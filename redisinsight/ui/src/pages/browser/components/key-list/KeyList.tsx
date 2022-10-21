@@ -2,11 +2,13 @@ import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef,
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
+import { debounce, findIndex, isUndefined, reject } from 'lodash'
 
 import {
   EuiText,
   EuiToolTip,
   EuiTextColor,
+  EuiLoadingContent,
 } from '@elastic/eui'
 import {
   formatBytes,
@@ -17,6 +19,7 @@ import {
   formatLongName,
   bufferToString,
   bufferFormatRangeItems,
+  isEqualBuffers,
 } from 'uiSrc/utils'
 import {
   NoKeysToDisplayText,
@@ -25,6 +28,7 @@ import {
   ScanNoResultsFoundText,
 } from 'uiSrc/constants/texts'
 import {
+  fetchKeysMetadata,
   keysDataSelector,
   keysSelector,
   selectedKeySelector,
@@ -40,7 +44,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { OVER_RENDER_BUFFER_COUNT, Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -65,14 +69,15 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { data: selectedKey } = useSelector(selectedKeySelector)
+  const selectedKey = useSelector(selectedKeySelector)
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
   const { isSearched, isFiltered, viewType } = useSelector(keysSelector)
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
 
-  const [items, setItems] = useState(keysState.keys)
+  const [, rerender] = useState({})
 
-  const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
+  const itemsRef = useRef(keysState.keys)
+  const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
 
   const dispatch = useDispatch()
 
@@ -87,21 +92,34 @@ const KeyList = forwardRef((props: Props, ref) => {
       if (viewType === KeyViewType.Tree) {
         return
       }
-      setItems((prevItems) => {
-        dispatch(setLastBatchKeys(prevItems.slice(-SCAN_COUNT_DEFAULT)))
-        return []
+      rerender(() => {
+        dispatch(setLastBatchKeys(itemsRef.current?.slice(-SCAN_COUNT_DEFAULT)))
       })
     }, [])
 
   useEffect(() => {
-    const newKeys = bufferFormatRangeItems(keysState.keys, 0, OVER_RENDER_BUFFER_COUNT, formatItem)
-
-    if (keysState.keys.length < items.length) {
-      formattedLastIndexRef.current = 0
+    itemsRef.current = [...keysState.keys]
+    if (itemsRef.current.length === 0) {
+      rerender({})
+      return
     }
 
-    setItems(newKeys)
+    const { startIndex, lastIndex } = renderedRowsIndexesRef.current
+    onRowsRendered(startIndex, lastIndex)
+    rerender({})
   }, [keysState.keys])
+
+  useEffect(() => {
+    if (!selectedKey || !selectedKey?.data) return
+
+    const indexKeyForUpdate = itemsRef.current.findIndex(({ name }) =>
+      isEqualBuffers(name, selectedKey?.data?.name))
+
+    if (indexKeyForUpdate === -1) return
+
+    itemsRef.current[indexKeyForUpdate] = selectedKey.data
+    rerender({})
+  }, [selectedKey])
 
   const onNoKeysLinkClick = () => {
     sendEventTelemetry({
@@ -130,8 +148,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
-    const formattedAllKeys = bufferFormatRangeItems(items, formattedLastIndexRef.current, items.length, formatItem)
-    loadMoreItems?.(formattedAllKeys, props)
+    loadMoreItems?.(itemsRef.current, props)
   }
 
   const onWheelSearched = (event: React.WheelEvent) => {
@@ -159,16 +176,54 @@ const KeyList = forwardRef((props: Props, ref) => {
     nameString: bufferToString(item.name)
   }), [])
 
-  const bufferFormatRows = (lastIndex: number) => {
-    const newItems = bufferFormatRangeItems(items, formattedLastIndexRef.current, lastIndex, formatItem)
+  const onRowsRendered = (startIndex: number, lastIndex: number) => {
+    renderedRowsIndexesRef.current = { lastIndex, startIndex }
 
-    setItems(newItems)
+    const newItems = bufferFormatRows(startIndex, lastIndex)
 
-    if (lastIndex > formattedLastIndexRef.current) {
-      formattedLastIndexRef.current = lastIndex
-    }
+    getMetadata(startIndex, newItems)
+    rerender({})
+  }
+
+  const onRowsRenderedDebounced = debounce(onRowsRendered, 100)
+
+  const bufferFormatRows = (startIndex: number, lastIndex: number): GetKeyInfoResponse[] => {
+    const newItems = bufferFormatRangeItems(
+      itemsRef.current, startIndex, lastIndex, formatItem
+    )
+    itemsRef.current.splice(startIndex, newItems.length, ...newItems)
 
     return newItems
+  }
+
+  const getMetadata = (
+    startIndex: number,
+    itemsInit: GetKeyInfoResponse[] = []
+  ): void => {
+    const isSomeNotUndefined = ({ type, size, length }: GetKeyInfoResponse) =>
+      !isUndefined(type) || !isUndefined(size) || !isUndefined(length)
+
+    const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
+    if (firstEmptyItemIndex === -1) return
+
+    const emptyItems = reject(itemsInit, isSomeNotUndefined)
+
+    dispatch(fetchKeysMetadata(
+      emptyItems.map(({ name }) => name),
+      (loadedItems) =>
+        onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
+      () => { rerender({}) }
+    ))
+  }
+
+  const onSuccessFetchedMetadata = (
+    startIndex: number,
+    loadedItems: GetKeyInfoResponse[],
+  ) => {
+    const items = loadedItems.map(formatItem)
+    itemsRef.current.splice(startIndex, items.length, ...items)
+
+    rerender({})
   }
 
   const columns: ITableColumn[] = [
@@ -177,16 +232,29 @@ const KeyList = forwardRef((props: Props, ref) => {
       label: 'Type',
       absoluteWidth: 'auto',
       minWidth: 126,
-      render: (cellData: any, { nameString: name }: any) => <GroupBadge type={cellData} name={name} />,
+      render: (cellData: any, { nameString: name }: any) => (
+        isUndefined(cellData)
+          ? <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="type-loading" />
+          : <GroupBadge type={cellData} name={name} />
+      )
     },
     {
       id: 'nameString',
       label: 'Key',
       minWidth: 100,
       truncateText: true,
-      render: (cellData: string = '') => {
+      render: (cellData: string) => {
+        if (isUndefined(cellData)) {
+          return (
+            <EuiLoadingContent
+              lines={1}
+              className={cx(styles.keyInfoLoading, styles.keyNameLoading)}
+              data-testid="name-loading"
+            />
+          )
+        }
         // Better to cut the long string, because it could affect virtual scroll performance
-        const name = cellData
+        const name = cellData || ''
         const cellContent = replaceSpaces(name?.substring(0, 200))
         const tooltipContent = formatLongName(name)
         return (
@@ -214,6 +282,9 @@ const KeyList = forwardRef((props: Props, ref) => {
       truncateText: true,
       alignment: TableCellAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
+        if (isUndefined(cellData)) {
+          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="ttl-loading" />
+        }
         if (cellData === -1) {
           return (
             <EuiTextColor color="subdued" data-testid={`ttl-${name}`}>
@@ -252,6 +323,10 @@ const KeyList = forwardRef((props: Props, ref) => {
       alignment: TableCellAlignment.Right,
       textAlignment: TableCellTextAlignment.Right,
       render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
+        if (isUndefined(cellData)) {
+          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="size-loading" />
+        }
+
         if (!cellData) {
           return (
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }} data-testid={`size-${name}`}>
@@ -297,15 +372,16 @@ const KeyList = forwardRef((props: Props, ref) => {
               loadMoreItems={onLoadMoreItems}
               onWheel={onWheelSearched}
               loading={loading}
-              items={items}
+              items={itemsRef.current}
               totalItemsCount={keysState.total ? keysState.total : Infinity}
               scanned={isSearched || isFiltered ? keysState.scanned : 0}
               noItemsMessage={getNoItemsMessage()}
-              selectedKey={selectedKey}
+              selectedKey={selectedKey.data}
               scrollTopProp={scrollTopPosition}
               setScrollTopPosition={setScrollTopPosition}
               hideFooter={hideFooter}
-              onRowsRendered={({ overscanStopIndex }) => bufferFormatRows(overscanStopIndex)}
+              onRowsRendered={({ overscanStartIndex, overscanStopIndex }) =>
+                onRowsRenderedDebounced(overscanStartIndex, overscanStopIndex)}
             />
           </div>
         </div>
@@ -314,4 +390,4 @@ const KeyList = forwardRef((props: Props, ref) => {
   )
 })
 
-export default KeyList
+export default React.memo(KeyList)

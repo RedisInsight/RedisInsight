@@ -34,6 +34,20 @@
   transition: opacity 250ms ease-in-out;
 }
 
+.keyInfoLoading {
+  width: 44px;
+
+  :global(.euiLoadingContent__singleLine) {
+    margin-bottom: 0;
+  }
+}
+
+.keyNameLoading {
+  width: 50%;
+  min-width: 100px;
+  max-width: 300px;
+}
+
 :global(.table-row-selected) .action {
   opacity: 1;
 }

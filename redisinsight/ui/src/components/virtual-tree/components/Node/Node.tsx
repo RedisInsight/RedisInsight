@@ -37,7 +37,7 @@ const Node = ({
   }, [keys, isSelected])
 
   const handleClick = () => {
-    if (isLeaf && keys) {
+    if (isLeaf && keys && !isSelected) {
       setItems?.(keys)
       updateStatusSelected?.(fullName, keys)
     }

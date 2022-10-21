@@ -1,4 +1,6 @@
-import { toNumber, omit, isNull, get } from 'lodash';
+import {
+  toNumber, omit, isNull, get,
+} from 'lodash';
 import * as isGlob from 'is-glob';
 import config from 'src/utils/config';
 import { unescapeGlob, convertBulkStringsToObject } from 'src/utils';
@@ -85,13 +87,16 @@ export class ClusterStrategy extends AbstractStrategy {
 
     await Promise.all(
       nodes.map(async (node) => {
-        if (node.keys.length) {
+        if (node.keys.length && args.keysInfo) {
           // eslint-disable-next-line no-param-reassign
           node.keys = await this.getKeysInfo(
             node.node,
             node.keys,
             args.type,
           );
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          node.keys = node.keys.map((name) => ({ name }));
         }
       }),
     );
@@ -144,16 +149,16 @@ export class ClusterStrategy extends AbstractStrategy {
           BrowserToolKeysCommands.InfoKeyspace,
           [],
           { host: node.host, port: node.port },
-        )
+        );
 
-        const info = convertBulkStringsToObject(result.result)
+        const info = convertBulkStringsToObject(result.result);
 
         if (!info[`db${currentDbIndex}`]) {
-          node.total = 0
+          node.total = 0;
         } else {
           const { keys } = convertBulkStringsToObject(info[`db${currentDbIndex}`], ',', '=');
           node.total = parseInt(keys, 10);
-        }  
+        }
       }),
     );
   }

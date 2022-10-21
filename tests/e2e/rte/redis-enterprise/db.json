@@ -1,6 +1,6 @@
 {
   "name": "test-re-standalone",
   "type": "redis",
-  "memory_size": 1073741824,
+  "memory_size": 268435456,
   "port": 12000
 }

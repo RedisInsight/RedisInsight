@@ -15,3 +15,5 @@ export type Content = {
   title: string
   text: (path: string) => ReactNode
 }
+
+export const DEFAULT_EXTRAPOLATION = 1

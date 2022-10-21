@@ -19,6 +19,7 @@ import {
   formatLongName,
   bufferToString,
   bufferFormatRangeItems,
+  isEqualBuffers,
 } from 'uiSrc/utils'
 import {
   NoKeysToDisplayText,
@@ -68,7 +69,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { data: selectedKey } = useSelector(selectedKeySelector)
+  const selectedKey = useSelector(selectedKeySelector)
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
   const { isSearched, isFiltered, viewType } = useSelector(keysSelector)
   const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
@@ -115,6 +116,18 @@ const KeyList = forwardRef((props: Props, ref) => {
     onRowsRendered(startIndex, lastIndex)
     rerender({})
   }, [keysState.keys])
+
+  useEffect(() => {
+    if (!selectedKey || !selectedKey?.data) return
+
+    const indexKeyForUpdate = itemsRef.current.findIndex(({ name }) =>
+      isEqualBuffers(name, selectedKey?.data?.name))
+
+    if (indexKeyForUpdate === -1) return
+
+    itemsRef.current[indexKeyForUpdate] = selectedKey.data
+    rerender({})
+  }, [selectedKey])
 
   const onNoKeysLinkClick = () => {
     sendEventTelemetry({
@@ -179,7 +192,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
     const newItems = bufferFormatRows(startIndex, lastIndex)
 
-    getMetadata(startIndex, lastIndex, newItems)
+    getMetadata(startIndex, newItems)
     rerender({})
   }
 
@@ -196,7 +209,6 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const getMetadata = (
     startIndex: number,
-    lastIndex: number,
     itemsInit: GetKeyInfoResponse[] = []
   ): void => {
     const isSomeNotUndefined = ({ type, size, length }: GetKeyInfoResponse) =>
@@ -375,7 +387,7 @@ const KeyList = forwardRef((props: Props, ref) => {
               totalItemsCount={keysState.total ? keysState.total : Infinity}
               scanned={isSearched || isFiltered ? keysState.scanned : 0}
               noItemsMessage={getNoItemsMessage()}
-              selectedKey={selectedKey}
+              selectedKey={selectedKey.data}
               scrollTopProp={scrollTopPosition}
               setScrollTopPosition={setScrollTopPosition}
               hideFooter={hideFooter}

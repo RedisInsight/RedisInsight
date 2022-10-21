@@ -9,7 +9,7 @@ import {
   EuiFlexItem,
   EuiIcon,
   EuiButton,
-  EuiText
+  EuiText, EuiHideFor
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -85,13 +85,16 @@ const Header = (props: Props) => {
         gutterSize="none"
         alignItems="center"
         justifyContent={items.length ? 'spaceBetween' : 'flexEnd'}
+        responsive={false}
       >
         {!!items.length && (
           <EuiFlexItem grow={false}>
             <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-              <EuiFlexItem grow={false}>
-                <EuiText className={styles.text}>Report generated on:</EuiText>
-              </EuiFlexItem>
+              <EuiHideFor sizes={['xs', 's']}>
+                <EuiFlexItem grow={false}>
+                  <EuiText className={styles.text}>Report generated on:</EuiText>
+                </EuiFlexItem>
+              </EuiHideFor>
               <EuiFlexItem>
                 <EuiSuperSelect
                   options={analysisOptions}
@@ -125,7 +128,7 @@ const Header = (props: Props) => {
           </EuiFlexItem>
         )}
         <EuiFlexItem grow={false}>
-          <EuiFlexGroup gutterSize="none" alignItems="center">
+          <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
             <EuiFlexItem style={{ overflow: 'hidden' }}>
               <EuiButton
                 aria-label="New reports"

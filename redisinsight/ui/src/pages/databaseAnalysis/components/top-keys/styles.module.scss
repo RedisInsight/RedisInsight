@@ -8,9 +8,16 @@
   min-height: auto;
   border-radius: 4px;
   background: transparent !important;
-  box-shadow: none;
   margin-left: 18px;
-  color: var(--wbHoverIconColor) !important;
+  box-shadow: none !important;
+
+  &:global(.euiButton.euiButton--secondary) {
+    color: var(--wbHoverIconColor) !important;
+
+    &:hover, &:focus {
+      color: var(--wbHoverIconColor) !important;
+    }
+  }
 
   :global(.euiButton__content) {
     padding: 6px;
@@ -52,7 +59,11 @@
     table-layout: fixed;
   }
 
-  :global {    
+  :global {
+    .euiTableRowCell {
+      border-color: transparent !important;
+    }
+
     .euiTableRowCell:first-child {
       padding-left: 12px;
     }

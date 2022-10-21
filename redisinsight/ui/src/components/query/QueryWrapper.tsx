@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { getMultiCommands, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
+import { getMultiCommands, isGroupMode, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
@@ -81,7 +81,7 @@ const QueryWrapper = (props: Props) => {
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: batchSize > 1,
         rawMode: state.activeMode === RunQueryMode.Raw,
-        group: state.resultsMode === ResultsMode.GroupMode
+        group: isGroupMode(state.resultsMode)
       }
     })()
 

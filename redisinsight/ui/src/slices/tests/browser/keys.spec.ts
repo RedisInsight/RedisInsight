@@ -47,7 +47,6 @@ import reducer, {
   editKey,
   defaultSelectedKeyActionFailure,
   editKeyTTL,
-  editKeyTTLFromList,
   addHashKey,
   addSetKey,
   addReJSONKey,
@@ -58,6 +57,7 @@ import reducer, {
   updateSelectedKeyRefreshTime,
   resetKeyInfo,
   resetKeys,
+  fetchKeysMetadata,
 } from '../../browser/keys'
 import { getString } from '../../browser/string'
 
@@ -716,39 +716,6 @@ describe('keys slice', () => {
     })
   })
 
-  describe('editKeyTTLFromList', () => {
-    it('should properly set the state before the edit TTL', () => {
-      // Arrange
-
-      const data = {
-        key: 'test',
-        ttl: 1000,
-      }
-
-      const initialStateMock = {
-        ...initialState,
-        data: {
-          keys: [{ name: data.key, ttl: -1 }],
-        },
-      }
-      const state = {
-        ...initialState,
-        data: {
-          keys: [{ name: data.key, ttl: data.ttl }],
-        },
-      }
-
-      // Act
-      const nextState = reducer(initialStateMock, editKeyTTLFromList(data))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        browser: { keys: nextState },
-      })
-      expect(keysSelector(rootState)).toEqual(state)
-    })
-  })
-
   describe('editKeyFromList', () => {
     it('should properly set the state before the edit key', () => {
       // Arrange
@@ -1287,8 +1254,6 @@ describe('keys slice', () => {
         // Assert
         const expectedActions = [
           defaultSelectedKeyAction(),
-          editKeyTTLFromList({ key, ttl }),
-
           // fetch keyInfo
           defaultSelectedKeyAction(),
           defaultSelectedKeyActionSuccess(),
@@ -1315,6 +1280,57 @@ describe('keys slice', () => {
           defaultSelectedKeyActionSuccess(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchKeysMetadata', () => {
+      it('success to fetch keys metadata', async () => {
+      // Arrange
+        const data = [
+          {
+            name: stringToBuffer('key1'),
+            type: 'hash',
+            ttl: -1,
+            size: 100,
+            length: 100,
+          },
+          {
+            name: stringToBuffer('key2'),
+            type: 'hash',
+            ttl: -1,
+            size: 150,
+            length: 100,
+          },
+          {
+            name: stringToBuffer('key3'),
+            type: 'hash',
+            ttl: -1,
+            size: 110,
+            length: 100,
+          },
+        ]
+        const responsePayload = { data, status: 200 }
+
+        const apiServiceMock = jest.fn().mockResolvedValue(responsePayload)
+        const onSuccessMock = jest.fn()
+        apiService.post = apiServiceMock
+
+        // Act
+        await store.dispatch<any>(
+          fetchKeysMetadata(
+            data.map(({ name }) => ({ name })),
+            onSuccessMock
+          )
+        )
+
+        // Assert
+        expect(apiServiceMock).toBeCalledWith(
+          '/instance//keys/get-metadata',
+          { keys: data.map(({ name }) => ({ name })) },
+          { params: { encoding: 'buffer' } },
+        )
+
+        expect(onSuccessMock).toBeCalledWith(data)
       })
     })
   })

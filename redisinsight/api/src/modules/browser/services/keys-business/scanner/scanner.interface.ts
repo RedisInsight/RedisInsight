@@ -1,6 +1,7 @@
-import { RedisDataType } from 'src/modules/browser/dto';
+import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
-import { Redis } from 'ioredis';
+import { Cluster, Redis } from 'ioredis';
+import { RedisString } from 'src/common/constants';
 
 interface IGetKeysArgs {
   cursor: string;
@@ -24,4 +25,10 @@ export interface IScannerStrategy {
     clientOptions: IFindRedisClientInstanceByOptions,
     args: IGetKeysArgs,
   ): Promise<IGetNodeKeysResult[]>;
+
+  getKeysInfo(
+    client: Redis | Cluster,
+    keys: RedisString[],
+    type?: RedisDataType,
+  ): Promise<GetKeyInfoResponse[]>;
 }

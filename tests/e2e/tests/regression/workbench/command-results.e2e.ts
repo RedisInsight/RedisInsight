@@ -74,7 +74,8 @@ test
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(await workbenchPage.queryTableResult.exists).ok('The table view is not switched for command FT.AGGREGATE');
     });
-test
+// Skipped due to issue https://redislabs.atlassian.net/browse/RI-3524
+test.skip
     .meta({ env: env.web })('Verify that user can switches between views and see results according to this view in full mode in Workbench', async t => {
         const command = 'CLIENT LIST';
 

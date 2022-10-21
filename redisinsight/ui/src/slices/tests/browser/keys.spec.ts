@@ -47,7 +47,6 @@ import reducer, {
   editKey,
   defaultSelectedKeyActionFailure,
   editKeyTTL,
-  editKeyTTLFromList,
   addHashKey,
   addSetKey,
   addReJSONKey,
@@ -717,39 +716,6 @@ describe('keys slice', () => {
     })
   })
 
-  describe('editKeyTTLFromList', () => {
-    it('should properly set the state before the edit TTL', () => {
-      // Arrange
-
-      const data = {
-        key: 'test',
-        ttl: 1000,
-      }
-
-      const initialStateMock = {
-        ...initialState,
-        data: {
-          keys: [{ name: data.key, ttl: -1 }],
-        },
-      }
-      const state = {
-        ...initialState,
-        data: {
-          keys: [{ name: data.key, ttl: data.ttl }],
-        },
-      }
-
-      // Act
-      const nextState = reducer(initialStateMock, editKeyTTLFromList(data))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        browser: { keys: nextState },
-      })
-      expect(keysSelector(rootState)).toEqual(state)
-    })
-  })
-
   describe('editKeyFromList', () => {
     it('should properly set the state before the edit key', () => {
       // Arrange
@@ -1288,8 +1254,6 @@ describe('keys slice', () => {
         // Assert
         const expectedActions = [
           defaultSelectedKeyAction(),
-          editKeyTTLFromList({ key, ttl }),
-
           // fetch keyInfo
           defaultSelectedKeyAction(),
           defaultSelectedKeyActionSuccess(),

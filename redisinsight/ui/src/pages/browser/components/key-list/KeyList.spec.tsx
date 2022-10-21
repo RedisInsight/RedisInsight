@@ -1,4 +1,5 @@
 import React from 'react'
+import { cloneDeep } from 'lodash'
 import { render, waitFor } from 'uiSrc/utils/test-utils'
 import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { keysSelector, setLastBatchKeys } from 'uiSrc/slices/browser/keys'
@@ -101,7 +102,7 @@ describe('KeyList', () => {
   })
 
   it('should call apiService.post to get key info', async () => {
-    const apiServiceMock = jest.fn().mockResolvedValue([...propsMock.keysState.keys])
+    const apiServiceMock = jest.fn().mockResolvedValue(cloneDeep(propsMock.keysState.keys))
     apiService.post = apiServiceMock
 
     const { rerender } = render(<KeyList {...propsMock} keysState={{ ...propsMock.keysState, keys: [] }} />)
@@ -120,7 +121,7 @@ describe('KeyList', () => {
 
   it('apiService.post should be called with only keys without info', async () => {
     const params = { params: { encoding: 'buffer' } }
-    const apiServiceMock = jest.fn().mockResolvedValue([...propsMock.keysState.keys])
+    const apiServiceMock = jest.fn().mockResolvedValue(cloneDeep(propsMock.keysState.keys))
     apiService.post = apiServiceMock
 
     const { rerender } = render(<KeyList {...propsMock} keysState={{ ...propsMock.keysState, keys: [] }} />)
@@ -130,7 +131,7 @@ describe('KeyList', () => {
       keysState={{
         ...propsMock.keysState,
         keys: [
-          ...propsMock.keysState.keys.map(({ name }) => ({ name })),
+          ...cloneDeep(propsMock.keysState.keys).map(({ name }) => ({ name })),
           { name: 'key5', size: 100, length: 100 }, // key with info
         ] }}
     />)
@@ -162,7 +163,7 @@ describe('KeyList', () => {
       keysState={{
         ...propsMock.keysState,
         keys: [
-          ...propsMock.keysState.keys.map(({ name }) => ({ name })),
+          ...cloneDeep(propsMock).keysState.keys.map(({ name }) => ({ name })),
         ] }}
     />)
 

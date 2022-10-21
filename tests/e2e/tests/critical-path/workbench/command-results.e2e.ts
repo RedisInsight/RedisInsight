@@ -1,4 +1,4 @@
-import { env, rte } from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -49,7 +49,7 @@ test('Verify that user can see re-run icon near the already executed command and
     // Verify that user can delete command with result from table with results in Workbench
     await t.expect(workbenchPage.queryCardCommand.withExactText(commandForSend2).exists).notOk(`Command ${commandForSend2} is not deleted from table with results`);
 });
-test.only('Verify that user can see the results found in the table view by default for FT.INFO, FT.SEARCH and FT.AGGREGATE', async t => {
+test('Verify that user can see the results found in the table view by default for FT.INFO, FT.SEARCH and FT.AGGREGATE', async t => {
     const commands = [
         'FT.INFO',
         'FT.SEARCH',
@@ -61,28 +61,26 @@ test.only('Verify that user can see the results found in the table view by defau
         await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is not selected by default for command ${command}`);
     }
 });
-test
-    .meta({ env: env.desktop })('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
-        indexName = common.generateWord(5);
-        const commands = [
-            'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',
-            `FT.CREATE ${indexName} ON HASH PREFIX 1 doc: SCHEMA title TEXT WEIGHT 5.0 body TEXT url TEXT author TEXT rate TEXT review TEXT comment TEXT`,
-            `FT.SEARCH ${indexName} * limit 0 10000`
-        ];
+test('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
+    indexName = common.generateWord(5);
+    const commands = [
+        'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',
+        `FT.CREATE ${indexName} ON HASH PREFIX 1 doc: SCHEMA title TEXT WEIGHT 5.0 body TEXT url TEXT author TEXT rate TEXT review TEXT comment TEXT`,
+        `FT.SEARCH ${indexName} * limit 0 10000`
+    ];
         // Send commands and check table view is default for Search command
-        for (const command of commands) {
-            await workbenchPage.sendCommandInWorkbench(command);
-        }
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok('The table view is not selected by default for command FT.SEARCH');
-        await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(await workbenchPage.queryTableResult.visible).ok('The table result is not displayed for command FT.SEARCH');
-        // Select Text view and check result
-        await t.switchToMainWindow();
-        await workbenchPage.selectViewTypeText();
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The result is not displayed in Text view');
-    });
-// Skipped due to issue https://redislabs.atlassian.net/browse/RI-3524
-test.skip('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
+    for (const command of commands) {
+        await workbenchPage.sendCommandInWorkbench(command);
+    }
+    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok('The table view is not selected by default for command FT.SEARCH');
+    await t.switchToIframe(workbenchPage.iframe);
+    await t.expect(await workbenchPage.queryTableResult.visible).ok('The table result is not displayed for command FT.SEARCH');
+    // Select Text view and check result
+    await t.switchToMainWindow();
+    await workbenchPage.selectViewTypeText();
+    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The result is not displayed in Text view');
+});
+test('Verify that user can switches between Table and Text for Client List and see results corresponding to their views', async t => {
     const command = 'CLIENT LIST';
     // Send command and check table view is default
     await workbenchPage.sendCommandInWorkbench(command);

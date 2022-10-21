@@ -383,8 +383,7 @@ jobs:
         description: Number of threads to run tests
         type: integer
         default: 1
-    # parallelism: << parameters.parallelism >>
-    parallelism: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - when:

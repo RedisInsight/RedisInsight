@@ -20,7 +20,7 @@ const commandsForIndex = [
     'HMSET product:2 price 100'
 ];
 
-fixture.only `Command results at Workbench`
+fixture `Command results at Workbench`
     .meta({type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {

@@ -1,6 +1,6 @@
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
-import { env, rte } from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
@@ -90,7 +90,6 @@ test
         await workbenchPage.checkWorkbenchCommandResult(commandsForSend[1], `"${unicodeValue}"`);
     });
 test
-    .meta({ env: env.desktop })
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         // Go to Workbench page

@@ -32,8 +32,8 @@ import styles from './styles.module.scss'
 
 const dateFormat = 'd MMM yyyy HH:mm'
 
-const commonTooltipMessage = 'Analyze up to 10,000 keys per shard to get an overview of your data.'
-const clusterTooltipMessage = 'Analyze up to 10,000 keys per Redis database to get an overview of your data.'
+const commonTooltipMessage = 'Analyze up to 10 000 keys per Redis database to get an overview of your data.'
+const clusterTooltipMessage = 'Analyze up to 10 000 keys per shard to get an overview of your data.'
 
 export interface Props {
   items: ShortDatabaseAnalysis[]
@@ -155,7 +155,7 @@ const Header = (props: Props) => {
                 position="bottom"
                 anchorClassName={styles.tooltipAnchor}
                 className={styles.tooltip}
-                title="Memory Efficiency"
+                title="Redis Database Analysis"
                 content={connectionType === ConnectionType.Cluster ? clusterTooltipMessage : commonTooltipMessage}
                 data-testid="db-new-reports-tooltip"
               >

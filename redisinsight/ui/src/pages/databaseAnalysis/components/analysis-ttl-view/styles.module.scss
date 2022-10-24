@@ -1,5 +1,6 @@
 .container {
   position: relative;
+  padding-right: 0;
 
   @media screen and (max-width: 920px) {
     :global(.section-title-wrapper) {
@@ -42,6 +43,7 @@
 
 .switch {
   float: right;
+  padding-right: 20px;
 
   :global(.euiSwitch__label) {
     font-size: 13px !important;

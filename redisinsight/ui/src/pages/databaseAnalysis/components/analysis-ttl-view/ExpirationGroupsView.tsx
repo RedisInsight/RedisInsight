@@ -6,8 +6,8 @@ import cx from 'classnames'
 
 import { DEFAULT_EXTRAPOLATION } from 'uiSrc/pages/databaseAnalysis'
 import { extrapolate, formatBytes, formatExtrapolation, Nullable } from 'uiSrc/utils'
-import { AreaChart } from 'uiSrc/components/charts'
-import { AreaChartData, AreaChartDataType, DEFAULT_MULTIPLIER_GRID } from 'uiSrc/components/charts/area-chart/AreaChart'
+import { BarChart } from 'uiSrc/components/charts'
+import { BarChartData, BarChartDataType, DEFAULT_BAR_WIDTH, DEFAULT_MULTIPLIER_GRID, DEFAULT_Y_TICKS } from 'uiSrc/components/charts/bar-chart'
 import { DBAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import styles from './styles.module.scss'
@@ -24,7 +24,7 @@ const ExpirationGroupsView = (props: Props) => {
   const { totalMemory, totalKeys } = data || {}
 
   const { showNoExpiryGroup } = useSelector(DBAnalysisReportsSelector)
-  const [expirationGroups, setExpirationGroups] = useState<AreaChartData[]>([])
+  const [expirationGroups, setExpirationGroups] = useState<BarChartData[]>([])
   const [isExtrapolated, setIsExtrapolated] = useState<boolean>(true)
 
   const dispatch = useDispatch()
@@ -74,6 +74,9 @@ const ExpirationGroupsView = (props: Props) => {
     return null
   }
 
+  const multiplierGrid = DEFAULT_MULTIPLIER_GRID
+  const yCountTicks = DEFAULT_Y_TICKS
+
   return (
     <div className={cx('section', styles.container)} data-testid="analysis-ttl">
       <div className="section-title-wrapper">
@@ -110,17 +113,19 @@ const ExpirationGroupsView = (props: Props) => {
         <div className={styles.chart}>
           <AutoSizer>
             {({ width, height }) => (
-              <AreaChart
+              <BarChart
                 name="expiration-groups"
                 width={width}
                 height={height}
-                dataType={AreaChartDataType.Bytes}
+                dataType={BarChartDataType.Bytes}
                 divideLastColumn={showNoExpiryGroup}
-                multiplierGrid={DEFAULT_MULTIPLIER_GRID}
+                multiplierGrid={multiplierGrid}
                 data={expirationGroups}
+                yCountTicks={yCountTicks}
+                barWidth={width > 1000 ? 70 : (width < 800 ? 30 : DEFAULT_BAR_WIDTH)}
                 tooltipValidation={(val) => `${formatExtrapolation(formatBytes(val, 3) as string, isExtrapolated)}`}
-                leftAxiosValidation={(val) => formatBytes(val, 1)}
-                bottomAxiosValidation={(_val, i) => (i % DEFAULT_MULTIPLIER_GRID ? '' : expirationGroups[i / DEFAULT_MULTIPLIER_GRID]?.xlabel)}
+                leftAxiosValidation={(val, i) => (i % 2 ? '' : formatBytes(val, 1))}
+                bottomAxiosValidation={(_val, i) => expirationGroups[i / multiplierGrid]?.xlabel}
               />
             )}
           </AutoSizer>

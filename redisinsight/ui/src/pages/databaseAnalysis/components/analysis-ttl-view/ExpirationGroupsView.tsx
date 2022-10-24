@@ -8,7 +8,7 @@ import { AreaChart } from 'uiSrc/components/charts'
 import { AreaChartData, AreaChartDataType, DEFAULT_MULTIPLIER_GRID } from 'uiSrc/components/charts/area-chart/AreaChart'
 
 import { DEFAULT_EXTRAPOLATION, SectionName } from 'uiSrc/pages/databaseAnalysis'
-import { DBAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
+import { dbAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
 import { extrapolate, formatBytes, formatExtrapolation, Nullable } from 'uiSrc/utils'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
@@ -25,7 +25,7 @@ const ExpirationGroupsView = (props: Props) => {
   const { data, loading, extrapolation, onSwitchExtrapolation } = props
   const { totalMemory, totalKeys } = data || {}
 
-  const { showNoExpiryGroup } = useSelector(DBAnalysisReportsSelector)
+  const { showNoExpiryGroup } = useSelector(dbAnalysisReportsSelector)
   const [expirationGroups, setExpirationGroups] = useState<AreaChartData[]>([])
   const [isExtrapolated, setIsExtrapolated] = useState<boolean>(true)
 

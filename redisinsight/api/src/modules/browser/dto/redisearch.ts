@@ -1,20 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  ArrayMinSize, IsDefined, IsEnum, IsNotEmpty, IsString, ValidateNested,
+  ArrayMinSize, IsDefined, IsEnum, IsInt, IsNotEmpty, IsString, ValidateNested
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export enum RedisearchIndexKeyType {
-  HASH = 'HASH',
-  JSON = 'JSON',
+  HASH = 'hash',
+  JSON = 'json',
 }
 
 export enum RedisearchIndexDataType {
-  TEXT = 'TEXT',
-  TAG = 'TAG',
-  NUMERIC = 'NUMERIC',
-  GEO = 'GEO',
-  VECTOR = 'VECTOR',
+  TEXT = 'text',
+  TAG = 'tag',
+  NUMERIC = 'numeric',
+  GEO = 'geo',
+  VECTOR = 'vector',
 }
 
 export class CreateRedisearchIndexFieldDto {
@@ -70,4 +70,40 @@ export class CreateRedisearchIndexDto {
   @ValidateNested()
   @ArrayMinSize(1)
   fields: CreateRedisearchIndexFieldDto[];
+}
+
+export class SearchRedisearchDto {
+  @ApiProperty({
+    description: 'Index Name',
+    type: String,
+  })
+  @IsDefined()
+  @IsString()
+  index: string;
+
+  @ApiProperty({
+    description: 'Query to search inside data fields',
+    type: String,
+  })
+  @IsDefined()
+  @IsString()
+  query: string;
+
+  @ApiProperty({
+    description: 'Limit number of results to be returned',
+    type: Number,
+  })
+  @IsDefined()
+  @IsInt()
+  @Type(() => Number)
+  limit: number = 500; // todo use @Default from another PR
+
+  @ApiProperty({
+    description: 'Offset position to start searching',
+    type: Number,
+  })
+  @IsDefined()
+  @IsInt()
+  @Type(() => Number)
+  offset: number = 0; // todo use @Default from another PR
 }

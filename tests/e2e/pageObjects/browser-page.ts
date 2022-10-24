@@ -92,6 +92,7 @@ export class BrowserPage {
     editListButton = Selector('[data-testid^=edit-list-button-]');
     workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
+    submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -299,7 +300,8 @@ export class BrowserPage {
             .click(this.plusAddKeyButton)
             .click(this.keyTypeDropDown)
             .click(this.jsonOption)
-            .click(this.addKeyNameInput)
+            .click(this.addKeyNameInput);
+        await t
             .typeText(this.addKeyNameInput, keyName, { replace: true, paste: true })
             .click(this.jsonKeyValueInput)
             .typeText(this.jsonKeyValueInput, value, { replace: true, paste: true });

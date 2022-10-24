@@ -60,7 +60,9 @@ test
         await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);
         await browserPage.addStreamKey(streamKeyName, 'field', 'value', keysTTL[2]);
         await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value', keysTTL[2]);
-        await t.click(Selector('button').withText('Ok'));
+        if (await browserPage.submitTooltipBtn.exists) {
+            await t.click(browserPage.submitTooltipBtn);
+        };
         await cliPage.addKeysFromCliWithDelimiter('MSET', 15);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page

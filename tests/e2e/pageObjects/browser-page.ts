@@ -510,10 +510,9 @@ export class BrowserPage {
         if (await this.toastCloseButton.exists) {
             await t.click(this.toastCloseButton);
         }
-        await t
-            .click(this.keyNameInTheList)
-            .click(this.deleteKeyButton)
-            .click(this.confirmDeleteKeyButton);
+        await t.click(this.keyNameInTheList);
+        await t.click(this.deleteKeyButton);
+        await t.click(this.confirmDeleteKeyButton);
     }
 
     /**
@@ -522,10 +521,9 @@ export class BrowserPage {
      */
     async deleteKeyByName(keyName: string): Promise<void> {
         await this.searchByKeyName(keyName);
-        await t
-            .click(this.keyNameInTheList)
-            .click(this.deleteKeyButton)
-            .click(this.confirmDeleteKeyButton);
+        await t.click(this.keyNameInTheList);
+        await t.click(this.deleteKeyButton);
+        await t.click(this.confirmDeleteKeyButton);
     }
 
     /**

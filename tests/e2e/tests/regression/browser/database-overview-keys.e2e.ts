@@ -8,9 +8,10 @@ import {
     AddRedisDatabasePage
 } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
-import { cloudDatabaseConfig, commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { cloudDatabaseConfig, commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { deleteAllKeysFromDB } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -34,23 +35,23 @@ fixture `Database overview`
     .page(commonUrl)
     .beforeEach(async t => {
         // Create databases and keys
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabase(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         await browserPage.addStringKey(keyName);
         await t.click(myRedisDatabasePage.myRedisDBButton);
-        await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
-        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName} [${index}]`);
+        await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneRedisearch, index);
+        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [${index}]`);
         keys = await common.createArrayWithKeyValue(keysAmount);
         await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
     })
     .afterEach(async t => {
         // Clear and delete databases
         await t.click(myRedisDatabasePage.myRedisDBButton);
-        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName} [${index}]`);
+        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [${index}]`);
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await deleteDatabase(`${ossStandaloneRedisearch.databaseName} [${index}]`);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
         await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can see total and current logical database number of keys (if there are any keys in other logical DBs)', async t => {
@@ -64,7 +65,7 @@ test
 
         // Open Database
         await t.click(myRedisDatabasePage.myRedisDBButton);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
         await t.hover(workbenchPage.overviewTotalKeys);
         // Verify that user can see total number of keys and not it current logical database (if there are no any keys in other logical DBs)
         await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');

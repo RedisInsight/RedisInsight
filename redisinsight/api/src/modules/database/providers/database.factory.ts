@@ -10,7 +10,6 @@ import { DatabaseInfoProvider } from 'src/modules/database/providers/database-in
 import { RedisErrorCodes } from 'src/constants';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
-import { RedisSentinelBusinessService } from 'src/modules/shared/services/redis-sentinel-business/redis-sentinel-business.service';
 
 @Injectable()
 export class DatabaseFactory {
@@ -18,7 +17,6 @@ export class DatabaseFactory {
 
   constructor(
     private redisService: RedisService,
-    private redisSentinelService: RedisSentinelBusinessService,
     private databaseInfoProvider: DatabaseInfoProvider,
     private caCertificateService: CaCertificateService,
     private clientCertificateService: ClientCertificateService,
@@ -59,7 +57,7 @@ export class DatabaseFactory {
    * @param database
    * @private
    */
-  private async createStandaloneDatabaseModel(database: Database): Promise<Database> {
+  async createStandaloneDatabaseModel(database: Database): Promise<Database> {
     const model = database;
 
     model.connectionType = ConnectionType.STANDALONE;
@@ -89,7 +87,7 @@ export class DatabaseFactory {
    * @param client
    * @private
    */
-  private async createClusterDatabaseModel(database: Database, client: IORedis.Redis): Promise<Database> {
+  async createClusterDatabaseModel(database: Database, client: IORedis.Redis): Promise<Database> {
     try {
       const model = database;
 
@@ -123,10 +121,11 @@ export class DatabaseFactory {
    * @param client
    * @private
    */
-  private async createSentinelDatabaseModel(database: Database, client: IORedis.Redis): Promise<Database> {
+  async createSentinelDatabaseModel(database: Database, client: IORedis.Redis): Promise<Database> {
     try {
       const model = database;
-      const masters = await this.redisSentinelService.getMasters(client);
+      // todo: move to redis module
+      const masters = await this.databaseInfoProvider.determineSentinelMasterGroups(client);
       const selectedMaster = masters.find(
         (master) => master.name === model.sentinelMaster.name,
       );
@@ -139,12 +138,12 @@ export class DatabaseFactory {
 
       const sentinelClient = await this.redisService.createSentinelClient(
         model,
-        selectedMaster.endpoints,
+        selectedMaster.nodes,
         AppTool.Common,
       );
 
       model.connectionType = ConnectionType.SENTINEL;
-      model.nodes = selectedMaster.endpoints;
+      model.nodes = selectedMaster.nodes;
       await sentinelClient.disconnect();
 
       return model;

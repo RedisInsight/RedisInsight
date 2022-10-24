@@ -46,10 +46,6 @@ import {
   AddRedisCloudDatabaseResponse,
 } from 'src/modules/instances/dto/redis-enterprise-cloud.dto';
 import { RedisEnterpriseDatabaseStatus } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
-import {
-  AddSentinelMasterResponse,
-  AddSentinelMastersDto,
-} from 'src/modules/instances/dto/redis-sentinel.dto';
 import { RedisDatabaseInfoResponse } from 'src/modules/instances/dto/redis-info.dto';
 import { InstancesAnalyticsService } from 'src/modules/shared/services/instances-business/instances-analytics.service';
 import { DatabasesProvider } from 'src/modules/shared/services/instances-business/databases.provider';
@@ -59,7 +55,6 @@ import { convertEntityToDto } from '../../utils/database-entity-converter';
 import { RedisEnterpriseBusinessService } from '../redis-enterprise-business/redis-enterprise-business.service';
 import { RedisCloudBusinessService } from '../redis-cloud-business/redis-cloud-business.service';
 import { ConfigurationBusinessService } from '../configuration-business/configuration-business.service';
-import { RedisSentinelBusinessService } from '../redis-sentinel-business/redis-sentinel-business.service';
 
 @Injectable()
 export class InstancesBusinessService {
@@ -74,7 +69,6 @@ export class InstancesBusinessService {
     private clientCertificateService: ClientCertificateService,
     private redisEnterpriseService: RedisEnterpriseBusinessService,
     private redisCloudService: RedisCloudBusinessService,
-    private redisSentinelService: RedisSentinelBusinessService,
     private redisConfBusinessService: ConfigurationBusinessService,
     private instancesAnalyticsService: InstancesAnalyticsService,
     private eventEmitter: EventEmitter2,

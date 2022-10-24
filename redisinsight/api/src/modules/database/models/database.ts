@@ -2,7 +2,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   EndpointDto,
   RedisModuleDto,
-  SentinelMasterDto,
 } from 'src/modules/instances/dto/database-instance.dto';
 import { Expose, Type } from 'class-transformer';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
@@ -19,6 +18,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 
 export class Database {
   @ApiProperty({
@@ -125,14 +125,14 @@ export class Database {
 
   @ApiPropertyOptional({
     description: 'Redis OSS Sentinel master group.',
-    type: SentinelMasterDto,
+    type: SentinelMaster,
   })
   @Expose()
   @IsOptional()
   @IsNotEmptyObject()
-  @Type(() => SentinelMasterDto)
+  @Type(() => SentinelMaster)
   @ValidateNested()
-  sentinelMaster?: SentinelMasterDto;
+  sentinelMaster?: SentinelMaster;
 
   @ApiPropertyOptional({
     description: 'OSS Cluster Nodes',
@@ -187,7 +187,6 @@ export class Database {
   @IsOptional()
   @IsNotEmptyObject()
   @Type(() => CaCertificate)
-  // @Validate(CaCertCollisionValidator)
   @ValidateNested()
   caCert?: CaCertificate;
 
@@ -199,7 +198,6 @@ export class Database {
   @IsOptional()
   @IsNotEmptyObject()
   @Type(() => ClientCertificate)
-  // @Validate(ClientCertCollisionValidator)
   @ValidateNested()
   clientCert?: ClientCertificate;
 }

@@ -25,6 +25,11 @@ const dataSchema = Joi.object({
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),
+  sentinelMaster: Joi.object({
+    name: Joi.string().required(),
+    username: Joi.string(),
+    password: Joi.string(),
+  }),
 }).messages({
   'any.required': '{#label} should not be empty',
 }).strict(true);

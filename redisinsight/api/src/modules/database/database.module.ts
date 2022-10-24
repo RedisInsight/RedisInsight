@@ -10,8 +10,6 @@ import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
-import { RedisSentinelBusinessService } from 'src/modules/shared/services/redis-sentinel-business/redis-sentinel-business.service';
-import { AutodiscoveryAnalyticsService } from 'src/modules/shared/services/autodiscovery-analytics.service/autodiscovery-analytics.service';
 import { DatabaseInfoController } from 'src/modules/database/database-info.controller';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { ConfigurationBusinessService } from 'src/modules/shared/services/configuration-business/configuration-business.service';
@@ -39,13 +37,15 @@ import { DatabaseOverviewProvider } from 'src/modules/database/providers/databas
       useClass: LocalDatabaseRepository,
     },
     // todo: remove deps below
-    RedisSentinelBusinessService,
-    AutodiscoveryAnalyticsService,
     ConfigurationBusinessService,
   ],
   exports: [
     DatabaseService,
     DatabaseConnectionService,
+    // todo: rethink everything below
+    DatabaseFactory,
+    DatabaseInfoService,
+    DatabaseInfoProvider,
   ],
 })
 export class DatabaseModule {}

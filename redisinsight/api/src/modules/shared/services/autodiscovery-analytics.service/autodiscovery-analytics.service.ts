@@ -5,7 +5,6 @@ import { RedisEnterpriseDatabase } from 'src/modules/redis-enterprise/dto/cluste
 import { RedisEnterpriseDatabaseStatus } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
 import { RedisCloudSubscriptionStatus } from 'src/modules/redis-enterprise/models/redis-cloud-subscriptions';
 import { GetRedisCloudSubscriptionResponse, RedisCloudDatabase } from 'src/modules/redis-enterprise/dto/cloud.dto';
-import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel';
 import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
 
 @Injectable()
@@ -72,29 +71,5 @@ export class AutodiscoveryAnalyticsService extends TelemetryBaseService {
 
   sendGetRECloudDbsFailedEvent(exception: HttpException) {
     this.sendFailedEvent(TelemetryEvents.RECloudDatabasesDiscoveryFailed, exception);
-  }
-
-  sendGetSentinelMastersSucceedEvent(groups: SentinelMaster[] = []) {
-    try {
-      this.sendEvent(
-        TelemetryEvents.SentinelMasterGroupsDiscoverySucceed,
-        {
-          numberOfAvailablePrimaryGroups: groups.filter(
-            (db) => db.status === SentinelMasterStatus.Active,
-          ).length,
-          totalNumberOfPrimaryGroups: groups.length,
-          totalNumberOfReplicas: groups.reduce<number>(
-            (sum, group) => sum + group.numberOfSlaves,
-            0,
-          ),
-        },
-      );
-    } catch (e) {
-      // continue regardless of error
-    }
-  }
-
-  sendGetSentinelMastersFailedEvent(exception: HttpException) {
-    this.sendFailedEvent(TelemetryEvents.SentinelMasterGroupsDiscoveryFailed, exception);
   }
 }

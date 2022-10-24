@@ -8,35 +8,31 @@ import {
   getMainCheckFn,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
+  _,
 } from '../deps';
 const { request, server, constants, localDb } = deps;
 
-const endpoint = () => request(server).post('/sentinel/get-masters');
+const endpoint = () => request(server).post('/sentinel/discovery');
 const mainCheckFn = getMainCheckFn(endpoint);
 
 // input data schema
 const dataSchema = Joi.object({
   host: Joi.string().required(),
-  port: Joi.number().required().allow(true), // todo: rework server transformer to not handle true like number:1
+  port: Joi.number().integer().required(),
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
-  tls: Joi.object({
-    verifyServerCert: Joi.any(), // todo: rework server validation to not handle any value like boolean:true
-    caCertId: Joi.string().allow(null),
-    clientCertPairId: Joi.string().allow(null),
-    newCaCert: Joi.object({
-      name: Joi.string(),
-      cert: Joi.string(),
-    }).allow(null),
-    newClientCertPair: Joi.object({
-      name: Joi.string(),
-      key: Joi.string(),
-      cert: Joi.string(),
-    }).allow(null),
-  }).allow(null),
+  tls: Joi.boolean().allow(null),
+  tlsServername: Joi.string().allow(null),
+  verifyServerCert: Joi.boolean().allow(null),
 }).messages({
   'any.required': '{#label} should not be empty',
-}).strict();
+}).strict(true);
+
+const validInputData = {
+  name: constants.getRandomString(),
+  host: constants.getRandomString(),
+  port: 111,
+};
 
 const responseSchema = Joi.array().items(Joi.object().keys({
   host: Joi.string().required(),
@@ -44,17 +40,13 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   name: Joi.string().required(),
   status: Joi.string().required(),
   numberOfSlaves: Joi.number().required(),
-  endpoints: Joi.array().items(Joi.object({
+  nodes: Joi.array().items(Joi.object({
     host: Joi.string().required(),
     port: Joi.number().required(),
   })).required(),
 }));
 
-const validInputData = {
-  host: constants.TEST_REDIS_HOST,
-  port: constants.TEST_REDIS_PORT,
-};
-describe('POST /sentinel/get-masters', () => {
+describe('POST /sentinel/discovery', () => {
   requirements('rte.type=SENTINEL');
   after(localDb.initAgreements);
 
@@ -76,9 +68,9 @@ describe('POST /sentinel/get-masters', () => {
         },
         responseSchema,
         checkFn: async ({body}) => {
-          expect(body.length).to.eql(1);
-          expect(body[0].name).to.eql(constants.TEST_SENTINEL_MASTER_GROUP);
-          expect(body[0].endpoints).to.eql([
+          expect(body.length).to.gte(1);
+          const sentinelMaster = _.find(body, ({ name }) => name === constants.TEST_SENTINEL_MASTER_GROUP);
+          expect(sentinelMaster.nodes).to.eql([
             {
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,

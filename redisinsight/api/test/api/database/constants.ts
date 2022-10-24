@@ -18,6 +18,11 @@ export const databaseSchema = Joi.object().keys({
   verifyServerCert: Joi.boolean().allow(null),
   caCert: caCertSchema.strict(true).allow(null),
   clientCert: clientCertSchema.strict(true).allow(null),
+  sentinelMaster: Joi.object({
+    name: Joi.string().required(),
+    username: Joi.string().allow(null),
+    password: Joi.string().allow(null),
+  }).allow(null),
   nodes: Joi.array().items({
     host: Joi.string().required(),
     port: Joi.number().integer().required(),

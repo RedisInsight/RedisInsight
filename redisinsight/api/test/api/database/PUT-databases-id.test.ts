@@ -58,7 +58,6 @@ describe(`PUT /databases/:id`, () => {
       validateInvalidDataTestCase(endpoint, dataSchema),
     );
 
-
     [
       {
         name: 'should deprecate to pass both cert id and other cert fields',
@@ -107,9 +106,6 @@ describe(`PUT /databases/:id`, () => {
         },
         responseBody: {
           name: newName,
-        },
-        checkFn: ({ body }) => {
-          console.log('BODY', body)
         },
         after: async () => {
           newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID);

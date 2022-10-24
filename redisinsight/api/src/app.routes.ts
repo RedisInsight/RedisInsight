@@ -49,8 +49,4 @@ export const routes: Routes = [
     path: '/redis-enterprise',
     module: RedisEnterpriseModule,
   },
-  {
-    path: '/sentinel',
-    module: RedisSentinelModule,
-  },
 ];

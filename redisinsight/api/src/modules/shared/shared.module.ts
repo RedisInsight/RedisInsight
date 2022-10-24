@@ -2,9 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import config from 'src/utils/config';
 import { CoreModule } from 'src/modules/core/core.module';
-import {
-  RedisSentinelBusinessService,
-} from 'src/modules/shared/services/redis-sentinel-business/redis-sentinel-business.service';
 import { DatabasesProvider } from 'src/modules/shared/services/instances-business/databases.provider';
 import { RedisToolFactory } from 'src/modules/shared/services/base/redis-tool.factory';
 import { StackDatabasesProvider } from 'src/modules/shared/services/instances-business/stack.databases.provider';
@@ -38,7 +35,6 @@ const SERVER_CONFIG = config.get('server');
     RedisEnterpriseBusinessService,
     RedisCloudBusinessService,
     ConfigurationBusinessService,
-    RedisSentinelBusinessService,
     AutodiscoveryAnalyticsService,
     RedisToolFactory,
     AutoDiscoveryService,
@@ -48,7 +44,6 @@ const SERVER_CONFIG = config.get('server');
     RedisEnterpriseBusinessService,
     RedisCloudBusinessService,
     ConfigurationBusinessService,
-    RedisSentinelBusinessService,
     RedisToolFactory,
   ],
 })

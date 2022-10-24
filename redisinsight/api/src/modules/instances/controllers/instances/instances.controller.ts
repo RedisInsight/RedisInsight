@@ -19,7 +19,6 @@ import { AppTool } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
-import { AddSentinelMasterResponse, AddSentinelMastersDto } from 'src/modules/instances/dto/redis-sentinel.dto';
 import { BuildType } from 'src/modules/core/models/server-provider.interface';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import {
@@ -111,34 +110,5 @@ export class InstancesController {
   //   }
   //   return res.json(result);
   // }
-  //
-  // @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
-  // @Post('sentinel-masters')
-  // @ApiEndpoint({
-  //   statusCode: 201,
-  //   description: 'Add masters from Redis Sentinel',
-  //   excludeFor: [BuildType.RedisStack],
-  //   responses: [
-  //     {
-  //       status: 201,
-  //       description: 'Ok',
-  //       type: AddSentinelMasterResponse,
-  //       isArray: true,
-  //     },
-  //   ],
-  // })
-  // @UsePipes(new ValidationPipe({ transform: true }))
-  // async addSentinelMasters(
-  //   @Body() dto: AddSentinelMastersDto,
-  //     @Res() res: Response,
-  // ): Promise<Response> {
-  //   const result = await this.instancesBusinessService.addSentinelMasters(dto);
-  //   const hasSuccessResult = result.some(
-  //     (addResponse: AddSentinelMasterResponse) => addResponse.status === AddRedisDatabaseStatus.Success,
-  //   );
-  //   if (!hasSuccessResult) {
-  //     return res.status(200).json(result);
-  //   }
-  //   return res.json(result);
-  // }
+
 }

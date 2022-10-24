@@ -4,7 +4,8 @@ import {
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 import { DataAsJsonString } from 'src/common/decorators';
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
+import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 
 export enum HostingProvider {
   UNKNOWN = 'UNKNOWN',
@@ -54,15 +55,39 @@ export class DatabaseEntity {
 
   @Expose()
   @Column({ nullable: true })
+  @Transform((_, model) => (
+    model?.sentinelMaster?.name || null
+  ), { toClassOnly: true })
   sentinelMasterName: string;
 
   @Expose()
   @Column({ nullable: true })
+  @Transform((_, model) => (
+    model?.sentinelMaster?.username || null
+  ), { toClassOnly: true })
   sentinelMasterUsername: string;
 
   @Expose()
   @Column({ nullable: true })
+  @Transform((_, model) => (
+    model?.sentinelMaster?.password || null
+  ), { toClassOnly: true })
   sentinelMasterPassword: string;
+
+  @Expose()
+  @Transform((_, entity) => {
+    if (entity?.sentinelMasterName) {
+      return {
+        name: entity?.sentinelMasterName,
+        username: entity?.sentinelMasterUsername,
+        password: entity?.sentinelMasterPassword,
+      };
+    }
+
+    return null;
+  }, { toPlainOnly: true })
+  @Transform(() => undefined, { toClassOnly: true })
+  sentinelMaster: SentinelMaster;
 
   @Expose()
   @Column({ nullable: true })

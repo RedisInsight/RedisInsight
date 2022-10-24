@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as IORedis from 'ioredis';
 import {
   IRedisClusterInfo,
@@ -6,14 +6,17 @@ import {
   RedisClusterNodeLinkState,
 } from 'src/models';
 import {
+  catchAclError,
   convertBulkStringsToObject,
   convertIntToSemanticVersion,
   convertStringsArrayToObject,
   parseClusterNodes,
 } from 'src/utils';
-import { RedisModuleDto } from 'src/modules/instances/dto/database-instance.dto';
+import { EndpointDto, RedisModuleDto } from 'src/modules/instances/dto/database-instance.dto';
 import { REDIS_MODULES_COMMANDS, SUPPORTED_REDIS_MODULES } from 'src/constants';
 import { isNil } from 'lodash';
+import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 @Injectable()
 export class DatabaseInfoProvider {
@@ -100,5 +103,86 @@ export class DatabaseInfoProvider {
       }
     }));
     return modules;
+  }
+
+  /**
+   * Get list of master groups for Sentinel instance using established connection (client)
+   * @param client
+   */
+  public async determineSentinelMasterGroups(client: IORedis.Redis): Promise<SentinelMaster[]> {
+    let result: SentinelMaster[];
+    try {
+      const reply = await client.call('sentinel', ['masters']);
+      // @ts-expect-error
+      // https://github.com/luin/ioredis/issues/1572
+      result = reply.map((item) => {
+        const {
+          ip,
+          port,
+          name,
+          'num-slaves': numberOfSlaves,
+          flags,
+        } = convertStringsArrayToObject(item);
+        return {
+          host: ip,
+          port: parseInt(port, 10),
+          name,
+          status: flags?.includes('down') ? SentinelMasterStatus.Down : SentinelMasterStatus.Active,
+          numberOfSlaves: parseInt(numberOfSlaves, 10),
+        };
+      });
+      await Promise.all(
+        result.map(async (master: SentinelMaster, index: number) => {
+          const nodes = await this.getMasterEndpoints(client, master.name);
+          result[index] = {
+            ...master,
+            nodes,
+          };
+        }),
+      );
+
+      return result;
+    } catch (error) {
+      if (error.message.includes('unknown command `sentinel`')) {
+        throw new BadRequestException(ERROR_MESSAGES.WRONG_DISCOVERY_TOOL());
+      }
+
+      throw catchAclError(error);
+    }
+  }
+
+  /**
+   * Get list of Sentinels for particular Sentinel master group
+   * @param client
+   * @param masterName
+   */
+  private async getMasterEndpoints(
+    client: IORedis.Redis,
+    masterName: string,
+  ): Promise<EndpointDto[]> {
+    let result: EndpointDto[];
+    try {
+      const reply = await client.call('sentinel', [
+        'sentinels',
+        masterName,
+      ]);
+      // @ts-expect-error
+      // https://github.com/luin/ioredis/issues/1572
+      result = reply.map((item) => {
+        const { ip, port } = convertStringsArrayToObject(item);
+        return { host: ip, port: parseInt(port, 10) };
+      });
+
+      return [
+        { host: client.options.host, port: client.options.port },
+        ...result,
+      ];
+    } catch (error) {
+      if (error.message.includes('unknown command `sentinel`')) {
+        throw new BadRequestException(ERROR_MESSAGES.WRONG_DATABASE_TYPE);
+      }
+
+      throw catchAclError(error);
+    }
   }
 }

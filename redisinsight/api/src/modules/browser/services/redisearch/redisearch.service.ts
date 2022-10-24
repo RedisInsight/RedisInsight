@@ -126,7 +126,7 @@ export class RedisearchService {
       return plainToClass(GetKeysWithDetailsResponse, {
         cursor: limit + offset,
         total,
-        scanned: keyNames.length,
+        scanned: keyNames.length + offset,
         keys: keyNames.map((name) => ({ name })),
       });
     } catch (e) {

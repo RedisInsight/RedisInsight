@@ -467,10 +467,9 @@ export class BrowserPage {
      * @param keyName The name of the key
      */
     async searchByKeyName(keyName: string): Promise<void> {
-        await t
-            .click(this.filterByPatterSearchInput)
-            .typeText(this.filterByPatterSearchInput, keyName, { replace: true, paste: true })
-            .pressKey('enter');
+        await t.click(this.filterByPatterSearchInput);
+        await t.typeText(this.filterByPatterSearchInput, keyName, { replace: true, paste: true });
+        await t.pressKey('enter');
     }
 
     /**

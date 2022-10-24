@@ -273,20 +273,18 @@ export class BrowserPage {
      * @param value The key value
      */
     async addStringKey(keyName: string, value = ' ', TTL?: string): Promise<void> {
-        await t
-            .click(this.plusAddKeyButton)
-            .click(this.keyTypeDropDown)
-            .click(this.stringOption)
-            .click(this.addKeyNameInput)
-            .typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
+        await t.click(this.plusAddKeyButton);
+        await t.click(this.keyTypeDropDown);
+        await t.click(this.stringOption);
+        await t.click(this.addKeyNameInput);
+        await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         if (TTL !== undefined) {
             await t.click(this.keyTTLInput)
                 .typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
         }
-        await t
-            .click(this.stringKeyValueInput)
-            .typeText(this.stringKeyValueInput, value)
-            .click(this.addKeyButton);
+        await t.click(this.stringKeyValueInput);
+        await t.typeText(this.stringKeyValueInput, value);
+        await t.click(this.addKeyButton);
     }
 
     /**
@@ -582,11 +580,10 @@ export class BrowserPage {
         if (await this.toastCloseButton.exists) {
             await t.click(this.toastCloseButton);
         }
-        await t
-            .click(this.addKeyValueItemsButton)
-            .typeText(this.hashFieldInput, keyFieldValue, { replace: true, paste: true })
-            .typeText(this.hashValueInput, keyValue, { replace: true, paste: true })
-            .click(this.saveHashFieldButton);
+        await t.click(this.addKeyValueItemsButton);
+        await t.typeText(this.hashFieldInput, keyFieldValue, { replace: true, paste: true });
+        await t.typeText(this.hashValueInput, keyValue, { replace: true, paste: true });
+        await t.click(this.saveHashFieldButton);
     }
 
     /**
@@ -787,11 +784,10 @@ export class BrowserPage {
      * @param jsonKeyValue The value of the json key
      */
     async addJsonKeyOnTheSameLevel(jsonKey: string, jsonKeyValue: string): Promise<void> {
-        await t
-            .click(this.addJsonObjectButton)
-            .typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true })
-            .typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true })
-            .click(this.applyButton);
+        await t.click(this.addJsonObjectButton);
+        await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
+        await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
+        await t.click(this.applyButton);
     }
 
     /**
@@ -800,12 +796,11 @@ export class BrowserPage {
      * @param jsonKeyValue The value of the json key
      */
     async addJsonKeyInsideStructure(jsonKey: string, jsonKeyValue: string): Promise<void> {
-        await t
-            .click(this.expandJsonObject)
-            .click(this.addJsonFieldButton)
-            .typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true })
-            .typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true })
-            .click(this.applyButton);
+        await t.click(this.expandJsonObject);
+        await t.click(this.addJsonFieldButton);
+        await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
+        await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
+        await t.click(this.applyButton);
     }
 
     /**
@@ -813,11 +808,10 @@ export class BrowserPage {
      * @param jsonStructure The structure of the json key
      */
     async addJsonStructure(jsonStructure: string): Promise<void> {
-        await t
-            .click(this.expandJsonObject)
-            .click(this.editJsonObjectButton)
-            .typeText(this.jsonValueInput, jsonStructure, { replace: true, paste: true })
-            .click(this.applyEditButton);
+        await t.click(this.expandJsonObject);
+        await t.click(this.editJsonObjectButton);
+        await t.typeText(this.jsonValueInput, jsonStructure, { replace: true, paste: true });
+        await t.click(this.applyEditButton);
     }
 
     /**
@@ -932,10 +926,9 @@ export class BrowserPage {
      */
     async openStreamPendingsView(keyName: string): Promise<void> {
         await this.openKeyDetails(keyName);
-        await t
-            .click(this.streamTabGroups)
-            .click(this.consumerGroup)
-            .click(this.streamConsumerName);
+        await t.click(this.streamTabGroups);
+        await t.click(this.consumerGroup);
+        await t.click(this.streamConsumerName);
     }
 
     /**

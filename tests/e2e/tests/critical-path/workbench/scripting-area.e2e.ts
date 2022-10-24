@@ -1,4 +1,4 @@
-import { rte, env } from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -45,66 +45,64 @@ test('Verify that user can resize scripting area in Workbench', async t => {
     // Verify that user can resize scripting area
     await t.expect(await workbenchPage.queryInput.clientHeight > inputHeightEnd).ok('Scripting area after resize has incorrect size');
 });
-test
-    .meta({ env: env.desktop })('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
-        indexName = common.generateWord(5);
-        keyName = common.generateWord(5);
-        const commandsForSendInCli = [
-            `HMSET product:1 name "${keyName}"`,
-            `HMSET product:2 name "${keyName}"`,
-            `HMSET product:3 name "${keyName}"`,
-            `HMSET product:4 name "${keyName}"`,
-            `HMSET product:5 name "${keyName}"`,
-            `HMSET product:6 name "${keyName}"`,
-            `HMSET product:7 name "${keyName}"`,
-            `HMSET product:8 name "${keyName}"`,
-            `HMSET product:9 name "${keyName}"`,
-            `HMSET product:10 name "${keyName}"`,
-            `HMSET product:11 name "${keyName}"`,
-            `HMSET product:12 name "${keyName}"`
-        ];
-        const commandToCreateSchema = `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`;
-        const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
-        //Open CLI
-        await t.click(cliPage.cliExpandButton);
-        //Create new keys for search
-        for(const command of commandsForSendInCli) {
-            await t.typeText(cliPage.cliCommandInput, command, { replace: true });
-            await t.pressKey('enter');
-        }
-        await t.click(cliPage.cliCollapseButton);
-        //Send commands
-        await workbenchPage.sendCommandInWorkbench(commandToCreateSchema);
-        //Send search command
-        await workbenchPage.sendCommandInWorkbench(searchCommand);
-        //Verify that we have pagination buttons
-        await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(workbenchPage.paginationButtonPrevious.exists).ok('Pagination previous button exists');
-        await t.expect(workbenchPage.paginationButtonNext.exists).ok('Pagination next button exists');
-    });
-test
-    .meta({ env: env.desktop })('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
-        indexName = common.generateWord(5);
-        keyName = common.generateWord(5);
-        const commandsForSend = [
-            `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-            `HMSET product:1 name "${keyName}"`,
-            `HMSET product:2 name "${keyName}"`
-        ];
-        const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
-        //Send commands
-        await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
-        //Send search command
-        await workbenchPage.sendCommandInWorkbench(searchCommand);
-        //Check that result is displayed in Table view
-        await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
-        //Select Text view type
-        await t.switchToMainWindow();
-        await workbenchPage.selectViewTypeText();
-        //Check that result is displayed in Text view
-        await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
-    });
+test('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
+    indexName = common.generateWord(5);
+    keyName = common.generateWord(5);
+    const commandsForSendInCli = [
+        `HMSET product:1 name "${keyName}"`,
+        `HMSET product:2 name "${keyName}"`,
+        `HMSET product:3 name "${keyName}"`,
+        `HMSET product:4 name "${keyName}"`,
+        `HMSET product:5 name "${keyName}"`,
+        `HMSET product:6 name "${keyName}"`,
+        `HMSET product:7 name "${keyName}"`,
+        `HMSET product:8 name "${keyName}"`,
+        `HMSET product:9 name "${keyName}"`,
+        `HMSET product:10 name "${keyName}"`,
+        `HMSET product:11 name "${keyName}"`,
+        `HMSET product:12 name "${keyName}"`
+    ];
+    const commandToCreateSchema = `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`;
+    const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
+    //Open CLI
+    await t.click(cliPage.cliExpandButton);
+    //Create new keys for search
+    for(const command of commandsForSendInCli) {
+        await t.typeText(cliPage.cliCommandInput, command, { replace: true });
+        await t.pressKey('enter');
+    }
+    await t.click(cliPage.cliCollapseButton);
+    //Send commands
+    await workbenchPage.sendCommandInWorkbench(commandToCreateSchema);
+    //Send search command
+    await workbenchPage.sendCommandInWorkbench(searchCommand);
+    //Verify that we have pagination buttons
+    await t.switchToIframe(workbenchPage.iframe);
+    await t.expect(workbenchPage.paginationButtonPrevious.exists).ok('Pagination previous button exists');
+    await t.expect(workbenchPage.paginationButtonNext.exists).ok('Pagination next button exists');
+});
+test('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
+    indexName = common.generateWord(5);
+    keyName = common.generateWord(5);
+    const commandsForSend = [
+        `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
+        `HMSET product:1 name "${keyName}"`,
+        `HMSET product:2 name "${keyName}"`
+    ];
+    const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
+    //Send commands
+    await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
+    //Send search command
+    await workbenchPage.sendCommandInWorkbench(searchCommand);
+    //Check that result is displayed in Table view
+    await t.switchToIframe(workbenchPage.iframe);
+    await t.expect(workbenchPage.queryTableResult.exists).ok('The result is displayed in Table view');
+    //Select Text view type
+    await t.switchToMainWindow();
+    await workbenchPage.selectViewTypeText();
+    //Check that result is displayed in Text view
+    await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
+});
 test('Verify that user can run one command in multiple lines in Workbench page', async t => {
     indexName = common.generateWord(5);
     const multipleLinesCommand = [

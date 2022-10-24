@@ -20,8 +20,7 @@ const commandsForIndex = [
     'HMSET product:2 price 100'
 ];
 
-// skip due to errors of FT.SEARCH issue https://redislabs.atlassian.net/browse/RI-3501
-fixture.skip `Command results at Workbench`
+fixture `Command results at Workbench`
     .meta({type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {

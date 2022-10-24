@@ -1,29 +1,31 @@
-import React, { useEffect, useState } from 'react'
 import { EuiSwitch, EuiTitle } from '@elastic/eui'
-import AutoSizer from 'react-virtualized-auto-sizer'
-import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
 
-import { DEFAULT_EXTRAPOLATION } from 'uiSrc/pages/databaseAnalysis'
-import { extrapolate, formatBytes, formatExtrapolation, Nullable } from 'uiSrc/utils'
+import cx from 'classnames'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import { AreaChart } from 'uiSrc/components/charts'
 import { AreaChartData, AreaChartDataType, DEFAULT_MULTIPLIER_GRID } from 'uiSrc/components/charts/area-chart/AreaChart'
-import { DBAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
+
+import { DEFAULT_EXTRAPOLATION, SectionName } from 'uiSrc/pages/databaseAnalysis'
+import { dbAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
+import { extrapolate, formatBytes, formatExtrapolation, Nullable } from 'uiSrc/utils'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
+
 import styles from './styles.module.scss'
 
 export interface Props {
   data: Nullable<DatabaseAnalysis>
   loading: boolean
   extrapolation: number
-  onSwitchExtrapolation?: (value: boolean) => void
+  onSwitchExtrapolation?: (value: boolean, section: SectionName) => void
 }
 
 const ExpirationGroupsView = (props: Props) => {
   const { data, loading, extrapolation, onSwitchExtrapolation } = props
   const { totalMemory, totalKeys } = data || {}
 
-  const { showNoExpiryGroup } = useSelector(DBAnalysisReportsSelector)
+  const { showNoExpiryGroup } = useSelector(dbAnalysisReportsSelector)
   const [expirationGroups, setExpirationGroups] = useState<AreaChartData[]>([])
   const [isExtrapolated, setIsExtrapolated] = useState<boolean>(true)
 
@@ -90,7 +92,7 @@ const ExpirationGroupsView = (props: Props) => {
               checked={isExtrapolated}
               onChange={(e) => {
                 setIsExtrapolated(e.target.checked)
-                onSwitchExtrapolation?.(e.target.checked)
+                onSwitchExtrapolation?.(e.target.checked, SectionName.MEMORY_LIKELY_TO_BE_FREED)
               }}
               data-testid="extrapolate-results"
             />

@@ -1,12 +1,14 @@
 import { EuiSwitch, EuiTitle } from '@elastic/eui'
-
+import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
+import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { DEFAULT_EXTRAPOLATION } from 'uiSrc/pages/databaseAnalysis'
+import { DEFAULT_EXTRAPOLATION, SectionName } from 'uiSrc/pages/databaseAnalysis'
 import { extrapolate, formatBytes, formatExtrapolation, Nullable } from 'uiSrc/utils'
 import { BarChart } from 'uiSrc/components/charts'
 import { BarChartData, BarChartDataType, DEFAULT_BAR_WIDTH, DEFAULT_MULTIPLIER_GRID, DEFAULT_Y_TICKS } from 'uiSrc/components/charts/bar-chart'
-import { DBAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
+import { dbAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import styles from './styles.module.scss'
@@ -22,7 +24,7 @@ const ExpirationGroupsView = (props: Props) => {
   const { data, loading, extrapolation, onSwitchExtrapolation } = props
   const { totalMemory, totalKeys } = data || {}
 
-  const { showNoExpiryGroup } = useSelector(DBAnalysisReportsSelector)
+  const { showNoExpiryGroup } = useSelector(dbAnalysisReportsSelector)
   const [expirationGroups, setExpirationGroups] = useState<BarChartData[]>([])
   const [isExtrapolated, setIsExtrapolated] = useState<boolean>(true)
 

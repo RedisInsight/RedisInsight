@@ -59,7 +59,7 @@ const databaseAnalysisSlice = createSlice({
 })
 
 export const dbAnalysisSelector = (state: RootState) => state.analytics.databaseAnalysis
-export const DBAnalysisReportsSelector = (state: RootState) => state.analytics.databaseAnalysis.history
+export const dbAnalysisReportsSelector = (state: RootState) => state.analytics.databaseAnalysis.history
 
 export const {
   setDatabaseAnalysisInitialState,

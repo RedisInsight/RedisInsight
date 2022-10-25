@@ -132,7 +132,7 @@ describe('DatabaseAnalysisHeader', () => {
   })
 })
 
-describe('Cluster tooltip', () => {
+describe('CLUSTER db', () => {
   beforeEach(() => {
     const state: any = store.getState()
     connectType(state, 'CLUSTER')
@@ -150,10 +150,28 @@ describe('Cluster tooltip', () => {
   })
 })
 
-describe('Default tooltip', () => {
+describe('STANDALONE db', () => {
   beforeEach(() => {
     const state: any = store.getState()
     connectType(state, 'STANDALONE')
+  })
+
+  it('should render default tooltip message', async () => {
+    render(<Header {...instance(mockedProps)} />)
+
+    await act(async () => {
+      fireEvent.mouseOver(screen.getByTestId('db-new-reports-icon'))
+    })
+    await waitForEuiToolTipVisible()
+
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Redis Database AnalysisAnalyze up to 10 000 keys per Redis database to get an overview of your data.')
+  })
+})
+
+describe('SENTINEL db', () => {
+  beforeEach(() => {
+    const state: any = store.getState()
+    connectType(state, 'SENTINEL')
   })
 
   it('should render default tooltip message', async () => {

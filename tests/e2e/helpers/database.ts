@@ -232,6 +232,17 @@ export async function deleteDatabase(databaseName: string): Promise<void> {
 }
 
 /**
+ * Delete database with custom name
+ * @param databaseName The database name
+*/
+export async function deleteCustomDatabase(databaseName: string): Promise<void> {
+    await t.click(myRedisDatabasePage.myRedisDBButton);
+    if (await addRedisDatabasePage.addDatabaseButton.exists) {
+        await myRedisDatabasePage.deleteDatabaseByName(databaseName);
+    }
+}
+
+/**
  * Accept License terms and add database or connect to the Redis stask database
  * @param databaseParameters The database parameters
  * @param databaseName The database name

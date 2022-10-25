@@ -88,7 +88,7 @@ test('Verify that user can see saved executed commands in CLI on Browser page wh
     // Return back to Browser and check executed command in CLI
     await t.click(myRedisDatabasePage.browserButton);
     for(const command of commands) {
-        await t.expect(await cliPage.cliCommandExecuted.withExactText(command).exists).ok(`Executed command '${command}' in CLI is saved`);
+        await t.expect(cliPage.cliCommandExecuted.withExactText(command).exists).ok(`Executed command '${command}' in CLI is saved`);
     }
 });
 test
@@ -104,7 +104,7 @@ test
         await t.click(myRedisDatabasePage.settingsButton);
         // Return back to Browser and check key details selected
         await t.click(myRedisDatabasePage.browserButton);
-        await t.expect(await browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is selected');
+        await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is selected');
     });
 test
     .after(async() => {

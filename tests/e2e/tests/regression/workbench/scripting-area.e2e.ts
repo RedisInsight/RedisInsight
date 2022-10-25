@@ -47,7 +47,7 @@ test('Verify that user can run multiple commands written in multiple lines in Wo
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
     // Check the result
     for (let i = 1; i < commandsForSend.length + 1; i++) {
-        const resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
+        const resultCommand = workbenchPage.queryCardCommand.nth(i - 1).textContent;
         await t.expect(resultCommand).eql(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is in not the result`);
     }
 });
@@ -74,7 +74,7 @@ test
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n"//"'), 0.5);
         // Check that all commands are executed
         for (let i = 1; i < commandsForSend.length + 1; i++) {
-            const resultCommand = await workbenchPage.queryCardCommand.nth(i - 1).textContent;
+            const resultCommand = workbenchPage.queryCardCommand.nth(i - 1).textContent;
             await t.expect(resultCommand).contains(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is not in the result`);
         }
     });
@@ -116,7 +116,7 @@ test
         // Select "Run Commands" from menu
         await t.click(workbenchPage.monacoSuggestionOption);
         // Check the result with sent command
-        await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The result of sent command is not displayed');
+        await t.expect(workbenchPage.queryCardCommand.withExactText(command).exists).ok('The result of sent command is not displayed');
     });
 test('Verify that user can repeat commands by entering a number of repeats before the Redis command and see separate results per each command in Workbench', async t => {
     const command = 'FT._LIST';
@@ -140,5 +140,5 @@ test('Verify that user can repeat commands by entering a number of repeats befor
     await t.typeText(workbenchPage.queryInput, command, { replace: true, paste: true });
     await t.pressKey('ctrl+enter');
     // Verify that user can use Ctrl + Enter to run the query in Workbench
-    await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The user can not use Ctrl + Enter to run the query');
+    await t.expect(workbenchPage.queryCardCommand.withExactText(command).exists).ok('The user can not use Ctrl + Enter to run the query');
 });

@@ -92,9 +92,9 @@ test
         // Verify that user can quickly set the filters per keyspaces in the Browser/Tree View from the list of keyspaces
         await t.click(memoryEfficiencyPage.expandedItem);
         // Verify filter by data type applied
-        await t.expect(await browserPage.filteringLabel.textContent).eql('Stream', 'Key type lable is not displayed in search input');
+        await t.expect(browserPage.filteringLabel.textContent).eql('Stream', 'Key type lable is not displayed in search input');
         // Verify keyname in search input prepopulated
-        await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keySpaces[0]).exists).ok('Filter per key name is not applied');
+        await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keySpaces[0]).exists).ok('Filter per key name is not applied');
         // Verify key is displayed
         await t.click(browserPage.browserViewButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(streamKeyName)).ok('Key is not found');

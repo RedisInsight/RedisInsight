@@ -3,17 +3,22 @@ import {
   Controller,
   Get, HttpCode,
   Param,
-  Post, Query,
+  Post,
 } from '@nestjs/common';
 import {
   ApiBody,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { CreateRedisearchIndexDto, SearchRedisearchDto } from 'src/modules/browser/dto/redisearch';
+import {
+  CreateRedisearchIndexDto,
+  ListRedisearchIndexesResponse,
+  SearchRedisearchDto,
+} from 'src/modules/browser/dto/redisearch';
 import { RedisearchService } from 'src/modules/browser/services/redisearch/redisearch.service';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
 
@@ -26,12 +31,13 @@ export class RedisearchController extends BaseController {
 
   @Get('')
   @ApiOperation({ description: 'Get list of available indexes' })
+  @ApiOkResponse({ type: ListRedisearchIndexesResponse })
   @ApiRedisParams()
   @ApiQueryRedisStringEncoding()
   async list(
     @Param('dbInstance') dbInstance: string,
-  ): Promise<string[]> {
-    return await this.service.list(
+  ): Promise<ListRedisearchIndexesResponse> {
+    return this.service.list(
       {
         instanceId: dbInstance,
       },
@@ -55,13 +61,14 @@ export class RedisearchController extends BaseController {
     );
   }
 
-  @Get('search')
+  @Post('search')
   @ApiOperation({ description: 'Search for keys in index' })
+  @ApiOkResponse({ type: GetKeysWithDetailsResponse })
   @ApiRedisParams()
   @ApiQueryRedisStringEncoding()
   async search(
     @Param('dbInstance') dbInstance: string,
-      @Query() dto: SearchRedisearchDto,
+      @Body() dto: SearchRedisearchDto,
   ): Promise<GetKeysWithDetailsResponse> {
     return await this.service.search(
       {

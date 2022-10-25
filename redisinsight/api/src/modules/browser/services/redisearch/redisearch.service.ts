@@ -7,7 +7,11 @@ import {
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
-import { CreateRedisearchIndexDto, SearchRedisearchDto } from 'src/modules/browser/dto/redisearch';
+import {
+  CreateRedisearchIndexDto,
+  ListRedisearchIndexesResponse,
+  SearchRedisearchDto,
+} from 'src/modules/browser/dto/redisearch';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
 import { plainToClass } from 'class-transformer';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
@@ -24,7 +28,7 @@ export class RedisearchService {
    * Get list of all available redisearch indexes
    * @param clientOptions
    */
-  public async list(clientOptions: IFindRedisClientInstanceByOptions): Promise<string[]> {
+  public async list(clientOptions: IFindRedisClientInstanceByOptions): Promise<ListRedisearchIndexesResponse> {
     this.logger.log('Getting all redisearch indexes.');
 
     try {
@@ -33,10 +37,12 @@ export class RedisearchService {
       const nodes = this.getShards(client);
 
       const res = await Promise.all(nodes.map(async (node) => node.sendCommand(
-        new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
+        new Command('FT._LIST'),
       )));
 
-      return [].concat(...res);
+      return plainToClass(ListRedisearchIndexesResponse, {
+        indexes: [].concat(...res),
+      });
     } catch (e) {
       this.logger.error('Failed to get redisearch indexes', e);
 
@@ -81,11 +87,18 @@ export class RedisearchService {
 
       const nodes = this.getShards(client);
 
-      const commandArgs = [
+      const commandArgs: any[] = [
         index, 'ON', type,
-        'PREFIX', prefixes.length, ...prefixes,
-        'SCHEMA', ...[].concat(...fields.map((field) => ([field.name, field.type]))),
       ];
+
+      if (prefixes && prefixes.length) {
+        commandArgs.push('PREFIX', prefixes.length, ...prefixes);
+      }
+
+      commandArgs.push(
+        'SCHEMA', ...[].concat(...fields.map((field) => ([field.name, field.type]))),
+      );
+
       const command = new Command('FT.CREATE', commandArgs, {
         replyEncoding: 'utf8',
       });

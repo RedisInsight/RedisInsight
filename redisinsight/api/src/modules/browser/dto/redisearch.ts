@@ -1,8 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  ArrayMinSize, IsDefined, IsEnum, IsInt, IsNotEmpty, IsString, ValidateNested
+  ArrayMinSize, IsDefined, IsEnum, IsInt, IsOptional, IsString, ValidateNested
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { RedisString } from 'src/common/constants';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
 
 export enum RedisearchIndexKeyType {
   HASH = 'hash',
@@ -17,14 +19,24 @@ export enum RedisearchIndexDataType {
   VECTOR = 'vector',
 }
 
+export class ListRedisearchIndexesResponse {
+  @ApiProperty({
+    description: 'Indexes names',
+    type: String,
+  })
+  @RedisStringType({ each: true })
+  indexes: RedisString[];
+}
+
 export class CreateRedisearchIndexFieldDto {
   @ApiProperty({
     description: 'Name of field to be indexed',
     type: String,
   })
   @IsDefined()
-  @IsString()
-  name: string;
+  @RedisStringType()
+  @IsRedisString()
+  name: RedisString;
 
   @ApiProperty({
     description: 'Type of how data must be indexed',
@@ -41,8 +53,9 @@ export class CreateRedisearchIndexDto {
     type: String,
   })
   @IsDefined()
-  @IsString()
-  index: string;
+  @RedisStringType()
+  @IsRedisString()
+  index: RedisString;
 
   @ApiProperty({
     description: 'Type of keys to index',
@@ -52,14 +65,15 @@ export class CreateRedisearchIndexDto {
   @IsEnum(RedisearchIndexKeyType)
   type: RedisearchIndexKeyType;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Keys prefixes to find keys for index',
     isArray: true,
     type: String,
   })
-  @IsString({ each: true })
-  @IsNotEmpty({ each: true })
-  prefixes: string[];
+  @IsOptional()
+  @RedisStringType({ each: true })
+  @IsRedisString({ each: true })
+  prefixes?: RedisString[];
 
   @ApiProperty({
     description: 'Fields to index',
@@ -78,8 +92,9 @@ export class SearchRedisearchDto {
     type: String,
   })
   @IsDefined()
-  @IsString()
-  index: string;
+  @RedisStringType()
+  @IsRedisString()
+  index: RedisString;
 
   @ApiProperty({
     description: 'Query to search inside data fields',
@@ -95,7 +110,6 @@ export class SearchRedisearchDto {
   })
   @IsDefined()
   @IsInt()
-  @Type(() => Number)
   limit: number = 500; // todo use @Default from another PR
 
   @ApiProperty({
@@ -104,6 +118,5 @@ export class SearchRedisearchDto {
   })
   @IsDefined()
   @IsInt()
-  @Type(() => Number)
   offset: number = 0; // todo use @Default from another PR
 }

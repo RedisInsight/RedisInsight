@@ -83,6 +83,7 @@ body {
   .euiFieldSearch,
   .euiSelect,
   .euiSuperSelectControl,
+  .euiComboBox .euiComboBox__inputWrap,
   .euiTextArea {
     background-color: var(--euiColorEmptyShade) !important;
     max-width: 100% !important;
@@ -155,5 +156,18 @@ body {
         border-left: 0 !important;
       }
     }
+  }
+}
+
+
+.euiComboBox .euiComboBox__inputWrap {
+  .euiBadge {
+    background-color: #363636;
+    color: var(--euiTextSubduedColor);
+    border: 0;
+  }
+
+  .euiBadge__text {
+    line-height: 20px;
   }
 }

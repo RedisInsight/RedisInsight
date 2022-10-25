@@ -43,7 +43,7 @@ test('Verify that user can see results history when he re-opens CLI after minimi
 
     // Open CLI and run commands
     await t.click(cliPage.cliExpandButton);
-    await t.typeText(cliPage.cliCommandInput, command);
+    await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
     await t.pressKey('enter');
     // Minimize and re-open cli
     await t.click(cliPage.minimizeCliButton);
@@ -63,7 +63,7 @@ test
 
         // Open CLI and run command with repeats
         await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, `${repeats} ${command}`);
+        await t.typeText(cliPage.cliCommandInput, `${repeats} ${command}`, { replace: true, paste: true });
         await t.pressKey('enter');
         // Verify result
         await t.expect(cliPage.cliOutputResponseSuccess.count).eql(repeats, `CLI not contains ${repeats} results`);
@@ -82,7 +82,7 @@ test
         const command = `JSON.GET ${keyName}`;
         // Open CLI and run command
         await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, command, { paste: true });
+        await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
         await t.pressKey('enter');
         // Verify result
         await t.expect(cliPage.cliOutputResponseSuccess.innerText).eql(jsonValueCli, 'The user can not see JSON object with escaped quotes');

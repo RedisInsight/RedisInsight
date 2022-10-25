@@ -34,7 +34,7 @@ test('Verify that if user has saved context on Browser page and go to Settings p
     await browserPage.addStringKey(keyName);
     await browserPage.openKeyDetails(keyName);
     await t.click(cliPage.cliExpandButton);
-    await t.typeText(cliPage.cliCommandInput, command);
+    await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
     await t.pressKey('enter');
     await t.click(myRedisDatabasePage.settingsButton);
     // Verify that Browser and Workbench icons are displayed

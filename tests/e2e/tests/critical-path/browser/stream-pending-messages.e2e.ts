@@ -97,7 +97,7 @@ test('Verify that claim with optional parameters, the message removed from this 
     await t.click(browserPage.claimPendingMessageButton);
     await t.expect(browserPage.optionalParametersSwitcher.withAttribute('aria-checked', 'false').exists).ok('By default toggle for optional parameters is off');
     await t.click(browserPage.optionalParametersSwitcher);
-    await t.typeText(browserPage.claimIdleTimeInput, '100', { replace: true });
+    await t.typeText(browserPage.claimIdleTimeInput, '100', { replace: true, paste: true});
     await t.click(browserPage.forceClaimCheckbox);
     await t.click(browserPage.submitButton);
     await t.expect(browserPage.streamMessagesContainer.textContent).contains('Your Consumer has no pending messages.', 'The messages is claimed and removed from the table');

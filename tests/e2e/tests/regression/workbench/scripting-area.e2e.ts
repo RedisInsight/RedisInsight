@@ -137,7 +137,7 @@ test('Verify that user can repeat commands by entering a number of repeats befor
     await t.expect(workbenchPage.commandExecutionResultFailed.textContent).contains(result, 'The select command unsupported message is incorrect');
 
     // Type command and use Ctrl + Enter
-    await t.typeText(workbenchPage.queryInput, command, { replace: true });
+    await t.typeText(workbenchPage.queryInput, command, { replace: true, paste: true });
     await t.pressKey('ctrl+enter');
     // Verify that user can use Ctrl + Enter to run the query in Workbench
     await t.expect(await workbenchPage.queryCardCommand.withExactText(command).exists).ok('The user can not use Ctrl + Enter to run the query');

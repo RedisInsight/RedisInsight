@@ -37,7 +37,7 @@ describe('bulk-actions', function () {
     it('should not crash on 100 the same concurrent bulk-actions create events', async () => {
       let errors = 0;
       let created = 0;
-      await Promise.all((new Array(100).fill(1)).map(() => new Promise((res, rej) => {
+      await Promise.all((new Array(10).fill(1)).map(() => new Promise((res, rej) => {
         client.emit('create', createDto, (ack, err) => {
           if (ack.status === 'error') {
             errors += 1;
@@ -60,7 +60,7 @@ describe('bulk-actions', function () {
         client.on('exception', rej);
       })));
 
-      expect(errors).to.eq(99);
+      expect(errors).to.eq(9);
       expect(created).to.eq(1);
     });
   });

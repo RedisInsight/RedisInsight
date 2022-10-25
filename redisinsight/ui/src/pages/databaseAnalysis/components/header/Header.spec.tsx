@@ -1,16 +1,20 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
+import { useSelector } from 'react-redux'
 import { instance, mock } from 'ts-mockito'
 import { getDBAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
+import { RootState } from 'uiSrc/slices/store'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
 
 import {
+  act,
   cleanup,
   mockedStore,
   fireEvent,
   render,
   screen,
+  waitForEuiToolTipVisible,
 } from 'uiSrc/utils/test-utils'
 
 import Header, { Props } from './Header'
@@ -41,7 +45,33 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn(),
 }))
 
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
+}))
+
+const connectType = (state: any, connectionType: any) => {
+  (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
+    ...state,
+    connections: {
+      ...state.connections,
+      instances: {
+        ...state.connections.instances,
+        connectedInstance: {
+          ...state.connections.instances.connectedInstance,
+          connectionType,
+        }
+      }
+    },
+  }))
+}
+
 describe('DatabaseAnalysisHeader', () => {
+  beforeEach(() => {
+    const state: any = store.getState()
+    connectType(state, 'STANDALONE')
+  })
+
   it('should render', () => {
     expect(render(<Header {...instance(mockedProps)} />)).toBeTruthy()
   })
@@ -99,5 +129,41 @@ describe('DatabaseAnalysisHeader', () => {
     fireEvent.click(queryByText('23 Sep 2022 05:30') || document)
 
     expect(onChangeSelectedAnalysis).toBeCalled()
+  })
+})
+
+describe('Cluster tooltip', () => {
+  beforeEach(() => {
+    const state: any = store.getState()
+    connectType(state, 'CLUSTER')
+  })
+
+  it('should render cluster tooltip message', async () => {
+    render(<Header {...instance(mockedProps)} />)
+
+    await act(async () => {
+      fireEvent.mouseOver(screen.getByTestId('db-new-reports-icon'))
+    })
+    await waitForEuiToolTipVisible()
+
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys per shard to get an overview of your data.')
+  })
+})
+
+describe('Default tooltip', () => {
+  beforeEach(() => {
+    const state: any = store.getState()
+    connectType(state, 'STANDALONE')
+  })
+
+  it('should render default tooltip message', async () => {
+    render(<Header {...instance(mockedProps)} />)
+
+    await act(async () => {
+      fireEvent.mouseOver(screen.getByTestId('db-new-reports-icon'))
+    })
+    await waitForEuiToolTipVisible()
+
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Redis Database AnalysisAnalyze up to 10 000 keys per Redis database to get an overview of your data.')
   })
 })

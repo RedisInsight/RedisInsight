@@ -9,7 +9,7 @@ export class MemoryEfficiencyPage {
     //-------------------------------------------------------------------------------------------
     // BUTTONS
     newReportBtn = Selector('[data-testid=start-database-analysis-btn]');
-    expandArrowBtn = Selector('[data-testid=expand-arrow-test]');
+    expandArrowBtn = Selector('[data-testid^=expand-arrow-]');
     sortByKeyPattern = Selector('[data-testid=tableHeaderSortButton]');
     showNoExpiryToggle = Selector('[data-testid=show-no-expiry-switch]');
     reportItem = Selector('[data-test-subj^=items-report-]');
@@ -27,7 +27,8 @@ export class MemoryEfficiencyPage {
     // TABLE
     namespaceTable = Selector('[data-testid=nsp-table-memory]');
     nameSpaceTableRows = this.namespaceTable.find('[data-testid^=row-]');
-    expandedRow = Selector('#row_test_expansion');
+    expandedRow = Selector('[data-testid^=expanded-]');
+    expandedItem = this.expandedRow.find('button');
     tableKeyPatternHeader = Selector('[data-test-subj*=tableHeaderCell_nsp]');
     tableMemoryHeader = Selector('[data-test-subj*=tableHeaderCell_memory]');
     tableKeysHeader = Selector('[data-test-subj*=tableHeaderCell_keys]');

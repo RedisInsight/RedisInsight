@@ -69,7 +69,7 @@ test
         // Check that TTL reduces every page refresh
         while (await browserPage.isKeyIsDisplayedInTheList(keyName)) {
             const actualTTL = Number((await ttlValueElement.innerText).slice(0, -2));
-            await t.expect(actualTTL).lte(ttlToCompare);
+            await t.expect(actualTTL).lte(ttlToCompare, 'Wrong TTL displayed');
             await t.click(browserPage.refreshKeysButton);
             ttlToCompare = actualTTL;
         }

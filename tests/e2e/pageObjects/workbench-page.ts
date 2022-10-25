@@ -113,6 +113,8 @@ export class WorkbenchPage {
     workbenchCommandSuccessResultInHistory = Selector(this.cssWorkbenchCommandSuccessResultInHistory);
     workbenchCommandFailedResultInHistory = Selector(this.cssWorkbenchCommandFailedResultInHistory);
     commandExecutionDateAndTime = Selector('[data-testid=command-execution-date-time]');
+    historyResultContainer = Selector('[data-testid=query-cli-card-result]');
+    historyResultRow = Selector('[data-testid=query-cli-card-result]');
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');
     monacoCloseCommandDetails = Selector('span.codicon-close');

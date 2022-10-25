@@ -1,4 +1,4 @@
-import { last } from 'lodash'
+import { isEmpty, last, min as minBy, reject } from 'lodash'
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from 'uiSrc/utils/test-utils'
 
@@ -6,7 +6,7 @@ import BarChart, { BarChartData, BarChartDataType } from './BarChart'
 
 const mockData: BarChartData[] = [
   { x: 1, y: 0, xlabel: '', ylabel: '' },
-  { x: 5, y: 10, xlabel: '', ylabel: '' },
+  { x: 5, y: 0.1, xlabel: '', ylabel: '' },
   { x: 10, y: 20, xlabel: '', ylabel: '' },
   { x: 2, y: 30, xlabel: '', ylabel: '' },
   { x: 30, y: 40, xlabel: '', ylabel: '' },
@@ -37,6 +37,18 @@ describe('BarChart', () => {
     mockData.forEach(({ x, y }) => {
       expect(screen.getByTestId(`bar-${x}-${y}`)).toBeInTheDocument()
     })
+  })
+
+  it('should render smallest bar with min height', () => {
+    const minBarHeight = 5
+    const smallestBar = minBy(
+      reject([...mockData], ({ y }) => !y),
+      ({ y }, i) => y,
+    ) ?? { x: 0, y: 0 }
+
+    render(<BarChart data={mockData} minBarHeight={minBarHeight} />)
+    expect(screen.getByTestId(`bar-${smallestBar.x}-${smallestBar.y}`)).toBeInTheDocument()
+    expect(screen.getByTestId(`bar-${smallestBar.x}-${smallestBar.y}`)).toHaveAttribute('height', `${minBarHeight}`)
   })
 
   it('should render tooltip and content inside', async () => {

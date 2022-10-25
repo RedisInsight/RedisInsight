@@ -60,9 +60,8 @@ export class CliPage {
   * @param groupName The group name
   */
     async selectFilterGroupType(groupName: string): Promise<void> {
-        await t
-            .click(this.filterGroupTypeButton)
-            .click(this.filterOptionGroupType.withExactText(groupName));
+        await t.click(this.filterGroupTypeButton);
+        await t.click(this.filterOptionGroupType.withExactText(groupName));
     }
 
     /**
@@ -75,12 +74,11 @@ export class CliPage {
         const keyValueArray = await common.createArrayWithKeyValueAndKeyname(amount, keyName);
 
         // Open CLI
-        await t
-            .click(this.cliExpandButton)
+        await t.click(this.cliExpandButton);
         // Add keys
-            .typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { replace: true, paste: true })
-            .pressKey('enter')
-            .click(this.cliCollapseButton);
+        await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { replace: true, paste: true });
+        await t.pressKey('enter');
+        await t.click(this.cliCollapseButton);
     }
 
     /**
@@ -118,10 +116,10 @@ export class CliPage {
    */
     async sendCommandInCli(command: string): Promise<void> {
         // Open CLI
-        await t.click(this.cliExpandButton)
-            .typeText(this.cliCommandInput, command, { replace: true, paste: true })
-            .pressKey('enter')
-            .click(this.cliCollapseButton);
+        await t.click(this.cliExpandButton);
+        await t.typeText(this.cliCommandInput, command, { replace: true, paste: true });
+        await t.pressKey('enter');
+        await t.click(this.cliCollapseButton);
     }
 
     /**
@@ -130,11 +128,10 @@ export class CliPage {
    */
     async getSuccessCommandResultFromCli(command: string): Promise<string> {
         // Open CLI
-        await t
-            .click(this.cliExpandButton)
+        await t.click(this.cliExpandButton);
         // Add keys
-            .typeText(this.cliCommandInput, command, { replace: true, paste: true })
-            .pressKey('enter');
+        await t.typeText(this.cliCommandInput, command, { replace: true, paste: true });
+        await t.pressKey('enter');
         const commandResult = await this.cliOutputResponseSuccess.innerText;
         await t.click(this.cliCollapseButton);
         return commandResult;
@@ -157,8 +154,8 @@ export class CliPage {
      * @param url Command URL for external resourse
      */
     async checkURLCommand(command: string, url: string): Promise<void> {
-        await t.click(this.cliHelperOutputTitles.withExactText(command))
-            .click(this.readMoreButton)
-            .expect(getPageUrl()).eql(url, 'The opened page not correct');
+        await t.click(this.cliHelperOutputTitles.withExactText(command));
+        await t.click(this.readMoreButton);
+        await t.expect(getPageUrl()).eql(url, 'The opened page not correct');
     }
 }

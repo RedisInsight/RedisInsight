@@ -5,6 +5,7 @@ import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { Selector } from 'testcafe';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -59,6 +60,9 @@ test
         await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);
         await browserPage.addStreamKey(streamKeyName, 'field', 'value', keysTTL[2]);
         await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value', keysTTL[2]);
+        if (await browserPage.submitTooltipBtn.exists) {
+            await t.click(browserPage.submitTooltipBtn);
+        };
         await cliPage.addKeysFromCliWithDelimiter('MSET', 15);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
@@ -73,7 +77,7 @@ test
         await browserPage.deleteKeyByName(streamKeyNameDelimiter);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Keyspaces displaying in Summary per keyspaces table', async t => {
-    // Create new report
+        // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that up to 15 keyspaces based on the delimiter set in the Tree view are displayed on memory efficiency page
         await t.expect(memoryEfficiencyPage.nameSpaceTableRows.count).eql(15, 'Namespaces table has more/less than 15 keyspaces');
@@ -84,9 +88,9 @@ test
 
         await t.click(memoryEfficiencyPage.expandArrowBtn);
         // Verify that Key Pattern with >1 keys can be expanded
-        await t.expect(memoryEfficiencyPage.expandedRow.find('button').count).eql(2, 'Expandable row has no items');
+        await t.expect(memoryEfficiencyPage.expandedRow.count).eql(2, 'Expandable row has no items');
         // Verify that user can quickly set the filters per keyspaces in the Browser/Tree View from the list of keyspaces
-        await t.click(memoryEfficiencyPage.expandedRow.find('button').nth(0));
+        await t.click(memoryEfficiencyPage.expandedItem);
         // Verify filter by data type applied
         await t.expect(await browserPage.filteringLabel.textContent).eql('Stream', 'Key type lable is not displayed in search input');
         // Verify keyname in search input prepopulated
@@ -124,7 +128,7 @@ test
         await browserPage.deleteKeyByName(keySpaces[4]);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Namespaces sorting', async t => {
-    // Create new report
+        // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that user can sort by Key Pattern column ASC
         await t.click(memoryEfficiencyPage.tableKeyPatternHeader);
@@ -167,7 +171,7 @@ test
         await browserPage.deleteKeyByName(hashKeyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Memory efficiency context saved', async t => {
-    // Create new report
+        // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Reload page
         await common.reloadPage();

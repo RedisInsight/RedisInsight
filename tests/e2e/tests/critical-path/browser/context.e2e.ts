@@ -81,7 +81,7 @@ test('Verify that user can see saved executed commands in CLI on Browser page wh
     // Execute command in CLI and open Settings page
     await t.click(cliPage.cliExpandButton);
     for(const command of commands) {
-        await t.typeText(cliPage.cliCommandInput, command);
+        await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
         await t.pressKey('enter');
     }
     await t.click(myRedisDatabasePage.settingsButton);
@@ -118,7 +118,7 @@ test
         await t.click(cliPage.cliExpandButton);
         // Create new keys
         keys = await common.createArrayWithKeyValue(numberOfItems);
-        await t.typeText(cliPage.cliCommandInput, `MSET ${keys.join(' ')}`, {paste: true});
+        await t.typeText(cliPage.cliCommandInput, `MSET ${keys.join(' ')}`, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.click(cliPage.cliCollapseButton);
         await t.click(browserPage.refreshKeysButton);

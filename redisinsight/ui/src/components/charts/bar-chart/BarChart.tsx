@@ -26,6 +26,7 @@ interface IProps {
   data?: BarChartData[]
   dataType?: BarChartDataType
   barWidth?: number
+  minBarHeight?: number
   width?: number
   height?: number
   yCountTicks?: number
@@ -45,6 +46,7 @@ interface IProps {
 export const DEFAULT_MULTIPLIER_GRID = 5
 export const DEFAULT_Y_TICKS = 8
 export const DEFAULT_BAR_WIDTH = 40
+export const MIN_BAR_HEIGHT = 3
 let cleanedData: IDatum[] = []
 
 const BarChart = (props: IProps) => {
@@ -55,6 +57,7 @@ const BarChart = (props: IProps) => {
     height: propHeight = 0,
     barWidth = DEFAULT_BAR_WIDTH,
     yCountTicks = DEFAULT_Y_TICKS,
+    minBarHeight = MIN_BAR_HEIGHT,
     dataType,
     classNames,
     divideLastColumn,
@@ -135,32 +138,6 @@ const BarChart = (props: IProps) => {
       .domain([0, maxY || 0])
       .range([height, 0])
 
-    // bars
-    svg
-      .selectAll('.bar')
-      .data(cleanedData)
-      .enter()
-      .append('rect')
-      .attr('class', cx(styles.bar, classNames?.bar))
-      .attr('x', (d) => xAxis(d.index))
-      .attr('width', barWidth)
-      .attr('y', (d) => yAxis(d.y))
-      .attr('height', (d) => height - yAxis(d.y))
-      .attr('data-testid', (d) => `bar-${d.x}-${d.y}`)
-      .on('mousemove mouseenter', (event, d) => {
-        tooltip.transition()
-          .duration(200)
-          .style('opacity', 1)
-        tooltip.html(tooltipValidation(d.y, d.index))
-          .style('left', `${event.pageX + 16}px`)
-          .style('top', `${event.pageY + 16}px`)
-          .attr('data-testid', 'bar-tooltip')
-      })
-      .on('mouseout', () => {
-        tooltip.transition()
-          .style('opacity', 0)
-      })
-
     // divider for last column
     if (divideLastColumn) {
       svg.append('line')
@@ -209,6 +186,35 @@ const BarChart = (props: IProps) => {
     yTicks.attr('opacity', '1')
     yTicks.selectAll('text')
       .attr('x', -10)
+
+    // bars
+    svg
+      .selectAll('.bar')
+      .data(cleanedData)
+      .enter()
+      .append('rect')
+      .attr('class', cx(styles.bar, classNames?.bar))
+      .attr('x', (d) => xAxis(d.index))
+      .attr('width', barWidth)
+      // set minimal height for Bar
+      .attr('y', (d) => (d.y && height - yAxis(d.y) < minBarHeight ? height - minBarHeight : yAxis(d.y)))
+      .attr('height', (d) => {
+        const initialHeight = height - yAxis(d.y)
+        return initialHeight && initialHeight < minBarHeight ? minBarHeight : initialHeight
+      })
+      .attr('data-testid', (d) => `bar-${d.x}-${d.y}`)
+      .on('mouseenter mousemove', (event, d) => {
+        tooltip
+          .style('opacity', 1)
+        tooltip.html(tooltipValidation(d.y, d.index))
+          .style('left', `${event.pageX + 16}px`)
+          .style('top', `${event.pageY + 16}px`)
+          .attr('data-testid', 'bar-tooltip')
+      })
+      .on('mouseleave', () => {
+        tooltip
+          .style('opacity', 0)
+      })
 
     return () => {
       tooltip.remove()

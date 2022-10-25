@@ -34,9 +34,8 @@ export class MemoryEfficiencyPage {
     tableKeysHeader = Selector('[data-test-subj*=tableHeaderCell_keys]');
     // GRAPH ELEMENTS
     donutTotalKeys = Selector('[data-testid=donut-title-keys]');
-    firstPoint = Selector('[data-testid*=circle-3600]');
-    thirdPoint = Selector('[data-testid*=circle-43200]');
-    fourthPoint = Selector('[data-testid*=circle-86400]');
-    noExpiryPoint = Selector('[data-testid*=circle-0]');
-    noExpiryDefaultPoint = Selector('[data-testid=circle-0-0]');
+    firstPoint = Selector('[data-testid*=bar-3600]');
+    thirdPoint = Selector('[data-testid*=bar-43200]');
+    fourthPoint = Selector('[data-testid*=bar-86400]');
+    noExpiryPoint = Selector('[data-testid*=bar-0-]:not(rect[data-testid=bar-0-0])');
 }

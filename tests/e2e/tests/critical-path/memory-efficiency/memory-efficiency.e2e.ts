@@ -200,23 +200,23 @@ test
         await browserPage.deleteKeyByName(streamKeyNameDelimiter);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Summary per expiration time', async t => {
-        const axisValue = 218;
+        const yAxis: number = 218;
         // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Points are displayed in graph according to their TTL
-        const firstPointLocation = +((await memoryEfficiencyPage.firstPoint.getAttribute('cy')).slice(0, 2));
-        const thirdPointLocation = await memoryEfficiencyPage.thirdPoint.getAttribute('cy');
-        const fourthPointLocation = +((await memoryEfficiencyPage.fourthPoint.getAttribute('cy')).slice(0, 2));
-        const noExpiryDefaultPointLocation = memoryEfficiencyPage.noExpiryDefaultPoint;
+        const firstPointLocation = +((await memoryEfficiencyPage.firstPoint.getAttribute('y')).slice(0, 2));
+        const thirdPointLocation = await memoryEfficiencyPage.thirdPoint.getAttribute('y');
+        const fourthPointLocation = +((await memoryEfficiencyPage.fourthPoint.getAttribute('y')).slice(0, 2));
+        const noExpiryDefaultPointLocation = memoryEfficiencyPage.noExpiryPoint;
 
-        await t.expect(firstPointLocation).lt(axisValue, 'Point in <1 hr breakdown doesn\'t contain key');
-        await t.expect(fourthPointLocation).lt(axisValue, 'Point in 12-25 Hrs breakdown doesn\'t contain key');
-        await t.expect(thirdPointLocation).eql(`${axisValue}`, 'Point in 4-12 Hrs breakdown contains key');
-        await t.expect(noExpiryDefaultPointLocation.exists).notOk('No expiry breakdown displayed when toggle is off', {timeout: 1000});
+        await t.expect(firstPointLocation).lt(yAxis, 'Point in <1 hr breakdown doesn\'t contain key');
+        await t.expect(fourthPointLocation).lt(yAxis, 'Point in 12-25 Hrs breakdown doesn\'t contain key');
+        await t.expect(thirdPointLocation).eql(`${yAxis}`, 'Point in 4-12 Hrs breakdown contains key');
+        await t.expect(noExpiryDefaultPointLocation.visible).notOk('No expiry breakdown displayed when toggle is off', {timeout: 1000});
         // No Expiry toggle shows No expiry breakdown
         await t.click(memoryEfficiencyPage.showNoExpiryToggle);
-        const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('cy')).slice(0, 2));
-        await t.expect(noExpiryPointLocation).lt(axisValue, 'Point in No expiry breakdown doesn\'t contain key');
+        const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('y')).slice(0, 2));
+        await t.expect(noExpiryPointLocation).lt(yAxis, 'Point in No expiry breakdown doesn\'t contain key');
     });
 test
     .before(async t => {

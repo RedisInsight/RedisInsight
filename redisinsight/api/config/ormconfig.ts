@@ -1,6 +1,4 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { CaCertificateEntity } from 'src/modules/core/models/ca-certificate.entity';
-import { ClientCertificateEntity } from 'src/modules/core/models/client-certificate.entity';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { ServerEntity } from 'src/modules/core/models/server.entity';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
@@ -10,6 +8,8 @@ import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/d
 import { DataSource } from 'typeorm';
 import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
 import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
+import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
+import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
 

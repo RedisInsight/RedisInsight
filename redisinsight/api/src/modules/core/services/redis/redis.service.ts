@@ -16,8 +16,8 @@ import {
 } from 'src/modules/instances/dto/database-instance.dto';
 import { IRedisClusterNodeAddress } from 'src/models/redis-cluster';
 import { ConnectionType } from 'src/modules/core/models/database-instance.entity';
-import { CaCertBusinessService } from '../certificates/ca-cert-business/ca-cert-business.service';
-import { ClientCertBusinessService } from '../certificates/client-cert-business/client-cert-business.service';
+import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
+import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -50,8 +50,8 @@ export class RedisService {
   public clients: IRedisClientInstance[] = [];
 
   constructor(
-    private caCertBusinessService: CaCertBusinessService,
-    private clientCertBusinessService: ClientCertBusinessService,
+    private caCertificateService: CaCertificateService,
+    private clientCertificateService: ClientCertificateService,
   ) {
     this.lastClientsSync = Date.now();
   }
@@ -315,14 +315,14 @@ export class RedisService {
 
   private async getCaCertConfig(tlsDto: TlsDto): Promise<SecureContextOptions> {
     if (tlsDto.caCertId) {
-      const caCertificateEntity = await this.caCertBusinessService.getOneById(tlsDto.caCertId);
+      const caCertificateEntity = await this.caCertificateService.get(tlsDto.caCertId);
       return {
         ca: [caCertificateEntity.certificate],
       };
     }
     if (tlsDto.newCaCert) {
       return {
-        ca: [tlsDto.newCaCert.cert],
+        ca: [tlsDto.newCaCert.certificate],
       };
     }
     return null;
@@ -332,9 +332,7 @@ export class RedisService {
     tlsDto: TlsDto,
   ): Promise<SecureContextOptions> {
     if (tlsDto.clientCertPairId) {
-      const clientCertificateEntity = await this.clientCertBusinessService.getOneById(
-        tlsDto.clientCertPairId,
-      );
+      const clientCertificateEntity = await this.clientCertificateService.get(tlsDto.clientCertPairId);
 
       return {
         cert: clientCertificateEntity.certificate,
@@ -344,7 +342,7 @@ export class RedisService {
     if (tlsDto.newClientCertPair) {
       return {
         key: tlsDto.newClientCertPair.key,
-        cert: tlsDto.newClientCertPair.cert,
+        cert: tlsDto.newClientCertPair.certificate,
       };
     }
     return null;

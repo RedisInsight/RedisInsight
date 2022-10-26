@@ -9,7 +9,6 @@ import {
   IsNotEmptyObject,
   IsOptional,
   IsString,
-  Max,
   MaxLength,
   Min,
   Validate,
@@ -19,6 +18,8 @@ import { Type } from 'class-transformer';
 import { ClientCertCollisionValidator, CaCertCollisionValidator } from 'src/validators';
 import { RedisModules } from 'src/constants';
 import { ConnectionType, HostingProvider } from 'src/modules/core/models/database-instance.entity';
+import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
+import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.client-certificate.dto';
 
 export class EndpointDto {
   @ApiProperty({
@@ -66,50 +67,6 @@ export class RedisModuleDto {
   semanticVersion?: string;
 }
 
-export class CaCertDto {
-  @ApiProperty({
-    description: 'Name for your CA Certificate',
-    type: String,
-  })
-  @IsNotEmpty()
-  @IsString({ always: true })
-  name: string;
-
-  @ApiProperty({
-    description: 'Text of the CA Certificate',
-    type: String,
-  })
-  @IsNotEmpty()
-  @IsString({ always: true })
-  cert: string;
-}
-
-export class ClientCertPairDto {
-  @ApiProperty({
-    description: 'Name for your Client Certificate',
-    type: String,
-  })
-  @IsNotEmpty()
-  @IsString({ always: true })
-  name: string;
-
-  @ApiProperty({
-    description: 'Text of the Private key',
-    type: String,
-  })
-  @IsNotEmpty()
-  @IsString({ always: true })
-  key: string;
-
-  @ApiProperty({
-    description: 'Text of the Certificate',
-    type: String,
-  })
-  @IsNotEmpty()
-  @IsString({ always: true })
-  cert: string;
-}
-
 export class BasicTlsDto {
   @ApiProperty({
     description: 'The certificate returned by the server needs to be verified.',
@@ -154,24 +111,24 @@ export class TlsDto extends BasicTlsDto {
   @ApiPropertyOptional({
     description:
       'If the server needs to be authenticated, pass a CA Certificate.',
-    type: CaCertDto,
+    type: CreateCaCertificateDto,
   })
   @ValidateNested()
   @IsNotEmptyObject()
-  @Type(() => CaCertDto)
+  @Type(() => CreateCaCertificateDto)
   @IsOptional()
-  newCaCert?: CaCertDto;
+  newCaCert?: CreateCaCertificateDto;
 
   @ApiPropertyOptional({
     description:
       'Client certificate and private key pair for TLS Mutual authentication.',
-    type: ClientCertPairDto,
+    type: CreateClientCertificateDto,
   })
   @ValidateNested()
   @IsNotEmptyObject()
-  @Type(() => ClientCertPairDto)
+  @Type(() => CreateClientCertificateDto)
   @IsOptional()
-  newClientCertPair?: ClientCertPairDto;
+  newClientCertPair?: CreateClientCertificateDto;
 }
 
 export class SentinelMasterDto {

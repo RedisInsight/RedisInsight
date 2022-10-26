@@ -2,8 +2,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   Column, Entity, ManyToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CaCertificateEntity } from 'src/modules/core/models/ca-certificate.entity';
-import { ClientCertificateEntity } from 'src/modules/core/models/client-certificate.entity';
+import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
+import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 
 export enum HostingProvider {
   UNKNOWN = 'UNKNOWN',

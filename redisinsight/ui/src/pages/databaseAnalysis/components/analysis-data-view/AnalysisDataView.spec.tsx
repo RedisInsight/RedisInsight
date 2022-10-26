@@ -153,8 +153,8 @@ describe('AnalysisDataView', () => {
 
     const expirationGroup = mockedData.expirationGroups[1]
 
-    fireEvent.mouseEnter(screen.getByTestId(`circle-${expirationGroup.threshold}-${expirationGroup.total * 2}`))
-    expect(screen.getByTestId('area-tooltip-circle')).toHaveTextContent(`~${formatBytes(expirationGroup.total * 2, 3)}`)
+    fireEvent.mouseEnter(screen.getByTestId(`bar-${expirationGroup.threshold}-${expirationGroup.total * 2}`))
+    expect(screen.getByTestId('bar-tooltip')).toHaveTextContent(`~${formatBytes(expirationGroup.total * 2, 3)}`)
   })
 
   it('should render properly not extrapolated data for ttl chart after switching off', () => {
@@ -173,8 +173,8 @@ describe('AnalysisDataView', () => {
 
     const expirationGroup = mockedData.expirationGroups[1]
 
-    fireEvent.mouseEnter(screen.getByTestId(`circle-${expirationGroup.threshold}-${expirationGroup.total}`))
-    expect(screen.getByTestId('area-tooltip-circle')).toHaveTextContent(`${formatBytes(expirationGroup.total, 3)}`)
+    fireEvent.mouseEnter(screen.getByTestId(`bar-${expirationGroup.threshold}-${expirationGroup.total}`))
+    expect(screen.getByTestId('bar-tooltip')).toHaveTextContent(`${formatBytes(expirationGroup.total, 3)}`)
   })
 
   it('should render properly extrapolated data for top namespaces table', () => {
@@ -240,8 +240,8 @@ describe('AnalysisDataView', () => {
 
     const expirationGroup = mockedData.expirationGroups[1]
 
-    fireEvent.mouseEnter(screen.getByTestId(`circle-${expirationGroup.threshold}-${expirationGroup.total}`))
-    expect(screen.getByTestId('area-tooltip-circle')).toHaveTextContent(`${formatBytes(expirationGroup.total, 3)}`)
+    fireEvent.mouseEnter(screen.getByTestId(`bar-${expirationGroup.threshold}-${expirationGroup.total}`))
+    expect(screen.getByTestId('bar-tooltip')).toHaveTextContent(`${formatBytes(expirationGroup.total, 3)}`)
 
     const nspTopKeyItem = mockedData.topKeysNsp[0]
     expect(screen.getByTestId(`nsp-usedMemory-value=${nspTopKeyItem.memory}`))

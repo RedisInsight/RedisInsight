@@ -21,7 +21,7 @@ import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/creat
 import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/create.sentinel.database.response';
 
 @ApiTags('Redis OSS Sentinel')
-@Controller('sentinel')
+@Controller('redis-sentinel')
 @UsePipes(
   new ValidationPipe({
     transform: true,
@@ -34,7 +34,7 @@ export class RedisSentinelController {
     private redisSentinelService: RedisSentinelService,
   ) {}
 
-  @Post('discovery')
+  @Post('get-databases')
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @ApiEndpoint({
     description: 'Get master groups',

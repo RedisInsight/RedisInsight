@@ -84,7 +84,7 @@ export class DatabaseEntity {
       };
     }
 
-    return null;
+    return undefined;
   }, { toPlainOnly: true })
   @Transform(() => undefined, { toClassOnly: true })
   sentinelMaster: SentinelMaster;
@@ -135,7 +135,7 @@ export class DatabaseEntity {
   nameFromProvider: string;
 
   @Expose()
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: '[]' })
   @DataAsJsonString()
   nodes: string;
 

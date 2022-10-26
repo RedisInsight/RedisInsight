@@ -43,7 +43,7 @@ export class SentinelMaster {
   @IsOptional()
   password?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'The hostname of Sentinel master.',
     type: String,
     default: 'localhost',
@@ -51,9 +51,10 @@ export class SentinelMaster {
   @Expose()
   @IsString({ always: true })
   @IsNotEmpty()
-  host: string;
+  @IsOptional()
+  host?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'The port Sentinel master.',
     type: Number,
     default: 6379,
@@ -61,7 +62,8 @@ export class SentinelMaster {
   @Expose()
   @IsInt({ always: true })
   @IsNotEmpty()
-  port: number;
+  @IsOptional()
+  port?: number;
 
   @ApiPropertyOptional({
     description: 'Sentinel master status',

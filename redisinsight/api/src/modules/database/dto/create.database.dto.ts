@@ -15,7 +15,7 @@ import { clientCertTransformer } from 'src/modules/certificate/transformers/clie
 
 @ApiExtraModels(CreateCaCertificateDto, UseCaCertificateDto, CreateClientCertificateDto, UseClientCertificateDto)
 export class CreateDatabaseDto extends PickType(Database, [
-  'host', 'port', 'name', 'db', 'username', 'password',
+  'host', 'port', 'name', 'db', 'username', 'password', 'nameFromProvider', 'provider',
   'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster',
 ] as const) {
   @ApiPropertyOptional({

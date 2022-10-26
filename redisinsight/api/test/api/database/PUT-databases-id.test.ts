@@ -260,6 +260,21 @@ describe(`PUT /databases/:id`, () => {
           await rte.data.executeCommand('select', '0');
           expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0)
           expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(0)
+
+          // switch back to db index 0
+          await validateApiCall({
+            endpoint,
+            data: {
+              db: 0,
+            },
+            responseSchema,
+            responseBody: {
+              db: 0,
+            },
+            checkFn: ({ body }) => {
+              addedId = body.id;
+            }
+          });
         });
       });
     });

@@ -11,7 +11,7 @@ import {
 } from '../deps';
 const { rte, request, server, localDb, constants } = deps;
 
-const endpoint = () => request(server).post(`/sentinel/databases`);
+const endpoint = () => request(server).post(`/redis-sentinel/databases`);
 
 // input data schema
 const dataSchema = Joi.object({
@@ -58,7 +58,7 @@ const responseSchema = Joi.array().items(Joi.object({
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-describe('POST /sentinel/databases', () => {
+describe('POST /redis-sentinel/databases', () => {
   describe('Validation', function () {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
       validateInvalidDataTestCase(endpoint, dataSchema),

@@ -29,7 +29,7 @@ const dataSchema = Joi.object({
     name: Joi.string().required(),
     username: Joi.string(),
     password: Joi.string(),
-  }),
+  }).allow(null),
 }).messages({
   'any.required': '{#label} should not be empty',
 }).strict(true);
@@ -759,7 +759,7 @@ describe('POST /databases', () => {
             port: constants.TEST_REDIS_PORT,
             username: null,
             password: constants.TEST_REDIS_PASSWORD,
-            connectionType: constants.STANDALONE,
+            connectionType: constants.SENTINEL,
           },
         });
 

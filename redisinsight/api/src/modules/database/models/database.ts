@@ -101,18 +101,22 @@ export class Database {
   @Expose()
   connectionType: ConnectionType;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'The database name from provider',
   })
   @Expose()
-  nameFromProvider: string | null;
+  @IsOptional()
+  @IsString()
+  nameFromProvider?: string | null;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'The redis database hosting provider',
     example: HostingProvider.RE_CLOUD,
   })
   @Expose()
-  provider: string;
+  @IsOptional()
+  @IsString()
+  provider?: string;
 
   @ApiProperty({
     description: 'Time of the last connection to the database.',
@@ -157,7 +161,7 @@ export class Database {
   @Expose()
   @IsBoolean()
   @IsOptional()
-  tls: boolean;
+  tls?: boolean;
 
   @ApiPropertyOptional({
     description: 'SNI servername',

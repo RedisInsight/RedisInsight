@@ -6,7 +6,6 @@ import {
   IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
 import { BrowserToolCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';

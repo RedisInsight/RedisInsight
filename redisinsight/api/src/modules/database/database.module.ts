@@ -5,8 +5,6 @@ import { DatabaseRepository } from 'src/modules/database/repositories/database.r
 import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { CertificateModule } from 'src/modules/certificate/certificate.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
@@ -17,7 +15,6 @@ import { DatabaseOverviewProvider } from 'src/modules/database/providers/databas
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([DatabaseEntity]),
     CertificateModule,
   ],
   controllers: [

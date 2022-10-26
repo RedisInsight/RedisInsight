@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import {
+  Global,
   MiddlewareConsumer, Module, NestModule, OnModuleInit,
 } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -17,6 +18,7 @@ import { NotificationModule } from 'src/modules/notification/notification.module
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
 import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
+import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
 import { SharedModule } from './modules/shared/shared.module';
 import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -33,9 +35,19 @@ import { ormModuleOptions } from '../config/ormconfig';
 const SERVER_CONFIG = config.get('server');
 const PATH_CONFIG = config.get('dir_path');
 
+@Global()
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormModuleOptions),
+    TypeOrmModule.forFeature(ormModuleOptions.entities as EntityClassOrSchema[]),
+  ],
+  exports: [TypeOrmModule],
+})
+export class EntitiesModule {}
+
+@Module({
+  imports: [
+    EntitiesModule,
     RouterModule.forRoutes(routes),
     SharedModule,
     InstancesModule,

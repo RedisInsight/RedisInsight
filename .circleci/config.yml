@@ -894,7 +894,8 @@ workflows:
           matrix:
             alias: itest-code
             parameters:
-              rte: *iTestsNamesShort
+              rte: *iTestsNames
+#              rte: *iTestsNamesShort
           name: ITest - << matrix.rte >> (code)
 #          requires:
 #            - UTest - API

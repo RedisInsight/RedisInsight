@@ -1,7 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
-import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 import { CaCertificateController } from 'src/modules/certificate/ca-certificate.controller';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
@@ -12,12 +9,6 @@ import { LocalClientCertificateRepository } from 'src/modules/certificate/reposi
 import { ClientCertificateController } from 'src/modules/certificate/client-certificate.controller';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      CaCertificateEntity,
-      ClientCertificateEntity,
-    ]),
-  ],
   controllers: [
     CaCertificateController,
     ClientCertificateController,

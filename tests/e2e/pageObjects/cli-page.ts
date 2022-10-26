@@ -91,7 +91,7 @@ export class CliPage {
         await t.click(this.cliExpandButton);
         //Add keys
         const keyValueArray = await common.createArrayWithKeyValueAndDelimiter(amount);
-        await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { paste: true });
+        await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.click(this.cliCollapseButton);
     }
@@ -105,7 +105,7 @@ export class CliPage {
         await t.click(this.cliExpandButton);
         //Add keys
         const keyValueArray = await common.createArrayWithKeyAndDelimiter(amount);
-        await t.typeText(this.cliCommandInput, `DEL ${keyValueArray.join(' ')}`, { paste: true });
+        await t.typeText(this.cliCommandInput, `DEL ${keyValueArray.join(' ')}`, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.click(this.cliCollapseButton);
     }

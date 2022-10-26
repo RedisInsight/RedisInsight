@@ -18,7 +18,7 @@ export class AddRedisDatabasePage {
     showDatabasesButton = Selector('[data-testid=btn-show-databases]');
     databaseName = Selector('.euiTableCellContent.column_name');
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
-    databaseIndexCheckbox = Selector('[data-testid=showDb]~div');
+    databaseIndexCheckbox = Selector('[data-testid=showDb]~div', { timeout: 500 });
     connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
     connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
     discoverSentinelDatabaseButton = Selector('[data-testid=btn-submit]');

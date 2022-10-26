@@ -54,6 +54,7 @@ const Notifications = () => {
             size="s"
             onClick={() => onSubmitNotification(toast, group)}
             className={styles.toastSuccessBtn}
+            data-testid="submit-tooltip-btn"
           >
             Ok
           </EuiButton>

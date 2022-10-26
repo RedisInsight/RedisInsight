@@ -1,5 +1,5 @@
 import React from 'react'
-import { isMacOs } from 'uiSrc/utils/handlePlatforms'
+import { isMacOs } from 'uiSrc/utils/dom'
 
 // TODO: use i18n file for labels & descriptions
 const COMMON_SHORTCUTS = {

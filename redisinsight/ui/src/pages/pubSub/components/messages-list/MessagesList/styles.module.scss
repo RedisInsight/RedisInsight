@@ -82,10 +82,11 @@
   bottom: 10px;
   right: 28px;
   background-color: var(--euiColorSecondary) !important;
+  color: var(--euiColorPrimaryText) !important;
   width: 36px !important;
   height: 36px !important;
 
-  box-shadow: 0px 3px 6px #00000099 !important;
+  box-shadow: 0 3px 6px #00000099 !important;
   border-radius: 18px !important;
 
   svg {

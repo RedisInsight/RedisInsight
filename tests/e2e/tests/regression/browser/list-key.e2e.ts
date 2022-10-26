@@ -22,7 +22,7 @@ fixture `List Key verification`
         await browserPage.addListKey(keyName, '2147476121', 'testElement');
     })
     .afterEach(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
@@ -31,12 +31,12 @@ test
         // Add 1000000 elements to the list key
         await populateListWithElements(dbParameters.host, dbParameters.port, keyToAddParameters);
         await populateListWithElements(dbParameters.host, dbParameters.port, keyToAddParameters);
-        //Add custom element to the list key
+        // Add custom element to the list key
         await browserPage.openKeyDetails(keyName);
         await browserPage.addElementToList(elementForSearch);
-        //Search by element index
+        // Search by element index
         await browserPage.searchByTheValueInKeyDetails('1000001');
-        //Check the search result
+        // Check the search result
         const result = await browserPage.listElementsList.nth(0).textContent;
         await t.expect(result).eql(elementForSearch, 'List element not found');
     });

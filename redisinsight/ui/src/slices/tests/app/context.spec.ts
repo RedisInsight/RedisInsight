@@ -54,6 +54,52 @@ describe('slices', () => {
       })
       expect(appContextSelector(rootState)).toEqual(initialState)
     })
+
+    it('should properly set initial state with existing contextId', () => {
+      // Arrange
+      const contextInstanceId = '12312-3123'
+      const prevState = {
+        ...initialState,
+        contextInstanceId,
+        browser: {
+          keyList: {
+            isDataLoaded: true,
+            scrollTopPosition: 100,
+            selectedKey: 'some key'
+          },
+          tree: {
+            delimiter: '-',
+          },
+          bulkActions: {
+            opened: true,
+          }
+        },
+        workbench: {
+          script: '123123',
+        },
+        pubsub: {
+          channel: '123123',
+          message: '123123'
+        },
+        analytics: {
+          lastViewedPage: 'zxczxc'
+        }
+      }
+      const state = {
+        ...initialState,
+        contextInstanceId
+      }
+
+      // Act
+      const nextState = reducer(prevState, setAppContextInitialState())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextSelector(rootState)).toEqual(state)
+    })
   })
 
   describe('setAppContextConnectedInstanceId', () => {
@@ -324,6 +370,7 @@ describe('slices', () => {
       expect(appContextSelector(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreeNodesOpen', () => {
     it('should properly set open nodes in the tree', () => {
       // Arrange
@@ -358,6 +405,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreeSelectedLeaf', () => {
     it('should properly set selected keys in the tree', () => {
       // Arrange
@@ -399,6 +447,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreePanelSizes', () => {
     it('should properly set browser tree panel widths', () => {
       // Arrange
@@ -422,6 +471,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreeDelimiter', () => {
     it('should properly set browser tree delimiter', () => {
       // Arrange
@@ -443,6 +493,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
   describe('resetBrowserTree', () => {
     it('should properly set last page', () => {
       // Arrange

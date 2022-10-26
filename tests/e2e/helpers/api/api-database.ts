@@ -22,8 +22,9 @@ export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewData
         })
         .set('Accept', 'application/json');
 
-    await t.expect(await response.status).eql(201, 'The creation of new standalone database request failed');
-    await t.expect(await response.body.name).eql(databaseParameters.databaseName, `Database Name is not equal to ${databaseParameters.databaseName} in response`);
+    await t
+        .expect(response.status).eql(201, 'The creation of new standalone database request failed')
+        .expect(await response.body.name).eql(databaseParameters.databaseName, `Database Name is not equal to ${databaseParameters.databaseName} in response`);
 }
 
 /**
@@ -31,7 +32,7 @@ export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewData
  * @param databasesParameters The databases parameters array
  */
 export async function addNewStandaloneDatabasesApi(databasesParameters: AddNewDatabaseParameters[]): Promise<void> {
-    if (await databasesParameters.length) {
+    if (databasesParameters.length) {
         await databasesParameters.forEach(async parameter => {
             await addNewStandaloneDatabaseApi(parameter);
         });
@@ -47,8 +48,8 @@ export async function addNewOSSClusterDatabaseApi(databaseParameters: OSSCluster
         .send({ 'name': databaseParameters.ossClusterDatabaseName, 'host': databaseParameters.ossClusterHost, 'port': databaseParameters.ossClusterPort })
         .set('Accept', 'application/json');
 
-    await t.expect(await response.status).eql(201, 'The creation of new oss cluster database request failed');
-    await t.expect(await response.body.name).eql(databaseParameters.ossClusterDatabaseName, `Database Name is not equal to ${databaseParameters.ossClusterDatabaseName} in response`);
+    await t.expect(await response.status).eql(201, 'The creation of new oss cluster database request failed')
+        .expect(await response.body.name).eql(databaseParameters.ossClusterDatabaseName, `Database Name is not equal to ${databaseParameters.ossClusterDatabaseName} in response`);
 }
 
 /**
@@ -206,7 +207,7 @@ export async function getClusterNodesApi(databaseParameters: OSSClusterParameter
         .get(`/instance/${databaseId}/cluster-details`)
         .set('Accept', 'application/json')
         .expect(200);
-    let nodes = await response.body.nodes;
-    let nodeNames = await nodes.map((node: ClusterNodes) => (node.host + ':' + node.port));
+    const nodes = await response.body.nodes;
+    const nodeNames = await nodes.map((node: ClusterNodes) => (`${node.host  }:${  node.port}`));
     return nodeNames;
 }

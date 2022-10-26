@@ -6,7 +6,7 @@ import { isUndefined } from 'lodash'
 import { millisecondsFormat } from 'uiSrc/utils'
 import { numberWithSpaces, nullableNumberWithSpaces } from 'uiSrc/utils/numbers'
 import { keysDataSelector } from 'uiSrc/slices/browser/keys'
-import { getApproximateNumber } from 'uiSrc/utils/validations'
+import { getApproximatePercentage } from 'uiSrc/utils/validations'
 import { overviewBulkActionsSelector, summaryBulkActionsSelector } from 'uiSrc/slices/browser/bulkActions'
 import styles from './styles.module.scss'
 
@@ -43,7 +43,7 @@ const BulkDeleteSummary = () => {
             </EuiToolTip>
           </EuiText>
           <EuiText color="subdued" className={styles.summaryApproximate} data-testid="bulk-delete-summary">
-            {`Scanned ${getApproximateNumber((total ? scanned / total : 1) * 100)}% `}
+            {`Scanned ${getApproximatePercentage(total, scanned)} `}
             {`(${numberWithSpaces(scanned)}/${nullableNumberWithSpaces(total)}) `}
             {`and found ${numberWithSpaces(keys.length)} keys`}
           </EuiText>

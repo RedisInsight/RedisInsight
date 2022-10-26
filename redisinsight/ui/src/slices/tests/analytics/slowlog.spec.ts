@@ -272,6 +272,7 @@ describe('slowLog slice', () => {
   })
 
   // thunks
+
   describe('thunks', () => {
     describe('fetchSlowLogsAction', () => {
       it('succeed to fetch data', async () => {

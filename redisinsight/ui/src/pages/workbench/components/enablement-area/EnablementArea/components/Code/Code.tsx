@@ -1,33 +1,48 @@
-import React, { useContext } from 'react'
 import { startCase } from 'lodash'
+import React, { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
-
+import { getFileInfo, parseParams } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
+import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
-import { getFileInfo } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils/getFileInfo'
+import { Maybe } from 'uiSrc/utils'
 
 import CodeButton from '../CodeButton'
 
 export interface Props {
-  label: string;
-  children: string;
+  label: string
+  children: string
+  params?: string
+  mode?: ExecuteButtonMode
 }
 
-const Code = ({ children, ...rest }: Props) => {
+const Code = ({ children, params, mode, ...rest }: Props) => {
   const { search } = useLocation()
   const { setScript, isCodeBtnDisabled } = useContext(EnablementAreaContext)
 
-  const loadContent = () => {
+  const loadContent = (execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams }) => {
     const pagePath = new URLSearchParams(search).get('item')
+    let file: Maybe<{ path: string, name: string }>
+
     if (pagePath) {
       const pageInfo = getFileInfo(pagePath)
-      setScript(children, `${pageInfo.location}/${pageInfo.name}`, startCase(rest.label))
-    } else {
-      setScript(children)
+      file = {
+        path: `${pageInfo.location}/${pageInfo.name}`,
+        name: startCase(rest.label)
+      }
     }
+
+    setScript(children, execute, file)
   }
 
   return (
-    <CodeButton className="mb-s mt-s" onClick={loadContent} disabled={isCodeBtnDisabled} {...rest} />
+    <CodeButton
+      className="mb-s mt-s"
+      onClick={loadContent}
+      params={parseParams(params)}
+      mode={mode}
+      disabled={isCodeBtnDisabled}
+      {...rest}
+    />
   )
 }
 

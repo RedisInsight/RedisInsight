@@ -164,6 +164,7 @@ const InlineItemEditor = (props: Props) => {
       display="inlineBlock"
       title={isDisabled && disabledTooltipText?.title}
       content={isDisabled && disabledTooltipText?.text}
+      data-testid="apply-tooltip"
     >
       <EuiButtonIcon
         iconSize={iconSize ?? 'l'}

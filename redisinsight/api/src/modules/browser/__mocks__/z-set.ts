@@ -8,11 +8,20 @@ import { SortOrder } from 'src/constants';
 
 export const mockZSetMemberDto: ZSetMemberDto = {
   name: Buffer.from('member1'),
-  score: 0,
+  score: '-inf',
 };
 export const mockZSetMemberDto2: ZSetMemberDto = {
   name: Buffer.from('member2'),
+  score: 0,
+};
+export const mockZSetMemberDto3: ZSetMemberDto = {
+  name: Buffer.from('member3'),
   score: 2,
+};
+
+export const mockZSetMemberDto4: ZSetMemberDto = {
+  name: Buffer.from('member4'),
+  score: 'inf',
 };
 export const mockGetMembersDto: GetZSetMembersDto = {
   keyName: Buffer.from('zSet'),
@@ -28,7 +37,7 @@ export const mockSearchMembersDto: SearchZSetMembersDto = {
 };
 export const mockAddMembersDto: AddMembersToZSetDto = {
   keyName: mockGetMembersDto.keyName,
-  members: [mockZSetMemberDto, mockZSetMemberDto2],
+  members: [mockZSetMemberDto, mockZSetMemberDto2, mockZSetMemberDto3, mockZSetMemberDto4],
 };
 export const mockUpdateMemberDto: UpdateMemberInZSetDto = {
   keyName: mockGetMembersDto.keyName,
@@ -39,10 +48,14 @@ export const mockMembersForZAddCommand = [
   mockZSetMemberDto.name,
   mockZSetMemberDto2.score,
   mockZSetMemberDto2.name,
+  mockZSetMemberDto3.score,
+  mockZSetMemberDto3.name,
+  mockZSetMemberDto4.score,
+  mockZSetMemberDto4.name,
 ];
 export const mockDeleteMembersDto: DeleteMembersFromZSetDto = {
   keyName: mockAddMembersDto.keyName,
-  members: [mockZSetMemberDto.name, mockZSetMemberDto2.name],
+  members: [mockZSetMemberDto.name, mockZSetMemberDto2.name, mockZSetMemberDto3.name, mockZSetMemberDto4.name],
 };
 export const getZSetMembersInAscResponse = {
   keyName: mockGetMembersDto.keyName,

@@ -1,7 +1,7 @@
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { IRedisConsumer, ReplyError } from 'src/models';
-import IORedis, { Redis, Cluster } from 'ioredis';
+import IORedis, { Redis, Cluster, Command } from 'ioredis';
 import { RedisString } from 'src/common/constants';
 import { IScannerStrategy } from '../scanner.interface';
 
@@ -54,13 +54,54 @@ export abstract class AbstractStrategy implements IScannerStrategy {
   }
 
   public async getKeysInfo(
-    client: Redis,
+    client: Redis | Cluster,
     keys: RedisString[],
-    type?: RedisDataType,
+    filterType?: RedisDataType,
   ): Promise<GetKeyInfoResponse[]> {
+    if (client.isCluster) {
+      return Promise.all(keys.map(async (key) => {
+        let ttl;
+        let size;
+        let type;
+
+        try {
+          ttl = await client.sendCommand(
+            new Command(BrowserToolKeysCommands.Ttl, [key], { replyEncoding: 'utf8' }),
+          ) as number;
+        } catch (e) {
+          ttl = null;
+        }
+
+        try {
+          size = await client.sendCommand(
+            new Command(
+              'memory', ['usage', key, 'samples', '0'], { replyEncoding: 'utf8' },
+            ),
+          ) as number;
+        } catch (e) {
+          size = null;
+        }
+
+        try {
+          type = filterType || await client.sendCommand(
+            new Command(BrowserToolKeysCommands.Type, [key], { replyEncoding: 'utf8' }),
+          ) as string;
+        } catch (e) {
+          type = null;
+        }
+
+        return {
+          name: key,
+          type,
+          ttl,
+          size,
+        };
+      }));
+    }
+
     const sizeResults = await this.getKeysSize(client, keys);
-    const typeResults = type
-      ? Array(keys.length).fill(type)
+    const typeResults = filterType
+      ? Array(keys.length).fill(filterType)
       : await this.getKeysType(client, keys);
     const ttlResults = await this.getKeysTtl(client, keys);
     return keys.map(
@@ -74,7 +115,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
   }
 
   protected async getKeysTtl(
-    client: Redis,
+    client: Redis | Cluster,
     keys: RedisString[],
   ): Promise<GetKeyInfoResponse> {
     const [
@@ -87,12 +128,12 @@ export abstract class AbstractStrategy implements IScannerStrategy {
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1]);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 
   protected async getKeysType(
-    client: Redis,
+    client: Redis | Cluster,
     keys: RedisString[],
   ): Promise<GetKeyInfoResponse> {
     const [
@@ -105,12 +146,12 @@ export abstract class AbstractStrategy implements IScannerStrategy {
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1]);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 
   protected async getKeysSize(
-    client: Redis,
+    client: Redis | Cluster,
     keys: RedisString[],
   ): Promise<GetKeyInfoResponse> {
     const [
@@ -130,7 +171,7 @@ export abstract class AbstractStrategy implements IScannerStrategy {
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1]);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 }

@@ -3,9 +3,11 @@ const { TextDecoder, TextEncoder } = require('util');
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   testURL: 'http://localhost/',
+  runner: 'groups',
   moduleNameMapper: {
-    '\\.(jpg|jpeg|png|ico|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+    '\\.(jpg|jpeg|png|ico|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/redisinsight/__mocks__/fileMock.js',
+    '\\.svg': '<rootDir>/redisinsight/__mocks__/svg.js',
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
     'uiSrc/(.*)': '<rootDir>/redisinsight/ui/src/$1',
     'monaco-editor': '<rootDir>/redisinsight/__mocks__/monacoMock.js',
@@ -43,6 +45,12 @@ module.exports = {
   modulePathIgnorePatterns: [
     '<rootDir>/redisinsight/ui/src/packages',
     '<rootDir>/redisinsight/ui/src/mocks',
+  ],
+  coverageDirectory: './coverage',
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '<rootDir>/redisinsight/api',
+    '<rootDir>/redisinsight/ui/src/packages',
   ],
   coverageThreshold: {
     global: {

@@ -9,6 +9,7 @@
   overflow: auto;
   white-space: pre-wrap;
   word-break: break-all;
+  position: relative;
 
   font: normal normal normal 14px/17px Inconsolata;
   text-align: left;
@@ -22,6 +23,12 @@
   :global(.cli-output-response-success) {
     color: var(--cliOutputResponseColor) !important;
   }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .loading {

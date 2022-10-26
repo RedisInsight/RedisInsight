@@ -11,6 +11,7 @@ enum ApiEndpoints {
   REDIS_CLOUD_DATABASES = 'redis-enterprise/cloud/get-databases',
   SENTINEL_MASTERS = 'sentinel/get-masters',
   KEYS = 'keys',
+  KEYS_METADATA = 'keys/get-metadata',
   KEY_INFO = 'keys/get-info',
   KEY_NAME = 'keys/name',
   KEY_TTL = 'keys/ttl',
@@ -73,6 +74,7 @@ enum ApiEndpoints {
   PUB_SUB = 'pub-sub',
   PUB_SUB_MESSAGES = 'pub-sub/messages',
   CLUSTER_DETAILS = 'cluster-details',
+  DATABASE_ANALYSIS = 'analysis',
 
   NOTIFICATIONS = 'notifications',
   NOTIFICATIONS_READ = 'notifications/read',

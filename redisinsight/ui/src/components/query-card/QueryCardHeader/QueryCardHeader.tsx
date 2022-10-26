@@ -16,7 +16,13 @@ import { useParams } from 'react-router-dom'
 import { findIndex } from 'lodash'
 
 import { Theme } from 'uiSrc/constants'
-import { getCommandNameFromQuery, getVisualizationsByCommand, truncateText, urlForAsset } from 'uiSrc/utils'
+import {
+  getCommandNameFromQuery,
+  getVisualizationsByCommand,
+  isGroupMode,
+  truncateText,
+  urlForAsset
+} from 'uiSrc/utils'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -45,7 +51,7 @@ export interface Props {
   queryType: WBQueryType
   selectedValue: string
   loading?: boolean
-  emptyCommand: boolean
+  emptyCommand?: boolean
   toggleOpen: () => void
   toggleFullScreen: () => void
   setSelectedValue: (type: WBQueryType, value: string) => void
@@ -68,7 +74,7 @@ const QueryCardHeader = (props: Props) => {
     summary,
     activeMode,
     selectedValue,
-    emptyCommand,
+    emptyCommand = false,
     setSelectedValue,
     onQueryDelete,
     onQueryReRun,
@@ -92,7 +98,7 @@ const QueryCardHeader = (props: Props) => {
         databaseId: instanceId,
         command: getCommandNameFromQuery(query, COMMANDS_SPEC),
         rawMode: activeMode === RunQueryMode.Raw,
-        group: activeResultsMode === ResultsMode.GroupMode,
+        group: isGroupMode(activeResultsMode),
         ...additionalData
       }
     })
@@ -245,8 +251,9 @@ const QueryCardHeader = (props: Props) => {
                   className={styles.tooltip}
                   content="Raw Mode"
                   position="bottom"
+                  data-testid="raw-mode-tooltip"
                 >
-                  <EuiTextColor className={cx(styles.timeText, styles.mode)}>
+                  <EuiTextColor className={cx(styles.timeText, styles.mode)} data-testid="raw-mode-anchor">
                     -r
                   </EuiTextColor>
                 </EuiToolTip>

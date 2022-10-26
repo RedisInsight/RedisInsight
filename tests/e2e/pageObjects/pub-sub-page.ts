@@ -33,11 +33,12 @@ export class PubSubPage {
      * @param message The message
      */
     async publishMessage(channel: string, message: string): Promise<void> {
-        await t.click(this.channelNameInput);
-        await t.typeText(this.channelNameInput, channel, { replace: true });
-        await t.click(this.messageInput);
-        await t.typeText(this.messageInput, message, { replace: true });
-        await t.click(this.publishButton);
+        await t
+            .click(this.channelNameInput)
+            .typeText(this.channelNameInput, channel, { replace: true, paste: true })
+            .click(this.messageInput)
+            .typeText(this.messageInput, message, { replace: true, paste: true })
+            .click(this.publishButton);
     }
 
     /**

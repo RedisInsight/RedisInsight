@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 import { Nullable } from 'uiSrc/utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
@@ -35,7 +36,7 @@ export interface Props {
   scrollDivRef: Ref<HTMLDivElement>
   activeMode: RunQueryMode
   resultsMode: ResultsMode
-  onSubmit: (query?: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
+  onSubmit: (query?: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   onQueryOpen: (commandId?: string) => void
   onQueryDelete: (commandId: string) => void
   onQueryChangeMode: () => void
@@ -90,6 +91,7 @@ const WBView = (props: Props) => {
             isMinimized={isMinimized}
             setIsMinimized={setIsMinimized}
             setScript={setScript}
+            onSubmit={onSubmit}
             scriptEl={scriptEl}
             isCodeBtnDisabled={isCodeBtnDisabled}
           />

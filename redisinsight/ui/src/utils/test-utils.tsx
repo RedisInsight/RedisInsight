@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 import { BrowserRouter } from 'react-router-dom'
 import configureMockStore from 'redux-mock-store'
-import { render as rtlRender } from '@testing-library/react'
+import { render as rtlRender, waitFor } from '@testing-library/react'
 
 import rootStore, { RootState } from 'uiSrc/slices/store'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
@@ -40,6 +40,7 @@ import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/con
 import { initialState as initialStateSlowLog } from 'uiSrc/slices/analytics/slowlog'
 import { initialState as initialClusterDetails } from 'uiSrc/slices/analytics/clusterDetails'
 import { initialState as initialStateAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
+import { initialState as initialStateDbAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { initialState as initialStatePubSub } from 'uiSrc/slices/pubsub/pubsub'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
@@ -100,6 +101,7 @@ const initialStateDefault: RootState = {
     settings: cloneDeep(initialStateAnalyticsSettings),
     slowlog: cloneDeep(initialStateSlowLog),
     clusterDetails: cloneDeep(initialClusterDetails),
+    databaseAnalysis: cloneDeep(initialStateDbAnalysis),
   },
   pubsub: cloneDeep(initialStatePubSub),
 }
@@ -144,6 +146,36 @@ const clearStoreActions = (actions: any[]) => {
   return JSON.stringify(newActions)
 }
 
+/**
+ * Ensure the EuiToolTip being tested is open and visible before continuing
+ */
+const waitForEuiToolTipVisible = async () => {
+  await waitFor(
+    () => {
+      const tooltip = document.querySelector('.euiToolTipPopover')
+      expect(tooltip).toBeInTheDocument()
+    },
+    { timeout: 500 } // Account for long delay on tooltips
+  )
+}
+
+const waitForEuiToolTipHidden = async () => {
+  await waitFor(() => {
+    const tooltip = document.querySelector('.euiToolTipPopover')
+    expect(tooltip).toBeNull()
+  })
+}
+
+const waitForEuiPopoverVisible = async () => {
+  await waitFor(
+    () => {
+      const tooltip = document.querySelector('.euiPopover__panel-isOpen')
+      expect(tooltip).toBeInTheDocument()
+    },
+    { timeout: 200 } // Account for long delay on popover
+  )
+}
+
 // mock useHistory
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -161,7 +193,7 @@ jest.mock('react-router-dom', () => ({
 // // mock useDispatch
 // jest.mock('react-redux', () => ({
 //   ...jest.requireActual('react-redux'),
-//   usDispatch: () => ({
+//   useDispatch: () => ({
 //     dispatch: jest.fn,
 //   }),
 // }))
@@ -204,4 +236,12 @@ export const getMswURL = (path: string = '') =>
 // re-export everything
 export * from '@testing-library/react'
 // override render method
-export { initialStateDefault, render, renderWithRouter, clearStoreActions }
+export {
+  initialStateDefault,
+  render,
+  renderWithRouter,
+  clearStoreActions,
+  waitForEuiToolTipVisible,
+  waitForEuiToolTipHidden,
+  waitForEuiPopoverVisible,
+}

@@ -3,6 +3,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
+import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import QueryCardCliResultWrapper, { Props } from './QueryCardCliResultWrapper'
 import QueryCardCliDefaultResult, { Props as QueryCardCliDefaultResultProps } from '../QueryCardCliDefaultResult'
 import QueryCardCliGroupResult, { Props as QueryCardCliGroupResultProps } from '../QueryCardCliGroupResult'
@@ -28,13 +29,17 @@ jest.mock('uiSrc/services', () => ({
 
 describe('QueryCardCliResultWrapper', () => {
   it('should render', () => {
-    expect(render(<QueryCardCliResultWrapper {...instance(mockedProps)} />)).toBeTruthy()
+    const mockResult = [{
+      response: 'response',
+      status: CommandExecutionStatus.Success
+    }]
+    expect(render(<QueryCardCliResultWrapper {...instance(mockedProps)} result={mockResult} />)).toBeTruthy()
   })
 
   it('Result element should render with result prop', () => {
     const mockResult = [{
       response: 'response',
-      status: 'success'
+      status: CommandExecutionStatus.Success
     }]
 
     render(
@@ -78,7 +83,7 @@ describe('QueryCardCliResultWrapper', () => {
   it('should render QueryCardCliDefaultResult when result.response is not array', () => {
     const mockResult = [{
       response: 'response',
-      status: 'success'
+      status: CommandExecutionStatus.Success
     }]
 
     render(
@@ -97,10 +102,29 @@ describe('QueryCardCliResultWrapper', () => {
   })
 
   it('should render warning', () => {
+    const mockResult = [{
+      response: 'response',
+      status: CommandExecutionStatus.Success
+    }]
     render(
-      <QueryCardCliResultWrapper {...instance(mockedProps)} isNotStored />
+      <QueryCardCliResultWrapper {...instance(mockedProps)} result={mockResult} isNotStored />
     )
 
     expect(screen.queryByTestId('query-cli-warning')).toBeInTheDocument()
+  })
+
+  it('Result element should render (nil) result', () => {
+    const mockResult = [{
+      response: '',
+      status: CommandExecutionStatus.Success
+    }]
+
+    const { queryByTestId } = render(
+      <QueryCardCliResultWrapper {...instance(mockedProps)} result={mockResult} />
+    )
+
+    const resultEl = queryByTestId('query-cli-card-result')
+
+    expect(resultEl).toHaveTextContent('(nil)')
   })
 })

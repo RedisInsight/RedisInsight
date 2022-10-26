@@ -19,35 +19,27 @@ const browserPage = new BrowserPage();
 let keys: string[];
 
 fixture `Database overview`
-    .meta({type: 'regression'})
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test
-    .meta({ rte: rte.standalone })('Verify that user can see total memory and total number of keys updated in DB header in Workbench page', async t => {
-        //Create new keys
-        keys = await common.createArrayWithKeyValue(10);
-        await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
-        //Open Workbench
-        await t.click(myRedisDatabasePage.workbenchButton);
-        //Verify that user can see total memory and total number of keys
-        await t.expect(workbenchPage.overviewTotalKeys.exists).ok('User can see total keys');
-        await t.expect(workbenchPage.overviewTotalMemory.exists).ok('User can see total memory');
-    });
-test
-    .meta({ rte: rte.standalone })
-    .after(async() => {
-        //Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })('Verify that user can connect to DB and see breadcrumbs at the top of the application', async t => {
-        //Verify that user can see breadcrumbs in Browser and Workbench views
-        await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can see breadcrumbs in Browser page', { timeout: 10000 });
-        await t.click(myRedisDatabasePage.workbenchButton);
-        await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can see breadcrumbs in Workbench page', { timeout: 10000 });
-    });
+test('Verify that user can connect to DB and see breadcrumbs at the top of the application', async t => {
+    // Create new keys
+    keys = await common.createArrayWithKeyValue(10);
+    await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
+
+    // Verify that user can see breadcrumbs in Browser and Workbench views
+    await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can not see breadcrumbs in Browser page', { timeout: 10000 });
+    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can not see breadcrumbs in Workbench page', { timeout: 10000 });
+
+    // Verify that user can see total memory and total number of keys updated in DB header in Workbench page
+    await t.expect(workbenchPage.overviewTotalKeys.exists).ok('User can not see total keys');
+    await t.expect(workbenchPage.overviewTotalMemory.exists).ok('User can not see total memory');
+});

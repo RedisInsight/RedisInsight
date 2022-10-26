@@ -33,6 +33,7 @@ fixture `Overview`
     });
 test('Overview tab header for OSS Cluster', async t => {
     const uptime = /[1-9][0-9]\s|[0-9]\smin|[1-9][0-9]\smin|[0-9]\sh/;
+
     // Verify that user see "Overview" tab by default for OSS Cluster
     await t.expect(overviewPage.overviewTab.withAttribute('aria-selected', 'true').exists).ok('The Overview tab not opened');
     // Verify that user see "Overview" header with OSS Cluster info
@@ -54,6 +55,7 @@ test
         const initialValues: number[] = [];
         const nodes = (await getClusterNodesApi(ossClusterConfig)).sort();
         const columns = ['Commands/s', 'Clients', 'Total Keys', 'Network Input', 'Network Output', 'Total Memory'];
+
         for (const column in columns) {
             initialValues.push(await overviewPage.getTotalValueByColumnName(column));
         }

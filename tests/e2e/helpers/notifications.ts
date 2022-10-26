@@ -31,7 +31,6 @@ export function insertNotificationInDB(notifications: NotificationParameters[]):
     for (let i = 0; i < notifications.length; i++) {
         const messageWithQuotes = `${notifications[i].type}, ${notifications[i].timestamp},
         ${notifications[i].title}, ${notifications[i].body}, ${notifications[i].isRead}`;
-        console.log(`messageWithQuotes: ${messageWithQuotes}`);
         if (i === notifications.length - 1) {
             query = `${query} (${messageWithQuotes})`;
         }
@@ -39,7 +38,6 @@ export function insertNotificationInDB(notifications: NotificationParameters[]):
             query = `${query} (${messageWithQuotes}),`;
         }
     }
-    console.log(`query: ${query}`);
     db.run(query, function(err: { message: string }) {
         if (err) {
             return console.log(`error during notification creation: ${err.message}`);

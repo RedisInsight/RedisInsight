@@ -2,18 +2,27 @@
 
 .button {
   justify-content: space-between;
+  position: relative;
   &[class*='euiButton--secondary']:not([class*='isDisabled']) {
-    &:hover,
-    &:focus,
-    &:focus-within {
+    &:hover {
       background-color: var(--euiColorSecondary) !important;
       border-color: var(--euiColorSecondary) !important;
+      color: var(--euiColorPrimaryText) !important;
     }
   }
-  &:not(:hover) {
-    span {
-      color: var(--euiTextSubduedColor);
-    }
+
+  :global(.euiButton__content) {
+    padding: 0 24px !important;
+  }
+
+  .autoExecuteIcon {
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    transform: translateY(-50%);
+
+    width: 16px;
+    height: 16px;
   }
 }
 

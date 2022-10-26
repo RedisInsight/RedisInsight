@@ -20,6 +20,11 @@ jest.mock('uiSrc/slices/instances/sentinel', () => ({
   resetDataSentinel: jest.fn
 }))
 
+/**
+ * SentinelDatabasesResultPage tests
+ *
+ * @group component
+ */
 describe('SentinelDatabasesResultPage', () => {
   it('should render', () => {
     expect(render(<SentinelDatabasesResultPage />)).toBeTruthy()

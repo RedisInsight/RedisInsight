@@ -1,6 +1,7 @@
 import {
   ArrayNotEmpty,
   IsArray,
+  IsBoolean,
   IsDefined,
   IsEnum,
   IsInt,
@@ -10,7 +11,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   ApiProperty,
   ApiPropertyOptional,
@@ -152,6 +153,29 @@ export class GetKeysDto {
   })
   @IsOptional()
   type?: RedisDataType;
+
+  @ApiPropertyOptional({
+    description: 'Fetch keys info (type, size, ttl, length)',
+    type: Boolean,
+    default: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  @Transform((val) => val === true || val === 'true')
+  keysInfo?: boolean = true;
+}
+
+export class GetKeysInfoDto {
+  @ApiProperty({
+    description: 'List of keys',
+    type: String,
+    isArray: true,
+    example: ['keys', 'key2'],
+  })
+  @IsDefined()
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
+  keys: RedisString[];
 }
 
 export class GetKeyInfoDto extends KeyDto {}
@@ -227,7 +251,7 @@ export class GetKeyInfoResponse {
   @ApiProperty({
     type: String,
   })
-  type: string;
+  type?: string;
 
   @ApiProperty({
     type: Number,
@@ -235,14 +259,14 @@ export class GetKeyInfoResponse {
       'The remaining time to live of a key.'
       + ' If the property has value of -1, then the key has no expiration time (no limit).',
   })
-  ttl: number;
+  ttl?: number;
 
   @ApiProperty({
     type: Number,
     description:
       'The number of bytes that a key and its value require to be stored in RAM.',
   })
-  size: number;
+  size?: number;
 
   @ApiPropertyOptional({
     type: Number,

@@ -78,6 +78,9 @@ export interface StateAppContext {
   pubsub: {
     channel: string
     message: string
+  },
+  analytics: {
+    lastViewedPage: string
   }
 }
 

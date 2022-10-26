@@ -17,6 +17,7 @@
   --tableRowHoverColor: #{$tableRowHoverColor};
   --tableRowSelectedColor: #{$tableRowSelectedColor};
   --euiColorPrimary: #{$euiColorPrimary};
+  --euiColorPrimaryRGB: #{$euiColorPrimaryRGB};
   --euiColorSecondary: #{$euiColorSecondary};
   --euiColorSuccess: #{$euiColorSuccess};
   --euiColorSecondaryText: #{$euiColorSecondaryText};
@@ -151,6 +152,7 @@
   --groupTransactionsColor: #{$groupTransactionsColor};
   --groupServerColor: #{$groupServerColor};
   --groupHyperLolLogColor: #{$groupHyperLolLogColor};
+  --defaultTypeColor: #{$defaultTypeColor};
 
   // JSON colors
   --jsonKeyNameColor: #{$jsonKeyNameColor};

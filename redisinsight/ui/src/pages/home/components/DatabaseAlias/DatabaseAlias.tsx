@@ -11,6 +11,9 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
+import { useSelector } from 'react-redux'
+import { BuildType } from 'uiSrc/constants/env'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { Nullable } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -22,7 +25,7 @@ import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogo
 
 import styles from './styles.module.scss'
 
-interface Props {
+export interface Props {
   alias: string
   database?: Nullable<number>
   onOpen: () => void
@@ -36,6 +39,8 @@ interface Props {
 
 const DatabaseAlias = (props: Props) => {
   const { alias, database, onOpen, onClone, onCloneBack, onApplyChanges, isLoading, isRediStack, isCloneMode } = props
+
+  const { server } = useSelector(appInfoSelector)
 
   const [isEditing, setIsEditing] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
@@ -208,19 +213,21 @@ const DatabaseAlias = (props: Props) => {
               Open
             </EuiButton>
           </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiButton
-              size="s"
-              color="secondary"
-              iconType="copy"
-              aria-label="Clone database"
-              data-testid="clone-db-btn"
-              className={styles.btnClone}
-              onClick={handleClone}
-            >
-              Clone
-            </EuiButton>
-          </EuiFlexItem>
+          {server?.buildType !== BuildType.RedisStack && (
+            <EuiFlexItem grow={false}>
+              <EuiButton
+                size="s"
+                color="secondary"
+                iconType="copy"
+                aria-label="Clone database"
+                data-testid="clone-db-btn"
+                className={styles.btnClone}
+                onClick={handleClone}
+              >
+                Clone
+              </EuiButton>
+            </EuiFlexItem>
+          )}
         </EuiFlexGroup>
       )}
     </>

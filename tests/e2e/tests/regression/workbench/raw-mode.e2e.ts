@@ -1,6 +1,6 @@
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
-import { env, rte } from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
@@ -10,7 +10,7 @@ const workbenchPage = new WorkbenchPage();
 const common = new Common();
 const browserPage = new BrowserPage();
 
-let keyName = common.generateWord(10);
+const keyName = common.generateWord(10);
 const indexName = common.generateWord(5);
 const keyValue = '\\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe9\\xa6\\xac / \\xe9\\xa9\\xac\\xe7\\x9b\\xae abc 123';
 const unicodeValue = '山女馬 / 马目 abc 123';
@@ -66,11 +66,11 @@ test
         // Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
-    .after(async t => {
+    .after(async() => {
         // Clear and delete database
         await deleteStandaloneDatabasesApi(databasesForAdding);
     })('Save Raw mode state', async t => {
-        //Send command in raw mode
+        // Send command in raw mode
         await t.click(workbenchPage.rawModeBtn);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForSend);
         // Verify that user can see saved Raw mode state after page refresh
@@ -90,14 +90,13 @@ test
         await workbenchPage.checkWorkbenchCommandResult(commandsForSend[1], `"${unicodeValue}"`);
     });
 test
-    .meta({ env: env.desktop })
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         // Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .after(async t => {
-        //Drop index, documents and database
+        // Drop index, documents and database
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
@@ -107,10 +106,10 @@ test
             `HMSET product:1 name "${unicodeValue}"`,
             `FT.SEARCH ${indexName} "${unicodeValue}"`
         ];
-        //Send command in raw mode
+        // Send command in raw mode
         await t.click(workbenchPage.rawModeBtn);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForSend);
-        //Check the FT.SEARCH result
+        // Check the FT.SEARCH result
         await t.switchToIframe(workbenchPage.iframe);
         const name = workbenchPage.queryTableResult.withText(unicodeValue);
         await t.expect(name.exists).ok('The added key name field is not converted to Unicode');

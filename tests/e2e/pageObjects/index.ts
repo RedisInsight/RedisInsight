@@ -10,6 +10,7 @@ import { WorkbenchPage } from './workbench-page';
 import { DatabaseOverviewPage } from './database-overview-page';
 import { HelpCenterPage } from './help-center-page';
 import { ShortcutsPage } from './shortcuts-page';
+import { MemoryEfficiencyPage } from './memory-efficiency-page';
 import { MonitorPage } from './monitor-page';
 import { OverviewPage } from './overview-page';
 import { PubSubPage } from './pub-sub-page';
@@ -29,6 +30,7 @@ export {
     DatabaseOverviewPage,
     HelpCenterPage,
     ShortcutsPage,
+    MemoryEfficiencyPage,
     MonitorPage,
     OverviewPage,
     PubSubPage,

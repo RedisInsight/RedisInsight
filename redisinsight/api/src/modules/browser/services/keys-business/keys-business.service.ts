@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -28,9 +27,9 @@ import {
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
 import { ConnectionType } from 'src/modules/core/models/database-instance.entity';
 import { Scanner } from 'src/modules/browser/services/keys-business/scanner/scanner';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import { RedisString } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
 import { KeyInfoManager } from './key-info-manager/key-info-manager';
@@ -61,8 +60,7 @@ export class KeysBusinessService {
     private instancesBusinessService: InstancesBusinessService,
     private browserTool: BrowserToolService,
     private browserToolCluster: BrowserToolClusterService,
-    @Inject('SETTINGS_PROVIDER')
-    private settingsService: ISettingsProvider,
+    private settingsService: SettingsService,
   ) {
     this.scanner = new Scanner();
     this.keyInfoManager = new KeyInfoManager(

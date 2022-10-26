@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
-export interface IAgreementsJSON {
-  version: string;
-}
+import { Expose, Transform } from 'class-transformer';
 
 @Entity('agreements')
 export class AgreementsEntity {
@@ -15,6 +12,7 @@ export class AgreementsEntity {
     type: String,
   })
   @Column({ nullable: true })
+  @Expose()
   version: string;
 
   @ApiProperty({
@@ -22,17 +20,14 @@ export class AgreementsEntity {
     type: String,
   })
   @Column({ nullable: true })
-  data: string;
-
-  toJSON(): IAgreementsJSON {
-    const { version, data } = this;
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((string) => {
     try {
-      return {
-        version,
-        ...JSON.parse(data),
-      };
+      return JSON.parse(string);
     } catch (e) {
-      return { version: null };
+      return undefined;
     }
-  }
+  }, { toPlainOnly: true })
+  @Expose()
+  data: string;
 }

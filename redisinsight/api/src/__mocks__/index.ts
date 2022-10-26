@@ -9,3 +9,4 @@ export * from './app-settings';
 export * from './autodiscovery-tools';
 export * from './analytics';
 export * from './profiler';
+export * from './user';

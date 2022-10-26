@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
+  mockAppSettingsInitial,
   mockRedisConsumer,
-  mockRedisNoPermError,
-  mockSettingsJSON,
-  mockSettingsProvider,
+  mockRedisNoPermError, mockSettingsService,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
@@ -14,8 +13,8 @@ import { GetKeysDto, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import IORedis from 'ioredis';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import { StandaloneStrategy } from './standalone.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
@@ -46,7 +45,7 @@ const mockRedisKeyspaceInfoResponse_4: string = '# Keyspace\r\ndb0:keys=10,expir
 
 let strategy;
 let browserTool;
-let settingsProvider;
+let settingsService;
 
 describe('Standalone Scanner Strategy', () => {
   beforeEach(async () => {
@@ -57,19 +56,16 @@ describe('Standalone Scanner Strategy', () => {
           useFactory: mockRedisConsumer,
         },
         {
-          provide: 'SETTINGS_PROVIDER',
-          useFactory: mockSettingsProvider,
+          provide: SettingsService,
+          useFactory: mockSettingsService,
         },
       ],
     }).compile();
 
     browserTool = module.get<BrowserToolService>(BrowserToolService);
-    settingsProvider = module.get<ISettingsProvider>('SETTINGS_PROVIDER');
-    settingsProvider.getSettings = jest.fn().mockResolvedValue({
-      ...mockSettingsJSON,
-      scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
-    });
-    strategy = new StandaloneStrategy(browserTool, settingsProvider);
+    settingsService = module.get(SettingsService);
+    settingsService.getAppSettings.mockResolvedValue(mockAppSettingsInitial);
+    strategy = new StandaloneStrategy(browserTool, settingsService);
     browserTool.getRedisClient.mockResolvedValue(nodeClient);
   });
   describe('getKeys', () => {

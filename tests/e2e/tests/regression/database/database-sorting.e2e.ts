@@ -1,4 +1,4 @@
-import { acceptLicenseTerms } from '../../../helpers/database';
+import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/database';
 import {
     discoverSentinelDatabaseApi,
     addNewOSSClusterDatabaseApi,
@@ -77,28 +77,22 @@ test('Verify that sorting on the list of databases saved when database opened', 
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
     await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedDatabaseHost);
 });
-test
-    .after(async() => {
-        // Clear and delete databases
-        await deleteAllDatabasesByConnectionTypeApi('STANDALONE');
-        await deleteAllDatabasesByConnectionTypeApi('CLUSTER');
-        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
-    })('Verify that user has the same sorting if db name is changed', async t => {
-        // Sort by Database name
-        await t.click(myRedisDatabasePage.sortByDatabaseAlias);
-        actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
-        await myRedisDatabasePage.compareDatabases(actualDatabaseList, await sortList());
-        // Change DB name inside of sorted list
-        await myRedisDatabasePage.clickOnEditDBByName(ossStandaloneConfig.databaseName);
-        await t.click(myRedisDatabasePage.editAliasButton);
-        await t.typeText(myRedisDatabasePage.aliasInput, newDBName, { replace: true });
-        await t.pressKey('enter');
-        // Change DB is control list
-        const index = databases.findIndex((item) => {
-            return item.databaseName === oldDBName;
-        });
-        databases[index].databaseName = newDBName;
-        // Compare sorting with expected list
-        actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
-        await myRedisDatabasePage.compareDatabases(actualDatabaseList, await sortList());
+test('Verify that user has the same sorting if db name is changed', async t => {
+    // Sort by Database name
+    await t.click(myRedisDatabasePage.sortByDatabaseAlias);
+    actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
+    await myRedisDatabasePage.compareDatabases(actualDatabaseList, await sortList());
+    // Change DB name inside of sorted list
+    await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+    await t.click(myRedisDatabasePage.editAliasButton);
+    await t.typeText(myRedisDatabasePage.aliasInput, newDBName, { replace: true, paste: true });
+    await t.pressKey('enter');
+    // Change DB is control list
+    const index = databases.findIndex((item) => {
+        return item.databaseName === oldDBName;
     });
+    databases[index].databaseName = newDBName;
+    // Compare sorting with expected list
+    actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
+    await myRedisDatabasePage.compareDatabases(actualDatabaseList, await sortList());
+});

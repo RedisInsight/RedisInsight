@@ -65,9 +65,8 @@ export class MyRedisDatabasePage {
             await t.click(this.toastCloseButton);
         }
         const db = this.dbNameList.withExactText(dbName.trim());
-        await t
-            .expect(db.exists).ok(`"${dbName}" database doesn't exist`, {timeout: 10000})
-            .click(db);
+        await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, {timeout: 10000});
+        await t.click(db);
     }
 
     //Delete all the databases from the list
@@ -115,8 +114,8 @@ export class MyRedisDatabasePage {
      */
     async clickOnEditDBByName(databaseName: string): Promise<void> {
         const dbNames = this.dbNameList;
-        const count = await dbNames.count;
-        for (let i = 0; i < count; i++) {
+        const count = dbNames.count;
+        for (let i = 0; i < await count; i++) {
             if ((await dbNames.nth(i).innerText || '').includes(databaseName)) {
                 await t.click(this.editDatabaseButton.nth(i));
                 break;

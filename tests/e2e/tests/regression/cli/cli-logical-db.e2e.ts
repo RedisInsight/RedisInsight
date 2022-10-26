@@ -1,4 +1,4 @@
-import { acceptLicenseTerms, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTerms, deleteCustomDatabase } from '../../../helpers/database';
 import { CliPage, AddRedisDatabasePage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
@@ -28,7 +28,7 @@ fixture `CLI logical database`
     })
     .afterEach(async() => {
         // Delete database
-        await deleteDatabase(`${ossStandaloneConfig.databaseName  } [${index}]`);
+        await deleteCustomDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
     });
 test
     .after(async() => {

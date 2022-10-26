@@ -35,11 +35,11 @@ test.skip
         await t.click(workbenchPage.submitCommandButton);
         // Switch to Text view and check result
         await workbenchPage.selectViewTypeText();
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).exists).ok('The text view is not switched for GRAPH command');
+        await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).exists).ok('The text view is not switched for GRAPH command');
         // Switch to Graph view and check result
         await workbenchPage.selectViewTypeGraph();
         await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.queryGraphContainer).exists).ok('The Graph view is not switched for GRAPH command');
+        await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.queryGraphContainer).exists).ok('The Graph view is not switched for GRAPH command');
     });
 test
     .meta({ env: env.desktop })('Verify that user can see "No data to visualize" message for Graph command', async t => {

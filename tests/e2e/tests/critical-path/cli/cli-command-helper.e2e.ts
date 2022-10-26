@@ -30,7 +30,7 @@ test('Verify Command Helper search and filter', async t => {
     // Verify default text
     await t.expect(cliPage.cliHelperText.textContent).eql(defaultHelperText, 'Default text for CLI Helper is not shown');
     // Search any command
-    await t.typeText(cliPage.cliHelperSearch, 'SET');
+    await t.typeText(cliPage.cliHelperSearch, 'SET', { replace: true, paste: true });
     await t.expect(cliPage.cliHelperOutputTitles.count).gt(0, 'List of commands were not found');
     // Clear search input
     const clearButton = cliPage.cliHelper.find('[aria-label="Clear input"]');
@@ -66,7 +66,7 @@ test('Verify Command Helper search and filter', async t => {
     // Verify that Command helper cleared when user runs the command in CLI
     await t.click(cliPage.cliExpandButton);
     // Enter command into CLI
-    await t.typeText(cliPage.cliCommandInput, COMMAND_APPEND, { speed: 0.5 });
+    await t.typeText(cliPage.cliCommandInput, COMMAND_APPEND, { speed: 0.5, replace: true, paste: true });
     await t.expect(cliPage.filterGroupTypeButton.textContent).notContains(COMMAND_GROUP_SET, 'Filter was not cleared');
     await t.expect(cliPage.cliHelperSearch.value).eql('', 'Search was not cleared');
 

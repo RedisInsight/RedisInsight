@@ -43,7 +43,7 @@ test('Verify that user can see Redis Stack icon in Edit mode near the DB name', 
     // Verify that user can see the Redis Stack logo is placed in the DB edit form when hover over the RedisStack logo
     await t.hover(myRedisDatabasePage.redisStackIcon);
     await t.expect(myRedisDatabasePage.tooltipRedisStackLogo.visible).ok('Redis Stack logo not found');
-    const databaseName = await myRedisDatabasePage.redisStackIcon.parent().nextSibling();
+    const databaseName = myRedisDatabasePage.redisStackIcon.parent().nextSibling();
     await t.expect(databaseName.withAttribute('data-testid', 'edit-alias-btn').exists).ok('Edit button not found');
 });
 test('Verify that user can see Redis Stack icon and logo in Browser page in Overview.', async t => {

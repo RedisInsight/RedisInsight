@@ -38,7 +38,7 @@ fixture `Memory Efficiency`
 test('No reports/keys message and report tooltip', async t => {
     const noReportsMessage = 'No Reports foundRun "New Analysis" to generate first report.';
     const noKeysMessage = 'No keys to displayUse Workbench Guides and Tutorials to quickly load the data.';
-    const tooltipText = 'Memory EfficiencyAnalyze up to 10K keys in your Redis database to get an overview of your data and memory efficiency recommendations.';
+    const tooltipText = 'Analyze up to 10 000 keys per Redis database to get an overview of your data.';
 
     // Verify that user can see the “No reports found” message when report wasn't generated
     await t.expect(memoryEfficiencyPage.noReportsText.textContent).eql(noReportsMessage, 'No reports message not displayed or text is invalid');
@@ -52,7 +52,7 @@ test('No reports/keys message and report tooltip', async t => {
     await t.click(myRedisDatabasePage.analysisPageButton);
     // Verify that user can see a tooltip when hovering over the icon on the right of the “New analysis” button
     await t.hover(memoryEfficiencyPage.reportTooltipIcon);
-    await t.expect(browserPage.tooltip.textContent).eql(tooltipText, 'Report tooltip is not displayed or text is invalid');
+    await t.expect(browserPage.tooltip.textContent).contains(tooltipText, 'Report tooltip is not displayed or text is invalid');
 });
 test
     .before(async t => {
@@ -92,9 +92,9 @@ test
         // Verify that user can quickly set the filters per keyspaces in the Browser/Tree View from the list of keyspaces
         await t.click(memoryEfficiencyPage.expandedItem);
         // Verify filter by data type applied
-        await t.expect(await browserPage.filteringLabel.textContent).eql('Stream', 'Key type lable is not displayed in search input');
+        await t.expect(browserPage.filteringLabel.textContent).eql('Stream', 'Key type lable is not displayed in search input');
         // Verify keyname in search input prepopulated
-        await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keySpaces[0]).exists).ok('Filter per key name is not applied');
+        await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keySpaces[0]).exists).ok('Filter per key name is not applied');
         // Verify key is displayed
         await t.click(browserPage.browserViewButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(streamKeyName)).ok('Key is not found');

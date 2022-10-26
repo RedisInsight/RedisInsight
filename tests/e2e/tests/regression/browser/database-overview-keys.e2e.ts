@@ -1,5 +1,5 @@
 import { t } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabase, acceptLicenseTermsAndAddRECloudDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabase, acceptLicenseTermsAndAddRECloudDatabase, deleteCustomDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     CliPage,
@@ -11,7 +11,6 @@ import { rte } from '../../../helpers/constants';
 import { cloudDatabaseConfig, commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import { deleteAllKeysFromDB } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -48,7 +47,7 @@ fixture `Database overview`
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [${index}]`);
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteDatabase(`${ossStandaloneRedisearch.databaseName} [${index}]`);
+        await deleteCustomDatabase(`${ossStandaloneRedisearch.databaseName} [${index}]`);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);

@@ -40,9 +40,9 @@ test('Verify that user can see TTL in the list of keys rounded down to the neare
     // Create new keys with TTL
     await t.click(cliPage.cliExpandButton);
     for (let i = 0; i < keysData.length; i++) {
-        await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[keysData[i].textType](keysData[i].keyName), {paste: true})
+        await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[keysData[i].textType](keysData[i].keyName), { replace: true, paste: true })
             .pressKey('enter')
-            .typeText(cliPage.cliCommandInput, `EXPIRE ${keysData[i].keyName} ${ttlForSet[i]}`, {paste: true})
+            .typeText(cliPage.cliCommandInput, `EXPIRE ${keysData[i].keyName} ${ttlForSet[i]}`, { replace: true, paste: true })
             .pressKey('enter');
     }
     await t.click(cliPage.cliCollapseButton);

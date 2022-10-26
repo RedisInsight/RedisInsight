@@ -34,7 +34,7 @@ test
         await t.expect(cliPage.cliCommandInput.exists).ok('CLI input is not displayed');
 
         // Add key from CLI
-        await t.typeText(cliPage.cliCommandInput, `SADD ${keyName} "chinese" "japanese" "german"`);
+        await t.typeText(cliPage.cliCommandInput, `SADD ${keyName} "chinese" "japanese" "german"`, { replace: true, paste: true });
         await t.pressKey('enter');
         // Check that the key is added
         await browserPage.searchByKeyName(keyName);
@@ -47,7 +47,7 @@ test('Verify that user can use blocking command', async t => {
     // Check that CLI is opened
     await t.expect(cliPage.cliArea.visible).ok('CLI area is not displayed');
     // Type blocking command
-    await t.typeText(cliPage.cliCommandInput, 'blpop newKey 10000');
+    await t.typeText(cliPage.cliCommandInput, 'blpop newKey 10000', { replace: true, paste: true });
     await t.pressKey('enter');
     // Verify that user input is blocked
     await t.expect(cliPage.cliCommandInput.exists).notOk('Cli input is still shown');
@@ -66,7 +66,7 @@ test
         await t.pressKey('enter');
         const clientId = (await cliPage.cliOutputResponseSuccess.textContent).replace(/^\D+/g, '');
         // Type blocking command
-        await t.typeText(cliPage.cliCommandInput, 'blpop newKey 10000');
+        await t.typeText(cliPage.cliCommandInput, 'blpop newKey 10000', { replace: true, paste: true });
         await t.pressKey('enter');
         // Verify that user input is blocked
         await t.expect(cliPage.cliCommandInput.exists).notOk('Cli input is still shown');
@@ -78,7 +78,7 @@ test
         // Open CLI
         await t.click(cliPage.cliExpandButton);
         // Unblock client
-        await t.typeText(cliPage.cliCommandInput, `client unblock ${clientId}`);
+        await t.typeText(cliPage.cliCommandInput, `client unblock ${clientId}`, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.closeWindow();
         await t.expect(cliPage.cliCommandInput.exists).ok('Cli input is not shown, the client still blocked', { timeout: 10000 });

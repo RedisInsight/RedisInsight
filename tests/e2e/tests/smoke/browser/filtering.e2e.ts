@@ -45,7 +45,7 @@ test('Verify that user can filter per exact key without using any patterns', asy
     // Open CLI
     await t.click(cliPage.cliExpandButton);
     // Create new key for search
-    await t.typeText(cliPage.cliCommandInput, `APPEND ${keyName} 1`);
+    await t.typeText(cliPage.cliCommandInput, `APPEND ${keyName} 1`, { replace: true, paste: true });
     await t.pressKey('enter');
     await t.click(cliPage.cliCollapseButton);
     // Filter per exact key without using any patterns

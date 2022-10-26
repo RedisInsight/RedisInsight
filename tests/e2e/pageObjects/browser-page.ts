@@ -100,6 +100,7 @@ export class BrowserPage {
     virtualTableContainer = Selector('[data-testid=virtual-table-container]');
     streamEntriesContainer = Selector('[data-testid=stream-entries-container]');
     streamMessagesContainer = Selector('[data-testid=stream-messages-container]');
+    loader = Selector('[data-testid=type-loading]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     userSurveyLink = Selector('[data-testid=user-survey-link]');
@@ -254,6 +255,7 @@ export class BrowserPage {
      */
     async commonAddNewKey(keyName: string, TTL?: string): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t
             .click(this.plusAddKeyButton)
             .click(this.addKeyNameInput)
@@ -316,6 +318,7 @@ export class BrowserPage {
      */
     async addSetKey(keyName: string, TTL = ' ', members = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.setOption);
@@ -336,6 +339,7 @@ export class BrowserPage {
      */
     async addZSetKey(keyName: string, scores = ' ', TTL = ' ', members = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.zsetOption);
@@ -356,13 +360,14 @@ export class BrowserPage {
      */
     async addListKey(keyName: string, TTL = ' ', element = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.listOption);
         await t.click(this.addKeyNameInput);
         await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         await t.click(this.keyTTLInput);
-        await t.typeText(this.keyTTLInput, TTL);
+        await t.typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
         await t.click(this.listKeyElementInput);
         await t.typeText(this.listKeyElementInput, element, { replace: true, paste: true });
         await t.click(this.addKeyButton);
@@ -377,6 +382,7 @@ export class BrowserPage {
      */
     async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.hashOption);
@@ -491,11 +497,20 @@ export class BrowserPage {
     }
 
     /**
+     * Get selector by key name
+     * @param keyName The name of the key
+     */
+    async getKeySelectorByName(keyName: string): Promise<Selector> {
+        return Selector(`[data-testid="key-${keyName}"]`);
+    }
+
+    /**
      * Verifying if the Key is in the List of keys
      * @param keyName The name of the key
      */
     async isKeyIsDisplayedInTheList(keyName: string): Promise<boolean> {
         const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+        await common.waitForElementNotVisible(this.loader);
         return keyNameInTheList.exists;
     }
 

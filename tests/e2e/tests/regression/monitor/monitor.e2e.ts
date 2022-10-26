@@ -79,7 +79,7 @@ test('Verify Monitor refresh/stop', async t => {
     // Click on refresh keys to get new logs
     await t.click(browserPage.refreshKeysButton);
     // Get last timestamp
-    const lastTimestampSelector = await monitorPage.monitorCommandLineTimestamp.nth(-1);
+    const lastTimestampSelector = monitorPage.monitorCommandLineTimestamp.nth(-1);
     // Stop Monitor
     await monitorPage.stopMonitor();
     // Click on Clear button

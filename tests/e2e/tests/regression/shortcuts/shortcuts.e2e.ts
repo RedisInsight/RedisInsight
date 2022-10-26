@@ -17,6 +17,8 @@ fixture `Shortcuts`
     });
 test
     .meta({ env: env.web })('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shortcuts" button in Help Center', async t => {
+        const link = 'https://github.com/RedisInsight/RedisInsight/releases';
+
         // Click on help center icon and verify panel
         await t.click(myRedisDatabasePage.helpCenterButton);
         await t.expect(helpCenterPage.helpCenterPanel.exists).ok('Help Center panel is not opened');
@@ -32,7 +34,6 @@ test
         await t.click(shortcutsPage.shortcutsCloseButton);
         await t.expect(shortcutsPage.shortcutsPanel.exists).notOk('Shortcuts panel is not displayed');
 
-        const link = 'https://github.com/RedisInsight/RedisInsight/releases';
         // Click on the Release Notes in Help Center
         await t.click(myRedisDatabasePage.helpCenterButton);
         await t.click(helpCenterPage.helpCenterReleaseNotesButton);

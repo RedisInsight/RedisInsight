@@ -4,13 +4,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 
-import { bufferToString, formatLongName, getDbIndex, isEqualBuffers, Nullable, setTitle } from 'uiSrc/utils'
+import { formatLongName, getDbIndex, isEqualBuffers, Nullable, setTitle } from 'uiSrc/utils'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
-  getBasedOnViewTypeEvent,
-  sendEventTelemetry,
   sendPageViewTelemetry,
-  TelemetryEvent,
   TelemetryPageView,
 } from 'uiSrc/telemetry'
 import {
@@ -31,7 +28,6 @@ import {
   appContextBrowser,
   setBrowserPanelSizes,
   setLastPageContext,
-  updateBrowserTreeSelectedLeaf,
 } from 'uiSrc/slices/app/context'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
@@ -40,12 +36,10 @@ import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
-import AddKey from './components/add-key/AddKey'
 import KeyList from './components/key-list/KeyList'
 import KeyTree from './components/key-tree'
 import KeysHeader from './components/keys-header'
-import KeyDetailsWrapper from './components/key-details/KeyDetailsWrapper'
-import BulkActions from './components/bulk-actions'
+import BrowserRightPanel from './components/browser-right-panel'
 
 import styles from './styles.module.scss'
 
@@ -64,18 +58,21 @@ const BrowserPage = () => {
   } = useSelector(appContextBrowser)
   const keysState = useSelector(keysDataSelector)
   const { loading, viewType, isBrowserFullScreen } = useSelector(keysSelector)
-  const { type, length } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
+  const { type } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
   const [arePanelsCollapsed, setArePanelsCollapsed] = useState(false)
   const [selectedKey, setSelectedKey] = useState<Nullable<RedisResponseBuffer>>(selectedKeyContext)
+
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
   const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(bulkActionOpenContext)
+  const [isCreateIndexPanelOpen, setIsCreateIndexPanelOpen] = useState(false)
+
   const [sizes, setSizes] = useState(panelSizes)
 
   const selectedKeyRef = useRef<Nullable<RedisResponseBuffer>>(selectedKey)
   const prevSelectedType = useRef<string>(type)
-  const keyListRef = useRef()
+  const keyListRef = useRef<any>()
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -125,25 +122,6 @@ const BrowserPage = () => {
     }))
   }, [])
 
-  const handleToggleFullScreen = () => {
-    dispatch(toggleBrowserFullScreen())
-
-    const browserViewEvent = !isBrowserFullScreen
-      ? TelemetryEvent.BROWSER_KEY_DETAILS_FULL_SCREEN_ENABLED
-      : TelemetryEvent.BROWSER_KEY_DETAILS_FULL_SCREEN_DISABLED
-    const treeViewEvent = !isBrowserFullScreen
-      ? TelemetryEvent.TREE_VIEW_KEY_DETAILS_FULL_SCREEN_ENABLED
-      : TelemetryEvent.TREE_VIEW_KEY_DETAILS_FULL_SCREEN_DISABLED
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(viewType, browserViewEvent, treeViewEvent),
-      eventData: {
-        databaseId: instanceId,
-        keyType: type,
-        length,
-      }
-    })
-  }
-
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({
       name: TelemetryPageView.BROWSER_PAGE,
@@ -162,25 +140,36 @@ const BrowserPage = () => {
     ))
   }
 
-  const handleAddKeyPanel = (value: boolean, keyName?: RedisResponseBuffer) => {
+  const handlePanel = (value: boolean, keyName?: RedisResponseBuffer) => {
     if (value && !isAddKeyPanelOpen && !isBulkActionsPanelOpen) {
       dispatch(resetKeyInfo())
     }
-    setSelectedKey(keyName ?? null)
+
     dispatch(toggleBrowserFullScreen(false))
-    setIsAddKeyPanelOpen(value)
-    setIsBulkActionsPanelOpen(false)
+    setSelectedKey(keyName ?? null)
+    closeRightPanels()
   }
 
-  const handleBulkActionsPanel = (value: boolean, keyName?: RedisResponseBuffer) => {
-    if (value && !isAddKeyPanelOpen && !isBulkActionsPanelOpen) {
-      dispatch(resetKeyInfo())
-    }
-    setSelectedKey(keyName ?? null)
-    dispatch(toggleBrowserFullScreen(false))
-    setIsAddKeyPanelOpen(false)
+  const handleAddKeyPanel = useCallback((value: boolean, keyName?: RedisResponseBuffer) => {
+    handlePanel(value, keyName)
+    setIsAddKeyPanelOpen(value)
+  }, [])
+
+  const handleBulkActionsPanel = useCallback((value: boolean) => {
+    handlePanel(value)
     setIsBulkActionsPanelOpen(value)
-  }
+  }, [])
+
+  const handleCreateIndexPanel = useCallback((value: boolean) => {
+    handlePanel(value)
+    setIsCreateIndexPanelOpen(value)
+  }, [])
+
+  const closeRightPanels = useCallback(() => {
+    setIsAddKeyPanelOpen(false)
+    setIsBulkActionsPanelOpen(false)
+    setIsCreateIndexPanelOpen(false)
+  }, [])
 
   const selectKey = ({ rowData }: { rowData: any }) => {
     if (!isEqualBuffers(rowData.name, selectedKey)) {
@@ -188,19 +177,9 @@ const BrowserPage = () => {
 
       dispatch(setInitialStateByType(prevSelectedType.current))
       setSelectedKey(rowData.name)
-      setIsAddKeyPanelOpen(false)
-      setIsBulkActionsPanelOpen(false)
+      closeRightPanels()
       prevSelectedType.current = rowData.type
     }
-  }
-
-  const closePanel = () => {
-    dispatch(resetKeyInfo())
-    dispatch(toggleBrowserFullScreen(true))
-
-    setSelectedKey(null)
-    setIsAddKeyPanelOpen(false)
-    setIsBulkActionsPanelOpen(false)
   }
 
   const loadMoreItems = (
@@ -216,25 +195,7 @@ const BrowserPage = () => {
     keyListRef.current?.handleLoadMoreItems?.(config)
   }
 
-  const handleEditKey = (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => {
-    setSelectedKey(newKey)
-
-    if (viewType === KeyViewType.Tree) {
-      dispatch(updateBrowserTreeSelectedLeaf({ key: bufferToString(key), newKey: bufferToString(newKey) }))
-    }
-  }
-
-  const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen || isBulkActionsPanelOpen
-
-  const onEditKey = useCallback(
-    (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => handleEditKey(key, newKey),
-    [],
-  )
-
-  const onSelectKey = useCallback(
-    () => setSelectedKey(null),
-    [],
-  )
+  const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen || isBulkActionsPanelOpen || isCreateIndexPanelOpen
 
   return (
     <div className={`browserPage ${styles.container}`}>
@@ -263,6 +224,7 @@ const BrowserPage = () => {
                       loadKeys={loadKeys}
                       handleAddKeyPanel={handleAddKeyPanel}
                       handleBulkActionsPanel={handleBulkActionsPanel}
+                      handleCreateIndexPanel={handleCreateIndexPanel}
                       handleScanMoreClick={handleScanMoreClick}
                       nextCursor={keysState.nextCursor}
                     />
@@ -311,32 +273,20 @@ const BrowserPage = () => {
                     }),
                   }}
                 >
-                  {isAddKeyPanelOpen && !isBulkActionsPanelOpen && (
-                    <AddKey
-                      onAddKeyPanel={handleAddKeyPanel}
-                      onClosePanel={closePanel}
-                    />
-                  )}
-                  {!isAddKeyPanelOpen && !isBulkActionsPanelOpen && (
-                    <KeyDetailsWrapper
-                      isFullScreen={isBrowserFullScreen}
-                      arePanelsCollapsed={arePanelsCollapsed}
-                      onToggleFullScreen={handleToggleFullScreen}
-                      keyProp={selectedKey}
-                      onCloseKey={closePanel}
-                      onEditKey={onEditKey}
-                      onDeleteKey={onSelectKey}
-                    />
-                  )}
-                  {isBulkActionsPanelOpen && !isAddKeyPanelOpen && (
-                    <BulkActions
-                      isFullScreen={isBrowserFullScreen}
-                      arePanelsCollapsed={arePanelsCollapsed}
-                      onClosePanel={closePanel}
-                      onBulkActionsPanel={handleBulkActionsPanel}
-                      onToggleFullScreen={handleToggleFullScreen}
-                    />
-                  )}
+                  <BrowserRightPanel
+                    arePanelsCollapsed={arePanelsCollapsed}
+                    setSelectedKey={setSelectedKey}
+                    selectedKey={selectedKey}
+                    panelsState={{
+                      isAddKeyPanelOpen,
+                      isCreateIndexPanelOpen,
+                      isBulkActionsPanelOpen,
+                      handleAddKeyPanel,
+                      handleBulkActionsPanel,
+                      handleCreateIndexPanel,
+                      closeRightPanels
+                    }}
+                  />
                 </EuiResizablePanel>
               </>
             )}

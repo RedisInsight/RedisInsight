@@ -1,7 +1,7 @@
 import { describe, it, deps, validateApiCall, requirements } from '../deps';
 const { request, server, constants } = deps;
 
-const endpoint = () => request(server).post(`/redis-enterprise/cluster/get-dbs`);
+const endpoint = () => request(server).post(`/redis-enterprise/cluster/get-databases`);
 
 //todo: add response
 //{
@@ -35,7 +35,7 @@ const mainCheckFn = async (testCase) => {
   });
 };
 
-describe('POST /redis-enterprise/cluster/get-dbs', () => {
+describe('POST /redis-enterprise/cluster/get-databases', () => {
   requirements('rte.re');
 
   [

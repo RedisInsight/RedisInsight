@@ -120,6 +120,7 @@ describe('pub-sub', function () {
     });
     describe('on message [unstable test]', () => {
       requirements('!rte.tls'); // tls works slower. skip test to not add additional wait time. todo: rewrite test
+      requirements('rte.type<>SENTINEL'); // sentinel too
 
       it('Should receive bunch of logs for many subscriptions', async () => {
         const messages = {

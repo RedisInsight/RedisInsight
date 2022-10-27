@@ -88,13 +88,16 @@ export class ClusterStrategy extends AbstractStrategy {
 
     await Promise.all(
       nodes.map(async (node) => {
-        if (node.keys.length) {
+        if (node.keys.length && args.keysInfo) {
           // eslint-disable-next-line no-param-reassign
           node.keys = await this.getKeysInfo(
             node.node,
             node.keys,
             args.type,
           );
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          node.keys = node.keys.map((name) => ({ name }));
         }
       }),
     );

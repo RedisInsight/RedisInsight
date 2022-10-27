@@ -1,29 +1,38 @@
-import React, { useEffect, useState } from 'react'
 import { EuiSwitch, EuiTitle } from '@elastic/eui'
-import AutoSizer from 'react-virtualized-auto-sizer'
 import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
+import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { formatBytes, Nullable } from 'uiSrc/utils'
-import { AreaChart } from 'uiSrc/components/charts'
-import { AreaChartData, AreaChartDataType, DEFAULT_MULTIPLIER_GRID } from 'uiSrc/components/charts/area-chart/AreaChart'
-import { DBAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
+import { DEFAULT_EXTRAPOLATION, SectionName } from 'uiSrc/pages/databaseAnalysis'
+import { extrapolate, formatBytes, formatExtrapolation, Nullable } from 'uiSrc/utils'
+import { BarChart } from 'uiSrc/components/charts'
+import { BarChartData, BarChartDataType, DEFAULT_BAR_WIDTH, DEFAULT_MULTIPLIER_GRID, DEFAULT_Y_TICKS } from 'uiSrc/components/charts/bar-chart'
+import { dbAnalysisReportsSelector, setShowNoExpiryGroup } from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
+
 import styles from './styles.module.scss'
 
 export interface Props {
   data: Nullable<DatabaseAnalysis>
   loading: boolean
+  extrapolation: number
+  onSwitchExtrapolation?: (value: boolean, section: SectionName) => void
 }
 
 const ExpirationGroupsView = (props: Props) => {
-  const { data, loading } = props
+  const { data, loading, extrapolation, onSwitchExtrapolation } = props
   const { totalMemory, totalKeys } = data || {}
 
-  const { showNoExpiryGroup } = useSelector(DBAnalysisReportsSelector)
-  const [expirationGroups, setExpirationGroups] = useState<AreaChartData[]>([])
+  const { showNoExpiryGroup } = useSelector(dbAnalysisReportsSelector)
+  const [expirationGroups, setExpirationGroups] = useState<BarChartData[]>([])
+  const [isExtrapolated, setIsExtrapolated] = useState<boolean>(true)
 
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    setIsExtrapolated(extrapolation !== DEFAULT_EXTRAPOLATION)
+  }, [extrapolation])
 
   useEffect(() => {
     if (!data?.expirationGroups || data?.expirationGroups?.length === 0) {
@@ -38,13 +47,21 @@ const ExpirationGroupsView = (props: Props) => {
       newExpirationGroups.push(noExpireGroup)
     }
 
+    const extrapolationOptions = { apply: isExtrapolated, extrapolation, showPrefix: false }
+
     setExpirationGroups(
       newExpirationGroups.map(({ total, threshold, label, ...group }) =>
-        ({ ...group, y: total, x: threshold, xlabel: label, ylabel: '' }))
+        ({
+          ...group,
+          y: extrapolate(total, extrapolationOptions) as number,
+          x: threshold,
+          xlabel: label,
+          ylabel: ''
+        }))
     )
-  }, [data?.expirationGroups, showNoExpiryGroup])
+  }, [data?.expirationGroups, showNoExpiryGroup, isExtrapolated, extrapolation])
 
-  if (loading && !data) {
+  if (loading) {
     return (
       <div className={cx(styles.content, styles.loadingWrapper)} data-testid="summary-per-ttl-loading" />
     )
@@ -54,16 +71,35 @@ const ExpirationGroupsView = (props: Props) => {
     dispatch(setShowNoExpiryGroup(value))
   }
 
-  if (!expirationGroups.length || !totalMemory?.total || !totalKeys?.total) {
+  if (!data?.expirationGroups?.length || !totalMemory?.total || !totalKeys?.total) {
     return null
   }
 
+  const multiplierGrid = DEFAULT_MULTIPLIER_GRID
+  const yCountTicks = DEFAULT_Y_TICKS
+
   return (
-    <div className={styles.container} data-testid="analysis-ttl">
-      <EuiTitle className="section-title">
-        <h4>MEMORY LIKELY TO BE FREED OVER TIME</h4>
-      </EuiTitle>
-      <div className={styles.content}>
+    <div className={cx('section', styles.container)} data-testid="analysis-ttl">
+      <div className="section-title-wrapper">
+        <div className={styles.titleWrapper}>
+          <EuiTitle className="section-title">
+            <h4>MEMORY LIKELY TO BE FREED OVER TIME</h4>
+          </EuiTitle>
+          {extrapolation !== DEFAULT_EXTRAPOLATION && (
+            <EuiSwitch
+              compressed
+              color="subdued"
+              className="switch-extrapolate-results"
+              label="Extrapolate results"
+              checked={isExtrapolated}
+              onChange={(e) => {
+                setIsExtrapolated(e.target.checked)
+                onSwitchExtrapolation?.(e.target.checked, SectionName.MEMORY_LIKELY_TO_BE_FREED)
+              }}
+              data-testid="extrapolate-results"
+            />
+          )}
+        </div>
         <EuiSwitch
           compressed
           color="subdued"
@@ -73,20 +109,24 @@ const ExpirationGroupsView = (props: Props) => {
           onChange={(e) => onSwitchChange(e.target.checked)}
           data-testid="show-no-expiry-switch"
         />
+      </div>
+      <div className={cx('section-content', styles.content)}>
         <div className={styles.chart}>
           <AutoSizer>
             {({ width, height }) => (
-              <AreaChart
+              <BarChart
                 name="expiration-groups"
                 width={width}
                 height={height}
-                dataType={AreaChartDataType.Bytes}
+                dataType={BarChartDataType.Bytes}
                 divideLastColumn={showNoExpiryGroup}
-                multiplierGrid={DEFAULT_MULTIPLIER_GRID}
+                multiplierGrid={multiplierGrid}
                 data={expirationGroups}
-                tooltipValidation={(val) => `${formatBytes(val, 3)}`}
-                leftAxiosValidation={(val, i) => formatBytes(val, 1)}
-                bottomAxiosValidation={(_val, i) => (i % DEFAULT_MULTIPLIER_GRID ? '' : expirationGroups[i / DEFAULT_MULTIPLIER_GRID]?.xlabel)}
+                yCountTicks={yCountTicks}
+                barWidth={width > 1000 ? 70 : (width < 800 ? 30 : DEFAULT_BAR_WIDTH)}
+                tooltipValidation={(val) => `${formatExtrapolation(formatBytes(val, 3) as string, isExtrapolated)}`}
+                leftAxiosValidation={(val, i) => (i % 2 ? '' : formatBytes(val, 1))}
+                bottomAxiosValidation={(_val, i) => expirationGroups[i / multiplierGrid]?.xlabel}
               />
             )}
           </AutoSizer>

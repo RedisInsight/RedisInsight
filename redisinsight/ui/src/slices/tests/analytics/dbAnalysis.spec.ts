@@ -15,7 +15,7 @@ import reducer, {
   fetchDBAnalysisAction,
   createNewAnalysis,
   fetchDBAnalysisReportsHistory,
-  DBAnalysisReportsSelector,
+  dbAnalysisReportsSelector,
   dbAnalysisSelector,
   setShowNoExpiryGroup,
 } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -110,7 +110,7 @@ describe('db analysis slice', () => {
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState },
         })
-        expect(DBAnalysisReportsSelector(rootState)).toEqual(stateHistory)
+        expect(dbAnalysisReportsSelector(rootState)).toEqual(stateHistory)
       })
     })
 
@@ -235,7 +235,7 @@ describe('db analysis slice', () => {
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState },
         })
-        expect(DBAnalysisReportsSelector(rootState)).toEqual(stateHistory)
+        expect(dbAnalysisReportsSelector(rootState)).toEqual(stateHistory)
       })
     })
     describe('setShowNoExpiryGroup', () => {
@@ -254,7 +254,7 @@ describe('db analysis slice', () => {
         const rootState = Object.assign(initialStateDefault, {
           analytics: { databaseAnalysis: nextState },
         })
-        expect(DBAnalysisReportsSelector(rootState)).toEqual(stateHistory)
+        expect(dbAnalysisReportsSelector(rootState)).toEqual(stateHistory)
       })
     })
   })

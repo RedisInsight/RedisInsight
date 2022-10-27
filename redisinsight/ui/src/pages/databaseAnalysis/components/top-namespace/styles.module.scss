@@ -3,26 +3,31 @@
 @import "@elastic/eui/src/global_styling/index";
 
 .wrapper {
-  margin-bottom: 37px;
-
   .textBtn {
     border: none;
     min-width: auto !important;
     min-height: auto;
     border-radius: 4px;
     background: transparent !important;
-    box-shadow: none;
     margin-left: 18px;
-    color: var(--wbHoverIconColor) !important;
-  
+    box-shadow: none !important;
+
+    &:global(.euiButton.euiButton--secondary) {
+      color: var(--wbHoverIconColor) !important;
+
+      &:hover, &:focus {
+        color: var(--wbHoverIconColor) !important;
+      }
+    }
+
     :global(.euiButton__content) {
       padding: 6px;
     }
-  
+
     :global(.euiButton__text) {
       font: normal normal normal 13px/17px Graphik, sans-serif !important;
     }
-  
+
     &.activeBtn:global(.euiButton.euiButton-isDisabled.euiButton--fill.euiButton--secondary),
     :global(.euiButton.euiButton-isDisabled.euiButton--fill.euiButton--secondary) {
       background: var(--browserComponentActive) !important;
@@ -33,43 +38,42 @@
 }
 
 .wrapper {
-  max-width: 1920px;
 
   .wrapper .link {
     width: max-content;
-  
+
     &:hover,
     &:focus {
       background-color: transparent !important;
     }
-  
+
     :global(.euiButtonEmpty__content) {
       padding: 0;
       width: max-content;
-  
+
       &:hover,
       &:focus {
         text-decoration: underline;
       }
     }
-  
+
     :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text) {
       font: normal normal normal 13px/17px Graphik, sans-serif;
       color: var(--buttonSecondaryTextColor) !important;
     }
-  
+
     :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):hover,
     :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text):focus {
       color: var(--euiTextSubduedColorHover);
     }
-  
+
     &.expanded {
       padding: 0 20px 0 12px;
     }
-  
+
     &.expanded :global(.euiButtonEmpty__content.euiButtonContent  .euiButtonEmpty__text) {
       color: var(--euiTextSubduedColor) !important;
-  
+
       &:hover,
       &:focus {
         color: var(--euiTextSubduedColorHover) !important;
@@ -97,10 +101,14 @@
   }
 
   :global {
+    .euiTableRowCell {
+      border-color: transparent !important;
+    }
+
     .nsp-cell {
       height: 42px;
     }
-    
+
     .euiTableRowCell:first-child {
       padding-left: 12px;
     }

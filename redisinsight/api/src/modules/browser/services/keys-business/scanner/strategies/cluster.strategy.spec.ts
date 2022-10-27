@@ -112,7 +112,7 @@ describe('Cluster Scanner Strategy', () => {
     beforeEach(() => {
       browserTool.getNodes = jest.fn().mockResolvedValue(mockGetClusterNodes);
     });
-    const getKeysDto: GetKeysDto = { cursor: '0', count: 15 };
+    const getKeysDto: GetKeysDto = { cursor: '0', count: 15, keysInfo: true };
     it('should return appropriate value with filter by type', async () => {
       const args = { ...getKeysDto, type: 'string', match: 'pattern*' };
       when(browserTool.execCommandFromNode)

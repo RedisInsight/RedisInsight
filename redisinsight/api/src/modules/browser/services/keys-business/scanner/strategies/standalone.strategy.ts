@@ -80,8 +80,10 @@ export class StandaloneStrategy extends AbstractStrategy {
 
     await this.scan(clientOptions, node, match, count, args.type);
 
-    if (node.keys.length) {
+    if (node.keys.length && args.keysInfo) {
       node.keys = await this.getKeysInfo(client, node.keys, args.type);
+    } else {
+      node.keys = node.keys.map((name) => ({ name }));
     }
 
     return [node];

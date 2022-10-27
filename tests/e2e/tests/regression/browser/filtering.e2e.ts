@@ -185,6 +185,6 @@ test
                 ? Selector('[data-testid^=badge-ReJSON]')
                 : Selector(`[data-testid^=badge-${keyTypes[i].keyName}]`);
             // Verify that all results have the same type as in filter
-            await t.expect(await browserPage.filteringLabel.count).eql(await filteredTypeKeys.count, `The keys of type ${keyTypes[i].textType} not filtered correctly`);
+            await t.expect(browserPage.filteringLabel.count).eql(await filteredTypeKeys.count, `The keys of type ${keyTypes[i].textType} not filtered correctly`);
         }
     });

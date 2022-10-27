@@ -27,7 +27,7 @@ import {
   RenameKeyDto,
   RenameKeyResponse,
   UpdateKeyTtlDto,
-  KeyTtlResponse,
+  KeyTtlResponse, GetKeysInfoDto,
 } from '../../dto';
 
 @ApiTags('Keys')
@@ -58,6 +58,28 @@ export class KeysController extends BaseController {
         instanceId: dbInstance,
       },
       getKeysDto,
+    );
+  }
+
+  @Post('get-metadata')
+  @HttpCode(200)
+  @ApiOperation({ description: 'Get info for multiple keys' })
+  @ApiBody({ type: GetKeysInfoDto })
+  @ApiRedisParams()
+  @ApiOkResponse({
+    description: 'Info for multiple keys',
+    type: GetKeysWithDetailsResponse,
+  })
+  @ApiQueryRedisStringEncoding()
+  async getKeysInfo(
+    @Param('dbInstance') dbInstance: string,
+      @Body() dto: GetKeysInfoDto,
+  ): Promise<GetKeyInfoResponse[]> {
+    return this.keysBusinessService.getKeysInfo(
+      {
+        instanceId: dbInstance,
+      },
+      dto,
     );
   }
 

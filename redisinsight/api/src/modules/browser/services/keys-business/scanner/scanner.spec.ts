@@ -20,6 +20,10 @@ class TestScanStrategy implements IScannerStrategy {
   public async getKeys() {
     return [];
   }
+
+  public async getKeysInfo() {
+    return [];
+  }
 }
 const strategyName = 'testStrategy';
 const testStrategy = new TestScanStrategy();

@@ -1,4 +1,4 @@
-import { t } from 'testcafe';
+import { Selector, t } from 'testcafe';
 import { AddNewDatabaseParameters, SentinelParameters, OSSClusterParameters } from '../pageObjects/add-redis-database-page';
 import { DiscoverMasterGroupsPage } from '../pageObjects/sentinel/discovered-sentinel-master-groups-page';
 import {
@@ -9,7 +9,7 @@ import {
     UserAgreementPage,
     CliPage
 } from '../pageObjects';
-import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi } from './api/api-database';
+import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi, getDatabaseByName } from './api/api-database';
 import { Common } from './common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -96,19 +96,17 @@ export async function addOSSClusterDatabase(databaseParameters: OSSClusterParame
 export async function addNewRECloudDatabase(cloudAPIAccessKey: string, cloudAPISecretKey: string): Promise<string> {
     // Fill the add database form and Submit
     await addRedisDatabasePage.addAutodiscoverRECloudDatabase(cloudAPIAccessKey, cloudAPISecretKey);
-    await t
-        .click(addRedisDatabasePage.addRedisDatabaseButton)
+    await t.click(addRedisDatabasePage.addRedisDatabaseButton);
     // Select subscriptions
-        .click(addRedisDatabasePage.selectAllCheckbox)
-        .click(addRedisDatabasePage.showDatabasesButton);
+    await t.click(addRedisDatabasePage.selectAllCheckbox);
+    await t.click(addRedisDatabasePage.showDatabasesButton);
     // Select databases for adding
     const databaseName = await browserPage.getDatabasesName();
-    await t
-        .click(addRedisDatabasePage.selectAllCheckbox)
-        .click(autoDiscoverREDatabases.addSelectedDatabases)
+    await t.click(addRedisDatabasePage.selectAllCheckbox);
+    await t.click(autoDiscoverREDatabases.addSelectedDatabases);
     // Wait for database to be exist in the My redis databases list
-        .click(autoDiscoverREDatabases.viewDatabasesButton)
-        .expect(myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The database not displayed', { timeout: 10000 });
+    await t.click(autoDiscoverREDatabases.viewDatabasesButton);
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The database not displayed', { timeout: 10000 });
     return databaseName;
 }
 
@@ -194,6 +192,7 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
     while (!(await dbSelector.exists) && Date.now() - startTime < searchTimeout);
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 5000 });
     await myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName ?? '');
+    await common.waitForElementNotVisible(browserPage.progressLine);
 }
 
 // Accept License terms
@@ -228,6 +227,17 @@ export async function clearDatabaseInCli(): Promise<void> {
 export async function deleteDatabase(databaseName: string): Promise<void> {
     await t.click(myRedisDatabasePage.myRedisDBButton);
     if (await addRedisDatabasePage.addDatabaseButton.exists) {
+        await deleteDatabaseByNameApi(databaseName);
+    }
+}
+
+/**
+ * Delete database with custom name
+ * @param databaseName The database name
+*/
+export async function deleteCustomDatabase(databaseName: string): Promise<void> {
+    await t.click(myRedisDatabasePage.myRedisDBButton);
+    if (await addRedisDatabasePage.addDatabaseButton.exists) {
         await myRedisDatabasePage.deleteDatabaseByName(databaseName);
     }
 }
@@ -244,4 +254,29 @@ export async function acceptTermsAddDatabaseOrConnectToRedisStack(databaseParame
     else {
         await acceptLicenseAndConnectToRedisStack();
     }
+}
+
+/**
+ * Click on the edit database button by name
+ * @param databaseName The name of the database
+ */
+export async function clickOnEditDatabaseByName(databaseName: string): Promise<void> {
+    const databaseId = await getDatabaseByName(databaseName);
+    const databaseEditBtn = Selector(`[data-testid=edit-instance-${databaseId}]`);
+
+    await t.expect(databaseEditBtn.exists).ok(`"${databaseName}" database not displayed`);
+    await t.click(databaseEditBtn);
+}
+
+/**
+ * Delete database button by name
+ * @param databaseName The name of the database
+ */
+ export async function deleteDatabaseByNameApi(databaseName: string): Promise<void> {
+    const databaseId = await getDatabaseByName(databaseName);
+    const databaseDeleteBtn = Selector(`[data-testid=delete-instance-${databaseId}-icon]`);
+
+    await t.expect(databaseDeleteBtn.exists).ok(`"${databaseName}" database not displayed`);
+    await t.click(databaseDeleteBtn);
+    await t.click(myRedisDatabasePage.confirmDeleteButton);
 }

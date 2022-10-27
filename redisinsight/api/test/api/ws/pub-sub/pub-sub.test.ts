@@ -45,7 +45,7 @@ describe('pub-sub', function () {
 
   describe('Connection edge cases', () => {
     it('should not crash on 100 concurrent pub-sub connections to the same db', async () => {
-      await Promise.all((new Array(100).fill(1)).map(() => new Promise((res, rej) => {
+      await Promise.all((new Array(10).fill(1)).map(() => new Promise((res, rej) => {
         client.emit('subscribe', { subscriptions: [pSubscription, subscription] }, (ack) => {
           expect(ack).to.eql({ status: 'ok' });
           res(ack);

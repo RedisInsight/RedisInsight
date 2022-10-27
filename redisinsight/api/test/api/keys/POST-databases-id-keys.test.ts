@@ -25,9 +25,9 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   port: Joi.number().integer(),
   keys: Joi.array().items(Joi.object().keys({
     name: JoiRedisString.required(),
-    type: Joi.string().required(),
-    ttl: Joi.number().integer().required(),
-    size: Joi.number().integer(), // todo: fix size pipeline for cluster
+    type: Joi.string(),
+    ttl: Joi.number().integer(),
+    size: Joi.number(), // todo: fix size pipeline for cluster
   })).required(),
 }).required()).required();
 
@@ -321,8 +321,44 @@ describe('POST /databases/:id/keys', () => {
             expect(result.total).to.eql(KEYS_NUMBER);
             expect(result.scanned).to.gte(KEYS_NUMBER);
             expect(result.keys.length).to.gte(10);
-            result.keys.map(({ name }) => {
+            result.keys.map(({ name, type, ttl, size }) => {
               expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
+              expect(type).to.be.a('string');
+              expect(ttl).to.be.a('number');
+              expect(size).to.be.a('number');
+            })
+          }
+        },
+        {
+          name: 'Should search by with ? in the end (without keys info)',
+          data: {
+            cursor: '0',
+            match: `${constants.TEST_RUN_ID}_str_key_10?`,
+            keysInfo: 'false',
+          },
+          responseSchema,
+          checkFn: ({ body }) => {
+            const result = {
+              total: 0,
+              scanned: 0,
+              keys: [],
+              numberOfShards: 0,
+            };
+
+            body.map(shard => {
+              result.total += shard.total;
+              result.scanned += shard.scanned;
+              result.keys.push(...shard.keys);
+              result.numberOfShards++;
+            });
+            expect(result.total).to.eql(KEYS_NUMBER);
+            expect(result.scanned).to.gte(KEYS_NUMBER);
+            expect(result.keys.length).to.gte(10);
+            result.keys.map(({ name, type, ttl, size }) => {
+              expect(name.indexOf(`${constants.TEST_RUN_ID}_str_key_10`)).to.eql(0);
+              expect(type).to.eql(undefined);
+              expect(ttl).to.eql(undefined);
+              expect(size).to.eql(undefined);
             })
           }
         },
@@ -871,8 +907,53 @@ describe('POST /databases/:id/keys', () => {
               expect(result.total).to.eql(KEYS_NUMBER);
               expect(result.scanned).to.gte(200 * result.numberOfShards);
               expect(result.keys.length).to.gte(200);
-              result.keys.map(key => expect(key.name).to.have.string('str_key_'));
-              result.keys.map(key => expect(key.type).to.eql('string'));
+              result.keys.map(key => {
+                expect(key.name).to.have.string('str_key_');
+                expect(key.type).to.eql('string');
+                expect(key.size).to.be.a('number');
+                expect(key.ttl).to.be.a('number');
+              });
+            }
+          },
+        ].map(mainCheckFn);
+      });
+      describe('Filter by type (w/o keys info)', () => {
+        requirements('rte.version>=6.0');
+        [
+          {
+            name: 'Should filter by type (string)',
+            data: {
+              cursor: '0',
+              type: 'string',
+              count: 200,
+              keysInfo: false,
+            },
+            responseSchema,
+            checkFn: ({ body }) => {
+              const result = {
+                total: 0,
+                scanned: 0,
+                keys: [],
+                numberOfShards: 0,
+              };
+
+              body.map(shard => {
+                result.total += shard.total;
+                result.scanned += shard.scanned;
+                result.keys.push(...shard.keys);
+                result.numberOfShards++;
+                expect(shard.scanned).to.gte(200);
+                expect(shard.scanned).to.lte(KEYS_NUMBER);
+              });
+              expect(result.total).to.eql(KEYS_NUMBER);
+              expect(result.scanned).to.gte(200 * result.numberOfShards);
+              expect(result.keys.length).to.gte(200);
+              result.keys.map(key => {
+                expect(key.name).to.have.string('str_key_');
+                expect(key.ttl).to.eq(undefined);
+                expect(key.size).to.eq(undefined);
+                expect(key.type).to.eq(undefined);
+              });
             }
           },
         ].map(mainCheckFn);

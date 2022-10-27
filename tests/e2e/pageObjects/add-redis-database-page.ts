@@ -18,7 +18,7 @@ export class AddRedisDatabasePage {
     showDatabasesButton = Selector('[data-testid=btn-show-databases]');
     databaseName = Selector('.euiTableCellContent.column_name');
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
-    databaseIndexCheckbox = Selector('[data-testid=showDb]~div');
+    databaseIndexCheckbox = Selector('[data-testid=showDb]~div', { timeout: 500 });
     connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
     connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
     discoverSentinelDatabaseButton = Selector('[data-testid=btn-submit]');
@@ -88,11 +88,10 @@ export class AddRedisDatabasePage {
             await t.typeText(this.passwordInput, parameters.databasePassword, { replace: true, paste: true });
         }
         // Enter logical index
-        await t
-            .click(this.databaseIndexCheckbox)
-            .typeText(this.databaseIndexInput, index, { replace: true, paste: true})
+        await t.click(this.databaseIndexCheckbox);
+        await t.typeText(this.databaseIndexInput, index, { replace: true, paste: true});
         // Click for saving
-            .click(this.addRedisDatabaseButton);
+        await t.click(this.addRedisDatabaseButton);
     }
 
     /**
@@ -117,7 +116,7 @@ export class AddRedisDatabasePage {
 
     /**
      * Adding a new database from RE Cluster via auto-discover flow
-     * @param prameters the parameters of the database
+     * @param parameters the parameters of the database
      */
     async addAutodiscoverREClucterDatabase(parameters: AddNewDatabaseParameters): Promise<void> {
         await t

@@ -5,6 +5,7 @@ import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies
 import { SettingsModule } from 'src/modules/settings/settings.module';
 import { CertificateModule } from 'src/modules/certificate/certificate.module';
 import { DatabaseModule } from 'src/modules/database/database.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RedisService } from './services/redis/redis.service';
 import { AnalyticsService } from './services/analytics/analytics.service';
 
@@ -26,6 +27,7 @@ export class CoreModule {
         SettingsModule.register(),
         CertificateModule,
         DatabaseModule,
+        EventEmitterModule.forRoot(),
       ],
       providers: [
         KeytarEncryptionStrategy,

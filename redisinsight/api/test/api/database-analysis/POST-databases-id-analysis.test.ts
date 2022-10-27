@@ -1,4 +1,4 @@
-import { expect, describe, deps, before, getMainCheckFn } from '../deps';
+import { expect, describe, deps, before, getMainCheckFn, requirements } from '../deps';
 import { analysisSchema } from './constants';
 const { localDb, request, server, constants, rte } = deps;
 
@@ -12,6 +12,9 @@ const mainCheckFn = getMainCheckFn(endpoint);
 let repository;
 
 describe('POST /databases/:instanceId/analysis', () => {
+  // todo: skip for RE for now since scan 0 count 10000 might return cursor and 0 keys multiple times
+  requirements('!rte.re');
+
   before(async() => {
       repository = await localDb.getRepository(localDb.repositories.DATABASE_ANALYSIS);
 

@@ -11,12 +11,13 @@ import {
   DeleteKeysResponse,
   GetKeyInfoResponse,
   GetKeysDto,
+  GetKeysInfoDto,
   GetKeysWithDetailsResponse,
+  KeyTtlResponse,
+  RedisDataType,
   RenameKeyDto,
   RenameKeyResponse,
   UpdateKeyTtlDto,
-  KeyTtlResponse,
-  RedisDataType,
 } from 'src/modules/browser/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
@@ -33,18 +34,14 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
 import { KeyInfoManager } from './key-info-manager/key-info-manager';
-import {
-  UnsupportedTypeInfoStrategy,
-} from './key-info-manager/strategies/unsupported-type-info/unsupported-type-info.strategy';
+import { UnsupportedTypeInfoStrategy } from './key-info-manager/strategies/unsupported-type-info/unsupported-type-info.strategy';
 import { StringTypeInfoStrategy } from './key-info-manager/strategies/string-type-info/string-type-info.strategy';
 import { HashTypeInfoStrategy } from './key-info-manager/strategies/hash-type-info/hash-type-info.strategy';
 import { ListTypeInfoStrategy } from './key-info-manager/strategies/list-type-info/list-type-info.strategy';
 import { SetTypeInfoStrategy } from './key-info-manager/strategies/set-type-info/set-type-info.strategy';
 import { ZSetTypeInfoStrategy } from './key-info-manager/strategies/z-set-type-info/z-set-type-info.strategy';
 import { StreamTypeInfoStrategy } from './key-info-manager/strategies/stream-type-info/stream-type-info.strategy';
-import {
-  RejsonRlTypeInfoStrategy,
-} from './key-info-manager/strategies/rejson-rl-type-info/rejson-rl-type-info.strategy';
+import { RejsonRlTypeInfoStrategy } from './key-info-manager/strategies/rejson-rl-type-info/rejson-rl-type-info.strategy';
 import { TSTypeInfoStrategy } from './key-info-manager/strategies/ts-type-info/ts-type-info.strategy';
 import { GraphTypeInfoStrategy } from './key-info-manager/strategies/graph-type-info/graph-type-info.strategy';
 
@@ -52,7 +49,7 @@ import { GraphTypeInfoStrategy } from './key-info-manager/strategies/graph-type-
 export class KeysBusinessService {
   private logger = new Logger('KeysBusinessService');
 
-  private scanner;
+  private scanner: Scanner;
 
   private keyInfoManager;
 
@@ -142,6 +139,29 @@ export class KeysBusinessService {
           ERROR_MESSAGES.SCAN_PER_KEY_TYPE_NOT_SUPPORT(),
         );
       }
+      throw catchAclError(error);
+    }
+  }
+
+  /**
+   * Fetch additional keys info (type, size, ttl)
+   * For standalone instances will use pipeline
+   * For cluster instances will use single commands
+   * @param clientOptions
+   * @param dto
+   */
+  public async getKeysInfo(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: GetKeysInfoDto,
+  ): Promise<GetKeyInfoResponse[]> {
+    try {
+      const client = await this.browserTool.getRedisClient(clientOptions);
+      const scanner = this.scanner.getStrategy(client.isCluster ? ConnectionType.CLUSTER : ConnectionType.STANDALONE);
+      const result = await scanner.getKeysInfo(client, dto.keys);
+
+      return plainToClass(GetKeyInfoResponse, result);
+    } catch (error) {
+      this.logger.error(`Failed to get keys info: ${error.message}.`);
       throw catchAclError(error);
     }
   }

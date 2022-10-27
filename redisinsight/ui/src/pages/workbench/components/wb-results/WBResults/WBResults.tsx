@@ -3,6 +3,7 @@ import cx from 'classnames'
 import { EuiIcon, EuiText } from '@elastic/eui'
 
 import { Theme } from 'uiSrc/constants'
+import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { Nullable } from 'uiSrc/utils'
 import QueryCard from 'uiSrc/components/query-card'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
@@ -17,7 +18,7 @@ export interface Props {
   activeMode: RunQueryMode
   activeResultsMode?: ResultsMode
   scrollDivRef: React.Ref<HTMLDivElement>
-  onQueryReRun: (query: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
+  onQueryReRun: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   onQueryDelete: (commandId: string) => void
   onQueryOpen: (commandId: string) => void
 }
@@ -81,7 +82,7 @@ const WBResults = (props: Props) => {
           activeResultsMode={activeResultsMode}
           resultsMode={resultsMode}
           onQueryOpen={() => onQueryOpen(id)}
-          onQueryReRun={() => onQueryReRun(command, null, false)}
+          onQueryReRun={() => onQueryReRun(command, null, { clearEditor: false })}
           onQueryDelete={() => onQueryDelete(id)}
         />
       ))}

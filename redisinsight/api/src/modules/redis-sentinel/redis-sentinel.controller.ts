@@ -13,12 +13,12 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Database } from 'src/modules/database/models/database';
 import { DiscoverSentinelMastersDto } from 'src/modules/redis-sentinel/dto/discover.sentinel-masters.dto';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
-import { BuildType } from 'src/modules/core/models/server-provider.interface';
 import { ActionStatus } from 'src/common/models';
 import { Response } from 'express';
 import { RedisSentinelService } from 'src/modules/redis-sentinel/redis-sentinel.service';
 import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
 import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/create.sentinel.database.response';
+import { BuildType } from 'src/modules/server/models/server';
 
 @ApiTags('Redis OSS Sentinel')
 @Controller('redis-sentinel')

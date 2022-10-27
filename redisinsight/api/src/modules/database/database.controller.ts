@@ -10,13 +10,13 @@ import { DatabaseConnectionService } from 'src/modules/database/database-connect
 import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
 import { AppTool } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { BuildType } from 'src/modules/core/models/server-provider.interface';
 import {
   DatabaseInstanceResponse,
   DeleteDatabaseInstanceDto, DeleteDatabaseInstanceResponse,
 } from 'src/modules/instances/dto/database-instance.dto';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
+import { BuildType } from 'src/modules/server/models/server';
 
 @ApiTags('Database Instances')
 @Controller('databases')

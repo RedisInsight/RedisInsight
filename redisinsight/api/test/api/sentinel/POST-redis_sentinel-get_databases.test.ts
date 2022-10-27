@@ -12,7 +12,7 @@ import {
 } from '../deps';
 const { request, server, constants, localDb } = deps;
 
-const endpoint = () => request(server).post('/sentinel/discovery');
+const endpoint = () => request(server).post('/redis-sentinel/get-databases');
 const mainCheckFn = getMainCheckFn(endpoint);
 
 // input data schema
@@ -46,7 +46,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   })).required(),
 }));
 
-describe('POST /sentinel/discovery', () => {
+describe('POST /redis-sentinel/get-databases', () => {
   requirements('rte.type=SENTINEL');
   after(localDb.initAgreements);
 
@@ -56,7 +56,9 @@ describe('POST /sentinel/discovery', () => {
     );
   });
 
-  describe('Common', () => {
+  describe('NO TLS', () => {
+    requirements('!rte.tls');
+
     [
       {
         name: 'Get list of master groups',
@@ -67,6 +69,59 @@ describe('POST /sentinel/discovery', () => {
           password: constants.TEST_REDIS_PASSWORD,
         },
         responseSchema,
+        checkFn: async ({body}) => {
+          expect(body.length).to.gte(1);
+          const sentinelMaster = _.find(body, ({ name }) => name === constants.TEST_SENTINEL_MASTER_GROUP);
+          expect(sentinelMaster.nodes).to.eql([
+            {
+              host: constants.TEST_REDIS_HOST,
+              port: constants.TEST_REDIS_PORT,
+            },
+          ]);
+        },
+      },
+
+    ].map(mainCheckFn);
+  });
+
+  describe('TLS AUTH', () => {
+    requirements('rte.tlsAuth');
+    let caCerts = 0;
+    let clientCerts = 0;
+
+    [
+      {
+        name: 'Get list of master groups but shouldn\'t create certs on this step (current implementation)',
+        data: {
+          host: constants.TEST_REDIS_HOST,
+          port: constants.TEST_REDIS_PORT,
+          username: constants.TEST_REDIS_USER,
+          password: constants.TEST_REDIS_PASSWORD,
+          tls: true,
+          verifyServerCert: true,
+          caCert: {
+            name: constants.getRandomString(),
+            certificate: constants.TEST_REDIS_TLS_CA,
+          },
+          clientCert: {
+            name: constants.getRandomString(),
+            certificate: constants.TEST_USER_TLS_CERT,
+            key: constants.TEST_USER_TLS_KEY,
+          },
+        },
+        responseSchema,
+        before: async () => {
+          caCerts = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).count({});
+          clientCerts = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY)).count({});
+        },
+        after: async () => {
+          expect(caCerts).to.eq(
+            await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY)).count({}),
+          );
+          expect(clientCerts).to.eq(
+            await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY)).count({}),
+          );
+        },
         checkFn: async ({body}) => {
           expect(body.length).to.gte(1);
           const sentinelMaster = _.find(body, ({ name }) => name === constants.TEST_SENTINEL_MASTER_GROUP);

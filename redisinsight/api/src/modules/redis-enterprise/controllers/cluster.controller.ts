@@ -10,7 +10,6 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
-import { BuildType } from 'src/modules/core/models/server-provider.interface';
 import { RedisEnterpriseService } from 'src/modules/redis-enterprise/redis-enterprise.service';
 import {
   AddRedisEnterpriseDatabaseResponse,
@@ -18,6 +17,7 @@ import {
 } from 'src/modules/redis-enterprise/dto/redis-enterprise-cluster.dto';
 import { Response } from 'express';
 import { ActionStatus } from 'src/common/models';
+import { BuildType } from 'src/modules/server/models/server';
 import { ClusterConnectionDetailsDto, RedisEnterpriseDatabase } from '../dto/cluster.dto';
 
 @ApiTags('Redis Enterprise Cluster')

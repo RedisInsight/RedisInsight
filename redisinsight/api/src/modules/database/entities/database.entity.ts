@@ -56,21 +56,21 @@ export class DatabaseEntity {
   @Expose()
   @Column({ nullable: true })
   @Transform((_, model) => (
-    model?.sentinelMaster?.name || null
+    model?.sentinelMaster?.name
   ), { toClassOnly: true })
   sentinelMasterName: string;
 
   @Expose()
   @Column({ nullable: true })
   @Transform((_, model) => (
-    model?.sentinelMaster?.username || null
+    model?.sentinelMaster?.username
   ), { toClassOnly: true })
   sentinelMasterUsername: string;
 
   @Expose()
   @Column({ nullable: true })
   @Transform((_, model) => (
-    model?.sentinelMaster?.password || null
+    model?.sentinelMaster?.password
   ), { toClassOnly: true })
   sentinelMasterPassword: string;
 

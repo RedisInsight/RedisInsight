@@ -1,5 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { ServerEntity } from 'src/modules/core/models/server.entity';
+import { ServerEntity } from 'src/modules/server/entities/server.entity';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
 import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.entity';
 import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';

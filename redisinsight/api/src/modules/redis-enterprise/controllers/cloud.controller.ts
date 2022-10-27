@@ -18,7 +18,6 @@ import {
   RedisCloudDatabase,
 } from 'src/modules/redis-enterprise/dto/cloud.dto';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
-import { BuildType } from 'src/modules/core/models/server-provider.interface';
 import { RedisCloudService } from 'src/modules/redis-enterprise/redis-cloud.service';
 import {
   AddMultipleRedisCloudDatabasesDto,
@@ -26,6 +25,7 @@ import {
 } from 'src/modules/redis-enterprise/dto/redis-enterprise-cloud.dto';
 import { Response } from 'express';
 import { ActionStatus } from 'src/common/models';
+import { BuildType } from 'src/modules/server/models/server';
 
 @ApiTags('Redis Enterprise Cloud')
 @UsePipes(new ValidationPipe({ transform: true }))

@@ -15,7 +15,7 @@ import { ServerEntity } from 'src/modules/core/models/server.entity';
 import { ITelemetryEvent } from 'src/modules/core/services/analytics/analytics.service';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 import { EncryptionStrategy } from 'src/modules/core/encryption/models';
-import { ServerOnPremiseService } from './server-on-premise.service';
+import { ServerService } from './server-on-premise.service';
 
 const SERVER_CONFIG = config.get('server');
 
@@ -35,7 +35,7 @@ const mockEventPayload: ITelemetryEvent = {
 };
 
 describe('ServerOnPremiseService', () => {
-  let service: ServerOnPremiseService;
+  let service: ServerService;
   let serverRepository: MockType<Repository<ServerEntity>>;
   let eventEmitter: EventEmitter2;
   let encryptionService: MockType<EncryptionService>;
@@ -45,7 +45,7 @@ describe('ServerOnPremiseService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EventEmitter2,
-        ServerOnPremiseService,
+        ServerService,
         {
           provide: getRepositoryToken(ServerEntity),
           useFactory: mockRepository,
@@ -60,7 +60,7 @@ describe('ServerOnPremiseService', () => {
     serverRepository = await module.get(getRepositoryToken(ServerEntity));
     eventEmitter = await module.get<EventEmitter2>(EventEmitter2);
     encryptionService = module.get(EncryptionService);
-    service = module.get(ServerOnPremiseService);
+    service = module.get(ServerService);
   });
 
   describe('onApplicationBootstrap', () => {

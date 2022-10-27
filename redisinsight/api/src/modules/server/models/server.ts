@@ -1,4 +1,5 @@
-import { GetServerInfoResponse } from 'src/dto/server.dto';
+import { Expose } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export enum BuildType {
   RedisStack = 'REDIS_STACK',
@@ -14,6 +15,16 @@ export enum AppType {
   Unknown = 'UNKNOWN',
 }
 
-export interface IServerProvider {
-  getInfo(): Promise<GetServerInfoResponse>;
+export class Server {
+  @ApiProperty({
+    type: String,
+  })
+  @Expose()
+  id: string;
+
+  @ApiProperty({
+    type: Date,
+  })
+  @Expose()
+  createDateTime: string;
 }

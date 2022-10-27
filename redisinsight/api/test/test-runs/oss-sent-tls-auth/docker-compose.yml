@@ -4,23 +4,10 @@ services:
   test:
     env_file:
       - ./oss-sent-tls-auth/.env
-#  redis:
-#    ports:
-#      - 26379:26379
-#    build: ./oss-sent-tls-auth
-#    links:
-#      - p1:p1
-#    depends_on:
-#      - s1_1
-#      - s1_2
-#      - p1
-
   redis:
     build:
       context: &build ./oss-sent-tls-auth
       dockerfile: sentinel.Dockerfile
-    ports:
-      - 26379:26379
     links:
       - p1:p1
       - p2:p2

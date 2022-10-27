@@ -5,8 +5,6 @@ services:
     env_file:
       - ./oss-sent/.env
   redis:
-    ports:
-      - 26379:26379
     build: ./oss-sent
     links:
       - p1:p1

@@ -36,8 +36,8 @@ test('Verify that user can resize scripting area in Workbench', async t => {
 
     await workbenchPage.sendCommandInWorkbench(commandForSend);
     // Verify that user can run any script from CLI in Workbench and see the results
-    await t.expect(await workbenchPage.queryCardContainer.exists).ok('Query card was added');
-    const sentCommandText = await workbenchPage.queryCardCommand.withExactText(commandForSend);
+    await t.expect(workbenchPage.queryCardContainer.exists).ok('Query card was added');
+    const sentCommandText = workbenchPage.queryCardCommand.withExactText(commandForSend);
     await t.expect(sentCommandText.exists).ok('Result of sent command exists');
 
     await t.hover(workbenchPage.resizeButtonForScriptingAndResults);

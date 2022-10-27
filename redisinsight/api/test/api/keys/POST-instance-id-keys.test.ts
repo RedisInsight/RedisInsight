@@ -331,7 +331,7 @@ describe('POST /instance/:instanceId/keys', () => {
         },
         {
           name: 'Should search by with ? in the end (without keys info)',
-          query: {
+          data: {
             cursor: '0',
             match: `${constants.TEST_RUN_ID}_str_key_10?`,
             keysInfo: 'false',
@@ -922,7 +922,7 @@ describe('POST /instance/:instanceId/keys', () => {
         [
           {
             name: 'Should filter by type (string)',
-            query: {
+            data: {
               cursor: '0',
               type: 'string',
               count: 200,

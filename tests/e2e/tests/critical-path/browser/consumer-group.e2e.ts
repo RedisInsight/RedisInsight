@@ -172,7 +172,7 @@ test('Verify that user can delete a Consumer Group', async t => {
     for (const id of entryIds) {
         const idBefore = await browserPage.streamGroupId.textContent;
         await t.click(browserPage.editStreamLastIdButton);
-        await t.typeText(browserPage.lastIdInput, id, { replace: true });
+        await t.typeText(browserPage.lastIdInput, id, { replace: true, paste: true });
         await t.click(browserPage.saveButton);
         await t.expect(browserPage.streamGroupId.textContent).notEql(idBefore, 'The last delivered ID is modified and the table is not reloaded');
     }

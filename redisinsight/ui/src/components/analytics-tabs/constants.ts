@@ -12,7 +12,7 @@ export const analyticsViewTabs: AnalyticsTabs[] = [
   },
   {
     id: AnalyticsViewTab.DatabaseAnalysis,
-    label: 'Memory Efficiency',
+    label: 'Redis Database Analysis',
   },
   {
     id: AnalyticsViewTab.SlowLog,

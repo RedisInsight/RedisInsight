@@ -5,6 +5,7 @@ import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { Selector } from 'testcafe';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -37,7 +38,7 @@ fixture `Memory Efficiency`
 test('No reports/keys message and report tooltip', async t => {
     const noReportsMessage = 'No Reports foundRun "New Analysis" to generate first report.';
     const noKeysMessage = 'No keys to displayUse Workbench Guides and Tutorials to quickly load the data.';
-    const tooltipText = 'Memory EfficiencyAnalyze up to 10K keys in your Redis database to get an overview of your data and memory efficiency recommendations.';
+    const tooltipText = 'Analyze up to 10 000 keys per Redis database to get an overview of your data.';
 
     // Verify that user can see the “No reports found” message when report wasn't generated
     await t.expect(memoryEfficiencyPage.noReportsText.textContent).eql(noReportsMessage, 'No reports message not displayed or text is invalid');
@@ -51,7 +52,7 @@ test('No reports/keys message and report tooltip', async t => {
     await t.click(myRedisDatabasePage.analysisPageButton);
     // Verify that user can see a tooltip when hovering over the icon on the right of the “New analysis” button
     await t.hover(memoryEfficiencyPage.reportTooltipIcon);
-    await t.expect(browserPage.tooltip.textContent).eql(tooltipText, 'Report tooltip is not displayed or text is invalid');
+    await t.expect(browserPage.tooltip.textContent).contains(tooltipText, 'Report tooltip is not displayed or text is invalid');
 });
 test
     .before(async t => {
@@ -59,6 +60,9 @@ test
         await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);
         await browserPage.addStreamKey(streamKeyName, 'field', 'value', keysTTL[2]);
         await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value', keysTTL[2]);
+        if (await browserPage.submitTooltipBtn.exists) {
+            await t.click(browserPage.submitTooltipBtn);
+        };
         await cliPage.addKeysFromCliWithDelimiter('MSET', 15);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
@@ -73,7 +77,7 @@ test
         await browserPage.deleteKeyByName(streamKeyNameDelimiter);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Keyspaces displaying in Summary per keyspaces table', async t => {
-    // Create new report
+        // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that up to 15 keyspaces based on the delimiter set in the Tree view are displayed on memory efficiency page
         await t.expect(memoryEfficiencyPage.nameSpaceTableRows.count).eql(15, 'Namespaces table has more/less than 15 keyspaces');
@@ -84,13 +88,13 @@ test
 
         await t.click(memoryEfficiencyPage.expandArrowBtn);
         // Verify that Key Pattern with >1 keys can be expanded
-        await t.expect(memoryEfficiencyPage.expandedRow.find('button').count).eql(2, 'Expandable row has no items');
+        await t.expect(memoryEfficiencyPage.expandedRow.count).eql(2, 'Expandable row has no items');
         // Verify that user can quickly set the filters per keyspaces in the Browser/Tree View from the list of keyspaces
-        await t.click(memoryEfficiencyPage.expandedRow.find('button').nth(0));
+        await t.click(memoryEfficiencyPage.expandedItem);
         // Verify filter by data type applied
-        await t.expect(await browserPage.filteringLabel.textContent).eql('Stream', 'Key type lable is not displayed in search input');
+        await t.expect(browserPage.filteringLabel.textContent).eql('Stream', 'Key type lable is not displayed in search input');
         // Verify keyname in search input prepopulated
-        await t.expect(await browserPage.filterByPatterSearchInput.withAttribute('value', keySpaces[0]).exists).ok('Filter per key name is not applied');
+        await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keySpaces[0]).exists).ok('Filter per key name is not applied');
         // Verify key is displayed
         await t.click(browserPage.browserViewButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(streamKeyName)).ok('Key is not found');
@@ -124,7 +128,7 @@ test
         await browserPage.deleteKeyByName(keySpaces[4]);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Namespaces sorting', async t => {
-    // Create new report
+        // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that user can sort by Key Pattern column ASC
         await t.click(memoryEfficiencyPage.tableKeyPatternHeader);
@@ -167,7 +171,7 @@ test
         await browserPage.deleteKeyByName(hashKeyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Memory efficiency context saved', async t => {
-    // Create new report
+        // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Reload page
         await common.reloadPage();
@@ -196,22 +200,23 @@ test
         await browserPage.deleteKeyByName(streamKeyNameDelimiter);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Summary per expiration time', async t => {
-    // Create new report
+        const yAxis: number = 218;
+        // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Points are displayed in graph according to their TTL
-        const firstPointLocation = +((await memoryEfficiencyPage.firstPoint.getAttribute('cy')).slice(0, 2));
-        const thirdPointLocation = await memoryEfficiencyPage.thirdPoint.getAttribute('cy');
-        const fourthPointLocation = +((await memoryEfficiencyPage.fourthPoint.getAttribute('cy')).slice(0, 2));
-        const noExpiryDefaultPointLocation = memoryEfficiencyPage.noExpiryDefaultPoint;
+        const firstPointLocation = +((await memoryEfficiencyPage.firstPoint.getAttribute('y')).slice(0, 2));
+        const thirdPointLocation = await memoryEfficiencyPage.thirdPoint.getAttribute('y');
+        const fourthPointLocation = +((await memoryEfficiencyPage.fourthPoint.getAttribute('y')).slice(0, 2));
+        const noExpiryDefaultPointLocation = memoryEfficiencyPage.noExpiryPoint;
 
-        await t.expect(firstPointLocation).lt(198, 'Point in <1 hr breakdown doesn\'t contain key');
-        await t.expect(fourthPointLocation).lt(198, 'Point in 12-25 Hrs breakdown doesn\'t contain key');
-        await t.expect(thirdPointLocation).eql('198', 'Point in 4-12 Hrs breakdown contains key');
-        await t.expect(noExpiryDefaultPointLocation.exists).notOk('No expiry breakdown displayed when toggle is off', {timeout: 1000});
+        await t.expect(firstPointLocation).lt(yAxis, 'Point in <1 hr breakdown doesn\'t contain key');
+        await t.expect(fourthPointLocation).lt(yAxis, 'Point in 12-25 Hrs breakdown doesn\'t contain key');
+        await t.expect(thirdPointLocation).eql(`${yAxis}`, 'Point in 4-12 Hrs breakdown contains key');
+        await t.expect(noExpiryDefaultPointLocation.visible).notOk('No expiry breakdown displayed when toggle is off', {timeout: 1000});
         // No Expiry toggle shows No expiry breakdown
         await t.click(memoryEfficiencyPage.showNoExpiryToggle);
-        const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('cy')).slice(0, 2));
-        await t.expect(noExpiryPointLocation).lt(198, 'Point in No expiry breakdown doesn\'t contain key');
+        const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('y')).slice(0, 2));
+        await t.expect(noExpiryPointLocation).lt(yAxis, 'Point in No expiry breakdown doesn\'t contain key');
     });
 test
     .before(async t => {

@@ -41,7 +41,7 @@ test('Verify that user can see re-run icon near the already executed command and
     await t.expect(workbenchPage.queryCardCommand.textContent).eql(commandForSend1, 'The command is not re-executed');
 
     // Verify that user can see expanded result after command re-run at the top of results table in Workbench
-    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryCardOutputResponseSuccess).visible).ok('Re-executed command is not expanded');
+    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('Re-executed command is not expanded');
     await t.expect(workbenchPage.queryCardCommand.nth(0).textContent).eql(commandForSend1, 'The re-executed command is not at the top of results table');
 
     // Delete the command from results

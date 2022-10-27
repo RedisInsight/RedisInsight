@@ -8,7 +8,7 @@ import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-outpu
 import { BrowserStorageItem, ICommands } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 import { SelectCommand } from 'uiSrc/constants/cliOutput'
-import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { ClusterNode, RedisDefaultModules, REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { Nullable } from './types'
@@ -146,6 +146,9 @@ const checkUnsupportedModuleCommand = (loadedModules: RedisModuleDto[], commandL
   }
 
   const isModuleLoaded = loadedModules?.some(({ name }) => name === commandModule)
+    // Redisearch has 4 names, need check all
+    || loadedModules?.some(({ name }) =>
+      REDISEARCH_MODULES.some((search) => name === search))
 
   if (isModuleLoaded) {
     return null

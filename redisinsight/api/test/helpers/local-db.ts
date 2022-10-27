@@ -321,7 +321,7 @@ export const createAclInstance = async (rte, server): Promise<void> => {
       port: constants.TEST_REDIS_PORT,
     }]);
     instance.username = constants.TEST_REDIS_USER;
-    instance.password =  constants.TEST_REDIS_PASSWORD;
+    instance.password = encryptData(constants.TEST_REDIS_PASSWORD);
     instance.sentinelMasterName = constants.TEST_SENTINEL_MASTER_GROUP;
     instance.sentinelMasterUsername = constants.TEST_INSTANCE_ACL_USER;
     instance.sentinelMasterPassword = encryptData(constants.TEST_INSTANCE_ACL_PASS);

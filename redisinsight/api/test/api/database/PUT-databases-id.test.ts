@@ -441,8 +441,73 @@ describe(`PUT /databases/:id`, () => {
 
       let existingCACertId, existingClientCertId, existingCACertName, existingClientCertName;
 
+      beforeEach(localDb.initAgreements);
       after(localDb.initAgreements);
 
+      // should be first test to not break other tests
+      it('Update standalone instance and verify users certs (new certificates !do not encrypt)', async () => {
+        await localDb.setAgreements({
+          encryption: false,
+        });
+
+        const dbName = constants.getRandomString();
+        const newCaName = constants.getRandomString();
+        const newClientCertName = constants.getRandomString();
+        // preconditions
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
+
+        await validateApiCall({
+          endpoint,
+          data: {
+            ...baseDatabaseData,
+            name: dbName,
+            tls: true,
+            verifyServerCert: true,
+            caCert: {
+              name: newCaName,
+              certificate: constants.TEST_REDIS_TLS_CA,
+            },
+            clientCert: {
+              name: newClientCertName,
+              certificate: constants.TEST_USER_TLS_CERT,
+              key: constants.TEST_USER_TLS_KEY,
+            },
+          },
+          responseSchema,
+          responseBody: {
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            connectionType: constants.STANDALONE,
+            tls: true,
+            verifyServerCert: true,
+            tlsServername: null,
+          },
+          checkFn: async ({ body }) => {
+            expect(body.caCert.id).to.be.a('string');
+            expect(body.caCert.name).to.eq(newCaName);
+            expect(body.caCert.certificate).to.be.undefined;
+
+            expect(body.clientCert.id).to.be.a('string');
+            expect(body.clientCert.name).to.deep.eq(newClientCertName);
+            expect(body.clientCert.certificate).to.be.undefined;
+            expect(body.clientCert.key).to.be.undefined;
+
+            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
+              .findOneBy({ id: body.caCert.id });
+
+            expect(ca.certificate).to.eql(constants.TEST_REDIS_TLS_CA);
+
+            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
+              .findOneBy({ id: body.clientCert.id });
+
+            expect(clientPair.certificate).to.eql(constants.TEST_USER_TLS_CERT);
+            expect(clientPair.key).to.eql(constants.TEST_USER_TLS_KEY);
+          },
+        });
+
+        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+      });
       it('Update standalone instance and verify users certs (new certificates)', async () => {
         const dbName = constants.getRandomString();
         const newCaName = existingCACertName = constants.getRandomString();
@@ -478,7 +543,6 @@ describe(`PUT /databases/:id`, () => {
             tlsServername: null,
           },
           checkFn: async ({ body }) => {
-            console.log('BODY', body);
             expect(body.caCert.id).to.be.a('string');
             expect(body.caCert.name).to.eq(newCaName);
             expect(body.caCert.certificate).to.be.undefined;
@@ -613,69 +677,6 @@ describe(`PUT /databases/:id`, () => {
         });
 
         expect(await localDb.getInstanceByName(dbName)).to.eql(null);
-      });
-      it('Update standalone instance and verify users certs (new certificates !do not encrypt)', async () => {
-        await localDb.setAgreements({
-          encryption: false,
-        });
-
-        const dbName = constants.getRandomString();
-        const newCaName = constants.getRandomString();
-        const newClientCertName = constants.getRandomString();
-        // preconditions
-        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
-
-        await validateApiCall({
-          endpoint,
-          data: {
-            ...baseDatabaseData,
-            name: dbName,
-            tls: true,
-            verifyServerCert: true,
-            caCert: {
-              name: newCaName,
-              certificate: constants.TEST_REDIS_TLS_CA,
-            },
-            clientCert: {
-              name: newClientCertName,
-              certificate: constants.TEST_USER_TLS_CERT,
-              key: constants.TEST_USER_TLS_KEY,
-            },
-          },
-          responseSchema,
-          responseBody: {
-            name: dbName,
-            host: constants.TEST_REDIS_HOST,
-            port: constants.TEST_REDIS_PORT,
-            connectionType: constants.STANDALONE,
-            tls: true,
-            verifyServerCert: true,
-            tlsServername: null,
-          },
-          checkFn: async ({ body }) => {
-            expect(body.caCert.id).to.be.a('string');
-            expect(body.caCert.name).to.eq(newCaName);
-            expect(body.caCert.certificate).to.be.undefined;
-
-            expect(body.clientCert.id).to.be.a('string');
-            expect(body.clientCert.name).to.deep.eq(newClientCertName);
-            expect(body.clientCert.certificate).to.be.undefined;
-            expect(body.clientCert.key).to.be.undefined;
-
-            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOneBy({ id: body.caCert.id });
-
-            expect(ca.certificate).to.eql(constants.TEST_REDIS_TLS_CA);
-
-            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOneBy({ id: body.clientCert.id });
-
-            expect(clientPair.certificate).to.eql(constants.TEST_USER_TLS_CERT);
-            expect(clientPair.key).to.eql(constants.TEST_USER_TLS_KEY);
-          },
-        });
-
-        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
       });
     });
   });

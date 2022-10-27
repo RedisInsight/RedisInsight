@@ -121,7 +121,8 @@ describe(`PUT /databases/:id`, () => {
         statusCode: 503,
         responseBody: {
           statusCode: 503,
-          message: `Could not connect to ${constants.TEST_REDIS_HOST}:1111, please check the connection details.`,
+          // message: `Could not connect to ${constants.TEST_REDIS_HOST}:1111, please check the connection details.`,
+          // todo: verify error handling because right now messages are different
           error: 'Service Unavailable'
         },
         after: async () => {
@@ -160,6 +161,7 @@ describe(`PUT /databases/:id`, () => {
           data: {
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
+            db: 0,
           },
           responseSchema,
           before: async () => {

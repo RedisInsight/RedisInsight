@@ -713,7 +713,7 @@ describe('POST /databases', () => {
     });
   });
   describe('SENTINEL', () => {
-    requirements('rte.type=SENTINEL');
+    requirements('rte.type=SENTINEL', '!rte.tls');
     it('Should always throw an Invalid Data error for sentinel', async () => {
       await validateApiCall({
         endpoint,

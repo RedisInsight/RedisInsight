@@ -8,6 +8,7 @@ import PubSubPage from 'uiSrc/pages/pubSub'
 import EditConnection from 'uiSrc/pages/redisStack/components/edit-connection'
 import ClusterDetailsPage from 'uiSrc/pages/clusterDetails'
 import AnalyticsPage from 'uiSrc/pages/analytics'
+import DatabaseAnalysisPage from 'uiSrc/pages/databaseAnalysis'
 import COMMON_ROUTES from './commonRoutes'
 
 const ANALYTICS_ROUTES: IRoute[] = [
@@ -16,6 +17,12 @@ const ANALYTICS_ROUTES: IRoute[] = [
     protected: true,
     path: Pages.slowLog(':instanceId'),
     component: SlowLogPage,
+  },
+  {
+    pageName: PageNames.databaseAnalysis,
+    protected: true,
+    path: Pages.databaseAnalysis(':instanceId'),
+    component: DatabaseAnalysisPage,
   },
   {
     pageName: PageNames.clusterDetails,

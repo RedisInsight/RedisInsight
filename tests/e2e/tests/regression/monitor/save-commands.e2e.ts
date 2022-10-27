@@ -19,39 +19,39 @@ fixture `Save commands`
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
-        //Delete database
+        // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that when clicks on “Reset Profiler” button he brought back to Profiler home screen', async t => {
-    //Start Monitor without Save logs
+    // Start Monitor without Save logs
     await monitorPage.startMonitor();
-    //Remember the number of files in Temp
+    // Remember the number of files in Temp
     const numberOfTempFiles = fs.readdirSync(tempDir).length;
-    //Reset profiler
+    // Reset profiler
     await monitorPage.resetProfiler();
     //Check the screen
-    await t.expect(monitorPage.monitorNotStartedElement.visible).ok('The Profiler home screen appears');
+    await t.expect(monitorPage.monitorNotStartedElement.visible).ok('The Profiler home screen not appeared');
     await t.click(monitorPage.closeMonitor);
-    //Start Monitor with Save logs
+    // Start Monitor with Save logs
     await monitorPage.startMonitorWithSaveLog();
-    //Reset profiler
+    // Reset profiler
     await monitorPage.resetProfiler();
-    //Check the screen
-    await t.expect(monitorPage.monitorNotStartedElement.visible).ok('The Profiler home screen appears');
-    await t.expect(monitorPage.monitorIsStartedText.visible).notOk('The current Profiler session is closed');
-    //temporary Log file is deleted
-    await t.expect(numberOfTempFiles).eql(fs.readdirSync(tempDir).length, 'The temporary Log file is deleted');
+    // Check the screen
+    await t.expect(monitorPage.monitorNotStartedElement.visible).ok('The Profiler home screen not appeared');
+    await t.expect(monitorPage.monitorIsStartedText.visible).notOk('The current Profiler session is not closed');
+    // temporary Log file is deleted
+    await t.expect(numberOfTempFiles).eql(fs.readdirSync(tempDir).length, 'The temporary Log file is not deleted');
 });
 test('Verify that when user clears the Profiler he doesn\'t brought back to Profiler home screen', async t => {
-    //Start Monitor
+    // Start Monitor
     await monitorPage.startMonitor();
-    //Clear monitor and check the view
+    // Clear monitor and check the view
     await t.click(monitorPage.clearMonitorButton);
-    await t.expect(monitorPage.monitorNotStartedElement.visible).notOk('Profiler home screen is not opened after Clear');
+    await t.expect(monitorPage.monitorNotStartedElement.visible).notOk('Profiler home screen is still opened after Clear');
     await t.click(monitorPage.closeMonitor);
-    //Start Monitor with Save logs
+    // Start Monitor with Save logs
     await monitorPage.startMonitorWithSaveLog();
-    //Clear monitor and check the view
+    // Clear monitor and check the view
     await t.click(monitorPage.clearMonitorButton);
-    await t.expect(monitorPage.monitorNotStartedElement.visible).notOk('Profiler home screen is not opened after Clear');
+    await t.expect(monitorPage.monitorNotStartedElement.visible).notOk('Profiler home screen is still opened after Clear');
 });

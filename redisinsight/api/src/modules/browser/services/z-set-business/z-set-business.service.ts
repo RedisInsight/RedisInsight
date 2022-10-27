@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { isNull } from 'lodash';
+import { isNull, isNaN } from 'lodash';
 import * as isGlob from 'is-glob';
 import config from 'src/utils/config';
 import { catchAclError, catchTransactionError, unescapeGlob } from 'src/utils';
@@ -277,8 +277,10 @@ export class ZSetBusinessService {
           BrowserToolZSetCommands.ZScore,
           [keyName, member],
         );
+        const formattedScore = isNaN(parseFloat(score)) ? String(score) : parseFloat(score);
+
         if (!isNull(score)) {
-          result.members.push(plainToClass(ZSetMemberDto, { name: member, score }));
+          result.members.push(plainToClass(ZSetMemberDto, { name: member, score: formattedScore }));
         }
       } else {
         const scanResult = await this.scanZSet(clientOptions, dto);
@@ -375,7 +377,6 @@ export class ZSetBusinessService {
       nextCursor: null,
       members: [],
     };
-
     while (result.nextCursor !== 0 && result.members.length < count) {
       const scanResult = await this.browserTool.execCommand(
         clientOptions,
@@ -406,11 +407,13 @@ export class ZSetBusinessService {
     const result: ZSetMemberDto[] = [];
     while (reply.length) {
       const member = reply.splice(0, 2);
+      const score = isNaN(parseFloat(member[1])) ? String(member[1]) : parseFloat(member[1]);
       result.push(plainToClass(ZSetMemberDto, {
         name: member[0],
-        score: parseFloat(member[1]),
+        score,
       }));
     }
+
     return result;
   }
 

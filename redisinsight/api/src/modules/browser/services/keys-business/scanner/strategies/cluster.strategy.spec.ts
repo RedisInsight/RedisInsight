@@ -116,7 +116,7 @@ describe('Cluster Scanner Strategy', () => {
     beforeEach(() => {
       browserTool.getNodes = jest.fn().mockResolvedValue(mockGetClusterNodes);
     });
-    const getKeysDto: GetKeysDto = { cursor: '0', count: 15 };
+    const getKeysDto: GetKeysDto = { cursor: '0', count: 15, keysInfo: true };
     it('should return appropriate value with filter by type', async () => {
       const args = { ...getKeysDto, type: 'string', match: 'pattern*' };
       when(browserTool.execCommandFromNode)
@@ -778,7 +778,7 @@ describe('Cluster Scanner Strategy', () => {
           BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
           expect.anything(),
-      )
+        )
         .mockRejectedValue(replyError);
       when(browserTool.execCommandFromNode)
         .calledWith(
@@ -789,15 +789,15 @@ describe('Cluster Scanner Strategy', () => {
           null,
         )
         .mockResolvedValue({ result: [0, [Buffer.from(getKeyInfoResponse.name)]] });
-        strategy.getKeysInfo = jest
-          .fn()
-          .mockResolvedValue([getKeyInfoResponse]);
-        try {
-          await strategy.getKeys(mockClientOptions, args);
-          fail();
-        } catch (err) {
-          expect(err.message).toEqual(replyError.message);
-        }
+      strategy.getKeysInfo = jest
+        .fn()
+        .mockResolvedValue([getKeyInfoResponse]);
+      try {
+        await strategy.getKeys(mockClientOptions, args);
+        fail();
+      } catch (err) {
+        expect(err.message).toEqual(replyError.message);
+      }
     });
     it('should throw error on scan command', async () => {
       const args = { ...getKeysDto };

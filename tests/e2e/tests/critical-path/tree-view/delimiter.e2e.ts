@@ -12,30 +12,19 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 const browserPage = new BrowserPage();
 
 fixture `Delimiter tests`
-    .meta({
-        type: 'critical_path',
-        rte: rte.standalone
-    })
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })
     .afterEach(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
-    })
-test('Verify that when user changes the delimiter and clicks on Save button delimiter is applied', async t => {
-    // Switch to tree view
-    await t.click(browserPage.treeViewButton);
-    // Change delimiter
-    await browserPage.changeDelimiterInTreeView('-');
-    // Check tree view according to the applied delimiter
-    await browserPage.checkTreeViewFoldersStructure([['device_us', 'west'], ['mobile_eu', 'central'], ['mobile_us', 'east'], ['user_us', 'west'], ['device_eu', 'central'], ['user_eu', 'central']], '-', true);
-});
+    });
 test('Verify that user can see that input is not saved when the Cancel button is clicked', async t => {
     // Switch to tree view
     await t.click(browserPage.treeViewButton);
     // Check the default delimiter value
-    await t.expect(browserPage.treeViewDelimiterButton.withExactText(':').exists).ok('Default delimiter');
+    await t.expect(browserPage.treeViewDelimiterButton.withExactText(':').exists).ok('Default delimiter not applied');
     // Open delimiter popup
     await t.click(browserPage.treeViewDelimiterButton);
     // Apply new value to the field
@@ -43,5 +32,10 @@ test('Verify that user can see that input is not saved when the Cancel button is
     // Click on Cancel button
     await t.click(browserPage.treeViewDelimiterValueCancel);
     // Check the previous delimiter value
-    await t.expect(browserPage.treeViewDelimiterButton.withExactText(':').exists).ok('Previous delimiter');
+    await t.expect(browserPage.treeViewDelimiterButton.withExactText(':').exists).ok('Previous delimiter not applied');
+
+    // Change delimiter
+    await browserPage.changeDelimiterInTreeView('-');
+    // Verify that when user changes the delimiter and clicks on Save button delimiter is applied
+    await browserPage.checkTreeViewFoldersStructure([['device_us', 'west'], ['mobile_eu', 'central'], ['mobile_us', 'east'], ['user_us', 'west'], ['device_eu', 'central'], ['user_eu', 'central']], '-', true);
 });

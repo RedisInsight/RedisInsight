@@ -25,6 +25,7 @@ import {
   getRedisCompletionProvider,
   getRedisMonarchTokensProvider,
   getRedisSignatureHelpProvider,
+  isGroupMode,
   MonacoAction,
   Nullable,
   toModelDeltaDecoration
@@ -543,7 +544,7 @@ const Query = (props: Props) => {
                 color="secondary"
                 onClick={() => onChangeGroupMode()}
                 disabled={isLoading}
-                className={cx(styles.textBtn, { [styles.activeBtn]: resultsMode === ResultsMode.GroupMode })}
+                className={cx(styles.textBtn, { [styles.activeBtn]: isGroupMode(resultsMode) })}
                 data-testid="btn-change-group-mode"
               >
                 <EuiIcon type={GroupModeIcon} />

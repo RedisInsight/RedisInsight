@@ -27,7 +27,7 @@ const LazyCodeButton = ({ path = '', ...rest }: Props) => {
         if (isStatusSuccessful(status)) {
           setLoading(false)
           const pageInfo = getFileInfo(path)
-          setScript(data, pageInfo.location, startCase(pageInfo.name))
+          setScript(data, {}, { path: pageInfo.location, name: startCase(pageInfo.name) })
         }
       } catch (error) {
         setLoading(false)

@@ -20,7 +20,7 @@
 
 .body {
   display: flex;
-  height: calc(100% - 20px);
+  height: 100%;
 
   :global(.ReactVirtualized__Table__headerRow) {
     border: none !important;
@@ -53,19 +53,21 @@
   position: relative;
   padding-top: 6px;
 
-  height: calc(100% - 90px);
+  height: 100%;
 
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .treeContent {
-  height: calc(100% - 25px);
+  height: 100%;
   position: relative;
   width: 100%;
 }
 
 .list {
-  height: calc(100% + 20px);
+  height: 100%;
   flex: 3;
   min-width: 400px;
 }

@@ -16,7 +16,7 @@ const homebrewPage = 'https://developer.redis.com/create/homebrew/?utm_source=re
 const promoPage = 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_offer_jan';
 
 fixture `Add database from welcome page`
-    .meta({ type: 'smoke' })
+    .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTerms();
@@ -26,17 +26,16 @@ fixture `Add database from welcome page`
     });
 test
     .after(async() => {
-        //Delete database
+        // Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-    .meta({ rte: rte.standalone })('Verify that user can add first DB from Welcome page', async t => {
-        await t.expect(addRedisDatabasePage.welcomePageTitle.exists).ok('The welcome page title');
-        //Add database from Welcome page
+    })('Verify that user can add first DB from Welcome page', async t => {
+        await t.expect(addRedisDatabasePage.welcomePageTitle.exists).ok('The welcome page title not displayed');
+        // Add database from Welcome page
         await addNewStandaloneDatabase(ossStandaloneConfig);
-        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database adding', { timeout: 10000 });
+        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database not added', { timeout: 10000 });
     });
 test
-    .meta({  env: env.web, rte: rte.standalone })('Verify that all the links are valid from Welcome page', async t => {
+    .meta({ env: env.web })('Verify that all the links are valid from Welcome page', async t => {
         // Verify build from source link
         await t.click(addRedisDatabasePage.buildFromSource);
         await t.expect(getPageUrl()).eql(sourcePage, 'Build from source link is not valid');

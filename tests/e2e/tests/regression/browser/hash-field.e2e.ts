@@ -15,28 +15,27 @@ const fieldForSearch = `SearchField-${common.generateWord(5)}`;
 const keyToAddParameters = { fieldsCount: 500000, keyName, fieldStartWith: 'hashField', fieldValueStartWith: 'hashValue' };
 
 fixture `Hash Key fields verification`
-    .meta({ type: 'regression' })
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(keyName, '2147476121', 'field', 'value');
     })
     .afterEach(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test
-    .meta({ rte: rte.standalone })('Verify that user can search per exact field name in Hash in DB with 1 million of fields', async t => {
-        // Add 1000000 fields to the hash key
-        await populateHashWithFields(dbParameters.host, dbParameters.port, keyToAddParameters);
-        await populateHashWithFields(dbParameters.host, dbParameters.port, keyToAddParameters);
-        //Add custom field to the hash key
-        await browserPage.openKeyDetails(keyName);
-        await browserPage.addFieldToHash(fieldForSearch, 'testHashValue');
-        //Search by full field name
-        await browserPage.searchByTheValueInKeyDetails(fieldForSearch);
-        //Check the search result
-        const result = await browserPage.hashFieldsList.nth(0).textContent;
-        await t.expect(result).eql(fieldForSearch, 'Hash field not found');
-    });
+test('Verify that user can search per exact field name in Hash in DB with 1 million of fields', async t => {
+    // Add 1000000 fields to the hash key
+    await populateHashWithFields(dbParameters.host, dbParameters.port, keyToAddParameters);
+    await populateHashWithFields(dbParameters.host, dbParameters.port, keyToAddParameters);
+    // Add custom field to the hash key
+    await browserPage.openKeyDetails(keyName);
+    await browserPage.addFieldToHash(fieldForSearch, 'testHashValue');
+    // Search by full field name
+    await browserPage.searchByTheValueInKeyDetails(fieldForSearch);
+    // Check the search result
+    const result = await browserPage.hashFieldsList.nth(0).textContent;
+    await t.expect(result).eql(fieldForSearch, 'Hash field not found');
+});

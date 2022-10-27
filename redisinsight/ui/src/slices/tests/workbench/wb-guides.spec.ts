@@ -107,6 +107,7 @@ describe('slices', () => {
   })
 
   // thunks
+
   describe('fetchGuides', () => {
     it('succeed to fetch guides items', async () => {
       // Arrange

@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { ClusterNodeDetails } from 'src/modules/cluster-monitor/models'
 
-import InstanceHeader from 'uiSrc/components/instance-header'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { clusterDetailsSelector, fetchClusterDetailsAction } from 'uiSrc/slices/analytics/clusterDetails'
@@ -111,16 +110,13 @@ const ClusterDetailsPage = () => {
   }
 
   return (
-    <>
-      <InstanceHeader />
-      <div className={styles.main} data-testid="cluster-details-page">
-        <ClusterDetailsHeader />
-        <div className={styles.wrapper}>
-          <ClusterDetailsGraphics nodes={nodes} loading={loading} />
-          <ClusterNodesTable nodes={nodes} loading={loading} />
-        </div>
+    <div className={styles.main} data-testid="cluster-details-page">
+      <ClusterDetailsHeader />
+      <div className={styles.wrapper}>
+        <ClusterDetailsGraphics nodes={nodes} loading={loading} />
+        <ClusterNodesTable nodes={nodes} loading={loading} />
       </div>
-    </>
+    </div>
   )
 }
 

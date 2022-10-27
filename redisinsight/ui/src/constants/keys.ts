@@ -47,6 +47,8 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [CommandGroup.CuckooFilter]: 'Cuckoo Filter',
 })
 
+export type GroupTypesDisplay = keyof (typeof GROUP_TYPES_DISPLAY)
+
 // Enums don't allow to use dynamic key
 export const GROUP_TYPES_COLORS = Object.freeze({
   [KeyTypes.Hash]: 'var(--typeHashColor)',
@@ -71,6 +73,8 @@ export const GROUP_TYPES_COLORS = Object.freeze({
   [CommandGroup.Server]: 'var(--groupServerColor)',
   [CommandGroup.HyperLogLog]: 'var(--groupHyperLolLogColor)',
 })
+
+export type GroupTypesColors = keyof (typeof GROUP_TYPES_COLORS)
 
 export type KeyTypesActions = {
   [key: string]: {

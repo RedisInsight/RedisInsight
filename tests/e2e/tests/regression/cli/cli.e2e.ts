@@ -1,4 +1,3 @@
-import { Chance } from 'chance';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { BrowserPage, CliPage } from '../../../pageObjects';
@@ -11,128 +10,84 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const cliPage = new CliPage();
 const common = new Common();
-const chance = new Chance();
 const browserPage = new BrowserPage();
 
-let keyName = chance.word({ length: 20 });
+let keyName = common.generateWord(20);
 const keyTTL = '2147476121';
 const jsonValue = '{"name":"xyz"}';
 const cliCommands = ['get test', 'acl help', 'client list'];
 
 fixture `CLI`
-    .meta({ type: 'regression' })
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
-        //Delete database
+        // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see CLI is minimized when he clicks the "minimize" button', async t => {
-        const cliColourBefore = await common.getBackgroundColour(cliPage.cliBadge);
-        //Open CLI and minimize
-        await t.click(cliPage.cliExpandButton);
-        await t.click(cliPage.minimizeCliButton);
-        //Verify cli is minimized
-        const cliColourAfter = await common.getBackgroundColour(cliPage.cliBadge);
-        await t.expect(cliColourAfter).notEql(cliColourBefore, 'CLI badge colour is changed');
-        await t.expect(cliPage.minimizeCliButton.visible).eql(false, 'CLI is mimized');
     });
+test('Verify that user can see CLI is minimized when he clicks the "minimize" button', async t => {
+    const cliColourBefore = await common.getBackgroundColour(cliPage.cliBadge);
+
+    // Open CLI and minimize
+    await t.click(cliPage.cliExpandButton);
+    await t.click(cliPage.minimizeCliButton);
+    // Verify cli is minimized
+    const cliColourAfter = await common.getBackgroundColour(cliPage.cliBadge);
+    await t.expect(cliColourAfter).notEql(cliColourBefore, 'CLI badge colour is not changed');
+    await t.expect(cliPage.minimizeCliButton.visible).eql(false, 'CLI is not mimized');
+});
+test('Verify that user can see results history when he re-opens CLI after minimizing', async t => {
+    const command = 'SET key';
+
+    // Open CLI and run commands
+    await t.click(cliPage.cliExpandButton);
+    await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
+    await t.pressKey('enter');
+    // Minimize and re-open cli
+    await t.click(cliPage.minimizeCliButton);
+    await t.click(cliPage.cliExpandButton);
+    // Verify cli results history
+    await t.expect(cliPage.cliCommandExecuted.textContent).eql(command, 'CLI results history not persists after reopening');
+});
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see results history when he re-opens CLI after minimizing', async t => {
-        const command = 'SET key';
-        //Open CLI and run commands
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, command);
-        await t.pressKey('enter');
-        //Minimize and re-open cli
-        await t.click(cliPage.minimizeCliButton);
-        await t.click(cliPage.cliExpandButton);
-        //Verify cli results history
-        await t.expect(cliPage.cliCommandExecuted.textContent).eql(command, 'CLI results history persists after reopening');
-    });
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see CLI is minimized when he clicks the "minimize" button', async t => {
-        const cliColourBefore = await common.getBackgroundColour(cliPage.cliBadge);
-        //Open CLI and minimize
-        await t.click(cliPage.cliExpandButton);
-        await t.click(cliPage.minimizeCliButton);
-        //Verify cli is minimized
-        const cliColourAfter = await common.getBackgroundColour(cliPage.cliBadge);
-        await t.expect(cliColourAfter).notEql(cliColourBefore, 'CLI badge colour is changed');
-        await t.expect(cliPage.minimizeCliButton.visible).eql(false, 'CLI is mimized');
-    });
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see results history when he re-opens CLI after minimizing', async t => {
-        const command = 'SET key';
-        //Open CLI and run commands
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, command);
-        await t.pressKey('enter');
-        //Minimize and re-open cli
-        await t.click(cliPage.minimizeCliButton);
-        await t.click(cliPage.cliExpandButton);
-        //Verify cli results history
-        await t.expect(cliPage.cliCommandExecuted.textContent).eql(command, 'CLI results history persists after reopening');
-    });
-test
-    .meta({ rte: rte.standalone })
     .after(async() => {
-        //Clear database and delete
+        // Clear database and delete
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-    ('Verify that user can repeat commands by entering a number of repeats before the Redis command in CLI', async t => {
-        keyName = chance.word({ length: 20 });
+    })('Verify that user can repeat commands by entering a number of repeats before the Redis command in CLI', async t => {
+        keyName = common.generateWord(20);
         const command = `SET ${keyName} a`;
         const repeats = 10;
-        //Open CLI and run command with repeats
+
+        // Open CLI and run command with repeats
         await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, `${repeats} ${command}`);
+        await t.typeText(cliPage.cliCommandInput, `${repeats} ${command}`, { replace: true, paste: true });
         await t.pressKey('enter');
-        //Verify result
-        await t.expect(cliPage.cliOutputResponseSuccess.count).eql(repeats, `CLI contains ${repeats} results`);
-});
-test
-    .meta({ rte: rte.standalone })
-    .after(async() => {
-        //Clear database and delete
-        await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-    ('Verify that user can run command json.get and see JSON object with escaped quotes (\" instead of ")', async t => {
-        keyName = chance.word({ length: 20 });
-        const jsonValueCli = '"{\\"name\\":\\"xyz\\"}"';
-        //Add Json key with json object
-        await browserPage.addJsonKey(keyName, jsonValue, keyTTL);
-        const command = `JSON.GET ${keyName}`;
-        //Open CLI and run command
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, command, { paste: true });
-        await t.pressKey('enter');
-        //Verify result
-        await t.expect(cliPage.cliOutputResponseSuccess.innerText).eql(jsonValueCli, 'The user can see JSON object with escaped quotes');
-});
-test
-    .meta({ rte: rte.standalone })
-    .after(async() => {
-        //Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-    ('Verify that user can see DB endpoint in the header of CLI', async t => {
-        const databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}`;
-        //Open CLI and check endpoint
-        await t.click(cliPage.cliExpandButton);
-        await t.expect(cliPage.cliEndpoint.textContent).eql(databaseEndpoint, 'The user can see DB endpoint in the header of CLI');
+        // Verify result
+        await t.expect(cliPage.cliOutputResponseSuccess.count).eql(repeats, `CLI not contains ${repeats} results`);
     });
 test
-    .meta({rte: rte.standalone})
+    .after(async() => {
+        // Clear database and delete
+        await browserPage.deleteKeyByName(keyName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify that user can run command json.get and see JSON object with escaped quotes (\" instead of ")', async t => {
+        keyName = common.generateWord(20);
+        const jsonValueCli = '"{\\"name\\":\\"xyz\\"}"';
+
+        // Add Json key with json object
+        await browserPage.addJsonKey(keyName, jsonValue, keyTTL);
+        const command = `JSON.GET ${keyName}`;
+        // Open CLI and run command
+        await t.click(cliPage.cliExpandButton);
+        await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
+        await t.pressKey('enter');
+        // Verify result
+        await t.expect(cliPage.cliOutputResponseSuccess.innerText).eql(jsonValueCli, 'The user can not see JSON object with escaped quotes');
+    });
+test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         for (const command of cliCommands) {
@@ -140,11 +95,15 @@ test
         }
     })
     .after(async() => {
-        //Delete database
+        // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })
-    ('Verify that user can use "Up" and "Down" keys to view previous commands in CLI in the application', async t => {
+    })('Verify that user can use "Up" and "Down" keys to view previous commands in CLI in the application', async t => {
+        const databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}`;
+
         await t.click(cliPage.cliExpandButton);
+        // Verify that user can see DB endpoint in the header of CLI
+        await t.expect(cliPage.cliEndpoint.textContent).eql(databaseEndpoint, 'The user can not see DB endpoint in the header of CLI');
+
         await t.expect(cliPage.cliCommandInput.innerText).eql('');
         for (let i = cliCommands.length - 1; i >= 0; i--) {
             await t.pressKey('up');

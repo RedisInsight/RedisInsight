@@ -256,7 +256,7 @@ const BrowserPage = () => {
                     }),
                   }}
                 >
-                  <>
+                  <div className={styles.leftPanelContent}>
                     <KeysHeader
                       keysState={keysState}
                       loading={loading}
@@ -285,7 +285,7 @@ const BrowserPage = () => {
                         loadMoreItems={loadMoreItems}
                       />
                     )}
-                  </>
+                  </div>
                 </EuiResizablePanel>
 
                 <EuiResizableButton

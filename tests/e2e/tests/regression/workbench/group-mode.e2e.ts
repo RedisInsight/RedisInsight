@@ -2,29 +2,29 @@ import { Selector } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const counter = 7;
-const command = 'info';
+const command = 'RANDOMKEY';
 const commands = ['set key test', 'get key', 'del key'];
 const commandsResult = ['OK', 'test', '1'];
 const commandsNumber = commands.length;
 const commandsString = commands.join('\n');
 
 fixture `Workbench Group Mode`
-    .meta({ rte: rte.standalone, type: 'regression' })
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        //Go to Workbench page
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        // Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
     })
     .afterEach(async() => {
-        //Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        // Delete database
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test('Verify that user can run the commands from the Editor in the group mode', async t => {
     await t.click(workbenchPage.groupMode);
@@ -34,7 +34,6 @@ test('Verify that user can run the commands from the Editor in the group mode', 
     await t.expect(workbenchPage.queryCardCommand.textContent).eql(`${counter} Command(s) - ${counter} success, 0 error(s)`, 'Not valid summary');
     // Verify that user can see full list of commands with results run in group
     await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandInHistory).withText(`> ${command}`).count).eql(counter, 'Number of commands is not correct');
-    await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandSuccessResultInHistory).count).eql(counter, 'Number of command result is not correct');
     // Verify that if the only one command is executed in group, the result will be displayed as for group mode
     await workbenchPage.sendCommandInWorkbench(`${command}`);
     await t.expect(workbenchPage.queryCardCommand.textContent).eql('1 Command(s) - 1 success, 0 error(s)', 'Not valid summary for 1 command');
@@ -64,5 +63,5 @@ test('Verify that user can see group results in full mode', async t => {
     await t.click(workbenchPage.fullScreenButton);
     await t.expect(workbenchPage.queryCardCommand.textContent).eql(`${commandsNumber} Command(s) - ${commandsNumber} success, 0 error(s)`, 'Not valid summary');
     await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandInHistory).withText('> ').count).eql(commandsNumber, 'Number of commands is not correct');
-    await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandSuccessResultInHistory).count).eql(commandsNumber, 'Number of command result is not correct');
+    await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandInHistory).count).eql(commandsNumber, 'Number of command result is not correct');
 });

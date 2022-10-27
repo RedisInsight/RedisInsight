@@ -5,8 +5,9 @@ import { isArray } from 'lodash'
 
 import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { Maybe } from 'uiSrc/utils'
+import { cliParseTextResponse, formatToText, isGroupMode, Maybe } from 'uiSrc/utils'
 
+import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import QueryCardCliDefaultResult from '../QueryCardCliDefaultResult'
 import QueryCardCliGroupResult from '../QueryCardCliGroupResult'
 import styles from './styles.module.scss'
@@ -18,24 +19,34 @@ export interface Props {
   status?: string
   resultsMode?: ResultsMode
   isNotStored?: boolean
+  isFullScreen?: boolean
 }
 
 const QueryCardCliResultWrapper = (props: Props) => {
-  const { result = [], query, loading, resultsMode, isNotStored } = props
+  const { result = [], query, loading, resultsMode, isNotStored, isFullScreen } = props
 
   return (
     <div className={cx('queryResultsContainer', styles.container)}>
       {!loading && (
-        <div data-testid="query-cli-result">
+        <div data-testid="query-cli-result" className={cx(styles.content)}>
           {isNotStored && (
             <EuiText className={styles.alert} data-testid="query-cli-warning">
               <EuiIcon type="alert" className={styles.alertIcon} />
               The result is too big to be saved. It will be deleted after the application is closed.
             </EuiText>
           )}
-          {resultsMode === ResultsMode.GroupMode && isArray(result[0]?.response)
-            ? <QueryCardCliGroupResult result={result} />
-            : <QueryCardCliDefaultResult query={query} result={result} />}
+          {isGroupMode(resultsMode) && isArray(result[0]?.response)
+            ? <QueryCardCliGroupResult result={result} isFullScreen={isFullScreen} />
+            : (
+              <QueryCardCliDefaultResult
+                isFullScreen={isFullScreen}
+                items={
+                  result[0].status === CommandExecutionStatus.Success
+                    ? formatToText(result[0].response || '(nil)', query).split('\n')
+                    : [cliParseTextResponse(result[0].response || '(nil)', '', result[0].status)]
+                }
+              />
+            )}
         </div>
       )}
       {loading && (

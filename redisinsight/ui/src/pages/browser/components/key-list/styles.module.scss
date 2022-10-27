@@ -14,11 +14,7 @@
 }
 
 .table {
-  height: calc(100% - 48px);
-
-  &__withoutFooter {
-    height: calc(100% - 50px) !important;
-  }
+  height: 100%;
 }
 
 :global(.show-cli) .table {
@@ -36,6 +32,20 @@
 .action {
   opacity: 0;
   transition: opacity 250ms ease-in-out;
+}
+
+.keyInfoLoading {
+  width: 44px;
+
+  :global(.euiLoadingContent__singleLine) {
+    margin-bottom: 0;
+  }
+}
+
+.keyNameLoading {
+  width: 50%;
+  min-width: 100px;
+  max-width: 300px;
 }
 
 :global(.table-row-selected) .action {

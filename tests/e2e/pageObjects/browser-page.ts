@@ -91,6 +91,8 @@ export class BrowserPage {
     editZsetButton = Selector('[data-testid^=zset-edit-button-]');
     editListButton = Selector('[data-testid^=edit-list-button-]');
     workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
+    cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
+    submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -98,6 +100,7 @@ export class BrowserPage {
     virtualTableContainer = Selector('[data-testid=virtual-table-container]');
     streamEntriesContainer = Selector('[data-testid=stream-entries-container]');
     streamMessagesContainer = Selector('[data-testid=stream-messages-container]');
+    loader = Selector('[data-testid=type-loading]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     userSurveyLink = Selector('[data-testid=user-survey-link]');
@@ -252,12 +255,15 @@ export class BrowserPage {
      */
     async commonAddNewKey(keyName: string, TTL?: string): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
-        await t.click(this.plusAddKeyButton);
-        await t.click(this.addKeyNameInput);
-        await t.typeText(this.addKeyNameInput, keyName);
+        await common.waitForElementNotVisible(this.loader);
+        await t
+            .click(this.plusAddKeyButton)
+            .click(this.addKeyNameInput)
+            .typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         if (TTL !== undefined) {
-            await t.click(this.keyTTLInput);
-            await t.typeText(this.keyTTLInput, TTL);
+            await t
+                .click(this.keyTTLInput)
+                .typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
         }
         await t.click(this.keyTypeDropDown);
     }
@@ -273,10 +279,10 @@ export class BrowserPage {
         await t.click(this.keyTypeDropDown);
         await t.click(this.stringOption);
         await t.click(this.addKeyNameInput);
-        await t.typeText(this.addKeyNameInput, keyName);
+        await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         if (TTL !== undefined) {
-            await t.click(this.keyTTLInput);
-            await t.typeText(this.keyTTLInput, TTL);
+            await t.click(this.keyTTLInput)
+                .typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
         }
         await t.click(this.stringKeyValueInput);
         await t.typeText(this.stringKeyValueInput, value);
@@ -294,9 +300,9 @@ export class BrowserPage {
         await t.click(this.keyTypeDropDown);
         await t.click(this.jsonOption);
         await t.click(this.addKeyNameInput);
-        await t.typeText(this.addKeyNameInput, keyName);
+        await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         await t.click(this.jsonKeyValueInput);
-        await t.typeText(this.jsonKeyValueInput, value, { paste: true });
+        await t.typeText(this.jsonKeyValueInput, value, { replace: true, paste: true });
         if (TTL !== undefined) {
             await t.click(this.keyTTLInput);
             await t.typeText(this.keyTTLInput, TTL);
@@ -312,14 +318,15 @@ export class BrowserPage {
      */
     async addSetKey(keyName: string, TTL = ' ', members = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.setOption);
         await t.click(this.addKeyNameInput);
-        await t.typeText(this.addKeyNameInput, keyName);
+        await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         await t.click(this.keyTTLInput);
         await t.typeText(this.keyTTLInput, TTL);
-        await t.typeText(this.setMemberInput, members);
+        await t.typeText(this.setMemberInput, members, { replace: true, paste: true });
         await t.click(this.addKeyButton);
     }
 
@@ -332,15 +339,16 @@ export class BrowserPage {
      */
     async addZSetKey(keyName: string, scores = ' ', TTL = ' ', members = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.zsetOption);
         await t.click(this.addKeyNameInput);
-        await t.typeText(this.addKeyNameInput, keyName);
+        await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         await t.click(this.keyTTLInput);
-        await t.typeText(this.keyTTLInput, TTL);
-        await t.typeText(this.setMemberInput, members);
-        await t.typeText(this.zsetMemberScoreInput, scores);
+        await t.typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
+        await t.typeText(this.setMemberInput, members, { replace: true, paste: true });
+        await t.typeText(this.zsetMemberScoreInput, scores, { replace: true, paste: true });
         await t.click(this.addKeyButton);
     }
 
@@ -352,15 +360,16 @@ export class BrowserPage {
      */
     async addListKey(keyName: string, TTL = ' ', element = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.listOption);
         await t.click(this.addKeyNameInput);
-        await t.typeText(this.addKeyNameInput, keyName);
+        await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         await t.click(this.keyTTLInput);
-        await t.typeText(this.keyTTLInput, TTL);
+        await t.typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
         await t.click(this.listKeyElementInput);
-        await t.typeText(this.listKeyElementInput, element);
+        await t.typeText(this.listKeyElementInput, element, { replace: true, paste: true });
         await t.click(this.addKeyButton);
     }
 
@@ -373,15 +382,16 @@ export class BrowserPage {
      */
     async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);
+        await common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.hashOption);
         await t.click(this.addKeyNameInput);
-        await t.typeText(this.addKeyNameInput, keyName);
+        await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         await t.click(this.keyTTLInput);
-        await t.typeText(this.keyTTLInput, TTL);
-        await t.typeText(this.hashFieldNameInput, field);
-        await t.typeText(this.hashFieldValueInput, value);
+        await t.typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
+        await t.typeText(this.hashFieldNameInput, field, { replace: true, paste: true });
+        await t.typeText(this.hashFieldValueInput, value, { replace: true, paste: true });
         await t.click(this.addKeyButton);
     }
 
@@ -396,10 +406,10 @@ export class BrowserPage {
         await this.commonAddNewKey(keyName, TTL);
         await t.click(this.streamOption);
         // Verify that user can see Entity ID filled by * by default on add Stream key form
-        await t.expect(this.streamEntryId.withAttribute('value', '*').visible).ok('Preselected Stream Entity ID field');
-        await t.typeText(this.streamField, field, { replace: true });
-        await t.typeText(this.streamValue, value, { replace: true });
-        await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');
+        await t.expect(this.streamEntryId.withAttribute('value', '*').exists).ok('Preselected Stream Entity ID field not displayed');
+        await t.typeText(this.streamField, field, { replace: true, paste: true });
+        await t.typeText(this.streamValue, value, { replace: true, paste: true });
+        await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Add Key button not clickable');
         await t.click(this.addKeyButton);
         await t.click(this.toastCloseButton);
     }
@@ -411,17 +421,19 @@ export class BrowserPage {
      * @param entryId The identification of specific entry of the Stream Key
      */
     async addEntryToStream(field: string, value: string, entryId?: string): Promise<void> {
-        await t.click(this.addNewStreamEntry);
+        await t
+            .click(this.addNewStreamEntry)
         // Specify field, value and add new entry
-        await t.typeText(this.streamField, field);
-        await t.typeText(this.streamValue, value);
+            .typeText(this.streamField, field, { replace: true, paste: true })
+            .typeText(this.streamValue, value, { replace: true, paste: true });
         if (entryId !== undefined) {
-            await t.typeText(this.streamEntryId, entryId);
+            await t.typeText(this.streamEntryId, entryId, { replace: true, paste: true });
         }
-        await t.click(this.saveElementButton);
+        await t
+            .click(this.saveElementButton)
         // Validate that new entry is added
-        await t.expect(this.streamEntriesContainer.textContent).contains(field, 'Field parameter');
-        await t.expect(this.streamEntriesContainer.textContent).contains(value, 'Value parameter');
+            .expect(this.streamEntriesContainer.textContent).contains(field, 'Field parameter not correct')
+            .expect(this.streamEntriesContainer.textContent).contains(value, 'Value parameter not correct');
     }
 
     /**
@@ -432,14 +444,14 @@ export class BrowserPage {
      */
     async fulfillSeveralStreamFields(fields: string[], values: string[], entryId?: string): Promise<void> {
         for (let i = 0; i < fields.length; i++) {
-            await t.typeText(this.streamField.nth(-1), fields[i]);
-            await t.typeText(this.streamValue.nth(-1), values[i]);
+            await t.typeText(this.streamField.nth(-1), fields[i], { replace: true, paste: true })
+                .typeText(this.streamValue.nth(-1), values[i], { replace: true, paste: true });
             if (i < fields.length - 1) {
                 await t.click(this.addStreamRow);
             }
         }
         if (entryId !== undefined) {
-            await t.typeText(this.streamEntryId, entryId);
+            await t.typeText(this.streamEntryId, entryId, { replace: true, paste: true });
         }
     }
 
@@ -448,11 +460,12 @@ export class BrowserPage {
      * @param groupName The group name
      */
     async selectFilterGroupType(groupName: string): Promise<void> {
-        if (await this.deleteFilterButton.visible) {
+        if (await this.deleteFilterButton.exists) {
             await t.click(this.deleteFilterButton);
         }
-        await t.click(this.filterByKeyTypeDropDown);
-        await t.click(this.filterOptionType.withExactText(groupName));
+        await t
+            .click(this.filterByKeyTypeDropDown)
+            .click((this.filterOptionType).withExactText(groupName));
     }
 
     /**
@@ -461,8 +474,7 @@ export class BrowserPage {
      */
     async searchByKeyName(keyName: string): Promise<void> {
         await t.click(this.filterByPatterSearchInput);
-        await t.pressKey('ctrl+a delete');
-        await t.typeText(this.filterByPatterSearchInput, keyName);
+        await t.typeText(this.filterByPatterSearchInput, keyName, { replace: true, paste: true });
         await t.pressKey('enter');
     }
 
@@ -485,11 +497,20 @@ export class BrowserPage {
     }
 
     /**
+     * Get selector by key name
+     * @param keyName The name of the key
+     */
+    async getKeySelectorByName(keyName: string): Promise<Selector> {
+        return Selector(`[data-testid="key-${keyName}"]`);
+    }
+
+    /**
      * Verifying if the Key is in the List of keys
      * @param keyName The name of the key
      */
     async isKeyIsDisplayedInTheList(keyName: string): Promise<boolean> {
         const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+        await common.waitForElementNotVisible(this.loader);
         return keyNameInTheList.exists;
     }
 
@@ -513,9 +534,6 @@ export class BrowserPage {
      * @param keyName The name of the key
      */
     async deleteKeyByName(keyName: string): Promise<void> {
-        if (await this.toastCloseButton.visible) {
-            await t.click(this.toastCloseButton);
-        }
         await this.searchByKeyName(keyName);
         await t.click(this.keyNameInTheList);
         await t.click(this.deleteKeyButton);
@@ -529,8 +547,7 @@ export class BrowserPage {
     async editKeyName(keyName: string): Promise<void> {
         await t
             .click(this.editKeyNameButton)
-            .pressKey('ctrl+a delete')
-            .typeText(this.keyNameInput, keyName)
+            .typeText(this.keyNameInput, keyName, { replace: true, paste: true })
             .click(this.applyButton);
     }
 
@@ -541,8 +558,7 @@ export class BrowserPage {
     async editStringKeyValue(value: string): Promise<void> {
         await t
             .click(this.stringKeyValueInput)
-            .pressKey('ctrl+a delete')
-            .typeText(this.stringKeyValueInput, value)
+            .typeText(this.stringKeyValueInput, value, { replace: true, paste: true })
             .click(this.applyButton);
     }
 
@@ -577,8 +593,8 @@ export class BrowserPage {
             await t.click(this.toastCloseButton);
         }
         await t.click(this.addKeyValueItemsButton);
-        await t.typeText(this.hashFieldInput, keyFieldValue);
-        await t.typeText(this.hashValueInput, keyValue);
+        await t.typeText(this.hashFieldInput, keyFieldValue, { replace: true, paste: true });
+        await t.typeText(this.hashValueInput, keyValue, { replace: true, paste: true });
         await t.click(this.saveHashFieldButton);
     }
 
@@ -635,10 +651,20 @@ export class BrowserPage {
      * @param value The value of the search parameter
      */
     async searchByTheValueInKeyDetails(value: string): Promise<void> {
-        await t.click(this.searchButtonInKeyDetails);
-        await t.pressKey('ctrl+a delete');
-        await t.typeText(this.searchInput, value);
-        await t.pressKey('enter');
+        await t
+            .click(this.searchButtonInKeyDetails)
+            .typeText(this.searchInput, value, { replace: true, paste: true })
+            .pressKey('enter');
+    }
+
+    /**
+     * Search by the value in the key details
+     * @param value The value of the search parameter
+     */
+    async secondarySearchByTheValueInKeyDetails(value: string): Promise<void> {
+        await t
+            .typeText(this.searchInput, value, { replace: true, paste: true })
+            .pressKey('enter');
     }
 
     /**
@@ -646,10 +672,10 @@ export class BrowserPage {
      * @param value The value of the search parameter
      */
     async searchByTheValueInSetKey(value: string): Promise<void> {
-        await t.click(this.searchInput);
-        await t.pressKey('ctrl+a delete');
-        await t.typeText(this.searchInput, value);
-        await t.pressKey('enter');
+        await t
+            .click(this.searchInput)
+            .typeText(this.searchInput, value, { replace: true, paste: true })
+            .pressKey('enter');
     }
 
     /**
@@ -660,9 +686,10 @@ export class BrowserPage {
         if (await this.toastCloseButton.exists) {
             await t.click(this.toastCloseButton);
         }
-        await t.click(this.addKeyValueItemsButton);
-        await t.typeText(this.setMemberInput, keyMember);
-        await t.click(this.saveMemberButton);
+        await t
+            .click(this.addKeyValueItemsButton)
+            .typeText(this.setMemberInput, keyMember, { replace: true, paste: true })
+            .click(this.saveMemberButton);
     }
 
     /**
@@ -674,10 +701,11 @@ export class BrowserPage {
         if (await this.toastCloseButton.exists) {
             await t.click(this.toastCloseButton);
         }
-        await t.click(this.addKeyValueItemsButton);
-        await t.typeText(this.setMemberInput, keyMember);
-        await t.typeText(this.zsetMemberScoreInput, score);
-        await t.click(this.saveMemberButton);
+        await t
+            .click(this.addKeyValueItemsButton)
+            .typeText(this.setMemberInput, keyMember, { replace: true, paste: true })
+            .typeText(this.zsetMemberScoreInput, score, { replace: true, paste: true })
+            .click(this.saveMemberButton);
     }
 
     //Get databases name
@@ -708,23 +736,25 @@ export class BrowserPage {
         if (await this.toastCloseButton.exists) {
             await t.click(this.toastCloseButton);
         }
-        await t.click(this.addKeyValueItemsButton);
-        await t.typeText(this.addListKeyElementInput, element);
-        await t.click(this.saveElementButton);
+        await t
+            .click(this.addKeyValueItemsButton)
+            .typeText(this.addListKeyElementInput, element, { replace: true, paste: true })
+            .click(this.saveElementButton);
     }
 
     //Remove List element from tail for Redis databases less then v. 6.2.
     async removeListElementFromTailOld(): Promise<void> {
-        await t.click(this.removeElementFromListIconButton);
-        await t.expect(this.countInput.withAttribute('disabled').exists).ok('Disabled input field');
-        await t.click(this.removeElementFromListButton);
-        await t.click(this.confirmRemoveListElementButton);
+        await t
+            .click(this.removeElementFromListIconButton)
+            .expect(this.countInput.withAttribute('disabled').exists).ok('Input field not disabled')
+            .click(this.removeElementFromListButton)
+            .click(this.confirmRemoveListElementButton);
     }
 
     //Remove List element from head for Redis databases less then v. 6.2.
     async removeListElementFromHeadOld(): Promise<void> {
         await t.click(this.removeElementFromListIconButton);
-        await t.expect(this.countInput.withAttribute('disabled').exists).ok('Disabled input field');
+        await t.expect(this.countInput.withAttribute('disabled').exists).ok('Input field not disabled');
         //Select Remove from head selection
         await t.click(this.removeElementFromListSelect);
         await t.click(this.removeFromHeadSelection);
@@ -739,7 +769,7 @@ export class BrowserPage {
      */
     async removeListElementFromTail(count: string): Promise<void> {
         await t.click(this.removeElementFromListIconButton);
-        await t.typeText(this.countInput, count);
+        await t.typeText(this.countInput, count, { replace: true, paste: true });
         await t.click(this.removeElementFromListButton);
         await t.click(this.confirmRemoveListElementButton);
     }
@@ -751,7 +781,7 @@ export class BrowserPage {
     async removeListElementFromHead(count: string): Promise<void> {
         await t.click(this.removeElementFromListIconButton);
         //Enter count of the removing elements
-        await t.typeText(this.countInput, count);
+        await t.typeText(this.countInput, count, { replace: true, paste: true });
         //Select Remove from head selection
         await t.click(this.removeElementFromListSelect);
         await t.click(this.removeFromHeadSelection);
@@ -767,8 +797,8 @@ export class BrowserPage {
      */
     async addJsonKeyOnTheSameLevel(jsonKey: string, jsonKeyValue: string): Promise<void> {
         await t.click(this.addJsonObjectButton);
-        await t.typeText(this.jsonKeyInput, jsonKey);
-        await t.typeText(this.jsonValueInput, jsonKeyValue);
+        await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
+        await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
         await t.click(this.applyButton);
     }
 
@@ -780,8 +810,8 @@ export class BrowserPage {
     async addJsonKeyInsideStructure(jsonKey: string, jsonKeyValue: string): Promise<void> {
         await t.click(this.expandJsonObject);
         await t.click(this.addJsonFieldButton);
-        await t.typeText(this.jsonKeyInput, jsonKey);
-        await t.typeText(this.jsonValueInput, jsonKeyValue);
+        await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
+        await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
         await t.click(this.applyButton);
     }
 
@@ -792,8 +822,7 @@ export class BrowserPage {
     async addJsonStructure(jsonStructure: string): Promise<void> {
         await t.click(this.expandJsonObject);
         await t.click(this.editJsonObjectButton);
-        await t.pressKey('ctrl+a delete');
-        await t.typeText(this.jsonValueInput, jsonStructure);
+        await t.typeText(this.jsonValueInput, jsonStructure, { replace: true, paste: true });
         await t.click(this.applyEditButton);
     }
 
@@ -820,9 +849,10 @@ export class BrowserPage {
     async checkTreeViewFoldersStructure(folders: string[][], delimiter: string, commonKeyFolder: boolean): Promise<void> {
         // Verify that all keys that are not inside of tree view doesn't contain delimiter
         if (commonKeyFolder) {
-            await t.expect(this.treeViewNotPatternedKeys.exists).ok('Folder with not patterned keys');
-            await t.click(this.treeViewNotPatternedKeys);
-            const notPatternedKeys = await Selector('[data-test-subj=key-list-panel]').find(this.cssSelectorKey);
+            await t
+                .expect(this.treeViewNotPatternedKeys.exists).ok('Folder with not patterned keys')
+                .click(this.treeViewNotPatternedKeys);
+            const notPatternedKeys = Selector('[data-test-subj=key-list-panel]').find(this.cssSelectorKey);
             const notPatternedKeysNumber = await notPatternedKeys.count;
             for (let i = 0; i < notPatternedKeysNumber; i++) {
                 await t.expect(notPatternedKeys.nth(i).withText(delimiter).exists).notOk('Not contained delimiter keys');
@@ -837,22 +867,23 @@ export class BrowserPage {
                 if (j === 0) {
                     const folderSelector = `[data-testid="node-item_${folders[i][j]}${delimiter}"]`;
                     array.push(folderSelector);
-                    await t.click(await Selector(folderSelector));
+                    await t.click(Selector(folderSelector));
                 }
                 else {
                     const lastSelector = array[array.length - 1].substring(0, array[array.length - 1].length - 2);
                     const folderSelector = `${lastSelector}${folders[i][j]}${delimiter}"]`;
                     array.push(folderSelector);
-                    await t.click(await Selector(folderSelector));
+                    await t.click(Selector(folderSelector));
                 }
             }
             // Verify that the last folder level contains required keys
             const lastSelector = array[array.length - 1].substring(0, array[array.length - 1].length - 2);
             const folderSelector = `${lastSelector}keys${delimiter}keys${delimiter}"]`;
-            await t.click(await Selector(folderSelector));
+            await t.click(Selector(folderSelector));
             const foundKeyName = `${folders[i].join(delimiter)}`;
-            await t.expect(Selector(`[data-testid*="key-${foundKeyName}"]`).visible).ok('Specific key');
-            await t.click(array[0]);
+            await t
+                .expect(Selector(`[data-testid*="key-${foundKeyName}"]`).exists).ok('Specific key not found')
+                .click(array[0]);
         }
     }
 
@@ -864,9 +895,9 @@ export class BrowserPage {
         // Open delimiter popup
         await t.click(this.treeViewDelimiterButton);
         // Check the previous value
-        await t.expect(this.treeViewDelimiterButton.withExactText(':').exists).ok('Default delimiter value');
+        await t.expect(this.treeViewDelimiterButton.withExactText(':').exists).ok('Default delimiter value not correct');
         // Apply new value to the field
-        await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true });
+        await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true, paste: true });
         // Click on save button
         await t.click(this.treeViewDelimiterValueSave);
         await t.expect(this.treeViewDelimiterButton.withExactText(delimiter).exists).ok('Delimiter is not changed');
@@ -874,8 +905,8 @@ export class BrowserPage {
 
     //Delete entry from Stream key
     async deleteStreamEntry(): Promise<void> {
-        await t.click(this.removeEntryButton);
-        await t.click(this.confirmRemoveEntryButton);
+        await t.click(this.removeEntryButton)
+            .click(this.confirmRemoveEntryButton);
     }
 
     /**
@@ -892,8 +923,9 @@ export class BrowserPage {
      * @id The ID of the Consumer Group
      */
     async createConsumerGroup(groupName: string, id?: string): Promise<void> {
-        await t.click(this.addKeyValueItemsButton);
-        await t.typeText(this.groupNameInput, groupName, { replace: true, paste: true });
+        await t
+            .click(this.addKeyValueItemsButton)
+            .typeText(this.groupNameInput, groupName, { replace: true, paste: true });
         if (id !== undefined) {
             await t.typeText(this.consumerIdInput, id, { replace: true, paste: true });
         }
@@ -917,8 +949,9 @@ export class BrowserPage {
      */
     async selectFormatter(formatter: string): Promise<void> {
         const option = Selector(`[data-test-subj="format-option-${formatter}"]`);
-        await t.click(this.formatSwitcher);
-        await t.click(option);
+        await t
+            .click(this.formatSwitcher)
+            .click(option);
     }
 
     /**
@@ -931,9 +964,10 @@ export class BrowserPage {
             await t.expect(this.progressKeyList.exists).notOk('Progress Bar is still displayed', { timeout: 30000 });
             const scannedValueText = await this.scannedValue.textContent;
             const regExp = new RegExp(`${i} 00` + '.');
-            await t.expect(scannedValueText).match(regExp, `The database is not automatically scanned by ${i} 000 keys`);
-            await t.doubleClick(this.scanMoreButton);
-            await t.expect(this.progressKeyList.exists).ok('Progress Bar is not displayed', { timeout: 30000 });
+            await t
+                .expect(scannedValueText).match(regExp, `The database is not automatically scanned by ${i} 000 keys`)
+                .doubleClick(this.scanMoreButton)
+                .expect(this.progressKeyList.exists).ok('Progress Bar is not displayed', { timeout: 30000 });
             const scannedResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
             await t.expect(scannedResults).gt(rememberedScanResults, { timeout: 3000 });
         }

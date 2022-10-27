@@ -162,9 +162,9 @@ test
         await t.wait(fiveSecondsTimeout);
         const cpuBeforeEdit = (await browserPage.overviewCpu.textContent).split(' ')[0];
         //Verify that additional information in Overview: Connected Clients, Commands/Sec, CPU (%) is displayed
-        await t.expect(browserPage.overviewConnectedClients.visible).ok('Connected Clients is dispalyed in the Overview');
-        await t.expect(browserPage.overviewCommandsSec.visible).ok('Commands/Sec is dispalyed in the Overview');
-        await t.expect(browserPage.overviewCpu.visible).ok('CPU (%) is dispalyed in the Overview');
+        await t.expect(browserPage.overviewConnectedClients.exists).ok('Connected Clients is dispalyed in the Overview');
+        await t.expect(browserPage.overviewCommandsSec.exists).ok('Commands/Sec is dispalyed in the Overview');
+        await t.expect(browserPage.overviewCpu.exists).ok('CPU (%) is dispalyed in the Overview');
         //Run Create hash index command
         await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.click(workbenchPage.internalLinkWorkingWithHashes);

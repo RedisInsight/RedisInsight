@@ -15,28 +15,27 @@ const memberForSearch = `SearchField-${common.generateWord(5)}`;
 const keyToAddParameters = { membersCount: 500000, keyName, memberStartWith: 'setMember' };
 
 fixture `Set Key verification`
-    .meta({ type: 'regression' })
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addSetKey(keyName, '2147476121', 'testMember');
     })
     .afterEach(async() => {
-        //Clear and delete database
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test
-    .meta({ rte: rte.standalone })('Verify that user can search per exact member name in Set key in DB with 1 million of members', async t => {
-        // Add 1000000 members to the set key
-        await populateSetWithMembers(dbParameters.host, dbParameters.port, keyToAddParameters);
-        await populateSetWithMembers(dbParameters.host, dbParameters.port, keyToAddParameters);
-        //Add custom member to the set key
-        await browserPage.openKeyDetails(keyName);
-        await browserPage.addMemberToSet(memberForSearch);
-        //Search by full member name
-        await browserPage.searchByTheValueInSetKey(memberForSearch);
-        //Check the search result
-        const result = await browserPage.setMembersList.nth(0).textContent;
-        await t.expect(result).eql(memberForSearch, 'Set member not found');
-    });
+test('Verify that user can search per exact member name in Set key in DB with 1 million of members', async t => {
+    // Add 1000000 members to the set key
+    await populateSetWithMembers(dbParameters.host, dbParameters.port, keyToAddParameters);
+    await populateSetWithMembers(dbParameters.host, dbParameters.port, keyToAddParameters);
+    // Add custom member to the set key
+    await browserPage.openKeyDetails(keyName);
+    await browserPage.addMemberToSet(memberForSearch);
+    // Search by full member name
+    await browserPage.searchByTheValueInSetKey(memberForSearch);
+    // Check the search result
+    const result = await browserPage.setMembersList.nth(0).textContent;
+    await t.expect(result).eql(memberForSearch, 'Set member not found');
+});

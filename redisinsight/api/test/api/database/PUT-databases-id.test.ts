@@ -157,16 +157,15 @@ describe(`PUT /databases/:id`, () => {
       [
         {
           name: 'Should change host and port and recalculate data such as (provider, modules, etc...)',
-          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           data: {
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
-            db: 0,
           },
           responseSchema,
           before: async () => {
-            oldDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_2);
-            expect(oldDatabase.name).to.eq(constants.TEST_INSTANCE_NAME_2);
+            oldDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
+            expect(oldDatabase.name).to.eq(constants.TEST_INSTANCE_NAME_3);
             expect(oldDatabase.modules).to.eq('[]');
             expect(oldDatabase.host).to.not.eq(constants.TEST_REDIS_HOST)
             expect(oldDatabase.port).to.not.eq(constants.TEST_REDIS_PORT)
@@ -182,7 +181,7 @@ describe(`PUT /databases/:id`, () => {
             tlsServername: null,
           },
           after: async () => {
-            newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_2);
+            newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
             expect(_.omit(newDatabase, ['modules', 'provider'])).to.deep.eq({
               ..._.omit(oldDatabase, ['modules', 'provider']),
               host: constants.TEST_REDIS_HOST,
@@ -289,7 +288,7 @@ describe(`PUT /databases/:id`, () => {
         expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
         await validateApiCall({
-          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           data: {
             name: dbName,
             host: constants.TEST_REDIS_HOST,

@@ -4,16 +4,11 @@ import { DatabaseAnalysisService } from 'src/modules/database-analysis/database-
 import { SharedModule } from 'src/modules/shared/shared.module';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/database-analysis.entity';
 import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
 import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      DatabaseAnalysisEntity,
-    ]),
     SharedModule,
   ],
   controllers: [DatabaseAnalysisController],

@@ -2,7 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
-  Post,
+  Post, Res,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -10,20 +10,24 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
+import { RedisEnterpriseService } from 'src/modules/redis-enterprise/redis-enterprise.service';
 import {
-  RedisEnterpriseBusinessService,
-} from 'src/modules/shared/services/redis-enterprise-business/redis-enterprise-business.service';
-import { BuildType } from 'src/modules/core/models/server-provider.interface';
+  AddRedisEnterpriseDatabaseResponse,
+  AddRedisEnterpriseDatabasesDto,
+} from 'src/modules/redis-enterprise/dto/redis-enterprise-cluster.dto';
+import { Response } from 'express';
+import { ActionStatus } from 'src/common/models';
+import { BuildType } from 'src/modules/server/models/server';
 import { ClusterConnectionDetailsDto, RedisEnterpriseDatabase } from '../dto/cluster.dto';
 
 @ApiTags('Redis Enterprise Cluster')
 @UsePipes(new ValidationPipe({ transform: true }))
-@Controller('cluster')
+@Controller('redis-enterprise/cluster')
 export class ClusterController {
-  constructor(private redisEnterpriseService: RedisEnterpriseBusinessService) {}
+  constructor(private redisEnterpriseService: RedisEnterpriseService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Post('get-dbs')
+  @Post('get-databases')
   @UseInterceptors(new TimeoutInterceptor())
   @ApiEndpoint({
     description: 'Get all databases in the cluster.',
@@ -42,5 +46,38 @@ export class ClusterController {
     @Body() dto: ClusterConnectionDetailsDto,
   ): Promise<RedisEnterpriseDatabase[]> {
     return await this.redisEnterpriseService.getDatabases(dto);
+  }
+
+  @Post('databases')
+  @ApiEndpoint({
+    description: 'Add databases from Redis Enterprise cluster',
+    statusCode: 201,
+    excludeFor: [BuildType.RedisStack],
+    responses: [
+      {
+        status: 201,
+        description: 'Added databases list.',
+        type: AddRedisEnterpriseDatabaseResponse,
+        isArray: true,
+      },
+    ],
+  })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async addRedisEnterpriseDatabases(
+    @Body() dto: AddRedisEnterpriseDatabasesDto,
+      @Res() res: Response,
+  ): Promise<Response> {
+    const { uids, ...connectionDetails } = dto;
+    const result = await this.redisEnterpriseService.addRedisEnterpriseDatabases(
+      connectionDetails,
+      uids,
+    );
+    const hasSuccessResult = result.some(
+      (addResponse: AddRedisEnterpriseDatabaseResponse) => addResponse.status === ActionStatus.Success,
+    );
+    if (!hasSuccessResult) {
+      return res.status(200).json(result);
+    }
+    return res.json(result);
   }
 }

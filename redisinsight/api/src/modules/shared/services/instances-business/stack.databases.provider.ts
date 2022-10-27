@@ -6,7 +6,7 @@ import {
 import { merge } from 'lodash';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import config from 'src/utils/config';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { DatabasesProvider } from 'src/modules/shared/services/instances-business/databases.provider';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
@@ -33,7 +33,7 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
   /**
    * Get list of databases from the local db
    */
-  async getAll(): Promise<DatabaseInstanceEntity[]> {
+  async getAll(): Promise<DatabaseEntity[]> {
     this.logger.log('Getting databases list');
     return [await this.getOneById(REDIS_STACK_CONFIG.id)];
   }
@@ -45,7 +45,7 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
   async getOneById(
     id: string,
     ignoreEncryptionErrors: boolean = false,
-  ): Promise<DatabaseInstanceEntity> {
+  ): Promise<DatabaseEntity> {
     return super.getOneById(REDIS_STACK_CONFIG.id, ignoreEncryptionErrors);
   }
 
@@ -53,8 +53,8 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
    * Save entire entity
    * @param database
    */
-  async save(database: DatabaseInstanceEntity): Promise<DatabaseInstanceEntity> {
-    return super.save(new DatabaseInstanceEntity({
+  async save(database: DatabaseEntity): Promise<DatabaseEntity> {
+    return super.save(new DatabaseEntity({
       ...database,
       id: REDIS_STACK_CONFIG.id,
     }));
@@ -66,7 +66,7 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
    * @param data
    * @throws BadRequestException error when try to update password or sentinelMasterPassword fields
    */
-  async patch(id: string, data: QueryDeepPartialEntity<DatabaseInstanceEntity>) {
+  async patch(id: string, data: QueryDeepPartialEntity<DatabaseEntity>) {
     return super.patch(REDIS_STACK_CONFIG.id, {
       ...data,
       id: REDIS_STACK_CONFIG.id,
@@ -79,8 +79,8 @@ export class StackDatabasesProvider extends DatabasesProvider implements OnAppli
    * @param id
    * @param data
    */
-  async update(id: string, data: DatabaseInstanceEntity) {
-    return super.update(REDIS_STACK_CONFIG.id, new DatabaseInstanceEntity({
+  async update(id: string, data: DatabaseEntity) {
+    return super.update(REDIS_STACK_CONFIG.id, new DatabaseEntity({
       ...data,
       id: REDIS_STACK_CONFIG.id,
     }));

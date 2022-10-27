@@ -15,10 +15,10 @@ services:
 
   p1:
     image: &r redis:5
-    command: redis-server --requirepass dbpass
+    command: redis-server
   s1_1:
     image: *r
-    command: redis-server --slaveof p1 6379 --masterauth dbpass
+    command: redis-server --slaveof p1 6379
   s1_2:
     image: *r
-    command: redis-server --slaveof p1 6379 --masterauth dbpass
+    command: redis-server --slaveof p1 6379

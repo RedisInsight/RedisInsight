@@ -15,9 +15,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ClientCertCollisionValidator, CaCertCollisionValidator } from 'src/validators';
 import { RedisModules } from 'src/constants';
-import { ConnectionType, HostingProvider } from 'src/modules/core/models/database-instance.entity';
+import { ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
 import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
 import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.client-certificate.dto';
 
@@ -202,8 +201,6 @@ export class ConnectionOptionsDto extends EndpointDto {
   @IsOptional()
   @IsNotEmptyObject()
   @Type(() => TlsDto)
-  @Validate(CaCertCollisionValidator)
-  @Validate(ClientCertCollisionValidator)
   @ValidateNested()
   tls?: TlsDto;
 

@@ -20,7 +20,7 @@ export class ModelEncryptor {
    * @private
    */
   async encryptEntity<T>(entity: T): Promise<T> {
-    const encryptedEntity = { ...entity };
+    const encryptedEntity = entity;
 
     await Promise.all(this.fields.map(async (field) => {
       if (entity[field]) {
@@ -49,6 +49,10 @@ export class ModelEncryptor {
     entity: T,
     ignoreErrors: boolean = false,
   ): Promise<T> {
+    if (!entity) {
+      return null;
+    }
+
     const decrypted = entity;
 
     await Promise.all(this.fields.map(async (field) => {

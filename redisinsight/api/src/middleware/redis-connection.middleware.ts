@@ -8,7 +8,7 @@ import {
 import { NextFunction, Request, Response } from 'express';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 @Injectable()
 export class RedisConnectionMiddleware implements NestMiddleware {
@@ -16,7 +16,7 @@ export class RedisConnectionMiddleware implements NestMiddleware {
 
   constructor(
     private redisService: RedisService,
-    private instancesBusinessService: InstancesBusinessService,
+    private databaseService: DatabaseService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction): Promise<any> {
@@ -24,7 +24,7 @@ export class RedisConnectionMiddleware implements NestMiddleware {
     if (!instanceIdFromReq) {
       this.throwError(req, ERROR_MESSAGES.UNDEFINED_INSTANCE_ID);
     }
-    const existDatabaseInstance = await this.instancesBusinessService.exists(instanceIdFromReq);
+    const existDatabaseInstance = await this.databaseService.exists(instanceIdFromReq);
     if (!existDatabaseInstance) {
       throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
     }

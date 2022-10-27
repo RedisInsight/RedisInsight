@@ -6,12 +6,11 @@ import {
 } from '@nestjs/common';
 import { SharedModule } from 'src/modules/shared/shared.module';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
-import { InstancesController } from './controllers/instances/instances.controller';
 
 @Module({
   imports: [SharedModule],
   providers: [],
-  controllers: [InstancesController],
+  controllers: [],
 })
 export class InstancesModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {

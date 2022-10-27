@@ -45,7 +45,7 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
     return (await this.repository
       .createQueryBuilder('c')
       .select(['c.id', 'c.name'])
-      .getMany()).map((model) => classToClass(CaCertificate, model));
+      .getMany()).map((entity) => classToClass(CaCertificate, entity));
   }
 
   /**
@@ -56,7 +56,7 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
     const found = await this.repository.findOneBy({ name: caCertificate.name });
     if (found) {
       this.logger.error(
-        `Failed to create certificate. ${ERROR_MESSAGES.CA_CERT_EXIST}. name: ${caCertificate.name}`,
+        `Failed to create certificate: ${caCertificate.name}. ${ERROR_MESSAGES.CA_CERT_EXIST}`,
       );
       throw new BadRequestException(ERROR_MESSAGES.CA_CERT_EXIST);
     }
@@ -79,11 +79,11 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
     //  3. why we need to fail if no cert found?
     const found = await this.repository.findOneBy({ id });
     if (!found) {
-      this.logger.error(`Failed to delete certificate. Not Found. id: ${id}`);
+      this.logger.error(`Failed to delete ca certificate: ${id}`);
       throw new NotFoundException();
     }
 
     await this.repository.delete(id);
-    this.logger.log(`Succeed to delete certificate. id: ${id}`);
+    this.logger.log(`Succeed to delete ca certificate: ${id}`);
   }
 }

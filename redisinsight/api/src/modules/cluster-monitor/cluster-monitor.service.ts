@@ -4,12 +4,12 @@ import {
   BadRequestException, HttpException, Injectable, Logger,
 } from '@nestjs/common';
 import { catchAclError, convertRedisInfoReplyToObject } from 'src/utils';
-import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
 import { ClusterNodesInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-nodes.info.strategy';
 import { ClusterShardsInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-shards.info.strategy';
 import { ClusterDetails } from 'src/modules/cluster-monitor/models';
+import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 
 export enum ClusterInfoStrategies {
   CLUSTER_NODES = 'CLUSTER_NODES',
@@ -23,8 +23,7 @@ export class ClusterMonitorService {
   private infoStrategies: Map<string, IClusterInfo> = new Map();
 
   constructor(
-    private redisService: RedisService,
-    private instancesBusinessService: InstancesBusinessService,
+    private readonly databaseConnectionService: DatabaseConnectionService,
   ) {
     this.infoStrategies.set(ClusterInfoStrategies.CLUSTER_NODES, new ClusterNodesInfoStrategy());
     this.infoStrategies.set(ClusterInfoStrategies.CLUSTER_SHARDS, new ClusterShardsInfoStrategy());
@@ -36,7 +35,10 @@ export class ClusterMonitorService {
    */
   public async getClusterDetails(clientOptions: IFindRedisClientInstanceByOptions): Promise<ClusterDetails> {
     try {
-      const client = await this.getClient(clientOptions);
+      const client = await this.databaseConnectionService.getOrCreateClient({
+        databaseId: clientOptions.instanceId,
+        namespace: clientOptions.tool,
+      });
 
       if (!(client instanceof IORedis.Cluster)) {
         return Promise.reject(new BadRequestException('Current database is not in a cluster mode'));
@@ -71,27 +73,5 @@ export class ClusterMonitorService {
     }
 
     return this.infoStrategies.get(ClusterInfoStrategies.CLUSTER_NODES);
-  }
-
-  /**
-   * Get or create redis "common" client
-   *
-   * @param clientOptions
-   * @private
-   */
-  private async getClient(clientOptions: IFindRedisClientInstanceByOptions) {
-    const { tool, instanceId } = clientOptions;
-
-    const commonClient = this.redisService.getClientInstance({ instanceId, tool })?.client;
-
-    if (commonClient && this.redisService.isClientConnected(commonClient)) {
-      return commonClient;
-    }
-
-    return this.instancesBusinessService.connectToInstance(
-      clientOptions.instanceId,
-      clientOptions.tool,
-      true,
-    );
   }
 }

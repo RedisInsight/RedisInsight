@@ -1,28 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { OmitType } from '@nestjs/swagger';
+import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
+import { Expose } from 'class-transformer';
 
-export class CreateClientCertificateDto {
-  @ApiProperty({
-    description: 'Name for your Client Certificate',
-    type: String,
-  })
-  @IsNotEmpty()
-  @IsString({ always: true })
-  name: string;
-
-  @ApiProperty({
-    description: 'Text of the Private key',
-    type: String,
-  })
-  @IsNotEmpty()
-  @IsString({ always: true })
-  key: string;
-
-  @ApiProperty({
-    description: 'Text of the Certificate',
-    type: String,
-  })
-  @IsNotEmpty()
-  @IsString({ always: true })
+export class CreateClientCertificateDto extends OmitType(ClientCertificate, ['id'] as const) {
+  @Expose()
   certificate: string;
+
+  @Expose()
+  key: string;
 }

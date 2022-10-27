@@ -4,11 +4,12 @@ import {
 import { DatabasesProvider } from 'src/modules/shared/services/instances-business/databases.provider';
 import { RedisService } from 'src/modules/core/services/redis/redis.service';
 import { AppTool } from 'src/models';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { getAvailableEndpoints, getRunningProcesses, getTCPEndpoints } from 'src/utils/auto-discovery-helper';
 import { convertRedisInfoReplyToObject } from 'src/utils';
 import config from 'src/utils/config';
 import { SettingsService } from 'src/modules/settings/settings.service';
+import { Database } from 'src/modules/database/models/database';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 const SERVER_CONFIG = config.get('server');
 
@@ -20,7 +21,7 @@ export class AutoDiscoveryService implements OnModuleInit {
     private settingsService: SettingsService,
     private databaseProvider: DatabasesProvider,
     private redisService: RedisService,
-    private databaseService: InstancesBusinessService,
+    private databaseService: DatabaseService,
   ) {}
 
   /**
@@ -73,7 +74,7 @@ export class AutoDiscoveryService implements OnModuleInit {
   private async addRedisDatabase(endpoint: { host: string, port: number }) {
     try {
       const client = await this.redisService.createStandaloneClient(
-        endpoint,
+        endpoint as Database,
         AppTool.Common,
         false,
         'redisinsight-auto-discovery',
@@ -84,10 +85,10 @@ export class AutoDiscoveryService implements OnModuleInit {
       );
 
       if (info?.server?.redis_mode === 'standalone') {
-        await this.databaseService.addDatabase({
+        await this.databaseService.create({
           name: `${endpoint.host}:${endpoint.port}`,
           ...endpoint,
-        });
+        } as Database);
       }
     } catch (e) {
       // ignore error

@@ -18,33 +18,6 @@ import { RedisModuleDto } from 'src/modules/instances/dto/database-instance.dto'
 
 @Injectable()
 export class ConfigurationBusinessService {
-  public async checkClusterConnection(client: IORedis.Redis): Promise<boolean> {
-    try {
-      const reply = await client.cluster('INFO');
-      const clusterInfo: IRedisClusterInfo = convertBulkStringsToObject(reply);
-      return clusterInfo?.cluster_state === 'ok';
-    } catch (e) {
-      return false;
-    }
-  }
-
-  public async checkSentinelConnection(
-    client: IORedis.Redis,
-  ): Promise<boolean> {
-    try {
-      await client.call('sentinel', ['masters']);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  public async getRedisClusterNodes(
-    client: IORedis.Redis,
-  ): Promise<IRedisClusterNode[]> {
-    const nodes: any = await client.call('cluster', ['nodes']);
-    return parseClusterNodes(nodes);
-  }
 
   public async getRedisGeneralInfo(
     client: IORedis.Redis | IORedis.Cluster,
@@ -61,17 +34,6 @@ export class ConfigurationBusinessService {
       return reply.length ? parseInt(reply[1], 10) : 1;
     } catch (e) {
       return 1;
-    }
-  }
-
-  public async getLoadedModulesList(client: any): Promise<RedisModuleDto[]> {
-    try {
-      const reply = await client.call('module', ['list']);
-      const modules = reply.map((module: any[]) => convertStringsArrayToObject(module));
-      return this.convertRedisModules(modules);
-    } catch (e) {
-      // TODO: detect loaded modules without using ModuleList command
-      return this.detectRedisModules(client);
     }
   }
 
@@ -141,34 +103,5 @@ export class ConfigurationBusinessService {
     } catch (error) {
       return undefined;
     }
-  }
-
-  private convertRedisModules(modules: IRedisModule[] = []): RedisModuleDto[] {
-    return modules.map((module): RedisModuleDto => {
-      const { name, ver } = module;
-      return {
-        name: SUPPORTED_REDIS_MODULES[name] ?? name,
-        version: ver,
-        semanticVersion: SUPPORTED_REDIS_MODULES[name]
-          ? convertIntToSemanticVersion(ver)
-          : undefined,
-      };
-    });
-  }
-
-  private async detectRedisModules(client: any): Promise<RedisModuleDto[]> {
-    const modules: RedisModuleDto[] = [];
-    await Promise.all(Array.from(REDIS_MODULES_COMMANDS, async ([moduleName, commands]) => {
-      try {
-        let commandsInfo = await client.call('command', ['info', ...commands]);
-        commandsInfo = commandsInfo.filter((info) => !isNil(info));
-        if (commandsInfo.length) {
-          modules.push({ name: moduleName });
-        }
-      } catch (e) {
-        // continue regardless of error
-      }
-    }));
-    return modules;
   }
 }

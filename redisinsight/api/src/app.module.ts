@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import {
   MiddlewareConsumer, Module, NestModule, OnModuleInit,
 } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RouterModule } from 'nest-router';
@@ -17,6 +16,8 @@ import { NotificationModule } from 'src/modules/notification/notification.module
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
 import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
+import { ServerModule } from 'src/modules/server/server.module';
+import { LocalDatabaseModule } from 'src/local-database.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -25,17 +26,16 @@ import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.mod
 import { ProfilerModule } from './modules/profiler/profiler.module';
 import { CliModule } from './modules/cli/cli.module';
 import { StaticsManagementModule } from './modules/statics-management/statics-management.module';
-import { ServerInfoController } from './controllers/server-info.controller';
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import { routes } from './app.routes';
-import { ormModuleOptions } from '../config/ormconfig';
 
 const SERVER_CONFIG = config.get('server');
 const PATH_CONFIG = config.get('dir_path');
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ormModuleOptions),
+    LocalDatabaseModule,
+    ServerModule.register(),
     RouterModule.forRoutes(routes),
     SharedModule,
     InstancesModule,
@@ -80,7 +80,7 @@ const PATH_CONFIG = config.get('dir_path');
     }),
     StaticsManagementModule,
   ],
-  controllers: [ServerInfoController],
+  controllers: [],
   providers: [],
 })
 export class AppModule implements OnModuleInit, NestModule {

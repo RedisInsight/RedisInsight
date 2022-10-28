@@ -1,6 +1,6 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CommandType } from 'src/constants';
-import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
+import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { forEach } from 'lodash';
 

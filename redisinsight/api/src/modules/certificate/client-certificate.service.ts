@@ -7,7 +7,7 @@ import {
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   EncryptionServiceErrorException,
-} from 'src/modules/core/encryption/exceptions';
+} from 'src/modules/encryption/exceptions';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.client-certificate.dto';

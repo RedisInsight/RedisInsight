@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { EncryptionResult, EncryptionStrategy } from 'src/modules/core/encryption/models';
-import { IEncryptionStrategy } from 'src/modules/core/encryption/strategies/encryption-strategy.interface';
+import { EncryptionResult, EncryptionStrategy } from 'src/modules/encryption/models';
+import { IEncryptionStrategy } from 'src/modules/encryption/strategies/encryption-strategy.interface';
 
 @Injectable()
 export class PlainEncryptionStrategy implements IEncryptionStrategy {

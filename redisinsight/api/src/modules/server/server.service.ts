@@ -6,7 +6,7 @@ import config from 'src/utils/config';
 import { AppAnalyticsEvents } from 'src/constants/app-events';
 import { TelemetryEvents } from 'src/constants/telemetry-events';
 import { ServerInfoNotFoundException } from 'src/constants/exceptions';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { ServerRepository } from 'src/modules/server/repositories/server.repository';
 import { AppType, BuildType } from 'src/modules/server/models/server';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';

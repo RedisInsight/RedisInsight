@@ -7,7 +7,7 @@ import {
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   EncryptionServiceErrorException,
-} from 'src/modules/core/encryption/exceptions';
+} from 'src/modules/encryption/exceptions';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';

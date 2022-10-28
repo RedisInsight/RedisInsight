@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { isUndefined, filter, isNull } from 'lodash';
 import { plainToClass } from 'class-transformer';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import ERROR_MESSAGES from 'src/constants/error-messages';

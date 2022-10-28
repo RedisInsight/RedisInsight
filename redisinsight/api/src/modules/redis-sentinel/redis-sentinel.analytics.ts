@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { TelemetryEvents } from 'src/constants';
-import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
+import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()

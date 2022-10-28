@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
 import { classToClass } from 'src/utils';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
-import { ModelEncryptor } from 'src/modules/core/encryption/model.encryptor';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
+import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 

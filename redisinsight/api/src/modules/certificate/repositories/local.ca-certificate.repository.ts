@@ -11,8 +11,8 @@ import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certifi
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { classToClass } from 'src/utils';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
-import { ModelEncryptor } from 'src/modules/core/encryption/model.encryptor';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
+import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 
 @Injectable()
 export class LocalCaCertificateRepository extends CaCertificateRepository {

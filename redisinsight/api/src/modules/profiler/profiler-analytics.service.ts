@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
-import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
+import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { RedisError, ReplyError } from 'src/models';
 

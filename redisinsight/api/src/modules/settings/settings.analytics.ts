@@ -7,7 +7,7 @@ import {
 } from 'lodash';
 import { AppAnalyticsEvents, TelemetryEvents } from 'src/constants';
 import { getRangeForNumber, getIsPipelineEnable, SCAN_THRESHOLD_BREAKPOINTS } from 'src/utils';
-import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
+import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { GetAppSettingsResponse } from 'src/modules/settings/dto/settings.dto';
 
 @Injectable()

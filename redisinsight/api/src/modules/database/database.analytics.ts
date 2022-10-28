@@ -1,9 +1,11 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
+import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { Database } from 'src/modules/database/models/database';
 import { TelemetryEvents } from 'src/constants';
-import { DatabaseInstanceResponse } from 'src/modules/instances/dto/database-instance.dto';
+import { RedisDatabaseInfoResponse } from 'src/modules/instances/dto/redis-info.dto';
+import { getRedisModulesSummary } from 'src/utils/redis-modules-summary';
+import { getRangeForNumber, TOTAL_KEYS_BREAKPOINTS } from 'src/utils';
 
 @Injectable()
 export class DatabaseAnalytics extends TelemetryBaseService {
@@ -28,12 +30,48 @@ export class DatabaseAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendConnectionFailedEvent(instance: DatabaseInstanceResponse | Database, exception: HttpException): void {
+  sendConnectionFailedEvent(instance: Database, exception: HttpException): void {
     this.sendFailedEvent(
       TelemetryEvents.RedisInstanceConnectionFailed,
       exception,
       { databaseId: instance.id },
     );
+  }
+
+  sendInstanceAddedEvent(
+    instance: Database,
+    additionalInfo: RedisDatabaseInfoResponse,
+  ): void {
+    try {
+      const modulesSummary = getRedisModulesSummary(instance.modules);
+      this.sendEvent(
+        TelemetryEvents.RedisInstanceAdded,
+        {
+          databaseId: instance.id,
+          connectionType: instance.connectionType,
+          provider: instance.provider,
+          useTLS: instance.tls ? 'enabled' : 'disabled',
+          verifyTLSCertificate: instance?.verifyServerCert
+            ? 'enabled'
+            : 'disabled',
+          useTLSAuthClients: instance?.clientCert
+            ? 'enabled'
+            : 'disabled',
+          useSNI: instance?.tlsServername
+            ? 'enabled'
+            : 'disabled',
+          version: additionalInfo.version,
+          numberOfKeys: additionalInfo.totalKeys,
+          numberOfKeysRange: getRangeForNumber(additionalInfo.totalKeys, TOTAL_KEYS_BREAKPOINTS),
+          totalMemory: additionalInfo.usedMemory,
+          numberedDatabases: additionalInfo.databases,
+          numberOfModules: instance.modules.length,
+          ...modulesSummary,
+        },
+      );
+    } catch (e) {
+      // continue regardless of error
+    }
   }
 
   sendInstanceAddFailedEvent(exception: HttpException): void {

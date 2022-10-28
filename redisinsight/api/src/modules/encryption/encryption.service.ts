@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
-import { PlainEncryptionStrategy } from 'src/modules/core/encryption/strategies/plain-encryption.strategy';
-import { EncryptionResult, EncryptionStrategy } from 'src/modules/core/encryption/models';
-import { IEncryptionStrategy } from 'src/modules/core/encryption/strategies/encryption-strategy.interface';
+import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
+import { PlainEncryptionStrategy } from 'src/modules/encryption/strategies/plain-encryption.strategy';
+import { EncryptionResult, EncryptionStrategy } from 'src/modules/encryption/models';
+import { IEncryptionStrategy } from 'src/modules/encryption/strategies/encryption-strategy.interface';
 import {
   UnsupportedEncryptionStrategyException,
-} from 'src/modules/core/encryption/exceptions';
+} from 'src/modules/encryption/exceptions';
 import { SettingsService } from 'src/modules/settings/settings.service';
 
 @Injectable()

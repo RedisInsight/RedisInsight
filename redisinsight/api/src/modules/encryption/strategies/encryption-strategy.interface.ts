@@ -1,4 +1,4 @@
-import { EncryptionResult } from 'src/modules/core/encryption/models';
+import { EncryptionResult } from 'src/modules/encryption/models';
 
 export interface IEncryptionStrategy {
   encrypt(data: string): Promise<EncryptionResult>;

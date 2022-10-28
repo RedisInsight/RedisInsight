@@ -2,13 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   createDecipheriv, createCipheriv, randomBytes, createHash,
 } from 'crypto';
-import { EncryptionResult, EncryptionStrategy } from 'src/modules/core/encryption/models';
-import { IEncryptionStrategy } from 'src/modules/core/encryption/strategies/encryption-strategy.interface';
+import { EncryptionResult, EncryptionStrategy } from 'src/modules/encryption/models';
+import { IEncryptionStrategy } from 'src/modules/encryption/strategies/encryption-strategy.interface';
 import {
   KeytarDecryptionErrorException,
   KeytarEncryptionErrorException,
   KeytarUnavailableException,
-} from 'src/modules/core/encryption/exceptions';
+} from 'src/modules/encryption/exceptions';
 import config from 'src/utils/config';
 
 const SERVICE = 'redisinsight';

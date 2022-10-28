@@ -31,7 +31,7 @@ import {
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
-import { EncryptionServiceErrorException } from 'src/modules/core/encryption/exceptions';
+import { EncryptionServiceErrorException } from 'src/modules/encryption/exceptions';
 import { AppTool } from 'src/models';
 import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
 import { getUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';

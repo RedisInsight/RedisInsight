@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Injectable()

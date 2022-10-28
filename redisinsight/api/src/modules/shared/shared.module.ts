@@ -8,7 +8,6 @@ import { StackDatabasesProvider } from 'src/modules/shared/services/instances-bu
 import { AutoDiscoveryService } from 'src/modules/shared/services/instances-business/auto-discovery.service';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { ConfigurationBusinessService } from './services/configuration-business/configuration-business.service';
-import { InstancesAnalyticsService } from './services/instances-business/instances-analytics.service';
 
 const SERVER_CONFIG = config.get('server');
 
@@ -24,7 +23,6 @@ const SERVER_CONFIG = config.get('server');
       provide: DatabasesProvider,
       useClass: SERVER_CONFIG.buildType === 'REDIS_STACK' ? StackDatabasesProvider : DatabasesProvider,
     },
-    InstancesAnalyticsService,
     ConfigurationBusinessService,
     RedisToolFactory,
     AutoDiscoveryService,

@@ -1,6 +1,6 @@
 import { isUndefined } from 'lodash';
 import { Logger } from '@nestjs/common';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 
 export class ModelEncryptor {
   private readonly logger = new Logger('ModelEncryptor');

@@ -12,10 +12,7 @@ import {
 import { ReplyError } from 'src/models';
 import { RedisErrorCodes, CertificatesErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { ConnectionOptionsDto } from 'src/modules/instances/dto/database-instance.dto';
-import { EncryptionServiceErrorException } from 'src/modules/core/encryption/exceptions';
-import { Database } from 'src/modules/database/models/database';
-import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
+import { EncryptionServiceErrorException } from 'src/modules/encryption/exceptions';
 
 export const isCertError = (error: ReplyError): boolean => {
   try {

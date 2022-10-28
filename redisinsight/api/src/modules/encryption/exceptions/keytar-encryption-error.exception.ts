@@ -1,6 +1,6 @@
 import {
   EncryptionServiceErrorException,
-} from 'src/modules/core/encryption/exceptions/encryption-service-error.exception';
+} from 'src/modules/encryption/exceptions/encryption-service-error.exception';
 
 export class KeytarEncryptionErrorException extends EncryptionServiceErrorException {
   constructor(message = 'Unable to encrypt data with Keytar') {

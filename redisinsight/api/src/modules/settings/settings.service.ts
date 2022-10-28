@@ -13,7 +13,7 @@ import {
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
 import config from 'src/utils/config';
 import { AgreementIsNotDefinedException } from 'src/constants';
-import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
+import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
 import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
 import { SettingsRepository } from 'src/modules/settings/repositories/settings.repository';
 import { classToClass } from 'src/utils';

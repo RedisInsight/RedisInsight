@@ -2,7 +2,6 @@ import { Module, Type } from '@nestjs/common';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { SettingsController } from 'src/modules/settings/settings.controller';
 import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
-import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
 import { SettingsRepository } from 'src/modules/settings/repositories/settings.repository';
 import { LocalSettingsRepository } from 'src/modules/settings/repositories/local.settings.repository';
 import { AgreementsRepository } from 'src/modules/settings/repositories/agreements.repository';
@@ -22,7 +21,6 @@ export class SettingsModule {
       providers: [
         SettingsService,
         SettingsAnalytics,
-        KeytarEncryptionStrategy,
         {
           provide: SettingsRepository,
           useClass: settingsRepository,

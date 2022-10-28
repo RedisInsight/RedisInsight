@@ -14,9 +14,6 @@ import { ConfigurationBusinessService } from 'src/modules/shared/services/config
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 
 @Module({
-  imports: [
-    CertificateModule,
-  ],
   controllers: [
     DatabaseController,
     DatabaseInfoController,

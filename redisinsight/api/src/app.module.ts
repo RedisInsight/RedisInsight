@@ -17,6 +17,7 @@ import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monito
 import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
 import { ServerModule } from 'src/modules/server/server.module';
 import { LocalDatabaseModule } from 'src/local-database.module';
+import { CoreModule } from 'src/core.module';
 import { SharedModule } from './modules/shared/shared.module';
 import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -34,6 +35,7 @@ const PATH_CONFIG = config.get('dir_path');
 @Module({
   imports: [
     LocalDatabaseModule,
+    CoreModule,
     ServerModule.register(),
     RouterModule.forRoutes(routes),
     SharedModule,

@@ -1,4 +1,5 @@
 import { Cluster, Command, Redis } from 'ioredis';
+import { uniq } from 'lodash';
 import {
   ConflictException,
   Injectable,
@@ -37,11 +38,11 @@ export class RedisearchService {
       const nodes = this.getShards(client);
 
       const res = await Promise.all(nodes.map(async (node) => node.sendCommand(
-        new Command('FT._LIST'),
+        new Command('FT._LIST', [], { replyEncoding: 'hex' }),
       )));
 
       return plainToClass(ListRedisearchIndexesResponse, {
-        indexes: [].concat(...res),
+        indexes: (uniq([].concat(...res))).map((idx) => Buffer.from(idx, 'hex')),
       });
     } catch (e) {
       this.logger.error('Failed to get redisearch indexes', e);
@@ -103,7 +104,15 @@ export class RedisearchService {
         replyEncoding: 'utf8',
       });
 
-      await Promise.all(nodes.map(async (node) => node.sendCommand(command)));
+      await Promise.all(nodes.map(async (node) => {
+        try {
+          await node.sendCommand(command);
+        } catch (e) {
+          if (!e.message.includes('MOVED')) {
+            throw e;
+          }
+        }
+      }));
 
       return undefined;
     } catch (e) {

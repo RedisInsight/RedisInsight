@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Type } from '@nestjs/common';
 import { CaCertificateController } from 'src/modules/certificate/ca-certificate.controller';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
@@ -8,28 +8,36 @@ import { ClientCertificateRepository } from 'src/modules/certificate/repositorie
 import { LocalClientCertificateRepository } from 'src/modules/certificate/repositories/local.client-certificate.repository';
 import { ClientCertificateController } from 'src/modules/certificate/client-certificate.controller';
 
-@Module({
-  controllers: [
-    CaCertificateController,
-    ClientCertificateController,
-  ],
-  providers: [
-    CaCertificateService,
-    ClientCertificateService,
-    {
-      provide: CaCertificateRepository,
-      useClass: LocalCaCertificateRepository,
-    },
-    {
-      provide: ClientCertificateRepository,
-      useClass: LocalClientCertificateRepository,
-    },
-  ],
-  exports: [
-    CaCertificateService,
-    ClientCertificateService,
-    CaCertificateRepository,
-    ClientCertificateRepository,
-  ],
-})
-export class CertificateModule {}
+@Module({})
+export class CertificateModule {
+  static register(
+    caCertificateRepository: Type<CaCertificateRepository> = LocalCaCertificateRepository,
+    clientCertificateRepository: Type<ClientCertificateRepository> = LocalClientCertificateRepository,
+  ) {
+    return {
+      module: CertificateModule,
+      controllers: [
+        CaCertificateController,
+        ClientCertificateController,
+      ],
+      providers: [
+        CaCertificateService,
+        ClientCertificateService,
+        {
+          provide: CaCertificateRepository,
+          useClass: caCertificateRepository,
+        },
+        {
+          provide: ClientCertificateRepository,
+          useClass: clientCertificateRepository,
+        },
+      ],
+      exports: [
+        CaCertificateService,
+        ClientCertificateService,
+        CaCertificateRepository,
+        ClientCertificateRepository,
+      ],
+    }
+  }
+}

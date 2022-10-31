@@ -12,7 +12,7 @@ import { RedisModule } from 'src/modules/redis/redis.module';
     EventEmitterModule.forRoot(),
     EncryptionModule.register(),
     SettingsModule.register(),
-    CertificateModule,
+    CertificateModule.register(),
     DatabaseModule.register(),
     RedisModule,
   ],

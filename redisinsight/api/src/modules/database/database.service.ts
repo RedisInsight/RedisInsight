@@ -14,9 +14,7 @@ import { DatabaseFactory } from 'src/modules/database/providers/database.factory
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
 import { AppRedisInstanceEvents } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import {
-  DeleteDatabaseInstanceResponse,
-} from 'src/modules/instances/dto/database-instance.dto';
+import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 
 @Injectable()
 export class DatabaseService {
@@ -162,7 +160,7 @@ export class DatabaseService {
    * Returns successfully deleted databases number
    * @param ids
    */
-  async bulkDelete(ids: string[]): Promise<DeleteDatabaseInstanceResponse> {
+  async bulkDelete(ids: string[]): Promise<DeleteDatabasesResponse> {
     this.logger.log(`Deleting many database: ${ids}`);
     try {
       return {

@@ -6,7 +6,7 @@ import {
   IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/core/services/redis/redis.service';
-import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
+import { Endpoint } from 'src/common/models';
 import { BrowserToolCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -89,7 +89,7 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
     clientOptions: IFindRedisClientInstanceByOptions,
     toolCommand: BrowserToolCommands,
     args: Array<string | number>,
-    exactNode: EndpointDto,
+    exactNode: Endpoint,
     replyEncoding: BufferEncoding = 'utf8',
   ): Promise<IExecCommandFromClusterNode> {
     const client = await this.getRedisClient(clientOptions);

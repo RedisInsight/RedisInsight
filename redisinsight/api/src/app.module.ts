@@ -19,7 +19,6 @@ import { ServerModule } from 'src/modules/server/server.module';
 import { LocalDatabaseModule } from 'src/local-database.module';
 import { CoreModule } from 'src/core.module';
 import { SharedModule } from './modules/shared/shared.module';
-import { InstancesModule } from './modules/instances/instances.module';
 import { BrowserModule } from './modules/browser/browser.module';
 import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterprise.module';
 import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.module';
@@ -39,7 +38,6 @@ const PATH_CONFIG = config.get('dir_path');
     ServerModule.register(),
     RouterModule.forRoutes(routes),
     SharedModule,
-    InstancesModule,
     RedisEnterpriseModule,
     RedisSentinelModule,
     BrowserModule,

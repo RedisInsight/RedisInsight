@@ -11,7 +11,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
+import { Endpoint } from 'src/common/models';
 import {
   CliOutputFormatterTypes,
 } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
@@ -27,7 +27,7 @@ export enum ClusterNodeRole {
   Slave = 'SLAVE',
 }
 
-class ClusterNode extends EndpointDto {
+class ClusterNode extends Endpoint {
   @ApiPropertyOptional({
     description: 'Cluster node slot.',
     type: Number,
@@ -72,7 +72,7 @@ export class SendCommandDto {
   outputFormat?: CliOutputFormatterTypes;
 }
 
-export class ClusterSingleNodeOptions extends EndpointDto {
+export class ClusterSingleNodeOptions extends Endpoint {
   @ApiProperty({
     description: 'Use redirects for OSS Cluster or not.',
     type: Boolean,

@@ -1,8 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  EndpointDto,
-  RedisModuleDto,
-} from 'src/modules/instances/dto/database-instance.dto';
 import { Expose, Type } from 'class-transformer';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
@@ -19,6 +15,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
+import { Endpoint } from 'src/common/models';
+import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 
 export class Database {
   @ApiProperty({
@@ -140,19 +138,19 @@ export class Database {
 
   @ApiPropertyOptional({
     description: 'OSS Cluster Nodes',
-    type: EndpointDto,
+    type: Endpoint,
     isArray: true,
   })
   @Expose()
-  nodes?: EndpointDto[];
+  nodes?: Endpoint[];
 
   @ApiPropertyOptional({
     description: 'Loaded Redis modules.',
-    type: RedisModuleDto,
+    type: AdditionalRedisModule,
     isArray: true,
   })
   @Expose()
-  modules?: RedisModuleDto[];
+  modules?: AdditionalRedisModule[];
 
   @ApiPropertyOptional({
     description: 'Use TLS to connect.',

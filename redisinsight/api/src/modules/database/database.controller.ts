@@ -10,13 +10,11 @@ import { DatabaseConnectionService } from 'src/modules/database/database-connect
 import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
 import { AppTool } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import {
-  DatabaseInstanceResponse,
-  DeleteDatabaseInstanceDto, DeleteDatabaseInstanceResponse,
-} from 'src/modules/instances/dto/database-instance.dto';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
 import { BuildType } from 'src/modules/server/models/server';
+import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dto';
+import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 
 @ApiTags('Database Instances')
 @Controller('databases')
@@ -73,7 +71,7 @@ export class DatabaseController {
       {
         status: 201,
         description: 'Created database instance',
-        type: DatabaseInstanceResponse,
+        type: Database,
       },
     ],
   })
@@ -100,7 +98,7 @@ export class DatabaseController {
       {
         status: 200,
         description: 'Updated database instance\' response',
-        type: DatabaseInstanceResponse,
+        type: Database,
       },
     ],
   })
@@ -137,14 +135,14 @@ export class DatabaseController {
       {
         status: 200,
         description: 'Delete many databases by ids response',
-        type: DeleteDatabaseInstanceDto,
+        type: DeleteDatabasesDto,
       },
     ],
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   async bulkDeleteDatabaseInstance(
-    @Body() dto: DeleteDatabaseInstanceDto,
-  ): Promise<DeleteDatabaseInstanceResponse> {
+    @Body() dto: DeleteDatabasesDto,
+  ): Promise<DeleteDatabasesResponse> {
     return await this.service.bulkDelete(dto.ids);
   }
 

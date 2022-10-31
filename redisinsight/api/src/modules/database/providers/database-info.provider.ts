@@ -12,11 +12,12 @@ import {
   convertStringsArrayToObject,
   parseClusterNodes,
 } from 'src/utils';
-import { EndpointDto, RedisModuleDto } from 'src/modules/instances/dto/database-instance.dto';
+import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { REDIS_MODULES_COMMANDS, SUPPORTED_REDIS_MODULES } from 'src/constants';
 import { isNil } from 'lodash';
 import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { Endpoint } from 'src/common/models';
 
 @Injectable()
 export class DatabaseInfoProvider {
@@ -68,7 +69,7 @@ export class DatabaseInfoProvider {
    * In case when "module" command is not available use "command info" approach
    * @param client
    */
-  public async determineDatabaseModules(client: any): Promise<RedisModuleDto[]> {
+  public async determineDatabaseModules(client: any): Promise<AdditionalRedisModule[]> {
     try {
       const reply = await client.call('module', ['list']);
       const modules = reply.map((module: any[]) => convertStringsArrayToObject(module));
@@ -89,8 +90,8 @@ export class DatabaseInfoProvider {
    * @param client
    * @private
    */
-  public async determineDatabaseModulesUsingInfo(client: any): Promise<RedisModuleDto[]> {
-    const modules: RedisModuleDto[] = [];
+  public async determineDatabaseModulesUsingInfo(client: any): Promise<AdditionalRedisModule[]> {
+    const modules: AdditionalRedisModule[] = [];
     await Promise.all(Array.from(REDIS_MODULES_COMMANDS, async ([moduleName, commands]) => {
       try {
         let commandsInfo = await client.call('command', ['info', ...commands]);
@@ -159,8 +160,8 @@ export class DatabaseInfoProvider {
   private async getMasterEndpoints(
     client: IORedis.Redis,
     masterName: string,
-  ): Promise<EndpointDto[]> {
-    let result: EndpointDto[];
+  ): Promise<Endpoint[]> {
+    let result: Endpoint[];
     try {
       const reply = await client.call('sentinel', [
         'sentinels',

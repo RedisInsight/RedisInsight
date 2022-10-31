@@ -1,5 +1,4 @@
 import { Routes } from 'nest-router';
-import { InstancesModule } from 'src/modules/instances/instances.module';
 import { BrowserModule } from 'src/modules/browser/browser.module';
 import { CliModule } from 'src/modules/cli/cli.module';
 import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
@@ -11,7 +10,6 @@ import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-a
 export const routes: Routes = [
   {
     path: '/databases',
-    module: InstancesModule,
     children: [
       {
         path: '/:dbInstance',

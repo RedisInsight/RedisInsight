@@ -42,4 +42,11 @@ import { DatabaseOverviewProvider } from 'src/modules/database/providers/databas
     DatabaseInfoProvider,
   ],
 })
-export class DatabaseModule {}
+export class DatabaseModule {
+  // todo: check if still needed
+  // configure(consumer: MiddlewareConsumer): any {
+  //   consumer
+  //     .apply(RedisConnectionMiddleware)
+  //     .forRoutes({ path: 'instance/:dbInstance/connect', method: RequestMethod.GET });
+  // }
+}

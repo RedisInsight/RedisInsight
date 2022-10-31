@@ -14,7 +14,6 @@ import {
   SUPPORTED_REDIS_MODULES,
 } from 'src/constants';
 import { RedisDatabaseInfoResponse } from 'src/modules/instances/dto/redis-info.dto';
-import { RedisModuleDto } from 'src/modules/instances/dto/database-instance.dto';
 
 @Injectable()
 export class ConfigurationBusinessService {

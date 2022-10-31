@@ -37,7 +37,8 @@ import {
 } from 'uiSrc/slices/browser/keys'
 import {
   appContextBrowser,
-  setBrowserKeyListScrollPosition
+  setBrowserKeyListScrollPosition,
+  setBrowserIsNotRendered,
 } from 'uiSrc/slices/app/context'
 import { GroupBadge } from 'uiSrc/components'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
@@ -72,13 +73,13 @@ const KeyList = forwardRef((props: Props, ref) => {
   const selectedKey = useSelector(selectedKeySelector)
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
   const { isSearched, isFiltered, viewType } = useSelector(keysSelector)
-  const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
+  const { keyList: { scrollTopPosition, isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
   const [firstDataLoaded, setFirstDataLoaded] = useState(!!keysState.keys.length)
 
   const itemsRef = useRef(keysState.keys)
-  const isNotRendered = useRef(true)
+  const isNotRendered = useRef(isNotRenderedContext)
   const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
 
   const dispatch = useDispatch()
@@ -107,6 +108,7 @@ const KeyList = forwardRef((props: Props, ref) => {
     }
 
     isNotRendered.current = false
+    dispatch(setBrowserIsNotRendered(isNotRendered.current))
     if (itemsRef.current.length === 0) {
       rerender({})
       return

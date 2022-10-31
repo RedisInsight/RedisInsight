@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
-import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
+import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { RedisEnterpriseService } from 'src/modules/redis-enterprise/redis-enterprise.service';
 import {
   AddRedisEnterpriseDatabaseResponse,

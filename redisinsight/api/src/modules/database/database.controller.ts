@@ -7,7 +7,7 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
-import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
+import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { AppTool } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';

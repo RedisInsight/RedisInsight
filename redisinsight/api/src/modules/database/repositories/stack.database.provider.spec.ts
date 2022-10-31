@@ -9,16 +9,16 @@ import {
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
-import { StackDatabasesProvider } from './stack.databases.provider';
+import { StackDatabasesRepository } from './stack.databases.provider';
 
 describe('StackDatabasesProvider', () => {
-  let service: StackDatabasesProvider;
+  let service: StackDatabasesRepository;
   let encryptionService: MockType<EncryptionService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        StackDatabasesProvider,
+        StackDatabasesRepository,
         {
           provide: EncryptionService,
           useFactory: mockEncryptionService,
@@ -30,7 +30,7 @@ describe('StackDatabasesProvider', () => {
       ],
     }).compile();
 
-    service = module.get(StackDatabasesProvider);
+    service = module.get(StackDatabasesRepository);
     encryptionService = module.get(EncryptionService);
 
     encryptionService.decrypt.mockReturnValue(mockDataToEncrypt);

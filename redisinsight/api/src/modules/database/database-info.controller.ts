@@ -3,7 +3,7 @@ import {
   Controller, Get, Param, UseInterceptors,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
-import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
+import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { AppTool } from 'src/models';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';

@@ -7,7 +7,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
+import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { ApiTags } from '@nestjs/swagger';
 import { RedisEnterpriseDatabase } from 'src/modules/redis-enterprise/dto/cluster.dto';
 import {

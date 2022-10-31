@@ -7,7 +7,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
+import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Database } from 'src/modules/database/models/database';

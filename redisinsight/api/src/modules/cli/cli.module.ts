@@ -1,6 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { RouterModule } from 'nest-router';
-import { SharedModule } from 'src/modules/shared/shared.module';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { RedisToolFactory } from 'src/modules/redis/redis-tool.factory';
@@ -16,7 +15,7 @@ import { CliAnalyticsService } from './services/cli-analytics/cli-analytics.serv
 const COMMANDS_CONFIGS = config.get('commands');
 
 @Module({
-  imports: [SharedModule, CommandsModule],
+  imports: [CommandsModule],
   controllers: [CliController],
   providers: [
     CliBusinessService,

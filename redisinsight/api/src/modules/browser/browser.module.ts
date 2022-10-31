@@ -1,6 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { RouterModule } from 'nest-router';
-import { SharedModule } from 'src/modules/shared/shared.module';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { StreamController } from 'src/modules/browser/controllers/stream/stream.controller';
 import { StreamService } from 'src/modules/browser/services/stream/stream.service';
@@ -26,7 +25,6 @@ import { BrowserToolService } from './services/browser-tool/browser-tool.service
 import { BrowserToolClusterService } from './services/browser-tool-cluster/browser-tool-cluster.service';
 
 @Module({
-  imports: [SharedModule],
   controllers: [
     KeysController,
     StringController,

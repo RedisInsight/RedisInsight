@@ -2,7 +2,6 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { WorkbenchController } from 'src/modules/workbench/workbench.controller';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { RouterModule } from 'nest-router';
-import { SharedModule } from 'src/modules/shared/shared.module';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
@@ -23,7 +22,6 @@ const COMMANDS_CONFIGS = config.get('commands');
 
 @Module({
   imports: [
-    SharedModule,
     CommandsModule,
   ],
   controllers: [

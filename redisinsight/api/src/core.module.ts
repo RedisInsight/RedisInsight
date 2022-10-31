@@ -13,7 +13,7 @@ import { RedisModule } from 'src/modules/redis/redis.module';
     EncryptionModule.register(),
     SettingsModule.register(),
     CertificateModule,
-    DatabaseModule,
+    DatabaseModule.register(),
     RedisModule,
   ],
   exports: [

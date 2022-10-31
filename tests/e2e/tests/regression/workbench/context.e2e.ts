@@ -30,7 +30,7 @@ test('Verify that user can see saved CLI state when navigates away to any other 
     await t.click(myRedisDatabasePage.browserButton);
     // Return back to Workbench and check CLI
     await t.click(myRedisDatabasePage.workbenchButton);
-    await t.expect(await cliPage.cliCollapseButton.exists).ok('CLI is not expanded');
+    await t.expect(cliPage.cliCollapseButton.exists).ok('CLI is not expanded');
 });
 // Update after resolving https://redislabs.atlassian.net/browse/RI-3299
 test('Verify that user can see saved CLI size when navigates away to any other page', async t => {
@@ -39,7 +39,7 @@ test('Verify that user can see saved CLI size when navigates away to any other p
     await t.click(cliPage.cliExpandButton);
     const cliAreaHeight = await cliPage.cliArea.clientHeight;
     const cliAreaHeightEnd = cliAreaHeight + 150;
-    const cliResizeButton = await cliPage.cliResizeButton;
+    const cliResizeButton = cliPage.cliResizeButton;
     await t.hover(cliResizeButton);
     // Resize CLI 50px up and navigate to the My Redis databases page
     await t.drag(cliResizeButton, 0, -offsetY, { speed: 0.01 });
@@ -56,12 +56,12 @@ test('Verify that user can see all the information removed when reloads the page
     await t.click(myRedisDatabasePage.browserButton);
     // Open Workbench page and verify context
     await t.click(myRedisDatabasePage.workbenchButton);
-    await t.expect(await cliPage.cliCollapseButton.exists).ok('CLI is not expanded');
-    await t.expect(await workbenchPage.queryInputScriptArea.textContent).eql(command, 'Input in Editor is not saved');
+    await t.expect(cliPage.cliCollapseButton.exists).ok('CLI is not expanded');
+    await t.expect(workbenchPage.queryInputScriptArea.textContent).eql(command, 'Input in Editor is not saved');
     // Reload the window and chek context
     await common.reloadPage();
-    await t.expect(await cliPage.cliCollapseButton.exists).notOk('CLI is not collapsed');
-    await t.expect(await workbenchPage.queryInputScriptArea.textContent).eql('', 'Input in Editor is not removed');
+    await t.expect(cliPage.cliCollapseButton.exists).notOk('CLI is not collapsed');
+    await t.expect(workbenchPage.queryInputScriptArea.textContent).eql('', 'Input in Editor is not removed');
 });
 test('Verify that user can see saved state of the Enablement area when navigates back to the Workbench from other page', async t => {
     // Collapse the Enablement area and open Settings

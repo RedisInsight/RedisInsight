@@ -31,7 +31,8 @@ import reducer, {
   appContextBrowserTree,
   setBrowserTreeSelectedLeaf,
   updateBrowserTreeSelectedLeaf,
-  setBrowserTreeDelimiter
+  setBrowserTreeDelimiter,
+  setBrowserIsNotRendered,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -469,6 +470,30 @@ describe('slices', () => {
       })
 
       expect(appContextBrowserTree(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setBrowserIsNotRendered', () => {
+    it('should properly set browser is not rendered value', () => {
+      // Arrange
+      const isNotRendered = false
+      const state = {
+        ...initialState.browser,
+        keyList: {
+          ...initialState.browser.keyList,
+          isNotRendered
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setBrowserIsNotRendered(isNotRendered))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowser(rootState)).toEqual(state)
     })
   })
 

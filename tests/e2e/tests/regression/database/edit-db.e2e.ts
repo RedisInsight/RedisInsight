@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabaseApi, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi, clickOnEditDatabaseByName, deleteDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
@@ -28,7 +28,7 @@ test
     })('Verify that user can edit DB alias of Standalone DB', async t => {
         await t.click(myRedisDatabasePage.myRedisDBButton);
         // Edit alias of added database
-        await myRedisDatabasePage.clickOnEditDBByName(database.databaseName);
+        await clickOnEditDatabaseByName(database.databaseName);
         await t.click(myRedisDatabasePage.editAliasButton);
         await t.typeText(myRedisDatabasePage.aliasInput, newDatabaseName, { replace: true });
         await t.click(myRedisDatabasePage.applyButton);

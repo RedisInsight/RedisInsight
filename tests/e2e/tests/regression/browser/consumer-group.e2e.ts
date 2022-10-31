@@ -145,7 +145,7 @@ test('Verify that user can see error message if enter invalid last delivered ID'
     for(const id of invalidEntryIds){
         const idBefore = await browserPage.streamGroupId.textContent;
         await t.click(browserPage.editStreamLastIdButton);
-        await t.typeText(browserPage.lastIdInput, id, { replace: true });
+        await t.typeText(browserPage.lastIdInput, id, { replace: true, paste: true });
         await t.click(browserPage.saveButton);
         await t.expect(browserPage.streamGroupId.textContent).eql(idBefore, 'The last delivered ID is not modified');
         await t.expect(browserPage.entryIdError.textContent).eql(errorMessage, 'The error message not displayed');

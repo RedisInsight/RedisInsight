@@ -33,13 +33,13 @@ test('Verify that user can open the "read more" about the command by clicking on
     await t.typeText(workbenchPage.queryInput, command, { replace: true });
     // Open the read more by clicking on the "ctrl+space" and check
     await t.pressKey('ctrl+space');
-    await t.expect(await workbenchPage.monacoCommandDetails.exists).ok('The "read more" about the command is not opened');
+    await t.expect(workbenchPage.monacoCommandDetails.exists).ok('The "read more" about the command is not opened');
     for(const detail of commandDetails) {
-        await t.expect(await workbenchPage.monacoCommandDetails.textContent).contains(detail, `The ${detail} command detail is not displayed`);
+        await t.expect(workbenchPage.monacoCommandDetails.textContent).contains(detail, `The ${detail} command detail is not displayed`);
     }
     // Close the command details
     await t.pressKey('ctrl+space');
-    await t.expect(await workbenchPage.monacoCommandDetails.exists).notOk('The "read more" about the command is not closed');
+    await t.expect(workbenchPage.monacoCommandDetails.exists).notOk('The "read more" about the command is not closed');
 });
 test('Verify that user can see static list of arguments is displayed when he enters the command in Editor in Workbench', async t => {
     const command = 'AI.SCRIPTEXECUTE';
@@ -66,7 +66,7 @@ test('Verify that user can see the static list of arguments when he uses “Ctrl
     const command = 'JSON.ARRAPPEND';
     await t.typeText(workbenchPage.queryInput, command, { replace: true });
     // Verify that the list with auto-suggestions is displayed
-    await t.expect(await workbenchPage.monacoSuggestion.exists).ok('Auto-suggestions are not displayed');
+    await t.expect(workbenchPage.monacoSuggestion.exists).ok('Auto-suggestions are not displayed');
     // Select the command from suggestion list
     await t.pressKey('enter');
     // Check that the command is displayed in Editing area after selecting

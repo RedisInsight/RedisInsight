@@ -48,7 +48,7 @@ test
         await t.click(cliPage.cliExpandButton);
         // Add key from CLI
         for ([keyName, value] of pairsToSet) {
-            await t.typeText(cliPage.cliCommandInput, `SET ${keyName} ${value}`);
+            await t.typeText(cliPage.cliCommandInput, `SET ${keyName} ${value}`, { replace: true, paste: true});
             await t.pressKey('enter');
         }
         // Check that user is redirected
@@ -59,13 +59,13 @@ test
         //Open CLI
         await t.click(cliPage.cliExpandButton);
 
-        await t.typeText(cliPage.cliCommandInput, 'SET key');
+        await t.typeText(cliPage.cliCommandInput, 'SET key', { replace: true, paste: true});
         await t.pressKey('enter');
         // Check error
         const errWrongArgs = cliPage.cliOutputResponseFail.withText('ERR wrong number of arguments for \'set\' command');
         await t.expect(errWrongArgs.exists).ok('Error with wrong number of arguments was not shown');
 
-        await t.typeText(cliPage.cliCommandInput, 'lorem');
+        await t.typeText(cliPage.cliCommandInput, 'lorem', { replace: true, paste: true});
         await t.pressKey('enter');
         // Check error
         const errWrongCmnd = cliPage.cliOutputResponseFail.withText('ERR unknown command');
@@ -77,7 +77,7 @@ test
         const commandStartsWith = 'I';
         // Open CLI
         await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, commandStartsWith);
+        await t.typeText(cliPage.cliCommandInput, commandStartsWith, { replace: true, paste: true});
         // Press tab while we won't find 'INFO' command
         // Avoid endless cycle
         let operationsCount = 0;
@@ -108,13 +108,13 @@ test
 
         // Open CLI
         await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, command, { replace: true });
+        await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true});
         // Verify that user can type AI command in CLI and see agruments in hints from RedisAI commands.json
         await t.expect(cliPage.cliCommandAutocomplete.textContent).eql(commandHint, `The hints with arguments for command ${command} not shown`);
 
         // Enter commands and check hints with arguments
         for(const command of commands) {
-            await t.typeText(cliPage.cliCommandInput, command, { replace: true });
+            await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true});
             await t.expect(cliPage.cliCommandAutocomplete.textContent).eql(commandHints[commands.indexOf(command)], `The hints with arguments for command ${command} not shown`);
         }
     });

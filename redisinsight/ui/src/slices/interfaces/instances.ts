@@ -144,12 +144,14 @@ export enum RedisCustomModulesName {
   IpTables = 'iptables-input-filter',
 }
 
-const RediSearchModulesText = [
+export const REDISEARCH_MODULES: string[] = [
   RedisDefaultModules.Search,
   RedisDefaultModules.SearchLight,
   RedisDefaultModules.FT,
-  RedisDefaultModules.FTL
-].reduce((prev, next) => ({ ...prev, [next]: 'RediSearch' }), {})
+  RedisDefaultModules.FTL,
+]
+
+const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'RediSearch' }), {})
 
 // Enums don't allow to use dynamic key
 export const DATABASE_LIST_MODULES_TEXT = Object.freeze({

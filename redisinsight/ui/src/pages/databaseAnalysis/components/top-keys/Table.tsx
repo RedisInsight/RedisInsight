@@ -22,9 +22,9 @@ import {
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { GroupBadge } from 'uiSrc/components'
-import { setFilter, setSearchMatch, resetKeysData, fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
+import { setFilter, setSearchMatch, resetKeysData, fetchKeys, keysSelector, changeSearchMode } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { setBrowserKeyListDataLoaded, setBrowserSelectedKey, resetBrowserTree, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
 import { Pages } from 'uiSrc/constants'
 import { Key } from 'apiSrc/modules/database-analysis/models/key'
@@ -50,11 +50,13 @@ const Table = (props: Props) => {
   const { viewType } = useSelector(keysSelector)
 
   const handleRedirect = (name: string) => {
+    dispatch(changeSearchMode(SearchMode.Pattern))
     dispatch(setBrowserTreeDelimiter(delimiter))
     dispatch(setFilter(null))
-    dispatch(setSearchMatch(name))
+    dispatch(setSearchMatch(name, SearchMode.Pattern))
     dispatch(resetKeysData())
     dispatch(fetchKeys(
+      SearchMode.Pattern,
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       () => dispatch(setBrowserKeyListDataLoaded(true)),

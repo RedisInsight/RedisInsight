@@ -37,8 +37,9 @@ import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
 import { fetchStreamEntries, setStreamInitialState } from './stream'
+import { fetchMoreRedisearchKeysAction, fetchRedisearchKeysAction, setLastBatchRedisearchKeys, setQueryRedisearch } from './redisearch'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
-import { KeysStore, KeyViewType } from '../interfaces/keys'
+import { KeysStore, KeyViewType, SearchMode } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'
 import { StreamViewType } from '../interfaces/stream'
 import { RedisResponseBuffer, RedisString } from '../interfaces'
@@ -53,6 +54,7 @@ export const initialState: KeysStore = {
   isSearched: false,
   isFiltered: false,
   isBrowserFullScreen: false,
+  searchMode: SearchMode.Pattern,
   viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
   data: {
     total: 0,
@@ -135,7 +137,7 @@ const keysSlice = createSlice({
       state.error = payload
     },
 
-    setLastBatchKeys: (state, { payload }) => {
+    setLastBatchPatternKeys: (state, { payload }) => {
       const newKeys = state.data.keys
       newKeys.splice(-payload.length, payload.length, ...payload)
       state.data.keys = newKeys
@@ -274,7 +276,7 @@ const keysSlice = createSlice({
       }
     },
 
-    setSearchMatch: (state, { payload }) => {
+    setPatternSearchMatch: (state, { payload }) => {
       state.search = payload
     },
     setFilter: (state, { payload }) => {
@@ -283,6 +285,10 @@ const keysSlice = createSlice({
 
     changeKeyViewType: (state, { payload }:{ payload: KeyViewType }) => {
       state.viewType = payload
+    },
+
+    changeSearchMode: (state, { payload }:{ payload: SearchMode }) => {
+      state.searchMode = payload
     },
 
     resetAddKey: (state) => {
@@ -338,7 +344,7 @@ export const {
   defaultSelectedKeyAction,
   defaultSelectedKeyActionSuccess,
   defaultSelectedKeyActionFailure,
-  setLastBatchKeys,
+  setLastBatchPatternKeys,
   addKey,
   addKeySuccess,
   addKeyFailure,
@@ -349,7 +355,7 @@ export const {
   deleteKeyFromList,
   editKeyFromList,
   updateSelectedKeyLength,
-  setSearchMatch,
+  setPatternSearchMatch,
   setFilter,
   changeKeyViewType,
   resetKeyInfo,
@@ -357,6 +363,7 @@ export const {
   resetKeysData,
   toggleBrowserFullScreen,
   setViewFormat,
+  changeSearchMode,
 } = keysSlice.actions
 
 // A selector
@@ -389,7 +396,7 @@ export function setInitialStateByType(type: string) {
   }
 }
 // Asynchronous thunk action
-export function fetchKeys(cursor: string, count: number, onSuccess?: () => void, onFailed?: () => void) {
+export function fetchPatternKeysAction(cursor: string, count: number, onSuccess?: () => void, onFailed?: () => void) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadKeys())
 
@@ -476,7 +483,7 @@ export function fetchKeys(cursor: string, count: number, onSuccess?: () => void,
 }
 
 // Asynchronous thunk action
-export function fetchMoreKeys(oldKeys: IKeyPropTypes[] = [], cursor: string, count: number) {
+export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor: string, count: number) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadMoreKeys())
 
@@ -872,6 +879,7 @@ export function editKeyTTL(key: string, ttl: number) {
 // Asynchronous thunk action
 export function fetchKeysMetadata(
   keys: RedisString[],
+  signal: AbortSignal,
   onSuccessAction?: (data: GetKeyInfoResponse[]) => void,
   onFailAction?: () => void
 ) {
@@ -884,7 +892,7 @@ export function fetchKeysMetadata(
           ApiEndpoints.KEYS_METADATA
         ),
         { keys },
-        { params: { encoding: state.app.info.encoding } }
+        { params: { encoding: state.app.info.encoding }, signal }
       )
 
       onSuccessAction?.(data)
@@ -893,4 +901,41 @@ export function fetchKeysMetadata(
       console.error(error)
     }
   }
+}
+
+// Asynchronous thunk action
+export function fetchKeys(
+  searchMode: SearchMode,
+  cursor: string,
+  count: number,
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return searchMode === SearchMode.Pattern
+    ? fetchPatternKeysAction(cursor, count, onSuccess, onFailed,)
+    : fetchRedisearchKeysAction(cursor, count, onSuccess, onFailed,)
+}
+
+// Asynchronous thunk action
+export function fetchMoreKeys(
+  searchMode: SearchMode,
+  oldKeys: IKeyPropTypes[] = [],
+  cursor: string,
+  count: number,
+) {
+  return searchMode === SearchMode.Pattern
+    ? fetchMorePatternKeysAction(oldKeys, cursor, count)
+    : fetchMoreRedisearchKeysAction(oldKeys, cursor, count)
+}
+
+export function setLastBatchKeys(keys: GetKeyInfoResponse[], searchMode: SearchMode) {
+  return searchMode === SearchMode.Pattern
+    ? setLastBatchPatternKeys(keys)
+    : setLastBatchRedisearchKeys(keys)
+}
+
+export function setSearchMatch(query: string, searchMode: SearchMode) {
+  return searchMode === SearchMode.Pattern
+    ? setPatternSearchMatch(query)
+    : setQueryRedisearch(query)
 }

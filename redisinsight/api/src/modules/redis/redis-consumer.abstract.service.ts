@@ -9,9 +9,9 @@ import {
 import {
   IFindRedisClientInstanceByOptions,
   RedisService,
-} from 'src/modules/core/services/redis/redis.service';
-import { ClientNotFoundErrorException } from 'src/modules/shared/exceptions/client-not-found-error.exception';
-import { IRedisToolOptions, DEFAULT_REDIS_TOOL_OPTIONS } from 'src/modules/shared/services/base/redis-tool-options';
+} from 'src/modules/redis/redis.service';
+import { ClientNotFoundErrorException } from 'src/modules/redis/exceptions/client-not-found-error.exception';
+import { IRedisToolOptions, DEFAULT_REDIS_TOOL_OPTIONS } from 'src/modules/redis/redis-tool-options';
 import { DatabaseService } from 'src/modules/database/database.service';
 
 export abstract class RedisConsumerAbstractService implements IRedisConsumer {

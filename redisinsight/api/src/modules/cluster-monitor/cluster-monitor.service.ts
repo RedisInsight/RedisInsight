@@ -4,7 +4,7 @@ import {
   BadRequestException, HttpException, Injectable, Logger,
 } from '@nestjs/common';
 import { catchAclError, convertRedisInfoReplyToObject } from 'src/utils';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
 import { ClusterNodesInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-nodes.info.strategy';
 import { ClusterShardsInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-shards.info.strategy';

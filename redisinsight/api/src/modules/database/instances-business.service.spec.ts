@@ -31,7 +31,7 @@ import {
   DatabaseInstanceResponse,
   RenameDatabaseInstanceResponse,
 } from 'src/modules/instances/dto/database-instance.dto';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import {
   CaCertBusinessService,
 } from 'src/modules/core/services/certificates/ca-cert-business/ca-cert-business.service';
@@ -46,7 +46,7 @@ import {
 } from 'src/modules/instances/dto/redis-sentinel.dto';
 import { AddRedisDatabaseStatus } from 'src/modules/instances/dto/redis-enterprise-cluster.dto';
 import { InstancesAnalyticsService } from 'src/modules/shared/services/instances-business/instances-analytics.service';
-import { mockRedisClientInstance } from 'src/modules/shared/services/base/redis-consumer.abstract.service.spec';
+import { mockRedisClientInstance } from 'src/modules/redis/redis-consumer.abstract.service.spec';
 import {
   mockRedisGeneralInfo,
 } from 'src/modules/shared/services/configuration-business/configuration-business.service.spec';

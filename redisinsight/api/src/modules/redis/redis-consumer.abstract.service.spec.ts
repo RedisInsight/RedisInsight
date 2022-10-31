@@ -9,13 +9,13 @@ import {
   IFindRedisClientInstanceByOptions,
   IRedisClientInstance,
   RedisService,
-} from 'src/modules/core/services/redis/redis.service';
+} from 'src/modules/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
-import { RedisConsumerAbstractService } from 'src/modules/shared/services/base/redis-consumer.abstract.service';
-import { ClientNotFoundErrorException } from 'src/modules/shared/exceptions/client-not-found-error.exception';
+import { RedisConsumerAbstractService } from 'src/modules/redis/redis-consumer.abstract.service';
+import { ClientNotFoundErrorException } from 'src/modules/redis/exceptions/client-not-found-error.exception';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,

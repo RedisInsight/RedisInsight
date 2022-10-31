@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/create.sentinel.database.response';
 import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { AppTool } from 'src/models';
 import { Database } from 'src/modules/database/models/database';
 import { ActionStatus } from 'src/common/models';

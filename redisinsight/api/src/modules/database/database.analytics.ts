@@ -3,9 +3,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { Database } from 'src/modules/database/models/database';
 import { TelemetryEvents } from 'src/constants';
-import { RedisDatabaseInfoResponse } from 'src/modules/instances/dto/redis-info.dto';
 import { getRedisModulesSummary } from 'src/utils/redis-modules-summary';
 import { getRangeForNumber, TOTAL_KEYS_BREAKPOINTS } from 'src/utils';
+import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 
 @Injectable()
 export class DatabaseAnalytics extends TelemetryBaseService {

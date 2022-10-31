@@ -16,7 +16,7 @@ import {
 } from 'src/__mocks__';
 import { AppTool, ReplyError } from 'src/models';
 import { convertEntityToDto } from 'src/modules/shared/utils/database-entity-converter';
-import { mockRedisClientInstance } from 'src/modules/shared/services/base/redis-consumer.abstract.service.spec';
+import { mockRedisClientInstance } from 'src/modules/redis/redis-consumer.abstract.service.spec';
 import { IFindRedisClientInstanceByOptions, RedisService } from './redis.service';
 import { CaCertBusinessService } from '../certificates/ca-cert-business/ca-cert-business.service';
 import { ClientCertBusinessService } from '../certificates/client-cert-business/client-cert-business.service';

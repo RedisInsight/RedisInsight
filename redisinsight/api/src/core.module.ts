@@ -4,6 +4,7 @@ import { SettingsModule } from 'src/modules/settings/settings.module';
 import { DatabaseModule } from 'src/modules/database/database.module';
 import { CertificateModule } from 'src/modules/certificate/certificate.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RedisModule } from 'src/modules/redis/redis.module';
 
 @Global()
 @Module({
@@ -13,12 +14,14 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     SettingsModule.register(),
     CertificateModule,
     DatabaseModule,
+    RedisModule,
   ],
   exports: [
     EncryptionModule,
     SettingsModule,
     CertificateModule,
     DatabaseModule,
+    RedisModule,
   ],
 })
 export class CoreModule {}

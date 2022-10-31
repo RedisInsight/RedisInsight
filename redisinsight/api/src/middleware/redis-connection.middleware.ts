@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseService } from 'src/modules/database/database.service';
 
 @Injectable()

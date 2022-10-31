@@ -17,7 +17,7 @@ import {
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   GetKeyInfoResponse,
   GetKeysDto,

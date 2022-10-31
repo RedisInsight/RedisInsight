@@ -8,7 +8,7 @@ import { DatabaseRepository } from 'src/modules/database/repositories/database.r
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { catchRedisConnectionError, classToClass, getRedisConnectionException } from 'src/utils';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';

@@ -7,7 +7,7 @@ import { unescapeGlob, convertBulkStringsToObject } from 'src/utils';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import {
   GetKeyInfoResponse,

@@ -5,7 +5,7 @@ import {
   MockType,
 } from 'src/__mocks__';
 import { BulkActionsProvider } from 'src/modules/bulk-actions/providers/bulk-actions.provider';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { BulkActionType } from 'src/modules/bulk-actions/contants';

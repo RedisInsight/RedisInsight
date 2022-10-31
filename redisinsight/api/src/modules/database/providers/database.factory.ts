@@ -5,7 +5,7 @@ import { Database } from 'src/modules/database/models/database';
 import * as IORedis from 'ioredis';
 import { AppTool } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { RedisErrorCodes } from 'src/constants';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';

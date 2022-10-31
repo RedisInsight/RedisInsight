@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuidv4 } from 'uuid';
 import { when } from 'jest-when';
 import { mockStandaloneDatabaseEntity, mockWorkbenchAnalyticsService } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
@@ -208,7 +208,7 @@ describe('WorkbenchService', () => {
       when(workbenchCommandsExecutor.sendCommand)
         .calledWith(mockClientOptions, {...mockCreateCommandExecutionDtoWithGroupMode, command: mockCommands[0]})
         .mockResolvedValue([mockSendCommandResultSuccess]);
-      
+
       when(workbenchCommandsExecutor.sendCommand)
         .calledWith(mockClientOptions, {...mockCreateCommandExecutionDtoWithGroupMode, command: mockCommands[1]})
         .mockResolvedValue([mockSendCommandResultFail]);

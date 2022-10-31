@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import {
   ClusterNodeRole,
@@ -33,9 +33,9 @@ import {
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
 import { EncryptionServiceErrorException } from 'src/modules/encryption/exceptions';
 import { AppTool } from 'src/models';
-import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { getUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
-import { ClientNotFoundErrorException } from 'src/modules/shared/exceptions/client-not-found-error.exception';
+import { ClientNotFoundErrorException } from 'src/modules/redis/exceptions/client-not-found-error.exception';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';

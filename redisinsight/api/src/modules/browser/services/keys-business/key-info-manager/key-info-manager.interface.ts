@@ -1,4 +1,4 @@
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { GetKeyInfoResponse } from 'src/modules/browser/dto';
 import { RedisString } from 'src/common/constants';
 

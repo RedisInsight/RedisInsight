@@ -3,7 +3,7 @@ import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscribeDto } from 'src/modules/pub-sub/dto';
 import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription.provider';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { PublishResponse } from 'src/modules/pub-sub/dto/publish.response';
 import { PublishDto } from 'src/modules/pub-sub/dto/publish.dto';
 import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';

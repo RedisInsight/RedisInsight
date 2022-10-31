@@ -1,4 +1,4 @@
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { ReplyError } from 'src/models/redis-client';
 import { Cluster, Redis } from 'ioredis';
 

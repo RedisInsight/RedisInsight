@@ -1,5 +1,5 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { AppTool } from 'src/models';
 import { withTimeout } from 'src/utils/promise-with-timeout';
 import ERROR_MESSAGES from 'src/constants/error-messages';

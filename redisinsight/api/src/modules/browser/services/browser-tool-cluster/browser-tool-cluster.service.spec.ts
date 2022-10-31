@@ -5,7 +5,7 @@ import { mockStandaloneDatabaseEntity } from 'src/__mocks__';
 import {
   IFindRedisClientInstanceByOptions,
   RedisService,
-} from 'src/modules/core/services/redis/redis.service';
+} from 'src/modules/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import {
   BrowserToolCommands,

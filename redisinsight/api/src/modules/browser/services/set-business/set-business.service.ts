@@ -11,7 +11,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
 import { catchAclError, catchTransactionError, unescapeGlob } from 'src/utils';
 import { ReplyError } from 'src/models';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   BrowserToolKeysCommands,
   BrowserToolSetCommands,

@@ -4,7 +4,7 @@ import * as IORedis from 'ioredis';
 import { generateRedisConnectionName, getRedisConnectionException } from 'src/utils';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { ClientMetadata } from 'src/modules/redis/models/client-metadata';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';

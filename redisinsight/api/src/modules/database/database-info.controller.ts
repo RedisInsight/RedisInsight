@@ -5,9 +5,9 @@ import {
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { TimeoutInterceptor } from 'src/modules/core/interceptors/timeout.interceptor';
 import { AppTool } from 'src/models';
-import { RedisDatabaseInfoResponse } from 'src/modules/instances/dto/redis-info.dto';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
+import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 
 @ApiTags('Database Instances')
 @Controller('databases')

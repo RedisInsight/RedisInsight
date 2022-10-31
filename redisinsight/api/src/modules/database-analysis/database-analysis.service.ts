@@ -1,5 +1,5 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { catchAclError } from 'src/utils';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { plainToClass } from 'class-transformer';

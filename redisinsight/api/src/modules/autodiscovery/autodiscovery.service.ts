@@ -1,8 +1,7 @@
 import {
   Injectable, Logger, OnModuleInit,
 } from '@nestjs/common';
-import { DatabasesProvider } from 'src/modules/shared/services/instances-business/databases.provider';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { AppTool } from 'src/models';
 import { getAvailableEndpoints, getRunningProcesses, getTCPEndpoints } from 'src/utils/auto-discovery-helper';
 import { convertRedisInfoReplyToObject } from 'src/utils';
@@ -14,12 +13,11 @@ import { DatabaseService } from 'src/modules/database/database.service';
 const SERVER_CONFIG = config.get('server');
 
 @Injectable()
-export class AutoDiscoveryService implements OnModuleInit {
+export class AutodiscoveryService implements OnModuleInit {
   private logger = new Logger('AutoDiscoveryService');
 
   constructor(
     private settingsService: SettingsService,
-    private databaseProvider: DatabasesProvider,
     private redisService: RedisService,
     private databaseService: DatabaseService,
   ) {}
@@ -36,7 +34,7 @@ export class AutoDiscoveryService implements OnModuleInit {
 
       // additional check for existing databases
       // We should not start auto discover if any database already exists
-      if ((await this.databaseProvider.getAll()).length) {
+      if ((await this.databaseService.list()).length) {
         return;
       }
 

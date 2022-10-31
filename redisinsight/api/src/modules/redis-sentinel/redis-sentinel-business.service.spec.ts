@@ -3,7 +3,7 @@ import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import * as Redis from 'ioredis-mock';
 import { ReplyError } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { ConnectionOptionsDto } from 'src/modules/instances/dto/database-instance.dto';
 import {
   mockAutodiscoveryAnalyticsService,

@@ -20,7 +20,7 @@ import {
   UpdateKeyTtlDto,
 } from 'src/modules/browser/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolClusterService,

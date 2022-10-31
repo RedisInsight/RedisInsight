@@ -1,10 +1,10 @@
 import { AppTool } from 'src/models';
-import { RedisDatabaseInfoResponse } from 'src/modules/instances/dto/redis-info.dto';
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
-import { ConfigurationBusinessService } from 'src/modules/shared/services/configuration-business/configuration-business.service';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
+import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 
 @Injectable()
 export class DatabaseInfoService {
@@ -12,8 +12,8 @@ export class DatabaseInfoService {
 
   constructor(
     private readonly databaseConnectionService: DatabaseConnectionService,
-    private readonly redisConfBusinessService: ConfigurationBusinessService,
     private readonly databaseOverviewProvider: DatabaseOverviewProvider,
+    private readonly databaseInfoProvider: DatabaseInfoProvider,
   ) {}
 
   /**
@@ -32,7 +32,7 @@ export class DatabaseInfoService {
       namespace,
     });
 
-    return this.redisConfBusinessService.getRedisGeneralInfo(client);
+    return this.databaseInfoProvider.getRedisGeneralInfo(client);
   }
 
   /**

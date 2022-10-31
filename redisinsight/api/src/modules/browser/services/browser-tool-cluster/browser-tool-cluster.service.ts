@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import IORedis, { NodeRole, Redis } from 'ioredis';
 import { AppTool } from 'src/models';
-import { RedisConsumerAbstractService } from 'src/modules/shared/services/base/redis-consumer.abstract.service';
+import { RedisConsumerAbstractService } from 'src/modules/redis/redis-consumer.abstract.service';
 import {
   IFindRedisClientInstanceByOptions,
   RedisService,
-} from 'src/modules/core/services/redis/redis.service';
+} from 'src/modules/redis/redis.service';
 import { Endpoint } from 'src/common/models';
 import { BrowserToolCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';

@@ -3,7 +3,7 @@ import { concat } from 'lodash';
 import {
   BadRequestException, HttpException, Injectable, Logger,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { SlowLog, SlowLogConfig } from 'src/modules/slow-log/models';
 import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constants/commands';

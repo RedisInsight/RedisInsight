@@ -10,8 +10,8 @@ import {
 } from 'src/__mocks__';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 // import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
-import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
-import { mockRedisClientInstance } from 'src/modules/shared/services/base/redis-consumer.abstract.service.spec';
+import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/redis/redis.service';
+import { mockRedisClientInstance } from 'src/modules/redis/redis-consumer.abstract.service.spec';
 // import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';

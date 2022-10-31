@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as Redis from 'ioredis-mock';
 import { mockStandaloneDatabaseEntity } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { InternalServerErrorException } from '@nestjs/common';
-import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,

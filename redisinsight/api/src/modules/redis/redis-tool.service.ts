@@ -7,8 +7,8 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   IFindRedisClientInstanceByOptions,
   RedisService,
-} from 'src/modules/core/services/redis/redis.service';
-import { RedisConsumerAbstractService } from 'src/modules/shared/services/base/redis-consumer.abstract.service';
+} from 'src/modules/redis/redis.service';
+import { RedisConsumerAbstractService } from 'src/modules/redis/redis-consumer.abstract.service';
 import {
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,

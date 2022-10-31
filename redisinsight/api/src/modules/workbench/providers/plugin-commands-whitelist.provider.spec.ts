@@ -6,7 +6,7 @@ import {
   mockWhitelistCommandsResponse,
 } from 'src/__mocks__';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
-import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 
 const mockClient = Object.create(Redis.prototype);
 

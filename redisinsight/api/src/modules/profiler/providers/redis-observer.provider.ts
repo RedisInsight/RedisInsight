@@ -5,7 +5,7 @@ import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { AppTool } from 'src/models';
 import { withTimeout } from 'src/utils/promise-with-timeout';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
 

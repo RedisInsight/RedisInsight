@@ -6,8 +6,8 @@ import {
 } from 'src/__mocks__';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
-import { mockRedisClientInstance } from 'src/modules/shared/services/base/redis-consumer.abstract.service.spec';
+import { RedisService } from 'src/modules/redis/redis.service';
+import { mockRedisClientInstance } from 'src/modules/redis/redis-consumer.abstract.service.spec';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
 
 const nodeClient = Object.create(Redis.prototype);

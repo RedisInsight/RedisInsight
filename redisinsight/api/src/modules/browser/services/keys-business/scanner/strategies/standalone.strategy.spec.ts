@@ -11,7 +11,7 @@ import config from 'src/utils/config';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { GetKeysDto, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
 import IORedis from 'ioredis';
 import { SettingsService } from 'src/modules/settings/settings.service';

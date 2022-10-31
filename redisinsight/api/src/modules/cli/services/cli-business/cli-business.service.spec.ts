@@ -19,7 +19,7 @@ import {
   SendCommandDto,
   SendCommandResponse,
 } from 'src/modules/cli/dto/cli.dto';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { ReplyError } from 'src/models';
 import { CliToolUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
 import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
@@ -31,7 +31,7 @@ import {
 } from 'src/modules/cli/constants/errors';
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
 import { KeytarUnavailableException } from 'src/modules/core/encryption/exceptions';
-import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes, IOutputFormatterStrategy } from './output-formatter/output-formatter.interface';

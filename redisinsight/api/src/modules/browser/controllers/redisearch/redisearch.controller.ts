@@ -49,7 +49,7 @@ export class RedisearchController extends BaseController {
   @ApiRedisParams()
   @HttpCode(201)
   @ApiBody({ type: CreateRedisearchIndexDto })
-  async createList(
+  async createIndex(
     @Param('dbInstance') dbInstance: string,
       @Body() dto: CreateRedisearchIndexDto,
   ): Promise<void> {
@@ -62,6 +62,7 @@ export class RedisearchController extends BaseController {
   }
 
   @Post('search')
+  @HttpCode(200)
   @ApiOperation({ description: 'Search for keys in index' })
   @ApiOkResponse({ type: GetKeysWithDetailsResponse })
   @ApiRedisParams()

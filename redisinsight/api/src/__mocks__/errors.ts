@@ -6,6 +6,12 @@ export const mockRedisNoPermError: ReplyError = {
   message: 'NOPERM this user has no permissions.',
 };
 
+export const mockRedisUnknownIndexName: ReplyError = {
+  name: 'ReplyError',
+  command: 'FT.INFO',
+  message: 'Unknown Index name',
+};
+
 export const mockRedisWrongNumberOfArgumentsError: ReplyError = {
   name: 'ReplyError',
   command: 'GET',

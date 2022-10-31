@@ -155,7 +155,7 @@ const Header = (props: Props) => {
                 position="bottom"
                 anchorClassName={styles.tooltipAnchor}
                 className={styles.tooltip}
-                title="Redis Database Analysis"
+                title="Database Analysis"
                 content={connectionType === ConnectionType.Cluster ? clusterTooltipMessage : commonTooltipMessage}
                 data-testid="db-new-reports-tooltip"
               >

@@ -78,6 +78,9 @@ enum ApiEndpoints {
 
   NOTIFICATIONS = 'notifications',
   NOTIFICATIONS_READ = 'notifications/read',
+
+  REDISEARCH = 'redisearch',
+  REDISEARCH_SEARCH = 'redisearch/search',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

@@ -35,6 +35,7 @@ import slowLogReducer from './analytics/slowlog'
 import analyticsSettingsReducer from './analytics/settings'
 import clusterDetailsReducer from './analytics/clusterDetails'
 import databaseAnalysisReducer from './analytics/dbAnalysis'
+import redisearchReducer from './browser/redisearch'
 
 export const history = createBrowserHistory()
 
@@ -65,6 +66,7 @@ export const rootReducer = combineReducers({
     rejson: rejsonReducer,
     stream: streamReducer,
     bulkActions: bulkActionsReducer,
+    redisearch: redisearchReducer,
   }),
   cli: combineReducers({
     settings: cliSettingsReducer,

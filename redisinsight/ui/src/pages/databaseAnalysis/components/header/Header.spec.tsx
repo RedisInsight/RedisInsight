@@ -164,7 +164,7 @@ describe('STANDALONE db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Redis Database AnalysisAnalyze up to 10 000 keys per Redis database to get an overview of your data.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Database AnalysisAnalyze up to 10 000 keys per Redis database to get an overview of your data.')
   })
 })
 
@@ -182,6 +182,6 @@ describe('SENTINEL db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Redis Database AnalysisAnalyze up to 10 000 keys per Redis database to get an overview of your data.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Database AnalysisAnalyze up to 10 000 keys per Redis database to get an overview of your data.')
   })
 })

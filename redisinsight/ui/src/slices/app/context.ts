@@ -12,7 +12,8 @@ export const initialState: StateAppContext = {
     keyList: {
       isDataLoaded: false,
       scrollTopPosition: 0,
-      selectedKey: null
+      isNotRendered: true,
+      selectedKey: null,
     },
     panelSizes: {},
     tree: {
@@ -66,6 +67,9 @@ const appContextSlice = createSlice({
     },
     setBrowserKeyListScrollPosition: (state, { payload }: { payload: number }) => {
       state.browser.keyList.scrollTopPosition = payload
+    },
+    setBrowserIsNotRendered: (state, { payload }: { payload: boolean }) => {
+      state.browser.keyList.isNotRendered = payload
     },
     setBrowserPanelSizes: (state, { payload }: { payload: any }) => {
       state.browser.panelSizes = payload
@@ -153,6 +157,7 @@ export const {
   setBrowserKeyListDataLoaded,
   setBrowserSelectedKey,
   setBrowserKeyListScrollPosition,
+  setBrowserIsNotRendered,
   setBrowserPanelSizes,
   setBrowserTreeSelectedLeaf,
   setBrowserTreeNodesOpen,

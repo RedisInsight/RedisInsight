@@ -90,12 +90,13 @@ test.skip
         // Verify that search results are displayed in Text view
         await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The result is displayed in Text view');
     });
-test.only('Verify that user can see re-run icon near the already executed command and re-execute the command by clicking on the icon in Workbench page', async t => {
+test('Verify that user can scroll and see big output in workbench in text mode in virtualized list', async t => {
     // Send commands
     const command = 'graph.query t "UNWIND range(1,1000) AS x return x"';
     const bottomText = 'Query internal execution time';
     let numberOfScrolls = 0;
 
+    // Send command in workbench with Text view type
     await workbenchPage.sendCommandInWorkbench(command);
     await workbenchPage.selectViewTypeText();
 
@@ -103,6 +104,7 @@ test.only('Verify that user can see re-run icon near the already executed comman
     const listItems = containerOfCommand.find(workbenchPage.cssRowInVirtualizedTable);
     const lastExpectedItem = listItems.withText(bottomText);
 
+    // Scroll down the virtualized list until the last row
     while (!await lastExpectedItem.exists && numberOfScrolls < 100) {
         const currentLastRenderedItemIndex = await listItems.count - 1;
         const currentLastRenderedItemText = await listItems.nth(currentLastRenderedItemIndex).textContent;
@@ -113,5 +115,5 @@ test.only('Verify that user can see re-run icon near the already executed comman
     }
 
     // Verify that all commands scrolled
-    await t.expect(lastExpectedItem.visible).ok('Final execution message not displayed');
+    await t.expect(lastExpectedItem.visible).ok('Final execution time message not displayed');
 });

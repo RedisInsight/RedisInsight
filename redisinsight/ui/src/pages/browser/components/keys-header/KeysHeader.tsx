@@ -57,6 +57,7 @@ export interface Props {
   loadKeys: (type?: KeyViewType) => void
   handleAddKeyPanel: (value: boolean) => void
   handleBulkActionsPanel: (value: boolean) => void
+  handleCreateIndexPanel: (value: boolean) => void
   handleScanMoreClick: (config: any) => void
 }
 
@@ -67,6 +68,7 @@ const KeysHeader = (props: Props) => {
     loadKeys,
     handleAddKeyPanel,
     handleBulkActionsPanel,
+    handleCreateIndexPanel,
     handleScanMoreClick,
     nextCursor,
   } = props
@@ -262,6 +264,15 @@ const KeysHeader = (props: Props) => {
               <div style={{ minWidth: '120px' }}>
                 {AddKeyBtn}
                 {BulkActionsBtn}
+                <EuiButton
+                  fill
+                  size="s"
+                  color="secondary"
+                  onClick={() => handleCreateIndexPanel(true)}
+                  className={styles.bulkActions}
+                >
+                  <EuiIcon type="indexEdit" />
+                </EuiButton>
               </div>
             </div>
 

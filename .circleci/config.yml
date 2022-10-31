@@ -379,11 +379,11 @@ jobs:
         description: Send report for test run to slack
         type: boolean
         default: false
-      # parallelism:
-      #   description: Number of threads to run tests
-      #   type: integer
-      #   default: 1
-    parallelism: 1
+      parallelism:
+        description: Number of threads to run tests
+        type: integer
+        default: 1
+    # parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - when:

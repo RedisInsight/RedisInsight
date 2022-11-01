@@ -46,12 +46,12 @@ test
         // Clear filter
         await t.click(browserPage.clearFilterButton);
         // Check the filtering starts by press Enter
-        await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText');
+        await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText', { replace: true, paste: true });
         await t.pressKey('enter');
         await t.expect(browserPage.searchAdvices.exists).ok('The filtering is set');
         // Check the filtering starts by clicks the control
         await common.reloadPage();
-        await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText');
+        await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText', { replace: true, paste: true });
         await t.click(browserPage.searchButton);
         await t.expect(browserPage.searchAdvices.exists).ok('The filtering is set');
     });

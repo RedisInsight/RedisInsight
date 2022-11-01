@@ -9,7 +9,7 @@ export class MemoryEfficiencyPage {
     //-------------------------------------------------------------------------------------------
     // BUTTONS
     newReportBtn = Selector('[data-testid=start-database-analysis-btn]');
-    expandArrowBtn = Selector('[data-testid=expand-arrow-test]');
+    expandArrowBtn = Selector('[data-testid^=expand-arrow-]');
     sortByKeyPattern = Selector('[data-testid=tableHeaderSortButton]');
     showNoExpiryToggle = Selector('[data-testid=show-no-expiry-switch]');
     reportItem = Selector('[data-test-subj^=items-report-]');
@@ -27,15 +27,15 @@ export class MemoryEfficiencyPage {
     // TABLE
     namespaceTable = Selector('[data-testid=nsp-table-memory]');
     nameSpaceTableRows = this.namespaceTable.find('[data-testid^=row-]');
-    expandedRow = Selector('#row_test_expansion');
+    expandedRow = Selector('[data-testid^=expanded-]');
+    expandedItem = this.expandedRow.find('button');
     tableKeyPatternHeader = Selector('[data-test-subj*=tableHeaderCell_nsp]');
     tableMemoryHeader = Selector('[data-test-subj*=tableHeaderCell_memory]');
     tableKeysHeader = Selector('[data-test-subj*=tableHeaderCell_keys]');
     // GRAPH ELEMENTS
     donutTotalKeys = Selector('[data-testid=donut-title-keys]');
-    firstPoint = Selector('[data-testid*=circle-3600]');
-    thirdPoint = Selector('[data-testid*=circle-43200]');
-    fourthPoint = Selector('[data-testid*=circle-86400]');
-    noExpiryPoint = Selector('[data-testid*=circle-0]');
-    noExpiryDefaultPoint = Selector('[data-testid=circle-0-0]');
+    firstPoint = Selector('[data-testid*=bar-3600]');
+    thirdPoint = Selector('[data-testid*=bar-43200]');
+    fourthPoint = Selector('[data-testid*=bar-86400]');
+    noExpiryPoint = Selector('[data-testid*=bar-0-]:not(rect[data-testid=bar-0-0])');
 }

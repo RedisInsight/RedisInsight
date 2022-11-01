@@ -16,6 +16,11 @@ export enum KeyViewType {
   Tree = 'Tree',
 }
 
+export enum SearchMode {
+  Pattern = 'Pattern',
+  Redisearch = 'Redisearch',
+}
+
 export interface KeysStore {
   loading: boolean
   error: string
@@ -25,6 +30,7 @@ export interface KeysStore {
   isSearched: boolean
   isBrowserFullScreen: boolean
   viewType: KeyViewType
+  searchMode: SearchMode
   data: KeysStoreData
   selectedKey: {
     loading: boolean

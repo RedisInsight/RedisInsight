@@ -41,6 +41,7 @@ export interface StateAppContext {
     keyList: {
       isDataLoaded: boolean
       scrollTopPosition: number
+      isNotRendered: boolean
       selectedKey: Nullable<RedisResponseBuffer>
     },
     panelSizes: {

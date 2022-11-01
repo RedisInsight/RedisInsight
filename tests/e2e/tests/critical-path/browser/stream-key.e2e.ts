@@ -53,11 +53,11 @@ test('Verify that user can add several fields and values during Stream key creat
     // Verify that user can see Entity ID filled by * by default on add Stream key form
     await t.expect(browserPage.streamEntryId.withAttribute('value', '*').exists).ok('Preselected Stream Entity ID field not correct');
     // Verify that user can specify valid custom value for Entry ID
-    await t.typeText(browserPage.streamEntryId, '0-1', {replace: true});
+    await t.typeText(browserPage.streamEntryId, '0-1', { replace: true, paste: true});
     // Filled fields and value by different data types
     for (let i = 0; i < Object.keys(streamData).length; i++) {
-        await t.typeText(browserPage.streamField.nth(-1), Object.keys(streamData)[i]);
-        await t.typeText(browserPage.streamValue.nth(-1), Object.values(streamData)[i]);
+        await t.typeText(browserPage.streamField.nth(-1), Object.keys(streamData)[i], { replace: true, paste: true});
+        await t.typeText(browserPage.streamValue.nth(-1), Object.values(streamData)[i], { replace: true, paste: true});
         await t.scroll(scrollSelector, 'bottom');
         await t.expect(browserPage.streamField.count).eql(i + 1, 'Number of added fields not correct');
         if (i < Object.keys(streamData).length - 1) {

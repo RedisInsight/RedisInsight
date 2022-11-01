@@ -1,5 +1,6 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-this-in-sfc */
-import React, { Ref, useRef, FC, SVGProps } from 'react'
+import React, { Ref, useRef, FC, SVGProps, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import AutoSizer from 'react-virtualized-auto-sizer'
@@ -7,13 +8,16 @@ import {
   EuiButton,
   EuiButtonIcon,
   EuiIcon,
+  EuiLink,
+  EuiPopover,
+  EuiText,
   EuiToolTip,
 } from '@elastic/eui'
 
 import {
   changeKeyViewType,
+  changeSearchMode,
   fetchKeys,
-  keysDataSelector,
   keysSelector,
   resetKeysData,
 } from 'uiSrc/slices/browser/keys'
@@ -24,28 +28,35 @@ import {
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
+import { REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
 import { ReactComponent as TreeViewIcon } from 'uiSrc/assets/img/icons/treeview.svg'
 import { ReactComponent as BulkActionsIcon } from 'uiSrc/assets/img/icons/bulk_actions.svg'
+import { ReactComponent as VectorIcon } from 'uiSrc/assets/img/icons/vector.svg'
+import { ReactComponent as RediSearchIcon } from 'uiSrc/assets/img/modules/RedisSearchLight.svg'
 
 import FilterKeyType from '../filter-key-type'
 import SearchKeyList from '../search-key-list'
 import AutoRefresh from '../auto-refresh'
+import RediSearchIndexesList from '../redisearch-key-list'
 
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 600
 const FULL_SCREEN_RESOLUTION = 1260
+export const REDISEARCH_MAX_KEYS_COUNT = 10_000
 
-interface IViewType {
+interface ISwitchType<T> {
   tooltipText: string
-  type: KeyViewType
+  type: T
+  disabled?: boolean
   ariaLabel: string
   dataTestId: string
   getClassName: () => string
+  onClick: () => void
   isActiveView: () => boolean
   getIconType: () => string | FC<SVGProps<SVGSVGElement>>
 }
@@ -73,15 +84,16 @@ const KeysHeader = (props: Props) => {
     nextCursor,
   } = props
 
-  const { lastRefreshTime } = useSelector(keysDataSelector)
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
-  const { viewType, isSearched, isFiltered } = useSelector(keysSelector)
+  const { id: instanceId, modules } = useSelector(connectedInstanceSelector)
+  const { viewType, searchMode, isSearched, isFiltered } = useSelector(keysSelector)
 
   const rootDivRef: Ref<HTMLDivElement> = useRef(null)
 
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+
   const dispatch = useDispatch()
 
-  const viewTypes: IViewType[] = [
+  const viewTypes: ISwitchType<KeyViewType>[] = [
     {
       type: KeyViewType.Browser,
       tooltipText: 'Browser',
@@ -94,6 +106,7 @@ const KeysHeader = (props: Props) => {
       getIconType() {
         return 'menu'
       },
+      onClick() { handleSwitchView(this.type) }
     },
     {
       type: KeyViewType.Tree,
@@ -107,12 +120,56 @@ const KeysHeader = (props: Props) => {
       getIconType() {
         return TreeViewIcon
       },
+      onClick() { handleSwitchView(this.type) }
+    },
+  ]
+
+  const searchModes: ISwitchType<SearchMode>[] = [
+    {
+      type: SearchMode.Pattern,
+      tooltipText: 'Filter by Key Name or Pattern',
+      ariaLabel: 'Filter by Key Name or Pattern button',
+      dataTestId: 'search-mode-pattern-btn',
+      isActiveView() { return searchMode === this.type },
+      getClassName() {
+        return cx(styles.viewTypeBtn, styles.iconVector, { [styles.active]: this.isActiveView() })
+      },
+      getIconType() {
+        return VectorIcon
+      },
+      onClick() { handleSwitchSearchMode(this.type) }
+    },
+    {
+      type: SearchMode.Redisearch,
+      tooltipText: 'Search by Values of Keys',
+      ariaLabel: 'Search by Values of Keys button',
+      dataTestId: 'search-mode-redisearch-btn',
+      disabled: !modules?.some(({ name }) =>
+        REDISEARCH_MODULES.some((search) => name === search)),
+      isActiveView() { return searchMode === this.type },
+      getClassName() {
+        return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
+      },
+      getIconType() {
+        return RediSearchIcon
+      },
+      onClick() {
+        if (this.disabled) {
+          showPopover()
+        } else {
+          handleSwitchSearchMode(this.type)
+        }
+      }
     },
   ]
 
   const scanMoreStyle = {
     marginLeft: 10,
     height: '36px !important',
+    // RediSearch can't return more than 10_000 results
+    display: searchMode === SearchMode.Redisearch && keysState.keys.length >= REDISEARCH_MAX_KEYS_COUNT
+      ? 'none'
+      : 'inline-block'
   }
 
   const handleRefreshKeys = (enableAutoRefresh: boolean) => {
@@ -129,6 +186,7 @@ const KeysHeader = (props: Props) => {
       })
     }
     dispatch(fetchKeys(
+      searchMode,
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
       () => dispatch(setBrowserKeyListDataLoaded(true)),
@@ -199,6 +257,10 @@ const KeysHeader = (props: Props) => {
     loadKeys(type)
   }
 
+  const handleSwitchSearchMode = (mode: SearchMode) => {
+    dispatch(changeSearchMode(mode))
+  }
+
   const AddKeyBtn = (
     <EuiButton
       fill
@@ -243,11 +305,77 @@ const KeysHeader = (props: Props) => {
             className={view.getClassName()}
             iconType={view.getIconType()}
             aria-label={view.ariaLabel}
-            onClick={() => handleSwitchView(view.type)}
+            onClick={() => view.onClick()}
             data-testid={view.dataTestId}
           />
         </EuiToolTip>
       ))}
+
+    </div>
+  )
+
+  const showPopover = useCallback(() => {
+    setIsPopoverOpen(true)
+  }, [])
+
+  const hidePopover = useCallback(() => {
+    setIsPopoverOpen(false)
+  }, [])
+
+  const SwitchModeBtn = (item: ISwitchType<SearchMode>) => (
+    <EuiButtonIcon
+      className={item.getClassName()}
+      iconType={item.getIconType()}
+      aria-label={item.ariaLabel}
+      onClick={() => item.onClick?.()}
+      data-testid={item.dataTestId}
+    />
+  )
+
+  const SearchModeSwitch = (width: number) => (
+    <div
+      className={
+        cx(styles.searchModeSwitch, {
+          [styles.middleScreen]: width > HIDE_REFRESH_LABEL_WIDTH,
+          [styles.fullScreen]: width > FULL_SCREEN_RESOLUTION
+        })
+      }
+      data-testid="search-mode-switcher"
+    >
+      {searchModes.map((mode) => (
+        !mode.disabled ? (
+          <EuiToolTip content={mode.tooltipText} position="bottom" key={mode.tooltipText}>
+            {SwitchModeBtn(mode)}
+          </EuiToolTip>
+        )
+          : (
+            <EuiToolTip content={mode.tooltipText} position="bottom" key={mode.tooltipText}>
+              <EuiPopover
+                ownFocus={false}
+                anchorPosition="downCenter"
+                isOpen={isPopoverOpen}
+                closePopover={hidePopover}
+                panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popoverPanelWrapper)}
+                panelPaddingSize="l"
+                button={SwitchModeBtn(mode)}
+              >
+                <EuiText className={styles.noModuleInfo}>
+                  {'RediSearch module is not loaded. Create a '}
+                  <EuiLink
+                    color="subdued"
+                    href="https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_browser_search"
+                    className={styles.link}
+                    external={false}
+                    target="_blank"
+                    data-testid="redisearch-free-db"
+                  >
+                    free Redis database
+                  </EuiLink>
+                  {' database with module support on Redis Cloud.'}
+                </EuiText>
+              </EuiPopover>
+            </EuiToolTip>
+          )))}
 
     </div>
   )
@@ -258,21 +386,17 @@ const KeysHeader = (props: Props) => {
         {({ width }) => (
           <div style={{ width }}>
             <div className={styles.top}>
-              <FilterKeyType />
+              {SearchModeSwitch(width)}
+              {searchMode === SearchMode.Pattern ? (
+                <FilterKeyType />
+              ) : (
+                <RediSearchIndexesList onCreateIndex={handleCreateIndexPanel} />
+              )}
               <SearchKeyList />
               {ViewSwitch(width)}
               <div style={{ minWidth: '120px' }}>
                 {AddKeyBtn}
                 {BulkActionsBtn}
-                <EuiButton
-                  fill
-                  size="s"
-                  color="secondary"
-                  onClick={() => handleCreateIndexPanel(true)}
-                  className={styles.bulkActions}
-                >
-                  <EuiIcon type="indexEdit" />
-                </EuiButton>
               </div>
             </div>
 
@@ -289,7 +413,7 @@ const KeysHeader = (props: Props) => {
               <AutoRefresh
                 postfix="keys"
                 loading={loading}
-                lastRefreshTime={lastRefreshTime}
+                lastRefreshTime={keysState.lastRefreshTime}
                 displayText={width > HIDE_REFRESH_LABEL_WIDTH}
                 containerClassName={styles.refreshContainer}
                 onRefresh={handleRefreshKeys}

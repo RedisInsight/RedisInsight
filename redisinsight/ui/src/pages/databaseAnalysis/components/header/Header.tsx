@@ -20,6 +20,8 @@ import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { getApproximatePercentage } from 'uiSrc/utils/validations'
 import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { appContextBrowserTree } from 'uiSrc/slices/app/context'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -29,6 +31,9 @@ import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analys
 import styles from './styles.module.scss'
 
 const dateFormat = 'd MMM yyyy HH:mm'
+
+const commonTooltipMessage = 'Analyze up to 10 000 keys per Redis database to get an overview of your data.'
+const clusterTooltipMessage = 'Analyze up to 10 000 keys per shard to get an overview of your data.'
 
 export interface Props {
   items: ShortDatabaseAnalysis[]
@@ -47,6 +52,7 @@ const Header = (props: Props) => {
     analysisLoading
   } = props
 
+  const { connectionType } = useSelector(connectedInstanceSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
@@ -69,7 +75,7 @@ const Header = (props: Props) => {
 
   const handleClick = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.MEMORY_ANALYSIS_STARTED,
+      event: TelemetryEvent.DATABASE_ANALYSIS_STARTED,
       eventData: {
         databaseId: instanceId,
       }
@@ -149,8 +155,9 @@ const Header = (props: Props) => {
                 position="bottom"
                 anchorClassName={styles.tooltipAnchor}
                 className={styles.tooltip}
-                title="Memory Efficiency"
-                content="Analyze up to 10K keys in your Redis database to get an overview of your data and memory efficiency recommendations."
+                title="Database Analysis"
+                content={connectionType === ConnectionType.Cluster ? clusterTooltipMessage : commonTooltipMessage}
+                data-testid="db-new-reports-tooltip"
               >
                 <EuiIcon
                   className={styles.infoIcon}

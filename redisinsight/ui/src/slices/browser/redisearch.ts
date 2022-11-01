@@ -1,14 +1,15 @@
-import { AxiosError } from 'axios'
+import axios, { AxiosError, CancelTokenSource } from 'axios'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 import { GetKeysWithDetailsResponse } from 'apiSrc/modules/browser/dto'
-import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/dto/redisearch'
+import { CreateRedisearchIndexDto, ListRedisearchIndexesResponse } from 'apiSrc/modules/browser/dto/redisearch'
 
 import { AppDispatch, RootState } from '../store'
 import { RedisResponseBuffer, StateRedisearch } from '../interfaces'
@@ -48,46 +49,41 @@ const redisearchSlice = createSlice({
 
     // load redisearch keys
     loadKeys: (state) => {
-      state.list = {
-        ...state.list,
-        loading: true,
-        error: '',
-      }
+      state.loading = true
+      state.error = ''
     },
     loadKeysSuccess: (state, { payload }: PayloadAction<GetKeysWithDetailsResponse>) => {
       state.data = {
-        ...payload
+        ...state.data,
+        ...payload,
+        nextCursor: `${payload.cursor}`,
+        previousResultCount: payload.keys?.length,
       }
+      state.loading = false
+      state.data.lastRefreshTime = Date.now()
     },
     loadKeysFailure: (state, { payload }) => {
-      state.list = {
-        ...state.list,
-        loading: false,
-        error: payload,
-      }
+      state.error = payload
+      state.loading = false
     },
 
     // load more redisearch keys
     loadMoreKeys: (state) => {
-      state.list = {
-        ...state.list,
-        loading: true,
-        error: '',
-      }
+      state.loading = true
+      state.error = ''
     },
     loadMoreKeysSuccess: (state, { payload }: PayloadAction<GetKeysWithDetailsResponse>) => {
-      state.list = {
-        ...state.list,
-        loading: false,
-        data: payload,
-      }
+      state.data.keys = payload.keys
+      state.data.total = payload.total
+      state.data.scanned = payload.scanned
+      state.data.nextCursor = `${payload.cursor}`
+      state.data.previousResultCount = payload.keys.length
+
+      state.loading = false
     },
     loadMoreKeysFailure: (state, { payload }) => {
-      state.list = {
-        ...state.list,
-        loading: false,
-        error: payload,
-      }
+      state.loading = false
+      state.error = payload
     },
 
     // load list of indexes
@@ -134,6 +130,21 @@ const redisearchSlice = createSlice({
         error: payload,
       }
     },
+
+    // create an index
+    setSelectedIndex: (state, { payload }: PayloadAction<RedisResponseBuffer>) => {
+      state.selectedIndex = payload
+    },
+
+    setLastBatchRedisearchKeys: (state, { payload }) => {
+      const newKeys = state.data.keys
+      newKeys.splice(-payload.length, payload.length, ...payload)
+      state.data.keys = newKeys
+    },
+
+    setQueryRedisearch: (state, { payload }: PayloadAction<string>) => {
+      state.search = payload
+    },
   },
 })
 
@@ -152,6 +163,9 @@ export const {
   createIndexSuccess,
   createIndexFailure,
   setRedisearchInitialState,
+  setSelectedIndex,
+  setLastBatchRedisearchKeys,
+  setQueryRedisearch,
 } = redisearchSlice.actions
 
 // Selectors
@@ -162,6 +176,9 @@ export const createIndexStateSelector = (state: RootState) => state.browser.redi
 
 // The reducer
 export default redisearchSlice.reducer
+
+// eslint-disable-next-line import/no-mutable-exports
+export let controller: Nullable<AbortController> = null
 
 // Asynchronous thunk action
 export function fetchRedisearchKeysAction(
@@ -174,69 +191,91 @@ export function fetchRedisearchKeysAction(
     dispatch(loadKeys())
 
     try {
+      controller?.abort()
+      controller = new AbortController()
+
       const state = stateInit()
       const { encoding } = state.app.info
-      const { search: query } = state.browser.keys
+      const { selectedIndex: index, search: query } = state.browser.redisearch
       const { data, status } = await apiService.post<GetKeysWithDetailsResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.REDISEARCH_SEARCH
         ),
         {
-          limit: count, offset: cursor, query: query || DEFAULT_SEARCH_MATCH, keysInfo: false,
+          offset: +cursor, limit: count, query: query || DEFAULT_SEARCH_MATCH, index,
         },
         {
           params: { encoding },
+          signal: controller.signal,
         }
       )
+
+      controller = null
 
       if (isStatusSuccessful(status)) {
         dispatch(loadKeysSuccess(data))
         onSuccess?.(data)
       }
     } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
-      dispatch(loadKeysFailure(errorMessage))
-      onFailed?.()
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadKeysFailure(errorMessage))
+        onFailed?.()
+      }
     }
   }
 }
+// Asynchronous thunk action
+export function fetchMoreRedisearchKeysAction(
+  oldKeys: IKeyPropTypes[] = [],
+  cursor: string,
+  count: number,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadMoreKeys())
 
-// export function fetchMoreRedisearchKeysAction(
-//   onSuccess?: (value: RedisResponseBuffer[]) => void,
-//   onFailed?: () => void,
-// ) {
-//   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-//     dispatch(loadMoreKeys())
+    try {
+      controller?.abort()
+      controller = new AbortController()
 
-//     try {
-//       const state = stateInit()
-//       const { encoding } = state.app.info
-//       const { data, status } = await apiService.get<GetKeysWithDetailsResponse>(
-//         getUrl(
-//           state.connections.instances.connectedInstance?.id,
-//           ApiEndpoints.REDISEARCH_SEARCH
-//         ),
-//         {
-//           params: { encoding },
-//         }
-//       )
+      const state = stateInit()
+      const { encoding } = state.app.info
+      const { selectedIndex: index, search: query } = state.browser.redisearch
+      const { data, status } = await apiService.post<GetKeysWithDetailsResponse>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.REDISEARCH_SEARCH
+        ),
+        {
+          offset: +cursor, limit: count, query: query || DEFAULT_SEARCH_MATCH, index
+        },
+        {
+          params: { encoding },
+          signal: controller.signal,
+        }
+      )
 
-//       if (isStatusSuccessful(status)) {
-//         dispatch(loadMoreKeysSuccess(data))
-//         onSuccess?.(data)
-//       }
-//     } catch (_err) {
-//       const error = _err as AxiosError
-//       const errorMessage = getApiErrorMessage(error)
-//       dispatch(addErrorNotification(error))
-//       dispatch(loadMoreKeysFailure(errorMessage))
-//       onFailed?.()
-//     }
-//   }
-// }
+      controller = null
+
+      if (isStatusSuccessful(status)) {
+        dispatch(loadMoreKeysSuccess({
+          ...data,
+          keys: oldKeys.concat(data.keys)
+        }))
+      }
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(loadMoreKeysFailure(errorMessage))
+      }
+    }
+  }
+}
 
 export function fetchRedisearchListAction(
   onSuccess?: (value: RedisResponseBuffer[]) => void,
@@ -248,7 +287,7 @@ export function fetchRedisearchListAction(
     try {
       const state = stateInit()
       const { encoding } = state.app.info
-      const { data, status } = await apiService.get<RedisResponseBuffer[]>(
+      const { data, status } = await apiService.get<ListRedisearchIndexesResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.REDISEARCH
@@ -259,8 +298,8 @@ export function fetchRedisearchListAction(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(loadListSuccess(data))
-        onSuccess?.(data)
+        dispatch(loadListSuccess(data.indexes))
+        onSuccess?.(data.indexes)
       }
     } catch (_err) {
       const error = _err as AxiosError

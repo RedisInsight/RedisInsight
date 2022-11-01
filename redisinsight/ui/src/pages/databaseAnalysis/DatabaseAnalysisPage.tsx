@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 
 import {
   dbAnalysisSelector,
-  DBAnalysisReportsSelector,
+  dbAnalysisReportsSelector,
   fetchDBAnalysisAction,
   fetchDBAnalysisReportsHistory,
   setSelectedAnalysisId
@@ -14,6 +14,7 @@ import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
+import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 
 import Header from './components/header'
 import AnalysisDataView from './components/analysis-data-view'
@@ -24,12 +25,14 @@ const DatabaseAnalysisPage = () => {
   const { viewTab } = useSelector(analyticsSettingsSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { loading: analysisLoading, data } = useSelector(dbAnalysisSelector)
-  const { data: reports, selectedAnalysis } = useSelector(DBAnalysisReportsSelector)
-  const { name: connectedInstanceName } = useSelector(connectedInstanceSelector)
+  const { data: reports, selectedAnalysis } = useSelector(dbAnalysisReportsSelector)
+  const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState<boolean>(false)
 
   const dispatch = useDispatch()
+  const dbName = `${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)}`
+  setTitle(`${dbName} - Database Analysis`)
 
   useEffect(() => {
     dispatch(fetchDBAnalysisReportsHistory(instanceId))
@@ -51,7 +54,7 @@ const DatabaseAnalysisPage = () => {
 
   const handleSelectAnalysis = (reportId: string) => {
     sendEventTelemetry({
-      event: TelemetryEvent.MEMORY_ANALYSIS_HISTORY_VIEWED,
+      event: TelemetryEvent.DATABASE_ANALYSIS_HISTORY_VIEWED,
       eventData: {
         databaseId: instanceId,
       }

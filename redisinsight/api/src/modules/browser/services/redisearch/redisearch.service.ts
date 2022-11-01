@@ -19,7 +19,7 @@ import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
 @Injectable()
 export class RedisearchService {
-  private logger = new Logger('ListBusinessService');
+  private logger = new Logger('RedisearchService');
 
   constructor(
     private browserTool: BrowserToolService,
@@ -83,7 +83,9 @@ export class RedisearchService {
           );
         }
       } catch (error) {
-        // ignore any kind of error
+        if (!error.message?.includes('Unknown Index name')) {
+          throw error;
+        }
       }
 
       const nodes = this.getShards(client);

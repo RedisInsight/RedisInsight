@@ -152,7 +152,8 @@ body {
   .euiFlexGroup {
     .euiFlexItem:not(:first-child) {
       .euiFieldText,
-      .euiFormControlLayout--group {
+      .euiFormControlLayout--group,
+      .euiSuperSelectControl {
         border-left: 0 !important;
       }
     }

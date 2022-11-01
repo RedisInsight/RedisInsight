@@ -140,8 +140,8 @@ const CreateRedisearchIndex = ({ onClosePanel }: Props) => {
                 </EuiFormFieldset>
               </EuiFlexItem>
             </EuiFlexGroup>
-            <EuiFlexGroup responsive={false} className={styles.row}>
-              <EuiFlexItem>
+            <EuiFlexGroup responsive={false} className={styles.row} style={{ maxWidth: '100%' }}>
+              <EuiFlexItem style={{ minWidth: '100%', maxWidth: '100%' }}>
                 <EuiFormRow
                   label="Prefixes"
                   fullWidth

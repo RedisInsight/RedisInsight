@@ -1,4 +1,4 @@
-import axios, { AxiosError, CancelTokenSource } from 'axios'
+import axios, { AxiosError } from 'axios'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 
@@ -108,8 +108,6 @@ const redisearchSlice = createSlice({
         error: payload,
       }
     },
-
-    // create an index
     createIndex: (state) => {
       state.createIndex = {
         ...state.createIndex,

@@ -1,8 +1,9 @@
 import { AxiosError } from 'axios'
 import { cloneDeep, omit } from 'lodash'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import { apiService } from 'uiSrc/services'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import { stringToBuffer } from 'uiSrc/utils'
 import { REDISEARCH_LIST_DATA_MOCK } from 'uiSrc/mocks/handlers/browser/redisearchHandlers'
 import { SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -21,7 +22,11 @@ import reducer, {
   setSelectedIndex,
   setLastBatchRedisearchKeys,
   setQueryRedisearch,
+  createIndex,
+  createIndexSuccess,
+  createIndexFailure,
   fetchRedisearchListAction,
+  createRedisearchIndexAction,
   redisearchDataSelector,
   redisearchSelector,
 } from '../../browser/redisearch'
@@ -469,6 +474,80 @@ describe('redisearch slice', () => {
     })
   })
 
+  describe('createIndex', () => {
+    it('should properly set the state before the fetch data', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        createIndex: {
+          ...initialState.createIndex,
+          loading: true,
+          error: ''
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, createIndex())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: {
+          redisearch: nextState,
+        },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('createIndexSuccess', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        createIndex: {
+          ...initialState.createIndex,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(
+        initialState,
+        createIndexSuccess()
+      )
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadKeysFailure', () => {
+    it('should properly set the error', () => {
+      // Arrange
+      const data = 'some error'
+      const state = {
+        ...initialState,
+        createIndex: {
+          ...initialState.createIndex,
+          loading: false,
+          error: data
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, createIndexFailure(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchRedisearchListAction', () => {
       it('call both fetchRedisearchListAction, loadListSuccess when fetch is successed', async () => {
@@ -628,6 +707,57 @@ describe('redisearch slice', () => {
           loadMoreKeys(),
           addErrorNotification(responsePayload as AxiosError),
           loadMoreKeysFailure(errorMessage),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('createRedisearchIndexAction', () => {
+      it('should call proper actions on success', async () => {
+        // Arrange
+        const data = {
+          index: stringToBuffer('index'),
+          type: 'hash',
+          prefixes: ['prefix1', 'prefix 2'].map((p) => stringToBuffer(p)),
+          fields: [{ name: stringToBuffer('field'), type: 'numeric' }]
+        }
+
+        const responsePayload = { status: 200 }
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(createRedisearchIndexAction(data))
+
+        // Assert
+        const expectedActions = [
+          createIndex(),
+          createIndexSuccess(),
+          addMessageNotification(successMessages.CREATE_INDEX()),
+          loadList()
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to create index', async () => {
+        // Arrange
+        const errorMessage = 'some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(createRedisearchIndexAction({}))
+
+        // Assert
+        const expectedActions = [
+          createIndex(),
+          addErrorNotification(responsePayload as AxiosError),
+          createIndexFailure(errorMessage),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

@@ -6,8 +6,14 @@
 
   .container {
     background-color: var(--euiColorEmptyShade);
-    padding: 24px 0;
     height: 100%;
+  }
+
+  .headerWrapper {
+    padding: 24px 0;
+    min-height: 108px;
+    border-bottom: 1px solid var(--separatorColor);
+    flex-shrink: 0;
   }
 
   .header {
@@ -25,18 +31,13 @@
     }
   }
 
-  .divider {
-    margin-top: 16px;
-    margin-bottom: 16px;
-  }
-
   .controlsDivider {
     margin-top: 32px;
     margin-bottom: 40px;
   }
 
   .contentFields {
-    padding: 24px 18px 96px 18px;
+    padding: 24px 18px 0;
 
     .fieldsContainer {
       margin: 0 auto;
@@ -60,6 +61,7 @@
   }
 
   .footer {
+    margin-top: 24px;
     background-color: var(--browserTableRowEven) !important;
     border: 0 solid var(--euiColorLightShade) !important;
     border-top-width: 1px !important;

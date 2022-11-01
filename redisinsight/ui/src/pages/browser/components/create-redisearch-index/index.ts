@@ -1,3 +1,3 @@
-import CreateRedisearchIndex from './CreateRedisearchIndex'
+import CreateRedisearchIndex from './CreateRedisearchIndexWrapper'
 
 export default CreateRedisearchIndex

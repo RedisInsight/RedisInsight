@@ -152,7 +152,8 @@ body {
   .euiFlexGroup {
     .euiFlexItem:not(:first-child) {
       .euiFieldText,
-      .euiFormControlLayout--group {
+      .euiFormControlLayout--group,
+      .euiSuperSelectControl {
         border-left: 0 !important;
       }
     }
@@ -161,13 +162,20 @@ body {
 
 
 .euiComboBox .euiComboBox__inputWrap {
+  padding-top: 5px !important;
+  padding-left: 8px !important;
+  min-height: 43px !important;
   .euiBadge {
-    background-color: #363636;
+    background-color: var(--comboBoxBadgeBgColor);
     color: var(--euiTextSubduedColor);
     border: 0;
   }
 
   .euiBadge__text {
     line-height: 20px;
+  }
+
+  .euiComboBoxPlaceholder {
+    color: var(--inputPlaceholderColor) !important;
   }
 }

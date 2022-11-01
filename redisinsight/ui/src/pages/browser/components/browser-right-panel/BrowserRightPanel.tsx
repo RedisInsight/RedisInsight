@@ -11,7 +11,6 @@ import KeyDetailsWrapper from 'uiSrc/pages/browser/components/key-details/KeyDet
 import { updateBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
 import {
   keysSelector,
-  resetKeyInfo,
   selectedKeyDataSelector,
   toggleBrowserFullScreen
 } from 'uiSrc/slices/browser/keys'
@@ -30,7 +29,7 @@ export interface Props {
     isBulkActionsPanelOpen: boolean
     handleBulkActionsPanel: (value: boolean) => void
     isCreateIndexPanelOpen: boolean
-    handleCreateIndexPanel: (value: boolean) => void
+    handleCreateIndexPanel?: (value: boolean) => void
     closeRightPanels: () => void
   }
 }
@@ -49,7 +48,6 @@ const BrowserRightPanel = (props: Props) => {
     isBulkActionsPanelOpen,
     handleBulkActionsPanel,
     isCreateIndexPanelOpen,
-    handleCreateIndexPanel,
     closeRightPanels
   } = panelsState
 
@@ -60,7 +58,6 @@ const BrowserRightPanel = (props: Props) => {
   const dispatch = useDispatch()
 
   const closePanel = () => {
-    dispatch(resetKeyInfo())
     dispatch(toggleBrowserFullScreen(true))
 
     setSelectedKey(null)
@@ -106,7 +103,7 @@ const BrowserRightPanel = (props: Props) => {
 
   return (
     <>
-      {!isAddKeyPanelOpen && !isBulkActionsPanelOpen && !isCreateIndexPanelOpen && (
+      {every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
         <KeyDetailsWrapper
           isFullScreen={isBrowserFullScreen}
           arePanelsCollapsed={arePanelsCollapsed}
@@ -117,7 +114,7 @@ const BrowserRightPanel = (props: Props) => {
           onDeleteKey={onSelectKey}
         />
       )}
-      {isAddKeyPanelOpen && !isBulkActionsPanelOpen && !isCreateIndexPanelOpen && (
+      {isAddKeyPanelOpen && every([!isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
         <AddKey
           onAddKeyPanel={handleAddKeyPanel}
           onClosePanel={closePanel}
@@ -132,11 +129,8 @@ const BrowserRightPanel = (props: Props) => {
           onToggleFullScreen={handleToggleFullScreen}
         />
       )}
-      {isCreateIndexPanelOpen && !isAddKeyPanelOpen && !isBulkActionsPanelOpen && (
-        <CreateRedisearchIndex
-          onClosePanel={closePanel}
-          onCreateIndexPanel={handleCreateIndexPanel}
-        />
+      {isCreateIndexPanelOpen && every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen], Boolean) && (
+        <CreateRedisearchIndex onClosePanel={closePanel} />
       )}
     </>
   )

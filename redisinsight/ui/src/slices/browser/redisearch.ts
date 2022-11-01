@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
@@ -11,7 +12,7 @@ import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/dto/redisearch'
 
 import { AppDispatch, RootState } from '../store'
 import { RedisResponseBuffer, StateRedisearch } from '../interfaces'
-import { addErrorNotification } from '../app/notifications'
+import { addErrorNotification, addMessageNotification } from '../app/notifications'
 
 export const initialState: StateRedisearch = {
   loading: false,
@@ -296,6 +297,8 @@ export function createRedisearchIndexAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(createIndexSuccess())
+        dispatch(addMessageNotification(successMessages.CREATE_INDEX()))
+        dispatch(fetchRedisearchListAction())
         onSuccess?.()
       }
     } catch (_err) {

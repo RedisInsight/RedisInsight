@@ -141,7 +141,7 @@ const BrowserPage = () => {
   }
 
   const handlePanel = (value: boolean, keyName?: RedisResponseBuffer) => {
-    if (value && !isAddKeyPanelOpen && !isBulkActionsPanelOpen) {
+    if (value && !isAddKeyPanelOpen && !isBulkActionsPanelOpen && !isCreateIndexPanelOpen) {
       dispatch(resetKeyInfo())
     }
 

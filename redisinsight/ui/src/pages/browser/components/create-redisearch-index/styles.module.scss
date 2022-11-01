@@ -6,7 +6,7 @@
 
   .container {
     background-color: var(--euiColorEmptyShade);
-    padding: 24px 0;
+    padding: 24px 0 0;
     height: 100%;
   }
 
@@ -36,7 +36,7 @@
   }
 
   .contentFields {
-    padding: 24px 18px 96px 18px;
+    padding: 24px 18px 0;
 
     .fieldsContainer {
       margin: 0 auto;
@@ -60,6 +60,7 @@
   }
 
   .footer {
+    margin-top: 24px;
     background-color: var(--browserTableRowEven) !important;
     border: 0 solid var(--euiColorLightShade) !important;
     border-top-width: 1px !important;

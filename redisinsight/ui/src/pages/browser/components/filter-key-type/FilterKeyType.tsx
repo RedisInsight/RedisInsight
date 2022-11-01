@@ -28,7 +28,7 @@ const FilterKeyType = () => {
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState<boolean>(false)
 
   const { version } = useSelector(connectedInstanceOverviewSelector)
-  const { filter, viewType } = useSelector(keysSelector)
+  const { filter, viewType, searchMode } = useSelector(keysSelector)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -77,7 +77,11 @@ const FilterKeyType = () => {
     setTypeSelected(value)
     setIsSelectOpen(false)
     dispatch(setFilter(value || null))
-    dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
+    dispatch(fetchKeys(
+      searchMode,
+      '0',
+      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+    ))
 
     // reset browser tree context
     dispatch(resetBrowserTree())

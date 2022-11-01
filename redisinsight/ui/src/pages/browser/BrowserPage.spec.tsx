@@ -103,7 +103,7 @@ describe('BrowserPage', () => {
 
   it('should render', () => {
     expect(render(<BrowserPage />)).toBeTruthy()
-    const afterRenderActions = [resetErrors(), setConnectedInstanceId('instanceId'), loadKeys()]
+    const afterRenderActions = [setConnectedInstanceId('instanceId'), loadKeys(), resetErrors()]
     expect(store.getActions().slice(0, afterRenderActions.length)).toEqual([...afterRenderActions])
   })
 

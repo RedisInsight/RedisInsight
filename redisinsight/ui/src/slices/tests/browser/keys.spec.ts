@@ -6,6 +6,7 @@ import { parseKeysListResponse, stringToBuffer } from 'uiSrc/utils'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { SearchMode } from 'uiSrc/slices/interfaces/keys'
 import {
   CreateHashWithExpireDto,
   CreateListWithExpireDto,
@@ -53,7 +54,7 @@ import reducer, {
   addListKey,
   addStringKey,
   addZsetKey,
-  setLastBatchKeys,
+  setLastBatchPatternKeys,
   updateSelectedKeyRefreshTime,
   resetKeyInfo,
   resetKeys,
@@ -401,7 +402,7 @@ describe('keys slice', () => {
       }
 
       // Act
-      const nextState = reducer(prevState, setLastBatchKeys(data))
+      const nextState = reducer(prevState, setLastBatchPatternKeys(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -834,7 +835,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchKeys(0, 20))
+        await store.dispatch<any>(fetchKeys(SearchMode.Pattern, 0, 20))
 
         // Assert
         const expectedActions = [
@@ -861,7 +862,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchKeys('0', 20))
+        await store.dispatch<any>(fetchKeys(SearchMode.Pattern, '0', 20))
 
         // Assert
         const expectedActions = [
@@ -912,7 +913,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchMoreKeys([], '0', 20))
+        await store.dispatch<any>(fetchMoreKeys(SearchMode.Pattern, [], '0', 20))
 
         // Assert
         const expectedActions = [
@@ -935,7 +936,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchMoreKeys('0', 20))
+        await store.dispatch<any>(fetchMoreKeys(SearchMode.Pattern, [], '0', 20))
 
         // Assert
         const expectedActions = [
@@ -1314,11 +1315,13 @@ describe('keys slice', () => {
         const apiServiceMock = jest.fn().mockResolvedValue(responsePayload)
         const onSuccessMock = jest.fn()
         apiService.post = apiServiceMock
+        const controller = new AbortController()
 
         // Act
         await store.dispatch<any>(
           fetchKeysMetadata(
             data.map(({ name }) => ({ name })),
+            controller.signal,
             onSuccessMock
           )
         )
@@ -1327,7 +1330,7 @@ describe('keys slice', () => {
         expect(apiServiceMock).toBeCalledWith(
           '/instance//keys/get-metadata',
           { keys: data.map(({ name }) => ({ name })) },
-          { params: { encoding: 'buffer' } },
+          { params: { encoding: 'buffer' }, signal: controller.signal },
         )
 
         expect(onSuccessMock).toBeCalledWith(data)

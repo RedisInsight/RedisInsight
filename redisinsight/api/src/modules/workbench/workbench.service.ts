@@ -122,7 +122,7 @@ export class WorkbenchService {
     dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
     if (dto.resultsMode === ResultsMode.GroupMode) {
-      return await this.commandExecutionProvider.createMany(
+      return this.commandExecutionProvider.createMany(
         [await this.createCommandsExecution(clientOptions, dto, dto.commands)],
       );
     }

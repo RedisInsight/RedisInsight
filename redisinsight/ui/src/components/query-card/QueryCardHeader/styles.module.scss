@@ -133,10 +133,27 @@ $marginIcon: 12px;
 }
 
 .executionTime {
-  min-width: 55px;
+  min-width: 25px;
 
   @media (min-width: $breakpoint-m) {
     min-width: 67px;
+  }
+
+  @media (min-width: $breakpoint-s) {
+    min-width: 55px;
+  }
+}
+
+.executionTimeValue {
+  display: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  min-width: 75px !important;
+  white-space: nowrap;
+
+  @media (min-width: $breakpoint-s) {
+    display: initial;
   }
 }
 

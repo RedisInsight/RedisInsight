@@ -23,6 +23,7 @@ import {
   truncateText,
   urlForAsset
 } from 'uiSrc/utils'
+import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -59,6 +60,13 @@ export interface Props {
   setSelectedValue: (type: WBQueryType, value: string) => void
   onQueryDelete: () => void
   onQueryReRun: () => void
+}
+
+const getExecutionTimeString = (value: number): string => {
+  if (value < 1) {
+    return '0.001'
+  }
+  return `${numberWithSpaces((parseFloat((value / 1000).toFixed(3))))} ms`
 }
 
 const QueryCardHeader = (props: Props) => {
@@ -272,7 +280,8 @@ const QueryCardHeader = (props: Props) => {
         <EuiFlexItem className={styles.executionTime} data-testid="command-execution-time">
           {isNumber(executionTime) && (
             <EuiToolTip
-              content="Command Execution Time"
+              title="Execution Time"
+              content={getExecutionTimeString(executionTime)}
               position="left"
               anchorClassName={cx(styles.tooltipIcon, styles.alignCenter)}
             >
@@ -282,8 +291,8 @@ const QueryCardHeader = (props: Props) => {
                   data-testid="command-execution-time-icon"
                   className={styles.iconExecutingTime}
                 />
-                <EuiTextColor className={styles.timeText}>
-                  {`${(executionTime / 1000000000).toFixed(3)} s`}
+                <EuiTextColor className={cx(styles.timeText, styles.executionTimeValue)}>
+                  {getExecutionTimeString(executionTime)}
                 </EuiTextColor>
               </>
             </EuiToolTip>

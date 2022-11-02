@@ -49,7 +49,7 @@ export class WorkbenchService {
       const startCommandExecutionTime = process.hrtime();
       commandExecution.result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
       const [,executionTimeInNanoseconds] = process.hrtime(startCommandExecutionTime);
-      commandExecution.executionTime = executionTimeInNanoseconds;
+      commandExecution.executionTime = Math.round(executionTimeInNanoseconds / 1000);
     }
 
     return commandExecution;
@@ -70,6 +70,8 @@ export class WorkbenchService {
       ...dto,
       databaseId: clientOptions.instanceId,
     };
+    let executionTimeInNanoseconds = 0;
+
     const startCommandExecutionTime = process.hrtime();
 
     const executionResults = await Promise.all(commands.map(async (singleCommand) => {
@@ -83,11 +85,13 @@ export class WorkbenchService {
         });
       }
       const result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
+      executionTimeInNanoseconds += process.hrtime(startCommandExecutionTime)[1];
       return ({ ...result[0], command });
     }));
 
-    const [,executionTimeInNanoseconds] = process.hrtime(startCommandExecutionTime);
-    commandExecution.executionTime = executionTimeInNanoseconds;
+    if (executionTimeInNanoseconds !== 0) {
+      commandExecution.executionTime = Math.round(executionTimeInNanoseconds / 1000);
+    }
 
     const successCommands = executionResults.filter(
       (command) => command.status === CommandExecutionStatus.Success,

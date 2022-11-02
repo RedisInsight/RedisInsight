@@ -1,8 +1,14 @@
-import { EuiButton, EuiSwitch, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiLink, EuiSwitch, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useHistory, useParams } from 'react-router-dom'
+import { Pages } from 'uiSrc/constants'
 import { DEFAULT_EXTRAPOLATION, SectionName, TableView } from 'uiSrc/pages/databaseAnalysis'
 import { TableLoader } from 'uiSrc/pages/databaseAnalysis/components'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import { changeKeyViewType } from 'uiSrc/slices/browser/keys'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { Nullable } from 'uiSrc/utils'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import Table from './Table'
@@ -20,6 +26,10 @@ const TopNamespace = (props: Props) => {
   const [tableView, setTableView] = useState<TableView>(TableView.MEMORY)
   const [isExtrapolated, setIsExtrapolated] = useState<boolean>(true)
 
+  const { instanceId } = useParams<{ instanceId: string }>()
+  const history = useHistory()
+  const dispatch = useDispatch()
+
   useEffect(() => {
     setIsExtrapolated(extrapolation !== DEFAULT_EXTRAPOLATION)
   }, [data, extrapolation])
@@ -28,8 +38,42 @@ const TopNamespace = (props: Props) => {
     return <TableLoader />
   }
 
+  const handleTreeViewClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+
+    dispatch(resetBrowserTree())
+    dispatch(changeKeyViewType(KeyViewType.Tree))
+    history.push(Pages.browser(instanceId))
+  }
+
   if (!data?.topMemoryNsp?.length && !data?.topKeysNsp?.length) {
-    return null
+    return (
+      <div className={cx('section', styles.wrapper)} data-testid="top-namespaces-empty">
+        <div className="section-title-wrapper">
+          <EuiTitle className="section-title">
+            <h4>TOP NAMESPACES</h4>
+          </EuiTitle>
+        </div>
+        <div className="section-content">
+          <div className={styles.noNamespaceMsg}>
+            <EuiTitle size="xs">
+              <span>No namespaces to display</span>
+            </EuiTitle>
+            <p>
+              {'Configure the delimiter in '}
+              <EuiLink
+                color="text"
+                onClick={handleTreeViewClick}
+                data-testid="tree-view-page-link"
+              >
+                Tree View
+              </EuiLink>
+              {' to customize the namespaces displayed.'}
+            </p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

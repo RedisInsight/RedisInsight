@@ -14,11 +14,11 @@ import {
 import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Divider from 'uiSrc/components/divider/Divider'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
-import { createRedisearchIndexAction } from 'uiSrc/slices/browser/redisearch'
+import { createIndexStateSelector, createRedisearchIndexAction } from 'uiSrc/slices/browser/redisearch'
 import { stringToBuffer } from 'uiSrc/utils'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/dto/redisearch'
 
@@ -50,6 +50,8 @@ const fieldTypeOptions = FIELD_TYPE_OPTIONS.map(({ value, text }) => ({
 const initialFieldValue = (id = 0) => ({ id, identifier: '', fieldType: fieldTypeOptions[0].value })
 
 const CreateRedisearchIndex = ({ onClosePanel }: Props) => {
+  const { loading } = useSelector(createIndexStateSelector)
+
   const [keyTypeSelected, setKeyTypeSelected] = useState<RedisearchIndexKeyType>(keyTypeOptions[0].value)
   const [prefixes, setPrefixes] = useState<EuiComboBoxOptionOption[]>([])
   const [indexName, setIndexName] = useState<string>('')
@@ -215,7 +217,7 @@ const CreateRedisearchIndex = ({ onClosePanel }: Props) => {
                       removeItem={removeField}
                       clearItemValues={clearFieldsValues}
                       clearIsDisabled={isClearDisabled(item)}
-                      loading={false}
+                      loading={loading}
                       anchorClassName={styles.refreshKeyTooltip}
                     />
                   </EuiFlexGroup>
@@ -248,6 +250,8 @@ const CreateRedisearchIndex = ({ onClosePanel }: Props) => {
               fill
               size="m"
               color="secondary"
+              isLoading={loading}
+              isDisabled={loading}
               onClick={submitData}
               data-testid="create-index-btn"
             >

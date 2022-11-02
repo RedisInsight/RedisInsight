@@ -7,6 +7,7 @@ import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import ApiErrors from 'uiSrc/constants/apiErrors'
 
 import { GetKeysWithDetailsResponse } from 'apiSrc/modules/browser/dto'
 import { CreateRedisearchIndexDto, ListRedisearchIndexesResponse } from 'apiSrc/modules/browser/dto/redisearch'
@@ -19,6 +20,7 @@ export const initialState: StateRedisearch = {
   loading: false,
   error: '',
   search: '',
+  isSearched: false,
   selectedIndex: null,
   data: {
     total: 0,
@@ -52,14 +54,15 @@ const redisearchSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    loadKeysSuccess: (state, { payload }: PayloadAction<GetKeysWithDetailsResponse>) => {
+    loadKeysSuccess: (state, { payload: [data, isSearched] }: PayloadAction<[GetKeysWithDetailsResponse, boolean]>) => {
       state.data = {
         ...state.data,
-        ...payload,
-        nextCursor: `${payload.cursor}`,
-        previousResultCount: payload.keys?.length,
+        ...data,
+        nextCursor: `${data.cursor}`,
+        previousResultCount: data.keys?.length,
       }
       state.loading = false
+      state.isSearched = isSearched
       state.data.lastRefreshTime = Date.now()
     },
     loadKeysFailure: (state, { payload }) => {
@@ -212,7 +215,7 @@ export function fetchRedisearchKeysAction(
       controller = null
 
       if (isStatusSuccessful(status)) {
-        dispatch(loadKeysSuccess(data))
+        dispatch(loadKeysSuccess([data, !!query]))
         onSuccess?.(data)
       }
     } catch (_err) {
@@ -221,6 +224,11 @@ export function fetchRedisearchKeysAction(
         const errorMessage = getApiErrorMessage(error)
         dispatch(addErrorNotification(error))
         dispatch(loadKeysFailure(errorMessage))
+
+        if (error?.response?.data?.message?.toString().endsWith(ApiErrors.RedisearchIndexNotFound)) {
+          dispatch(setRedisearchInitialState())
+          dispatch(fetchRedisearchListAction())
+        }
         onFailed?.()
       }
     }

@@ -21,7 +21,8 @@ import {
   getVisualizationsByCommand,
   isGroupMode,
   truncateText,
-  urlForAsset
+  urlForAsset,
+  truncateMilliseconds,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -64,9 +65,17 @@ export interface Props {
 
 const getExecutionTimeString = (value: number): string => {
   if (value < 1) {
-    return '0.001'
+    return '0.001 ms'
   }
   return `${numberWithSpaces((parseFloat((value / 1000).toFixed(3))))} ms`
+}
+
+const getTruncatedExecutionTimeString = (value: number): string => {
+  if (value < 1) {
+    return '0.001 ms'
+  }
+
+  return truncateMilliseconds(parseFloat((value / 1000).toFixed(3)))
 }
 
 const QueryCardHeader = (props: Props) => {
@@ -292,7 +301,7 @@ const QueryCardHeader = (props: Props) => {
                   className={styles.iconExecutingTime}
                 />
                 <EuiTextColor className={cx(styles.timeText, styles.executionTimeValue)}>
-                  {getExecutionTimeString(executionTime)}
+                  {getTruncatedExecutionTimeString(executionTime)}
                 </EuiTextColor>
               </>
             </EuiToolTip>

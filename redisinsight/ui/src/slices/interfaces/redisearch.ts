@@ -6,6 +6,7 @@ export interface StateRedisearch {
   loading: boolean
   error: string
   search: string
+  isSearched: boolean
   data: KeysStoreData
   selectedIndex: Nullable<RedisResponseBuffer>
   list: {

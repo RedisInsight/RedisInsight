@@ -37,9 +37,13 @@ const RediSearchIndexesList = (props: Props) => {
   const { data: list = [], loading } = useSelector(redisearchListSelector)
 
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
-  const [modeSelected, setModeSelected] = useState<Nullable<string>>(JSON.stringify(selectedIndex))
+  const [index, setIndex] = useState<Nullable<string>>(JSON.stringify(selectedIndex))
 
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    setIndex(JSON.stringify(selectedIndex || ''))
+  }, [selectedIndex])
 
   useEffect(() => {
     dispatch(fetchRedisearchListAction())
@@ -75,7 +79,7 @@ const RediSearchIndexesList = (props: Props) => {
       return
     }
 
-    setModeSelected(initValue)
+    setIndex(initValue)
     setIsSelectOpen(false)
 
     dispatch(setSelectedIndex(value))
@@ -98,7 +102,7 @@ const RediSearchIndexesList = (props: Props) => {
           isLoading={loading}
           options={options}
           isOpen={isSelectOpen}
-          valueOfSelected={modeSelected || ''}
+          valueOfSelected={index || ''}
           onChange={onChangeIndex}
           data-testid="select-search-mode"
         />

@@ -50,8 +50,8 @@ const BrowserLeftPanel = (props: Props) => {
   const { instanceId } = useParams<{ instanceId: string }>()
   const patternKeysState = useSelector(keysDataSelector)
   const redisearchKeysState = useSelector(redisearchDataSelector)
-  const { loading: redisearchLoading } = useSelector(redisearchSelector)
-  const { loading: patternLoading, viewType, searchMode } = useSelector(keysSelector)
+  const { loading: redisearchLoading, isSearched: redisearchIsSearched } = useSelector(redisearchSelector)
+  const { loading: patternLoading, viewType, searchMode, isSearched: patternIsSearched } = useSelector(keysSelector)
   const { keyList: { isDataLoaded } } = useSelector(appContextBrowser)
   const { contextInstanceId } = useSelector(appContextSelector)
 
@@ -61,6 +61,7 @@ const BrowserLeftPanel = (props: Props) => {
 
   const keysState = searchMode === SearchMode.Pattern ? patternKeysState : redisearchKeysState
   const loading = searchMode === SearchMode.Pattern ? patternLoading : redisearchLoading
+  const isSearched = searchMode === SearchMode.Pattern ? patternIsSearched : redisearchIsSearched
 
   useEffect(() => {
     if (!isDataLoaded || contextInstanceId !== instanceId) {
@@ -103,6 +104,7 @@ const BrowserLeftPanel = (props: Props) => {
       <KeysHeader
         keysState={keysState}
         loading={loading}
+        isSearched={isSearched}
         loadKeys={loadKeys}
         handleAddKeyPanel={handleAddKeyPanel}
         handleBulkActionsPanel={handleBulkActionsPanel}

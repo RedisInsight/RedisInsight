@@ -237,7 +237,7 @@ const QueryCardHeader = (props: Props) => {
     >
       <EuiFlexGroup alignItems="center" gutterSize="l" responsive={false} style={{ width: '100%' }}>
         <EuiFlexItem
-          className={cx(styles.titleWrapper, { [styles.titleWrapperShort]: !!createdAt })}
+          className={styles.titleWrapper}
           grow={!createdAt}
         >
           <div className="copy-btn-wrapper">

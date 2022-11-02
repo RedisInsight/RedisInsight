@@ -113,10 +113,12 @@ const KeyList = forwardRef((props: Props, ref) => {
     isNotRendered.current = false
     dispatch(setBrowserIsNotRendered(isNotRendered.current))
     if (itemsRef.current.length === 0) {
+      setFirstDataLoaded(true)
       rerender({})
       return
     }
 
+    cancelAllMetadataRequests()
     controller.current = new AbortController()
 
     const { startIndex, lastIndex } = renderedRowsIndexesRef.current

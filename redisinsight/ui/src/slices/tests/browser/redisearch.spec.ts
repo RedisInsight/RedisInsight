@@ -29,6 +29,7 @@ import reducer, {
   createRedisearchIndexAction,
   redisearchDataSelector,
   redisearchSelector,
+  setRedisearchInitialState,
 } from '../../browser/redisearch'
 
 let store: typeof mockedStore
@@ -126,7 +127,7 @@ describe('redisearch slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadKeysSuccess(data)
+        loadKeysSuccess([data, false])
       )
 
       // Assert
@@ -610,7 +611,7 @@ describe('redisearch slice', () => {
         // Assert
         const expectedActions = [
           loadKeys(),
-          loadKeysSuccess(data),
+          loadKeysSuccess([data, false]),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -635,6 +636,32 @@ describe('redisearch slice', () => {
           loadKeys(),
           addErrorNotification(responsePayload as AxiosError),
           loadKeysFailure(errorMessage),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to load keys: Index not found', async () => {
+        // Arrange
+        const errorMessage = 'idx: no such index'
+        const responsePayload = {
+          response: {
+            status: 404,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
+
+        // Assert
+        const expectedActions = [
+          loadKeys(),
+          addErrorNotification(responsePayload as AxiosError),
+          loadKeysFailure(errorMessage),
+          setRedisearchInitialState(),
+          loadList(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

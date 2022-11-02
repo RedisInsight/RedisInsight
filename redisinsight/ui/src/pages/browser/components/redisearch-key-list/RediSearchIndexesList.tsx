@@ -42,6 +42,10 @@ const RediSearchIndexesList = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    setModeSelected(JSON.stringify(selectedIndex || ''))
+  }, [selectedIndex])
+
+  useEffect(() => {
     dispatch(fetchRedisearchListAction())
   }, [])
 

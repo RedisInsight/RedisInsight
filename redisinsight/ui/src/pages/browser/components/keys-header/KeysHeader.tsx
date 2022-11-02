@@ -65,6 +65,7 @@ export interface Props {
   loading: boolean
   keysState: KeysStoreData
   nextCursor: string
+  isSearched: boolean
   loadKeys: (type?: KeyViewType) => void
   handleAddKeyPanel: (value: boolean) => void
   handleBulkActionsPanel: (value: boolean) => void
@@ -76,6 +77,7 @@ const KeysHeader = (props: Props) => {
   const {
     loading,
     keysState,
+    isSearched,
     loadKeys,
     handleAddKeyPanel,
     handleBulkActionsPanel,
@@ -85,7 +87,7 @@ const KeysHeader = (props: Props) => {
   } = props
 
   const { id: instanceId, modules } = useSelector(connectedInstanceSelector)
-  const { viewType, searchMode, isSearched, isFiltered } = useSelector(keysSelector)
+  const { viewType, searchMode, isFiltered } = useSelector(keysSelector)
 
   const rootDivRef: Ref<HTMLDivElement> = useRef(null)
 

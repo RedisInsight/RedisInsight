@@ -158,6 +158,14 @@ body {
       }
     }
   }
+
+  .euiFormRow .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
+  .euiFormRow .euiSelect:not(.euiSelect--compressed),
+  .euiFormRow .euiFormControlLayout:not(.euiFormControlLayout--compressed),
+  .euiFormRow .euiFieldText:not(.euiFieldText--compressed),
+  .euiFormRow .euiFieldNumber:not(.euiFieldNumber--compressed) {
+    height: 43px;
+  }
 }
 
 

@@ -142,6 +142,6 @@ describe('BrowserPage', () => {
 
     fireEvent.click(screen.getByTestId('onCloseKey-btn'))
 
-    expect(store.getActions()).toEqual([...afterRenderActions, resetKeyInfo(), toggleBrowserFullScreen(true)])
+    expect(store.getActions()).toEqual([...afterRenderActions, toggleBrowserFullScreen(true)])
   })
 })

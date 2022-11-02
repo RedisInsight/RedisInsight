@@ -896,9 +896,12 @@ export function fetchKeysMetadata(
       )
 
       onSuccessAction?.(data)
-    } catch (error) {
-      onFailAction?.()
-      console.error(error)
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        onFailAction?.()
+        console.error(error)
+      }
     }
   }
 }

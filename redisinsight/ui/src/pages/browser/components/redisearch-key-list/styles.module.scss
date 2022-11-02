@@ -14,7 +14,7 @@
         box-shadow: none !important;
         border: 1px solid var(--separatorColor) !important;
         border-radius: 4px;
-        padding: 0 20px 0 10px !important;
+        padding: 0 25px 0 10px !important;
 
         overflow: hidden;
         white-space: nowrap;
@@ -49,7 +49,12 @@
     }
     .euiFormControlLayoutIcons {
       z-index: 6;
-      :global(.euiIcon) {
+
+      .euiLoadingSpinner {
+        margin-right: -22px;
+      }
+
+      .euiIcon {
         width: 16px;
         height: 12px;
       }
@@ -114,15 +119,17 @@
   height: 36px !important;
   top: 0;
   left: 0;
-
   transform: none !important;
 
   :global {
     .euiButtonContent.euiButtonEmpty__content {
       padding-left: 16px !important;
+      padding-right: 30px;
       justify-content: left;
 
       .euiButtonEmpty__text {
+        padding-right: 10px;
+        text-overflow: initial !important;
         color: var(--inputPlaceholderColor) !important;
       }
     }

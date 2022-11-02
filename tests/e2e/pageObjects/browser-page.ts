@@ -93,6 +93,8 @@ export class BrowserPage {
     workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
     submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
+    patternModeBtn =  Selector('[data-testid=search-mode-pattern-btn]');
+    redisearchModeBtn =  Selector('[data-testid=search-mode-redisearch-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -123,6 +125,7 @@ export class BrowserPage {
     timestampOption = Selector('#time');
     formatSwitcher = Selector('[data-testid=select-format-key-value]', { timeout: 2000 });
     formatSwitcherIcon = Selector('img[data-testid^=key-value-formatter-option-selected]');
+    selectIndexDdn = Selector('[data-testid=select-index-placeholder],[data-testid=select-search-mode]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -971,6 +974,18 @@ export class BrowserPage {
             const scannedResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
             await t.expect(scannedResults).gt(rememberedScanResults, { timeout: 3000 });
         }
+    }
+
+    
+    /**
+     * Open Select Index droprown and select option
+     * @param index The name of format
+     */
+     async selectIndexByName(index: string): Promise<void> {
+        const option = Selector(`[data-test-subj="mode-option-type-${index}"]`);
+        await t
+            .click(this.selectIndexDdn)
+            .click(option);
     }
 }
 

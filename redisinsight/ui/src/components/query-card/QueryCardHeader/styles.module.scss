@@ -40,18 +40,18 @@ $marginIcon: 12px;
 }
 
 .titleWrapper {
-  width: calc(100% - 380px);
+  width: calc(100% - 447px);
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 450px);
+    width: calc(100% - 517px);
   }
 }
 
 :global(.fullscreen) .titleWrapper {
-  width: calc(100% - 270px);
+  width: calc(100% - 337px);
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 320px);
+    width: calc(100% - 387px);
   }
 }
 
@@ -92,7 +92,7 @@ $marginIcon: 12px;
 
 .summaryText {
   position: absolute;
-  right: -142px;
+  right: -207px;
 }
 
 .extraInfo {
@@ -132,6 +132,18 @@ $marginIcon: 12px;
   }
 }
 
+.executionTime {
+  min-width: 55px;
+
+  @media (min-width: $breakpoint-m) {
+    min-width: 67px;
+  }
+}
+
+.alignCenter {
+  align-items: center;
+}
+
 .dropdownOption {
   display: flex;
   align-items: center;
@@ -149,6 +161,16 @@ $marginIcon: 12px;
 .iconDropdownOption {
   width: 20px !important;
   height: 20px !important;
+}
+
+.iconExecutingTime {
+  width: 13px !important;
+  height: 13px !important;
+  margin-right: 6px;
+
+  path {
+    fill: var(--iconsDefaultColor)
+  }
 }
 
 .dropdownOptionSeparator:after {

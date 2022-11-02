@@ -46,7 +46,10 @@ export class WorkbenchService {
         },
       ];
     } else {
+      const startCommandExecutionTime = process.hrtime();
       commandExecution.result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
+      const [,executionTimeInNanoseconds] = process.hrtime(startCommandExecutionTime);
+      commandExecution.executionTime = executionTimeInNanoseconds;
     }
 
     return commandExecution;
@@ -67,6 +70,7 @@ export class WorkbenchService {
       ...dto,
       databaseId: clientOptions.instanceId,
     };
+    const startCommandExecutionTime = process.hrtime();
 
     const executionResults = await Promise.all(commands.map(async (singleCommand) => {
       const command = multilineCommandToOneLine(singleCommand);
@@ -81,6 +85,9 @@ export class WorkbenchService {
       const result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
       return ({ ...result[0], command });
     }));
+
+    const [,executionTimeInNanoseconds] = process.hrtime(startCommandExecutionTime);
+    commandExecution.executionTime = executionTimeInNanoseconds;
 
     const successCommands = executionResults.filter(
       (command) => command.status === CommandExecutionStatus.Success,
@@ -115,7 +122,7 @@ export class WorkbenchService {
     dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
     if (dto.resultsMode === ResultsMode.GroupMode) {
-      return this.commandExecutionProvider.createMany(
+      return await this.commandExecutionProvider.createMany(
         [await this.createCommandsExecution(clientOptions, dto, dto.commands)],
       );
     }

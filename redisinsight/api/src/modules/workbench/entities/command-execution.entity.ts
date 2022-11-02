@@ -71,6 +71,9 @@ export class CommandExecutionEntity {
   @Column({ nullable: true })
   encryption: string;
 
+  @Column({ nullable: true })
+  executionTime?: number;
+
   @CreateDateColumn()
   @Index()
   createdAt: Date;

@@ -13,7 +13,7 @@ import {
 } from '@elastic/eui'
 import { format, parseISO } from 'date-fns'
 import { useParams } from 'react-router-dom'
-import { findIndex } from 'lodash'
+import { findIndex, isNumber } from 'lodash'
 
 import { Theme } from 'uiSrc/constants'
 import {
@@ -33,6 +33,7 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
 import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
+import { ReactComponent as ExecutionTimeIcon } from 'uiSrc/assets/img/workbench/execution_time.svg'
 
 import QueryCardTooltip from '../QueryCardTooltip'
 
@@ -51,6 +52,7 @@ export interface Props {
   queryType: WBQueryType
   selectedValue: string
   loading?: boolean
+  executionTime?: number
   emptyCommand?: boolean
   toggleOpen: () => void
   toggleFullScreen: () => void
@@ -74,6 +76,7 @@ const QueryCardHeader = (props: Props) => {
     summary,
     activeMode,
     selectedValue,
+    executionTime,
     emptyCommand = false,
     setSelectedValue,
     onQueryDelete,
@@ -264,6 +267,26 @@ const QueryCardHeader = (props: Props) => {
             <EuiTextColor className={styles.summaryText} component="div">
               {truncateText(summaryText, 13)}
             </EuiTextColor>
+          )}
+        </EuiFlexItem>
+        <EuiFlexItem className={styles.executionTime} data-testid="command-execution-time">
+          {isNumber(executionTime) && (
+            <EuiToolTip
+              content="Command Execution Time"
+              position="left"
+              anchorClassName={cx(styles.tooltipIcon, styles.alignCenter)}
+            >
+              <>
+                <EuiIcon
+                  type={ExecutionTimeIcon}
+                  data-testid="command-execution-time-icon"
+                  className={styles.iconExecutingTime}
+                />
+                <EuiTextColor className={styles.timeText}>
+                  {`${(executionTime / 1000000000).toFixed(3)} s`}
+                </EuiTextColor>
+              </>
+            </EuiToolTip>
           )}
         </EuiFlexItem>
         <EuiFlexItem

@@ -9,6 +9,7 @@ import {
 import { rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { verifyKeysDisplayedInTheList } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const common = new Common();
@@ -23,14 +24,7 @@ let indexName = common.generateWord(5);
 
 fixture `Search capabilities in Browser`
     .meta({ type: 'critical_path', rte: rte.standalone })
-    .page(commonUrl)
-    .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-    })
-    .afterEach(async() => {
-        // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    });
+    .page(commonUrl);
 test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -52,9 +46,8 @@ test
             `FT.CREATE ${indexName} ON HASH PREFIX 1 "${keyName}:" SCHEMA name TEXT NOSTEM description TEXT class TAG type TAG SEPARATOR ";" address_city AS city TAG address_street AS address TEXT NOSTEM students NUMERIC SORTABLE location GEO`
         ];
 
-        // Create keys and index
+        // Create 3 keys and index
         await cliPage.sendCommandsInCli(commands);
-
         // Verify that user see the tooltips for the controls to switch the modes
         await t.click(browserPage.patternModeBtn);
         await t.hover(browserPage.patternModeBtn);
@@ -68,9 +61,7 @@ test
 
         // Verify that user can search by index in Browser view
         await browserPage.selectIndexByName(indexName);
-        for (const keyName of keyNames) {
-            await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key ${keyName} not found`);
-        }
+        await verifyKeysDisplayedInTheList(keyNames);
         await t.expect((await browserPage.getKeySelectorByName(keyName)).exists).notOk('Key without index displayed after search');
         // Verify that user can search by index plus key value
         await browserPage.searchByKeyName('Hall School');
@@ -87,17 +78,13 @@ test
         // Change delimiter
         await browserPage.changeDelimiterInTreeView('-');
         await browserPage.selectIndexByName(indexName);
-        for (const keyName of keyNames) {
-            await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key ${keyName} not found`);
-        }
+        await verifyKeysDisplayedInTheList(keyNames);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('Key without index displayed after search');
 
         // Verify that user see the database scanned when he switch to Pattern search mode
         await t.click(browserPage.patternModeBtn);
         await t.click(browserPage.browserViewButton);
-        for (const keyName of keyNames) {
-            await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key ${keyName} not found`);
-        }
+        await verifyKeysDisplayedInTheList(keyNames);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Database not scanned after returning to Pattern search mode');
     });
 test
@@ -108,7 +95,7 @@ test
     // Clear and delete database
         await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
-    })('Search by index max keys count', async t => {
+    })('Search by index keys scanned for JSON', async t => {
         keyName = common.generateWord(10);
         indexName = `idx:${keyName}`;
         const command = `FT.CREATE ${indexName} ON JSON PREFIX 1 "device:" SCHEMA id numeric`;
@@ -117,12 +104,15 @@ test
         await cliPage.sendCommandInCli(command);
         // Verify that user can can get 500 keys (limit 0 500) in Browser view
         await t.click(browserPage.redisearchModeBtn);
-        const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
-        await t.expect(keysNumberOfResults).contains('500', 'Number of results is not 500');
-
+        await browserPage.selectIndexByName(indexName);
+        // Verify that all keys are displayed according to selected index
+        for (let i = 0; i < 15; i++) {
+            await t.expect(browserPage.keyListItem.textContent).contains('device:', 'Keys out of index displayed');
+        }
         // Verify that user can can get 10 000 keys in Tree view
         await t.click(browserPage.treeViewButton);
-        await browserPage.verifyScannningMore();
+        const keysNumberOfResults = browserPage.keysNumberOfResults.textContent;
+        await t.expect(keysNumberOfResults).contains('10 000', 'Number of results is not 10 000');
     });
 test
     .before(async() => {

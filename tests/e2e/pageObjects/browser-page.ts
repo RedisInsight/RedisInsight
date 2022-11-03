@@ -253,6 +253,9 @@ export class BrowserPage {
     stringValueAsJson = Selector(this.cssJsonValue);
     // POPUPS
     changeValueWarning = Selector('[data-testid=approve-popover]');
+    // TABLE
+    keyListItem = Selector('[role=rowgroup] [role=row]');
+
     /**
      * Common part for Add any new key
      * @param keyName The name of the key
@@ -978,12 +981,11 @@ export class BrowserPage {
         }
     }
 
-    
     /**
      * Open Select Index droprown and select option
      * @param index The name of format
      */
-     async selectIndexByName(index: string): Promise<void> {
+    async selectIndexByName(index: string): Promise<void> {
         const option = Selector(`[data-test-subj="mode-option-type-${index}"]`);
         await t
             .click(this.selectIndexDdn)

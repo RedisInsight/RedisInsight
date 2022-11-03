@@ -46,10 +46,10 @@ export class WorkbenchService {
         },
       ];
     } else {
-      const startCommandExecutionTime = process.hrtime();
+      const startCommandExecutionTime = process.hrtime.bigint();
       commandExecution.result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
-      const [,executionTimeInNanoseconds] = process.hrtime(startCommandExecutionTime);
-      commandExecution.executionTime = Math.round(executionTimeInNanoseconds / 1000);
+      const endCommandExecutionTime = process.hrtime.bigint();
+      commandExecution.executionTime = Math.round((Number(endCommandExecutionTime - startCommandExecutionTime) / 1000));
     }
 
     return commandExecution;
@@ -70,9 +70,9 @@ export class WorkbenchService {
       ...dto,
       databaseId: clientOptions.instanceId,
     };
-    let executionTimeInNanoseconds = 0;
+    let executionTimeInNanoseconds = BigInt(0);
 
-    const startCommandExecutionTime = process.hrtime();
+    const startCommandExecutionTime = process.hrtime.bigint();
 
     const executionResults = await Promise.all(commands.map(async (singleCommand) => {
       const command = multilineCommandToOneLine(singleCommand);
@@ -85,12 +85,14 @@ export class WorkbenchService {
         });
       }
       const result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
-      executionTimeInNanoseconds += process.hrtime(startCommandExecutionTime)[1];
+      const endCommandExecutionTime = process.hrtime.bigint();
+
+      executionTimeInNanoseconds += (endCommandExecutionTime - startCommandExecutionTime);
       return ({ ...result[0], command });
     }));
 
-    if (executionTimeInNanoseconds !== 0) {
-      commandExecution.executionTime = Math.round(executionTimeInNanoseconds / 1000);
+    if (Number(executionTimeInNanoseconds) !== 0) {
+      commandExecution.executionTime = Math.round(Number(executionTimeInNanoseconds) / 1000);
     }
 
     const successCommands = executionResults.filter(

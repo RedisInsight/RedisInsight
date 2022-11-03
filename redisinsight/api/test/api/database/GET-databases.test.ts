@@ -9,6 +9,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   id: Joi.string().required(),
   host: Joi.string().required(),
   port: Joi.number().integer().required(),
+  db: Joi.number().integer().allow(null).required(),
   name: Joi.string().required(),
   connectionType: Joi.string().valid('STANDALONE', 'SENTINEL', 'CLUSTER').required(),
   lastConnection: Joi.string().isoDate().allow(null).required(),

@@ -19,7 +19,7 @@ export abstract class DatabaseRepository {
 
   /**
    * List of databases (limited fields only)
-   * Fields: ['id', 'name', 'host', 'port', 'connectionType', 'modules', 'lastConnection]
+   * Fields: ['id', 'name', 'host', 'port', 'db', 'connectionType', 'modules', 'lastConnection]
    * @return Database[]
    */
   abstract list(): Promise<Database[]>;

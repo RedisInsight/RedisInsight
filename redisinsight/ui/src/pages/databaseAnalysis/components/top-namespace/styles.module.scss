@@ -35,6 +35,19 @@
       opacity: 1;
     }
   }
+
+  .noNamespaceMsg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 80px auto 100px;
+
+    :global(.euiTitle) {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+  }
 }
 
 .wrapper {

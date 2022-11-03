@@ -24,6 +24,8 @@ export class MemoryEfficiencyPage {
     scannedKeysInReport = Selector('[data-testid=bulk-delete-summary]');
     topKeysTitle = Selector('[data-testid=top-keys-title]');
     topKeysKeyName = Selector('[data-testid=top-keys-table-name]');
+    topNamespacesEmptyContainer = Selector('[data-testid=top-namespaces-empty]');
+    topNamespacesEmptyMessage = Selector('[data-testid=top-namespaces-message]');
     // TABLE
     namespaceTable = Selector('[data-testid=nsp-table-memory]');
     nameSpaceTableRows = this.namespaceTable.find('[data-testid^=row-]');
@@ -38,4 +40,6 @@ export class MemoryEfficiencyPage {
     thirdPoint = Selector('[data-testid*=bar-43200]');
     fourthPoint = Selector('[data-testid*=bar-86400]');
     noExpiryPoint = Selector('[data-testid*=bar-0-]:not(rect[data-testid=bar-0-0])');
+    // LINKS
+    treeViewLink = Selector('[data-testid=tree-view-page-link]');
 }

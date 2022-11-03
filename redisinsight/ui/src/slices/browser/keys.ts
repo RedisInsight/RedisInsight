@@ -962,7 +962,7 @@ export function deleteKeyFromList(key: RedisResponseBuffer) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
 
-    return state.browser.keys.searchMode === SearchMode.Pattern
+    return state.browser.keys?.searchMode === SearchMode.Pattern
       ? dispatch(deletePatternKeyFromList(key))
       : dispatch(deleteRedisearchKeyFromList(key))
   }
@@ -972,7 +972,7 @@ export function editKeyFromList(key: RedisResponseBuffer) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
 
-    return state.browser.keys.searchMode === SearchMode.Pattern
+    return state.browser.keys?.searchMode === SearchMode.Pattern
       ? dispatch(editPatternKeyFromList(key))
       : dispatch(editRedisearchKeyFromList(key))
   }

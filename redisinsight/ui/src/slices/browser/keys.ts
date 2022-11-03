@@ -37,7 +37,15 @@ import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
 import { fetchStreamEntries, setStreamInitialState } from './stream'
-import { deleteRedisearchKeyFromList, editRedisearchKeyFromList, fetchMoreRedisearchKeysAction, fetchRedisearchKeysAction, resetRedisearchKeysData, setLastBatchRedisearchKeys, setQueryRedisearch } from './redisearch'
+import {
+  deleteRedisearchKeyFromList,
+  editRedisearchKeyFromList,
+  fetchMoreRedisearchKeysAction,
+  fetchRedisearchKeysAction,
+  resetRedisearchKeysData,
+  setLastBatchRedisearchKeys,
+  setQueryRedisearch,
+} from './redisearch'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { KeysStore, KeyViewType, SearchMode } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'

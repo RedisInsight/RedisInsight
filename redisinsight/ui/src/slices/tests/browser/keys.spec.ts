@@ -735,7 +735,7 @@ describe('keys slice', () => {
       const state = {
         ...initialState,
         data: {
-          keys: [{ name: data.newKey }],
+          keys: [{ name: data.newKey, nameString: data.newKey }],
         },
       }
 

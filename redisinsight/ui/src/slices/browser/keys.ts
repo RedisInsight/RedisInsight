@@ -37,7 +37,7 @@ import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
 import { fetchStreamEntries, setStreamInitialState } from './stream'
-import { fetchMoreRedisearchKeysAction, fetchRedisearchKeysAction, resetRedisearchKeysData, setLastBatchRedisearchKeys, setQueryRedisearch } from './redisearch'
+import { deleteRedisearchKeyFromList, editRedisearchKeyFromList, fetchMoreRedisearchKeysAction, fetchRedisearchKeysAction, resetRedisearchKeysData, setLastBatchRedisearchKeys, setQueryRedisearch } from './redisearch'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { KeysStore, KeyViewType, SearchMode } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'
@@ -197,7 +197,7 @@ const keysSlice = createSlice({
         error: payload,
       }
     },
-    deleteKeyFromList: (state, { payload }) => {
+    deletePatternKeyFromList: (state, { payload }) => {
       remove(state.data?.keys, (key) => isEqualBuffers(key.name, payload))
 
       state.data = {
@@ -229,10 +229,11 @@ const keysSlice = createSlice({
         error: payload,
       }
     },
-    editKeyFromList: (state, { payload }) => {
+    editPatternKeyFromList: (state, { payload }) => {
       const keys = state.data.keys.map((key) => {
         if (isEqualBuffers(key.name, payload?.key)) {
           key.name = payload?.newKey
+          key.nameString = bufferToString(payload?.newKey)
         }
         return key
       })
@@ -352,8 +353,8 @@ export const {
   deleteKey,
   deleteKeySuccess,
   deleteKeyFailure,
-  deleteKeyFromList,
-  editKeyFromList,
+  deletePatternKeyFromList,
+  editPatternKeyFromList,
   updateSelectedKeyLength,
   setPatternSearchMatch,
   setFilter,
@@ -947,4 +948,24 @@ export function resetKeysData(searchMode: SearchMode) {
   return searchMode === SearchMode.Pattern
     ? resetPatternKeysData()
     : resetRedisearchKeysData()
+}
+
+export function deleteKeyFromList(key: RedisResponseBuffer) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+
+    return state.browser.keys.searchMode === SearchMode.Pattern
+      ? dispatch(deletePatternKeyFromList(key))
+      : dispatch(deleteRedisearchKeyFromList(key))
+  }
+}
+
+export function editKeyFromList(key: RedisResponseBuffer) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+
+    return state.browser.keys.searchMode === SearchMode.Pattern
+      ? dispatch(editPatternKeyFromList(key))
+      : dispatch(editRedisearchKeyFromList(key))
+  }
 }

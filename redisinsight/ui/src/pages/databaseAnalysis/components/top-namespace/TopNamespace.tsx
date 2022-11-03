@@ -54,7 +54,7 @@ const TopNamespace = (props: Props) => {
             <h4>TOP NAMESPACES</h4>
           </EuiTitle>
         </div>
-        <div className="section-content">
+        <div className="section-content" data-testid="top-namespaces-message">
           <div className={styles.noNamespaceMsg}>
             <EuiTitle size="xs">
               <span>No namespaces to display</span>

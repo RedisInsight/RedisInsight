@@ -145,7 +145,7 @@ export function fetchMastersSentinelAction(
 
     try {
       const { status, data } = await apiService.post<SentinelMaster[]>(
-        `${ApiEndpoints.SENTINEL_MASTERS}`,
+        `${ApiEndpoints.SENTINEL_GET_DATABASES}`,
         payload
       )
 
@@ -182,7 +182,7 @@ export function createMastersSentinelAction(
       const { instance } = state.connections.sentinel
       const { data, status } = await apiService.post<
       AddSentinelMasterResponse[]
-      >(`${ApiEndpoints.INSTANCE_SENTINEL_MASTERS}`, {
+      >(`${ApiEndpoints.SENTINEL_DATABASES}`, {
         ...instance,
         masters: payload,
       })
@@ -216,7 +216,7 @@ export function cloneMasterSentinelAction(
     dispatch(defaultInstanceChanging())
     try {
       const { data, status } = await apiService.post<AddSentinelMasterResponse[]>(
-        `${ApiEndpoints.INSTANCE_SENTINEL_MASTERS}`,
+        `${ApiEndpoints.SENTINEL_DATABASES}`,
         payload,
       )
 

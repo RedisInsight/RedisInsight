@@ -101,7 +101,7 @@ export function fetchInstancesRedisCluster(payload: ICredentialsRedisCluster, on
 
     try {
       const { data, status } = await apiService.post(
-        `${ApiEndpoints.REDIS_CLUSTER_DATABASES}`,
+        `${ApiEndpoints.REDIS_CLUSTER_GET_DATABASES}`,
         { ...payload }
       )
 
@@ -129,7 +129,7 @@ export function addInstancesRedisCluster(payload: {
 
     try {
       const { data, status } = await apiService.post(
-        `${ApiEndpoints.INSTANCE_REDIS_CLUSTER}`,
+        `${ApiEndpoints.REDIS_CLUSTER_DATABASES}`,
         { uids: payload.uids, ...payload.credentials },
       )
 

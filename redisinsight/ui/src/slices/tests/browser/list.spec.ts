@@ -8,11 +8,11 @@ import {
   mockStore,
 } from 'uiSrc/utils/test-utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { DeleteListElementsDto, PushElementToListDto } from 'apiSrc/modules/browser/dto'
 import { stringToBuffer } from 'uiSrc/utils'
+import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
+import { DeleteListElementsDto, PushElementToListDto } from 'apiSrc/modules/browser/dto'
 import {
   defaultSelectedKeyAction,
-  deleteKeyFromList,
   deleteKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
@@ -866,7 +866,7 @@ describe('list slice', () => {
           deleteListElements(),
           deleteListElementsSuccess(),
           deleteKeySuccess(),
-          deleteKeyFromList(data.keyName),
+          deleteRedisearchKeyFromList(data.keyName),
           addMessageNotification(successMessages.DELETED_KEY(data.keyName))
         ]
 

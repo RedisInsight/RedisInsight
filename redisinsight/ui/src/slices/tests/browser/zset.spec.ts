@@ -11,10 +11,10 @@ import {
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { stringToBuffer } from 'uiSrc/utils'
+import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
 import { AddMembersToZSetDto, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
 import {
   defaultSelectedKeyAction,
-  deleteKeyFromList,
   deleteKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
@@ -966,7 +966,7 @@ describe('zset slice', () => {
           removeZsetMembersSuccess(),
           removeMembersFromList(members),
           deleteKeySuccess(),
-          deleteKeyFromList(key),
+          deleteRedisearchKeyFromList(key),
           addMessageNotification(successMessages.DELETED_KEY(key))
         ]
 

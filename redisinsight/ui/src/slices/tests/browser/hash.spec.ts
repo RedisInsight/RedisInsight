@@ -9,11 +9,11 @@ import {
 } from 'uiSrc/utils/test-utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { bufferToString, stringToBuffer } from 'uiSrc/utils'
+import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
 import {
   defaultSelectedKeyAction,
   refreshKeyInfo,
   deleteKeySuccess,
-  deleteKeyFromList,
   updateSelectedKeyRefreshTime,
 } from '../../browser/keys'
 import reducer, {
@@ -642,7 +642,7 @@ describe('hash slice', () => {
             removeHashFieldsSuccess(),
             removeFieldsFromList(fields),
             deleteKeySuccess(),
-            deleteKeyFromList(key),
+            deleteRedisearchKeyFromList(key),
             addMessageNotification(successMessages.DELETED_KEY(key))
           ]
 

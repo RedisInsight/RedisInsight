@@ -23,6 +23,8 @@ export interface Props {
 
 const commandTabPosInit = 0
 const commandHistoryPosInit = -1
+const TIME_FOR_DOUBLE_CLICK = 300
+
 const CliBody = (props: Props) => {
   const { data, command = '', error, setCommand, onSubmit } = props
 
@@ -36,6 +38,7 @@ const CliBody = (props: Props) => {
   const { loading, commandHistory: commandHistoryStore } = useSelector(outputSelector)
   const { commandsArray } = useSelector(appRedisCommandsSelector)
 
+  const timerClickRef = useRef<NodeJS.Timeout>()
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const dispatch = useDispatch()
 
@@ -149,44 +152,23 @@ const CliBody = (props: Props) => {
 
     const isModifierKey = isModifiedEvent(event)
 
-    if (event.shiftKey && event.key === keys.TAB) {
-      onKeyDownShiftTab(event)
-      return
-    }
-
-    if (event.key === keys.TAB) {
-      onKeyDownTab(event, commandLine)
-      return
-    }
+    if (event.shiftKey && event.key === keys.TAB) return onKeyDownShiftTab(event)
+    if (event.key === keys.TAB) return onKeyDownTab(event, commandLine)
 
     // reset command tab position
     if (!event.shiftKey || (event.shiftKey && event.key !== 'Shift')) {
       setCommandTabPos(commandTabPosInit)
     }
 
-    if (event.key === keys.ENTER) {
-      onKeyDownEnter(commandLine, event)
-      return
-    }
-
-    if (event.key === keys.ARROW_UP && !isModifierKey) {
-      onKeyDownArrowUp(event)
-      return
-    }
-
-    if (event.key === keys.ARROW_DOWN && !isModifierKey) {
-      onKeyDownArrowDown(event)
-      return
-    }
-
-    if (event.key === keys.ESCAPE) {
-      onKeyEsc()
-      return
-    }
+    if (event.key === keys.ENTER) return onKeyDownEnter(commandLine, event)
+    if (event.key === keys.ARROW_UP && !isModifierKey) return onKeyDownArrowUp(event)
+    if (event.key === keys.ARROW_DOWN && !isModifierKey) return onKeyDownArrowDown(event)
+    if (event.key === keys.ESCAPE) return onKeyEsc()
 
     if ((event.metaKey && event.key === 'k') || (event.ctrlKey && event.key === 'l')) {
       onClearOutput(event)
     }
+    return undefined
   }
 
   const updateMatchingCmds = (command: string = '') => {
@@ -212,15 +194,34 @@ const CliBody = (props: Props) => {
   }
 
   const onMouseUpOutput = () => {
-    if (!window.getSelection()?.toString()) {
-      inputEl?.focus()
-      document.execCommand('selectAll', false)
-      document.getSelection()?.collapseToEnd()
+    if (timerClickRef.current) {
+      clearTimeout(timerClickRef.current)
+      timerClickRef.current = undefined
+      return
     }
+
+    if (window.getSelection()?.toString()) {
+      return
+    }
+
+    timerClickRef.current = setTimeout(() => {
+      if (!window.getSelection()?.toString()) {
+        inputEl?.focus()
+        document.execCommand('selectAll', false)
+        document.getSelection()?.collapseToEnd()
+        timerClickRef.current = undefined
+      }
+    }, TIME_FOR_DOUBLE_CLICK)
   }
 
   return (
-    <div className={styles.container} onMouseUp={onMouseUpOutput} role="textbox" tabIndex={0}>
+    <div
+      className={styles.container}
+      onClick={onMouseUpOutput}
+      onKeyDown={() => {}}
+      role="textbox"
+      tabIndex={0}
+    >
       <EuiFlexGroup
         justifyContent="spaceBetween"
         gutterSize="none"

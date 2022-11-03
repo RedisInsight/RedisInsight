@@ -67,6 +67,11 @@ test
         await browserPage.searchByKeyName('Hall School');
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[0])).ok(`The key ${keyNames[0]} not found`);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
+        // Verify that user can search by index plus multiple key values
+        await browserPage.searchByKeyName('(@name:"Hall School") | (@students:[500, 1000])');
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[0])).ok(`The first valid key ${keyNames[0]} not found`);
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[2])).ok(`The second valid key ${keyNames[2]} not found`);
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
 
         // Verify that user can clear the search
         await t.click(browserPage.clearFilterButton);

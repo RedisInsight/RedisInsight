@@ -217,7 +217,7 @@ const CliBody = (props: Props) => {
   return (
     <div
       className={styles.container}
-      onClick={onMouseUpOutput}
+      onMouseUp={onMouseUpOutput}
       onKeyDown={() => {}}
       role="textbox"
       tabIndex={0}

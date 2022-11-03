@@ -106,6 +106,7 @@ export class BrowserPage {
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     userSurveyLink = Selector('[data-testid=user-survey-link]');
+    redisearchFreeLink = Selector('[data-testid=redisearch-free-db]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');
@@ -125,7 +126,7 @@ export class BrowserPage {
     timestampOption = Selector('#time');
     formatSwitcher = Selector('[data-testid=select-format-key-value]', { timeout: 2000 });
     formatSwitcherIcon = Selector('img[data-testid^=key-value-formatter-option-selected]');
-    selectIndexDdn = Selector('[data-testid=select-index-placeholder],[data-testid=select-search-mode]');
+    selectIndexDdn = Selector('[data-testid=select-index-placeholder],[data-testid=select-search-mode]', { timeout: 1000 });
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -186,6 +187,7 @@ export class BrowserPage {
     jsonKeyValue = Selector('[data-testid=json-data]');
     jsonError = Selector('[data-testid=edit-json-error]');
     tooltip = Selector('[role=tooltip]');
+    popover = Selector('[role=dialog]');
     noResultsFound = Selector('[data-test-subj=no-result-found]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');

@@ -3,7 +3,8 @@ import { BrowserPage, CliPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
-    ossStandaloneConfig
+    ossStandaloneConfig,
+    ossStandaloneV5Config
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
@@ -13,36 +14,35 @@ const browserPage = new BrowserPage();
 const common = new Common();
 const cliPage = new CliPage();
 
+const patternModeTooltipText = 'Filter by Key Name or Pattern';
+const redisearchModeTooltipText = 'Search by Values of Keys';
+const notSelectedIndexText = 'Select an index and enter a query to search per values of keys.';
 let keyName = common.generateWord(10);
 let keyNames: string[];
 let indexName = common.generateWord(5);
 
-fixture`Search capabilities in Browser`
+fixture `Search capabilities in Browser`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async () => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
-    .before(async () => {
+    .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         keyName = common.generateWord(10);
         await browserPage.addHashKey(keyName);
     })
-    .after(async () => {
+    .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await cliPage.sendCommandInCli(`DEL ${keyNames.join(' ')}`);
-        await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
+        await cliPage.sendCommandsInCli([`DEL ${keyNames.join(' ')}`, `FT.DROPINDEX ${indexName}`]);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('RediSearch capabilities in Browser view to search per Hashes or JSONs', async t => {
-        const patternModeTooltipText = 'Filter by Key Name or Pattern';
-        const redisearchModeTooltipText = 'Search by Values of Keys';
-        const notSelectedIndexText = 'Select an index and enter a query to search per values of keys.';
         indexName = `idx:${keyName}`;
         keyNames = [`${keyName}:1`, `${keyName}:2`, `${keyName}:3`];
         const commands = [
@@ -52,14 +52,8 @@ test
             `FT.CREATE ${indexName} ON HASH PREFIX 1 "${keyName}:" SCHEMA name TEXT NOSTEM description TEXT class TAG type TAG SEPARATOR ";" address_city AS city TAG address_street AS address TEXT NOSTEM students NUMERIC SORTABLE location GEO`
         ];
 
-        // Open CLI
-        await t.click(cliPage.cliExpandButton);
         // Create keys and index
-        for (const command of commands) {
-            await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
-            await t.pressKey('enter');
-        }
-        await t.click(cliPage.cliCollapseButton);
+        await cliPage.sendCommandsInCli(commands);
 
         // Verify that user see the tooltips for the controls to switch the modes
         await t.click(browserPage.patternModeBtn);
@@ -75,18 +69,18 @@ test
         // Verify that user can search by index in Browser view
         await browserPage.selectIndexByName(indexName);
         for (const keyName of keyNames) {
-            await browserPage.isKeyIsDisplayedInTheList(keyName);
+            await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key ${keyName} not found`);
         }
         await t.expect((await browserPage.getKeySelectorByName(keyName)).exists).notOk('Key without index displayed after search');
-        // Verify that user can search by index and key value
+        // Verify that user can search by index plus key value
         await browserPage.searchByKeyName('Hall School');
-        await browserPage.isKeyIsDisplayedInTheList(keyNames[0]);
-        await t.expect((await browserPage.getKeySelectorByName(keyNames[1])).exists).notOk('Wrong key is displayed after search');
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[0])).ok(`The key ${keyNames[0]} not found`);
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
 
         // Verify that user can clear the search
         await t.click(browserPage.clearFilterButton);
-        await browserPage.isKeyIsDisplayedInTheList(keyNames[1]);
-        await t.expect((await browserPage.getKeySelectorByName(keyName)).exists).notOk('Search not cleared');
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).ok(`The key ${keyNames[1]} not found`);
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('Search not cleared');
 
         // Verify that user can search by index in Tree view
         await t.click(browserPage.treeViewButton);
@@ -94,31 +88,57 @@ test
         await browserPage.changeDelimiterInTreeView('-');
         await browserPage.selectIndexByName(indexName);
         for (const keyName of keyNames) {
-            await browserPage.isKeyIsDisplayedInTheList(keyName);
+            await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key ${keyName} not found`);
         }
-        await t.expect((await browserPage.getKeySelectorByName(keyName)).exists).notOk('Key without index displayed after search');
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('Key without index displayed after search');
 
         // Verify that user see the database scanned when he switch to Pattern search mode
         await t.click(browserPage.patternModeBtn);
         await t.click(browserPage.browserViewButton);
         for (const keyName of keyNames) {
-            await browserPage.isKeyIsDisplayedInTheList(keyName);
+            await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key ${keyName} not found`);
         }
-        await t.expect((await browserPage.getKeySelectorByName(keyName)).exists).ok('Database not scanned after returning to Pattern search mode');
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Database not scanned after returning to Pattern search mode');
     });
 test
-.before(async () => {
-    await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
-})
-.after(async () => {
+    .before(async() => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+    })
+    .after(async() => {
     // Clear and delete database
-    await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
-    await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
-})('Search by index max keys count', async t => {
-    keyName = common.generateWord(10);
-    indexName = `idx:${keyName}`;
-    let command = `FT.CREATE ${indexName} ON JSON PREFIX 1 "device:" SCHEMA $.id TEXT NOSTEM`;
-    
-    // Create index for JSON keys
-    await cliPage.sendCommandInCli(command);
-});
+        await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+    })('Search by index max keys count', async t => {
+        keyName = common.generateWord(10);
+        indexName = `idx:${keyName}`;
+        const command = `FT.CREATE ${indexName} ON JSON PREFIX 1 "device:" SCHEMA id numeric`;
+
+        // Create index for JSON keys
+        await cliPage.sendCommandInCli(command);
+        // Verify that user can can get 500 keys (limit 0 500) in Browser view
+        await t.click(browserPage.redisearchModeBtn);
+        const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
+        await t.expect(keysNumberOfResults).contains('500', 'Number of results is not 500');
+
+        // Verify that user can can get 10 000 keys in Tree view
+        await t.click(browserPage.treeViewButton);
+        await browserPage.verifyScannningMore();
+    });
+test
+    .before(async() => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+    })
+    .after(async() => {
+        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+    })('No RediSearch module message', async t => {
+        const noRedisearchMessage = 'RediSearch module is not loaded. Create a free Redis database(opens in a new tab or window) with module support on Redis Cloud.';
+        const externalPageLink = 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_browser_search';
+
+        await t.click(browserPage.redisearchModeBtn);
+        // Verify that user can see message in popover when he not have RediSearch module
+        await t.expect(browserPage.popover.textContent).contains(noRedisearchMessage, 'Invalid text in no redisearch popover');
+        // Verify that user can navigate by link to create a Redis db
+        await t.click(browserPage.redisearchFreeLink);
+        await common.checkURL(externalPageLink);
+        await t.switchToParentWindow();
+    });

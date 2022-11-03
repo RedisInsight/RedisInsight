@@ -286,7 +286,7 @@ const QueryCardHeader = (props: Props) => {
             </EuiTextColor>
           )}
         </EuiFlexItem>
-        <EuiFlexItem className={styles.executionTime} data-testid="command-execution-time">
+        <EuiFlexItem grow={false} className={styles.executionTime} data-testid="command-execution-time">
           {isNumber(executionTime) && (
             <EuiToolTip
               title="Execution Time"

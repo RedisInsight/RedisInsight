@@ -47,7 +47,7 @@ $marginIcon: 12px;
   }
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 517px);
+    width: calc(100% - 533px);
   }
 }
 
@@ -142,13 +142,16 @@ $marginIcon: 12px;
 
 .executionTime {
   min-width: 25px;
+  width: 25px;
 
   @media (min-width: $breakpoint-s) {
     min-width: 50px;
+    width: 50px;
   }
 
   @media (min-width: $breakpoint-m) {
     min-width: 67px;
+    width: 67px;
   }
 }
 

@@ -40,15 +40,23 @@ $marginIcon: 12px;
 }
 
 .titleWrapper {
-  width: calc(100% - 447px);
+  width: calc(100% - 422px);
+
+  @media (min-width: $breakpoint-s) {
+    width: calc(100% - 447px);
+  }
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 517px);
+    width: calc(100% - 533px);
   }
 }
 
 :global(.fullscreen) .titleWrapper {
-  width: calc(100% - 337px);
+  width: calc(100% - 312px);
+
+  @media (min-width: $breakpoint-s) {
+    width: calc(100% - 337px);
+  }
 
   @media (min-width: $breakpoint-m) {
     width: calc(100% - 387px);
@@ -134,26 +142,29 @@ $marginIcon: 12px;
 
 .executionTime {
   min-width: 25px;
+  width: 25px;
+
+  @media (min-width: $breakpoint-s) {
+    min-width: 50px;
+    width: 50px;
+  }
 
   @media (min-width: $breakpoint-m) {
     min-width: 67px;
-  }
-
-  @media (min-width: $breakpoint-s) {
-    min-width: 55px;
+    width: 67px;
   }
 }
 
 .executionTimeValue {
   display: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-  min-width: 75px !important;
-  white-space: nowrap;
 
   @media (min-width: $breakpoint-s) {
     display: initial;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    min-width: 75px !important;
+    white-space: nowrap;
   }
 }
 

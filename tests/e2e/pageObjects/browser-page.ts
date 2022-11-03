@@ -894,8 +894,6 @@ export class BrowserPage {
     async changeDelimiterInTreeView(delimiter: string): Promise<void> {
         // Open delimiter popup
         await t.click(this.treeViewDelimiterButton);
-        // Check the previous value
-        await t.expect(this.treeViewDelimiterButton.withExactText(':').exists).ok('Default delimiter value not correct');
         // Apply new value to the field
         await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true, paste: true });
         // Click on save button

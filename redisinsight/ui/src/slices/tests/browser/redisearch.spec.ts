@@ -31,6 +31,8 @@ import reducer, {
   redisearchSelector,
   setRedisearchInitialState,
   resetRedisearchKeysData,
+  deleteRedisearchKeyFromList,
+  editRedisearchKeyFromList,
 } from '../../browser/redisearch'
 
 let store: typeof mockedStore
@@ -573,6 +575,79 @@ describe('redisearch slice', () => {
 
       // Act
       const nextState = reducer(prevState, resetRedisearchKeysData())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteRedisearchKeyFromList', () => {
+    it('should delete keys from list', () => {
+      const scanned = 5
+      const total = 5
+      const strToKey = (name:string) => ({ name: stringToBuffer(name), nameString: name, ttl: 1, size: 1, type: 'hash' })
+
+      // Arrange
+      const state = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: ['1', '2', '3', '5', '6'].map(strToKey),
+          scanned: scanned - 1,
+          total: total - 1
+        }
+      }
+
+      const prevState = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          scanned,
+          total,
+          keys: ['1', '2', '3', '4', '5', '6'].map(strToKey),
+        }
+      }
+
+      // Act
+      const nextState = reducer(prevState, deleteRedisearchKeyFromList(strToKey('4')?.name))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('editRedisearchKeyFromList', () => {
+    it('should rename key in the list', () => {
+      const strToKey = (name:string) => ({ name: stringToBuffer(name), nameString: name, ttl: 1, size: 1, type: 'hash' })
+
+      // Arrange
+      const state = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: ['1', '2', '3', '44', '5', '6'].map(strToKey),
+        }
+      }
+
+      const prevState = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: ['1', '2', '3', '4', '5', '6'].map(strToKey),
+        }
+      }
+
+      // Act
+      const nextState = reducer(
+        prevState,
+        editRedisearchKeyFromList({ key: strToKey('4')?.name, newKey: strToKey('44')?.name }),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

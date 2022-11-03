@@ -42,8 +42,8 @@ import reducer, {
   deleteKey,
   deleteKeySuccess,
   deleteKeyFailure,
-  deleteKeyFromList,
-  editKeyFromList,
+  deletePatternKeyFromList,
+  editPatternKeyFromList,
   defaultSelectedKeyActionSuccess,
   editKey,
   defaultSelectedKeyActionFailure,
@@ -717,7 +717,7 @@ describe('keys slice', () => {
     })
   })
 
-  describe('editKeyFromList', () => {
+  describe('editPatternKeyFromList', () => {
     it('should properly set the state before the edit key', () => {
       // Arrange
 
@@ -735,12 +735,12 @@ describe('keys slice', () => {
       const state = {
         ...initialState,
         data: {
-          keys: [{ name: data.newKey }],
+          keys: [{ name: data.newKey, nameString: data.newKey }],
         },
       }
 
       // Act
-      const nextState = reducer(initialStateMock, editKeyFromList(data))
+      const nextState = reducer(initialStateMock, editPatternKeyFromList(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -1196,7 +1196,7 @@ describe('keys slice', () => {
     })
 
     describe('deleteKey', () => {
-      it('call both deleteKey, deleteKeySuccess and deleteKeyFromList when delete is successed', async () => {
+      it('call both deleteKey, deleteKeySuccess and deletePatternKeyFromList when delete is successed', async () => {
         // Arrange
         const data = {
           name: 'string',
@@ -1215,7 +1215,7 @@ describe('keys slice', () => {
         const expectedActions = [
           deleteKey(),
           deleteKeySuccess(),
-          deleteKeyFromList(data.name),
+          deletePatternKeyFromList(data.name),
           addMessageNotification(successMessages.DELETED_KEY(data.name)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1223,7 +1223,7 @@ describe('keys slice', () => {
     })
 
     describe('editKey', () => {
-      it('call both editKey, editKeySuccess and editKeyFromList when editing is successed', async () => {
+      it('call both editKey, editKeySuccess and editPatternKeyFromList when editing is successed', async () => {
         // Arrange
         const key = 'string'
         const newKey = 'string2'
@@ -1235,7 +1235,7 @@ describe('keys slice', () => {
         await store.dispatch<any>(editKey(key, newKey))
 
         // Assert
-        const expectedActions = [defaultSelectedKeyAction(), editKeyFromList({ key, newKey })]
+        const expectedActions = [defaultSelectedKeyAction(), editPatternKeyFromList({ key, newKey })]
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
@@ -1277,7 +1277,7 @@ describe('keys slice', () => {
         const expectedActions = [
           defaultSelectedKeyAction(),
           deleteKeySuccess(),
-          deleteKeyFromList(key),
+          deletePatternKeyFromList(key),
           defaultSelectedKeyActionSuccess(),
         ]
         expect(store.getActions()).toEqual(expectedActions)

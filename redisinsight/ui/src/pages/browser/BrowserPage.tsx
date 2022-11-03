@@ -325,7 +325,7 @@ const BrowserPage = () => {
                       keyProp={selectedKey}
                       onCloseKey={closePanel}
                       onEditKey={onEditKey}
-                      onDeleteKey={onSelectKey}
+                      onRemoveKey={onSelectKey}
                     />
                   )}
                   {isBulkActionsPanelOpen && !isAddKeyPanelOpen && (

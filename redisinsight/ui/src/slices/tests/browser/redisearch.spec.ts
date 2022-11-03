@@ -30,6 +30,7 @@ import reducer, {
   redisearchDataSelector,
   redisearchSelector,
   setRedisearchInitialState,
+  resetRedisearchKeysData,
 } from '../../browser/redisearch'
 
 let store: typeof mockedStore
@@ -540,6 +541,38 @@ describe('redisearch slice', () => {
 
       // Act
       const nextState = reducer(initialState, createIndexFailure(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetRedisearchKeysData', () => {
+    it('should reset keys data', () => {
+      const strToKey = (name:string) => ({ name, nameString: name, ttl: 1, size: 1, type: 'hash' })
+
+      // Arrange
+      const state = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: [],
+        }
+      }
+
+      const prevState = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: ['1', '2', '3', '4', '5', '6'].map(strToKey),
+        }
+      }
+
+      // Act
+      const nextState = reducer(prevState, resetRedisearchKeysData())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

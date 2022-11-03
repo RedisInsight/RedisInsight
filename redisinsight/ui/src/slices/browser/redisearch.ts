@@ -146,6 +146,10 @@ const redisearchSlice = createSlice({
     setQueryRedisearch: (state, { payload }: PayloadAction<string>) => {
       state.search = payload
     },
+
+    resetRedisearchKeysData: (state) => {
+      state.data.keys.length = 0
+    },
   },
 })
 
@@ -167,6 +171,7 @@ export const {
   setSelectedIndex,
   setLastBatchRedisearchKeys,
   setQueryRedisearch,
+  resetRedisearchKeysData,
 } = redisearchSlice.actions
 
 // Selectors

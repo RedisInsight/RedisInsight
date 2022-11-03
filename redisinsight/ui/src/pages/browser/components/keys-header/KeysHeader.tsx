@@ -252,7 +252,7 @@ const KeysHeader = (props: Props) => {
         }
       })
     }
-    dispatch(resetKeysData())
+    dispatch(resetKeysData(searchMode))
     dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
     localStorageService.set(BrowserStorageItem.browserViewType, type)
@@ -406,7 +406,11 @@ const KeysHeader = (props: Props) => {
               <KeysSummary
                 items={keysState.keys}
                 totalItemsCount={keysState.total}
-                scanned={isSearched || isFiltered || viewType === KeyViewType.Tree ? keysState.scanned : 0}
+                scanned={
+                  isSearched
+                  || (isFiltered && searchMode === SearchMode.Pattern)
+                  || viewType === KeyViewType.Tree ? keysState.scanned : 0
+                }
                 loading={loading}
                 scanMoreStyle={scanMoreStyle}
                 loadMoreItems={handleScanMore}

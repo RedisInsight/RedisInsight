@@ -37,7 +37,7 @@ import { fetchReJSON } from './rejson'
 import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
 import { fetchStreamEntries, setStreamInitialState } from './stream'
-import { fetchMoreRedisearchKeysAction, fetchRedisearchKeysAction, setLastBatchRedisearchKeys, setQueryRedisearch } from './redisearch'
+import { fetchMoreRedisearchKeysAction, fetchRedisearchKeysAction, resetRedisearchKeysData, setLastBatchRedisearchKeys, setQueryRedisearch } from './redisearch'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { KeysStore, KeyViewType, SearchMode } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'
@@ -308,7 +308,7 @@ const keysSlice = createSlice({
       }
     ),
 
-    resetKeysData: (state) => {
+    resetPatternKeysData: (state) => {
       // state.data.keys = []
       state.data.keys.length = 0
     },
@@ -360,7 +360,7 @@ export const {
   changeKeyViewType,
   resetKeyInfo,
   resetKeys,
-  resetKeysData,
+  resetPatternKeysData,
   toggleBrowserFullScreen,
   setViewFormat,
   changeSearchMode,
@@ -941,4 +941,10 @@ export function setSearchMatch(query: string, searchMode: SearchMode) {
   return searchMode === SearchMode.Pattern
     ? setPatternSearchMatch(query)
     : setQueryRedisearch(query)
+}
+
+export function resetKeysData(searchMode: SearchMode) {
+  return searchMode === SearchMode.Pattern
+    ? resetPatternKeysData()
+    : resetRedisearchKeysData()
 }

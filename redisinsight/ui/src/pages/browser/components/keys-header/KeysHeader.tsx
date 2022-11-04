@@ -373,7 +373,7 @@ const KeysHeader = (props: Props) => {
                   >
                     free Redis database
                   </EuiLink>
-                  {' database with module support on Redis Cloud.'}
+                  {' with module support on Redis Cloud.'}
                 </EuiText>
               </EuiPopover>
             </EuiToolTip>

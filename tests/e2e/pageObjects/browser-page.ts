@@ -93,6 +93,8 @@ export class BrowserPage {
     workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
     submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
+    patternModeBtn =  Selector('[data-testid=search-mode-pattern-btn]');
+    redisearchModeBtn =  Selector('[data-testid=search-mode-redisearch-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -104,6 +106,7 @@ export class BrowserPage {
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     userSurveyLink = Selector('[data-testid=user-survey-link]');
+    redisearchFreeLink = Selector('[data-testid=redisearch-free-db]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');
@@ -123,6 +126,7 @@ export class BrowserPage {
     timestampOption = Selector('#time');
     formatSwitcher = Selector('[data-testid=select-format-key-value]', { timeout: 2000 });
     formatSwitcherIcon = Selector('img[data-testid^=key-value-formatter-option-selected]');
+    selectIndexDdn = Selector('[data-testid=select-index-placeholder],[data-testid=select-search-mode]', { timeout: 1000 });
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -183,6 +187,7 @@ export class BrowserPage {
     jsonKeyValue = Selector('[data-testid=json-data]');
     jsonError = Selector('[data-testid=edit-json-error]');
     tooltip = Selector('[role=tooltip]');
+    popover = Selector('[role=dialog]');
     noResultsFound = Selector('[data-test-subj=no-result-found]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
@@ -248,6 +253,9 @@ export class BrowserPage {
     stringValueAsJson = Selector(this.cssJsonValue);
     // POPUPS
     changeValueWarning = Selector('[data-testid=approve-popover]');
+    // TABLE
+    keyListItem = Selector('[role=rowgroup] [role=row]');
+
     /**
      * Common part for Add any new key
      * @param keyName The name of the key
@@ -971,6 +979,17 @@ export class BrowserPage {
             const scannedResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
             await t.expect(scannedResults).gt(rememberedScanResults, { timeout: 3000 });
         }
+    }
+
+    /**
+     * Open Select Index droprown and select option
+     * @param index The name of format
+     */
+    async selectIndexByName(index: string): Promise<void> {
+        const option = Selector(`[data-test-subj="mode-option-type-${index}"]`);
+        await t
+            .click(this.selectIndexDdn)
+            .click(option);
     }
 }
 

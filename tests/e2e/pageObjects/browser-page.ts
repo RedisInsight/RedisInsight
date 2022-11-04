@@ -103,6 +103,7 @@ export class BrowserPage {
     streamEntriesContainer = Selector('[data-testid=stream-entries-container]');
     streamMessagesContainer = Selector('[data-testid=stream-messages-container]');
     loader = Selector('[data-testid=type-loading]');
+    newIndexPanel = Selector('[data-testid=create-index-panel]');
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     userSurveyLink = Selector('[data-testid=user-survey-link]');
@@ -127,6 +128,9 @@ export class BrowserPage {
     formatSwitcher = Selector('[data-testid=select-format-key-value]', { timeout: 2000 });
     formatSwitcherIcon = Selector('img[data-testid^=key-value-formatter-option-selected]');
     selectIndexDdn = Selector('[data-testid=select-index-placeholder],[data-testid=select-search-mode]', { timeout: 1000 });
+    createIndex = Selector('[data-testid=create-index-btn]');
+    cancelIndexCreation = Selector('[data-testid=create-index-cancel-btn]');
+    confirmIndexCreation = Selector('[data-testid=create-index-btn]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -170,6 +174,10 @@ export class BrowserPage {
     claimRetryCountInput = Selector('[data-testid=retry-count]');
     lastIdInput = Selector('[data-testid=last-id-field]');
     inlineItemEditor = Selector('[data-testid=inline-item-editor]');
+    indexNameInput = Selector('[data-testid=index-name]');
+    prefixFieldInput = Selector('[data-test-subj=comboBoxInput]');
+    indexIdentifierInput = Selector('[data-testid^=identifier-]');
+    indexFieldType = Selector('[data-testid^=field-type-]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');

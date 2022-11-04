@@ -137,3 +137,50 @@ test
         await common.checkURL(externalPageLink);
         await t.switchToParentWindow();
     });
+test
+    .before(async() => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+    })
+    .after(async() => {
+        await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+    })('Index creation', async t => {
+        const createIndexLink = 'https://redis.io/commands/ft.create/';
+
+        // Verify that user can cancel index creation
+        await t.click(browserPage.redisearchModeBtn);
+        await t.click(browserPage.selectIndexDdn);
+        await t.click(browserPage.createIndex);
+        await t.expect(browserPage.newIndexPanel.exists).ok('New Index panel is not displayed');
+        await t.click(browserPage.cancelIndexCreation);
+        await t.expect(browserPage.newIndexPanel.exists).notOk('New Index panel is displayed');
+
+        // Verify that user can create an index with all mandatory parameters
+        await t.click(browserPage.redisearchModeBtn);
+        await t.click(browserPage.selectIndexDdn);
+        await t.click(browserPage.createIndex);
+        await t.expect(browserPage.newIndexPanel.exists).ok('New Index panel is not displayed');
+        // Verify that user can see a link to create a profound index and navigate
+        await t.click(browserPage.newIndexPanel.find('a'));
+        await common.checkURL(createIndexLink);
+        await t.switchToParentWindow();
+
+        // Verify that user can create an index with multiple prefixes
+        await t.click(browserPage.indexNameInput);
+        await t.typeText(browserPage.indexNameInput, indexName);
+        await t.click(browserPage.prefixFieldInput);
+        await t.typeText(browserPage.prefixFieldInput, 'device:');
+        await t.pressKey('enter');
+        await t.typeText(browserPage.prefixFieldInput, 'mobile_');
+        await t.pressKey('enter');
+        await t.typeText(browserPage.prefixFieldInput, 'user_');
+        await t.pressKey('enter');
+
+        // Verify that user can create an index with multiple fields (up to 20)
+        await t.click(browserPage.indexIdentifierInput);
+        await t.typeText(browserPage.indexIdentifierInput, 'k0');
+        await t.click(browserPage.confirmIndexCreation);
+        await t.expect(browserPage.newIndexPanel.exists).notOk('New Index panel is displayed');
+        await t.click(browserPage.selectIndexDdn);
+        await browserPage.selectIndexByName(indexName);
+    });

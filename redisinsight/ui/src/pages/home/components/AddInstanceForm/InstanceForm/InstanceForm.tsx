@@ -45,6 +45,7 @@ import {
   resetInstanceUpdateAction,
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
+
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { handlePasteHostName, getDiffKeysOfObjectValues } from 'uiSrc/utils'
@@ -55,7 +56,7 @@ import {
   validateNumber,
   validatePortNumber,
 } from 'uiSrc/utils/validations'
-import { LoadingInstanceText, SubmitBtnText, TitleInstanceText, } from '../InstanceFormWrapper'
+import { LoadingDatabaseText, SubmitBtnText, TitleDatabaseText, } from '../InstanceFormWrapper'
 import styles from './styles.module.scss'
 
 export const ADD_NEW_CA_CERT = 'ADD_NEW_CA_CERT'
@@ -90,10 +91,10 @@ export interface Props {
   isResizablePanel?: boolean
   formFields: DbConnectionInfo
   submitButtonText?: SubmitBtnText
-  titleText?: TitleInstanceText
+  titleText?: TitleDatabaseText
   loading: boolean
   instanceType: InstanceType
-  loadingMsg: LoadingInstanceText
+  loadingMsg: LoadingDatabaseText
   isEditMode: boolean
   isCloneMode: boolean
   setIsCloneMode: (value: boolean) => void
@@ -103,7 +104,7 @@ export interface Props {
   onHostNamePaste: (content: string) => boolean
   onClose?: () => void
   onAliasEdited?: (value: string) => void
-  setErrorMsgRef?: (instance: HTMLDivElement | null) => void
+  setErrorMsgRef?: (database: HTMLDivElement | null) => void
 }
 
 interface ISubmitButton {

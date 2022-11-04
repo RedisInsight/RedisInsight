@@ -27,11 +27,12 @@ export interface Instance extends DatabaseInstanceResponse {
   password?: Nullable<string>
   username?: Nullable<string>
   name?: string
-  tls?: TlsSettings
+  db?: string
+  tls?: boolean
   tlsClientAuthRequired?: boolean
-  tlsClientCertId?: number | undefined
   verifyServerCert?: boolean
-  caCertName?: string
+  caCert?: CaCertificate
+  clientCert?: ClientCertificate
   authUsername?: Nullable<string>
   authPass?: Nullable<string>
   isDeleting?: boolean
@@ -39,6 +40,19 @@ export interface Instance extends DatabaseInstanceResponse {
   modules: RedisModuleDto[]
   isRediStack?: boolean
   visible?: boolean
+}
+
+interface CaCertificate {
+  id?: string
+  name?: string
+  certificate?: string
+}
+
+interface ClientCertificate {
+  id?: string
+  name?: string
+  key?: string
+  certificate?: string
 }
 
 export enum ConnectionType {
@@ -266,7 +280,14 @@ export interface InitialStateInstances {
   changedSuccessfully: boolean
   deletedSuccessfully: boolean
   connectedInstance: Instance
+  editedInstance: InitialStateEditedInstances
   instanceOverview: DatabaseConfigInfo
+}
+
+export interface InitialStateEditedInstances {
+  loading: boolean
+  error: string
+  data: Nullable<Instance>
 }
 
 export interface InitialStateCluster {

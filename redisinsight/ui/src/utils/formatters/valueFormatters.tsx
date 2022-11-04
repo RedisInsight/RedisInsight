@@ -127,7 +127,11 @@ const formattingBuffer = (
   }
 }
 
-const bufferToSerializedFormat = (format: KeyValueFormat, value: RedisResponseBuffer, space?: number): string => {
+const bufferToSerializedFormat = (
+  format: KeyValueFormat,
+  value: RedisResponseBuffer = stringToBuffer(''),
+  space?: number
+): string => {
   switch (format) {
     case KeyValueFormat.ASCII: return bufferToASCII(value)
     case KeyValueFormat.HEX: return bufferToHex(value)

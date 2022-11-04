@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { BulkActionsType, MAX_BULK_ACTION_ERRORS_LENGTH } from 'uiSrc/constants'
 import { IBulkActionOverview } from 'apiSrc/modules/bulk-actions/interfaces/bulk-action-overview.interface'
@@ -20,7 +20,7 @@ export const initialState: StateBulkActions = {
 }
 
 // A slice for recipes
-const bulkActionsSlice = createSlice<StateBulkActions, SliceCaseReducers<StateBulkActions>>({
+const bulkActionsSlice = createSlice({
   name: 'bulkActions',
   initialState,
   reducers: {

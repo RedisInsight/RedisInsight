@@ -51,7 +51,8 @@
   margin-left: 18px;
 }
 
-.viewTypeSwitch {
+.viewTypeSwitch,
+.searchModeSwitch {
   padding: 0 18px;
   flex-shrink: 0;
   &.middleScreen {
@@ -91,4 +92,59 @@
 .refreshContainer {
   right: 18px;
   position: absolute;
+}
+
+.popoverPanelWrapper {
+  width: 225px;
+  z-index: 10000 !important;
+}
+
+.noModuleInfo {
+  font-size: 12px !important;
+  line-height: 18px !important;
+  color: var(--euiTooltipTextSecondColor) !important;
+}
+
+.iconVector svg {
+  height: 17px !important;
+}
+
+.searchModeSwitch {
+  padding: 0 10px 0 0 !important;
+
+  *:first-of-type .viewTypeBtn {
+    border-radius: 4px 0 0 4px !important;
+  }
+  *:last-of-type .viewTypeBtn {
+    border-radius: 0 4px 4px 0 !important;
+  }
+
+  .viewTypeBtn {
+    border: 1px solid var(--euiColorSecondary) !important;
+    background-color: var(--browserViewTypePassive) !important;
+
+    &:hover {
+      transform: none !important;
+    }
+
+    svg {
+      color: var(--euiColorFullShade) !important;
+    }
+
+    svg > g > path {
+      fill: var(--euiColorFullShade) !important;
+    }
+
+    &.active {
+      background-color: var(--euiColorSecondary) !important;
+
+      svg {
+        color: var(--euiColorPrimaryText) !important;
+      }
+
+      svg > g > path {
+        fill: var(--euiColorPrimaryText) !important;
+      }
+    }
+  }
 }

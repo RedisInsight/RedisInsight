@@ -3,7 +3,8 @@ enum ApiErrors {
   KeytarUnavailable = 'KeytarUnavailable',
   KeytarEncryption = 'KeytarEncryptionError',
   KeytarDecryption = 'KeytarDecryptionError',
-  ClientNotFound = 'ClientNotFoundError'
+  ClientNotFound = 'ClientNotFoundError',
+  RedisearchIndexNotFound = 'no such index',
 }
 
 export const ApiEncryptionErrors: string[] = [

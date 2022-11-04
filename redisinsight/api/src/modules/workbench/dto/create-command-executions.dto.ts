@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsEnum, IsArray, IsNotEmptyObject, IsOptional, ArrayNotEmpty, ValidateNested,
+  IsEnum, IsArray, IsNotEmptyObject, IsDefined, IsOptional, ArrayNotEmpty, ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';
@@ -13,6 +13,7 @@ export class CreateCommandExecutionsDto {
   })
   @IsArray()
   @ArrayNotEmpty()
+  @IsDefined()
   @Type(() => String)
   commands: string[];
 

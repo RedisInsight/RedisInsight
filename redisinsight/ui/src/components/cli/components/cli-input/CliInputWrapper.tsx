@@ -9,11 +9,11 @@ import CliAutocomplete from './CliAutocomplete'
 import CliInput from './CliInput'
 
 export interface Props {
-  command: string;
-  wordsTyped: number;
-  setInputEl: Function;
-  setCommand: (command: string) => void;
-  onKeyDown: (event: React.KeyboardEvent<HTMLSpanElement>) => void;
+  command: string
+  wordsTyped: number
+  setInputEl: Function
+  setCommand: (command: string) => void
+  onKeyDown: (event: React.KeyboardEvent<HTMLSpanElement>) => void
 }
 
 const CliInputWrapper = (props: Props) => {

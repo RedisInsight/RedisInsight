@@ -247,7 +247,7 @@ const QueryCardHeader = (props: Props) => {
       <EuiFlexGroup alignItems="center" gutterSize="l" responsive={false} style={{ width: '100%' }}>
         <EuiFlexItem
           className={styles.titleWrapper}
-          grow={!createdAt}
+          grow={false}
         >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
@@ -280,6 +280,8 @@ const QueryCardHeader = (props: Props) => {
               )}
             </EuiTextColor>
           )}
+        </EuiFlexItem>
+        <EuiFlexItem grow={false} className={styles.summaryTextWrapper}>
           {!!summaryText && !isOpen && (
             <EuiTextColor className={styles.summaryText} component="div">
               {truncateText(summaryText, 13)}

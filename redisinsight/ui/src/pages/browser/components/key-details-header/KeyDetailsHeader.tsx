@@ -36,7 +36,7 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, getRefreshEventData, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   formatBytes,
-  formatNameShort,
+  formatLongName,
   isEqualBuffers,
   isFormatEditable,
   MAX_TTL_NUMBER,
@@ -117,7 +117,7 @@ const KeyDetailsHeader = ({
 
   const keyNameRef = useRef<HTMLInputElement>(null)
 
-  const tooltipContent = formatNameShort(keyProp || '')
+  const tooltipContent = formatLongName(keyProp || '')
 
   const onMouseEnterKey = () => {
     setKeyIsHovering(true)

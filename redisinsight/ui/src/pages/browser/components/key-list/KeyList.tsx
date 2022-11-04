@@ -20,12 +20,14 @@ import {
   bufferToString,
   bufferFormatRangeItems,
   isEqualBuffers,
+  Nullable,
 } from 'uiSrc/utils'
 import {
   NoKeysToDisplayText,
   NoResultsFoundText,
   FullScanNoResultsFoundText,
   ScanNoResultsFoundText,
+  NoSelectedIndexText,
 } from 'uiSrc/constants/texts'
 import {
   fetchKeysMetadata,
@@ -42,12 +44,13 @@ import {
 } from 'uiSrc/slices/app/context'
 import { GroupBadge } from 'uiSrc/components'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { KeysStoreData, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import styles from './styles.module.scss'
@@ -72,12 +75,14 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const selectedKey = useSelector(selectedKeySelector)
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered, viewType } = useSelector(keysSelector)
+  const { isSearched, isFiltered, viewType, searchMode } = useSelector(keysSelector)
+  const { selectedIndex } = useSelector(redisearchSelector)
   const { keyList: { scrollTopPosition, isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
-  const [firstDataLoaded, setFirstDataLoaded] = useState(!!keysState.keys.length)
+  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(!!keysState.keys.length)
 
+  const controller = useRef<Nullable<AbortController>>(null)
   const itemsRef = useRef(keysState.keys)
   const isNotRendered = useRef(isNotRenderedContext)
   const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
@@ -90,15 +95,13 @@ const KeyList = forwardRef((props: Props, ref) => {
     }
   }))
 
-  useEffect(() =>
-    () => {
-      if (viewType === KeyViewType.Tree) {
-        return
-      }
-      rerender(() => {
-        dispatch(setLastBatchKeys(itemsRef.current?.slice(-SCAN_COUNT_DEFAULT)))
-      })
-    }, [])
+  useEffect(() => {
+    cancelAllMetadataRequests()
+
+    return () => {
+      dispatch(setLastBatchKeys(itemsRef.current?.slice(-SCAN_COUNT_DEFAULT - 1), searchMode))
+    }
+  }, [searchMode])
 
   useEffect(() => {
     itemsRef.current = [...keysState.keys]
@@ -110,9 +113,13 @@ const KeyList = forwardRef((props: Props, ref) => {
     isNotRendered.current = false
     dispatch(setBrowserIsNotRendered(isNotRendered.current))
     if (itemsRef.current.length === 0) {
+      setFirstDataLoaded(true)
       rerender({})
       return
     }
+
+    cancelAllMetadataRequests()
+    controller.current = new AbortController()
 
     const { startIndex, lastIndex } = renderedRowsIndexesRef.current
     onRowsRendered(startIndex, lastIndex)
@@ -131,6 +138,10 @@ const KeyList = forwardRef((props: Props, ref) => {
     rerender({})
   }, [selectedKey])
 
+  const cancelAllMetadataRequests = () => {
+    controller.current?.abort()
+  }
+
   const onNoKeysLinkClick = () => {
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
@@ -148,8 +159,14 @@ const KeyList = forwardRef((props: Props, ref) => {
     if (isNotRendered.current) {
       return ''
     }
+    if (searchMode === SearchMode.Redisearch && !selectedIndex) {
+      return NoSelectedIndexText
+    }
     if (total === 0) {
       return NoKeysToDisplayText(Pages.workbench(instanceId), onNoKeysLinkClick)
+    }
+    if (isSearched && searchMode === SearchMode.Redisearch) {
+      return keysState.scanned < total ? NoResultsFoundText : FullScanNoResultsFoundText
     }
     if (isSearched) {
       return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
@@ -223,6 +240,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
     dispatch(fetchKeysMetadata(
       emptyItems.map(({ name }) => name),
+      controller.current?.signal,
       (loadedItems) =>
         onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
       () => { rerender({}) }

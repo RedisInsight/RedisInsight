@@ -1,0 +1,267 @@
+import {
+  EuiButton,
+  EuiComboBox,
+  EuiFieldText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFormFieldset,
+  EuiFormRow,
+  EuiHealth,
+  EuiPanel,
+  EuiSuperSelect,
+  EuiTextColor
+} from '@elastic/eui'
+import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
+import cx from 'classnames'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+import Divider from 'uiSrc/components/divider/Divider'
+import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
+import { createIndexStateSelector, createRedisearchIndexAction } from 'uiSrc/slices/browser/redisearch'
+import { stringToBuffer } from 'uiSrc/utils'
+import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/dto/redisearch'
+
+import { FIELD_TYPE_OPTIONS, KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
+
+import styles from './styles.module.scss'
+
+export interface Props {
+  onClosePanel: () => void
+}
+
+const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
+  const { value, color, text } = item
+  return {
+    value,
+    inputDisplay: (
+      <EuiHealth color={color} style={{ lineHeight: 'inherit' }} data-test-subj={value}>
+        {text}
+      </EuiHealth>
+    ),
+  }
+})
+
+const fieldTypeOptions = FIELD_TYPE_OPTIONS.map(({ value, text }) => ({
+  value,
+  inputDisplay: text,
+}))
+
+const initialFieldValue = (id = 0) => ({ id, identifier: '', fieldType: fieldTypeOptions[0].value })
+
+const CreateRedisearchIndex = ({ onClosePanel }: Props) => {
+  const { loading } = useSelector(createIndexStateSelector)
+
+  const [keyTypeSelected, setKeyTypeSelected] = useState<RedisearchIndexKeyType>(keyTypeOptions[0].value)
+  const [prefixes, setPrefixes] = useState<EuiComboBoxOptionOption[]>([])
+  const [indexName, setIndexName] = useState<string>('')
+  const [fields, setFields] = useState<any[]>([initialFieldValue()])
+
+  const lastAddedIdentifier = useRef<HTMLInputElement>(null)
+  const prevCountFields = useRef<number>(0)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (prevCountFields.current !== 0 && prevCountFields.current < fields.length) {
+      lastAddedIdentifier.current?.focus()
+    }
+    prevCountFields.current = fields.length
+  }, [fields.length])
+
+  const addField = () => {
+    const lastFieldId = fields[fields.length - 1].id
+    setFields([...fields, initialFieldValue(lastFieldId + 1)])
+  }
+
+  const removeField = (id: number) => {
+    setFields((fields) => fields.filter((item) => item.id !== id))
+  }
+
+  const clearFieldsValues = (id: number) => {
+    setFields((fields) => fields.map((item) => (item.id === id ? initialFieldValue(id) : item)))
+  }
+
+  const handleFieldChange = (formField: string, id: number, value: string) => {
+    setFields((fields) => fields.map((item) => ((item.id === id) ? { ...item, [formField]: value } : item)))
+  }
+
+  const submitData = () => {
+    const data: CreateRedisearchIndexDto = {
+      index: stringToBuffer(indexName),
+      type: keyTypeSelected,
+      prefixes: prefixes.map((p) => stringToBuffer(p.label as string)),
+      fields: fields.map((item) => ({
+        name: stringToBuffer(item.identifier),
+        type: item.fieldType
+      }))
+    }
+
+    dispatch(createRedisearchIndexAction(data, onClosePanel))
+  }
+
+  const isClearDisabled = (item: any): boolean => fields.length === 1 && !(item.identifier.length)
+
+  return (
+    <>
+      <div className="eui-yScroll">
+        <div className={styles.contentFields}>
+          <div className={styles.fieldsContainer}>
+            <EuiFlexGroup responsive={false} className={styles.row}>
+              <EuiFlexItem>
+                <EuiFormRow label="Index Name" fullWidth>
+                  <EuiFieldText
+                    fullWidth
+                    name="Index name"
+                    id="index-name"
+                    placeholder="Enter Index Name"
+                    value={indexName}
+                    onChange={(e) => setIndexName(e.target.value)}
+                    autoComplete="off"
+                    data-testid="index-name"
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+              <EuiFlexItem>
+                <EuiFormFieldset
+                  legend={{ children: 'Select key type', display: 'hidden' }}
+                >
+                  <EuiFormRow
+                    label="Key Type*"
+                    fullWidth
+                  >
+                    <EuiSuperSelect
+                      itemClassName="withColorDefinition"
+                      fullWidth
+                      options={keyTypeOptions}
+                      valueOfSelected={keyTypeSelected}
+                      onChange={(value: RedisearchIndexKeyType) => setKeyTypeSelected(value)}
+                      data-testid="key-type"
+                    />
+                  </EuiFormRow>
+                </EuiFormFieldset>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+            <EuiFlexGroup responsive={false} className={styles.row} style={{ maxWidth: '100%' }}>
+              <EuiFlexItem style={{ minWidth: '100%', maxWidth: '100%' }}>
+                <EuiFormRow
+                  label="Prefixes"
+                  fullWidth
+                >
+                  <EuiComboBox
+                    noSuggestions
+                    isClearable={false}
+                    placeholder="Enter Prefix"
+                    selectedOptions={prefixes}
+                    onCreateOption={(searchValue) => setPrefixes([...prefixes, { label: searchValue }])}
+                    onChange={(selectedOptions) => setPrefixes(selectedOptions)}
+                    className={styles.combobox}
+                    data-testid="prefix-combobox"
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+            <Divider colorVariable="separatorColor" className={styles.controlsDivider} />
+            {
+              fields.map((item, index) => (
+                <EuiFlexItem
+                  key={item.id}
+                  className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+                  grow
+                  style={{ marginBottom: '8px', marginTop: '16px' }}
+                >
+                  <EuiFlexGroup gutterSize="m">
+                    <EuiFlexItem grow>
+                      <EuiFlexGroup gutterSize="none" alignItems="center">
+                        <EuiFlexItem grow>
+                          <EuiFormRow fullWidth>
+                            <EuiFieldText
+                              fullWidth
+                              name={`identifier-${item.id}`}
+                              id={`identifier-${item.id}`}
+                              placeholder="Enter Identifier"
+                              value={item.identifier}
+                              onChange={(e: ChangeEvent<HTMLInputElement>) => handleFieldChange(
+                                'identifier',
+                                item.id,
+                                e.target.value
+                              )}
+                              inputRef={index === fields.length - 1 ? lastAddedIdentifier : null}
+                              autoComplete="off"
+                              data-testid={`identifier-${item.id}`}
+                            />
+                          </EuiFormRow>
+                        </EuiFlexItem>
+                        <EuiFlexItem grow>
+                          <EuiFormRow>
+                            <EuiSuperSelect
+                              itemClassName="withColorDefinition"
+                              options={fieldTypeOptions}
+                              valueOfSelected={item.fieldType}
+                              onChange={(value: string) => handleFieldChange(
+                                'fieldType',
+                                item.id,
+                                value
+                              )}
+                              data-testid={`field-type-${item.id}`}
+                            />
+                          </EuiFormRow>
+                        </EuiFlexItem>
+                      </EuiFlexGroup>
+                    </EuiFlexItem>
+                    <AddItemsActions
+                      id={item.id}
+                      index={index}
+                      length={fields.length}
+                      addItem={addField}
+                      removeItem={removeField}
+                      clearItemValues={clearFieldsValues}
+                      clearIsDisabled={isClearDisabled(item)}
+                      loading={loading}
+                      anchorClassName={styles.refreshKeyTooltip}
+                    />
+                  </EuiFlexGroup>
+                </EuiFlexItem>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+      <EuiPanel
+        style={{ border: 'none' }}
+        color="transparent"
+        hasShadow={false}
+        borderRadius="none"
+        className={styles.footer}
+      >
+        <EuiFlexGroup justifyContent="flexEnd">
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              color="secondary"
+              onClick={() => onClosePanel()}
+              className="btn-cancel btn-back"
+              data-testid="create-index-cancel-btn"
+            >
+              <EuiTextColor>Cancel</EuiTextColor>
+            </EuiButton>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              fill
+              size="m"
+              color="secondary"
+              isLoading={loading}
+              isDisabled={loading}
+              onClick={submitData}
+              data-testid="create-index-btn"
+            >
+              Create Index
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiPanel>
+    </>
+  )
+}
+
+export default CreateRedisearchIndex

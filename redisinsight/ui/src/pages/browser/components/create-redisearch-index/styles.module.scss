@@ -1,0 +1,69 @@
+.page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .container {
+    background-color: var(--euiColorEmptyShade);
+    height: 100%;
+  }
+
+  .headerWrapper {
+    padding: 24px 0;
+    min-height: 108px;
+    border-bottom: 1px solid var(--separatorColor);
+    flex-shrink: 0;
+  }
+
+  .header {
+    padding: 0 20px;
+  }
+
+  .closeBtnTooltip {
+    position: absolute;
+    top: 22px;
+    right: 18px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .controlsDivider {
+    margin-top: 32px;
+    margin-bottom: 40px;
+  }
+
+  .contentFields {
+    padding: 24px 18px 0;
+
+    .fieldsContainer {
+      margin: 0 auto;
+      width: 100%;
+      max-width: 680px;
+    }
+  }
+
+  .row {
+    margin-bottom: 20px !important;
+  }
+
+  .combobox {
+    max-width: none !important;
+    :global(.euiFormControlLayout) {
+      max-width: none !important;
+    }
+    :global(.euiBadge__content) {
+      min-height: 22px;
+    }
+  }
+
+  .footer {
+    margin-top: 24px;
+    background-color: var(--browserTableRowEven) !important;
+    border: 0 solid var(--euiColorLightShade) !important;
+    border-top-width: 1px !important;
+  }
+}

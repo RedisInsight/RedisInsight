@@ -165,6 +165,9 @@ const KeyList = forwardRef((props: Props, ref) => {
     if (total === 0) {
       return NoKeysToDisplayText(Pages.workbench(instanceId), onNoKeysLinkClick)
     }
+    if (isSearched && searchMode === SearchMode.Redisearch) {
+      return keysState.scanned < total ? NoResultsFoundText : FullScanNoResultsFoundText
+    }
     if (isSearched) {
       return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
     }

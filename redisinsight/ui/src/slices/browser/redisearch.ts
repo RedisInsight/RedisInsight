@@ -9,6 +9,7 @@ import { bufferToString, getApiErrorMessage, getUrl, isEqualBuffers, isStatusSuc
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import ApiErrors from 'uiSrc/constants/apiErrors'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { GetKeysWithDetailsResponse } from 'apiSrc/modules/browser/dto'
 import { CreateRedisearchIndexDto, ListRedisearchIndexesResponse } from 'apiSrc/modules/browser/dto/redisearch'
@@ -249,6 +250,16 @@ export function fetchRedisearchKeysAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(loadKeysSuccess([data, !!query]))
+
+        sendEventTelemetry({
+          event: TelemetryEvent.SEARCH_KEYS_SEARCHED,
+          eventData: {
+            view: state.browser.keys?.viewType,
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            scanCount: data.scanned,
+          }
+        })
+
         onSuccess?.(data)
       }
     } catch (_err) {
@@ -351,7 +362,7 @@ export function fetchRedisearchListAction(
 }
 export function createRedisearchIndexAction(
   data: CreateRedisearchIndexDto,
-  onSuccess?: () => void,
+  onSuccess?: (data: CreateRedisearchIndexDto) => void,
   onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -377,7 +388,7 @@ export function createRedisearchIndexAction(
         dispatch(createIndexSuccess())
         dispatch(addMessageNotification(successMessages.CREATE_INDEX()))
         dispatch(fetchRedisearchListAction())
-        onSuccess?.()
+        onSuccess?.(data)
       }
     } catch (_err) {
       const error = _err as AxiosError

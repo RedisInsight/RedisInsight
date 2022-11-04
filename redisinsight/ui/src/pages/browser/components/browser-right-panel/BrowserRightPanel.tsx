@@ -69,7 +69,8 @@ const BrowserRightPanel = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.SEARCH_INDEX_ADD_CANCELLED,
       eventData: {
-        databaseId: instanceId
+        databaseId: instanceId,
+        view: viewType,
       }
     })
   }

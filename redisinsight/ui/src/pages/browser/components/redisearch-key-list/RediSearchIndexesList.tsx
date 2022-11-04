@@ -82,7 +82,8 @@ const RediSearchIndexesList = (props: Props) => {
       sendEventTelemetry({
         event: TelemetryEvent.SEARCH_INDEX_ADD_BUTTON_CLICKED,
         eventData: {
-          databaseId: instanceId
+          databaseId: instanceId,
+          view: viewType,
         }
       })
 
@@ -100,10 +101,11 @@ const RediSearchIndexesList = (props: Props) => {
     ))
 
     sendEventTelemetry({
-      event: TelemetryEvent.SEARCH_INDEX_ADD_BUTTON_CLICKED,
+      event: TelemetryEvent.SEARCH_INDEX_CHANGED,
       eventData: {
         databaseId: instanceId,
-        totalNumberOfIndexes: list.length
+        totalNumberOfIndexes: list.length,
+        view: viewType,
       }
     })
   }

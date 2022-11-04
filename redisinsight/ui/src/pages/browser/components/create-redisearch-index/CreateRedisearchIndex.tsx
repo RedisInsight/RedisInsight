@@ -20,6 +20,9 @@ import Divider from 'uiSrc/components/divider/Divider'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 import { createIndexStateSelector, createRedisearchIndexAction } from 'uiSrc/slices/browser/redisearch'
 import { stringToBuffer } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { keysSelector } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/dto/redisearch'
 
 import { FIELD_TYPE_OPTIONS, KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -50,7 +53,9 @@ const fieldTypeOptions = FIELD_TYPE_OPTIONS.map(({ value, text }) => ({
 const initialFieldValue = (id = 0) => ({ id, identifier: '', fieldType: fieldTypeOptions[0].value })
 
 const CreateRedisearchIndex = ({ onClosePanel }: Props) => {
+  const { viewType } = useSelector(keysSelector)
   const { loading } = useSelector(createIndexStateSelector)
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
 
   const [keyTypeSelected, setKeyTypeSelected] = useState<RedisearchIndexKeyType>(keyTypeOptions[0].value)
   const [prefixes, setPrefixes] = useState<EuiComboBoxOptionOption[]>([])
@@ -97,7 +102,22 @@ const CreateRedisearchIndex = ({ onClosePanel }: Props) => {
       }))
     }
 
-    dispatch(createRedisearchIndexAction(data, onClosePanel))
+    dispatch(createRedisearchIndexAction(data, onSuccess))
+  }
+
+  const onSuccess = (data: CreateRedisearchIndexDto) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.SEARCH_INDEX_ADDED,
+      eventData: {
+        databaseId: instanceId,
+        view: viewType,
+        dataType: data.type,
+        countOfPrefixes: data.prefixes?.length || 0,
+        countOfFieldNames: data.fields?.length || 0,
+      }
+    })
+
+    onClosePanel()
   }
 
   const isClearDisabled = (item: any): boolean => fields.length === 1 && !(item.identifier.length)

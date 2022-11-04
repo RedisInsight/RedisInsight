@@ -205,7 +205,9 @@ const CliBody = (props: Props) => {
     }
 
     timerClickRef.current = setTimeout(() => {
-      if (!window.getSelection()?.toString()) {
+      const isInputFocused = document.activeElement === inputEl
+
+      if (!window.getSelection()?.toString() && !isInputFocused) {
         inputEl?.focus()
         document.execCommand('selectAll', false)
         document.getSelection()?.collapseToEnd()

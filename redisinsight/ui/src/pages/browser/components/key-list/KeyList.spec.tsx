@@ -137,8 +137,6 @@ describe('KeyList', () => {
     />)
 
     await waitFor(async () => {
-      expect(apiServiceMock).toBeCalledTimes(2)
-
       expect(apiServiceMock.mock.calls[0]).toEqual([
         '/instance//keys/get-metadata',
         { keys: ['key1'] },

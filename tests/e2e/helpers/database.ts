@@ -185,6 +185,7 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
     await addRedisDatabasePage.addRedisDataBase(databaseParameters);
     // Click for saving
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+    await t.wait(2000);
     // Reload page until db appears
     do {
         await common.reloadPage();
@@ -192,7 +193,7 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
     while (!(await dbSelector.exists) && Date.now() - startTime < searchTimeout);
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 5000 });
     await myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName ?? '');
-    await t.expect(browserPage.keysSummary.exists).ok('Key list not loaded');
+    await t.expect(browserPage.keysSummary.exists).ok('Key list not loaded', { timeout: 15000 });
 }
 
 // Accept License terms

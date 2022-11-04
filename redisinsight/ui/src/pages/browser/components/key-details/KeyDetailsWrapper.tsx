@@ -31,7 +31,7 @@ export interface Props {
   onToggleFullScreen: () => void
   onCloseKey: () => void
   onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => void
-  onDeleteKey: () => void
+  onRemoveKey: () => void
   keyProp: RedisResponseBuffer | null
 }
 
@@ -42,7 +42,7 @@ const KeyDetailsWrapper = (props: Props) => {
     onToggleFullScreen,
     onCloseKey,
     onEditKey,
-    onDeleteKey,
+    onRemoveKey,
     keyProp
   } = props
 
@@ -84,11 +84,11 @@ const KeyDetailsWrapper = (props: Props) => {
     if (type === KeyTypes.String) {
       dispatch(deleteKeyAction(key, () => {
         dispatch(resetStringValue())
-        onDeleteKey()
+        onRemoveKey()
       }))
       return
     }
-    dispatch(deleteKeyAction(key, onDeleteKey))
+    dispatch(deleteKeyAction(key, onRemoveKey))
   }
 
   const handleRefreshKey = (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => {
@@ -153,6 +153,7 @@ const KeyDetailsWrapper = (props: Props) => {
       onClosePanel={handleClosePanel}
       onRefresh={handleRefreshKey}
       onDelete={handleDeleteKey}
+      onRemoveKey={onRemoveKey}
       onEditTTL={handleEditTTL}
       onEditKey={handleEditKey}
     />

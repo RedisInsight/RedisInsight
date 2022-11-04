@@ -1,5 +1,4 @@
 import {
-  EuiButton,
   EuiButtonEmpty,
   EuiOutsideClickDetector,
   EuiSuperSelect,
@@ -16,8 +15,10 @@ import {
   redisearchListSelector,
   fetchRedisearchListAction,
 } from 'uiSrc/slices/browser/redisearch'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { bufferToString, formatLongName, Nullable } from 'uiSrc/utils'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
@@ -35,6 +36,7 @@ const RediSearchIndexesList = (props: Props) => {
   const { viewType, searchMode } = useSelector(keysSelector)
   const { selectedIndex = '' } = useSelector(redisearchSelector)
   const { data: list = [], loading } = useSelector(redisearchListSelector)
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
 
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
   const [index, setIndex] = useState<Nullable<string>>(JSON.stringify(selectedIndex))
@@ -76,6 +78,14 @@ const RediSearchIndexesList = (props: Props) => {
     if (isString(value) && value === CREATE) {
       onCreateIndex(true)
       setIsSelectOpen(false)
+
+      sendEventTelemetry({
+        event: TelemetryEvent.SEARCH_INDEX_ADD_BUTTON_CLICKED,
+        eventData: {
+          databaseId: instanceId
+        }
+      })
+
       return
     }
 
@@ -88,6 +98,14 @@ const RediSearchIndexesList = (props: Props) => {
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
     ))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.SEARCH_INDEX_ADD_BUTTON_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        totalNumberOfIndexes: list.length
+      }
+    })
   }
 
   return (

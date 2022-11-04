@@ -150,15 +150,15 @@ test
         // Verify that user can cancel index creation
         await t.click(browserPage.redisearchModeBtn);
         await t.click(browserPage.selectIndexDdn);
-        await t.click(browserPage.createIndex);
+        await t.click(browserPage.createIndexBtn);
         await t.expect(browserPage.newIndexPanel.exists).ok('New Index panel is not displayed');
-        await t.click(browserPage.cancelIndexCreation);
+        await t.click(browserPage.cancelIndexCreationBtn);
         await t.expect(browserPage.newIndexPanel.exists).notOk('New Index panel is displayed');
 
         // Verify that user can create an index with all mandatory parameters
         await t.click(browserPage.redisearchModeBtn);
         await t.click(browserPage.selectIndexDdn);
-        await t.click(browserPage.createIndex);
+        await t.click(browserPage.createIndexBtn);
         await t.expect(browserPage.newIndexPanel.exists).ok('New Index panel is not displayed');
         // Verify that user can see a link to create a profound index and navigate
         await t.click(browserPage.newIndexPanel.find('a'));
@@ -175,11 +175,12 @@ test
         await t.pressKey('enter');
         await t.typeText(browserPage.prefixFieldInput, 'user_');
         await t.pressKey('enter');
+        await t.expect(browserPage.prefixFieldInput.find('button').count).eql(3, '3 prefixes are not displayed');
 
         // Verify that user can create an index with multiple fields (up to 20)
         await t.click(browserPage.indexIdentifierInput);
         await t.typeText(browserPage.indexIdentifierInput, 'k0');
-        await t.click(browserPage.confirmIndexCreation);
+        await t.click(browserPage.confirmIndexCreationBtn);
         await t.expect(browserPage.newIndexPanel.exists).notOk('New Index panel is displayed');
         await t.click(browserPage.selectIndexDdn);
         await browserPage.selectIndexByName(indexName);

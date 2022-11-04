@@ -128,9 +128,9 @@ export class BrowserPage {
     formatSwitcher = Selector('[data-testid=select-format-key-value]', { timeout: 2000 });
     formatSwitcherIcon = Selector('img[data-testid^=key-value-formatter-option-selected]');
     selectIndexDdn = Selector('[data-testid=select-index-placeholder],[data-testid=select-search-mode]', { timeout: 1000 });
-    createIndex = Selector('[data-testid=create-index-btn]');
-    cancelIndexCreation = Selector('[data-testid=create-index-cancel-btn]');
-    confirmIndexCreation = Selector('[data-testid=create-index-btn]');
+    createIndexBtn = Selector('[data-testid=create-index-btn]');
+    cancelIndexCreationBtn = Selector('[data-testid=create-index-cancel-btn]');
+    confirmIndexCreationBtn = Selector('[data-testid=create-index-btn]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');

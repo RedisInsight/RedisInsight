@@ -7,6 +7,8 @@ import { ConsumerGroupController } from 'src/modules/browser/controllers/stream/
 import { ConsumerGroupService } from 'src/modules/browser/services/stream/consumer-group.service';
 import { ConsumerController } from 'src/modules/browser/controllers/stream/consumer.controller';
 import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
+import { RedisearchController } from 'src/modules/browser/controllers/redisearch/redisearch.controller';
+import { RedisearchService } from 'src/modules/browser/services/redisearch/redisearch.service';
 import { HashController } from './controllers/hash/hash.controller';
 import { KeysController } from './controllers/keys/keys.controller';
 import { KeysBusinessService } from './services/keys-business/keys-business.service';
@@ -32,6 +34,7 @@ import { BrowserToolClusterService } from './services/browser-tool-cluster/brows
     SetController,
     ZSetController,
     RejsonRlController,
+    RedisearchController,
     HashController,
     StreamController,
     ConsumerGroupController,
@@ -44,6 +47,7 @@ import { BrowserToolClusterService } from './services/browser-tool-cluster/brows
     SetBusinessService,
     ZSetBusinessService,
     RejsonRlBusinessService,
+    RedisearchService,
     HashBusinessService,
     StreamService,
     ConsumerGroupService,

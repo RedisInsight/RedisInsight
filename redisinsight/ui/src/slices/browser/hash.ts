@@ -9,7 +9,6 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   GetHashFieldsResponse,
   AddFieldsToHashDto,
-  HashFieldDto,
 } from 'apiSrc/modules/browser/dto/hash.dto'
 import {
   deleteKeyFromList,
@@ -312,7 +311,7 @@ export function fetchMoreHashFields(
 export function deleteHashFields(
   key: RedisResponseBuffer,
   fields: RedisResponseBuffer[],
-  onSuccessAction?: () => void,
+  onSuccessAction?: (newTotal?: number) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeHashFields())
@@ -334,7 +333,7 @@ export function deleteHashFields(
       )
       const newTotalValue = state.browser.hash.data.total - data.affected
       if (isStatusSuccessful(status)) {
-        onSuccessAction?.()
+        onSuccessAction?.(newTotalValue)
         dispatch(removeHashFieldsSuccess())
         dispatch(removeFieldsFromList(fields))
         if (newTotalValue > 0) {

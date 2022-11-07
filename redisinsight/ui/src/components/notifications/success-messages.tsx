@@ -146,5 +146,9 @@ export default {
   NO_CLAIMED_MESSAGES: () => ({
     title: 'No messages claimed',
     message: 'No messages exceed the minimum idle time.',
+  }),
+  CREATE_INDEX: () => ({
+    title: 'Index has been created',
+    message: 'Open the list of indexes to see it.'
   })
 }

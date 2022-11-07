@@ -10,9 +10,9 @@ import {
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { stringToBuffer } from 'uiSrc/utils'
+import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
 import {
   defaultSelectedKeyAction,
-  deleteKeyFromList,
   deleteKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
@@ -675,7 +675,7 @@ describe('set slice', () => {
         removeSetMembersSuccess(),
         removeMembersFromList(members),
         deleteKeySuccess(),
-        deleteKeyFromList(key),
+        deleteRedisearchKeyFromList(key),
         addMessageNotification(successMessages.DELETED_KEY(key))
       ]
 

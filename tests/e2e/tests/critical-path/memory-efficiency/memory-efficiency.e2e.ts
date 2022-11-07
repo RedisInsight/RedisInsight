@@ -5,7 +5,6 @@ import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
-import { Selector } from 'testcafe';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -62,7 +61,7 @@ test
         await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value', keysTTL[2]);
         if (await browserPage.submitTooltipBtn.exists) {
             await t.click(browserPage.submitTooltipBtn);
-        };
+        }
         await cliPage.addKeysFromCliWithDelimiter('MSET', 15);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
@@ -77,6 +76,8 @@ test
         await browserPage.deleteKeyByName(streamKeyNameDelimiter);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Keyspaces displaying in Summary per keyspaces table', async t => {
+        const noNamespacesMessage = 'No namespaces to displayConfigure the delimiter in Tree View to customize the namespaces displayed.';
+
         // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that up to 15 keyspaces based on the delimiter set in the Tree view are displayed on memory efficiency page
@@ -100,8 +101,9 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(streamKeyName)).ok('Key is not found');
 
         // Clear filter
-        await t.click(browserPage.treeViewButton);
-        await t.click(browserPage.clearFilterButton);
+        await t
+            .click(browserPage.treeViewButton)
+            .click(browserPage.clearFilterButton);
         // Change delimiter
         await browserPage.changeDelimiterInTreeView('-');
         // Go to Analysis Tools page
@@ -111,6 +113,21 @@ test
         // Verify that delimiter can be changed in Tree View and applied
         await t.expect(memoryEfficiencyPage.nameSpaceTableRows.count).eql(1, 'New delimiter not applied');
         await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[5], 'Keyspace not displayed');
+
+        // No namespaces message with link
+        await t.click(myRedisDatabasePage.browserButton);
+        // Change delimiter to delimiter with no keys
+        await browserPage.changeDelimiterInTreeView('+');
+        // Go to Analysis Tools page and create report
+        await t
+            .click(myRedisDatabasePage.analysisPageButton)
+            .click(memoryEfficiencyPage.newReportBtn);
+        // Verify that user can see the message when he do not have any namespaces selected in delimiter
+        await t.expect(memoryEfficiencyPage.topNamespacesEmptyContainer.exists).ok('No namespaces section not displayed');
+        await t.expect(memoryEfficiencyPage.topNamespacesEmptyMessage.textContent).contains(noNamespacesMessage, 'No namespaces message not displayed/correct');
+        // Verify that user can redirect to Tree view by clicking on button
+        await t.click(memoryEfficiencyPage.treeViewLink);
+        await t.expect(browserPage.treeViewArea.exists).ok('Tree view not opened');
     });
 test
     .before(async t => {
@@ -200,7 +217,7 @@ test
         await browserPage.deleteKeyByName(streamKeyNameDelimiter);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Summary per expiration time', async t => {
-        const yAxis: number = 218;
+        const yAxis = 218;
         // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Points are displayed in graph according to their TTL

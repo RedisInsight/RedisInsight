@@ -83,6 +83,7 @@ body {
   .euiFieldSearch,
   .euiSelect,
   .euiSuperSelectControl,
+  .euiComboBox .euiComboBox__inputWrap,
   .euiTextArea {
     background-color: var(--euiColorEmptyShade) !important;
     max-width: 100% !important;
@@ -151,9 +152,38 @@ body {
   .euiFlexGroup {
     .euiFlexItem:not(:first-child) {
       .euiFieldText,
-      .euiFormControlLayout--group {
+      .euiFormControlLayout--group,
+      .euiSuperSelectControl {
         border-left: 0 !important;
       }
     }
+  }
+
+  .euiFormRow .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
+  .euiFormRow .euiSelect:not(.euiSelect--compressed),
+  .euiFormRow .euiFormControlLayout:not(.euiFormControlLayout--compressed),
+  .euiFormRow .euiFieldText:not(.euiFieldText--compressed),
+  .euiFormRow .euiFieldNumber:not(.euiFieldNumber--compressed) {
+    height: 43px;
+  }
+}
+
+
+.euiComboBox .euiComboBox__inputWrap {
+  padding-top: 5px !important;
+  padding-left: 8px !important;
+  min-height: 43px !important;
+  .euiBadge {
+    background-color: var(--comboBoxBadgeBgColor);
+    color: var(--euiTextSubduedColor);
+    border: 0;
+  }
+
+  .euiBadge__text {
+    line-height: 20px;
+  }
+
+  .euiComboBoxPlaceholder {
+    color: var(--inputPlaceholderColor) !important;
   }
 }

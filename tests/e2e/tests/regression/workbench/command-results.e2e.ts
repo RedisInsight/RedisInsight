@@ -90,7 +90,7 @@ test.skip
         // Verify that search results are displayed in Text view
         await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The result is displayed in Text view');
     });
-test('Big output in workbench is visible in virtuallized table', async t => {
+test('Big output in workbench is visible in virtualized table', async t => {
     // Send commands
     const command = 'graph.query t "UNWIND range(1,1000) AS x return x"';
     const bottomText = 'Query internal execution time';

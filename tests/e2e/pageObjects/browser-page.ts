@@ -10,6 +10,10 @@ export class BrowserPage {
     cssSelectorKey = '[data-testid^=key-]';
     cssFilteringLabel = '[data-testid=multi-search]';
     cssJsonValue = '[data-tesid=value-as-json]';
+    cssVirtualTableRow = '[aria-label=row]';
+    cssKeyBadge = '[data-testid^=badge-]';
+    cssKeyTtl = '[data-testid^=ttl-]';
+    cssKeySize = '[data-testid^=size-]';
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.

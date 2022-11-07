@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsEnum, IsArray, IsNotEmptyObject, IsDefined, IsOptional, ArrayNotEmpty, ValidateNested,
+  IsEnum, IsArray, IsNotEmptyObject, IsDefined, IsOptional, IsString, ArrayNotEmpty, ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';
@@ -9,12 +9,13 @@ import { ClusterNodeRole, RunQueryMode, ResultsMode } from './create-command-exe
 export class CreateCommandExecutionsDto {
   @ApiProperty({
     isArray: true,
+    type: String,
     description: 'Redis commands',
   })
   @IsArray()
   @ArrayNotEmpty()
   @IsDefined()
-  @Type(() => String)
+  @IsString({ each: true })
   commands: string[];
 
   @ApiPropertyOptional({

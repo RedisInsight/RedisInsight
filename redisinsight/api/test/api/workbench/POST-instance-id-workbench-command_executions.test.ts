@@ -19,10 +19,9 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 
 // input data schema
 const dataSchema = Joi.object({
-  commands: Joi.array().items(Joi.string().required().label('commands').messages({
-    'any.required': '{#label} should not be empty',
-  })).required().min(1).messages({
-    'array.sparse': 'each value in commands should not be empty',
+  // commands: Joi.array().items(Joi.string().required()).required(),
+  commands: Joi.array().items(Joi.string().allow('')).required().messages({
+    'string.base': 'each value in commands must be a string'
   }),
   role: Joi.string().valid('ALL', 'MASTER', 'SLAVE').allow(null),
   mode: Joi.string().valid('RAW', 'ASCII').allow(null),
@@ -75,6 +74,11 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   createdAt: Joi.date().required(),
   executionTime: Joi.number().integer().allow(null),
   isNotStored: Joi.boolean(),
+  summary: Joi.object({
+    total: Joi.number(),
+    success: Joi.number(),
+    fail: Joi.number(),
+  }),
 })).required();
 
 const mainCheckFn = async (testCase) => {
@@ -100,9 +104,9 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
   before(rte.data.truncate);
 
   describe('Validation', () => {
-    // generateInvalidDataTestCases(dataSchema, validInputData).map(
-    //   validateInvalidDataTestCase(endpoint, dataSchema),
-    // );
+    generateInvalidDataTestCases(dataSchema, validInputData).map(
+      validateInvalidDataTestCase(endpoint, dataSchema),
+    );
   });
 
   describe('Common', () => {
@@ -952,8 +956,8 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
             checkFn: async ({ body }) => {
               expect(body[0].result.length).to.eql(1);
 
-              // const count = await repo.count({ databaseId: constants.TEST_INSTANCE_ID });
-              // expect(count).to.lte(30);
+              const count = await repo.countBy({ databaseId: constants.TEST_INSTANCE_ID });
+              expect(count).to.lte(30);
 
               // check that the last execution command was not deleted
               // await repo.findOneOrFail({ id: body.id }); // sometimes localDb is not in sync. investigate
@@ -1235,6 +1239,8 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
             expect(body[1].executionTime).to.eql(entity_2.executionTime);
             expect(localDb.encryptData(body[0].command)).to.eql(entity_1.command);
             expect(localDb.encryptData(body[1].command)).to.eql(entity_2.command);
+            expect(body[0].result[0].status).to.eql('success');
+            expect(body[1].result[0].status).to.eql('success');
           }
         },
         {
@@ -1263,81 +1269,87 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
             expect(localDb.encryptData(body[1].command)).to.eql(entity_2.command);
             expect(body[0].result[0].status).to.eql('success');
             expect(body[1].result[0].status).to.eql('fail');
-            // expect(body[0].result[0].response).to.include([
-            //   constants.TEST_LIST_ELEMENT_2,
-            //   constants.TEST_LIST_ELEMENT_1,
-            // ]);
-            // expect(body[1].result[1].response).to.include('ERR unknown command \'dasd\', with args beginning with: ');
-            expect(localDb.encryptData(JSON.stringify(body[0].result))).to.eql(entity_1.result);
-            expect(localDb.encryptData(JSON.stringify(body[1].result))).to.eql(entity_2.result);
+          },
+        }
+      ].map(mainCheckFn);
+    });
+    describe('Group mode', () => {
+      [
+        {
+          name: 'Group mode with two commands',
+          data: {
+            commands: [`lpush ${constants.TEST_LIST_KEY_1} ${constants.TEST_LIST_ELEMENT_1} ${constants.TEST_LIST_ELEMENT_2}`, `lrange ${constants.TEST_LIST_KEY_1} 0 100`],
+            resultsMode: 'GROUP_MODE',
+          },
+          responseSchema,
+          before: async () => {
+            expect(await rte.client.exists(constants.TEST_LIST_KEY_1)).to.eql(0);
+          },
+          after: async () => {
+            expect(await rte.client.lrange(constants.TEST_LIST_KEY_1, 0, 100)).to.eql([
+              constants.TEST_LIST_ELEMENT_2,
+              constants.TEST_LIST_ELEMENT_1,
+            ]);
+          },
+          checkFn: async ({ body }) => {
+            expect(body[0].executionTime).to.be.a('number')
+
+            const entity: any = await (await localDb.getRepository(localDb.repositories.COMMAND_EXECUTION)).findOneBy({
+              id: body[0].id,
+            });
+
+            expect(entity.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
+            expect(body[0].executionTime).to.eql(entity.executionTime);
+            // group mode should always return success
+            expect(body[0].result[0].status).to.eql('success');
+            expect(body[0].result[0].response[0].status).to.eql('success');
+            expect(body[0].result[0].response[1]).to.eql(
+              {
+                status: 'success',
+                response: [
+                  constants.TEST_LIST_ELEMENT_2,
+                  constants.TEST_LIST_ELEMENT_1,
+                ],
+                command: `lrange ${constants.TEST_LIST_KEY_1} 0 100`,
+              },
+            );
+            expect(body[0].summary).to.eql({ total: 2, success: 2, fail: 0 });
+            expect(localDb.encryptData(body[0].command)).to.eql(entity.command);
+            expect(localDb.encryptData(JSON.stringify(body[0].result))).to.eql(entity.result);
+          }
+        },
+        {
+          name: 'Group mode with one wrong command',
+          data: {
+            commands: [`lrange ${constants.TEST_LIST_KEY_1} 0 100`, 'dasd'],
+            resultsMode: 'GROUP_MODE',
+          },
+          responseSchema,
+          checkFn: async ({ body }) => {
+
+            const entity: any = await (await localDb.getRepository(localDb.repositories.COMMAND_EXECUTION)).findOneBy({
+              id: body[0].id,
+            });
+
+            expect(body[0].executionTime).to.be.a('number')
+            expect(entity.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
+            expect(body[0].executionTime).to.eql(entity.executionTime);
+            expect(localDb.encryptData(body[0].command)).to.eql(entity.command);
+            expect(body[0].summary).to.eql({ total: 2, success: 1, fail: 1 });
+            // group mode should always return success
+            expect(body[0].result[0].status).to.eql('success');
+            expect(body[0].result[0].response[0].status).to.eql('success');
+            expect(body[0].result[0].response[1].status).to.eql('fail');
+            expect(localDb.encryptData(body[0].command)).to.eql(entity.command);
+            expect(body[0].result[0].response[0].response).to.eql([
+                constants.TEST_LIST_ELEMENT_2,
+                constants.TEST_LIST_ELEMENT_1,
+            ]);
+            expect(body[0].result[0].response[1].response).to.include('ERR unknown command `dasd`, with args beginning with: ');
+            expect(localDb.encryptData(JSON.stringify(body[0].result))).to.eql(entity.result);
           }
         },
       ].map(mainCheckFn);
     });
-    // describe('Group mode', () => {
-    //   [
-    //     {
-    //       name: 'Pipeline with two commands',
-    //       data: {
-    //         commands: [`lrange ${constants.TEST_LIST_KEY_1} 0 100`, 'info'],
-    //       },
-    //       responseSchema,
-    //       checkFn: async ({ body }) => {
-    //         expect(body[0].executionTime).to.be.a('number')
-    //         expect(body[1].executionTime).to.be.a('number')
-
-    //         const entity_1: any = await (await localDb.getRepository(localDb.repositories.COMMAND_EXECUTION)).findOneBy({
-    //           id: body[0].id,
-    //         });
-
-    //         const entity_2: any = await (await localDb.getRepository(localDb.repositories.COMMAND_EXECUTION)).findOneBy({
-    //           id: body[1].id,
-    //         });
-
-    //         expect(entity_1.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
-    //         expect(entity_2.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
-    //         expect(body[0].executionTime).to.eql(entity_1.executionTime);
-    //         expect(body[1].executionTime).to.eql(entity_2.executionTime);
-    //         expect(localDb.encryptData(body[0].command)).to.eql(entity_1.command);
-    //         expect(localDb.encryptData(body[1].command)).to.eql(entity_2.command);
-    //       }
-    //     },
-    //     {
-    //       name: 'Pipeline with one wrong command',
-    //       data: {
-    //         commands: [`lrange ${constants.TEST_LIST_KEY_1} 0 100`, 'dasd'],
-    //       },
-    //       responseSchema,
-    //       checkFn: async ({ body }) => {
-    //         expect(body[0].executionTime).to.be.a('number')
-    //         expect(body[1].executionTime).to.be.a('number')
-
-    //         const entity_1: any = await (await localDb.getRepository(localDb.repositories.COMMAND_EXECUTION)).findOneBy({
-    //           id: body[0].id,
-    //         });
-
-    //         const entity_2: any = await (await localDb.getRepository(localDb.repositories.COMMAND_EXECUTION)).findOneBy({
-    //           id: body[1].id,
-    //         });
-
-    //         expect(entity_1.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
-    //         expect(entity_2.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
-    //         expect(body[0].executionTime).to.eql(entity_1.executionTime);
-    //         expect(body[1].executionTime).to.eql(entity_2.executionTime);
-    //         expect(localDb.encryptData(body[0].command)).to.eql(entity_1.command);
-    //         expect(localDb.encryptData(body[1].command)).to.eql(entity_2.command);
-    //         expect(body[0].result[0].status).to.eql('success');
-    //         expect(body[1].result[0].status).to.eql('fail');
-    //         expect(body[1].result[0].response).to.include([
-    //           constants.TEST_LIST_ELEMENT_2,
-    //           constants.TEST_LIST_ELEMENT_1,
-    //         ]);
-    //         expect(body[1].result[1].response).to.include('ERR unknown command \'dasd\', with args beginning with: ');
-    //         expect(localDb.encryptData(JSON.stringify(body[0].result))).to.eql(entity_1.result);
-    //         expect(localDb.encryptData(JSON.stringify(body[1].result))).to.eql(entity_2.result);
-    //       }
-    //     },
-    //   ].map(mainCheckFn);
-    // });
   });
 });

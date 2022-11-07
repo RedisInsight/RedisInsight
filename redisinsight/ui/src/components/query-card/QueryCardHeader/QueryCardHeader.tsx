@@ -295,6 +295,7 @@ const QueryCardHeader = (props: Props) => {
               content={getExecutionTimeString(executionTime)}
               position="left"
               anchorClassName={cx(styles.tooltipIcon, styles.alignCenter)}
+              data-testid="execution-time-tooltip"
             >
               <>
                 <EuiIcon
@@ -302,7 +303,10 @@ const QueryCardHeader = (props: Props) => {
                   data-testid="command-execution-time-icon"
                   className={styles.iconExecutingTime}
                 />
-                <EuiTextColor className={cx(styles.timeText, styles.executionTimeValue)}>
+                <EuiTextColor
+                  className={cx(styles.timeText, styles.executionTimeValue)}
+                  data-testid="command-execution-time-value"
+                >
                   {getTruncatedExecutionTimeString(executionTime)}
                 </EuiTextColor>
               </>

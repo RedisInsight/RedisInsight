@@ -1345,7 +1345,7 @@ describe('POST /instance/:instanceId/workbench/command-executions', () => {
                 constants.TEST_LIST_ELEMENT_2,
                 constants.TEST_LIST_ELEMENT_1,
             ]);
-            expect(body[0].result[0].response[1].response).to.include('ERR unknown command `dasd`, with args beginning with: ');
+            expect(body[0].result[0].response[1].response).to.include('ERR unknown command');
             expect(localDb.encryptData(JSON.stringify(body[0].result))).to.eql(entity.result);
           }
         },

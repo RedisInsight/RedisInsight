@@ -40,7 +40,8 @@ export interface StateAppContext {
   browser: {
     keyList: {
       isDataLoaded: boolean
-      scrollTopPosition: number
+      scrollPatternTopPosition: number
+      scrollRedisearchTopPosition: number
       isNotRendered: boolean
       selectedKey: Nullable<RedisResponseBuffer>
     },

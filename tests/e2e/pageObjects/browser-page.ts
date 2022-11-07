@@ -914,8 +914,6 @@ export class BrowserPage {
     async changeDelimiterInTreeView(delimiter: string): Promise<void> {
         // Open delimiter popup
         await t.click(this.treeViewDelimiterButton);
-        // Check the previous value
-        await t.expect(this.treeViewDelimiterButton.withExactText(':').exists).ok('Default delimiter value not correct');
         // Apply new value to the field
         await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true, paste: true });
         // Click on save button
@@ -982,14 +980,14 @@ export class BrowserPage {
             // Remember results value
             const rememberedScanResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
             await t.expect(this.progressKeyList.exists).notOk('Progress Bar is still displayed', { timeout: 30000 });
-            const scannedValueText = await this.scannedValue.textContent;
+            const scannedValueText = this.scannedValue.textContent;
             const regExp = new RegExp(`${i} 00` + '.');
             await t
                 .expect(scannedValueText).match(regExp, `The database is not automatically scanned by ${i} 000 keys`)
                 .doubleClick(this.scanMoreButton)
-                .expect(this.progressKeyList.exists).ok('Progress Bar is not displayed', { timeout: 30000 });
+                .expect(this.progressKeyList.exists).ok('Progress Bar is not displayed');
             const scannedResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
-            await t.expect(scannedResults).gt(rememberedScanResults, { timeout: 3000 });
+            await t.expect(scannedResults).gt(rememberedScanResults);
         }
     }
 

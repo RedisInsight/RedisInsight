@@ -10,7 +10,7 @@ export class BrowserActions {
     async verifyAllRenderedKeysHasText(): Promise<void> {
         const keyListItems = browserPage.virtualTableContainer.find(browserPage.cssVirtualTableRow);
         // Take 1st, middle and last one rendered items for test
-        const keysForTest = [keyListItems.nth(0), keyListItems.nth(await keyListItems.count / 2), keyListItems.nth(await keyListItems.count - 2)];
+        const keysForTest = [keyListItems.nth(0), keyListItems.nth(Math.round(await keyListItems.count / 2)), keyListItems.nth(await keyListItems.count - 2)];
 
         // Verify that keys info in all columns is not empty
         for (const key of keysForTest) {

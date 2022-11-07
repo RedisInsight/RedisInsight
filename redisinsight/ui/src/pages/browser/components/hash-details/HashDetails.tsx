@@ -74,10 +74,11 @@ interface IHashField extends HashFieldDto {}
 
 export interface Props {
   isFooterOpen: boolean
+  onRemoveKey: () => void
 }
 
 const HashDetails = (props: Props) => {
-  const { isFooterOpen } = props
+  const { isFooterOpen, onRemoveKey } = props
 
   const {
     total,
@@ -135,7 +136,8 @@ const HashDetails = (props: Props) => {
     setDeleting(`${field + suffix}`)
   }, [])
 
-  const onSuccessRemoved = () => {
+  const onSuccessRemoved = (newTotalValue: number) => {
+    newTotalValue === 0 && onRemoveKey()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,

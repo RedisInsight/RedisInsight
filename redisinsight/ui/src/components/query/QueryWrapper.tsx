@@ -1,3 +1,4 @@
+import { without } from 'lodash'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { EuiLoadingContent } from '@elastic/eui'
@@ -63,7 +64,11 @@ const QueryWrapper = (props: Props) => {
 
   const sendEventSubmitTelemetry = (commandInit = query) => {
     const eventData = (() => {
-      const commands = splitMonacoValuePerLines(commandInit)
+      const commands = without(
+        splitMonacoValuePerLines(commandInit)
+          .map((command) => removeMonacoComments(decode(command).trim())),
+        ''
+      )
 
       const [commandLine, ...rest] = commands.map((command = '') => {
         const matchedCommand = REDIS_COMMANDS_ARRAY.find((commandName) =>
@@ -72,8 +77,7 @@ const QueryWrapper = (props: Props) => {
       })
 
       const multiCommands = getMultiCommands(rest).replaceAll('\n', ';')
-
-      const command = removeMonacoComments(decode([commandLine, multiCommands].join(';')).trim())
+      const command = [commandLine, multiCommands].join('') ? [commandLine, multiCommands].join(';') : null
 
       return {
         command,
@@ -85,10 +89,12 @@ const QueryWrapper = (props: Props) => {
       }
     })()
 
-    sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_COMMAND_SUBMITTED,
-      eventData
-    })
+    if (eventData.command) {
+      sendEventTelemetry({
+        event: TelemetryEvent.WORKBENCH_COMMAND_SUBMITTED,
+        eventData
+      })
+    }
   }
 
   const handleSubmit = (value?: string) => {

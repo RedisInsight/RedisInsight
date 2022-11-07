@@ -122,7 +122,7 @@ const BrowserRightPanel = (props: Props) => {
           keyProp={selectedKey}
           onCloseKey={closePanel}
           onEditKey={onEditKey}
-          onDeleteKey={onSelectKey}
+          onRemoveKey={onSelectKey}
         />
       )}
       {isAddKeyPanelOpen && every([!isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (

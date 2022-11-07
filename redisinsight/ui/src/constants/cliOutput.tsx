@@ -1,5 +1,5 @@
 import { EuiLink, EuiTextColor } from '@elastic/eui'
-import React from 'react'
+import React, { Fragment } from 'react'
 import { getRouterLinkProps } from 'uiSrc/services'
 
 export const ClearCommand = 'clear'
@@ -17,7 +17,7 @@ export const InitOutputText = (
   emptyOutput: boolean,
   onClick: () => void,
 ) => [
-  <>
+  <Fragment key={Math.random()}>
     { emptyOutput && (
       <span className="color-green" key={Math.random()}>
         {'Try '}
@@ -32,7 +32,7 @@ export const InitOutputText = (
         , our advanced CLI. Check out our Quick Guides to learn more about Redis capabilities.
       </span>
     )}
-  </>,
+  </Fragment>,
   '\n\n',
   'Connecting...',
   '\n\n',

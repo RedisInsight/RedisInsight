@@ -101,10 +101,10 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can scroll key virtualized table and see keys info displayed', async() => {
         const listItems = browserPage.virtualTableContainer.find(browserPage.cssVirtualTableRow);
-        const maxNumberOfScrolls = 50;
+        const maxNumberOfScrolls = 15;
         let numberOfScrolls = 0;
 
-        // Scroll down the virtualized list 50 times
+        // Scroll down the virtualized list 15 times
         while (numberOfScrolls < maxNumberOfScrolls) {
             const currentLastRenderedItemIndex = await listItems.count - 1;
             const currentLastRenderedItemText = await listItems.nth(currentLastRenderedItemIndex).find(browserPage.cssSelectorKey).innerText;
@@ -115,17 +115,18 @@ test
             // Verify that last rendered item name is not empty
             await t.expect(currentLastRenderedItemText).notEql('', `"${currentLastRenderedItemText}" Key name is empty`);
         }
-        // Verify that key names are not empty
+
+        // Verify that keys info in row not empty
         await browserActions.verifyAllRenderedKeysHasText();
 
         await t.click(browserPage.refreshKeysButton);
-        // Verify that key names are not empty after refreshing page
+        // Verify that keys info in row not empty after refreshing page
         await browserActions.verifyAllRenderedKeysHasText();
 
         // Go to Workbench page
         await t.click(myRedisDatabasePage.workbenchButton);
         // Go to Browser Page
         await t.click(myRedisDatabasePage.browserButton);
-        // Verify that key names are not empty after switching between pages
+        // Verify that keys info in row not empty after switching between pages
         await browserActions.verifyAllRenderedKeysHasText();
     });

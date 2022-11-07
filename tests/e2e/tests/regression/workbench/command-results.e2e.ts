@@ -90,3 +90,30 @@ test.skip
         // Verify that search results are displayed in Text view
         await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The result is displayed in Text view');
     });
+test('Big output in workbench is visible in virtuallized table', async t => {
+    // Send commands
+    const command = 'graph.query t "UNWIND range(1,1000) AS x return x"';
+    const bottomText = 'Query internal execution time';
+    let numberOfScrolls = 0;
+
+    // Send command in workbench with Text view type
+    await workbenchPage.sendCommandInWorkbench(command);
+    await workbenchPage.selectViewTypeText();
+
+    const containerOfCommand = await workbenchPage.getCardContainerByCommand(command);
+    const listItems = containerOfCommand.find(workbenchPage.cssRowInVirtualizedTable);
+    const lastExpectedItem = listItems.withText(bottomText);
+
+    // Scroll down the virtualized list until the last row
+    while (!await lastExpectedItem.exists && numberOfScrolls < 100) {
+        const currentLastRenderedItemIndex = await listItems.count - 1;
+        const currentLastRenderedItemText = await listItems.nth(currentLastRenderedItemIndex).textContent;
+        const currentLastRenderedItem = listItems.withText(currentLastRenderedItemText);
+
+        await t.scrollIntoView(currentLastRenderedItem);
+        numberOfScrolls++;
+    }
+
+    // Verify that all commands scrolled
+    await t.expect(lastExpectedItem.visible).ok('Final execution time message not displayed');
+});

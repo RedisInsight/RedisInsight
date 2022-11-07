@@ -10,7 +10,7 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).get(`/instance/${instanceId}/redisearch`);
+  request(server).get(`/${constants.API.DATABASES}/${instanceId}/redisearch`);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 

@@ -15,7 +15,7 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/instance/${instanceId}/redisearch`);
+  request(server).post(`/${constants.API.DATABASES}/${instanceId}/redisearch`);
 
 // input data schema
 const dataSchema = Joi.object({
@@ -63,7 +63,7 @@ describe('POST /databases/:id/redisearch', () => {
           statusCode: 201,
           before: async () => {
             await validateApiCall({
-              endpoint: () => request(server).get(`/instance/${constants.TEST_INSTANCE_ID}/redisearch`),
+              endpoint: () => request(server).get(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/redisearch`),
               checkFn: ({ body }) => {
                 expect(body.indexes.length).to.eq(0);
               },
@@ -71,7 +71,7 @@ describe('POST /databases/:id/redisearch', () => {
           },
           after: async () => {
             await validateApiCall({
-              endpoint: () => request(server).get(`/instance/${constants.TEST_INSTANCE_ID}/redisearch`),
+              endpoint: () => request(server).get(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/redisearch`),
               checkFn: ({ body }) => {
                 expect(body.indexes.length).to.eq(1);
                 expect(body.indexes).to.include(constants.TEST_SEARCH_HASH_INDEX_1);

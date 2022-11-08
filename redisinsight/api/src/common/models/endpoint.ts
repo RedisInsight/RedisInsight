@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 export class Endpoint {
   @ApiProperty({
@@ -12,6 +12,7 @@ export class Endpoint {
   })
   @IsNotEmpty()
   @IsString({ always: true })
+  @Expose()
   host: string;
 
   @ApiProperty({
@@ -22,5 +23,6 @@ export class Endpoint {
   @IsNotEmpty()
   @IsInt({ always: true })
   @Type(() => Number)
+  @Expose()
   port: number;
 }

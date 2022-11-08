@@ -10,7 +10,7 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { Endpoint } from 'src/common/models';
 import {
   CliOutputFormatterTypes,
@@ -80,6 +80,7 @@ export class ClusterSingleNodeOptions extends Endpoint {
   })
   @IsBoolean()
   @IsDefined()
+  @Expose()
   enableRedirection: boolean;
 }
 

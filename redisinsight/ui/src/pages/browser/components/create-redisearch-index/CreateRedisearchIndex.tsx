@@ -31,6 +31,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   onClosePanel: () => void
+  onCreateIndex: () => void
 }
 
 const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
@@ -52,7 +53,7 @@ const fieldTypeOptions = FIELD_TYPE_OPTIONS.map(({ value, text }) => ({
 
 const initialFieldValue = (id = 0) => ({ id, identifier: '', fieldType: fieldTypeOptions[0].value })
 
-const CreateRedisearchIndex = ({ onClosePanel }: Props) => {
+const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   const { viewType } = useSelector(keysSelector)
   const { loading } = useSelector(createIndexStateSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
@@ -117,7 +118,7 @@ const CreateRedisearchIndex = ({ onClosePanel }: Props) => {
       }
     })
 
-    onClosePanel()
+    onCreateIndex()
   }
 
   const isClearDisabled = (item: any): boolean => fields.length === 1 && !(item.identifier.length)

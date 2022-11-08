@@ -15,9 +15,10 @@ import styles from './styles.module.scss'
 
 export interface Props {
   onClosePanel: () => void
+  onCreateIndex: () => void
 }
 
-const CreateRedisearchIndexWrapper = ({ onClosePanel }: Props) => (
+const CreateRedisearchIndexWrapper = ({ onClosePanel, onCreateIndex }: Props) => (
   <div className={styles.page} data-testid="create-index-panel">
     <EuiFlexGroup
       justifyContent="center"
@@ -60,7 +61,10 @@ const CreateRedisearchIndexWrapper = ({ onClosePanel }: Props) => (
           </EuiText>
         </EuiFlexItem>
       </div>
-      <CreateRedisearchIndex onClosePanel={onClosePanel} />
+      <CreateRedisearchIndex
+        onCreateIndex={onCreateIndex}
+        onClosePanel={onClosePanel}
+      />
     </EuiFlexGroup>
   </div>
 )

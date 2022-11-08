@@ -251,14 +251,16 @@ export function fetchRedisearchKeysAction(
       if (isStatusSuccessful(status)) {
         dispatch(loadKeysSuccess([data, !!query]))
 
-        sendEventTelemetry({
-          event: TelemetryEvent.SEARCH_KEYS_SEARCHED,
-          eventData: {
-            view: state.browser.keys?.viewType,
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            scanCount: data.scanned,
-          }
-        })
+        if (query) {
+          sendEventTelemetry({
+            event: TelemetryEvent.SEARCH_KEYS_SEARCHED,
+            eventData: {
+              view: state.browser.keys?.viewType,
+              databaseId: state.connections.instances?.connectedInstance?.id,
+              scanCount: data.scanned,
+            }
+          })
+        }
 
         onSuccess?.(data)
       }

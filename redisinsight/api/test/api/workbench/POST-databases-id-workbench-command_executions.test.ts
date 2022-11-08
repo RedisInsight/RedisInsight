@@ -19,7 +19,6 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 
 // input data schema
 const dataSchema = Joi.object({
-  // commands: Joi.array().items(Joi.string().required()).required(),
   commands: Joi.array().items(Joi.string().allow('')).required().messages({
     'string.base': 'each value in commands must be a string'
   }),
@@ -1013,7 +1012,7 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
     let nodes;
 
     before(async () => {
-      database = await (await localDb.getRepository(localDb.repositories.INSTANCE)).findOneBy({
+      database = await (await localDb.getRepository(localDb.repositories.DAtABASE)).findOneBy({
         id: constants.TEST_INSTANCE_ID,
       });
       nodes = JSON.parse(database.nodes);

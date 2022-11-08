@@ -63,7 +63,8 @@ const WBResults = (props: Props) => {
           mode,
           resultsMode,
           emptyCommand,
-          isNotStored
+          isNotStored,
+          executionTime,
         }
       ) => (
         <QueryCard
@@ -78,6 +79,7 @@ const WBResults = (props: Props) => {
           activeMode={activeMode}
           emptyCommand={emptyCommand}
           isNotStored={isNotStored}
+          executionTime={executionTime}
           mode={mode}
           activeResultsMode={activeResultsMode}
           resultsMode={resultsMode}

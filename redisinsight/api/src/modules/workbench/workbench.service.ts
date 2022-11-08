@@ -46,7 +46,10 @@ export class WorkbenchService {
         },
       ];
     } else {
+      const startCommandExecutionTime = process.hrtime.bigint();
       commandExecution.result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
+      const endCommandExecutionTime = process.hrtime.bigint();
+      commandExecution.executionTime = Math.round((Number(endCommandExecutionTime - startCommandExecutionTime) / 1000));
     }
 
     return commandExecution;
@@ -67,6 +70,9 @@ export class WorkbenchService {
       ...dto,
       databaseId: clientOptions.instanceId,
     };
+    let executionTimeInNanoseconds = BigInt(0);
+
+    const startCommandExecutionTime = process.hrtime.bigint();
 
     const executionResults = await Promise.all(commands.map(async (singleCommand) => {
       const command = multilineCommandToOneLine(singleCommand);
@@ -79,8 +85,15 @@ export class WorkbenchService {
         });
       }
       const result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
+      const endCommandExecutionTime = process.hrtime.bigint();
+
+      executionTimeInNanoseconds += (endCommandExecutionTime - startCommandExecutionTime);
       return ({ ...result[0], command });
     }));
+
+    if (Number(executionTimeInNanoseconds) !== 0) {
+      commandExecution.executionTime = Math.round(Number(executionTimeInNanoseconds) / 1000);
+    }
 
     const successCommands = executionResults.filter(
       (command) => command.status === CommandExecutionStatus.Success,

@@ -3,8 +3,8 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  RequestTimeoutException,
   Logger,
+  BadGatewayException,
 } from '@nestjs/common';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
@@ -29,9 +29,9 @@ export class TimeoutInterceptor implements NestInterceptor {
         if (err instanceof TimeoutError) {
           const { method, url } = context.switchToHttp().getRequest();
           this.logger.error(`Request Timeout. ${method} ${url}`);
-          return throwError(new RequestTimeoutException(this.message));
+          return throwError(() => new BadGatewayException(this.message));
         }
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   }

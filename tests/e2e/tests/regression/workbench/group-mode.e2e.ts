@@ -32,6 +32,9 @@ test('Verify that user can run the commands from the Editor in the group mode', 
     await workbenchPage.sendCommandInWorkbench(`${counter} ${command}`);
     // Verify that user can see number of total commands in group, success commands, number of failed commands in header summary in Workbench
     await t.expect(workbenchPage.queryCardCommand.textContent).eql(`${counter} Command(s) - ${counter} success, 0 error(s)`, 'Not valid summary');
+    // Verify that if users execute commands in group mode, they see summary of the commands execution
+    await t.expect(workbenchPage.executionCommandTime.exists).ok('Execution time is not displayed');
+    await t.expect(workbenchPage.executionCommandIcon.exists).ok('Execution time icon is not displayed');
     // Verify that user can see full list of commands with results run in group
     await t.expect(workbenchPage.queryTextResult.find(workbenchPage.cssWorkbenchCommandInHistory).withText(`> ${command}`).count).eql(counter, 'Number of commands is not correct');
     // Verify that if the only one command is executed in group, the result will be displayed as for group mode

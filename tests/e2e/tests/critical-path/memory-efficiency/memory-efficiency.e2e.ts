@@ -249,6 +249,7 @@ test
         const existedNumberOfKeys = parseInt(dbSize[dbSize.length - 1]);
         for (let i = 0; i < 6; i++) {
             await cliPage.sendCommandInCli(`set ${keyNamesReport[i]} ${chance.word()}`);
+            await t.hover(memoryEfficiencyPage.newReportBtn);
             await t.click(memoryEfficiencyPage.newReportBtn);
             const compareValue = parseInt(await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent);
             await t.expect(compareValue).eql((existedNumberOfKeys + i + 1), 'New report is not displayed', { timeout: 2000 });
@@ -259,6 +260,7 @@ test
         await t.expect(memoryEfficiencyPage.reportItem.count).eql(5, 'Number of saved reports is not correct');
         // Verify that user can switch between reports and see all data updated in each report
         for (let i = 0; i < 5; i++) {
+            await t.hover(memoryEfficiencyPage.reportItem.nth(i));
             await t.click(memoryEfficiencyPage.reportItem.nth(i));
             await t.expect(memoryEfficiencyPage.reportItem.exists).notOk('Report is not switched');
             await t.expect(memoryEfficiencyPage.scannedKeysInReport.textContent).contains(`(${numberOfKeys[5 - i]}/${numberOfKeys[5 - i]} keys)`);

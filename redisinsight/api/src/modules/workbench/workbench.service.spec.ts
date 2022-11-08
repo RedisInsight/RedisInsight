@@ -136,8 +136,10 @@ describe('WorkbenchService', () => {
 
   describe('createCommandExecution', () => {
     it('should successfully execute command and save it', async () => {
-      expect(await service.createCommandExecution(mockClientOptions, mockCreateCommandExecutionDto))
-        .toEqual(mockCommandExecutionToRun);
+      const result = await service.createCommandExecution(mockClientOptions, mockCreateCommandExecutionDto);
+      // can't predict execution time
+      expect(result).toMatchObject(mockCommandExecutionToRun);
+      expect(result.executionTime).toBeGreaterThan(0);
     });
     it('should save result as unsupported command message', async () => {
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);

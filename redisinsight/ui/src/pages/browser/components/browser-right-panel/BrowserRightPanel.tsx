@@ -69,7 +69,8 @@ const BrowserRightPanel = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.SEARCH_INDEX_ADD_CANCELLED,
       eventData: {
-        databaseId: instanceId
+        databaseId: instanceId,
+        view: viewType,
       }
     })
   }
@@ -140,7 +141,10 @@ const BrowserRightPanel = (props: Props) => {
         />
       )}
       {isCreateIndexPanelOpen && every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen], Boolean) && (
-        <CreateRedisearchIndex onClosePanel={onCloseRedisearchPanel} />
+        <CreateRedisearchIndex
+          onCreateIndex={closePanel}
+          onClosePanel={onCloseRedisearchPanel}
+        />
       )}
     </>
   )

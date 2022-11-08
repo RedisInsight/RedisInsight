@@ -110,6 +110,13 @@ export class CommandExecution {
   @Expose()
   createdAt: Date;
 
+  @ApiPropertyOptional({
+    description: 'Workbench command execution time',
+    type: Number,
+  })
+  @Expose()
+  executionTime?: number;
+
   constructor(partial: Partial<CommandExecution> = {}) {
     Object.assign(this, partial);
   }

@@ -34,6 +34,11 @@ export const getRedisConnectionException = (
   errorPlaceholder: string = '',
 ): HttpException => {
   const { host, port } = connectionOptions;
+
+  if (error instanceof HttpException) {
+    return error;
+  }
+
   if (error?.message) {
     if (error.message.includes(RedisErrorCodes.SentinelParamsRequired)) {
       return new HttpException(

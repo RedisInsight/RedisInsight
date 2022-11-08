@@ -249,7 +249,8 @@ const KeysHeader = (props: Props) => {
         eventData: {
           databaseId: instanceId,
           previous: searchMode,
-          current: mode
+          current: mode,
+          view: viewType,
         }
       })
     }

@@ -2,19 +2,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
   mockRedisConsumer,
-  mockRedisWrongTypeError,
-  mockSettingsProvider,
+  mockRedisWrongTypeError, mockSettingsService,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { StandaloneStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/standalone.strategy';
 import { AbstractStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/abstract.strategy';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import IORedis from 'ioredis';
+import { SettingsService } from 'src/modules/settings/settings.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -36,7 +35,7 @@ const mockKeyInfo: GetKeyInfoResponse = {
 describe('RedisScannerAbstract', () => {
   let scannerInstance: AbstractStrategy;
   let browserTool: BrowserToolService;
-  let settingsProvider: ISettingsProvider;
+  let settingsService: SettingsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -46,15 +45,15 @@ describe('RedisScannerAbstract', () => {
           useFactory: mockRedisConsumer,
         },
         {
-          provide: 'SETTINGS_PROVIDER',
-          useFactory: mockSettingsProvider,
+          provide: SettingsService,
+          useFactory: mockSettingsService,
         },
       ],
     }).compile();
 
     browserTool = await module.get<BrowserToolService>(BrowserToolService);
-    settingsProvider = module.get<ISettingsProvider>('SETTINGS_PROVIDER');
-    scannerInstance = new StandaloneStrategy(browserTool, settingsProvider);
+    settingsService = module.get(SettingsService);
+    scannerInstance = new StandaloneStrategy(browserTool, settingsService);
   });
 
   describe('getKeysInfo', () => {

@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
+  mockAppSettingsInitial,
   mockRedisClusterConsumer,
-  mockRedisNoPermError,
-  mockSettingsJSON,
-  mockSettingsProvider,
+  mockRedisNoPermError, mockSettingsService,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
@@ -15,10 +14,10 @@ import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
 import IORedis from 'ioredis';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import { ClusterStrategy } from './cluster.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
@@ -82,7 +81,7 @@ mockGetKeysInfoFn.mockImplementation(async (clientOptions, keys) => {
 
 let strategy;
 let browserTool;
-let settingsProvider;
+let settingsService;
 
 describe('Cluster Scanner Strategy', () => {
   beforeEach(async () => {
@@ -93,8 +92,8 @@ describe('Cluster Scanner Strategy', () => {
           useFactory: mockRedisClusterConsumer,
         },
         {
-          provide: 'SETTINGS_PROVIDER',
-          useFactory: mockSettingsProvider,
+          provide: SettingsService,
+          useFactory: mockSettingsService,
         },
       ],
     }).compile();
@@ -102,12 +101,9 @@ describe('Cluster Scanner Strategy', () => {
     browserTool = module.get<BrowserToolClusterService>(
       BrowserToolClusterService,
     );
-    settingsProvider = module.get<ISettingsProvider>('SETTINGS_PROVIDER');
-    settingsProvider.getSettings = jest.fn().mockResolvedValue({
-      ...mockSettingsJSON,
-      scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
-    });
-    strategy = new ClusterStrategy(browserTool, settingsProvider);
+    settingsService = module.get(SettingsService);
+    settingsService.getAppSettings.mockResolvedValue(mockAppSettingsInitial);
+    strategy = new ClusterStrategy(browserTool, settingsService);
     browserTool.getRedisClient.mockResolvedValue(clusterClient);
     mockGetKeysInfoFn.mockClear();
   });

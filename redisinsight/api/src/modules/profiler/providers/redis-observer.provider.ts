@@ -4,8 +4,8 @@ import { RedisObserver } from 'src/modules/profiler/models/redis.observer';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { AppTool } from 'src/models';
 import { withTimeout } from 'src/utils/promise-with-timeout';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
 
@@ -19,7 +19,7 @@ export class RedisObserverProvider {
 
   constructor(
     private redisService: RedisService,
-    private instancesBusinessService: InstancesBusinessService,
+    private databaseConnectionService: DatabaseConnectionService,
   ) {}
 
   /**
@@ -92,21 +92,17 @@ export class RedisObserverProvider {
 
   /**
    * Get Redis existing common IORedis client for instance or create a new common connection
-   * @param instanceId
+   * @param databaseId
    * @private
    */
-  private getRedisClientFn(instanceId: string): () => Promise<IORedis.Redis | IORedis.Cluster> {
-    return async () => {
-      const tool = AppTool.Common;
-      const commonClient = this.redisService.getClientInstance({ instanceId, tool })?.client;
-      if (commonClient && this.redisService.isClientConnected(commonClient)) {
-        return commonClient;
-      }
-      return withTimeout(
-        this.instancesBusinessService.connectToInstance(instanceId, tool, true),
-        serverConfig.requestTimeout,
-        new ServiceUnavailableException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
-      );
-    };
+  private getRedisClientFn(databaseId: string): () => Promise<IORedis.Redis | IORedis.Cluster> {
+    return async () => withTimeout(
+      this.databaseConnectionService.getOrCreateClient({
+        databaseId,
+        namespace: AppTool.Common,
+      }),
+      serverConfig.requestTimeout,
+      new ServiceUnavailableException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
+    );
   }
 }

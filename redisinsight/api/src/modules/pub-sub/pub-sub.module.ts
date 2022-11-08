@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { SharedModule } from 'src/modules/shared/shared.module';
 import { PubSubGateway } from 'src/modules/pub-sub/pub-sub.gateway';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
@@ -9,7 +8,6 @@ import { PubSubController } from 'src/modules/pub-sub/pub-sub.controller';
 import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
 
 @Module({
-  imports: [SharedModule],
   providers: [
     PubSubGateway,
     PubSubService,

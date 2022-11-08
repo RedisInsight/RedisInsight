@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { filter, get, map } from 'lodash';
 import { pluginBlockingCommands, pluginUnsupportedCommands } from 'src/constants';
 

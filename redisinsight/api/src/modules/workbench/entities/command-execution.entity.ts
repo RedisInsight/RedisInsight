@@ -1,32 +1,36 @@
 import {
   Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
 } from 'typeorm';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { Transform } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 
 @Entity('command_execution')
 export class CommandExecutionEntity {
   @PrimaryGeneratedColumn('uuid')
+  @Expose()
   id: string;
 
   @Column({ nullable: false })
+  @Expose()
   databaseId: string;
 
   @ManyToOne(
-    () => DatabaseInstanceEntity,
+    () => DatabaseEntity,
     {
       nullable: false,
       onDelete: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'databaseId' })
-  database: DatabaseInstanceEntity;
+  database: DatabaseEntity;
 
   @Column({ nullable: false, type: 'text' })
+  @Expose()
   command: string;
 
   @Column({ nullable: true })
+  @Expose()
   mode?: string = RunQueryMode.ASCII;
 
   @Column({ nullable: false, type: 'text' })
@@ -38,12 +42,15 @@ export class CommandExecutionEntity {
       return undefined;
     }
   }, { toPlainOnly: true })
+  @Expose()
   result: string;
 
   @Column({ nullable: true })
+  @Expose()
   role?: string;
 
   @Column({ nullable: true })
+  @Expose()
   resultsMode?: string = ResultsMode.Default;
 
   @Column({ nullable: true })
@@ -55,6 +62,7 @@ export class CommandExecutionEntity {
       return undefined;
     }
   }, { toPlainOnly: true })
+  @Expose()
   summary?: string;
 
   @Column({ nullable: true })
@@ -66,6 +74,7 @@ export class CommandExecutionEntity {
       return undefined;
     }
   }, { toPlainOnly: true })
+  @Expose()
   nodeOptions?: string;
 
   @Column({ nullable: true })
@@ -76,6 +85,7 @@ export class CommandExecutionEntity {
 
   @CreateDateColumn()
   @Index()
+  @Expose()
   createdAt: Date;
 
   constructor(entity: Partial<CommandExecutionEntity>) {

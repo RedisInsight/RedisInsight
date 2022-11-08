@@ -22,7 +22,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   getZSetMembersInAscResponse, getZSetMembersInDescResponse,
   mockAddMembersDto, mockDeleteMembersDto,

@@ -1,7 +1,7 @@
 import {
   BadRequestException, Injectable, Logger, NotFoundException,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { RedisErrorCodes } from 'src/constants';
 import { catchAclError, catchTransactionError } from 'src/utils';
 import {

@@ -37,6 +37,8 @@ import reducer, {
   changeInstanceAliasSuccess,
   changeInstanceAliasAction,
   resetConnectedInstance,
+  setEditedInstance,
+  fetchEditedInstanceAction,
   setConnectedInstanceId,
   setConnectedInstance,
   setConnectedInstanceFailure,
@@ -485,6 +487,31 @@ describe('instances slice', () => {
     })
   })
 
+  describe('setEditedInstance', () => {
+    it('should properly set error', () => {
+      // Arrange
+      const data = instances[1]
+      const state = {
+        ...initialState,
+        editedInstance: {
+          ...initialState.editedInstance,
+          data,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setEditedInstance(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchInstances', () => {
       it('call both fetchInstances and loadInstancesSuccess when fetch is successed', async () => {
@@ -920,6 +947,53 @@ describe('instances slice', () => {
           addErrorNotification(responsePayload as AxiosError),
         ]
 
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchEditedInstanceAction', () => {
+      it('call both setEditedInstance and setDefaultInstanceSuccess when fetch is successed', async () => {
+        // Arrange
+        const id = 'instanceId'
+        const data = instances[1]
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchEditedInstanceAction(id))
+
+        // Assert
+        const expectedActions = [
+          setDefaultInstance(),
+          setEditedInstance(responsePayload.data),
+          setDefaultInstanceSuccess(),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('call both setDefaultInstance and setDefaultInstanceFailure when fetch is fail', async () => {
+        // Arrange
+        const id = 'instanceId'
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchEditedInstanceAction(id))
+
+        // Assert
+        const expectedActions = [
+          setDefaultInstance(),
+          setDefaultInstanceFailure(responsePayload.response.data.message),
+          addErrorNotification(responsePayload as AxiosError),
+        ]
         expect(store.getActions()).toEqual(expectedActions)
       })
     })

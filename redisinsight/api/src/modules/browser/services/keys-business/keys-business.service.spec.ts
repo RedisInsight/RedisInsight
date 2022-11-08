@@ -13,12 +13,11 @@ import {
   mockRedisClusterConsumer,
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockRepository,
-  mockSettingsProvider,
+  mockRepository, mockSettingsService,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   GetKeyInfoResponse,
   GetKeysDto,
@@ -36,6 +35,7 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import IORedis from 'ioredis';
 import { KeysBusinessService } from './keys-business.service';
 import { StringTypeInfoStrategy } from './key-info-manager/strategies/string-type-info/string-type-info.strategy';
@@ -98,8 +98,8 @@ describe('KeysBusinessService', () => {
           }),
         },
         {
-          provide: 'SETTINGS_PROVIDER',
-          useFactory: mockSettingsProvider,
+          provide: SettingsService,
+          useFactory: mockSettingsService,
         },
       ],
     }).compile();

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { mockStandaloneDatabaseEntity, mockWhitelistCommandsResponse } from 'src/__mocks__';
 import { v4 as uuidv4 } from 'uuid';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import {
   ClusterNodeRole,

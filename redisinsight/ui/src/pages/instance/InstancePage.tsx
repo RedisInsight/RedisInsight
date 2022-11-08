@@ -6,7 +6,7 @@ import cx from 'classnames'
 
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import {
-  fetchInstanceAction,
+  fetchConnectedInstanceAction,
   fetchInstancesAction,
   getDatabaseConfigInfoAction,
   instancesSelector,
@@ -68,7 +68,7 @@ const InstancePage = ({ routes = [] }: Props) => {
   const isShowBottomGroup = isShowCli || isShowHelper || isShowMonitor
 
   useEffect(() => {
-    dispatch(fetchInstanceAction(connectionInstanceId, () => {
+    dispatch(fetchConnectedInstanceAction(connectionInstanceId, () => {
       !modulesData.length && dispatch(fetchInstancesAction())
     }))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))

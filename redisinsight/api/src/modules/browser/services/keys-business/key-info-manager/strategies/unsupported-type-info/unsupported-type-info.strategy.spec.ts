@@ -9,7 +9,7 @@ import { ReplyError } from 'src/models';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { UnsupportedTypeInfoStrategy } from './unsupported-type-info.strategy';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {

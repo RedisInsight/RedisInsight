@@ -1,11 +1,11 @@
 import Redis from 'ioredis';
 import { Test, TestingModule } from '@nestjs/testing';
 import { mockRedisNoPermError, mockStandaloneDatabaseEntity, MockType } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { SlowLogService } from 'src/modules/slow-log/slow-log.service';
 import { AppTool } from 'src/models';
-import { mockRedisClientInstance } from 'src/modules/shared/services/base/redis-consumer.abstract.service.spec';
+import { mockRedisClientInstance } from 'src/modules/redis/redis-consumer.abstract.service.spec';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constants/commands';
 import { SlowLogAnalyticsService } from 'src/modules/slow-log/slow-log-analytics.service';

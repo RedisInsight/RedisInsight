@@ -118,39 +118,44 @@ describe('pub-sub', function () {
         })
       });
     });
-    it('Should receive bunch of logs for many subscriptions', async () => {
-      const messages = {
-        'channel-a': [],
-        'channel-b': [],
-        '*': [],
-      };
+    describe('on message [unstable test]', () => {
+      requirements('!rte.tls'); // tls works slower. skip test to not add additional wait time. todo: rewrite test
+      requirements('rte.type<>SENTINEL'); // sentinel too
 
-      client.on('s:channel-a', (data) => messages['channel-a'].push(...data.messages));
-      client.on('s:channel-b', (data) => messages['channel-b'].push(...data.messages));
-      client.on('p:*', (data) => messages['*'].push(...data.messages));
+      it('Should receive bunch of logs for many subscriptions', async () => {
+        const messages = {
+          'channel-a': [],
+          'channel-b': [],
+          '*': [],
+        };
 
-      await new Promise((resolve) => {
-        client.emit('subscribe', { subscriptions: [subscription, subscriptionB, pSubscription] },  (ack) => {
-          expect(ack).to.eql({ status: 'ok' });
+        client.on('s:channel-a', (data) => messages['channel-a'].push(...data.messages));
+        client.on('s:channel-b', (data) => messages['channel-b'].push(...data.messages));
+        client.on('p:*', (data) => messages['*'].push(...data.messages));
 
-          client.on('s:channel-b', resolve);
+        await new Promise((resolve) => {
+          client.emit('subscribe', { subscriptions: [subscription, subscriptionB, pSubscription] },  (ack) => {
+            expect(ack).to.eql({ status: 'ok' });
 
-          rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          rte.data.sendCommand('publish', ['channel-a', 'message-a']);
-          rte.data.sendCommand('publish', ['channel-b', 'message-b']);
-        })
+            client.on('s:channel-b', resolve);
+
+            rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            rte.data.sendCommand('publish', ['channel-a', 'message-a']);
+            rte.data.sendCommand('publish', ['channel-b', 'message-b']);
+          })
+        });
+
+        await sleep(3000);
+
+        expect(messages['channel-a'].length).to.eql(4);
+        messages['channel-a'].forEach(message => {
+          expect(message.channel).to.eql('channel-a');
+        });
+        expect(messages['channel-b'].length).to.eql(1);
+        expect(messages['*'].length).to.eql(5);
       });
-
-      await sleep(3000);
-
-      expect(messages['channel-a'].length).to.eql(4);
-      messages['channel-a'].forEach(message => {
-        expect(message.channel).to.eql('channel-a');
-      });
-      expect(messages['channel-b'].length).to.eql(1);
-      expect(messages['*'].length).to.eql(5);
     });
   });
 

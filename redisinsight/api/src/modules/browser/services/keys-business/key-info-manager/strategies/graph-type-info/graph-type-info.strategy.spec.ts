@@ -12,7 +12,7 @@ import {
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { GraphTypeInfoStrategy } from './graph-type-info.strategy';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {

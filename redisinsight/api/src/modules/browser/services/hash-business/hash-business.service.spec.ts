@@ -23,7 +23,7 @@ import {
   BrowserToolHashCommands,
   BrowserToolKeysCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   mockAddFieldsDto, mockDeleteFieldsDto,
   mockGetFieldsDto,

@@ -3,7 +3,7 @@ import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/d
 import { isUndefined } from 'lodash';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { plainToClass } from 'class-transformer';
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
 import { classToClass } from 'src/utils';

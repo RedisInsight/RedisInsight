@@ -112,6 +112,7 @@ const getClient = async (
     }
     info.type = constants.SENTINEL;
     const sentinelOptions = {
+      ...connectionOptions,
       sentinels: [{
         host: constants.TEST_REDIS_HOST,
         port: constants.TEST_REDIS_PORT,
@@ -122,6 +123,8 @@ const getClient = async (
       username: constants.TEST_SENTINEL_MASTER_USER,
       password: constants.TEST_SENTINEL_MASTER_PASS,
       connectionName: connectionOptions.connectionName,
+      sentinelTLS: connectionOptions.tls,
+      enableTLSForSentinelMode: !!connectionOptions.tls,
     };
     return {
       client: await connectToRedisSentinel(sentinelOptions),

@@ -26,7 +26,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
 import { KeytarDecryptionErrorException } from 'src/modules/core/encryption/exceptions';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { ICliExecResultFromNode } from 'src/modules/shared/services/base/redis-tool.service';
+import { ICliExecResultFromNode } from 'src/modules/redis/redis-tool.service';
 import config from 'src/utils/config';
 
 const WORKBENCH_CONFIG = config.get('workbench');

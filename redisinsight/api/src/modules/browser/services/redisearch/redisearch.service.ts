@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   CreateRedisearchIndexDto,
   ListRedisearchIndexesResponse,

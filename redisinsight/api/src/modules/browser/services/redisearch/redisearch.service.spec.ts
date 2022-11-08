@@ -10,7 +10,7 @@ import {
   mockRedisUnknownIndexName,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { RedisearchService } from 'src/modules/browser/services/redisearch/redisearch.service';
 import IORedis from 'ioredis';

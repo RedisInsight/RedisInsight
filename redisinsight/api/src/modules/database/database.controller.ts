@@ -16,7 +16,7 @@ import { BuildType } from 'src/modules/server/models/server';
 import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dto';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 
-@ApiTags('Database Instances')
+@ApiTags('Database')
 @Controller('databases')
 export class DatabaseController {
   constructor(

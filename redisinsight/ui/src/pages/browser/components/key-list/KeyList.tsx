@@ -39,8 +39,9 @@ import {
 } from 'uiSrc/slices/browser/keys'
 import {
   appContextBrowser,
-  setBrowserKeyListScrollPosition,
+  setBrowserPatternScrollPosition,
   setBrowserIsNotRendered,
+  setBrowserRedisearchScrollPosition,
 } from 'uiSrc/slices/app/context'
 import { GroupBadge } from 'uiSrc/components'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
@@ -59,6 +60,7 @@ export interface Props {
   hideHeader?: boolean
   keysState: KeysStoreData
   loading: boolean
+  scrollTopPosition: number
   hideFooter?: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
   loadMoreItems?: (
@@ -69,7 +71,7 @@ export interface Props {
 
 const KeyList = forwardRef((props: Props, ref) => {
   let wheelTimer = 0
-  const { selectKey, loadMoreItems, loading, keysState, hideFooter } = props
+  const { selectKey, loadMoreItems, loading, keysState, scrollTopPosition, hideFooter } = props
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
@@ -77,7 +79,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
   const { isSearched, isFiltered, viewType, searchMode } = useSelector(keysSelector)
   const { selectedIndex } = useSelector(redisearchSelector)
-  const { keyList: { scrollTopPosition, isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
+  const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
   const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(!!keysState.keys.length)
@@ -197,9 +199,13 @@ const KeyList = forwardRef((props: Props, ref) => {
     }
   }
 
-  const setScrollTopPosition = (position: number) => {
-    dispatch(setBrowserKeyListScrollPosition(position))
-  }
+  const setScrollTopPosition = useCallback((position: number) => {
+    if (searchMode === SearchMode.Pattern) {
+      dispatch(setBrowserPatternScrollPosition(position))
+    } else {
+      dispatch(setBrowserRedisearchScrollPosition(position))
+    }
+  }, [searchMode])
 
   const formatItem = useCallback((item: GetKeyInfoResponse): GetKeyInfoResponse => ({
     ...item,
@@ -388,32 +394,37 @@ const KeyList = forwardRef((props: Props, ref) => {
     },
   ]
 
+  const VirtualizeTable = () => (
+    <VirtualTable
+      selectable
+      onRowClick={selectKey}
+      headerHeight={0}
+      rowHeight={43}
+      threshold={50}
+      columns={columns}
+      loadMoreItems={onLoadMoreItems}
+      onWheel={onWheelSearched}
+      loading={loading || !firstDataLoaded}
+      items={itemsRef.current}
+      totalItemsCount={keysState.total ? keysState.total : Infinity}
+      scanned={isSearched || isFiltered ? keysState.scanned : 0}
+      noItemsMessage={getNoItemsMessage()}
+      selectedKey={selectedKey.data}
+      scrollTopProp={scrollTopPosition}
+      setScrollTopPosition={setScrollTopPosition}
+      hideFooter={hideFooter}
+      onRowsRendered={({ overscanStartIndex, overscanStopIndex }) =>
+        onRowsRenderedDebounced(overscanStartIndex, overscanStopIndex)}
+    />
+  )
+
   return (
     <div className={styles.page}>
       <div className={styles.content}>
         <div className={cx(styles.table, { [styles.table__withoutFooter]: hideFooter })}>
           <div className="key-list-table" data-testid="keyList-table">
-            <VirtualTable
-              selectable
-              onRowClick={selectKey}
-              headerHeight={0}
-              rowHeight={43}
-              threshold={50}
-              columns={columns}
-              loadMoreItems={onLoadMoreItems}
-              onWheel={onWheelSearched}
-              loading={loading || !firstDataLoaded}
-              items={itemsRef.current}
-              totalItemsCount={keysState.total ? keysState.total : Infinity}
-              scanned={isSearched || isFiltered ? keysState.scanned : 0}
-              noItemsMessage={getNoItemsMessage()}
-              selectedKey={selectedKey.data}
-              scrollTopProp={scrollTopPosition}
-              setScrollTopPosition={setScrollTopPosition}
-              hideFooter={hideFooter}
-              onRowsRendered={({ overscanStartIndex, overscanStopIndex }) =>
-                onRowsRenderedDebounced(overscanStartIndex, overscanStopIndex)}
-            />
+            {searchMode === SearchMode.Pattern && VirtualizeTable()}
+            {searchMode !== SearchMode.Pattern && VirtualizeTable()}
           </div>
         </div>
       </div>

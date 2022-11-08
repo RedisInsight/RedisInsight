@@ -52,8 +52,10 @@ const BrowserLeftPanel = (props: Props) => {
   const redisearchKeysState = useSelector(redisearchDataSelector)
   const { loading: redisearchLoading, isSearched: redisearchIsSearched } = useSelector(redisearchSelector)
   const { loading: patternLoading, viewType, searchMode, isSearched: patternIsSearched } = useSelector(keysSelector)
-  const { keyList: { isDataLoaded } } = useSelector(appContextBrowser)
   const { contextInstanceId } = useSelector(appContextSelector)
+  const {
+    keyList: { isDataLoaded, scrollPatternTopPosition, scrollRedisearchTopPosition }
+  } = useSelector(appContextBrowser)
 
   const keyListRef = useRef<any>()
 
@@ -62,6 +64,7 @@ const BrowserLeftPanel = (props: Props) => {
   const keysState = searchMode === SearchMode.Pattern ? patternKeysState : redisearchKeysState
   const loading = searchMode === SearchMode.Pattern ? patternLoading : redisearchLoading
   const isSearched = searchMode === SearchMode.Pattern ? patternIsSearched : redisearchIsSearched
+  const scrollTopPosition = searchMode === SearchMode.Pattern ? scrollPatternTopPosition : scrollRedisearchTopPosition
 
   useEffect(() => {
     if (!isDataLoaded || contextInstanceId !== instanceId) {
@@ -118,6 +121,7 @@ const BrowserLeftPanel = (props: Props) => {
           ref={keyListRef}
           keysState={keysState}
           loading={loading}
+          scrollTopPosition={scrollTopPosition}
           loadMoreItems={loadMoreItems}
           selectKey={selectKey}
         />

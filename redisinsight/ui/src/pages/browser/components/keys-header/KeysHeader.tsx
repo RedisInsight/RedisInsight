@@ -17,11 +17,11 @@ import { resetBrowserTree, setBrowserKeyListDataLoaded, } from 'uiSrc/slices/app
 
 import { changeKeyViewType, changeSearchMode, fetchKeys, keysSelector, resetKeysData, } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import AutoRefresh from '../auto-refresh'
+import { isRedisearchAvailable } from 'uiSrc/utils'
 
+import AutoRefresh from '../auto-refresh'
 import FilterKeyType from '../filter-key-type'
 import RediSearchIndexesList from '../redisearch-key-list'
 import SearchKeyList from '../search-key-list'
@@ -129,8 +129,7 @@ const KeysHeader = (props: Props) => {
       tooltipText: 'Search by Values of Keys',
       ariaLabel: 'Search by Values of Keys button',
       dataTestId: 'search-mode-redisearch-btn',
-      disabled: !modules?.some(({ name }) =>
-        REDISEARCH_MODULES.some((search) => name === search)),
+      disabled: !isRedisearchAvailable(modules),
       isActiveView() { return searchMode === this.type },
       getClassName() {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
@@ -256,6 +255,8 @@ const KeysHeader = (props: Props) => {
     }
 
     dispatch(changeSearchMode(mode))
+
+    localStorageService.set(BrowserStorageItem.browserSearchMode, mode)
   }
 
   const AddKeyBtn = (

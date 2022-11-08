@@ -5,8 +5,8 @@ export enum KeyTypesTexts {
     ZSet = 'Sorted Set',
     String = 'String',
     ReJSON = 'JSON',
-    Stream = 'STREAM',
-    Graph = 'GRAPH',
+    Stream = 'Stream',
+    Graph = 'Graph',
     TimeSeries = 'TS',
 }
 export const keyLength = 50;

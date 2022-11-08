@@ -35,7 +35,7 @@ test('Verify that user can see saved CLI size on Browser page when he returns ba
     await t.click(cliPage.cliExpandButton);
     const cliAreaHeight = await cliPage.cliArea.clientHeight;
     const cliAreaHeightEnd = cliAreaHeight + 150;
-    const cliResizeButton = await cliPage.cliResizeButton;
+    const cliResizeButton = cliPage.cliResizeButton;
     await t.hover(cliResizeButton);
     // move resize 200px up
     await t.drag(cliResizeButton, 0, -offsetY, { speed: 0.01 });

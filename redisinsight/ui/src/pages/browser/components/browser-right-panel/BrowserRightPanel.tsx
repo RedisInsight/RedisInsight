@@ -141,7 +141,10 @@ const BrowserRightPanel = (props: Props) => {
         />
       )}
       {isCreateIndexPanelOpen && every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen], Boolean) && (
-        <CreateRedisearchIndex onClosePanel={onCloseRedisearchPanel} />
+        <CreateRedisearchIndex
+          onCreateIndex={closePanel}
+          onClosePanel={onCloseRedisearchPanel}
+        />
       )}
     </>
   )

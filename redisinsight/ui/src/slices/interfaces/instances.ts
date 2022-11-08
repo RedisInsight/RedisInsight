@@ -39,6 +39,7 @@ export interface Instance extends DatabaseInstanceResponse {
   modules: RedisModuleDto[]
   isRediStack?: boolean
   visible?: boolean
+  loading?: boolean
 }
 
 export enum ConnectionType {

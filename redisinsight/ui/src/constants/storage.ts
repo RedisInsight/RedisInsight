@@ -3,6 +3,7 @@ enum BrowserStorageItem {
   instancesSorting = 'instancesSorting',
   theme = 'theme',
   browserViewType = 'browserViewType',
+  browserSearchMode = 'browserSearchMode',
   cliClientUuid = 'cliClientUuid',
   cliResizableContainer = 'cliResizableContainer',
   cliInputHistory = 'cliInputHistory',

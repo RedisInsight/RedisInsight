@@ -12,7 +12,8 @@ import {
   isStatusSuccessful,
   Maybe,
   bufferToString,
-  isEqualBuffers
+  isEqualBuffers,
+  isRedisearchAvailable,
 } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
@@ -62,7 +63,7 @@ export const initialState: KeysStore = {
   isSearched: false,
   isFiltered: false,
   isBrowserFullScreen: false,
-  searchMode: SearchMode.Pattern,
+  searchMode: localStorageService?.get(BrowserStorageItem.browserSearchMode) ?? SearchMode.Pattern,
   viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
   data: {
     total: 0,
@@ -313,6 +314,7 @@ const keysSlice = createSlice({
       {
         ...initialState,
         viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
+        searchMode: localStorageService?.get(BrowserStorageItem.browserSearchMode) ?? SearchMode.Pattern,
         selectedKey: getInitialSelectedKeyState(state as KeysStore)
       }
     ),
@@ -923,9 +925,14 @@ export function fetchKeys(
   onSuccess?: () => void,
   onFailed?: () => void,
 ) {
-  return searchMode === SearchMode.Pattern
-    ? fetchPatternKeysAction(cursor, count, onSuccess, onFailed,)
-    : fetchRedisearchKeysAction(cursor, count, onSuccess, onFailed,)
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const isRedisearchExists = isRedisearchAvailable(state.connections.instances.connectedInstance.modules)
+
+    return searchMode === SearchMode.Pattern || !isRedisearchExists
+      ? dispatch(fetchPatternKeysAction(cursor, count, onSuccess, onFailed))
+      : dispatch(fetchRedisearchKeysAction(cursor, count, onSuccess, onFailed))
+  }
 }
 
 // Asynchronous thunk action

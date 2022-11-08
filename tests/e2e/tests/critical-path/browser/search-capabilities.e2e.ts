@@ -1,3 +1,4 @@
+import { t } from 'testcafe';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage, CliPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
@@ -19,9 +20,16 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const patternModeTooltipText = 'Filter by Key Name or Pattern';
 const redisearchModeTooltipText = 'Search by Values of Keys';
 const notSelectedIndexText = 'Select an index and enter a query to search per values of keys.';
+const searchPerValue = '(@name:"Hall School") | (@students:[500, 1000])';
 let keyName = common.generateWord(10);
 let keyNames: string[];
 let indexName = common.generateWord(5);
+async function verifyContext(): Promise<void> {
+    await t
+        .expect(browserPage.selectIndexDdn.withText(indexName).exists).ok('Index selection not saved')
+        .expect(browserPage.filterByPatterSearchInput.value).eql(searchPerValue, 'Search per Value not saved in input')
+        .expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('Key details not opened');
+}
 
 fixture `Search capabilities in Browser`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -46,7 +54,6 @@ test
             `HSET ${keyNames[2]} "name" "Gillford School" "description" "Gillford School is a centre" "class" "private" "type" "democratic; waldorf" "address_city" "Goudhurst" "address_street" "Goudhurst" "students" 721 "location" "51.112685, 0.451076"`,
             `FT.CREATE ${indexName} ON HASH PREFIX 1 "${keyName}:" SCHEMA name TEXT NOSTEM description TEXT class TAG type TAG SEPARATOR ";" address_city AS city TAG address_street AS address TEXT NOSTEM students NUMERIC SORTABLE location GEO`
         ];
-        const searchPerValue = '(@name:"Hall School") | (@students:[500, 1000])';
 
         // Create 3 keys and index
         await cliPage.sendCommandsInCli(commands);
@@ -75,23 +82,6 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[2])).ok(`The second valid key ${keyNames[2]} not found`);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
 
-        // Verify that Redisearch context (inputs, key selected, scroll, key details) saved after switching between pages
-        await t
-            .click(myRedisDatabasePage.workbenchButton)
-            .click(myRedisDatabasePage.browserButton)
-            .expect(browserPage.selectIndexDdn.withText(indexName).exists).ok('Index selection not saved')
-            .expect(browserPage.filterByPatterSearchInput.value).eql(searchPerValue, 'Search per Value not saved in input');
-
-        // Verify that Redisearch context saved when switching between browser/tree view
-        await t
-            .click(browserPage.treeViewButton)
-            .expect(browserPage.selectIndexDdn.withText(indexName).exists).ok('Index selection not saved')
-            .expect(browserPage.filterByPatterSearchInput.value).eql(searchPerValue, 'Search per Value not saved in input');
-        await t
-            .click(browserPage.browserViewButton)
-            .expect(browserPage.selectIndexDdn.withText(indexName).exists).ok('Index selection not saved')
-            .expect(browserPage.filterByPatterSearchInput.value).eql(searchPerValue, 'Search per Value not saved in input');
-
         // Verify that user can clear the search
         await t.click(browserPage.clearFilterButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).ok(`The key ${keyNames[1]} not found`);
@@ -104,10 +94,6 @@ test
         await browserPage.selectIndexByName(indexName);
         await verifyKeysDisplayedInTheList(keyNames);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('Key without index displayed after search');
-
-        // Verify that Search control opened after reloading page
-        await common.reloadPage();
-        await t.expect(browserPage.keyListTable.textContent).contains(notSelectedIndexText, 'Search by Values of Keys section not opened');
 
         // Verify that user see the database scanned when he switch to Pattern search mode
         await t.click(browserPage.patternModeBtn);
@@ -207,4 +193,43 @@ test
         await t.expect(browserPage.newIndexPanel.exists).notOk('New Index panel is displayed');
         await t.click(browserPage.selectIndexDdn);
         await browserPage.selectIndexByName(indexName);
+    });
+test
+    .before(async() => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    })
+    .after(async() => {
+        // Clear and delete database
+        await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Context for RediSearch capability', async t => {
+        keyName = common.generateWord(10);
+        indexName = `idx:${keyName}`;
+        const commands = [
+            `HSET ${keyName} "name" "Hall School" "description" " Spanning 10 states" "class" "independent" "type" "traditional" "address_city" "London" "address_street" "Manor Street" "students" 342 "location" "51.445417, -0.258352"`,
+            `FT.CREATE ${indexName} ON HASH PREFIX 1 "${keyName}" SCHEMA name TEXT NOSTEM description TEXT class TAG type TAG SEPARATOR ";" address_city AS city TAG address_street AS address TEXT NOSTEM students NUMERIC SORTABLE location GEO`
+        ];
+
+        await cliPage.sendCommandsInCli(commands);
+        await t.click(browserPage.redisearchModeBtn);
+        await browserPage.selectIndexByName(indexName);
+        await browserPage.searchByKeyName(searchPerValue);
+        // Select key
+        await t.click(await browserPage.getKeySelectorByName(keyName));
+
+        // Verify that Redisearch context (inputs, key selected, scroll, key details) saved after switching between pages
+        await t
+            .click(myRedisDatabasePage.workbenchButton)
+            .click(myRedisDatabasePage.browserButton);
+        await verifyContext();
+
+        // Verify that Redisearch context saved when switching between browser/tree view
+        await t.click(browserPage.treeViewButton);
+        await verifyContext();
+        await t.click(browserPage.browserViewButton);
+        await verifyContext();
+
+        // Verify that Search control opened after reloading page
+        await common.reloadPage();
+        await t.expect(browserPage.keyListTable.textContent).contains(notSelectedIndexText, 'Search by Values of Keys section not opened');
     });

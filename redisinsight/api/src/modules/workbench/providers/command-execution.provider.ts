@@ -31,7 +31,7 @@ export class CommandExecutionProvider {
    */
   async createMany(commandExecutions: Partial<CommandExecution>[]): Promise<CommandExecution[]> {
     // todo: limit by 30 max to insert
-    let entities = await Promise.all(commandExecutions.map(async (commandExecution, idx) => {
+    let entities = await Promise.all(commandExecutions.map(async (commandExecution) => {
       const entity = plainToClass(CommandExecutionEntity, commandExecution);
 
       // Do not store command execution result that exceeded limitation
@@ -61,6 +61,7 @@ export class CommandExecutionProvider {
           result: commandExecutions[idx].result,
           nodeOptions: commandExecutions[idx].nodeOptions,
           summary: commandExecutions[idx].summary,
+          executionTime: commandExecutions[idx].executionTime,
         },
       )),
     );
@@ -95,6 +96,7 @@ export class CommandExecutionProvider {
         'e.mode',
         'e.summary',
         'e.resultsMode',
+        'e.executionTime',
       ])
       .orderBy('e.createdAt', 'DESC')
       .limit(WORKBENCH_CONFIG.maxItemsPerDb)

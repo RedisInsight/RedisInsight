@@ -116,6 +116,8 @@ export class WorkbenchPage {
     commandExecutionDateAndTime = Selector('[data-testid=command-execution-date-time]');
     historyResultContainer = Selector('[data-testid=query-cli-card-result]');
     historyResultRow = Selector('[data-testid=query-cli-card-result]');
+    executionCommandTime = Selector('[data-testid=command-execution-time-value]');
+    executionCommandIcon = Selector('[data-testid=command-execution-time-icon]');
     rowInVirtualizedTable = Selector('[data-testid^=row-]');
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');

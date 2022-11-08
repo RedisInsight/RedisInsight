@@ -64,6 +64,16 @@ const BrowserRightPanel = (props: Props) => {
     closeRightPanels()
   }
 
+  const onCloseRedisearchPanel = () => {
+    closePanel()
+    sendEventTelemetry({
+      event: TelemetryEvent.SEARCH_INDEX_ADD_CANCELLED,
+      eventData: {
+        databaseId: instanceId
+      }
+    })
+  }
+
   const handleToggleFullScreen = () => {
     dispatch(toggleBrowserFullScreen())
 
@@ -111,7 +121,7 @@ const BrowserRightPanel = (props: Props) => {
           keyProp={selectedKey}
           onCloseKey={closePanel}
           onEditKey={onEditKey}
-          onDeleteKey={onSelectKey}
+          onRemoveKey={onSelectKey}
         />
       )}
       {isAddKeyPanelOpen && every([!isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
@@ -130,7 +140,7 @@ const BrowserRightPanel = (props: Props) => {
         />
       )}
       {isCreateIndexPanelOpen && every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen], Boolean) && (
-        <CreateRedisearchIndex onClosePanel={closePanel} />
+        <CreateRedisearchIndex onClosePanel={onCloseRedisearchPanel} />
       )}
     </>
   )

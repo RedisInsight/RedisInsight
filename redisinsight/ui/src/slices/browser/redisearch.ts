@@ -1,10 +1,11 @@
 import axios, { AxiosError } from 'axios'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import successMessages from 'uiSrc/components/notifications/success-messages'
+import { remove } from 'lodash'
 
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { bufferToString, getApiErrorMessage, getUrl, isEqualBuffers, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import ApiErrors from 'uiSrc/constants/apiErrors'
@@ -146,6 +147,35 @@ const redisearchSlice = createSlice({
     setQueryRedisearch: (state, { payload }: PayloadAction<string>) => {
       state.search = payload
     },
+
+    resetRedisearchKeysData: (state) => {
+      state.data.keys.length = 0
+    },
+
+    deleteRedisearchKeyFromList: (state, { payload }) => {
+      remove(state.data?.keys, (key) => isEqualBuffers(key.name, payload))
+
+      state.data = {
+        ...state.data,
+        total: state.data.total - 1,
+        scanned: state.data.scanned - 1,
+      }
+    },
+
+    editRedisearchKeyFromList: (state, { payload }) => {
+      const keys = state.data.keys.map((key) => {
+        if (isEqualBuffers(key.name, payload?.key)) {
+          key.name = payload?.newKey
+          key.nameString = bufferToString(payload?.newKey)
+        }
+        return key
+      })
+
+      state.data = {
+        ...state.data,
+        keys,
+      }
+    },
   },
 })
 
@@ -167,6 +197,9 @@ export const {
   setSelectedIndex,
   setLastBatchRedisearchKeys,
   setQueryRedisearch,
+  resetRedisearchKeysData,
+  deleteRedisearchKeyFromList,
+  editRedisearchKeyFromList,
 } = redisearchSlice.actions
 
 // Selectors

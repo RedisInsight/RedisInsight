@@ -1,47 +1,30 @@
 /* eslint-disable react/destructuring-assignment */
-/* eslint-disable react/no-this-in-sfc */
-import React, { Ref, useRef, FC, SVGProps, useState, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { EuiButton, EuiButtonIcon, EuiIcon, EuiLink, EuiPopover, EuiText, EuiToolTip, } from '@elastic/eui'
 import cx from 'classnames'
+/* eslint-disable react/no-this-in-sfc */
+import React, { FC, Ref, SVGProps, useCallback, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiIcon,
-  EuiLink,
-  EuiPopover,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
-
-import {
-  changeKeyViewType,
-  changeSearchMode,
-  fetchKeys,
-  keysSelector,
-  resetKeysData,
-} from 'uiSrc/slices/browser/keys'
-import {
-  resetBrowserTree,
-  setBrowserKeyListDataLoaded,
-} from 'uiSrc/slices/app/context'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import KeysSummary from 'uiSrc/components/keys-summary'
-import { localStorageService } from 'uiSrc/services'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
-import { ReactComponent as TreeViewIcon } from 'uiSrc/assets/img/icons/treeview.svg'
 import { ReactComponent as BulkActionsIcon } from 'uiSrc/assets/img/icons/bulk_actions.svg'
+import { ReactComponent as TreeViewIcon } from 'uiSrc/assets/img/icons/treeview.svg'
 import { ReactComponent as VectorIcon } from 'uiSrc/assets/img/icons/vector.svg'
 import { ReactComponent as RediSearchIcon } from 'uiSrc/assets/img/modules/RedisSearchLight.svg'
+import KeysSummary from 'uiSrc/components/keys-summary'
+import { BrowserStorageItem } from 'uiSrc/constants'
+import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { localStorageService } from 'uiSrc/services'
+import { resetBrowserTree, setBrowserKeyListDataLoaded, } from 'uiSrc/slices/app/context'
+
+import { changeKeyViewType, changeSearchMode, fetchKeys, keysSelector, resetKeysData, } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
+import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import AutoRefresh from '../auto-refresh'
 
 import FilterKeyType from '../filter-key-type'
-import SearchKeyList from '../search-key-list'
-import AutoRefresh from '../auto-refresh'
 import RediSearchIndexesList from '../redisearch-key-list'
+import SearchKeyList from '../search-key-list'
 
 import styles from './styles.module.scss'
 
@@ -252,7 +235,7 @@ const KeysHeader = (props: Props) => {
         }
       })
     }
-    dispatch(resetKeysData())
+    dispatch(resetKeysData(searchMode))
     dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
     localStorageService.set(BrowserStorageItem.browserViewType, type)
@@ -260,6 +243,17 @@ const KeysHeader = (props: Props) => {
   }
 
   const handleSwitchSearchMode = (mode: SearchMode) => {
+    if (searchMode !== mode) {
+      sendEventTelemetry({
+        event: TelemetryEvent.SEARCH_MODE_CHANGED,
+        eventData: {
+          databaseId: instanceId,
+          previous: searchMode,
+          current: mode
+        }
+      })
+    }
+
     dispatch(changeSearchMode(mode))
   }
 
@@ -373,7 +367,7 @@ const KeysHeader = (props: Props) => {
                   >
                     free Redis database
                   </EuiLink>
-                  {' database with module support on Redis Cloud.'}
+                  {' with module support on Redis Cloud.'}
                 </EuiText>
               </EuiPopover>
             </EuiToolTip>
@@ -406,7 +400,11 @@ const KeysHeader = (props: Props) => {
               <KeysSummary
                 items={keysState.keys}
                 totalItemsCount={keysState.total}
-                scanned={isSearched || isFiltered || viewType === KeyViewType.Tree ? keysState.scanned : 0}
+                scanned={
+                  isSearched
+                  || (isFiltered && searchMode === SearchMode.Pattern)
+                  || viewType === KeyViewType.Tree ? keysState.scanned : 0
+                }
                 loading={loading}
                 scanMoreStyle={scanMoreStyle}
                 loadMoreItems={handleScanMore}

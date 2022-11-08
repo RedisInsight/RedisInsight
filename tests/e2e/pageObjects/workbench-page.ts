@@ -21,6 +21,7 @@ export class WorkbenchPage {
     cssQueryCardCommandResult = '[data-testid=query-common-result]';
     cssCustomPluginTableResult = '[data-testid^=query-table-result-client]';
     cssCommandExecutionDateTime = '[data-testid=command-execution-date-time]';
+    cssRowInVirtualizedTable = '[data-testid^=row-]';
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -117,6 +118,7 @@ export class WorkbenchPage {
     historyResultRow = Selector('[data-testid=query-cli-card-result]');
     executionCommandTime = Selector('[data-testid=command-execution-time-value]');
     executionCommandIcon = Selector('[data-testid=command-execution-time-icon]');
+    rowInVirtualizedTable = Selector('[data-testid^=row-]');
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');
     monacoCloseCommandDetails = Selector('span.codicon-close');

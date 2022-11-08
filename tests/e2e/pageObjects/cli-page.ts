@@ -123,6 +123,19 @@ export class CliPage {
     }
 
     /**
+   * Send command in Cli
+   * @param commands The commands to send
+   */
+    async sendCommandsInCli(commands: string[]): Promise<void> {
+        await t.click(this.cliExpandButton);
+        for (const command of commands) {
+            await t.typeText(this.cliCommandInput, command, { replace: true, paste: true });
+            await t.pressKey('enter');
+        }
+        await t.click(this.cliCollapseButton);
+    }
+
+    /**
    * Get command result execution
    * @param command The command for send in CLI
    */

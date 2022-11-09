@@ -16,11 +16,13 @@ import {
   fetchRedisearchListAction,
 } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
-import { fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
+import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import { changeSearchMode, fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { bufferToString, formatLongName, Nullable } from 'uiSrc/utils'
+import { bufferToString, formatLongName, isRedisearchAvailable, Nullable } from 'uiSrc/utils'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { localStorageService } from 'uiSrc/services'
+import { BrowserStorageItem } from 'uiSrc/constants'
 
 import styles from './styles.module.scss'
 
@@ -36,7 +38,7 @@ const RediSearchIndexesList = (props: Props) => {
   const { viewType, searchMode } = useSelector(keysSelector)
   const { selectedIndex = '' } = useSelector(redisearchSelector)
   const { data: list = [], loading } = useSelector(redisearchListSelector)
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, modules, loading: instanceLoading } = useSelector(connectedInstanceSelector)
 
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
   const [index, setIndex] = useState<Nullable<string>>(JSON.stringify(selectedIndex))
@@ -44,12 +46,21 @@ const RediSearchIndexesList = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    setIndex(JSON.stringify(selectedIndex || ''))
-  }, [selectedIndex])
+    if (instanceLoading) return
+
+    const moduleExists = isRedisearchAvailable(modules)
+    if (moduleExists) {
+      dispatch(fetchRedisearchListAction())
+    } else {
+      dispatch(changeSearchMode(SearchMode.Pattern))
+
+      localStorageService.set(BrowserStorageItem.browserSearchMode, SearchMode.Pattern)
+    }
+  }, [instanceLoading, modules])
 
   useEffect(() => {
-    dispatch(fetchRedisearchListAction())
-  }, [])
+    setIndex(JSON.stringify(selectedIndex || ''))
+  }, [selectedIndex])
 
   const options: EuiSuperSelectOption<string>[] = list.map(
     (index) => {

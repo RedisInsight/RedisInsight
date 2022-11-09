@@ -2,12 +2,14 @@ import { AxiosError } from 'axios'
 import { cloneDeep, omit } from 'lodash'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { apiService } from 'uiSrc/services'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import { cleanup, initialStateDefault, mockedStore, mockStore } from 'uiSrc/utils/test-utils'
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import { stringToBuffer } from 'uiSrc/utils'
 import { REDISEARCH_LIST_DATA_MOCK } from 'uiSrc/mocks/handlers/browser/redisearchHandlers'
 import { SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { fetchKeys, fetchMoreKeys } from 'uiSrc/slices/browser/keys'
+import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
+import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import reducer, {
   initialState,
   loadKeys,
@@ -713,15 +715,27 @@ describe('redisearch slice', () => {
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
+        const newStore = mockStore({
+          ...initialStateDefault,
+          connections: {
+            instances: {
+              ...cloneDeep(initialStateInstances),
+              connectedInstance: {
+                modules: [{ name: RedisDefaultModules.Search }]
+              }
+            }
+          }
+        })
+
         // Act
-        await store.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
+        await newStore.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
 
         // Assert
         const expectedActions = [
           loadKeys(),
           loadKeysSuccess([data, false]),
         ]
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(newStore.getActions()).toEqual(expectedActions)
       })
 
       it('failed to load keys', async () => {
@@ -736,8 +750,20 @@ describe('redisearch slice', () => {
 
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
+        const newStore = mockStore({
+          ...initialStateDefault,
+          connections: {
+            instances: {
+              ...cloneDeep(initialStateInstances),
+              connectedInstance: {
+                modules: [{ name: RedisDefaultModules.Search }]
+              }
+            }
+          }
+        })
+
         // Act
-        await store.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
+        await newStore.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
 
         // Assert
         const expectedActions = [
@@ -745,7 +771,7 @@ describe('redisearch slice', () => {
           addErrorNotification(responsePayload as AxiosError),
           loadKeysFailure(errorMessage),
         ]
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(newStore.getActions()).toEqual(expectedActions)
       })
 
       it('failed to load keys: Index not found', async () => {
@@ -760,8 +786,20 @@ describe('redisearch slice', () => {
 
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
+        const newStore = mockStore({
+          ...initialStateDefault,
+          connections: {
+            instances: {
+              ...cloneDeep(initialStateInstances),
+              connectedInstance: {
+                modules: [{ name: RedisDefaultModules.Search }]
+              }
+            }
+          }
+        })
+
         // Act
-        await store.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
+        await newStore.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
 
         // Assert
         const expectedActions = [
@@ -771,7 +809,7 @@ describe('redisearch slice', () => {
           setRedisearchInitialState(),
           loadList(),
         ]
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(newStore.getActions()).toEqual(expectedActions)
       })
     })
 

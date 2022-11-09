@@ -39,6 +39,10 @@ import reducer, {
   resetConnectedInstance,
   setEditedInstance,
   fetchEditedInstanceAction,
+  setConnectedInstanceId,
+  setConnectedInstance,
+  setConnectedInstanceFailure,
+  setConnectedInstanceSuccess,
 } from '../../instances/instances'
 import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
@@ -377,6 +381,101 @@ describe('instances slice', () => {
 
       // Act
       const nextState = reducer(initialState, getDatabaseConfigInfoFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setConnectedInstanceId', () => {
+    it('should properly set "id"', () => {
+      // Arrange
+      const id = 'id'
+      const state: InitialStateInstances = {
+        ...initialState,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          id,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setConnectedInstanceId(id))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setConnectedInstance', () => {
+    it('should properly set loading = "true"', () => {
+      // Arrange
+      const state: InitialStateInstances = {
+        ...initialState,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          loading: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setConnectedInstance())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setConnectedInstanceSuccess', () => {
+    it('should properly set error', () => {
+      // Arrange
+      const instance = { ...instances[1] }
+      const state: InitialStateInstances = {
+        ...initialState,
+        connectedInstance: instance
+      }
+
+      // Act
+      const nextState = reducer(initialState, setConnectedInstanceSuccess(instance))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setConnectedInstanceFailure', () => {
+    it('should properly set loading = "false"', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setConnectedInstanceFailure())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

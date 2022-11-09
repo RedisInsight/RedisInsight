@@ -1,4 +1,4 @@
-import { DATABASE_LIST_MODULES_TEXT, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { DATABASE_LIST_MODULES_TEXT, RedisDefaultModules, REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 
 export interface IDatabaseModule {
@@ -36,3 +36,7 @@ export const sortModulesByName = (modules: RedisModuleDto[]) => [...modules].sor
   if (PREDEFINED_MODULE_NAMES_ORDER.indexOf(b.name) === -1) return -1
   return PREDEFINED_MODULE_NAMES_ORDER.indexOf(a.name) - PREDEFINED_MODULE_NAMES_ORDER.indexOf(b.name)
 })
+
+export const isRedisearchAvailable = (modules: RedisModuleDto[]): boolean =>
+  modules?.some(({ name }) =>
+    REDISEARCH_MODULES.some((search) => name === search))

@@ -33,6 +33,7 @@ export const initialState: InitialStateInstances = {
     connectionType: ConnectionType.Standalone,
     isRediStack: false,
     modules: [],
+    loading: false,
   },
   editedInstance: {
     loading: false,
@@ -143,15 +144,25 @@ const instancesSlice = createSlice({
     },
 
     // set connected instance
-    setConnectedInstance: (state, { payload }: { payload: Instance }) => {
+    setConnectedInstance: (state) => {
+      state.connectedInstance.loading = true
+    },
+
+    // set connected instance success
+    setConnectedInstanceSuccess: (state, { payload }: { payload: Instance }) => {
       const isRediStack = state.data?.find((db) => db.id === state.connectedInstance.id)?.isRediStack
       state.connectedInstance = payload
+      state.connectedInstance.loading = false
       state.connectedInstance.isRediStack = isRediStack || false
     },
 
     // set edited instance
     setEditedInstance: (state, { payload }: { payload:Nullable<Instance> }) => {
       state.editedInstance.data = payload
+    },
+
+    setConnectedInstanceFailure: (state) => {
+      state.connectedInstance.loading = false
     },
 
     // reset connected instance
@@ -172,6 +183,8 @@ export const {
   setDefaultInstance,
   setDefaultInstanceSuccess,
   setDefaultInstanceFailure,
+  setConnectedInstanceSuccess,
+  setConnectedInstanceFailure,
   setConnectedInstance,
   setConnectedInstanceId,
   resetConnectedInstance,
@@ -327,12 +340,13 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
 export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
+    dispatch(setConnectedInstance())
 
     try {
       const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.DATABASES}/${id}`)
 
       if (isStatusSuccessful(status)) {
-        dispatch(setConnectedInstance(data))
+        dispatch(setConnectedInstanceSuccess(data))
         dispatch(setDefaultInstanceSuccess())
       }
       onSuccess?.()
@@ -359,6 +373,7 @@ export function fetchEditedInstanceAction(id: string, onSuccess?: () => void) {
       onSuccess?.()
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
+      dispatch(setConnectedInstanceFailure())
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
     }

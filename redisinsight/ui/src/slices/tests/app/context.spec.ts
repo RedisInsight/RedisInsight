@@ -64,6 +64,7 @@ describe('slices', () => {
         ...initialState,
         contextInstanceId,
         browser: {
+          ...initialState.browser,
           keyList: {
             isDataLoaded: true,
             scrollTopPosition: 100,
@@ -74,7 +75,7 @@ describe('slices', () => {
           },
           bulkActions: {
             opened: true,
-          }
+          },
         },
         workbench: {
           script: '123123',

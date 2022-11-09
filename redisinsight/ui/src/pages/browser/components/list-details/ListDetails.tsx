@@ -234,7 +234,7 @@ const ListDetails = (props: Props) => {
       id: 'index',
       label: 'Index',
       minWidth: 120,
-      relativeWidth: listSizes?.index || 20,
+      relativeWidth: listSizes?.index || 30,
       truncateText: true,
       isSearchable: true,
       isResizable: true,

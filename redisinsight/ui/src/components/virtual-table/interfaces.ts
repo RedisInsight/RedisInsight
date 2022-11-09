@@ -29,6 +29,7 @@ export interface ITableColumn {
   minWidth?: number
   maxWidth?: number
   isSortable?: boolean
+  isResizable?: boolean
   isSearchable?: boolean
   isSearchOpen?: boolean
   initialSearchValue?: string
@@ -81,9 +82,32 @@ export interface IProps {
   overscanRowCount?: number
   setExpandedRows?: (rows: number[]) => void
   onRowsRendered?: (info: IndexRange & OverscanIndexRange) => void
+  onColResizeEnd?: (cols: RelativeWidthSizes) => void
 }
 
 export interface ISortedColumn {
   column: string
   order: SortOrder
+}
+
+export interface RelativeWidthSizes {
+  [key: string]: number
+}
+
+export interface AbsoluteWidthSizes {
+  [key: string]: {
+    abs: number
+  }
+}
+
+export type ColumnWidthSizes = AbsoluteWidthSizes & {
+  [key: string]: {
+    relative: number
+  }
+}
+
+export interface ResizableState {
+  column: Nullable<string>
+  active: boolean
+  x: number
 }

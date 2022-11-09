@@ -4,6 +4,7 @@ import {
   TableCellAlignment,
   TableCellTextAlignment,
 } from 'uiSrc/constants'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 export interface IColumnSearchState {
   initialSearchValue?: string
@@ -18,7 +19,7 @@ export interface IColumnSearchState {
 export interface ITableColumn {
   id: string
   label: string | ReactNode
-  minWidth: number
+  minWidth?: number
   maxWidth?: number
   isSortable?: boolean
   isSearchable?: boolean

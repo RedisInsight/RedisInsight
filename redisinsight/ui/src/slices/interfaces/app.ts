@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios'
+import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { Nullable } from 'uiSrc/utils'
 import { ICommands } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
@@ -64,6 +65,9 @@ export interface StateAppContext {
     },
     bulkActions: {
       opened: boolean
+    },
+    keyDetailsSizes: {
+      [key: string]: Nullable<RelativeWidthSizes>
     }
   },
   workbench: {

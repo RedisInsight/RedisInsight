@@ -1,11 +1,12 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { RedisResponseBufferType } from 'uiSrc/slices/interfaces'
 import { bufferToString } from 'uiSrc/utils'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import HashDetails, { Props } from './HashDetails'
 
 const mockedProps = mock<Props>()
-const fields = [
+const fields: Array<{ field: RedisResponseBufferType, value: RedisResponseBufferType }> = [
   { field: { type: 'Buffer', data: [49] }, value: { type: 'Buffer', data: [49, 65] } },
   { field: { type: 'Buffer', data: [49, 50, 51] }, value: { type: 'Buffer', data: [49, 11] } },
   { field: { type: 'Buffer', data: [50] }, value: { type: 'Buffer', data: [49, 234, 453] } },
@@ -63,5 +64,10 @@ describe('HashDetails', () => {
     render(<HashDetails {...instance(mockedProps)} />)
     fireEvent.click(screen.getAllByTestId(/edit-hash-button/)[0])
     expect(screen.getByTestId('hash-value-editor')).toBeInTheDocument()
+  })
+
+  it('should render resize trigger for field column', () => {
+    render(<HashDetails {...instance(mockedProps)} />)
+    expect(screen.getByTestId('resize-trigger-field')).toBeInTheDocument()
   })
 })

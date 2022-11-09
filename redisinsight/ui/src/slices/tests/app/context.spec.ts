@@ -33,7 +33,7 @@ import reducer, {
   updateBrowserTreeSelectedLeaf,
   setBrowserTreeDelimiter,
   setBrowserIsNotRendered,
-  setBrowserRedisearchScrollPosition,
+  setBrowserRedisearchScrollPosition, updateKeyDetailsSizes, appContextBrowserKeyDetails,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -701,6 +701,33 @@ describe('slices', () => {
       })
 
       expect(appContextBrowserTree(rootState)).toEqual(state)
+    })
+  })
+
+  describe('updateKeyDetailsSizes', () => {
+    it('should properly update sizes', () => {
+      // Arrange
+      const payload = {
+        type: KeyTypes.Hash,
+        sizes: {
+          field: 50
+        }
+      }
+
+      const state = {
+        ...initialState.browser.keyDetailsSizes,
+        [KeyTypes.Hash]: { ...payload.sizes }
+      }
+
+      // Act
+      const nextState = reducer(initialState, updateKeyDetailsSizes(payload))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowserKeyDetails(rootState)).toEqual(state)
     })
   })
 })

@@ -96,14 +96,17 @@ export class RedisService {
 
   public async createClusterClient(
     database: Database,
-    nodes: IRedisClusterNodeAddress[],
+    nodes: IRedisClusterNodeAddress[] = [],
     useRetry: boolean = false,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<Cluster> {
     const config = await this.getRedisConnectionConfig(database);
     return new Promise((resolve, reject) => {
       try {
-        const cluster = new Redis.Cluster(nodes, {
+        const cluster = new Redis.Cluster([{
+          host: database.host,
+          port: database.port,
+        }].concat(nodes), {
           clusterRetryStrategy: useRetry ? this.retryStrategy : () => undefined,
           redisOptions: {
             ...config,

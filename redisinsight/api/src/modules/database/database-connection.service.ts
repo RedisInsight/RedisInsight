@@ -8,6 +8,7 @@ import { RedisService } from 'src/modules/redis/redis.service';
 import { ClientMetadata } from 'src/modules/redis/models/client-metadata';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { Database } from 'src/modules/database/models/database';
 
 @Injectable()
 export class DatabaseConnectionService {
@@ -38,10 +39,25 @@ export class DatabaseConnectionService {
     // refresh modules list and last connected time
     // will be refreshed after user navigate to particular database from the databases list
     // Note: move to a different place in case if we need to update such info more often
-    await this.repository.update(databaseId, {
+    const toUpdate: Partial<Database> = {
       lastConnection: new Date(),
       modules: await this.databaseInfoProvider.determineDatabaseModules(client),
-    });
+    };
+
+    // !Temporary. Refresh cluster nodes on connection
+    if (client?.isCluster) {
+      const primaryNodeOptions = client.nodes('master')[0].options;
+
+      toUpdate.host = primaryNodeOptions.host;
+      toUpdate.port = primaryNodeOptions.port;
+
+      toUpdate.nodes = client.nodes().map(({ options }) => ({
+        host: options.host,
+        port: options.port,
+      }));
+    }
+
+    await this.repository.update(databaseId, toUpdate);
 
     this.logger.log(`Succeed to connect to database ${databaseId}`);
   }

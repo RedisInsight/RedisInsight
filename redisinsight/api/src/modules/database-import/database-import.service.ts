@@ -1,13 +1,20 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { isArray, get, set } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import { plainToClass } from 'class-transformer';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseImportResponse } from 'src/modules/database-import/dto/database-import.response';
+import { Validator } from 'class-validator';
+import { ImportDatabaseDto } from 'src/modules/database-import/dto/import.database.dto';
+import { classToClass } from 'src/utils';
 
 @Injectable()
 export class DatabaseImportService {
+  private logger = new Logger('DatabaseImportService');
+
+  private validator = new Validator();
+
   private fieldsMapSchema: Array<[string, string[]]> = [
     ['name', ['name', 'connectionName']],
     ['username', ['username']],
@@ -22,6 +29,10 @@ export class DatabaseImportService {
     private readonly databaseRepository: DatabaseRepository,
   ) {}
 
+  /**
+   * Import databases from the file
+   * @param file
+   */
   public async import(file): Promise<DatabaseImportResponse> {
     const items = DatabaseImportService.parseFile(file);
 
@@ -80,7 +91,26 @@ export class DatabaseImportService {
       data.connectionType = ConnectionType.STANDALONE;
     }
 
-    const database = plainToClass(Database, data);
+    const dto = plainToClass(
+      ImportDatabaseDto,
+      // additionally replace empty strings ("") with null
+      Object.keys(data)
+        .reduce((acc, key) => {
+          acc[key] = data[key] === '' ? null : data[key];
+          return acc;
+        }, {}),
+    );
+
+    try {
+      await this.validator.validateOrReject(dto, {
+        whitelist: true,
+      });
+    } catch (e) {
+      this.logger.warn('Invalid data for database import entry', e);
+      return Promise.reject(e);
+    }
+
+    const database = classToClass(Database, dto);
 
     return this.databaseRepository.create(database);
   }

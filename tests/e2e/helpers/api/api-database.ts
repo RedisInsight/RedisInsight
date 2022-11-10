@@ -207,7 +207,7 @@ export async function deleteStandaloneDatabasesApi(databasesParameters: AddNewDa
 export async function getClusterNodesApi(databaseParameters: OSSClusterParameters): Promise<string[]> {
     const databaseId = await getDatabaseByName(databaseParameters.ossClusterDatabaseName);
     const response = await request(endpoint)
-        .get(`/instance/${databaseId}/cluster-details`)
+        .get(`/databases/${databaseId}/cluster-details`)
         .set('Accept', 'application/json')
         .expect(200);
     const nodes = await response.body.nodes;

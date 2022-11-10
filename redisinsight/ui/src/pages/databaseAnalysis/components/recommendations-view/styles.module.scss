@@ -1,0 +1,97 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+.wrapper {
+  @include euiScrollBar;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100%;
+}
+
+.title {
+  margin: 32px 0 24px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+
+  .emptyMessage {
+    font: normal normal 500 16px/19px Graphik, sans-serif;
+  }
+
+  .spinner {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 12px;
+    border-top-color: var(--euiColorPrimary) !important;
+  }
+
+  .spinnerText {
+    color: var(--htmlColor);
+  }
+}
+
+.recommendation {
+  border-radius: 8px;
+  border: 1px solid #323232;
+  background-color: var(--euiColorLightestShade);
+  margin-bottom: 6px;
+  padding: 18px;
+
+  .accordion {
+    margin-bottom: 18px;
+  }
+
+  .accordionContent {
+    padding: 18px 0 17px !important;
+  }
+
+  :global(.euiAccordion__triggerWrapper) {
+    background-color: transparent;
+  }
+
+  :global(.euiPanel.euiPanel--subdued) {
+    background-color: transparent;
+  }
+
+  :global(.euiAccordion.euiAccordion-isOpen .euiAccordion__triggerWrapper) {
+    border-bottom: none;
+  }
+
+  :global(.euiAccordion .euiAccordion__triggerWrapper) {
+    border-bottom: 1px solid var(--separatorColor);
+  }
+
+  .accordionBtn {
+    font: normal normal 500 16px/19px Graphik, sans-serif;
+    padding-bottom: 22px;
+  }
+
+  .badgesContainer {
+    margin-right: 48px;
+
+    .badge {
+      margin: 18px;
+  
+      .badgeIcon {
+        margin-right: 14px;
+        fill: var(--badgeIconColor);
+      }
+
+      .badgeWrapper {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+
+  .span {
+    display: inline;
+    font: normal normal normal 14px/24px Graphik, sans-serif;
+  }
+}

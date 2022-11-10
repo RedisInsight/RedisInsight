@@ -26,6 +26,7 @@ export class DatabaseAnalysisProvider {
     'filter',
     'progress',
     'expirationGroups',
+    'recommendations',
   ];
 
   constructor(
@@ -40,7 +41,11 @@ export class DatabaseAnalysisProvider {
    * @param analysis
    */
   async create(analysis: Partial<DatabaseAnalysis>): Promise<DatabaseAnalysis> {
-    const entity = await this.repository.save(await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, analysis)));
+    const entity = await this.repository.save(
+      await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, {
+        ...analysis,
+      })),
+    );
 
     // cleanup history and ignore error if any
     try {

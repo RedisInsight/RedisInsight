@@ -1,5 +1,6 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { RecommendationsService } from 'src/modules/db-recommendations/providers/database-recommendations.provider';
 import { catchAclError } from 'src/utils';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { plainToClass } from 'class-transformer';
@@ -16,9 +17,10 @@ export class DatabaseAnalysisService {
 
   constructor(
     private readonly databaseConnectionService: DatabaseConnectionService,
-    private readonly analyzer: DatabaseAnalyzer,
-    private readonly databaseAnalysisProvider: DatabaseAnalysisProvider,
-    private readonly scanner: KeysScanner,
+    private recommendationsService: RecommendationsService,
+    private analyzer: DatabaseAnalyzer,
+    private databaseAnalysisProvider: DatabaseAnalysisProvider,
+    private scanner: KeysScanner,
   ) {}
 
   /**
@@ -56,6 +58,7 @@ export class DatabaseAnalysisService {
         databaseId: clientOptions.instanceId,
         ...dto,
         progress,
+        recommendations: await this.recommendationsService.getRecommendations(clientOptions),
       }, [].concat(...scanResults.map((nodeResult) => nodeResult.keys))));
 
       return this.databaseAnalysisProvider.create(analysis);

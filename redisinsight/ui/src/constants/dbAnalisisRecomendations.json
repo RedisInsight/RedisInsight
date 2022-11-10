@@ -1,0 +1,44 @@
+{
+  "luaScript": {
+    "id": "luaScript",
+    "title":"Avoid dynamic Lua script",
+    "content": [
+      {
+        "id": "1",
+        "type": "span",
+        "value": "Refrain from generating dynamic scripts, which can cause your Lua cache to grow and get out of control. Memory is consumed as scripts are loaded. If you have to use dynamic Lua scripts, then remember to track your Lua memory consumption and flush the cache periodically with a SCRIPT FLUSH, also do not hardcode and/or programmatically generate key names in your Lua scripts because it makes them useless in a clustered Redis setup. "
+      },
+      {
+        "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["configuration_changes", "code_changes", "upgrade"]
+  },
+  "1": {
+    "id": "1",
+    "title":"Avoid",
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "some text as paragraph"
+      },
+      {
+        "id": "2",
+        "type": "span",
+        "value": "some text as span"
+      },
+      {
+        "id": "3",
+        "type": "image",
+        "value": "uiSrc/assets/img/welcome_bg_dark.jpg"
+      }
+    ],
+    "badges": ["configuration_changes", "code_changes"]
+  }
+}

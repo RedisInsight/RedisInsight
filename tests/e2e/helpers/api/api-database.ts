@@ -45,7 +45,10 @@ export async function addNewStandaloneDatabasesApi(databasesParameters: AddNewDa
  */
 export async function addNewOSSClusterDatabaseApi(databaseParameters: OSSClusterParameters): Promise<void> {
     const response = await request(endpoint).post('/databases')
-        .send({ 'name': databaseParameters.ossClusterDatabaseName, 'host': databaseParameters.ossClusterHost, 'port': databaseParameters.ossClusterPort })
+        .send({
+            'name': databaseParameters.ossClusterDatabaseName,
+            'host': databaseParameters.ossClusterHost,
+            'port': Number(databaseParameters.ossClusterPort) })
         .set('Accept', 'application/json');
 
     await t.expect(await response.status).eql(201, 'The creation of new oss cluster database request failed')
@@ -65,7 +68,7 @@ export async function discoverSentinelDatabaseApi(databaseParameters: SentinelPa
     const response = await request(endpoint).post('/databases/sentinel-masters')
         .send({
             'host': databaseParameters.sentinelHost,
-            'port': databaseParameters.sentinelPort,
+            'port': Number(databaseParameters.sentinelPort),
             'password': databaseParameters.sentinelPassword,
             'masters': masters
         })

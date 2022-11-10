@@ -4,7 +4,7 @@ import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
 import {
-  IsBoolean,
+  IsBoolean, IsEnum,
   IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
@@ -97,6 +97,7 @@ export class Database {
     enum: ConnectionType,
   })
   @Expose()
+  @IsEnum(ConnectionType)
   connectionType: ConnectionType;
 
   @ApiPropertyOptional({

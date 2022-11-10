@@ -124,7 +124,7 @@ export class DatabaseImportService {
 
     let databases;
 
-    if (file.mimetype === 'application/json') {
+    if (file?.mimetype === 'application/json') {
       databases = DatabaseImportService.parseJson(data);
     } else {
       databases = DatabaseImportService.parseBase64(data);

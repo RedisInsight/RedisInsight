@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { StateDatabaseAnalysis } from 'uiSrc/slices/interfaces/analytics'
+import { StateDatabaseAnalysis, DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
@@ -13,6 +13,7 @@ export const initialState: StateDatabaseAnalysis = {
   loading: false,
   error: '',
   data: null,
+  selectedViewTab: DatabaseAnalysisViewTab.DataSummary,
   history: {
     loading: false,
     error: '',
@@ -55,11 +56,15 @@ const databaseAnalysisSlice = createSlice({
     setShowNoExpiryGroup: (state, { payload }: PayloadAction<boolean>) => {
       state.history.showNoExpiryGroup = payload
     },
+    setDatabaseAnalysisViewTab: (state, { payload }: PayloadAction<DatabaseAnalysisViewTab>) => {
+      state.selectedViewTab = payload
+    },
   }
 })
 
 export const dbAnalysisSelector = (state: RootState) => state.analytics.databaseAnalysis
 export const dbAnalysisReportsSelector = (state: RootState) => state.analytics.databaseAnalysis.history
+export const dbAnalysisViewTabSelector = (state: RootState) => state.analytics.databaseAnalysis.selectedViewTab
 
 export const {
   setDatabaseAnalysisInitialState,
@@ -71,6 +76,7 @@ export const {
   loadDBAnalysisReportsError,
   setSelectedAnalysisId,
   setShowNoExpiryGroup,
+  setDatabaseAnalysisViewTab,
 } = databaseAnalysisSlice.actions
 
 // The reducer

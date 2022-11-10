@@ -23,6 +23,7 @@ export interface StateDatabaseAnalysis {
   loading: boolean
   error: string
   data: Nullable<DatabaseAnalysis>
+  selectedViewTab: DatabaseAnalysisViewTab
   history: {
     loading: boolean
     error: string
@@ -40,4 +41,9 @@ export enum AnalyticsViewTab {
   ClusterDetails = 'ClusterDetails',
   DatabaseAnalysis = 'DatabaseAnalysis',
   SlowLog = 'SlowLog',
+}
+
+export enum DatabaseAnalysisViewTab {
+  DataSummary = 'DataSummary',
+  Recommendations = 'Recommendations',
 }

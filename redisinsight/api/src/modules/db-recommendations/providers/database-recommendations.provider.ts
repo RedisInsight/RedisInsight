@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cluster, Command } from 'ioredis';
 import { get, max } from 'lodash';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
@@ -10,12 +10,14 @@ const minNumberOfCachedScripts = 10;
 
 @Injectable()
 export class RecommendationsService {
-  private logger = new Logger('DatabaseRecommendationsService');
-
   constructor(
     private readonly databaseConnectionService: DatabaseConnectionService,
   ) {}
 
+  /**
+   * Get database recommendations
+   * @param clientOptions
+   */
   public async getRecommendations(
     clientOptions: IFindRedisClientInstanceByOptions,
   ) {
@@ -27,6 +29,10 @@ export class RecommendationsService {
     return recommendations;
   }
 
+  /**
+   * Check lua script recommendation
+   * @param clientOptions
+   */
   async getLuaScriptRecommendation(
     clientOptions: IFindRedisClientInstanceByOptions,
   ): Promise<boolean> {

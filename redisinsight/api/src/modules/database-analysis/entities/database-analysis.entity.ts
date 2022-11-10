@@ -119,14 +119,8 @@ export class DatabaseAnalysisEntity {
   encryption: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
-  @Transform((str) => {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      return undefined;
-    }
-  }, { toPlainOnly: true })
+  @DataAsJsonString()
+  @Expose()
   recommendations: string;
 
   @CreateDateColumn()

@@ -17,10 +17,10 @@ export class DatabaseAnalysisService {
 
   constructor(
     private readonly databaseConnectionService: DatabaseConnectionService,
-    private recommendationsService: RecommendationsService,
-    private analyzer: DatabaseAnalyzer,
-    private databaseAnalysisProvider: DatabaseAnalysisProvider,
-    private scanner: KeysScanner,
+    private readonly recommendationsService: RecommendationsService,
+    private readonly analyzer: DatabaseAnalyzer,
+    private readonly databaseAnalysisProvider: DatabaseAnalysisProvider,
+    private readonly scanner: KeysScanner,
   ) {}
 
   /**

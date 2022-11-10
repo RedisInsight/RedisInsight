@@ -117,7 +117,7 @@ export class DatabaseAnalysis {
   expirationGroups: SumGroup[];
 
   @ApiProperty({
-    description: 'Expiration groups',
+    description: 'Recommendations',
     isArray: true,
     type: () => Recommendation,
   })

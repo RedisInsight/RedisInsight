@@ -17,28 +17,6 @@
         }
       }
     ],
-    "badges": ["configuration_changes", "code_changes", "upgrade"]
-  },
-  "1": {
-    "id": "1",
-    "title":"Avoid",
-    "content": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "some text as paragraph"
-      },
-      {
-        "id": "2",
-        "type": "span",
-        "value": "some text as span"
-      },
-      {
-        "id": "3",
-        "type": "image",
-        "value": "uiSrc/assets/img/welcome_bg_dark.jpg"
-      }
-    ],
-    "badges": ["configuration_changes", "code_changes"]
+    "badges": ["upgrade"]
   }
 }

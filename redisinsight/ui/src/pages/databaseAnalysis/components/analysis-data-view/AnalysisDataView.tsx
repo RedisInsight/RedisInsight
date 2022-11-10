@@ -13,7 +13,6 @@ import {
   SummaryPerData,
   ExpirationGroupsView
 } from 'uiSrc/pages/databaseAnalysis/components'
-// import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import styles from './styles.module.scss'
 

@@ -65,7 +65,7 @@ export async function discoverSentinelDatabaseApi(databaseParameters: SentinelPa
     if (primaryGroupsNumber) {
         masters = databaseParameters.masters.slice(0, primaryGroupsNumber);
     }
-    const response = await request(endpoint).post('/databases/sentinel-masters')
+    const response = await request(endpoint).post('/redis-sentinel/databases')
         .send({
             'host': databaseParameters.sentinelHost,
             'port': Number(databaseParameters.sentinelPort),
@@ -74,7 +74,7 @@ export async function discoverSentinelDatabaseApi(databaseParameters: SentinelPa
         })
         .set('Accept', 'application/json');
 
-    await t.expect(response.status).eql(201, 'The autodiscover of Sentinel database request failed');
+    await t.expect(response.status).eql(201, 'Autodiscovery of Sentinel database request failed');
 }
 
 /**

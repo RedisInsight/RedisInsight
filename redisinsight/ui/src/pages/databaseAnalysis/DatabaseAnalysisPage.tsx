@@ -17,7 +17,7 @@ import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, Telemetry
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 
 import Header from './components/header'
-import DatabaseAnalysisTabs from './components/sub-tabs'
+import DatabaseAnalysisTabs from './components/data-nav-tabs'
 import styles from './styles.module.scss'
 
 const DatabaseAnalysisPage = () => {

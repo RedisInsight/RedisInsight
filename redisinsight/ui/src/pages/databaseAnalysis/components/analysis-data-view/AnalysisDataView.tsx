@@ -42,7 +42,7 @@ const AnalysisDataView = () => {
     })
   }
 
-  if (!loading && !!reports.length && data?.totalKeys?.total === 0) {
+  if (!loading && !!reports?.length && data?.totalKeys?.total === 0) {
     return (<EmptyAnalysisMessage name={EmptyMessage.Keys} />)
   }
 

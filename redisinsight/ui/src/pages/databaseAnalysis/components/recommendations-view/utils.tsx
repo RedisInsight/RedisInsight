@@ -4,8 +4,9 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiLink,
-  EuiImage,
+  EuiSpacer,
 } from '@elastic/eui'
+import cx from 'classnames'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
 import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
@@ -24,7 +25,7 @@ export const renderBadges = (badges: string[]) => (
       ? <EuiFlexItem key={id} className={styles.badge} grow={false} />
       : (
         <EuiFlexItem key={id} className={styles.badge} grow={false}>
-          <div className={styles.badgeWrapper}>
+          <div data-testid={id} className={styles.badgeWrapper}>
             {icon}
             {name}
           </div>
@@ -36,13 +37,13 @@ export const renderBadges = (badges: string[]) => (
 export const parseContent = ({ type, value }: { type: string, value: any }) => {
   switch (type) {
     case 'paragraph':
-      return <EuiTextColor color="subdued">{value}</EuiTextColor>
+      return <EuiTextColor className={styles.text} color="subdued">{value}</EuiTextColor>
     case 'span':
-      return <EuiTextColor color="subdued" className={styles.span}>{value}</EuiTextColor>
+      return <EuiTextColor color="subdued" className={cx(styles.span, styles.text)}>{value}</EuiTextColor>
     case 'link':
       return <EuiLink external={false} target="_blank" href={value.href}>{value.name}</EuiLink>
-    case 'image':
-      return <EuiImage size="l" alt="" src={value} />
+    case 'spacer':
+      return <EuiSpacer size={value} />
     default:
       return value
   }

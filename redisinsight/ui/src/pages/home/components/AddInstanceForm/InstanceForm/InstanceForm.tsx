@@ -703,7 +703,7 @@ const AddStandaloneForm = (props: Props) => {
                 data-testid="port"
                 style={{ width: '100%' }}
                 placeholder="Enter Port"
-                value={formik.values.port ?? ''}
+                value={formik.values.port ? formik.values.port : '6379'}
                 maxLength={6}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(

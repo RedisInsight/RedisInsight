@@ -283,6 +283,14 @@ export interface InitialStateInstances {
   connectedInstance: Instance
   editedInstance: InitialStateEditedInstances
   instanceOverview: DatabaseConfigInfo
+  importInstances: {
+    loading: boolean
+    error: string
+    data: Nullable<{
+      success: number,
+      total: number
+    }>
+  }
 }
 
 export interface InitialStateEditedInstances {

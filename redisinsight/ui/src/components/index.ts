@@ -20,6 +20,7 @@ import GlobalSubscriptions from './global-subscriptions'
 import MonitorWrapper from './monitor'
 import PagePlaceholder from './page-placeholder'
 import BulkActionsConfig from './bulk-actions-config'
+import ImportDatabasesDialog from './import-databases-dialog'
 
 export {
   NavigationMenu,
@@ -47,4 +48,5 @@ export {
   ShortcutsFlyout,
   PagePlaceholder,
   BulkActionsConfig,
+  ImportDatabasesDialog
 }

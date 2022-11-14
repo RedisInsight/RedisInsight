@@ -1,20 +1,22 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { Instance } from 'uiSrc/slices/interfaces'
 import InstanceFormWrapper, { Props } from './InstanceFormWrapper'
 import InstanceForm, {
   Props as InstanceProps,
 } from './InstanceForm/InstanceForm'
 
 const mockedProps = mock<Props>()
-const mockedEditedInstance = {
+const mockedEditedInstance: Instance = {
   name: 'name',
   host: 'host',
   port: 123,
-  tls: {
-    caCertId: 'zxc',
-    clientCertPairId: 'zxc',
-  },
+  id: '123',
+  modules: [],
+  tls: true,
+  caCert: { id: 'zxc' },
+  clientCert: { id: 'zxc' },
 }
 
 const mockedValues = {

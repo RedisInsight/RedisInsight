@@ -451,6 +451,8 @@ export const constants = {
     threshold: 4 * 60 * 60 * 1000,
   },
 
-
+  TEST_DATABASE_ANALYSIS_RECOMMENDATION_1: {
+    name: 'luaScript',
+  },
   // etc...
 }

@@ -64,6 +64,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.topKeysLength.length).to.gt(0);
         expect(body.topKeysMemory.length).to.gt(0);
         expect(body.expirationGroups.length).to.gt(0);
+        expect(body.recommendations.length).to.eq(0);
       },
       after: async () => {
         expect(await repository.count()).to.eq(5);
@@ -142,6 +143,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.expirationGroups[0].label).to.eq('No Expiry');
         expect(body.expirationGroups[0].total).to.gt(0);
         expect(body.expirationGroups[0].threshold).to.eq(0);
+        expect(body.recommendations.length).to.eq(0);
       },
       after: async () => {
         expect(await repository.count()).to.eq(5);

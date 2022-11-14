@@ -175,6 +175,7 @@ export const generateNDatabaseAnalysis = async (
       expirationGroups: encryptData(JSON.stringify([
         constants.TEST_DATABASE_ANALYSIS_EXPIRATION_GROUP_1,
       ])),
+      recommendations: encryptData(JSON.stringify([constants.TEST_DATABASE_ANALYSIS_RECOMMENDATION_1])),
       createdAt: new Date(),
       encryption: constants.TEST_ENCRYPTION_STRATEGY,
       ...partial,

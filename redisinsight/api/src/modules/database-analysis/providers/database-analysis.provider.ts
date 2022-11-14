@@ -68,7 +68,6 @@ export class DatabaseAnalysisProvider {
       this.logger.error(`Database analysis with id:${id} was not Found`);
       throw new NotFoundException(ERROR_MESSAGES.DATABASE_ANALYSIS_NOT_FOUND);
     }
-    console.log(classToClass(DatabaseAnalysis, await this.decryptEntity(entity, true)))
     return classToClass(DatabaseAnalysis, await this.decryptEntity(entity, true));
   }
 

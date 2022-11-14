@@ -81,6 +81,7 @@ export class CommandExecutionEntity {
   encryption: string;
 
   @Column({ nullable: true })
+  @Expose()
   executionTime?: number;
 
   @CreateDateColumn()

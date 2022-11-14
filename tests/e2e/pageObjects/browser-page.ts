@@ -11,6 +11,10 @@ export class BrowserPage {
     cssFilteringLabel = '[data-testid=multi-search]';
     cssJsonValue = '[data-tesid=value-as-json]';
     cssRowInVirtualizedTable = '[role=gridcell]';
+    cssVirtualTableRow = '[aria-label=row]';
+    cssKeyBadge = '[data-testid^=badge-]';
+    cssKeyTtl = '[data-testid^=ttl-]';
+    cssKeySize = '[data-testid^=size-]';
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.

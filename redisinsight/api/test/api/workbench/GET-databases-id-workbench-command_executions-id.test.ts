@@ -32,7 +32,7 @@ const responseSchema = Joi.object().keys({
   mode: Joi.string().required(),
   summary: Joi.string().allow(null),
   resultsMode: Joi.string().allow(null),
-  executionTime: Joi.number().allow(null),
+  executionTime: Joi.number().required(),
   nodeOptions: Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().required(),

@@ -319,4 +319,13 @@ export class GetKeysWithDetailsResponse {
     description: 'Node port. In case when we are working with cluster',
   })
   port?: number;
+
+  @ApiPropertyOptional({
+    type: Number,
+    description:
+      'The maximum number of results.'
+      + ' For RediSearch this number is a value from "FT.CONFIG GET maxsearchresults" command.'
+      + ' If FT.CONFIG unavailable the number is 10.000 by default for RediSearch',
+  })
+  maxResults?: number;
 }

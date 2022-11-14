@@ -34,7 +34,7 @@ const responseSchema = Joi.object({
   cursor: Joi.number().integer().required(),
   scanned: Joi.number().integer().required(),
   total: Joi.number().integer().required(),
-  maxResults: Joi.number().integer().allow(null).required().allow(null),
+  maxResults: Joi.number().integer().allow(null).required(),
   keys: Joi.array().items(Joi.object({
     name: JoiRedisString.required(),
   })).required(),

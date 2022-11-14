@@ -325,7 +325,6 @@ export class GetKeysWithDetailsResponse {
     description:
       'The maximum number of results.'
       + ' For RediSearch this number is a value from "FT.CONFIG GET maxsearchresults" command.'
-      + ' If FT.CONFIG unavailable the number is 10.000 by default for RediSearch',
   })
   maxResults?: number;
 }

@@ -1098,6 +1098,7 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           setDefaultInstance(),
+          setConnectedInstanceFailure(),
           setDefaultInstanceFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as AxiosError),
         ]

@@ -61,4 +61,5 @@ export interface KeysStoreData {
   }>
   previousResultCount: number
   lastRefreshTime: Nullable<number>
+  maxResults?: Nullable<number>
 }

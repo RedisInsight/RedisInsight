@@ -17,7 +17,7 @@ import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { redisearchDataSelector, redisearchSelector } from 'uiSrc/slices/browser/redisearch'
+import { redisearchDataSelector, redisearchListSelector, redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 
 import KeyList from '../key-list'
 import KeyTree from '../key-tree'
@@ -51,6 +51,7 @@ const BrowserLeftPanel = (props: Props) => {
   const patternKeysState = useSelector(keysDataSelector)
   const redisearchKeysState = useSelector(redisearchDataSelector)
   const { loading: redisearchLoading, isSearched: redisearchIsSearched } = useSelector(redisearchSelector)
+  const { loading: redisearchListLoading } = useSelector(redisearchListSelector)
   const { loading: patternLoading, viewType, searchMode, isSearched: patternIsSearched } = useSelector(keysSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
   const {
@@ -62,15 +63,15 @@ const BrowserLeftPanel = (props: Props) => {
   const dispatch = useDispatch()
 
   const keysState = searchMode === SearchMode.Pattern ? patternKeysState : redisearchKeysState
-  const loading = searchMode === SearchMode.Pattern ? patternLoading : redisearchLoading
+  const loading = searchMode === SearchMode.Pattern ? patternLoading : redisearchLoading || redisearchListLoading
   const isSearched = searchMode === SearchMode.Pattern ? patternIsSearched : redisearchIsSearched
   const scrollTopPosition = searchMode === SearchMode.Pattern ? scrollPatternTopPosition : scrollRedisearchTopPosition
 
   useEffect(() => {
-    if (!isDataLoaded || contextInstanceId !== instanceId) {
+    if ((!isDataLoaded || contextInstanceId !== instanceId) && searchMode === SearchMode.Pattern) {
       loadKeys(viewType)
     }
-  }, [])
+  }, [searchMode])
 
   const loadKeys = useCallback((keyViewType: KeyViewType = KeyViewType.Browser) => {
     dispatch(setConnectedInstanceId(instanceId))

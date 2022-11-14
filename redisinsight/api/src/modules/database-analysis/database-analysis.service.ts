@@ -50,7 +50,7 @@ export class DatabaseAnalysisService {
         processed: 0,
       };
 
-      scanResults.forEach(async (nodeResult) => {
+      scanResults.forEach((nodeResult) => {
         progress.scanned += nodeResult.progress.scanned;
         progress.processed += nodeResult.progress.processed;
         progress.total += nodeResult.progress.total;

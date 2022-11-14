@@ -42,9 +42,7 @@ export class DatabaseAnalysisProvider {
    */
   async create(analysis: Partial<DatabaseAnalysis>): Promise<DatabaseAnalysis> {
     const entity = await this.repository.save(
-      await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, {
-        ...analysis,
-      })),
+      await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, analysis)),
     );
 
     // cleanup history and ignore error if any
@@ -68,6 +66,7 @@ export class DatabaseAnalysisProvider {
       this.logger.error(`Database analysis with id:${id} was not Found`);
       throw new NotFoundException(ERROR_MESSAGES.DATABASE_ANALYSIS_NOT_FOUND);
     }
+
     return classToClass(DatabaseAnalysis, await this.decryptEntity(entity, true));
   }
 

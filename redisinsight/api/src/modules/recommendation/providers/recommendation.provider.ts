@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Redis, Command } from 'ioredis';
 import { get } from 'lodash';
+import { RedisString } from 'src/common/constants';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { convertRedisInfoReplyToObject } from 'src/utils';
 import { checkIsGreaterThan } from 'src/utils/base.helper';
@@ -9,8 +10,8 @@ const minNumberOfCachedScripts = 10;
 
 interface RecommendationInput {
   client?: Redis,
-  keys?: any,
-  info?: any,
+  keys?: RedisString[],
+  info?: RedisString,
 }
 
 @Injectable()

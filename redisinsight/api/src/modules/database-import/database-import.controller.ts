@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Controller, HttpCode, Post, UploadedFile,
   UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
@@ -35,14 +34,6 @@ export class DatabaseImportController {
   async import(
     @UploadedFile() file: any,
   ): Promise<DatabaseImportResponse> {
-    // todo: create FileValidation class
-    if (!file) {
-      throw new BadRequestException('No import file provided');
-    }
-    if (file?.size > 1024 * 1024 * 10) {
-      throw new BadRequestException('Import file is too big. Maximum 10mb allowed');
-    }
-
     return this.service.import(file);
   }
 }

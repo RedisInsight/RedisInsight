@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { isArray, get, set } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import { plainToClass } from 'class-transformer';
@@ -8,6 +8,11 @@ import { DatabaseImportResponse } from 'src/modules/database-import/dto/database
 import { Validator } from 'class-validator';
 import { ImportDatabaseDto } from 'src/modules/database-import/dto/import.database.dto';
 import { classToClass } from 'src/utils';
+import { DatabaseImportAnalytics } from 'src/modules/database-import/database-import.analytics';
+import {
+  SizeLimitExceededDatabaseImportFileException,
+  NoDatabaseImportFileProvidedException, UnableToParseDatabaseImportFileException,
+} from 'src/modules/database-import/exceptions';
 
 @Injectable()
 export class DatabaseImportService {
@@ -27,6 +32,7 @@ export class DatabaseImportService {
 
   constructor(
     private readonly databaseRepository: DatabaseRepository,
+    private readonly analytics: DatabaseImportAnalytics,
   ) {}
 
   /**
@@ -34,29 +40,57 @@ export class DatabaseImportService {
    * @param file
    */
   public async import(file): Promise<DatabaseImportResponse> {
-    const items = DatabaseImportService.parseFile(file);
-
-    if (!isArray(items) || !items?.length) {
-      let filename = file?.originalname || 'import file';
-      if (filename.length > 50) {
-        filename = `${filename.slice(0, 50)}...`;
+    try {
+      // todo: create FileValidation class
+      if (!file) {
+        throw new NoDatabaseImportFileProvidedException('No import file provided');
       }
-      return Promise.reject(new BadRequestException(`Unable to parse ${filename}`));
+      if (file?.size > 1024 * 1024 * 10) {
+        throw new SizeLimitExceededDatabaseImportFileException('Import file is too big. Maximum 10mb allowed');
+      }
+
+      const items = DatabaseImportService.parseFile(file);
+
+      if (!isArray(items) || !items?.length) {
+        let filename = file?.originalname || 'import file';
+        if (filename.length > 50) {
+          filename = `${filename.slice(0, 50)}...`;
+        }
+        throw new UnableToParseDatabaseImportFileException(`Unable to parse ${filename}`);
+      }
+
+      let response = {
+        total: items.length,
+        success: 0,
+        errors: [],
+      };
+
+      // it is very important to insert databases on-by-one to avoid db constraint errors
+      await items.reduce((prev, item) => prev.finally(() => this.createDatabase(item)
+        .then(() => {
+          response.success += 1;
+        })
+        .catch((e) => {
+          let error = e;
+          if (isArray(e)) {
+            [error] = e;
+          }
+          this.logger.warn(`Unable to import database: ${error?.constructor?.name || 'UncaughtError'}`, error);
+          response.errors.push(error);
+        })), Promise.resolve());
+
+      this.analytics.sendImportResults(response);
+
+      response = plainToClass(DatabaseImportResponse, response);
+
+      return response;
+    } catch (e) {
+      this.logger.warn(`Unable to import databases: ${e?.constructor?.name || 'UncaughtError'}`, e);
+
+      this.analytics.sendImportFailed(e);
+
+      throw e;
     }
-
-    const response = {
-      total: items.length,
-      success: 0,
-    };
-
-    // it is very important to insert databases on-by-one to avoid db constraint errors
-    await items.reduce((prev, item) => prev.finally(() => this.createDatabase(item)
-      .then(() => {
-        response.success += 1;
-      })
-      .catch(() => { /* just ignore errors */ })), Promise.resolve());
-
-    return plainToClass(DatabaseImportResponse, response);
   }
 
   /**
@@ -101,14 +135,9 @@ export class DatabaseImportService {
         }, {}),
     );
 
-    try {
-      await this.validator.validateOrReject(dto, {
-        whitelist: true,
-      });
-    } catch (e) {
-      this.logger.warn('Invalid data for database import entry', e);
-      return Promise.reject(e);
-    }
+    await this.validator.validateOrReject(dto, {
+      whitelist: true,
+    });
 
     const database = classToClass(Database, dto);
 

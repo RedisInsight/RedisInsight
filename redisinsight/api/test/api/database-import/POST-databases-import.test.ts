@@ -18,7 +18,7 @@ const endpoint = () => request(server).post(`/${constants.API.DATABASES}/import`
 const databaseSchema = Joi.object({
   name: Joi.string().allow(null, ''),
   host: Joi.string().required(),
-  port: Joi.number().integer().required(),
+  port: Joi.number().integer().allow(true).required(),
   db: Joi.number().integer().allow(null, ''),
   username: Joi.string().allow(null, ''),
   password: Joi.string().allow(null, ''),
@@ -49,7 +49,7 @@ const baseSentinelData = {
 const importDatabaseFormat1 = {
   name: baseDatabaseData.name,
   host: baseDatabaseData.host,
-  port: baseDatabaseData.port,
+  port: `${baseDatabaseData.port}`,
   username: baseDatabaseData.username,
   auth: baseDatabaseData.password,
 }
@@ -86,7 +86,7 @@ describe('POST /databases/import', () => {
         responseBody: {
           statusCode: 400,
           message: 'No import file provided',
-          error: 'Bad Request',
+          error: 'No Database Import File Provided',
         },
       },
       {
@@ -96,7 +96,7 @@ describe('POST /databases/import', () => {
         responseBody: {
           statusCode: 400,
           message: 'Import file is too big. Maximum 10mb allowed',
-          error: 'Bad Request',
+          error: 'Invalid Database Import File',
         },
       },
       {
@@ -106,7 +106,7 @@ describe('POST /databases/import', () => {
         responseBody: {
           statusCode: 400,
           message: 'Unable to parse filename.json',
-          error: 'Bad Request',
+          error: 'Unable To Parse Database Import File',
         },
       },
       {
@@ -116,7 +116,7 @@ describe('POST /databases/import', () => {
         responseBody: {
           statusCode: 400,
           message: `Unable to parse ${new Array(50).fill(1).join('')}...`,
-          error: 'Bad Request',
+          error: 'Unable To Parse Database Import File',
         },
       },
       {
@@ -126,7 +126,7 @@ describe('POST /databases/import', () => {
         responseBody: {
           statusCode: 400,
           message: `Unable to parse ${new Array(50).fill(1).join('')}...`,
-          error: 'Bad Request',
+          error: 'Unable To Parse Database Import File',
         },
       },
     ].map(mainCheckFn);

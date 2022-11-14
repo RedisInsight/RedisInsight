@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { isNull } from 'lodash'
 import {
   EuiAccordion,
   EuiPanel,
@@ -23,7 +24,7 @@ const Recommendations = () => {
     )
   }
 
-  if (!recommendations.length) {
+  if (isNull(recommendations) || !recommendations.length) {
     return (
       <div className={styles.container} data-testid="empty-recommendations-message">
         <EuiText size="m">No Recommendations at the moment.</EuiText>

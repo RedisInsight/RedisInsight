@@ -42,7 +42,7 @@ export class CaCertificateService {
   async create(dto: CreateCaCertificateDto): Promise<CaCertificate> {
     this.logger.log('Creating certificate.');
     try {
-      return this.repository.create(classToClass(CaCertificate, dto));
+      return await this.repository.create(classToClass(CaCertificate, dto));
     } catch (error) {
       this.logger.error('Failed to create certificate.', error);
 

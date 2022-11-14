@@ -5,10 +5,10 @@ import {
   mockEncryptionService,
   mockEncryptResult, mockQueryBuilderGetMany, mockQueryBuilderGetManyRaw,
   mockRepository,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
   MockType,
 } from 'src/__mocks__';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
@@ -20,7 +20,7 @@ import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
 import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/database-analysis.entity';
 import { NotFoundException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { KeytarDecryptionErrorException } from 'src/modules/core/encryption/exceptions';
+import { KeytarDecryptionErrorException } from 'src/modules/encryption/exceptions';
 
 export const mockCreateDatabaseAnalysisDto: CreateDatabaseAnalysisDto = {
   delimiter: ':',
@@ -33,7 +33,7 @@ export const mockCreateDatabaseAnalysisDto: CreateDatabaseAnalysisDto = {
 
 const mockDatabaseAnalysisEntity = new DatabaseAnalysisEntity({
   id: uuidv4(),
-  databaseId: mockStandaloneDatabaseEntity.id,
+  databaseId: mockDatabase.id,
   delimiter: mockCreateDatabaseAnalysisDto.delimiter,
   filter: 'ENCRYPTED:filter',
   totalKeys: 'ENCRYPTED:totalKeys',
@@ -49,7 +49,7 @@ const mockDatabaseAnalysisEntity = new DatabaseAnalysisEntity({
 
 const mockDatabaseAnalysisPartial: Partial<DatabaseAnalysis> = {
   ...mockCreateDatabaseAnalysisDto,
-  databaseId: mockStandaloneDatabaseEntity.id,
+  databaseId: mockDatabase.id,
 };
 
 const mockDatabaseAnalysis = {
@@ -247,7 +247,7 @@ describe('DatabaseAnalysisProvider', () => {
         { id: mockDatabaseAnalysisEntity.id },
       ]);
 
-      expect(await service.cleanupDatabaseHistory(mockStandaloneDatabaseEntity.id)).toEqual(
+      expect(await service.cleanupDatabaseHistory(mockDatabase.id)).toEqual(
         undefined,
       );
     });

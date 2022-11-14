@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { mockStandaloneDatabaseEntity } from 'src/__mocks__';
+import { mockDatabase } from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
 import { PubSubAnalyticsService } from './pub-sub.analytics.service';
 
-const instanceId = mockStandaloneDatabaseEntity.id;
+const instanceId = mockDatabase.id;
 
 const affected = 2;
 

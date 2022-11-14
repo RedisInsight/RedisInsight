@@ -119,6 +119,7 @@ export const generateNCommandExecutions = async (
       role: 'ALL',
       mode: 'ASCII',
       encryption: constants.TEST_ENCRYPTION_STRATEGY,
+      executionTime: Math.round(Math.random() * 10000),
       createdAt: new Date(),
       ...partial,
     }));

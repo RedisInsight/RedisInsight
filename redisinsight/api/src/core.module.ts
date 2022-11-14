@@ -5,11 +5,13 @@ import { DatabaseModule } from 'src/modules/database/database.module';
 import { CertificateModule } from 'src/modules/certificate/certificate.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RedisModule } from 'src/modules/redis/redis.module';
+import { AnalyticsModule } from 'src/modules/analytics/analytics.module';
 
 @Global()
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
+    AnalyticsModule,
     EncryptionModule.register(),
     SettingsModule.register(),
     CertificateModule.register(),

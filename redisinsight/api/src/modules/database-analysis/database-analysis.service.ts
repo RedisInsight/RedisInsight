@@ -19,7 +19,7 @@ export class DatabaseAnalysisService {
 
   constructor(
     private readonly databaseConnectionService: DatabaseConnectionService,
-    private readonly recommendationsService: RecommendationService,
+    private readonly RecommendationModule: RecommendationService,
     private readonly analyzer: DatabaseAnalyzer,
     private readonly databaseAnalysisProvider: DatabaseAnalysisProvider,
     private readonly scanner: KeysScanner,
@@ -59,7 +59,7 @@ export class DatabaseAnalysisService {
       const recommendations = DatabaseAnalysisService.getRecommendationsSummary(
         flatten(await Promise.all(
           scanResults.map(async (nodeResult) => (
-            await this.recommendationsService.getRecommendations({
+            await this.RecommendationModule.getRecommendations({
               client: nodeResult.client,
               keys: nodeResult.keys,
             })

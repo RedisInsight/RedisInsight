@@ -26,6 +26,7 @@ export class RecommendationService {
     // generic solution, if somewhere we will sent info, we don't need determined some recommendations
     const { client, keys, info } = dto;
     const recommendations = [];
+    // TODO refactor it
     if (await this.recommendationProvider.determineLuaScriptRecommendation(client)) {
       recommendations.push({ name: 'luaScript' });
     }

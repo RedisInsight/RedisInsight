@@ -20,8 +20,8 @@ export class RecommendationProvider {
         new Command('info', [], { replyEncoding: 'utf8' }),
       ) as string,
     );
-    const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts', {});
+    const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
 
-    return checkIsGreaterThan(minNumberOfCachedScripts, parseInt(await nodesNumbersOfCachedScripts, 10));
+    return checkIsGreaterThan(minNumberOfCachedScripts, parseInt(nodesNumbersOfCachedScripts, 10));
   }
 }

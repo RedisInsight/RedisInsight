@@ -71,7 +71,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     enableRedirection: Joi.boolean().required(),
   }).allow(null),
   createdAt: Joi.date().required(),
-  executionTime: Joi.number().integer().allow(null),
+  executionTime: Joi.number().integer(),
   isNotStored: Joi.boolean(),
   summary: Joi.object({
     total: Joi.number(),

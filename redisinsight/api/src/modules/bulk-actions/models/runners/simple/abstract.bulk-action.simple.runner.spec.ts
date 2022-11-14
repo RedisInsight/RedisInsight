@@ -54,21 +54,21 @@ describe('AbstractBulkActionSimpleRunner', () => {
     deleteRunner = new DeleteBulkActionSimpleRunner(bulkAction, nodeClient);
   });
 
-  describe('prepareToStart', () => {
-    it('should get total before start', async () => {
-      nodeClient.sendCommand.mockResolvedValueOnce(mockRedisKeyspaceInfoResponse);
+  // describe('prepareToStart', () => {
+  //   it('should get total before start', async () => {
+  //     nodeClient.sendCommand.mockResolvedValueOnce(mockRedisKeyspaceInfoResponse);
 
-      expect(deleteRunner['progress']['total']).toEqual(0);
-      expect(deleteRunner['progress']['scanned']).toEqual(0);
-      expect(deleteRunner['progress']['cursor']).toEqual(0);
+  //     expect(deleteRunner['progress']['total']).toEqual(0);
+  //     expect(deleteRunner['progress']['scanned']).toEqual(0);
+  //     expect(deleteRunner['progress']['cursor']).toEqual(0);
 
-      await deleteRunner.prepareToStart();
+  //     await deleteRunner.prepareToStart();
 
-      expect(deleteRunner['progress']['total']).toEqual(100);
-      expect(deleteRunner['progress']['scanned']).toEqual(0);
-      expect(deleteRunner['progress']['cursor']).toEqual(0);
-    });
-  });
+  //     expect(deleteRunner['progress']['total']).toEqual(100);
+  //     expect(deleteRunner['progress']['scanned']).toEqual(0);
+  //     expect(deleteRunner['progress']['cursor']).toEqual(0);
+  //   });
+  // });
 
   describe('getKeysToProcess', () => {
     beforeEach(() => {

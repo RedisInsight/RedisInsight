@@ -4,7 +4,6 @@ import { CliPage } from '../pageObjects';
 const cliPage = new CliPage();
 
 export class CliActions {
-    
     /**
      * Check list of commands searched
      * @param searchedCommand Searched command in Command Helper

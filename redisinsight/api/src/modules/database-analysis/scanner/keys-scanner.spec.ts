@@ -45,6 +45,7 @@ const mockScanResult = {
     scanned: 15,
     total: 1,
   },
+  client: Object.assign(nodeClient),
 };
 
 describe('KeysScanner', () => {

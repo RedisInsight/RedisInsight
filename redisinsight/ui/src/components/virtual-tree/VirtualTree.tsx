@@ -95,6 +95,7 @@ const VirtualTree = (props: Props) => {
   useEffect(() => {
     if (!items?.length) {
       setNodes([])
+      runWebworker?.({ items: [], delimiter })
       return
     }
 

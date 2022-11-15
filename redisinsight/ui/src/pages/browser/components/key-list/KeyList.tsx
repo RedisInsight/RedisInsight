@@ -60,7 +60,7 @@ export interface Props {
   hideHeader?: boolean
   keysState: KeysStoreData
   loading: boolean
-  scrollTopPosition: number
+  scrollTopPosition?: number
   hideFooter?: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
   loadMoreItems?: (
@@ -115,6 +115,7 @@ const KeyList = forwardRef((props: Props, ref) => {
     isNotRendered.current = false
     dispatch(setBrowserIsNotRendered(isNotRendered.current))
     if (itemsRef.current.length === 0) {
+      cancelAllMetadataRequests()
       setFirstDataLoaded(true)
       rerender({})
       return
@@ -180,6 +181,12 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
+    if (searchMode === SearchMode.Redisearch
+      && keysState.maxResults
+      && keysState.keys.length >= keysState.maxResults
+    ) {
+      return
+    }
     loadMoreItems?.(itemsRef.current, props)
   }
 

@@ -11,6 +11,7 @@ import styles from './styles.module.scss'
 export interface Props {
   loading: boolean
   items: any[]
+  showScanMore?: boolean
   scanned?: number
   totalItemsCount?: number
   nextCursor: string
@@ -24,6 +25,7 @@ const KeysSummary = (props: Props) => {
   const {
     items = [],
     loading,
+    showScanMore = true,
     scanned = 0,
     totalItemsCount = 0,
     scanMoreStyle,
@@ -43,45 +45,40 @@ const KeysSummary = (props: Props) => {
               <>
                 <EuiTextColor className="eui-alignMiddle">
                   <b>
-                    Results:&nbsp;
+                    {'Results: '}
                     <span data-testid="keys-number-of-results">{numberWithSpaces(resultsLength)}</span>
-                    {' '}
-                    key
-                    {resultsLength !== 1 && 's'}
-                    .&nbsp;
+                    {` key${resultsLength !== 1 && 's'}. `}
                   </b>
                   <EuiTextColor color="subdued">
-                    Scanned
-                    {' '}
+                    {'Scanned '}
                     <span data-testid="keys-number-of-scanned">{numberWithSpaces(scannedDisplay)}</span>
-                    {' '}
-                    /
-                    {' '}
+                    {' / '}
                     <span data-testid="keys-total">{nullableNumberWithSpaces(totalItemsCount)}</span>
-                    {' '}
-                    keys
+                    {' keys'}
                     <span
                       className={cx([styles.loading, { [styles.loadingShow]: loading }])}
                     />
                   </EuiTextColor>
                 </EuiTextColor>
-                <ScanMore
-                  withAlert
-                  fill={false}
-                  style={scanMoreStyle}
-                  scanned={scanned}
-                  totalItemsCount={totalItemsCount}
-                  loading={loading}
-                  loadMoreItems={loadMoreItems}
-                  nextCursor={nextCursor}
-                />
+                {showScanMore && (
+                  <ScanMore
+                    withAlert
+                    fill={false}
+                    style={scanMoreStyle}
+                    scanned={scanned}
+                    totalItemsCount={totalItemsCount}
+                    loading={loading}
+                    loadMoreItems={loadMoreItems}
+                    nextCursor={nextCursor}
+                  />
+                )}
               </>
             )}
 
             {!scanned && (
               <EuiText size="xs">
                 <b>
-                  Total:&nbsp;
+                  {'Total: '}
                   {nullableNumberWithSpaces(totalItemsCount)}
                 </b>
               </EuiText>

@@ -257,7 +257,7 @@ describe('CliBusinessService', () => {
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
         mockClientOptions.instanceId,
         {
-          command: 'memory',
+          command: 'memory'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -283,7 +283,7 @@ describe('CliBusinessService', () => {
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
         mockClientOptions.instanceId,
         {
-          command: 'memory',
+          command: 'memory'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -416,7 +416,7 @@ describe('CliBusinessService', () => {
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
         mockClientOptions.instanceId,
         {
-          command: 'info',
+          command: 'info'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -491,7 +491,7 @@ describe('CliBusinessService', () => {
           ...mockNode,
         },
         {
-          command: 'memory',
+          command: 'memory'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -535,7 +535,7 @@ describe('CliBusinessService', () => {
           ...mockNode,
         },
         {
-          command: 'info',
+          command: 'info'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -699,7 +699,7 @@ describe('CliBusinessService', () => {
           status: CommandExecutionStatus.Success,
         },
         {
-          command: 'memory',
+          command: 'memory'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -740,7 +740,7 @@ describe('CliBusinessService', () => {
           status: CommandExecutionStatus.Success,
         },
         {
-          command: 'info',
+          command: 'info'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -786,7 +786,7 @@ describe('CliBusinessService', () => {
           status: CommandExecutionStatus.Success,
         },
         {
-          command: 'set',
+          command: 'set'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -831,7 +831,7 @@ describe('CliBusinessService', () => {
           status: CommandExecutionStatus.Success,
         },
         {
-          command: 'set',
+          command: 'set'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Text,
         },
       );
@@ -868,7 +868,7 @@ describe('CliBusinessService', () => {
           status: CommandExecutionStatus.Fail,
         },
         {
-          command: 'set',
+          command: 'set'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );

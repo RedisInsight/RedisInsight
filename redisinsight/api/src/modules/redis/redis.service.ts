@@ -54,7 +54,7 @@ export class RedisService {
   ): Promise<Redis> {
     const config = await this.getRedisConnectionConfig(database);
 
-    const client = await new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       try {
         const connection = new Redis({
           ...config,
@@ -62,7 +62,7 @@ export class RedisService {
           maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
           connectionName,
           retryStrategy: useRetry ? this.retryStrategy : () => undefined,
-          db: 0, // create connection to 0 index always and select db later if needed
+          db: config.db > 0 && !database.sentinelMaster ? config.db : 0,
         });
         connection.on('error', (e): void => {
           this.logger.error('Failed connection to the redis database.', e);
@@ -79,19 +79,6 @@ export class RedisService {
         reject(e);
       }
     }) as Redis;
-
-    // do not add db index in the client construcot to avoid Sentinel select command
-    // todo: rethink how we can avoid such logic
-    if (config.db > 0 && !database.sentinelMaster) {
-      try {
-        await client.select(config.db);
-      } catch (e) {
-        client.disconnect();
-        throw e;
-      }
-    }
-
-    return client;
   }
 
   public async createClusterClient(

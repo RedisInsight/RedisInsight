@@ -1,7 +1,7 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { uniqWith, isEqual, flatten } from 'lodash';
-import { RecommendationService } from 'src/modules/recommendation/providers/recommendation.provider';
+import { RecommendationService } from 'src/modules/recommendation/recommendation.service';
 import { catchAclError } from 'src/utils';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { plainToClass } from 'class-transformer';
@@ -19,7 +19,7 @@ export class DatabaseAnalysisService {
 
   constructor(
     private readonly databaseConnectionService: DatabaseConnectionService,
-    private readonly recommendationsService: RecommendationService,
+    private readonly recommendationService: RecommendationService,
     private readonly analyzer: DatabaseAnalyzer,
     private readonly databaseAnalysisProvider: DatabaseAnalysisProvider,
     private readonly scanner: KeysScanner,
@@ -59,7 +59,7 @@ export class DatabaseAnalysisService {
       const recommendations = DatabaseAnalysisService.getRecommendationsSummary(
         flatten(await Promise.all(
           scanResults.map(async (nodeResult) => (
-            await this.recommendationsService.getRecommendations({
+            await this.recommendationService.getRecommendations({
               client: nodeResult.client,
               keys: nodeResult.keys,
             })

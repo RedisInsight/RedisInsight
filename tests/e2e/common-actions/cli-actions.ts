@@ -6,7 +6,6 @@ const cliPage = new CliPage();
 const common = new Common();
 
 export class CliActions {
-
     /**
      * Check list of commands searched
      * @param searchedCommand Searched command in Command Helper

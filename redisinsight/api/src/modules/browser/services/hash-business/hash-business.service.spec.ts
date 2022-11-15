@@ -9,18 +9,13 @@ import { when } from 'jest-when';
 import { flatMap } from 'lodash';
 import { ReplyError } from 'src/models/redis-client';
 import {
-  mockBrowserAnalyticsService,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
-import config from 'src/utils/config';
 import {
-  AddFieldsToHashDto,
-  DeleteFieldsFromHashDto,
   GetHashFieldsDto,
-  GetHashFieldsResponse,
   HashFieldDto,
 } from 'src/modules/browser/dto/hash.dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
@@ -28,49 +23,18 @@ import {
   BrowserToolHashCommands,
   BrowserToolKeysCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import {
+  mockAddFieldsDto, mockDeleteFieldsDto,
+  mockGetFieldsDto,
+  mockGetFieldsResponse,
+  mockRedisHScanResponse,
+} from 'src/modules/browser/__mocks__';
 import { HashBusinessService } from './hash-business.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
-
-const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
-
-const mockAddFieldsDto: AddFieldsToHashDto = {
-  keyName: 'testHash',
-  fields: [
-    {
-      field: 'field1',
-      value: 'value',
-    },
-  ],
-};
-
-const mockDeleteFieldsDto: DeleteFieldsFromHashDto = {
-  keyName: mockAddFieldsDto.keyName,
-  fields: mockAddFieldsDto.fields.map((item) => item.field),
-};
-
-const mockGetFieldsDto: GetHashFieldsDto = {
-  keyName: mockAddFieldsDto.keyName,
-  cursor: 0,
-  count: REDIS_SCAN_CONFIG.countDefault || 15,
-  match: '*',
-};
-
-const mockGetFieldsResponse: GetHashFieldsResponse = {
-  keyName: mockGetFieldsDto.keyName,
-  nextCursor: 0,
-  total: mockAddFieldsDto.fields.length,
-  fields: mockAddFieldsDto.fields,
-};
-
-const mockRedisHScanResponse = [
-  0,
-  flatMap(mockAddFieldsDto.fields, ({ field, value }: HashFieldDto) => [field, value]),
-];
 
 describe('HashBusinessService', () => {
   let service: HashBusinessService;
@@ -80,10 +44,6 @@ describe('HashBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         HashBusinessService,
-        {
-          provide: BrowserAnalyticsService,
-          useFactory: mockBrowserAnalyticsService,
-        },
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
@@ -204,7 +164,7 @@ describe('HashBusinessService', () => {
       const item = mockAddFieldsDto.fields[0];
       const dto: GetHashFieldsDto = {
         ...mockGetFieldsDto,
-        match: item.field,
+        match: item.field.toString(),
       };
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolHashCommands.HGet, [
@@ -240,8 +200,8 @@ describe('HashBusinessService', () => {
     });
     it('should not call scan when math contains escaped glob', async () => {
       const item = {
-        field: 'fi[a-e]ld',
-        value: 'value',
+        field: Buffer.from('fi[a-e]ld'),
+        value: Buffer.from('value'),
       };
       const dto: GetHashFieldsDto = {
         ...mockGetFieldsDto,
@@ -250,7 +210,7 @@ describe('HashBusinessService', () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolHashCommands.HGet, [
           dto.keyName,
-          item.field,
+          item.field.toString(),
         ])
         .mockResolvedValue('value');
 

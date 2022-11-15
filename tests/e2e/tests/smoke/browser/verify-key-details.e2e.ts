@@ -1,130 +1,117 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
-import { BrowserPage} from '../../../pageObjects';
+import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { Chance } from 'chance';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const chance = new Chance();
+const common = new Common();
 
-let keyName = chance.word({ length: 10 });
+let keyName = common.generateWord(10);
 const keyTTL = '2147476121';
 const expectedTTL = /214747612*/;
 
 fixture `Key details verification`
-    .meta({ type: 'smoke' })
+    .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async () => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    .beforeEach(async() => {
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async () => {
-        //Clear and delete database
+    .afterEach(async() => {
+        // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see Hash Key details', async t => {
-        keyName = chance.word({ length: 10 });
-
-        await browserPage.addHashKey(keyName, keyTTL);
-        const keyDetails = await browserPage.keyDetailsHeader.textContent;
-        const keyBadge = await browserPage.keyDetailsBadge.textContent;
-        const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
-        const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
-
-        await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-        await t.expect(keyDetails).contains('Hash', 'The Key Type');
-        await t.expect(keyDetails).contains('TTL', 'The TTL');
-        await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
-        await t.expect(keyBadge).contains('Hash', 'The Key Badge');
     });
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see List Key details', async t => {
-        keyName = chance.word({ length: 10 });
+test('Verify that user can see Hash Key details', async t => {
+    keyName = common.generateWord(10);
 
-        await browserPage.addListKey(keyName, keyTTL);
-        const keyDetails = await browserPage.keyDetailsHeader.textContent;
-        const keyBadge = await browserPage.keyDetailsBadge.textContent;
-        const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
-        const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
+    await browserPage.addHashKey(keyName, keyTTL);
+    const keyDetails = await browserPage.keyDetailsHeader.textContent;
+    const keyBadge = await browserPage.keyDetailsBadge.textContent;
+    const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
+    const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
-        await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-        await t.expect(keyDetails).contains('List', 'The Key Type');
-        await t.expect(keyDetails).contains('TTL', 'The TTL');
-        await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
-        await t.expect(keyBadge).contains('List', 'The Key Badge');
-    });
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see Set Key details', async t => {
-        keyName = chance.word({ length: 10 });
+    await t.expect(keyNameFromDetails).contains(keyName, 'The Hash Key Name is incorrect');
+    await t.expect(keyDetails).contains('Hash', 'The Hash Key Type is incorrect');
+    await t.expect(keyDetails).contains('TTL', 'The Hash TTL is incorrect');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The Hash Key TTL is incorrect');
+    await t.expect(keyBadge).contains('Hash', 'The Hash Key Badge is incorrect');
+});
+test('Verify that user can see List Key details', async t => {
+    keyName = common.generateWord(10);
 
-        await browserPage.addSetKey(keyName, keyTTL);
-        const keyDetails = await browserPage.keyDetailsHeader.textContent;
-        const keyBadge = await browserPage.keyDetailsBadge.textContent;
-        const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
-        const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
+    await browserPage.addListKey(keyName, keyTTL);
+    const keyDetails = await browserPage.keyDetailsHeader.textContent;
+    const keyBadge = await browserPage.keyDetailsBadge.textContent;
+    const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
+    const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
-        await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-        await t.expect(keyDetails).contains('Set', 'The Key Type');
-        await t.expect(keyDetails).contains('TTL', 'The TTL');
-        await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
-        await t.expect(keyBadge).contains('Set', 'The Key Badge');
-    });
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see String Key details', async t => {
-        keyName = chance.word({ length: 10 });
-        const value = 'keyValue12334353434;'
+    await t.expect(keyNameFromDetails).contains(keyName, 'The List Key Name is incorrect');
+    await t.expect(keyDetails).contains('List', 'The List Key Type is incorrect');
+    await t.expect(keyDetails).contains('TTL', 'The List TTL is incorrect');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The List Key TTL is incorrect');
+    await t.expect(keyBadge).contains('List', 'The List Key Badge is incorrect');
+});
+test('Verify that user can see Set Key details', async t => {
+    keyName = common.generateWord(10);
 
-        await browserPage.addStringKey(keyName, value, keyTTL);
-        const keyDetails = await browserPage.keyDetailsHeader.textContent;
-        const keyBadge = await browserPage.keyDetailsBadge.textContent;
-        const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
-        const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
+    await browserPage.addSetKey(keyName, keyTTL);
+    const keyDetails = await browserPage.keyDetailsHeader.textContent;
+    const keyBadge = await browserPage.keyDetailsBadge.textContent;
+    const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
+    const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
-        await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-        await t.expect(keyDetails).contains('String', 'The Key Type');
-        await t.expect(keyDetails).contains('TTL', 'The TTL');
-        await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
-        await t.expect(keyBadge).contains('String', 'The Key Badge');
-    });
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see ZSet Key details', async t => {
-        keyName = chance.word({ length: 10 });
+    await t.expect(keyNameFromDetails).contains(keyName, 'The Set Key Name is incorrect');
+    await t.expect(keyDetails).contains('Set', 'The Set Key Type is incorrect');
+    await t.expect(keyDetails).contains('TTL', 'The Set TTL is incorrect');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The Set Key TTL is incorrect');
+    await t.expect(keyBadge).contains('Set', 'The Set Key Badge is incorrect');
+});
+test('Verify that user can see String Key details', async t => {
+    keyName = common.generateWord(10);
+    const value = 'keyValue12334353434;';
 
-        await browserPage.addZSetKey(keyName, '1', keyTTL);
-        const keyDetails = await browserPage.keyDetailsHeader.textContent;
-        const keyBadge = await browserPage.keyDetailsBadge.textContent;
-        const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
-        const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
+    await browserPage.addStringKey(keyName, value, keyTTL);
+    const keyDetails = await browserPage.keyDetailsHeader.textContent;
+    const keyBadge = await browserPage.keyDetailsBadge.textContent;
+    const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
+    const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
-        await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-        await t.expect(keyDetails).contains('Sorted Set', 'The Key Type');
-        await t.expect(keyDetails).contains('TTL', 'The TTL');
-        await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
-        await t.expect(keyBadge).contains('Sorted Set', 'The Key Badge');
-    });
-test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see JSON Key details', async t => {
-        keyName = chance.word({ length: 10 });
+    await t.expect(keyNameFromDetails).contains(keyName, 'The String Key Name is incorrect');
+    await t.expect(keyDetails).contains('String', 'The String Key Type is incorrect');
+    await t.expect(keyDetails).contains('TTL', 'The StringTTL is incorrect');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The String Key TTL is incorrect');
+    await t.expect(keyBadge).contains('String', 'The String Key Badge is incorrect');
+});
+test('Verify that user can see ZSet Key details', async t => {
+    keyName = common.generateWord(10);
 
-        const jsonValue = '{"employee":{ "name":"John", "age":30, "city":"New York" }}';
+    await browserPage.addZSetKey(keyName, '1', keyTTL);
+    const keyDetails = await browserPage.keyDetailsHeader.textContent;
+    const keyBadge = await browserPage.keyDetailsBadge.textContent;
+    const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
+    const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
 
-        await browserPage.addJsonKey(keyName, keyTTL, jsonValue);
-        const keyDetails = await browserPage.keyDetailsHeader.textContent;
-        const keyBadge = await browserPage.keyDetailsBadge.textContent;
-        const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
-        const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
+    await t.expect(keyNameFromDetails).contains(keyName, 'The ZSet Key Name is incorrect');
+    await t.expect(keyDetails).contains('Sorted Set', 'The ZSet Key Type is incorrect');
+    await t.expect(keyDetails).contains('TTL', 'The ZSet TTL is incorrect');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The ZSet Key TTL is incorrect');
+    await t.expect(keyBadge).contains('Sorted Set', 'The ZSet Key Badge is incorrect');
+});
+test('Verify that user can see JSON Key details', async t => {
+    keyName = common.generateWord(10);
 
-        await t.expect(keyNameFromDetails).contains(keyName, 'The Key Name');
-        await t.expect(keyDetails).contains('JSON', 'The Key Type');
-        await t.expect(keyDetails).contains('TTL', 'The TTL');
-        await t.expect(keyTTLValue).match(expectedTTL, 'The Key TTL');
-        await t.expect(keyBadge).contains('JSON', 'The Key Badge');
-    });
-    
+    const jsonValue = '{"employee":{ "name":"John", "age":30, "city":"New York" }}';
+
+    await browserPage.addJsonKey(keyName, jsonValue, keyTTL);
+    const keyDetails = await browserPage.keyDetailsHeader.textContent;
+    const keyBadge = await browserPage.keyDetailsBadge.textContent;
+    const keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
+    const keyTTLValue = await browserPage.keyDetailsTTL.textContent;
+
+    await t.expect(keyNameFromDetails).contains(keyName, 'The JSON Key Name is incorrect');
+    await t.expect(keyDetails).contains('JSON', 'The JSON Key Type is incorrect');
+    await t.expect(keyDetails).contains('TTL', 'The JSON TTL is incorrect');
+    await t.expect(keyTTLValue).match(expectedTTL, 'The JSON Key TTL is incorrect');
+    await t.expect(keyBadge).contains('JSON', 'The JSON Key Badge is incorrect');
+});

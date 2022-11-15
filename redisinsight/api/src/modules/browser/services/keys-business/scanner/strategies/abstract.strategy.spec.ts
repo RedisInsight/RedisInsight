@@ -2,22 +2,28 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
   mockRedisConsumer,
-  mockRedisWrongTypeError,
-  mockSettingsProvider,
+  mockRedisWrongTypeError, mockSettingsService,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { StandaloneStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/standalone.strategy';
 import { AbstractStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/abstract.strategy';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import IORedis from 'ioredis';
+import { SettingsService } from 'src/modules/settings/settings.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
+
+const nodeClient = Object.create(IORedis.prototype);
+
+const clusterClient = Object.create(IORedis.Cluster.prototype);
+clusterClient.isCluster = true;
+clusterClient.sendCommand = jest.fn();
 
 const mockKeyInfo: GetKeyInfoResponse = {
   name: 'testString',
@@ -29,7 +35,7 @@ const mockKeyInfo: GetKeyInfoResponse = {
 describe('RedisScannerAbstract', () => {
   let scannerInstance: AbstractStrategy;
   let browserTool: BrowserToolService;
-  let settingsProvider: ISettingsProvider;
+  let settingsService: SettingsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -39,29 +45,28 @@ describe('RedisScannerAbstract', () => {
           useFactory: mockRedisConsumer,
         },
         {
-          provide: 'SETTINGS_PROVIDER',
-          useFactory: mockSettingsProvider,
+          provide: SettingsService,
+          useFactory: mockSettingsService,
         },
       ],
     }).compile();
 
     browserTool = await module.get<BrowserToolService>(BrowserToolService);
-    settingsProvider = module.get<ISettingsProvider>('SETTINGS_PROVIDER');
-    scannerInstance = new StandaloneStrategy(browserTool, settingsProvider);
+    settingsService = module.get(SettingsService);
+    scannerInstance = new StandaloneStrategy(browserTool, settingsService);
   });
 
   describe('getKeysInfo', () => {
     const keys = ['key1', 'key2'];
     beforeEach(() => {
-      when(browserTool.execPipeline)
+      when(browserTool.execPipelineFromClient)
         .calledWith(
-          mockClientOptions,
+          nodeClient,
           keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
         )
         .mockResolvedValue([null, Array(keys.length).fill([null, -1])]);
-      when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
-          [BrowserToolKeysCommands.Ttl, keys[0]],
+      when(browserTool.execPipelineFromClient)
+        .calledWith(nodeClient, [
           ...keys.map((key: string) => [
             BrowserToolKeysCommands.MemoryUsage,
             key,
@@ -71,14 +76,21 @@ describe('RedisScannerAbstract', () => {
         ])
         .mockResolvedValue([
           null,
-          [[null, -1], ...Array(keys.length).fill([null, 50])],
+          Array(keys.length).fill([null, 50]),
         ]);
-      when(browserTool.execPipeline)
+      when(browserTool.execPipelineFromClient)
         .calledWith(
-          mockClientOptions,
+          nodeClient,
           keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
         )
         .mockResolvedValue([null, Array(keys.length).fill([null, 'string'])]);
+      when(clusterClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'type' }))
+        .mockResolvedValue('string')
+        .calledWith(jasmine.objectContaining({ name: 'ttl' }))
+        .mockResolvedValue(-1)
+        .calledWith(jasmine.objectContaining({ name: 'memory' }))
+        .mockResolvedValue(50);
     });
     it('should return correct keys info', async () => {
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
@@ -86,7 +98,17 @@ describe('RedisScannerAbstract', () => {
         name: key,
       }));
 
-      const result = await scannerInstance.getKeysInfo(mockClientOptions, keys);
+      const result = await scannerInstance.getKeysInfo(nodeClient, keys);
+
+      expect(result).toEqual(mockResult);
+    });
+    it('should return correct keys info (cluster)', async () => {
+      const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
+        ...mockKeyInfo,
+        name: key,
+      }));
+
+      const result = await scannerInstance.getKeysInfo(clusterClient, keys);
 
       expect(result).toEqual(mockResult);
     });
@@ -97,7 +119,7 @@ describe('RedisScannerAbstract', () => {
       }));
 
       const result = await scannerInstance.getKeysInfo(
-        mockClientOptions,
+        nodeClient,
         keys,
         RedisDataType.String,
       );
@@ -113,9 +135,8 @@ describe('RedisScannerAbstract', () => {
         ...mockRedisWrongTypeError,
         command: BrowserToolKeysCommands.MemoryUsage,
       };
-      when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
-          [BrowserToolKeysCommands.Ttl, keys[0]],
+      when(browserTool.execPipelineFromClient)
+        .calledWith(nodeClient, [
           ...keys.map((key: string) => [
             BrowserToolKeysCommands.MemoryUsage,
             key,
@@ -126,7 +147,7 @@ describe('RedisScannerAbstract', () => {
         .mockResolvedValue([transactionError, null]);
 
       await expect(
-        scannerInstance.getKeysInfo(mockClientOptions, keys),
+        scannerInstance.getKeysInfo(nodeClient, keys),
       ).rejects.toEqual(transactionError);
     });
     it('should throw transaction error for Type', async () => {
@@ -134,15 +155,15 @@ describe('RedisScannerAbstract', () => {
         ...mockRedisWrongTypeError,
         command: BrowserToolKeysCommands.Type,
       };
-      when(browserTool.execPipeline)
+      when(browserTool.execPipelineFromClient)
         .calledWith(
-          mockClientOptions,
+          nodeClient,
           keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
         )
         .mockResolvedValue([transactionError, null]);
 
       await expect(
-        scannerInstance.getKeysInfo(mockClientOptions, keys),
+        scannerInstance.getKeysInfo(nodeClient, keys),
       ).rejects.toEqual(transactionError);
     });
     it('should throw transaction error for TTL', async () => {
@@ -150,15 +171,15 @@ describe('RedisScannerAbstract', () => {
         ...mockRedisWrongTypeError,
         command: BrowserToolKeysCommands.Ttl,
       };
-      when(browserTool.execPipeline)
+      when(browserTool.execPipelineFromClient)
         .calledWith(
-          mockClientOptions,
+          nodeClient,
           keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
         )
         .mockResolvedValue([transactionError, null]);
 
       await expect(
-        scannerInstance.getKeysInfo(mockClientOptions, keys),
+        scannerInstance.getKeysInfo(nodeClient, keys),
       ).rejects.toEqual(transactionError);
     });
   });

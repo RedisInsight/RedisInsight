@@ -17,12 +17,11 @@ import {
 import { setReleaseNotesViewed } from 'uiSrc/slices/app/info'
 import { IError, IMessage } from 'uiSrc/slices/interfaces'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
+import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 
 import errorMessages from './error-messages'
 
 import styles from './styles.module.scss'
-
-export const DEFAULT_TEXT = 'Something went wrong.'
 
 const Notifications = () => {
   const messagesData = useSelector(messagesSelector)
@@ -55,6 +54,7 @@ const Notifications = () => {
             size="s"
             onClick={() => onSubmitNotification(toast, group)}
             className={styles.toastSuccessBtn}
+            data-testid="submit-tooltip-btn"
           >
             Ok
           </EuiButton>
@@ -82,7 +82,7 @@ const Notifications = () => {
     })
 
   const getErrorsToasts = (errors: IError[]) =>
-    errors.map(({ id = '', message = DEFAULT_TEXT, instanceId = '', name }) => {
+    errors.map(({ id = '', message = DEFAULT_ERROR_MESSAGE, instanceId = '', name }) => {
       if (ApiEncryptionErrors.includes(name)) {
         return errorMessages.ENCRYPTION(id, () => removeToast({ id }), instanceId)
       }

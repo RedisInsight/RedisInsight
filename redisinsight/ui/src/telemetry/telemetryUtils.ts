@@ -2,12 +2,25 @@
  * Telemetry and analytics module.
  * This module abstracts the exact service/framework used for tracking usage.
  */
-import { get } from 'lodash'
+import isGlob from 'is-glob'
+import { cloneDeep } from 'lodash'
+import * as jsonpath from 'jsonpath'
 import { Nullable } from 'uiSrc/utils'
-import store from 'uiSrc/slices/store'
 import { localStorageService } from 'uiSrc/services'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { ITelemetrySendEvent, ITelemetrySendPageView, ITelemetryService } from './interfaces'
+import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/constants'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { checkIsAnalyticsGranted, getAppType } from 'uiSrc/telemetry/checkAnalytics'
+import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import {
+  ITelemetrySendEvent,
+  ITelemetrySendPageView,
+  ITelemetryService,
+  IRedisModulesSummary,
+  MatchType,
+  RedisModules,
+} from './interfaces'
+import { TelemetryEvent } from './events'
 import { NON_TRACKING_ANONYMOUS_ID, SegmentTelemetryService } from './segment'
 
 let telemetryService: Nullable<ITelemetryService> = null
@@ -24,10 +37,6 @@ const getTelemetryService = (apiKey: string): ITelemetryService => {
   }
   return telemetryService
 }
-
-// Check is user give access to collect his events
-const checkIsAnalyticsGranted = () =>
-  !!get(store.getState(), 'user.settings.config.agreements.analytics', false)
 
 // Telemetry doesn't watch on sending anonymousId like arg of function. Only look at localStorage
 const setAnonymousId = (isAnalyticsGranted: boolean) => {
@@ -51,10 +60,13 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
 
+  const appType = getAppType()
+
   if (isAnalyticsGranted || nonTracking) {
     telemetryService?.event({
       event,
       properties: {
+        buildType: appType,
         ...eventData,
       },
     })
@@ -73,10 +85,167 @@ const sendPageViewTelemetry = (payload: ITelemetrySendPageView) => {
 
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
+  const appType = getAppType()
 
   if (isAnalyticsGranted || nonTracking) {
-    telemetryService?.pageView(name, databaseId)
+    telemetryService?.pageView(name, appType, databaseId)
   }
 }
 
-export { getTelemetryService, sendEventTelemetry, sendPageViewTelemetry, checkIsAnalyticsGranted }
+const getBasedOnViewTypeEvent = (
+  viewType: KeyViewType,
+  browserEvent: TelemetryEvent,
+  treeViewEvent: TelemetryEvent
+): TelemetryEvent => {
+  switch (viewType) {
+    case KeyViewType.Browser:
+      return browserEvent
+    case KeyViewType.Tree:
+      return treeViewEvent
+    default:
+      return browserEvent
+  }
+}
+
+const getJsonPathLevel = (path: string): string => {
+  try {
+    if (path === '.') {
+      return 'root'
+    }
+    const levelsLength = jsonpath.parse(
+      `$${path.startsWith('.') ? '' : '..'}${path}`,
+    ).length
+    if (levelsLength === 1) {
+      return 'root'
+    }
+    return `${levelsLength - 2}`
+  } catch (e) {
+    return 'root'
+  }
+}
+
+const getAdditionalAddedEventData = (endpoint: ApiEndpoints, data: any) => {
+  switch (endpoint) {
+    case ApiEndpoints.HASH:
+      return {
+        keyType: KeyTypes.Hash,
+        length: data.fields?.length,
+        TTL: data.expire || -1
+      }
+    case ApiEndpoints.SET:
+      return {
+        keyType: KeyTypes.Set,
+        length: data.members?.length,
+        TTL: data.expire || -1
+      }
+    case ApiEndpoints.ZSET:
+      return {
+        keyType: KeyTypes.ZSet,
+        length: data.members?.length,
+        TTL: data.expire || -1
+      }
+    case ApiEndpoints.STRING:
+      return {
+        keyType: KeyTypes.String,
+        length: data.value?.length,
+        TTL: data.expire || -1
+      }
+    case ApiEndpoints.LIST:
+      return {
+        keyType: KeyTypes.List,
+        length: 1,
+        TTL: data.expire || -1
+      }
+    case ApiEndpoints.REJSON:
+      return {
+        keyType: KeyTypes.ReJSON,
+        TTL: -1
+      }
+    case ApiEndpoints.STREAMS:
+      return {
+        keyType: KeyTypes.Stream,
+        length: 1,
+        TTL: data.expire || -1
+      }
+    default:
+      return {}
+  }
+}
+
+const getMatchType = (match: string): MatchType => (
+  !isGlob(match, { strict: false })
+    ? MatchType.EXACT_VALUE_NAME
+    : MatchType.PATTERN
+)
+
+export const getRefreshEventData = (eventData: any, type: string, streamViewType?: StreamViewType) => {
+  if (type === KeyTypes.Stream) {
+    return {
+      ...eventData,
+      streamView: StreamViews[streamViewType!]
+    }
+  }
+  return eventData
+}
+
+const SUPPORTED_REDIS_MODULES = Object.freeze({
+  ai: RedisModules.RedisAI,
+  graph: RedisModules.RedisGraph,
+  rg: RedisModules.RedisGears,
+  bf: RedisModules.RedisBloom,
+  ReJSON: RedisModules.RedisJSON,
+  search: RedisModules.RediSearch,
+  timeseries: RedisModules.RedisTimeSeries,
+})
+
+const DEFAULT_SUMMARY: IRedisModulesSummary = Object.freeze(
+  {
+    RediSearch: { loaded: false },
+    RedisAI: { loaded: false },
+    RedisGraph: { loaded: false },
+    RedisGears: { loaded: false },
+    RedisBloom: { loaded: false },
+    RedisJSON: { loaded: false },
+    RedisTimeSeries: { loaded: false },
+    customModules: [],
+  },
+)
+
+const getEnumKeyBValue = (myEnum: any, enumValue: number | string): string => {
+  const keys = Object.keys(myEnum)
+  const index = keys.findIndex((x) => myEnum[x] === enumValue)
+  return index > -1 ? keys[index] : ''
+}
+
+const getRedisModulesSummary = (modules: RedisModuleDto[] = []): IRedisModulesSummary => {
+  const summary = cloneDeep(DEFAULT_SUMMARY)
+  try {
+    modules.forEach(((module) => {
+      if (SUPPORTED_REDIS_MODULES[module.name]) {
+        const moduleName = getEnumKeyBValue(RedisModules, module.name)
+        summary[moduleName] = {
+          loaded: true,
+          version: module.version,
+          semanticVersion: module.semanticVersion,
+        }
+      } else {
+        summary.customModules.push(module)
+      }
+    }))
+  } catch (e) {
+    // continue regardless of error
+  }
+  return summary
+}
+
+export {
+  getTelemetryService,
+  sendEventTelemetry,
+  sendPageViewTelemetry,
+  checkIsAnalyticsGranted,
+  getBasedOnViewTypeEvent,
+  getJsonPathLevel,
+  getAdditionalAddedEventData,
+  getMatchType,
+  getRedisModulesSummary
+}

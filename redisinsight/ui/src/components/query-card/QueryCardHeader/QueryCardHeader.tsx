@@ -13,19 +13,29 @@ import {
 } from '@elastic/eui'
 import { format, parseISO } from 'date-fns'
 import { useParams } from 'react-router-dom'
-import { findIndex } from 'lodash'
+import { findIndex, isNumber } from 'lodash'
 
 import { Theme } from 'uiSrc/constants'
-import { getCommandNameFromQuery, getVisualizationsByCommand, truncateText, urlForAsset } from 'uiSrc/utils'
+import {
+  getCommandNameFromQuery,
+  getVisualizationsByCommand,
+  isGroupMode,
+  truncateText,
+  urlForAsset,
+  truncateMilliseconds,
+} from 'uiSrc/utils'
+import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getViewTypeOptions, WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
 import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
+import { ReactComponent as ExecutionTimeIcon } from 'uiSrc/assets/img/workbench/execution_time.svg'
 
 import QueryCardTooltip from '../QueryCardTooltip'
 
@@ -37,14 +47,35 @@ export interface Props {
   isFullScreen: boolean
   createdAt?: Date
   summaryText?: string
+  activeMode: RunQueryMode
+  mode?: RunQueryMode
+  activeResultsMode?: ResultsMode
+  summary?: string
   queryType: WBQueryType
   selectedValue: string
   loading?: boolean
+  executionTime?: number
+  emptyCommand?: boolean
   toggleOpen: () => void
   toggleFullScreen: () => void
   setSelectedValue: (type: WBQueryType, value: string) => void
   onQueryDelete: () => void
   onQueryReRun: () => void
+}
+
+const getExecutionTimeString = (value: number): string => {
+  if (value < 1) {
+    return '0.001 ms'
+  }
+  return `${numberWithSpaces((parseFloat((value / 1000).toFixed(3))))} ms`
+}
+
+const getTruncatedExecutionTimeString = (value: number): string => {
+  if (value < 1) {
+    return '0.001 ms'
+  }
+
+  return truncateMilliseconds(parseFloat((value / 1000).toFixed(3)))
 }
 
 const QueryCardHeader = (props: Props) => {
@@ -57,10 +88,16 @@ const QueryCardHeader = (props: Props) => {
     loading,
     summaryText,
     createdAt,
+    mode,
+    activeResultsMode,
+    summary,
+    activeMode,
     selectedValue,
+    executionTime,
+    emptyCommand = false,
     setSelectedValue,
     onQueryDelete,
-    onQueryReRun
+    onQueryReRun,
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -80,6 +117,8 @@ const QueryCardHeader = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         command: getCommandNameFromQuery(query, COMMANDS_SPEC),
+        rawMode: activeMode === RunQueryMode.Raw,
+        group: isGroupMode(activeResultsMode),
         ...additionalData
       }
     })
@@ -207,18 +246,19 @@ const QueryCardHeader = (props: Props) => {
     >
       <EuiFlexGroup alignItems="center" gutterSize="l" responsive={false} style={{ width: '100%' }}>
         <EuiFlexItem
-          className={cx(styles.titleWrapper, { [styles.titleWrapperShort]: !!createdAt })}
-          grow={!createdAt}
+          className={styles.titleWrapper}
+          grow={false}
         >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
-              <QueryCardTooltip query={query} />
+              <QueryCardTooltip query={query} summary={summary} />
             </EuiTextColor>
             <EuiButtonIcon
               iconType="copy"
               aria-label="Copy query"
               className="copy-btn"
-              onClick={(event: React.MouseEvent) => handleCopy(event, query)}
+              onClick={(event: React.MouseEvent) => handleCopy(event, query || '')}
+              data-testid="copy-command"
             />
           </div>
         </EuiFlexItem>
@@ -226,12 +266,51 @@ const QueryCardHeader = (props: Props) => {
           {!!createdAt && (
             <EuiTextColor className={styles.timeText} component="div">
               {getFormatTime()}
+              {mode === RunQueryMode.Raw && (
+                <EuiToolTip
+                  className={styles.tooltip}
+                  content="Raw Mode"
+                  position="bottom"
+                  data-testid="raw-mode-tooltip"
+                >
+                  <EuiTextColor className={cx(styles.timeText, styles.mode)} data-testid="raw-mode-anchor">
+                    -r
+                  </EuiTextColor>
+                </EuiToolTip>
+              )}
             </EuiTextColor>
           )}
+        </EuiFlexItem>
+        <EuiFlexItem grow={false} className={styles.summaryTextWrapper}>
           {!!summaryText && !isOpen && (
             <EuiTextColor className={styles.summaryText} component="div">
-              {truncateText(summaryText, 17)}
+              {truncateText(summaryText, 13)}
             </EuiTextColor>
+          )}
+        </EuiFlexItem>
+        <EuiFlexItem grow={false} className={styles.executionTime} data-testid="command-execution-time">
+          {isNumber(executionTime) && (
+            <EuiToolTip
+              title="Execution Time"
+              content={getExecutionTimeString(executionTime)}
+              position="left"
+              anchorClassName={cx(styles.tooltipIcon, styles.alignCenter)}
+              data-testid="execution-time-tooltip"
+            >
+              <>
+                <EuiIcon
+                  type={ExecutionTimeIcon}
+                  data-testid="command-execution-time-icon"
+                  className={styles.iconExecutingTime}
+                />
+                <EuiTextColor
+                  className={cx(styles.timeText, styles.executionTimeValue)}
+                  data-testid="command-execution-time-value"
+                >
+                  {getTruncatedExecutionTimeString(executionTime)}
+                </EuiTextColor>
+              </>
+            </EuiToolTip>
           )}
         </EuiFlexItem>
         <EuiFlexItem
@@ -239,7 +318,7 @@ const QueryCardHeader = (props: Props) => {
           className={cx(styles.buttonIcon, styles.viewTypeIcon)}
           onClick={onDropDownViewClick}
         >
-          {isOpen && options.length > 1 && (
+          {isOpen && options.length > 1 && !summary && (
             <div className={styles.dropdownWrapper}>
               <div className={styles.dropdown}>
                 <EuiSuperSelect
@@ -285,7 +364,13 @@ const QueryCardHeader = (props: Props) => {
               content="Run again"
               position="left"
             >
-              <EuiButtonIcon iconType="play" aria-label="Re-run command" data-testid="re-run-command" onClick={handleQueryReRun} />
+              <EuiButtonIcon
+                disabled={emptyCommand}
+                iconType="play"
+                aria-label="Re-run command"
+                data-testid="re-run-command"
+                onClick={handleQueryReRun}
+              />
             </EuiToolTip>
           </EuiFlexItem>
         )}

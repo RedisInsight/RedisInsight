@@ -1,8 +1,9 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
 
 .containerWrapper {
+  min-width: 590px;
   &:nth-of-type(even) {
     background-color: var(--euiColorEmptyShade) !important;
   }
@@ -37,6 +38,9 @@
 
     .container {
       border-color: var(--tableLightestBorderColor);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
     &.isOpen .container {
@@ -60,8 +64,10 @@
   color: var(--cliOutputResponseColor) !important;
 }
 
-:global(.fullscreen .query-card-output-response-success){
+:global(.fullscreen .query-card-output-response-success) {
+  height: 100%;
   max-height: calc(100vh - 65px);
+  display: flex;
 }
 
 :global(.query-card-output-response-fail) {

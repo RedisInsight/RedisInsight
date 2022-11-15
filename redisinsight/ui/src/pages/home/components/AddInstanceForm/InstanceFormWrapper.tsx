@@ -1,66 +1,56 @@
 /* eslint-disable no-nested-ternary */
+import { ConnectionString } from 'connection-string'
+import { pick } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ConnectionString } from 'connection-string'
 import { useHistory } from 'react-router'
-import { pick } from 'lodash'
 
 import {
   createInstanceStandaloneAction,
-  updateInstanceAction,
   instancesSelector,
-} from 'uiSrc/slices/instances'
-import {
-  clientCertsSelector,
-  fetchClientCerts,
-} from 'uiSrc/slices/clientCerts'
-import { Nullable, removeEmpty } from 'uiSrc/utils'
-import {
-  ConnectionType,
-  Instance,
-  InstanceType,
-} from 'uiSrc/slices/interfaces'
-import { localStorageService } from 'uiSrc/services'
-import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/caCerts'
-import { DbType, BrowserStorageItem, REDIS_URI_SCHEMES, Pages } from 'uiSrc/constants'
+  updateInstanceAction,
+} from 'uiSrc/slices/instances/instances'
 import {
   fetchMastersSentinelAction,
   sentinelSelector,
-} from 'uiSrc/slices/sentinel'
+} from 'uiSrc/slices/instances/sentinel'
+import { Nullable, removeEmpty } from 'uiSrc/utils'
+import { localStorageService } from 'uiSrc/services'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
+import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
+import { BrowserStorageItem, DbType, Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
+import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
 
-import InstanceForm, {
-  ADD_NEW,
-  ADD_NEW_CA_CERT,
-  NO_CA_CERT,
-} from './InstanceForm/InstanceForm'
+import InstanceForm, { ADD_NEW, ADD_NEW_CA_CERT, NO_CA_CERT } from './InstanceForm'
 
 export interface Props {
-  width: number;
-  isResizablePanel?: boolean;
-  instanceType: InstanceType;
-  editMode: boolean;
-  editedInstance: Nullable<Instance>;
-  onDbAdded: () => void;
-  onClose?: () => void;
-  onDbEdited?: () => void;
-  onAliasEdited?: (value: string) => void;
+  width: number
+  isResizablePanel?: boolean
+  instanceType: InstanceType
+  editMode: boolean
+  editedInstance: Nullable<Instance>
+  onDbAdded: () => void
+  onClose?: () => void
+  onDbEdited?: () => void
+  onAliasEdited?: (value: string) => void
 }
 
 export enum SubmitBtnText {
-  AddInstance = 'Add Redis Database',
-  EditInstance = 'Apply changes',
+  AddDatabase = 'Add Redis Database',
+  EditDatabase = 'Apply changes',
   ConnectToSentinel = 'Discover database',
+  CloneDatabase = 'Clone Database'
 }
 
-export enum LoadingInstanceText {
-  AddInstance = 'Adding database...',
-  EditInstance = 'Editing database...',
+export enum LoadingDatabaseText {
+  AddDatabase = 'Adding database...',
+  EditDatabase = 'Editing database...',
 }
 
-export enum TitleInstanceText {
-  AddInstance = 'Add Redis Database',
-  EditInstance = 'Edit Redis Database',
+export enum TitleDatabaseText {
+  AddDatabase = 'Add Redis Database',
+  EditDatabase = 'Edit Redis Database',
 }
 
 const getInitialValues = (editedInstance: Nullable<Instance>) => ({
@@ -85,6 +75,7 @@ const InstanceFormWrapper = (props: Props) => {
     editedInstance,
   } = props
   const [initialValues, setInitialValues] = useState(getInitialValues(editedInstance))
+  const [isCloneMode, setIsCloneMode] = useState<boolean>(false)
 
   const { host, port, name, username, password, tls } = initialValues
 
@@ -93,10 +84,10 @@ const InstanceFormWrapper = (props: Props) => {
   const { data: caCertificates } = useSelector(caCertsSelector)
   const { data: certificates } = useSelector(clientCertsSelector)
 
-  const tlsClientAuthRequired = !!editedInstance?.tls?.clientCertPairId ?? false
-  const selectedTlsClientCertId = editedInstance?.tls?.clientCertPairId ?? ADD_NEW
-  const verifyServerTlsCert = editedInstance?.tls?.verifyServerCert ?? true
-  const selectedCaCertName = editedInstance?.tls?.caCertId ?? NO_CA_CERT
+  const tlsClientAuthRequired = !!editedInstance?.clientCert?.id ?? false
+  const selectedTlsClientCertId = editedInstance?.clientCert?.id ?? ADD_NEW
+  const verifyServerTlsCert = editedInstance?.verifyServerCert ?? false
+  const selectedCaCertName = editedInstance?.caCert?.id ?? NO_CA_CERT
   const sentinelMasterUsername = editedInstance?.sentinelMaster?.username ?? ''
   const sentinelMasterPassword = editedInstance?.sentinelMaster?.password ?? ''
 
@@ -116,19 +107,26 @@ const InstanceFormWrapper = (props: Props) => {
       ...initialValues,
       ...getInitialValues(editedInstance)
     })
+    setIsCloneMode(false)
   }, [editedInstance])
 
   const onMastersSentinelFetched = () => {
     history.push(Pages.sentinelDatabases)
   }
 
-  const handleSubmitInstance = (payload: any) => {
+  const handleSubmitDatabase = (payload: any) => {
+    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
+      dispatch(createInstanceStandaloneAction(payload))
+      return
+    }
+
     if (instanceType === InstanceType.Sentinel) {
       sendEventTelemetry({
         event: TelemetryEvent.CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_SUBMITTED
       })
 
       delete payload.name
+      delete payload.db
       dispatch(fetchMastersSentinelAction(payload, onMastersSentinelFetched))
     } else {
       sendEventTelemetry({
@@ -140,7 +138,7 @@ const InstanceFormWrapper = (props: Props) => {
       )
     }
   }
-  const handleEditInstance = (payload: any) => {
+  const handleEditDatabase = (payload: any) => {
     dispatch(updateInstanceAction(payload, onDbEdited))
   }
 
@@ -154,8 +152,8 @@ const InstanceFormWrapper = (props: Props) => {
       'tls',
       'sentinelMaster',
     ]
-    const instance = pick(editedInstance, ...requiredFields)
-    dispatch(updateInstanceAction({ ...instance, name }))
+    const database = pick(editedInstance, ...requiredFields)
+    dispatch(updateInstanceAction({ ...database, name }))
   }
 
   const autoFillFormDetails = (content: string): boolean => {
@@ -199,7 +197,7 @@ const InstanceFormWrapper = (props: Props) => {
     return false
   }
 
-  const editInstance = (tlsSettings, values) => {
+  const editDatabase = (tlsSettings, values) => {
     const {
       name,
       host,
@@ -210,119 +208,132 @@ const InstanceFormWrapper = (props: Props) => {
       sentinelMasterPassword,
     } = values
 
-    const db = {
+    const database = {
       id: editedInstance?.id,
       name,
       host,
-      port,
+      port: +port,
       username,
       password,
     }
 
     const {
       useTls,
+      servername,
       verifyServerCert,
       caCert,
       clientAuth,
-      clientCertificateKeyPair,
+      clientCert,
     } = tlsSettings
 
     if (useTls) {
-      db.tls = {}
-
-      db.tls.verifyServerCert = !!verifyServerCert
+      database.tls = useTls
+      database.tlsServername = servername
+      database.verifyServerCert = !!verifyServerCert
 
       if (typeof caCert?.new !== 'undefined') {
-        db.tls.newCaCert = {
+        database.caCert = {
           name: caCert?.new.name,
-          cert: caCert?.new.cert,
+          certificate: caCert?.new.certificate,
         }
       }
       if (typeof caCert?.name !== 'undefined') {
-        db.tls.caCertId = caCert?.name
+        database.caCert = { id: caCert?.name }
       }
 
       if (clientAuth) {
-        if (typeof clientCertificateKeyPair.new !== 'undefined') {
-          db.tls.newClientCertPair = {
-            name: clientCertificateKeyPair.new.name,
-            cert: clientCertificateKeyPair.new.cert,
-            key: clientCertificateKeyPair.new.key,
+        if (typeof clientCert.new !== 'undefined') {
+          database.clientCert = {
+            name: clientCert.new.name,
+            certificate: clientCert.new.certificate,
+            key: clientCert.new.key,
           }
         }
 
-        if (typeof clientCertificateKeyPair.id !== 'undefined') {
-          db.tls.clientCertPairId = clientCertificateKeyPair.id
+        if (typeof clientCert.id !== 'undefined') {
+          database.clientCert = { id: clientCert.id }
         }
       }
     }
 
     if (connectionType === ConnectionType.Sentinel) {
-      db.sentinelMaster = {}
-      db.sentinelMaster.name = masterName
-      db.sentinelMaster.username = sentinelMasterUsername
-      db.sentinelMaster.password = sentinelMasterPassword
+      database.sentinelMaster = {}
+      database.sentinelMaster.name = masterName
+      database.sentinelMaster.username = sentinelMasterUsername
+      database.sentinelMaster.password = sentinelMasterPassword
     }
 
-    handleEditInstance(removeEmpty(db))
+    handleEditDatabase(removeEmpty(database))
   }
 
-  const addInstance = (tlsSettings, values) => {
-    const { name, host, port, username, password, db } = values
-    const database = {
+  const addDatabase = (tlsSettings, values) => {
+    const {
       name,
       host,
       port,
-      db,
       username,
       password,
-    }
+      db,
+      sentinelMasterName,
+      sentinelMasterUsername,
+      sentinelMasterPassword
+    } = values
+    const database: any = { name, host, port: +port, db: +db, username, password }
 
     const {
       useTls,
+      servername,
       verifyServerCert,
       caCert,
       clientAuth,
-      clientCertificateKeyPair,
+      clientCert,
     } = tlsSettings
 
     if (useTls) {
-      database.tls = {}
-
-      database.tls.verifyServerCert = !!verifyServerCert
+      database.tls = useTls
+      database.tlsServername = servername
+      database.verifyServerCert = !!verifyServerCert
       if (typeof caCert?.new !== 'undefined') {
-        database.tls.newCaCert = {
+        database.caCert = {
           name: caCert?.new.name,
-          cert: caCert?.new.cert,
+          certificate: caCert?.new.certificate,
         }
       }
       if (typeof caCert?.name !== 'undefined') {
-        database.tls.caCertId = caCert?.name
+        database.caCert = { id: caCert?.name }
       }
 
       if (clientAuth) {
-        if (typeof clientCertificateKeyPair.new !== 'undefined') {
-          database.tls.newClientCertPair = {
-            name: clientCertificateKeyPair.new.name,
-            cert: clientCertificateKeyPair.new.cert,
-            key: clientCertificateKeyPair.new.key,
+        if (typeof clientCert.new !== 'undefined') {
+          database.clientCert = {
+            name: clientCert.new.name,
+            certificate: clientCert.new.certificate,
+            key: clientCert.new.key,
           }
         }
 
-        if (typeof clientCertificateKeyPair.id !== 'undefined') {
-          database.tls.clientCertPairId = clientCertificateKeyPair.id
+        if (typeof clientCert.id !== 'undefined') {
+          database.clientCert = { id: clientCert.id }
         }
       }
     }
 
-    handleSubmitInstance(removeEmpty(database))
+    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
+      database.sentinelMaster = {
+        name: sentinelMasterName,
+        username: sentinelMasterUsername,
+        password: sentinelMasterPassword,
+      }
+    }
 
-    const instancesCount: number = JSON.parse(
+    handleSubmitDatabase(removeEmpty(database))
+
+    const databasesCount: number = JSON.parse(
       localStorageService.get(BrowserStorageItem.instancesCount) || `${0}`
     )
     localStorageService.set(
       BrowserStorageItem.instancesCount,
-      instancesCount + 1
+      databasesCount + 1
     )
     onDbAdded()
   }
@@ -331,6 +342,8 @@ const InstanceFormWrapper = (props: Props) => {
     const {
       newCaCert,
       tls,
+      sni,
+      servername,
       newCaCertName,
       selectedCaCertName,
       tlsClientAuthRequired,
@@ -343,6 +356,7 @@ const InstanceFormWrapper = (props: Props) => {
 
     const tlsSettings = {
       useTls: tls,
+      servername: (sni && servername) || undefined,
       verifyServerCert: verifyServerTlsCert,
       caCert:
         !tls || selectedCaCertName === NO_CA_CERT
@@ -351,14 +365,14 @@ const InstanceFormWrapper = (props: Props) => {
             ? {
               new: {
                 name: newCaCertName,
-                cert: newCaCert,
+                certificate: newCaCert,
               },
             }
             : {
               name: selectedCaCertName,
             },
       clientAuth: tls && tlsClientAuthRequired,
-      clientCertificateKeyPair: !tls
+      clientCert: !tls
         ? undefined
         : typeof selectedTlsClientCertId === 'string'
           && tlsClientAuthRequired
@@ -368,18 +382,30 @@ const InstanceFormWrapper = (props: Props) => {
             ? {
               new: {
                 name: newTlsCertPairName,
-                cert: newTlsClientCert,
+                certificate: newTlsClientCert,
                 key: newTlsClientKey,
               },
             }
             : undefined,
     }
 
-    if (editMode) {
-      editInstance(tlsSettings, values)
+    if (editMode && !isCloneMode) {
+      editDatabase(tlsSettings, values)
     } else {
-      addInstance(tlsSettings, values)
+      addDatabase(tlsSettings, values)
     }
+  }
+
+  const handleOnClose = () => {
+    if (isCloneMode) {
+      sendEventTelemetry({
+        event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CANCELLED,
+        eventData: {
+          databaseId: editedInstance?.id,
+        }
+      })
+    }
+    onClose?.()
   }
 
   const connectionFormData = {
@@ -402,14 +428,16 @@ const InstanceFormWrapper = (props: Props) => {
   }
 
   const getSubmitButtonText = () => {
-    let text = SubmitBtnText.AddInstance
     if (instanceType === InstanceType.Sentinel) {
-      text = SubmitBtnText.ConnectToSentinel
+      return SubmitBtnText.ConnectToSentinel
+    }
+    if (isCloneMode) {
+      return SubmitBtnText.CloneDatabase
     }
     if (editMode) {
-      text = SubmitBtnText.EditInstance
+      return SubmitBtnText.EditDatabase
     }
-    return text
+    return SubmitBtnText.AddDatabase
   }
 
   return (
@@ -423,19 +451,21 @@ const InstanceFormWrapper = (props: Props) => {
         instanceType={instanceType}
         loadingMsg={
           editMode
-            ? LoadingInstanceText.EditInstance
-            : LoadingInstanceText.AddInstance
+            ? LoadingDatabaseText.EditDatabase
+            : LoadingDatabaseText.AddDatabase
         }
         submitButtonText={getSubmitButtonText()}
         titleText={
           editMode
-            ? TitleInstanceText.EditInstance
-            : TitleInstanceText.AddInstance
+            ? TitleDatabaseText.EditDatabase
+            : TitleDatabaseText.AddDatabase
         }
         onSubmit={handleConnectionFormSubmit}
-        onClose={onClose}
+        onClose={handleOnClose}
         onHostNamePaste={autoFillFormDetails}
         isEditMode={editMode}
+        isCloneMode={isCloneMode}
+        setIsCloneMode={setIsCloneMode}
         updateEditingName={handleUpdateEditingName}
         onAliasEdited={onAliasEdited}
       />

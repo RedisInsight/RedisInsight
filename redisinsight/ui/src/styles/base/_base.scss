@@ -43,7 +43,6 @@ main.euiPageBody {
     height: 100% !important;
     max-height: 100% !important;
     flex: 0 1 0 !important;
-    padding: 4px 0 20px !important;
     overflow: auto !important;
   }
 }
@@ -64,4 +63,12 @@ main.euiPageBody {
 .euiHealth .euiIcon {
   width: 18px !important;
   height: 18px !important;
+}
+
+.euiSpacer--m {
+  height: 12px !important;
+}
+
+.euiSpacer--xl {
+  height: 36px !important;
 }

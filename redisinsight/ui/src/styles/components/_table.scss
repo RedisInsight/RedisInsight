@@ -51,13 +51,42 @@ table {
 }
 
 .inMemoryTableDefault {
-  > div:first-child {
-    @include euiScrollBar;
-    overflow-x: auto;
+  &:not(.stickyHeader) {
+    > div:first-child {
+      @include euiScrollBar;
+      overflow-x: auto;
+    }
   }
 
   &.euiBasicTable-loading table {
     overflow: hidden;
+  }
+
+  &.noHeaderBorders {
+    .euiTableRow {
+      &:not(:first-child) {
+        .euiTableRowCell {
+          border-top: 0 !important;
+        }
+      }
+    }
+    .euiTableRowCell {
+      &:not(:last-child) {
+        border-right: 0 !important;
+      }
+    }
+
+    .euiTableHeaderCell {
+      border: 0 !important;
+    }
+  }
+
+  &.stickyHeader {
+    .euiTableHeaderCell {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
   }
 
   table {
@@ -82,7 +111,7 @@ table {
   }
 
   .euiTableCellContent span {
-    color: var(--textColorShade) !important;
+    color: var(--textColorShade);
     padding-top: 1px;
     max-width: 100%;
     overflow: hidden;
@@ -91,12 +120,12 @@ table {
   }
 
   .euiTableHeaderCell {
-    letter-spacing: 0px;
+    letter-spacing: 0;
     border: 1px solid var(--tableLightestBorderColor);
 
     .euiTableCellContent__text {
       color: var(--htmlColor) !important;
-      font: normal normal 500 14px/17px Graphik, sans-serif !important;
+      font: normal normal 500 14px/17px Graphik, sans-serif;
       letter-spacing: -0.14px;
     }
   }

@@ -1,0 +1,75 @@
+.multiSearchWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+
+  height: 100%;
+  min-height: 36px;
+
+  .multiSearch {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 6px 12px 6px 6px;
+    border: 1px solid var(--separatorColor);
+    border-right: 0;
+    background-color: var(--browserTableRowEven);
+    background-repeat: no-repeat;
+    background-size: 0 100%;
+    transition: box-shadow 150ms ease-in, background-image 150ms ease-in, background-size 150ms ease-in, background-color 150ms ease-in;
+
+    &.isFocused {
+      background-size: 100% 100%;
+      background-image: linear-gradient(to top, var(--euiColorPrimary), var(--euiColorPrimary) 2px, transparent 2px, transparent 100%) !important;
+    }
+  }
+
+  .multiSearchInput {
+    flex: 1;
+    background-color: transparent !important;
+    max-width: 100% !important;
+    border: none !important;
+    height: 100%;
+    padding: 0 6px 0 10px;
+    background-image: none !important;
+  }
+
+  .clearBtnTooltip {
+    position: relative;
+  }
+
+  .clearButton {
+    color: var(--htmlColor) !important;
+    width: 16px;
+    height: 16px;
+    background-color: var(--separatorColor);
+    border-radius: 100%;
+
+    &:hover, &:focus {
+      background-color: var(--separatorColor) !important;
+    }
+
+    :global(.euiIcon) {
+      width: 10px;
+      height: 10px;
+    }
+  }
+
+  .searchButton {
+    width: 48px;
+    height: 100%;
+    background-color: var(--euiColorSecondary);
+    color: var(--euiColorPrimaryText) !important;
+    border-radius: 0 4px 4px 0;
+
+    &:hover, &:focus, &:focus-within {
+      background-color: var(--buttonSecondaryHoverColor) !important;
+      transform: none !important;
+    }
+
+    &:hover {
+      transform: none;
+    }
+  }
+}

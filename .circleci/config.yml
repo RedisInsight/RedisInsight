@@ -93,9 +93,16 @@ aliases:
     - oss-clu             # OSS Cluster
     - oss-clu-tls         # OSS Cluster with TLS enabled
     - oss-sent            # OSS Sentinel
+    - oss-sent-tls-auth   # OSS Sentinel with TLS auth
     - re-st               # Redis Enterprise with Standalone inside
     - re-clu              # Redis Enterprise with Cluster inside
     - re-crdt             # Redis Enterprise with active-active database inside
+  iTestsNamesShort: &iTestsNamesShort
+    - oss-st-5-pass       # OSS Standalone v5 with admin pass required
+    - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
+    - oss-clu-tls         # OSS Cluster with TLS enabled
+    - re-crdt             # Redis Enterprise with active-active database inside
+    - oss-sent-tls-auth   # OSS Sentinel with TLS auth
   guides-filter: &guidesFilter
     filters:
       branches:
@@ -124,19 +131,23 @@ aliases:
 
 orbs:
   win: circleci/windows@2.4.1
-  node: circleci/node@4.4.0
+  node: circleci/node@5.0.2
   aws: circleci/aws-cli@2.0.3
 
 executors:
   linux-executor:
     machine:
       image: ubuntu-2004:202010-01
+  linux-executor-dlc:
+    machine:
+      image: ubuntu-2004:202010-01
+      docker_layer_caching: true
 
 jobs:
   # Test jobs
   unit-tests-ui:
     docker:
-      - image: circleci/node:15.14.0
+      - image: cimg/node:16.15.1
     steps:
       - checkout
       - restore_cache:
@@ -180,7 +191,7 @@ jobs:
             - ./node_modules
   unit-tests-api:
     docker:
-      - image: circleci/node:15.14.0
+      - image: cimg/node:16.15.1
     steps:
       - checkout
       - restore_cache:
@@ -218,7 +229,7 @@ jobs:
           paths:
             - ./redisinsight/api/node_modules
   integration-tests-run:
-    executor: linux-executor
+    executor: linux-executor-dlc
     parameters:
       rte:
         description: Redis Test Environment name
@@ -285,7 +296,7 @@ jobs:
             sudo cp -R /tmp/itest/coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
             cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
   e2e-app-image:
-    executor: linux-executor
+    executor: linux-executor-dlc
     parameters:
       report:
         description: Send report for test run to slack
@@ -300,11 +311,12 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run: sudo apt-get install net-tools
       - run:
           name: .AppImage tests
           command: |
-            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
-            .circleci/scripts/e2e/app-image.e2e.sh
+            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
+            .circleci/e2e/test.app-image.sh
       - when:
           condition:
             equal: [ true, << parameters.report >> ]
@@ -317,9 +329,50 @@ jobs:
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
       - store_test_results:
           path: ./tests/e2e/results
-
+      - store_artifacts:
+          path: tests/e2e/report
+          destination: tests/e2e/report
+  e2e-exe:
+    executor:
+      name: win/default
+    parameters:
+      report:
+        description: Send report for test run to slack
+        type: boolean
+        default: false
+      parallelism:
+        description: Number of threads to run tests
+        type: integer
+        default: 1
+    parallelism: << parameters.parallelism >>
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: choco install nodejs --version=16.15.1
+      - run:
+          command: |
+            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
+            .circleci/e2e/test.exe.cmd
+          shell: bash.exe
+      - when:
+          condition:
+            equal: [ true, << parameters.report >> ]
+          steps:
+            - run:
+                name: Send report
+                when: always
+                command: |
+                  APP_BUILD_TYPE="Electron (Windows)" node ./.circleci/e2e-results.js
+                  curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+                shell: bash.exe
+      - store_test_results:
+          path: ./tests/e2e/results
+      - store_artifacts:
+          path: tests/e2e/report
+          destination: tests/e2e/report
   e2e-tests:
-    executor: linux-executor
+    executor: linux-executor-dlc
     parameters:
       build:
         description: Backend build to run tests over
@@ -350,12 +403,12 @@ jobs:
             - run:
                 name: Run tests
                 command: |
-                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
+                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
                   -f tests/e2e/docker.web.docker-compose.yml \
-                  up --abort-on-container-exit --force-recreate
+                  up --abort-on-container-exit --force-recreate --build
                 no_output_timeout: 5m
       - when:
           condition:
@@ -364,7 +417,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
-                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split) && cd ../..
+                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
@@ -383,6 +436,9 @@ jobs:
                   curl -H "Content-type: application/json" --data @e2e.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
       - store_test_results:
           path: ./tests/e2e/results
+      - store_artifacts:
+          path: tests/e2e/report
+          destination: tests/e2e/report
 
   # Build jobs
   setup-sign-certificates:
@@ -403,12 +459,12 @@ jobs:
   setup-build:
     parameters:
       env:
-        description: Build environemtnt (stage || prod)
+        description: Build environment (stage || prod)
         type: enum
         default: stage
         enum: [ 'dev', 'stage', 'prod' ]
     docker:
-      - image: cibuilds/github:0.13
+      - image: cibuilds/docker:19.03.5
     steps:
       - checkout
       - run:
@@ -450,7 +506,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '14.17'
+          node-version: '16.15.1'
       - attach_workspace:
           at: .
       - run:
@@ -516,7 +572,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '15.14.0'
+          node-version: '16.15.1'
       - attach_workspace:
           at: .
       - run:
@@ -586,7 +642,7 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            choco install nodejs --version=15.14.0
+            choco install nodejs --version=16.15.1
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
             yarn --cwd redisinsight/api/ install
@@ -659,33 +715,6 @@ jobs:
       - store_artifacts:
           path: release
           destination: release
-  release-github:
-    parameters:
-      env:
-        description: Release environment (stage || prod)
-        type: enum
-        default: stage
-        enum: [ 'stage', 'prod' ]
-    docker:
-      - image: cibuilds/github:0.13
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - store_artifacts:
-          path: release
-          destination: release
-      - run:
-          name: prepare release
-          command: |
-            rm release/._* ||:
-      - run:
-          name: publish to prerelease Github
-          command: |
-            applicationVersion=$(jq -r '.version' electron/package.json)
-            echo "APP VERSION $applicationVersion"
-            ghr -t ${GH_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -prerelease -delete ${applicationVersion}
-
   release-aws-test:
     executor: linux-executor
     steps:
@@ -729,11 +758,13 @@ jobs:
             latestYmlFileName="latest.yml"
             downloadLatestFolderPath="public/latest"
             upgradeLatestFolderPath="public/upgrades"
+            releasesFolderPath="public/releases"
             appName=$(jq -r '.productName' electron-builder.json)
             appVersion=$(jq -r '.version' redisinsight/package.json)
 
             echo "export downloadLatestFolderPath=${downloadLatestFolderPath}" >> $BASH_ENV
             echo "export upgradeLatestFolderPath=${upgradeLatestFolderPath}" >> $BASH_ENV
+            echo "export releasesFolderPath=${releasesFolderPath}" >> $BASH_ENV
             echo "export applicationName=${appName}" >> $BASH_ENV
             echo "export applicationVersion=${appVersion}" >> $BASH_ENV
             echo "export appFileName=RedisInsight" >> $BASH_ENV
@@ -750,21 +781,26 @@ jobs:
       - run:
           name: Publish AWS S3
           command: |
-            # move last public version apps for download to /private/{last public version}
-            aws s3 mv s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} \
-              s3://${AWS_BUCKET_NAME}/private/${previousApplicationVersion}/ --recursive
+            # remove previous build from the latest directory /public/latest
+            aws s3 rm s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} --recursive
 
-            # move last public version apps for upgrades to /private/{last public version}
-            aws s3 mv s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} \
-              s3://${AWS_BUCKET_NAME}/private/${previousApplicationVersion}/ --recursive
+            # remove previous build from the upgrade directory /public/upgrades
+            aws s3 rm s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} --recursive
 
-            # move current version apps for download to /public/latest
+            # copy current version apps for download to /public/latest
             aws s3 cp s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
               s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath} --recursive  --exclude "*.zip"
 
             # copy current version apps for upgrades to /public/upgrades
-            aws s3 mv s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
+            aws s3 cp s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
               s3://${AWS_BUCKET_NAME}/${upgradeLatestFolderPath} --recursive
+
+            # !MOVE current version apps to releases folder /public/releases
+            aws s3 mv s3://${AWS_BUCKET_NAME}/private/${applicationVersion}/ \
+              s3://${AWS_BUCKET_NAME}/${releasesFolderPath}/${applicationVersion} --recursive
+
+            # invalidate cloudfront cash
+            aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID} --paths "/*"
 
       - run:
           name: Add tags for all objects and create S3 metrics
@@ -772,35 +808,41 @@ jobs:
 
             # declare all tags
             declare -A tag0=(
-                [key]='platform'
-                [value]='macos'
+                [arch]='x64'
+                [platform]='macos'
                 [objectDownload]=${applicationName}'-mac-x64.dmg'
                 [objectUpgrade]=${applicationName}'-mac-x64.zip'
             )
 
             declare -A tag1=(
-                [key]='platform'
-                [value]='macos'
+                [arch]='arm64'
+                [platform]='macos'
                 [objectDownload]=${applicationName}'-mac-arm64.dmg'
                 [objectUpgrade]=${applicationName}'-mac-arm64.zip'
             )
 
             declare -A tag2=(
-                [key]='platform'
-                [value]='windows'
+                [arch]='x64'
+                [platform]='windows'
                 [objectDownload]=${applicationName}'-win-installer.exe'
             )
 
             declare -A tag3=(
-                [key]='platform'
-                [value]='linux_AppImage'
-                [objectDownload]=${applicationName}'-x86_64.AppImage'
+                [arch]='x64'
+                [platform]='linux_AppImage'
+                [objectDownload]=${applicationName}'-linux-x86_64.AppImage'
             )
 
             declare -A tag4=(
-                [key]='platform'
-                [value]='linux_deb'
-                [objectDownload]=${applicationName}'-amd64.deb'
+                [arch]='x64'
+                [platform]='linux_deb'
+                [objectDownload]=${applicationName}'-linux-amd64.deb'
+            )
+
+            declare -A tag5=(
+                [arch]='x64'
+                [platform]='linux_rpm'
+                [objectDownload]=${applicationName}'-linux-x86_64.rpm'
             )
 
             # loop for add all tags to each app and create metrics
@@ -810,52 +852,206 @@ jobs:
                 designation0="downloads"
                 designation1="upgrades"
 
-                id0="${tag[value]}_${designation0}_${applicationVersion}"
-                id1="${tag[value]}_${designation1}_${applicationVersion}"
+                id0="${tag[platform]}_${tag[arch]}_${designation0}_${applicationVersion}"
+                id1="${tag[platform]}_${tag[arch]}_${designation1}_${applicationVersion}"
 
                 # add tags to each app for download
                 aws s3api put-object-tagging \
                   --bucket ${AWS_BUCKET_NAME} \
                   --key ${downloadLatestFolderPath}/${tag[objectDownload]} \
-                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, { "Key": "designation", "Value": "'"${designation0}"'" }]}'
+                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation0}"'" }]}'
 
                 # add tags to each app for upgrades
                 aws s3api put-object-tagging \
                   --bucket ${AWS_BUCKET_NAME} \
                   --key ${upgradeLatestFolderPath}/${tag[objectUpgrade]:=${tag[objectDownload]}} \
-                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, { "Key": "designation", "Value": "'"${designation1}"'" }]}'
+                  --tagging '{"TagSet": [{ "Key": "version", "Value": "'"${applicationVersion}"'" }, {"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, { "Key": "designation", "Value": "'"${designation1}"'" }]}'
 
                 # Create metrics for all tags for downloads to S3
                 aws s3api put-bucket-metrics-configuration \
                   --bucket ${AWS_BUCKET_NAME} \
                   --id ${id0} \
-                  --metrics-configuration '{"Id": "'"${id0}"'", "Filter": {"And": {"Tags": [{"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, {"Key": "designation", "Value": "'"${designation0}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"} ]}}}'
+                  --metrics-configuration '{"Id": "'"${id0}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation0}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"} ]}}}'
 
                 # Create metrics for all tags for upgrades to S3
                 aws s3api put-bucket-metrics-configuration \
                   --bucket ${AWS_BUCKET_NAME} \
                   --id ${id1} \
-                  --metrics-configuration '{"Id": "'"${id1}"'", "Filter": {"And": {"Tags": [{"Key": "'"${tag[key]}"'", "Value": "'"${tag[value]}"'"}, {"Key": "designation", "Value": "'"${designation1}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"}]}}}'
+                  --metrics-configuration '{"Id": "'"${id1}"'", "Filter": {"And": {"Tags": [{"Key": "platform", "Value": "'"${tag[platform]}"'"}, {"Key": "arch", "Value": "'"${tag[arch]}"'"}, {"Key": "designation", "Value": "'"${designation1}"'"}, {"Key": "version", "Value": "'"${applicationVersion}"'"}]}}}'
 
             done
 
 workflows:
-  build:
+  # FE Unit tests for "fe/feature" or "fe/bugfix" branches only
+  frontend-tests:
     jobs:
-      # unit tests (on any commit)
       - unit-tests-ui:
           name: UTest - UI
+#          filters:
+#            branches:
+#              only:
+#                - /^fe/feature.*/
+#                - /^fe/bugfix.*/
+  # BE Unit + Integration (limited RTEs) tests for "be/feature" or "be/bugfix" branches only
+  backend-tests:
+    jobs:
       - unit-tests-api:
           name: UTest - API
-
-      # integration tests run in parallel (on any commit)
-      # target server runs locally to calculate code coverage
+#          filters:
+#            branches:
+#              only:
+#                - /^be/feature.*/
+#                - /^be/bugfix.*/
+      - integration-tests-run:
+          matrix:
+            alias: itest-code
+            parameters:
+              rte: *iTestsNames
+#              rte: *iTestsNamesShort
+          name: ITest - << matrix.rte >> (code)
+#          requires:
+#            - UTest - API
+  # E2E tests for "e2e/feature" or "e2e/bugfix" branches only
+  e2e-tests:
+    jobs:
+      - approve:
+          name: Start E2E Tests
+          type: approval
+          filters:
+            branches:
+              only:
+                - /^e2e/feature.*/
+                - /^e2e/bugfix.*/
+      - docker:
+          name: Build docker image
+          requires:
+            - Start E2E Tests
+      - e2e-tests:
+          name: E2ETest
+          build: docker
+          parallelism: 4
+          requires:
+            - Build docker image
+  # Workflow for feature, bugfix, main branches
+  feature-main-branch:
+    jobs:
+      # Approve to run all (unit, integration, e2e) tests
+      - approve:
+          name: Start All Tests
+          type: approval
+          filters:
+            branches:
+              only:
+                - /^feature.*/
+                - /^bugfix.*/
+                - main
+      # FE tests
+      - unit-tests-ui:
+          name: UTest - UI
+          requires:
+            - Start All Tests
+      # BE tests
+      - unit-tests-api:
+          name: UTest - API
+          requires:
+            - Start All Tests
       - integration-tests-run:
           matrix:
             alias: itest-code
             parameters:
               rte: *iTestsNames
           name: ITest - << matrix.rte >> (code)
+          requires:
+            - Start All Tests
+      - integration-tests-coverage:
+          name: ITest - Final coverage
+          requires:
+            - itest-code
+      # E2E tests
+      - docker:
+          name: Build docker image
+          requires:
+            - Start All Tests
+      - e2e-tests:
+          name: E2ETest
+          build: docker
+          parallelism: 4
+          requires:
+            - Build docker image
+      # Approve to build
+      - approve:
+          name: Build App
+          type: approval
+          requires:
+            - UTest - UI
+            - UTest - API
+            - ITest - Final coverage
+          filters:
+            branches:
+              only:
+                - /^e2e/feature.*/
+                - /^e2e/bugfix.*/
+  # build electron app (dev) from "build" branches
+  build:
+    jobs:
+      - setup-sign-certificates:
+          name: Setup sign certificates (dev)
+          filters:
+            branches:
+              only:
+                - /^build.*/
+      - setup-build:
+          name: Setup build (dev)
+          env: dev
+          requires:
+            - Setup sign certificates (dev)
+      - linux:
+          name: Build app - Linux (dev)
+          env: dev
+          requires: &devBuildRequire
+            - Setup build (dev)
+      - macosx:
+          name: Build app - MacOS (dev)
+          env: dev
+          requires: *devBuildRequire
+      - windows:
+          name: Build app - Windows (dev)
+          env: dev
+          requires: *devBuildRequire
+      - store-build-artifacts:
+          name: Store build artifacts (dev)
+          requires:
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
+      - release-aws-test:
+          name: Release AWS dev
+          requires:
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
+  # Main workflow for release/* and latest branches only
+  release:
+    jobs:
+      # unit tests (on any commit)
+      - unit-tests-ui:
+          name: UTest - UI
+          filters: &releaseAndLatestFilter
+            branches:
+              only:
+                - /^release.*/
+                - latest
+      - unit-tests-api:
+          name: UTest - API
+          filters: *releaseAndLatestFilter
+      # integration tests
+      - integration-tests-run:
+          matrix:
+            alias: itest-code
+            parameters:
+              rte: *iTestsNames
+          name: ITest - << matrix.rte >> (code)
+          filters: *releaseAndLatestFilter
       - integration-tests-coverage:
           name: ITest - Final coverage
           requires:
@@ -863,73 +1059,17 @@ workflows:
         # e2e tests (doesn't affect pipeline even if fail)
       - docker:
           name: Build docker image
-          filters: &e2eFilter
-            branches:
-              only:
-                - /^release.*/
-                - /^e2e.*/
-                - /^feature/e2e.*/
-                - main
-                - latest
+          filters: *releaseAndLatestFilter
       - e2e-tests:
           name: E2ETest
           build: docker
           parallelism: 4
-          filters: *e2eFilter
           requires:
             - Build docker image
 
-      # build and release electron app (dev)
-      - dev-build-approve:
-          name: Build dev app
-          type: approval
-          requires:
-            - UTest - UI
-            - UTest - API
-            - ITest - Final coverage
-          <<: *devFilter
-      - setup-sign-certificates:
-          name: Setup sign certificates (dev)
-          requires:
-            - Build dev app
-          <<: *devFilter
-      - setup-build:
-          name: Setup build (dev)
-          env: dev
-          requires:
-            - Setup sign certificates (dev)
-          <<: *devFilter
-      - linux:
-          name: Build app - Linux (dev)
-          env: dev
-          requires: &stageElectronBuildRequires
-            - Setup build (dev)
-          <<: *devFilter
-      - macosx:
-          name: Build app - MacOS (dev)
-          env: dev
-          requires: *stageElectronBuildRequires
-          <<: *devFilter
-      - windows:
-          name: Build app - Windows (dev)
-          env: dev
-          requires: *stageElectronBuildRequires
-          <<: *devFilter
-      - store-build-artifacts:
-          name: Store build artifacts (dev)
-          requires:
-            - Build app - Linux (dev)
-            - Build app - MacOS (dev)
-            - Build app - Windows (dev)
 
-      - release-aws-test:
-          name: Release AWS test
-          requires:
-            - Build app - Linux (dev)
-            - Build app - MacOS (dev)
-            - Build app - Windows (dev)
-
-      # build and release electron app (stage)
+      # ================== STAGE ==================
+      # prebuild (stage)
       - setup-sign-certificates:
           name: Setup sign certificates (stage)
           requires:
@@ -941,28 +1081,24 @@ workflows:
           name: Setup build (stage)
           requires:
             - Setup sign certificates (stage)
-          <<: *stageFilter
+      # build electron app (stage)
       - linux:
           name: Build app - Linux (stage)
           requires: &stageElectronBuildRequires
             - Setup build (stage)
-          <<: *stageFilter
       - macosx:
           name: Build app - MacOS (stage)
           requires: *stageElectronBuildRequires
-          <<: *stageFilter
       - windows:
           name: Build app - Windows (stage)
           requires: *stageElectronBuildRequires
-          <<: *stageFilter
-
+      # release to AWS (stage)
       - release-aws-test:
-          name: Release AWS test
+          name: Release AWS stage
           requires:
             - Build app - Linux (stage)
             - Build app - MacOS (stage)
             - Build app - Windows (stage)
-
       # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:
           name: Approved by QA team
@@ -972,6 +1108,7 @@ workflows:
             - Build app - MacOS (stage)
             - Build app - Windows (stage)
 
+      # ================== PROD ==================
       # build and release electron app (prod)
       - setup-sign-certificates:
           name: Setup sign certificates (prod)
@@ -985,24 +1122,20 @@ workflows:
           env: prod
           requires:
             - Setup sign certificates (prod)
-          <<: *prodFilter
       - linux:
           name: Build app - Linux (prod)
           env: prod
           requires: &prodElectronBuildRequires
             - Setup build (prod)
-          <<: *prodFilter
       - macosx:
           name: Build app - MacOS (prod)
           env: prod
           requires: *prodElectronBuildRequires
-          <<: *prodFilter
       - windows:
           name: Build app - Windows (prod)
           env: prod
           requires: *prodElectronBuildRequires
-          <<: *prodFilter
-      # virus check all electron apps (prod only)
+      # virus check all electron apps (prod)
       - virustotal:
           name: Virus check - AppImage (prod)
           ext: .AppImage
@@ -1028,8 +1161,7 @@ workflows:
           ext: .exe
           requires:
             - Build app - Windows (prod)
-
-      # upload release to AWS and GitHub
+      # upload release to prerelease AWS folder
       - release-aws-private:
           name: Release AWS S3 Private (prod)
           requires:
@@ -1038,33 +1170,19 @@ workflows:
             - Virus check x64 - dmg (prod)
             - Virus check arm64 - dmg (prod)
             - Virus check - exe (prod)
-
-      - release-github:
-          name: Release Github (prod)
-          env: prod
-          requires:
-            - Virus check - AppImage (prod)
-            - Virus check - deb (prod)
-            - Virus check x64 - dmg (prod)
-            - Virus check arm64 - dmg (prod)
-            - Virus check - exe (prod)
-
       # Manual approve for publish release
       - approve-publish:
           name: Approve Publish Release (prod)
           type: approval
           requires:
             - Release AWS S3 Private (prod)
-            - Release Github (prod)
           <<: *prodFilter # double check for "latest"
-
       # Publish release
       - publish-prod-aws:
           name: Publish AWS S3
           requires:
             - Approve Publish Release (prod)
           <<: *prodFilter # double check for "latest"
-
   # Nightly tests
   nightly:
     triggers:
@@ -1074,7 +1192,6 @@ workflows:
             branches:
               only:
                 - main
-                - latest
     jobs:
       # build docker image
       - docker:
@@ -1090,6 +1207,10 @@ workflows:
           name: Build app - Linux (stage)
           requires:
             - Setup build (stage)
+#      - windows:
+#          name: Build app - Windows (stage)
+#          requires:
+#            - Setup build (stage)
       # integration tests on docker image build
       - integration-tests-run:
           matrix:
@@ -1115,7 +1236,14 @@ workflows:
       #     parallelism: 4
       #     report: true
       #     requires:
-      #       - Approve guides release
+      #       - Build app - Linux (stage)
+      # # e2e desktop tests on exe build
+      # - e2e-exe:
+      #     name: E2ETest (exe) - Nightly
+      #     parallelism: 4
+      #     report: true
+      #     requires:
+      #       - Build app - Windows (stage)
   mas:
     jobs:
       - setup-sign-certificates:

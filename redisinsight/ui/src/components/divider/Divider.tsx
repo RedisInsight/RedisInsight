@@ -5,12 +5,13 @@ import styles from './styles.module.scss'
 
 export interface Props {
   color?: string
+  colorVariable?: string
   orientation?: 'horizontal' | 'vertical',
   variant? : 'fullWidth' | 'middle' | 'half';
   className?: string;
 }
 
-const Divider = ({ orientation, variant, className, color }: Props) => (
+const Divider = ({ orientation, variant, className, color, colorVariable }: Props) => (
   <div
     className={cx(
       styles.divider,
@@ -19,7 +20,7 @@ const Divider = ({ orientation, variant, className, color }: Props) => (
       className,
     )}
   >
-    <hr style={color ? { backgroundColor: color } : {}} />
+    <hr style={(color || colorVariable) ? { backgroundColor: color ?? `var(--${colorVariable})` } : {}} />
   </div>
 )
 

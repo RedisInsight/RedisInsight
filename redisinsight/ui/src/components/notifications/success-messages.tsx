@@ -1,5 +1,7 @@
 import React from 'react'
-import { formatNameShort, Maybe } from 'uiSrc/utils'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { bufferToString, formatNameShort, Maybe } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 // TODO: use i18n file for texts
@@ -48,28 +50,28 @@ export default {
       ),
     }
   },
-  ADDED_NEW_KEY: (keyName: string) => ({
+  ADDED_NEW_KEY: (keyName: RedisResponseBuffer) => ({
     title: 'Key has been added',
     message: (
       <>
-        <b>{formatNameShort(keyName)}</b>
+        <b>{formatNameShort(bufferToString(keyName))}</b>
         {' '}
         has been added. Please refresh the list of Keys to see
         updates.
       </>
     ),
   }),
-  DELETED_KEY: (keyName: string) => ({
+  DELETED_KEY: (keyName: RedisResponseBuffer) => ({
     title: 'Key has been deleted',
     message: (
       <>
-        <b>{formatNameShort(keyName)}</b>
+        <b>{formatNameShort(bufferToString(keyName))}</b>
         {' '}
         has been deleted.
       </>
     ),
   }),
-  REMOVED_KEY_VALUE: (keyName: string, keyValue: string, valueType: string) => ({
+  REMOVED_KEY_VALUE: (keyName: RedisResponseBuffer, keyValue: RedisResponseBuffer, valueType: string) => ({
     title: (
       <>
         <span>{valueType}</span>
@@ -79,27 +81,31 @@ export default {
     ),
     message: (
       <>
-        <b>{formatNameShort(keyValue)}</b>
+        <b>{formatNameShort(bufferToString(keyValue))}</b>
         {' '}
         has been removed from &nbsp;
-        <b>{formatNameShort(keyName)}</b>
+        <b>{formatNameShort(bufferToString(keyName))}</b>
       </>
     ),
   }),
-  REMOVED_LIST_ELEMENTS: (keyName: string, numberOfElements: number, listOfElements: string[]) => {
+  REMOVED_LIST_ELEMENTS: (
+    keyName: RedisResponseBuffer,
+    numberOfElements: number,
+    listOfElements: RedisResponseBuffer[],
+  ) => {
     const limitShowRemovedElements = 10
     return {
       title: 'Elements have been removed',
       message: (
         <>
           <span>
-            {`${numberOfElements} Element(s) removed from ${formatNameShort(keyName)}:`}
+            {`${numberOfElements} Element(s) removed from ${formatNameShort(bufferToString(keyName))}:`}
           </span>
           <ul style={{ marginBottom: 0 }}>
             {listOfElements.slice(0, limitShowRemovedElements).map((el, i) => (
               // eslint-disable-next-line react/no-array-index-key
               <li className={styles.list} key={i}>
-                {formatNameShort(el)}
+                {formatNameShort(bufferToString(el))}
               </li>
             ))}
             {listOfElements.length >= limitShowRemovedElements && <li>...</li>}
@@ -108,10 +114,41 @@ export default {
       ),
     }
   },
-  INSTALLED_NEW_UPDATE: (updateDownloadedVersion: string) => ({
+  INSTALLED_NEW_UPDATE: (updateDownloadedVersion: string, onClickLink?: () => void) => ({
     title: 'Application updated',
-    message: `Your application has been updated to ${updateDownloadedVersion}. Find more
-    information in Release Notes.`,
+    message: (
+      <>
+        <span>{`Your application has been updated to ${updateDownloadedVersion}. Find more information in `}</span>
+        <a href={EXTERNAL_LINKS.releaseNotes} onClick={() => onClickLink?.()} className="link-underline" target="_blank" rel="noreferrer">Release Notes.</a>
+      </>
+    ),
     group: 'upgrade'
   }),
+  // only one message is being processed at the moment
+  MESSAGE_ACTION: (message: string, actionName: string) => ({
+    title: (
+      <>
+        Message has been
+        {' '}
+        {actionName}
+      </>
+    ),
+    message: (
+      <>
+        <b>{message}</b>
+        {' '}
+        has been successfully
+        {' '}
+        {actionName}.
+      </>
+    ),
+  }),
+  NO_CLAIMED_MESSAGES: () => ({
+    title: 'No messages claimed',
+    message: 'No messages exceed the minimum idle time.',
+  }),
+  CREATE_INDEX: () => ({
+    title: 'Index has been created',
+    message: 'Open the list of indexes to see it.'
+  })
 }

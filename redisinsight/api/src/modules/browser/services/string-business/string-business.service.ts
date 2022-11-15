@@ -8,8 +8,7 @@ import {
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
-import { RedisDataType } from 'src/modules/browser/dto';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   GetStringValueResponse,
   SetStringDto,
@@ -20,7 +19,8 @@ import {
   BrowserToolKeysCommands,
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
+import { plainToClass } from 'class-transformer';
+import { RedisString } from 'src/common/constants';
 
 @Injectable()
 export class StringBusinessService {
@@ -28,7 +28,6 @@ export class StringBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
-    private browserAnalyticsService: BrowserAnalyticsService,
   ) {}
 
   public async setString(
@@ -62,20 +61,12 @@ export class StringBusinessService {
       );
       throw new ConflictException(ERROR_MESSAGES.KEY_NAME_EXIST);
     }
-    this.browserAnalyticsService.sendKeyAddedEvent(
-      clientOptions.instanceId,
-      RedisDataType.String,
-      {
-        length: dto.value.length,
-        TTL: dto.expire || -1,
-      },
-    );
     this.logger.log('Succeed to set string key type.');
   }
 
   public async getStringValue(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keyName: string,
+    keyName: RedisString,
   ): Promise<GetStringValueResponse> {
     this.logger.log('Getting string value.');
     let result: GetStringValueResponse;
@@ -100,7 +91,7 @@ export class StringBusinessService {
       throw new NotFoundException();
     } else {
       this.logger.log('Succeed to get string value.');
-      return result;
+      return plainToClass(GetStringValueResponse, result);
     }
   }
 
@@ -129,10 +120,6 @@ export class StringBusinessService {
           [keyName, ttl],
         );
       }
-      this.browserAnalyticsService.sendKeyValueEditedEvent(
-        clientOptions.instanceId,
-        RedisDataType.String,
-      );
     } catch (error) {
       this.logger.error('Failed to update string value.', error);
       catchAclError(error);

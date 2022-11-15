@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -12,57 +11,53 @@ import {
   DeleteKeysResponse,
   GetKeyInfoResponse,
   GetKeysDto,
+  GetKeysInfoDto,
   GetKeysWithDetailsResponse,
+  KeyTtlResponse,
+  RedisDataType,
   RenameKeyDto,
   RenameKeyResponse,
   UpdateKeyTtlDto,
-  KeyTtlResponse,
-  RedisDataType,
 } from 'src/modules/browser/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { ConnectionType } from 'src/modules/core/models/database-instance.entity';
+import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { Scanner } from 'src/modules/browser/services/keys-business/scanner/scanner';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { RedisString } from 'src/common/constants';
+import { plainToClass } from 'class-transformer';
+import { SettingsService } from 'src/modules/settings/settings.service';
+import { DatabaseService } from 'src/modules/database/database.service';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
 import { KeyInfoManager } from './key-info-manager/key-info-manager';
-import {
-  UnsupportedTypeInfoStrategy,
-} from './key-info-manager/strategies/unsupported-type-info/unsupported-type-info.strategy';
+import { UnsupportedTypeInfoStrategy } from './key-info-manager/strategies/unsupported-type-info/unsupported-type-info.strategy';
 import { StringTypeInfoStrategy } from './key-info-manager/strategies/string-type-info/string-type-info.strategy';
 import { HashTypeInfoStrategy } from './key-info-manager/strategies/hash-type-info/hash-type-info.strategy';
 import { ListTypeInfoStrategy } from './key-info-manager/strategies/list-type-info/list-type-info.strategy';
 import { SetTypeInfoStrategy } from './key-info-manager/strategies/set-type-info/set-type-info.strategy';
 import { ZSetTypeInfoStrategy } from './key-info-manager/strategies/z-set-type-info/z-set-type-info.strategy';
 import { StreamTypeInfoStrategy } from './key-info-manager/strategies/stream-type-info/stream-type-info.strategy';
-import {
-  RejsonRlTypeInfoStrategy,
-} from './key-info-manager/strategies/rejson-rl-type-info/rejson-rl-type-info.strategy';
+import { RejsonRlTypeInfoStrategy } from './key-info-manager/strategies/rejson-rl-type-info/rejson-rl-type-info.strategy';
 import { TSTypeInfoStrategy } from './key-info-manager/strategies/ts-type-info/ts-type-info.strategy';
 import { GraphTypeInfoStrategy } from './key-info-manager/strategies/graph-type-info/graph-type-info.strategy';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 @Injectable()
 export class KeysBusinessService {
   private logger = new Logger('KeysBusinessService');
 
-  private scanner;
+  private scanner: Scanner;
 
   private keyInfoManager;
 
   constructor(
-    private instancesBusinessService: InstancesBusinessService,
+    private readonly databaseService: DatabaseService,
     private browserTool: BrowserToolService,
     private browserToolCluster: BrowserToolClusterService,
-    private browserAnalyticsService: BrowserAnalyticsService,
-    @Inject('SETTINGS_PROVIDER')
-    private settingsService: ISettingsProvider,
+    private settingsService: SettingsService,
   ) {
     this.scanner = new Scanner();
     this.keyInfoManager = new KeyInfoManager(
@@ -125,25 +120,13 @@ export class KeysBusinessService {
     try {
       this.logger.log('Getting keys with details.');
       // todo: refactor. no need entire entity here
-      const databaseInstance = await this.instancesBusinessService.getOneById(
+      const databaseInstance = await this.databaseService.get(
         clientOptions.instanceId,
       );
       const scanner = this.scanner.getStrategy(databaseInstance.connectionType);
       const result = await scanner.getKeys(clientOptions, dto);
-      this.browserAnalyticsService.sendKeysScannedEvent(
-        clientOptions.instanceId,
-        dto.match,
-        dto.type,
-        {
-          databaseSize: result.reduce((prev, cur) => prev + cur.total, 0),
-          numberOfKeysScanned: result.reduce(
-            (prev, cur) => prev + cur.scanned,
-            0,
-          ),
-          scanCount: dto.count,
-        },
-      );
-      return result;
+
+      return result.map((nodeResult) => plainToClass(GetKeysWithDetailsResponse, nodeResult));
     } catch (error) {
       this.logger.error(
         `Failed to get keys with details info. ${error.message}.`,
@@ -160,9 +143,32 @@ export class KeysBusinessService {
     }
   }
 
+  /**
+   * Fetch additional keys info (type, size, ttl)
+   * For standalone instances will use pipeline
+   * For cluster instances will use single commands
+   * @param clientOptions
+   * @param dto
+   */
+  public async getKeysInfo(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: GetKeysInfoDto,
+  ): Promise<GetKeyInfoResponse[]> {
+    try {
+      const client = await this.browserTool.getRedisClient(clientOptions);
+      const scanner = this.scanner.getStrategy(client.isCluster ? ConnectionType.CLUSTER : ConnectionType.STANDALONE);
+      const result = await scanner.getKeysInfo(client, dto.keys);
+
+      return plainToClass(GetKeyInfoResponse, result);
+    } catch (error) {
+      this.logger.error(`Failed to get keys info: ${error.message}.`);
+      throw catchAclError(error);
+    }
+  }
+
   public async getKeyInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log('Getting key info.');
     try {
@@ -170,6 +176,7 @@ export class KeysBusinessService {
         clientOptions,
         BrowserToolKeysCommands.Type,
         [key],
+        'utf8',
       );
       if (type === 'none') {
         this.logger.error(`Failed to get key info. Not found key: ${key}`);
@@ -180,7 +187,7 @@ export class KeysBusinessService {
       const infoManager = this.keyInfoManager.getStrategy(type);
       const result = await infoManager.getInfo(clientOptions, key, type);
       this.logger.log('Succeed to get key info');
-      return result;
+      return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error('Failed to get key info.', error);
       throw catchAclError(error);
@@ -189,7 +196,7 @@ export class KeysBusinessService {
 
   public async deleteKeys(
     clientOptions: IFindRedisClientInstanceByOptions,
-    keys: string[],
+    keys: RedisString[],
   ): Promise<DeleteKeysResponse> {
     this.logger.log('Deleting keys');
     let result;
@@ -207,10 +214,6 @@ export class KeysBusinessService {
       this.logger.error('Failed to delete keys. Not Found keys');
       throw new NotFoundException();
     }
-    this.browserAnalyticsService.sendKeysDeletedEvent(
-      clientOptions.instanceId,
-      result,
-    );
     this.logger.log('Succeed to delete keys');
     return { affected: result };
   }
@@ -252,7 +255,7 @@ export class KeysBusinessService {
       throw new BadRequestException(ERROR_MESSAGES.NEW_KEY_NAME_EXIST);
     }
     this.logger.log('Succeed to rename key');
-    return { keyName: newKeyName };
+    return plainToClass(RenameKeyResponse, { keyName: newKeyName });
   }
 
   public async updateTtl(
@@ -271,10 +274,9 @@ export class KeysBusinessService {
   ): Promise<KeyTtlResponse> {
     this.logger.log('Setting a timeout on key.');
     const { keyName, ttl } = dto;
-    let currentTtl;
     let result;
     try {
-      currentTtl = await this.browserTool.execCommand(
+      await this.browserTool.execCommand(
         clientOptions,
         BrowserToolKeysCommands.Ttl,
         [keyName],
@@ -295,11 +297,6 @@ export class KeysBusinessService {
       throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
     }
     this.logger.log('Succeed to set a timeout on key.');
-    this.browserAnalyticsService.sendKeyTTLChangedEvent(
-      clientOptions.instanceId,
-      ttl >= 0 ? ttl : -2,
-      currentTtl,
-    );
     return { ttl: ttl >= 0 ? ttl : -2 };
   }
 
@@ -328,11 +325,6 @@ export class KeysBusinessService {
           clientOptions,
           BrowserToolKeysCommands.Persist,
           [keyName],
-        );
-        this.browserAnalyticsService.sendKeyTTLChangedEvent(
-          clientOptions.instanceId,
-          -1,
-          currentTtl,
         );
       }
     } catch (error) {

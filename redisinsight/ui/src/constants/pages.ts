@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 export interface IRoute {
   path: any;
@@ -12,7 +12,12 @@ export interface IRoute {
 
 export enum PageNames {
   workbench = 'workbench',
-  browser = 'browser'
+  browser = 'browser',
+  slowLog = 'slowlog',
+  pubSub = 'pub-sub',
+  analytics = 'analytics',
+  clusterDetails = 'cluster-details',
+  databaseAnalysis = 'database-analysis'
 }
 
 const redisCloud = '/redis-cloud'
@@ -31,5 +36,10 @@ export const Pages = {
   sentinelDatabases: `${sentinel}/databases`,
   sentinelDatabasesResult: `${sentinel}/databases-result`,
   browser: (instanceId: string) => `/${instanceId}/${PageNames.browser}`,
-  workbench: (instanceId: string) => `/${instanceId}/${PageNames.workbench}`
+  workbench: (instanceId: string) => `/${instanceId}/${PageNames.workbench}`,
+  pubSub: (instanceId: string) => `/${instanceId}/${PageNames.pubSub}`,
+  analytics: (instanceId: string) => `/${instanceId}/${PageNames.analytics}`,
+  slowLog: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.slowLog}`,
+  clusterDetails: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.clusterDetails}`,
+  databaseAnalysis: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.databaseAnalysis}`,
 }

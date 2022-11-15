@@ -8,7 +8,10 @@ services:
     tty: true
     volumes:
       - ./results:/usr/src/app/results
+      - ./report:/usr/src/app/report
       - ./plugins:/usr/src/app/plugins
+      - .redisinsight-v2:/root/.redisinsight-v2
+      - .ritmp:/tmp
     env_file:
       - ./.env
     entrypoint: [
@@ -35,4 +38,6 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ./plugins:/root/.redisinsight-preview/plugins
+      - .redisinsight-v2:/root/.redisinsight-v2
+      - .ritmp:/tmp
+

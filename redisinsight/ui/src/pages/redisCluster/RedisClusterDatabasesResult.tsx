@@ -20,7 +20,7 @@ import {
 } from 'uiSrc/slices/interfaces'
 import { setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
-import { clusterSelector } from 'uiSrc/slices/cluster'
+import { clusterSelector } from 'uiSrc/slices/instances/cluster'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 
 import styles from './styles.module.scss'

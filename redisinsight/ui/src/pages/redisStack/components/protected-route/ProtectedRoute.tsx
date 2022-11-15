@@ -1,7 +1,7 @@
 import React from 'react'
 import { Redirect, Route } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
 
 interface IProps {

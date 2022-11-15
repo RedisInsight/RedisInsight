@@ -11,8 +11,8 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
-import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances'
-import { fetchKeys, keysSelector, setFilter } from 'uiSrc/slices/keys'
+import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
+import { fetchKeys, keysSelector, setFilter } from 'uiSrc/slices/browser/keys'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
@@ -28,7 +28,7 @@ const FilterKeyType = () => {
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState<boolean>(false)
 
   const { version } = useSelector(connectedInstanceOverviewSelector)
-  const { filter, viewType } = useSelector(keysSelector)
+  const { filter, viewType, searchMode } = useSelector(keysSelector)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const FilterKeyType = () => {
   }, [version])
 
   useEffect(() => {
-    filter && setTypeSelected(filter)
+    setTypeSelected(filter ?? '')
   }, [filter])
 
   const options: EuiSuperSelectOption<string>[] = FILTER_KEY_TYPE_OPTIONS.map(
@@ -56,21 +56,32 @@ const FilterKeyType = () => {
               className={styles.controlsIcon}
               data-testid={`filter-option-type-selected-${value}`}
             />
-            <EuiHealth color={color} />
           </>
         ),
-        dropdownDisplay: <EuiHealth color={color}>{text}</EuiHealth>,
+        dropdownDisplay: <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>,
         'data-test-subj': `filter-option-type-${value}`,
       }
     }
   )
 
+  options.push({
+    value: 'clear',
+    inputDisplay: null,
+    dropdownDisplay: (
+      <div className={styles.clearSelectionBtn} data-testid="clear-selection-btn">Clear Selection</div>
+    )
+  })
+
   const onChangeType = (initValue: string) => {
-    const value = typeSelected === initValue ? '' : initValue
+    const value = (initValue === 'clear') ? '' : typeSelected === initValue ? '' : initValue
     setTypeSelected(value)
     setIsSelectOpen(false)
     dispatch(setFilter(value || null))
-    dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
+    dispatch(fetchKeys(
+      searchMode,
+      '0',
+      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+    ))
 
     // reset browser tree context
     dispatch(resetBrowserTree())

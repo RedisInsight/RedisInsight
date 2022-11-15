@@ -9,6 +9,17 @@ const KEY_INPUT_TEST_ID = 'edit-key-input'
 const KEY_BTN_TEST_ID = 'edit-key-btn'
 const TTL_INPUT_TEST_ID = 'edit-ttl-input'
 
+jest.mock('uiSrc/slices/browser/keys', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/keys'),
+  selectedKeyDataSelector: jest.fn().mockReturnValue({
+    name: {
+      type: 'Buffer',
+      data: [116, 101, 115, 116]
+    },
+    nameString: 'test'
+  }),
+}))
+
 describe('KeyDetailsHeader', () => {
   global.navigator.clipboard = {
     writeText: jest.fn()
@@ -21,13 +32,7 @@ describe('KeyDetailsHeader', () => {
   it('should change key properly', () => {
     render(<KeyDetailsHeader {...mockedProps} />)
 
-    fireEvent(
-      screen.getByTestId(KEY_BTN_TEST_ID),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId(KEY_BTN_TEST_ID))
 
     fireEvent.change(
       screen.getByTestId(KEY_INPUT_TEST_ID),
@@ -49,13 +54,7 @@ describe('KeyDetailsHeader', () => {
 
     expect(screen.getByLabelText(/Copy key name/i)).toBeInTheDocument()
 
-    fireEvent(
-      screen.getByLabelText(/Copy key name/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByLabelText(/Copy key name/i))
   })
 
   it('should call onClose', () => {
@@ -70,7 +69,7 @@ describe('KeyDetailsHeader', () => {
     const onRefresh = jest.fn()
     render(<KeyDetailsHeader {...mockedProps} onRefresh={onRefresh} />)
 
-    fireEvent.click(screen.getByLabelText(/Refresh key/i))
+    fireEvent.click(screen.getByTestId('refresh-key-btn'))
     expect(onRefresh).toBeCalled()
   })
 
@@ -78,13 +77,7 @@ describe('KeyDetailsHeader', () => {
     const onEditKey = jest.fn()
     render(<KeyDetailsHeader {...mockedProps} onEditKey={onEditKey} />)
 
-    fireEvent(
-      screen.getByTestId(KEY_BTN_TEST_ID),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    fireEvent.click(screen.getByTestId(KEY_BTN_TEST_ID))
 
     fireEvent.change(
       screen.getByTestId(KEY_INPUT_TEST_ID),

@@ -1,7 +1,8 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import { fetchVisualisationResults, setReJSONDataAction } from 'uiSrc/slices/rejson'
+import { fireEvent, render, screen, act } from 'uiSrc/utils/test-utils'
+
+import { fetchVisualisationResults } from 'uiSrc/slices/browser/rejson'
 import JSONObject, { Props } from './JSONObject'
 
 const EXPAND_OBJECT = 'expand-object'
@@ -10,7 +11,6 @@ const JSON_VALUE_DOT = '.jsonValue'
 const EDIT_OBJECT_BTN = 'edit-object-btn'
 
 const mockedProps = mock<Props>()
-jest.mock('uiSrc/slices/rejson')
 
 const mockedSimpleJSONObject = { a: 1, b: null, c: 'string', d: true }
 const mockedDownloadedObjectWithObjects = {
@@ -20,14 +20,15 @@ const mockedDownloadedObjectWithArray = {
   a: [1, null, 'aaa']
 }
 
-describe('JSONObject', () => {
-  beforeEach(() => {
-    setReJSONDataAction.mockImplementation(() => jest.fn)
-    fetchVisualisationResults.mockImplementation(() => jest.fn().mockReturnValue(
-      Promise.resolve({ data: mockedSimpleJSONObject })
-    ))
-  })
+jest.mock('uiSrc/slices/browser/rejson', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/rejson'),
+  setReJSONDataAction: jest.fn,
+  fetchVisualisationResults: jest.fn().mockReturnValue(
+    Promise.resolve({ data: mockedSimpleJSONObject })
+  ),
+}))
 
+describe('JSONObject', () => {
   it('should render', () => {
     expect(render(
       <JSONObject
@@ -38,7 +39,7 @@ describe('JSONObject', () => {
     )).toBeTruthy()
   })
 
-  it('should expand simple downloaded JSON', () => {
+  it('should expand simple downloaded JSON', async () => {
     const { container } = render(<JSONObject
       {...instance(mockedProps)}
       keyName="keyName"
@@ -47,18 +48,14 @@ describe('JSONObject', () => {
       onJSONKeyExpandAndCollapse={jest.fn()}
     />)
 
-    fireEvent(
-      screen.getByTestId(EXPAND_OBJECT),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
+    })
 
     expect(container.querySelectorAll(JSON_VALUE_DOT)).toHaveLength(4)
   })
 
-  it('should render and expand downloaded JSON with objects', () => {
+  it('should render and expand downloaded JSON with objects', async () => {
     const { container } = render(<JSONObject
       {...instance(mockedProps)}
       keyName="keyName"
@@ -67,26 +64,17 @@ describe('JSONObject', () => {
       onJSONKeyExpandAndCollapse={jest.fn()}
     />)
 
-    fireEvent(
-      screen.getByTestId(EXPAND_OBJECT),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
-
-    fireEvent(
-      screen.getByTestId(EXPAND_OBJECT),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
+    })
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
+    })
 
     expect(container.querySelectorAll(JSON_VALUE_DOT)).toHaveLength(4)
   })
 
-  it('should render and expand downloaded JSON with array', () => {
+  it('should render and expand downloaded JSON with array', async () => {
     const { container } = render(<JSONObject
       {...instance(mockedProps)}
       keyName="keyName"
@@ -95,26 +83,21 @@ describe('JSONObject', () => {
       onJSONKeyExpandAndCollapse={jest.fn()}
     />)
 
-    fireEvent(
-      screen.getByTestId(EXPAND_OBJECT),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
+    })
 
-    fireEvent(
-      screen.getByTestId('expand-array'),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId('expand-array'))
+    })
 
     expect(container.querySelectorAll(JSON_VALUE_DOT)).toHaveLength(3)
   })
 
   it('should render simple not downloaded JSON', async () => {
+    fetchVisualisationResults.mockImplementation(() => jest.fn().mockReturnValue(
+      Promise.resolve({ data: mockedSimpleJSONObject })
+    ))
     const { container } = render(<JSONObject
       {...instance(mockedProps)}
       keyName="keyName"
@@ -123,13 +106,9 @@ describe('JSONObject', () => {
       onJSONKeyExpandAndCollapse={jest.fn()}
     />)
 
-    await fireEvent(
-      screen.getByTestId(EXPAND_OBJECT),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
+    })
 
     expect(container.querySelectorAll(JSON_VALUE_DOT)).toHaveLength(4)
   })
@@ -172,18 +151,14 @@ describe('JSONObject', () => {
       onJSONKeyExpandAndCollapse={jest.fn()}
     />)
 
-    await fireEvent(
-      screen.getByTestId(EXPAND_OBJECT),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
+    })
 
     expect(container.querySelectorAll(JSON_VALUE_DOT)).toHaveLength(3)
   })
 
-  it('should render inline editor to add', () => {
+  it('should render inline editor to add', async () => {
     render(<JSONObject
       {...instance(mockedProps)}
       keyName="keyName"
@@ -192,26 +167,18 @@ describe('JSONObject', () => {
       onJSONKeyExpandAndCollapse={jest.fn()}
     />)
 
-    fireEvent(
-      screen.getByTestId(/expand-object/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(/expand-object/i))
+    })
 
-    fireEvent(
-      screen.getByTestId(/add-field-btn/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(/add-field-btn/i))
+    })
 
     expect(screen.getByTestId('apply-btn')).toBeInTheDocument()
   })
 
-  it('should not be able to add value with wrong json', () => {
+  it('should not be able to add value with wrong json', async () => {
     const onJSONPropertyAdded = jest.fn()
     render(<JSONObject
       {...instance(mockedProps)}
@@ -222,21 +189,13 @@ describe('JSONObject', () => {
       onJSONKeyExpandAndCollapse={jest.fn()}
     />)
 
-    fireEvent(
-      screen.getByTestId(/expand-object/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(/expand-object/i))
+    })
 
-    fireEvent(
-      screen.getByTestId(/add-field-btn/i),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(/add-field-btn/i))
+    })
 
     fireEvent.change(screen.getByTestId('json-key'), {
       target: { value: '"a"' }
@@ -250,7 +209,7 @@ describe('JSONObject', () => {
     // expect(screen.getByTestId('apply-btn')).toBeDisabled();
   })
 
-  it('should apply proper value to add element in object', () => {
+  it('should apply proper value to add element in object', async () => {
     const onJSONPropertyAdded = jest.fn()
     render(<JSONObject
       {...instance(mockedProps)}
@@ -262,21 +221,13 @@ describe('JSONObject', () => {
       onJSONPropertyAdded={onJSONPropertyAdded}
     />)
 
-    fireEvent(
-      screen.getByTestId(EXPAND_OBJECT),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EXPAND_OBJECT))
+    })
 
-    fireEvent(
-      screen.getByTestId('add-field-btn'),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId('add-field-btn'))
+    })
 
     fireEvent.change(screen.getByTestId('json-key'), {
       target: { value: '"key"' }
@@ -286,18 +237,14 @@ describe('JSONObject', () => {
       target: { value: '{}' }
     })
 
-    fireEvent(
-      screen.getByTestId('apply-btn'),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId('apply-btn'))
+    })
 
     expect(onJSONPropertyAdded).toBeCalled()
   })
 
-  it('should render inline editor to edit value', () => {
+  it('should render inline editor to edit value', async () => {
     render(<JSONObject
       {...instance(mockedProps)}
       keyName="keyName"
@@ -306,18 +253,14 @@ describe('JSONObject', () => {
       onJSONKeyExpandAndCollapse={jest.fn()}
     />)
 
-    fireEvent(
-      screen.getByTestId(EDIT_OBJECT_BTN),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EDIT_OBJECT_BTN))
+    })
 
     expect(screen.getByTestId(JSON_VALUE)).toBeInTheDocument()
   })
 
-  it('should change value when editing', () => {
+  it('should change value when editing', async () => {
     render(<JSONObject
       {...instance(mockedProps)}
       keyName="keyName"
@@ -326,13 +269,9 @@ describe('JSONObject', () => {
       onJSONKeyExpandAndCollapse={jest.fn()}
     />)
 
-    fireEvent(
-      screen.getByTestId(EDIT_OBJECT_BTN),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EDIT_OBJECT_BTN))
+    })
 
     fireEvent.change(screen.getByTestId(JSON_VALUE), {
       target: { value: '{}' }
@@ -341,7 +280,7 @@ describe('JSONObject', () => {
     expect(screen.getByTestId(JSON_VALUE)).toHaveValue('{}')
   })
 
-  it('should not apply wrong value for edit', () => {
+  it('should not apply wrong value for edit', async () => {
     const onJSONPropertyEdited = jest.fn()
     render(<JSONObject
       {...instance(mockedProps)}
@@ -352,13 +291,9 @@ describe('JSONObject', () => {
       onJSONKeyExpandAndCollapse={jest.fn()}
     />)
 
-    fireEvent(
-      screen.getByTestId(EDIT_OBJECT_BTN),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EDIT_OBJECT_BTN))
+    })
 
     fireEvent.change(screen.getByTestId(JSON_VALUE), {
       target: { value: '{' }
@@ -368,7 +303,7 @@ describe('JSONObject', () => {
     // expect(screen.getByTestId('apply-edit-btn')).toBeDisabled()
   })
 
-  it('should apply proper value for edit', () => {
+  it('should apply proper value for edit', async () => {
     const onJSONPropertyEdited = jest.fn()
     render(<JSONObject
       {...instance(mockedProps)}
@@ -380,25 +315,17 @@ describe('JSONObject', () => {
       onJSONPropertyEdited={onJSONPropertyEdited}
     />)
 
-    fireEvent(
-      screen.getByTestId(EDIT_OBJECT_BTN),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId(EDIT_OBJECT_BTN))
+    })
 
     fireEvent.change(screen.getByTestId(JSON_VALUE), {
       target: { value: '{}' }
     })
 
-    fireEvent(
-      screen.getByTestId('apply-edit-btn'),
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      })
-    )
+    await act(async () => {
+      await fireEvent.click(screen.getByTestId('apply-edit-btn'))
+    })
 
     expect(onJSONPropertyEdited).toBeCalled()
   })

@@ -2,6 +2,9 @@
 export default {
   INVALID_DATABASE_INSTANCE_ID: 'Invalid database instance id.',
   COMMAND_EXECUTION_NOT_FOUND: 'Command execution was not found.',
+  DATABASE_ANALYSIS_NOT_FOUND: 'Database analysis was not found.',
+  PROFILER_LOG_FILE_NOT_FOUND: 'Profiler log file was not found.',
+  CONSUMER_GROUP_NOT_FOUND: 'Consumer Group with such name was not found.',
   PLUGIN_STATE_NOT_FOUND: 'Plugin state was not found.',
   UNDEFINED_INSTANCE_ID: 'Undefined redis database instance id.',
   NO_CONNECTION_TO_REDIS_DB: 'No connection to the Redis Database.',
@@ -20,6 +23,7 @@ export default {
   MASTER_GROUP_NOT_EXIST: "Master group with this name doesn't exist",
 
   KEY_NAME_EXIST: 'This key name is already in use.',
+  REDISEARCH_INDEX_EXIST: 'This index name is already in use.',
   KEY_NOT_EXIST: 'Key with this name does not exist.',
   PATH_NOT_EXISTS: () => 'There is no such path.',
   INDEX_OUT_OF_RANGE: () => 'Index is out of range.',

@@ -8,10 +8,11 @@ import {
   mockedStore,
   render,
   screen,
-  waitFor,
+  act,
 } from 'uiSrc/utils/test-utils'
-import QueryWrapper, { Props as QueryProps } from 'uiSrc/components/query'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import QueryWrapper from 'uiSrc/components/query'
+import { Props as QueryProps } from 'uiSrc/components/query/QueryWrapper'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendWBCommandAction } from 'uiSrc/slices/workbench/wb-results'
 import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
@@ -33,7 +34,7 @@ jest.mock('uiSrc/components/query', () => ({
 
 const QueryWrapperMock = (props: QueryProps) => (
   <div
-    onKeyDown={(e: any) => props.onKeyDown(e, 'get')}
+    onKeyDown={(e: any) => props.onKeyDown?.(e, 'get')}
     data-testid="query"
     aria-label="query"
     role="textbox"
@@ -49,8 +50,8 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-jest.mock('uiSrc/slices/instances', () => ({
-  ...jest.requireActual('uiSrc/slices/instances'),
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: '123',
     connectionType: 'STANDALONE',
@@ -97,15 +98,6 @@ describe('WBViewWrapper', () => {
   })
 
   it('should render', () => {
-    // connectedInstanceSelector.mockImplementation(() => ({
-    //   id: '123',
-    //   connectionType: 'CLUSTER',
-    // }));
-
-    // const sendWBCommandClusterActionMock = jest.fn();
-
-    // sendWBCommandClusterAction.mockImplementation(() => sendWBCommandClusterActionMock);
-
     expect(render(<WBViewWrapper />)).toBeTruthy()
   })
 
@@ -119,19 +111,19 @@ describe('WBViewWrapper', () => {
   })
 
   it.skip('"onSubmit" for Cluster connection should call "sendWBCommandClusterAction"', async () => {
-    connectedInstanceSelector.mockImplementation(() => ({
+    (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
       id: '123',
       connectionType: 'CLUSTER',
     }))
 
-    const sendWBCommandClusterActionMock = jest.fn()
+    const sendWBCommandClusterActionMock = jest.fn();
 
-    sendWBCommandAction.mockImplementation(() => sendWBCommandClusterActionMock)
+    (sendWBCommandAction as jest.Mock).mockImplementation(() => sendWBCommandClusterActionMock)
 
     const { queryAllByTestId } = render(<WBViewWrapper />)
 
     // Act
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(queryAllByTestId(/preselect-/)[0])
     })
 

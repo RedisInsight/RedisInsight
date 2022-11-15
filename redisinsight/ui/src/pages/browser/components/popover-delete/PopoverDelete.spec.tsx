@@ -16,14 +16,10 @@ describe('PopoverDelete', () => {
       <PopoverDelete
         {...instance(mockedProps)}
         item="name"
-        keyName="key"
         showPopover={showPopover}
       />
     )
-    fireEvent(
-      screen.getByLabelText(/remove field/i),
-      new MouseEvent('click', { bubbles: true })
-    )
+    fireEvent.click(screen.getByLabelText(/remove field/i))
 
     expect(showPopover).toBeCalledTimes(1)
   })
@@ -36,16 +32,12 @@ describe('PopoverDelete', () => {
         item="name"
         suffix="_"
         deleting="name_"
-        keyName="key"
         handleDeleteItem={handleDeleteItem}
       />
     )
 
     const deleteBtn = screen.getByTestId('remove')
-    fireEvent(
-      deleteBtn,
-      new MouseEvent('click', { bubbles: true })
-    )
+    fireEvent.click(deleteBtn)
     expect(handleDeleteItem).toBeCalledTimes(1)
   })
 })

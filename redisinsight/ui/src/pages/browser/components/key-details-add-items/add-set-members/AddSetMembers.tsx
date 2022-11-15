@@ -11,9 +11,13 @@ import {
   EuiPanel,
 } from '@elastic/eui'
 
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
-import { addSetMembersAction, setSelector } from 'uiSrc/slices/set'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { addSetMembersAction, setSelector } from 'uiSrc/slices/browser/set'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { KeyTypes } from 'uiSrc/constants'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { stringToBuffer } from 'uiSrc/utils'
 import AddItemsActions from '../../add-items-actions/AddItemsActions'
 import { AddZsetFormConfig as config } from '../../add-key/constants/fields-config'
 
@@ -39,11 +43,29 @@ const AddSetMembers = (props: Props) => {
   const [members, setMembers] = useState<ISetMemberState[]>([{ ...INITIAL_SET_MEMBER_STATE }])
   const { loading } = useSelector(setSelector)
   const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
+  const { viewType } = useSelector(keysSelector)
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
   const lastAddedMemberName = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     lastAddedMemberName.current?.focus()
   }, [members.length])
+
+  const onSuccessAdded = () => {
+    onCancel()
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.Set,
+        numberOfAdded: members.length,
+      }
+    })
+  }
 
   const addMember = () => {
     const lastField = members[members.length - 1]
@@ -88,9 +110,10 @@ const AddSetMembers = (props: Props) => {
   const submitData = (): void => {
     const data = {
       keyName: selectedKey,
-      members: members.map((item) => item.name),
+      members: members.map((item) => stringToBuffer(item.name)),
     }
-    dispatch(addSetMembersAction(data, onCancel))
+
+    dispatch(addSetMembersAction(data, onSuccessAdded))
   }
 
   const isClearDisabled = (item: ISetMemberState): boolean => members.length === 1 && !item.name.length

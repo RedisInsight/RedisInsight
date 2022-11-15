@@ -29,6 +29,8 @@ $sideBarWidth: 60px;
 
     &.active {
       background-color: var(--euiColorSuccessText) !important;
+      transform: none;
+      cursor: default;
     }
 
     &.navigationButtonNotified {
@@ -56,7 +58,6 @@ $sideBarWidth: 60px;
 
 .navigation {
   background: var(--navBackgroundColor) !important;
-  padding: 32px 0;
   display: flex !important;
   flex-direction: column;
   justify-content: space-between;
@@ -74,7 +75,7 @@ $sideBarWidth: 60px;
   background-color: var(--navBackgroundColor);
 }
 
-.iconLogo {
+.iconNavItem {
   display: inline-flex;
   height: 60px;
   width: 60px;
@@ -90,6 +91,46 @@ $sideBarWidth: 60px;
   :global(.euiIcon) {
     width: 34px;
     height: 34px;
+  }
+
+  :global(.euiLink.euiLink--primary) {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    &:focus {
+      animation: none !important;
+    }
+  }
+}
+
+.homeIcon {
+  height: 60px;
+  width: 72px;
+  @media only screen and (min-width: 768px) {
+    height: 72px;
+    width: 60px;
+  }
+}
+
+.githubLink {
+  :global(.euiLink.euiLink--primary):focus {
+    animation: none !important;
+  }
+  .githubIcon {
+    width: 30px;
+    height: 30px;
+    // color of icon, no need variable here
+    border: 2px solid #000;
+    border-radius: 100%;
+    transition: border-color ease .3s;
+  }
+  &:hover {
+    .githubIcon {
+      border-color: var(--euiColorSuccessText);
+    }
   }
 }
 
@@ -154,4 +195,13 @@ $sideBarWidth: 60px;
 .helpMenuText {
   font-size: 13px !important;
   line-height: 1.35 !important;
+}
+
+.logo {
+  &:hover {
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(1px);
+  }
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NodePublicState } from 'react-vtree/dist/es/Tree'
 import cx from 'classnames'
 import { EuiIcon, EuiToolTip, keys as ElasticKeys } from '@elastic/eui'
@@ -16,7 +16,6 @@ const Node = ({
   setOpen
 }: NodePublicState<TreeData>) => {
   const {
-    id,
     isLeaf,
     leafIcon,
     keys,
@@ -31,8 +30,14 @@ const Node = ({
     updateStatusSelected,
   } = data
 
+  useEffect(() => {
+    if (isSelected && keys) {
+      updateStatusSelected?.(fullName, keys)
+    }
+  }, [keys, isSelected])
+
   const handleClick = () => {
-    if (isLeaf && keys) {
+    if (isLeaf && keys && !isSelected) {
       setItems?.(keys)
       updateStatusSelected?.(fullName, keys)
     }

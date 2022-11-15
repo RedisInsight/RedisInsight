@@ -1,3 +1,4 @@
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { CommandGroup } from './commands'
 
 export enum KeyTypes {
@@ -8,9 +9,6 @@ export enum KeyTypes {
   String = 'string',
   ReJSON = 'ReJSON-RL',
   JSON = 'json',
-}
-
-export enum UnsupportedKeyTypes {
   Stream = 'stream',
 }
 
@@ -27,8 +25,8 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [KeyTypes.String]: 'String',
   [KeyTypes.ReJSON]: 'JSON',
   [KeyTypes.JSON]: 'JSON',
-  [UnsupportedKeyTypes.Stream]: 'Stream',
-  [ModulesKeyTypes.Graph]: 'GRAPH',
+  [KeyTypes.Stream]: 'Stream',
+  [ModulesKeyTypes.Graph]: 'Graph',
   [ModulesKeyTypes.TimeSeries]: 'TS',
   [CommandGroup.Bitmap]: 'Bitmap',
   [CommandGroup.Cluster]: 'Cluster',
@@ -45,7 +43,11 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [CommandGroup.CMS]: 'CMS',
   [CommandGroup.TDigest]: 'TDigest',
   [CommandGroup.TopK]: 'TopK',
+  [CommandGroup.BloomFilter]: 'Bloom Filter',
+  [CommandGroup.CuckooFilter]: 'Cuckoo Filter',
 })
+
+export type GroupTypesDisplay = keyof (typeof GROUP_TYPES_DISPLAY)
 
 // Enums don't allow to use dynamic key
 export const GROUP_TYPES_COLORS = Object.freeze({
@@ -56,7 +58,7 @@ export const GROUP_TYPES_COLORS = Object.freeze({
   [KeyTypes.String]: 'var(--typeStringColor)',
   [KeyTypes.ReJSON]: 'var(--typeReJSONColor)',
   [KeyTypes.JSON]: 'var(--typeReJSONColor)',
-  [UnsupportedKeyTypes.Stream]: 'var(--typeStreamColor)',
+  [KeyTypes.Stream]: 'var(--typeStreamColor)',
   [ModulesKeyTypes.Graph]: 'var(--typeGraphColor)',
   [ModulesKeyTypes.TimeSeries]: 'var(--typeTimeSeriesColor)',
   [CommandGroup.SortedSet]: 'var(--groupSortedSetColor)',
@@ -72,7 +74,23 @@ export const GROUP_TYPES_COLORS = Object.freeze({
   [CommandGroup.HyperLogLog]: 'var(--groupHyperLolLogColor)',
 })
 
-export const KEY_TYPES_ACTIONS = Object.freeze({
+export type GroupTypesColors = keyof (typeof GROUP_TYPES_COLORS)
+
+export type KeyTypesActions = {
+  [key: string]: {
+    addItems?: {
+      name: string
+    }
+    removeItems?: {
+      name: string
+    }
+    editItem?: {
+      name: string
+    }
+  }
+}
+
+export const KEY_TYPES_ACTIONS: KeyTypesActions = Object.freeze({
   [KeyTypes.Hash]: {
     addItems: {
       name: 'Add Fields',
@@ -101,7 +119,28 @@ export const KEY_TYPES_ACTIONS = Object.freeze({
       name: 'Edit Value',
     },
   },
-  [KeyTypes.ReJSON]: {},
+  [KeyTypes.ReJSON]: {}
+})
+
+export const STREAM_ADD_GROUP_VIEW_TYPES = [
+  StreamViewType.Groups,
+  StreamViewType.Consumers,
+  StreamViewType.Messages
+]
+
+export const STREAM_ADD_ACTION = Object.freeze({
+  [StreamViewType.Data]: {
+    name: 'New Entry'
+  },
+  [StreamViewType.Groups]: {
+    name: 'New Group'
+  },
+  [StreamViewType.Consumers]: {
+    name: 'New Group'
+  },
+  [StreamViewType.Messages]: {
+    name: 'New Group'
+  }
 })
 
 export enum SortOrder {
@@ -109,13 +148,34 @@ export enum SortOrder {
   DESC = 'DESC',
 }
 
-export const LENGTH_NAMING_BY_TYPE = Object.freeze({
+export interface LengthNamingByType {
+  [key: string]: string
+}
+
+export const LENGTH_NAMING_BY_TYPE: LengthNamingByType = Object.freeze({
   [ModulesKeyTypes.Graph]: 'Nodes',
   [ModulesKeyTypes.TimeSeries]: 'Samples',
-  [UnsupportedKeyTypes.Stream]: 'Entries'
+  [KeyTypes.Stream]: 'Entries'
 })
 
-export const MODULES_KEY_TYPES_NAMES = Object.freeze({
+export interface ModulesKeyTypesNames {
+  [key: string]: string
+}
+
+export const MODULES_KEY_TYPES_NAMES: ModulesKeyTypesNames = Object.freeze({
   [ModulesKeyTypes.Graph]: 'RedisGraph',
   [ModulesKeyTypes.TimeSeries]: 'RedisTimeSeries',
 })
+
+export enum KeyValueFormat {
+  Unicode = 'Unicode',
+  ASCII = 'ASCII',
+  JSON = 'JSON',
+  HEX = 'HEX',
+  Binary = 'Binary',
+  Msgpack = 'Msgpack',
+  PHP = 'PHP serialized',
+  JAVA = 'Java serialized',
+  Protobuf = 'Protobuf',
+  Pickle = 'Pickle',
+}

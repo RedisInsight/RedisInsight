@@ -1,8 +1,32 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDefined } from 'class-validator';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
-import { ClusterNodeRole } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { ClusterNodeRole, RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';
 import { Expose } from 'class-transformer';
+
+export class ResultsSummary {
+  @ApiProperty({
+    description: 'Total number of commands executed',
+    type: Number,
+  })
+  @IsDefined()
+  total: number;
+
+  @ApiProperty({
+    description: 'Total number of successful commands executed',
+    type: Number,
+  })
+  @IsDefined()
+  success: number;
+
+  @ApiProperty({
+    description: 'Total number of failed commands executed',
+    type: Number,
+  })
+  @IsDefined()
+  fail: number;
+}
 
 export class CommandExecution {
   @ApiProperty({
@@ -26,6 +50,29 @@ export class CommandExecution {
   @Expose()
   command: string;
 
+  @ApiPropertyOptional({
+    description: 'Workbench mode',
+    default: RunQueryMode.ASCII,
+    enum: RunQueryMode,
+  })
+  @Expose()
+  mode?: RunQueryMode = RunQueryMode.ASCII;
+
+  @ApiPropertyOptional({
+    description: 'Workbench result mode',
+    default: ResultsMode.Default,
+    enum: ResultsMode,
+  })
+  @Expose()
+  resultsMode?: ResultsMode = ResultsMode.Default;
+
+  @ApiPropertyOptional({
+    description: 'Workbench executions summary',
+    type: () => ResultsSummary,
+  })
+  @Expose()
+  summary?: ResultsSummary;
+
   @ApiProperty({
     description: 'Command execution result',
     type: () => CommandExecutionResult,
@@ -33,6 +80,13 @@ export class CommandExecution {
   })
   @Expose()
   result: CommandExecutionResult[];
+
+  @ApiPropertyOptional({
+    description: 'Result did not stored in db',
+    type: Boolean,
+  })
+  @Expose()
+  isNotStored?: boolean;
 
   @ApiPropertyOptional({
     description: 'Nodes roles where command was executed',
@@ -55,6 +109,13 @@ export class CommandExecution {
   })
   @Expose()
   createdAt: Date;
+
+  @ApiPropertyOptional({
+    description: 'Workbench command execution time',
+    type: Number,
+  })
+  @Expose()
+  executionTime?: number;
 
   constructor(partial: Partial<CommandExecution> = {}) {
     Object.assign(this, partial);

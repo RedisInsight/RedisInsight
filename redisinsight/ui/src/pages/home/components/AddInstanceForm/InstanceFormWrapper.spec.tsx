@@ -1,20 +1,22 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { Instance } from 'uiSrc/slices/interfaces'
 import InstanceFormWrapper, { Props } from './InstanceFormWrapper'
 import InstanceForm, {
   Props as InstanceProps,
 } from './InstanceForm/InstanceForm'
 
 const mockedProps = mock<Props>()
-const mockedEditedInstance = {
+const mockedEditedInstance: Instance = {
   name: 'name',
   host: 'host',
   port: 123,
-  tls: {
-    caCertId: 'zxc',
-    clientCertPairId: 'zxc',
-  },
+  id: '123',
+  modules: [],
+  tls: true,
+  caCert: { id: 'zxc' },
+  clientCert: { id: 'zxc' },
 }
 
 const mockedValues = {
@@ -36,23 +38,23 @@ jest.mock('./InstanceForm/InstanceForm', () => ({
   default: jest.fn(),
 }))
 
-jest.mock('uiSrc/slices/instances', () => ({
+jest.mock('uiSrc/slices/instances/instances', () => ({
   createInstanceStandaloneAction: () => jest.fn,
   updateInstanceAction: () => jest.fn,
   instancesSelector: jest.fn().mockReturnValue({ loadingChanging: false }),
 }))
 
-jest.mock('uiSrc/slices/clientCerts', () => ({
+jest.mock('uiSrc/slices/instances/clientCerts', () => ({
   clientCertsSelector: () => jest.fn().mockReturnValue({ data: [] }),
   fetchClientCerts: jest.fn,
 }))
 
-jest.mock('uiSrc/slices/caCerts', () => ({
+jest.mock('uiSrc/slices/instances/caCerts', () => ({
   caCertsSelector: () => jest.fn().mockReturnValue({ data: [] }),
   fetchCaCerts: () => jest.fn,
 }))
 
-jest.mock('uiSrc/slices/sentinel', () => ({
+jest.mock('uiSrc/slices/instances/sentinel', () => ({
   sentinelSelector: () => jest.fn().mockReturnValue({ loading: false }),
   fetchMastersSentinelAction: () => jest.fn,
 }))

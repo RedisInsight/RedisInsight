@@ -1,5 +1,6 @@
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { ReplyError } from 'src/models/redis-client';
+import { Cluster, Redis } from 'ioredis';
 
 export interface IRedisConsumer {
   execCommand(
@@ -10,6 +11,13 @@ export interface IRedisConsumer {
 
   execPipeline(
     clientOptions: IFindRedisClientInstanceByOptions,
+    toolCommands: Array<
+    [toolCommand: any, ...args: Array<string | number | Buffer>]
+    >,
+  ): Promise<[ReplyError | null, any]>;
+
+  execPipelineFromClient(
+    client: Redis | Cluster,
     toolCommands: Array<
     [toolCommand: any, ...args: Array<string | number | Buffer>]
     >,

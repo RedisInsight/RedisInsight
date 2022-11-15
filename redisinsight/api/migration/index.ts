@@ -12,6 +12,15 @@ import { databaseDbIndex1634219846022 } from './1634219846022-database-db-index'
 import { encryption1634557312500 } from './1634557312500-encryption';
 import { commandExecution1641795882696 } from './1641795882696-command-execution';
 import { pluginState1641805606399 } from './1641805606399-plugin-state';
+import { sni1650278664000 } from "./1650278664000-sni";
+import { notification1655821010349 } from './1655821010349-notification';
+import { notificationCategory1659687030433 } from './1659687030433-notification-category';
+import { workbenchMode1660664717573 } from './1660664717573-workbench-mode';
+import { workbenchGroupMode1663093411715 } from './1663093411715-workbench-group-mode';
+import { databaseAnalysis1664785208236 } from './1664785208236-database-analysis';
+import { databaseAnalysisExpirationGroups1664886479051 } from './1664886479051-database-analysis-expiration-groups';
+import { workbenchExecutionTime1667368983699 } from './1667368983699-workbench-execution-time';
+import { database1667477693934 } from './1667477693934-database';
 
 export default [
   initialMigration1614164490968,
@@ -28,4 +37,13 @@ export default [
   encryption1634557312500,
   commandExecution1641795882696,
   pluginState1641805606399,
+  sni1650278664000,
+  notification1655821010349,
+  notificationCategory1659687030433,
+  workbenchMode1660664717573,
+  workbenchGroupMode1663093411715,
+  databaseAnalysis1664785208236,
+  databaseAnalysisExpirationGroups1664886479051,
+  workbenchExecutionTime1667368983699,
+  database1667477693934,
 ];

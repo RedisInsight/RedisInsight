@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { isNull } from 'lodash';
+import { isNull, isNaN } from 'lodash';
 import * as isGlob from 'is-glob';
 import config from 'src/utils/config';
 import { catchAclError, catchTransactionError, unescapeGlob } from 'src/utils';
@@ -16,7 +16,6 @@ import {
   DeleteMembersFromZSetResponse,
   GetZSetMembersDto,
   GetZSetResponse,
-  RedisDataType,
   ScanZSetResponse,
   SearchZSetMembersDto,
   SearchZSetMembersResponse,
@@ -27,13 +26,13 @@ import { SortOrder } from 'src/constants/sort';
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ReplyError } from 'src/models';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
+import { plainToClass } from 'class-transformer';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -43,7 +42,6 @@ export class ZSetBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
-    private browserAnalyticsService: BrowserAnalyticsService,
   ) {}
 
   public async createZSet(
@@ -71,14 +69,6 @@ export class ZSetBusinessService {
       } else {
         await this.createSimpleZSet(clientOptions, dto);
       }
-      this.browserAnalyticsService.sendKeyAddedEvent(
-        clientOptions.instanceId,
-        RedisDataType.ZSet,
-        {
-          length: dto.members.length,
-          TTL: dto.expire || -1,
-        },
-      );
       this.logger.log('Succeed to create ZSet data type.');
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -132,7 +122,7 @@ export class ZSetBusinessService {
       }
       catchAclError(error);
     }
-    return result;
+    return plainToClass(GetZSetResponse, result);
   }
 
   public async addMembers(
@@ -156,26 +146,11 @@ export class ZSetBusinessService {
         );
       }
       const args = this.formatMembersDtoToCommandArgs(members);
-      const added = await this.browserTool.execCommand(
+      await this.browserTool.execCommand(
         clientOptions,
         BrowserToolZSetCommands.ZAdd,
         [keyName, ...args],
       );
-      if (added) {
-        this.browserAnalyticsService.sendKeyValueAddedEvent(
-          clientOptions.instanceId,
-          RedisDataType.ZSet,
-          {
-            numberOfAdded: added,
-          },
-        );
-      }
-      if (members.length - added > 0) {
-        this.browserAnalyticsService.sendKeyValueEditedEvent(
-          clientOptions.instanceId,
-          RedisDataType.ZSet,
-        );
-      }
       this.logger.log('Succeed to add members to ZSet data type.');
     } catch (error) {
       this.logger.error('Failed to add members to Set data type.', error);
@@ -220,12 +195,6 @@ export class ZSetBusinessService {
           new NotFoundException(ERROR_MESSAGES.MEMBER_IN_SET_NOT_EXIST),
         );
       }
-      if (result) {
-        this.browserAnalyticsService.sendKeyValueEditedEvent(
-          clientOptions.instanceId,
-          RedisDataType.ZSet,
-        );
-      }
       this.logger.log('Succeed to update member in ZSet data type.');
     } catch (error) {
       this.logger.error('Failed to update member in ZSet data type.', error);
@@ -263,15 +232,6 @@ export class ZSetBusinessService {
         BrowserToolZSetCommands.ZRem,
         [keyName, ...members],
       );
-      if (result) {
-        this.browserAnalyticsService.sendKeyValueRemovedEvent(
-          clientOptions.instanceId,
-          RedisDataType.ZSet,
-          {
-            numberOfRemoved: result,
-          },
-        );
-      }
     } catch (error) {
       this.logger.error('Failed to delete members from the ZSet data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -317,23 +277,17 @@ export class ZSetBusinessService {
           BrowserToolZSetCommands.ZScore,
           [keyName, member],
         );
+        const formattedScore = isNaN(parseFloat(score)) ? String(score) : parseFloat(score);
+
         if (!isNull(score)) {
-          result.members.push({ name: member, score });
+          result.members.push(plainToClass(ZSetMemberDto, { name: member, score: formattedScore }));
         }
       } else {
         const scanResult = await this.scanZSet(clientOptions, dto);
         result = { ...result, ...scanResult };
       }
-      this.browserAnalyticsService.sendKeyScannedEvent(
-        clientOptions.instanceId,
-        RedisDataType.ZSet,
-        dto.match,
-        {
-          length: result.total,
-        },
-      );
       this.logger.log('Succeed to search members of the ZSet data type.');
-      return result;
+      return plainToClass(SearchZSetMembersResponse, result);
     } catch (error) {
       this.logger.error('Failed to search members of the ZSet data type.', error);
 
@@ -423,7 +377,6 @@ export class ZSetBusinessService {
       nextCursor: null,
       members: [],
     };
-
     while (result.nextCursor !== 0 && result.members.length < count) {
       const scanResult = await this.browserTool.execCommand(
         clientOptions,
@@ -454,21 +407,22 @@ export class ZSetBusinessService {
     const result: ZSetMemberDto[] = [];
     while (reply.length) {
       const member = reply.splice(0, 2);
-      result.push({
+      const score = isNaN(parseFloat(member[1])) ? String(member[1]) : parseFloat(member[1]);
+      result.push(plainToClass(ZSetMemberDto, {
         name: member[0],
-        score: parseFloat(member[1]),
-      });
+        score,
+      }));
     }
+
     return result;
   }
 
-  private formatMembersDtoToCommandArgs(members: ZSetMemberDto[]): string[] {
-    return members.reduce<string[]>(
+  private formatMembersDtoToCommandArgs(members: ZSetMemberDto[]): (string | Buffer)[] {
+    return members.reduce<(string | Buffer)[]>(
       (prev: string[], cur: ZSetMemberDto) => [
         ...prev,
-        ...[`${cur.score}`, `${cur.name}`],
+        ...[`${cur.score}`, cur.name],
       ],
-      [],
-    );
+    []);
   }
 }

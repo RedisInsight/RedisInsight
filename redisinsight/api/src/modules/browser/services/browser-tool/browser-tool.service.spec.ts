@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import * as IORedis from 'ioredis';
 import * as Redis from 'ioredis-mock';
 import { mockStandaloneDatabaseEntity } from 'src/__mocks__';
 import {
   IFindRedisClientInstanceByOptions,
   RedisService,
-} from 'src/modules/core/services/redis/redis.service';
+} from 'src/modules/redis/redis.service';
 import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
@@ -13,6 +14,8 @@ import {
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { InternalServerErrorException } from '@nestjs/common';
+import { mockKeyDto } from 'src/modules/browser/__mocks__';
+import { RedisString } from 'src/common/constants';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
@@ -20,6 +23,7 @@ const mockClientOptions: IFindRedisClientInstanceByOptions = {
 
 const mockClient = new Redis();
 const mockConnectionErrorMessage = 'Could not connect to localhost, please check the connection details.';
+const { keyName } = mockKeyDto;
 
 describe('BrowserToolService', () => {
   let service: BrowserToolService;
@@ -55,11 +59,10 @@ describe('BrowserToolService', () => {
       service,
       'execMultiFromClient',
     );
-    mockClient.send_command = jest.fn();
+    mockClient.sendCommand = jest.fn();
   });
 
   describe('execCommand', () => {
-    const keyName = 'keyName';
     it('should call send_command with correct args', async () => {
       getRedisClient.mockResolvedValue(mockClient);
 
@@ -69,10 +72,16 @@ describe('BrowserToolService', () => {
         [keyName],
       );
 
-      expect(mockClient.send_command).toHaveBeenCalledWith('memory', [
-        'usage',
-        keyName,
-      ]);
+      expect(
+        JSON.parse(JSON.stringify(mockClient.sendCommand.mock.calls[0])),
+      ).toStrictEqual(JSON.parse(JSON.stringify(([
+        new IORedis.Command('memory', [
+          'usage',
+          keyName,
+        ], {
+          replyEncoding: null,
+        }),
+      ]))));
     });
     it('should throw error for execCommand', async () => {
       const error = new InternalServerErrorException(
@@ -87,14 +96,13 @@ describe('BrowserToolService', () => {
           [keyName],
         ),
       ).rejects.toThrow(InternalServerErrorException);
-      expect(mockClient.send_command).not.toHaveBeenCalled();
+      expect(mockClient.sendCommand).not.toHaveBeenCalled();
     });
   });
 
   describe('execPipeline', () => {
-    const keyName = 'keyName';
     const args: Array<
-    [toolCommand: BrowserToolCommands, ...args: Array<string | number>]
+    [toolCommand: BrowserToolCommands, ...args: Array<RedisString | number>]
     > = [
       [BrowserToolKeysCommands.Type, keyName],
       [BrowserToolKeysCommands.Ttl, keyName],
@@ -121,9 +129,8 @@ describe('BrowserToolService', () => {
   });
 
   describe('execMulti', () => {
-    const keyName = 'keyName';
     const args: Array<
-    [toolCommand: BrowserToolCommands, ...args: Array<string | number>]
+    [toolCommand: BrowserToolCommands, ...args: Array<RedisString | number>]
     > = [
       [BrowserToolStringCommands.Set, keyName],
       [BrowserToolStringCommands.Get, keyName],

@@ -1,11 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
 
 import { AppDispatch, RootState } from '../store'
-import { StateAppInfo } from '../interfaces'
+import { RedisResponseEncoding, StateAppInfo } from '../interfaces'
 
 const segmentWriteKey = process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY'
 
@@ -13,6 +13,7 @@ export const initialState: StateAppInfo = {
   loading: true,
   error: '',
   server: null,
+  encoding: RedisResponseEncoding.Buffer,
   analytics: {
     identified: false,
     segmentWriteKey,
@@ -54,6 +55,9 @@ const appInfoSlice = createSlice({
     },
     setShortcutsFlyoutState: (state, { payload }) => {
       state.isShortcutsFlyoutOpen = payload
+    },
+    setEncoding: (state, { payload }: PayloadAction<RedisResponseEncoding>) => {
+      state.encoding = payload
     }
   },
 })
@@ -67,7 +71,8 @@ export const {
   getServerInfo,
   getServerInfoSuccess,
   getServerInfoFailure,
-  setShortcutsFlyoutState
+  setShortcutsFlyoutState,
+  setEncoding,
 } = appInfoSlice.actions
 
 // A selector

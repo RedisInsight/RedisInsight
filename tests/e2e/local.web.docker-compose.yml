@@ -9,11 +9,13 @@ services:
     volumes:
       - ./results:/usr/src/app/results
       - ./plugins:/usr/src/app/plugins
+      - .redisinsight-v2:/root/.redisinsight-v2
     env_file:
       - ./.env
     environment:
       TEST_FILES: $TEST_FILES
       COMMON_URL: 'http://app:5000'
+      API_URL: 'http://app:5000/api'
       E2E_CLOUD_DATABASE_HOST: $E2E_CLOUD_DATABASE_HOST
       E2E_CLOUD_DATABASE_PORT: $E2E_CLOUD_DATABASE_PORT
       E2E_CLOUD_DATABASE_PASSWORD: $E2E_CLOUD_DATABASE_PASSWORD
@@ -38,6 +40,6 @@ services:
       context: ./../../
       dockerfile: Dockerfile
     volumes:
-      - ./plugins:/root/.redisinsight-preview/plugins
+      - .redisinsight-v2:/root/.redisinsight-v2
     ports:
       - 5000:5000

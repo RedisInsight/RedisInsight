@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabase, deleteDatabase } from '../../../helpers/database';
+import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     CliPage,
@@ -11,34 +11,30 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { Chance } from 'chance';
+import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const cliPage = new CliPage();
 const monitorPage = new MonitorPage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
-const chance = new Chance();
+const common = new Common();
 
-const keyName = `${chance.word({ length: 20 })}-key`;
-const keyValue = `${chance.word({ length: 10 })}-value`;
+const keyName = `${common.generateWord(20)}-key`;
+const keyValue = `${common.generateWord(10)}-value`;
 
 fixture `Monitor`
-    .meta({ type: 'critical_path' })
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabase(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-    })
-    .afterEach(async() => {
-        await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+    });
 test
-    .meta({ rte: rte.standalone })
-    .after(async () => {
+    .after(async() => {
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
-    })
-    ('Verify that user can work with Monitor', async t => {
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify that user can work with Monitor', async t => {
         const command = 'set';
         //Verify that user can open Monitor
         await t.click(monitorPage.expandMonitor);
@@ -47,7 +43,7 @@ test
         await t.expect(monitorPage.startMonitorButton.exists).ok('Start profiler button');
         //Verify that user can see message inside Monitor "Running Monitor will decrease throughput, avoid running it in production databases." when opens it for the first time
         await t.expect(monitorPage.monitorWarningMessage.exists).ok('Profiler warning message');
-        await t.expect(monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases').exists).ok('Profiler warning message is correct');
+        await t.expect(monitorPage.monitorWarningMessage.withText('Running Profiler will decrease throughput, avoid running it in production databases.').exists).ok('Profiler warning message is not correct');
         //Verify that user can run Monitor by clicking "Run" command in the message inside Monitor
         await t.click(monitorPage.startMonitorButton);
         await t.expect(monitorPage.monitorIsStartedText.innerText).eql('Profiler is started.');
@@ -56,17 +52,18 @@ test
         await monitorPage.checkCommandInMonitorResults(command, [keyName, keyValue]);
     });
 test
-    .meta({ rte: rte.standalone })
-    ('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
-        //Define commands in different clients
+    .after(async t => {
+        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.deleteKeyByName(keyName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
+    //Define commands in different clients
         const cli_command = 'command';
         const workbench_command = 'hello';
         const common_command = 'info';
-        const browser_command = 'dbsize';
-        //Expand Monitor panel
-        await t.click(monitorPage.expandMonitor);
-        //Start monitor (using run button in header)
-        await t.click(monitorPage.runMonitorToggle);
+        const browser_command = 'hset';
+        //Start Monitor
+        await monitorPage.startMonitor();
         //Send command in CLI
         await cliPage.getSuccessCommandResultFromCli(cli_command);
         //Check that command from CLI is displayed in monitor
@@ -74,6 +71,7 @@ test
         //Refresh the page to send command from Browser client
         await t.click(browserPage.refreshKeysButton);
         //Check the command from browser client
+        await browserPage.addHashKey(keyName);
         await monitorPage.checkCommandInMonitorResults(browser_command);
         //Open Workbench page to create new client
         await t.click(myRedisDatabasePage.workbenchButton);

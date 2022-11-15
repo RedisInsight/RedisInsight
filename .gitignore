@@ -16,6 +16,7 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
+**/coverage
 
 # IDEs and editors
 /.idea
@@ -54,6 +55,10 @@ vendor
 
 # E2E tests report
 /tests/e2e/report
+/tests/e2e/.redisinsight-v2
 
 # Parcel
 .parcel-cache
+
+# caches
+.temp_cache

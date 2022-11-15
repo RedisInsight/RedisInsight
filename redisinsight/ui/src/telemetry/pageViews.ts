@@ -4,4 +4,8 @@ export enum TelemetryPageView {
   SETTINGS_PAGE = 'Settings',
   BROWSER_PAGE = 'Browser',
   WORKBENCH_PAGE = 'Workbench',
+  SLOWLOG_PAGE = 'Slow Log',
+  CLUSTER_DETAILS_PAGE = 'Overview',
+  PUBSUB_PAGE = 'Pub/Sub',
+  DATABASE_ANALYSIS = 'Database Analysis'
 }

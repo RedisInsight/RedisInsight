@@ -100,6 +100,7 @@ describe('slices', () => {
   })
 
   // thunks
+
   describe('fetchRedisCommandsInfo', () => {
     it('succeed to fetch redis commands', async () => {
       // Arrange

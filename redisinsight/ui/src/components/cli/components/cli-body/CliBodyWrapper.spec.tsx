@@ -15,7 +15,7 @@ import {
   sendCliClusterCommandAction,
 } from 'uiSrc/slices/cli/cli-output'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import CliBodyWrapper from './CliBodyWrapper'
 
@@ -34,8 +34,8 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-jest.mock('uiSrc/slices/instances', () => ({
-  ...jest.requireActual('uiSrc/slices/instances'),
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: '123',
     connectionType: 'STANDALONE',

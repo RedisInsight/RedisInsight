@@ -10,13 +10,16 @@ import InputFieldSentinel from './input-field-sentinel/InputFieldSentinel'
 import PageBreadcrumbs from './page-breadcrumbs/PageBreadcrumbs'
 import ContentEditable from './ContentEditable'
 import Config from './config'
-import AdvancedSettings from './advanced-settings/AdvancedSettings'
-import { ConsentsSettings, ConsentsSettingsPopup } from './consents-settings'
+import SettingItem from './settings-item/SettingItem'
+import { ConsentsSettings, ConsentsSettingsPopup, ConsentsPrivacy, ConsentsNotifications } from './consents-settings'
 import KeyboardShortcut from './keyboard-shortcut/KeyboardShortcut'
 import ShortcutsFlyout from './shortcuts-flyout/ShortcutsFlyout'
 import MonitorConfig from './monitor-config'
+import PubSubConfig from './pub-sub-config'
+import GlobalSubscriptions from './global-subscriptions'
 import MonitorWrapper from './monitor'
 import PagePlaceholder from './page-placeholder'
+import BulkActionsConfig from './bulk-actions-config'
 
 export {
   NavigationMenu,
@@ -33,10 +36,15 @@ export {
   ContentEditable,
   ConsentsSettings,
   ConsentsSettingsPopup,
-  AdvancedSettings,
+  ConsentsPrivacy,
+  ConsentsNotifications,
+  SettingItem,
   KeyboardShortcut,
   MonitorConfig,
+  PubSubConfig,
+  GlobalSubscriptions,
   MonitorWrapper,
   ShortcutsFlyout,
   PagePlaceholder,
+  BulkActionsConfig,
 }

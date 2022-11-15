@@ -5,19 +5,19 @@ import {
   connectedInstanceOverviewSelector,
   connectedInstanceSelector,
   getDatabaseConfigInfoAction
-} from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
 import { getOverviewMetrics } from './components/OverviewMetrics'
 
-const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 100000
+const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 10000000
 
 interface IProps { windowDimensions: number }
 
 const DatabaseOverviewWrapper = ({ windowDimensions } :IProps) => {
   let interval: NodeJS.Timeout
   const { theme } = useContext(ThemeContext)
-  const { id: connectedInstanceId = '', modules = [], isRediStack } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '', modules = [], isRediStack, db } = useSelector(connectedInstanceSelector)
   const overview = useSelector(connectedInstanceOverviewSelector)
 
   const dispatch = useDispatch()
@@ -38,7 +38,7 @@ const DatabaseOverviewWrapper = ({ windowDimensions } :IProps) => {
   return (
     <DatabaseOverview
       modules={modules}
-      metrics={getOverviewMetrics({ theme, items: overview })}
+      metrics={getOverviewMetrics({ theme, items: overview, db })}
       windowDimensions={windowDimensions}
       isRediStack={isRediStack}
     />

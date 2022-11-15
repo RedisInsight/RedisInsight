@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useState, useEffect, useContext } from 'react'
 import {
   EuiButton,
+  EuiButtonIcon,
   EuiFieldText,
   EuiFlexGrid,
   EuiFlexGroup,
@@ -10,6 +11,9 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
+import { useSelector } from 'react-redux'
+import { BuildType } from 'uiSrc/constants/env'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { Nullable } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -21,17 +25,22 @@ import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogo
 
 import styles from './styles.module.scss'
 
-interface Props {
+export interface Props {
   alias: string
-  database?: Nullable<number>
+  database?: Nullable<string>
   onOpen: () => void
+  onClone: () => void
+  onCloneBack: () => void
   isLoading: boolean
   onApplyChanges: (value: string, onSuccess?: () => void, onFail?: () => void) => void
   isRediStack?: boolean
+  isCloneMode: boolean
 }
 
 const DatabaseAlias = (props: Props) => {
-  const { alias, database, onOpen, onApplyChanges, isLoading, isRediStack } = props
+  const { alias, database, onOpen, onClone, onCloneBack, onApplyChanges, isLoading, isRediStack, isCloneMode } = props
+
+  const { server } = useSelector(appInfoSelector)
 
   const [isEditing, setIsEditing] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
@@ -65,6 +74,12 @@ const DatabaseAlias = (props: Props) => {
     onOpen()
   }
 
+  const handleClone = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    onClone()
+  }
+
   const handleApplyChanges = () => {
     setIsEditing(false)
     onApplyChanges(value, () => setIsHovering(false), () => setValue(alias))
@@ -79,104 +94,143 @@ const DatabaseAlias = (props: Props) => {
   }
 
   return (
-    <EuiFlexGroup responsive={false} justifyContent="spaceBetween" gutterSize="xs">
-      <EuiFlexItem grow={false}>
-        <EuiFlexGroup responsive={false} justifyContent="spaceBetween" gutterSize="xs">
-          {isRediStack && (
-            <EuiFlexItem grow={false}>
-              <EuiToolTip
-                content={(
+    <>
+      <EuiFlexGroup responsive={false} justifyContent="flexStart" alignItems="center" gutterSize="xs">
+        {isCloneMode && (
+          <EuiFlexItem grow={false}>
+            <EuiButtonIcon
+              onClick={onCloneBack}
+              iconSize="m"
+              iconType="sortLeft"
+              className={styles.iconLeftArrow}
+              aria-label="back"
+              data-testid="back-btn"
+            />
+          </EuiFlexItem>
+        )}
+        <EuiFlexItem grow={false} style={{ overflow: isEditing || isHovering ? 'inherit' : 'hidden' }}>
+          <EuiFlexGroup
+            responsive={false}
+            justifyContent="spaceBetween"
+            gutterSize="xs"
+          >
+            {isRediStack && (
+              <EuiFlexItem grow={false}>
+                <EuiToolTip
+                  content={(
+                    <EuiIcon
+                      type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
+                      className={styles.tooltipLogo}
+                      data-testid="tooltip-redis-stack-icon"
+                    />
+                  )}
+                  position="bottom"
+                >
                   <EuiIcon
-                    type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
-                    className={styles.tooltipLogo}
-                    data-testid="tooltip-redis-stack-icon"
+                    type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+                    className={styles.redistackIcon}
+                    data-testid="redis-stack-icon"
                   />
-                )}
-                position="bottom"
+                </EuiToolTip>
+              </EuiFlexItem>
+            )}
+            <EuiFlexItem
+              onMouseEnter={onMouseEnterAlias}
+              onMouseLeave={onMouseLeaveAlias}
+              onClick={setEditMode}
+              grow
+              data-testid="edit-alias-btn"
+              style={{ overflow: isEditing || isHovering ? 'inherit' : 'hidden', maxWidth: '360px' }}
+            >
+              {!isCloneMode && (isEditing || isHovering || isLoading) ? (
+                <EuiFlexGrid
+                  responsive
+                  className="relative"
+                  gutterSize="none"
+                >
+                  <EuiFlexItem
+                    grow={1}
+                    component="span"
+                    className="fluid"
+                  >
+                    <>
+                      <InlineItemEditor
+                        onApply={handleApplyChanges}
+                        onDecline={handleDeclineChanges}
+                        viewChildrenMode={!isEditing}
+                        isLoading={isLoading}
+                        isDisabled={!value}
+                        declineOnUnmount={false}
+                      >
+                        <EuiFieldText
+                          name="alias"
+                          id="alias"
+                          className={cx(styles.input)}
+                          placeholder="Enter Database Alias"
+                          value={value}
+                          fullWidth={false}
+                          maxLength={500}
+                          compressed
+                          isLoading={isLoading}
+                          onChange={onChange}
+                          append={!isEditing
+                            ? <EuiIcon type="pencil" color="subdued" /> : ''}
+                          autoComplete="off"
+                          data-testid="alias-input"
+                        />
+                      </InlineItemEditor>
+                      <p className={styles.hiddenText}>{value}</p>
+                    </>
+                  </EuiFlexItem>
+                </EuiFlexGrid>
+              ) : (
+                <EuiText className={styles.alias}>
+                  <b className={styles.aliasText} data-testid="db-alias">
+                    {isCloneMode && (<span>Clone </span>)}
+                    <span>{alias}</span>
+                  </b>
+                  <b>
+                    {database ? `[${database}]` : ''}
+                  </b>
+                </EuiText>
+              )}
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      {!isCloneMode && (
+        <EuiFlexGroup responsive={false} gutterSize="m" style={{ marginTop: 6 }}>
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              size="s"
+              color="secondary"
+              iconType="kqlFunction"
+              aria-label="Connect to database"
+              data-testid="connect-to-db-btn"
+              className={styles.btnOpen}
+              onClick={handleOpen}
+            >
+              Open
+            </EuiButton>
+          </EuiFlexItem>
+          {server?.buildType !== BuildType.RedisStack && (
+            <EuiFlexItem grow={false}>
+              <EuiButton
+                size="s"
+                color="secondary"
+                iconType="copy"
+                aria-label="Clone database"
+                data-testid="clone-db-btn"
+                className={styles.btnClone}
+                onClick={handleClone}
               >
-                <EuiIcon
-                  type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
-                  className={styles.redistackIcon}
-                  data-testid="redis-stack-icon"
-                />
-              </EuiToolTip>
+                Clone
+              </EuiButton>
             </EuiFlexItem>
           )}
-          <EuiFlexItem
-            onMouseEnter={onMouseEnterAlias}
-            onMouseLeave={onMouseLeaveAlias}
-            onClick={setEditMode}
-            grow
-            data-testid="edit-alias-btn"
-            style={{ overflow: isEditing || isHovering ? 'inherit' : 'hidden', maxWidth: '360px' }}
-          >
-            {isEditing || isHovering || isLoading ? (
-              <EuiFlexGrid
-                responsive
-                className="relative"
-                gutterSize="none"
-              >
-                <EuiFlexItem
-                  grow={1}
-                  component="span"
-                  className="fluid"
-                >
-                  <>
-                    <InlineItemEditor
-                      onApply={handleApplyChanges}
-                      onDecline={handleDeclineChanges}
-                      viewChildrenMode={!isEditing}
-                      isLoading={isLoading}
-                      isDisabled={!value}
-                      declineOnUnmount={false}
-                    >
-                      <EuiFieldText
-                        name="alias"
-                        id="alias"
-                        className={cx(styles.input)}
-                        placeholder="Enter Database Alias"
-                        value={value}
-                        fullWidth={false}
-                        maxLength={500}
-                        compressed
-                        isLoading={isLoading}
-                        onChange={onChange}
-                        append={!isEditing
-                          ? <EuiIcon type="pencil" color="subdued" /> : ''}
-                        autoComplete="off"
-                        data-testid="alias-input"
-                      />
-                    </InlineItemEditor>
-                    <p className={styles.hiddenText}>{value}</p>
-                  </>
-                </EuiFlexItem>
-              </EuiFlexGrid>
-            ) : (
-              <EuiText className={styles.alias}>
-                <b className={styles.aliasText}>
-                  <span>{alias}</span>
-                </b>
-                <b>
-                  {database ? `[${database}]` : ''}
-                </b>
-              </EuiText>
-            )}
-          </EuiFlexItem>
         </EuiFlexGroup>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiButton
-          size="s"
-          color="secondary"
-          iconType="kqlFunction"
-          aria-label="Connect to database"
-          className={styles.btnOpen}
-          onClick={handleOpen}
-        >
-          Open
-        </EuiButton>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      )}
+    </>
   )
 }
 

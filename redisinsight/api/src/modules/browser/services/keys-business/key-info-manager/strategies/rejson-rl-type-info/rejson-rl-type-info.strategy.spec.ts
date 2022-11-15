@@ -12,7 +12,8 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { mockKeyDto } from 'src/modules/browser/__mocks__';
 import { RejsonRlTypeInfoStrategy } from './rejson-rl-type-info.strategy';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
@@ -20,7 +21,7 @@ const mockClientOptions: IFindRedisClientInstanceByOptions = {
 };
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
-  name: 'testJson',
+  name: mockKeyDto.keyName,
   type: 'ReJSON-RL',
   ttl: -1,
   size: 50,
@@ -66,13 +67,13 @@ describe('RejsonRlTypeInfoStrategy', () => {
         .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonType, [
           key,
           path,
-        ])
+        ], 'utf8')
         .mockResolvedValue('object');
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonObjLen, [
           key,
           path,
-        ])
+        ], 'utf8')
         .mockResolvedValue(10);
     });
     it('should return appropriate value for key that store object', async () => {
@@ -95,7 +96,7 @@ describe('RejsonRlTypeInfoStrategy', () => {
         .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonStrLen, [
           key,
           path,
-        ])
+        ], 'utf8')
         .mockResolvedValue(10);
 
       const result = await strategy.getInfo(
@@ -111,13 +112,13 @@ describe('RejsonRlTypeInfoStrategy', () => {
         .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonType, [
           key,
           path,
-        ])
+        ], 'utf8')
         .mockResolvedValue('array');
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonArrLen, [
           key,
           path,
-        ])
+        ], 'utf8')
         .mockResolvedValue(10);
 
       const result = await strategy.getInfo(
@@ -133,7 +134,7 @@ describe('RejsonRlTypeInfoStrategy', () => {
         .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonType, [
           key,
           path,
-        ])
+        ], 'utf8')
         .mockResolvedValue('boolean');
 
       const result = await strategy.getInfo(

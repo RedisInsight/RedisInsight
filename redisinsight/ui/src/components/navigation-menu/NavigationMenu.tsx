@@ -17,11 +17,18 @@ import {
   EuiTitle,
   EuiToolTip
 } from '@elastic/eui'
+import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
 import { PageNames, Pages } from 'uiSrc/constants'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { getRouterLinkProps } from 'uiSrc/services'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { appElectronInfoSelector, setReleaseNotesViewed, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import {
+  appElectronInfoSelector,
+  appInfoSelector,
+  setReleaseNotesViewed,
+  setShortcutsFlyoutState
+} from 'uiSrc/slices/app/info'
 import LogoSVG from 'uiSrc/assets/img/logo.svg'
 import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
 import SettingsActiveSVG from 'uiSrc/assets/img/sidebar/settings_active.svg'
@@ -29,13 +36,21 @@ import BrowserSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import BrowserActiveSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import WorkbenchSVG from 'uiSrc/assets/img/sidebar/workbench.svg'
 import WorkbenchActiveSVG from 'uiSrc/assets/img/sidebar/workbench_active.svg'
+import SlowLogSVG from 'uiSrc/assets/img/sidebar/slowlog.svg'
+import SlowLogActiveSVG from 'uiSrc/assets/img/sidebar/slowlog_active.svg'
+import PubSubSVG from 'uiSrc/assets/img/sidebar/pubsub.svg'
+import PubSubActiveSVG from 'uiSrc/assets/img/sidebar/pubsub_active.svg'
+import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
-
 import { BuildType } from 'uiSrc/constants/env'
+
+import NotificationMenu from './components/notifications-center'
+
 import styles from './styles.module.scss'
 
 const workbenchPath = `/${PageNames.workbench}`
 const browserPath = `/${PageNames.browser}`
+const pubSubPath = `/${PageNames.pubSub}`
 
 interface INavigations {
   isActivePage: boolean;
@@ -48,11 +63,7 @@ interface INavigations {
   getIconType: () => string;
 }
 
-interface IProps {
-  buildType: BuildType
-}
-
-const NavigationMenu = ({ buildType }: IProps) => {
+const NavigationMenu = () => {
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
@@ -62,32 +73,29 @@ const NavigationMenu = ({ buildType }: IProps) => {
 
   const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
   const { isReleaseNotesViewed } = useSelector(appElectronInfoSelector)
+  const { server } = useSelector(appInfoSelector)
 
   useEffect(() => {
     setActivePage(`/${last(location.pathname.split('/'))}`)
   }, [location])
 
-  const handleGoSettingsPage = () => {
-    history.push(Pages.settings)
-  }
-  const handleGoWorkbenchPage = () => {
-    history.push(Pages.workbench(connectedInstanceId))
-  }
-  const handleGoBrowserPage = () => {
-    history.push(Pages.browser(connectedInstanceId))
-  }
+  const handleGoPage = (page: string) => history.push(page)
 
   const onKeyboardShortcutClick = () => {
     setIsHelpMenuActive(false)
     dispatch(setShortcutsFlyoutState(true))
   }
 
+  const isAnalyticsPath = (activePage: string) => !!ANALYTICS_ROUTES.find(
+    ({ path }) => (`/${last(path.split('/'))}` === activePage)
+  )
+
   const privateRoutes: INavigations[] = [
     {
       tooltipText: 'Browser',
       isActivePage: activePage === browserPath,
       ariaLabel: 'Browser page button',
-      onClick: handleGoBrowserPage,
+      onClick: () => handleGoPage(Pages.browser(connectedInstanceId)),
       dataTestId: 'browser-page-btn',
       connectedInstanceId,
       getClassName() {
@@ -100,7 +108,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
     {
       tooltipText: 'Workbench',
       ariaLabel: 'Workbench page button',
-      onClick: handleGoWorkbenchPage,
+      onClick: () => handleGoPage(Pages.workbench(connectedInstanceId)),
       dataTestId: 'workbench-page-btn',
       connectedInstanceId,
       isActivePage: activePage === workbenchPath,
@@ -111,13 +119,41 @@ const NavigationMenu = ({ buildType }: IProps) => {
         return this.isActivePage ? WorkbenchSVG : WorkbenchActiveSVG
       },
     },
+    {
+      tooltipText: 'Analysis Tools',
+      ariaLabel: 'Analysis Tools',
+      onClick: () => handleGoPage(Pages.analytics(connectedInstanceId)),
+      dataTestId: 'analytics-page-btn',
+      connectedInstanceId,
+      isActivePage: isAnalyticsPath(activePage),
+      getClassName() {
+        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+      },
+      getIconType() {
+        return this.isActivePage ? SlowLogActiveSVG : SlowLogSVG
+      },
+    },
+    {
+      tooltipText: 'Pub/Sub',
+      ariaLabel: 'Pub/Sub page button',
+      onClick: () => handleGoPage(Pages.pubSub(connectedInstanceId)),
+      dataTestId: 'pub-sub-page-btn',
+      connectedInstanceId,
+      isActivePage: activePage === pubSubPath,
+      getClassName() {
+        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+      },
+      getIconType() {
+        return this.isActivePage ? PubSubActiveSVG : PubSubSVG
+      },
+    },
   ]
 
   const publicRoutes: INavigations[] = [
     {
       tooltipText: 'Settings',
       ariaLabel: 'Settings page button',
-      onClick: handleGoSettingsPage,
+      onClick: () => handleGoPage(Pages.settings),
       dataTestId: 'settings-page-btn',
       isActivePage: activePage === Pages.settings,
       getClassName() {
@@ -177,7 +213,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
             <EuiLink
               external={false}
               className={styles.helpMenuItemLink}
-              href="https://github.com/RedisInsight/RedisInsight/issues"
+              href={EXTERNAL_LINKS.githubIssues}
               target="_blank"
               data-testid="submit-bug-btn"
             >
@@ -212,7 +248,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
               external={false}
               className={styles.helpMenuItemLink}
               onClick={onClickReleaseNotes}
-              href="https://docs.redis.com/staging/release-ri-v2.0/ri/release-notes/"
+              href={EXTERNAL_LINKS.releaseNotes}
               target="_blank"
               data-testid="release-notes-btn"
             >
@@ -233,22 +269,15 @@ const NavigationMenu = ({ buildType }: IProps) => {
     <EuiPageSideBar aria-label="Main navigation" className={cx(styles.navigation, 'eui-yScroll')}>
       <div className={styles.container}>
         <EuiToolTip
-          content={buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+          content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
           position="right"
         >
-          <span className={styles.iconLogo}>
-            <EuiLink {...getRouterLinkProps(Pages.home)} data-test-subj="home-page-btn">
+          <span className={cx(styles.iconNavItem, styles.homeIcon)}>
+            <EuiLink {...getRouterLinkProps(Pages.home)} className={styles.logo} data-test-subj="home-page-btn">
               <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />
             </EuiLink>
           </span>
         </EuiToolTip>
-        <Divider color="#465282" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
-        <Divider
-          color="#465282"
-          className="eui-showFor--xs--flex eui-showFor--s--flex"
-          variant="middle"
-          orientation="vertical"
-        />
 
         {connectedInstanceId && (
           privateRoutes.map((nav) => (
@@ -265,13 +294,7 @@ const NavigationMenu = ({ buildType }: IProps) => {
         )}
       </div>
       <div className={styles.bottomContainer}>
-        <Divider color="#465282" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
-        <Divider
-          color="#465282"
-          className="eui-showFor--xs--flex eui-showFor--s--flex"
-          variant="middle"
-          orientation="vertical"
-        />
+        <NotificationMenu />
         {HelpMenu()}
         {publicRoutes.map((nav) => (
           <EuiToolTip content={nav.tooltipText} position="right" key={nav.tooltipText}>
@@ -284,6 +307,33 @@ const NavigationMenu = ({ buildType }: IProps) => {
             />
           </EuiToolTip>
         ))}
+        <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
+        <Divider
+          colorVariable="separatorNavigationColor"
+          className="eui-showFor--xs--flex eui-showFor--s--flex"
+          variant="middle"
+          orientation="vertical"
+        />
+        <EuiToolTip
+          content="RedisInsight Repository"
+          position="right"
+        >
+          <span className={cx(styles.iconNavItem, styles.githubLink)}>
+            <EuiLink
+              external={false}
+              href={EXTERNAL_LINKS.githubRepo}
+              target="_blank"
+              data-test-subj="github-repo-btn"
+            >
+              <EuiIcon
+                className={styles.githubIcon}
+                aria-label="redis insight github repository"
+                type={GithubSVG}
+                data-testid="github-repo-icon"
+              />
+            </EuiLink>
+          </span>
+        </EuiToolTip>
       </div>
     </EuiPageSideBar>
   )

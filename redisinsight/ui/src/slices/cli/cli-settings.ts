@@ -4,9 +4,9 @@ import { CreateCliClientResponse, DeleteClientResponse } from 'apiSrc/modules/cl
 import { apiService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { concatToOutput, setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
+import { outputSelector, concatToOutput, setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
 import { cliTexts, ConnectionSuccessOutputText, InitOutputText } from 'uiSrc/constants/cliOutput'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { AppDispatch, RootState } from '../store'
 import { StateCliSettings } from '../interfaces/cli'
@@ -35,6 +35,10 @@ const cliSettingsSlice = createSlice({
   reducers: {
     setCliSettingsInitialState: () => initialState,
     // collapse / uncollapse CLI
+    openCli: (state) => {
+      state.isShowCli = true
+    },
+
     toggleCli: (state) => {
       state.isShowCli = !state.isShowCli
     },
@@ -134,12 +138,19 @@ const cliSettingsSlice = createSlice({
       state.searchedCommand = ''
       state.searchingCommandFilter = ''
     },
+
+    goBackFromCommand: (state) => {
+      state.matchedCommand = ''
+      state.searchedCommand = ''
+      state.isSearching = true
+    }
   },
 })
 
 // Actions generated from the slice
 export const {
   setCliSettingsInitialState,
+  openCli,
   toggleCli,
   toggleCliHelper,
   toggleHideCliHelper,
@@ -158,6 +169,7 @@ export const {
   resetCliHelperSettings,
   getUnsupportedCommandsSuccess,
   getBlockingCommandsSuccess,
+  goBackFromCommand
 } = cliSettingsSlice.actions
 
 // A selector
@@ -170,18 +182,21 @@ export default cliSettingsSlice.reducer
 
 // Asynchronous thunk action
 export function createCliClientAction(
+  instanceId: string,
+  onWorkbenchClick: () => void,
   onSuccessAction?: () => void,
   onFailAction?: (message: string) => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { host, port, db } = connectedInstanceSelector(state)
+    const { data = [] } = outputSelector?.(state) ?? {}
     dispatch(processCliClient())
-    dispatch(concatToOutput(InitOutputText(host, port, db)))
+    dispatch(concatToOutput(InitOutputText(host, port, db, !data.length, onWorkbenchClick)))
 
     try {
       const { data, status } = await apiService.post<CreateCliClientResponse>(
-        getUrl(state.connections.instances.connectedInstance?.id ?? '', ApiEndpoints.CLI)
+        getUrl(instanceId ?? '', ApiEndpoints.CLI)
       )
 
       if (isStatusSuccessful(status)) {

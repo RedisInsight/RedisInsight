@@ -1,9 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { GetKeyInfoResponse } from 'src/modules/browser/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
+import { RedisString } from 'src/common/constants';
 import { IKeyInfoStrategy } from '../../key-info-manager.interface';
 
 export class UnsupportedTypeInfoStrategy implements IKeyInfoStrategy {
@@ -17,7 +18,7 @@ export class UnsupportedTypeInfoStrategy implements IKeyInfoStrategy {
 
   public async getInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log(`Getting ${type} type info.`);

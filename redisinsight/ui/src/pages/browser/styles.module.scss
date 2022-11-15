@@ -29,15 +29,21 @@ $breakpoint-to-hide-resize-panel: 1124px;
   display: none;
 }
 
+.noVisible {
+  visibility: hidden;
+}
+
 .resizePanelLeft {
+  min-width: 550px;
   :global(.euiResizablePanel__content) {
-    @media (min-width: 1124px) {
+    @media (min-width: $breakpoint-to-hide-resize-panel) {
       padding-right: 8px;
     }
   }
 }
 
 .resizePanelRight {
+  min-width: 500px;
   :global(.euiResizablePanel__content) {
     @media (min-width: $breakpoint-to-hide-resize-panel) {
       padding-left: 8px;
@@ -48,6 +54,10 @@ $breakpoint-to-hide-resize-panel: 1124px;
 .fullWidth {
   width: 100% !important;
   min-width: 100% !important;
+  :global(.euiResizablePanel__content) {
+    padding-right: 0;
+    padding-left: 0;
+  }
 }
 
 .keysContainer {
@@ -86,3 +96,4 @@ $breakpoint-to-hide-resize-panel: 1124px;
     width: 100% !important;
   }
 }
+

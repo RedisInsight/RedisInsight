@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { compact, findIndex } from 'lodash'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiButton, EuiIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
+import { useParams } from 'react-router-dom'
 
 import {
   Theme,
@@ -24,6 +25,7 @@ import {
   getRedisCompletionProvider,
   getRedisMonarchTokensProvider,
   getRedisSignatureHelpProvider,
+  isGroupMode,
   MonacoAction,
   Nullable,
   toModelDeltaDecoration
@@ -34,20 +36,26 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
-
-import { workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
+import { ReactComponent as RawModeIcon } from 'uiSrc/assets/img/icons/raw_mode.svg'
+import { ReactComponent as GroupModeIcon } from 'uiSrc/assets/img/icons/group_mode.svg'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   query: string
-  loading: boolean
+  activeMode: RunQueryMode
+  resultsMode?: ResultsMode
   setQueryEl: Function
   setQuery: (script: string) => void
   setIsCodeBtnDisabled: (value: boolean) => void
   onSubmit: (query?: string) => void
   onKeyDown?: (e: React.KeyboardEvent, script: string) => void
+  onQueryChangeMode: () => void
+  onChangeGroupMode: () => void
 }
 
 const SYNTAX_CONTEXT_ID = 'syntaxWidgetContext'
@@ -61,7 +69,18 @@ let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
 
 const Query = (props: Props) => {
-  const { query = '', setQuery, onKeyDown, onSubmit, setQueryEl, setIsCodeBtnDisabled = () => {} } = props
+  const {
+    query = '',
+    activeMode,
+    resultsMode,
+    setQuery,
+    onKeyDown,
+    onSubmit,
+    setQueryEl,
+    setIsCodeBtnDisabled = () => { },
+    onQueryChangeMode,
+    onChangeGroupMode
+  } = props
   let contribution: Nullable<ISnippetController> = null
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
   const isWidgetOpen = useRef(false)
@@ -73,22 +92,25 @@ const Query = (props: Props) => {
   let syntaxWidgetContext: Nullable<monaco.editor.IContextKey<boolean>> = null
 
   const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
-  const { items: execHistoryItems } = useSelector(workbenchResultsSelector)
+  const { items: execHistoryItems, loading, processing } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
+
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
+
+  const dispatch = useDispatch()
 
   let disposeCompletionItemProvider = () => {}
   let disposeSignatureHelpProvider = () => {}
 
-  useEffect(() => {
+  useEffect(() =>
     // componentWillUnmount
-    return () => {
+    () => {
+      dispatch(stopProcessing())
       contribution?.dispose?.()
       disposeCompletionItemProvider()
       disposeSignatureHelpProvider()
-    }
-  }, [])
-
+    }, [])
 
   useEffect(() => {
     // HACK: The Monaco editor memoize the state and ignores updates to it
@@ -100,7 +122,7 @@ const Query = (props: Props) => {
     if (!monacoObjects.current) return
     const commands = query.split('\n')
     const { monaco, editor } = monacoObjects.current
-    const notCommandRegEx = /^\s|\/\//
+    const notCommandRegEx = /^[\s|//]/
 
     const newDecorations = compact(commands.map((command, index) => {
       if (!command || notCommandRegEx.test(command)) return null
@@ -125,7 +147,7 @@ const Query = (props: Props) => {
   const triggerUpdateCursorPosition = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
     const position = editor.getPosition()
     isDedicatedEditorOpenRef.current = false
-    editor.trigger('mouse', '_moveTo', { position: { lineNumber: 1, column: 1 }})
+    editor.trigger('mouse', '_moveTo', { position: { lineNumber: 1, column: 1 } })
     editor.trigger('mouse', '_moveTo', { position })
     editor.focus()
   }
@@ -137,6 +159,13 @@ const Query = (props: Props) => {
     setIsDedicatedEditorOpen(true)
     editor.updateOptions({ readOnly: true })
     hideSyntaxWidget(editor)
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_NON_REDIS_EDITOR_OPENED,
+      eventData: {
+        databaseId: instanceId,
+        lang: syntaxCommand.current.lang,
+      }
+    })
   }
 
   const onChange = (value: string = '') => {
@@ -190,10 +219,10 @@ const Query = (props: Props) => {
 
     const position = editor.getPosition()
     if (
-      position?.column !== 1 ||
-      position?.lineNumber !== 1 ||
+      position?.column !== 1
+      || position?.lineNumber !== 1
       // @ts-ignore
-      editor.getContribution('editor.contrib.suggestController')?.model?.state
+      || editor.getContribution('editor.contrib.suggestController')?.model?.state
     ) return
 
     if (execHistory[execHistoryPos]) {
@@ -305,6 +334,14 @@ const Query = (props: Props) => {
 
     editor.updateOptions({ readOnly: false })
     triggerUpdateCursorPosition(editor)
+
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_NON_REDIS_EDITOR_CANCELLED,
+      eventData: {
+        databaseId: instanceId,
+        lang: syntaxCommand.current.lang,
+      }
+    })
   }
 
   const updateArgFromDedicatedEditor = (value: string = '') => {
@@ -333,6 +370,13 @@ const Query = (props: Props) => {
     ])
     setIsDedicatedEditorOpen(false)
     triggerUpdateCursorPosition(editor)
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_NON_REDIS_EDITOR_SAVED,
+      eventData: {
+        databaseId: instanceId,
+        lang: syntaxCommand.current.lang,
+      }
+    })
   }
 
   const editorDidMount = (
@@ -416,6 +460,8 @@ const Query = (props: Props) => {
     monaco.editor.defineTheme('light', lightTheme)
   }
 
+  const isLoading = loading || processing
+
   return (
     <div className={styles.wrapper}>
       <div
@@ -423,6 +469,7 @@ const Query = (props: Props) => {
         onKeyDown={handleKeyDown}
         role="textbox"
         tabIndex={0}
+        data-testid="main-input-container-area"
       >
         <div className={styles.input} data-testid="query-input-container" ref={input}>
           <MonacoEditor
@@ -435,28 +482,74 @@ const Query = (props: Props) => {
             editorDidMount={editorDidMount}
           />
         </div>
-        <div className={styles.actions}>
+        <div className={cx(styles.actions, { [styles.disabledActions]: isDedicatedEditorOpen })}>
+          <EuiToolTip
+            position="left"
+            content="Raw Mode"
+            data-testid="change-mode-tooltip"
+          >
+            <EuiButton
+              fill
+              size="s"
+              color="secondary"
+              onClick={() => onQueryChangeMode()}
+              disabled={isLoading}
+              className={cx(styles.textBtn, { [styles.activeBtn]: activeMode === RunQueryMode.Raw })}
+              data-testid="btn-change-mode"
+            >
+              <EuiIcon type={RawModeIcon} />
+            </EuiButton>
+          </EuiToolTip>
           <EuiToolTip
             position="left"
             content={
-              KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
-                <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                  <EuiText size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
-                  <KeyboardShortcut
-                    separator={KEYBOARD_SHORTCUTS?._separator}
-                    items={KEYBOARD_SHORTCUTS.workbench.runQuery.keys}
-                  />
-                </div>
-              )
+              isLoading
+                ? 'Please wait while the commands are being executed…'
+                : KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
+                  <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                    <EuiText className={styles.tooltipText} size="s">{`${KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:\u00A0\u00A0`}</EuiText>
+                    <KeyboardShortcut
+                      badgeTextClassName={styles.tooltipText}
+                      separator={KEYBOARD_SHORTCUTS?._separator}
+                      items={KEYBOARD_SHORTCUTS.workbench.runQuery.keys}
+                    />
+                  </div>
+                )
             }
+            data-testid="run-query-tooltip"
           >
-            <EuiButtonIcon
-              onClick={() => handleSubmit()}
-              iconType="playFilled"
-              className={cx(styles.submitButton)}
-              aria-label="submit"
-              data-testid="btn-submit"
-            />
+            <>
+              {isLoading && (
+                <EuiLoadingSpinner size="l" data-testid="loading-spinner" />
+              )}
+              <EuiButtonIcon
+                onClick={() => handleSubmit()}
+                disabled={isLoading}
+                iconType="playFilled"
+                className={cx(styles.submitButton, { [styles.submitButtonLoading]: isLoading })}
+                aria-label="submit"
+                data-testid="btn-submit"
+              />
+            </>
+          </EuiToolTip>
+          <EuiToolTip
+            position="left"
+            content="Group Results"
+            data-testid="run-query-tooltip"
+          >
+            <>
+              <EuiButton
+                fill
+                size="s"
+                color="secondary"
+                onClick={() => onChangeGroupMode()}
+                disabled={isLoading}
+                className={cx(styles.textBtn, { [styles.activeBtn]: isGroupMode(resultsMode) })}
+                data-testid="btn-change-group-mode"
+              >
+                <EuiIcon type={GroupModeIcon} />
+              </EuiButton>
+            </>
           </EuiToolTip>
         </div>
       </div>
@@ -464,14 +557,14 @@ const Query = (props: Props) => {
         <AutoSizer>
           {({ height }) => (
             <div className="editorBounder">
-                <DedicatedEditor
-                  initialHeight={input?.current?.scrollHeight || 0}
-                  height={height}
-                  lang={syntaxCommand.current.lang}
-                  query={selectedArg.current.replace(aroundQuotesRegExp, '')}
-                  onSubmit={updateArgFromDedicatedEditor}
-                  onCancel={onCancelDedicatedEditor}
-                />
+              <DedicatedEditor
+                initialHeight={input?.current?.scrollHeight || 0}
+                height={height}
+                lang={syntaxCommand.current.lang}
+                query={selectedArg.current.replace(aroundQuotesRegExp, '')}
+                onSubmit={updateArgFromDedicatedEditor}
+                onCancel={onCancelDedicatedEditor}
+              />
             </div>
           )}
         </AutoSizer>

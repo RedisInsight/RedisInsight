@@ -1,18 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 import IORedis, { NodeRole, Redis } from 'ioredis';
 import { AppTool } from 'src/models';
-import { RedisConsumerAbstractService } from 'src/modules/shared/services/base/redis-consumer.abstract.service';
+import { RedisConsumerAbstractService } from 'src/modules/redis/redis-consumer.abstract.service';
 import {
   IFindRedisClientInstanceByOptions,
   RedisService,
-} from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
-import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
+} from 'src/modules/redis/redis.service';
+import { Endpoint } from 'src/common/models';
 import { BrowserToolCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { getRedisPipelineSummary } from 'src/utils/cli-helper';
 import { getConnectionName } from 'src/utils/redis-connection-helper';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 export interface IExecCommandFromClusterNode {
   host: string;
@@ -26,9 +26,9 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
 
   constructor(
     protected redisService: RedisService,
-    protected instancesBusinessService: InstancesBusinessService,
+    protected databaseService: DatabaseService,
   ) {
-    super(AppTool.Browser, redisService, instancesBusinessService);
+    super(AppTool.Browser, redisService, databaseService);
   }
 
   async execCommand(
@@ -40,7 +40,7 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
     this.logger.log(`Execute command '${toolCommand}', connectionName: ${getConnectionName(client)}`);
     const [command, ...commandArgs] = toolCommand.split(' ');
     // TODO: use sendCommand method
-    return client.send_command(command, [...commandArgs, ...args]);
+    return client.call(command, [...commandArgs, ...args]);
   }
 
   async execPipeline(
@@ -63,16 +63,15 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
     args: Array<string | number>,
     nodeRole: NodeRole = 'all',
   ): Promise<IExecCommandFromClusterNode[]> {
-
     const client = await this.getRedisClient(clientOptions);
     const nodes: Redis[] = client.nodes(nodeRole);
     this.logger.log(`Execute command '${toolCommand}' from nodes, connectionName: ${getConnectionName(client)}`);
     return await Promise.all(
       nodes.map(
-        async (node: IORedis.Redis): Promise<IExecCommandFromClusterNode> => {
+        async (node: Redis): Promise<IExecCommandFromClusterNode> => {
           const { host, port } = node.options;
           const [command, ...commandArgs] = toolCommand.split(' ');
-          const result = await node.send_command(command, [
+          const result = await node.call(command, [
             ...commandArgs,
             ...args,
           ]);
@@ -90,7 +89,8 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
     clientOptions: IFindRedisClientInstanceByOptions,
     toolCommand: BrowserToolCommands,
     args: Array<string | number>,
-    exactNode: EndpointDto,
+    exactNode: Endpoint,
+    replyEncoding: BufferEncoding = 'utf8',
   ): Promise<IExecCommandFromClusterNode> {
     const client = await this.getRedisClient(clientOptions);
     this.logger.log(`Execute command '${toolCommand}' from node, connectionName: ${getConnectionName(client)}`);
@@ -112,10 +112,16 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
         ),
       );
     }
-    const result = await node.send_command(command, [
-      ...commandArgs,
-      ...args,
-    ]);
+
+    // @ts-ignore
+    // There are issues with ioredis types. Here and below
+    const result = await node.sendCommand(
+      // @ts-ignore
+      new IORedis.Command(command, [...commandArgs, ...args], {
+        replyEncoding,
+      }),
+    );
+
     return {
       host,
       port,

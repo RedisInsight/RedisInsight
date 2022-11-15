@@ -11,11 +11,11 @@ export const mockEncryptionService = () => ({
   decrypt: jest.fn(),
 });
 
-export const mockEncryptionStrategy = () => ({
+export const mockEncryptionStrategy = jest.fn(() => ({
   isAvailable: jest.fn(),
   encrypt: jest.fn(),
   decrypt: jest.fn(),
-});
+}));
 
 export const mockKeytarModule = {
   getPassword: jest.fn(),

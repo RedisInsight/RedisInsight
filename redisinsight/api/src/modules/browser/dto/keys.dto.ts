@@ -1,6 +1,7 @@
 import {
   ArrayNotEmpty,
   IsArray,
+  IsBoolean,
   IsDefined,
   IsEnum,
   IsInt,
@@ -10,12 +11,14 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   ApiProperty,
   ApiPropertyOptional,
 } from '@nestjs/swagger';
 import { MAX_TTL_NUMBER } from 'src/constants/redis-keys';
+import { RedisString } from 'src/common/constants';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
 
 export enum RedisDataType {
   String = 'string',
@@ -35,8 +38,20 @@ export class KeyDto {
     type: String,
   })
   @IsDefined()
-  @IsString()
-  keyName: string;
+  @IsRedisString()
+  @RedisStringType()
+  keyName: RedisString;
+}
+
+export class KeyResponse {
+  @ApiProperty({
+    description: 'Key Name',
+    type: String,
+  })
+  @IsDefined()
+  @IsRedisString()
+  @RedisStringType()
+  keyName: RedisString;
 }
 
 export class KeyWithExpireDto extends KeyDto {
@@ -87,8 +102,8 @@ export class ScanDataTypeDto extends KeyDto {
     type: String,
     default: '*',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   match?: string;
 }
 
@@ -138,6 +153,29 @@ export class GetKeysDto {
   })
   @IsOptional()
   type?: RedisDataType;
+
+  @ApiPropertyOptional({
+    description: 'Fetch keys info (type, size, ttl, length)',
+    type: Boolean,
+    default: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  @Transform((val) => val === true || val === 'true')
+  keysInfo?: boolean = true;
+}
+
+export class GetKeysInfoDto {
+  @ApiProperty({
+    description: 'List of keys',
+    type: String,
+    isArray: true,
+    example: ['keys', 'key2'],
+  })
+  @IsDefined()
+  @IsRedisString({ each: true })
+  @RedisStringType({ each: true })
+  keys: RedisString[];
 }
 
 export class GetKeyInfoDto extends KeyDto {}
@@ -151,8 +189,9 @@ export class DeleteKeysDto {
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
-  @Type(() => String)
-  keyNames: string[];
+  @RedisStringType({ each: true })
+  @IsRedisString({ each: true })
+  keyNames: RedisString[];
 }
 
 export class DeleteKeysResponse {
@@ -163,41 +202,20 @@ export class DeleteKeysResponse {
   affected: number;
 }
 
-export class RenameKeyDto {
-  @ApiProperty({
-    description: 'Key name',
-    type: String,
-  })
-  @IsDefined()
-  @IsString()
-  keyName: string;
-
+export class RenameKeyDto extends KeyDto {
   @ApiProperty({
     description: 'New key name',
     type: String,
   })
   @IsDefined()
-  @IsString()
-  newKeyName: string;
+  @IsRedisString()
+  @RedisStringType()
+  newKeyName: RedisString;
 }
 
-export class RenameKeyResponse {
-  @ApiProperty({
-    description: 'Key name',
-    type: String,
-  })
-  keyName: string;
-}
+export class RenameKeyResponse extends KeyResponse {}
 
-export class UpdateKeyTtlDto {
-  @ApiProperty({
-    description: 'Key name',
-    type: String,
-  })
-  @IsDefined()
-  @IsString()
-  keyName: string;
-
+export class UpdateKeyTtlDto extends KeyDto {
   @ApiProperty({
     type: Number,
     description:
@@ -227,12 +245,13 @@ export class GetKeyInfoResponse {
   @ApiProperty({
     type: String,
   })
-  name: string;
+  @RedisStringType()
+  name: RedisString;
 
   @ApiProperty({
     type: String,
   })
-  type: string;
+  type?: string;
 
   @ApiProperty({
     type: Number,
@@ -240,14 +259,14 @@ export class GetKeyInfoResponse {
       'The remaining time to live of a key.'
       + ' If the property has value of -1, then the key has no expiration time (no limit).',
   })
-  ttl: number;
+  ttl?: number;
 
   @ApiProperty({
     type: Number,
     description:
       'The number of bytes that a key and its value require to be stored in RAM.',
   })
-  size: number;
+  size?: number;
 
   @ApiPropertyOptional({
     type: Number,
@@ -285,6 +304,8 @@ export class GetKeysWithDetailsResponse {
     description: 'Array of Keys.',
     isArray: true,
   })
+  @IsArray()
+  @Type(() => GetKeyInfoResponse)
   keys: GetKeyInfoResponse[];
 
   @ApiPropertyOptional({

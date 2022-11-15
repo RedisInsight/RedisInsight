@@ -1,11 +1,11 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { EuiLoadingSpinner } from '@elastic/eui'
+import { EuiProgress } from '@elastic/eui'
 
-import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/rejson'
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/browser/rejson'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 
 import RejsonDetails from './RejsonDetails/RejsonDetails'
 
@@ -16,6 +16,7 @@ const RejsonDetailsWrapper = () => {
   const { data, downloaded, type } = useSelector(rejsonDataSelector)
   const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) || {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
 
   const handleSubmitJsonUpdateValue = async () => {}
 
@@ -23,7 +24,11 @@ const RejsonDetailsWrapper = () => {
 
   const reportJSONKeyCollapsed = (level: number) => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_JSON_KEY_COLLAPSED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_JSON_KEY_COLLAPSED,
+        TelemetryEvent.TREE_VIEW_JSON_KEY_COLLAPSED
+      ),
       eventData: {
         databaseId: instanceId,
         level
@@ -33,7 +38,11 @@ const RejsonDetailsWrapper = () => {
 
   const reportJSONKeyExpanded = (level: number) => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_JSON_KEY_EXPANDED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_JSON_KEY_EXPANDED,
+        TelemetryEvent.TREE_VIEW_JSON_KEY_EXPANDED
+      ),
       eventData: {
         databaseId: instanceId,
         level
@@ -59,11 +68,15 @@ const RejsonDetailsWrapper = () => {
 
   return (
     <div className={`${[styles.container].join(' ')}`}>
-      {loading ? (
-        <div className={styles.placeholder}>
-          <EuiLoadingSpinner size="xl" />
-        </div>
-      ) : (
+      {loading && (
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-key-json"
+        />
+      )}
+      {!(loading && data === undefined) && (
         <RejsonDetails
           selectedKey={selectedKey}
           dbNumber={0}

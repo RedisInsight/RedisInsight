@@ -1,5 +1,5 @@
-import { HostingProvider } from 'src/modules/core/models/database-instance.entity';
 import { IP_ADDRESS_REGEX, PRIVATE_IP_ADDRESS_REGEX } from 'src/constants';
+import { HostingProvider } from 'src/modules/database/entities/database.entity';
 
 // Ignore LGTM [js/incomplete-url-substring-sanitization] alert.
 // Because we do not bind potentially dangerous logic to this.

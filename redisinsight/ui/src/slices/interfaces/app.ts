@@ -1,8 +1,9 @@
 import { AxiosError } from 'axios'
 import { Nullable } from 'uiSrc/utils'
-import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
 import { ICommands } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
+import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 
 export interface IError extends AxiosError {
   id: string
@@ -20,6 +21,7 @@ export interface StateAppInfo {
   loading: boolean
   error: string
   server: Nullable<GetServerInfoResponse>
+  encoding: RedisResponseEncoding,
   analytics: {
     segmentWriteKey: string
     identified: boolean
@@ -38,14 +40,16 @@ export interface StateAppContext {
   browser: {
     keyList: {
       isDataLoaded: boolean
-      scrollTopPosition: number
-      selectedKey: Nullable<string>
+      scrollPatternTopPosition: number
+      scrollRedisearchTopPosition: number
+      isNotRendered: boolean
+      selectedKey: Nullable<RedisResponseBuffer>
     },
     panelSizes: {
       [key: string]: number
     },
     tree: {
-      separator: string
+      delimiter: string
       panelSizes: {
         [key: string]: number
       },
@@ -57,6 +61,9 @@ export interface StateAppContext {
           [key: string]: IKeyPropTypes
         }
       },
+    },
+    bulkActions: {
+      opened: boolean
     }
   },
   workbench: {
@@ -70,6 +77,13 @@ export interface StateAppContext {
         [key: string]: number
       }
     }
+  },
+  pubsub: {
+    channel: string
+    message: string
+  },
+  analytics: {
+    lastViewedPage: string
   }
 }
 
@@ -113,3 +127,54 @@ export interface StateAppPlugins {
   plugins: IPlugin[]
   visualizations: IPluginVisualization[]
 }
+
+export interface StateAppSocketConnection {
+  isConnected: boolean
+}
+
+export enum NotificationType {
+  Global = 'global'
+}
+
+export interface IGlobalNotification {
+  type: string
+  timestamp: number
+  title: string
+  body: string
+  read: boolean
+  category?: string
+  categoryColor?: string
+}
+
+export interface StateAppNotifications {
+  errors: IError[]
+  messages: IMessage[]
+  notificationCenter: {
+    loading: boolean
+    lastReceivedNotification: Nullable<IGlobalNotification>
+    notifications: IGlobalNotification[]
+    isNotificationOpen: boolean
+    isCenterOpen: boolean
+    totalUnread: number
+    shouldDisplayToast: boolean
+  }
+}
+
+export enum RedisResponseEncoding {
+  UTF8 = 'utf8',
+  ASCII = 'ascii',
+  Buffer = 'buffer',
+}
+
+export enum RedisResponseBufferType {
+  Buffer = 'Buffer'
+}
+
+export type RedisResponseBuffer = {
+  type: RedisResponseBufferType
+  data: UintArray
+} & Exclude<RedisStringAPI, string>
+
+export type RedisString = string | RedisResponseBuffer
+
+export type UintArray = number[] | Uint8Array

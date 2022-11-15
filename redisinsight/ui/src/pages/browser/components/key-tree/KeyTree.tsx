@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState, useTransition } from 'react'
 import cx from 'classnames'
-import { EuiResizableContainer, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
+import { EuiResizableContainer } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -9,42 +9,55 @@ import {
   setBrowserTreeSelectedLeaf
 } from 'uiSrc/slices/app/context'
 import { constructKeysToTree } from 'uiSrc/helpers'
-import { keysSelector } from 'uiSrc/slices/keys'
 import VirtualTree from 'uiSrc/components/virtual-tree'
-import { DEFAULT_SEPARATOR } from 'uiSrc/constants'
-import { IKeyListPropTypes, } from 'uiSrc/constants/prop-types/keys'
 import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
+import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
+import { bufferToString } from 'uiSrc/utils'
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
+import KeyTreeDelimiter from './KeyTreeDelimiter'
 
-import KeyList from '../key-list/KeyList'
+import KeyList from '../key-list'
 import styles from './styles.module.scss'
 
 export interface Props {
-  keysState: IKeyListPropTypes
+  keysState: KeysStoreData
   loading: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
+  loadMoreItems: (
+    oldKeys: IKeyPropTypes[],
+    { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
+  ) => void
 }
 
 export const firstPanelId = 'tree'
 export const secondPanelId = 'keys'
 
-const KeyTree = (props: Props) => {
-  const { selectKey, loading, keysState } = props
+const KeyTree = forwardRef((props: Props, ref) => {
+  const { selectKey, loadMoreItems, loading, keysState } = props
 
   const firstPanelId = 'tree'
   const secondPanelId = 'keys'
 
-  const { filter, search } = useSelector(keysSelector)
-  const { panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
+  const { delimiter, panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
+
+  const [,startTransition] = useTransition()
 
   const [statusSelected, setStatusSelected] = useState(selectedLeaf)
   const [statusOpen, setStatusOpen] = useState(openNodes)
   const [sizes, setSizes] = useState(panelSizes)
-  const [separator, setSeparator] = useState<string>(DEFAULT_SEPARATOR)
-  const [keyListState, setKeyListState] = useState<IKeyListPropTypes>(keysState)
+  const [keyListState, setKeyListState] = useState<KeysStoreData>(keysState)
   const [constructingTree, setConstructingTree] = useState(false)
   const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(true)
+  const [items, setItems] = useState<IKeyPropTypes[]>(keysState.keys ?? [])
 
   const dispatch = useDispatch()
+
+  useImperativeHandle(ref, () => ({
+    handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
+      onLoadMoreItems(config)
+    }
+  }))
 
   useEffect(() => {
     updateKeysList()
@@ -62,23 +75,45 @@ const KeyTree = (props: Props) => {
   }, [selectedLeaf])
 
   useEffect(() => {
-    // select default leaf "Keys" after each search or filter
-    setSelectDefaultLeaf(true)
-  }, [filter, search])
+    setItems(parseKeyNames(keysState.keys))
+    if (keysState.keys?.length === 0) {
+      dispatch(setBrowserTreeSelectedLeaf({}))
+    }
+  }, [keysState.keys])
 
-  const options: EuiSuperSelectOption<string>[] = [{
-    value: DEFAULT_SEPARATOR,
-    inputDisplay: DEFAULT_SEPARATOR,
-    'data-test-subj': 'separator-colon',
-  }]
+  useEffect(() => {
+    updateSelectedKeys()
+  }, [delimiter, keysState.lastRefreshTime])
+
+  const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
+    const formattedAllKeys = parseKeyNames(keysState.keys)
+    loadMoreItems?.(formattedAllKeys, props)
+  }
+
+  // select default leaf "Keys" after each change delimiter, filter or search
+  const updateSelectedKeys = () => {
+    setItems(parseKeyNames(keysState.keys))
+    setTimeout(() => {
+      startTransition(() => {
+        setStatusSelected({})
+        setSelectDefaultLeaf(true)
+      })
+    }, 0)
+  }
+
+  const parseKeyNames = (keys: GetKeyInfoResponse[]) =>
+    keys.map((item) =>
+      ({ ...item, nameString: item.nameString ?? bufferToString(item.name) }))
 
   const updateKeysList = (items:any = {}) => {
-    const newState:IKeyListPropTypes = {
-      ...keyListState,
-      keys: Object.values(items)
-    }
+    startTransition(() => {
+      const newState:KeysStoreData = {
+        ...keyListState,
+        keys: Object.values(items)
+      }
 
-    setKeyListState(newState)
+      setKeyListState(newState)
+    })
   }
 
   const onPanelWidthChange = useCallback((newSizes: any) => {
@@ -88,14 +123,9 @@ const KeyTree = (props: Props) => {
     }))
   }, [])
 
-  const onChangeSeparator = (initValue: string) => {
-    setSeparator(initValue)
-  }
-
   const handleStatusOpen = (name: string, value:boolean) => {
     setStatusOpen((prevState) => {
       const newState = { ...prevState }
-
       // add or remove opened node
       if (newState[name]) {
         delete newState[name]
@@ -132,21 +162,13 @@ const KeyTree = (props: Props) => {
                 >
                   <div className={styles.tree}>
                     <div className={styles.treeHeader}>
-                      <EuiSuperSelect
-                        disabled={loading}
-                        options={options}
-                        valueOfSelected={separator}
-                        popoverClassName={styles.separatorSelect}
-                        itemClassName={styles.separatorSelectItem}
-                        onChange={(value: string) => onChangeSeparator(value)}
-                        data-testid="select-tree-view-separator"
-                      />
+                      <KeyTreeDelimiter loading={loading} />
                     </div>
                     <div className={styles.treeContent}>
                       <VirtualTree
-                        items={keysState.keys}
+                        items={items}
                         loadingIcon={TreeViewSVG}
-                        separator={separator}
+                        delimiter={delimiter}
                         statusSelected={statusSelected}
                         statusOpen={statusOpen}
                         loading={loading || constructingTree}
@@ -182,6 +204,7 @@ const KeyTree = (props: Props) => {
                     <KeyList
                       hideHeader
                       hideFooter
+                      ref={ref}
                       keysState={keyListState}
                       loading={loading || constructingTree}
                       selectKey={selectKey}
@@ -196,6 +219,6 @@ const KeyTree = (props: Props) => {
       </div>
     </div>
   )
-}
+})
 
 export default KeyTree

@@ -1,7 +1,14 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { RouterModule } from 'nest-router';
-import { SharedModule } from 'src/modules/shared/shared.module';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
+import { StreamController } from 'src/modules/browser/controllers/stream/stream.controller';
+import { StreamService } from 'src/modules/browser/services/stream/stream.service';
+import { ConsumerGroupController } from 'src/modules/browser/controllers/stream/consumer-group.controller';
+import { ConsumerGroupService } from 'src/modules/browser/services/stream/consumer-group.service';
+import { ConsumerController } from 'src/modules/browser/controllers/stream/consumer.controller';
+import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
+import { RedisearchController } from 'src/modules/browser/controllers/redisearch/redisearch.controller';
+import { RedisearchService } from 'src/modules/browser/services/redisearch/redisearch.service';
 import { HashController } from './controllers/hash/hash.controller';
 import { KeysController } from './controllers/keys/keys.controller';
 import { KeysBusinessService } from './services/keys-business/keys-business.service';
@@ -18,10 +25,8 @@ import { ZSetBusinessService } from './services/z-set-business/z-set-business.se
 import { RejsonRlBusinessService } from './services/rejson-rl-business/rejson-rl-business.service';
 import { BrowserToolService } from './services/browser-tool/browser-tool.service';
 import { BrowserToolClusterService } from './services/browser-tool-cluster/browser-tool-cluster.service';
-import { BrowserAnalyticsService } from './services/browser-analytics/browser-analytics.service';
 
 @Module({
-  imports: [SharedModule],
   controllers: [
     KeysController,
     StringController,
@@ -29,7 +34,11 @@ import { BrowserAnalyticsService } from './services/browser-analytics/browser-an
     SetController,
     ZSetController,
     RejsonRlController,
+    RedisearchController,
     HashController,
+    StreamController,
+    ConsumerGroupController,
+    ConsumerController,
   ],
   providers: [
     KeysBusinessService,
@@ -38,10 +47,13 @@ import { BrowserAnalyticsService } from './services/browser-analytics/browser-an
     SetBusinessService,
     ZSetBusinessService,
     RejsonRlBusinessService,
+    RedisearchService,
     HashBusinessService,
+    StreamService,
+    ConsumerGroupService,
+    ConsumerService,
     BrowserToolService,
     BrowserToolClusterService,
-    BrowserAnalyticsService,
   ],
 })
 export class BrowserModule implements NestModule {
@@ -56,6 +68,9 @@ export class BrowserModule implements NestModule {
         RouterModule.resolvePath(SetController),
         RouterModule.resolvePath(ZSetController),
         RouterModule.resolvePath(RejsonRlController),
+        RouterModule.resolvePath(StreamController),
+        RouterModule.resolvePath(ConsumerGroupController),
+        RouterModule.resolvePath(ConsumerController),
       );
   }
 }

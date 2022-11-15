@@ -9,7 +9,7 @@ import { isNull, isArray } from 'lodash';
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError, catchTransactionError } from 'src/utils';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   CreateListWithExpireDto,
   DeleteListElementsDto,
@@ -21,7 +21,6 @@ import {
   ListElementDestination,
   PushElementToListDto,
   PushListElementsResponse,
-  RedisDataType,
   SetListElementDto,
   SetListElementResponse,
 } from 'src/modules/browser/dto';
@@ -29,8 +28,8 @@ import {
   BrowserToolKeysCommands,
   BrowserToolListCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { plainToClass } from 'class-transformer';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 @Injectable()
 export class ListBusinessService {
@@ -38,7 +37,6 @@ export class ListBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
-    private browserAnalyticsService: BrowserAnalyticsService,
   ) {}
 
   public async createList(
@@ -66,14 +64,6 @@ export class ListBusinessService {
       } else {
         await this.createSimpleList(clientOptions, dto);
       }
-      this.browserAnalyticsService.sendKeyAddedEvent(
-        clientOptions.instanceId,
-        RedisDataType.List,
-        {
-          length: 1,
-          TTL: dto.expire || -1,
-        },
-      );
       this.logger.log('Succeed to create list data type.');
     } catch (error) {
       this.logger.error('Failed to create list data type.', error);
@@ -104,17 +94,10 @@ export class ListBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      this.browserAnalyticsService.sendKeyValueAddedEvent(
-        clientOptions.instanceId,
-        RedisDataType.List,
-        {
-          numberOfAdded: 1,
-        },
-      );
       this.logger.log(
         `Succeed to insert element at the ${destination} of the list data type.`,
       );
-      return { keyName, total };
+      return plainToClass(PushListElementsResponse, { keyName, total });
     } catch (error) {
       this.logger.error('Failed to inserts element to the list data type.', error);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
@@ -159,7 +142,7 @@ export class ListBusinessService {
       }
       catchAclError(error);
     }
-    return result;
+    return plainToClass(GetListElementsResponse, result);
   }
 
   /**
@@ -200,11 +183,8 @@ export class ListBusinessService {
           new NotFoundException(ERROR_MESSAGES.INDEX_OUT_OF_RANGE()),
         );
       }
-      this.browserAnalyticsService.sendGetListElementByIndexEvent(
-        clientOptions.instanceId,
-      );
       this.logger.log('Succeed to get List element by index.');
-      return { keyName, value };
+      return plainToClass(GetListElementResponse, { keyName, value });
     } catch (error) {
       this.logger.error('Failed to to get List element by index.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -239,10 +219,6 @@ export class ListBusinessService {
         BrowserToolListCommands.LSet,
         [keyName, index, element],
       );
-      this.browserAnalyticsService.sendKeyValueEditedEvent(
-        clientOptions.instanceId,
-        RedisDataType.List,
-      );
       this.logger.log('Succeed to set the list element at index.');
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -254,7 +230,7 @@ export class ListBusinessService {
       this.logger.error('Failed to set the list element at index.', error);
       catchAclError(error);
     }
-    return { index, element };
+    return plainToClass(SetListElementResponse, { index, element });
   }
 
   /**
@@ -290,16 +266,9 @@ export class ListBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      this.browserAnalyticsService.sendKeyValueRemovedEvent(
-        clientOptions.instanceId,
-        RedisDataType.List,
-        {
-          numberOfRemoved: isArray(result) ? result.length : 1,
-        },
-      );
-      return {
+      return plainToClass(DeleteListElementsResponse, {
         elements: isArray(result) ? [...result] : [result],
-      };
+      });
     } catch (error) {
       this.logger.error('Failed to delete elements from the list stored at key.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {

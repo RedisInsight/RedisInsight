@@ -6,6 +6,7 @@
   padding: 18px 18px 0;
 
   display: flex;
+  flex-shrink: 0;
   flex-direction: column;
   position: relative;
 
@@ -14,55 +15,53 @@
     width: 78px !important;
 
     :global(.euiButton__text) {
-      font: normal normal 500 15px/24px 'Graphik', sans-serif !important;
+      font: normal normal 500 15px/24px "Graphik", sans-serif !important;
     }
   }
 
+  .bulkActions {
+    height: 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    margin-left: 6px;
+
+    :global(.euiButtonContent) {
+      padding: 0 !important;
+    }
+  }
 }
 
-.top, .bottom {
+.top,
+.bottom {
   display: flex;
   text-align: center;
   align-items: center;
   min-height: 38px;
 }
 
+.top {
+  justify-content: space-between;
+}
+
 .bottom {
   padding-top: 10px;
 }
 
-
-.refresh {
-  right: 18px;
-  position: absolute;
+.exitFullScreenBtn {
+  margin-left: 18px;
 }
 
-.btnRefresh {
-  svg {
-    width: 20px;
-    height: 20px;
+.viewTypeSwitch,
+.searchModeSwitch {
+  padding: 0 18px;
+  flex-shrink: 0;
+  &.middleScreen {
+    padding: 0 36px;
+  }
+  &.fullScreen {
+    padding: 0 120px;
   }
 }
-
-.refreshTime {
-  color: var(--euiColorWarningLight);
-  padding-right: 6px;
-}
-
-.refreshSummary {
-  vertical-align: middle;
-  font: normal normal normal 12px/18px 'Graphik', sans-serif !important;
-  letter-spacing: -0.12px;
-}
-
-.tooltip {
-  max-width: 372px !important;
-}
-
-.viewTypeSwitch {
-  padding: 0 24px;
-}
-
 
 .viewTypeBtn {
   width: 36px !important;
@@ -73,11 +72,79 @@
     color: var(--euiTextSubduedColor) !important;
   }
 
+  svg > g > path {
+    fill: var(--euiTextSubduedColor) !important;
+  }
+
   &.active {
     background-color: var(--browserComponentActive) !important;
 
     svg {
       color: var(--euiColorPrimary) !important;
+    }
+
+    svg > g > path {
+      fill: var(--euiColorPrimary) !important;
+    }
+  }
+}
+
+.refreshContainer {
+  right: 18px;
+  position: absolute;
+}
+
+.popoverPanelWrapper {
+  width: 225px;
+  z-index: 10000 !important;
+}
+
+.noModuleInfo {
+  font-size: 12px !important;
+  line-height: 18px !important;
+  color: var(--euiTooltipTextSecondColor) !important;
+}
+
+.iconVector svg {
+  height: 17px !important;
+}
+
+.searchModeSwitch {
+  padding: 0 10px 0 0 !important;
+
+  *:first-of-type .viewTypeBtn {
+    border-radius: 4px 0 0 4px !important;
+  }
+  *:last-of-type .viewTypeBtn {
+    border-radius: 0 4px 4px 0 !important;
+  }
+
+  .viewTypeBtn {
+    border: 1px solid var(--euiColorSecondary) !important;
+    background-color: var(--browserViewTypePassive) !important;
+
+    &:hover {
+      transform: none !important;
+    }
+
+    svg {
+      color: var(--euiColorFullShade) !important;
+    }
+
+    svg > g > path {
+      fill: var(--euiColorFullShade) !important;
+    }
+
+    &.active {
+      background-color: var(--euiColorSecondary) !important;
+
+      svg {
+        color: var(--euiColorPrimaryText) !important;
+      }
+
+      svg > g > path {
+        fill: var(--euiColorPrimaryText) !important;
+      }
     }
   }
 }

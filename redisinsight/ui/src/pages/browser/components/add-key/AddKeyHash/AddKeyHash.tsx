@@ -11,12 +11,10 @@ import {
   EuiFlexItem,
   EuiPanel,
 } from '@elastic/eui'
-import { Maybe } from 'uiSrc/utils'
 import {
   addHashKey, addKeyStateSelector,
-} from 'uiSrc/slices/keys'
+} from 'uiSrc/slices/browser/keys'
 import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/dto/hash.dto'
-import AddKeyCommonFields from 'uiSrc/pages/browser/components/add-key/AddKeyCommonFields/AddKeyCommonFields'
 import {
   IHashFieldState,
   INITIAL_HASH_FIELD_STATE
@@ -24,20 +22,21 @@ import {
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 import styles from 'uiSrc/pages/browser/components/key-details-add-items/styles.module.scss'
+import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import {
-  AddCommonFieldsFormConfig as defaultConfig,
   AddHashFormConfig as config
 } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  keyName: string
+  keyTTL: Maybe<number>
+  onCancel: (isCancelled?: boolean) => void
 }
 
 const AddKeyHash = (props: Props) => {
+  const { keyName = '', keyTTL, onCancel } = props
   const { loading } = useSelector(addKeyStateSelector)
-  const [keyName, setKeyName] = useState<string>('')
-  const [keyTTL, setKeyTTL] = useState<Maybe<number>>(undefined)
   const [fields, setFields] = useState<IHashFieldState[]>([{ ...INITIAL_HASH_FIELD_STATE }])
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
   const lastAddedFieldName = useRef<HTMLInputElement>(null)
@@ -109,16 +108,16 @@ const AddKeyHash = (props: Props) => {
 
   const submitData = (): void => {
     const data: CreateHashWithExpireDto = {
-      keyName,
+      keyName: stringToBuffer(keyName),
       fields: fields.map((item) => ({
-        field: item.fieldName,
-        value: item.fieldValue
+        field: stringToBuffer(item.fieldName),
+        value: stringToBuffer(item.fieldValue),
       }))
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL
     }
-    dispatch(addHashKey(data, props.onCancel))
+    dispatch(addHashKey(data, onCancel))
   }
 
   const isClearDisabled = (item: IHashFieldState): boolean =>
@@ -126,14 +125,6 @@ const AddKeyHash = (props: Props) => {
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
-      <AddKeyCommonFields
-        config={defaultConfig}
-        loading={loading}
-        keyName={keyName}
-        setKeyName={setKeyName}
-        keyTTL={keyTTL}
-        setKeyTTL={setKeyTTL}
-      />
       {
         fields.map((item, index) => (
           <EuiFlexItem
@@ -218,7 +209,7 @@ const AddKeyHash = (props: Props) => {
               <div>
                 <EuiButton
                   color="secondary"
-                  onClick={() => props.onCancel(true)}
+                  onClick={() => onCancel(true)}
                   className="btn-cancel btn-back"
                 >
                   <EuiTextColor>Cancel</EuiTextColor>

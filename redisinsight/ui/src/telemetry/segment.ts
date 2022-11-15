@@ -32,7 +32,11 @@ export class SegmentTelemetryService implements ITelemetryService {
 
     if (!isWebApp) {
       pageObject.page = {
-        path: '', url: '', title: globalThis.document.title
+        path: '', url: '', title: ''
+      }
+    } else {
+      pageObject.page = {
+        ...pageObject.page, title: ''
       }
     }
 
@@ -47,12 +51,12 @@ export class SegmentTelemetryService implements ITelemetryService {
     return this._anonymousId
   }
 
-  async pageView(name: string, databaseId?: string): Promise<void> {
+  async pageView(name: string, appType: string, databaseId?: string): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         const pageInfo = this._getPageInfo()
         const { page = {} } = { ...pageInfo }
-        window.analytics.page(name, { databaseId, ...page }, {
+        window.analytics.page(name, { databaseId, buildType: appType, ...page }, {
           context: {
             ip: '0.0.0.0',
             ...pageInfo

@@ -12,14 +12,14 @@ import {
   EuiPanel,
 } from '@elastic/eui'
 
-import { validateScoreNumber } from 'uiSrc/utils'
+import { stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import {
   fetchAddZSetMembers,
   resetUpdateScore,
   updateZsetScoreStateSelector,
-} from 'uiSrc/slices/zset'
+} from 'uiSrc/slices/browser/zset'
 
 import AddItemsActions from '../../add-items-actions/AddItemsActions'
 import { AddZsetFormConfig as config } from '../../add-key/constants/fields-config'
@@ -157,7 +157,7 @@ const AddZsetMembers = (props: Props) => {
     const data = {
       keyName: selectedKey,
       members: members.map((item) => ({
-        name: item.name,
+        name: stringToBuffer(item.name),
         score: toNumber(item.score),
       })),
     }

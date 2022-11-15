@@ -64,6 +64,8 @@ export enum CommandGroup {
   TDigest = 'tdigest',
   CMS = 'cms',
   TopK = 'topk',
+  BloomFilter = 'bf',
+  CuckooFilter = 'cf'
 }
 
 export enum CommandPrefix {
@@ -80,6 +82,7 @@ export enum CommandPrefix {
 }
 
 export const CommandMonitor = 'MONITOR'
+export const CommandPSubscribe = 'PSUBSCRIBE'
 
 export enum CommandRediSearch {
   Search = 'FT.SEARCH',

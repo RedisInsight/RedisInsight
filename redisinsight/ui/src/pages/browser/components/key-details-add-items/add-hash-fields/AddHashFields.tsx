@@ -10,15 +10,19 @@ import {
   EuiFieldText,
   EuiPanel,
 } from '@elastic/eui'
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import {
   updateHashValueStateSelector,
   resetUpdateValue,
   addHashFieldsAction,
-} from 'uiSrc/slices/hash'
+} from 'uiSrc/slices/browser/hash'
 import { AddFieldsToHashDto } from 'apiSrc/modules/browser/dto/hash.dto'
+import { KeyTypes } from 'uiSrc/constants'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
+import { stringToBuffer } from 'uiSrc/utils'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -43,6 +47,8 @@ const AddHashFields = (props: Props) => {
   const [fields, setFields] = useState<IHashFieldState[]>([{ ...INITIAL_HASH_FIELD_STATE }])
   const { loading } = useSelector(updateHashValueStateSelector)
   const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
+  const { viewType } = useSelector(keysSelector)
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
   const lastAddedFieldName = useRef<HTMLInputElement>(null)
 
   useEffect(() =>
@@ -84,6 +90,22 @@ const AddHashFields = (props: Props) => {
     setFields(newState)
   }
 
+  const onSuccessAdded = () => {
+    onCancel()
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.Hash,
+        numberOfAdded: fields.length,
+      }
+    })
+  }
+
   const handleFieldChange = (formField: string, id: number, value: any) => {
     const newState = fields.map((item) => {
       if (item.id === id) {
@@ -101,11 +123,11 @@ const AddHashFields = (props: Props) => {
     const data: AddFieldsToHashDto = {
       keyName: selectedKey,
       fields: fields.map((item) => ({
-        field: item.fieldName,
-        value: item.fieldValue,
+        field: stringToBuffer(item.fieldName),
+        value: stringToBuffer(item.fieldValue,)
       })),
     }
-    dispatch(addHashFieldsAction(data, onCancel))
+    dispatch(addHashFieldsAction(data, onSuccessAdded))
   }
 
   const isClearDisabled = (item: IHashFieldState): boolean =>

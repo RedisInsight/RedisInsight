@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
+  mockAppSettingsInitial,
   mockRedisConsumer,
-  mockRedisNoPermError,
-  mockSettingsJSON,
-  mockSettingsProvider,
+  mockRedisNoPermError, mockSettingsService,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
@@ -12,15 +11,20 @@ import config from 'src/utils/config';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { GetKeysDto, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import IORedis from 'ioredis';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import { StandaloneStrategy } from './standalone.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
 };
+
+const nodeClient = Object.create(IORedis.prototype);
+nodeClient.sendCommand = jest.fn();
+
 const getKeyInfoResponse = {
   name: 'testString',
   type: 'string',
@@ -34,9 +38,14 @@ const mockNodeEmptyResult: IGetNodeKeysResult = {
   keys: [],
 };
 
+const mockRedisKeyspaceInfoResponse_1: string = '# Keyspace\r\ndb0:keys=1,expires=0,avg_ttl=0\r\n';
+const mockRedisKeyspaceInfoResponse_2: string = '# Keyspace\r\ndb0:keys=1000000,expires=0,avg_ttl=0\r\n';
+const mockRedisKeyspaceInfoResponse_3: string = '# Keyspace\r\n \r\n';
+const mockRedisKeyspaceInfoResponse_4: string = '# Keyspace\r\ndb0:keys=10,expires=0,avg_ttl=0\r\n';
+
 let strategy;
 let browserTool;
-let settingsProvider;
+let settingsService;
 
 describe('Standalone Scanner Strategy', () => {
   beforeEach(async () => {
@@ -47,22 +56,20 @@ describe('Standalone Scanner Strategy', () => {
           useFactory: mockRedisConsumer,
         },
         {
-          provide: 'SETTINGS_PROVIDER',
-          useFactory: mockSettingsProvider,
+          provide: SettingsService,
+          useFactory: mockSettingsService,
         },
       ],
     }).compile();
 
     browserTool = module.get<BrowserToolService>(BrowserToolService);
-    settingsProvider = module.get<ISettingsProvider>('SETTINGS_PROVIDER');
-    settingsProvider.getSettings = jest.fn().mockResolvedValue({
-      ...mockSettingsJSON,
-      scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
-    });
-    strategy = new StandaloneStrategy(browserTool, settingsProvider);
+    settingsService = module.get(SettingsService);
+    settingsService.getAppSettings.mockResolvedValue(mockAppSettingsInitial);
+    strategy = new StandaloneStrategy(browserTool, settingsService);
+    browserTool.getRedisClient.mockResolvedValue(nodeClient);
   });
   describe('getKeys', () => {
-    const getKeysDto: GetKeysDto = { cursor: '0', count: 15 };
+    const getKeysDto: GetKeysDto = { cursor: '0', count: 15, keysInfo: true };
     it('should return appropriate value with filter by type', async () => {
       const args = { ...getKeysDto, type: 'string', match: 'pattern*' };
 
@@ -71,15 +78,17 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
+          null,
         )
         .mockResolvedValue([0, [getKeyInfoResponse.name]]);
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(1);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([getKeyInfoResponse]);
 
@@ -99,7 +108,44 @@ describe('Standalone Scanner Strategy', () => {
         mockClientOptions,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
+        null,
       );
+    });
+    it('should return keys names only', async () => {
+      const args = {
+        ...getKeysDto, type: 'string', match: 'pattern*', keysInfo: false,
+      };
+
+      when(browserTool.execCommand)
+        .calledWith(
+          mockClientOptions,
+          BrowserToolKeysCommands.Scan,
+          expect.anything(),
+          null,
+        )
+        .mockResolvedValue([0, [getKeyInfoResponse.name]]);
+      when(browserTool.execCommand)
+        .calledWith(
+          mockClientOptions,
+          BrowserToolKeysCommands.InfoKeyspace,
+          expect.anything(),
+          'utf8',
+        )
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
+
+      strategy.getKeysInfo = jest.fn();
+
+      const result = await strategy.getKeys(mockClientOptions, args);
+
+      expect(strategy.getKeysInfo).not.toHaveBeenCalled();
+      expect(result).toEqual([
+        {
+          ...mockNodeEmptyResult,
+          total: 1,
+          scanned: getKeysDto.count,
+          keys: [{ name: getKeyInfoResponse.name }],
+        },
+      ]);
     });
     it('should call scan 3 times and return appropriate value', async () => {
       when(browserTool.execCommand)
@@ -109,7 +155,7 @@ describe('Standalone Scanner Strategy', () => {
           '*',
           'COUNT',
           getKeysDto.count,
-        ])
+        ], null)
         .mockResolvedValue(['1', new Array(3).fill(getKeyInfoResponse.name)]);
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Scan, [
@@ -118,7 +164,7 @@ describe('Standalone Scanner Strategy', () => {
           '*',
           'COUNT',
           getKeysDto.count,
-        ])
+        ], null)
         .mockResolvedValue(['2', new Array(3).fill(getKeyInfoResponse.name)]);
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Scan, [
@@ -127,15 +173,16 @@ describe('Standalone Scanner Strategy', () => {
           '*',
           'COUNT',
           getKeysDto.count,
-        ])
+        ], null)
         .mockResolvedValue(['0', new Array(3).fill(getKeyInfoResponse.name)]);
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(1000000);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_2);
 
       strategy.getKeysInfo = jest
         .fn()
@@ -156,26 +203,30 @@ describe('Standalone Scanner Strategy', () => {
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         1,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         expect.anything(),
+        'utf8',
       );
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         2,
         mockClientOptions,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', getKeysDto.count],
+        null,
       );
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         3,
         mockClientOptions,
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', getKeysDto.count],
+        null,
       );
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         4,
         mockClientOptions,
         BrowserToolKeysCommands.Scan,
         ['2', 'MATCH', '*', 'COUNT', getKeysDto.count],
+        null,
       );
     });
     it('should call scan N times until threshold exceeds', async () => {
@@ -184,15 +235,17 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
+          null,
         )
         .mockResolvedValue(['1', []]);
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(1000000);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_2);
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
 
@@ -214,18 +267,20 @@ describe('Standalone Scanner Strategy', () => {
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         1,
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         expect.anything(),
+        'utf8',
       );
     });
     it('should not call scan when total is 0', async () => {
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(0);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_3);
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
 
@@ -239,8 +294,9 @@ describe('Standalone Scanner Strategy', () => {
       expect(browserTool.execCommand).toBeCalledTimes(1);
       expect(browserTool.execCommand).toHaveBeenLastCalledWith(
         mockClientOptions,
-        BrowserToolKeysCommands.DbSize,
+        BrowserToolKeysCommands.InfoKeyspace,
         expect.anything(),
+        'utf8',
       );
       expect(strategy.getKeysInfo).toBeCalledTimes(0);
     });
@@ -248,10 +304,11 @@ describe('Standalone Scanner Strategy', () => {
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(0);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_3);
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
       strategy.scan = jest.fn().mockResolvedValue(undefined);
 
@@ -270,15 +327,14 @@ describe('Standalone Scanner Strategy', () => {
       expect(result).toEqual([mockNodeEmptyResult]);
       expect(strategy.getKeysInfo).toBeCalledTimes(0);
     });
-    it('should throw error on dbsize command', async () => {
+    it('should throw error on Info Keyspace command', async () => {
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
-        command: 'DBSIZE',
+        command: 'info keyspace',
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.DbSize, [])
+        .calledWith(mockClientOptions, BrowserToolKeysCommands.InfoKeyspace, [], 'utf8')
         .mockRejectedValue(replyError);
-
       try {
         await strategy.getKeys(mockClientOptions, getKeysDto);
         fail('Should throw an error');
@@ -290,10 +346,11 @@ describe('Standalone Scanner Strategy', () => {
       when(browserTool.execCommand)
         .calledWith(
           mockClientOptions,
-          BrowserToolKeysCommands.DbSize,
+          BrowserToolKeysCommands.InfoKeyspace,
           expect.anything(),
+          'utf8',
         )
-        .mockResolvedValue(10);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
 
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
@@ -304,6 +361,7 @@ describe('Standalone Scanner Strategy', () => {
           mockClientOptions,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
+          null,
         )
         .mockRejectedValue(replyError);
 
@@ -319,10 +377,11 @@ describe('Standalone Scanner Strategy', () => {
         when(browserTool.execCommand)
           .calledWith(
             mockClientOptions,
-            BrowserToolKeysCommands.DbSize,
+            BrowserToolKeysCommands.InfoKeyspace,
             expect.anything(),
+            'utf8',
           )
-          .mockResolvedValue(10);
+          .mockResolvedValue(mockRedisKeyspaceInfoResponse_4);
         strategy.scan = jest.fn();
       });
       it("should call scan when math contains '?' glob", async () => {
@@ -393,10 +452,11 @@ describe('Standalone Scanner Strategy', () => {
         when(browserTool.execCommand)
           .calledWith(
             mockClientOptions,
-            BrowserToolKeysCommands.DbSize,
-            expect.anything(),
+            BrowserToolKeysCommands.InfoKeyspace,
+            [],
+            'utf8',
           )
-          .mockResolvedValue(total);
+          .mockResolvedValue(mockRedisKeyspaceInfoResponse_4);
         strategy.scan = jest.fn();
       });
       it('should find exact key when match is not glob patter', async () => {
@@ -415,7 +475,7 @@ describe('Standalone Scanner Strategy', () => {
             keys: [getKeyInfoResponse],
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(mockClientOptions, [
+        expect(strategy.getKeysInfo).toHaveBeenCalledWith(nodeClient, [
           key,
         ]);
         expect(strategy.scan).not.toHaveBeenCalled();
@@ -437,7 +497,7 @@ describe('Standalone Scanner Strategy', () => {
             keys: [{ ...getKeyInfoResponse, name: mockSearchPattern }],
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(mockClientOptions, [mockSearchPattern]);
+        expect(strategy.getKeysInfo).toHaveBeenCalledWith(nodeClient, [mockSearchPattern]);
         expect(strategy.scan).not.toHaveBeenCalled();
       });
       it('should find exact key with correct type', async () => {

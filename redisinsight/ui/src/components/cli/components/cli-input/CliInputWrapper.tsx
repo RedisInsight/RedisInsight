@@ -9,11 +9,11 @@ import CliAutocomplete from './CliAutocomplete'
 import CliInput from './CliInput'
 
 export interface Props {
-  command: string;
-  wordsTyped: number;
-  setInputEl: Function;
-  setCommand: (command: string) => void;
-  onKeyDown: (event: React.KeyboardEvent<HTMLSpanElement>) => void;
+  command: string
+  wordsTyped: number
+  setInputEl: Function
+  setCommand: (command: string) => void
+  onKeyDown: (event: React.KeyboardEvent<HTMLSpanElement>) => void
 }
 
 const CliInputWrapper = (props: Props) => {
@@ -21,7 +21,7 @@ const CliInputWrapper = (props: Props) => {
   const { spec: ALL_REDIS_COMMANDS } = useSelector(appRedisCommandsSelector)
   const { db } = useSelector(outputSelector)
 
-  const [commandLine, repeatCommand] = getCommandRepeat(command)
+  const [commandLine, repeatCommand] = getCommandRepeat(command || '')
   const [firstCommand, secondCommand] = commandLine.split(' ')
   const firstCommandMatch = firstCommand.toUpperCase()
   const secondCommandMatch = `${firstCommandMatch} ${secondCommand ? secondCommand.toUpperCase() : null}`

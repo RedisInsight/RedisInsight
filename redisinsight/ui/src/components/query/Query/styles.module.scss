@@ -28,6 +28,11 @@
   opacity: 0.8;
 }
 
+.disabledActions {
+  pointer-events: none;
+  user-select: none;
+}
+
 .containerPlaceholder {
   display: flex;
   padding: 8px 16px 8px 16px;
@@ -61,9 +66,54 @@
 
 .actions {
   width: 44px;
+  position: relative;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+}
+
+.textBtn.textBtn {
+  border: none !important;
+  width: 24px;
+  height: 24px !important;
+  min-width: auto !important;
+  min-height: auto !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+
+  :global(.euiButton__content) {
+    padding: 0 !important;
+  }
+
+  &:hover, 
+  &:focus {
+    border: 1px solid var(--buttonSecondaryHoverColor) !important;
+  }
+
+  svg path {
+    fill: var(--euiTextSubduedColor) !important;
+  }
+
+  &:hover svg path,
+  &:focus svg path {
+    fill: var(--wbHoverIconColor) !important;
+  }
+  
+  &.activeBtn {
+    background: var(--browserComponentActive) !important;
+    border: 1px solid var(--euiColorSecondary);
+
+    svg path {
+      fill: var(--wbActiveIconColor) !important;
+    }
+
+    &:hover,
+    &:focus {
+      border: 1px solid var(--buttonSecondaryHoverColor) !important;
+    }
+  }
 }
 
 .submitButton {
@@ -71,8 +121,23 @@
   width: 44px !important;
   height: 44px !important;
 
+  &Loading {
+    position: absolute;
+    left: 0;
+    opacity: .5;
+    margin-top: -10px;
+    svg {
+      width: 17px !important;
+      height: 17px !important;
+    }
+  }
+
   svg {
     width: 24px;
     height: 24px;
   }
+}
+
+.tooltipText {
+  font-size: 12px !important;
 }

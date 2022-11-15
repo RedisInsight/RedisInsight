@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
+import { v4 as uuidv4 } from 'uuid'
 import { EuiFlexItem, EuiIcon, EuiLoadingContent, EuiTextColor } from '@elastic/eui'
 import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -15,7 +16,7 @@ import {
   sendPluginCommandAction,
   setPluginStateAction
 } from 'uiSrc/slices/app/plugins'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appServerInfoSelector } from 'uiSrc/slices/app/info'
 
 import styles from './styles.module.scss'
@@ -210,7 +211,7 @@ const QueryCardCliPlugin = (props: Props) => {
   useEffect(() => {
     const view = visualizations.find((visualization: IPluginVisualization) => visualization.uniqId === id)
     if (view) {
-      generatedIframeNameRef.current = `${view.plugin.name}-${Date.now()}`
+      generatedIframeNameRef.current = `${view.plugin.name}-${uuidv4()}`
       setCurrentView(view)
 
       const { plugin } = view
@@ -238,6 +239,7 @@ const QueryCardCliPlugin = (props: Props) => {
           className={cx('pluginIframe', styles.pluginIframe, { [styles.hidden]: !currentPlugin || !isPluginLoaded || !!error })}
           title={id}
           ref={pluginIframeRef}
+          src="about:blank"
           referrerPolicy="no-referrer"
           sandbox="allow-same-origin allow-scripts"
           data-testid="pluginIframe"

@@ -73,6 +73,10 @@
 
 .commandsPerSecTip {
   margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   .moreInfoOverviewIcon {
     margin-right: 8px;
     width: auto !important;
@@ -117,7 +121,7 @@
   height: 18px !important;
 
   @media only screen and (min-width: 1124px) {
-    display: none;
+    display: none !important;
   }
 }
 

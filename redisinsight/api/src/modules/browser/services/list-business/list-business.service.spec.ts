@@ -8,72 +8,34 @@ import {
 import { when } from 'jest-when';
 import { ReplyError } from 'src/models/redis-client';
 import {
-  mockBrowserAnalyticsService,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongNumberOfArgumentsError,
   mockRedisWrongTypeError,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   CreateListWithExpireDto,
-  DeleteListElementsDto,
-  GetListElementResponse,
-  GetListElementsDto,
-  GetListElementsResponse,
-  KeyDto,
   ListElementDestination,
-  PushElementToListDto,
-  SetListElementDto,
 } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolKeysCommands,
   BrowserToolListCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import {
+  mockDeleteElementsDto,
+  mockGetListElementResponse,
+  mockGetListElementsDto, mockGetListElementsResponse, mockIndex,
+  mockKeyDto, mockListElement, mockListElement2,
+  mockListElements,
+  mockPushElementDto, mockSetListElementDto,
+} from 'src/modules/browser/__mocks__';
 import { ListBusinessService } from './list-business.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
   instanceId: mockStandaloneDatabaseEntity.id,
-};
-const mockKeyDto: KeyDto = {
-  keyName: 'testList',
-};
-const mockIndex: number = 0;
-const mockGetListElementResponse: GetListElementResponse = {
-  keyName: mockKeyDto.keyName,
-  value: 'somesortofstring',
-};
-const mockPushElementDto: PushElementToListDto = {
-  keyName: 'testList',
-  element: 'Lorem ipsum dolor sit amet.',
-  destination: ListElementDestination.Tail,
-};
-const mockGetListElementsDto: GetListElementsDto = {
-  keyName: 'testList',
-  offset: 0,
-  count: 10,
-};
-const mockListElements: string[] = ['element'];
-
-const mockGetListElementsResponse: GetListElementsResponse = {
-  keyName: mockPushElementDto.keyName,
-  total: mockListElements.length,
-  elements: mockListElements,
-};
-
-const mockSetListElementDto: SetListElementDto = {
-  keyName: 'testList',
-  element: 'Lorem ipsum dolor sit amet.',
-  index: 0,
-};
-
-const mockDeleteElementsDto: DeleteListElementsDto = {
-  keyName: 'testList',
-  destination: ListElementDestination.Tail,
-  count: 1,
 };
 
 describe('ListBusinessService', () => {
@@ -84,10 +46,6 @@ describe('ListBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ListBusinessService,
-        {
-          provide: BrowserAnalyticsService,
-          useFactory: mockBrowserAnalyticsService,
-        },
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
@@ -476,7 +434,7 @@ describe('ListBusinessService', () => {
       await expect(result).toEqual({ elements: [mockListElements[0]] });
     });
     it('succeed to remove multiple elements from the tail', async () => {
-      const mockDeletedElements = ['element1', 'element2'];
+      const mockDeletedElements = [mockListElement, mockListElement2];
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolListCommands.RPop, [
           mockDeleteElementsDto.keyName,

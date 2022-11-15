@@ -1,3 +1,6 @@
+@import "../../../../../node_modules/@elastic/eui/src/global_styling/index";
+@import "../../../../../node_modules/@elastic/eui/src/global_styling/mixins/helpers";
+
 .euiFormRow {
   .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
   .euiSelect:not(.euiSelect--compressed),
@@ -13,7 +16,7 @@
     font-size: 13px;
     line-height: 18px;
     font-weight: 400;
-    letter-spacing: -.13px;
+    letter-spacing: -0.13px;
 
     &:not(.euiFormLabel-isFocused, .euiFormLabel-isInvalid) {
       color: var(--euiTextSubduedColor);
@@ -24,7 +27,7 @@
     display: flex;
     align-items: center;
     font-size: 13px;
-    line-height: 43px;
+    line-height: 41px;
   }
 
   .euiFormRow__label {
@@ -34,6 +37,10 @@
   .euiFieldText:disabled {
     background-color: initial;
     color: #b5b6c0;
+  }
+
+  .euiButtonIcon {
+    align-self: center;
   }
 }
 
@@ -56,11 +63,17 @@
   border-color: var(--euiColorLightShade);
   border-top-width: 1px;
   width: 100%;
+
+  z-index: 2;
+
+  max-height: 100%;
+  @include euiScrollBar;
+  overflow-y: auto;
 }
 
 .euiRadio .euiRadio__circle,
 .euiCheckbox .euiCheckbox__square {
-    border-width: 2px !important;
+  border-width: 2px !important;
 }
 
 body {
@@ -70,6 +83,7 @@ body {
   .euiFieldSearch,
   .euiSelect,
   .euiSuperSelectControl,
+  .euiComboBox .euiComboBox__inputWrap,
   .euiTextArea {
     background-color: var(--euiColorEmptyShade) !important;
     max-width: 100% !important;
@@ -105,20 +119,20 @@ body {
 }
 
 .euiRadio .euiRadio__input:checked + .euiRadio__circle,
-.euiCheckbox .euiCheckbox__input:checked + .euiCheckbox__square{
+.euiCheckbox .euiCheckbox__input:checked + .euiCheckbox__square {
   border-color: var(--euiColorPrimary) !important;
 }
 
 .euiRadio:hover,
-.euiCheckbox:hover, {
+.euiCheckbox:hover {
   .euiRadio__label,
   .euiCheckbox__label {
     transition: color 150ms ease-in;
     color: var(--controlsLabelHoverColor) !important;
   }
 }
-.euiCheckbox .euiCheckbox__input:checked  ~ .euiCheckbox__label,
-.euiRadio .euiRadio__input:checked  ~ .euiRadio__label {
+.euiCheckbox .euiCheckbox__input:checked ~ .euiCheckbox__label,
+.euiRadio .euiRadio__input:checked ~ .euiRadio__label {
   color: var(--controlsLabelHoverColor) !important;
 }
 
@@ -137,9 +151,39 @@ body {
 .inlineFieldsNoSpace {
   .euiFlexGroup {
     .euiFlexItem:not(:first-child) {
-      .euiFieldText, .euiFormControlLayout--group {
+      .euiFieldText,
+      .euiFormControlLayout--group,
+      .euiSuperSelectControl {
         border-left: 0 !important;
       }
     }
+  }
+
+  .euiFormRow .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
+  .euiFormRow .euiSelect:not(.euiSelect--compressed),
+  .euiFormRow .euiFormControlLayout:not(.euiFormControlLayout--compressed),
+  .euiFormRow .euiFieldText:not(.euiFieldText--compressed),
+  .euiFormRow .euiFieldNumber:not(.euiFieldNumber--compressed) {
+    height: 43px;
+  }
+}
+
+
+.euiComboBox .euiComboBox__inputWrap {
+  padding-top: 5px !important;
+  padding-left: 8px !important;
+  min-height: 43px !important;
+  .euiBadge {
+    background-color: var(--comboBoxBadgeBgColor);
+    color: var(--euiTextSubduedColor);
+    border: 0;
+  }
+
+  .euiBadge__text {
+    line-height: 20px;
+  }
+
+  .euiComboBoxPlaceholder {
+    color: var(--inputPlaceholderColor) !important;
   }
 }

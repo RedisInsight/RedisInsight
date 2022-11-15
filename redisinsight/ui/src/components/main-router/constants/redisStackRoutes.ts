@@ -3,8 +3,34 @@ import {
   BrowserPage, InstancePage,
 } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
+import SlowLogPage from 'uiSrc/pages/slowLog'
+import PubSubPage from 'uiSrc/pages/pubSub'
 import EditConnection from 'uiSrc/pages/redisStack/components/edit-connection'
+import ClusterDetailsPage from 'uiSrc/pages/clusterDetails'
+import AnalyticsPage from 'uiSrc/pages/analytics'
+import DatabaseAnalysisPage from 'uiSrc/pages/databaseAnalysis'
 import COMMON_ROUTES from './commonRoutes'
+
+const ANALYTICS_ROUTES: IRoute[] = [
+  {
+    pageName: PageNames.slowLog,
+    protected: true,
+    path: Pages.slowLog(':instanceId'),
+    component: SlowLogPage,
+  },
+  {
+    pageName: PageNames.databaseAnalysis,
+    protected: true,
+    path: Pages.databaseAnalysis(':instanceId'),
+    component: DatabaseAnalysisPage,
+  },
+  {
+    pageName: PageNames.clusterDetails,
+    protected: true,
+    path: Pages.clusterDetails(':instanceId'),
+    component: ClusterDetailsPage,
+  },
+]
 
 const INSTANCE_ROUTES: IRoute[] = [
   {
@@ -18,6 +44,18 @@ const INSTANCE_ROUTES: IRoute[] = [
     protected: true,
     path: Pages.workbench(':instanceId'),
     component: WorkbenchPage,
+  },
+  {
+    pageName: PageNames.pubSub,
+    protected: true,
+    path: Pages.pubSub(':instanceId'),
+    component: PubSubPage,
+  },
+  {
+    path: Pages.analytics(':instanceId'),
+    protected: true,
+    component: AnalyticsPage,
+    routes: ANALYTICS_ROUTES,
   },
 ]
 

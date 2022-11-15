@@ -1,17 +1,18 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { bufferToString } from 'uiSrc/utils'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import HashDetails, { Props } from './HashDetails'
 
 const mockedProps = mock<Props>()
 const fields = [
-  { field: 'field', value: '123' },
-  { field: 'field2', value: '1' },
-  { field: 'field3', value: '5' },
+  { field: { type: 'Buffer', data: [49] }, value: { type: 'Buffer', data: [49, 65] } },
+  { field: { type: 'Buffer', data: [49, 50, 51] }, value: { type: 'Buffer', data: [49, 11] } },
+  { field: { type: 'Buffer', data: [50] }, value: { type: 'Buffer', data: [49, 234, 453] } },
 ]
 
-jest.mock('uiSrc/slices/hash', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/hash').initialState
+jest.mock('uiSrc/slices/browser/hash', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/browser/hash').initialState
   return ({
     hashSelector: jest.fn().mockReturnValue(defaultState),
     updateHashValueStateSelector: jest.fn().mockReturnValue(defaultState.updateValue),
@@ -54,26 +55,13 @@ describe('HashDetails', () => {
 
   it('should render delete popup after click remove button', () => {
     render(<HashDetails {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getAllByTestId(/remove-hash-button/)[0],
-      new MouseEvent(
-        'click',
-        {
-          bubbles: true
-        }
-      )
-    )
-    expect(screen.getByTestId(`remove-hash-button-${fields[0].field}-icon`)).toBeInTheDocument()
+    fireEvent.click(screen.getAllByTestId(/remove-hash-button/)[0])
+    expect(screen.getByTestId(`remove-hash-button-${bufferToString(fields[0].field)}-icon`)).toBeInTheDocument()
   })
 
   it('should render editor after click edit button', () => {
     render(<HashDetails {...instance(mockedProps)} />)
-    fireEvent(
-      screen.getAllByTestId(/edit-hash-button/)[0],
-      new MouseEvent('click', {
-        bubbles: true,
-      })
-    )
-    expect(screen.getByTestId('inline-item-editor')).toBeInTheDocument()
+    fireEvent.click(screen.getAllByTestId(/edit-hash-button/)[0])
+    expect(screen.getByTestId('hash-value-editor')).toBeInTheDocument()
   })
 })

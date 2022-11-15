@@ -1,9 +1,18 @@
+import { floor } from 'lodash'
+
 export const MAX_TTL_NUMBER = 2147483647
 export const MAX_PORT_NUMBER = 65535
-export const MAX_DATABASE_INDEX_NUMBER = 15
 export const MAX_SCORE_DECIMAL_LENGTH = 15
+export const MAX_REFRESH_RATE = 999.9
+export const MIN_REFRESH_RATE = 1.0
+
+export const entryIdRegex = /^(\*)$|^(([0-9]+)(-)((\*)$|([0-9]+$)))/
+export const consumerGroupIdRegex = /^(\$)$|^0$|^(([0-9]+)(-)([0-9]+$))/
 
 export const validateField = (text: string) => text.replace(/\s/g, '')
+
+export const validateEntryId = (initValue: string) => initValue.replace(/[^0-9-*]+/gi, '')
+export const validateConsumerGroupId = (initValue: string) => initValue.replace(/[^0-9-$]+/gi, '')
 
 export const validateCountNumber = (initValue: string) => {
   const value = initValue.replace(/[^0-9]+/gi, '')
@@ -52,23 +61,65 @@ export const validateEmail = (email: string) => {
   return re.test(String(email).toLowerCase())
 }
 
-export const validatePortNumber = (initValue: string) => validateNumber(initValue, MAX_PORT_NUMBER)
-export const validateDatabaseNumber = (initValue: string) =>
-  validateNumber(initValue, MAX_DATABASE_INDEX_NUMBER)
+export const validatePortNumber = (initValue: string) => validateNumber(initValue, 0, MAX_PORT_NUMBER)
 
-export const validateNumber = (initValue: string, maxNumber: number = MAX_PORT_NUMBER) => {
-  const value = initValue ? +initValue.replace(/[^0-9]+/gi, '') : ''
+export const validateNumber = (initValue: string, minNumber: number = 0, maxNumber: number = Infinity) => {
+  const positiveNumbers = /[^0-9]+/gi
+  const negativeNumbers = /[^0-9-]+/gi
+  const value = initValue ? initValue.replace(minNumber < 0 ? negativeNumbers : positiveNumbers, '') : ''
 
-  if (value > maxNumber) {
+  if (+value > maxNumber) {
     return maxNumber.toString()
   }
 
-  if (value < 0) {
+  if (+value < minNumber) {
     return ''
   }
 
   return value.toString()
 }
 
+export const validateRefreshRateNumber = (initValue: string) => {
+  let value = initValue.replace(/[^0-9.]/gi, '')
+
+  if (countDecimals(+value) > 0) {
+    value = `${floor(+value, 1)}`
+  }
+
+  if (+value > MAX_REFRESH_RATE) {
+    return MAX_REFRESH_RATE.toString()
+  }
+
+  if (+value < 0) {
+    return ''
+  }
+
+  return value.toString()
+}
+
+export const errorValidateRefreshRateNumber = (value: string) => {
+  const decimalsRegexp = /^\d+(\.\d{1})?$/
+  return !decimalsRegexp.test(value)
+}
+
+export const errorValidateNegativeInteger = (value: string) => {
+  const negativeIntegerRegexp = /^-?\d+$/
+  return !negativeIntegerRegexp.test(value)
+}
+
 export const validateCertName = (initValue: string) =>
   initValue.replace(/[^ a-zA-Z0-9!@#$%^&*-_()[\]]+/gi, '').toString()
+
+export const isRequiredStringsValid = (...params: string[]) => params.every((p = '') => p.length > 0)
+
+const countDecimals = (value: number) => {
+  if (Math.floor(value) === value) return 0
+  return value.toString().split('.')?.[1]?.length || 0
+}
+
+const getApproximateNumber = (number: number): string => (number < 1 ? '<1' : `${Math.round(number)}`)
+
+export const getApproximatePercentage = (total?: number, part: number = 0): string => {
+  const percent = (total ? part / total : 1) * 100
+  return `${getApproximateNumber(percent)}%`
+}

@@ -7,6 +7,7 @@ import {
   ConnectionSuccessOutputText,
   InitOutputText,
 } from 'uiSrc/constants/cliOutput'
+import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import reducer, {
   initialState,
   toggleCli,
@@ -29,14 +30,11 @@ import reducer, {
   setSearchingCommand,
   clearSearchingCommand,
   resetCliClientUuid,
-  resetCliHelperSettings,
+  resetCliHelperSettings, goBackFromCommand,
 } from '../../cli/cli-settings'
 
-jest.mock('uiSrc/constants/cliOutput', () => ({
-  ...jest.requireActual('uiSrc/constants/cliOutput'),
-  InitOutputText: jest.fn().mockReturnValue([]),
-}))
-
+let mathRandom: jest.SpyInstance<number>
+const random = 0.91911
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -53,6 +51,14 @@ jest.mock('uiSrc/services', () => ({
 }))
 
 describe('cliSettings slice', () => {
+  beforeAll(() => {
+    mathRandom = jest.spyOn(Math, 'random').mockImplementation(() => random)
+  })
+
+  afterAll(() => {
+    mathRandom.mockRestore()
+  })
+
   describe('toggleCliHelper', () => {
     it('default state.isShowHelper should be falsy', () => {
       // Arrange
@@ -326,6 +332,37 @@ describe('cliSettings slice', () => {
     })
   })
 
+  describe('goBackFromCommand', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const initState: typeof initialState = {
+        ...initialState,
+        isShowHelper: true,
+        isSearching: true,
+        isEnteringCommand: true,
+        isMinimizedHelper: true,
+        matchedCommand: '123',
+        searchingCommand: '123',
+        searchedCommand: '123',
+        searchingCommandFilter: '123',
+      }
+
+      const state: typeof initialState = {
+        ...initState,
+        matchedCommand: '',
+        searchedCommand: '',
+        isSearching: true
+      }
+
+      // Act
+      const nextState = reducer(initState, goBackFromCommand())
+
+      // Assert
+      const rootState = { ...initialStateDefault, cli: { settings: nextState } }
+      expect(cliSettingsSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('processCliClient', () => {
     it('should properly set loading = true', () => {
       // Arrange
@@ -448,17 +485,17 @@ describe('cliSettings slice', () => {
       apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(createCliClientAction())
+      await store.dispatch<any>(createCliClientAction(INSTANCE_ID_MOCK, () => {}))
 
       // Assert
       const expectedActions = [
         processCliClient(),
-        concatToOutput(InitOutputText()),
+        concatToOutput(InitOutputText('', 0, 0, true, () => {})),
         processCliClientSuccess(responsePayload.data?.uuid),
         concatToOutput(ConnectionSuccessOutputText),
         setCliDbIndex(0)
       ]
-      expect(store.getActions()).toEqual(expectedActions)
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
 
     it('call both createCliClientAction and processCliClientFailure when fetch is fail', async () => {
@@ -474,12 +511,12 @@ describe('cliSettings slice', () => {
       apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
       // Act
-      await store.dispatch<any>(createCliClientAction())
+      await store.dispatch<any>(createCliClientAction(INSTANCE_ID_MOCK, () => {}))
 
       // Assert
       const expectedActions = [
         processCliClient(),
-        concatToOutput(InitOutputText()),
+        concatToOutput(InitOutputText('', 0, 0, true, () => {})),
         processCliClientFailure(responsePayload.response.data.message),
         concatToOutput(cliTexts.CLI_ERROR_MESSAGE(errorMessage))
       ]

@@ -1,12 +1,17 @@
 import {
   BadRequestException, Injectable, InternalServerErrorException, Logger,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   ClusterNodeRole, ClusterSingleNodeOptions,
   CommandExecutionStatus,
 } from 'src/modules/cli/dto/cli.dto';
-import { checkRedirectionError, parseRedirectionError, splitCliCommandLine } from 'src/utils/cli-helper';
+import {
+  checkHumanReadableCommands,
+  checkRedirectionError,
+  parseRedirectionError,
+  splitCliCommandLine,
+} from 'src/utils/cli-helper';
 import {
   CommandNotSupportedError,
   CommandParsingError,
@@ -14,130 +19,110 @@ import {
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
-import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
-import { RawFormatterStrategy } from 'src/modules/cli/services/cli-business/output-formatter/strategies/raw-formatter.strategy';
+import { CreateCommandExecutionDto, RunQueryMode } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { RedisToolService } from 'src/modules/redis/redis-tool.service';
+import {
+  FormatterManager,
+  FormatterTypes,
+  ASCIIFormatterStrategy,
+  UTF8FormatterStrategy,
+} from 'src/common/transformers';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
 export class WorkbenchCommandsExecutor {
   private logger = new Logger('WorkbenchCommandsExecutor');
 
-  private formatter = new RawFormatterStrategy();
+  private formatterManager: FormatterManager;
 
   constructor(
     private redisTool: RedisToolService,
     private analyticsService: WorkbenchAnalyticsService,
-  ) {}
+  ) {
+    this.formatterManager = new FormatterManager();
+    this.formatterManager.addStrategy(
+      FormatterTypes.UTF8,
+      new UTF8FormatterStrategy(),
+    );
+    this.formatterManager.addStrategy(
+      FormatterTypes.ASCII,
+      new ASCIIFormatterStrategy(),
+    );
+  }
 
+  /**
+   * Entrypoint for any CommandExecution
+   * Will determine type of a command (standalone, per node(s)) and format, and execute it
+   * Also sis a single place of analytics events invocation
+   * @param clientOptions
+   * @param dto
+   */
   public async sendCommand(
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionDto,
   ): Promise<CommandExecutionResult[]> {
-    const { command, role, nodeOptions } = dto;
+    let result;
 
-    if (nodeOptions) {
-      const result = await this.sendCommandForSingleNode(
-        clientOptions,
-        command,
-        role,
-        nodeOptions,
-      );
+    const {
+      command: commandLine,
+      role,
+      nodeOptions,
+      mode,
+    } = dto;
 
-      return [result];
-    }
-
-    if (role) {
-      return this.sendCommandForNodes(clientOptions, command, role);
-    }
-
-    return [await this.sendCommandForStandalone(clientOptions, dto)];
-  }
-
-  private async sendCommandForStandalone(
-    clientOptions: IFindRedisClientInstanceByOptions,
-    dto: CreateCommandExecutionDto,
-  ): Promise<CommandExecutionResult> {
-    this.logger.log('Executing workbench command.');
-    const { command: commandLine } = dto;
+    const [command, ...commandArgs] = splitCliCommandLine(commandLine);
 
     try {
-      const [command, ...args] = splitCliCommandLine(commandLine);
-      const response = this.formatter.format(
-        await this.redisTool.execCommand(clientOptions, command, args),
+      if (nodeOptions) {
+        result = [await this.sendCommandForSingleNode(
+          clientOptions,
+          command,
+          commandArgs,
+          role,
+          mode,
+          nodeOptions,
+        )];
+      } else if (role) {
+        result = await this.sendCommandForNodes(
+          clientOptions,
+          command,
+          commandArgs,
+          role,
+          mode,
+        );
+      } else {
+        result = [await this.sendCommandForStandalone(
+          clientOptions,
+          command,
+          commandArgs,
+          mode,
+        )];
+      }
+
+      this.analyticsService.sendCommandExecutedEvents(
+        clientOptions.instanceId,
+        result,
+        { command, rawMode: mode === RunQueryMode.Raw },
       );
 
-      this.logger.log('Succeed to execute workbench command.');
-
-      const result = { response, status: CommandExecutionStatus.Success };
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command });
       return result;
     } catch (error) {
       this.logger.error('Failed to execute workbench command.', error);
-      const result = { response: error.message, status: CommandExecutionStatus.Fail };
+
+      const errorResult = { response: error.message, status: CommandExecutionStatus.Fail };
+      this.analyticsService.sendCommandExecutedEvent(
+        clientOptions.instanceId,
+        { ...errorResult, error },
+        { command, rawMode: dto.mode === RunQueryMode.Raw },
+      );
+
       if (
         error instanceof CommandParsingError
         || error instanceof CommandNotSupportedError
         || error.name === 'ReplyError'
       ) {
-        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
-        return result;
+        return [errorResult];
       }
-
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
-      throw new InternalServerErrorException(error.message);
-    }
-  }
-
-  private async sendCommandForSingleNode(
-    clientOptions: IFindRedisClientInstanceByOptions,
-    commandLine: string,
-    role: ClusterNodeRole = ClusterNodeRole.All,
-    nodeOptions: ClusterSingleNodeOptions,
-  ): Promise<CommandExecutionResult> {
-    this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
-    try {
-      const [command, ...args] = splitCliCommandLine(commandLine);
-
-      const nodeAddress = `${nodeOptions.host}:${nodeOptions.port}`;
-      let result = await this.redisTool.execCommandForNode(
-        clientOptions,
-        command,
-        args,
-        role,
-        nodeAddress,
-      );
-      if (result.error && checkRedirectionError(result.error) && nodeOptions.enableRedirection) {
-        const { slot, address } = parseRedirectionError(result.error);
-        result = await this.redisTool.execCommandForNode(
-          clientOptions,
-          command,
-          args,
-          role,
-          address,
-        );
-        result.slot = parseInt(slot, 10);
-      }
-
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command });
-      const {
-        host, port, error, slot, ...rest
-      } = result;
-
-      return {
-        ...rest,
-        response: this.formatter.format(rest.response),
-        node: { host, port, slot },
-      };
-    } catch (error) {
-      this.logger.error('Failed to execute redis.cluster CLI command.', error);
-      const result = { response: error.message, status: CommandExecutionStatus.Fail };
-
-      if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
-        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
-        return result;
-      }
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
 
       if (error instanceof WrongDatabaseTypeError || error instanceof ClusterNodeNotFoundError) {
         throw new BadRequestException(error.message);
@@ -147,43 +132,141 @@ export class WorkbenchCommandsExecutor {
     }
   }
 
+  /**
+   * Sends command for standalone instances
+   * @param clientOptions
+   * @param command
+   * @param commandArgs
+   * @param mode
+   * @private
+   */
+  private async sendCommandForStandalone(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    command: string,
+    commandArgs: string[],
+    mode: RunQueryMode,
+  ): Promise<CommandExecutionResult> {
+    this.logger.log('Executing workbench command.');
+
+    const formatter = this.getFormatter(mode);
+
+    const replyEncoding = checkHumanReadableCommands(`${command} ${commandArgs[0]}`) ? 'utf8' : undefined;
+
+    const response = formatter.format(
+      await this.redisTool.execCommand(clientOptions, command, commandArgs, replyEncoding),
+    );
+
+    this.logger.log('Succeed to execute workbench command.');
+
+    return { response, status: CommandExecutionStatus.Success };
+  }
+
+  /**
+   * Sends command for a single node in cluster by host and port (nodeOptions)
+   * @param clientOptions
+   * @param command
+   * @param commandArgs
+   * @param role
+   * @param mode
+   * @param nodeOptions
+   * @private
+   */
+  private async sendCommandForSingleNode(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    command: string,
+    commandArgs: string[],
+    role: ClusterNodeRole = ClusterNodeRole.All,
+    mode: RunQueryMode = RunQueryMode.ASCII,
+    nodeOptions: ClusterSingleNodeOptions,
+  ): Promise<CommandExecutionResult> {
+    this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
+
+    const formatter = this.getFormatter(mode);
+
+    const replyEncoding = checkHumanReadableCommands(`${command} ${commandArgs[0]}`) ? 'utf8' : undefined;
+
+    const nodeAddress = `${nodeOptions.host}:${nodeOptions.port}`;
+    let result = await this.redisTool.execCommandForNode(
+      clientOptions,
+      command,
+      commandArgs,
+      role,
+      nodeAddress,
+      replyEncoding,
+    );
+    if (result.error && checkRedirectionError(result.error) && nodeOptions.enableRedirection) {
+      const { slot, address } = parseRedirectionError(result.error);
+      result = await this.redisTool.execCommandForNode(
+        clientOptions,
+        command,
+        commandArgs,
+        role,
+        address,
+        replyEncoding,
+      );
+      result.slot = parseInt(slot, 10);
+    }
+
+    const {
+      host, port, error, slot, ...rest
+    } = result;
+
+    return {
+      ...rest,
+      response: formatter.format(rest.response),
+      node: { host, port, slot },
+    };
+  }
+
+  /**
+   * Sends commands for multiple nodes in cluster based on their role
+   * @param clientOptions
+   * @param command
+   * @param commandArgs
+   * @param role
+   * @param mode
+   * @private
+   */
   private async sendCommandForNodes(
     clientOptions: IFindRedisClientInstanceByOptions,
-    commandLine: string,
+    command: string,
+    commandArgs: string[],
     role: ClusterNodeRole,
+    mode: RunQueryMode = RunQueryMode.ASCII,
   ): Promise<CommandExecutionResult[]> {
     this.logger.log(`Executing redis.cluster CLI command for [${role}] nodes.`);
-    try {
-      const [command, ...args] = splitCliCommandLine(commandLine);
 
-      return (
-        await this.redisTool.execCommandForNodes(clientOptions, command, args, role)
-      ).map((nodeExecReply) => {
-        const {
-          response, status, host, port,
-        } = nodeExecReply;
-        const result = {
-          response: this.formatter.format(response),
-          status,
-          node: { host, port },
-        };
-        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, result, { command });
-        return result;
-      });
-    } catch (error) {
-      this.logger.error('Failed to execute redis.cluster CLI command.', error);
-      const result = { response: error.message, status: CommandExecutionStatus.Fail };
+    const formatter = this.getFormatter(mode);
 
-      if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
-        this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
-        return [result];
+    const replyEncoding = checkHumanReadableCommands(`${command} ${commandArgs[0]}`) ? 'utf8' : undefined;
+
+    return (
+      await this.redisTool.execCommandForNodes(clientOptions, command, commandArgs, role, replyEncoding)
+    ).map((nodeExecReply) => {
+      const {
+        response, status, host, port,
+      } = nodeExecReply;
+      return {
+        response: formatter.format(response),
+        status,
+        node: { host, port },
+      };
+    });
+  }
+
+  /**
+   * Get formatter strategy based on "mode"
+   * @param mode
+   * @private
+   */
+  private getFormatter(mode: RunQueryMode) {
+    switch (mode) {
+      case RunQueryMode.Raw:
+        return this.formatterManager.getStrategy(FormatterTypes.UTF8);
+      case RunQueryMode.ASCII:
+      default: {
+        return this.formatterManager.getStrategy(FormatterTypes.ASCII);
       }
-
-      this.analyticsService.sendCommandExecutedEvent(clientOptions.instanceId, { ...result, error });
-      if (error instanceof WrongDatabaseTypeError) {
-        throw new BadRequestException(error.message);
-      }
-      throw new InternalServerErrorException(error.message);
     }
   }
 }

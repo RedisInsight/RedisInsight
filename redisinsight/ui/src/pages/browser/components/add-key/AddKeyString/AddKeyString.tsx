@@ -10,26 +10,25 @@ import {
   EuiFlexItem,
   EuiPanel, EuiTextArea,
 } from '@elastic/eui'
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
-import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/keys'
+import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
 
-import AddKeyCommonFields from 'uiSrc/pages/browser/components/add-key/AddKeyCommonFields/AddKeyCommonFields'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import {
-  AddCommonFieldsFormConfig as defaultConfig,
   AddStringFormConfig as config
 } from '../constants/fields-config'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  keyName: string
+  keyTTL: Maybe<number>
+  onCancel: (isCancelled?: boolean) => void
 }
 
 const AddKeyString = (props: Props) => {
+  const { keyName = '', keyTTL, onCancel } = props
   const { loading } = useSelector(addKeyStateSelector)
-  const [keyName, setKeyName] = useState<string>('')
-  const [keyTTL, setKeyTTL] = useState<Maybe<number>>(undefined)
   const [value, setValue] = useState<string>('')
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
@@ -48,25 +47,17 @@ const AddKeyString = (props: Props) => {
 
   const submitData = (): void => {
     const data: SetStringWithExpireDto = {
-      keyName,
-      value
+      keyName: stringToBuffer(keyName),
+      value: stringToBuffer(value)
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL
     }
-    dispatch(addStringKey(data, props.onCancel))
+    dispatch(addStringKey(data, onCancel))
   }
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
-      <AddKeyCommonFields
-        config={defaultConfig}
-        loading={loading}
-        keyName={keyName}
-        setKeyName={setKeyName}
-        keyTTL={keyTTL}
-        setKeyTTL={setKeyTTL}
-      />
       <EuiFormRow label={config.value.label} fullWidth>
         <EuiTextArea
           fullWidth
@@ -91,7 +82,7 @@ const AddKeyString = (props: Props) => {
               <div>
                 <EuiButton
                   color="secondary"
-                  onClick={() => props.onCancel(true)}
+                  onClick={() => onCancel(true)}
                   className="btn-cancel btn-back"
                 >
                   <EuiTextColor>Cancel</EuiTextColor>

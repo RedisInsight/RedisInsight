@@ -6,6 +6,9 @@ tests/e2e
 logs
 *.log
 
+# Tests coverage results
+redisinsight/api/test/test-runs/coverage
+
 # Runtime data
 pids
 *.pid
@@ -54,3 +57,7 @@ package.json
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+
+# temp folders - remove in future after fix all issues
+redisinsight/ui/src/packages/redisgraph
+redisinsight/ui/src/packages/redistimeseries-app

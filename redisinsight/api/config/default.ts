@@ -1,4 +1,5 @@
 import { join } from 'path';
+import * as os from 'os';
 
 const homedir = join(__dirname, '..');
 
@@ -15,6 +16,7 @@ const defaultsDir = process.env.BUILD_TYPE === 'ELECTRON' && process['resourcesP
 
 export default {
   dir_path: {
+    tmpDir: os.tmpdir(),
     homedir,
     prevHomedir: homedir,
     staticDir,
@@ -66,7 +68,7 @@ export default {
     migrationsRun: process.env.DB_MIGRATIONS ? process.env.DB_MIGRATIONS === 'true' : true,
   },
   redis_cloud: {
-    url: process.env.REDIS_CLOUD_URL || 'https://api.qa.redislabs.com/v1',
+    url: process.env.REDIS_CLOUD_URL || 'https://api-cloudapi.qa.redislabs.com/v1',
   },
   redis_clients: {
     idleSyncInterval: parseInt(process.env.CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr
@@ -87,10 +89,14 @@ export default {
   redis_cli: {
     unsupportedCommands: JSON.parse(process.env.CLI_UNSUPPORTED_COMMANDS || '[]'),
   },
+  profiler: {
+    logFileIdleThreshold: parseInt(process.env.PROFILER_LOG_FILE_IDLE_THRESHOLD, 10) || 1000 * 60, // 1min
+  },
   analytics: {
     writeKey: process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY',
   },
   logger: {
+    logLevel: process.env.LOG_LEVEL || 'info', // log level
     stdout: process.env.STDOUT_LOGGER ? process.env.STDOUT_LOGGER === 'true' : false, // disabled by default
     files: process.env.FILES_LOGGER ? process.env.FILES_LOGGER === 'true' : true, // enabled by default
     omitSensitiveData: process.env.LOGGER_OMIT_DATA ? process.env.LOGGER_OMIT_DATA === 'true' : true,
@@ -120,10 +126,22 @@ export default {
     buildInfo: process.env.CONTENT_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.CONTENT_DEV_PATH,
   },
+  notifications: {
+    updateUrl: process.env.NOTIFICATION_DEV_PATH
+      || process.env.NOTIFICATION_UPDATE_URL
+      || 'https://github.com/RedisInsight/Notifications/releases/download/latest/notifications.json',
+    syncInterval: parseInt(process.env.NOTIFICATION_SYNC_INTERVAL, 10) || 60 * 60 * 1000,
+    queryLimit: parseInt(process.env.NOTIFICATION_QUERY_LIMIT, 10) || 20,
+    devMode: !!process.env.NOTIFICATION_DEV_PATH,
+  },
   workbench: {
     maxResultSize: parseInt(process.env.COMMAND_EXECUTION_MAX_RESULT_SIZE, 10) || 1024 * 1024,
     maxItemsPerDb: parseInt(process.env.COMMAND_EXECUTION_MAX_ITEMS_PER_DB, 10) || 30,
     unsupportedCommands: JSON.parse(process.env.WORKBENCH_UNSUPPORTED_COMMANDS || '[]'),
+    countBatch: parseInt(process.env.WORKBENCH_BATCH_SIZE, 10) || 5,
+  },
+  database_analysis: {
+    maxItemsPerDb: parseInt(process.env.DATABASE_ANALYSIS_MAX_ITEMS_PER_DB, 10) || 5,
   },
   commands: [
     {
@@ -159,7 +177,7 @@ export default {
     {
       name: 'redisgears',
       url: process.env.COMMANDS_REDISGEARS_URL
-        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
+        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/v1.2.5/commands.json',
     },
     {
       name: 'redisbloom',

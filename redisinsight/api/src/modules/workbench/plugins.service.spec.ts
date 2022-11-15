@@ -1,9 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { mockStandaloneDatabaseEntity, mockWhitelistCommandsResponse } from 'src/__mocks__';
 import { v4 as uuidv4 } from 'uuid';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { ClusterNodeRole, CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import {
+  ClusterNodeRole,
+  CreateCommandExecutionDto,
+  RunQueryMode,
+  ResultsMode,
+} from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException } from '@nestjs/common';
@@ -29,6 +34,8 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
     enableRedirection: true,
   },
   role: ClusterNodeRole.All,
+  mode: RunQueryMode.ASCII,
+  resultsMode: ResultsMode.Default,
 };
 
 const mockCommandExecutionResults: CommandExecutionResult[] = [
@@ -117,6 +124,7 @@ describe('PluginsService', () => {
     it('should return status failed when unsupported command called', async () => {
       const dto = {
         command: 'subscribe',
+        mode: RunQueryMode.ASCII,
       };
 
       pluginsCommandsWhitelistProvider.getWhitelistCommands.mockResolvedValueOnce(mockWhitelistCommandsResponse);
@@ -140,6 +148,7 @@ describe('PluginsService', () => {
       const dto = {
         ...mockCommandExecutionResults,
         command: 'get foo',
+        mode: RunQueryMode.ASCII,
       };
 
       try {

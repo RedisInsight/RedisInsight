@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
-import { TREE_LEAF_FIELD } from 'uiSrc/components/virtual-tree'
-import { KeyTypes } from 'uiSrc/constants'
+import { DEFAULT_DELIMITER, KeyTypes } from 'uiSrc/constants'
+import { getTreeLeafField } from 'uiSrc/utils'
 
 import {
   cleanup,
@@ -13,7 +13,7 @@ import reducer, {
   setAppContextConnectedInstanceId,
   setBrowserKeyListDataLoaded,
   setBrowserSelectedKey,
-  setBrowserKeyListScrollPosition,
+  setBrowserPatternScrollPosition,
   setBrowserPanelSizes,
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
@@ -30,10 +30,15 @@ import reducer, {
   resetBrowserTree,
   appContextBrowserTree,
   setBrowserTreeSelectedLeaf,
-  updateBrowserTreeSelectedLeaf
+  updateBrowserTreeSelectedLeaf,
+  setBrowserTreeDelimiter,
+  setBrowserIsNotRendered,
+  setBrowserRedisearchScrollPosition,
 } from '../../app/context'
 
-jest.mock('uiSrc/services')
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+}))
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -50,6 +55,52 @@ describe('slices', () => {
         app: { context: nextState },
       })
       expect(appContextSelector(rootState)).toEqual(initialState)
+    })
+
+    it('should properly set initial state with existing contextId', () => {
+      // Arrange
+      const contextInstanceId = '12312-3123'
+      const prevState = {
+        ...initialState,
+        contextInstanceId,
+        browser: {
+          keyList: {
+            isDataLoaded: true,
+            scrollTopPosition: 100,
+            selectedKey: 'some key'
+          },
+          tree: {
+            delimiter: '-',
+          },
+          bulkActions: {
+            opened: true,
+          }
+        },
+        workbench: {
+          script: '123123',
+        },
+        pubsub: {
+          channel: '123123',
+          message: '123123'
+        },
+        analytics: {
+          lastViewedPage: 'zxczxc'
+        }
+      }
+      const state = {
+        ...initialState,
+        contextInstanceId
+      }
+
+      // Act
+      const nextState = reducer(prevState, setAppContextInitialState())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextSelector(rootState)).toEqual(state)
     })
   })
 
@@ -122,20 +173,47 @@ describe('slices', () => {
     })
   })
 
-  describe('setBrowserKeyListScrollPosition', () => {
+  describe('setBrowserPatternScrollPosition', () => {
     it('should properly set scroll position of keyList', () => {
       // Arrange
-      const scrollTopPosition = 530
+      const scrollPatternTopPosition = 530
       const state = {
         ...initialState.browser,
         keyList: {
           ...initialState.browser.keyList,
-          scrollTopPosition
+          scrollPatternTopPosition
         }
       }
 
       // Act
-      const nextState = reducer(initialState, setBrowserKeyListScrollPosition(scrollTopPosition))
+      const nextState = reducer(initialState, setBrowserPatternScrollPosition(scrollPatternTopPosition))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowser(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setBrowserRedisearchScrollPosition', () => {
+    it('should properly set scroll position of keyList', () => {
+      // Arrange
+      const scrollRedisearchTopPosition = 530
+      const state = {
+        ...initialState.browser,
+        keyList: {
+          ...initialState.browser.keyList,
+          scrollRedisearchTopPosition
+        }
+      }
+
+      // Act
+      const nextState = reducer(
+        initialState,
+        setBrowserRedisearchScrollPosition(scrollRedisearchTopPosition)
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -321,6 +399,7 @@ describe('slices', () => {
       expect(appContextSelector(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreeNodesOpen', () => {
     it('should properly set open nodes in the tree', () => {
       // Arrange
@@ -355,11 +434,12 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreeSelectedLeaf', () => {
     it('should properly set selected keys in the tree', () => {
       // Arrange
       const selectedLeaf = {
-        [TREE_LEAF_FIELD]: {
+        [getTreeLeafField(DEFAULT_DELIMITER)]: {
           test: {
             name: 'test',
             type: KeyTypes.Hash,
@@ -396,6 +476,7 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
   describe('setBrowserTreePanelSizes', () => {
     it('should properly set browser tree panel widths', () => {
       // Arrange
@@ -419,6 +500,53 @@ describe('slices', () => {
       expect(appContextBrowserTree(rootState)).toEqual(state)
     })
   })
+
+  describe('setBrowserIsNotRendered', () => {
+    it('should properly set browser is not rendered value', () => {
+      // Arrange
+      const isNotRendered = false
+      const state = {
+        ...initialState.browser,
+        keyList: {
+          ...initialState.browser.keyList,
+          isNotRendered
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setBrowserIsNotRendered(isNotRendered))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowser(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setBrowserTreeDelimiter', () => {
+    it('should properly set browser tree delimiter', () => {
+      // Arrange
+      const delimiter = '_'
+
+      const state = {
+        ...initialState.browser.tree,
+        delimiter
+      }
+
+      // Act
+      const nextState = reducer(initialState, setBrowserTreeDelimiter(delimiter))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowserTree(rootState)).toEqual(state)
+    })
+  })
+
   describe('resetBrowserTree', () => {
     it('should properly set last page', () => {
       // Arrange
@@ -432,7 +560,7 @@ describe('slices', () => {
               test: true
             },
             selectedLeaf: {
-              [TREE_LEAF_FIELD]: {
+              [getTreeLeafField(DEFAULT_DELIMITER)]: {
                 test: {
                   name: 'test',
                   type: KeyTypes.Hash,
@@ -477,7 +605,7 @@ describe('slices', () => {
           tree: {
             ...initialState.browser.tree,
             selectedLeaf: {
-              [TREE_LEAF_FIELD]: {
+              [getTreeLeafField(DEFAULT_DELIMITER)]: {
                 [payload.key]: {
                   name: payload.key,
                   type: KeyTypes.Hash,
@@ -494,7 +622,7 @@ describe('slices', () => {
         ...initialState.browser.tree,
         openNodes: {},
         selectedLeaf: {
-          [TREE_LEAF_FIELD]: {
+          [getTreeLeafField(DEFAULT_DELIMITER)]: {
             [payload.newKey]: {
               name: payload.newKey,
               type: KeyTypes.Hash,
@@ -528,7 +656,7 @@ describe('slices', () => {
           tree: {
             ...initialState.browser.tree,
             selectedLeaf: {
-              [TREE_LEAF_FIELD]: {
+              [getTreeLeafField(DEFAULT_DELIMITER)]: {
                 [payload.key]: {
                   name: payload.key,
                   type: KeyTypes.Hash,
@@ -552,7 +680,7 @@ describe('slices', () => {
         ...initialState.browser.tree,
         openNodes: {},
         selectedLeaf: {
-          [TREE_LEAF_FIELD]: {
+          [getTreeLeafField(DEFAULT_DELIMITER)]: {
             test2: {
               name: 'test2',
               type: KeyTypes.Hash,

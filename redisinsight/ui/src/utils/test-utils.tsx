@@ -5,27 +5,30 @@ import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 import { BrowserRouter } from 'react-router-dom'
 import configureMockStore from 'redux-mock-store'
-import { render as rtlRender } from '@testing-library/react'
+import { render as rtlRender, waitFor } from '@testing-library/react'
 
 import rootStore, { RootState } from 'uiSrc/slices/store'
-import { initialState as initialStateInstances } from 'uiSrc/slices/instances'
-import { initialState as initialStateCaCerts } from 'uiSrc/slices/caCerts'
-import { initialState as initialStateClientCerts } from 'uiSrc/slices/clientCerts'
-import { initialState as initialStateCluster } from 'uiSrc/slices/cluster'
-import { initialState as initialStateCloud } from 'uiSrc/slices/cloud'
-import { initialState as initialStateSentinel } from 'uiSrc/slices/sentinel'
-import { initialState as initialStateKeys } from 'uiSrc/slices/keys'
-import { initialState as initialStateString } from 'uiSrc/slices/string'
-import { initialState as initialStateZSet } from 'uiSrc/slices/zset'
-import { initialState as initialStateSet } from 'uiSrc/slices/set'
-import { initialState as initialStateHash } from 'uiSrc/slices/hash'
-import { initialState as initialStateList } from 'uiSrc/slices/list'
-import { initialState as initialStateRejson } from 'uiSrc/slices/rejson'
+import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
+import { initialState as initialStateCaCerts } from 'uiSrc/slices/instances/caCerts'
+import { initialState as initialStateClientCerts } from 'uiSrc/slices/instances/clientCerts'
+import { initialState as initialStateCluster } from 'uiSrc/slices/instances/cluster'
+import { initialState as initialStateCloud } from 'uiSrc/slices/instances/cloud'
+import { initialState as initialStateSentinel } from 'uiSrc/slices/instances/sentinel'
+import { initialState as initialStateKeys } from 'uiSrc/slices/browser/keys'
+import { initialState as initialStateString } from 'uiSrc/slices/browser/string'
+import { initialState as initialStateZSet } from 'uiSrc/slices/browser/zset'
+import { initialState as initialStateSet } from 'uiSrc/slices/browser/set'
+import { initialState as initialStateHash } from 'uiSrc/slices/browser/hash'
+import { initialState as initialStateList } from 'uiSrc/slices/browser/list'
+import { initialState as initialStateRejson } from 'uiSrc/slices/browser/rejson'
+import { initialState as initialStateStream } from 'uiSrc/slices/browser/stream'
+import { initialState as initialStateBulkActions } from 'uiSrc/slices/browser/bulkActions'
 import { initialState as initialStateNotifications } from 'uiSrc/slices/app/notifications'
 import { initialState as initialStateAppInfo } from 'uiSrc/slices/app/info'
 import { initialState as initialStateAppContext } from 'uiSrc/slices/app/context'
 import { initialState as initialStateAppRedisCommands } from 'uiSrc/slices/app/redis-commands'
 import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/plugins'
+import { initialState as initialStateAppSocketConnectionReducer } from 'uiSrc/slices/app/socket-connection'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
@@ -34,6 +37,14 @@ import { initialState as initialStateWBResults } from 'uiSrc/slices/workbench/wb
 import { initialState as initialStateWBEGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
+import { initialState as initialStateSlowLog } from 'uiSrc/slices/analytics/slowlog'
+import { initialState as initialClusterDetails } from 'uiSrc/slices/analytics/clusterDetails'
+import { initialState as initialStateAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
+import { initialState as initialStateDbAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
+import { initialState as initialStatePubSub } from 'uiSrc/slices/pubsub/pubsub'
+import { initialState as initialStateRedisearch } from 'uiSrc/slices/browser/redisearch'
+import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
+import { apiService } from 'uiSrc/services'
 
 interface Options {
   initialState?: RootState;
@@ -49,7 +60,8 @@ const initialStateDefault: RootState = {
     notifications: cloneDeep(initialStateNotifications),
     context: cloneDeep(initialStateAppContext),
     redisCommands: cloneDeep(initialStateAppRedisCommands),
-    plugins: cloneDeep(initialStateAppPluginsReducer)
+    plugins: cloneDeep(initialStateAppPluginsReducer),
+    socketConnection: cloneDeep(initialStateAppSocketConnectionReducer)
   },
   connections: {
     instances: cloneDeep(initialStateInstances),
@@ -67,6 +79,9 @@ const initialStateDefault: RootState = {
     hash: cloneDeep(initialStateHash),
     list: cloneDeep(initialStateList),
     rejson: cloneDeep(initialStateRejson),
+    stream: cloneDeep(initialStateStream),
+    bulkActions: cloneDeep(initialStateBulkActions),
+    redisearch: cloneDeep(initialStateRedisearch),
   },
   cli: {
     settings: cloneDeep(initialStateCliSettings),
@@ -83,7 +98,14 @@ const initialStateDefault: RootState = {
   },
   content: {
     createRedisButtons: cloneDeep(initialStateCreateRedisButtons)
-  }
+  },
+  analytics: {
+    settings: cloneDeep(initialStateAnalyticsSettings),
+    slowlog: cloneDeep(initialStateSlowLog),
+    clusterDetails: cloneDeep(initialClusterDetails),
+    databaseAnalysis: cloneDeep(initialStateDbAnalysis),
+  },
+  pubsub: cloneDeep(initialStatePubSub),
 }
 
 // mocked store
@@ -126,6 +148,36 @@ const clearStoreActions = (actions: any[]) => {
   return JSON.stringify(newActions)
 }
 
+/**
+ * Ensure the EuiToolTip being tested is open and visible before continuing
+ */
+const waitForEuiToolTipVisible = async () => {
+  await waitFor(
+    () => {
+      const tooltip = document.querySelector('.euiToolTipPopover')
+      expect(tooltip).toBeInTheDocument()
+    },
+    { timeout: 500 } // Account for long delay on tooltips
+  )
+}
+
+const waitForEuiToolTipHidden = async () => {
+  await waitFor(() => {
+    const tooltip = document.querySelector('.euiToolTipPopover')
+    expect(tooltip).toBeNull()
+  })
+}
+
+const waitForEuiPopoverVisible = async () => {
+  await waitFor(
+    () => {
+      const tooltip = document.querySelector('.euiPopover__panel-isOpen')
+      expect(tooltip).toBeInTheDocument()
+    },
+    { timeout: 200 } // Account for long delay on popover
+  )
+}
+
 // mock useHistory
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -140,18 +192,26 @@ jest.mock('react-router-dom', () => ({
   }),
 }))
 
-// mock useDispatch
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  usDispatch: () => ({
-    dispatch: jest.fn,
-  }),
-}))
+// // mock useDispatch
+// jest.mock('react-redux', () => ({
+//   ...jest.requireActual('react-redux'),
+//   useDispatch: () => ({
+//     dispatch: jest.fn,
+//   }),
+// }))
 
 // mock <AutoSizer />
 jest.mock(
   'react-virtualized-auto-sizer',
   () => ({ children }) => children({ height: 600, width: 600 })
+)
+
+jest.mock(
+  'uiSrc/telemetry/checkAnalytics',
+  () => ({
+    checkIsAnalyticsGranted: jest.fn(),
+    getAppType: jest.fn()
+  })
 )
 
 export const localStorageMock = {
@@ -171,7 +231,19 @@ Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock })
 const scrollIntoViewMock = jest.fn()
 window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock
 
+export const getMswResourceURL = (path: string = '') => RESOURCES_BASE_URL.concat(path)
+export const getMswURL = (path: string = '') =>
+  apiService.defaults.baseURL?.concat(path.startsWith('/') ? path.slice(1) : path) ?? ''
+
 // re-export everything
 export * from '@testing-library/react'
 // override render method
-export { initialStateDefault, render, renderWithRouter, clearStoreActions }
+export {
+  initialStateDefault,
+  render,
+  renderWithRouter,
+  clearStoreActions,
+  waitForEuiToolTipVisible,
+  waitForEuiToolTipHidden,
+  waitForEuiPopoverVisible,
+}

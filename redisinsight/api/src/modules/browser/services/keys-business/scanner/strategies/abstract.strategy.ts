@@ -1,7 +1,8 @@
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { IRedisConsumer, ReplyError } from 'src/models';
+import IORedis, { Redis, Cluster, Command } from 'ioredis';
+import { RedisString } from 'src/common/constants';
 import { IScannerStrategy } from '../scanner.interface';
 
 export abstract class AbstractStrategy implements IScannerStrategy {
@@ -13,16 +14,96 @@ export abstract class AbstractStrategy implements IScannerStrategy {
 
   abstract getKeys(clientOptions, args);
 
+  public async getKeyInfo(
+    client: Redis | Cluster,
+    key: RedisString,
+    knownType?: RedisDataType,
+  ) {
+    const options = {
+      replyEncoding: 'utf8' as BufferEncoding,
+    };
+
+    // @ts-ignore
+    const size = await client.sendCommand(new IORedis.Command(
+      'memory',
+      ['usage', key, 'samples', '0'],
+      options,
+    ));
+
+    const type = knownType
+      // @ts-ignore
+      || await client.sendCommand(new IORedis.Command(
+        BrowserToolKeysCommands.Type,
+        [key],
+        options,
+      ));
+
+    // @ts-ignore
+    const ttl = await client.sendCommand(new IORedis.Command(
+      BrowserToolKeysCommands.Ttl,
+      [key],
+      options,
+    ));
+
+    return {
+      name: key,
+      type,
+      ttl,
+      size,
+    };
+  }
+
   public async getKeysInfo(
-    clientOptions: IFindRedisClientInstanceByOptions,
-    keys: string[],
-    type?: RedisDataType,
+    client: Redis | Cluster,
+    keys: RedisString[],
+    filterType?: RedisDataType,
   ): Promise<GetKeyInfoResponse[]> {
-    const sizeResults = await this.getKeysSize(clientOptions, keys);
-    const typeResults = type
-      ? Array(keys.length).fill(type)
-      : await this.getKeysType(clientOptions, keys);
-    const ttlResults = await this.getKeysTtl(clientOptions, keys);
+    if (client.isCluster) {
+      return Promise.all(keys.map(async (key) => {
+        let ttl;
+        let size;
+        let type;
+
+        try {
+          ttl = await client.sendCommand(
+            new Command(BrowserToolKeysCommands.Ttl, [key], { replyEncoding: 'utf8' }),
+          ) as number;
+        } catch (e) {
+          ttl = null;
+        }
+
+        try {
+          size = await client.sendCommand(
+            new Command(
+              'memory', ['usage', key, 'samples', '0'], { replyEncoding: 'utf8' },
+            ),
+          ) as number;
+        } catch (e) {
+          size = null;
+        }
+
+        try {
+          type = filterType || await client.sendCommand(
+            new Command(BrowserToolKeysCommands.Type, [key], { replyEncoding: 'utf8' }),
+          ) as string;
+        } catch (e) {
+          type = null;
+        }
+
+        return {
+          name: key,
+          type,
+          ttl,
+          size,
+        };
+      }));
+    }
+
+    const sizeResults = await this.getKeysSize(client, keys);
+    const typeResults = filterType
+      ? Array(keys.length).fill(filterType)
+      : await this.getKeysType(client, keys);
+    const ttlResults = await this.getKeysTtl(client, keys);
     return keys.map(
       (key: string, index: number): GetKeyInfoResponse => ({
         name: key,
@@ -34,56 +115,51 @@ export abstract class AbstractStrategy implements IScannerStrategy {
   }
 
   protected async getKeysTtl(
-    clientOptions: IFindRedisClientInstanceByOptions,
-    keys: string[],
+    client: Redis | Cluster,
+    keys: RedisString[],
   ): Promise<GetKeyInfoResponse> {
     const [
       transactionError,
       transactionResults,
-    ] = await this.redisConsumer.execPipeline(
-      clientOptions,
+    ] = await this.redisConsumer.execPipelineFromClient(
+      client,
       keys.map((key: string) => [BrowserToolKeysCommands.Ttl, key]),
     );
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1]);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 
   protected async getKeysType(
-    clientOptions: IFindRedisClientInstanceByOptions,
-    keys: string[],
+    client: Redis | Cluster,
+    keys: RedisString[],
   ): Promise<GetKeyInfoResponse> {
     const [
       transactionError,
       transactionResults,
-    ] = await this.redisConsumer.execPipeline(
-      clientOptions,
+    ] = await this.redisConsumer.execPipelineFromClient(
+      client,
       keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
     );
     if (transactionError) {
       throw transactionError;
     } else {
-      return transactionResults.map((item: [ReplyError, any]) => item[1]);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 
   protected async getKeysSize(
-    clientOptions: IFindRedisClientInstanceByOptions,
-    keys: string[],
+    client: Redis | Cluster,
+    keys: RedisString[],
   ): Promise<GetKeyInfoResponse> {
     const [
       transactionError,
       transactionResults,
-    ] = await this.redisConsumer.execPipeline(clientOptions, [
-      // HACK: for OSS CLUSTER, for some reason, if the pipeline contains only 'MEMORY USAGE' commands
-      // IORedis.Cluster sometimes incorrectly determines for which node it is necessary to execute it.
-      // To fix it we insert one TTL command (with the key that belongs to the required node)
-      // at the head of the pipeline.
-      // And late we remove the result for TTL command and returns only results for 'MEMORY USAGE'
-      [BrowserToolKeysCommands.Ttl, keys[0]],
-      ...keys.map<[toolCommand: any, ...args: Array<string | number | Buffer>]>(
+    ] = await this.redisConsumer.execPipelineFromClient(
+      client,
+      keys.map<[toolCommand: any, ...args: Array<string | number | Buffer>]>(
         (key: string) => [
           BrowserToolKeysCommands.MemoryUsage,
           key,
@@ -91,13 +167,11 @@ export abstract class AbstractStrategy implements IScannerStrategy {
           '0',
         ],
       ),
-    ]);
+    );
     if (transactionError) {
       throw transactionError;
     } else {
-      // Remove the result for TTL command and returns only results for 'MEMORY USAGE'
-      transactionResults.shift();
-      return transactionResults.map((item: [ReplyError, any]) => item[1]);
+      return transactionResults.map((item: [ReplyError, any]) => item[0] ? null : item[1]);
     }
   }
 }

@@ -18,7 +18,7 @@ import {
   AddRedisDatabaseStatus,
 } from 'uiSrc/slices/interfaces'
 import { PageHeader } from 'uiSrc/components'
-import { cloudSelector } from 'uiSrc/slices/cloud'
+import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 
 import styles from './styles.module.scss'

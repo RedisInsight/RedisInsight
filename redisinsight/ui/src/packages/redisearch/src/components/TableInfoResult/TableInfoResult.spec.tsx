@@ -1,6 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { render, waitFor } from 'uiSrc/utils/test-utils'
+import { render, act } from 'uiSrc/utils/test-utils'
 import TableInfoResult, { Props } from './TableInfoResult'
 
 const mockedProps = mock<Props>()
@@ -17,7 +17,7 @@ describe.skip('TableInfoResult', () => {
       <TableInfoResult {...instance(mockedProps)} result={null} query="ft.search" />
     )
 
-    await waitFor(() => {
+    await act(() => {
       rerender(<TableInfoResult {...instance(mockedProps)} result={[]} query="ft.search" />)
     })
 
@@ -42,7 +42,7 @@ describe.skip('TableInfoResult', () => {
       <TableInfoResult {...instance(mockedProps)} result={[]} query="ft.search" />
     )
 
-    await waitFor(() => {
+    await act(() => {
       rerender(
         <TableInfoResult {...instance(mockedProps)} result={result} query="ft.search" />
       )

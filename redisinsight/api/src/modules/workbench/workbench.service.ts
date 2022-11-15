@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { omit } from 'lodash';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
-import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { CreateCommandExecutionDto, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
+import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { getBlockingCommands, multilineCommandToOneLine } from 'src/utils/cli-helper';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
@@ -28,9 +30,9 @@ export class WorkbenchService {
   async createCommandExecution(
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionDto,
-  ): Promise<CommandExecution> {
+  ): Promise<Partial<CommandExecution>> {
     const commandExecution: Partial<CommandExecution> = {
-      ...dto,
+      ...omit(dto, 'commands'),
       databaseId: clientOptions.instanceId,
     };
 
@@ -44,10 +46,101 @@ export class WorkbenchService {
         },
       ];
     } else {
+      const startCommandExecutionTime = process.hrtime.bigint();
       commandExecution.result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
+      const endCommandExecutionTime = process.hrtime.bigint();
+      commandExecution.executionTime = Math.round((Number(endCommandExecutionTime - startCommandExecutionTime) / 1000));
     }
 
-    return this.commandExecutionProvider.create(commandExecution);
+    return commandExecution;
+  }
+
+  /**
+   * Send redis command from workbench and save history
+   *
+   * @param clientOptions
+   * @param dto
+   */
+  async createCommandsExecution(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: Partial<CreateCommandExecutionDto>,
+    commands: string[],
+  ): Promise<Partial<CommandExecution>> {
+    const commandExecution: Partial<CommandExecution> = {
+      ...dto,
+      databaseId: clientOptions.instanceId,
+    };
+    let executionTimeInNanoseconds = BigInt(0);
+
+    const startCommandExecutionTime = process.hrtime.bigint();
+
+    const executionResults = await Promise.all(commands.map(async (singleCommand) => {
+      const command = multilineCommandToOneLine(singleCommand);
+      const deprecatedCommand = this.findCommandInBlackList(command);
+      if (deprecatedCommand) {
+        return ({
+          command,
+          response: ERROR_MESSAGES.WORKBENCH_COMMAND_NOT_SUPPORTED(deprecatedCommand.toUpperCase()),
+          status: CommandExecutionStatus.Fail,
+        });
+      }
+      const result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
+      const endCommandExecutionTime = process.hrtime.bigint();
+
+      executionTimeInNanoseconds += (endCommandExecutionTime - startCommandExecutionTime);
+      return ({ ...result[0], command });
+    }));
+
+    if (Number(executionTimeInNanoseconds) !== 0) {
+      commandExecution.executionTime = Math.round(Number(executionTimeInNanoseconds) / 1000);
+    }
+
+    const successCommands = executionResults.filter(
+      (command) => command.status === CommandExecutionStatus.Success,
+    );
+    const failedCommands = executionResults.filter(
+      (command) => command.status === CommandExecutionStatus.Fail,
+    );
+
+    commandExecution.summary = {
+      total: executionResults.length,
+      success: successCommands.length,
+      fail: failedCommands.length,
+    };
+
+    commandExecution.command = commands.join('\r\n');
+    commandExecution.result = [{
+      status: CommandExecutionStatus.Success,
+      response: executionResults,
+    }];
+
+    return commandExecution;
+  }
+
+  /**
+   * Send redis command from workbench and save history
+   *
+   * @param clientOptions
+   * @param dto
+   */
+  async createCommandExecutions(
+    clientOptions: IFindRedisClientInstanceByOptions,
+    dto: CreateCommandExecutionsDto,
+  ): Promise<CommandExecution[]> {
+    if (dto.resultsMode === ResultsMode.GroupMode) {
+      return this.commandExecutionProvider.createMany(
+        [await this.createCommandsExecution(clientOptions, dto, dto.commands)],
+      );
+    }
+    // todo: rework to support pipeline
+    // prepare and execute commands
+    const commandExecutions = await Promise.all(
+      dto.commands.map(async (command) => await this.createCommandExecution(clientOptions, { ...dto, command })),
+    );
+
+    // save history
+    // todo: rework
+    return this.commandExecutionProvider.createMany(commandExecutions);
   }
 
   /**

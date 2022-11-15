@@ -19,31 +19,50 @@ function resolveProps(d: Object | Array<unknown>): any {
 }
 
 
-function responseParser(data: any) {
+interface INode {
+  id: string
+  labels: string[]
+  properties: {[key: string]: string | number | object }
+}
 
-  interface INode {
-    id: string
-    labels: string[]
-    properties: {[key: string]: string | number | object }
-  }
+interface IEdge {
+  id: string
+  type: string
+  source: string
+  target: string
+  properties: {[key: string]: string | number | object }
+}
 
-  interface IEdge {
-    id: string
-    type: string
-    source: string
-    target: string
-    properties: {[key: string]: string | number | object }
-  }
+
+interface IResponseParser {
+  nodes: INode[]
+  edges: IEdge[]
+  nodeIds: Set<string>
+  edgeIds: Set<string>
+  labels: {[key: string]: number}
+  types: {[key: string]: number}
+  headers: any
+  hasNamedPathItem: boolean
+  npNodeIds: string[]
+  npEdgeIds: string[]
+  danglingEdgeIds: Set<string>
+}
+
+function responseParser(data: any): IResponseParser {
 
   const headers = data[0]
   let nodes: INode[] = []
-  let nodeIds: string[] = []
-  let edgeIds: string[] = []
+  let nodeIds = new Set<string>()
+  let edgeIds = new Set<string>()
   let edges: IEdge[] = []
   let types: {[key: string]: number} = {}
   let labels: {[key: string]: number} = {}
+  let hasNamedPathItem = false
+  let npNodeIds: string[] = []
+  let npEdgeIds: string[] = []
+  let danglingEdgeIds = new Set<string>()
   if (data.length < 2) return {
-    nodes, edges, types, labels, headers, nodeIds, edgeIds,
+    nodes, edges, types, labels, headers, nodeIds, edgeIds, hasNamedPathItem, npNodeIds, npEdgeIds, danglingEdgeIds,
   }
 
   const entries = data[1].map((entry: any) => {
@@ -79,22 +98,32 @@ function responseParser(data: any) {
             const v = resolveProps(x)
             edge['properties'][v.key] = v.value
           })
-          edges.push(edge)
+          if (!edgeIds.has(edge.id)) {
+            edges.push(edge)
+            edgeIds.add(edge.id)
+          }
         } else {
           // unknown item?
         }
       } else if (typeof(item) === 'string'){
         try {
           // If named path response, try to parse it
-          let [nIds, eIds] = ParseEntitesFromNamedPathResponse(item)
-          nodeIds = Array.from(new Set(nodeIds.concat(nIds)))
-          edgeIds = Array.from(new Set(edgeIds.concat(eIds)))
+          hasNamedPathItem = true
+          let[nIds, eIds] = ParseEntitesFromNamedPathResponse(item)
+          nodeIds = new Set([...nodeIds, ...nIds])
+          edgeIds = new Set([...edgeIds, ...eIds])
+
+          npNodeIds = Array.from(new Set([...npNodeIds, ...nIds]))
+          npEdgeIds = Array.from(new Set([...npEdgeIds, ...eIds]))
         } catch {
           // maybe just a normal string
         }
       }
     })
   })
+
+
+  danglingEdgeIds = new Set([...edgeIds].filter(eId => !nodeIds.has(eId)))
 
   return {
     headers,
@@ -104,6 +133,10 @@ function responseParser(data: any) {
     labels,
     nodeIds,
     edgeIds,
+    hasNamedPathItem,
+    npNodeIds,
+    npEdgeIds,
+    danglingEdgeIds,
   }
 }
 

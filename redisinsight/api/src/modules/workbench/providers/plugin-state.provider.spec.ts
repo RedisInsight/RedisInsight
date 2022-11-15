@@ -90,13 +90,13 @@ describe('PluginStateProvider', () => {
   });
   describe('getOne', () => {
     it('should return decrypted and transformed state', async () => {
-      repository.findOne.mockResolvedValueOnce(mockPluginStateEntity);
+      repository.findOneBy.mockResolvedValueOnce(mockPluginStateEntity);
       encryptionService.decrypt.mockReturnValueOnce(JSON.stringify(mockPluginState.state));
 
       expect(await service.getOne(mockVisualizationId, mockCommandExecutionId)).toEqual(mockPluginState);
     });
     it('should return null fields in case of decryption errors', async () => {
-      repository.findOne.mockResolvedValueOnce(mockPluginStateEntity);
+      repository.findOneBy.mockResolvedValueOnce(mockPluginStateEntity);
       encryptionService.decrypt.mockRejectedValueOnce(new KeytarDecryptionErrorException());
 
       const result = await service.getOne(mockVisualizationId, mockCommandExecutionId);
@@ -108,7 +108,7 @@ describe('PluginStateProvider', () => {
       });
     });
     it('should return not found exception', async () => {
-      repository.findOne.mockResolvedValueOnce(null);
+      repository.findOneBy.mockResolvedValueOnce(null);
 
       try {
         await service.getOne(mockVisualizationId, mockCommandExecutionId);

@@ -1,12 +1,13 @@
 import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import {
   BrowserToolGraphCommands,
   BrowserToolKeysCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { RedisString } from 'src/common/constants';
 import { IKeyInfoStrategy } from '../../key-info-manager.interface';
 
 export class GraphTypeInfoStrategy implements IKeyInfoStrategy {
@@ -20,7 +21,7 @@ export class GraphTypeInfoStrategy implements IKeyInfoStrategy {
 
   public async getInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log(`Getting ${RedisDataType.Graph} type info.`);
@@ -51,7 +52,7 @@ export class GraphTypeInfoStrategy implements IKeyInfoStrategy {
 
   private async getNodesCount(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
   ): Promise<number> {
     try {
       const queryReply = await this.redisManager.execCommand(

@@ -1,5 +1,5 @@
 {
-  "version": "1.0.4",
+  "version": "1.0.6",
   "agreements": {
     "analytics": {
       "defaultValue": false,
@@ -7,15 +7,29 @@
       "required": false,
       "editable": true,
       "disabled": false,
+      "category": "privacy",
       "since": "1.0.1",
       "title": "Analytics",
-      "label": "Analytics",
-      "description": "We will store data in an aggregate form about user's experience with RedisInsight. We use these data to fix bugs and improve the experience for all users."
+      "label": "Enable Analytics",
+      "description": "Select to help us make RedisInsight better. We aggregate anonymized user experience data and use it to fix bugs and improve experience for all users."
+    },
+    "notifications": {
+      "defaultValue": false,
+      "displayInSetting": true,
+      "required": false,
+      "editable": true,
+      "disabled": false,
+      "category": "notifications",
+      "since": "1.0.6",
+      "title": "Notification",
+      "label": "Show notification",
+      "description": "Select to display notification. Otherwise, notifications are shown in the Notification Center."
     },
     "encryption": {
       "conditional": true,
       "checker": "KEYTAR",
       "defaultOption": "false",
+      
       "options": {
         "true": {
           "defaultValue": true,
@@ -23,10 +37,11 @@
           "required": false,
           "editable": true,
           "disabled": false,
+          "category": "privacy",
           "since": "1.0.3",
           "title": "Encryption",
           "label": "Encrypt sensitive information",
-          "description": "We will encrypt your sensitive information added to the application using the system keychain. Otherwise, this information will be stored locally in plain text and may lead to security risks."
+          "description": "Select to encrypt sensitive information using system keychain. Otherwise, this information is stored locally in plain text, which may incur security risk."
         },
         "false": {
           "defaultValue": false,
@@ -34,10 +49,23 @@
           "required": false,
           "editable": true,
           "disabled": true,
+          "category": "privacy",
           "since": "1.0.3",
           "title": "Encryption",
           "label": "Encrypt sensitive information",
           "description": "Install or enable the system keychain to encrypt and securely store your sensitive information added before using the application. Otherwise, this information will be stored locally in plain text and may lead to security risks."
+        },
+        "stack_false": {
+          "defaultValue": false,
+          "displayInSetting": false,
+          "required": false,
+          "editable": true,
+          "disabled": true,
+          "category": "privacy",
+          "since": "1.0.5",
+          "title": "Encryption",
+          "label": "Encrypt sensitive information",
+          "description": "Data encryption is available in the desktop application version. Download it <a target=\"_blank\" href=\"https://redis.com/redis-enterprise/redis-insight\">here</a>."
         }
       }
     },
@@ -49,7 +77,7 @@
       "disabled": false,
       "since": "1.0.4",
       "title": "Server Side Public License",
-      "label": "I have read and understood the <a target=\"_blank\" href=\"https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE\">Server Side Public License</a>",
+      "label": "I have read and understood the Terms",
       "requiredText": "Accept the Server Side Public License"
     }
   }

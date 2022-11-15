@@ -1,21 +1,23 @@
 import { Connection, createConnection, getConnectionManager } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
-import { SettingsEntity } from 'src/modules/core/models/settings.entity';
-import { AgreementsEntity } from 'src/modules/core/models/agreements.entity';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
+import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
 import { CommandExecutionEntity } from "src/modules/workbench/entities/command-execution.entity";
 import { PluginStateEntity } from "src/modules/workbench/entities/plugin-state.entity";
 import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 
 export const repositories = {
-  INSTANCE: 'DatabaseInstanceEntity',
+  DAtABASE: 'DatabaseEntity',
   CA_CERT_REPOSITORY: 'CaCertificateEntity',
   CLIENT_CERT_REPOSITORY: 'ClientCertificateEntity',
   AGREEMENTS: 'AgreementsEntity',
   COMMAND_EXECUTION: 'CommandExecutionEntity',
   PLUGIN_STATE: 'PluginStateEntity',
-  SETTINGS: 'SettingsEntity'
+  SETTINGS: 'SettingsEntity',
+  NOTIFICATION: 'NotificationEntity',
+  DATABASE_ANALYSIS: 'DatabaseAnalysisEntity',
 }
 
 let localDbConnection;
@@ -115,8 +117,67 @@ export const generateNCommandExecutions = async (
         enableRedirection: true,
       }),
       role: 'ALL',
+      mode: 'ASCII',
       encryption: constants.TEST_ENCRYPTION_STRATEGY,
+      executionTime: Math.round(Math.random() * 10000),
       createdAt: new Date(),
+      ...partial,
+    }));
+  }
+
+  return result;
+}
+
+export const generateNDatabaseAnalysis = async (
+  partial: Record<string, any>,
+  number: number,
+  truncate: boolean = false,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.DATABASE_ANALYSIS);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  for (let i = 0; i < number; i++) {
+    result.push(await rep.save({
+      id: uuidv4(),
+      databaseId: uuidv4(),
+      delimiter: constants.TEST_DATABASE_ANALYSIS_DELIMITER_1,
+      filter: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_FILTER_1)),
+      progress: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_PROGRESS_1)),
+      totalKeys: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_TOTAL_KEYS_1)),
+      totalMemory: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_TOTAL_MEMORY_1)),
+      topKeysNsp: encryptData(JSON.stringify([
+        {
+          ...constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_NSP_1,
+          nsp: Buffer.from(constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_NSP_1.nsp),
+        },
+      ])),
+      topMemoryNsp: encryptData(JSON.stringify([
+        {
+          ...constants.TEST_DATABASE_ANALYSIS_TOP_MEMORY_NSP_1,
+          nsp: Buffer.from(constants.TEST_DATABASE_ANALYSIS_TOP_MEMORY_NSP_1.nsp),
+        },
+      ])),
+      topKeysLength: encryptData(JSON.stringify([
+        {
+          ...constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1,
+          name: Buffer.from(constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1.name),
+        },
+      ])),
+      topKeysMemory: encryptData(JSON.stringify([
+        {
+          ...constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1,
+          name: Buffer.from(constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1.name),
+        },
+      ])),
+      expirationGroups: encryptData(JSON.stringify([
+        constants.TEST_DATABASE_ANALYSIS_EXPIRATION_GROUP_1,
+      ])),
+      createdAt: new Date(),
+      encryption: constants.TEST_ENCRYPTION_STRATEGY,
       ...partial,
     }));
   }
@@ -154,7 +215,7 @@ const createClientCertificate = async (certificate) => {
 }
 
 const createTesDbInstance = async (rte, server): Promise<void> => {
-  const rep = await getRepository(repositories.INSTANCE);
+  const rep = await getRepository(repositories.DAtABASE);
 
   const instance: any = {
     id: constants.TEST_INSTANCE_ID,
@@ -208,7 +269,7 @@ const createTesDbInstance = async (rte, server): Promise<void> => {
 }
 
 export const createDatabaseInstances = async () => {
-  const rep = await getRepository(repositories.INSTANCE);
+  const rep = await getRepository(repositories.DAtABASE);
   const instances = [
     {
       id: constants.TEST_INSTANCE_ID_2,
@@ -237,7 +298,7 @@ export const createDatabaseInstances = async () => {
 }
 
 export const createAclInstance = async (rte, server): Promise<void> => {
-  const rep = await getRepository(repositories.INSTANCE);
+  const rep = await getRepository(repositories.DAtABASE);
   const instance: any = {
     id: constants.TEST_INSTANCE_ACL_ID,
     name: constants.TEST_INSTANCE_ACL_NAME,
@@ -261,7 +322,7 @@ export const createAclInstance = async (rte, server): Promise<void> => {
       port: constants.TEST_REDIS_PORT,
     }]);
     instance.username = constants.TEST_REDIS_USER;
-    instance.password =  constants.TEST_REDIS_PASSWORD;
+    instance.password = encryptData(constants.TEST_REDIS_PASSWORD);
     instance.sentinelMasterName = constants.TEST_SENTINEL_MASTER_GROUP;
     instance.sentinelMasterUsername = constants.TEST_INSTANCE_ACL_USER;
     instance.sentinelMasterPassword = encryptData(constants.TEST_INSTANCE_ACL_PASS);
@@ -293,18 +354,18 @@ export const createAclInstance = async (rte, server): Promise<void> => {
 }
 
 export const getInstanceByName = async (name: string) => {
-  const rep = await getRepository(repositories.INSTANCE);
-  return rep.findOne({ where: { name } });
+  const rep = await getRepository(repositories.DAtABASE);
+  return rep.findOneBy({ name });
 }
 
 export const getInstanceById = async (id: string) => {
-  const rep = await getRepository(repositories.INSTANCE);
-  return rep.findOne({ where: { id } });
+  const rep = await getRepository(repositories.DAtABASE);
+  return rep.findOneBy({ id });
 }
 
 export const applyEulaAgreement = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
-  const agreements: any = await rep.findOne();
+  const agreements: any = await rep.findOneBy({});
   agreements.version = '1.0.0';
   agreements.data = JSON.stringify({eula: true, encryption: true});
 
@@ -315,7 +376,7 @@ export const setAgreements = async (agreements = {}) => {
   const defaultAgreements = {eula: true, encryption: true};
 
   const rep = await getRepository(repositories.AGREEMENTS);
-  const entity: any = await rep.findOne();
+  const entity: any = await rep.findOneBy({});
 
   entity.version = '1.0.0';
   entity.data = JSON.stringify({ ...defaultAgreements, ...agreements });
@@ -325,7 +386,7 @@ export const setAgreements = async (agreements = {}) => {
 
 const resetAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
-  const agreements: any = await rep.findOne();
+  const agreements: any = await rep.findOneBy({});
   agreements.version = null;
   agreements.data = null;
 
@@ -334,7 +395,7 @@ const resetAgreements = async () => {
 
 export const initAgreements = async () => {
   const rep = await getRepository(repositories.AGREEMENTS);
-  const agreements: any = await rep.findOne();
+  const agreements: any = await rep.findOneBy({});
   agreements.version = constants.TEST_AGREEMENTS_VERSION;
   agreements.data = JSON.stringify({
     eula: true,
@@ -347,7 +408,7 @@ export const initAgreements = async () => {
 export const resetSettings = async () => {
   await resetAgreements();
   const rep = await getRepository(repositories.SETTINGS);
-  const settings: any = await rep.findOne();
+  const settings: any = await rep.findOneBy({});
   settings.data = null;
 
   await rep.save(settings);
@@ -356,7 +417,7 @@ export const resetSettings = async () => {
 export const initSettings = async () => {
   await initAgreements();
   const rep = await getRepository(repositories.SETTINGS);
-  const settings: any = await rep.findOne();
+  const settings: any = await rep.findOneBy({});
   settings.data = null;
 
   await rep.save(settings);
@@ -364,7 +425,7 @@ export const initSettings = async () => {
 
 export const setAppSettings = async (data: object) => {
   const rep = await getRepository(repositories.SETTINGS);
-  const settings: any = await rep.findOne();
+  const settings: any = await rep.findOneBy({});
   settings.data = JSON.stringify({
     ...JSON.parse(settings.data),
     ...data
@@ -373,7 +434,7 @@ export const setAppSettings = async (data: object) => {
 }
 
 const truncateAll = async () => {
-  await (await getRepository(repositories.INSTANCE)).clear();
+  await (await getRepository(repositories.DAtABASE)).clear();
   await (await getRepository(repositories.CA_CERT_REPOSITORY)).clear();
   await (await getRepository(repositories.CLIENT_CERT_REPOSITORY)).clear();
   await (await resetSettings());
@@ -386,4 +447,34 @@ export const initLocalDb = async (rte, server) => {
   if (rte.env.acl) {
     await createAclInstance(rte, server);
   }
+}
+
+export const createNotifications = async (notifications: object[], truncate: boolean) => {
+  const rep = await getRepository(repositories.NOTIFICATION);
+
+  if(truncate) {
+    await rep.createQueryBuilder().delete().execute();
+  }
+
+  await rep.insert(notifications);
+}
+
+export const createDefaultNotifications = async (truncate: boolean = false) => {
+  const notifications = [
+    constants.TEST_NOTIFICATION_1,
+    constants.TEST_NOTIFICATION_2,
+    constants.TEST_NOTIFICATION_3,
+  ];
+
+  await createNotifications(notifications, truncate);
+}
+
+export const createNotExistingNotifications = async (truncate: boolean = false) => {
+  const notifications = [
+    constants.TEST_NOTIFICATION_NE_1,
+    constants.TEST_NOTIFICATION_NE_2,
+    constants.TEST_NOTIFICATION_NE_3,
+  ];
+
+  await createNotifications(notifications, truncate);
 }

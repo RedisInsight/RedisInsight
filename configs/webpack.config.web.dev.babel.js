@@ -5,24 +5,40 @@
  * https://webpack.js.org/concepts/hot-module-replacement/
  */
 
+import path from 'path';
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
+import ip from 'ip';
 import commonConfig from './webpack.config.web.common.babel';
 
 function employCache(loaders) {
   return ['cache-loader'].concat(loaders);
 }
 
+const HOST = process.env.PUBLIC_DEV ? ip.address(): 'localhost'
+
 export default merge(commonConfig, {
   target: 'web',
 
   mode: 'development',
 
+  cache: {
+    type: 'filesystem',
+    allowCollectingMemory: true,
+    cacheDirectory: path.resolve(__dirname, '../.temp_cache'),
+    name: 'webpack',
+    maxAge: 86_400_000, // 1 day
+    buildDependencies: {
+      // This makes all dependencies of this file - build dependencies
+      config: [__filename],
+    }
+  },
+
   devtool: 'source-map',
 
   entry: [
     'regenerator-runtime/runtime',
-    'webpack-dev-server/client?http://localhost:8080',
+    `webpack-dev-server/client?http://${HOST}:8080`,
     'webpack/hot/only-dev-server',
     require.resolve('../redisinsight/ui/index.tsx'),
   ],
@@ -156,6 +172,8 @@ export default merge(commonConfig, {
   },
 
   devServer: {
+    host: HOST,
+    disableHostCheck: true,
     port: 8080,
     hot: true, // enable HMR on the server
     historyApiFallback: true,
@@ -184,8 +202,9 @@ export default merge(commonConfig, {
       APP_ENV: 'web',
       API_PREFIX: 'api',
       API_PORT: '5000',
-      BASE_API_URL: `http://${require('os').hostname()}`,
-      RESOURCES_BASE_URL: `http://${require('os').hostname()}`,
+      BASE_API_URL: `http://${HOST}`,
+      RESOURCES_BASE_URL: `http://${HOST}`,
+      PIPELINE_COUNT_DEFAULT: '5',
       SCAN_COUNT_DEFAULT: '500',
       SCAN_TREE_COUNT_DEFAULT: '10000',
       SEGMENT_WRITE_KEY:

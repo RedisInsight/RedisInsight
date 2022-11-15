@@ -2,8 +2,6 @@
 @import '@elastic/eui/src/components/table/mixins';
 @import '@elastic/eui/src/global_styling/index';
 
-$selectSeparatorHeight: 18px;
-
 .page {
   height: 100%;
   overflow: hidden;
@@ -22,7 +20,7 @@ $selectSeparatorHeight: 18px;
 
 .body {
   display: flex;
-  height: calc(100% - 20px);
+  height: 100%;
 
   :global(.ReactVirtualized__Table__headerRow) {
     border: none !important;
@@ -39,9 +37,12 @@ $selectSeparatorHeight: 18px;
   }
 }
 
+.resizableButton {
+  z-index: 1 !important;
+}
 .resizableButton:not(:hover) {
   &::before, &::after {
-    width: 0px !important;
+    width: 0 !important;
   }
 }
 
@@ -52,19 +53,21 @@ $selectSeparatorHeight: 18px;
   position: relative;
   padding-top: 6px;
 
-  height: calc(100% - 90px);
+  height: 100%;
 
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .treeContent {
-  height: calc(100% - 25px);
+  height: 100%;
   position: relative;
   width: 100%;
 }
 
 .list {
-  height: calc(100% + 20px);
+  height: 100%;
   flex: 3;
   min-width: 400px;
 }
@@ -84,42 +87,4 @@ $selectSeparatorHeight: 18px;
 
 :global(.table-row-selected) .action {
   opacity: 1;
-}
-
-.separatorSelect {
-  width: 60px;
-  height: $selectSeparatorHeight;
-  padding-left: 12px;
-  margin-bottom: 10px;
-
-  :global {
-    .euiSuperSelectControl,
-    .euiPopover__anchor {
-      height: $selectSeparatorHeight;
-      line-height: $selectSeparatorHeight;
-    }
-
-    .euiSuperSelectControl {
-      display: flex;
-      align-items: flex-end;
-      border-color: var(--separatorColor) !important;
-      border-radius: 4px !important;
-      padding-left: 8px;
-    }
-
-    .euiFormControlLayoutIcons {
-      right: 2px !important;
-    }
-  }
-
-
-  svg {
-    width: 12px !important;
-    height: 12px !important;
-  }
-
-}
-
-.separatorSelectItem {
-  height: $selectSeparatorHeight;
 }

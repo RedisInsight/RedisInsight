@@ -11,11 +11,12 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
 import { catchAclError, catchTransactionError, unescapeGlob } from 'src/utils';
 import { ReplyError } from 'src/models';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   BrowserToolKeysCommands,
   BrowserToolSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { plainToClass } from 'class-transformer';
 import {
   AddMembersToSetDto,
   CreateSetWithExpireDto,
@@ -23,11 +24,9 @@ import {
   DeleteMembersFromSetResponse,
   GetSetMembersDto,
   GetSetMembersResponse,
-  RedisDataType,
   SetScanResponse,
 } from '../../dto';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -37,7 +36,6 @@ export class SetBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
-    private browserAnalyticsService: BrowserAnalyticsService,
   ) {}
 
   public async createSet(
@@ -65,14 +63,6 @@ export class SetBusinessService {
       } else {
         await this.createSimpleSet(clientOptions, dto);
       }
-      this.browserAnalyticsService.sendKeyAddedEvent(
-        clientOptions.instanceId,
-        RedisDataType.Set,
-        {
-          length: dto.members.length,
-          TTL: dto.expire || -1,
-        },
-      );
       this.logger.log('Succeed to create Set data type.');
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -126,16 +116,8 @@ export class SetBusinessService {
         const scanResult = await this.scanSet(clientOptions, dto);
         result = { ...result, ...scanResult };
       }
-      this.browserAnalyticsService.sendKeyScannedEvent(
-        clientOptions.instanceId,
-        RedisDataType.Set,
-        dto.match,
-        {
-          length: result.total,
-        },
-      );
       this.logger.log('Succeed to get members of the Set data type.');
-      return result;
+      return plainToClass(GetSetMembersResponse, result);
     } catch (error) {
       this.logger.error('Failed to get members of the Set data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
@@ -165,20 +147,11 @@ export class SetBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      const added = await this.browserTool.execCommand(
+      await this.browserTool.execCommand(
         clientOptions,
         BrowserToolSetCommands.SAdd,
         [keyName, ...members],
       );
-      if (added) {
-        this.browserAnalyticsService.sendKeyValueAddedEvent(
-          clientOptions.instanceId,
-          RedisDataType.Set,
-          {
-            numberOfAdded: added,
-          },
-        );
-      }
       this.logger.log('Succeed to add members to Set data type.');
     } catch (error) {
       this.logger.error('Failed to add members to Set data type.', error);
@@ -216,15 +189,6 @@ export class SetBusinessService {
         BrowserToolSetCommands.SRem,
         [keyName, ...members],
       );
-      if (result) {
-        this.browserAnalyticsService.sendKeyValueRemovedEvent(
-          clientOptions.instanceId,
-          RedisDataType.Set,
-          {
-            numberOfRemoved: result,
-          },
-        );
-      }
     } catch (error) {
       this.logger.error('Failed to delete members from the Set data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
+import { fetchNotificationsAction } from 'uiSrc/slices/app/notifications'
 
 import {
   fetchUserConfigSettings,
@@ -15,7 +16,8 @@ import {
   setAnalyticsIdentified,
 } from 'uiSrc/slices/app/info'
 
-import { checkIsAnalyticsGranted, getTelemetryService } from 'uiSrc/telemetry'
+import { getTelemetryService } from 'uiSrc/telemetry'
+import { checkIsAnalyticsGranted } from 'uiSrc/telemetry/checkAnalytics'
 import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
 import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
@@ -36,6 +38,7 @@ const Config = () => {
     dispatch(fetchServerInfo())
     dispatch(fetchUnsupportedCliCommandsAction())
     dispatch(fetchRedisCommandsInfo())
+    dispatch(fetchNotificationsAction())
 
     // fetch config settings, after that take spec
     if (pathname !== SETTINGS_PAGE_PATH) {

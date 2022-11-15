@@ -9,17 +9,15 @@ import { when } from 'jest-when';
 import { get } from 'lodash';
 import { ReplyError } from 'src/models/redis-client';
 import {
-  mockBrowserAnalyticsService,
   mockOSSClusterDatabaseEntity,
   mockRedisClusterConsumer,
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockRepository,
-  mockSettingsProvider,
+  mockRepository, mockSettingsService,
   mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   GetKeyInfoResponse,
   GetKeysDto,
@@ -37,12 +35,13 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
+import { SettingsService } from 'src/modules/settings/settings.service';
+import IORedis from 'ioredis';
 import { KeysBusinessService } from './keys-business.service';
 import { StringTypeInfoStrategy } from './key-info-manager/strategies/string-type-info/string-type-info.strategy';
-import { BrowserAnalyticsService } from '../browser-analytics/browser-analytics.service';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
-  name: 'testString',
+  name: Buffer.from('testString'),
   type: 'string',
   ttl: -1,
   size: 50,
@@ -59,6 +58,9 @@ const mockGetKeysWithDetailsResponse: GetKeysWithDetailsResponse = {
   keys: [getKeyInfoResponse],
 };
 
+const nodeClient = Object.create(IORedis.prototype);
+nodeClient.isCluster = false;
+
 describe('KeysBusinessService', () => {
   let service;
   let instancesBusinessService;
@@ -71,10 +73,6 @@ describe('KeysBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         KeysBusinessService,
-        {
-          provide: BrowserAnalyticsService,
-          useFactory: mockBrowserAnalyticsService,
-        },
         {
           provide: getRepositoryToken(DatabaseInstanceEntity),
           useFactory: mockRepository,
@@ -100,8 +98,8 @@ describe('KeysBusinessService', () => {
           }),
         },
         {
-          provide: 'SETTINGS_PROVIDER',
-          useFactory: mockSettingsProvider,
+          provide: SettingsService,
+          useFactory: mockSettingsService,
         },
       ],
     }).compile();
@@ -123,7 +121,7 @@ describe('KeysBusinessService', () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Type, [
           getKeyInfoResponse.name,
-        ])
+        ], 'utf8')
         .mockResolvedValue(RedisDataType.String);
     });
 
@@ -145,7 +143,7 @@ describe('KeysBusinessService', () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Type, [
           getKeyInfoResponse.name,
-        ])
+        ], 'utf8')
         .mockResolvedValue('none');
 
       await expect(
@@ -160,11 +158,41 @@ describe('KeysBusinessService', () => {
       when(browserTool.execCommand)
         .calledWith(mockClientOptions, BrowserToolKeysCommands.Type, [
           getKeyInfoResponse.name,
-        ])
+        ], 'utf8')
         .mockRejectedValue(replyError);
 
       await expect(
         service.getKeyInfo(mockClientOptions, getKeyInfoResponse.name),
+      ).rejects.toThrow(ForbiddenException);
+    });
+  });
+
+  describe('getKeysInfo', () => {
+    beforeEach(() => {
+      when(browserTool.getRedisClient)
+        .calledWith(mockClientOptions)
+        .mockResolvedValue(nodeClient);
+      standaloneScanner['getKeysInfo'] = jest.fn().mockResolvedValue([getKeyInfoResponse]);
+    });
+
+    it('should return keys with info', async () => {
+      const result = await service.getKeysInfo(
+        mockClientOptions,
+        [getKeyInfoResponse.name],
+      );
+
+      expect(result).toEqual([getKeyInfoResponse]);
+    });
+    it("user don't have required permissions for getKeyInfo", async () => {
+      const replyError: ReplyError = {
+        ...mockRedisNoPermError,
+        command: 'TYPE',
+      };
+
+      standaloneScanner['getKeysInfo'] = jest.fn().mockRejectedValueOnce(replyError);
+
+      await expect(
+        service.getKeysInfo(mockClientOptions, [getKeyInfoResponse.name]),
       ).rejects.toThrow(ForbiddenException);
     });
   });

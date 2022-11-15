@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as chai from 'chai';
 import * as Joi from 'joi';
 import * as diff from 'object-diff';
-import { cloneDeep, isMatch, isObject, set } from 'lodash';
+import { cloneDeep, isMatch, isObject, set, isArray } from 'lodash';
 import { generateInvalidDataArray } from './test/dataGenerator';
 
 export { _, fs }
@@ -45,15 +45,13 @@ export const validateApiCall = async function ({
 
   // data to send with POST, PUT etc
   if (data) {
-    request.send(data);
+    request.send(typeof data === 'function' ? data() : data);
   }
 
   // data to send with url query string
   if (query) {
     request.query(query);
   }
-
-  request.expect(statusCode);
 
   const response = await request;
 
@@ -66,6 +64,8 @@ export const validateApiCall = async function ({
   if (responseBody) {
     checkResponseBody(response.body, responseBody);
   }
+
+  expect(response.res.statusCode).to.eq(statusCode)
 
   // validate response schema if passed
   if (responseSchema) {
@@ -84,6 +84,10 @@ export const validateApiCall = async function ({
  */
 export const checkResponseBody = (body, expected) => {
   try {
+    if (isArray(expected)) {
+      return expect(body).to.deep.eq(expected);
+    }
+
     if (isObject(expected)) {
       return expect(isMatch(body, expected)).to.eql(true);
     }
@@ -196,3 +200,9 @@ export const getMainCheckFn = (endpoint) => async (testCase) => {
 };
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const JoiRedisString = Joi.alternatives()
+  .try(Joi.string(), Joi.object().keys({
+    type: Joi.string().valid('Buffer').required(),
+    data: Joi.array().items(Joi.number()).required(),
+  }));

@@ -7,22 +7,6 @@ export const mockInstancesAnalyticsService = () => ({
   sendConnectionFailedEvent: jest.fn(),
 });
 
-export const mockBrowserAnalyticsService = () => ({
-  sendKeysScannedEvent: jest.fn(),
-  sendKeyAddedEvent: jest.fn(),
-  sendKeyTTLChangedEvent: jest.fn(),
-  sendKeysDeletedEvent: jest.fn(),
-  sendKeyValueAddedEvent: jest.fn(),
-  sendKeyValueEditedEvent: jest.fn(),
-  sendKeyValueRemovedEvent: jest.fn(),
-  sendKeyScannedEvent: jest.fn(),
-  sendGetListElementByIndexEvent: jest.fn(),
-  sendJsonPropertyAddedEvent: jest.fn(),
-  sendJsonPropertyEditedEvent: jest.fn(),
-  sendJsonPropertyDeletedEvent: jest.fn(),
-  sendJsonArrayPropertyAppendEvent: jest.fn(),
-});
-
 export const mockCliAnalyticsService = () => ({
   sendClientCreatedEvent: jest.fn(),
   sendClientCreationFailedEvent: jest.fn(),
@@ -35,6 +19,7 @@ export const mockCliAnalyticsService = () => ({
 });
 
 export const mockWorkbenchAnalyticsService = () => ({
+  sendCommandExecutedEvents: jest.fn(),
   sendCommandExecutedEvent: jest.fn(),
   sendCommandDeletedEvent: jest.fn(),
 });
@@ -42,4 +27,10 @@ export const mockWorkbenchAnalyticsService = () => ({
 export const mockSettingsAnalyticsService = () => ({
   sendAnalyticsAgreementChange: jest.fn(),
   sendSettingsUpdatedEvent: jest.fn(),
+});
+
+export const mockPubSubAnalyticsService = () => ({
+  sendMessagePublishedEvent: jest.fn(),
+  sendChannelSubscribeEvent: jest.fn(),
+  sendChannelUnsubscribeEvent: jest.fn(),
 });

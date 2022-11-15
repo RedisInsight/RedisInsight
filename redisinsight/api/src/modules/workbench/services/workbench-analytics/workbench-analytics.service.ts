@@ -1,9 +1,10 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
-import { TelemetryBaseService } from 'src/modules/shared/services/base/telemetry.base.service';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { RedisError, ReplyError } from 'src/models';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CommandsService } from 'src/modules/commands/commands.service';
+import { CommandTelemetryBaseService } from 'src/modules/analytics/command.telemetry.base.service';
 
 export interface IExecResult {
   response: any;
@@ -12,12 +13,35 @@ export interface IExecResult {
 }
 
 @Injectable()
-export class WorkbenchAnalyticsService extends TelemetryBaseService {
-  constructor(protected eventEmitter: EventEmitter2) {
-    super(eventEmitter);
+export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
+  constructor(
+    protected eventEmitter: EventEmitter2,
+    protected readonly commandsService: CommandsService,
+  ) {
+    super(eventEmitter, commandsService);
   }
 
-  sendCommandExecutedEvent(databaseId: string, result: IExecResult, additionalData: object = {}): void {
+  public async sendCommandExecutedEvents(
+    databaseId: string,
+    results: IExecResult[],
+    additionalData: object = {},
+  ): Promise<void> {
+    try {
+      await Promise.all(
+        results.map(
+          (result) => this.sendCommandExecutedEvent(databaseId, result, additionalData),
+        ),
+      );
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
+
+  public async sendCommandExecutedEvent(
+    databaseId: string,
+    result: IExecResult,
+    additionalData: object = {},
+  ): Promise<void> {
     const { status } = result;
     try {
       if (status === CommandExecutionStatus.Success) {
@@ -25,12 +49,16 @@ export class WorkbenchAnalyticsService extends TelemetryBaseService {
           TelemetryEvents.WorkbenchCommandExecuted,
           {
             databaseId,
+            ...(await this.getCommandAdditionalInfo(additionalData['command'])),
             ...additionalData,
           },
         );
       }
       if (status === CommandExecutionStatus.Fail) {
-        this.sendCommandErrorEvent(databaseId, result.error, additionalData);
+        this.sendCommandErrorEvent(databaseId, result.error, {
+          ...(await this.getCommandAdditionalInfo(additionalData['command'])),
+          ...additionalData,
+        });
       }
     } catch (e) {
       // continue regardless of error

@@ -1,7 +1,7 @@
-import React, { ChangeEvent, useRef, useEffect, useState } from 'react'
 import {
   EuiButton,
   EuiButtonIcon,
+  EuiCallOut,
   EuiCheckbox,
   EuiCollapsibleNavGroup,
   EuiFieldNumber,
@@ -12,8 +12,10 @@ import {
   EuiForm,
   EuiFormRow,
   EuiIcon,
+  EuiLink,
   EuiListGroup,
   EuiListGroupItem,
+  EuiSpacer,
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiText,
@@ -21,49 +23,40 @@ import {
   EuiTextColor,
   EuiToolTip,
   htmlIdGenerator,
-  EuiLink,
   keys,
-  EuiCallOut,
 } from '@elastic/eui'
-import { capitalize, isEmpty, pick } from 'lodash'
-import ReactDOM from 'react-dom'
-import { useHistory } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
-import { FormikErrors, useFormik } from 'formik'
 import cx from 'classnames'
-import {
-  MAX_PORT_NUMBER,
-  MAX_DATABASE_INDEX_NUMBER,
-  validateCertName,
-  validateField,
-  validatePortNumber,
-  validateDatabaseNumber,
-} from 'uiSrc/utils/validations'
-import {
-  ConnectionType,
-  Instance,
-  InstanceType,
-} from 'uiSrc/slices/interfaces'
+import { FormikErrors, useFormik } from 'formik'
+import { capitalize, isEmpty, pick } from 'lodash'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import ReactDOM from 'react-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router'
+import { DatabaseListModules } from 'uiSrc/components'
+import { APPLICATION_NAME, PageNames, Pages } from 'uiSrc/constants'
+import validationErrors from 'uiSrc/constants/validationErrors'
+import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
+import { useResizableFormField } from 'uiSrc/services'
+import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import {
   changeInstanceAliasAction,
   checkConnectToInstanceAction,
   resetInstanceUpdateAction,
   setConnectedInstanceId,
-} from 'uiSrc/slices/instances'
-import { handlePasteHostName } from 'uiSrc/utils'
-import { APPLICATION_NAME, PageNames, Pages } from 'uiSrc/constants'
-import { useResizableFormField } from 'uiSrc/services'
-import validationErrors from 'uiSrc/constants/validationErrors'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { resetKeys } from 'uiSrc/slices/keys'
-import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
-import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
-import { DatabaseListModules } from 'uiSrc/components'
+} from 'uiSrc/slices/instances/instances'
+
+import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
+import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { handlePasteHostName, getDiffKeysOfObjectValues } from 'uiSrc/utils'
 import {
-  LoadingInstanceText,
-  SubmitBtnText,
-  TitleInstanceText,
-} from '../InstanceFormWrapper'
+  MAX_PORT_NUMBER,
+  validateCertName,
+  validateField,
+  validateNumber,
+  validatePortNumber,
+} from 'uiSrc/utils/validations'
+import { LoadingDatabaseText, SubmitBtnText, TitleDatabaseText, } from '../InstanceFormWrapper'
 import styles from './styles.module.scss'
 
 export const ADD_NEW_CA_CERT = 'ADD_NEW_CA_CERT'
@@ -71,52 +64,53 @@ export const NO_CA_CERT = 'NO_CA_CERT'
 export const ADD_NEW = 'ADD_NEW'
 
 export interface DbConnectionInfo extends Instance {
-  port: string;
-  tlsClientAuthRequired?: boolean;
-  certificates?: { id: number; name: string }[];
-  selectedTlsClientCertId?: string | 'ADD_NEW' | undefined;
-  newTlsCertPairName?: string;
-  newTlsClientCert?: string;
-  newTlsClientKey?: string;
-  verifyServerTlsCert?: boolean;
-  caCertificates?: { name: string; id: string }[];
-  selectedCaCertName: string | typeof ADD_NEW_CA_CERT | typeof NO_CA_CERT;
-  newCaCertName?: string;
-  newCaCert?: string;
-  username?: string;
-  password?: string;
-  showDb?: boolean;
-  sentinelMasterUsername?: string;
-  sentinelMasterPassword?: string;
+  port: string
+  tlsClientAuthRequired?: boolean
+  certificates?: { id: number; name: string }[]
+  selectedTlsClientCertId?: string | 'ADD_NEW' | undefined
+  newTlsCertPairName?: string
+  newTlsClientCert?: string
+  newTlsClientKey?: string
+  servername?: string
+  verifyServerTlsCert?: boolean
+  caCertificates?: { name: string; id: string }[]
+  selectedCaCertName: string | typeof ADD_NEW_CA_CERT | typeof NO_CA_CERT
+  newCaCertName?: string
+  newCaCert?: string
+  username?: string
+  password?: string
+  showDb?: boolean
+  sni?: boolean
+  sentinelMasterUsername?: string
+  sentinelMasterPassword?: string
+  sentinelMasterName?: string
 }
 
 export interface Props {
-  width: number;
-  isResizablePanel?: boolean;
-  formFields: DbConnectionInfo;
-  submitButtonText?: SubmitBtnText;
-  titleText?: TitleInstanceText;
-  loading: boolean;
-  instanceType: InstanceType;
-  loadingMsg: LoadingInstanceText;
-  isEditMode: boolean;
-  initialValues: DbConnectionInfo;
-  onFormFieldChanged: <K extends keyof DbConnectionInfo>(
-    fornField: K,
-    value: DbConnectionInfo[K]
-  ) => void;
-  onSubmit: (values: DbConnectionInfo) => void;
-  updateEditingName: (name: string) => void;
-  onHostNamePaste: (content: string) => boolean;
-  onClose?: () => void;
-  onAliasEdited?: (value: string) => void;
-  setErrorMsgRef?: (instance: HTMLDivElement | null) => void;
+  width: number
+  isResizablePanel?: boolean
+  formFields: DbConnectionInfo
+  submitButtonText?: SubmitBtnText
+  titleText?: TitleDatabaseText
+  loading: boolean
+  instanceType: InstanceType
+  loadingMsg: LoadingDatabaseText
+  isEditMode: boolean
+  isCloneMode: boolean
+  setIsCloneMode: (value: boolean) => void
+  initialValues: DbConnectionInfo
+  onSubmit: (values: DbConnectionInfo) => void
+  updateEditingName: (name: string) => void
+  onHostNamePaste: (content: string) => boolean
+  onClose?: () => void
+  onAliasEdited?: (value: string) => void
+  setErrorMsgRef?: (database: HTMLDivElement | null) => void
 }
 
 interface ISubmitButton {
-  onClick: () => void;
-  text?: string;
-  submitIsDisabled?: boolean;
+  onClick: () => void
+  text?: string
+  submitIsDisabled?: boolean
 }
 
 const fieldDisplayNames: DbConnectionInfo = {
@@ -129,6 +123,8 @@ const fieldDisplayNames: DbConnectionInfo = {
   newTlsCertPairName: 'Client Certificate Name',
   newTlsClientCert: 'Client Certificate',
   newTlsClientKey: 'Private Key',
+  servername: 'Server Name',
+  sentinelMasterName: 'Primary Group Name'
 }
 
 const getInitFieldsDisplayNames = ({ host, port, name, instanceType }: any) => {
@@ -153,7 +149,7 @@ const AddStandaloneForm = (props: Props) => {
       nameFromProvider,
       sentinelMaster,
       connectionType,
-      endpoints = null,
+      nodes = null,
       tlsClientAuthRequired,
       certificates,
       selectedTlsClientCertId = '',
@@ -165,7 +161,9 @@ const AddStandaloneForm = (props: Props) => {
       modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
-      isRediStack
+      isRediStack,
+      servername,
+      provider,
     },
     initialValues: initialValuesProp,
     width,
@@ -176,12 +174,14 @@ const AddStandaloneForm = (props: Props) => {
     instanceType,
     loading,
     isEditMode,
+    isCloneMode,
+    setIsCloneMode,
     onAliasEdited,
   } = props
 
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
 
-  const [initialValues, setInitialValues] = useState({
+  const prepareInitialValues = () => ({
     host,
     port: port?.toString(),
     name,
@@ -191,6 +191,7 @@ const AddStandaloneForm = (props: Props) => {
     db,
     modules,
     showDb: !!db,
+    sni: !!servername,
     newCaCert: '',
     newCaCertName: '',
     selectedCaCertName,
@@ -200,23 +201,23 @@ const AddStandaloneForm = (props: Props) => {
     selectedTlsClientCertId,
     newTlsClientCert: '',
     newTlsClientKey: '',
+    sentinelMasterName: sentinelMaster?.name || '',
     sentinelMasterUsername,
     sentinelMasterPassword,
   })
+
+  const [initialValues, setInitialValues] = useState(prepareInitialValues())
 
   const [errors, setErrors] = useState<FormikErrors<DbConnectionInfo>>(
     getInitFieldsDisplayNames({ host, port, name, instanceType })
   )
 
   useEffect(() => {
-    const values = {
-      ...initialValues,
-      ...initialValuesProp,
-    }
+    const values = prepareInitialValues()
 
     setInitialValues(values)
-    formik.validateForm(values)
-  }, [initialValuesProp])
+    formik.setValues(values)
+  }, [initialValuesProp, isCloneMode])
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -265,6 +266,14 @@ const AddStandaloneForm = (props: Props) => {
 
     if (
       values.tls
+      && values.sni
+      && values.servername === ''
+    ) {
+      errs.servername = fieldDisplayNames.servername
+    }
+
+    if (
+      values.tls
       && values.tlsClientAuthRequired
       && values.selectedTlsClientCertId === ADD_NEW
     ) {
@@ -279,6 +288,10 @@ const AddStandaloneForm = (props: Props) => {
       }
     }
 
+    if (isCloneMode && connectionType === ConnectionType.Sentinel && !values.sentinelMasterName) {
+      errs.sentinelMasterName = fieldDisplayNames.sentinelMasterName
+    }
+
     setErrors(errs)
     return errs
   }
@@ -287,7 +300,16 @@ const AddStandaloneForm = (props: Props) => {
     initialValues,
     validate,
     enableReinitialize: true,
-    onSubmit: (values) => {
+    onSubmit: (values: any) => {
+      if (isCloneMode) {
+        const diffKeys = getDiffKeysOfObjectValues(formik.initialValues, values)
+        sendEventTelemetry({
+          event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CONFIRMED,
+          eventData: {
+            fieldsModified: diffKeys
+          }
+        })
+      }
       onSubmit(values)
     },
   })
@@ -297,7 +319,7 @@ const AddStandaloneForm = (props: Props) => {
     width
   )
 
-  const onKeyDown = (event: KeyboardEvent) => {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
     if (event.key === keys.ENTER && !submitIsDisable()) {
       // event.
       formik.submitForm()
@@ -350,13 +372,36 @@ const AddStandaloneForm = (props: Props) => {
   }
 
   const handleCheckConnectToInstance = () => {
+    const modulesSummary = getRedisModulesSummary(modules)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE_BUTTON_CLICKED,
+      eventData: {
+        databaseId: id,
+        provider,
+        ...modulesSummary,
+      }
+    })
+    dispatch(checkConnectToInstanceAction(id, connectToInstance))
+  }
+
+  const handleCloneDatabase = () => {
+    setIsCloneMode(true)
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_REQUESTED,
       eventData: {
         databaseId: id
       }
     })
-    dispatch(checkConnectToInstanceAction(id, connectToInstance))
+  }
+
+  const handleBackCloneDatabase = () => {
+    setIsCloneMode(false)
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CANCELLED,
+      eventData: {
+        databaseId: id
+      }
+    })
   }
 
   const handleChangeDatabaseAlias = (
@@ -427,7 +472,7 @@ const AddStandaloneForm = (props: Props) => {
       <EuiListGroupItem
         label={(
           <>
-            {!!endpoints?.length && <AppendEndpoints />}
+            {!!nodes?.length && <AppendEndpoints />}
             <EuiText color="subdued" size="s">
               Host:
               <EuiTextColor color="default" className={styles.dbInfoListValue}>
@@ -478,6 +523,43 @@ const AddStandaloneForm = (props: Props) => {
         </>
       )}
     </EuiListGroup>
+  )
+
+  const PrimaryGroupSentinel = () => (
+    <>
+      <EuiFlexGroup className={flexGroupClassName}>
+        <EuiFlexItem className={flexItemClassName}>
+          <EuiFormRow label="Database Alias*">
+            <EuiFieldText
+              fullWidth
+              name="name"
+              id="name"
+              data-testid="name"
+              placeholder="Enter Database Alias"
+              value={formik.values.name ?? ''}
+              maxLength={500}
+              onChange={formik.handleChange}
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      <EuiFlexGroup className={flexGroupClassName}>
+        <EuiFlexItem className={flexItemClassName}>
+          <EuiFormRow label="Primary Group Name*">
+            <EuiFieldText
+              fullWidth
+              name="sentinelMasterName"
+              id="sentinelMasterName"
+              data-testid="primary-group"
+              placeholder="Enter Primary Group Name"
+              value={formik.values.sentinelMasterName ?? ''}
+              maxLength={500}
+              onChange={formik.handleChange}
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </>
   )
 
   const DbInfoSentinel = () => (
@@ -564,7 +646,7 @@ const AddStandaloneForm = (props: Props) => {
       anchorClassName={styles.anchorEndpoints}
       content={(
         <ul className={styles.endpointsList}>
-          {endpoints?.map(({ host: ephost, port: epport }) => (
+          {nodes?.map(({ host: ephost, port: epport }) => (
             <li key={ephost + epport}>
               <EuiText>
                 {ephost}
@@ -588,11 +670,12 @@ const AddStandaloneForm = (props: Props) => {
 
   const DatabaseForm = () => (
     <>
-      {!isEditMode && (
+      {(!isEditMode || isCloneMode) && (
         <EuiFlexGroup className={flexGroupClassName}>
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Host*">
               <EuiFieldText
+                autoFocus={!isCloneMode}
                 name="host"
                 id="host"
                 data-testid="host"
@@ -638,7 +721,11 @@ const AddStandaloneForm = (props: Props) => {
         </EuiFlexGroup>
       )}
 
-      {!isEditMode && instanceType !== InstanceType.Sentinel && (
+      {(
+        (!isEditMode || isCloneMode)
+        && instanceType !== InstanceType.Sentinel
+        && connectionType !== ConnectionType.Sentinel
+      ) && (
         <EuiFlexGroup className={flexGroupClassName}>
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Database Alias*">
@@ -699,9 +786,9 @@ const AddStandaloneForm = (props: Props) => {
     <>
       <EuiFlexGroup
         className={flexGroupClassName}
+        responsive={false}
       >
         <EuiFlexItem
-          style={{ width: '230px' }}
           grow={false}
           className={flexItemClassName}
         >
@@ -709,7 +796,7 @@ const AddStandaloneForm = (props: Props) => {
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
               name="showDb"
-              label="Database Index"
+              label="Select Logical Database"
               checked={!!formik.values.showDb}
               onChange={handleChangeDbIndexCheckbox}
               data-testid="showDb"
@@ -726,18 +813,20 @@ const AddStandaloneForm = (props: Props) => {
             <EuiCallOut>
               <EuiText size="s" data-testid="db-index-message">
                 When the database is added, you can select logical databases only in CLI.
-                To work with other logical databases in Browser and Workbench, add another database with the same host and port,
+                To work with other logical databases in Browser and Workbench,
+                add another database with the same host and port,
                 but a different database index.
               </EuiText>
             </EuiCallOut>
           </EuiFlexItem>
-          <EuiFlexItem className={cx(
-            flexItemClassName,
-            styles.dbInput,
-            { [styles.dbInputBig]: !flexItemClassName }
-          )}
+          <EuiFlexItem
+            className={cx(
+              flexItemClassName,
+              styles.dbInput,
+              { [styles.dbInputBig]: !flexItemClassName }
+            )}
           >
-            <EuiFormRow label="Select the Redis logical database" helpText="Should not exceed 15.">
+            <EuiFormRow label="Database Index">
               <EuiFieldNumber
                 name="db"
                 id="db"
@@ -749,12 +838,11 @@ const AddStandaloneForm = (props: Props) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     e.target.name,
-                    validateDatabaseNumber(e.target.value.trim())
+                    validateNumber(e.target.value.trim())
                   )
                 }}
                 type="text"
                 min={0}
-                max={MAX_DATABASE_INDEX_NUMBER}
               />
             </EuiFormRow>
           </EuiFlexItem>
@@ -766,8 +854,11 @@ const AddStandaloneForm = (props: Props) => {
   const TlsDetails = () => (
     <>
       <EuiFlexGroup
-        style={{ padding: '12px 0px 15px' }}
-        className={flexGroupClassName}
+        className={cx(flexGroupClassName, {
+          [styles.tlsContainer]: !flexGroupClassName,
+          [styles.tlsSniOpened]: formik.values.sni
+        })}
+        alignItems={!flexGroupClassName ? 'flexEnd' : undefined}
       >
         <EuiFlexItem
           style={{ width: '230px' }}
@@ -785,16 +876,54 @@ const AddStandaloneForm = (props: Props) => {
         </EuiFlexItem>
 
         {formik.values.tls && (
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiCheckbox
-              id={`${htmlIdGenerator()()} verifyServerTlsCert`}
-              name="verifyServerTlsCert"
-              label="Verify TLS Certificate"
-              checked={!!formik.values.verifyServerTlsCert}
-              onChange={formik.handleChange}
-              data-testid="verify-tls-cert"
-            />
-          </EuiFlexItem>
+          <>
+            <EuiFlexItem className={flexItemClassName}>
+              <EuiCheckbox
+                id={`${htmlIdGenerator()()} sni`}
+                name="sni"
+                label="Use SNI"
+                checked={!!formik.values.sni}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(
+                    'servername',
+                    formik.values.servername ?? formik.values.host ?? ''
+                  )
+                  return formik.handleChange(e)
+                }}
+                data-testid="sni"
+              />
+            </EuiFlexItem>
+            {formik.values.sni && (
+              <EuiFlexItem className={flexItemClassName} style={{ flexBasis: '255px', marginTop: 0 }}>
+                <EuiFormRow label="Server Name*" style={{ paddingTop: 0 }}>
+                  <EuiFieldText
+                    name="servername"
+                    id="servername"
+                    fullWidth
+                    maxLength={200}
+                    placeholder="Enter Server Name"
+                    value={formik.values.servername ?? ''}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      formik.setFieldValue(
+                        e.target.name,
+                        validateField(e.target.value.trim())
+                      )}
+                    data-testid="sni-servername"
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+            )}
+            <EuiFlexItem className={cx(flexItemClassName, { [styles.fullWidth]: formik.values.sni })}>
+              <EuiCheckbox
+                id={`${htmlIdGenerator()()} verifyServerTlsCert`}
+                name="verifyServerTlsCert"
+                label="Verify TLS Certificate"
+                checked={!!formik.values.verifyServerTlsCert}
+                onChange={formik.handleChange}
+                data-testid="verify-tls-cert"
+              />
+            </EuiFlexItem>
+          </>
         )}
       </EuiFlexGroup>
       {formik.values.tls && (
@@ -883,7 +1012,7 @@ const AddStandaloneForm = (props: Props) => {
         </EuiFlexGroup>
       )}
       {formik.values.tls && formik.values.tlsClientAuthRequired && (
-        <div className="boxSection">
+        <div className="boxSection" style={{ marginTop: 15 }}>
           <EuiFlexGroup className={flexGroupClassName}>
             <EuiFlexItem className={flexItemClassName}>
               <EuiFormRow label="Client Certificate*">
@@ -976,7 +1105,7 @@ const AddStandaloneForm = (props: Props) => {
 
   const SentinelMasterDatabase = () => (
     <>
-      {!!db && (
+      {(!!db && !isCloneMode) && (
         <EuiText color="subdued" className={styles.sentinelCollapsedField}>
           Database Index:
           <span style={{ paddingLeft: 5 }}>
@@ -1006,7 +1135,7 @@ const AddStandaloneForm = (props: Props) => {
               type="dual"
               name="sentinelMasterPassword"
               id="sentinelMasterPassword"
-              data-testid="sentinelMasterPassword"
+              data-testid="sentinel-master-password"
               fullWidth
               className="passwordField"
               maxLength={200}
@@ -1162,10 +1291,13 @@ const AddStandaloneForm = (props: Props) => {
         <div className="fluid" style={{ marginBottom: 15 }}>
           <DatabaseAlias
             isRediStack={isRediStack}
+            isCloneMode={isCloneMode}
             alias={name}
             database={db}
             isLoading={loading}
             onOpen={handleCheckConnectToInstance}
+            onClone={handleCloneDatabase}
+            onCloneBack={handleBackCloneDatabase}
             onApplyChanges={handleChangeDatabaseAlias}
           />
         </div>
@@ -1195,9 +1327,9 @@ const AddStandaloneForm = (props: Props) => {
             {TlsDetails()}
           </EuiForm>
         )}
-        {isEditMode && connectionType !== ConnectionType.Sentinel && (
+        {(isEditMode || isCloneMode) && connectionType !== ConnectionType.Sentinel && (
           <>
-            <DbInfo />
+            {!isCloneMode && <DbInfo />}
             <EuiForm
               component="form"
               onSubmit={formik.handleSubmit}
@@ -1205,41 +1337,73 @@ const AddStandaloneForm = (props: Props) => {
               onKeyDown={onKeyDown}
             >
               {DatabaseForm()}
+              {isCloneMode && DBIndex()}
               {TlsDetails()}
             </EuiForm>
           </>
         )}
-        {isEditMode && connectionType === ConnectionType.Sentinel && (
+        {(isEditMode || isCloneMode) && connectionType === ConnectionType.Sentinel && (
           <>
-            <DbInfoSentinel />
             <EuiForm
               component="form"
               onSubmit={formik.handleSubmit}
               data-testid="form"
               onKeyDown={onKeyDown}
             >
-              <EuiCollapsibleNavGroup
-                title="Database"
-                isCollapsible
-                initialIsOpen={false}
-              >
-                {SentinelMasterDatabase()}
-              </EuiCollapsibleNavGroup>
-              <EuiCollapsibleNavGroup
-                title="Sentinel"
-                isCollapsible
-                initialIsOpen={false}
-              >
-                {SentinelHostPort()}
-                {DatabaseForm()}
-              </EuiCollapsibleNavGroup>
-              <EuiCollapsibleNavGroup
-                title="TLS Details"
-                isCollapsible
-                initialIsOpen={false}
-              >
-                {TlsDetails()}
-              </EuiCollapsibleNavGroup>
+              {!isCloneMode && (
+                <>
+                  <DbInfoSentinel />
+                  <EuiCollapsibleNavGroup
+                    title="Database"
+                    isCollapsible
+                    initialIsOpen={false}
+                    data-testid="database-nav-group"
+                  >
+                    {SentinelMasterDatabase()}
+                  </EuiCollapsibleNavGroup>
+                  <EuiCollapsibleNavGroup
+                    title="Sentinel"
+                    isCollapsible
+                    initialIsOpen={false}
+                    data-testid="sentinel-nav-group"
+                  >
+                    {SentinelHostPort()}
+                    {DatabaseForm()}
+                  </EuiCollapsibleNavGroup>
+
+                  <EuiCollapsibleNavGroup
+                    title="TLS Details"
+                    isCollapsible
+                    initialIsOpen={false}
+                  >
+                    {TlsDetails()}
+                  </EuiCollapsibleNavGroup>
+                </>
+              )}
+              {isCloneMode && (
+                <>
+                  {PrimaryGroupSentinel()}
+                  <EuiCollapsibleNavGroup
+                    title="Database"
+                    isCollapsible
+                    initialIsOpen={false}
+                    data-testid="database-nav-group-clone"
+                  >
+                    {SentinelMasterDatabase()}
+                  </EuiCollapsibleNavGroup>
+                  <EuiCollapsibleNavGroup
+                    title="Sentinel"
+                    isCollapsible
+                    initialIsOpen={false}
+                    data-testid="sentinel-nav-group-clone"
+                  >
+                    {DatabaseForm()}
+                  </EuiCollapsibleNavGroup>
+                  <EuiSpacer size="m" />
+                  {DBIndex()}
+                  {TlsDetails()}
+                </>
+              )}
             </EuiForm>
           </>
         )}

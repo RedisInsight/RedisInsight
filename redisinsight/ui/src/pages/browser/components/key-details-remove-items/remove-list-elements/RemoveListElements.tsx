@@ -19,14 +19,14 @@ import {
 } from '@elastic/eui'
 
 import { KeyTypes } from 'uiSrc/constants'
-import { validateCountNumber, isVersionHigherOrEquals, formatNameShort } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { validateCountNumber, isVersionHigherOrEquals, formatNameShort, bufferToString } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 
-import { selectedKeyDataSelector } from 'uiSrc/slices/keys'
-import { deleteListElementsAction } from 'uiSrc/slices/list'
-import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import { deleteListElementsAction } from 'uiSrc/slices/browser/list'
+import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/dto'
 
@@ -69,6 +69,7 @@ const RemoveListElements = (props: Props) => {
   }
   const { version: databaseVersion = '' } = useSelector(connectedInstanceOverviewSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { viewType } = useSelector(keysSelector)
 
   const countInput = useRef<HTMLInputElement>(null)
 
@@ -102,7 +103,11 @@ const RemoveListElements = (props: Props) => {
   const showPopover = () => {
     setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+      ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.List
@@ -114,6 +119,22 @@ const RemoveListElements = (props: Props) => {
     setIsPopoverOpen(false)
   }
 
+  const onSuccessRemoved = () => {
+    onCancel()
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+      ),
+      eventData: {
+        databaseId: instanceId,
+        keyType: KeyTypes.List,
+        numberOfRemoved: toNumber(count),
+      }
+    })
+  }
+
   const submitData = (): void => {
     const data: DeleteListElementsDto = {
       keyName: selectedKey,
@@ -121,7 +142,7 @@ const RemoveListElements = (props: Props) => {
       destination,
     }
     closePopover()
-    dispatch(deleteListElementsAction(data, props.onCancel))
+    dispatch(deleteListElementsAction(data, onSuccessRemoved))
   }
 
   const RemoveButton = () => (
@@ -158,7 +179,7 @@ const RemoveListElements = (props: Props) => {
             {' '}
             of
             {' '}
-            <b>{formatNameShort(selectedKey)}</b>
+            <b>{formatNameShort(bufferToString(selectedKey))}</b>
           </EuiText>
           {(!length || length <= +count) && (
             <div className={styles.appendInfo}>

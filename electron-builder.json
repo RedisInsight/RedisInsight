@@ -104,8 +104,7 @@
     "desktop": {
       "Name": "RedisInsight",
       "Type": "Application",
-      "Comment": "Redis GUI by Redis Ltd",
-      "Terminal": "true"
+      "Comment": "Redis GUI by Redis Ltd"
     }
   },
   "directories": {

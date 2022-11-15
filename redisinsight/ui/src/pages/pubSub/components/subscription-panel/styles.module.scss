@@ -1,0 +1,22 @@
+.buttonSubscribe {
+  :global(.euiButton__text) {
+    font-weight: normal !important;
+    font-size: 12px !important;
+  }
+}
+
+.container {
+  height: 30px;
+  margin: 0 -4px !important;
+}
+
+.iconSubscribe {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+
+  .iconUser {
+    width: 18px;
+    height: 18px;
+  }
+}

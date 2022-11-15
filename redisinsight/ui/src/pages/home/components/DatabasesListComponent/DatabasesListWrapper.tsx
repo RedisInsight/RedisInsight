@@ -1,14 +1,11 @@
 import {
-  EuiButton,
   EuiButtonIcon,
   EuiIcon,
-  EuiPopover,
   EuiTableFieldDataColumnType,
   EuiText,
   EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
-import { formatDistanceToNow } from 'date-fns'
 import { capitalize } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,20 +18,21 @@ import {
   deleteInstancesAction,
   instancesSelector,
   setConnectedInstanceId,
-} from 'uiSrc/slices/instances'
+} from 'uiSrc/slices/instances/instances'
 import {
   CONNECTION_TYPE_DISPLAY,
   ConnectionType,
   Instance,
 } from 'uiSrc/slices/interfaces'
-import { resetKeys } from 'uiSrc/slices/keys'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { PageNames, Pages, Theme } from 'uiSrc/constants'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent, getRedisModulesSummary } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { formatLongName, getDbIndex, Nullable, replaceSpaces } from 'uiSrc/utils'
+import { formatLongName, getDbIndex, lastConnectionFormat, Nullable, replaceSpaces } from 'uiSrc/utils'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
+import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
@@ -50,6 +48,9 @@ export interface Props {
   onEditInstance: (instance: Instance) => void;
   onDeleteInstances: (instances: Instance[]) => void;
 }
+
+const suffix = '_db_instance'
+
 const DatabasesListWrapper = ({
   width,
   dialogIsOpen,
@@ -65,23 +66,15 @@ const DatabasesListWrapper = ({
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
   const instances = useSelector(instancesSelector)
   const [, forceRerender] = useState({})
-  const [deleting, setDeleting] = useState({ id: '' })
+  const deleting = { id: '' }
 
   const closePopover = () => {
     deleting.id = ''
-
-    setDeleting(deleting)
     forceRerender({})
   }
 
-  const showPopover = (instanceId = '') => {
-    if (deleting.id === instanceId) {
-      closePopover()
-      return
-    }
-    deleting.id = instanceId
-
-    setDeleting(deleting)
+  const showPopover = (id: string) => {
+    deleting.id = `${id + suffix}`
     forceRerender({})
   }
 
@@ -103,7 +96,7 @@ const DatabasesListWrapper = ({
   }, [width])
 
   const handleCopy = (text = '', databaseId?: string) => {
-    navigator.clipboard.writeText(text)
+    navigator.clipboard?.writeText(text)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_HOST_PORT_COPIED,
       eventData: {
@@ -127,25 +120,31 @@ const DatabasesListWrapper = ({
     }
     history.push(Pages.browser(id))
   }
-  const handleCheckConnectToInstance = (event: any, id = '') => {
+  const handleCheckConnectToInstance = (
+    event: React.MouseEvent | React.KeyboardEvent,
+    { id, provider, modules }: Instance
+  ) => {
     event.preventDefault()
+    const modulesSummary = getRedisModulesSummary(modules)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
-        databaseId: id
+        databaseId: id,
+        provider,
+        ...modulesSummary,
       }
     })
     dispatch(checkConnectToInstanceAction(id, connectToInstance))
   }
 
-  const handleClickDeleteInstance = (instance: Instance) => {
+  const handleClickDeleteInstance = (id: string) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_SINGLE_DATABASE_DELETE_CLICKED,
       eventData: {
-        databaseId: instance.id
+        databaseId: id
       }
     })
-    showPopover(instance.id)
+    showPopover(id)
   }
 
   const handleClickEditInstance = (instance: Instance) => {
@@ -166,48 +165,6 @@ const DatabasesListWrapper = ({
     dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
 
-  const PopoverDelete = ({ id, ...instance }: Instance) => (
-    <EuiPopover
-      key={id}
-      anchorPosition="leftCenter"
-      ownFocus
-      isOpen={id === deleting.id}
-      closePopover={() => closePopover()}
-      panelPaddingSize="l"
-      anchorClassName="deleteInstancePopover"
-      button={(
-        <EuiButtonIcon
-          iconType="trash"
-          aria-label="Delete instance"
-          className="deleteInstanceBtn"
-          data-testid={`delete-instance-${id}`}
-          onClick={() => handleClickDeleteInstance({ id, ...instance })}
-        />
-      )}
-    >
-      <EuiText size="m" style={{ overflow: 'hidden' }}>
-        <p className={styles.popoverSubTitle}>
-          <b style={{ wordBreak: 'break-all' }}>
-            {formatLongName(instance.name, 50, 10, '...')}
-          </b>
-          &nbsp;will be deleted from RedisInsight.
-        </p>
-      </EuiText>
-      <div className={styles.popoverFooter}>
-        <EuiButton
-          fill
-          size="s"
-          color="warning"
-          iconType="trash"
-          data-testid={`delete-instance-confirm-${id}`}
-          onClick={() => handleDeleteInstance({ id, ...instance })}
-        >
-          Delete
-        </EuiButton>
-      </div>
-    </EuiPopover>
-  )
-
   const columnsFull: EuiTableFieldDataColumnType<Instance>[] = [
     {
       field: 'name',
@@ -218,7 +175,8 @@ const DatabasesListWrapper = ({
       'data-test-subj': 'database-alias-column',
       sortable: ({ name }) => name?.toLowerCase(),
       width: '30%',
-      render: function InstanceCell(name: string = '', { id, db }: Instance) {
+      render: function InstanceCell(name: string = '', instance: Instance) {
+        const { id, db } = instance
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div
@@ -230,18 +188,21 @@ const DatabasesListWrapper = ({
               className={styles.tooltipColumnName}
               content={`${formatLongName(name)} ${getDbIndex(db)}`}
             >
-              <span className={styles.tooltipAnchorColumnName} data-testid={`instance-name-${id}`}>
+              <EuiText
+                className={styles.tooltipAnchorColumnName}
+                data-testid={`instance-name-${id}`}
+                onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, instance)}
+                onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, instance)}
+              >
                 <EuiTextColor
                   className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}
-                  onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, id)}
-                  onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, id)}
                 >
                   {cellContent}
                 </EuiTextColor>
                 <EuiTextColor>
                   {` ${getDbIndex(db)}`}
                 </EuiTextColor>
-              </span>
+              </EuiText>
             </EuiToolTip>
           </div>
         )
@@ -317,7 +278,7 @@ const DatabasesListWrapper = ({
                     </>
                   ) : undefined}
                   modules={modules}
-                  maxViewModules={Math.floor((columnWidth - 12) / 28) - 1}
+                  maxViewModules={columnWidth > 40 ? (Math.floor((columnWidth - 12) / 28) - 1) : 0}
                 />
               </div>
             )}
@@ -334,17 +295,14 @@ const DatabasesListWrapper = ({
       width: '170px',
       sortable: ({ lastConnection }) =>
         (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
-      render: (date: Date) =>
-        (date
-          ? `${formatDistanceToNow(new Date(date), { addSuffix: true })}`
-          : 'Never'),
+      render: (date: Date) => lastConnectionFormat(date),
     },
     {
       field: 'controls',
       className: 'column_controls',
       width: '100px',
       name: '',
-      render: function Icons(_: string, instance: Instance) {
+      render: function Actions(_act: any, instance: Instance) {
         return (
           <>
             <EuiButtonIcon
@@ -354,7 +312,19 @@ const DatabasesListWrapper = ({
               data-testid={`edit-instance-${instance.id}`}
               onClick={() => handleClickEditInstance(instance)}
             />
-            {PopoverDelete(instance)}
+            <PopoverDelete
+              header={formatLongName(instance.name, 50, 10, '...')}
+              text="will be deleted from RedisInsight."
+              item={instance.id}
+              suffix={suffix}
+              deleting={deleting.id}
+              closePopover={closePopover}
+              updateLoading={false}
+              showPopover={showPopover}
+              handleDeleteItem={() => handleDeleteInstance(instance)}
+              handleButtonClick={() => handleClickDeleteInstance(instance.id)}
+              testid={`delete-instance-${instance.id}`}
+            />
           </>
         )
       },

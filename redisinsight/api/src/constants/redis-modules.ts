@@ -1,4 +1,4 @@
-export enum RedisModules {
+export enum AdditionalRedisModuleName {
   RedisAI = 'ai',
   RedisGraph = 'graph',
   RedisGears = 'rg',
@@ -9,41 +9,41 @@ export enum RedisModules {
 }
 
 export const SUPPORTED_REDIS_MODULES = Object.freeze({
-  ai: RedisModules.RedisAI,
-  graph: RedisModules.RedisGraph,
-  rg: RedisModules.RedisGears,
-  bf: RedisModules.RedisBloom,
-  ReJSON: RedisModules.RedisJSON,
-  search: RedisModules.RediSearch,
-  timeseries: RedisModules.RedisTimeSeries,
+  ai: AdditionalRedisModuleName.RedisAI,
+  graph: AdditionalRedisModuleName.RedisGraph,
+  rg: AdditionalRedisModuleName.RedisGears,
+  bf: AdditionalRedisModuleName.RedisBloom,
+  ReJSON: AdditionalRedisModuleName.RedisJSON,
+  search: AdditionalRedisModuleName.RediSearch,
+  timeseries: AdditionalRedisModuleName.RedisTimeSeries,
 });
 
 export const RE_CLOUD_MODULES_NAMES = Object.freeze({
-  RedisAI: RedisModules.RedisAI,
-  RedisGraph: RedisModules.RedisGraph,
-  RedisGears: RedisModules.RedisGears,
-  RedisBloom: RedisModules.RedisBloom,
-  RedisJSON: RedisModules.RedisJSON,
-  RediSearch: RedisModules.RediSearch,
-  RedisTimeSeries: RedisModules.RedisTimeSeries,
+  RedisAI: AdditionalRedisModuleName.RedisAI,
+  RedisGraph: AdditionalRedisModuleName.RedisGraph,
+  RedisGears: AdditionalRedisModuleName.RedisGears,
+  RedisBloom: AdditionalRedisModuleName.RedisBloom,
+  RedisJSON: AdditionalRedisModuleName.RedisJSON,
+  RediSearch: AdditionalRedisModuleName.RediSearch,
+  RedisTimeSeries: AdditionalRedisModuleName.RedisTimeSeries,
 });
 
 export const RE_CLUSTER_MODULES_NAMES = Object.freeze({
-  ai: RedisModules.RedisAI,
-  graph: RedisModules.RedisGraph,
-  gears: RedisModules.RedisGears,
-  bf: RedisModules.RedisBloom,
-  ReJSON: RedisModules.RedisJSON,
-  search: RedisModules.RediSearch,
-  timeseries: RedisModules.RedisTimeSeries,
+  ai: AdditionalRedisModuleName.RedisAI,
+  graph: AdditionalRedisModuleName.RedisGraph,
+  gears: AdditionalRedisModuleName.RedisGears,
+  bf: AdditionalRedisModuleName.RedisBloom,
+  ReJSON: AdditionalRedisModuleName.RedisJSON,
+  search: AdditionalRedisModuleName.RediSearch,
+  timeseries: AdditionalRedisModuleName.RedisTimeSeries,
 });
 
 export const REDIS_MODULES_COMMANDS = new Map([
-  [RedisModules.RedisAI, ['ai.info']],
-  [RedisModules.RedisGraph, ['graph.delete']],
-  [RedisModules.RedisGears, ['rg.pyexecute']],
-  [RedisModules.RedisBloom, ['bf.info', 'cf.info', 'cms.info', 'topk.info']],
-  [RedisModules.RedisJSON, ['json.get']],
-  [RedisModules.RediSearch, ['ft.info']],
-  [RedisModules.RedisTimeSeries, ['ts.mrange', 'ts.info']],
+  [AdditionalRedisModuleName.RedisAI, ['ai.info']],
+  [AdditionalRedisModuleName.RedisGraph, ['graph.delete']],
+  [AdditionalRedisModuleName.RedisGears, ['rg.pyexecute']],
+  [AdditionalRedisModuleName.RedisBloom, ['bf.info', 'cf.info', 'cms.info', 'topk.info']],
+  [AdditionalRedisModuleName.RedisJSON, ['json.get']],
+  [AdditionalRedisModuleName.RediSearch, ['ft.info']],
+  [AdditionalRedisModuleName.RedisTimeSeries, ['ts.mrange', 'ts.info']],
 ]);

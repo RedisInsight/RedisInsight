@@ -17,10 +17,12 @@ import { first, last } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { ActionBar } from 'uiSrc/components'
-import { instancesSelector } from 'uiSrc/slices/instances'
+import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { formatLongName, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { localStorageService } from 'uiSrc/services'
+import { BrowserStorageItem } from 'uiSrc/constants'
 
 import styles from '../styles.module.scss'
 
@@ -80,7 +82,7 @@ function DatabasesList({
     }
   }, [width])
 
-  const sort: PropertySort = {
+  const sort: PropertySort = localStorageService.get(BrowserStorageItem.instancesSorting) ?? {
     field: 'lastConnection',
     direction: 'asc',
   }
@@ -116,6 +118,7 @@ function DatabasesList({
   const onTableChange = ({ sort, page }: Criteria<Instance>) => {
     // calls also with page changing
     if (sort && !page) {
+      localStorageService.set(BrowserStorageItem.instancesSorting, sort)
       sendEventSortedTelemetry(sort)
     }
   }
@@ -198,14 +201,21 @@ function DatabasesList({
     </EuiPopover>
   )
 
+  const noSearchResultsMsg = (
+    <div className={styles.noSearchResults}>
+      <div className={styles.tableMsgTitle}>No results found</div>
+      <div>No databases matched your search. Try reducing the criteria.</div>
+    </div>
+  )
+
   return (
     <div className="databaseList" ref={containerTableRef}>
       <EuiInMemoryTable
         ref={tableRef}
-        items={instances}
+        items={instances.filter(({ visible = true }) => visible)}
         itemId="id"
         loading={loading}
-        message={loadingMsg}
+        message={instances.length ? noSearchResultsMsg : loadingMsg}
         columns={columns}
         rowProps={toggleSelectedRow}
         sorting={{ sort }}

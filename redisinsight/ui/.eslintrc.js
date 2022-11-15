@@ -54,6 +54,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'react/require-default-props': 'off',
     'react/prop-types': 1,
+    'react/jsx-one-expression-per-line': 'off',
     '@typescript-eslint/comma-dangle': 'off',
     '@typescript-eslint/no-shadow': 'off',
     '@typescript-eslint/no-unused-expressions': 'off',
@@ -64,7 +65,35 @@ module.exports = {
     'no-nested-ternary': 'off',
     'no-param-reassign': ['error', { props: false }],
     'sonarjs/no-duplicate-string': 'off',
-    'sonarjs/cognitive-complexity': [1, 15],
-    'sonarjs/no-identical-functions': [0, 5]
+    'sonarjs/cognitive-complexity': [1, 20],
+    'sonarjs/no-identical-functions': [0, 5],
+    'import/order': [
+      1,
+      {
+        groups: [
+          'external',
+          'builtin',
+          'internal',
+          'sibling',
+          'parent',
+          'index',
+        ],
+        pathGroups: [
+          {
+            pattern: 'apiSrc/**',
+            group: 'internal',
+            position: 'after'
+          },
+          {
+            pattern: '{.,..}/*.scss', // same directory only
+            // pattern: '{.,..}/**/*\.scss' // same & outside directories (e.g. import '../foo/foo.scss')
+            group: 'object',
+            position: 'after'
+          }
+        ],
+        warnOnUnassignedImports: true,
+        pathGroupsExcludedImportTypes: ['builtin']
+      },
+    ],
   },
 }

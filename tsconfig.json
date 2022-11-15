@@ -27,6 +27,7 @@
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
     "allowJs": true,
+    "skipLibCheck": true,
     "paths": {
       "uiSrc/*": [
         "redisinsight/ui/src/*"
@@ -46,7 +47,8 @@
     "redisinsight/ui/src/**/*",
     "redisinsight/ui/index.tsx",
     "redisinsight/ui/indexElectron.tsx",
-    "redisinsight/main.dev.ts"
+    "redisinsight/main.dev.ts",
+    "jest.config.js"
   ],
   "exclude": [
     "./redisinsight/api",

@@ -1,10 +1,11 @@
 /* eslint-disable sonarjs/no-identical-functions */
 import React from 'react'
-import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
-import { setConnectedInstanceId } from 'uiSrc/slices/instances'
-import { loadKeys, resetKeyInfo } from 'uiSrc/slices/keys'
-import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { cloneDeep } from 'lodash'
+import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import { setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
+import { loadKeys, resetKeyInfo, toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
+import { resetErrors } from 'uiSrc/slices/app/notifications'
+import { setBrowserBulkActionOpen } from 'uiSrc/slices/app/context'
 import BrowserPage from './BrowserPage'
 import KeyList, { Props as KeyListProps } from './components/key-list/KeyList'
 import KeyDetailsWrapper, {
@@ -42,7 +43,7 @@ const mockKeyList = (props: KeyListProps) => (
     <button
       type="button"
       data-testid="loadMoreItems-btn"
-      onClick={() => props?.loadMoreItems?.({ startIndex: 1, stopIndex: 2 })}
+      onClick={() => props?.handleScanMoreClick?.({ startIndex: 1, stopIndex: 2 })}
     >
       loadMoreItems
     </button>
@@ -70,6 +71,13 @@ const mockKeysHeader = (props: KeysHeaderProps) => (
     >
       handleAddKeyPanel
     </button>
+    <button
+      type="button"
+      data-testid="handleBulkActionsPanel-btn"
+      onClick={() => props?.handleBulkActionsPanel?.(true)}
+    >
+      handleBulkActionsPanel
+    </button>
   </div>
 )
 
@@ -80,6 +88,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+/**
+ * BrowserPage tests
+ *
+ * @group component
+ */
 describe('BrowserPage', () => {
   beforeAll(() => {
     KeyList.mockImplementation(mockKeyList)
@@ -90,7 +103,7 @@ describe('BrowserPage', () => {
 
   it('should render', () => {
     expect(render(<BrowserPage />)).toBeTruthy()
-    const afterRenderActions = [resetErrors(), setConnectedInstanceId('instanceId'), loadKeys()]
+    const afterRenderActions = [setConnectedInstanceId('instanceId'), loadKeys(), resetErrors()]
     expect(store.getActions().slice(0, afterRenderActions.length)).toEqual([...afterRenderActions])
   })
 
@@ -100,7 +113,17 @@ describe('BrowserPage', () => {
 
     fireEvent.click(screen.getByTestId('handleAddKeyPanel-btn'))
 
-    const expectedActions = [resetKeyInfo()]
+    const expectedActions = [resetKeyInfo(), toggleBrowserFullScreen(false)]
+    expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
+  })
+
+  it('should call handleBulkActionsPanel', () => {
+    render(<BrowserPage />)
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('handleBulkActionsPanel-btn'))
+
+    const expectedActions = [resetKeyInfo(), toggleBrowserFullScreen(false), setBrowserBulkActionOpen(true)]
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 
@@ -119,6 +142,6 @@ describe('BrowserPage', () => {
 
     fireEvent.click(screen.getByTestId('onCloseKey-btn'))
 
-    expect(store.getActions()).toEqual([...afterRenderActions, resetKeyInfo()])
+    expect(store.getActions()).toEqual([...afterRenderActions, toggleBrowserFullScreen(true)])
   })
 })

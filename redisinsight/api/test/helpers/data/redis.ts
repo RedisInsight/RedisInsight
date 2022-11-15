@@ -1,18 +1,61 @@
 import { get } from 'lodash';
 import { constants } from '../constants';
 import * as _ from 'lodash';
+import * as IORedis from 'ioredis';
+import { sleep } from '../test';
+import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
 
 export const initDataHelper = (rte) => {
   const client = rte.client;
 
+  const sendCommand = async (command: string, args?: (Buffer | string)[], replyEncoding = 'utf8'): Promise<any> => {
+    return client.sendCommand(new IORedis.Command(command, args, {
+      replyEncoding,
+    }));
+  };
+
   const executeCommand = async (...args: string[]): Promise<any> => {
     return client.nodes ? Promise.all(client.nodes('master').map(async (node) => {
       try {
-        return node.send_command(...args);
+        return node.call(...args);
       } catch (e) {
         return null;
       }
-    })) : client.send_command(args.shift(), ...args);
+    })) : client.call(args.shift(), ...args);
+  };
+
+  const waitForInfoSync = async () => {
+    let totalKeys = 0;
+    let dbSize = -1;
+
+    while (true) {
+      const currentDbIndex = get(client, ['options', 'db'], 0);
+
+      dbSize = await sendCommand('dbsize')
+
+      const info = convertRedisInfoReplyToObject(await sendCommand('info', ['keyspace']));
+      const dbInfo = get(info, 'keyspace', {});
+      if (dbInfo[`db${currentDbIndex}`]) {
+        const { keys } = convertBulkStringsToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
+        totalKeys = parseInt(keys, 10);
+      }
+
+      if (dbSize === totalKeys) {
+        break;
+      }
+
+      await sleep(200);
+    }
+  }
+
+  const executeCommandAll = async (...args: string[]): Promise<any> => {
+    return client.nodes ? Promise.all(client.nodes().map(async (node) => {
+      try {
+        return node.call(...args);
+      } catch (e) {
+        return null;
+      }
+    })) : client.call(args.shift(), ...args);
   };
 
   const setAclUserRules = async (
@@ -34,9 +77,13 @@ export const initDataHelper = (rte) => {
     let cursor = null;
     let keys = [];
     while (cursor !== '0') {
-      [cursor, keys] = await node.send_command('scan', [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`])
+      [cursor, keys] = await node.sendCommand(new IORedis.Command(
+        'scan',
+        [cursor, 'count', count, 'match', `${constants.TEST_RUN_ID}*`],
+      ));
+      cursor = cursor.toString();
       if (keys.length) {
-        await node.send_command('del', ...keys)
+        await Promise.all(keys.map((key) => node.sendCommand(new IORedis.Command('del', [key]))));
       }
     }
   }
@@ -51,6 +98,52 @@ export const initDataHelper = (rte) => {
     })) : flushTestRunData(client);
   };
 
+  // bin data
+  const generateBinKeys = async (clean = false) => {
+    if (clean) {
+      await truncate();
+    }
+
+    // string
+    await client.set(constants.TEST_STRING_KEY_BIN_BUFFER_1, constants.TEST_STRING_VALUE_BIN_BUFFER_1);
+
+    // list
+    await client.lpush(constants.TEST_LIST_KEY_BIN_BUFFER_1, constants.TEST_LIST_ELEMENT_BIN_BUFFER_1);
+
+    // set
+    await client.sadd(constants.TEST_SET_KEY_BIN_BUFFER_1, constants.TEST_SET_MEMBER_BIN_BUFFER_1);
+
+    // zset
+    await client.zadd(
+      constants.TEST_ZSET_KEY_BIN_BUFFER_1,
+      constants.TEST_ZSET_MEMBER_1_SCORE,
+      constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
+    );
+
+    // hash
+    await client.hset(
+      constants.TEST_HASH_KEY_BIN_BUFFER_1,
+      constants.TEST_HASH_FIELD_BIN_BUFFER_1,
+      constants.TEST_HASH_VALUE_BIN_BUFFER_1,
+    );
+
+    // stream
+    await client.xadd(
+      constants.TEST_STREAM_KEY_BIN_BUFFER_1,
+      '*',
+      constants.TEST_STREAM_FIELD_BIN_BUFFER_1,
+      constants.TEST_STREAM_VALUE_BIN_BUFFER_1,
+    );
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_BIN_BUFFER_1,
+      constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+      constants.TEST_STREAM_ID_1
+    ]);
+
+    await waitForInfoSync();
+  };
+
   // keys
   const generateKeys = async (clean: boolean) => {
     if (clean) {
@@ -63,6 +156,9 @@ export const initDataHelper = (rte) => {
     await generateZSets();
     await generateHashes();
     await generateReJSONs();
+    await generateStreams();
+
+    await waitForInfoSync();
   };
 
   const insertKeysBasedOnEnv = async (pipeline, forcePipeline: boolean = false) => {
@@ -102,6 +198,7 @@ export const initDataHelper = (rte) => {
 
     await client.set(constants.TEST_STRING_KEY_1, constants.TEST_STRING_VALUE_1);
     await client.set(constants.TEST_STRING_KEY_2, constants.TEST_STRING_VALUE_2, 'EX', constants.TEST_STRING_EXPIRE_2);
+    await client.set(constants.TEST_STRING_KEY_ASCII_BUFFER, constants.TEST_STRING_KEY_ASCII_VALUE);
   };
 
   // List
@@ -210,6 +307,67 @@ export const initDataHelper = (rte) => {
     await executeCommand('json.set', constants.TEST_REJSON_KEY_3, '.', JSON.stringify(constants.TEST_REJSON_VALUE_3));
   };
 
+  // Streams
+  const generateStreams = async (clean: boolean = false) => {
+    if (clean) {
+      await truncate();
+    }
+
+    await client.xadd(constants.TEST_STREAM_KEY_1, '*', constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_GROUP_1,
+      constants.TEST_STREAM_ID_1
+    ])
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_GROUP_2,
+      constants.TEST_STREAM_ID_1
+    ])
+    await client.xadd(constants.TEST_STREAM_KEY_2, '*', constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+  };
+
+  const generateStreamsWithoutStrictMode = async (clean: boolean = false) => {
+    if (clean) {
+      await truncate();
+    }
+
+    await client.xadd(constants.TEST_STREAM_KEY_1, constants.TEST_STREAM_ID_1, constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_GROUP_1,
+      constants.TEST_STREAM_ID_1
+    ])
+    await sendCommand('xgroup', [
+      'create',
+      constants.TEST_STREAM_KEY_1,
+      constants.TEST_STREAM_GROUP_2,
+      constants.TEST_STREAM_ID_1
+    ])
+    await client.xadd(constants.TEST_STREAM_KEY_2, constants.TEST_STREAM_ID_1, constants.TEST_STREAM_FIELD_1, constants.TEST_STREAM_VALUE_1)
+  };
+
+  const generateHugeStream = async (number: number = 100000, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const batchSize = 10000;
+    let inserted = 0;
+    do {
+      const pipeline = [];
+      const limit = inserted + batchSize;
+      for (inserted; inserted < limit && inserted < number; inserted++) {
+        pipeline.push(['xadd', `${constants.TEST_STREAM_HUGE_KEY}`, '*', `f_${inserted}`, `v_${inserted}`]);
+      }
+
+      await insertKeysBasedOnEnv(pipeline);
+    } while (inserted < number)
+  };
+
   const generateHugeNumberOfFieldsForHashKey = async (number: number = 100000, clean: boolean) => {
     if (clean) {
       await truncate();
@@ -254,6 +412,15 @@ export const initDataHelper = (rte) => {
       { create: n => _.map(new Array(n), (v,i) => ['zadd', `${constants.TEST_RUN_ID}_zset_key_${i}`, 0, `zset_val_${i}`]) }, // zset
       { create: n => _.map(new Array(n), (v,i) => ['hset', `${constants.TEST_RUN_ID}_hash_key_${i}`, `field`, `hash_val_${i}`]) }, // hash
     ], number, clean);
+
+    await waitForInfoSync();
+  };
+
+  const generateRedisearchIndexes = async (clean: boolean) => {
+    await generateNKeys(10_000, clean);
+
+    await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_1, 'on', 'hash', 'schema', 'field', 'text']);
+    await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_2, 'on', 'hash', 'schema', '*', 'text']);
   };
 
   const generateNReJSONs = async (number: number = 300, clean: boolean) => {
@@ -281,17 +448,34 @@ export const initDataHelper = (rte) => {
     ], number, clean);
   };
 
+  const getClientNodes = () => {
+    if (client.nodes) {
+      return client.nodes();
+    } else {
+      return [client];
+    }
+  }
+
   return {
+    sendCommand,
     executeCommand,
+    executeCommandAll,
     setAclUserRules,
     truncate,
+    generateBinKeys,
     generateKeys,
     generateHugeNumberOfFieldsForHashKey,
     generateHugeNumberOfTinyStringKeys,
+    generateHugeStream,
     generateNKeys,
+    generateRedisearchIndexes,
     generateNReJSONs,
     generateNTimeSeries,
+    generateStrings,
+    generateStreams,
+    generateStreamsWithoutStrictMode,
     generateNStreams,
     generateNGraphs,
+    getClientNodes,
   }
 }

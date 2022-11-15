@@ -1,12 +1,13 @@
 import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { RedisString } from 'src/common/constants';
 import { IKeyInfoStrategy } from '../../key-info-manager.interface';
 
 export class ZSetTypeInfoStrategy implements IKeyInfoStrategy {
@@ -20,7 +21,7 @@ export class ZSetTypeInfoStrategy implements IKeyInfoStrategy {
 
   public async getInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log(`Getting ${RedisDataType.ZSet} type info.`);

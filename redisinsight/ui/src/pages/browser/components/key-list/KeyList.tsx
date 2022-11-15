@@ -1,73 +1,186 @@
-import React from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
+import { useParams } from 'react-router-dom'
+import { debounce, findIndex, isUndefined, reject } from 'lodash'
 
 import {
-  EuiIcon,
   EuiText,
   EuiToolTip,
   EuiTextColor,
+  EuiLoadingContent,
 } from '@elastic/eui'
 import {
   formatBytes,
-  formatLongName,
-  replaceSpaces,
-  truncateTTLToDuration,
-  truncateTTLToFirstUnit,
+  truncateNumberToDuration,
+  truncateNumberToFirstUnit,
   truncateTTLToSeconds,
+  replaceSpaces,
+  formatLongName,
+  bufferToString,
+  bufferFormatRangeItems,
+  isEqualBuffers,
+  Nullable,
 } from 'uiSrc/utils'
 import {
   NoKeysToDisplayText,
   NoResultsFoundText,
   FullScanNoResultsFoundText,
   ScanNoResultsFoundText,
+  NoSelectedIndexText,
 } from 'uiSrc/constants/texts'
 import {
+  fetchKeysMetadata,
   keysDataSelector,
   keysSelector,
   selectedKeySelector,
+  setLastBatchKeys,
   sourceKeysFetch,
-} from 'uiSrc/slices/keys'
+} from 'uiSrc/slices/browser/keys'
 import {
   appContextBrowser,
-  setBrowserKeyListScrollPosition
+  setBrowserPatternScrollPosition,
+  setBrowserIsNotRendered,
+  setBrowserRedisearchScrollPosition,
 } from 'uiSrc/slices/app/context'
 import { GroupBadge } from 'uiSrc/components'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { IKeyListPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { KeysStoreData, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import styles from './styles.module.scss'
 
 export interface Props {
   hideHeader?: boolean
-  keysState: IKeyListPropTypes
+  keysState: KeysStoreData
   loading: boolean
+  scrollTopPosition: number
   hideFooter?: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
-  loadMoreItems?: ({ startIndex, stopIndex }: { startIndex: number, stopIndex: number }) => void
+  loadMoreItems?: (
+    oldKeys: IKeyPropTypes[],
+    { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
+  ) => void
 }
 
-const KeyList = (props: Props) => {
+const KeyList = forwardRef((props: Props, ref) => {
   let wheelTimer = 0
-  const { selectKey, loadMoreItems, loading, keysState, hideFooter } = props
+  const { selectKey, loadMoreItems, loading, keysState, scrollTopPosition, hideFooter } = props
 
-  const { data: selectedKey } = useSelector(selectedKeySelector)
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
+
+  const selectedKey = useSelector(selectedKeySelector)
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered } = useSelector(keysSelector)
-  const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
+  const { isSearched, isFiltered, viewType, searchMode } = useSelector(keysSelector)
+  const { selectedIndex } = useSelector(redisearchSelector)
+  const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
+
+  const [, rerender] = useState({})
+  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(!!keysState.keys.length)
+
+  const controller = useRef<Nullable<AbortController>>(null)
+  const itemsRef = useRef(keysState.keys)
+  const isNotRendered = useRef(isNotRenderedContext)
+  const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
+
   const dispatch = useDispatch()
 
+  useImperativeHandle(ref, () => ({
+    handleLoadMoreItems(config: { startIndex: number; stopIndex: number }) {
+      onLoadMoreItems(config)
+    }
+  }))
+
+  useEffect(() => {
+    cancelAllMetadataRequests()
+
+    return () => {
+      dispatch(setLastBatchKeys(itemsRef.current?.slice(-SCAN_COUNT_DEFAULT - 1), searchMode))
+    }
+  }, [searchMode])
+
+  useEffect(() => {
+    itemsRef.current = [...keysState.keys]
+
+    if (!isNotRendered.current && !loading) {
+      setFirstDataLoaded(true)
+    }
+
+    isNotRendered.current = false
+    dispatch(setBrowserIsNotRendered(isNotRendered.current))
+    if (itemsRef.current.length === 0) {
+      setFirstDataLoaded(true)
+      rerender({})
+      return
+    }
+
+    cancelAllMetadataRequests()
+    controller.current = new AbortController()
+
+    const { startIndex, lastIndex } = renderedRowsIndexesRef.current
+    onRowsRendered(startIndex, lastIndex)
+    rerender({})
+  }, [keysState.keys])
+
+  useEffect(() => {
+    if (!selectedKey || !selectedKey?.data) return
+
+    const indexKeyForUpdate = itemsRef.current.findIndex(({ name }) =>
+      isEqualBuffers(name, selectedKey?.data?.name))
+
+    if (indexKeyForUpdate === -1) return
+
+    itemsRef.current[indexKeyForUpdate] = selectedKey.data
+    rerender({})
+  }, [selectedKey])
+
+  const cancelAllMetadataRequests = () => {
+    controller.current?.abort()
+  }
+
+  const onNoKeysLinkClick = () => {
+    sendEventTelemetry({
+      event: getBasedOnViewTypeEvent(
+        viewType,
+        TelemetryEvent.BROWSER_WORKBENCH_LINK_CLICKED,
+        TelemetryEvent.TREE_VIEW_WORKBENCH_LINK_CLICKED
+      ),
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }
+
   const getNoItemsMessage = () => {
+    if (isNotRendered.current) {
+      return ''
+    }
+    if (searchMode === SearchMode.Redisearch && !selectedIndex) {
+      return NoSelectedIndexText
+    }
+    if (total === 0) {
+      return NoKeysToDisplayText(Pages.workbench(instanceId), onNoKeysLinkClick)
+    }
+    if (isSearched && searchMode === SearchMode.Redisearch) {
+      return keysState.scanned < total ? NoResultsFoundText : FullScanNoResultsFoundText
+    }
     if (isSearched) {
       return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
     }
     if (isFiltered && keysState.scanned < total) {
       return ScanNoResultsFoundText
     }
-    return total ? NoResultsFoundText : NoKeysToDisplayText
+    return NoResultsFoundText
+  }
+
+  const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
+    loadMoreItems?.(itemsRef.current, props)
   }
 
   const onWheelSearched = (event: React.WheelEvent) => {
@@ -81,13 +194,73 @@ const KeyList = (props: Props) => {
     ) {
       clearTimeout(wheelTimer)
       wheelTimer = window.setTimeout(() => {
-        loadMoreItems?.({ stopIndex: SCAN_COUNT_DEFAULT, startIndex: 1 })
+        onLoadMoreItems({ stopIndex: SCAN_COUNT_DEFAULT, startIndex: 1 })
       }, 100)
     }
   }
 
-  const setScrollTopPosition = (position: number) => {
-    dispatch(setBrowserKeyListScrollPosition(position))
+  const setScrollTopPosition = useCallback((position: number) => {
+    if (searchMode === SearchMode.Pattern) {
+      dispatch(setBrowserPatternScrollPosition(position))
+    } else {
+      dispatch(setBrowserRedisearchScrollPosition(position))
+    }
+  }, [searchMode])
+
+  const formatItem = useCallback((item: GetKeyInfoResponse): GetKeyInfoResponse => ({
+    ...item,
+    nameString: bufferToString(item.name)
+  }), [])
+
+  const onRowsRendered = (startIndex: number, lastIndex: number) => {
+    renderedRowsIndexesRef.current = { lastIndex, startIndex }
+
+    const newItems = bufferFormatRows(startIndex, lastIndex)
+
+    getMetadata(startIndex, newItems)
+    rerender({})
+  }
+
+  const onRowsRenderedDebounced = debounce(onRowsRendered, 100)
+
+  const bufferFormatRows = (startIndex: number, lastIndex: number): GetKeyInfoResponse[] => {
+    const newItems = bufferFormatRangeItems(
+      itemsRef.current, startIndex, lastIndex, formatItem
+    )
+    itemsRef.current.splice(startIndex, newItems.length, ...newItems)
+
+    return newItems
+  }
+
+  const getMetadata = (
+    startIndex: number,
+    itemsInit: GetKeyInfoResponse[] = []
+  ): void => {
+    const isSomeNotUndefined = ({ type, size, length }: GetKeyInfoResponse) =>
+      !isUndefined(type) || !isUndefined(size) || !isUndefined(length)
+
+    const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
+    if (firstEmptyItemIndex === -1) return
+
+    const emptyItems = reject(itemsInit, isSomeNotUndefined)
+
+    dispatch(fetchKeysMetadata(
+      emptyItems.map(({ name }) => name),
+      controller.current?.signal,
+      (loadedItems) =>
+        onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
+      () => { rerender({}) }
+    ))
+  }
+
+  const onSuccessFetchedMetadata = (
+    startIndex: number,
+    loadedItems: GetKeyInfoResponse[],
+  ) => {
+    const items = loadedItems.map(formatItem)
+    itemsRef.current.splice(startIndex, items.length, ...items)
+
+    rerender({})
   }
 
   const columns: ITableColumn[] = [
@@ -95,21 +268,35 @@ const KeyList = (props: Props) => {
       id: 'type',
       label: 'Type',
       absoluteWidth: 'auto',
-      minWidth: 124,
-      render: (cellData: any, { name }: any) => <GroupBadge type={cellData} name={name} />,
+      minWidth: 126,
+      render: (cellData: any, { nameString: name }: any) => (
+        isUndefined(cellData)
+          ? <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="type-loading" />
+          : <GroupBadge type={cellData} name={name} />
+      )
     },
     {
-      id: 'name',
+      id: 'nameString',
       label: 'Key',
       minWidth: 100,
       truncateText: true,
-      render: (cellData: string = '', { name }: any) => {
+      render: (cellData: string) => {
+        if (isUndefined(cellData)) {
+          return (
+            <EuiLoadingContent
+              lines={1}
+              className={cx(styles.keyInfoLoading, styles.keyNameLoading)}
+              data-testid="name-loading"
+            />
+          )
+        }
         // Better to cut the long string, because it could affect virtual scroll performance
-        const cellContent = replaceSpaces(cellData.substring(0, 200))
-        const tooltipContent = formatLongName(cellData)
+        const name = cellData || ''
+        const cellContent = replaceSpaces(name?.substring(0, 200))
+        const tooltipContent = formatLongName(name)
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText'" data-testid={`key-${name}`}>
+            <div style={{ display: 'flex' }} className="truncateText" data-testid={`key-${name}`}>
               <EuiToolTip
                 title="Key Name"
                 className={styles.tooltip}
@@ -122,16 +309,19 @@ const KeyList = (props: Props) => {
             </div>
           </EuiText>
         )
-      },
+      }
     },
     {
       id: 'ttl',
       label: 'TTL',
-      absoluteWidth: 65,
-      minWidth: 65,
+      absoluteWidth: 86,
+      minWidth: 86,
       truncateText: true,
       alignment: TableCellAlignment.Right,
-      render: (cellData: number, { name }: any) => {
+      render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
+        if (isUndefined(cellData)) {
+          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="ttl-loading" />
+        }
         if (cellData === -1) {
           return (
             <EuiTextColor color="subdued" data-testid={`ttl-${name}`}>
@@ -151,11 +341,11 @@ const KeyList = (props: Props) => {
                   <>
                     {`${truncateTTLToSeconds(cellData)} s`}
                     <br />
-                    {`(${truncateTTLToDuration(cellData)})`}
+                    {`(${truncateNumberToDuration(cellData)})`}
                   </>
                 )}
               >
-                <>{truncateTTLToFirstUnit(cellData)}</>
+                <>{truncateNumberToFirstUnit(cellData)}</>
               </EuiToolTip>
             </div>
           </EuiText>
@@ -165,11 +355,15 @@ const KeyList = (props: Props) => {
     {
       id: 'size',
       label: 'Size',
-      absoluteWidth: 100,
-      minWidth: 100,
+      absoluteWidth: 84,
+      minWidth: 84,
       alignment: TableCellAlignment.Right,
       textAlignment: TableCellTextAlignment.Right,
-      render: (cellData: number, { name }: any) => {
+      render: (cellData: number, { nameString: name }: GetKeyInfoResponse) => {
+        if (isUndefined(cellData)) {
+          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="size-loading" />
+        }
+
         if (!cellData) {
           return (
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }} data-testid={`size-${name}`}>
@@ -200,34 +394,42 @@ const KeyList = (props: Props) => {
     },
   ]
 
+  const VirtualizeTable = () => (
+    <VirtualTable
+      selectable
+      onRowClick={selectKey}
+      headerHeight={0}
+      rowHeight={43}
+      threshold={50}
+      columns={columns}
+      loadMoreItems={onLoadMoreItems}
+      onWheel={onWheelSearched}
+      loading={loading || !firstDataLoaded}
+      items={itemsRef.current}
+      totalItemsCount={keysState.total ? keysState.total : Infinity}
+      scanned={isSearched || isFiltered ? keysState.scanned : 0}
+      noItemsMessage={getNoItemsMessage()}
+      selectedKey={selectedKey.data}
+      scrollTopProp={scrollTopPosition}
+      setScrollTopPosition={setScrollTopPosition}
+      hideFooter={hideFooter}
+      onRowsRendered={({ overscanStartIndex, overscanStopIndex }) =>
+        onRowsRenderedDebounced(overscanStartIndex, overscanStopIndex)}
+    />
+  )
+
   return (
     <div className={styles.page}>
       <div className={styles.content}>
         <div className={cx(styles.table, { [styles.table__withoutFooter]: hideFooter })}>
           <div className="key-list-table" data-testid="keyList-table">
-            <VirtualTable
-              onRowClick={selectKey}
-              headerHeight={0}
-              rowHeight={43}
-              columns={columns}
-              isRowSelectable
-              loadMoreItems={loadMoreItems}
-              onWheel={onWheelSearched}
-              loading={loading}
-              items={keysState.keys}
-              totalItemsCount={keysState.total}
-              scanned={isSearched || isFiltered ? keysState.scanned : 0}
-              noItemsMessage={getNoItemsMessage()}
-              selectedKey={selectedKey}
-              scrollTopProp={scrollTopPosition}
-              setScrollTopPosition={setScrollTopPosition}
-              hideFooter={hideFooter}
-            />
+            {searchMode === SearchMode.Pattern && VirtualizeTable()}
+            {searchMode !== SearchMode.Pattern && VirtualizeTable()}
           </div>
         </div>
       </div>
     </div>
   )
-}
+})
 
-export default KeyList
+export default React.memo(KeyList)

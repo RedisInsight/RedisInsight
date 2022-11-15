@@ -10,6 +10,7 @@ export enum BrowserToolKeysCommands {
   RenameNX = 'renamenx',
   MemoryUsage = 'memory usage',
   DbSize = 'dbsize',
+  InfoKeyspace = 'info keyspace',
 }
 
 export enum BrowserToolStringCommands {
@@ -75,6 +76,20 @@ export enum BrowserToolGraphCommands {
 }
 export enum BrowserToolStreamCommands {
   XLen = 'xlen',
+  XInfoStream = 'xinfo stream',
+  XRange = 'xrange',
+  XRevRange = 'xrevrange',
+  XAdd = 'xadd',
+  XDel = 'xdel',
+  XInfoGroups = 'xinfo groups',
+  XInfoConsumers = 'xinfo consumers',
+  XPending = 'xpending',
+  XAck = 'xack',
+  XClaim = 'xclaim',
+  XGroupCreate = 'xgroup create',
+  XGroupSetId = 'xgroup setid',
+  XGroupDestroy = 'xgroup destroy',
+  XGroupDelConsumer = 'xgroup delconsumer',
 }
 
 export enum BrowserToolTSCommands {

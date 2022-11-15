@@ -1,10 +1,14 @@
 .euiSwitch {
+  .euiSwitch__button {
+    width: 50px;
+  }
+
   .euiSwitch__thumb {
     background-color: var(--euiColorPrimaryText) !important;
-    border-color: transparent !important;
+    border: 1px solid var(--controlsBorderColor) !important;
   }
-  .euiSwitch__button[aria-checked='false'] .euiSwitch__body {
-    background-color: var(--tableLightestBorderColor) !important;
+  .euiSwitch__button[aria-checked="false"] .euiSwitch__body {
+    background-color: var(--controlsBorderColor) !important;
   }
   .euiSwitch__body {
     background-color: var(--euiColorSecondary) !important;
@@ -12,5 +16,14 @@
     .euiSwitch__icon--checked {
       fill: #fff;
     }
+  }
+  .euiSwitch__button:disabled {
+    opacity: 0.5;
+  }
+}
+
+.euiSwitch:not(.euiSwitch--compressed) {
+  .euiSwitch__thumb {
+    border-color: var(--controlsBorderColor) !important;
   }
 }

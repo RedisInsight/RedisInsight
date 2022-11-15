@@ -43,6 +43,11 @@ export interface Props {
   withoutStyles?: boolean
 }
 
+const rediSearchIcons = {
+  iconDark: RedisSearchDark,
+  iconLight: RedisSearchLight,
+}
+
 export const modulesDefaultInit = {
   [RedisDefaultModules.AI]: {
     iconDark: RedisAIDark,
@@ -70,9 +75,20 @@ export const modulesDefaultInit = {
     text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.ReJSON],
   },
   [RedisDefaultModules.Search]: {
-    iconDark: RedisSearchDark,
-    iconLight: RedisSearchLight,
+    ...rediSearchIcons,
     text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Search],
+  },
+  [RedisDefaultModules.SearchLight]: {
+    ...rediSearchIcons,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.SearchLight],
+  },
+  [RedisDefaultModules.FT]: {
+    ...rediSearchIcons,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.FT],
+  },
+  [RedisDefaultModules.FTL]: {
+    ...rediSearchIcons,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.FTL],
   },
   [RedisDefaultModules.TimeSeries]: {
     iconDark: RedisTimeSeriesDark,
@@ -142,9 +158,8 @@ const DatabaseListModules = React.memo((props: Props) => {
     </div>
   ))
 
-  const Module = (moduleName: string = '', abbreviation: string = '', icon: string, content: string = '') => {
-    return (
-      <span key={moduleName || abbreviation || content}>
+  const Module = (moduleName: string = '', abbreviation: string = '', icon: string, content: string = '') => (
+    <span key={moduleName || abbreviation || content}>
       {icon ? (
         <EuiButtonIcon
           iconType={icon}
@@ -164,8 +179,7 @@ const DatabaseListModules = React.memo((props: Props) => {
         </EuiTextColor>
       )}
     </span>
-    )
-  }
+  )
 
   const Modules = () => (
     newModules.map(({ icon, content, abbreviation, moduleName }, i) => (

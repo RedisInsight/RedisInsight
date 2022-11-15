@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { apiService } from 'uiSrc/services'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { apiService, localStorageService } from 'uiSrc/services'
+import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from 'apiSrc/dto/settings.dto'
@@ -14,6 +14,9 @@ export const initialState: StateUserSettings = {
   isShowConceptsPopup: false,
   config: null,
   spec: null,
+  workbench: {
+    cleanup: localStorageService?.get(BrowserStorageItem.wbCleanUp) ?? true
+  }
 }
 
 // A slice for recipes
@@ -59,6 +62,10 @@ const userSettingsSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    setWorkbenchCleanUp: (state, { payload }) => {
+      localStorageService.set(BrowserStorageItem.wbCleanUp, payload)
+      state.workbench.cleanup = payload
+    }
   },
 })
 
@@ -75,10 +82,13 @@ export const {
   getUserSettingsSpec,
   getUserSettingsSpecSuccess,
   getUserSettingsSpecFailure,
+  setWorkbenchCleanUp
 } = userSettingsSlice.actions
 
 // A selector
 export const userSettingsSelector = (state: RootState) => state.user.settings
+export const userSettingsConfigSelector = (state: RootState) => state.user.settings.config
+export const userSettingsWBSelector = (state: RootState) => state.user.settings.workbench
 
 // The reducer
 export default userSettingsSlice.reducer

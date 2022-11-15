@@ -2,12 +2,13 @@ import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
 import { convertStringsArrayToObject } from 'src/utils';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import {
   BrowserToolKeysCommands,
   BrowserToolTSCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { RedisString } from 'src/common/constants';
 import { IKeyInfoStrategy } from '../../key-info-manager.interface';
 
 export class TSTypeInfoStrategy implements IKeyInfoStrategy {
@@ -21,7 +22,7 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
 
   public async getInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log(`Getting ${RedisDataType.TS} type info.`);
@@ -52,13 +53,14 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
 
   private async getTotalSamples(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
   ): Promise<number> {
     try {
       const info = await this.redisManager.execCommand(
         clientOptions,
         BrowserToolTSCommands.TSInfo,
         [key],
+        'utf8',
       );
       const { totalsamples } = convertStringsArrayToObject(info);
       return totalsamples;

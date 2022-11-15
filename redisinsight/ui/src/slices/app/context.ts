@@ -1,9 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { first } from 'lodash'
-import { Nullable } from 'uiSrc/utils'
-import { TREE_LEAF_FIELD } from 'uiSrc/components/virtual-tree'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { getTreeLeafField, Nullable } from 'uiSrc/utils'
+import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
+import { localStorageService } from 'uiSrc/services'
 import { RootState } from '../store'
-import { StateAppContext } from '../interfaces'
+import { RedisResponseBuffer, StateAppContext } from '../interfaces'
 
 export const initialState: StateAppContext = {
   contextInstanceId: '',
@@ -11,15 +11,20 @@ export const initialState: StateAppContext = {
   browser: {
     keyList: {
       isDataLoaded: false,
-      scrollTopPosition: 0,
-      selectedKey: null
+      scrollPatternTopPosition: 0,
+      scrollRedisearchTopPosition: 0,
+      isNotRendered: true,
+      selectedKey: null,
     },
     panelSizes: {},
     tree: {
-      separator: ':',
+      delimiter: DEFAULT_DELIMITER,
       panelSizes: {},
       openNodes: {},
       selectedLeaf: {},
+    },
+    bulkActions: {
+      opened: false,
     }
   },
   workbench: {
@@ -31,6 +36,13 @@ export const initialState: StateAppContext = {
     panelSizes: {
       vertical: {}
     }
+  },
+  pubsub: {
+    channel: '',
+    message: ''
+  },
+  analytics: {
+    lastViewedPage: ''
   }
 }
 
@@ -39,19 +51,29 @@ const appContextSlice = createSlice({
   name: 'appContext',
   initialState,
   reducers: {
-    setAppContextInitialState: () => initialState,
+    // don't need to reset instanceId
+    setAppContextInitialState: (state) => ({
+      ...initialState,
+      contextInstanceId: state.contextInstanceId
+    }),
     // set connected instance
     setAppContextConnectedInstanceId: (state, { payload }: { payload: string }) => {
       state.contextInstanceId = payload
     },
-    setBrowserSelectedKey: (state, { payload }: { payload: Nullable<string> }) => {
+    setBrowserSelectedKey: (state, { payload }: { payload: Nullable<RedisResponseBuffer> }) => {
       state.browser.keyList.selectedKey = payload
     },
     setBrowserKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
       state.browser.keyList.isDataLoaded = payload
     },
-    setBrowserKeyListScrollPosition: (state, { payload }: { payload: number }) => {
-      state.browser.keyList.scrollTopPosition = payload
+    setBrowserPatternScrollPosition: (state, { payload }: { payload: number }) => {
+      state.browser.keyList.scrollPatternTopPosition = payload
+    },
+    setBrowserRedisearchScrollPosition: (state, { payload }: { payload: number }) => {
+      state.browser.keyList.scrollRedisearchTopPosition = payload
+    },
+    setBrowserIsNotRendered: (state, { payload }: { payload: boolean }) => {
+      state.browser.keyList.isNotRendered = payload
     },
     setBrowserPanelSizes: (state, { payload }: { payload: any }) => {
       state.browser.panelSizes = payload
@@ -60,13 +82,13 @@ const appContextSlice = createSlice({
       state.browser.tree.selectedLeaf = payload
     },
     updateBrowserTreeSelectedLeaf: (state, { payload }) => {
-      const { selectedLeaf, separator } = state.browser.tree
+      const { selectedLeaf, delimiter } = state.browser.tree
       const [[selectedLeafField = '', keys = {}]] = Object.entries(selectedLeaf)
-      const [pattern] = selectedLeafField.split(TREE_LEAF_FIELD)
+      const [pattern] = selectedLeafField.split(getTreeLeafField(delimiter))
 
       if (payload.key in keys) {
         const isFitNewKey = payload.newKey?.startsWith?.(pattern)
-          && (pattern.split(separator)?.length === payload.newKey.split(separator)?.length)
+          && (pattern.split(delimiter)?.length === payload.newKey.split(delimiter)?.length)
 
         if (!isFitNewKey) {
           delete keys[payload.key]
@@ -87,6 +109,10 @@ const appContextSlice = createSlice({
     },
     setBrowserTreePanelSizes: (state, { payload }: { payload: any }) => {
       state.browser.tree.panelSizes = payload
+    },
+    setBrowserTreeDelimiter: (state, { payload }: { payload: string }) => {
+      localStorageService.set(BrowserStorageItem.treeViewDelimiter + state.contextInstanceId, payload)
+      state.browser.tree.delimiter = payload
     },
     setWorkbenchScript: (state, { payload }: { payload: string }) => {
       state.workbench.script = payload
@@ -114,7 +140,17 @@ const appContextSlice = createSlice({
     resetBrowserTree: (state) => {
       state.browser.tree.selectedLeaf = {}
       state.browser.tree.openNodes = {}
-    }
+    },
+    setPubSubFieldsContext: (state, { payload }: { payload: { channel: string, message: string } }) => {
+      state.pubsub.channel = payload.channel
+      state.pubsub.message = payload.message
+    },
+    setBrowserBulkActionOpen: (state, { payload }: PayloadAction<boolean>) => {
+      state.browser.bulkActions.opened = payload
+    },
+    setLastAnalyticsPage: (state, { payload }: { payload: string }) => {
+      state.analytics.lastViewedPage = payload
+    },
   },
 })
 
@@ -124,10 +160,13 @@ export const {
   setAppContextConnectedInstanceId,
   setBrowserKeyListDataLoaded,
   setBrowserSelectedKey,
-  setBrowserKeyListScrollPosition,
+  setBrowserPatternScrollPosition,
+  setBrowserRedisearchScrollPosition,
+  setBrowserIsNotRendered,
   setBrowserPanelSizes,
   setBrowserTreeSelectedLeaf,
   setBrowserTreeNodesOpen,
+  setBrowserTreeDelimiter,
   updateBrowserTreeSelectedLeaf,
   resetBrowserTree,
   setBrowserTreePanelSizes,
@@ -137,6 +176,9 @@ export const {
   setWorkbenchEAItem,
   resetWorkbenchEAItem,
   setWorkbenchEAItemScrollTop,
+  setPubSubFieldsContext,
+  setBrowserBulkActionOpen,
+  setLastAnalyticsPage,
 } = appContextSlice.actions
 
 // Selectors
@@ -152,6 +194,10 @@ export const appContextSelectedKey = (state: RootState) =>
   state.app.context.browser.keyList.selectedKey
 export const appContextWorkbenchEA = (state: RootState) =>
   state.app.context.workbench.enablementArea
+export const appContextPubSub = (state: RootState) =>
+  state.app.context.pubsub
+export const appContextAnalytics = (state: RootState) =>
+  state.app.context.analytics
 
 // The reducer
 export default appContextSlice.reducer

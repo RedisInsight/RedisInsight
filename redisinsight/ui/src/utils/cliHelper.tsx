@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Dispatch, PayloadAction } from '@reduxjs/toolkit'
+import parse from 'html-react-parser'
 
 import { localStorageService } from 'uiSrc/services'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
@@ -7,15 +8,21 @@ import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-outpu
 import { BrowserStorageItem, ICommands } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 import { SelectCommand } from 'uiSrc/constants/cliOutput'
-import { ClusterNode, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { ClusterNode, RedisDefaultModules, REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
 
 import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { Nullable } from './types'
-import formatToText from './cliTextFormatter'
+import formatToText from './transformers/cliTextFormatter'
 
 export enum CliPrefix {
   Cli = 'cli',
   QueryCard = 'query-card',
+}
+
+interface IGroupModeCommand {
+  command: string
+  response: string
+  status: CommandExecutionStatus
 }
 
 const cliParseTextResponseWithRedirect = (
@@ -39,10 +46,11 @@ const cliParseTextResponseWithOffset = (
 ) => [cliParseTextResponse(text, command, status), '\n']
 
 const cliParseTextResponse = (
-  text: string = '',
+  text: string | JSX.Element = '',
   command: string = '',
   status: CommandExecutionStatus = CommandExecutionStatus.Success,
-  prefix: CliPrefix = CliPrefix.Cli
+  prefix: CliPrefix = CliPrefix.Cli,
+  isParse: boolean = false
 ) => (
   <span
     key={Math.random()}
@@ -57,7 +65,7 @@ const cliParseTextResponse = (
         : `${prefix}-output-response-fail`
     }
   >
-    {formatToText(text, command)}
+    {isParse ? parse(formatToText(text, command)) : formatToText(text, command)}
   </span>
 )
 
@@ -71,8 +79,32 @@ const cliCommandWrapper = (command: string) => (
   </span>
 )
 
+const wbSummaryCommand = (command: string) => (
+  <span
+    className="cli-command-wrapper"
+    data-testid="wb-command"
+  >
+    {`> ${command} \n`}
+  </span>
+)
+
 const clearOutput = (dispatch: any) => {
   dispatch(resetOutput())
+}
+
+const cliParseCommandsGroupResult = (
+  result: IGroupModeCommand
+) => {
+  const executionCommand = wbSummaryCommand(result.command)
+
+  let executionResult = []
+  if (result.status === CommandExecutionStatus.Success) {
+    executionResult = formatToText(result.response || '(nil)', result.command).split('\n')
+  } else {
+    executionResult = [cliParseTextResponse(result.response || '(nil)', result.command, result.status)]
+  }
+
+  return [executionCommand, ...executionResult]
 }
 
 const updateCliHistoryStorage = (
@@ -114,6 +146,9 @@ const checkUnsupportedModuleCommand = (loadedModules: RedisModuleDto[], commandL
   }
 
   const isModuleLoaded = loadedModules?.some(({ name }) => name === commandModule)
+    // Redisearch has 4 names, need check all
+    || loadedModules?.some(({ name }) =>
+      REDISEARCH_MODULES.some((search) => name === search))
 
   if (isModuleLoaded) {
     return null
@@ -152,6 +187,7 @@ export {
   cliParseTextResponse,
   cliParseTextResponseWithOffset,
   cliParseTextResponseWithRedirect,
+  cliParseCommandsGroupResult,
   cliCommandOutput,
   bashTextValue,
   cliCommandWrapper,

@@ -1,21 +1,23 @@
-import { constructKeysToTree } from '../constructKeysToTree'
+import { DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { constructKeysToTreeMockResult } from './constructKeysToTreeMockResult'
+import { constructKeysToTree } from '../constructKeysToTree'
 
 const constructKeysToTreeTests: any[] = [
   [{
     items: [
-      { name: 'keys:1:2', type: 'hash', ttl: -1, size: 71 },
-      { name: 'keys2', type: 'hash', ttl: -1, size: 71 },
-      { name: 'keys:1:1', type: 'hash', ttl: -1, size: 71 },
-      { name: 'empty::test', type: 'hash', ttl: -1, size: 71 },
-      { name: 'test1', type: 'hash', ttl: -1, size: 71 },
-      { name: 'test2', type: 'hash', ttl: -1, size: 71 },
-      { name: 'keys:1', type: 'hash', ttl: -1, size: 71 },
-      { name: 'keys1', type: 'hash', ttl: -1, size: 71 },
-      { name: 'keys:3', type: 'hash', ttl: -1, size: 71 },
-      { name: 'keys:2', type: 'hash', ttl: -1, size: 71 },
+      { nameString: 'keys:1:2', type: 'hash', ttl: -1, size: 71 },
+      { nameString: 'keys2', type: 'hash', ttl: -1, size: 71 },
+      { nameString: 'keys:1:1', type: 'hash', ttl: -1, size: 71 },
+      { nameString: 'empty::test', type: 'hash', ttl: -1, size: 71 },
+      { nameString: 'test1', type: 'hash', ttl: -1, size: 71 },
+      { nameString: 'test2', type: 'hash', ttl: -1, size: 71 },
+      { nameString: 'keys:1', type: 'hash', ttl: -1, size: 71 },
+      { nameString: 'keys1', type: 'hash', ttl: -1, size: 71 },
+      { nameString: 'keys:3', type: 'hash', ttl: -1, size: 71 },
+      { nameString: 'keys:2', type: 'hash', ttl: -1, size: 71 },
     ],
-    separator: ':' },
+    delimiter: DEFAULT_DELIMITER
+  },
   constructKeysToTreeMockResult
   ]
 ]

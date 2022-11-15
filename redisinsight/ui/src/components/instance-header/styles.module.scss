@@ -33,6 +33,7 @@
   display: inline-block !important;
   overflow: hidden;
   font-size: 16px;
+  line-height: 20px;
   font-weight: 500;
   text-overflow: ellipsis;
   max-width: 100%;
@@ -42,4 +43,3 @@
 .infoIcon {
   color: var(--euiColorMediumShade);
 }
-

@@ -1,4 +1,3 @@
-import * as jsonpath from 'jsonpath';
 import { isNil } from 'lodash';
 
 export const TOTAL_KEYS_BREAKPOINTS = [
@@ -42,23 +41,6 @@ export const getRangeForNumber = (
   )} - ${numberWithSpaces(breakpoints[index])}`;
 };
 
-export const getJsonPathLevel = (path: string): string => {
-  try {
-    if (path === '.') {
-      return 'root';
-    }
-    const levelsLength = jsonpath.parse(
-      `$${path.startsWith('.') ? '' : '..'}${path}`,
-    ).length;
-    if (levelsLength === 1) {
-      return 'root';
-    }
-    return `${levelsLength - 2}`;
-  } catch (e) {
-    return 'root';
-  }
-};
-
 export const calculateRedisHitRatio = (
   keyspaceHits: string | number,
   keyspaceMisses: string | number,
@@ -78,3 +60,5 @@ export const calculateRedisHitRatio = (
     return undefined;
   }
 };
+
+export const getIsPipelineEnable = (size: number): boolean => size > 1;

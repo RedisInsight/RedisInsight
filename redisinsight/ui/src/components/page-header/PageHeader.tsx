@@ -5,10 +5,10 @@ import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import { Theme, Pages } from 'uiSrc/constants'
-import { resetDataRedisCloud } from 'uiSrc/slices/cloud'
+import { resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { resetDataRedisCluster } from 'uiSrc/slices/cluster'
-import { resetDataSentinel } from 'uiSrc/slices/sentinel'
+import { resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
+import { resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
 
 import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
 import lightLogo from 'uiSrc/assets/img/light_logo.svg'
@@ -41,7 +41,7 @@ const PageHeader = ({ title, subtitle, children }: Props) => {
     <div className={styles.pageHeader}>
       <div className={styles.pageHeaderTop}>
         <div>
-          <EuiTitle size="s">
+          <EuiTitle size="s" className={styles.title}>
             <h1>
               <b>{title}</b>
             </h1>

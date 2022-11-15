@@ -12,7 +12,7 @@ import {
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { TSTypeInfoStrategy } from './ts-type-info.strategy';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
@@ -78,7 +78,7 @@ describe('TSTypeInfoStrategy', () => {
           ],
         ]);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolTSCommands.TSInfo, [key])
+        .calledWith(mockClientOptions, BrowserToolTSCommands.TSInfo, [key], 'utf8')
         .mockResolvedValue(mockTSInfoReply);
     });
     it('should return appropriate value', async () => {
@@ -143,7 +143,7 @@ describe('TSTypeInfoStrategy', () => {
         message: "ERR unknown command 'ts.info'",
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolTSCommands.TSInfo, [key])
+        .calledWith(mockClientOptions, BrowserToolTSCommands.TSInfo, [key], 'utf8')
         .mockResolvedValue(replyError);
 
       const result = await strategy.getInfo(

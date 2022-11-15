@@ -40,18 +40,26 @@ $marginIcon: 12px;
 }
 
 .titleWrapper {
-  width: calc(100% - 350px);
+  width: calc(100% - 490px);
+
+  @media (min-width: $breakpoint-s) {
+    width: calc(100% - 529px);
+  }
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 420px);
+    width: calc(100% - 651px);
   }
 }
 
 :global(.fullscreen) .titleWrapper {
-  width: calc(100% - 270px);
+  width: calc(100% - 402px);
+
+  @media (min-width: $breakpoint-s) {
+    width: calc(100% - 447px);
+  }
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 320px);
+    width: calc(100% - 519px);
   }
 }
 
@@ -73,22 +81,28 @@ $marginIcon: 12px;
 }
 
 .time {
-  max-width: 95px;
+  max-width: 117px;
   position: relative;
   height: 18px;
+}
+
+.mode {
+  margin-left: 6px;
 }
 
 .timeText, .summaryText {
   font: normal normal normal 12px/16px Graphik, sans-serif;
   letter-spacing: -0.12px;
   color: var(--euiColorMediumShade) !important;
-  min-width: 104px;
   text-align: left;
 }
 
-.summaryText {
-  position: absolute;
-  right: -120px;
+.timeText {
+  min-width: 126px;
+}
+
+.summaryTextWrapper {
+  min-width: 86px;
 }
 
 .extraInfo {
@@ -128,6 +142,37 @@ $marginIcon: 12px;
   }
 }
 
+.executionTime {
+  min-width: 13px;
+  width: 13px;
+
+  @media (min-width: $breakpoint-s) {
+    min-width: 58px;
+    width: 58px;
+  }
+
+  @media (min-width: $breakpoint-m) {
+    min-width: 70px;
+    width: 70px;
+  }
+}
+
+.executionTimeValue {
+  display: none;
+
+  @media (min-width: $breakpoint-s) {
+    display: initial;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    white-space: nowrap;
+  }
+}
+
+.alignCenter {
+  align-items: center;
+}
+
 .dropdownOption {
   display: flex;
   align-items: center;
@@ -145,6 +190,16 @@ $marginIcon: 12px;
 .iconDropdownOption {
   width: 20px !important;
   height: 20px !important;
+}
+
+.iconExecutingTime {
+  width: 13px !important;
+  height: 13px !important;
+  margin-right: 6px;
+
+  path {
+    fill: var(--iconsDefaultColor)
+  }
 }
 
 .dropdownOptionSeparator:after {
@@ -209,6 +264,7 @@ $marginIcon: 12px;
 .buttonIcon {
   padding: 0 4px;
   width: 32px;
+  min-width: 32px;
   position: relative;
   z-index: 2;
 }

@@ -17,6 +17,7 @@ const responseSchema = Joi.object().keys({
   appVersion: Joi.string().required(),
   osPlatform: Joi.string().required(),
   buildType: Joi.string().valid('ELECTRON', 'DOCKER_ON_PREMISE', 'REDIS_STACK').required(),
+  appType: Joi.string().valid('ELECTRON', 'DOCKER', 'REDIS_STACK_WEB', 'UNKNOWN').required(),
   encryptionStrategies: Joi.array().items(Joi.string()),
   sessionId: Joi.number().required(),
 }).required();

@@ -7,7 +7,7 @@
 }
 
 .field {
-  min-width: 110px;
+  min-width: 72px;
   max-width: 100% !important;
   box-shadow: 0 3px 3px var(--controlsBoxShadowColor) !important;
   height: 33px !important;
@@ -20,12 +20,19 @@
   width: 80px;
   height: 33px;
 
-  z-index: 1;
+  z-index: 3;
 
-  :global(.euiButtonIcon) {
+  .tooltip,
+  .declineBtn,
+  .popoverWrapper {
     width: 50% !important;
     height: 100% !important;
   }
+}
+
+.applyBtn {
+  height: 100% !important;
+  width: 100% !important;
 }
 
 .controlsBottom {
@@ -56,11 +63,47 @@
   box-shadow: 0 3px 3px var(--controlsBoxShadowColor);
 }
 
+.controlsInside {
+  top: calc(100% - 35px);
+  right: 7px;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 3px 3px var(--controlsBoxShadowColor);
+}
+
+.controlsSeparate {
+  border-radius: 0;
+  box-shadow: none;
+  background-color: inherit !important;
+  text-align: right;
+  width: 60px;
+  z-index: 4;
+
+  .btn,
+  .popoverWrapper {
+    margin: 6px 3px;
+    height: 24px !important;
+    width: 24px !important;
+  }
+
+  .btn:hover {
+    background-color: var(--hoverInListColorDarken) !important;
+  }
+
+  .applyBtn {
+    margin-top: 0;
+  }
+
+  svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
 .declineBtn:hover {
   color: var(--euiColorColorDanger) !important;
 }
 
-.applyBtn:hover {
+.applyBtn:hover:not([class*="isDisabled"]) {
   color: var(--euiColorPrimary) !important;
 }
 
@@ -72,4 +115,48 @@
   max-width: 100%;
   margin-right: 80px;
   word-break: break-all;
+}
+
+.popoverAnchor,
+.popoverWrapper .tooltip {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.popoverPanel:global(.euiPanel--paddingMedium) {
+  width: 296px !important;
+  padding: 24px 30px !important;
+  border: 1px solid var(--euiColorPrimary) !important;
+  background-color: var(--browserTableRowEven) !important;
+
+  :global(.euiPopover__panelArrow:after) {
+    border-left-color: var(--browserTableRowEven) !important;
+  }
+  :global(.euiPopover__panelArrow:before) {
+    border-left-color: var(--euiColorPrimary) !important;
+  }
+}
+
+.popover {
+  word-wrap: break-word;
+
+  h4 b {
+    font-size: 14px !important;
+    color: var(--htmlColor) !important;
+  }
+}
+.approveText {
+  font-size: 13px !important;
+  letter-spacing: -0.13px;
+}
+
+.popoverFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+
+  .saveBtn {
+    height: 36px !important;
+    width: 86px !important;
+  }
 }

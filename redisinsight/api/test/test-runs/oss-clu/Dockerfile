@@ -1,3 +1,3 @@
-FROM bitnami/redis-cluster:6.0.8
+FROM bitnami/redis-cluster:6.2.6
 
 ENV ALLOW_EMPTY_PASSWORD yes

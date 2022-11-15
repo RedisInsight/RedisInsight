@@ -1,6 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { render, screen, fireEvent, waitFor } from 'uiSrc/utils/test-utils'
+import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import InstanceForm, {
   ADD_NEW_CA_CERT,
@@ -18,13 +18,13 @@ const mockedDbConnectionInfo = mock<DbConnectionInfo>()
 const formFields = {
   ...instance(mockedDbConnectionInfo),
   host: 'localhost',
-  port: 6379,
+  port: '6379',
   name: 'lala',
   caCertificates: [],
   certificates: [],
 }
 
-jest.mock('uiSrc/slices/instances', () => ({
+jest.mock('uiSrc/slices/instances/instances', () => ({
   checkConnectToInstanceAction: () => jest.fn,
   resetInstanceUpdateAction: () => jest.fn,
   changeInstanceAliasAction: () => jest.fn,
@@ -67,7 +67,7 @@ describe('InstanceForm', () => {
     ).toBeTruthy()
   })
 
-  it('should render tooltip with endpoints', () => {
+  it('should render tooltip with nodes', () => {
     expect(
       render(
         <InstanceForm
@@ -75,7 +75,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            endpoints: [{ host: '1', port: 1 }],
+            nodes: [{ host: '1', port: 1 }],
             connectionType: ConnectionType.Cluster,
           }}
         />
@@ -91,12 +91,11 @@ describe('InstanceForm', () => {
           isEditMode={false}
           formFields={{
             ...formFields,
-            tls: {
-              caCertId: '123',
-            },
+            tls: true,
+            caCert: { id: '123' },
             host: '123',
             tlsClientAuthRequired: true,
-            endpoints: [{ host: '1', port: 1 }],
+            nodes: [{ host: '1', port: 1 }],
             connectionType: ConnectionType.Cluster,
           }}
         />
@@ -120,14 +119,14 @@ describe('InstanceForm', () => {
       </div>
     )
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('sentinel-mater-username'), {
         target: { value: 'user' },
       })
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
     expect(handleSubmit).toBeCalledWith(
@@ -156,7 +155,7 @@ describe('InstanceForm', () => {
     fireEvent.click(screen.getByTestId('tls'))
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -185,7 +184,7 @@ describe('InstanceForm', () => {
     fireEvent.click(screen.getByTestId('showDb'))
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -213,14 +212,14 @@ describe('InstanceForm', () => {
 
     fireEvent.click(screen.getByTestId('showDb'))
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('db'), {
         target: { value: '12' },
       })
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -228,6 +227,74 @@ describe('InstanceForm', () => {
       expect.objectContaining({
         showDb: true,
         db: '12'
+      })
+    )
+  })
+
+  it('should change "Use SNI" with prepopulated with host', async () => {
+    const handleSubmit = jest.fn()
+    render(
+      <div id="footerDatabaseForm">
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          formFields={{
+            ...formFields,
+            tls: true,
+            connectionType: ConnectionType.Cluster,
+          }}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    )
+    fireEvent.click(screen.getByTestId('sni'))
+
+    const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    await act(() => {
+      fireEvent.click(submitBtn)
+    })
+
+    expect(handleSubmit).toBeCalledWith(
+      expect.objectContaining({
+        sni: true,
+        servername: formFields.host
+      })
+    )
+  })
+
+  it('should change "Use SNI"', async () => {
+    const handleSubmit = jest.fn()
+    render(
+      <div id="footerDatabaseForm">
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          formFields={{
+            ...formFields,
+            tls: true,
+            connectionType: ConnectionType.Cluster,
+          }}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    )
+    fireEvent.click(screen.getByTestId('sni'))
+
+    await act(() => {
+      fireEvent.change(screen.getByTestId('sni-servername'), {
+        target: { value: '12' },
+      })
+    })
+
+    const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    await act(() => {
+      fireEvent.click(submitBtn)
+    })
+
+    expect(handleSubmit).toBeCalledWith(
+      expect.objectContaining({
+        sni: true,
+        servername: '12'
       })
     )
   })
@@ -241,7 +308,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
@@ -251,7 +318,7 @@ describe('InstanceForm', () => {
     fireEvent.click(screen.getByTestId('verify-tls-cert'))
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -271,36 +338,36 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
         />
       </div>
     )
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId('select-ca-cert'))
     })
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(queryByText('Add new CA certificate') || document)
     })
 
     expect(screen.getByTestId(NEW_CA_CERT)).toBeInTheDocument()
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId(NEW_CA_CERT), {
         target: { value: '123' },
       })
     })
 
     expect(screen.getByTestId(QA_CA_CERT)).toBeInTheDocument()
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId(QA_CA_CERT), {
         target: { value: '321' },
       })
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -322,7 +389,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Cluster,
             selectedCaCertName: 'ADD_NEW_CA_CERT',
           }}
@@ -343,7 +410,7 @@ describe('InstanceForm', () => {
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -364,7 +431,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
@@ -374,7 +441,7 @@ describe('InstanceForm', () => {
     fireEvent.click(screen.getByTestId('tls-required-checkbox'))
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -394,7 +461,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Standalone,
             selectedCaCertName: 'NO_CA_CERT',
             tlsClientAuthRequired: true,
@@ -407,32 +474,32 @@ describe('InstanceForm', () => {
 
     expect(screen.getByTestId('select-cert')).toBeInTheDocument()
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(screen.getByTestId('select-cert'))
     })
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(
         container.querySelectorAll('.euiContextMenuItem__text')[0] || document
       )
     })
 
     expect(screen.getByTestId('new-tsl-cert-pair-name')).toBeInTheDocument()
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('new-tsl-cert-pair-name'), {
         target: { value: '123' },
       })
     })
 
     expect(screen.getByTestId('new-tls-client-cert')).toBeInTheDocument()
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('new-tls-client-cert'), {
         target: { value: '321' },
       })
     })
 
     expect(screen.getByTestId('new-tls-client-cert-key')).toBeInTheDocument()
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(screen.getByTestId('new-tls-client-cert-key'), {
         target: { value: '231' },
       })
@@ -440,7 +507,7 @@ describe('InstanceForm', () => {
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.click(submitBtn)
     })
 
@@ -451,5 +518,100 @@ describe('InstanceForm', () => {
         newTlsClientKey: '231',
       })
     )
+  })
+
+  it('should render clone mode btn', () => {
+    render(
+      <InstanceForm
+        {...instance(mockedProps)}
+        isEditMode
+        formFields={{
+          ...formFields,
+          connectionType: ConnectionType.Standalone,
+        }}
+      />
+    )
+    expect(screen.getByTestId('clone-db-btn')).toBeTruthy()
+  })
+
+  describe('should render proper fields with Clone mode', () => {
+    it('should render proper fields for standalone db', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          isCloneMode
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Standalone,
+          }}
+        />
+      )
+      const fieldsTestIds = ['host', 'port', 'username', 'password', 'showDb', 'tls']
+      fieldsTestIds.forEach((id) => {
+        expect(screen.getByTestId(id)).toBeTruthy()
+      })
+    })
+
+    it('should render proper fields for sentinel db', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          isCloneMode
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Sentinel,
+          }}
+        />
+      )
+      const fieldsTestIds = [
+        'name',
+        'primary-group',
+        'sentinel-mater-username',
+        'sentinel-master-password',
+        'host',
+        'port',
+        'username',
+        'password',
+        'showDb',
+        'tls'
+      ]
+      fieldsTestIds.forEach((id) => {
+        expect(screen.getByTestId(id)).toBeTruthy()
+      })
+    })
+
+    it('should render selected logical database with proper db index', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          isCloneMode
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Standalone,
+            db: 5
+          }}
+        />
+      )
+      expect(screen.getByTestId('showDb')).toBeChecked()
+      expect(screen.getByTestId('db')).toHaveValue('5')
+    })
+
+    it('should render proper database alias', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          isCloneMode
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Standalone,
+          }}
+        />
+      )
+      expect(screen.getByTestId('db-alias')).toHaveTextContent('Clone ')
+    })
   })
 })

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 import { Nullable } from 'uiSrc/utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
@@ -14,6 +15,7 @@ import {
   appContextWorkbench
 } from 'uiSrc/slices/app/context'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 
 import WBResultsWrapper from '../../wb-results'
 import EnablementAreaWrapper from '../../enablement-area'
@@ -27,32 +29,38 @@ const verticalPanelIds = {
 
 export interface Props {
   script: string
-  loading: boolean
   items: CommandExecutionUI[]
   setScript: (script: string) => void
   setScriptEl: Function
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
   scrollDivRef: Ref<HTMLDivElement>
-  onSubmit: (query?: string, commandId?: Nullable<string>, clearEditor?: boolean) => void
+  activeMode: RunQueryMode
+  resultsMode: ResultsMode
+  onSubmit: (query?: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   onQueryOpen: (commandId?: string) => void
   onQueryDelete: (commandId: string) => void
+  onQueryChangeMode: () => void
+  onChangeGroupMode: () => void
 }
 
 const WBView = (props: Props) => {
   const {
     script = '',
     items,
-    loading,
     setScript,
     setScriptEl,
     scriptEl,
+    activeMode,
+    resultsMode,
     onSubmit,
     onQueryOpen,
     onQueryDelete,
+    onQueryChangeMode,
+    onChangeGroupMode,
     scrollDivRef,
   } = props
   const [isMinimized, setIsMinimized] = useState<boolean>(
-    (localStorageService?.get(BrowserStorageItem.isGuidesMinimized) ?? 'false') === 'true'
+    localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? false
   )
   const [isCodeBtnDisabled, setIsCodeBtnDisabled] = useState<boolean>(false)
 
@@ -67,7 +75,7 @@ const WBView = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    localStorageService.set(BrowserStorageItem.isGuidesMinimized, isMinimized)
+    localStorageService.set(BrowserStorageItem.isEnablementAreaMinimized, isMinimized)
   }, [isMinimized])
 
   const onVerticalPanelWidthChange = useCallback((newSizes: any) => {
@@ -83,6 +91,7 @@ const WBView = (props: Props) => {
             isMinimized={isMinimized}
             setIsMinimized={setIsMinimized}
             setScript={setScript}
+            onSubmit={onSubmit}
             scriptEl={scriptEl}
             isCodeBtnDisabled={isCodeBtnDisabled}
           />
@@ -98,15 +107,18 @@ const WBView = (props: Props) => {
                   scrollable={false}
                   className={styles.queryPanel}
                   initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
-                  style={{ minHeight: '140px' }}
+                  style={{ minHeight: '140px', overflow: 'hidden' }}
                 >
                   <QueryWrapper
                     query={script}
-                    loading={loading}
+                    activeMode={activeMode}
+                    resultsMode={resultsMode}
                     setQuery={setScript}
                     setQueryEl={setScriptEl}
                     setIsCodeBtnDisabled={setIsCodeBtnDisabled}
                     onSubmit={onSubmit}
+                    onQueryChangeMode={onQueryChangeMode}
+                    onChangeGroupMode={onChangeGroupMode}
                   />
                 </EuiResizablePanel>
 
@@ -127,6 +139,8 @@ const WBView = (props: Props) => {
                 >
                   <WBResultsWrapper
                     items={items}
+                    activeMode={activeMode}
+                    activeResultsMode={resultsMode}
                     scrollDivRef={scrollDivRef}
                     onQueryReRun={onSubmit}
                     onQueryOpen={onQueryOpen}

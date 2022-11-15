@@ -11,13 +11,19 @@ var EuiIconEmpty = function EuiIconEmpty(_ref) {
       titleId = _ref.titleId,
       props = _objectWithoutProperties(_ref, ["title", "titleId"]);
 
-  return /*#__PURE__*/React.createElement("svg", _extends({
-    width: 16,
-    height: 16,
-    viewBox: "0 0 16 16",
-    xmlns: "http://www.w3.org/2000/svg",
-    "aria-labelledby": titleId
-  }, props));
+  try {
+    document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+    return /*#__PURE__*/React.createElement("svg", _extends({
+      width: 16,
+      height: 16,
+      viewBox: "0 0 16 16",
+      xmlns: "http://www.w3.org/2000/svg",
+      "aria-labelledby": titleId
+    }, props));
+  } catch (e) {
+    return <span>''</span>
+  }
 };
 
 export var icon = EuiIconEmpty;

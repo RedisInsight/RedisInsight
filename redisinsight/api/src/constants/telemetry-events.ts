@@ -4,6 +4,7 @@ export enum TelemetryEvents {
   ApplicationStarted = 'APPLICATION_STARTED',
   AnalyticsPermission = 'ANALYTICS_PERMISSION',
   SettingsScanThresholdChanged = 'SETTINGS_KEYS_TO_SCAN_CHANGED',
+  SettingsWorkbenchPipelineChanged = 'SETTINGS_WORKBENCH_PIPELINE_CHANGED',
 
   // Events for redis instances
   RedisInstanceAdded = 'CONFIG_DATABASES_DATABASE_ADDED',
@@ -23,33 +24,40 @@ export enum TelemetryEvents {
   SentinelMasterGroupsDiscoverySucceed = 'CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_SUCCEEDED',
   SentinelMasterGroupsDiscoveryFailed = 'CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_FAILED',
 
-  // Events for browser tool
-  BrowserKeysScanned = 'BROWSER_KEYS_SCANNED',
-  BrowserKeysScannedWithFilters = 'BROWSER_KEYS_SCANNED_WITH_FILTER_ENABLED',
-  BrowserKeyAdded = 'BROWSER_KEY_ADDED',
-  BrowserKeyTTLChanged = 'BROWSER_KEY_TTL_CHANGED',
-  BrowserKeysDeleted = 'BROWSER_KEYS_DELETED',
-  BrowserKeyValueFiltered = 'BROWSER_KEY_VALUE_FILTERED',
-  BrowserKeyValueAdded = 'BROWSER_KEY_VALUE_ADDED',
-  BrowserKeyValueEdited = 'BROWSER_KEY_VALUE_EDITED',
-  BrowserKeyValueRemoved = 'BROWSER_KEY_VALUE_REMOVED',
-  BrowserKeyValueDeleted = 'BROWSER_KEY_VALUE_FILTERED',
-  BrowserJSONPropertyEdited = 'BROWSER_JSON_PROPERTY_EDITED',
-  BrowserJSONPropertyAdded = 'BROWSER_JSON_PROPERTY_ADDED',
-  BrowserJSONPropertyDeleted = 'BROWSER_JSON_PROPERTY_DELETED',
-
   // Events for cli tool
-  ClientCreated = 'CLIENT_CREATED',
-  ClientCreationFailed = 'CLIENT_CREATION_FAILED',
-  ClientConnectionError = 'CLIENT_CONNECTION_ERROR',
-  ClientDeleted = 'CLIENT_DELETED',
-  ClientRecreated = 'CLIENT_RECREATED',
-  CommandExecuted = 'COMMAND_EXECUTED',
-  ClusterNodeCommandExecuted = 'CLUSTER_COMMAND_EXECUTED',
-  CommandErrorReceived = 'COMMAND_ERROR_RECEIVED',
+  CliClientCreated = 'CLI_CLIENT_CREATED',
+  CliClientCreationFailed = 'CLI_CLIENT_CREATION_FAILED',
+  CliClientConnectionError = 'CLI_CLIENT_CONNECTION_ERROR',
+  CliClientDeleted = 'CLI_CLIENT_DELETED',
+  CliClientRecreated = 'CLI_CLIENT_RECREATED',
+  CliCommandExecuted = 'CLI_COMMAND_EXECUTED',
+  CliClusterNodeCommandExecuted = 'CLI_CLUSTER_COMMAND_EXECUTED',
+  CliCommandErrorReceived = 'CLI_COMMAND_ERROR_RECEIVED',
 
   // Events for workbench tool
   WorkbenchCommandExecuted = 'WORKBENCH_COMMAND_EXECUTED',
   WorkbenchCommandErrorReceived = 'WORKBENCH_COMMAND_ERROR_RECEIVED',
   WorkbenchCommandDeleted = 'WORKBENCH_COMMAND_DELETE_COMMAND',
+
+  // Profiler
+  ProfilerLogDownloaded = 'PROFILER_LOG_DOWNLOADED',
+  ProfilerLogDeleted = 'PROFILER_LOG_DELETED',
+
+  // Slowlog
+  SlowlogSetLogSlowerThan = 'SLOWLOG_SET_LOG_SLOWER_THAN',
+  SlowlogSetMaxLen = 'SLOWLOG_SET_MAX_LEN',
+
+  // Pub/Sub
+  PubSubMessagePublished = 'PUBSUB_MESSAGE_PUBLISHED',
+  PubSubChannelSubscribed = 'PUBSUB_CHANNEL_SUBSCRIBED',
+  PubSubChannelUnsubscribed = 'PUBSUB_CHANNEL_UNSUBSCRIBED',
+
+  // Bulk Actions
+  BulkActionsStarted = 'BULK_ACTIONS_STARTED',
+  BulkActionsStopped = 'BULK_ACTIONS_STOPPED',
+}
+
+export enum CommandType {
+  Core = 'core',
+  Module = 'module',
 }

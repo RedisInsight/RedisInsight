@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as Redis from 'ioredis';
+import Redis from 'ioredis';
 import {
   mockRedisCommandReply,
   mockStandaloneDatabaseEntity,
   mockWhitelistCommandsResponse,
 } from 'src/__mocks__';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
-import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 
 const mockClient = Object.create(Redis.prototype);
 
@@ -30,7 +30,7 @@ describe('PluginCommandsWhitelistProvider', () => {
 
     service = await module.get<PluginCommandsWhitelistProvider>(PluginCommandsWhitelistProvider);
     mockRedisTool.getRedisClient.mockResolvedValue(mockClient);
-    mockClient.send_command = jest.fn();
+    mockClient.call = jest.fn();
   });
 
   describe('getWhitelistCommands', () => {
@@ -58,27 +58,27 @@ describe('PluginCommandsWhitelistProvider', () => {
   });
   describe('calculateWhiteListCommands', () => {
     it('should return 2 readonly commands', async () => {
-      mockClient.send_command.mockResolvedValueOnce(mockRedisCommandReply);
-      mockClient.send_command.mockResolvedValueOnce([]);
-      mockClient.send_command.mockResolvedValueOnce([]);
+      mockClient.call.mockResolvedValueOnce(mockRedisCommandReply);
+      mockClient.call.mockResolvedValueOnce([]);
+      mockClient.call.mockResolvedValueOnce([]);
 
       const result = await service.calculateWhiteListCommands(mockClient);
 
       expect(result).toEqual(mockWhitelistCommandsResponse);
     });
     it('should return 1 readonly commands excluded by dangerous filter', async () => {
-      mockClient.send_command.mockResolvedValueOnce(mockRedisCommandReply);
-      mockClient.send_command.mockResolvedValueOnce(['custom.command']);
-      mockClient.send_command.mockResolvedValueOnce([]);
+      mockClient.call.mockResolvedValueOnce(mockRedisCommandReply);
+      mockClient.call.mockResolvedValueOnce(['custom.command']);
+      mockClient.call.mockResolvedValueOnce([]);
 
       const result = await service.calculateWhiteListCommands(mockClient);
 
       expect(result).toEqual(['get']);
     });
     it('should return 1 readonly commands excluded by blocking filter', async () => {
-      mockClient.send_command.mockResolvedValueOnce(mockRedisCommandReply);
-      mockClient.send_command.mockResolvedValueOnce([]);
-      mockClient.send_command.mockResolvedValueOnce(['custom.command']);
+      mockClient.call.mockResolvedValueOnce(mockRedisCommandReply);
+      mockClient.call.mockResolvedValueOnce([]);
+      mockClient.call.mockResolvedValueOnce(['custom.command']);
 
       const result = await service.calculateWhiteListCommands(mockClient);
 

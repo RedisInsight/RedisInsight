@@ -16,6 +16,7 @@
   --tableRowHoverColor: #{$tableRowHoverColor};
   --tableRowSelectedColor: #{$tableRowSelectedColor};
   --euiColorPrimary: #{$euiColorPrimary};
+  --euiColorPrimaryRGB: #{$euiColorPrimaryRGB};
   --euiColorSecondary: #{$euiColorSecondary};
   --euiColorSuccess: #{$euiColorSuccess};
   --euiColorAccent: #{$euiColorAccent};
@@ -67,6 +68,7 @@
   --euiTooltipTextSecondColor: #{$euiTooltipTextSecondColor};
   --euiTooltipTitleTextColor: #{$euiTooltipTitleTextColor};
   --euiToastBackgroundColor: #{$euiToastBackgroundColor};
+  --euiToastDangerBgColor: #{$euiToastDangerBgColor};
   --euiToastSuccessBtnColor: #{$euiToastSuccessBtnColor};
   --euiToastSuccessBorderColor: #{$euiToastSuccessBorderColor};
   --euiToastDangerBtnColor: #{$euiToastDangerBtnColor};
@@ -90,14 +92,18 @@
   --hoverInListColorDarken: #{$hoverInListColorDarken};
   --externalLinkColor: #{$externalLinkColor};
   --externalLinkTooltipColor: #{$externalLinkTooltipColor};
+  --linkToastColor: #{$linkToastColor};
   --browserViewTypePassive: #{$browserViewTypePassive};
   --browserComponentActive: #{$browserComponentActive};
   --browserTreeNodeOpen: #{$browserTreeNodeOpen};
+  --defaultGreenColor: #{$defaultGreenColor};
 
   --iconsDefaultColor: #{$iconsDefaultColor};
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
 
   --separatorColor: #{$separatorColor};
+  --separatorColorLight: #{$separatorColorLight};
+  --separatorNavigationColor: #{$separatorNavigationColor};
   --separatorDropdownColor: #{$separatorDropdownColor};
 
   --buttonSecondaryHoverColor: #{$buttonSecondaryHoverColor};
@@ -105,6 +111,12 @@
   --buttonSecondaryDisabledTextColor: #{$buttonSecondaryDisabledTextColor};
   --buttonDangerHoverColor: #{$buttonDangerHoverColor};
   --buttonIconPrimaryHover: #{$buttonIconPrimaryHover};
+  --buttonWarningColor: #{$buttonWarningColor};
+  --buttonWarningHoverColor: #{$buttonWarningHoverColor};
+  --buttonDangerToastColor: #{$buttonDangerToastColor};
+  --buttonDangerToastHoverColor: #{$buttonDangerToastHoverColor};
+
+  --comboBoxBadgeBgColor: #{$comboBoxBadgeBgColor};
 
   --cliOutputResponseColor: #{$cliOutputResponseColor};
   --cliOutputResponseFailColor: #{$cliOutputResponseFailColor};
@@ -140,6 +152,7 @@
   --groupTransactionsColor: #{$groupTransactionsColor};
   --groupServerColor: #{$groupServerColor};
   --groupHyperLolLogColor: #{$groupHyperLolLogColor};
+  --defaultTypeColor: #{$defaultTypeColor};
 
   // JSON colors
   --jsonKeyNameColor: #{$jsonKeyNameColor};
@@ -154,4 +167,12 @@
   --rsSubmitBtn: #{$rsSubmitBtn};
   --rsInputColor: #{$rsInputColor};
   --rsInputWrapperColor: #{$rsInputWrapperColor};
+
+  // Workbench
+  --wbRunResultsBg: #{$wbRunResultsBg};
+  --wbHoverIconColor: #{$wbHoverIconColor};
+  --wbActiveIconColor: #{$wbActiveIconColor};
+
+  // Pub/Sub
+  --pubSubClientsBadge: #{$pubSubClientsBadge};
 }

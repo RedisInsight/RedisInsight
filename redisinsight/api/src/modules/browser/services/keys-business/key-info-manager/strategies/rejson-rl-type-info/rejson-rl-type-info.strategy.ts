@@ -1,12 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import {
   BrowserToolKeysCommands,
   BrowserToolRejsonRlCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
+import { RedisString } from 'src/common/constants';
 import { IKeyInfoStrategy } from '../../key-info-manager.interface';
 
 @Injectable()
@@ -21,7 +22,7 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
 
   public async getInfo(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
     this.logger.log(`Getting ${RedisDataType.JSON} type info.`);
@@ -52,13 +53,14 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
 
   private async getLength(
     clientOptions: IFindRedisClientInstanceByOptions,
-    key: string,
+    key: RedisString,
   ): Promise<number> {
     try {
       const objectKeyType = await this.redisManager.execCommand(
         clientOptions,
         BrowserToolRejsonRlCommands.JsonType,
         [key, '.'],
+        'utf8',
       );
 
       switch (objectKeyType) {
@@ -67,18 +69,21 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
             clientOptions,
             BrowserToolRejsonRlCommands.JsonObjLen,
             [key, '.'],
+            'utf8',
           );
         case 'array':
           return await this.redisManager.execCommand(
             clientOptions,
             BrowserToolRejsonRlCommands.JsonArrLen,
             [key, '.'],
+            'utf8',
           );
         case 'string':
           return await this.redisManager.execCommand(
             clientOptions,
             BrowserToolRejsonRlCommands.JsonStrLen,
             [key, '.'],
+            'utf8',
           );
         default:
           return undefined;

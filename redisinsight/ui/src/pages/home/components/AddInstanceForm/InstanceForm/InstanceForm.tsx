@@ -48,7 +48,7 @@ import {
 
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { handlePasteHostName, getDiffKeysOfObjectValues } from 'uiSrc/utils'
+import { handlePasteHostName, getDiffKeysOfObjectValues, checkRediStackModules } from 'uiSrc/utils'
 import {
   MAX_PORT_NUMBER,
   validateCertName,
@@ -161,7 +161,6 @@ const AddStandaloneForm = (props: Props) => {
       modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
-      isRediStack,
       servername,
       provider,
     },
@@ -1290,7 +1289,7 @@ const AddStandaloneForm = (props: Props) => {
       {isEditMode && name && (
         <div className="fluid" style={{ marginBottom: 15 }}>
           <DatabaseAlias
-            isRediStack={isRediStack}
+            isRediStack={checkRediStackModules(modules)}
             isCloneMode={isCloneMode}
             alias={name}
             database={db}

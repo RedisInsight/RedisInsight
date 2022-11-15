@@ -27,6 +27,10 @@
       {
         "target": "mas",
         "arch": ["x64", "arm64", "universal"]
+      },
+      {
+        "target": "mas-dev",
+        "arch": ["x64", "arm64", "universal"]
       }
     ],
     "type": "distribution",
@@ -50,7 +54,7 @@
     "entitlements": "resources/entitlements.mas.plist",
     "entitlementsInherit": "resources/entitlements.mas.plist",
     "hardenedRuntime": true,
-    "artifactName": "${productName}-${os}-${arch}-mas.${ext}"
+    "artifactName": "${productName}-${os}-${arch}-masDev.${ext}"
   },
   "dmg": {
     "contents": [

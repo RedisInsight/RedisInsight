@@ -6,6 +6,7 @@ import { DataAsJsonString } from 'src/common/decorators';
 @Entity('settings')
 export class SettingsEntity {
   @PrimaryGeneratedColumn()
+  @Expose()
   id: number;
 
   @ApiProperty({

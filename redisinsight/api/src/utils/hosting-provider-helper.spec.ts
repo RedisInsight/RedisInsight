@@ -1,4 +1,4 @@
-import { HostingProvider } from 'src/modules/core/models/database-instance.entity';
+import { HostingProvider } from 'src/modules/database/entities/database.entity';
 import { getHostingProvider } from './hosting-provider-helper';
 
 const getHostingProviderTests = [

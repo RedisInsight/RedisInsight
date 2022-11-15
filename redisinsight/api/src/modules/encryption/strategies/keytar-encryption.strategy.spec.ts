@@ -5,12 +5,12 @@ import {
   mockKeytarModule,
   mockKeytarPassword,
 } from 'src/__mocks__';
-import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
+import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
 import {
   KeytarDecryptionErrorException,
   KeytarEncryptionErrorException,
   KeytarUnavailableException,
-} from 'src/modules/core/encryption/exceptions';
+} from 'src/modules/encryption/exceptions';
 
 describe('KeytarEncryptionStrategy', () => {
   let service: KeytarEncryptionStrategy;

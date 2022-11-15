@@ -4,12 +4,12 @@ import { IScannerStrategy } from 'src/modules/browser/services/keys-business/sca
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { ConnectionType } from 'src/modules/core/models/database-instance.entity';
 import { ClusterStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/cluster.strategy';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { mockRedisConsumer, mockSettingsService } from 'src/__mocks__';
 import { StandaloneStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/standalone.strategy';
 import { SettingsService } from 'src/modules/settings/settings.service';
+import { ConnectionType } from 'src/modules/database/entities/database.entity';
 
 let scanner;
 let browserToolCluster;

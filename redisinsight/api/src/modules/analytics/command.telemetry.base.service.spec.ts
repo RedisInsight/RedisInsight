@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CommandType } from 'src/constants';
-import { CommandTelemetryBaseService } from 'src/modules/shared/services/base/command.telemetry.base.service';
+import { CommandTelemetryBaseService } from 'src/modules/analytics/command.telemetry.base.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { MockType } from 'src/__mocks__';
 
@@ -102,6 +102,13 @@ describe('CommandTelemetryBaseService', () => {
         moduleName: 'custom',
         capability: 'n/a',
       });
+    });
+    it('should return empty object if no command provided', async () => {
+      expect(await service.getCommandAdditionalInfo('')).toEqual({});
+    });
+    it('should return empty object in case of an error', async () => {
+      commandsService.getCommandsGroups.mockRejectedValueOnce(new Error());
+      expect(await service.getCommandAdditionalInfo('set')).toEqual({});
     });
   });
 });

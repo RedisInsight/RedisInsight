@@ -2,11 +2,7 @@ import * as os from 'os';
 import * as net from 'net';
 import { spawn } from 'child_process';
 import { isObject } from 'lodash';
-
-interface Endpoint {
-  host: string,
-  port: number,
-}
+import { IEndpoint } from 'src/common/models';
 
 /**
  * Get "netstat" command and args based on operation system
@@ -52,7 +48,7 @@ export const getRunningProcesses = async (): Promise<string[]> => new Promise((r
  * Return list of unique endpoints (host is hardcoded) to test
  * @param processes
  */
-export const getTCPEndpoints = (processes: string[]): Endpoint[] => {
+export const getTCPEndpoints = (processes: string[]): IEndpoint[] => {
   const regExp = /\s((\d+\.\d+\.\d+\.\d+|\*)[:.]|([0-9a-fA-F\][]{0,4}[.:]){1,8})(\d+)\s/;
   const endpoints = new Map();
 
@@ -74,7 +70,7 @@ export const getTCPEndpoints = (processes: string[]): Endpoint[] => {
  * Check RESP protocol response from tcp connection
  * @param endpoint
  */
-export const testEndpoint = async (endpoint: Endpoint): Promise<Endpoint> => new Promise((resolve) => {
+export const testEndpoint = async (endpoint: IEndpoint): Promise<IEndpoint> => new Promise((resolve) => {
   const client = net.createConnection({
     host: endpoint.host,
     port: endpoint.port,
@@ -104,9 +100,8 @@ export const testEndpoint = async (endpoint: Endpoint): Promise<Endpoint> => new
 
 /**
  * Get endpoints that we are able to connect and receive expected RESP protocol response
- * @param endpoints
  */
-export const getAvailableEndpoints = async (
-  endpoints: Endpoint[],
-): Promise<Endpoint[]> => (await Promise.all(endpoints.map(testEndpoint))).filter(isObject);
-
+export const getAvailableEndpoints = async (): Promise<IEndpoint[]> => {
+  const endpoints = getTCPEndpoints(await getRunningProcesses());
+  return (await Promise.all(endpoints.map(testEndpoint))).filter(isObject);
+};

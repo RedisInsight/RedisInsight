@@ -3,7 +3,7 @@ import { when } from 'jest-when';
 import {
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import {
@@ -17,7 +17,7 @@ import { mockKeyDto } from 'src/modules/browser/__mocks__';
 import { RejsonRlTypeInfoStrategy } from './rejson-rl-type-info.strategy';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const getKeyInfoResponse: GetKeyInfoResponse = {

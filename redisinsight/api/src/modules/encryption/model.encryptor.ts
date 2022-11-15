@@ -1,6 +1,7 @@
 import { isUndefined } from 'lodash';
 import { Logger } from '@nestjs/common';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
+import { cloneClassInstance } from 'src/utils';
 
 export class ModelEncryptor {
   private readonly logger = new Logger('ModelEncryptor');
@@ -20,7 +21,7 @@ export class ModelEncryptor {
    * @private
    */
   async encryptEntity<T>(entity: T): Promise<T> {
-    const encryptedEntity = entity;
+    const encryptedEntity = cloneClassInstance(entity);
 
     await Promise.all(this.fields.map(async (field) => {
       if (entity[field]) {
@@ -53,7 +54,7 @@ export class ModelEncryptor {
       return null;
     }
 
-    const decrypted = entity;
+    const decrypted = cloneClassInstance(entity);
 
     await Promise.all(this.fields.map(async (field) => {
       decrypted[field] = await this.decryptField(entity, field, ignoreErrors);

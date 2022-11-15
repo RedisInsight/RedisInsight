@@ -1,8 +1,4 @@
-import {
-  getTCPEndpoints,
-} from 'src/utils/auto-discovery-helper';
-
-const winNetstat = ''
+export const mockWinNetstat = ''
   + 'Proto  Local Address          Foreign Address        State           PID\n'
   + 'TCP    0.0.0.0:5000           0.0.0.0:0              LISTENING       13728\n'
   + 'TCP    0.0.0.0:6379           0.0.0.0:0              LISTENING       13728\n'
@@ -15,7 +11,7 @@ const winNetstat = ''
   + 'TCP    [::]:5000              [::]:0                 LISTENING       6056\n'
   + 'TCP                           *:*                    LISTENING       6056';
 
-const linuxNetstat = ''
+export const mockLinuxNetstat = ''
   + 'Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    \n'
   + 'tcp        0      0 0.0.0.0:5000            0.0.0.0:*               LISTEN      -                   \n'
   + 'tcp        0      0 0.0.0.0:6379            0.0.0.0:*               LISTEN      -                   \n'
@@ -30,7 +26,7 @@ const linuxNetstat = ''
   + 'tcp6       0      0 ::1:6379                :::*                    LISTEN      -                   \n';
 
 /* eslint-disable max-len */
-const macNetstat = ''
+export const mockMacNetstat = ''
   + 'Proto Recv-Q Send-Q  Local Address          Foreign Address        (state)     rhiwat shiwat    pid   epid  state    options\n'
   + 'tcp4       0      0  10.55.1.235.5000       10.55.1.235.52217      FIN_WAIT_2  407280 146988  30555      0 0x2131 0x00000104\n'
   + 'tcp4       0      0  10.55.1.235.6379       10.55.1.235.5001       CLOSE_WAIT  407682 146988    872      0 0x0122 0x00000008\n'
@@ -40,54 +36,7 @@ const macNetstat = ''
   + 'tcp6       0      0  ::1.52167              ::1.5002               ESTABLISHED 406172 146808  31200      0 0x0102 0x00000008\n';
 /* eslint-enable max-len */
 
-const getTCPEndpointsTests = [
-  {
-    name: 'win output',
-    input: winNetstat.split('\n'),
-    output: [
-      { host: 'localhost', port: 5000 },
-      { host: 'localhost', port: 6379 },
-      { host: 'localhost', port: 6380 },
-      { host: 'localhost', port: 135 },
-      { host: 'localhost', port: 445 },
-      { host: 'localhost', port: 808 },
-      { host: 'localhost', port: 2701 },
-    ],
-  },
-  {
-    name: 'linux output',
-    input: linuxNetstat.split('\n'),
-    output: [
-      { host: 'localhost', port: 5000 },
-      { host: 'localhost', port: 6379 },
-      { host: 'localhost', port: 6380 },
-      { host: 'localhost', port: 28100 },
-      { host: 'localhost', port: 8100 },
-      { host: 'localhost', port: 8101 },
-      { host: 'localhost', port: 8102 },
-      { host: 'localhost', port: 8103 },
-      { host: 'localhost', port: 8200 },
-    ],
-  },
-  {
-    name: 'mac output',
-    input: macNetstat.split('\n'),
-    output: [
-      { host: 'localhost', port: 5000 },
-      { host: 'localhost', port: 6379 },
-      { host: 'localhost', port: 6380 },
-      { host: 'localhost', port: 5002 },
-      { host: 'localhost', port: 52167 },
-    ],
-  },
-];
-
-describe('getTCP4Endpoints', () => {
-  getTCPEndpointsTests.forEach((test) => {
-    it(`Should return endpoints to test ${test.name}`, async () => {
-      const result = getTCPEndpoints(test.input);
-
-      expect(result).toEqual(test.output);
-    });
-  });
-});
+export const mockAutodiscoveryEndpoint = {
+  host: '127.0.0.1',
+  port: 6379,
+};

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import axios from 'axios';
 import { RedisErrorCodes } from 'src/constants';
-import { mockAutodiscoveryAnalyticsService } from 'src/__mocks__';
+import { mockDatabaseService, mockRedisEnterpriseAnalytics } from 'src/__mocks__';
 import {
   IRedisEnterpriseDatabase,
   IRedisEnterpriseEndpoint,
@@ -11,9 +11,10 @@ import {
   RedisEnterpriseDatabaseStatus,
 } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
 import { RedisPersistencePolicy } from 'src/modules/redis-enterprise/models/redis-cloud-database';
-import { RedisEnterpriseService } from './redis-enterprise-business.service';
-import { AutodiscoveryAnalyticsService } from '../autodiscovery-analytics.service/autodiscovery-analytics.service';
-import { ClusterConnectionDetailsDto } from '../../../redis-enterprise/dto/cluster.dto';
+import { RedisEnterpriseService } from 'src/modules/redis-enterprise/redis-enterprise.service';
+import { ClusterConnectionDetailsDto } from 'src/modules/redis-enterprise/dto/cluster.dto';
+import { RedisEnterpriseAnalytics } from 'src/modules/redis-enterprise/redis-enterprise.analytics';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -127,7 +128,7 @@ const mockREClusterDbsResponse: IRedisEnterpriseDatabase[] = [
   mockREClusterDatabase,
 ];
 
-describe('ClusterBusinessService', () => {
+describe('RedisEnterpriseService', () => {
   let service;
   let parseClusterDbsResponse;
 
@@ -135,8 +136,12 @@ describe('ClusterBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
-          provide: AutodiscoveryAnalyticsService,
-          useFactory: mockAutodiscoveryAnalyticsService,
+          provide: DatabaseService,
+          useFactory: mockDatabaseService,
+        },
+        {
+          provide: RedisEnterpriseAnalytics,
+          useFactory: mockRedisEnterpriseAnalytics,
         },
         RedisEnterpriseService,
       ],

@@ -50,7 +50,7 @@ export class ClientCertificateService {
     this.logger.log('Creating client certificate.');
 
     try {
-      return this.repository.create(classToClass(ClientCertificate, dto));
+      return await this.repository.create(classToClass(ClientCertificate, dto));
     } catch (error) {
       this.logger.error('Failed to create client certificate.', error);
 

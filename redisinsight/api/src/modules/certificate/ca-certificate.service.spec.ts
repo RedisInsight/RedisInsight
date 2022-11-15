@@ -1,148 +1,114 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { CaCertificateEntity } from 'src/modules/core/models/ca-certificate.entity';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
-  mockCaCertDto,
-  mockCaCertEntity,
-  mockEncryptionService,
-  mockEncryptResult,
-  mockQueryBuilderGetMany,
-  mockRepository,
+  mockCaCertificate,
+  mockCaCertificateRepository, mockCreateCaCertificateDto,
   MockType,
 } from 'src/__mocks__';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
-import { KeytarEncryptionErrorException } from 'src/modules/core/encryption/exceptions';
+import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
+import { pick } from 'lodash';
+import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
 import { CaCertificateService } from './ca-certificate.service';
 
-describe('CaCertBusinessService', () => {
+describe('CaCertificateService', () => {
   let service: CaCertificateService;
-  let repository: MockType<Repository<CaCertificateEntity>>;
-  let encryptionService: MockType<EncryptionService>;
+  let repository: MockType<CaCertificateRepository>;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CaCertificateService,
         {
-          provide: EncryptionService,
-          useFactory: mockEncryptionService,
-        },
-        {
-          provide: getRepositoryToken(CaCertificateEntity),
-          useFactory: mockRepository,
+          provide: CaCertificateRepository,
+          useFactory: mockCaCertificateRepository,
         },
       ],
     }).compile();
 
-    service = await module.get<CaCertificateService>(CaCertificateService);
-    encryptionService = module.get(EncryptionService);
-    repository = await module.get(getRepositoryToken(CaCertificateEntity));
+    service = await module.get(CaCertificateService);
+    repository = await module.get(CaCertificateRepository);
   });
 
-  describe('getAll', () => {
+  describe('get', () => {
+    it('should return ca certificate model', async () => {
+      expect(await service.get(mockCaCertificate.id)).toEqual(mockCaCertificate);
+    });
+    it('should return NotFound error if no certificated found', async () => {
+      repository.get.mockResolvedValueOnce(null);
+
+      try {
+        await service.get(mockCaCertificate.id);
+        fail();
+      } catch (e) {
+        // why BadRequest instead of NotFound?
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual(ERROR_MESSAGES.INVALID_CERTIFICATE_ID);
+      }
+    });
+  });
+
+  describe('list', () => {
     it('get all certificates from the repository', async () => {
-      mockQueryBuilderGetMany.mockResolvedValueOnce([mockCaCertEntity]);
+      const result = await service.list();
 
-      const result = await service.getAll();
-
-      expect(repository.createQueryBuilder).toHaveBeenCalled();
-      expect(result).toEqual([mockCaCertEntity]);
-    });
-  });
-
-  describe('getOneById', () => {
-    it('should successfully find entity and decrypt field', async () => {
-      repository.findOneBy.mockResolvedValue(mockCaCertEntity);
-      encryptionService.decrypt.mockResolvedValueOnce(mockCaCertEntity.certificate);
-
-      const result = await service.getOneById(mockCaCertEntity.id);
-
-      expect(repository.findOneBy).toHaveBeenCalledWith({
-        id: mockCaCertEntity.id,
-      });
-      expect(result).toEqual(mockCaCertEntity);
-    });
-    it('should throw an error when certificate not found', async () => {
-      repository.findOneBy.mockResolvedValue(null);
-
-      // todo: refactor. why BadRequest?
-      await expect(service.getOneById(mockCaCertEntity.id)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-    it('should find entity and return encrypted fields to equal empty string on decrypted error', async () => {
-      repository.findOneBy.mockResolvedValue(mockCaCertEntity);
-      encryptionService.decrypt.mockRejectedValueOnce(new Error('Decryption error'));
-
-      const result = await service.getOneById(mockCaCertEntity.id);
-
-      expect(repository.findOneBy).toHaveBeenCalledWith({
-        id: mockCaCertEntity.id,
-      });
-      expect(result).toEqual({
-        ...mockCaCertEntity,
-        certificate: '',
-      });
+      expect(result).toEqual([
+        pick(mockCaCertificate, 'id', 'name'),
+        pick(mockCaCertificate, 'id', 'name'),
+      ]);
     });
   });
 
   describe('create', () => {
-    it('successfully create the certificate', async () => {
-      repository.findOneBy.mockResolvedValue(null);
-      repository.create.mockResolvedValueOnce(mockCaCertEntity);
-      encryptionService.encrypt.mockResolvedValueOnce(mockEncryptResult);
-      repository.save.mockResolvedValue(mockCaCertEntity);
-
-      const result = await service.create(mockCaCertDto);
-
-      expect(repository.findOneBy).toHaveBeenCalledWith({
-        name: mockCaCertEntity.name,
-      });
-      expect(repository.save).toHaveBeenCalled();
-      expect(result).toEqual(mockCaCertEntity);
+    it('should return ca certificate model', async () => {
+      expect(await service.create(mockCreateCaCertificateDto)).toEqual(mockCaCertificate);
     });
-    it('certificate with this name exist', async () => {
-      repository.findOneBy.mockResolvedValue(mockCaCertEntity);
+    it('should throw encryption error', async () => {
+      repository.create.mockRejectedValueOnce(new KeytarEncryptionErrorException());
 
-      await expect(service.create(mockCaCertDto)).rejects.toThrow(
-        BadRequestException,
-      );
-
-      expect(repository.save).not.toHaveBeenCalled();
+      try {
+        await service.create(mockCreateCaCertificateDto);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(KeytarEncryptionErrorException);
+      }
     });
-    it('should throw and error when unable to encrypt the data', async () => {
-      repository.findOneBy.mockResolvedValueOnce(null);
-      repository.create.mockResolvedValueOnce(mockCaCertEntity);
-      encryptionService.encrypt.mockRejectedValueOnce(new KeytarEncryptionErrorException());
+    it('should throw 500 error in any other case (why?)', async () => {
+      repository.create.mockRejectedValueOnce(new BadRequestException());
 
-      await expect(service.create(mockCaCertDto)).rejects.toThrow(
-        KeytarEncryptionErrorException,
-      );
-
-      expect(repository.save).not.toHaveBeenCalled();
+      try {
+        await service.create(mockCreateCaCertificateDto);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+      }
     });
   });
 
   describe('delete', () => {
-    it('successfully delete the certificate', async () => {
-      repository.findOneBy.mockResolvedValue(mockCaCertEntity);
-
-      await service.delete(mockCaCertEntity.id);
-
-      expect(repository.findOneBy).toHaveBeenCalledWith({
-        id: mockCaCertEntity.id,
-      });
-      expect(repository.delete).toHaveBeenCalledWith(mockCaCertEntity.id);
+    it('should delete ca certificate', async () => {
+      expect(await service.delete(mockCaCertificate.id)).toEqual(undefined);
     });
-    it('certificate not found', async () => {
-      repository.findOneBy.mockResolvedValue(null);
+    it('should throw encryption error', async () => {
+      repository.delete.mockRejectedValueOnce(new KeytarEncryptionErrorException());
 
-      await expect(service.delete(mockCaCertEntity.id)).rejects.toThrow(
-        NotFoundException,
-      );
-      expect(repository.delete).not.toHaveBeenCalled();
+      try {
+        await service.delete(mockCaCertificate.id);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(KeytarEncryptionErrorException);
+      }
+    });
+    it('should throw 500 error in any other case (why?)', async () => {
+      repository.delete.mockRejectedValueOnce(new Error());
+
+      try {
+        await service.delete(mockCaCertificate.id);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+      }
     });
   });
 });

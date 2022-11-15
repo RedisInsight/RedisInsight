@@ -27,8 +27,4 @@ export class ClientCertificateEntity {
 
   @OneToMany(() => DatabaseEntity, (database) => database.clientCert)
   public databases: DatabaseEntity[];
-
-  constructor(partial: Partial<ClientCertificateEntity>) {
-    Object.assign(this, partial);
-  }
 }

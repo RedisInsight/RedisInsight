@@ -1,6 +1,7 @@
 import { Cluster, Command, Redis } from 'ioredis';
-import { uniq } from 'lodash';
+import { toNumber, uniq } from 'lodash';
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   Logger,
@@ -14,6 +15,7 @@ import {
   SearchRedisearchDto,
 } from 'src/modules/browser/dto/redisearch';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
+import { RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
@@ -137,6 +139,7 @@ export class RedisearchService {
     this.logger.log('Searching keys using redisearch.');
 
     try {
+      let maxResults;
       const {
         index, query, offset, limit,
       } = dto;
@@ -147,16 +150,33 @@ export class RedisearchService {
         new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, limit]),
       );
 
+
+      try {
+        const [[, maxSearchResults]] = await client.sendCommand(
+          // response: [ [ 'MAXSEARCHRESULTS', '10000' ] ]
+          new Command('FT.CONFIG', ['GET', 'MAXSEARCHRESULTS'], {
+            replyEncoding: 'utf8',
+          }),
+        ) as [[string, string]];
+
+        maxResults = toNumber(maxSearchResults);
+      } catch (error) {
+        maxResults = null;
+      }
+
       return plainToClass(GetKeysWithDetailsResponse, {
         cursor: limit + offset,
         total,
         scanned: keyNames.length + offset,
         keys: keyNames.map((name) => ({ name })),
+        maxResults,
       });
-    } catch (e) {
-      this.logger.error('Failed to search keys using redisearch index', e);
-
-      throw catchAclError(e);
+    } catch (error) {
+      this.logger.error('Failed to search keys using redisearch index', error);
+      if (error.message?.includes(RedisErrorCodes.RedisearchLimit)) {
+        throw new BadRequestException(ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(dto.limit?.toLocaleString?.()));
+      }
+      throw catchAclError(error);
     }
   }
 

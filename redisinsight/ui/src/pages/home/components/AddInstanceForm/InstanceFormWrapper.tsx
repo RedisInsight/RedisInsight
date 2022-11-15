@@ -11,7 +11,6 @@ import {
   updateInstanceAction,
 } from 'uiSrc/slices/instances/instances'
 import {
-  cloneMasterSentinelAction,
   fetchMastersSentinelAction,
   sentinelSelector,
 } from 'uiSrc/slices/instances/sentinel'
@@ -117,7 +116,7 @@ const InstanceFormWrapper = (props: Props) => {
 
   const handleSubmitDatabase = (payload: any) => {
     if (isCloneMode && connectionType === ConnectionType.Sentinel) {
-      dispatch(cloneMasterSentinelAction(payload))
+      dispatch(createInstanceStandaloneAction(payload))
       return
     }
 
@@ -320,26 +319,20 @@ const InstanceFormWrapper = (props: Props) => {
     }
 
     if (isCloneMode && connectionType === ConnectionType.Sentinel) {
-      delete database.db
-      delete database.name
-      database.sentinelMaster = [
-        {
-          alias: name,
-          db,
-          name: sentinelMasterName,
-          username: sentinelMasterUsername,
-          password: sentinelMasterPassword,
-        }
-      ]
+      database.sentinelMaster = {
+        name: sentinelMasterName,
+        username: sentinelMasterUsername,
+        password: sentinelMasterPassword,
+      }
     }
 
     handleSubmitDatabase(removeEmpty(database))
 
     const databasesCount: number = JSON.parse(
-      localStorageService.get(BrowserStorageItem.databasesCount) || `${0}`
+      localStorageService.get(BrowserStorageItem.instancesCount) || `${0}`
     )
     localStorageService.set(
-      BrowserStorageItem.databasesCount,
+      BrowserStorageItem.instancesCount,
       databasesCount + 1
     )
     onDbAdded()

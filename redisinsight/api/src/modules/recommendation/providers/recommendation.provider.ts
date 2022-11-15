@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Redis, Command } from 'ioredis';
 import { get } from 'lodash';
 import { convertRedisInfoReplyToObject } from 'src/utils';
-import { checkIsGreaterThan } from 'src/utils/base.helper';
 
 const minNumberOfCachedScripts = 10;
 
@@ -22,6 +21,6 @@ export class RecommendationProvider {
     );
     const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
 
-    return checkIsGreaterThan(minNumberOfCachedScripts, parseInt(nodesNumbersOfCachedScripts, 10));
+    return parseInt(nodesNumbersOfCachedScripts, 10) > minNumberOfCachedScripts;
   }
 }

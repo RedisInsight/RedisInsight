@@ -9,7 +9,6 @@ import * as events from 'events';
 import * as stream from 'stream';
 import { ChildProcess } from 'child_process';
 import * as autodiscoveryUtility from './autodiscovery.util';
-import { getRunningProcesses, getTCPEndpoints } from './autodiscovery.util';
 
 jest.mock('os', () => ({
   ...jest.requireActual('os') as object,

@@ -175,7 +175,7 @@ export class SlowLogService {
           namespace: clientOptions.tool,
         });
 
-        if (client instanceof IORedis.Cluster) {
+        if (client.isCluster) {
           return Promise.reject(new BadRequestException('Configuration slowlog for cluster is deprecated'));
         }
         await Promise.all(commands.map((command) => client.call(
@@ -200,10 +200,10 @@ export class SlowLogService {
    * @private
    */
   private async getNodes(client: IORedis.Redis | IORedis.Cluster): Promise<IORedis.Redis[]> {
-    if (client instanceof IORedis.Cluster) {
-      return client.nodes();
+    if (client.isCluster) {
+      return (client as IORedis.Cluster).nodes();
     }
 
-    return [client];
+    return [client as IORedis.Redis];
   }
 }

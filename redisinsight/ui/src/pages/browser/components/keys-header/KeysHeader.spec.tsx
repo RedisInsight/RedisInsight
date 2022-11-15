@@ -91,8 +91,7 @@ describe('KeysHeader', () => {
     expect(queryByTestId('scan-more')).toBeInTheDocument()
   })
 
-  it('should not render Scan more button for if searchMode = "Redisearch" '
-  + 'and keys.length > maxResults', () => {
+  it('should not render Scan more button for if searchMode = "Redisearch" and keys.length > maxResults', () => {
     keysSelector.mockImplementation(() => ({
       searchMode: SearchMode.Redisearch,
       viewType: KeyViewType.Tree,

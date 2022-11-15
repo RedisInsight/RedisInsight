@@ -4,7 +4,7 @@ import {
   mockAppSettingsInitial,
   mockRedisClusterConsumer,
   mockRedisNoPermError, mockSettingsService,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import config from 'src/utils/config';
@@ -22,7 +22,7 @@ import { ClusterStrategy } from './cluster.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const nodeClient = Object.create(IORedis.prototype);

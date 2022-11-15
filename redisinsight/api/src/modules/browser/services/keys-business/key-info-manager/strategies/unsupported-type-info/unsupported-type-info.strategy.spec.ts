@@ -3,7 +3,7 @@ import { when } from 'jest-when';
 import {
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
@@ -13,7 +13,7 @@ import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.servi
 import { UnsupportedTypeInfoStrategy } from './unsupported-type-info.strategy';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const getKeyInfoResponse: GetKeyInfoResponse = {

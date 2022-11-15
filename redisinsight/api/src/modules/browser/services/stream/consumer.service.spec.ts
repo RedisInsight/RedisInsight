@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import { mockRedisConsumer, mockStandaloneDatabaseEntity, MockType } from 'src/__mocks__';
+import { mockRedisConsumer, mockDatabase, MockType } from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
@@ -27,7 +27,7 @@ import {
 } from 'src/modules/browser/__mocks__';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 describe('ConsumerService', () => {

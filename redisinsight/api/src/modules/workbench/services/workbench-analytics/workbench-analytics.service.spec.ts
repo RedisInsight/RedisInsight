@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ServiceUnavailableException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { mockRedisWrongTypeError, mockStandaloneDatabaseEntity, MockType } from 'src/__mocks__';
+import { mockRedisWrongTypeError, mockDatabase, MockType } from 'src/__mocks__';
 import { CommandType, TelemetryEvents } from 'src/constants';
 import { ReplyError } from 'src/models';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
@@ -13,7 +13,7 @@ const redisReplyError: ReplyError = {
   ...mockRedisWrongTypeError,
   command: { name: 'sadd' },
 };
-const instanceId = mockStandaloneDatabaseEntity.id;
+const instanceId = mockDatabase.id;
 
 const mockCommandsService = {
   getCommandsGroups: jest.fn(),

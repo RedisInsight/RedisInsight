@@ -9,10 +9,10 @@ import { when } from 'jest-when';
 import { SortOrder } from 'src/constants/sort';
 import { ReplyError } from 'src/models';
 import {
+  mockDatabase,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
 import {
   CreateZSetWithExpireDto,
@@ -33,7 +33,7 @@ import { ZSetBusinessService } from './z-set-business.service';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 describe('ZSetBusinessService', () => {

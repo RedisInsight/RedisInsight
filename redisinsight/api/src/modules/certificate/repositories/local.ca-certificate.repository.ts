@@ -77,6 +77,7 @@ export class LocalCaCertificateRepository extends CaCertificateRepository {
     // todo: 1. why we need to check if entity exists?
     //  2. why we fetch it instead of check delete response?
     //  3. why we need to fail if no cert found?
+    //  4. why there is no error message?
     const found = await this.repository.findOneBy({ id });
     if (!found) {
       this.logger.error(`Failed to delete ca certificate: ${id}`);

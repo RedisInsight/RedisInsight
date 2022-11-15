@@ -7,7 +7,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   mockRedisServerInfoResponse,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
   mockCliAnalyticsService,
   mockRedisMovedError, MockType,
 } from 'src/__mocks__';
@@ -22,7 +22,6 @@ import {
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { ReplyError } from 'src/models';
 import { CliToolUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
-import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
 import {
   ClusterNodeNotFoundError,
   CommandNotSupportedError,
@@ -30,7 +29,7 @@ import {
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
-import { KeytarUnavailableException } from 'src/modules/core/encryption/exceptions';
+import { KeytarUnavailableException } from 'src/modules/encryption/exceptions';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
@@ -38,10 +37,10 @@ import { CliOutputFormatterTypes, IOutputFormatterStrategy } from './output-form
 import { CliBusinessService } from './cli-business.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 const mockClientUuid = uuidv4();
-const mockNode: EndpointDto = {
+const mockNode = {
   host: '127.0.0.1',
   port: 7002,
 };
@@ -112,7 +111,7 @@ describe('CliBusinessService', () => {
     it('should successfully create new redis client', async () => {
       cliTool.createNewToolClient.mockResolvedValue(mockClientUuid);
 
-      const result = await service.getClient(mockStandaloneDatabaseEntity.id);
+      const result = await service.getClient(mockDatabase.id);
 
       expect(result).toEqual({ uuid: mockClientUuid });
       expect(analyticsService.sendClientCreatedEvent).toHaveBeenCalledWith(
@@ -126,7 +125,7 @@ describe('CliBusinessService', () => {
       );
 
       try {
-        await service.getClient(mockStandaloneDatabaseEntity.id);
+        await service.getClient(mockDatabase.id);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
@@ -141,7 +140,7 @@ describe('CliBusinessService', () => {
       cliTool.createNewToolClient.mockRejectedValue(new KeytarUnavailableException());
 
       try {
-        await service.getClient(mockStandaloneDatabaseEntity.id);
+        await service.getClient(mockDatabase.id);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
@@ -158,7 +157,7 @@ describe('CliBusinessService', () => {
       cliTool.reCreateToolClient.mockResolvedValue(mockClientUuid);
 
       const result = await service.reCreateClient(
-        mockStandaloneDatabaseEntity.id,
+        mockDatabase.id,
         mockClientUuid,
       );
 
@@ -175,7 +174,7 @@ describe('CliBusinessService', () => {
 
       try {
         await service.reCreateClient(
-          mockStandaloneDatabaseEntity.id,
+          mockDatabase.id,
           mockClientUuid,
         );
         fail();
@@ -193,7 +192,7 @@ describe('CliBusinessService', () => {
 
       try {
         await service.reCreateClient(
-          mockStandaloneDatabaseEntity.id,
+          mockDatabase.id,
           mockClientUuid,
         );
         fail();
@@ -212,7 +211,7 @@ describe('CliBusinessService', () => {
       cliTool.deleteToolClient.mockResolvedValue(1);
 
       const result = await service.deleteClient(
-        mockStandaloneDatabaseEntity.id,
+        mockDatabase.id,
         mockClientUuid,
       );
 
@@ -228,7 +227,7 @@ describe('CliBusinessService', () => {
 
       try {
         await service.deleteClient(
-          mockStandaloneDatabaseEntity.id,
+          mockDatabase.id,
           mockClientUuid,
         );
         fail();

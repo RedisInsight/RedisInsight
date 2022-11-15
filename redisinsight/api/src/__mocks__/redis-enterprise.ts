@@ -2,18 +2,6 @@ import { RedisEnterpriseDatabase } from 'src/modules/redis-enterprise/dto/cluste
 import { RedisEnterpriseDatabaseStatus } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
 import { GetRedisCloudSubscriptionResponse, RedisCloudDatabase } from 'src/modules/redis-enterprise/dto/cloud.dto';
 import { RedisCloudSubscriptionStatus } from 'src/modules/redis-enterprise/models/redis-cloud-subscriptions';
-import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel';
-
-export const mockAutodiscoveryAnalyticsService = () => ({
-  sendGetREClusterDbsSucceedEvent: jest.fn(),
-  sendGetREClusterDbsFailedEvent: jest.fn(),
-  sendGetRECloudSubsSucceedEvent: jest.fn(),
-  sendGetRECloudSubsFailedEvent: jest.fn(),
-  sendGetRECloudDbsSucceedEvent: jest.fn(),
-  sendGetRECloudDbsFailedEvent: jest.fn(),
-  sendGetSentinelMastersSucceedEvent: jest.fn(),
-  sendGetSentinelMastersFailedEvent: jest.fn(),
-});
 
 export const mockRedisEnterpriseDatabaseDto: RedisEnterpriseDatabase = {
   uid: 1,
@@ -48,14 +36,11 @@ export const mockRedisCloudDatabaseDto: RedisCloudDatabase = {
   status: RedisEnterpriseDatabaseStatus.Active,
 };
 
-export const mockSentinelMasterDto: SentinelMaster = {
-  name: 'mymaster',
-  host: '127.0.0.1',
-  port: 6379,
-  numberOfSlaves: 1,
-  status: SentinelMasterStatus.Active,
-  endpoints: [{
-    host: '127.0.0.1',
-    port: 26379,
-  }],
-};
+export const mockRedisEnterpriseAnalytics = jest.fn(() => ({
+  sendGetREClusterDbsSucceedEvent: jest.fn(),
+  sendGetREClusterDbsFailedEvent: jest.fn(),
+  sendGetRECloudSubsSucceedEvent: jest.fn(),
+  sendGetRECloudSubsFailedEvent: jest.fn(),
+  sendGetRECloudDbsSucceedEvent: jest.fn(),
+  sendGetRECloudDbsFailedEvent: jest.fn(),
+}));

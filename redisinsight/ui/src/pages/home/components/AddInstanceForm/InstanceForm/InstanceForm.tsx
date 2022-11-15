@@ -48,7 +48,7 @@ import {
 
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { handlePasteHostName, getDiffKeysOfObjectValues } from 'uiSrc/utils'
+import { handlePasteHostName, getDiffKeysOfObjectValues, checkRediStackModules } from 'uiSrc/utils'
 import {
   MAX_PORT_NUMBER,
   validateCertName,
@@ -149,7 +149,7 @@ const AddStandaloneForm = (props: Props) => {
       nameFromProvider,
       sentinelMaster,
       connectionType,
-      endpoints = null,
+      nodes = null,
       tlsClientAuthRequired,
       certificates,
       selectedTlsClientCertId = '',
@@ -161,7 +161,6 @@ const AddStandaloneForm = (props: Props) => {
       modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
-      isRediStack,
       servername,
       provider,
     },
@@ -472,7 +471,7 @@ const AddStandaloneForm = (props: Props) => {
       <EuiListGroupItem
         label={(
           <>
-            {!!endpoints?.length && <AppendEndpoints />}
+            {!!nodes?.length && <AppendEndpoints />}
             <EuiText color="subdued" size="s">
               Host:
               <EuiTextColor color="default" className={styles.dbInfoListValue}>
@@ -646,7 +645,7 @@ const AddStandaloneForm = (props: Props) => {
       anchorClassName={styles.anchorEndpoints}
       content={(
         <ul className={styles.endpointsList}>
-          {endpoints?.map(({ host: ephost, port: epport }) => (
+          {nodes?.map(({ host: ephost, port: epport }) => (
             <li key={ephost + epport}>
               <EuiText>
                 {ephost}
@@ -1290,7 +1289,7 @@ const AddStandaloneForm = (props: Props) => {
       {isEditMode && name && (
         <div className="fluid" style={{ marginBottom: 15 }}>
           <DatabaseAlias
-            isRediStack={isRediStack}
+            isRediStack={checkRediStackModules(modules)}
             isCloneMode={isCloneMode}
             alias={name}
             database={db}

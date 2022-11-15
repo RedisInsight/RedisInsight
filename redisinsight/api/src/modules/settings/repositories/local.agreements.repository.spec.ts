@@ -62,7 +62,6 @@ describe('LocalAgreementsRepository', () => {
       expect(result).toEqual(mockAgreements);
       expect(repository.update).toHaveBeenCalledWith({}, {
         ...mockAgreementsEntity,
-        id: undefined,
       });
     });
   });

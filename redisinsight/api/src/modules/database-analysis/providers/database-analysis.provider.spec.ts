@@ -147,7 +147,7 @@ const mockDatabaseAnalysis = {
       total: 0,
     },
   ],
-  recommendations: [{ name: 'luaScript'}],
+  recommendations: [{ name: 'luaScript' }],
 } as DatabaseAnalysis;
 
 describe('DatabaseAnalysisProvider', () => {

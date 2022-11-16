@@ -99,7 +99,7 @@ export class DatabaseImportService {
    * @param item
    * @private
    */
-  private async createDatabase(item: any[]): Promise<Database> {
+  private async createDatabase(item: any): Promise<Database> {
     const data: any = {};
 
     this.fieldsMapSchema.forEach(([field, paths]) => {

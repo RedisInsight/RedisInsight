@@ -1,7 +1,9 @@
 import { PickType } from '@nestjs/swagger';
 import { Database } from 'src/modules/database/models/database';
 import { Expose, Type } from 'class-transformer';
-import { IsInt, IsNotEmpty } from 'class-validator';
+import {
+  IsInt, IsNotEmpty, Max, Min,
+} from 'class-validator';
 
 export class ImportDatabaseDto extends PickType(Database, [
   'host', 'port', 'name', 'db', 'username', 'password',
@@ -11,5 +13,7 @@ export class ImportDatabaseDto extends PickType(Database, [
   @IsNotEmpty()
   @IsInt({ always: true })
   @Type(() => Number)
+  @Min(0)
+  @Max(65536)
   port: number;
 }

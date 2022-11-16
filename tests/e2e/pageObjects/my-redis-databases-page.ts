@@ -15,7 +15,7 @@ export class MyRedisDatabasePage {
     githubButton = Selector('[data-testid=github-repo-icon]');
     browserButton = Selector('[data-testid=browser-page-btn]');
     pubSubButton = Selector('[data-testid=pub-sub-page-btn]');
-    myRedisDBButton = Selector('[data-test-subj=home-page-btn]');
+    myRedisDBButton = Selector('[data-test-subj=home-page-btn]', { timeout: 1000 });
     deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
     confirmDeleteButton = Selector('[data-testid^=delete-instance-]').withExactText('Remove');
     toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
@@ -30,6 +30,10 @@ export class MyRedisDatabasePage {
     sortByHostAndPort = Selector('span').withAttribute('title', 'Host:Port');
     sortByConnectionType = Selector('span').withAttribute('title', 'Connection Type');
     sortByLastConnection = Selector('span').withAttribute('title', 'Last connection');
+    importDatabasesBtn = Selector('[data-testid=import-dbs-btn]');
+    submitImportBtn = Selector('[data-testid=submit-btn]');
+    closeDialogBtn = Selector('[aria-label="Closes this modal window"]');
+    okDialogBtn = Selector('[data-testid=ok-btn]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     //ICONS
@@ -46,6 +50,7 @@ export class MyRedisDatabasePage {
     //TEXT INPUTS (also referred to as 'Text fields')
     aliasInput = Selector('[data-testid=alias-input]');
     searchInput = Selector('[data-testid=search-database-list]');
+    importDatabaseInput = Selector('[data-testid=import-databases-input-file]');
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');
@@ -55,6 +60,10 @@ export class MyRedisDatabasePage {
     hostPort = Selector('[data-testid=host-port]');
     noResultsFoundMessage = Selector('div').withExactText('No results found');
     noResultsFoundText = Selector('div').withExactText('No databases matched your search. Try reducing the criteria.');
+    failedImportMessage = Selector('[data-testid=result-failed]');
+    successImportMessage = Selector('[data-testid=result-success]');
+    // DIALOG
+    importDbDialog = Selector('[data-testid=import-dbs-dialog]');
 
     /**
      * Click on the database by name

@@ -41,7 +41,7 @@ export const parseContent = ({ type, value }: { type: string, value: any }) => {
     case 'span':
       return <EuiTextColor color="subdued" className={cx(styles.span, styles.text)}>{value}</EuiTextColor>
     case 'link':
-      return <EuiLink external={false} target="_blank" href={value.href}>{value.name}</EuiLink>
+      return <EuiLink external={false} data-testid="read-more-link" target="_blank" href={value.href}>{value.name}</EuiLink>
     case 'spacer':
       return <EuiSpacer size={value} />
     default:

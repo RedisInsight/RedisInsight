@@ -43,6 +43,7 @@ const mockDatabaseAnalysisEntity = new DatabaseAnalysisEntity({
   topKeysLength: 'ENCRYPTED:topKeysLength',
   topKeysMemory: 'ENCRYPTED:topKeysMemory',
   expirationGroups: 'ENCRYPTED:expirationGroups',
+  recommendations: 'ENCRYPTED:recommendations',
   encryption: 'KEYTAR',
   createdAt: new Date(),
 });
@@ -146,6 +147,7 @@ const mockDatabaseAnalysis = {
       total: 0,
     },
   ],
+  recommendations: [{ name: 'luaScript'}],
 } as DatabaseAnalysis;
 
 describe('DatabaseAnalysisProvider', () => {
@@ -175,7 +177,7 @@ describe('DatabaseAnalysisProvider', () => {
     // encryption mocks
     [
       'filter', 'totalKeys', 'totalMemory', 'topKeysNsp', 'topMemoryNsp',
-      'topKeysLength', 'topKeysMemory', 'expirationGroups',
+      'topKeysLength', 'topKeysMemory', 'expirationGroups', 'recommendations',
     ].forEach((field) => {
       when(encryptionService.encrypt)
         .calledWith(JSON.stringify(mockDatabaseAnalysis[field]))

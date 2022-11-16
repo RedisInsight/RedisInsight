@@ -454,5 +454,6 @@ export const constants = {
   TEST_DATABASE_ANALYSIS_RECOMMENDATION_1: {
     name: 'luaScript',
   },
+
   // etc...
 }

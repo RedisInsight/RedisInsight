@@ -15,14 +15,14 @@ describe('POST /databases/:instanceId/analysis', () => {
   // todo: skip for RE for now since scan 0 count 10000 might return cursor and 0 keys multiple times
   requirements('!rte.re');
 
-  before(async() => {
-      repository = await localDb.getRepository(localDb.repositories.DATABASE_ANALYSIS);
+  before(async () => {
+    repository = await localDb.getRepository(localDb.repositories.DATABASE_ANALYSIS);
 
-      await localDb.generateNDatabaseAnalysis({
-        databaseId: constants.TEST_INSTANCE_ID,
-      }, 30, true);
+    await localDb.generateNDatabaseAnalysis({
+      databaseId: constants.TEST_INSTANCE_ID,
+    }, 30, true);
 
-      await rte.data.generateKeys(true);
+    await rte.data.generateKeys(true);
   });
 
   [
@@ -135,7 +135,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.topKeysLength[0].length).to.gt(0);
 
         expect(body.expirationGroups.length).to.eq(8);
-        for(let i = 1; i < 8; i++) {
+        for (let i = 1; i < 8; i++) {
           expect(body.expirationGroups[i].label).to.be.a('string');
           expect(body.expirationGroups[i].total).to.eq(0);
           expect(body.expirationGroups[i].threshold).to.gt(0);
@@ -144,6 +144,71 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.expirationGroups[0].total).to.gt(0);
         expect(body.expirationGroups[0].threshold).to.eq(0);
         expect(body.recommendations.length).to.eq(0);
+      },
+      after: async () => {
+        expect(await repository.count()).to.eq(5);
+      }
+    },
+    {
+      name: 'Should create new database analysis with useSmallerKeys recommendation',
+      data: {
+        delimiter: '-',
+      },
+      statusCode: 201,
+      responseSchema,
+      before: async () => {
+        const KEYS_NUMBER = 1_000_001
+        await rte.data.generateNKeys(KEYS_NUMBER, false);
+      },
+      checkFn: async ({ body }) => {
+        expect(body.totalKeys.total).to.gt(0);
+        expect(body.totalMemory.total).to.gt(0);
+        expect(body.topKeysNsp.length).to.gt(0);
+        expect(body.topMemoryNsp.length).to.gt(0);
+        expect(body.topKeysLength.length).to.gt(0);
+        expect(body.topKeysMemory.length).to.gt(0);
+        expect(body.recommendations).to.deep.eq([{ name: 'useSmallerKeys'}]);
+      },
+      after: async () => {
+        expect(await repository.count()).to.eq(5);
+      }
+    },
+    {
+      name: 'Should create new database analysis with bigHashes recommendation',
+      data: {
+        delimiter: '-',
+      },
+      statusCode: 201,
+      responseSchema,
+      before: async () => {
+        const NUMBERS_OF_HASH_FIELDS = 5001
+        await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
+      },
+      checkFn: async ({ body }) => {
+        expect(body.totalKeys.total).to.gt(0);
+        expect(body.totalMemory.total).to.gt(0);
+        expect(body.topKeysNsp.length).to.gt(0);
+        expect(body.topMemoryNsp.length).to.gt(0);
+        expect(body.topKeysLength.length).to.gt(0);
+        expect(body.topKeysMemory.length).to.gt(0);
+        expect(body.recommendations).to.deep.eq([{ name: 'bigHashes'}]);
+      },
+      after: async () => {
+        expect(await repository.count()).to.eq(5);
+      }
+    },
+    {
+      name: 'Should create new database analysis with luaScript recommendation',
+      data: {
+        delimiter: '-',
+      },
+      statusCode: 201,
+      responseSchema,
+      before: async () => {
+        await rte.data.generateNCachedScripts(11, true);
+      },
+      checkFn: async ({ body }) => {
+        expect(body.recommendations).to.deep.eq([{ name: 'luaScript'}]);
       },
       after: async () => {
         expect(await repository.count()).to.eq(5);

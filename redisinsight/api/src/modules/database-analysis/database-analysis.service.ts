@@ -62,6 +62,7 @@ export class DatabaseAnalysisService {
             await this.recommendationService.getRecommendations({
               client: nodeResult.client,
               keys: nodeResult.keys,
+              total: progress.total,
             })
           )),
         )),

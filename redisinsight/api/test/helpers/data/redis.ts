@@ -456,6 +456,19 @@ export const initDataHelper = (rte) => {
     }
   }
 
+  // scripts
+  const generateNCachedScripts = async (number: number = 10, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const pipeline = [];
+    for (let i = 0; i < number; i++) {
+      pipeline.push(['eval', `return ${i}`, '0'])
+    }
+    await insertKeysBasedOnEnv(pipeline);
+  };
+
   return {
     sendCommand,
     executeCommand,
@@ -476,6 +489,7 @@ export const initDataHelper = (rte) => {
     generateStreamsWithoutStrictMode,
     generateNStreams,
     generateNGraphs,
+    generateNCachedScripts,
     getClientNodes,
   }
 }

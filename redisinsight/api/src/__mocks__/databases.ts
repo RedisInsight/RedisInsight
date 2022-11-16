@@ -6,7 +6,7 @@ import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { mockIORedisClient } from 'src/__mocks__/redis';
 import { mockSentinelMasterDto } from 'src/__mocks__/redis-sentinel';
 import { pick } from 'lodash';
-import { mockRedisGeneralInfo } from 'src/modules/database/providers/database-info.provider.spec';
+import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 import { ClientMetadata } from 'src/modules/redis/models/client-metadata';
 import { AppTool } from 'src/models';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
@@ -132,6 +132,27 @@ export const mockDatabaseOverview: DatabaseOverview = {
   networkInKbps: 1,
   networkOutKbps: 1,
   cpuUsagePercentage: null,
+};
+
+export const mockRedisServerInfoDto = {
+  redis_version: '6.0.5',
+  redis_mode: 'standalone',
+  os: 'Linux 4.15.0-1087-gcp x86_64',
+  arch_bits: '64',
+  tcp_port: '11113',
+  uptime_in_seconds: '1000',
+};
+
+export const mockRedisGeneralInfo: RedisDatabaseInfoResponse = {
+  version: mockRedisServerInfoDto.redis_version,
+  databases: 16,
+  role: 'master',
+  server: mockRedisServerInfoDto,
+  usedMemory: 1000000,
+  totalKeys: 1,
+  connectedClients: 1,
+  uptimeInSeconds: 1000,
+  hitRatio: 1,
 };
 
 export const mockDatabaseRepository = jest.fn(() => ({

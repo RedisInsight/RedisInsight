@@ -3,13 +3,13 @@ import {
   mockDatabase,
   mockDatabaseConnectionService,
   mockDatabaseInfoProvider, mockDatabaseOverview, mockDatabaseOverviewProvider,
+  mockRedisGeneralInfo,
 } from 'src/__mocks__';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { AppTool } from 'src/models';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
-import { mockRedisGeneralInfo } from 'src/modules/database/providers/database-info.provider.spec';
 
 describe('DatabaseConnectionService', () => {
   let service: DatabaseInfoService;

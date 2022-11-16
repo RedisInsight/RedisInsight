@@ -3,10 +3,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   mockDatabase, mockDatabaseAnalytics, mockDatabaseFactory, mockDatabaseInfoProvider, mockDatabaseRepository,
-  mockRedisService, MockType,
+  mockRedisService, MockType, mockRedisGeneralInfo,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
-import { mockRedisGeneralInfo } from 'src/modules/database/providers/database-info.provider.spec';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { RedisService } from 'src/modules/redis/redis.service';

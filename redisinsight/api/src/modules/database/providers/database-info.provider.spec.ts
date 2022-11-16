@@ -46,7 +46,7 @@ const mockRedisServerInfoDto = {
   uptime_in_seconds: '1000',
 };
 
-export const mockRedisGeneralInfo: RedisDatabaseInfoResponse = {
+const mockRedisGeneralInfo: RedisDatabaseInfoResponse = {
   version: mockRedisServerInfoDto.redis_version,
   databases: 16,
   role: 'master',

@@ -4,11 +4,11 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   mockDatabase,
   mockDatabaseWithTlsAuth,
+  mockRedisGeneralInfo,
 } from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
 import { DEFAULT_SUMMARY as DEFAULT_REDIS_MODULES_SUMMARY } from 'src/utils/redis-modules-summary';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
-import { mockRedisGeneralInfo } from 'src/modules/database/providers/database-info.provider.spec';
 import { HostingProvider } from 'src/modules/database/entities/database.entity';
 
 describe('DatabaseAnalytics', () => {

@@ -3,6 +3,7 @@ import { Redis, Command } from 'ioredis';
 import { get } from 'lodash';
 import { convertRedisInfoReplyToObject } from 'src/utils';
 import { RedisDataType } from 'src/modules/browser/dto';
+import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
 
 const minNumberOfCachedScripts = 10;
@@ -17,7 +18,7 @@ export class RecommendationProvider {
    */
   async determineLuaScriptRecommendation(
     redisClient: Redis,
-  ): Promise<boolean> {
+  ): Promise<Recommendation> {
     const info = convertRedisInfoReplyToObject(
       await redisClient.sendCommand(
         new Command('info', [], { replyEncoding: 'utf8' }),
@@ -25,7 +26,10 @@ export class RecommendationProvider {
     );
     const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
 
-    return parseInt(nodesNumbersOfCachedScripts, 10) > minNumberOfCachedScripts;
+    return ({
+      name: 'luaScript',
+      isActual: parseInt(nodesNumbersOfCachedScripts, 10) > minNumberOfCachedScripts,
+    });
   }
 
   /**
@@ -34,9 +38,12 @@ export class RecommendationProvider {
    */
   async determineBigHashesRecommendation(
     keys: Key[],
-  ): Promise<boolean> {
+  ): Promise<Recommendation> {
     const bigHashes = keys.filter((key) => key.type === RedisDataType.Hash && key.length > maxHashLength);
-    return bigHashes.length > 0;
+    return ({
+      name: 'bigHashes',
+      isActual: bigHashes.length > 0,
+    });
   }
 
   /**
@@ -45,7 +52,10 @@ export class RecommendationProvider {
    */
   async determineBigTotalRecommendation(
     total: number,
-  ): Promise<boolean> {
-    return total > maxDatabaseTotal;
+  ): Promise<Recommendation> {
+    return ({
+      name: 'useSmallerKeys',
+      isActual: total > maxDatabaseTotal,
+    });
   }
 }

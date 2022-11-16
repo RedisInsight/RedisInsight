@@ -33,17 +33,10 @@ export class RecommendationService {
       total,
     } = dto;
 
-    const recommendations = [];
-    // TODO refactor it
-    if (await this.recommendationProvider.determineLuaScriptRecommendation(client)) {
-      recommendations.push({ name: 'luaScript' });
-    }
-    if (await this.recommendationProvider.determineBigHashesRecommendation(keys)) {
-      recommendations.push({ name: 'bigHashes' });
-    }
-    if (await this.recommendationProvider.determineBigTotalRecommendation(total)) {
-      recommendations.push({ name: 'useSmallerKeys' });
-    }
-    return recommendations;
+    return ([
+      await this.recommendationProvider.determineLuaScriptRecommendation(client),
+      await this.recommendationProvider.determineBigHashesRecommendation(keys),
+      await this.recommendationProvider.determineBigTotalRecommendation(total),
+    ]);
   }
 }

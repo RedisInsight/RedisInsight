@@ -46,7 +46,7 @@ describe('Table', () => {
   it('should render correct length', () => {
     render(<Table {...instance(mockedProps)} data={mockData} />)
     expect(screen.getByTestId('length-empty-name_1')).toHaveTextContent('-')
-    expect(screen.getByTestId('length-value-name')).toHaveTextContent('10')
+    expect(screen.getByTestId(/length-value-name/).textContent).toEqual('100 000 000')
   })
 
   it('should highlight big keys', () => {

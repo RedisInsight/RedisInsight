@@ -71,16 +71,17 @@ test
             .click(myRedisDatabasePage.submitImportBtn)
             .expect(myRedisDatabasePage.failedImportMessage.exists).ok('Failed to add database message not displayed');
 
-        // Verify that success message is displayed
+        // Verify that user can import database with mandatory fields
         await t.click(myRedisDatabasePage.closeDialogBtn);
         await databasesActions.importDatabase(rdmData.path);
+        // Verify that success message is displayed
         await t.expect(myRedisDatabasePage.successImportMessage.textContent).contains(partialImportedMsg, 'Successfully added databases number not correct');
         
         // Verify that list of databases is reloaded when database added
         await t.click(myRedisDatabasePage.okDialogBtn);
         await databasesActions.verifyDatabasesDisplayed(rdmData.dbNames);
 
-        // Verify that user can import database with all data
+        // Verify that user can import database with mandatory+optional data
         await clickOnEditDatabaseByName(rdmData.dbNames[0]);
         // Verify username imported
         await t.expect(addRedisDatabasePage.usernameInput.value).eql(rdmData.userName);

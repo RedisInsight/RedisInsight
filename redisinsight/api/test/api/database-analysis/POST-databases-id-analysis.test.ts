@@ -167,7 +167,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.topMemoryNsp.length).to.gt(0);
         expect(body.topKeysLength.length).to.gt(0);
         expect(body.topKeysMemory.length).to.gt(0);
-        expect(body.recommendations).to.deep.eq([{ name: 'useSmallerKeys'}]);
+        expect(body.recommendations).to.deep.eq([constants.TEST_SMALLER_KEYS_DATABASE_ANALYSIS_RECOMMENDATION]);
       },
       after: async () => {
         expect(await repository.count()).to.eq(5);
@@ -191,7 +191,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.topMemoryNsp.length).to.gt(0);
         expect(body.topKeysLength.length).to.gt(0);
         expect(body.topKeysMemory.length).to.gt(0);
-        expect(body.recommendations).to.deep.eq([{ name: 'bigHashes'}]);
+        expect(body.recommendations).to.deep.eq([constants.TEST_BIG_HASHES_DATABASE_ANALYSIS_RECOMMENDATION]);
       },
       after: async () => {
         expect(await repository.count()).to.eq(5);
@@ -208,7 +208,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         await rte.data.generateNCachedScripts(11, true);
       },
       checkFn: async ({ body }) => {
-        expect(body.recommendations).to.deep.eq([{ name: 'luaScript'}]);
+        expect(body.recommendations).to.deep.eq([constants.TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION]);
       },
       after: async () => {
         expect(await repository.count()).to.eq(5);

@@ -26,10 +26,9 @@ export class RecommendationProvider {
     );
     const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
 
-    return ({
-      name: 'luaScript',
-      isActual: parseInt(nodesNumbersOfCachedScripts, 10) > minNumberOfCachedScripts,
-    });
+    return parseInt(nodesNumbersOfCachedScripts, 10) > minNumberOfCachedScripts
+      ? { name: 'luaScript' }
+      : null;
   }
 
   /**
@@ -39,11 +38,8 @@ export class RecommendationProvider {
   async determineBigHashesRecommendation(
     keys: Key[],
   ): Promise<Recommendation> {
-    const bigHashes = keys.filter((key) => key.type === RedisDataType.Hash && key.length > maxHashLength);
-    return ({
-      name: 'bigHashes',
-      isActual: bigHashes.length > 0,
-    });
+    const bigHashes = keys.some((key) => key.type === RedisDataType.Hash && key.length > maxHashLength);
+    return bigHashes ? { name: 'bigHashes' } : null;
   }
 
   /**
@@ -53,9 +49,6 @@ export class RecommendationProvider {
   async determineBigTotalRecommendation(
     total: number,
   ): Promise<Recommendation> {
-    return ({
-      name: 'useSmallerKeys',
-      isActual: total > maxDatabaseTotal,
-    });
+    return total > maxDatabaseTotal ? { name: 'useSmallerKeys' } : null;
   }
 }

@@ -1,6 +1,6 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
-import { omit } from 'lodash';
+import { isNull, flatten, uniqBy } from 'lodash';
 import { RecommendationService } from 'src/modules/recommendation/recommendation.service';
 import { catchAclError } from 'src/utils';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
@@ -57,7 +57,7 @@ export class DatabaseAnalysisService {
       });
 
       const recommendations = DatabaseAnalysisService.getRecommendationsSummary(
-        await Promise.all(
+        flatten(await Promise.all(
           scanResults.map(async (nodeResult) => (
             await this.recommendationService.getRecommendations({
               client: nodeResult.client,
@@ -65,7 +65,7 @@ export class DatabaseAnalysisService {
               total: progress.total,
             })
           )),
-        ),
+        )),
       );
       const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
         databaseId: clientOptions.instanceId,
@@ -107,23 +107,10 @@ export class DatabaseAnalysisService {
    * @param recommendations
    */
 
-  static getRecommendationsSummary(recommendations: Recommendation[][]): Recommendation[] {
-    const mergedRecommendations = recommendations.reduce((acc, nodeRecommendations) => {
-      nodeRecommendations.forEach((recommendation) => {
-        if (!acc[recommendation.name]) {
-          acc[recommendation.name] = recommendation;
-        } else {
-          acc[recommendation.name] = {
-            name: recommendation.name,
-            isActual: recommendation.isActual || acc[recommendation.name].isActual,
-            // merge other fields here
-          };
-        }
-      });
-      return acc;
-    }, {});
-    return Object.values(mergedRecommendations)
-      .filter((rec: Recommendation) => rec.isActual)
-      .map((recommendation: Recommendation) => omit(recommendation, 'isActual'));
+  static getRecommendationsSummary(recommendations: Recommendation[]): Recommendation[] {
+    return uniqBy(
+      recommendations.filter((recommendation) => !isNull(recommendation)),
+      'name',
+    );
   }
 }

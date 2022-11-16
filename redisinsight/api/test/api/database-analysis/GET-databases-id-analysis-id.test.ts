@@ -38,7 +38,7 @@ describe('GET /databases/:id/analysis/:id', () => {
           topKeysLength: [constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1],
           topKeysMemory: [constants.TEST_DATABASE_ANALYSIS_TOP_KEYS_1],
           expirationGroups: [constants.TEST_DATABASE_ANALYSIS_EXPIRATION_GROUP_1],
-          recommendations: [constants.TEST_DATABASE_ANALYSIS_RECOMMENDATION_1],
+          recommendations: [constants.TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION],
         });
       }
     },

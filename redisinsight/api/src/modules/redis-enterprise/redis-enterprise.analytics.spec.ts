@@ -5,15 +5,13 @@ import {
   mockRedisCloudDatabaseDto,
   mockRedisCloudSubscriptionDto,
   mockRedisEnterpriseDatabaseDto,
-  mockSentinelMasterDto,
 } from 'src/__mocks__';
 import { RedisEnterpriseDatabaseStatus } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
 import { RedisCloudSubscriptionStatus } from 'src/modules/redis-enterprise/models/redis-cloud-subscriptions';
-import { SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel';
 import { InternalServerErrorException } from '@nestjs/common';
-import { RedisEnterpriseAnalytics } from './autodiscovery-analytics.service';
+import { RedisEnterpriseAnalytics } from 'src/modules/redis-enterprise/redis-enterprise.analytics';
 
-describe('AutodiscoveryAnalyticsService', () => {
+describe('RedisEnterpriseAnalytics', () => {
   let service: RedisEnterpriseAnalytics;
   let sendEventMethod;
   let sendFailedEventMethod;
@@ -307,107 +305,6 @@ describe('AutodiscoveryAnalyticsService', () => {
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.RECloudDatabasesDiscoveryFailed,
-        httpException,
-      );
-    });
-  });
-
-  describe('sendGetSentinelMastersSucceedEvent', () => {
-    it('should emit event with active master groups', () => {
-      service.sendGetSentinelMastersSucceedEvent([
-        mockSentinelMasterDto,
-        mockSentinelMasterDto,
-      ]);
-
-      expect(sendEventMethod).toHaveBeenCalledWith(
-        TelemetryEvents.SentinelMasterGroupsDiscoverySucceed,
-        {
-          numberOfAvailablePrimaryGroups: 2,
-          totalNumberOfPrimaryGroups: 2,
-          totalNumberOfReplicas: 2,
-        },
-      );
-    });
-    it('should emit event with active and not active master groups', () => {
-      service.sendGetSentinelMastersSucceedEvent([
-        mockSentinelMasterDto,
-        {
-          ...mockSentinelMasterDto,
-          status: SentinelMasterStatus.Down,
-          numberOfSlaves: 0,
-        },
-      ]);
-
-      expect(sendEventMethod).toHaveBeenCalledWith(
-        TelemetryEvents.SentinelMasterGroupsDiscoverySucceed,
-        {
-          numberOfAvailablePrimaryGroups: 1,
-          totalNumberOfPrimaryGroups: 2,
-          totalNumberOfReplicas: 1,
-        },
-      );
-    });
-    it('should emit event without active groups', () => {
-      service.sendGetSentinelMastersSucceedEvent([
-        {
-          ...mockSentinelMasterDto,
-          status: SentinelMasterStatus.Down,
-          numberOfSlaves: 0,
-        },
-        {
-          ...mockSentinelMasterDto,
-          numberOfSlaves: 0,
-          status: SentinelMasterStatus.Down,
-        },
-      ]);
-
-      expect(sendEventMethod).toHaveBeenCalledWith(
-        TelemetryEvents.SentinelMasterGroupsDiscoverySucceed,
-        {
-          numberOfAvailablePrimaryGroups: 0,
-          totalNumberOfPrimaryGroups: 2,
-          totalNumberOfReplicas: 0,
-        },
-      );
-    });
-    it('should emit event for empty list', () => {
-      service.sendGetSentinelMastersSucceedEvent([]);
-
-      expect(sendEventMethod).toHaveBeenCalledWith(
-        TelemetryEvents.SentinelMasterGroupsDiscoverySucceed,
-        {
-          numberOfAvailablePrimaryGroups: 0,
-          totalNumberOfPrimaryGroups: 0,
-          totalNumberOfReplicas: 0,
-        },
-      );
-    });
-    it('should emit event for undefined input value', () => {
-      service.sendGetSentinelMastersSucceedEvent(undefined);
-
-      expect(sendEventMethod).toHaveBeenCalledWith(
-        TelemetryEvents.SentinelMasterGroupsDiscoverySucceed,
-        {
-          numberOfAvailablePrimaryGroups: 0,
-          totalNumberOfPrimaryGroups: 0,
-          totalNumberOfReplicas: 0,
-        },
-      );
-    });
-    it('should not throw on error', () => {
-      const input: any = {};
-
-      expect(() => service.sendGetSentinelMastersSucceedEvent(input)).not.toThrow();
-      expect(sendEventMethod).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('sendGetRECloudSubsFailedEvent', () => {
-    it('should emit event', () => {
-      service.sendGetSentinelMastersFailedEvent(httpException);
-
-      expect(sendFailedEventMethod).toHaveBeenCalledWith(
-        TelemetryEvents.SentinelMasterGroupsDiscoveryFailed,
         httpException,
       );
     });

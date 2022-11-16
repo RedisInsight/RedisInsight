@@ -1,17 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import {
+  mockDatabaseService,
   mockLogFile, mockLogFileProvider, mockMonitorSettings,
   mockSocket,
   MockType,
 } from 'src/__mocks__';
 import { ProfilerClientProvider } from 'src/modules/profiler/providers/profiler-client.provider';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 describe('ProfilerClientProvider', () => {
   let service: ProfilerClientProvider;
   let logFileProvider: MockType<LogFileProvider>;
-  let databaseService: MockType<InstancesBusinessService>;
+  let databaseService: MockType<DatabaseService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,21 +23,17 @@ describe('ProfilerClientProvider', () => {
           useFactory: () => mockLogFileProvider,
         },
         {
-          provide: InstancesBusinessService,
-          useFactory: () => ({
-            connectToInstance: jest.fn(),
-            getOneById: jest.fn(),
-          }),
+          provide: DatabaseService,
+          useFactory: mockDatabaseService,
         },
       ],
     }).compile();
 
     service = await module.get(ProfilerClientProvider);
     logFileProvider = await module.get(LogFileProvider);
-    databaseService = await module.get(InstancesBusinessService);
+    databaseService = await module.get(DatabaseService);
 
     logFileProvider.getOrCreate.mockReturnValue(mockLogFile);
-    databaseService.getOneById.mockResolvedValue({ name: 'alias' });
   });
 
   it('getOrCreateClient', async () => {
@@ -47,7 +44,7 @@ describe('ProfilerClientProvider', () => {
     );
 
     expect(service['profilerClients'].size).toEqual(1);
-    expect(databaseService.getOneById).not.toHaveBeenCalled();
+    expect(databaseService.get).not.toHaveBeenCalled();
     expect(logFileProvider.getOrCreate).not.toHaveBeenCalled();
 
     await service.getOrCreateClient(
@@ -57,7 +54,7 @@ describe('ProfilerClientProvider', () => {
     );
 
     expect(service['profilerClients'].size).toEqual(2);
-    expect(databaseService.getOneById).toHaveBeenCalled();
+    expect(databaseService.get).toHaveBeenCalled();
     expect(logFileProvider.getOrCreate).toHaveBeenCalled();
   });
 

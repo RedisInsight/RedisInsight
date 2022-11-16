@@ -94,10 +94,10 @@ const instancesSlice = createSlice({
       state.errorChanging = ''
     },
     changeInstanceAliasSuccess: (state, { payload }) => {
-      const { id, newName } = payload
+      const { id, name } = payload
       state.data = state.data.map((item: Instance) => {
         if (item.id === id) {
-          item.name = newName
+          item.name = name
         }
         return item
       })
@@ -275,7 +275,7 @@ export function fetchInstancesAction(onSuccess?: (data?: DatabaseInstanceRespons
 // Asynchronous thunk action
 export function createInstanceStandaloneAction(
   payload: Instance,
-  onRedirectToSentinel: () => void
+  onRedirectToSentinel?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
@@ -438,7 +438,7 @@ export function checkConnectToInstanceAction(
 const checkoutToSentinelFlow = (
   payload: Instance,
   dispatch: AppDispatch,
-  onRedirectToSentinel: () => void
+  onRedirectToSentinel?: () => void
 ) => {
   const payloadSentinel = { ...payload }
   delete payloadSentinel.name
@@ -474,7 +474,7 @@ export function getDatabaseConfigInfoAction(
 // Asynchronous thunk action
 export function changeInstanceAliasAction(
   id: string = '',
-  newName: string,
+  name: string,
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
@@ -486,18 +486,19 @@ export function changeInstanceAliasAction(
       const { CancelToken } = axios
       sourceInstance = CancelToken.source()
 
-      const { status } = await apiService.patch(
-        `${ApiEndpoints.DATABASES}/${id}/name`,
-        { newName },
+      const { status } = await apiService.put(
+        `${ApiEndpoints.DATABASES}/${id}`,
+        { name },
         { cancelToken: sourceInstance.token }
       )
 
       sourceInstance = null
       if (isStatusSuccessful(status)) {
-        dispatch(changeInstanceAliasSuccess({ id, newName }))
+        dispatch(changeInstanceAliasSuccess({ id, name }))
         onSuccessAction?.()
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       if (!axios.isCancel(error)) {
         const errorMessage = getApiErrorMessage(error)
         dispatch(changeInstanceAliasFailure(errorMessage))

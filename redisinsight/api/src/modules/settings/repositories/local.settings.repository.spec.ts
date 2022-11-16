@@ -59,7 +59,6 @@ describe('LocalSettingsRepository', () => {
       expect(result).toEqual(mockSettings);
       expect(repository.update).toHaveBeenCalledWith({}, {
         ...mockSettingsEntity,
-        id: undefined,
       });
     });
   });

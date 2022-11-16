@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ServiceUnavailableException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { mockRedisWrongTypeError, mockStandaloneDatabaseEntity, MockType } from 'src/__mocks__';
+import { mockRedisWrongTypeError, mockDatabase, MockType } from 'src/__mocks__';
 import { CommandType, TelemetryEvents } from 'src/constants';
 import { ReplyError } from 'src/models';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
@@ -13,7 +13,7 @@ const redisReplyError: ReplyError = {
   ...mockRedisWrongTypeError,
   command: { name: 'sadd' },
 };
-const instanceId = mockStandaloneDatabaseEntity.id;
+const instanceId = mockDatabase.id;
 
 const mockCommandsService = {
   getCommandsGroups: jest.fn(),
@@ -98,7 +98,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'set',
+          command: 'set'.toUpperCase(),
           commandType: CommandType.Core,
           moduleName: 'n/a',
           capability: 'string',
@@ -118,7 +118,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'set',
+          command: 'set'.toUpperCase(),
           commandType: CommandType.Core,
           moduleName: 'n/a',
           capability: 'string',
@@ -138,7 +138,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'set',
+          command: 'set'.toUpperCase(),
         },
       );
     });
@@ -153,7 +153,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'bF.rEsErvE',
+          command: 'bF.rEsErvE'.toUpperCase(),
           commandType: CommandType.Module,
           moduleName: 'redisbloom',
           capability: 'bf',
@@ -171,7 +171,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'CUSTOM.COMMAnd',
+          command: 'CUSTOM.COMMAnd'.toUpperCase(),
           commandType: CommandType.Module,
           moduleName: 'custommodule',
           capability: 'n/a',
@@ -189,7 +189,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'some.command',
+          command: 'some.command'.toUpperCase(),
           commandType: CommandType.Module,
           moduleName: 'custom',
           capability: 'n/a',
@@ -221,7 +221,7 @@ describe('WorkbenchAnalyticsService', () => {
         {
           databaseId: instanceId,
           error: ReplyError.name,
-          command: 'set',
+          command: 'set'.toUpperCase(),
           commandType: CommandType.Core,
           moduleName: 'n/a',
           capability: 'string',
@@ -240,7 +240,7 @@ describe('WorkbenchAnalyticsService', () => {
         {
           databaseId: instanceId,
           error: ReplyError.name,
-          command: 'sadd',
+          command: 'sadd'.toUpperCase(),
         },
       );
     });

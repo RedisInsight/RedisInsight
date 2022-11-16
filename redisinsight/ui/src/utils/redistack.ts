@@ -35,4 +35,4 @@ const checkRediStack = (instances: Instance[]): Instance[] => {
   return newInstances
 }
 
-export { checkRediStack }
+export { checkRediStack, checkRediStackModules }

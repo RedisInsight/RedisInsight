@@ -12,7 +12,7 @@ import {
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
 } from 'src/__mocks__';
 import {
   GetHashFieldsDto,
@@ -33,7 +33,7 @@ import {
 import { HashBusinessService } from './hash-business.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 describe('HashBusinessService', () => {

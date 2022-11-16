@@ -217,7 +217,7 @@ describe('instances slice', () => {
       }
 
       // Act
-      const nextState = reducer(prevState, changeInstanceAliasSuccess({ id: instances[0].id, newName: 'newAlias' }))
+      const nextState = reducer(prevState, changeInstanceAliasSuccess({ id: instances[0].id, name: 'newAlias' }))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -1008,7 +1008,7 @@ describe('instances slice', () => {
     })
 
     describe('changeInstanceAliasAction', () => {
-      const requestPayload = { id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff', newName: 'newAlias' }
+      const requestPayload = { id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff', name: 'newAlias' }
       it('succeed to change database alias', async () => {
         // Arrange
         const data = {
@@ -1016,11 +1016,11 @@ describe('instances slice', () => {
           newName: 'newAlias',
         }
         const responsePayload = { status: 200, data }
-        apiService.patch = jest.fn().mockResolvedValue(responsePayload)
+        apiService.put = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
-          changeInstanceAliasAction(requestPayload.id, requestPayload.newName)
+          changeInstanceAliasAction(requestPayload.id, requestPayload.name)
         )
 
         // Assert
@@ -1040,11 +1040,11 @@ describe('instances slice', () => {
             data: { message: errorMessage },
           },
         }
-        apiService.patch = jest.fn().mockRejectedValue(responsePayload)
+        apiService.put = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
-          changeInstanceAliasAction(requestPayload.id, requestPayload.newName)
+          changeInstanceAliasAction(requestPayload.id, requestPayload.name)
         )
 
         // Assert

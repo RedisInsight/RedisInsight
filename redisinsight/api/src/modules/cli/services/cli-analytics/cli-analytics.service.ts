@@ -106,7 +106,7 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
         {
           databaseId,
           error: error?.name,
-          command: error?.command?.name,
+          command: error?.command?.name?.toUpperCase(),
           ...(await this.getCommandAdditionalInfo(additionalData['command'])),
           ...additionalData,
         },
@@ -139,7 +139,7 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
           {
             databaseId,
             error: error.name,
-            command: error?.command?.name,
+            command: error?.command?.name?.toUpperCase(),
             ...(await this.getCommandAdditionalInfo(additionalData['command'])),
             ...additionalData,
           },

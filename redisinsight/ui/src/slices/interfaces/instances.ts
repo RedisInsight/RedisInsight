@@ -7,13 +7,12 @@ import {
   GetListElementsDto,
   GetListElementsResponse,
 } from 'apiSrc/modules/browser/dto/list.dto'
-import {
-  DatabaseInstanceResponse,
-  RedisModuleDto,
-  SentinelMasterDto
-} from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
-import { AddSentinelMasterDto, AddSentinelMasterResponse } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
+import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-master'
+import { CreateSentinelDatabasesDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.databases.dto'
+import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
 
 export interface Instance extends DatabaseInstanceResponse {
   host: string
@@ -36,8 +35,8 @@ export interface Instance extends DatabaseInstanceResponse {
   authUsername?: Nullable<string>
   authPass?: Nullable<string>
   isDeleting?: boolean
-  sentinelMaster?: SentinelMasterDto
-  modules: RedisModuleDto[]
+  sentinelMaster?: SentinelMaster
+  modules: AdditionalRedisModule[]
   isRediStack?: boolean
   visible?: boolean
   loading?: boolean
@@ -325,7 +324,7 @@ export interface InitialStateSentinel {
   loading: boolean
   instance: Nullable<Instance>
   data: ModifiedSentinelMaster[]
-  statuses: AddSentinelMasterResponse[]
+  statuses: CreateSentinelDatabaseResponse[]
   error: string
   loaded: ILoadedSentinel
 }
@@ -367,7 +366,7 @@ export interface ModifiedGetHashMembersResponse extends GetHashFieldsResponse {
   match?: string
 }
 
-export interface ModifiedSentinelMaster extends AddSentinelMasterDto {
+export interface ModifiedSentinelMaster extends CreateSentinelDatabasesDto {
   id?: string
   alias?: string
   host?: string

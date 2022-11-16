@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { get } from 'lodash';
 import {
   mockRedisMovedError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
   mockWorkbenchAnalyticsService,
 } from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
@@ -27,7 +27,7 @@ import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workb
 const MOCK_ERROR_MESSAGE = 'Some error';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const mockCliTool = () => ({

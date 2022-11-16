@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuidv4 } from 'uuid';
 import { when } from 'jest-when';
-import { mockStandaloneDatabaseEntity, mockWorkbenchAnalyticsService } from 'src/__mocks__';
+import { mockDatabase, mockWorkbenchAnalyticsService } from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
@@ -21,7 +21,7 @@ import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-com
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
@@ -71,7 +71,7 @@ const mockCommandExecutionResults: CommandExecutionResult[] = [
 ];
 const mockCommandExecutionToRun: CommandExecution = new CommandExecution({
   ...mockCreateCommandExecutionDto,
-  databaseId: mockStandaloneDatabaseEntity.id,
+  databaseId: mockDatabase.id,
 });
 
 const mockCommandExecution: CommandExecution = new CommandExecution({

@@ -3,15 +3,15 @@ import { InternalServerErrorException } from '@nestjs/common';
 import {
   mockAgreements,
   mockAgreementsRepository, mockAppSettings,
-  mockEncryptionStrategy, mockSettings,
+  mockEncryptionStrategyInstance, mockSettings,
   mockSettingsAnalyticsService, mockSettingsRepository,
-  MockType, mockUserId,
+  MockType, mockUserId
 } from 'src/__mocks__';
 import { UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
 import { AgreementIsNotDefinedException } from 'src/constants';
 import config from 'src/utils/config';
-import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
+import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
 import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { AgreementsRepository } from 'src/modules/settings/repositories/agreements.repository';
@@ -55,7 +55,7 @@ describe('SettingsService', () => {
         },
         {
           provide: KeytarEncryptionStrategy,
-          useFactory: mockEncryptionStrategy,
+          useFactory: mockEncryptionStrategyInstance,
         },
       ],
     }).compile();

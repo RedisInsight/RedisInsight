@@ -120,7 +120,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @private
    */
   private async populateCertificates(database: Database): Promise<Database> {
-    const model = database;
+    const model = classToClass(Database, database);
 
     // fetch ca cert if needed to be able to connect
     if (!model.caCert?.id && model.caCert?.certificate) {

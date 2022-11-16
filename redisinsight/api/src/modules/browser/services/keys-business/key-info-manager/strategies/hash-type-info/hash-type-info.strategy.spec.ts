@@ -3,7 +3,7 @@ import { when } from 'jest-when';
 import {
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
 } from 'src/__mocks__';
 import {
   BrowserToolHashCommands,
@@ -16,7 +16,7 @@ import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.servi
 import { HashTypeInfoStrategy } from './hash-type-info.strategy';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const getKeyInfoResponse: GetKeyInfoResponse = {

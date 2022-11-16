@@ -6,7 +6,7 @@ import {
   mockQueryBuilderGetMany,
   mockQueryBuilderGetManyRaw,
   mockRepository,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
   MockType,
 } from 'src/__mocks__';
 import { omit } from 'lodash';
@@ -20,11 +20,11 @@ import { CommandExecutionResult } from 'src/modules/workbench/models/command-exe
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { NotFoundException } from '@nestjs/common';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
-import { KeytarDecryptionErrorException } from 'src/modules/core/encryption/exceptions';
+import { KeytarDecryptionErrorException } from 'src/modules/encryption/exceptions';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ICliExecResultFromNode } from 'src/modules/redis/redis-tool.service';
 import config from 'src/utils/config';
@@ -54,7 +54,7 @@ const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
 
 const mockCommandExecutionEntity = new CommandExecutionEntity({
   id: uuidv4(),
-  databaseId: mockStandaloneDatabaseEntity.id,
+  databaseId: mockDatabase.id,
   command: mockEncryptResult.data,
   result: mockEncryptResult.data,
   role: mockCreateCommandExecutionDto.role,
@@ -74,7 +74,7 @@ const mockCommandExecutionResult: CommandExecutionResult = {
 
 const mockCommandExecutionPartial: Partial<CommandExecution> = new CommandExecution({
   ...mockCreateCommandExecutionDto,
-  databaseId: mockStandaloneDatabaseEntity.id,
+  databaseId: mockDatabase.id,
   result: [mockCommandExecutionResult],
 });
 
@@ -108,57 +108,55 @@ describe('CommandExecutionProvider', () => {
       repository.save.mockReturnValueOnce([mockCommandExecutionEntity]);
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
-      expect(await service.createMany([mockCommandExecutionPartial])).toEqual([new CommandExecution({
+      expect(await service.createMany([mockCommandExecutionPartial])).toEqual([{
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
         createdAt: mockCommandExecutionEntity.createdAt,
-      })]);
+      }]);
     });
     it('should return full result even if size limit exceeded', async () => {
       repository.save.mockReturnValueOnce([mockCommandExecutionEntity]);
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
-      const executionResult = [new CommandExecutionResult({
+      const executionResult = [{
         status: CommandExecutionStatus.Success,
         response: `${Buffer.alloc(WORKBENCH_CONFIG.maxResultSize, 'a').toString()}`,
-      })];
+      }];
 
       expect(await service.createMany([{
         ...mockCommandExecutionPartial,
         result: executionResult,
-      }])).toEqual([new CommandExecution({
+      }])).toEqual([{
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
         createdAt: mockCommandExecutionEntity.createdAt,
         result: executionResult,
-      })]);
+      }]);
 
-      expect(encryptionService.encrypt).toHaveBeenLastCalledWith(JSON.stringify([
-        new CommandExecutionResult({
-          status: CommandExecutionStatus.Success,
-          response: 'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
-        }),
-      ]));
+      expect(encryptionService.encrypt).toHaveBeenLastCalledWith(JSON.stringify([{
+        status: CommandExecutionStatus.Success,
+        response: 'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
+      }]));
     });
     it('should return with flag isNotStored="true" even if size limit exceeded', async () => {
       repository.save.mockReturnValueOnce([{ ...mockCommandExecutionEntity, isNotStored: true }]);
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
-      const executionResult = [new CommandExecutionResult({
+      const executionResult = [{
         status: CommandExecutionStatus.Success,
         response: `${Buffer.alloc(WORKBENCH_CONFIG.maxResultSize, 'a').toString()}`,
-      })];
+      }];
 
       expect(await service.createMany([{
         ...mockCommandExecutionPartial,
         result: executionResult,
-      }])).toEqual([new CommandExecution({
+      }])).toEqual([{
         ...mockCommandExecutionPartial,
         id: mockCommandExecutionEntity.id,
         createdAt: mockCommandExecutionEntity.createdAt,
         result: executionResult,
         isNotStored: true,
-      })]);
+      }]);
 
       expect(encryptionService.encrypt).toHaveBeenLastCalledWith(JSON.stringify([
         new CommandExecutionResult({
@@ -215,7 +213,7 @@ describe('CommandExecutionProvider', () => {
         createdAt: mockCommandExecutionEntity.createdAt,
       });
 
-      expect(await service.getOne(mockStandaloneDatabaseEntity.id, mockCommandExecutionEntity.id)).toEqual(
+      expect(await service.getOne(mockDatabase.id, mockCommandExecutionEntity.id)).toEqual(
         commandExecution,
       );
     });
@@ -231,7 +229,7 @@ describe('CommandExecutionProvider', () => {
         result: null,
       });
 
-      expect(await service.getOne(mockStandaloneDatabaseEntity.id, mockCommandExecutionEntity.id)).toEqual(
+      expect(await service.getOne(mockDatabase.id, mockCommandExecutionEntity.id)).toEqual(
         commandExecution,
       );
     });
@@ -239,7 +237,7 @@ describe('CommandExecutionProvider', () => {
       repository.findOneBy.mockResolvedValueOnce(null);
 
       try {
-        await service.getOne(mockStandaloneDatabaseEntity.id, mockCommandExecutionEntity.id);
+        await service.getOne(mockDatabase.id, mockCommandExecutionEntity.id);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -250,7 +248,7 @@ describe('CommandExecutionProvider', () => {
   describe('delete', () => {
     it('Should not return anything on delete', async () => {
       repository.delete.mockResolvedValueOnce(1);
-      expect(await service.delete(mockStandaloneDatabaseEntity.id, mockCommandExecutionEntity.id)).toEqual(
+      expect(await service.delete(mockDatabase.id, mockCommandExecutionEntity.id)).toEqual(
         undefined,
       );
     });
@@ -262,7 +260,7 @@ describe('CommandExecutionProvider', () => {
         { id: mockCommandExecutionEntity.id },
       ]);
 
-      expect(await service.cleanupDatabaseHistory(mockStandaloneDatabaseEntity.id)).toEqual(
+      expect(await service.cleanupDatabaseHistory(mockDatabase.id)).toEqual(
         undefined,
       );
     });

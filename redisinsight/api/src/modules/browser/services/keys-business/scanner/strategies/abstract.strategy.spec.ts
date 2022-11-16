@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
+  mockDatabase,
   mockRedisConsumer,
-  mockRedisWrongTypeError, mockSettingsService,
-  mockStandaloneDatabaseEntity,
+  mockRedisWrongTypeError,
+  mockSettingsService,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
@@ -16,7 +17,7 @@ import IORedis from 'ioredis';
 import { SettingsService } from 'src/modules/settings/settings.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const nodeClient = Object.create(IORedis.prototype);

@@ -1,4 +1,4 @@
-import { RedisModules } from 'src/constants';
+import { AdditionalRedisModuleName } from 'src/constants';
 import { convertRECloudModuleName } from 'src/modules/redis-enterprise/utils/redis-cloud-converter';
 
 describe('convertRedisCloudModuleName', () => {
@@ -7,7 +7,7 @@ describe('convertRedisCloudModuleName', () => {
 
     const output = convertRECloudModuleName(input);
 
-    expect(output).toEqual(RedisModules.RedisJSON);
+    expect(output).toEqual(AdditionalRedisModuleName.RedisJSON);
   });
   it('should return non-exist module name', () => {
     const input = 'RedisNewModule';

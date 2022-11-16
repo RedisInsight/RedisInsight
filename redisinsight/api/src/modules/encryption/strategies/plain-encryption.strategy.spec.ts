@@ -3,8 +3,8 @@ import {
   mockDataToEncrypt,
   mockEncryptResult,
 } from 'src/__mocks__';
-import { PlainEncryptionStrategy } from 'src/modules/core/encryption/strategies/plain-encryption.strategy';
-import { EncryptionStrategy } from 'src/modules/core/encryption/models';
+import { PlainEncryptionStrategy } from 'src/modules/encryption/strategies/plain-encryption.strategy';
+import { EncryptionStrategy } from 'src/modules/encryption/models';
 
 describe('PlainEncryptionStrategy', () => {
   let service: PlainEncryptionStrategy;

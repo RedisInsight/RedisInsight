@@ -157,8 +157,4 @@ export class DatabaseEntity {
 
   @Column({ nullable: true })
   encryption: string;
-
-  constructor(partial: Partial<DatabaseEntity>) {
-    Object.assign(this, partial);
-  }
 }

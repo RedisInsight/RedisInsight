@@ -14,6 +14,6 @@ export class ImportDatabaseDto extends PickType(Database, [
   @IsInt({ always: true })
   @Type(() => Number)
   @Min(0)
-  @Max(65536)
+  @Max(65535)
   port: number;
 }

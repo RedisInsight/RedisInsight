@@ -62,6 +62,10 @@ const HomePage = () => {
     dispatch(resetInstancesRedisCluster())
     dispatch(resetSubscriptionsRedisCloud())
     dispatch(fetchCreateRedisButtonsAction())
+
+    return (() => {
+      dispatch(setEditedInstance(null))
+    })
   }, [])
 
   useEffect(() => {

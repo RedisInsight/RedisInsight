@@ -89,7 +89,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
           {
             databaseId,
             error: error.name,
-            command: error?.command?.name,
+            command: error?.command?.name?.toUpperCase(),
             ...additionalData,
           },
         );

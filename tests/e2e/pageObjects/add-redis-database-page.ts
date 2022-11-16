@@ -28,7 +28,6 @@ export class AddRedisDatabasePage {
     sentinelDatabaseNavigation = Selector('[data-testid=database-nav-group]');
     cloneSentinelDatabaseNavigation = Selector('[data-testid=database-nav-group-clone]');
     cancelButton = Selector('[data-testid=btn-cancel]');
-    showPasswordBtn = Selector('[aria-label^="Show password"]');
     //TEXT INPUTS (also referred to as 'Text fields')
     hostInput = Selector('[data-testid=host]');
     portInput = Selector('[data-testid=port]');
@@ -43,7 +42,6 @@ export class AddRedisDatabasePage {
     databaseIndexMessage = Selector('[data-testid=db-index-message]');
     primaryGroupNameInput = Selector('[data-testid=primary-group]');
     masterGroupPassword = Selector('[data-testid=sentinel-master-password]');
-    connectionType = Selector('[data-testid=connection-type]');
     //Links
     buildFromSource = Selector('a').withExactText('Build from source');
     buildFromDocker = Selector('a').withExactText('Docker');

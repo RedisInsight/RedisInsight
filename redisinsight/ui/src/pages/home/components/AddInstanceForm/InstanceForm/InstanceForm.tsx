@@ -448,7 +448,7 @@ const AddStandaloneForm = (props: Props) => {
         label={(
           <EuiText color="subdued" size="s">
             Connection Type:
-            <EuiTextColor color="default" className={styles.dbInfoListValue} data-testid="connection-type">
+            <EuiTextColor color="default" className={styles.dbInfoListValue}>
               {capitalize(connectionType)}
             </EuiTextColor>
           </EuiText>

@@ -1,66 +1,40 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { mockCaCertEntity, mockClientCertEntity, mockStandaloneDatabaseEntity } from 'src/__mocks__';
+import {
+  mockDatabase,
+  mockDatabaseWithTlsAuth,
+  mockRedisGeneralInfo,
+} from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
 import { DEFAULT_SUMMARY as DEFAULT_REDIS_MODULES_SUMMARY } from 'src/utils/redis-modules-summary';
-import { DatabaseInstanceResponse } from 'src/modules/instances/dto/database-instance.dto';
-import { HostingProvider } from 'src/modules/core/models/database-instance.entity';
-import {
-  mockRedisGeneralInfo,
-} from 'src/modules/shared/services/configuration-business/configuration-business.service.spec';
-import { InstancesAnalyticsService } from './instances-analytics.service';
+import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
+import { HostingProvider } from 'src/modules/database/entities/database.entity';
 
-const mockDatabaseInstanceDto: DatabaseInstanceResponse = {
-  id: mockStandaloneDatabaseEntity.id,
-  nameFromProvider: null,
-  provider: HostingProvider.LOCALHOST,
-  connectionType: mockStandaloneDatabaseEntity.connectionType,
-  lastConnection: mockStandaloneDatabaseEntity.lastConnection,
-  host: mockStandaloneDatabaseEntity.host,
-  port: mockStandaloneDatabaseEntity.port,
-  name: mockStandaloneDatabaseEntity.name,
-  username: mockStandaloneDatabaseEntity.username,
-  password: mockStandaloneDatabaseEntity.password,
-  tls: {
-    verifyServerCert: true,
-    caCertId: mockCaCertEntity.id,
-    clientCertPairId: mockClientCertEntity.id,
-    servername: mockStandaloneDatabaseEntity.tlsServername,
-  },
-  modules: [],
-};
-describe('InstancesAnalytics', () => {
-  let service: InstancesAnalyticsService;
-  let sendEventMethod;
-  let sendFailedEventMethod;
+describe('DatabaseAnalytics', () => {
+  let service: DatabaseAnalytics;
+  let sendEventSpy;
+  let sendFailedEventSpy;
   const httpException = new InternalServerErrorException();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EventEmitter2,
-        InstancesAnalyticsService,
+        DatabaseAnalytics,
       ],
     }).compile();
 
-    service = await module.get<InstancesAnalyticsService>(InstancesAnalyticsService);
-    sendEventMethod = jest.spyOn<InstancesAnalyticsService, any>(
-      service,
-      'sendEvent',
-    );
-    sendFailedEventMethod = jest.spyOn<InstancesAnalyticsService, any>(
-      service,
-      'sendFailedEvent',
-    );
+    service = await module.get(DatabaseAnalytics);
+    sendEventSpy = jest.spyOn(service as any, 'sendEvent');
+    sendFailedEventSpy = jest.spyOn(service as any, 'sendFailedEvent');
   });
 
   describe('sendInstanceListReceivedEvent', () => {
-    const instance = mockDatabaseInstanceDto;
     it('should emit event with one db in the list', () => {
-      service.sendInstanceListReceivedEvent([instance]);
+      service.sendInstanceListReceivedEvent([mockDatabaseWithTlsAuth]);
 
-      expect(sendEventMethod).toHaveBeenCalledWith(
+      expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceListReceived,
         {
           numberOfDatabases: 1,
@@ -68,9 +42,13 @@ describe('InstancesAnalytics', () => {
       );
     });
     it('should emit event with several dbs in the list', () => {
-      service.sendInstanceListReceivedEvent([instance, instance, instance]);
+      service.sendInstanceListReceivedEvent([
+        mockDatabaseWithTlsAuth,
+        mockDatabaseWithTlsAuth,
+        mockDatabaseWithTlsAuth,
+      ]);
 
-      expect(sendEventMethod).toHaveBeenCalledWith(
+      expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceListReceived,
         {
           numberOfDatabases: 3,
@@ -80,7 +58,7 @@ describe('InstancesAnalytics', () => {
     it('should emit event with several empty in the list', () => {
       service.sendInstanceListReceivedEvent([]);
 
-      expect(sendEventMethod).toHaveBeenCalledWith(
+      expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceListReceived,
         {
           numberOfDatabases: 0,
@@ -90,7 +68,7 @@ describe('InstancesAnalytics', () => {
     it('should emit event with additional data', () => {
       service.sendInstanceListReceivedEvent([], { data: 'data' });
 
-      expect(sendEventMethod).toHaveBeenCalledWith(
+      expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceListReceived,
         {
           numberOfDatabases: 0,
@@ -102,15 +80,14 @@ describe('InstancesAnalytics', () => {
 
   describe('sendInstanceAddedEvent', () => {
     it('should emit event with enabled tls and sni', () => {
-      const instance = mockDatabaseInstanceDto;
-      service.sendInstanceAddedEvent(instance, mockRedisGeneralInfo);
+      service.sendInstanceAddedEvent(mockDatabaseWithTlsAuth, mockRedisGeneralInfo);
 
-      expect(sendEventMethod).toHaveBeenCalledWith(
+      expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceAdded,
         {
-          databaseId: instance.id,
-          connectionType: instance.connectionType,
-          provider: instance.provider,
+          databaseId: mockDatabaseWithTlsAuth.id,
+          connectionType: mockDatabaseWithTlsAuth.connectionType,
+          provider: mockDatabaseWithTlsAuth.provider,
           useTLS: 'enabled',
           verifyTLSCertificate: 'enabled',
           useTLSAuthClients: 'enabled',
@@ -127,12 +104,12 @@ describe('InstancesAnalytics', () => {
     });
     it('should emit event with disabled tls and sni', () => {
       const instance = {
-        ...mockDatabaseInstanceDto,
-        tls: undefined,
+        ...mockDatabase,
       };
+
       service.sendInstanceAddedEvent(instance, mockRedisGeneralInfo);
 
-      expect(sendEventMethod).toHaveBeenCalledWith(
+      expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceAdded,
         {
           databaseId: instance.id,
@@ -154,14 +131,14 @@ describe('InstancesAnalytics', () => {
     });
     it('should emit event without additional info', () => {
       const instance = {
-        ...mockDatabaseInstanceDto,
+        ...mockDatabaseWithTlsAuth,
         modules: [{ name: 'search', version: 20000 }, { name: 'rediSQL', version: 1 }],
       };
       service.sendInstanceAddedEvent(instance, {
         version: mockRedisGeneralInfo.version,
       });
 
-      expect(sendEventMethod).toHaveBeenCalledWith(
+      expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceAdded,
         {
           databaseId: instance.id,
@@ -190,15 +167,18 @@ describe('InstancesAnalytics', () => {
 
   describe('sendInstanceEditedEvent', () => {
     it('should emit event for manual update by user with disabled tls', () => {
-      const prev = mockDatabaseInstanceDto;
+      const prev = mockDatabaseWithTlsAuth;
       const cur = {
-        ...mockDatabaseInstanceDto,
+        ...mockDatabaseWithTlsAuth,
         provider: HostingProvider.RE_CLUSTER,
         tls: undefined,
+        verifyServerCert: false,
+        caCert: null,
+        clientCert: null,
       };
       service.sendInstanceEditedEvent(prev, cur);
 
-      expect(sendEventMethod).toHaveBeenCalledWith(
+      expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceEditedByUser,
         {
           databaseId: cur.id,
@@ -219,16 +199,16 @@ describe('InstancesAnalytics', () => {
     });
     it('should emit event for manual update by user with enabled tls', () => {
       const prev = {
-        ...mockDatabaseInstanceDto,
+        ...mockDatabase,
         tls: undefined,
       };
       const cur = {
-        ...mockDatabaseInstanceDto,
+        ...mockDatabaseWithTlsAuth,
         provider: HostingProvider.RE_CLUSTER,
       };
       service.sendInstanceEditedEvent(prev, cur);
 
-      expect(sendEventMethod).toHaveBeenCalledWith(
+      expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceEditedByUser,
         {
           databaseId: cur.id,
@@ -248,15 +228,15 @@ describe('InstancesAnalytics', () => {
       );
     });
     it('should not emit event if instance updated not by user', () => {
-      const prev = mockDatabaseInstanceDto;
+      const prev = mockDatabaseWithTlsAuth;
       const cur = {
-        ...mockDatabaseInstanceDto,
+        ...mockDatabase,
         provider: HostingProvider.RE_CLUSTER,
         tls: undefined,
       };
       service.sendInstanceEditedEvent(prev, cur, false);
 
-      expect(sendEventMethod).not.toHaveBeenCalled();
+      expect(sendEventSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -264,7 +244,7 @@ describe('InstancesAnalytics', () => {
     it('should emit AddFailed event', () => {
       service.sendInstanceAddFailedEvent(httpException);
 
-      expect(sendFailedEventMethod).toHaveBeenCalledWith(
+      expect(sendFailedEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceAddFailed,
         httpException,
       );
@@ -273,13 +253,13 @@ describe('InstancesAnalytics', () => {
 
   describe('sendInstanceDeletedEvent', () => {
     it('should emit Deleted event', () => {
-      service.sendInstanceDeletedEvent(mockDatabaseInstanceDto);
+      service.sendInstanceDeletedEvent(mockDatabase);
 
-      expect(sendEventMethod).toHaveBeenCalledWith(
+      expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceDeleted,
         {
-          databaseId: mockDatabaseInstanceDto.id,
-          provider: mockDatabaseInstanceDto.provider,
+          databaseId: mockDatabase.id,
+          provider: mockDatabase.provider,
         },
       );
     });
@@ -287,13 +267,13 @@ describe('InstancesAnalytics', () => {
 
   describe('sendConnectionFailedEvent', () => {
     it('should emit ConnectionFailed event', () => {
-      service.sendConnectionFailedEvent(mockDatabaseInstanceDto, httpException);
+      service.sendConnectionFailedEvent(mockDatabase, httpException);
 
-      expect(sendFailedEventMethod).toHaveBeenCalledWith(
+      expect(sendFailedEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceConnectionFailed,
         httpException,
         {
-          databaseId: mockDatabaseInstanceDto.id,
+          databaseId: mockDatabase.id,
         },
       );
     });

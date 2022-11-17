@@ -35,11 +35,11 @@ export class ServerService implements OnApplicationBootstrap {
   private async upsertServerInfo(id: string = '') {
     this.logger.log('Checking server info.');
 
-    let startEvent = TelemetryEvents.ApplicationStarted;
+    let startEvent = TelemetryEvents.ApplicationFirstStart;
 
     if (await this.repository.exists(id)) {
       this.logger.log('First application launch.');
-      startEvent = TelemetryEvents.ApplicationFirstStart;
+      startEvent = TelemetryEvents.ApplicationStarted;
     }
 
     const server = await this.repository.getOrCreate(id);

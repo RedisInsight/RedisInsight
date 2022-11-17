@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import Redis from 'ioredis';
 import { when } from 'jest-when';
 import {
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
   mockStandaloneRedisInfoReply,
 } from 'src/__mocks__';
-import { OverviewService } from 'src/modules/shared/services/instances-business/overview.service';
-import { DatabaseOverview } from 'src/modules/instances/dto/database-overview.dto';
+import { DatabaseOverview } from 'src/modules/database/models/database-overview';
+import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 
 const mockClient = Object.create(Redis.prototype);
 mockClient.options = {
@@ -55,7 +55,7 @@ const mockNodeInfo = {
   keyspace: mockKeyspace,
 };
 
-const databaseId = mockStandaloneDatabaseEntity.id;
+const databaseId = mockDatabase.id;
 export const mockDatabaseOverview: DatabaseOverview = {
   version: mockServerInfo.redis_version,
   usedMemory: 1,
@@ -71,14 +71,14 @@ export const mockDatabaseOverview: DatabaseOverview = {
 };
 
 describe('OverviewService', () => {
-  let service: OverviewService;
+  let service: DatabaseOverviewProvider;
   let spyGetNodeInfo;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OverviewService],
+      providers: [DatabaseOverviewProvider],
     }).compile();
 
-    service = await module.get(OverviewService);
+    service = await module.get(DatabaseOverviewProvider);
     spyGetNodeInfo = jest.spyOn<any, any>(service, 'getNodeInfo');
     mockClient.call = jest.fn();
     mockClient.info = jest.fn();

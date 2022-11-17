@@ -877,30 +877,29 @@ workflows:
     jobs:
       - unit-tests-ui:
           name: UTest - UI
-#          filters:
-#            branches:
-#              only:
-#                - /^fe/feature.*/
-#                - /^fe/bugfix.*/
+          filters:
+            branches:
+              only:
+                - /^fe/feature.*/
+                - /^fe/bugfix.*/
   # BE Unit + Integration (limited RTEs) tests for "be/feature" or "be/bugfix" branches only
   backend-tests:
     jobs:
       - unit-tests-api:
           name: UTest - API
-#          filters:
-#            branches:
-#              only:
-#                - /^be/feature.*/
-#                - /^be/bugfix.*/
+          filters:
+            branches:
+              only:
+                - /^be/feature.*/
+                - /^be/bugfix.*/
       - integration-tests-run:
           matrix:
             alias: itest-code
             parameters:
-              rte: *iTestsNames
-#              rte: *iTestsNamesShort
+              rte: *iTestsNamesShort
           name: ITest - << matrix.rte >> (code)
-#          requires:
-#            - UTest - API
+          requires:
+            - UTest - API
   # E2E tests for "e2e/feature" or "e2e/bugfix" branches only
   e2e-tests:
     jobs:

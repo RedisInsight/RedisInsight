@@ -2,7 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
 
-export class Endpoint {
+export interface IEndpoint {
+  host: string,
+  port: number,
+}
+
+export class Endpoint implements IEndpoint {
   @ApiProperty({
     description:
       'The hostname of your Redis database, for example redis.acme.com.'

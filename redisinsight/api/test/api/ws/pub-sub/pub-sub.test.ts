@@ -259,6 +259,8 @@ describe('pub-sub', function () {
 
   describe('ACL', () => {
     requirements('rte.acl');
+    // todo: investigate cluster behaviour. tmp disabled ACL checks for cluster databases
+    requirements('rte.type<>CLUSTER');
     before(async () => rte.data.setAclUserRules('~* +@all'));
 
     it('should throw an error on connect without permissions (subscribe)', async () => {

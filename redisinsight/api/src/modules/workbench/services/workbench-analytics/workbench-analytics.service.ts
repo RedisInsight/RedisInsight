@@ -51,6 +51,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
             databaseId,
             ...(await this.getCommandAdditionalInfo(additionalData['command'])),
             ...additionalData,
+            command: additionalData['command']?.toUpperCase() || undefined,
           },
         );
       }
@@ -81,16 +82,21 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
         this.sendFailedEvent(
           TelemetryEvents.WorkbenchCommandErrorReceived,
           error,
-          { databaseId, ...additionalData },
+          {
+            databaseId,
+            ...additionalData,
+            command: additionalData['command']?.toUpperCase() || undefined,
+          },
         );
       } else {
+        const commandFromError = error?.command?.name?.toUpperCase() || undefined;
         this.sendEvent(
           TelemetryEvents.WorkbenchCommandErrorReceived,
           {
             databaseId,
             error: error.name,
-            command: error?.command?.name,
             ...additionalData,
+            command: additionalData['command']?.toUpperCase() || commandFromError,
           },
         );
       }

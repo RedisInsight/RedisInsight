@@ -6,7 +6,7 @@ import {
   MockType,
 } from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
-import { AppType } from 'src/modules/core/models/server-provider.interface';
+import { AppType } from 'src/modules/server/models/server';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import {
   AnalyticsService,
@@ -41,7 +41,7 @@ describe('AnalyticsService', () => {
     }).compile();
 
     settingsService = module.get(SettingsService);
-    service = module.get<AnalyticsService>(AnalyticsService);
+    service = module.get(AnalyticsService);
   });
 
   it('should be defined', () => {

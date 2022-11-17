@@ -160,7 +160,7 @@ export class CliBusinessService {
       this.cliAnalyticsService.sendCommandExecutedEvent(
         clientOptions.instanceId,
         {
-          command,
+          command: command?.toUpperCase(),
           outputFormat,
         },
       );
@@ -177,14 +177,14 @@ export class CliBusinessService {
         || error?.name === 'ReplyError'
       ) {
         this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, error, {
-          command,
+          command: command?.toUpperCase(),
           outputFormat,
         });
 
         return { response: error.message, status: CommandExecutionStatus.Fail };
       }
       this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, error, {
-        command,
+        command: command?.toUpperCase(),
         outputFormat,
       });
 
@@ -250,7 +250,7 @@ export class CliBusinessService {
         this.cliAnalyticsService.sendClusterCommandExecutedEvent(
           clientOptions.instanceId,
           nodeExecReply,
-          { command, outputFormat },
+          { command: command?.toUpperCase(), outputFormat },
         );
         const {
           response, status, host, port,
@@ -266,7 +266,7 @@ export class CliBusinessService {
 
       if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
         this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, error, {
-          command,
+          command: command?.toUpperCase(),
           outputFormat,
         });
         return [
@@ -333,7 +333,7 @@ export class CliBusinessService {
       this.cliAnalyticsService.sendClusterCommandExecutedEvent(
         clientOptions.instanceId,
         result,
-        { command, outputFormat },
+        { command: command?.toUpperCase(), outputFormat },
       );
       const {
         host, port, error, slot, ...rest
@@ -344,14 +344,14 @@ export class CliBusinessService {
 
       if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
         this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, error, {
-          command,
+          command: command?.toUpperCase(),
           outputFormat,
         });
         return { response: error.message, status: CommandExecutionStatus.Fail };
       }
 
       this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, error, {
-        command,
+        command: command?.toUpperCase(),
         outputFormat,
       });
 

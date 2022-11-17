@@ -1,12 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as IORedis from 'ioredis';
 import * as Redis from 'ioredis-mock';
-import { mockStandaloneDatabaseEntity } from 'src/__mocks__';
+import { mockDatabase } from 'src/__mocks__';
 import {
   IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import {
   BrowserToolCommands,
   BrowserToolKeysCommands,
@@ -15,12 +14,12 @@ import { InternalServerErrorException } from '@nestjs/common';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
 import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const mockClient = new Redis();
@@ -49,7 +48,7 @@ describe('BrowserToolClusterService', () => {
           useFactory: () => ({}),
         },
         {
-          provide: InstancesBusinessService,
+          provide: DatabaseService,
           useFactory: () => ({}),
         },
       ],
@@ -208,7 +207,7 @@ describe('BrowserToolClusterService', () => {
       ]))));
     });
     it('should throw error that cluster node not found', async () => {
-      const nodeOptions: EndpointDto = { host: '127.0.0.1', port: 7003 };
+      const nodeOptions = { host: '127.0.0.1', port: 7003 };
       const error = new ClusterNodeNotFoundError(
         ERROR_MESSAGES.CLUSTER_NODE_NOT_FOUND(
           `${nodeOptions.host}:${nodeOptions.port}`,

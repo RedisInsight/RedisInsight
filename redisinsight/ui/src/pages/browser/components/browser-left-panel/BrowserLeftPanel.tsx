@@ -28,24 +28,18 @@ import styles from './styles.module.scss'
 export interface Props {
   arePanelsCollapsed: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
-  panelsState: {
-    handleAddKeyPanel: (value: boolean) => void
-    handleBulkActionsPanel: (value: boolean) => void
-    handleCreateIndexPanel: (value: boolean) => void
-  }
+  handleAddKeyPanel: (value: boolean) => void
+  handleBulkActionsPanel: (value: boolean) => void
+  handleCreateIndexPanel: (value: boolean) => void
 }
 
 const BrowserLeftPanel = (props: Props) => {
   const {
     selectKey,
-    panelsState,
-  } = props
-
-  const {
     handleAddKeyPanel,
     handleBulkActionsPanel,
     handleCreateIndexPanel,
-  } = panelsState
+  } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const patternKeysState = useSelector(keysDataSelector)

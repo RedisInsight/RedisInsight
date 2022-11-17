@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import Redis from 'ioredis';
 import {
   mockRedisCommandReply,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
   mockWhitelistCommandsResponse,
 } from 'src/__mocks__';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
@@ -44,14 +44,14 @@ describe('PluginCommandsWhitelistProvider', () => {
       calculateCommandsSpy.mockResolvedValueOnce(mockWhitelistCommandsResponse);
 
       expect(
-        await service.getWhitelistCommands(mockStandaloneDatabaseEntity.id),
+        await service.getWhitelistCommands(mockDatabase.id),
       ).toEqual(mockWhitelistCommandsResponse);
       expect(calculateCommandsSpy).toHaveBeenCalled();
 
       calculateCommandsSpy.mockClear();
 
       expect(
-        await service.getWhitelistCommands(mockStandaloneDatabaseEntity.id),
+        await service.getWhitelistCommands(mockDatabase.id),
       ).toEqual(mockWhitelistCommandsResponse);
       expect(calculateCommandsSpy).not.toHaveBeenCalled();
     });

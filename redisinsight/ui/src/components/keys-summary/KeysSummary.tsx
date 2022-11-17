@@ -14,7 +14,7 @@ export interface Props {
   showScanMore?: boolean
   scanned?: number
   totalItemsCount?: number
-  nextCursor: string
+  nextCursor?: string
   scanMoreStyle?: {
     [key: string]: string | number;
   }

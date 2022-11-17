@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { mockAutodiscoveryAnalyticsService } from 'src/__mocks__';
+import { mockDatabaseService, mockRedisEnterpriseAnalytics } from 'src/__mocks__';
 import { IRedisCloudAccount } from 'src/modules/redis-enterprise/models/redis-cloud-account';
 import {
   CloudAuthDto,
@@ -23,8 +23,9 @@ import {
   RedisCloudDatabaseProtocol,
 } from 'src/modules/redis-enterprise/models/redis-cloud-database';
 import { RedisEnterpriseDatabaseStatus } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
-import { RedisCloudService } from './redis-cloud-business.service';
-import { AutodiscoveryAnalyticsService } from '../autodiscovery-analytics.service/autodiscovery-analytics.service';
+import { RedisCloudService } from 'src/modules/redis-enterprise/redis-cloud.service';
+import { RedisEnterpriseAnalytics } from 'src/modules/redis-enterprise/redis-enterprise.analytics';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -183,7 +184,7 @@ const mockRedisCloudDatabasesResponse: IRedisCloudDatabasesResponse = {
   ],
 };
 
-describe('RedisCloudBusinessService', () => {
+describe('RedisCloudService', () => {
   let service: RedisCloudService;
 
   beforeEach(async () => {
@@ -191,8 +192,12 @@ describe('RedisCloudBusinessService', () => {
       providers: [
         RedisCloudService,
         {
-          provide: AutodiscoveryAnalyticsService,
-          useFactory: mockAutodiscoveryAnalyticsService,
+          provide: DatabaseService,
+          useFactory: mockDatabaseService,
+        },
+        {
+          provide: RedisEnterpriseAnalytics,
+          useFactory: mockRedisEnterpriseAnalytics,
         },
       ],
     }).compile();

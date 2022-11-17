@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockAppSettings, mockAppSettingsInitial, mockAppSettingsWithoutPermissions,
-  mockEncryptionStrategy,
+  mockEncryptionStrategyInstance,
   mockEncryptResult,
   mockSettingsService,
   MockType,
 } from 'src/__mocks__';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
-import { PlainEncryptionStrategy } from 'src/modules/core/encryption/strategies/plain-encryption.strategy';
-import { KeytarEncryptionStrategy } from 'src/modules/core/encryption/strategies/keytar-encryption.strategy';
-import { EncryptionStrategy } from 'src/modules/core/encryption/models';
-import { UnsupportedEncryptionStrategyException } from 'src/modules/core/encryption/exceptions';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
+import { PlainEncryptionStrategy } from 'src/modules/encryption/strategies/plain-encryption.strategy';
+import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
+import { EncryptionStrategy } from 'src/modules/encryption/models';
+import { UnsupportedEncryptionStrategyException } from 'src/modules/encryption/exceptions';
 import { SettingsService } from 'src/modules/settings/settings.service';
 
 describe('EncryptionService', () => {
@@ -27,11 +27,11 @@ describe('EncryptionService', () => {
         EncryptionService,
         {
           provide: PlainEncryptionStrategy,
-          useFactory: mockEncryptionStrategy,
+          useFactory: mockEncryptionStrategyInstance,
         },
         {
           provide: KeytarEncryptionStrategy,
-          useFactory: mockEncryptionStrategy,
+          useFactory: mockEncryptionStrategyInstance,
         },
         {
           provide: SettingsService,

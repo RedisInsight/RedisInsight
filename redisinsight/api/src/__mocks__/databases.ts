@@ -1,12 +1,15 @@
 import { Database } from 'src/modules/database/models/database';
-import {
-  mockCaCertificate,
-  mockClientCertificate,
-} from 'src/__mocks__/certificates';
+import { mockCaCertificate, mockClientCertificate } from 'src/__mocks__/certificates';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { ConnectionType, DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { mockIORedisClient } from 'src/__mocks__/redis';
+import { mockSentinelMasterDto } from 'src/__mocks__/redis-sentinel';
+import { pick } from 'lodash';
+import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
+import { ClientMetadata } from 'src/modules/redis/models/client-metadata';
+import { AppTool } from 'src/models';
+import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';
 
@@ -21,8 +24,8 @@ export const mockDatabaseSentinelMasterPasswordPlain = 'some sentinel pass';
 export const mockDatabase = Object.assign(new Database(), {
   id: mockDatabaseId,
   name: 'database-name',
-  host: 'localhost',
-  port: 3679,
+  host: '127.0.100.1',
+  port: 6379,
   connectionType: ConnectionType.STANDALONE,
 });
 
@@ -69,7 +72,7 @@ export const mockDatabaseWithTlsAuthEntity = Object.assign(new DatabaseEntity(),
 });
 
 export const mockSentinelMaster = Object.assign(new SentinelMaster(), {
-  name: 'master_group_name',
+  name: 'mymaster',
   username: 'master_group_username',
   password: mockDatabaseSentinelMasterPasswordPlain,
 });
@@ -78,6 +81,7 @@ export const mockSentinelDatabaseWithTlsAuth = Object.assign(new Database(), {
   ...mockDatabaseWithTlsAuth,
   sentinelMaster: mockSentinelMaster,
   connectionType: ConnectionType.SENTINEL,
+  nodes: mockSentinelMasterDto.nodes,
 });
 
 export const mockSentinelDatabaseWithTlsAuthEntity = Object.assign(new DatabaseEntity(), {
@@ -86,17 +90,82 @@ export const mockSentinelDatabaseWithTlsAuthEntity = Object.assign(new DatabaseE
   sentinelMasterUsername: mockSentinelMaster.username,
   sentinelMasterPassword: mockDatabaseSentinelMasterPasswordEncrypted,
   connectionType: ConnectionType.SENTINEL,
+  nodes: JSON.stringify(mockSentinelDatabaseWithTlsAuth.nodes),
 });
+export const mockClusterNodes = [
+  {
+    host: '127.0.100.1',
+    port: 6379,
+  },
+  {
+    host: '127.0.100.2',
+    port: 6379,
+  },
+];
 
 export const mockClusterDatabaseWithTlsAuth = Object.assign(new Database(), {
   ...mockDatabaseWithTlsAuth,
   connectionType: ConnectionType.CLUSTER,
+  nodes: mockClusterNodes,
 });
 
 export const mockClusterDatabaseWithTlsAuthEntity = Object.assign(new DatabaseEntity(), {
   ...mockDatabaseWithTlsAuthEntity,
   connectionType: ConnectionType.CLUSTER,
+  nodes: JSON.stringify(mockClusterNodes),
 });
+
+export const mockClientMetadata: ClientMetadata = {
+  databaseId: mockDatabase.id,
+  namespace: AppTool.Common,
+};
+
+export const mockDatabaseOverview: DatabaseOverview = {
+  version: '6.2.4',
+  usedMemory: 1,
+  totalKeys: 2,
+  totalKeysPerDb: {
+    db0: 1,
+  },
+  connectedClients: 1,
+  opsPerSecond: 1,
+  networkInKbps: 1,
+  networkOutKbps: 1,
+  cpuUsagePercentage: null,
+};
+
+export const mockRedisServerInfoDto = {
+  redis_version: '6.0.5',
+  redis_mode: 'standalone',
+  os: 'Linux 4.15.0-1087-gcp x86_64',
+  arch_bits: '64',
+  tcp_port: '11113',
+  uptime_in_seconds: '1000',
+};
+
+export const mockRedisGeneralInfo: RedisDatabaseInfoResponse = {
+  version: mockRedisServerInfoDto.redis_version,
+  databases: 16,
+  role: 'master',
+  server: mockRedisServerInfoDto,
+  usedMemory: 1000000,
+  totalKeys: 1,
+  connectedClients: 1,
+  uptimeInSeconds: 1000,
+  hitRatio: 1,
+};
+
+export const mockDatabaseRepository = jest.fn(() => ({
+  exists: jest.fn().mockResolvedValue(true),
+  get: jest.fn().mockResolvedValue(mockDatabase),
+  create: jest.fn().mockResolvedValue(mockDatabase),
+  update: jest.fn().mockResolvedValue(mockDatabase),
+  delete: jest.fn(),
+  list: jest.fn().mockResolvedValue([
+    pick(mockDatabase, 'id', 'name'),
+    pick(mockDatabase, 'id', 'name'),
+  ]),
+}));
 
 export const mockDatabaseService = jest.fn(() => ({
   get: jest.fn().mockResolvedValue(mockDatabase),
@@ -106,4 +175,33 @@ export const mockDatabaseService = jest.fn(() => ({
 
 export const mockDatabaseConnectionService = jest.fn(() => ({
   getOrCreateClient: jest.fn().mockResolvedValue(mockIORedisClient),
+}));
+
+export const mockDatabaseInfoProvider = jest.fn(() => ({
+  isCluster: jest.fn(),
+  isSentinel: jest.fn(),
+  determineDatabaseModules: jest.fn(),
+  determineSentinelMasterGroups: jest.fn().mockReturnValue([mockSentinelMasterDto]),
+  determineClusterNodes: jest.fn().mockResolvedValue(mockClusterNodes),
+  getRedisGeneralInfo: jest.fn().mockResolvedValueOnce(mockRedisGeneralInfo),
+}));
+
+export const mockDatabaseOverviewProvider = jest.fn(() => ({
+  getOverview: jest.fn().mockResolvedValue(mockDatabaseOverview),
+}));
+
+export const mockDatabaseFactory = jest.fn(() => ({
+  createDatabaseModel: jest.fn().mockResolvedValue(mockDatabase),
+  createStandaloneDatabaseModel: jest.fn().mockResolvedValue(mockDatabase),
+  createClusterDatabaseModel: jest.fn().mockResolvedValue(mockClusterDatabaseWithTlsAuth),
+  createSentinelDatabaseModel: jest.fn().mockResolvedValue(mockSentinelDatabaseWithTlsAuth),
+}));
+
+export const mockDatabaseAnalytics = jest.fn(() => ({
+  sendInstanceListReceivedEvent: jest.fn(),
+  sendConnectionFailedEvent: jest.fn(),
+  sendInstanceAddedEvent: jest.fn(),
+  sendInstanceAddFailedEvent: jest.fn(),
+  sendInstanceEditedEvent: jest.fn(),
+  sendInstanceDeletedEvent: jest.fn(),
 }));

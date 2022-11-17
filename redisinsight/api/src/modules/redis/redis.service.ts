@@ -11,6 +11,7 @@ import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
 import { IRedisClusterNodeAddress } from 'src/models/redis-cluster';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
+import { cloneClassInstance } from 'src/utils';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -170,7 +171,7 @@ export class RedisService {
     tool = AppTool.Common,
     connectionName?,
   ): Promise<Redis | Cluster> {
-    const database = databaseDto;
+    const database = cloneClassInstance(databaseDto);
     Object.keys(database).forEach((key: string) => {
       if (database[key] === null) {
         delete database[key];

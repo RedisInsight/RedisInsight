@@ -17,6 +17,7 @@ import {
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
 import { RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
+import { numberWithSpaces } from 'src/utils/base.helper';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
 @Injectable()
@@ -174,7 +175,7 @@ export class RedisearchService {
     } catch (error) {
       this.logger.error('Failed to search keys using redisearch index', error);
       if (error.message?.includes(RedisErrorCodes.RedisearchLimit)) {
-        throw new BadRequestException(ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(dto.limit?.toLocaleString?.()));
+        throw new BadRequestException(ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(numberWithSpaces(dto.limit)));
       }
       throw catchAclError(error);
     }

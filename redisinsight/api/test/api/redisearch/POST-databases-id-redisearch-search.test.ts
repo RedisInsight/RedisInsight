@@ -1,3 +1,4 @@
+import { numberWithSpaces } from 'src/utils/base.helper';
 import {
   expect,
   describe,
@@ -89,7 +90,7 @@ describe('POST /databases/:id/redisearch/search', () => {
           responseBody: {
             statusCode: 400,
             error: 'Bad Request',
-            message: `Use a minimum of ${validInputData.limit} as the LIMIT.`,
+            message: `Set MAXSEARCHRESULTS to at least ${numberWithSpaces(validInputData.limit)}.`,
           },
           before: () => rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1'),
           after: () => rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '10000'),

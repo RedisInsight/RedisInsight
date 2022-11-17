@@ -9,7 +9,7 @@ export class DatabasesActions {
      * @param databases The list of databases to verify
      */
     async verifyDatabasesDisplayed(databases: string[]): Promise<void> {
-        for (const db in databases) {
+        for (const db of databases) {
             const databaseName = myRedisDatabasePage.dbNameList.withText(db);
             await t.expect(databaseName.exists).ok(`"${db}" database doesn't exist`);
         }

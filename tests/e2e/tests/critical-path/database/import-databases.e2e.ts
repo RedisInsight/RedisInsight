@@ -31,6 +31,7 @@ const dbData = [
         dbNames: ['ardmNoName:12001', 'ardmWithPassAndUsername']
     }
 ];
+// List of all created databases to delete
 const databases = [
     rdmData.dbNames[0],
     rdmData.dbNames[1],

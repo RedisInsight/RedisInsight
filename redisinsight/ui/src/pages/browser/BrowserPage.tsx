@@ -185,11 +185,12 @@ const BrowserPage = () => {
                   }}
                 >
                   <BrowserLeftPanel
-                    arePanelsCollapsed={arePanelsCollapsed}
                     selectKey={selectKey}
-                    handleAddKeyPanel={handleAddKeyPanel}
-                    handleBulkActionsPanel={handleBulkActionsPanel}
-                    handleCreateIndexPanel={handleCreateIndexPanel}
+                    panelsState={{
+                      handleAddKeyPanel,
+                      handleBulkActionsPanel,
+                      handleCreateIndexPanel,
+                    }}
                   />
                 </EuiResizablePanel>
 

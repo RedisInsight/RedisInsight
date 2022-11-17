@@ -5,13 +5,15 @@ import { BrowserStorageItem, DEFAULT_DELIMITER, KeyTypes } from 'uiSrc/constants
 import { localStorageService } from 'uiSrc/services'
 import { RootState } from '../store'
 import { RedisResponseBuffer, StateAppContext } from '../interfaces'
+import { SearchMode } from '../interfaces/keys'
 
 export const initialState: StateAppContext = {
   contextInstanceId: '',
   lastPage: '',
   browser: {
     keyList: {
-      isDataLoaded: false,
+      isDataPatternLoaded: false,
+      isDataRedisearchLoaded: false,
       scrollPatternTopPosition: 0,
       scrollRedisearchTopPosition: 0,
       isNotRendered: true,
@@ -73,8 +75,11 @@ const appContextSlice = createSlice({
     setBrowserSelectedKey: (state, { payload }: { payload: Nullable<RedisResponseBuffer> }) => {
       state.browser.keyList.selectedKey = payload
     },
-    setBrowserKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
-      state.browser.keyList.isDataLoaded = payload
+    setBrowserPatternKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
+      state.browser.keyList.isDataPatternLoaded = payload
+    },
+    setBrowserRedisearchKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
+      state.browser.keyList.isDataRedisearchLoaded = payload
     },
     setBrowserPatternScrollPosition: (state, { payload }: { payload: number }) => {
       state.browser.keyList.scrollPatternTopPosition = payload
@@ -176,7 +181,8 @@ const appContextSlice = createSlice({
 export const {
   setAppContextInitialState,
   setAppContextConnectedInstanceId,
-  setBrowserKeyListDataLoaded,
+  setBrowserPatternKeyListDataLoaded,
+  setBrowserRedisearchKeyListDataLoaded,
   setBrowserSelectedKey,
   setBrowserPatternScrollPosition,
   setBrowserRedisearchScrollPosition,
@@ -222,3 +228,13 @@ export const appContextAnalytics = (state: RootState) =>
 
 // The reducer
 export default appContextSlice.reducer
+
+// Asynchronous thunk action
+export function setBrowserKeyListDataLoaded(
+  searchMode: SearchMode,
+  value: boolean,
+) {
+  return searchMode === SearchMode.Pattern
+    ? setBrowserPatternKeyListDataLoaded(value)
+    : setBrowserRedisearchKeyListDataLoaded(value)
+}

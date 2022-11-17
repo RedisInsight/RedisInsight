@@ -33,6 +33,7 @@ import {
   fetchKeysMetadata,
   keysDataSelector,
   keysSelector,
+  resetKeysData,
   selectedKeySelector,
   setLastBatchKeys,
   sourceKeysFetch,
@@ -117,6 +118,7 @@ const KeyList = forwardRef((props: Props, ref) => {
     if (itemsRef.current.length === 0) {
       cancelAllMetadataRequests()
       setFirstDataLoaded(true)
+      dispatch(resetKeysData(searchMode))
       rerender({})
       return
     }

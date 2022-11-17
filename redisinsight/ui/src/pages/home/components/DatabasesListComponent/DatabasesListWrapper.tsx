@@ -24,7 +24,8 @@ import {
   ConnectionType,
   Instance,
 } from 'uiSrc/slices/interfaces'
-import { resetKeys } from 'uiSrc/slices/browser/keys'
+import { resetPatternKeysData } from 'uiSrc/slices/browser/keys'
+import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
 import { PageNames, Pages, Theme } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent, getRedisModulesSummary } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -107,7 +108,8 @@ const DatabasesListWrapper = ({
 
   const connectToInstance = (id = '') => {
     if (contextInstanceId && contextInstanceId !== id) {
-      dispatch(resetKeys())
+      dispatch(resetRedisearchKeysData())
+      dispatch(resetPatternKeysData())
       dispatch(resetCliSettingsAction())
       dispatch(resetCliHelperSettings())
       dispatch(setAppContextInitialState())

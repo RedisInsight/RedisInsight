@@ -29,6 +29,8 @@ export class MemoryEfficiencyPage {
     topNamespacesEmptyContainer = Selector('[data-testid=top-namespaces-empty]');
     topNamespacesEmptyMessage = Selector('[data-testid=top-namespaces-message]');
     noRecommendationsMessage =  Selector('[data-testid=empty-recommendations-message]');
+    codeChangesLabel = Selector('[data-testid=code_changes]');
+    configurationChangesLabel = Selector('[data-testid=configuration_changes]');
     // TABLE
     namespaceTable = Selector('[data-testid=nsp-table-memory]');
     nameSpaceTableRows = this.namespaceTable.find('[data-testid^=row-]');
@@ -49,4 +51,6 @@ export class MemoryEfficiencyPage {
     // CONTAINERS
     luaScriptAccordion = Selector('[data-testid=luaScript-accordion]');
     luaScriptTextContainer = Selector('#luaScript');
+    useSmallKeysAccordion = Selector('[data-testid=useSmallerKeys-accordion]');
+    bigHashesAccordion = Selector('[data-testid=bigHashes-accordion]');
 }

@@ -107,34 +107,10 @@ describe('KeysScanner', () => {
 
   describe('nodeScan', () => {
     it('should scan node keys', async () => {
+      const getTotal = jest.fn().mockResolvedValue(1);
       expect(await service.nodeScan(nodeClient, {
         filter: mockCreateDatabaseAnalysisDto.filter,
       })).toEqual(mockScanResult);
-    });
-  });
-
-  describe('getNodeTotal', () => {
-    it('get total keys in db', async () => {
-      expect(await service.getNodeTotal(nodeClient)).toEqual(1);
-    });
-    it('get total keys in db (db:3)', async () => {
-      const client = Object.assign(nodeClient);
-      client.options = { db: 3 };
-      expect(await service.getNodeTotal(client)).toEqual(100);
-    });
-    it('get total keys in db (no keyspace data)', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValueOnce(mockRedisKeyspaceInfoResponseNoKeyspaceData);
-
-      expect(await service.getNodeTotal(nodeClient)).toEqual(0);
-    });
-    it('get total keys in db (no info data)', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValueOnce(mockRedisKeyspaceInfoResponseEmpty);
-
-      expect(await service.getNodeTotal(nodeClient)).toEqual(0);
     });
   });
 });

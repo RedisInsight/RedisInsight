@@ -12,6 +12,7 @@ import {
   convertBulkStringsToObject,
   convertRedisInfoReplyToObject,
 } from 'src/utils';
+import { getTotal } from 'src/modules/database/utils/database.total.util';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 
 @Injectable()
@@ -29,16 +30,21 @@ export class DatabaseOverviewProvider {
   ): Promise<DatabaseOverview> {
     let nodesInfo = [];
     let currentDbIndex = 0;
+    let totalKeys;
+    let totalKeysPerDb;
 
-    if (client instanceof IORedis.Cluster) {
+    if (client.isCluster) {
       currentDbIndex = get(client, ['options', 'db'], 0);
-      nodesInfo = await this.getNodesInfo(client);
+      nodesInfo = await this.getNodesInfo(client as IORedis.Cluster);
+      totalKeys = await this.calculateNodesTotalKeys(client);
     } else {
       currentDbIndex = get(client, ['options', 'db'], 0);
-      nodesInfo = [await this.getNodeInfo(client)];
+      nodesInfo = [await this.getNodeInfo(client as IORedis.Redis)];
+      const [calculatedTotalKeys, calculatedTotalKeysPerDb] = this.calculateTotalKeys(nodesInfo, currentDbIndex);
+      totalKeys = calculatedTotalKeys;
+      totalKeysPerDb = calculatedTotalKeysPerDb;
     }
 
-    const [totalKeys, totalKeysPerDb] = this.calculateTotalKeys(nodesInfo, currentDbIndex);
     return {
       version: this.getVersion(nodesInfo),
       totalKeys,
@@ -232,6 +238,19 @@ export class DatabaseOverviewProvider {
     } catch (e) {
       return [null, null];
     }
+  }
+
+  private async calculateNodesTotalKeys(
+    client: IORedis.Cluster,
+  ): Promise<number> {
+    const nodesTotal: number[] = await Promise.all(
+      client
+        .nodes('master')
+        .map(async (node) => getTotal(node)),
+    );
+    return nodesTotal.reduce((prev, cur) => (
+      prev + cur
+    ), 0);
   }
 
   /**

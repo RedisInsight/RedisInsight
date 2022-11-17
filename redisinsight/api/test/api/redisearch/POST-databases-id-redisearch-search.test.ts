@@ -13,7 +13,7 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/instance/${instanceId}/redisearch/search`);
+  request(server).post(`/${constants.API.DATABASES}/${instanceId}/redisearch/search`);
 
 // input data schema
 const dataSchema = Joi.object({

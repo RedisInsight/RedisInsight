@@ -10,9 +10,9 @@ import {
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
 } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { ReplyError } from 'src/models';
 import {
   BrowserToolKeysCommands,
@@ -21,7 +21,6 @@ import {
 import {
   mockAddMembersToSetDto, mockDeleteMembersDto,
   mockGetSetMembersDto, mockGetSetMembersResponse,
-  mockSetMember,
   mockSetMembers,
 } from 'src/modules/browser/__mocks__';
 import { SetBusinessService } from './set-business.service';
@@ -32,7 +31,7 @@ import {
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 describe('SetBusinessService', () => {

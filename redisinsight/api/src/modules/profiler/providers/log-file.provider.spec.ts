@@ -4,7 +4,7 @@ import {
   mockLogFile,
   mockProfilerAnalyticsEvents,
   mockProfilerAnalyticsService,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
 } from 'src/__mocks__';
 import { ProfilerAnalyticsService } from 'src/modules/profiler/profiler-analytics.service';
 import { NotFoundException } from '@nestjs/common';
@@ -33,10 +33,10 @@ describe('LogFileProvider', () => {
     expect(service['profilerLogFiles'].size).toEqual(1);
     expect(logFile1['analyticsEvents']).toEqual(mockProfilerAnalyticsEvents);
 
-    const logFile2 = await service.getOrCreate(mockStandaloneDatabaseEntity.id, mockStandaloneDatabaseEntity.id);
+    const logFile2 = await service.getOrCreate(mockDatabase.id, mockDatabase.id);
     expect(service['profilerLogFiles'].size).toEqual(2);
 
-    const logFile22 = await service.getOrCreate(mockStandaloneDatabaseEntity.id, mockStandaloneDatabaseEntity.id);
+    const logFile22 = await service.getOrCreate(mockDatabase.id, mockDatabase.id);
     expect(service['profilerLogFiles'].size).toEqual(2);
     expect(logFile2).toEqual(logFile22);
   });

@@ -1,7 +1,7 @@
 import {
   BadRequestException, Injectable, InternalServerErrorException, Logger,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   ClusterNodeRole, ClusterSingleNodeOptions,
   CommandExecutionStatus,
@@ -20,7 +20,7 @@ import {
 } from 'src/modules/cli/constants/errors';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CreateCommandExecutionDto, RunQueryMode } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import {
   FormatterManager,
   FormatterTypes,
@@ -102,7 +102,7 @@ export class WorkbenchCommandsExecutor {
       this.analyticsService.sendCommandExecutedEvents(
         clientOptions.instanceId,
         result,
-        { command, rawMode: mode === RunQueryMode.Raw },
+        { command: command.toUpperCase(), rawMode: mode === RunQueryMode.Raw },
       );
 
       return result;
@@ -113,7 +113,7 @@ export class WorkbenchCommandsExecutor {
       this.analyticsService.sendCommandExecutedEvent(
         clientOptions.instanceId,
         { ...errorResult, error },
-        { command, rawMode: dto.mode === RunQueryMode.Raw },
+        { command: command.toUpperCase(), rawMode: dto.mode === RunQueryMode.Raw },
       );
 
       if (

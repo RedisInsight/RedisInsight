@@ -4,21 +4,21 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { when } from 'jest-when';
 import { get } from 'lodash';
 import { ReplyError } from 'src/models/redis-client';
 import {
-  mockOSSClusterDatabaseEntity,
   mockRedisClusterConsumer,
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockRepository,
-  mockSettingsProvider,
-  mockStandaloneDatabaseEntity,
+  mockSettingsService,
+  mockDatabase,
+  mockClusterDatabaseWithTlsAuth,
+  mockDatabaseService,
+  MockType,
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   GetKeyInfoResponse,
   GetKeysDto,
@@ -26,17 +26,16 @@ import {
   RedisDataType,
   RenameKeyDto,
 } from 'src/modules/browser/dto';
-import {
-  ConnectionType,
-  DatabaseInstanceEntity,
-} from 'src/modules/core/models/database-instance.entity';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import IORedis from 'ioredis';
+import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import { DatabaseService } from 'src/modules/database/database.service';
+import { RedisString } from 'src/common/constants';
 import { KeysBusinessService } from './keys-business.service';
 import { StringTypeInfoStrategy } from './key-info-manager/strategies/string-type-info/string-type-info.strategy';
 
@@ -48,7 +47,7 @@ const getKeyInfoResponse: GetKeyInfoResponse = {
 };
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const mockGetKeysWithDetailsResponse: GetKeysWithDetailsResponse = {
@@ -62,8 +61,8 @@ const nodeClient = Object.create(IORedis.prototype);
 nodeClient.isCluster = false;
 
 describe('KeysBusinessService', () => {
-  let service;
-  let instancesBusinessService;
+  let service: KeysBusinessService;
+  let databaseService: MockType<DatabaseService>;
   let browserTool;
   let standaloneScanner;
   let clusterScanner;
@@ -73,15 +72,13 @@ describe('KeysBusinessService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         KeysBusinessService,
+        // {
+        //   provide: DatabaseRepository,
+        //   useFactory: mockRepository,
+        // },
         {
-          provide: getRepositoryToken(DatabaseInstanceEntity),
-          useFactory: mockRepository,
-        },
-        {
-          provide: InstancesBusinessService,
-          useFactory: () => ({
-            getOneById: jest.fn(),
-          }),
+          provide: DatabaseService,
+          useFactory: mockDatabaseService,
         },
         {
           provide: BrowserToolService,
@@ -98,16 +95,14 @@ describe('KeysBusinessService', () => {
           }),
         },
         {
-          provide: 'SETTINGS_PROVIDER',
-          useFactory: mockSettingsProvider,
+          provide: SettingsService,
+          useFactory: mockSettingsService,
         },
       ],
     }).compile();
 
     service = module.get<KeysBusinessService>(KeysBusinessService);
-    instancesBusinessService = module.get<InstancesBusinessService>(
-      InstancesBusinessService,
-    );
+    databaseService = module.get(DatabaseService);
     browserTool = module.get<BrowserToolService>(BrowserToolService);
     const scannerManager = get(service, 'scanner');
     const keyInfoManager = get(service, 'keyInfoManager');
@@ -178,7 +173,7 @@ describe('KeysBusinessService', () => {
     it('should return keys with info', async () => {
       const result = await service.getKeysInfo(
         mockClientOptions,
-        [getKeyInfoResponse.name],
+        { keys: [getKeyInfoResponse.name] },
       );
 
       expect(result).toEqual([getKeyInfoResponse]);
@@ -192,18 +187,13 @@ describe('KeysBusinessService', () => {
       standaloneScanner['getKeysInfo'] = jest.fn().mockRejectedValueOnce(replyError);
 
       await expect(
-        service.getKeysInfo(mockClientOptions, [getKeyInfoResponse.name]),
+        service.getKeysInfo(mockClientOptions, { keys: [getKeyInfoResponse.name] }),
       ).rejects.toThrow(ForbiddenException);
     });
   });
 
   describe('getKeys', () => {
     const getKeysDto: GetKeysDto = { cursor: '0', count: 15 };
-    beforeEach(() => {
-      instancesBusinessService.getOneById.mockResolvedValue(
-        mockStandaloneDatabaseEntity,
-      );
-    });
     it('should return appropriate value for standalone database', async () => {
       standaloneScanner.getKeys = jest
         .fn()
@@ -216,11 +206,9 @@ describe('KeysBusinessService', () => {
     });
     it('should return appropriate value for cluster', async () => {
       const clientOptions: IFindRedisClientInstanceByOptions = {
-        instanceId: mockOSSClusterDatabaseEntity.id,
+        instanceId: mockClusterDatabaseWithTlsAuth.id,
       };
-      instancesBusinessService.getOneById.mockResolvedValue(
-        mockOSSClusterDatabaseEntity,
-      );
+      databaseService.get.mockResolvedValueOnce(mockClusterDatabaseWithTlsAuth);
       clusterScanner.getKeys = jest
         .fn()
         .mockResolvedValue([mockGetKeysWithDetailsResponse]);

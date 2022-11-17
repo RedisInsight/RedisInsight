@@ -1,5 +1,3 @@
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
-
 export type MockType<T> = {
   [P in keyof T]: jest.Mock<any>;
 };
@@ -21,13 +19,15 @@ export const mockRedisClusterConsumer = () => ({
   getRedisClient: jest.fn(),
 });
 
+export const mockQueryBuilderWhere = jest.fn().mockReturnThis();
 export const mockQueryBuilderGetOne = jest.fn();
 export const mockQueryBuilderGetMany = jest.fn();
 export const mockQueryBuilderGetManyRaw = jest.fn();
 export const mockQueryBuilderGetCount = jest.fn();
 export const mockQueryBuilderExecute = jest.fn();
 export const mockCreateQueryBuilder = jest.fn(() => ({
-  where: jest.fn().mockReturnThis(),
+  // where: jest.fn().mockReturnThis(),
+  where: mockQueryBuilderWhere,
   update: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
   set: jest.fn().mockReturnThis(),
@@ -57,9 +57,3 @@ export const mockRepository = jest.fn(() => ({
   remove: jest.fn(),
   createQueryBuilder: mockCreateQueryBuilder,
 }));
-
-export const mockSettingsProvider = (): ISettingsProvider => ({
-  getSettings: jest.fn(),
-  updateSettings: jest.fn(),
-  getAgreementsSpec: jest.fn(),
-});

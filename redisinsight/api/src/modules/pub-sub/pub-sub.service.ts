@@ -3,12 +3,12 @@ import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscribeDto } from 'src/modules/pub-sub/dto';
 import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription.provider';
-import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { PublishResponse } from 'src/modules/pub-sub/dto/publish.response';
 import { PublishDto } from 'src/modules/pub-sub/dto/publish.dto';
 import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { catchAclError } from 'src/utils';
+import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 
 @Injectable()
 export class PubSubService {
@@ -17,8 +17,7 @@ export class PubSubService {
   constructor(
     private readonly sessionProvider: UserSessionProvider,
     private readonly subscriptionProvider: SubscriptionProvider,
-    private redisService: RedisService,
-    private instancesBusinessService: InstancesBusinessService,
+    private databaseConnectionService: DatabaseConnectionService,
     private analyticsService: PubSubAnalyticsService,
   ) {}
 
@@ -84,7 +83,11 @@ export class PubSubService {
     try {
       this.logger.log('Publishing message.');
 
-      const client = await this.getClient(clientOptions);
+      const client = await this.databaseConnectionService.getOrCreateClient({
+        databaseId: clientOptions.instanceId,
+        namespace: clientOptions.tool,
+      });
+
       const affected = await client.publish(dto.channel, dto.message);
 
       this.analyticsService.sendMessagePublishedEvent(clientOptions.instanceId, affected);
@@ -101,28 +104,6 @@ export class PubSubService {
 
       throw catchAclError(e);
     }
-  }
-
-  /**
-   * Get or create redis "common" client
-   *
-   * @param clientOptions
-   * @private
-   */
-  private async getClient(clientOptions: IFindRedisClientInstanceByOptions) {
-    const { tool, instanceId } = clientOptions;
-
-    const commonClient = this.redisService.getClientInstance({ instanceId, tool })?.client;
-
-    if (commonClient && this.redisService.isClientConnected(commonClient)) {
-      return commonClient;
-    }
-
-    return this.instancesBusinessService.connectToInstance(
-      clientOptions.instanceId,
-      clientOptions.tool,
-      true,
-    );
   }
 
   /**

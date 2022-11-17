@@ -7,7 +7,7 @@ import { unescapeGlob, convertBulkStringsToObject } from 'src/utils';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import {
   GetKeyInfoResponse,
@@ -15,7 +15,7 @@ import {
   RedisDataType,
 } from 'src/modules/browser/dto';
 import { parseClusterCursor } from 'src/modules/browser/utils/clusterCursor';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { SettingsService } from 'src/modules/settings/settings.service';
 import { AbstractStrategy } from './abstract.strategy';
 import { IGetNodeKeysResult } from '../scanner.interface';
 
@@ -24,15 +24,15 @@ const REDIS_SCAN_CONFIG = config.get('redis_scan');
 export class ClusterStrategy extends AbstractStrategy {
   private readonly redisManager: BrowserToolClusterService;
 
-  private settingsProvider: ISettingsProvider;
+  private settingsService: SettingsService;
 
   constructor(
     redisManager: BrowserToolClusterService,
-    settingsProvider: ISettingsProvider,
+    settingsService: SettingsService,
   ) {
     super(redisManager);
     this.redisManager = redisManager;
-    this.settingsProvider = settingsProvider;
+    this.settingsService = settingsService;
   }
 
   public async getKeys(
@@ -44,7 +44,8 @@ export class ClusterStrategy extends AbstractStrategy {
     const client = await this.redisManager.getRedisClient(clientOptions);
     const currentDbIndex = get(client, ['options', 'db'], 0);
     const nodes = await this.getNodesToScan(clientOptions, args.cursor);
-    const settings = await this.settingsProvider.getSettings();
+    // todo: remove settings from here. threshold should be part of query?
+    const settings = await this.settingsService.getAppSettings('1');
     await this.calculateNodesTotalKeys(clientOptions, currentDbIndex, nodes);
 
     if (!isGlob(match, { strict: false })) {

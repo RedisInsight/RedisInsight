@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockStandaloneDatabaseEntity, mockWhitelistCommandsResponse } from 'src/__mocks__';
+import { mockDatabase, mockWhitelistCommandsResponse } from 'src/__mocks__';
 import { v4 as uuidv4 } from 'uuid';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import {
   ClusterNodeRole,
@@ -23,7 +23,7 @@ import config from 'src/utils/config';
 const PLUGINS_CONFIG = config.get('plugins');
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
@@ -51,7 +51,7 @@ const mockCommandExecutionResults: CommandExecutionResult[] = [
 ];
 const mockPluginCommandExecution = new PluginCommandExecution({
   ...mockCreateCommandExecutionDto,
-  databaseId: mockStandaloneDatabaseEntity.id,
+  databaseId: mockDatabase.id,
   result: mockCommandExecutionResults,
 });
 

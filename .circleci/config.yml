@@ -91,6 +91,7 @@ aliases:
     - oss-clu             # OSS Cluster
     - oss-clu-tls         # OSS Cluster with TLS enabled
     - oss-sent            # OSS Sentinel
+    - oss-sent-tls-auth   # OSS Sentinel with TLS auth
     - re-st               # Redis Enterprise with Standalone inside
     - re-clu              # Redis Enterprise with Cluster inside
     - re-crdt             # Redis Enterprise with active-active database inside
@@ -99,6 +100,7 @@ aliases:
     - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
     - oss-clu-tls         # OSS Cluster with TLS enabled
     - re-crdt             # Redis Enterprise with active-active database inside
+    - oss-sent-tls-auth   # OSS Sentinel with TLS auth
   guides-filter: &guidesFilter
     filters:
       branches:

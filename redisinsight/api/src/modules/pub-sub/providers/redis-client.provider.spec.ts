@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockSocket } from 'src/__mocks__';
+import { mockDatabaseConnectionService, mockSocket } from 'src/__mocks__';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
+import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 
 const mockUserClient = new UserClient('socketId', mockSocket, 'databaseId');
 
@@ -22,8 +22,8 @@ describe('RedisClientProvider', () => {
           useFactory: () => ({}),
         },
         {
-          provide: InstancesBusinessService,
-          useFactory: () => ({}),
+          provide: DatabaseConnectionService,
+          useFactory: mockDatabaseConnectionService,
         },
       ],
     }).compile();

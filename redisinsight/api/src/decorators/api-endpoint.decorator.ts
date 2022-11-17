@@ -2,7 +2,7 @@ import { applyDecorators, HttpCode } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ApiResponseOptions } from '@nestjs/swagger/dist/decorators/api-response.decorator';
 import config from 'src/utils/config';
-import { BuildType } from 'src/modules/core/models/server-provider.interface';
+import { BuildType } from 'src/modules/server/models/server';
 
 const SERVER_CONFIG = config.get('server');
 

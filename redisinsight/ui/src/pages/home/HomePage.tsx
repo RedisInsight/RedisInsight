@@ -7,12 +7,12 @@ import {
   resetDataRedisCluster,
   resetInstancesRedisCluster,
 } from 'uiSrc/slices/instances/cluster'
-import { Nullable, setTitle } from 'uiSrc/utils'
+import { setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { cloudSelector, resetSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
-import { fetchInstancesAction, instancesSelector } from 'uiSrc/slices/instances/instances'
+import { editedInstanceSelector, fetchEditedInstanceAction, fetchInstancesAction, instancesSelector, setEditedInstance } from 'uiSrc/slices/instances/instances'
 import { localStorageService } from 'uiSrc/services'
 import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
@@ -36,8 +36,6 @@ const HomePage = () => {
   )
   const [isPageViewSent, setIsPageViewSent] = useState(false)
 
-  const [editedInstance, setEditedInstance] = useState<Nullable<Instance>>(null)
-
   const dispatch = useDispatch()
 
   const { credentials: clusterCredentials } = useSelector(clusterSelector)
@@ -51,6 +49,10 @@ const HomePage = () => {
     deletedSuccessfully: isDeletedInstance,
   } = useSelector(instancesSelector)
 
+  const {
+    data: editedInstance,
+  } = useSelector(editedInstanceSelector)
+
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
 
   !welcomeIsShow && setTitle('My Redis databases')
@@ -60,6 +62,10 @@ const HomePage = () => {
     dispatch(resetInstancesRedisCluster())
     dispatch(resetSubscriptionsRedisCloud())
     dispatch(fetchCreateRedisButtonsAction())
+
+    return (() => {
+      dispatch(setEditedInstance(null))
+    })
   }, [])
 
   useEffect(() => {
@@ -72,7 +78,7 @@ const HomePage = () => {
     if (isChangedInstance) {
       setAddDialogIsOpen(!isChangedInstance)
       setEditDialogIsOpen(!isChangedInstance)
-      setEditedInstance(null)
+      dispatch(setEditedInstance(null))
       // send page view after adding database from welcome page
       sendPageViewTelemetry({
         name: TelemetryPageView.DATABASES_LIST_PAGE
@@ -113,7 +119,7 @@ const HomePage = () => {
     if (editedInstance) {
       const found = instances.find((item: Instance) => item.id === editedInstance.id)
       if (found) {
-        setEditedInstance(found)
+        dispatch(fetchEditedInstanceAction(found.id))
       }
     }
   }, [instances])
@@ -121,7 +127,7 @@ const HomePage = () => {
   const onInstanceChanged = () => ({})
 
   const closeEditDialog = () => {
-    setEditedInstance(null)
+    dispatch(setEditedInstance(null))
     setEditDialogIsOpen(false)
 
     sendEventTelemetry({
@@ -137,7 +143,7 @@ const HomePage = () => {
     dispatch(resetDataSentinel())
 
     setAddDialogIsOpen(false)
-    setEditedInstance(null)
+    dispatch(setEditedInstance(null))
     setEditDialogIsOpen(false)
 
     sendEventTelemetry({
@@ -147,19 +153,19 @@ const HomePage = () => {
 
   const handleAddInstance = () => {
     setAddDialogIsOpen(true)
-    setEditedInstance(null)
+    dispatch(setEditedInstance(null))
     setEditDialogIsOpen(false)
   }
 
-  const handleEditInstance = (instance: Instance) => {
-    setEditedInstance(instance)
+  const handleEditInstance = ({ id }: Instance) => {
+    dispatch(fetchEditedInstanceAction(id))
     setEditDialogIsOpen(true)
     setAddDialogIsOpen(false)
   }
 
   const handleDeleteInstances = (instances: Instance[]) => {
     if (instances.find((instance) => instance.id === editedInstance?.id)) {
-      setEditedInstance(null)
+      dispatch(setEditedInstance(null))
       setEditDialogIsOpen(false)
     }
   }

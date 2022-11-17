@@ -18,7 +18,7 @@ const mockedDbConnectionInfo = mock<DbConnectionInfo>()
 const formFields = {
   ...instance(mockedDbConnectionInfo),
   host: 'localhost',
-  port: 6379,
+  port: '6379',
   name: 'lala',
   caCertificates: [],
   certificates: [],
@@ -67,7 +67,7 @@ describe('InstanceForm', () => {
     ).toBeTruthy()
   })
 
-  it('should render tooltip with endpoints', () => {
+  it('should render tooltip with nodes', () => {
     expect(
       render(
         <InstanceForm
@@ -75,7 +75,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            endpoints: [{ host: '1', port: 1 }],
+            nodes: [{ host: '1', port: 1 }],
             connectionType: ConnectionType.Cluster,
           }}
         />
@@ -91,12 +91,11 @@ describe('InstanceForm', () => {
           isEditMode={false}
           formFields={{
             ...formFields,
-            tls: {
-              caCertId: '123',
-            },
+            tls: true,
+            caCert: { id: '123' },
             host: '123',
             tlsClientAuthRequired: true,
-            endpoints: [{ host: '1', port: 1 }],
+            nodes: [{ host: '1', port: 1 }],
             connectionType: ConnectionType.Cluster,
           }}
         />
@@ -241,7 +240,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
@@ -272,7 +271,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
@@ -309,7 +308,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
@@ -339,7 +338,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
@@ -390,7 +389,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Cluster,
             selectedCaCertName: 'ADD_NEW_CA_CERT',
           }}
@@ -432,7 +431,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
@@ -462,7 +461,7 @@ describe('InstanceForm', () => {
           isEditMode
           formFields={{
             ...formFields,
-            tls: {},
+            tls: true,
             connectionType: ConnectionType.Standalone,
             selectedCaCertName: 'NO_CA_CERT',
             tlsClientAuthRequired: true,

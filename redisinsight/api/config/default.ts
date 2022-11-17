@@ -155,7 +155,7 @@ export default {
         || 'https://raw.githubusercontent.com/RediSearch/RediSearch/master/commands.json',
     },
     {
-      name: 'redijson',
+      name: 'redisjson',
       url: process.env.COMMANDS_REDIJSON_URL
         || 'https://raw.githubusercontent.com/RedisJSON/RedisJSON/master/commands.json',
     },

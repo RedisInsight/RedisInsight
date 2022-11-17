@@ -1,5 +1,5 @@
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { Cluster, Redis } from 'ioredis';
 import { RedisString } from 'src/common/constants';
 

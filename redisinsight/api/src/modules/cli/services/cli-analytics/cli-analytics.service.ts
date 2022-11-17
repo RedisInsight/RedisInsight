@@ -3,9 +3,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { ReplyError } from 'src/models';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { ICliExecResultFromNode } from 'src/modules/shared/services/base/redis-tool.service';
+import { ICliExecResultFromNode } from 'src/modules/redis/redis-tool.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
-import { CommandTelemetryBaseService } from 'src/modules/shared/services/base/command.telemetry.base.service';
+import { CommandTelemetryBaseService } from 'src/modules/analytics/command.telemetry.base.service';
 
 @Injectable()
 export class CliAnalyticsService extends CommandTelemetryBaseService {
@@ -88,6 +88,7 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
           databaseId,
           ...(await this.getCommandAdditionalInfo(additionalData['command'])),
           ...additionalData,
+          command: additionalData['command']?.toUpperCase() || undefined,
         },
       );
     } catch (e) {
@@ -101,14 +102,15 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
     additionalData: object = {},
   ): Promise<void> {
     try {
+      const commandFromError = error?.command?.name?.toUpperCase() || undefined;
       this.sendEvent(
         TelemetryEvents.CliCommandErrorReceived,
         {
           databaseId,
           error: error?.name,
-          command: error?.command?.name,
           ...(await this.getCommandAdditionalInfo(additionalData['command'])),
           ...additionalData,
+          command: additionalData['command']?.toUpperCase() || commandFromError,
         },
       );
     } catch (e) {
@@ -130,18 +132,20 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
             databaseId,
             ...(await this.getCommandAdditionalInfo(additionalData['command'])),
             ...additionalData,
+            command: additionalData['command']?.toUpperCase() || undefined,
           },
         );
       }
       if (status === CommandExecutionStatus.Fail) {
+        const commandFromError = error?.command?.name?.toUpperCase() || undefined;
         this.sendEvent(
           TelemetryEvents.CliCommandErrorReceived,
           {
             databaseId,
             error: error.name,
-            command: error?.command?.name,
             ...(await this.getCommandAdditionalInfo(additionalData['command'])),
             ...additionalData,
+            command: additionalData['command']?.toUpperCase() || commandFromError,
           },
         );
       }

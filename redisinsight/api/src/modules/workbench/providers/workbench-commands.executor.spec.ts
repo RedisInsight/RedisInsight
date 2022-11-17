@@ -2,10 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { get } from 'lodash';
 import {
   mockRedisMovedError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
   mockWorkbenchAnalyticsService,
 } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import {
   ClusterNodeRole,
@@ -20,14 +20,14 @@ import {
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
-import { ICliExecResultFromNode, RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { ICliExecResultFromNode, RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { FormatterManager, IFormatterStrategy, FormatterTypes } from 'src/common/transformers';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const mockCliTool = () => ({
@@ -131,7 +131,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: false,
           },
         );
@@ -157,7 +157,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: false,
           },
         );
@@ -188,7 +188,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: false,
           },
         );
@@ -218,7 +218,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: false,
           },
         );
@@ -248,7 +248,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: true,
           },
         );
@@ -274,7 +274,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand,
+              command: mockSetCommand.toUpperCase(),
               rawMode: false,
             },
           );
@@ -299,7 +299,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: false,
           },
         );
@@ -330,7 +330,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: false,
           },
         );
@@ -364,7 +364,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: false,
           },
         );
@@ -387,7 +387,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: false,
           },
         );
@@ -410,7 +410,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand,
+              command: mockSetCommand.toUpperCase(),
               rawMode: false,
             },
           );
@@ -434,7 +434,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand,
+              command: mockSetCommand.toUpperCase(),
               rawMode: false,
             },
           );
@@ -475,7 +475,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: false,
           },
         );
@@ -502,7 +502,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand,
+            command: mockSetCommand.toUpperCase(),
             rawMode: false,
           },
         );
@@ -529,7 +529,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand,
+              command: mockSetCommand.toUpperCase(),
               rawMode: false,
             },
           );
@@ -557,7 +557,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand,
+              command: mockSetCommand.toUpperCase(),
               rawMode: false,
             },
           );

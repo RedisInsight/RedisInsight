@@ -1,12 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as IORedis from 'ioredis';
 import * as Redis from 'ioredis-mock';
-import { mockStandaloneDatabaseEntity } from 'src/__mocks__';
+import { mockDatabase } from 'src/__mocks__';
 import {
   IFindRedisClientInstanceByOptions,
   RedisService,
-} from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+} from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolCommands,
@@ -16,9 +15,10 @@ import {
 import { InternalServerErrorException } from '@nestjs/common';
 import { mockKeyDto } from 'src/modules/browser/__mocks__';
 import { RedisString } from 'src/common/constants';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const mockClient = new Redis();
@@ -40,7 +40,7 @@ describe('BrowserToolService', () => {
           useFactory: () => ({}),
         },
         {
-          provide: InstancesBusinessService,
+          provide: DatabaseService,
           useFactory: () => ({}),
         },
       ],

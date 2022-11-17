@@ -12,7 +12,7 @@ import {
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
 } from 'src/__mocks__';
 import {
   GetHashFieldsDto,
@@ -23,7 +23,7 @@ import {
   BrowserToolHashCommands,
   BrowserToolKeysCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   mockAddFieldsDto, mockDeleteFieldsDto,
   mockGetFieldsDto,
@@ -33,7 +33,7 @@ import {
 import { HashBusinessService } from './hash-business.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 describe('HashBusinessService', () => {

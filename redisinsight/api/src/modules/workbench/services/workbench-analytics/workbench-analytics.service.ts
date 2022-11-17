@@ -4,7 +4,7 @@ import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { RedisError, ReplyError } from 'src/models';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CommandsService } from 'src/modules/commands/commands.service';
-import { CommandTelemetryBaseService } from 'src/modules/shared/services/base/command.telemetry.base.service';
+import { CommandTelemetryBaseService } from 'src/modules/analytics/command.telemetry.base.service';
 
 export interface IExecResult {
   response: any;
@@ -51,6 +51,7 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
             databaseId,
             ...(await this.getCommandAdditionalInfo(additionalData['command'])),
             ...additionalData,
+            command: additionalData['command']?.toUpperCase() || undefined,
           },
         );
       }
@@ -81,16 +82,21 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
         this.sendFailedEvent(
           TelemetryEvents.WorkbenchCommandErrorReceived,
           error,
-          { databaseId, ...additionalData },
+          {
+            databaseId,
+            ...additionalData,
+            command: additionalData['command']?.toUpperCase() || undefined,
+          },
         );
       } else {
+        const commandFromError = error?.command?.name?.toUpperCase() || undefined;
         this.sendEvent(
           TelemetryEvents.WorkbenchCommandErrorReceived,
           {
             databaseId,
             error: error.name,
-            command: error?.command?.name,
             ...additionalData,
+            command: additionalData['command']?.toUpperCase() || commandFromError,
           },
         );
       }

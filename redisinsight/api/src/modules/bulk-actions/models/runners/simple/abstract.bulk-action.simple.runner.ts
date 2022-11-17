@@ -1,6 +1,6 @@
 import * as IORedis from 'ioredis';
 import { getTotal } from 'src/modules/database/utils/database.total.util';
-import { BulkActionStatus } from 'src/modules/bulk-actions/contants';
+import { BulkActionStatus } from 'src/modules/bulk-actions/constants';
 import { AbstractBulkActionRunner } from 'src/modules/bulk-actions/models/runners/abstract.bulk-action.runner';
 
 export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionRunner {

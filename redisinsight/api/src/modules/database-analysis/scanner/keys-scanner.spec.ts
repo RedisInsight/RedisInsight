@@ -4,6 +4,7 @@ import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner'
 import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
 import IORedis from 'ioredis';
 import { mockCreateDatabaseAnalysisDto } from 'src/modules/database-analysis/providers/database-analysis.provider.spec';
+import * as Utils from 'src/modules/database/utils/database.total.util';
 
 const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
@@ -25,10 +26,7 @@ const mockKeyInfoProvider = () => ({
   getStrategy: jest.fn(),
 });
 
-const mockRedisKeyspaceInfoResponse: string = '# Keyspace\r\ndb0:keys=1,expires=0,avg_ttl=0\r\n'
-  + 'db3:keys=100,expires=0,avg_ttl=0\r\n';
-const mockRedisKeyspaceInfoResponseNoKeyspaceData: string = '# Keyspace\r\n \r\n';
-const mockRedisKeyspaceInfoResponseEmpty: string = '';
+const mockGetTotalResponse = 1;
 
 const mockKey = {
   name: Buffer.from('key'),
@@ -70,12 +68,6 @@ describe('KeysScanner', () => {
     infoStrategy.getLengthSafe.mockResolvedValue(2);
     clusterClient.nodes.mockReturnValue([nodeClient, nodeClient, nodeClient]);
     when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'info' }))
-      .mockResolvedValue(mockRedisKeyspaceInfoResponse);
-    when(clusterClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'info' }))
-      .mockResolvedValue(mockRedisKeyspaceInfoResponse);
-    when(nodeClient.sendCommand)
       .calledWith(jasmine.objectContaining({ name: 'scan' }))
       .mockResolvedValue(['0', [mockKey.name]]);
     when(nodeClient.pipeline)
@@ -94,11 +86,13 @@ describe('KeysScanner', () => {
 
   describe('scan', () => {
     it('should scan standalone database', async () => {
+      jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse);
       expect(await service.scan(nodeClient, {
         filter: mockCreateDatabaseAnalysisDto.filter,
       })).toEqual([mockScanResult]);
     });
     it('should scan cluster database', async () => {
+      jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse);
       expect(await service.scan(clusterClient, {
         filter: mockCreateDatabaseAnalysisDto.filter,
       })).toEqual([mockScanResult, mockScanResult, mockScanResult]);
@@ -107,7 +101,7 @@ describe('KeysScanner', () => {
 
   describe('nodeScan', () => {
     it('should scan node keys', async () => {
-      const getTotal = jest.fn().mockResolvedValue(1);
+      jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse);
       expect(await service.nodeScan(nodeClient, {
         filter: mockCreateDatabaseAnalysisDto.filter,
       })).toEqual(mockScanResult);

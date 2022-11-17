@@ -7,6 +7,7 @@ import {
 } from 'src/__mocks__';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
+import * as Utils from 'src/modules/database/utils/database.total.util';
 
 const mockClient = Object.create(Redis.prototype);
 mockClient.options = {
@@ -15,6 +16,7 @@ mockClient.options = {
   port: 6379,
 };
 const mockCluster = Object.create(Redis.Cluster.prototype);
+mockCluster.isCluster = true;
 
 const mockServerInfo = {
   redis_version: '6.2.4',
@@ -54,6 +56,8 @@ const mockNodeInfo = {
   clients: mockClientsInfo,
   keyspace: mockKeyspace,
 };
+
+const mockGetTotalResponse_1 = 1;
 
 const databaseId = mockDatabase.id;
 export const mockDatabaseOverview: DatabaseOverview = {
@@ -193,6 +197,8 @@ describe('OverviewService', () => {
         mockCluster.nodes = jest.fn()
           .mockReturnValue(new Array(6).fill(Promise.resolve()));
 
+        jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse_1);
+
         spyGetNodeInfo.mockResolvedValueOnce({
           ...mockNodeInfo,
           port: 12001,
@@ -225,9 +231,7 @@ describe('OverviewService', () => {
           ...mockDatabaseOverview,
           connectedClients: 1,
           totalKeys: 6,
-          totalKeysPerDb: {
-            db0: 3,
-          },
+          totalKeysPerDb: undefined,
           usedMemory: 3,
           networkInKbps: 6,
           networkOutKbps: 6,
@@ -279,9 +283,7 @@ describe('OverviewService', () => {
           ...mockDatabaseOverview,
           connectedClients: 1,
           totalKeys: 6,
-          totalKeysPerDb: {
-            db0: 3,
-          },
+          totalKeysPerDb: undefined,
           usedMemory: 3,
           networkInKbps: 6,
           networkOutKbps: 6,

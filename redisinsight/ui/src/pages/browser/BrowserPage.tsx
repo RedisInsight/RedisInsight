@@ -187,11 +187,9 @@ const BrowserPage = () => {
                   <BrowserLeftPanel
                     arePanelsCollapsed={arePanelsCollapsed}
                     selectKey={selectKey}
-                    panelsState={{
-                      handleAddKeyPanel,
-                      handleBulkActionsPanel,
-                      handleCreateIndexPanel,
-                    }}
+                    handleAddKeyPanel={handleAddKeyPanel}
+                    handleBulkActionsPanel={handleBulkActionsPanel}
+                    handleCreateIndexPanel={handleCreateIndexPanel}
                   />
                 </EuiResizablePanel>
 
@@ -222,15 +220,13 @@ const BrowserPage = () => {
                     arePanelsCollapsed={arePanelsCollapsed}
                     setSelectedKey={setSelectedKey}
                     selectedKey={selectedKey}
-                    panelsState={{
-                      isAddKeyPanelOpen,
-                      isCreateIndexPanelOpen,
-                      isBulkActionsPanelOpen,
-                      handleAddKeyPanel,
-                      handleBulkActionsPanel,
-                      handleCreateIndexPanel,
-                      closeRightPanels
-                    }}
+                    isAddKeyPanelOpen={isAddKeyPanelOpen}
+                    isCreateIndexPanelOpen={isCreateIndexPanelOpen}
+                    isBulkActionsPanelOpen={isBulkActionsPanelOpen}
+                    handleAddKeyPanel={handleAddKeyPanel}
+                    handleBulkActionsPanel={handleBulkActionsPanel}
+                    handleCreateIndexPanel={handleCreateIndexPanel}
+                    closeRightPanels={closeRightPanels}
                   />
                 </EuiResizablePanel>
               </>

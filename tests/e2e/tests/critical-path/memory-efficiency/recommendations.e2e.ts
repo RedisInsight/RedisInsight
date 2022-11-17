@@ -75,8 +75,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Shard big hashes to small hashes recommendation', async t => {
         const noRecommendationsMessage = 'No Recommendations at the moment.';
-        // const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port };
-        const dbParameters = { host: 'localhost', port: '8100' };
+        const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port };
         const keyToAddParameters = { fieldsCount: 4999, keyName, fieldStartWith: 'hashField', fieldValueStartWith: 'hashValue' };
         const keyToAddParameters2 = { fieldsCount: 1, keyName, fieldStartWith: 'hashFieldLast', fieldValueStartWith: 'hashValueLast' };
 

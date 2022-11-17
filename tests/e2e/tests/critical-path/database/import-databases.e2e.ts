@@ -17,7 +17,8 @@ const rdmData = {
     dbNames: ['rdmWithUsernameAndPass1:1561', 'rdmOnlyHostPortDB2:6379'],
     userName: 'rdmUsername',
     password: 'rdmAuth',
-    connectionType: 'Cluster'
+    connectionType: 'Cluster',
+    fileName: 'rdm-valid.json'
 };
 const dbData = [
     {
@@ -54,6 +55,7 @@ test
     })('Connection import from JSON', async t => {
         const tooltipText = 'Import Database Connections';
         const partialImportedMsg = 'Successfully added 2 of 6 database connections';
+        const defaultText = 'Select or drag and drop a file';
 
         // Verify that user can see the “Import Database Connections” tooltip
         await t.hover(myRedisDatabasePage.importDatabasesBtn);
@@ -71,6 +73,15 @@ test
             .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [invalidJsonPath])
             .click(myRedisDatabasePage.submitImportBtn)
             .expect(myRedisDatabasePage.failedImportMessage.exists).ok('Failed to add database message not displayed');
+
+        // Verify that user can remove file from import input
+        await t.click(myRedisDatabasePage.closeDialogBtn);
+        await t.click(myRedisDatabasePage.importDatabasesBtn);
+        await t.setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [rdmData.path]);
+        await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(rdmData.fileName, 'Filename not displayed in import input');
+        // Click on remove button
+        await t.click(myRedisDatabasePage.removeImportedFileBtn);
+        await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(defaultText, 'File not removed from import input');
 
         // Verify that user can import database with mandatory fields
         await t.click(myRedisDatabasePage.closeDialogBtn);

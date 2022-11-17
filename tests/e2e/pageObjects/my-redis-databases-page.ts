@@ -34,6 +34,7 @@ export class MyRedisDatabasePage {
     submitImportBtn = Selector('[data-testid=submit-btn]');
     closeDialogBtn = Selector('[aria-label="Closes this modal window"]');
     okDialogBtn = Selector('[data-testid=ok-btn]');
+    removeImportedFileBtn = Selector('[aria-label="Clear selected files"]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     //ICONS

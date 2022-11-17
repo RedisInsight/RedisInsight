@@ -27,7 +27,7 @@ fixture `Memory Efficiency Recommendations`
         await t.click(memoryEfficiencyPage.newReportBtn);
     })
     .afterEach(async() => {
-        await cliPage.sendCommandInCli(`SCRIPT FLUSH`);
+        await cliPage.sendCommandInCli('SCRIPT FLUSH');
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test('Avoid dynamic Lua script recommendation', async t => {

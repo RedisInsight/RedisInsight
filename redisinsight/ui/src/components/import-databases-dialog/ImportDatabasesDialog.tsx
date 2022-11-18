@@ -95,7 +95,7 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
                 />
                 {isInvalid && (
                   <EuiTextColor color="danger" className={styles.errorFileMsg} data-testid="input-file-error-msg">
-                    File should not exceed {MAX_MB_FILE} mb
+                    File should not exceed {MAX_MB_FILE} MB
                   </EuiTextColor>
                 )}
               </>

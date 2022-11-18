@@ -17,15 +17,34 @@ export class DatabasesActions {
 
     /**
      * Import database using file
-     * @param pathToFile The path to file for import
-     * @param databaseType The database type
+     * @param fileParameters The arguments of imported file
      */
-    async importDatabase(pathToFile: string, databaseType = ''): Promise<void> {
+    async importDatabase(fileParameters: ImportDatabaseParameters): Promise<void> {
         await t
             .click(myRedisDatabasePage.importDatabasesBtn)
-            .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [pathToFile])
+            .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [fileParameters.path])
             .click(myRedisDatabasePage.submitImportBtn)
-            .expect(myRedisDatabasePage.successImportMessage.exists).ok(`Successfully added ${databaseType} databases message not displayed`);
+            .expect(myRedisDatabasePage.successImportMessage.exists).ok(`Successfully added ${fileParameters.type} databases message not displayed`);
     }
 
 }
+
+/**
+ * Import database parameters
+ * @param path The path to file
+ * @param type The type of application
+ * @param dbNames The names of databases
+ * @param userName The username of db
+ * @param password The password of db
+ * @param connectionType The connection type of db
+ * @param fileName The file name
+ */
+export type ImportDatabaseParameters = {
+    path: string,
+    type?: string,
+    dbNames?: string[],
+    userName?: string,
+    password?: string,
+    connectionType?: string,
+    fileName?: string
+};

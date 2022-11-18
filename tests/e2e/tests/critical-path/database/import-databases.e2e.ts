@@ -58,7 +58,7 @@ test
         const defaultText = 'Select or drag and drop a file';
 
         // Verify that user can see the “Import Database Connections” tooltip
-        await t.hover(myRedisDatabasePage.importDatabasesBtn);
+        await t.expect(myRedisDatabasePage.importDatabasesBtn.visible).ok('The import databases button not displayed');
         await t.hover(myRedisDatabasePage.importDatabasesBtn);
         await t.expect(browserPage.tooltip.innerText).contains(tooltipText, 'The tooltip message not displayed/correct');
 
@@ -85,9 +85,9 @@ test
 
         // Verify that user can import database with mandatory fields
         await t.click(myRedisDatabasePage.closeDialogBtn);
-        await databasesActions.importDatabase(rdmData.path);
+        await databasesActions.importDatabase(rdmData);
         // Verify that success message is displayed
-        await t.expect(myRedisDatabasePage.successImportMessage.textContent).contains(partialImportedMsg, 'Successfully added databases number not correct');
+        await t.expect(myRedisDatabasePage.successImportMessage.textContent).contains(partialImportedMsg, 'Databases not imported successfully');
         
         // Verify that list of databases is reloaded when database added
         await t.click(myRedisDatabasePage.okDialogBtn);
@@ -105,7 +105,7 @@ test
 
         // Verify that user can import files from Racompass, ARDM, RDM
         for (const db of dbData) {
-            await databasesActions.importDatabase(db.path, db.type);
+            await databasesActions.importDatabase(db);
             await t.click(myRedisDatabasePage.okDialogBtn);
             await databasesActions.verifyDatabasesDisplayed(db.dbNames);
         }

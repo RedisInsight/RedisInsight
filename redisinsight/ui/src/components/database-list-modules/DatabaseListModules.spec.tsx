@@ -2,12 +2,12 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { RedisDefaultModules, DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
 import { fireEvent, render, act } from 'uiSrc/utils/test-utils'
-import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import DatabaseListModules, { Props } from './DatabaseListModules'
 
 const mockedProps = mock<Props>()
 
-const modulesMock: RedisModuleDto[] = [
+const modulesMock: AdditionalRedisModule[] = [
   { name: RedisDefaultModules.AI },
   { name: RedisDefaultModules.Bloom },
   { name: RedisDefaultModules.Gears },

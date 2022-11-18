@@ -9,7 +9,7 @@ export class BrowserPage {
     cssSelectorRows = '[aria-label="row"]';
     cssSelectorKey = '[data-testid^=key-]';
     cssFilteringLabel = '[data-testid=multi-search]';
-    cssJsonValue = '[data-tesid=value-as-json]';
+    cssJsonValue = '[data-testid=value-as-json]';
     cssRowInVirtualizedTable = '[role=gridcell]';
     cssVirtualTableRow = '[aria-label=row]';
     cssKeyBadge = '[data-testid^=badge-]';

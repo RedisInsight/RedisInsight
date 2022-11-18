@@ -10,8 +10,8 @@ import {
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
-import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import { EMPTY_COMMAND } from 'uiSrc/constants'
+import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import reducer, {
   initialState,
   sendWBCommand,

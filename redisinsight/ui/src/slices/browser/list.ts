@@ -11,6 +11,9 @@ import {
   isStatusSuccessful,
   Maybe,
 } from 'uiSrc/utils'
+
+import successMessages from 'uiSrc/components/notifications/success-messages'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
   SetListElementDto,
   GetListElementsResponse,
@@ -19,9 +22,6 @@ import {
   PushElementToListDto,
   DeleteListElementsDto, DeleteListElementsResponse,
 } from 'apiSrc/modules/browser/dto/list.dto'
-
-import successMessages from 'uiSrc/components/notifications/success-messages'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
   refreshKeyInfoAction,
   fetchKeyInfo,

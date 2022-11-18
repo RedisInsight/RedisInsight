@@ -3,7 +3,7 @@ import { isString, uniqBy } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, ICommand, ICommands } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
-import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
+import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 
 import { AppDispatch, RootState } from '../store'
 import { StateAppRedisCommands } from '../interfaces'

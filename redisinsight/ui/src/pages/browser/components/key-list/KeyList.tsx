@@ -100,10 +100,6 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   useEffect(() => {
     cancelAllMetadataRequests()
-
-    return () => {
-      dispatch(setLastBatchKeys(itemsRef.current?.slice(-SCAN_COUNT_DEFAULT - 1), searchMode))
-    }
   }, [searchMode])
 
   useEffect(() => {
@@ -118,7 +114,6 @@ const KeyList = forwardRef((props: Props, ref) => {
     if (itemsRef.current.length === 0) {
       cancelAllMetadataRequests()
       setFirstDataLoaded(true)
-      dispatch(resetKeysData(searchMode))
       rerender({})
       return
     }

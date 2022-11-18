@@ -429,7 +429,7 @@ export function insertListElementsAction(
 // Asynchronous thunk action
 export function deleteListElementsAction(
   data: DeleteListElementsDto,
-  onSuccessAction?: () => void,
+  onSuccessAction?: (newTotal: number) => void,
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -445,9 +445,11 @@ export function deleteListElementsAction(
         { data, params: { encoding } },
       )
       if (isStatusSuccessful(status)) {
-        onSuccessAction?.()
+        const newTotal = state.browser.list.data?.total - data.count
+
+        onSuccessAction?.(newTotal)
         dispatch(deleteListElementsSuccess())
-        if (state.browser.list.data?.total - data.count > 0) {
+        if (newTotal > 0) {
           dispatch<any>(fetchKeyInfo(data.keyName))
           dispatch(addMessageNotification(
             successMessages.REMOVED_LIST_ELEMENTS(

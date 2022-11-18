@@ -42,8 +42,9 @@
   "mas": {
     "entitlements": "resources/entitlements.mas.plist",
     "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
+    "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
     "provisioningProfile": "embedded.provisionprofile",
-    "hardenedRuntime": true,
+    "hardenedRuntime": false,
     "artifactName": "${productName}-${os}-${arch}-mas.${ext}"
   },
   "masDev": {

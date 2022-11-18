@@ -18,9 +18,11 @@
     <true/>
     <key>com.apple.security.cs.disable-library-validation</key>
     <true/>
+    <key>com.apple.security.application-groups</key>
+    <string>UUK47G4BAZ.org.RedisLabs.RedisInsight-V2</string>
     <key>com.apple.application-identifier</key>
-    <true/>
+    <string>UUK47G4BAZ.org.RedisLabs.RedisInsight-V2</string>
     <key>com.apple.developer.team-identifier</key>
-    <true/>
+    <string>UUK47G4BAZ</string>
   </dict>
 </plist>

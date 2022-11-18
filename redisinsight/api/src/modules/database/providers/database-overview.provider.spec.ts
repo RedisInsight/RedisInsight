@@ -77,6 +77,8 @@ export const mockDatabaseOverview: DatabaseOverview = {
 describe('OverviewService', () => {
   let service: DatabaseOverviewProvider;
   let spyGetNodeInfo;
+  let spyCalculateTotalKeys;
+  let spyCalculateNodesTotalKeys;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [DatabaseOverviewProvider],
@@ -84,6 +86,8 @@ describe('OverviewService', () => {
 
     service = await module.get(DatabaseOverviewProvider);
     spyGetNodeInfo = jest.spyOn<any, any>(service, 'getNodeInfo');
+    spyCalculateTotalKeys = jest.spyOn<any, any>(service, 'calculateTotalKeys');
+    spyCalculateNodesTotalKeys = jest.spyOn<any, any>(service, 'calculateNodesTotalKeys');
     mockClient.call = jest.fn();
     mockClient.info = jest.fn();
   });
@@ -194,10 +198,9 @@ describe('OverviewService', () => {
     });
     describe('Cluster', () => {
       it('Should calculate overview and ignore replica where needed', async () => {
+        const getTotal = jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse_1);
         mockCluster.nodes = jest.fn()
           .mockReturnValue(new Array(6).fill(Promise.resolve()));
-
-        jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse_1);
 
         spyGetNodeInfo.mockResolvedValueOnce({
           ...mockNodeInfo,
@@ -238,6 +241,9 @@ describe('OverviewService', () => {
           opsPerSecond: 6,
           cpuUsagePercentage: null,
         });
+        expect(spyCalculateTotalKeys).toHaveBeenCalledTimes(0);
+        expect(spyCalculateNodesTotalKeys).toHaveBeenCalledTimes(1);
+        expect(getTotal).toHaveBeenCalledTimes(6); // 6 nodes
 
         spyGetNodeInfo.mockResolvedValueOnce({
           ...mockNodeInfo,

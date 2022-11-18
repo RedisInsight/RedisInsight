@@ -243,7 +243,6 @@ export class DatabaseOverviewProvider {
   private async calculateNodesTotalKeys(
     client: IORedis.Cluster,
   ): Promise<number> {
-    console.log(client);
     const nodesTotal: number[] = await Promise.all(
       client
         .nodes('master')

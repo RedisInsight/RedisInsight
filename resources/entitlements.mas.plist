@@ -18,5 +18,9 @@
     <true/>
     <key>com.apple.security.cs.disable-library-validation</key>
     <true/>
+    <key>com.apple.application-identifier</key>
+    <true/>
+    <key>com.apple.developer.team-identifier</key>
+    <true/>
   </dict>
 </plist>

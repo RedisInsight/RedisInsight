@@ -88,7 +88,6 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
           databaseId,
           ...(await this.getCommandAdditionalInfo(additionalData['command'])),
           ...additionalData,
-          command: additionalData['command']?.toUpperCase() || undefined,
         },
       );
     } catch (e) {
@@ -102,15 +101,14 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
     additionalData: object = {},
   ): Promise<void> {
     try {
-      const commandFromError = error?.command?.name?.toUpperCase() || undefined;
       this.sendEvent(
         TelemetryEvents.CliCommandErrorReceived,
         {
           databaseId,
           error: error?.name,
+          command: error?.command?.name,
           ...(await this.getCommandAdditionalInfo(additionalData['command'])),
           ...additionalData,
-          command: additionalData['command']?.toUpperCase() || commandFromError,
         },
       );
     } catch (e) {
@@ -132,20 +130,18 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
             databaseId,
             ...(await this.getCommandAdditionalInfo(additionalData['command'])),
             ...additionalData,
-            command: additionalData['command']?.toUpperCase() || undefined,
           },
         );
       }
       if (status === CommandExecutionStatus.Fail) {
-        const commandFromError = error?.command?.name?.toUpperCase() || undefined;
         this.sendEvent(
           TelemetryEvents.CliCommandErrorReceived,
           {
             databaseId,
             error: error.name,
+            command: error?.command?.name,
             ...(await this.getCommandAdditionalInfo(additionalData['command'])),
             ...additionalData,
-            command: additionalData['command']?.toUpperCase() || commandFromError,
           },
         );
       }

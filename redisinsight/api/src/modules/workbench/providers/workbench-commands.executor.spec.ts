@@ -131,7 +131,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -157,7 +157,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -188,7 +188,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -218,7 +218,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -248,7 +248,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: true,
           },
         );
@@ -274,7 +274,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand.toUpperCase(),
+              command: mockSetCommand,
               rawMode: false,
             },
           );
@@ -299,7 +299,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -330,7 +330,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -364,7 +364,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -387,7 +387,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -410,7 +410,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand.toUpperCase(),
+              command: mockSetCommand,
               rawMode: false,
             },
           );
@@ -434,7 +434,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand.toUpperCase(),
+              command: mockSetCommand,
               rawMode: false,
             },
           );
@@ -475,7 +475,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -502,7 +502,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -529,7 +529,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand.toUpperCase(),
+              command: mockSetCommand,
               rawMode: false,
             },
           );
@@ -557,7 +557,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand.toUpperCase(),
+              command: mockSetCommand,
               rawMode: false,
             },
           );

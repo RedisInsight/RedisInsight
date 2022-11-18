@@ -80,7 +80,7 @@ const QueryWrapper = (props: Props) => {
       const command = [commandLine, multiCommands].join('') ? [commandLine, multiCommands].join(';') : null
 
       return {
-        command,
+        command: command?.toUpperCase(),
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: batchSize > 1,

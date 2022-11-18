@@ -40,7 +40,8 @@ export interface StateAppContext {
   lastPage: string
   browser: {
     keyList: {
-      isDataLoaded: boolean
+      isDataPatternLoaded: boolean
+      isDataRedisearchLoaded: boolean
       scrollPatternTopPosition: number
       scrollRedisearchTopPosition: number
       isNotRendered: boolean

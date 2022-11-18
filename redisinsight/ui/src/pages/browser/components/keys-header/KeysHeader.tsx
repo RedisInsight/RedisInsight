@@ -168,8 +168,8 @@ const KeysHeader = (props: Props) => {
       searchMode,
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      () => dispatch(setBrowserKeyListDataLoaded(true)),
-      () => dispatch(setBrowserKeyListDataLoaded(false)),
+      () => dispatch(setBrowserKeyListDataLoaded(searchMode, true)),
+      () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
     ))
   }
 
@@ -229,11 +229,14 @@ const KeysHeader = (props: Props) => {
         }
       })
     }
-    dispatch(resetKeysData(searchMode))
-    dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
+    dispatch(resetKeysData(searchMode))
     localStorageService.set(BrowserStorageItem.browserViewType, type)
     loadKeys(type)
+
+    setTimeout(() => {
+      dispatch(changeKeyViewType(type))
+    }, 0)
   }
 
   const handleSwitchSearchMode = (mode: SearchMode) => {

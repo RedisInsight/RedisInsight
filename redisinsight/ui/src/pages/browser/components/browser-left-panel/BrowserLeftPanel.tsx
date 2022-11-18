@@ -54,13 +54,14 @@ const BrowserLeftPanel = (props: Props) => {
   const { loading: patternLoading, viewType, searchMode, isSearched: patternIsSearched } = useSelector(keysSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
   const {
-    keyList: { isDataLoaded, scrollPatternTopPosition, scrollRedisearchTopPosition }
+    keyList: { isDataPatternLoaded, isDataRedisearchLoaded, scrollPatternTopPosition, scrollRedisearchTopPosition }
   } = useSelector(appContextBrowser)
 
   const keyListRef = useRef<any>()
 
   const dispatch = useDispatch()
 
+  const isDataLoaded = searchMode === SearchMode.Pattern ? isDataPatternLoaded : isDataRedisearchLoaded
   const keysState = searchMode === SearchMode.Pattern ? patternKeysState : redisearchKeysState
   const loading = searchMode === SearchMode.Pattern ? patternLoading : redisearchLoading || redisearchListLoading
   const isSearched = searchMode === SearchMode.Pattern ? patternIsSearched : redisearchIsSearched
@@ -79,8 +80,8 @@ const BrowserLeftPanel = (props: Props) => {
       searchMode,
       '0',
       keyViewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      () => dispatch(setBrowserKeyListDataLoaded(true)),
-      () => dispatch(setBrowserKeyListDataLoaded(false))
+      () => dispatch(setBrowserKeyListDataLoaded(searchMode, true)),
+      () => dispatch(setBrowserKeyListDataLoaded(searchMode, false))
     ))
   }, [searchMode])
 

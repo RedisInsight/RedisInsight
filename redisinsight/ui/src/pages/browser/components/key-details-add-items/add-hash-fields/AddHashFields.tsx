@@ -17,12 +17,12 @@ import {
   resetUpdateValue,
   addHashFieldsAction,
 } from 'uiSrc/slices/browser/hash'
-import { AddFieldsToHashDto } from 'apiSrc/modules/browser/dto/hash.dto'
 import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 import { stringToBuffer } from 'uiSrc/utils'
+import { AddFieldsToHashDto } from 'apiSrc/modules/browser/dto/hash.dto'
 import styles from '../styles.module.scss'
 
 export interface Props {

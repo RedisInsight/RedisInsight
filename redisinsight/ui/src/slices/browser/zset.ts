@@ -7,13 +7,13 @@ import { bufferToString, getApiErrorMessage, getUrl, isEqualBuffers, isStatusSuc
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { StateZset } from 'uiSrc/slices/interfaces/zset'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
   AddMembersToZSetDto,
   SearchZSetMembersResponse,
   ZSetMemberDto,
   GetZSetResponse,
 } from 'apiSrc/modules/browser/dto'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
   deleteKeyFromList,
   deleteKeySuccess,

@@ -233,3 +233,37 @@ test
         await common.reloadPage();
         await t.expect(browserPage.keyListTable.textContent).contains(notSelectedIndexText, 'Search by Values of Keys section not opened');
     });
+test
+    .before(async() => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        indexName = common.generateWord(10);
+        const command = `FT.CREATE ${indexName} ON hash SCHEMA "" text`;
+        await cliPage.sendCommandInCli(command);
+    })
+    .after(async() => {
+        // Drop index
+        await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
+        // Delete database
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+    })('Scan more Redisearch', async t => {
+        const commandToChangeMaxSearchResults = 'FT.CONFIG SET maxsearchresults 30000';
+
+        await cliPage.sendCommandInCli(commandToChangeMaxSearchResults);
+        await t.click(browserPage.redisearchModeBtn);
+
+        // Verify that user can not see the “Scan more” button in Browser
+        await t.expect(browserPage.scanMoreButton.exists).notOk('Scan More button is displayed in Browser');
+
+        // Verify that user can see the “Scan more” button in the Tree View if the number of scanned keys is less than maxsearchresults
+        await t.click(browserPage.treeViewButton);
+        await browserPage.selectIndexByName(indexName);
+        for(let i = 0; i < 2; i++) {
+            await t.expect(browserPage.scanMoreButton.exists).ok('Scan More button is not displayed');
+            await t.click(browserPage.scanMoreButton);
+            await t.expect(browserPage.scannedValue.textContent).eql(`${i + 2}0 000`);
+            await t.expect(browserPage.keysNumberOfResults.textContent).eql(`${i + 2}0 000`);
+        }
+
+        // Verify that user cannot see the “Scan more” button in the Tree view if there limited number is riched
+        await t.expect(browserPage.scanMoreButton.exists).notOk('Scan More button is displayed');
+    });

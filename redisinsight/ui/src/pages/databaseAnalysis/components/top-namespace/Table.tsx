@@ -71,8 +71,8 @@ const NameSpacesTable = (props: Props) => {
       SearchMode.Pattern,
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      () => dispatch(setBrowserKeyListDataLoaded(true)),
-      () => dispatch(setBrowserKeyListDataLoaded(false)),
+      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, true)),
+      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, false)),
     ))
     dispatch(resetBrowserTree())
     history.push(Pages.browser(instanceId))

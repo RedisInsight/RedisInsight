@@ -13,6 +13,7 @@ export enum RedisErrorCodes {
   BusyGroup = 'BUSYGROUP',
   NoGroup = 'NOGROUP',
   UnknownCommand = 'unknown command',
+  RedisearchLimit = 'LIMIT',
 }
 
 export enum CertificatesErrorCodes {

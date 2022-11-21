@@ -46,6 +46,10 @@ renderer.prod.js.map
 redisinsight/ui/style.css
 redisinsight/ui/style.css.map
 redisinsight/ui/dist
+redisinsight/api/commands
+redisinsight/api/guides
+redisinsight/api/tutorials
+redisinsight/api/content
 dist
 distWeb
 dll

@@ -185,7 +185,6 @@ const BrowserPage = () => {
                   }}
                 >
                   <BrowserLeftPanel
-                    arePanelsCollapsed={arePanelsCollapsed}
                     selectKey={selectKey}
                     handleAddKeyPanel={handleAddKeyPanel}
                     handleBulkActionsPanel={handleBulkActionsPanel}

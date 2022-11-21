@@ -257,6 +257,7 @@ const QueryCardHeader = (props: Props) => {
               iconType="copy"
               aria-label="Copy query"
               className="copy-btn"
+              disabled={emptyCommand}
               onClick={(event: React.MouseEvent) => handleCopy(event, query || '')}
               data-testid="copy-command"
             />

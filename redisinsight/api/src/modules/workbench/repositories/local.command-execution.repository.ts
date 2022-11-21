@@ -6,23 +6,29 @@ import { plainToClass } from 'class-transformer';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
+import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { classToClass } from 'src/utils';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
+import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
 import config from 'src/utils/config';
 
 const WORKBENCH_CONFIG = config.get('workbench');
 
 @Injectable()
-export class CommandExecutionProvider {
+export class LocalCommandExecutionRepository extends CommandExecutionRepository {
   private logger = new Logger('CommandExecutionProvider');
+  private readonly modelEncryptor: ModelEncryptor;
 
   constructor(
     @InjectRepository(CommandExecutionEntity)
     private readonly commandExecutionRepository: Repository<CommandExecutionEntity>,
     private readonly encryptionService: EncryptionService,
-  ) {}
+  ) {
+    super();
+    this.modelEncryptor = new ModelEncryptor(encryptionService, ['command', 'result']);
+  }
 
   /**
    * Encrypt command executions and save entire entities
@@ -46,7 +52,7 @@ export class CommandExecutionProvider {
         entity['isNotStored'] = true;
       }
 
-      return this.encryptEntity(entity);
+      return this.modelEncryptor.encryptEntity(entity);
     }));
 
     entities = await this.commandExecutionRepository.save(entities);
@@ -107,7 +113,7 @@ export class CommandExecutionProvider {
     const decryptedEntities = await Promise.all(
       entities.map<Promise<CommandExecutionEntity>>(async (entity) => {
         try {
-          return await this.decryptEntity(entity);
+          return await this.modelEncryptor.decryptEntity(entity);
         } catch (e) {
           return null;
         }
@@ -136,7 +142,7 @@ export class CommandExecutionProvider {
 
     this.logger.log(`Succeed to get command execution ${id}`);
 
-    const decryptedEntity = await this.decryptEntity(entity, true);
+    const decryptedEntity = await this.modelEncryptor.decryptEntity(entity, true);
 
     return classToClass(CommandExecution, decryptedEntity);
   }
@@ -159,7 +165,7 @@ export class CommandExecutionProvider {
    * Clean history for particular database to fit 30 items limitation
    * @param databaseId
    */
-  async cleanupDatabaseHistory(databaseId: string): Promise<void> {
+  private async cleanupDatabaseHistory(databaseId: string): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works
     const idsToDelete = (await this.commandExecutionRepository
       .createQueryBuilder()
@@ -174,90 +180,5 @@ export class CommandExecutionProvider {
       .delete()
       .whereInIds(idsToDelete)
       .execute();
-  }
-
-  /**
-   * Encrypt required command execution fields based on picked encryption strategy
-   * Should always throw an encryption error to determine that something wrong
-   * with encryption strategy
-   *
-   * @param entity
-   * @private
-   */
-  private async encryptEntity(entity: CommandExecutionEntity): Promise<CommandExecutionEntity> {
-    let command = null;
-    let result = null;
-    let encryption = null;
-
-    if (entity.command) {
-      const encryptionResult = await this.encryptionService.encrypt(entity.command);
-      command = encryptionResult.data;
-      encryption = encryptionResult.encryption;
-    }
-
-    if (entity.result) {
-      const encryptionResult = await this.encryptionService.encrypt(entity.result);
-      result = encryptionResult.data;
-      encryption = encryptionResult.encryption;
-    }
-
-    return {
-      ...entity,
-      command,
-      result,
-      encryption,
-    };
-  }
-
-  /**
-   * Decrypt required command execution fields
-   * This method should optionally not fail (to not block users to navigate across app
-   * on decryption error, for example, to be able change encryption strategy in the future)
-   *
-   * When ignoreErrors = true will return null for failed fields.
-   * It will cause 401 Unauthorized errors when user tries to connect to redis database
-   *
-   * @param entity
-   * @param ignoreErrors
-   * @private
-   */
-  private async decryptEntity(
-    entity: CommandExecutionEntity,
-    ignoreErrors: boolean = false,
-  ): Promise<CommandExecutionEntity> {
-    return new CommandExecutionEntity({
-      ...entity,
-      command: await this.decryptField(entity, 'command', ignoreErrors),
-      result: await this.decryptField(entity, 'result', ignoreErrors),
-    });
-  }
-
-  /**
-   * Decrypt single field if exists
-   *
-   * @param entity
-   * @param field
-   * @param ignoreErrors
-   * @private
-   */
-  private async decryptField(
-    entity: CommandExecutionEntity,
-    field: string,
-    ignoreErrors: boolean,
-  ): Promise<string> {
-    if (isUndefined(entity[field])) {
-      return undefined;
-    }
-
-    try {
-      return await this.encryptionService.decrypt(entity[field], entity.encryption);
-    } catch (error) {
-      this.logger.error(`Unable to decrypt command execution ${entity.id} fields: ${field}`, error);
-      if (!ignoreErrors) {
-        throw error;
-      }
-    }
-
-    return null;
   }
 }

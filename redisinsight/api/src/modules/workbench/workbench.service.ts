@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { omit } from 'lodash';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
+import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionDto, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
@@ -17,7 +17,7 @@ import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbe
 export class WorkbenchService {
   constructor(
     private commandsExecutor: WorkbenchCommandsExecutor,
-    private commandExecutionProvider: CommandExecutionProvider,
+    private commandExecutionProvider: CommandExecutionRepository,
     private analyticsService: WorkbenchAnalyticsService,
   ) {}
 

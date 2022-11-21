@@ -42,7 +42,7 @@ const PATH_CONFIG = config.get('dir_path');
     RedisSentinelModule,
     BrowserModule,
     CliModule,
-    WorkbenchModule,
+    WorkbenchModule.register(),
     PluginModule,
     CommandsModule,
     ProfilerModule,

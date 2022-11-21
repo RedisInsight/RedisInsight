@@ -10,7 +10,7 @@ import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CreatePluginStateDto } from 'src/modules/workbench/dto/create-plugin-state.dto';
-import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
+import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin-state.repository';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import config from 'src/utils/config';
 
@@ -20,7 +20,7 @@ const PLUGINS_CONFIG = config.get('plugins');
 export class PluginsService {
   constructor(
     private commandsExecutor: WorkbenchCommandsExecutor,
-    private pluginStateProvider: PluginStateProvider,
+    private pluginStateProvider: PluginStateRepository,
     private whitelistProvider: PluginCommandsWhitelistProvider,
   ) {}
 

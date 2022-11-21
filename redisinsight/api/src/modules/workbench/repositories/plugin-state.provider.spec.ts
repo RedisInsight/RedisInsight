@@ -8,7 +8,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { NotFoundException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
+import { PluginStateProvider } from 'src/modules/workbench/repositories/local.plugin-state.repository';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';

@@ -16,7 +16,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { PluginsService } from 'src/modules/workbench/plugins.service';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
 import { PluginCommandExecution } from 'src/modules/workbench/models/plugin-command-execution';
-import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
+import { PluginStateProvider } from 'src/modules/workbench/repositories/local.plugin-state.repository';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import config from 'src/utils/config';
 

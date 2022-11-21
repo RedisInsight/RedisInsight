@@ -193,10 +193,10 @@ export class DatabaseInfoProvider {
   public async getRedisGeneralInfo(
     client: IORedis.Redis | IORedis.Cluster,
   ): Promise<RedisDatabaseInfoResponse> {
-    if (client instanceof IORedis.Cluster) {
+    if (client.isCluster) {
       return this.getRedisMasterNodesGeneralInfo(client);
     }
-    return this.getRedisNodeGeneralInfo(client);
+    return this.getRedisNodeGeneralInfo(client as IORedis.Redis);
   }
 
   private async getRedisNodeGeneralInfo(

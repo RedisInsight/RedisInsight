@@ -10,7 +10,7 @@ import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 import { SelectCommand } from 'uiSrc/constants/cliOutput'
 import { ClusterNode, RedisDefaultModules, REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
 
-import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { Nullable } from './types'
 import formatToText from './transformers/cliTextFormatter'
 
@@ -137,7 +137,7 @@ const checkUnsupportedCommand = (unsupportedCommands: string[], commandLine: str
 const checkBlockingCommand = (blockingCommands: string[], commandLine: string) =>
   blockingCommands?.find((command) => commandLine?.trim().toLowerCase().startsWith(command))
 
-const checkUnsupportedModuleCommand = (loadedModules: RedisModuleDto[], commandLine: string) => {
+const checkUnsupportedModuleCommand = (loadedModules: AdditionalRedisModule[], commandLine: string) => {
   const command = commandLine?.trim().toUpperCase()
   let commandModule: Nullable<RedisDefaultModules> = null
 

@@ -70,4 +70,9 @@ describe('ZSetDetails', () => {
     fireEvent.change(screen.getByTestId('inline-item-editor'), { target: { value: '123' } })
     expect(screen.getByTestId('inline-item-editor')).toHaveValue('123')
   })
+
+  it('should render resize trigger for name column', () => {
+    render(<ZSetDetails {...instance(mockedProps)} />)
+    expect(screen.getByTestId('resize-trigger-name')).toBeInTheDocument()
+  })
 })

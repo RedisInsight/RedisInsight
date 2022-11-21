@@ -5,7 +5,6 @@ import RouterWithSubRoutes from './routerWithSubRoutes'
 
 export * from './common'
 export * from './validations'
-export * from './errors'
 export * from './statuses'
 export * from './instance'
 export * from './apiResponse'

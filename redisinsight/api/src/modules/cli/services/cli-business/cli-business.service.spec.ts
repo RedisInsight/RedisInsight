@@ -307,7 +307,7 @@ describe('CliBusinessService', () => {
           ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED(command.toUpperCase()),
         ),
         {
-          command: 'script',
+          command: 'script'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -355,7 +355,7 @@ describe('CliBusinessService', () => {
         mockClientOptions.instanceId,
         replyError,
         {
-          command: 'get',
+          command: 'get'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -374,7 +374,7 @@ describe('CliBusinessService', () => {
           mockClientOptions.instanceId,
           new Error(mockENotFoundMessage),
           {
-            command: 'get',
+            command: 'get'.toUpperCase(),
             outputFormat: CliOutputFormatterTypes.Raw,
           },
         );
@@ -394,7 +394,7 @@ describe('CliBusinessService', () => {
           mockClientOptions.instanceId,
           new KeytarUnavailableException(),
           {
-            command: 'get',
+            command: 'get'.toUpperCase(),
             outputFormat: CliOutputFormatterTypes.Raw,
           },
         );
@@ -565,7 +565,7 @@ describe('CliBusinessService', () => {
           command.toUpperCase(),
         )),
         {
-          command: 'script',
+          command: 'script'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -896,7 +896,7 @@ describe('CliBusinessService', () => {
           command.toUpperCase(),
         )),
         {
-          command: 'script',
+          command: 'script'.toUpperCase(),
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -945,7 +945,7 @@ describe('CliBusinessService', () => {
           mockClientOptions.instanceId,
           new WrongDatabaseTypeError(ERROR_MESSAGES.WRONG_DATABASE_TYPE),
           {
-            command: 'get',
+            command: 'get'.toUpperCase(),
             outputFormat: CliOutputFormatterTypes.Raw,
           },
         );
@@ -975,7 +975,7 @@ describe('CliBusinessService', () => {
             ERROR_MESSAGES.CLUSTER_NODE_NOT_FOUND('127.0.0.1:7002'),
           ),
           {
-            command: 'get',
+            command: 'get'.toUpperCase(),
             outputFormat: CliOutputFormatterTypes.Raw,
           },
         );
@@ -999,7 +999,7 @@ describe('CliBusinessService', () => {
           mockClientOptions.instanceId,
           new Error(mockENotFoundMessage),
           {
-            command: 'get',
+            command: 'get'.toUpperCase(),
             outputFormat: CliOutputFormatterTypes.Raw,
           },
         );
@@ -1023,7 +1023,7 @@ describe('CliBusinessService', () => {
           mockClientOptions.instanceId,
           new KeytarUnavailableException(),
           {
-            command: 'get',
+            command: 'get'.toUpperCase(),
             outputFormat: CliOutputFormatterTypes.Raw,
           },
         );

@@ -154,6 +154,20 @@ export async function deleteStandaloneDatabaseApi(databaseParameters: AddNewData
 }
 
 /**
+ * Delete Standalone databases using their names through api
+ * @param databaseNames Databases names
+ */
+export async function deleteStandaloneDatabasesByNamesApi(databaseNames: string[]): Promise<void> {
+    databaseNames.forEach(async databaseName => {
+        const databaseId = await getDatabaseByName(databaseName);
+        await request(endpoint).delete('/databases')
+            .send({ 'ids': [`${databaseId}`] })
+            .set('Accept', 'application/json')
+            .expect(200);
+    });
+}
+
+/**
  * Delete database from OSS Cluster through api
  * @param databaseParameters The database parameters
  */

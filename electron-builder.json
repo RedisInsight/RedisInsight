@@ -14,9 +14,6 @@
   "afterSign": "electron-builder-notarize",
   "artifactName": "${productName}-${os}-${arch}.${ext}",
   "compression": "normal",
-  "asarUnpack": [
-    "**/*.node"
-  ],
   "mac": {
     "target": [
       {
@@ -35,19 +32,20 @@
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "bundleVersion": "0.0.4",
+    "bundleVersion": "0.0.5",
     "icon": "resources/icon.icns",
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
+    "provisioningProfile": "embedded.provisionprofile",
     "gatekeeperAssess": false
   },
   "mas": {
     "entitlements": "resources/entitlements.mas.plist",
     "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
     "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
-    "provisioningProfile": "embedded.provisionprofile",
-    "hardenedRuntime": false,
+    "hardenedRuntime": true,
+    "asarUnpack": ["node_modules"],
     "artifactName": "${productName}-${os}-${arch}-mas.${ext}"
   },
   "masDev": {

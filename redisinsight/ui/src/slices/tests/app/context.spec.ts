@@ -33,7 +33,11 @@ import reducer, {
   updateBrowserTreeSelectedLeaf,
   setBrowserTreeDelimiter,
   setBrowserIsNotRendered,
-  setBrowserRedisearchScrollPosition, updateKeyDetailsSizes, appContextBrowserKeyDetails,
+  setBrowserRedisearchScrollPosition,
+  updateKeyDetailsSizes,
+  appContextBrowserKeyDetails,
+  appContextDbConfig,
+  setSlowLogUnits, setDbConfig,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -526,14 +530,61 @@ describe('slices', () => {
     })
   })
 
+  describe('setDbConfig', () => {
+    it('should properly set db config', () => {
+      // Arrange
+      const data = {
+        slowLogDurationUnit: 'ms',
+        treeViewDelimiter: ':-'
+      }
+
+      const state = {
+        ...initialState.dbConfig,
+        ...data
+      }
+
+      // Act
+      const nextState = reducer(initialState, setDbConfig(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextDbConfig(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setSlowLogUnits', () => {
+    it('should properly set slow log units', () => {
+      // Arrange
+      const slowLogDurationUnit = 'ms'
+
+      const state = {
+        ...initialState.dbConfig,
+        slowLogDurationUnit
+      }
+
+      // Act
+      const nextState = reducer(initialState, setSlowLogUnits(slowLogDurationUnit))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextDbConfig(rootState)).toEqual(state)
+    })
+  })
+
   describe('setBrowserTreeDelimiter', () => {
     it('should properly set browser tree delimiter', () => {
       // Arrange
       const delimiter = '_'
 
       const state = {
-        ...initialState.browser.tree,
-        delimiter
+        ...initialState.dbConfig,
+        treeViewDelimiter: delimiter
       }
 
       // Act
@@ -544,7 +595,7 @@ describe('slices', () => {
         app: { context: nextState },
       })
 
-      expect(appContextBrowserTree(rootState)).toEqual(state)
+      expect(appContextDbConfig(rootState)).toEqual(state)
     })
   })
 

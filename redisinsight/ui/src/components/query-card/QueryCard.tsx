@@ -179,7 +179,7 @@ const QueryCard = (props: Props) => {
         />
         {isOpen && (
           <>
-            {React.isValidElement(commonError)
+            {React.isValidElement(commonError) && !isGroupMode(resultsMode)
               ? <QueryCardCommonResult loading={loading} result={commonError} />
               : (
                 <>

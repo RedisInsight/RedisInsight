@@ -1,5 +1,6 @@
 import { EuiButton, EuiLink, EuiSwitch, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
+import { isNull } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
@@ -44,6 +45,10 @@ const TopNamespace = (props: Props) => {
     dispatch(resetBrowserTree())
     dispatch(changeKeyViewType(KeyViewType.Tree))
     history.push(Pages.browser(instanceId))
+  }
+
+  if (isNull(data)) {
+    return null
   }
 
   if (!data?.topMemoryNsp?.length && !data?.topKeysNsp?.length) {

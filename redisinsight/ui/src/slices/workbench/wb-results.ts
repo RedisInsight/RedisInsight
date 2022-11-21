@@ -63,6 +63,13 @@ const workbenchResultsSlice = createSlice({
       })
     },
 
+    // temporary solution, need improve on BE how we handle errors
+    processWBCommandsFailure: (state, { payload }: { payload: { commandsId: string[], error: string } }) => {
+      state.items = [...state.items].filter((item) => payload.commandsId.indexOf(item?.id as string) === -1)
+      state.loading = false
+      state.processing = false
+    },
+
     processWBCommandFailure: (state, { payload }: { payload: { id: string, error: string } }) => {
       state.items = [...state.items].map((item) => {
         if (item.id === payload.id) {
@@ -155,6 +162,7 @@ export const {
   processWBCommand,
   fetchWBCommandSuccess,
   processWBCommandFailure,
+  processWBCommandsFailure,
   sendWBCommand,
   sendWBCommandSuccess,
   toggleOpenWBResult,
@@ -242,7 +250,10 @@ export function sendWBCommandAction({
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      dispatch(processWBCommandFailure({ id: commandId, error: errorMessage }))
+      dispatch(processWBCommandsFailure({
+        commandsId: commands.map((_, i) => commandId + i),
+        error: errorMessage
+      }))
       onFailAction?.()
     }
   }
@@ -300,7 +311,10 @@ export function sendWBCommandClusterAction({
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      dispatch(processWBCommandFailure({ id: commandId, error: errorMessage }))
+      dispatch(processWBCommandsFailure({
+        commandsId: commands.map((_, i) => commandId + i),
+        error: errorMessage
+      }))
       onFailAction?.()
     }
   }

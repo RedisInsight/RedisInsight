@@ -24,6 +24,7 @@ const searchPerValue = '(@name:"Hall School") | (@students:[500, 1000])';
 let keyName = common.generateWord(10);
 let keyNames: string[];
 let indexName = common.generateWord(5);
+let commandToChangeMaxSearchResults = 'FT.CONFIG SET maxsearchresults 30000';
 async function verifyContext(): Promise<void> {
     await t
         .expect(browserPage.selectIndexDdn.withText(indexName).exists).ok('Index selection not saved')
@@ -243,11 +244,12 @@ test
     .after(async() => {
         // Drop index
         await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
+        // Set initial maxsearchresults config
+        commandToChangeMaxSearchResults = 'FT.CONFIG SET maxsearchresults 1000000';
+        await cliPage.sendCommandInCli(commandToChangeMaxSearchResults);
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Scan more Redisearch', async t => {
-        const commandToChangeMaxSearchResults = 'FT.CONFIG SET maxsearchresults 30000';
-
         await cliPage.sendCommandInCli(commandToChangeMaxSearchResults);
         await t.click(browserPage.redisearchModeBtn);
 

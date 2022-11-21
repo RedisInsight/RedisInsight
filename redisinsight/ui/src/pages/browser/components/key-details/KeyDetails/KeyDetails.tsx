@@ -123,8 +123,8 @@ const KeyDetails = ({ ...props }: Props) => {
   }
 
   const TypeDetails: any = {
-    [KeyTypes.ZSet]: <ZSetDetails isFooterOpen={isAddItemPanelOpen} />,
-    [KeyTypes.Set]: <SetDetails isFooterOpen={isAddItemPanelOpen} />,
+    [KeyTypes.ZSet]: <ZSetDetails isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />,
+    [KeyTypes.Set]: <SetDetails isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />,
     [KeyTypes.String]: (
       <StringDetails
         isEditItem={editItem}
@@ -224,7 +224,7 @@ const KeyDetails = ({ ...props }: Props) => {
                 {isRemoveItemPanelOpen && (
                   <div className={cx('formFooterBar', styles.contentActive)}>
                     {selectedKeyType === KeyTypes.List && (
-                      <RemoveListElements onCancel={closeRemoveItemPanel} />
+                      <RemoveListElements onCancel={closeRemoveItemPanel} onRemoveKey={onRemoveKey} />
                     )}
                   </div>
                 )}

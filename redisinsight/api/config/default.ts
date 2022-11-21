@@ -56,6 +56,7 @@ export default {
     buildType: process.env.BUILD_TYPE || 'ELECTRON',
     appVersion: process.env.APP_VERSION || '2.0.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 10000,
+    ftSearchRequestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 45_000,
     excludeRoutes: [],
   },
   sockets: {

@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   ConflictException,
   ForbiddenException,
+  GatewayTimeoutException,
 } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 import { when } from 'jest-when';
 import {
   mockDatabase,
@@ -279,6 +281,21 @@ describe('RedisearchService', () => {
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
+      }
+    });
+    it('should handle produce BadGateway issue due to no response from ft.search command', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT.SEARCH' }))
+        .mockResolvedValue(new Promise((res) => {
+          setTimeout(() => res([100, keyName1, keyName2]), 1100);
+        }));
+
+      try {
+        await service.search(mockClientOptions, mockSearchRedisearchDto);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(GatewayTimeoutException);
+        expect(e.message).toEqual(ERROR_MESSAGES.FT_SEARCH_COMMAND_TIMED_OUT);
       }
     });
   });

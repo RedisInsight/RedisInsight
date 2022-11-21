@@ -2,6 +2,8 @@ import { Cluster, Command, Redis } from 'ioredis';
 import { uniq } from 'lodash';
 import {
   ConflictException,
+  GatewayTimeoutException,
+  HttpException,
   Injectable,
   Logger,
 } from '@nestjs/common';
@@ -15,7 +17,10 @@ import {
 } from 'src/modules/browser/dto/redisearch';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
 import { plainToClass } from 'class-transformer';
+import config from 'src/utils/config';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
+
+const serverConfig = config.get('server');
 
 @Injectable()
 export class RedisearchService {
@@ -143,9 +148,21 @@ export class RedisearchService {
 
       const client = await this.browserTool.getRedisClient(clientOptions);
 
-      const [total, ...keyNames] = await client.sendCommand(
-        new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, limit]),
-      );
+      // special workaround to avoid blocking client with ft.search command
+      // due to RediSearch issue
+      const [total, ...keyNames] = await Promise.race([
+        client.sendCommand(
+          new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, limit]),
+        ),
+        new Promise((res, rej) => setTimeout(() => {
+          try {
+            client.disconnect();
+          } catch (e) {
+            // ignore any error related to disconnect client
+          }
+          rej(new GatewayTimeoutException(ERROR_MESSAGES.FT_SEARCH_COMMAND_TIMED_OUT));
+        }, serverConfig.ftSearchRequestTimeout)),
+      ]);
 
       return plainToClass(GetKeysWithDetailsResponse, {
         cursor: limit + offset,
@@ -155,6 +172,10 @@ export class RedisearchService {
       });
     } catch (e) {
       this.logger.error('Failed to search keys using redisearch index', e);
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
 
       throw catchAclError(e);
     }

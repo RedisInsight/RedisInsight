@@ -9,7 +9,8 @@ export class BrowserPage {
     cssSelectorRows = '[aria-label="row"]';
     cssSelectorKey = '[data-testid^=key-]';
     cssFilteringLabel = '[data-testid=multi-search]';
-    cssJsonValue = '[data-tesid=value-as-json]';
+    cssJsonValue = '[data-testid=value-as-json]';
+    cssRowInVirtualizedTable = '[role=gridcell]';
     cssVirtualTableRow = '[aria-label=row]';
     cssKeyBadge = '[data-testid^=badge-]';
     cssKeyTtl = '[data-testid^=ttl-]';
@@ -135,6 +136,7 @@ export class BrowserPage {
     createIndexBtn = Selector('[data-testid=create-index-btn]');
     cancelIndexCreationBtn = Selector('[data-testid=create-index-cancel-btn]');
     confirmIndexCreationBtn = Selector('[data-testid=create-index-btn]');
+    resizeTrigger =  Selector('[data-testid^=resize-trigger-]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -558,6 +560,16 @@ export class BrowserPage {
         await t.click(this.keyNameInTheList);
         await t.click(this.deleteKeyButton);
         await t.click(this.confirmDeleteKeyButton);
+    }
+
+    /**
+     * Delete keys by their Names
+     * @param keyNames The names of the key array
+     */
+     async deleteKeysByNames(keyNames: string[]): Promise<void> {
+        for(const name of keyNames) {
+            await this.deleteKeyByName(name);
+        }
     }
 
     /**

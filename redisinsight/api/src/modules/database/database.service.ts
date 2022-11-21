@@ -6,7 +6,9 @@ import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
-import { catchRedisConnectionError, classToClass, getRedisConnectionException } from 'src/utils';
+import {
+  catchRedisConnectionError, classToClass, getHostingProvider, getRedisConnectionException,
+} from 'src/utils';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
@@ -15,6 +17,7 @@ import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto'
 import { AppRedisInstanceEvents } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
+import { AppTool } from 'src/models';
 
 @Injectable()
 export class DatabaseService {
@@ -80,12 +83,21 @@ export class DatabaseService {
     try {
       this.logger.log('Creating new database.');
 
-      return await this.repository.create(
+      const database = await this.repository.create(
         await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
       );
 
-      // const redisInfo = await this.getInfo(result.id, AppTool.Common, true);
-      // this.analytics.sendInstanceAddedEvent(result, redisInfo);
+      // todo: clarify if we need this and if yes - rethink implementation
+      try {
+        const client = await this.redisService.connectToDatabaseInstance(database, AppTool.Common);
+        const redisInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
+        this.analytics.sendInstanceAddedEvent(database, redisInfo);
+        await client.disconnect();
+      } catch (e) {
+        // ignore error
+      }
+
+      return database;
     } catch (error) {
       this.logger.error('Failed to add database.', error);
 
@@ -111,9 +123,9 @@ export class DatabaseService {
       database = await this.databaseFactory.createDatabaseModel(database);
 
       // todo: investigate manual update flag
-      // if (manualUpdate) {
-      //   databaseEntity.provider = getHostingProvider(databaseEntity.host);
-      // }
+      if (manualUpdate) {
+        database.provider = getHostingProvider(database.host);
+      }
 
       database = await this.repository.update(id, database);
 
@@ -162,20 +174,16 @@ export class DatabaseService {
    */
   async bulkDelete(ids: string[]): Promise<DeleteDatabasesResponse> {
     this.logger.log(`Deleting many database: ${ids}`);
-    try {
-      return {
-        affected: sum(await Promise.all(ids.map(async (id) => {
-          try {
-            await this.delete(id);
-            return 1;
-          } catch (e) {
-            return 0;
-          }
-        }))),
-      };
-    } catch (error) {
-      this.logger.error('Failed to delete many database', error);
-      throw new InternalServerErrorException();
-    }
+
+    return {
+      affected: sum(await Promise.all(ids.map(async (id) => {
+        try {
+          await this.delete(id);
+          return 1;
+        } catch (e) {
+          return 0;
+        }
+      }))),
+    };
   }
 }

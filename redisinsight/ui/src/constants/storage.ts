@@ -19,7 +19,8 @@ enum BrowserStorageItem {
   RunQueryMode = 'RunQueryMode',
   wbCleanUp = 'wbCleanUp',
   viewFormat = 'viewFormat',
-  wbGroupMode = 'wbGroupMode'
+  wbGroupMode = 'wbGroupMode',
+  keyDetailSizes = 'keyDetailSizes'
 }
 
 export default BrowserStorageItem

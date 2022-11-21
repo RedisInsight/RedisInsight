@@ -113,7 +113,7 @@ export class DatabaseController {
     @Param('id') id: string,
       @Body() database: UpdateDatabaseDto,
   ): Promise<Database> {
-    return await this.service.update(id, database);
+    return await this.service.update(id, database, true);
   }
 
   @Delete('/:id')

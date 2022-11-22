@@ -34,6 +34,7 @@
     "darkModeSupport": true,
     "bundleVersion": "0.0.5",
     "icon": "resources/icon.icns",
+    "mergeASARs": false,
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",

@@ -46,7 +46,7 @@ const TopNamespace = (props: Props) => {
     history.push(Pages.browser(instanceId))
   }
 
-  if (!data?.topMemoryNsp) {
+  if (!data?.topMemoryNsp || data?.totalKeys?.total === 0) {
     return null
   }
 

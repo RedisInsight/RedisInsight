@@ -64,7 +64,7 @@ describe('POST /databases/:id/redisearch/search', () => {
             expect(body.cursor).to.eq(10);
             expect(body.scanned).to.eq(10);
             expect(body.total).to.eq(2000);
-            expect(body.maxResults).to.eq(10000);
+            expect(body.maxResults).to.gte(10000);
           },
         },
         {
@@ -80,7 +80,7 @@ describe('POST /databases/:id/redisearch/search', () => {
             expect(body.cursor).to.eq(110);
             expect(body.scanned).to.eq(110);
             expect(body.total).to.eq(2000);
-            expect(body.maxResults).to.eq(10000);
+            expect(body.maxResults).to.gte(10000);
           },
         },
         {

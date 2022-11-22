@@ -16,6 +16,7 @@ import { localStorageService } from 'uiSrc/services'
 import { resetBrowserTree, setBrowserKeyListDataLoaded, } from 'uiSrc/slices/app/context'
 
 import { changeKeyViewType, changeSearchMode, fetchKeys, keysSelector, resetKeysData, } from 'uiSrc/slices/browser/keys'
+import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -70,6 +71,7 @@ const KeysHeader = (props: Props) => {
 
   const { id: instanceId, modules } = useSelector(connectedInstanceSelector)
   const { viewType, searchMode, isFiltered } = useSelector(keysSelector)
+  const { selectedIndex } = useSelector(redisearchSelector)
 
   const rootDivRef: Ref<HTMLDivElement> = useRef(null)
 
@@ -232,7 +234,10 @@ const KeysHeader = (props: Props) => {
     dispatch(resetBrowserTree())
     dispatch(resetKeysData(searchMode))
     localStorageService.set(BrowserStorageItem.browserViewType, type)
-    loadKeys(type)
+
+    if (!(searchMode === SearchMode.Redisearch && !selectedIndex)) {
+      loadKeys(type)
+    }
 
     setTimeout(() => {
       dispatch(changeKeyViewType(type))

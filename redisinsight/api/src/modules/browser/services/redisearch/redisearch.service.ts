@@ -1,7 +1,10 @@
 import { Cluster, Command, Redis } from 'ioredis';
-import { uniq } from 'lodash';
+import { toNumber, uniq } from 'lodash';
 import {
+  BadRequestException,
   ConflictException,
+  GatewayTimeoutException,
+  HttpException,
   Injectable,
   Logger,
 } from '@nestjs/common';
@@ -14,8 +17,13 @@ import {
   SearchRedisearchDto,
 } from 'src/modules/browser/dto/redisearch';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
+import { RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
+import { numberWithSpaces } from 'src/utils/base.helper';
+import config from 'src/utils/config';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
+
+const serverConfig = config.get('server');
 
 @Injectable()
 export class RedisearchService {
@@ -137,25 +145,59 @@ export class RedisearchService {
     this.logger.log('Searching keys using redisearch.');
 
     try {
+      let maxResults;
       const {
         index, query, offset, limit,
       } = dto;
 
       const client = await this.browserTool.getRedisClient(clientOptions);
 
-      const [total, ...keyNames] = await client.sendCommand(
-        new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, limit]),
-      );
+      // special workaround to avoid blocking client with ft.search command
+      // due to RediSearch issue
+      const [total, ...keyNames] = await Promise.race([
+        client.sendCommand(
+          new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, limit]),
+        ),
+        new Promise((res, rej) => setTimeout(() => {
+          try {
+            client.disconnect();
+          } catch (e) {
+            // ignore any error related to disconnect client
+          }
+          rej(new GatewayTimeoutException(ERROR_MESSAGES.FT_SEARCH_COMMAND_TIMED_OUT));
+        }, serverConfig.ftSearchRequestTimeout)),
+      ]);
+
+      try {
+        const [[, maxSearchResults]] = await client.sendCommand(
+          // response: [ [ 'MAXSEARCHRESULTS', '10000' ] ]
+          new Command('FT.CONFIG', ['GET', 'MAXSEARCHRESULTS'], {
+            replyEncoding: 'utf8',
+          }),
+        ) as [[string, string]];
+
+        maxResults = toNumber(maxSearchResults);
+      } catch (error) {
+        maxResults = null;
+      }
 
       return plainToClass(GetKeysWithDetailsResponse, {
         cursor: limit + offset,
         total,
         scanned: keyNames.length + offset,
         keys: keyNames.map((name) => ({ name })),
+        maxResults,
       });
     } catch (e) {
       this.logger.error('Failed to search keys using redisearch index', e);
 
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      if (e.message?.includes(RedisErrorCodes.RedisearchLimit)) {
+        throw new BadRequestException(ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(numberWithSpaces(dto.limit)));
+      }
       throw catchAclError(e);
     }
   }

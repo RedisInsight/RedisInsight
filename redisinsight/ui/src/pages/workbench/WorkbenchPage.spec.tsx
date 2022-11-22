@@ -167,7 +167,7 @@ describe('Telemetry', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.WORKBENCH_COMMAND_SUBMITTED,
       eventData: {
-        command: 'info;',
+        command: 'info;'.toUpperCase(),
         databaseId: INSTANCE_ID_MOCK,
         group: false,
         multiple: 'Single',
@@ -205,7 +205,7 @@ describe('Telemetry', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.WORKBENCH_COMMAND_SUBMITTED,
       eventData: {
-        command: 'info;',
+        command: 'info;'.toUpperCase(),
         databaseId: INSTANCE_ID_MOCK,
         group: false,
         multiple: 'Single',

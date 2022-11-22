@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   ConflictException,
   ForbiddenException,
+  GatewayTimeoutException,
 } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 import { when } from 'jest-when';
 import {
   mockDatabase,
@@ -222,6 +224,7 @@ describe('RedisearchService', () => {
         cursor: mockSearchRedisearchDto.limit + mockSearchRedisearchDto.offset,
         scanned: 2,
         total: 100,
+        maxResults: null,
         keys: [{
           name: keyName1,
         }, {
@@ -229,7 +232,7 @@ describe('RedisearchService', () => {
         }],
       });
 
-      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(2);
       expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
         name: 'FT.SEARCH',
         args: [
@@ -237,6 +240,13 @@ describe('RedisearchService', () => {
           mockSearchRedisearchDto.query,
           'NOCONTENT',
           'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining( {
+        name: 'FT.CONFIG',
+        args: [
+          'GET',
+          'MAXSEARCHRESULTS',
         ],
       }));
     });
@@ -252,13 +262,14 @@ describe('RedisearchService', () => {
         cursor: mockSearchRedisearchDto.limit + mockSearchRedisearchDto.offset,
         scanned: 2,
         total: 100,
+        maxResults: null,
         keys: [
           { name: keyName1 },
           { name: keyName2 },
         ],
       });
 
-      expect(clusterClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(clusterClient.sendCommand).toHaveBeenCalledTimes(2);
       expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
         name: 'FT.SEARCH',
         args: [
@@ -266,6 +277,13 @@ describe('RedisearchService', () => {
           mockSearchRedisearchDto.query,
           'NOCONTENT',
           'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining( {
+        name: 'FT.CONFIG',
+        args: [
+          'GET',
+          'MAXSEARCHRESULTS',
         ],
       }));
     });
@@ -279,6 +297,21 @@ describe('RedisearchService', () => {
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
+      }
+    });
+    it('should handle produce BadGateway issue due to no response from ft.search command', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT.SEARCH' }))
+        .mockResolvedValue(new Promise((res) => {
+          setTimeout(() => res([100, keyName1, keyName2]), 1100);
+        }));
+
+      try {
+        await service.search(mockClientOptions, mockSearchRedisearchDto);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(GatewayTimeoutException);
+        expect(e.message).toEqual(ERROR_MESSAGES.FT_SEARCH_COMMAND_TIMED_OUT);
       }
     });
   });

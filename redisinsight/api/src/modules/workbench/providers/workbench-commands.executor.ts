@@ -102,7 +102,7 @@ export class WorkbenchCommandsExecutor {
       this.analyticsService.sendCommandExecutedEvents(
         clientOptions.instanceId,
         result,
-        { command: command.toUpperCase(), rawMode: mode === RunQueryMode.Raw },
+        { command, rawMode: mode === RunQueryMode.Raw },
       );
 
       return result;
@@ -113,7 +113,7 @@ export class WorkbenchCommandsExecutor {
       this.analyticsService.sendCommandExecutedEvent(
         clientOptions.instanceId,
         { ...errorResult, error },
-        { command: command.toUpperCase(), rawMode: dto.mode === RunQueryMode.Raw },
+        { command, rawMode: dto.mode === RunQueryMode.Raw },
       );
 
       if (

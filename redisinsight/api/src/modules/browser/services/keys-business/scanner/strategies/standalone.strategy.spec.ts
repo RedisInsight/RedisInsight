@@ -476,7 +476,7 @@ describe('Standalone Scanner Strategy', () => {
           },
         ]);
         expect(strategy.getKeysInfo).toHaveBeenCalledWith(nodeClient, [
-          key,
+          Buffer.from(key),
         ]);
         expect(strategy.scan).not.toHaveBeenCalled();
       });
@@ -497,7 +497,7 @@ describe('Standalone Scanner Strategy', () => {
             keys: [{ ...getKeyInfoResponse, name: mockSearchPattern }],
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(nodeClient, [mockSearchPattern]);
+        expect(strategy.getKeysInfo).toHaveBeenCalledWith(nodeClient, [Buffer.from(mockSearchPattern)]);
         expect(strategy.scan).not.toHaveBeenCalled();
       });
       it('should find exact key with correct type', async () => {

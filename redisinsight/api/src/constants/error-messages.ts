@@ -11,6 +11,7 @@ export default {
   WRONG_DATABASE_TYPE: 'Wrong database type.',
   CONNECTION_TIMEOUT:
     'The connection has timed out, please check the connection details.',
+  FT_SEARCH_COMMAND_TIMED_OUT: 'Command timed out.',
   AUTHENTICATION_FAILED: () => 'Failed to authenticate, please check the username or password.',
   INCORRECT_DATABASE_URL: (url) => `Could not connect to ${url}, please check the connection details.`,
   INCORRECT_CERTIFICATES: (url) => `Could not connect to ${url}, please check the CA or Client certificate.`,
@@ -52,4 +53,5 @@ export default {
   REDIS_MODULE_IS_REQUIRED: (module: string) => `Required ${module} module is not loaded.`,
   APP_SETTINGS_NOT_FOUND: () => 'Could not find application settings.',
   SERVER_INFO_NOT_FOUND: () => 'Could not find server info.',
+  INCREASE_MINIMUM_LIMIT: (count: string) => `Set MAXSEARCHRESULTS to at least ${count}.`,
 };

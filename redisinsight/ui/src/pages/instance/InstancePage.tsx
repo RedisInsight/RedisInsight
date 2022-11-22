@@ -16,7 +16,7 @@ import {
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
-import { resetKeysData } from 'uiSrc/slices/browser/keys'
+import { resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
@@ -27,7 +27,7 @@ import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
-import { setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
+import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -96,7 +96,8 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setInitialPubSubState())
     dispatch(setBulkActionsInitialState())
     dispatch(setAppContextInitialState())
-    dispatch(resetKeysData())
+    dispatch(resetPatternKeysData())
+    dispatch(resetRedisearchKeysData())
     dispatch(setClusterDetailsInitialState())
     dispatch(setDatabaseAnalysisInitialState())
     dispatch(setInitialAnalyticsSettings())

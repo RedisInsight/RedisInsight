@@ -1,3 +1,4 @@
+import { isString } from 'lodash';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { HttpException } from '@nestjs/common';
 import { AppAnalyticsEvents } from 'src/constants';
@@ -13,7 +14,10 @@ export abstract class TelemetryBaseService {
     try {
       this.eventEmitter.emit(AppAnalyticsEvents.Track, {
         event,
-        eventData,
+        eventData: {
+          ...eventData,
+          command: isString(eventData['command']) ? eventData['command'].toUpperCase() : eventData['command'],
+        },
       });
     } catch (e) {
       // continue regardless of error
@@ -27,6 +31,7 @@ export abstract class TelemetryBaseService {
         eventData: {
           error: exception.getResponse()['error'] || exception.message,
           ...eventData,
+          command: isString(eventData['command']) ? eventData['command'].toUpperCase() : eventData['command'],
         },
       });
     } catch (e) {

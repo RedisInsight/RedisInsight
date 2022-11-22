@@ -943,7 +943,7 @@ describe('Cluster Scanner Strategy', () => {
             scanned: 10,
           },
         ]);
-        expect(strategy.getKeyInfo).toHaveBeenCalledWith(clusterClient, key);
+        expect(strategy.getKeyInfo).toHaveBeenCalledWith(clusterClient, Buffer.from(key));
         expect(strategy.scanNodes).not.toHaveBeenCalled();
       });
       it('should find exact key when match is escaped glob patter', async () => {
@@ -973,7 +973,7 @@ describe('Cluster Scanner Strategy', () => {
             scanned: 10,
           },
         ]);
-        expect(strategy.getKeyInfo).toHaveBeenCalledWith(clusterClient, searchPattern);
+        expect(strategy.getKeyInfo).toHaveBeenCalledWith(clusterClient, Buffer.from(searchPattern));
         expect(strategy.scanNodes).not.toHaveBeenCalled();
       });
       it('should find exact key with correct type', async () => {

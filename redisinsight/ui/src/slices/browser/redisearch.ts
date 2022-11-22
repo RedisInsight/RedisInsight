@@ -150,6 +150,8 @@ const redisearchSlice = createSlice({
     },
 
     resetRedisearchKeysData: (state) => {
+      state.data.total = 0
+      state.data.scanned = 0
       state.data.keys.length = 0
     },
 

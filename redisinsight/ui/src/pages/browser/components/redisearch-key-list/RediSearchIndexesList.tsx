@@ -14,6 +14,7 @@ import {
   redisearchSelector,
   redisearchListSelector,
   fetchRedisearchListAction,
+  controller as redisearchController,
 } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -61,6 +62,11 @@ const RediSearchIndexesList = (props: Props) => {
   useEffect(() => {
     setIndex(JSON.stringify(selectedIndex || ''))
   }, [selectedIndex])
+
+  useEffect(() =>
+    () => {
+      redisearchController?.abort()
+    }, [])
 
   const options: EuiSuperSelectOption<string>[] = list.map(
     (index) => {

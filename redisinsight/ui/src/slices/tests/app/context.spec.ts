@@ -11,7 +11,8 @@ import reducer, {
   initialState,
   setAppContextInitialState,
   setAppContextConnectedInstanceId,
-  setBrowserKeyListDataLoaded,
+  setBrowserPatternKeyListDataLoaded,
+  setBrowserRedisearchKeyListDataLoaded,
   setBrowserSelectedKey,
   setBrowserPatternScrollPosition,
   setBrowserPanelSizes,
@@ -130,20 +131,44 @@ describe('slices', () => {
     })
   })
 
-  describe('setBrowserKeyListDataLoaded', () => {
+  describe('setBrowserPatternKeyListDataLoaded', () => {
     it('should properly set context is data loaded', () => {
       // Arrange
-      const isDataLoaded = true
+      const isDataPatternLoaded = true
       const state = {
         ...initialState.browser,
         keyList: {
           ...initialState.browser.keyList,
-          isDataLoaded
+          isDataPatternLoaded
         }
       }
 
       // Act
-      const nextState = reducer(initialState, setBrowserKeyListDataLoaded(isDataLoaded))
+      const nextState = reducer(initialState, setBrowserPatternKeyListDataLoaded(isDataPatternLoaded))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowser(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setBrowserRedisearchKeyListDataLoaded', () => {
+    it('should properly set context is data loaded', () => {
+      // Arrange
+      const isDataRedisearchLoaded = true
+      const state = {
+        ...initialState.browser,
+        keyList: {
+          ...initialState.browser.keyList,
+          isDataRedisearchLoaded
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setBrowserRedisearchKeyListDataLoaded(isDataRedisearchLoaded))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

@@ -44,7 +44,8 @@ export interface StateAppContext {
   }
   browser: {
     keyList: {
-      isDataLoaded: boolean
+      isDataPatternLoaded: boolean
+      isDataRedisearchLoaded: boolean
       scrollPatternTopPosition: number
       scrollRedisearchTopPosition: number
       isNotRendered: boolean

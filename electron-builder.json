@@ -25,6 +25,10 @@
         "arch": ["x64", "arm64"]
       },
       {
+        "target": "mas-dev",
+        "arch": ["x64", "universal"]
+      },
+      {
         "target": "mas",
         "arch": ["x64", "universal"]
       }
@@ -51,7 +55,9 @@
   "masDev": {
     "entitlements": "resources/entitlements.mas.plist",
     "entitlementsInherit": "resources/entitlements.mas.plist",
+    "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
     "hardenedRuntime": true,
+    "asarUnpack": ["node_modules"],
     "artifactName": "${productName}-${os}-${arch}-masDev.${ext}"
   },
   "dmg": {

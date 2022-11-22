@@ -69,10 +69,12 @@ export class WorkbenchCommandsExecutor {
       nodeOptions,
       mode,
     } = dto;
-
-    const [command, ...commandArgs] = splitCliCommandLine(commandLine);
+    let command = commandLine;
 
     try {
+      const [parsedCommand, ...commandArgs] = splitCliCommandLine(commandLine);
+      command = parsedCommand;
+
       if (nodeOptions) {
         result = [await this.sendCommandForSingleNode(
           clientOptions,

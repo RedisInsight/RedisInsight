@@ -28,6 +28,7 @@ import {
   CommandParsingError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
+import { unknownCommand } from 'src/constants';
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
 import { KeytarUnavailableException } from 'src/modules/encryption/exceptions';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
@@ -330,6 +331,7 @@ describe('CliBusinessService', () => {
           ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
         ),
         {
+          command: unknownCommand,
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -591,6 +593,7 @@ describe('CliBusinessService', () => {
         mockClientOptions.instanceId,
         new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES()),
         {
+          command: unknownCommand,
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -920,6 +923,7 @@ describe('CliBusinessService', () => {
         mockClientOptions.instanceId,
         new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES()),
         {
+          command: unknownCommand,
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );

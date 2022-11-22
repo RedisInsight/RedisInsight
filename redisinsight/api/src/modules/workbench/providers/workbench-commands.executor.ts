@@ -18,6 +18,7 @@ import {
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
+import { unknownCommand } from 'src/constants';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CreateCommandExecutionDto, RunQueryMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
@@ -62,6 +63,8 @@ export class WorkbenchCommandsExecutor {
     dto: CreateCommandExecutionDto,
   ): Promise<CommandExecutionResult[]> {
     let result;
+    let command = unknownCommand;
+    let commandArgs: string[] = [];
 
     const {
       command: commandLine,
@@ -69,11 +72,8 @@ export class WorkbenchCommandsExecutor {
       nodeOptions,
       mode,
     } = dto;
-    let command = commandLine;
-
     try {
-      const [parsedCommand, ...commandArgs] = splitCliCommandLine(commandLine);
-      command = parsedCommand;
+      [command, ...commandArgs] = splitCliCommandLine(commandLine);
 
       if (nodeOptions) {
         result = [await this.sendCommandForSingleNode(

@@ -218,7 +218,16 @@ describe('workbench results slice', () => {
       }
       const state = {
         ...initialStateWithItems,
-        items: []
+        items: [{
+          id: mockItemId + 0,
+          loading: false,
+          isOpen: true,
+          error: '',
+          result: [{
+            response: data,
+            status: 'fail',
+          }]
+        }]
       }
 
       // Act

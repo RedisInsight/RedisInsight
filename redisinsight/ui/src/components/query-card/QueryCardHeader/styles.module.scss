@@ -57,11 +57,11 @@ $marginIcon: 12px;
 :global(.fullscreen) .titleWrapper {
   width: calc(100% - 402px);
 
-  @media (min-width: $breakpoint-s) {
-    width: calc(100% - 447px);
+  @media (min-width: $breakpoint-m) {
+    width: calc(100% - 474px);
   }
 
-  @media (min-width: $breakpoint-m) {
+  @media (min-width: $breakpoint-l) {
     width: calc(100% - 519px);
   }
 }

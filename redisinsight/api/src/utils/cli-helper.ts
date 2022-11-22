@@ -63,6 +63,17 @@ function getSpecChar(str: string): string {
   return char;
 }
 
+export const convertToStringIfPossible = (data: any) => {
+  if (data instanceof Buffer) {
+    const str = data.toString();
+    if (Buffer.compare(data, Buffer.from(str)) === 0) {
+      return str;
+    }
+  }
+
+  return data;
+};
+
 // todo: review/rewrite this function. Pay attention on handling data inside '' vs ""
 // todo: rethink implementation. set key {value} where {value} is string ~500KB take ~15s
 export const splitCliCommandLine = (line: string): string[] => {
@@ -70,7 +81,7 @@ export const splitCliCommandLine = (line: string): string[] => {
   // Ported from sdssplitargs() function in sds.c from Redis source code.
   // This is the function redis-cli uses to parse command lines.
   let i = 0;
-  let currentArg = null;
+  let currentArg: any = '';
   const args = [];
   while (i < line.length) {
     /* skip blanks */
@@ -141,19 +152,20 @@ export const splitCliCommandLine = (line: string): string[] => {
       } else if ([' ', '\n', '\r', '\t', '\0'].includes(line[i])) {
         done = true;
       } else if (line[i] === '"') {
-        currentArg = Buffer.alloc(0);
+        currentArg = Buffer.from(currentArg);
         inq = true;
       } else if (line[i] === "'") {
-        currentArg = '';
         insq = true;
       } else {
         currentArg = `${currentArg || ''}${line[i]}`;
       }
       if (i < line.length) i += 1;
     }
-    args.push(currentArg);
-    currentArg = null;
+    args.push(convertToStringIfPossible(currentArg));
+    // args.push(currentArg);
+    currentArg = '';
   }
+  // return [convertToStringIfPossible(args.pop()), ...args];
   return args;
 };
 

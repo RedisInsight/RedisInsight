@@ -13,6 +13,7 @@ import {
   isStatusSuccessful,
 } from 'uiSrc/utils'
 import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
+import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -63,9 +64,25 @@ const workbenchResultsSlice = createSlice({
       })
     },
 
-    // temporary solution, need improve on BE how we handle errors
     processWBCommandsFailure: (state, { payload }: { payload: { commandsId: string[], error: string } }) => {
-      state.items = [...state.items].filter((item) => payload.commandsId.indexOf(item?.id as string) === -1)
+      state.items = [...state.items].map((item) => {
+        let newItem = item
+        payload.commandsId.forEach(() => {
+          if (payload.commandsId.indexOf(item?.id as string) !== -1) {
+            newItem = {
+              ...item,
+              result: [{
+                response: payload.error,
+                status: CommandExecutionStatus.Fail,
+              }],
+              loading: false,
+              isOpen: true,
+              error: '',
+            }
+          }
+        })
+        return newItem
+      })
       state.loading = false
       state.processing = false
     },

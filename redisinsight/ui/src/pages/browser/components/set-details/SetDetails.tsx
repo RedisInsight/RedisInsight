@@ -51,10 +51,11 @@ const cellCache = new CellMeasurerCache({
 
 export interface Props {
   isFooterOpen: boolean
+  onRemoveKey: () => void
 }
 
 const SetDetails = (props: Props) => {
-  const { isFooterOpen } = props
+  const { isFooterOpen, onRemoveKey } = props
 
   const { loading } = useSelector(setSelector)
   const { members: loadedMembers, total, nextCursor } = useSelector(setDataSelector)
@@ -100,7 +101,8 @@ const SetDetails = (props: Props) => {
     setDeleting(`${member + suffix}`)
   }
 
-  const onSuccessRemoved = () => {
+  const onSuccessRemoved = (newTotal: number) => {
+    newTotal === 0 && onRemoveKey()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,

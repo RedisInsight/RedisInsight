@@ -53,4 +53,5 @@ export default {
   REDIS_MODULE_IS_REQUIRED: (module: string) => `Required ${module} module is not loaded.`,
   APP_SETTINGS_NOT_FOUND: () => 'Could not find application settings.',
   SERVER_INFO_NOT_FOUND: () => 'Could not find server info.',
+  INCREASE_MINIMUM_LIMIT: (count: string) => `Set MAXSEARCHRESULTS to at least ${count}.`,
 };

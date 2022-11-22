@@ -61,10 +61,11 @@ interface IZsetMember extends ZsetMember {
 
 export interface Props {
   isFooterOpen: boolean
+  onRemoveKey: () => void
 }
 
 const ZSetDetails = (props: Props) => {
-  const { isFooterOpen } = props
+  const { isFooterOpen, onRemoveKey } = props
 
   const { loading, searching } = useSelector(zsetSelector)
   const { loading: updateLoading } = useSelector(updateZsetScoreStateSelector)
@@ -119,7 +120,8 @@ const ZSetDetails = (props: Props) => {
     setDeleting(`${member + suffix}`)
   }, [])
 
-  const onSuccessRemoved = () => {
+  const onSuccessRemoved = (newTotal: number) => {
+    newTotal === 0 && onRemoveKey()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,

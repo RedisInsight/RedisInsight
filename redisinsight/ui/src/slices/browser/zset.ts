@@ -351,7 +351,7 @@ export function fetchAddZSetMembers(
 export function deleteZSetMembers(
   key: RedisResponseBuffer,
   members: RedisResponseBuffer[],
-  onSuccessAction?: () => void,
+  onSuccessAction?: (newTotal: number) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeZsetMembers())
@@ -372,8 +372,9 @@ export function deleteZSetMembers(
         }
       )
       if (isStatusSuccessful(status)) {
-        onSuccessAction?.()
         const newTotalValue = state.browser.zset.data.total - data.affected
+
+        onSuccessAction?.(newTotalValue)
         dispatch(removeZsetMembersSuccess())
         dispatch(removeMembersFromList(members))
         if (newTotalValue > 0) {

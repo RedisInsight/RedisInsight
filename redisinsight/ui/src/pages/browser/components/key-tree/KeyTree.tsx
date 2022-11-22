@@ -204,7 +204,6 @@ const KeyTree = forwardRef((props: Props, ref) => {
                     <KeyList
                       hideHeader
                       hideFooter
-                      ref={ref}
                       keysState={keyListState}
                       loading={loading || constructingTree}
                       selectKey={selectKey}

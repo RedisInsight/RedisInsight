@@ -30,7 +30,6 @@ import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 600
 const FULL_SCREEN_RESOLUTION = 1260
-export const REDISEARCH_MAX_KEYS_COUNT = 10_000
 
 interface ISwitchType<T> {
   tooltipText: string
@@ -150,10 +149,6 @@ const KeysHeader = (props: Props) => {
   const scanMoreStyle = {
     marginLeft: 10,
     height: '36px !important',
-    // RediSearch can't return more than 10_000 results
-    display: searchMode === SearchMode.Redisearch && keysState.keys.length >= REDISEARCH_MAX_KEYS_COUNT
-      ? 'none'
-      : 'inline-block'
   }
 
   const handleRefreshKeys = (enableAutoRefresh: boolean) => {
@@ -173,8 +168,8 @@ const KeysHeader = (props: Props) => {
       searchMode,
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      () => dispatch(setBrowserKeyListDataLoaded(true)),
-      () => dispatch(setBrowserKeyListDataLoaded(false)),
+      () => dispatch(setBrowserKeyListDataLoaded(searchMode, true)),
+      () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
     ))
   }
 
@@ -234,11 +229,14 @@ const KeysHeader = (props: Props) => {
         }
       })
     }
-    dispatch(resetKeysData(searchMode))
-    dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
+    dispatch(resetKeysData(searchMode))
     localStorageService.set(BrowserStorageItem.browserViewType, type)
     loadKeys(type)
+
+    setTimeout(() => {
+      dispatch(changeKeyViewType(type))
+    }, 0)
   }
 
   const handleSwitchSearchMode = (mode: SearchMode) => {
@@ -408,6 +406,11 @@ const KeysHeader = (props: Props) => {
                   || viewType === KeyViewType.Tree ? keysState.scanned : 0
                 }
                 loading={loading}
+                showScanMore={
+                  !(searchMode === SearchMode.Redisearch
+                    && keysState.maxResults
+                    && keysState.keys.length >= keysState.maxResults)
+                }
                 scanMoreStyle={scanMoreStyle}
                 loadMoreItems={handleScanMore}
                 nextCursor={nextCursor}

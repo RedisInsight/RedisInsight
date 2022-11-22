@@ -321,6 +321,8 @@ const keysSlice = createSlice({
 
     resetPatternKeysData: (state) => {
       // state.data.keys = []
+      state.data.total = 0
+      state.data.scanned = 0
       state.data.keys.length = 0
     },
 

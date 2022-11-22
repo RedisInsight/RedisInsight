@@ -26,6 +26,8 @@ export class MemoryEfficiencyPage {
     topKeysKeyName = Selector('[data-testid=top-keys-table-name]');
     topNamespacesEmptyContainer = Selector('[data-testid=top-namespaces-empty]');
     topNamespacesEmptyMessage = Selector('[data-testid=top-namespaces-message]');
+    topKeysKeySizeCell = Selector('[data-testid^=nsp-usedMemory-value]');
+    topKeysLengthCell = Selector('[data-testid^=length-value]');
     // TABLE
     namespaceTable = Selector('[data-testid=nsp-table-memory]');
     nameSpaceTableRows = this.namespaceTable.find('[data-testid^=row-]');

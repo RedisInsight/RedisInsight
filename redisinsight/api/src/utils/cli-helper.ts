@@ -162,10 +162,9 @@ export const splitCliCommandLine = (line: string): string[] => {
       if (i < line.length) i += 1;
     }
     args.push(convertToStringIfPossible(currentArg));
-    // args.push(currentArg);
     currentArg = '';
   }
-  // return [convertToStringIfPossible(args.pop()), ...args];
+
   return args;
 };
 

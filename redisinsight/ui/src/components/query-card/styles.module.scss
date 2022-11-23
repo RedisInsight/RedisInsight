@@ -8,10 +8,7 @@ $breakpoint-m: 1050px;
 .containerWrapper {
   min-width: 560px;
   @media (min-width: $breakpoint-m) {
-    min-width: 650px;
-  }
-  @media (min-width: $breakpoint-l) {
-    min-width: 720px;
+    min-width: 700px;
   }
   &:nth-of-type(even) {
     background-color: var(--euiColorEmptyShade) !important;

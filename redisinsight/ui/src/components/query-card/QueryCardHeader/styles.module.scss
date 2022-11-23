@@ -44,13 +44,8 @@ $marginIcon: 12px;
   min-width: calc(100% - 490px);
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 582px);
-    min-width: calc(100% - 582px);
-  }
-
-  @media (min-width: $breakpoint-l) {
-    width: calc(100% - 633px);
-    min-width: calc(100% - 633px);
+    width: calc(100% - 627px);
+    min-width: calc(100% - 627px);
   }
 }
 
@@ -149,7 +144,7 @@ $marginIcon: 12px;
   min-width: 13px;
   width: 13px;
 
-  @media (min-width: $breakpoint-l) {
+  @media (min-width: $breakpoint-m) {
     min-width: 58px;
     width: 58px;
   }

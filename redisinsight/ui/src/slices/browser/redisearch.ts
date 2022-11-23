@@ -5,7 +5,7 @@ import { remove } from 'lodash'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { bufferToString, getApiErrorMessage, getUrl, isEqualBuffers, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { bufferToString, getApiErrorMessage, getUrl, isEqualBuffers, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import ApiErrors from 'uiSrc/constants/apiErrors'
@@ -67,8 +67,10 @@ const redisearchSlice = createSlice({
       state.isSearched = isSearched
       state.data.lastRefreshTime = Date.now()
     },
-    loadKeysFailure: (state, { payload }) => {
-      state.error = payload
+    loadKeysFailure: (state, { payload }: PayloadAction<Maybe<string>>) => {
+      if (payload) {
+        state.error = payload
+      }
       state.loading = false
     },
 
@@ -86,9 +88,11 @@ const redisearchSlice = createSlice({
 
       state.loading = false
     },
-    loadMoreKeysFailure: (state, { payload }) => {
+    loadMoreKeysFailure: (state, { payload }: PayloadAction<Maybe<string>>) => {
+      if (payload) {
+        state.error = payload
+      }
       state.loading = false
-      state.error = payload
     },
 
     // load list of indexes
@@ -278,6 +282,8 @@ export function fetchRedisearchKeysAction(
           dispatch(fetchRedisearchListAction())
         }
         onFailed?.()
+      } else {
+        dispatch(loadKeysFailure())
       }
     }
   }
@@ -326,6 +332,8 @@ export function fetchMoreRedisearchKeysAction(
         const errorMessage = getApiErrorMessage(error)
         dispatch(addErrorNotification(error))
         dispatch(loadMoreKeysFailure(errorMessage))
+      } else {
+        dispatch(loadMoreKeysFailure())
       }
     }
   }

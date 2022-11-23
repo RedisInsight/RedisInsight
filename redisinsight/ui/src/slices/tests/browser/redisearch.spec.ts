@@ -171,6 +171,33 @@ describe('redisearch slice', () => {
       })
       expect(redisearchSelector(rootState)).toEqual(state)
     })
+
+    it('should not properly set the error if no payload', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        loading: false,
+        error: initialState.error,
+        data: {
+          ...initialState.data,
+          keys: [],
+          nextCursor: '0',
+          total: 0,
+          scanned: 0,
+          shardsMeta: {},
+          previousResultCount: 0,
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadKeysFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
   })
 
   describe('loadMoreKeys', () => {
@@ -291,6 +318,33 @@ describe('redisearch slice', () => {
 
       // Act
       const nextState = reducer(initialState, loadMoreKeysFailure(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+
+    it('should not properly set the error if no payload', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        loading: false,
+        error: initialState.error,
+        data: {
+          ...initialState.data,
+          keys: [],
+          nextCursor: '0',
+          total: 0,
+          scanned: 0,
+          shardsMeta: {},
+          previousResultCount: 0,
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadMoreKeysFailure())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

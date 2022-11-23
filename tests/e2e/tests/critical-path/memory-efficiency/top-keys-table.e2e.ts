@@ -74,7 +74,7 @@ test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         // Create keys
-        await populateHashWithFields('localhost', '8102', keyToAddParameters2);
+        await populateHashWithFields(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port, keyToAddParameters2);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.analysisPageButton);
     })

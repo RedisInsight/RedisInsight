@@ -158,7 +158,7 @@ $marginIcon: 12px;
 .executionTimeValue {
   display: none;
 
-  @media (min-width: $breakpoint-l) {
+  @media (min-width: $breakpoint-m) {
     display: initial;
     overflow: hidden;
     text-overflow: ellipsis;

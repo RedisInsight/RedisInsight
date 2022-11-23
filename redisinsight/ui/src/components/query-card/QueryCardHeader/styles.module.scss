@@ -41,24 +41,27 @@ $marginIcon: 12px;
 
 .titleWrapper {
   width: calc(100% - 490px);
-
-  @media (min-width: $breakpoint-s) {
-    width: calc(100% - 529px);
-  }
+  min-width: calc(100% - 490px);
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 651px);
+    width: calc(100% - 582px);
+    min-width: calc(100% - 582px);
+  }
+
+  @media (min-width: $breakpoint-l) {
+    width: calc(100% - 633px);
+    min-width: calc(100% - 633px);
   }
 }
 
 :global(.fullscreen) .titleWrapper {
   width: calc(100% - 402px);
 
-  @media (min-width: $breakpoint-s) {
-    width: calc(100% - 447px);
+  @media (min-width: $breakpoint-m) {
+    width: calc(100% - 474px);
   }
 
-  @media (min-width: $breakpoint-m) {
+  @media (min-width: $breakpoint-l) {
     width: calc(100% - 519px);
   }
 }
@@ -146,21 +149,16 @@ $marginIcon: 12px;
   min-width: 13px;
   width: 13px;
 
-  @media (min-width: $breakpoint-s) {
+  @media (min-width: $breakpoint-l) {
     min-width: 58px;
     width: 58px;
-  }
-
-  @media (min-width: $breakpoint-m) {
-    min-width: 70px;
-    width: 70px;
   }
 }
 
 .executionTimeValue {
   display: none;
 
-  @media (min-width: $breakpoint-s) {
+  @media (min-width: $breakpoint-l) {
     display: initial;
     overflow: hidden;
     text-overflow: ellipsis;

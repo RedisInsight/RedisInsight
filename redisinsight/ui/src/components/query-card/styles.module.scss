@@ -2,8 +2,17 @@
 @import "@elastic/eui/src/components/table/mixins";
 @import "@elastic/eui/src/global_styling/index";
 
+$breakpoint-l: 1300px;
+$breakpoint-m: 1050px;
+
 .containerWrapper {
-  min-width: 590px;
+  min-width: 560px;
+  @media (min-width: $breakpoint-m) {
+    min-width: 650px;
+  }
+  @media (min-width: $breakpoint-l) {
+    min-width: 720px;
+  }
   &:nth-of-type(even) {
     background-color: var(--euiColorEmptyShade) !important;
   }

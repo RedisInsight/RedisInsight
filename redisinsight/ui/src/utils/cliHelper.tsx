@@ -197,5 +197,6 @@ export {
   checkBlockingCommand,
   checkUnsupportedModuleCommand,
   getDbIndexFromSelectQuery,
-  getCommandNameFromQuery
+  getCommandNameFromQuery,
+  wbSummaryCommand
 }

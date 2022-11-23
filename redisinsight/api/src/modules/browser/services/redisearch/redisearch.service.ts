@@ -3,7 +3,6 @@ import { toNumber, uniq } from 'lodash';
 import {
   BadRequestException,
   ConflictException,
-  GatewayTimeoutException,
   HttpException,
   Injectable,
   Logger,
@@ -20,10 +19,7 @@ import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
 import { RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
 import { numberWithSpaces } from 'src/utils/base.helper';
-import config from 'src/utils/config';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
-
-const serverConfig = config.get('server');
 
 @Injectable()
 export class RedisearchService {
@@ -152,22 +148,6 @@ export class RedisearchService {
 
       const client = await this.browserTool.getRedisClient(clientOptions);
 
-      // special workaround to avoid blocking client with ft.search command
-      // due to RediSearch issue
-      const [total, ...keyNames] = await Promise.race([
-        client.sendCommand(
-          new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, limit]),
-        ),
-        new Promise((res, rej) => setTimeout(() => {
-          try {
-            client.disconnect();
-          } catch (e) {
-            // ignore any error related to disconnect client
-          }
-          rej(new GatewayTimeoutException(ERROR_MESSAGES.FT_SEARCH_COMMAND_TIMED_OUT));
-        }, serverConfig.ftSearchRequestTimeout)),
-      ]);
-
       try {
         const [[, maxSearchResults]] = await client.sendCommand(
           // response: [ [ 'MAXSEARCHRESULTS', '10000' ] ]
@@ -180,6 +160,16 @@ export class RedisearchService {
       } catch (error) {
         maxResults = null;
       }
+
+      // Workaround: recalculate limit to not query more then MAXSEARCHRESULTS
+      let safeLimit = limit;
+      if (maxResults && offset + limit > maxResults) {
+        safeLimit = offset <= maxResults ? maxResults - offset : limit;
+      }
+
+      const [total, ...keyNames] = await client.sendCommand(
+        new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, safeLimit]),
+      );
 
       return plainToClass(GetKeysWithDetailsResponse, {
         cursor: limit + offset,

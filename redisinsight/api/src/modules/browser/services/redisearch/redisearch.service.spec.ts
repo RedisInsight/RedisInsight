@@ -240,7 +240,7 @@ describe('RedisearchService', () => {
           'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
         ],
       }));
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining( {
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
         name: 'FT.CONFIG',
         args: [
           'GET',
@@ -277,7 +277,7 @@ describe('RedisearchService', () => {
           'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
         ],
       }));
-      expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining( {
+      expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
         name: 'FT.CONFIG',
         args: [
           'GET',

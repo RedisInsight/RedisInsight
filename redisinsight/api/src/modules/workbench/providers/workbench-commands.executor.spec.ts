@@ -5,6 +5,8 @@ import {
   mockDatabase,
   mockWorkbenchAnalyticsService,
 } from 'src/__mocks__';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { unknownCommand } from 'src/constants';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import {
@@ -17,6 +19,7 @@ import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException, ServiceUnavailableException } from '@nestjs/common';
 import {
   CommandNotSupportedError,
+  CommandParsingError,
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
@@ -49,6 +52,7 @@ const mockCliNodeResponse: ICliExecResultFromNode = {
 };
 
 const mockSetCommand = 'set';
+const mockGetEscapedKeyCommand = 'get "\\\\key';
 const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
   command: `${mockSetCommand} foo bar`,
   nodeOptions: {
@@ -131,7 +135,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -157,7 +161,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -188,7 +192,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -218,7 +222,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -248,7 +252,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: true,
           },
         );
@@ -274,7 +278,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand.toUpperCase(),
+              command: mockSetCommand,
               rawMode: false,
             },
           );
@@ -299,7 +303,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -330,7 +334,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -364,7 +368,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -387,7 +391,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -410,7 +414,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand.toUpperCase(),
+              command: mockSetCommand,
               rawMode: false,
             },
           );
@@ -434,7 +438,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand.toUpperCase(),
+              command: mockSetCommand,
               rawMode: false,
             },
           );
@@ -475,7 +479,7 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           ],
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -502,7 +506,7 @@ describe('WorkbenchCommandsExecutor', () => {
             status: CommandExecutionStatus.Fail,
           },
           {
-            command: mockSetCommand.toUpperCase(),
+            command: mockSetCommand,
             rawMode: false,
           },
         );
@@ -529,7 +533,7 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand.toUpperCase(),
+              command: mockSetCommand,
               rawMode: false,
             },
           );
@@ -557,11 +561,41 @@ describe('WorkbenchCommandsExecutor', () => {
               status: CommandExecutionStatus.Fail,
             },
             {
-              command: mockSetCommand.toUpperCase(),
+              command: mockSetCommand,
               rawMode: false,
             },
           );
         }
+      });
+    });
+    describe('CommandParsingError', () => {
+      it('should return response with [CLI_UNTERMINATED_QUOTES] error for sendCommandForNodes', async () => {
+        const mockResult = [
+          {
+            response: ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
+            status: CommandExecutionStatus.Fail,
+          },
+        ];
+
+        const result = await service.sendCommand(mockClientOptions, {
+          command: mockGetEscapedKeyCommand,
+          role: mockCreateCommandExecutionDto.role,
+          mode: RunQueryMode.ASCII,
+        });
+
+        expect(result).toEqual(mockResult);
+        expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          {
+            response: ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
+            error: new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES()),
+            status: CommandExecutionStatus.Fail,
+          },
+          {
+            command: unknownCommand,
+            rawMode: false,
+          },
+        );
       });
     });
   });

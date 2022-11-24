@@ -3,6 +3,7 @@ import { toNumber, uniq } from 'lodash';
 import {
   BadRequestException,
   ConflictException,
+  HttpException,
   Injectable,
   Logger,
 } from '@nestjs/common';
@@ -147,11 +148,6 @@ export class RedisearchService {
 
       const client = await this.browserTool.getRedisClient(clientOptions);
 
-      const [total, ...keyNames] = await client.sendCommand(
-        new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, limit]),
-      );
-
-
       try {
         const [[, maxSearchResults]] = await client.sendCommand(
           // response: [ [ 'MAXSEARCHRESULTS', '10000' ] ]
@@ -165,6 +161,16 @@ export class RedisearchService {
         maxResults = null;
       }
 
+      // Workaround: recalculate limit to not query more then MAXSEARCHRESULTS
+      let safeLimit = limit;
+      if (maxResults && offset + limit > maxResults) {
+        safeLimit = offset <= maxResults ? maxResults - offset : limit;
+      }
+
+      const [total, ...keyNames] = await client.sendCommand(
+        new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, safeLimit]),
+      );
+
       return plainToClass(GetKeysWithDetailsResponse, {
         cursor: limit + offset,
         total,
@@ -172,12 +178,17 @@ export class RedisearchService {
         keys: keyNames.map((name) => ({ name })),
         maxResults,
       });
-    } catch (error) {
-      this.logger.error('Failed to search keys using redisearch index', error);
-      if (error.message?.includes(RedisErrorCodes.RedisearchLimit)) {
+    } catch (e) {
+      this.logger.error('Failed to search keys using redisearch index', e);
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      if (e.message?.includes(RedisErrorCodes.RedisearchLimit)) {
         throw new BadRequestException(ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(numberWithSpaces(dto.limit)));
       }
-      throw catchAclError(error);
+      throw catchAclError(e);
     }
   }
 

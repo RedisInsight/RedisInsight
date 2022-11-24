@@ -292,7 +292,7 @@ const QueryCardHeader = (props: Props) => {
         <EuiFlexItem grow={false} className={styles.executionTime} data-testid="command-execution-time">
           {isNumber(executionTime) && (
             <EuiToolTip
-              title="Execution Time"
+              title="Processing Time"
               content={getExecutionTimeString(executionTime)}
               position="left"
               anchorClassName={cx(styles.tooltipIcon, styles.alignCenter)}

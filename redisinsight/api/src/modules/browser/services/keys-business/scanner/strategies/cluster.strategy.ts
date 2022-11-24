@@ -49,7 +49,7 @@ export class ClusterStrategy extends AbstractStrategy {
     await this.calculateNodesTotalKeys(clientOptions, currentDbIndex, nodes);
 
     if (!isGlob(match, { strict: false })) {
-      const keyName = unescapeGlob(match);
+      const keyName = Buffer.from(unescapeGlob(match));
       nodes.forEach((node) => {
         // eslint-disable-next-line no-param-reassign
         node.cursor = 0;

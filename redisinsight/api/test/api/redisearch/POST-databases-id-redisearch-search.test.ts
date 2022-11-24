@@ -45,6 +45,7 @@ const mainCheckFn = getMainCheckFn(endpoint);
 describe('POST /databases/:id/redisearch/search', () => {
   requirements('!rte.bigData', 'rte.modules.search');
   before(async () => rte.data.generateRedisearchIndexes(true));
+  beforeEach(() => rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '10000'));
 
   describe('Main', () => {
     describe('Validation', () => {
@@ -64,7 +65,7 @@ describe('POST /databases/:id/redisearch/search', () => {
             expect(body.cursor).to.eq(10);
             expect(body.scanned).to.eq(10);
             expect(body.total).to.eq(2000);
-            expect(body.maxResults).to.eq(10000);
+            expect(body.maxResults).to.gte(10000);
           },
         },
         {
@@ -80,12 +81,32 @@ describe('POST /databases/:id/redisearch/search', () => {
             expect(body.cursor).to.eq(110);
             expect(body.scanned).to.eq(110);
             expect(body.total).to.eq(2000);
-            expect(body.maxResults).to.eq(10000);
+            expect(body.maxResults).to.gte(10000);
           },
         },
         {
+          name: 'Should modify limit to not exceed available search limitation',
+          data: {
+            ...validInputData,
+            offset: 0,
+            limit: 10,
+          },
+          checkFn: async ({ body }) => {
+            expect(body.keys.length).to.eq(1);
+            expect(body.cursor).to.eq(10);
+            expect(body.scanned).to.eq(1);
+            expect(body.total).to.eq(2000);
+            expect(body.maxResults).to.gte(1);
+          },
+          before: () => rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1'),
+        },
+        {
           name: 'Should return custom error message if MAXSEARCHRESULTS less than request.limit',
-          data: validInputData,
+          data: {
+            ...validInputData,
+            offset: 10,
+            limit: 10,
+          },
           statusCode: 400,
           responseBody: {
             statusCode: 400,
@@ -93,7 +114,6 @@ describe('POST /databases/:id/redisearch/search', () => {
             message: `Set MAXSEARCHRESULTS to at least ${numberWithSpaces(validInputData.limit)}.`,
           },
           before: () => rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1'),
-          after: () => rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '10000'),
         },
       ].map(mainCheckFn);
     });

@@ -16,9 +16,9 @@ import { extrapolate, formatBytes, formatExtrapolation, formatLongName, Nullable
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { GroupBadge } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
-import { setFilter, setSearchMatch, resetKeysData, fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
+import { setFilter, setSearchMatch, resetKeysData, fetchKeys, keysSelector, changeSearchMode } from 'uiSrc/slices/browser/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { setBrowserTreeDelimiter, setBrowserKeyListDataLoaded, resetBrowserTree } from 'uiSrc/slices/app/context'
 import { NspSummary } from 'apiSrc/modules/database-analysis/models/nsp-summary'
 import { NspTypeSummary } from 'apiSrc/modules/database-analysis/models/nsp-type-summary'
@@ -62,15 +62,17 @@ const NameSpacesTable = (props: Props) => {
   }, [isExtrapolated])
 
   const handleRedirect = (nsp: string, filter: string) => {
+    dispatch(changeSearchMode(SearchMode.Pattern))
     dispatch(setBrowserTreeDelimiter(delimiter))
     dispatch(setFilter(filter))
-    dispatch(setSearchMatch(`${nsp}${delimiter}*`))
+    dispatch(setSearchMatch(`${nsp}${delimiter}*`, SearchMode.Pattern))
     dispatch(resetKeysData())
     dispatch(fetchKeys(
+      SearchMode.Pattern,
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      () => dispatch(setBrowserKeyListDataLoaded(true)),
-      () => dispatch(setBrowserKeyListDataLoaded(false)),
+      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, true)),
+      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, false)),
     ))
     dispatch(resetBrowserTree())
     history.push(Pages.browser(instanceId))

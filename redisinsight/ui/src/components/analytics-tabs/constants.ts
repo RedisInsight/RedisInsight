@@ -12,7 +12,7 @@ export const analyticsViewTabs: AnalyticsTabs[] = [
   },
   {
     id: AnalyticsViewTab.DatabaseAnalysis,
-    label: 'Redis Database Analysis',
+    label: 'Database Analysis',
   },
   {
     id: AnalyticsViewTab.SlowLog,

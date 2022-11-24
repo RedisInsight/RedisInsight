@@ -42,6 +42,7 @@ import { initialState as initialClusterDetails } from 'uiSrc/slices/analytics/cl
 import { initialState as initialStateAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { initialState as initialStateDbAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { initialState as initialStatePubSub } from 'uiSrc/slices/pubsub/pubsub'
+import { initialState as initialStateRedisearch } from 'uiSrc/slices/browser/redisearch'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
@@ -80,6 +81,7 @@ const initialStateDefault: RootState = {
     rejson: cloneDeep(initialStateRejson),
     stream: cloneDeep(initialStateStream),
     bulkActions: cloneDeep(initialStateBulkActions),
+    redisearch: cloneDeep(initialStateRedisearch),
   },
   cli: {
     settings: cloneDeep(initialStateCliSettings),

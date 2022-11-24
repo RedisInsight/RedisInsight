@@ -1,4 +1,3 @@
-import { SendClusterCommandDto, SendClusterCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 import { cloneDeep, first } from 'lodash'
 
 import { AppDispatch, RootState } from 'uiSrc/slices/store'
@@ -9,6 +8,7 @@ import { cliTexts } from 'uiSrc/constants/cliOutput'
 import { cliParseTextResponseWithOffset, cliParseTextResponseWithRedirect } from 'uiSrc/utils/cliHelper'
 import ApiErrors from 'uiSrc/constants/apiErrors'
 import { processCliClient, updateCliClientAction } from 'uiSrc/slices/cli/cli-settings'
+import { SendClusterCommandDto, SendClusterCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 import reducer, {
   concatToOutput,
   initialState,

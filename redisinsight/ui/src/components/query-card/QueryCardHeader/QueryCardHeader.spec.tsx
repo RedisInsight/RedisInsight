@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, fireEvent, act, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import QueryCardHeader, { Props } from './QueryCardHeader'
 
 const mockedProps = mock<Props>()
@@ -40,5 +40,21 @@ describe('QueryCardHeader', () => {
     // sendCliClusterCommandAction.mockImplementation(() => sendCliClusterActionMock);
 
     expect(render(<QueryCardHeader {...instance(mockedProps)} />)).toBeTruthy()
+  })
+  it('should render tooltip in milliseconds', async () => {
+    render(<QueryCardHeader {...instance(mockedProps)} executionTime={12345678910} />)
+
+    await act(async () => {
+      fireEvent.mouseOver(screen.getByTestId('command-execution-time-icon'))
+    })
+    await waitForEuiToolTipVisible()
+
+    expect(screen.getByTestId('execution-time-tooltip')).toHaveTextContent('12 345 678.91 ms')
+  })
+
+  it('should render disabled copy button', async () => {
+    render(<QueryCardHeader {...instance(mockedProps)} emptyCommand />)
+
+    expect(screen.getByTestId('copy-command')).toBeDisabled()
   })
 })

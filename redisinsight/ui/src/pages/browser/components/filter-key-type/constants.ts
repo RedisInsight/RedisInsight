@@ -36,12 +36,12 @@ export const FILTER_KEY_TYPE_OPTIONS = [
     color: GROUP_TYPES_COLORS[KeyTypes.ReJSON],
   },
   {
-    text: 'STREAM',
+    text: 'Stream',
     value: KeyTypes.Stream,
     color: GROUP_TYPES_COLORS[KeyTypes.Stream],
   },
   {
-    text: 'GRAPH',
+    text: 'Graph',
     value: ModulesKeyTypes.Graph,
     color: GROUP_TYPES_COLORS[ModulesKeyTypes.Graph],
   },

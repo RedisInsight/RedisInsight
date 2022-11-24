@@ -4,58 +4,56 @@ import React, { ChangeEvent, Ref, useCallback, useEffect, useRef, useState } fro
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
 import AutoSizer from 'react-virtualized-auto-sizer'
-
-import {
-  hashSelector,
-  hashDataSelector,
-  deleteHashFields,
-  fetchHashFields,
-  fetchMoreHashFields,
-  updateHashValueStateSelector,
-  updateHashFieldsAction,
-} from 'uiSrc/slices/browser/hash'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import {
-  formatLongName,
-  createDeleteFieldHeader,
-  createDeleteFieldMessage,
-  Nullable,
-  formattingBuffer,
-  bufferToString,
-  bufferToSerializedFormat,
-  stringToSerializedBufferFormat,
-  isNonUnicodeFormatter,
-  isFormatEditable,
-  isEqualBuffers
-} from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
-import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
+import { getColumnWidth } from 'uiSrc/components/virtual-grid'
+import { StopPropagation } from 'uiSrc/components/virtual-table'
 import {
   IColumnSearchState,
   ITableColumn,
+  RelativeWidthSizes,
 } from 'uiSrc/components/virtual-table/interfaces'
-import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import HelpTexts from 'uiSrc/constants/help-texts'
+import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import {
   KeyTypes,
   OVER_RENDER_BUFFER_COUNT,
   TableCellAlignment,
-  TEXT_INVALID_VALUE,
   TEXT_DISABLED_FORMATTER_EDITING,
+  TEXT_INVALID_VALUE,
   TEXT_UNPRINTABLE_CHARACTERS
 } from 'uiSrc/constants'
-import { getColumnWidth } from 'uiSrc/components/virtual-grid'
-import { StopPropagation } from 'uiSrc/components/virtual-table'
-import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import HelpTexts from 'uiSrc/constants/help-texts'
+import { NoResultsFoundText } from 'uiSrc/constants/texts'
+import { appContextBrowserKeyDetails, updateKeyDetailsSizes } from 'uiSrc/slices/app/context'
+
 import {
-  GetHashFieldsResponse,
-  AddFieldsToHashDto,
-  HashFieldDto,
-} from 'apiSrc/modules/browser/dto/hash.dto'
+  deleteHashFields,
+  fetchHashFields,
+  fetchMoreHashFields,
+  hashDataSelector,
+  hashSelector,
+  updateHashFieldsAction,
+  updateHashValueStateSelector,
+} from 'uiSrc/slices/browser/hash'
+import { keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { getBasedOnViewTypeEvent, getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  bufferToSerializedFormat,
+  bufferToString,
+  createDeleteFieldHeader,
+  createDeleteFieldMessage,
+  formatLongName,
+  formattingBuffer,
+  isEqualBuffers,
+  isFormatEditable,
+  isNonUnicodeFormatter,
+  Nullable,
+  stringToSerializedBufferFormat
+} from 'uiSrc/utils'
+import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
+import { AddFieldsToHashDto, GetHashFieldsResponse, HashFieldDto, } from 'apiSrc/modules/browser/dto/hash.dto'
 
 import PopoverDelete from '../popover-delete/PopoverDelete'
 import styles from './styles.module.scss'
@@ -74,10 +72,11 @@ interface IHashField extends HashFieldDto {}
 
 export interface Props {
   isFooterOpen: boolean
+  onRemoveKey: () => void
 }
 
 const HashDetails = (props: Props) => {
-  const { isFooterOpen } = props
+  const { isFooterOpen, onRemoveKey } = props
 
   const {
     total,
@@ -90,6 +89,7 @@ const HashDetails = (props: Props) => {
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
   const { name: key, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { loading: updateLoading } = useSelector(updateHashValueStateSelector)
+  const { [KeyTypes.Hash]: hashSizes } = useSelector(appContextBrowserKeyDetails)
 
   const [match, setMatch] = useState<Nullable<string>>(matchAllValue)
   const [deleting, setDeleting] = useState('')
@@ -135,7 +135,8 @@ const HashDetails = (props: Props) => {
     setDeleting(`${field + suffix}`)
   }, [])
 
-  const onSuccessRemoved = () => {
+  const onSuccessRemoved = (newTotalValue: number) => {
+    newTotalValue === 0 && onRemoveKey()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,
@@ -269,11 +270,21 @@ const HashDetails = (props: Props) => {
     }
   }
 
+  const onColResizeEnd = (sizes: RelativeWidthSizes) => {
+    dispatch(updateKeyDetailsSizes({
+      type: KeyTypes.Hash,
+      sizes
+    }))
+  }
+
   const columns: ITableColumn[] = [
     {
       id: 'field',
       label: 'Field',
       isSearchable: true,
+      isResizable: true,
+      minWidth: 120,
+      relativeWidth: hashSizes?.field || 40,
       prependSearchName: 'Field:',
       initialSearchValue: '',
       truncateText: true,
@@ -309,6 +320,7 @@ const HashDetails = (props: Props) => {
     {
       id: 'value',
       label: 'Value',
+      minWidth: 120,
       truncateText: true,
       alignment: TableCellAlignment.Left,
       render: function Value(
@@ -474,7 +486,7 @@ const HashDetails = (props: Props) => {
         <VirtualTable
           hideProgress
           expandable
-          keyName={key}
+          keyName={key as RedisResponseBuffer}
           headerHeight={headerHeight}
           rowHeight={rowHeight}
           onChangeWidth={setWidth}
@@ -495,6 +507,7 @@ const HashDetails = (props: Props) => {
           onRowToggleViewClick={handleRowToggleViewClick}
           expandedRows={expandedRows}
           setExpandedRows={setExpandedRows}
+          onColResizeEnd={onColResizeEnd}
         />
       </div>
     </>

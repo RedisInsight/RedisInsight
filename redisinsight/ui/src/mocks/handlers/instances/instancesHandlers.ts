@@ -1,14 +1,14 @@
-import { DatabaseInstanceResponse } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { rest, RestHandler } from 'msw'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { getMswURL } from 'uiSrc/utils/test-utils'
+import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 
 export const INSTANCE_ID_MOCK = 'instanceId'
 
 const handlers: RestHandler[] = [
   // fetchInstancesAction
-  rest.get<DatabaseInstanceResponse[]>(getMswURL(ApiEndpoints.INSTANCE), async (req, res, ctx) => res(
+  rest.get<DatabaseInstanceResponse[]>(getMswURL(ApiEndpoints.DATABASES), async (req, res, ctx) => res(
     ctx.status(200),
     ctx.json([
       {

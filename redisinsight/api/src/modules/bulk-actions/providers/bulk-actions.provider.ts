@@ -4,13 +4,10 @@ import {
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
 import { AppTool } from 'src/models';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import { Socket } from 'socket.io';
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/contants';
-import {
-  DeleteBulkActionSimpleRunner,
-} from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
+import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
+import { DeleteBulkActionSimpleRunner } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
+import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 
 @Injectable()
 export class BulkActionsProvider {
@@ -19,8 +16,7 @@ export class BulkActionsProvider {
   private logger: Logger = new Logger('BulkActionsProvider');
 
   constructor(
-    private readonly redisService: RedisService,
-    private readonly instancesBusinessService: InstancesBusinessService,
+    private readonly databaseConnectionService: DatabaseConnectionService,
   ) {}
 
   /**
@@ -37,7 +33,10 @@ export class BulkActionsProvider {
 
     this.bulkActions.set(dto.id, bulkAction);
 
-    const client = await this.getClient(dto.databaseId);
+    const client = await this.databaseConnectionService.getOrCreateClient({
+      databaseId: dto.databaseId,
+      namespace: AppTool.Common,
+    });
 
     await bulkAction.prepare(client, BulkActionsProvider.getSimpleRunnerClass(dto));
 
@@ -110,23 +109,5 @@ export class BulkActionsProvider {
     this.logger.debug(`Aborted ${aborted} bulk actions`);
 
     return aborted;
-  }
-
-  /**
-   * Get or create redis "common" client
-   *
-   * @private
-   * @param instanceId
-   */
-  private async getClient(instanceId: string) {
-    const tool = AppTool.Common;
-
-    const commonClient = this.redisService.getClientInstance({ instanceId, tool })?.client;
-
-    if (commonClient && this.redisService.isClientConnected(commonClient)) {
-      return commonClient;
-    }
-
-    return this.instancesBusinessService.connectToInstance(instanceId, tool, true);
   }
 }

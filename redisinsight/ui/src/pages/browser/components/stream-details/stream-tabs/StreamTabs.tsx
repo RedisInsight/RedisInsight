@@ -12,11 +12,11 @@ import {
   fetchStreamEntries,
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
-import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import { streamViewTypeTabs } from '../constants'
 

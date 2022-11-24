@@ -1,7 +1,6 @@
 import { Redis, Cluster, Command } from 'ioredis';
-import { get } from 'lodash';
 import { Injectable } from '@nestjs/common';
-import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
+import { getTotal } from 'src/modules/database/utils/database.total.util';
 import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
 
 @Injectable()
@@ -23,7 +22,7 @@ export class KeysScanner {
   }
 
   async nodeScan(client: Redis, opts: any) {
-    const total = await this.getNodeTotal(client);
+    const total = await getTotal(client);
 
     const [
       ,
@@ -74,27 +73,5 @@ export class KeysScanner {
         processed: nodeKeys.length,
       },
     };
-  }
-
-  /**
-   * Fetches total keys for node based on database index client connected to
-   * Uses "info" command
-   * @param client
-   */
-  async getNodeTotal(client: Redis): Promise<number> {
-    const currentDbIndex = get(client, ['options', 'db'], 0);
-    const info = convertRedisInfoReplyToObject(
-      await client.sendCommand(new Command('info', ['keyspace'], {
-        replyEncoding: 'utf8',
-      })) as string,
-    );
-
-    const dbInfo = get(info, 'keyspace', {});
-    if (!dbInfo[`db${currentDbIndex}`]) {
-      return 0;
-    }
-
-    const { keys } = convertBulkStringsToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
-    return parseInt(keys, 10);
   }
 }

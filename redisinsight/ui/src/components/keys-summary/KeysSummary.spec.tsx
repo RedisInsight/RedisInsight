@@ -23,4 +23,11 @@ describe('KeysSummary', () => {
     )
     expect(queryByTestId('keys-summary')).toBeInTheDocument()
   })
+
+  it('should not render Scan more button if showScanMore = false ', () => {
+    const { queryByTestId } = render(
+      <KeysSummary {...instance(mockedProps)} showScanMore={false} />
+    )
+    expect(queryByTestId('scan-more')).not.toBeInTheDocument()
+  })
 })

@@ -1,32 +1,49 @@
 import { keys } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import cx from 'classnames'
+
 import MultiSearch from 'uiSrc/components/multi-search/MultiSearch'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { replaceSpaces } from 'uiSrc/utils'
 import { fetchKeys, keysSelector, setFilter, setSearchMatch } from 'uiSrc/slices/browser/keys'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { SearchMode, KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 
 import styles from './styles.module.scss'
 
+const placeholders = {
+  [SearchMode.Pattern]: 'Filter by Key Name or Pattern',
+  [SearchMode.Redisearch]: 'Search per Values of Keys',
+}
+
 const SearchKeyList = () => {
   const dispatch = useDispatch()
-  const { search = '', viewType, filter } = useSelector(keysSelector)
+  const { search, viewType, filter, searchMode } = useSelector(keysSelector)
+  const { search: redisearchQuery } = useSelector(redisearchSelector)
   const [options, setOptions] = useState<string[]>(filter ? [filter] : [])
 
-  const [value, setValue] = useState(search)
+  const [value, setValue] = useState(search || '')
 
   useEffect(() => {
     setOptions(filter ? [filter] : [])
   }, [filter])
 
+  useEffect(() => {
+    setValue(searchMode === SearchMode.Pattern ? search : redisearchQuery)
+  }, [searchMode, search, redisearchQuery])
+
   const handleApply = (match = value) => {
-    dispatch(setSearchMatch(match))
+    dispatch(setSearchMatch(match, searchMode))
     // reset browser tree context
     dispatch(resetBrowserTree())
 
-    dispatch(fetchKeys('0', viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT))
+    dispatch(fetchKeys(
+      searchMode,
+      '0',
+      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT
+    ))
   }
 
   const handleChangeValue = (initValue: string) => {
@@ -52,7 +69,7 @@ const SearchKeyList = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={cx(styles.container, { [styles.redisearchMode]: searchMode === SearchMode.Redisearch })}>
       <MultiSearch
         value={value}
         onSubmit={handleApply}
@@ -60,8 +77,8 @@ const SearchKeyList = () => {
         onChange={handleChangeValue}
         onChangeOptions={handleChangeOptions}
         onClear={onClear}
-        options={options}
-        placeholder="Filter by Key Name or Pattern"
+        options={searchMode === SearchMode.Pattern ? options : []}
+        placeholder={placeholders[searchMode]}
         className={styles.input}
         data-testid="search-key"
       />

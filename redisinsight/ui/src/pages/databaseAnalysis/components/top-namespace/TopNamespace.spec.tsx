@@ -1,10 +1,22 @@
+import { cloneDeep } from 'lodash'
 import React from 'react'
+import reactRouterDom from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import { changeKeyViewType } from 'uiSrc/slices/browser/keys'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import TopNamespace, { Props } from './TopNamespace'
 
 const mockedProps = mock<Props>()
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('TopNamespace', () => {
   it('should render', () => {
@@ -124,5 +136,36 @@ describe('TopNamespace', () => {
     expect(queryByTestId('nsp-table-memory')).not.toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()
     expect(queryByTestId('table-loader')).toBeInTheDocument()
+  })
+
+  it('should render message when no namespaces', () => {
+    const mockedData = {
+      topKeysNsp: [],
+      topMemoryNsp: []
+    }
+    render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
+
+    expect(screen.queryByTestId('top-namespaces-empty')).toBeInTheDocument()
+  })
+
+  it('should call proper actions and push history after click tree view link', async () => {
+    const mockedData = {
+      topKeysNsp: [],
+      topMemoryNsp: []
+    }
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+    render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('tree-view-page-link'))
+    })
+
+    const expectedActions = [resetBrowserTree(), changeKeyViewType(KeyViewType.Tree)]
+
+    expect(store.getActions()).toEqual(expectedActions)
+    expect(pushMock).toHaveBeenCalledTimes(1)
+    expect(pushMock).toHaveBeenCalledWith('/instanceId/browser')
   })
 })

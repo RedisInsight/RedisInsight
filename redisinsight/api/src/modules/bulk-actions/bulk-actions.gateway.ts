@@ -12,7 +12,7 @@ import {
   Logger, UseFilters, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import config from 'src/utils/config';
-import { BulkActionsServerEvents } from 'src/modules/bulk-actions/contants';
+import { BulkActionsServerEvents } from 'src/modules/bulk-actions/constants';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
 import { BulkActionsService } from 'src/modules/bulk-actions/bulk-actions.service';
 import { AckWsExceptionFilter } from 'src/modules/pub-sub/filters/ack-ws-exception.filter';

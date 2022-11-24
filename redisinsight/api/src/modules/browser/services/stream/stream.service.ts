@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { catchAclError, catchTransactionError } from 'src/utils';
 import { SortOrder } from 'src/constants/sort';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolCommands,

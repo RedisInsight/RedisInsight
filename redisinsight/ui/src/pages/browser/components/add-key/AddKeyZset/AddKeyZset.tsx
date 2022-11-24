@@ -16,10 +16,9 @@ import { Maybe, stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
 import { addZsetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
 
-import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/dto/z-set.dto'
-
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 import styles from 'uiSrc/pages/browser/components/key-details-add-items/styles.module.scss'
+import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/dto/z-set.dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddZsetFormConfig as config } from '../constants/fields-config'
 

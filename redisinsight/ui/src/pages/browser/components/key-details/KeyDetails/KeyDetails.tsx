@@ -5,7 +5,7 @@ import {
   EuiButtonIcon,
   EuiToolTip
 } from '@elastic/eui'
-import { isNull } from 'lodash'
+import { curryRight, isNull } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
@@ -49,14 +49,15 @@ export interface Props {
   onToggleFullScreen: () => void
   onClose: (key: RedisResponseBuffer) => void
   onClosePanel: () => void
-  onRefresh: (key: RedisResponseBuffer, type: KeyTypes) => void
+  onRefresh: (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => void
   onDelete: (key: RedisResponseBuffer, type: string) => void
+  onRemoveKey: () => void
   onEditTTL: (key: RedisResponseBuffer, ttl: number) => void
   onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
 }
 
 const KeyDetails = ({ ...props }: Props) => {
-  const { onClosePanel } = props
+  const { onClosePanel, onRemoveKey } = props
   const { loading, error = '', data } = useSelector(selectedKeySelector)
   const { type: selectedKeyType, name: selectedKey } = useSelector(selectedKeyDataSelector) ?? {
     type: KeyTypes.String,
@@ -122,15 +123,15 @@ const KeyDetails = ({ ...props }: Props) => {
   }
 
   const TypeDetails: any = {
-    [KeyTypes.ZSet]: <ZSetDetails isFooterOpen={isAddItemPanelOpen} />,
-    [KeyTypes.Set]: <SetDetails isFooterOpen={isAddItemPanelOpen} />,
+    [KeyTypes.ZSet]: <ZSetDetails isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />,
+    [KeyTypes.Set]: <SetDetails isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />,
     [KeyTypes.String]: (
       <StringDetails
         isEditItem={editItem}
         setIsEdit={(isEdit) => setEditItem(isEdit)}
       />
     ),
-    [KeyTypes.Hash]: <HashDetails isFooterOpen={isAddItemPanelOpen} />,
+    [KeyTypes.Hash]: <HashDetails isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />,
     [KeyTypes.List]: <ListDetails isFooterOpen={isAddItemPanelOpen || isRemoveItemPanelOpen} />,
     [KeyTypes.ReJSON]: <RejsonDetailsWrapper />,
     [KeyTypes.Stream]: <StreamDetailsWrapper isFooterOpen={isAddItemPanelOpen} />,
@@ -223,7 +224,7 @@ const KeyDetails = ({ ...props }: Props) => {
                 {isRemoveItemPanelOpen && (
                   <div className={cx('formFooterBar', styles.contentActive)}>
                     {selectedKeyType === KeyTypes.List && (
-                      <RemoveListElements onCancel={closeRemoveItemPanel} />
+                      <RemoveListElements onCancel={closeRemoveItemPanel} onRemoveKey={onRemoveKey} />
                     )}
                   </div>
                 )}

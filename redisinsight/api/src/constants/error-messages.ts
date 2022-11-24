@@ -23,6 +23,7 @@ export default {
   MASTER_GROUP_NOT_EXIST: "Master group with this name doesn't exist",
 
   KEY_NAME_EXIST: 'This key name is already in use.',
+  REDISEARCH_INDEX_EXIST: 'This index name is already in use.',
   KEY_NOT_EXIST: 'Key with this name does not exist.',
   PATH_NOT_EXISTS: () => 'There is no such path.',
   INDEX_OUT_OF_RANGE: () => 'Index is out of range.',
@@ -51,4 +52,5 @@ export default {
   REDIS_MODULE_IS_REQUIRED: (module: string) => `Required ${module} module is not loaded.`,
   APP_SETTINGS_NOT_FOUND: () => 'Could not find application settings.',
   SERVER_INFO_NOT_FOUND: () => 'Could not find server info.',
+  INCREASE_MINIMUM_LIMIT: (count: string) => `Set MAXSEARCHRESULTS to at least ${count}.`,
 };

@@ -26,6 +26,11 @@ $footerHeight: 38px;
   height: 100%;
   width: 100%;
   padding-bottom: $footerHeight;
+
+  &.isResizing {
+    user-select: none;
+    cursor: col-resize;
+  }
 }
 
 :global(.keys-tree__count) {
@@ -238,6 +243,29 @@ $footerHeight: 38px;
 .loading:after {
   content: " .";
   animation: dots 1s steps(5, end) infinite;
+}
+
+.resizeTrigger {
+  position: absolute;
+  height: 100%;
+  right: -4px;
+  width: 7px;
+
+  cursor: col-resize;
+  z-index: 2;
+
+  &:before {
+    content: '';
+    display: block;
+    width: 7px;
+    height: 8px;
+    border-left: 1px solid var(--tableLightestBorderColor);
+    border-right: 1px solid var(--tableLightestBorderColor);
+
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
 
 @keyframes dots {

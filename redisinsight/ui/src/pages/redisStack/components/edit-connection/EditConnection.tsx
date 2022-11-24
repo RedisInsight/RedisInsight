@@ -55,7 +55,7 @@ const EditConnection = () => {
     try {
       setState(DEFAULT_STATE)
       isApiSubscribed = true
-      const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.INSTANCE}/${server.fixedDatabaseId}`)
+      const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.DATABASES}/${server.fixedDatabaseId}`)
       if (isStatusSuccessful(status) && isApiSubscribed) {
         setState({ ...state, loading: false, data })
       }

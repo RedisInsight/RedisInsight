@@ -61,3 +61,5 @@ export enum CommandType {
   Core = 'core',
   Module = 'module',
 }
+
+export const unknownCommand = 'unknown';

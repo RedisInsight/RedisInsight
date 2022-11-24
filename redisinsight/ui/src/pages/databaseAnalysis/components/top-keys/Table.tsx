@@ -1,32 +1,46 @@
-import React, { useState } from 'react'
 import {
   EuiBasicTableColumn,
+  EuiButtonEmpty,
   EuiInMemoryTable,
   EuiTextColor,
   EuiToolTip,
-  EuiButtonEmpty,
   PropertySort
 } from '@elastic/eui'
-import { isNull } from 'lodash'
-import { useParams, useHistory } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
+import { isNull } from 'lodash'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory, useParams } from 'react-router-dom'
+import { GroupBadge } from 'uiSrc/components'
+import { Pages } from 'uiSrc/constants'
+import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import {
+  resetBrowserTree,
+  setBrowserKeyListDataLoaded,
+  setBrowserSelectedKey,
+  setBrowserTreeDelimiter
+} from 'uiSrc/slices/app/context'
+import {
+  changeSearchMode,
+  fetchKeys,
+  keysSelector,
+  resetKeysData,
+  setFilter,
+  setSearchMatch
+} from 'uiSrc/slices/browser/keys'
+import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 
 import {
   formatBytes,
   formatLongName,
+  HighlightType,
+  isBigKey,
+  stringToBuffer,
   truncateNumberToDuration,
   truncateNumberToFirstUnit,
-  truncateTTLToSeconds,
-  stringToBuffer
+  truncateTTLToSeconds
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
-import { GroupBadge } from 'uiSrc/components'
-import { setFilter, setSearchMatch, resetKeysData, fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
-import { setBrowserKeyListDataLoaded, setBrowserSelectedKey, resetBrowserTree, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
-import { Pages } from 'uiSrc/constants'
 import { Key } from 'apiSrc/modules/database-analysis/models/key'
 
 import styles from './styles.module.scss'
@@ -50,15 +64,17 @@ const Table = (props: Props) => {
   const { viewType } = useSelector(keysSelector)
 
   const handleRedirect = (name: string) => {
+    dispatch(changeSearchMode(SearchMode.Pattern))
     dispatch(setBrowserTreeDelimiter(delimiter))
     dispatch(setFilter(null))
-    dispatch(setSearchMatch(name))
-    dispatch(resetKeysData())
+    dispatch(setSearchMatch(name, SearchMode.Pattern))
+    dispatch(resetKeysData(SearchMode.Pattern))
     dispatch(fetchKeys(
+      SearchMode.Pattern,
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      () => dispatch(setBrowserKeyListDataLoaded(true)),
-      () => dispatch(setBrowserKeyListDataLoaded(false)),
+      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, true)),
+      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, false)),
     ))
     dispatch(resetBrowserTree())
     dispatch(setBrowserSelectedKey(stringToBuffer(name)))
@@ -94,7 +110,7 @@ const Table = (props: Props) => {
       truncateText: true,
       render: (name: string) => {
         const tooltipContent = formatLongName(name)
-        const cellContent = name.substring(0, 200)
+        const cellContent = (name as string).substring(0, 200)
         return (
           <div data-testid="top-keys-table-name" className={cx(styles.delimiter, 'truncateText')}>
             <EuiToolTip
@@ -157,16 +173,25 @@ const Table = (props: Props) => {
       width: '9%',
       sortable: true,
       align: 'right',
-      render: (value: number) => {
+      render: (value: number, { type }) => {
         const [number, size] = formatBytes(value, 3, true)
-
+        const isHighlight = isBigKey(type, HighlightType.Memory, value)
         return (
           <EuiToolTip
-            content={`${numberWithSpaces(value)} B`}
+            content={(
+              <>
+                {isHighlight ? (<>Consider splitting it into multiple keys<br /></>) : null}
+                {numberWithSpaces(value)} B
+              </>
+            )}
+            anchorClassName={cx({ [styles.highlight]: isHighlight })}
             data-testid="usedMemory-tooltip"
           >
             <>
-              <span className={styles.count} data-testid={`nsp-usedMemory-value=${value}`}>
+              <span
+                className={styles.count}
+                data-testid={`nsp-usedMemory-value=${value}${isHighlight ? '-highlighted' : ''}`}
+              >
                 {number}
               </span>
               <span className={styles.valueUnit}>{size}</span>
@@ -181,7 +206,7 @@ const Table = (props: Props) => {
       width: '15%',
       sortable: ({ length }) => length ?? -1,
       align: 'right',
-      render: (value: number, { name }) => {
+      render: (value: number, { name, type }) => {
         if (isNull(value)) {
           return (
             <EuiTextColor color="subdued" style={{ maxWidth: '100%' }} data-testid={`length-empty-${name}`}>
@@ -189,10 +214,18 @@ const Table = (props: Props) => {
             </EuiTextColor>
           )
         }
+
+        const isHighlight = isBigKey(type, HighlightType.Length, value)
         return (
-          <span className={styles.count} data-testid={`length-value-${name}`}>
-            {numberWithSpaces(value)}
-          </span>
+          <EuiToolTip
+            content={isHighlight ? 'Consider splitting it into multiple keys' : ''}
+            anchorClassName={cx({ [styles.highlight]: isHighlight })}
+            data-testid="usedMemory-tooltip"
+          >
+            <span className={styles.count} data-testid={`length-value-${name}${isHighlight ? '-highlighted' : ''}`}>
+              {numberWithSpaces(value)}
+            </span>
+          </EuiToolTip>
         )
       }
     },

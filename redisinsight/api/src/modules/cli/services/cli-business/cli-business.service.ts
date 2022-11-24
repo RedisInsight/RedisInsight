@@ -4,7 +4,8 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { unknownCommand } from 'src/constants';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import {
   ClusterNodeRole,
@@ -31,11 +32,11 @@ import {
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
-import { EncryptionServiceErrorException } from 'src/modules/core/encryption/exceptions';
+import { EncryptionServiceErrorException } from 'src/modules/encryption/exceptions';
 import { AppTool } from 'src/models';
-import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { getUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
-import { ClientNotFoundErrorException } from 'src/modules/shared/exceptions/client-not-found-error.exception';
+import { ClientNotFoundErrorException } from 'src/modules/redis/exceptions/client-not-found-error.exception';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';
@@ -143,7 +144,7 @@ export class CliBusinessService {
   ): Promise<SendCommandResponse> {
     this.logger.log('Executing redis CLI command.');
     const { command: commandLine } = dto;
-    let command: string;
+    let command: string = unknownCommand;
     let args: string[] = [];
 
     const outputFormat = dto.outputFormat || CliOutputFormatterTypes.Raw;
@@ -229,7 +230,7 @@ export class CliBusinessService {
     outputFormat: CliOutputFormatterTypes = CliOutputFormatterTypes.Raw,
   ): Promise<SendClusterCommandResponse[]> {
     this.logger.log(`Executing redis.cluster CLI command for [${role}] nodes.`);
-    let command: string;
+    let command: string = unknownCommand;
     let args: string[] = [];
 
     try {
@@ -298,7 +299,7 @@ export class CliBusinessService {
     outputFormat: CliOutputFormatterTypes = CliOutputFormatterTypes.Raw,
   ): Promise<SendClusterCommandResponse> {
     this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
-    let command: string;
+    let command: string = unknownCommand;
     let args: string[] = [];
 
     try {

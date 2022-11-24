@@ -1,9 +1,21 @@
 import { ReplyError } from 'src/models';
 
+export const mockRedisNoAuthError: ReplyError = {
+  name: 'ReplyError',
+  command: 'AUTH',
+  message: 'NOAUTH authentication is required',
+};
+
 export const mockRedisNoPermError: ReplyError = {
   name: 'ReplyError',
   command: 'GET',
   message: 'NOPERM this user has no permissions.',
+};
+
+export const mockRedisUnknownIndexName: ReplyError = {
+  name: 'ReplyError',
+  command: 'FT.INFO',
+  message: 'Unknown Index name',
 };
 
 export const mockRedisWrongNumberOfArgumentsError: ReplyError = {

@@ -1,10 +1,3 @@
-import {
-  ConsumerDto,
-  ConsumerGroupDto,
-  ClaimPendingEntryDto,
-  PendingEntryDto,
-  UpdateConsumerGroupDto
-} from 'apiSrc/modules/browser/dto/stream.dto'
 import { AxiosError } from 'axios'
 import { cloneDeep, omit } from 'lodash'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
@@ -73,6 +66,13 @@ import reducer, {
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { bufferToString, stringToBuffer } from 'uiSrc/utils'
+import {
+  ConsumerDto,
+  ConsumerGroupDto,
+  ClaimPendingEntryDto,
+  PendingEntryDto,
+  UpdateConsumerGroupDto
+} from 'apiSrc/modules/browser/dto/stream.dto'
 import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services', () => ({

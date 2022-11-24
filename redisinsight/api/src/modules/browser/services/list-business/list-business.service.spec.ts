@@ -12,9 +12,9 @@ import {
   mockRedisNoPermError,
   mockRedisWrongNumberOfArgumentsError,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
 } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   CreateListWithExpireDto,
   ListElementDestination,
@@ -35,7 +35,7 @@ import {
 import { ListBusinessService } from './list-business.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 describe('ListBusinessService', () => {

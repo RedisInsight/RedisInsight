@@ -378,9 +378,12 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
             </div>
             <div className="info-props">
               {
-                Object.keys(selectedEntity.props).map(k => [k, selectedEntity.props[k]]).reduce(
-                  (a, b) => a.concat(b), []
-                ).map(k => <div>{k}</div>)
+                Object.keys(selectedEntity.props).map(k => (
+                    <>
+                      <div>{k}</div>
+                      <div>{JSON.stringify(selectedEntity.props[k])}</div>
+                    </>
+                  ))
               }
             </div>
           </div>

@@ -9,10 +9,15 @@ export function classToClass<T, V>(
 ): T {
   const defaultOptions = {
     excludeExtraneousValues: true,
+    groups: ['security'],
   };
 
-  return plainToClass(targetClass, classToPlain(classInstance), {
+  const transformOptions = {
     ...defaultOptions,
     ...options,
-  });
+  };
+
+  return plainToClass(targetClass, classToPlain(classInstance, transformOptions), transformOptions);
 }
+
+export const cloneClassInstance = <V>(entity: V): V => classToClass(entity.constructor as ClassType<V>, entity);

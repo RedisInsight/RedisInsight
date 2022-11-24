@@ -11,10 +11,10 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { EncryptionService } from 'src/modules/core/encryption/encryption.service';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { PluginStateEntity } from 'src/modules/workbench/entities/plugin-state.entity';
 import { Repository } from 'typeorm';
-import { KeytarDecryptionErrorException } from 'src/modules/core/encryption/exceptions';
+import { KeytarDecryptionErrorException } from 'src/modules/encryption/exceptions';
 
 const mockVisualizationId = 'pluginName_visualizationName';
 const mockCommandExecutionId = uuidv4();

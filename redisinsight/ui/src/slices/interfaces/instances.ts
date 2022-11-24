@@ -7,13 +7,12 @@ import {
   GetListElementsDto,
   GetListElementsResponse,
 } from 'apiSrc/modules/browser/dto/list.dto'
-import {
-  DatabaseInstanceResponse,
-  RedisModuleDto,
-  SentinelMasterDto
-} from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
-import { AddSentinelMasterDto, AddSentinelMasterResponse } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
+import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-master'
+import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
+import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
 
 export interface Instance extends DatabaseInstanceResponse {
   host: string
@@ -27,18 +26,33 @@ export interface Instance extends DatabaseInstanceResponse {
   password?: Nullable<string>
   username?: Nullable<string>
   name?: string
-  tls?: TlsSettings
+  db?: string
+  tls?: boolean
   tlsClientAuthRequired?: boolean
-  tlsClientCertId?: number | undefined
   verifyServerCert?: boolean
-  caCertName?: string
+  caCert?: CaCertificate
+  clientCert?: ClientCertificate
   authUsername?: Nullable<string>
   authPass?: Nullable<string>
   isDeleting?: boolean
-  sentinelMaster?: SentinelMasterDto
-  modules: RedisModuleDto[]
+  sentinelMaster?: SentinelMaster
+  modules: AdditionalRedisModule[]
   isRediStack?: boolean
   visible?: boolean
+  loading?: boolean
+}
+
+interface CaCertificate {
+  id?: string
+  name?: string
+  certificate?: string
+}
+
+interface ClientCertificate {
+  id?: string
+  name?: string
+  key?: string
+  certificate?: string
 }
 
 export enum ConnectionType {
@@ -266,7 +280,14 @@ export interface InitialStateInstances {
   changedSuccessfully: boolean
   deletedSuccessfully: boolean
   connectedInstance: Instance
+  editedInstance: InitialStateEditedInstances
   instanceOverview: DatabaseConfigInfo
+}
+
+export interface InitialStateEditedInstances {
+  loading: boolean
+  error: string
+  data: Nullable<Instance>
 }
 
 export interface InitialStateCluster {
@@ -295,7 +316,7 @@ export interface InitialStateSentinel {
   loading: boolean
   instance: Nullable<Instance>
   data: ModifiedSentinelMaster[]
-  statuses: AddSentinelMasterResponse[]
+  statuses: CreateSentinelDatabaseResponse[]
   error: string
   loaded: ILoadedSentinel
 }
@@ -337,9 +358,9 @@ export interface ModifiedGetHashMembersResponse extends GetHashFieldsResponse {
   match?: string
 }
 
-export interface ModifiedSentinelMaster extends AddSentinelMasterDto {
+export interface ModifiedSentinelMaster extends CreateSentinelDatabaseDto {
   id?: string
-  alias?: string
+  alias: string
   host?: string
   port?: string
   username?: string

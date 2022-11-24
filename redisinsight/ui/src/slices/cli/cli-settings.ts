@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { CreateCliClientResponse, DeleteClientResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 import { apiService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { outputSelector, concatToOutput, setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
 import { cliTexts, ConnectionSuccessOutputText, InitOutputText } from 'uiSrc/constants/cliOutput'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { CreateCliClientResponse, DeleteClientResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import { AppDispatch, RootState } from '../store'
 import { StateCliSettings } from '../interfaces/cli'

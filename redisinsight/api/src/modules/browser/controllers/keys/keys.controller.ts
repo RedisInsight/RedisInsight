@@ -14,7 +14,7 @@ import {
 } from '@nestjs/swagger';
 import { KeysBusinessService } from 'src/modules/browser/services/keys-business/keys-business.service';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import {

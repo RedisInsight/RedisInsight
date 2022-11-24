@@ -1,44 +1,88 @@
-import {
-  CaCertDto,
-  ClientCertPairDto,
-} from 'src/modules/instances/dto/database-instance.dto';
-import { CaCertificateEntity } from 'src/modules/core/models/ca-certificate.entity';
-import { ClientCertificateEntity } from 'src/modules/core/models/client-certificate.entity';
+import { pick, omit } from 'lodash';
+import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
+import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
+import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
+import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.client-certificate.dto';
+import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
+import { EncryptionStrategy } from 'src/modules/encryption/models';
+import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 
-export const mockCaCertDto: CaCertDto = {
+// ================== CA Certificate ==================
+export const mockCaCertificateId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805';
+
+export const mockCaCertificateCertificateEncrypted = 'caCertificate.certificate_ENCRYPTED';
+
+export const mockCaCertificateCertificatePlain = '-----BEGIN CERTIFICATE-----\nMIIDejCCAmKgAwIBAgIUehUr5AHdJM';
+
+export const mockCaCertificate = Object.assign(new CaCertificate(), {
+  id: mockCaCertificateId,
   name: 'ca-cert',
-  cert: '-----BEGIN CERTIFICATE-----\nMIIDejCCAmKgAwIBAgIUehUr5AHdJM',
-};
+  certificate: mockCaCertificateCertificatePlain,
+});
 
-export const mockClientCertDto: ClientCertPairDto = {
+export const mockCreateCaCertificateDto = Object.assign(new CreateCaCertificateDto(), {
+  ...omit(mockCaCertificate, 'id'),
+});
+
+export const mockCaCertificateEntity = Object.assign(new CaCertificateEntity(), {
+  ...mockCaCertificate,
+  certificate: mockCaCertificateCertificateEncrypted,
+  encryption: EncryptionStrategy.KEYTAR,
+});
+
+export const mockCaCertificateRepository = jest.fn(() => ({
+  get: jest.fn().mockResolvedValue(mockCaCertificate),
+  list: jest.fn().mockResolvedValueOnce([
+    pick(mockCaCertificate, 'id', 'name'),
+    pick(mockCaCertificate, 'id', 'name'),
+  ]),
+  create: jest.fn().mockResolvedValue(mockCaCertificate),
+  delete: jest.fn().mockResolvedValue(undefined),
+}));
+
+export const mockCaCertificateService = jest.fn(() => ({
+  get: jest.fn().mockResolvedValue(mockCaCertificate),
+}));
+
+// ================== Client Certificate ==================
+export const mockClientCertificateId = 'a77b23c1-7816-4ea4-b61f-d37f2915f805';
+
+export const mockClientCertificateCertificateEncrypted = 'clientCertificate.certificate_ENCRYPTED';
+
+export const mockClientCertificateCertificatePlain = '-----BEGIN CERTIFICATE-----\nMICLIENTCERTIDejCCAmKgAwIB';
+
+export const mockClientCertificateKeyEncrypted = 'clientCertificate.key_ENCRYPTED';
+
+export const mockClientCertificateKeyPlain = '-----BEGIN PRIVATE KEY-----\nMICLIENTCERTIDejCCAmKgAwIB';
+
+export const mockClientCertificate = Object.assign(new ClientCertificate(), {
+  id: mockClientCertificateId,
   name: 'client-cert',
-  cert: '-----BEGIN CERTIFICATE-----\nMIIDejCCAmKgAwIBAgIUehUr5AHdJM',
-  key: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAAM',
-};
-
-export const mockCaCertEntity: CaCertificateEntity = {
-  id: 'a77b23c1-7816-4ea4-b61f-d37795a0f805',
-  name: mockCaCertDto.name,
-  encryption: null,
-  certificate: mockCaCertDto.cert,
-  databases: [],
-};
-
-export const mockClientCertEntity: ClientCertificateEntity = {
-  id: 'a77b23c1-7816-4ea4-b61f-d37795a0f809',
-  name: mockClientCertDto.name,
-  encryption: null,
-  certificate: mockClientCertDto.cert,
-  key: mockClientCertDto.key,
-  databases: [],
-};
-
-export const mockCaCertificatesService = () => ({
-  getAll: jest.fn(),
-  getOneById: jest.fn(),
+  certificate: mockClientCertificateCertificatePlain,
+  key: mockClientCertificateKeyPlain,
 });
 
-export const mockClientCertificatesService = () => ({
-  getAll: jest.fn(),
-  getOneById: jest.fn(),
+export const mockCreateClientCertificateDto = Object.assign(new CreateClientCertificateDto(), {
+  ...omit(mockClientCertificate, 'id'),
 });
+
+export const mockClientCertificateEntity = Object.assign(new ClientCertificateEntity(), {
+  ...mockClientCertificate,
+  certificate: mockClientCertificateCertificateEncrypted,
+  key: mockClientCertificateKeyEncrypted,
+  encryption: EncryptionStrategy.KEYTAR,
+});
+
+export const mockClientCertificateRepository = jest.fn(() => ({
+  get: jest.fn().mockResolvedValue(mockClientCertificate),
+  list: jest.fn().mockResolvedValueOnce([
+    pick(mockClientCertificate, 'id', 'name'),
+    pick(mockClientCertificate, 'id', 'name'),
+  ]),
+  create: jest.fn().mockResolvedValue(mockClientCertificate),
+  delete: jest.fn().mockResolvedValue(undefined),
+}));
+
+export const mockClientCertificateService = jest.fn(() => ({
+  get: jest.fn().mockResolvedValue(mockClientCertificate),
+}));

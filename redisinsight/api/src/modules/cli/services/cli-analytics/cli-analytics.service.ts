@@ -3,9 +3,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { ReplyError } from 'src/models';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { ICliExecResultFromNode } from 'src/modules/shared/services/base/redis-tool.service';
+import { ICliExecResultFromNode } from 'src/modules/redis/redis-tool.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
-import { CommandTelemetryBaseService } from 'src/modules/shared/services/base/command.telemetry.base.service';
+import { CommandTelemetryBaseService } from 'src/modules/analytics/command.telemetry.base.service';
 
 @Injectable()
 export class CliAnalyticsService extends CommandTelemetryBaseService {

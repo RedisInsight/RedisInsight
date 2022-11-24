@@ -9,7 +9,7 @@ import {
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-import { loadKeys, setSearchMatch } from 'uiSrc/slices/browser/keys'
+import { loadKeys, setPatternSearchMatch } from 'uiSrc/slices/browser/keys'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import SearchKeyList from './SearchKeyList'
 
@@ -38,7 +38,7 @@ describe('SearchKeyList', () => {
 
     fireEvent.keyDown(screen.getByTestId('search-key'), { key: keys.ENTER })
 
-    const expectedActions = [setSearchMatch(searchTerm), resetBrowserTree(), loadKeys()]
+    const expectedActions = [setPatternSearchMatch(searchTerm), resetBrowserTree(), loadKeys()]
 
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions(expectedActions)

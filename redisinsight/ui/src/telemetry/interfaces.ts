@@ -1,34 +1,34 @@
-import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { TelemetryEvent } from './events'
 
 export interface ITelemetryIdentify {
-  installationId: string;
-  sessionId: number;
+  installationId: string
+  sessionId: number
 }
 
 export interface ITelemetryService {
-  initialize(): Promise<void>;
-  pageView(name: string, appType: string, databaseId?: string): Promise<void>;
-  identify(opts: ITelemetryIdentify): Promise<void>;
-  event(opts: ITelemetryEvent): Promise<void>;
-  anonymousId: string;
+  initialize(): Promise<void>
+  pageView(name: string, appType: string, databaseId?: string): Promise<void>
+  identify(opts: ITelemetryIdentify): Promise<void>
+  event(opts: ITelemetryEvent): Promise<void>
+  anonymousId: string
 }
 
 export interface ITelemetrySendEvent {
-  event: TelemetryEvent;
-  eventData?: Object;
-  nonTracking?: boolean;
+  event: TelemetryEvent
+  eventData?: Object
+  nonTracking?: boolean
 }
 
 export interface ITelemetrySendPageView {
-  name: string;
-  databaseId?: string;
-  nonTracking?: boolean;
+  name: string
+  databaseId?: string
+  nonTracking?: boolean
 }
 
 export interface ITelemetryEvent {
-  event: TelemetryEvent;
-  properties?: object;
+  event: TelemetryEvent
+  properties?: object
 }
 
 export enum MatchType {
@@ -47,10 +47,10 @@ export enum RedisModules {
 }
 
 interface IModuleSummary {
-  loaded: boolean;
-  version?: number;
-  semanticVersion?: number;
+  loaded: boolean
+  version?: number
+  semanticVersion?: number
 }
 export interface IRedisModulesSummary extends Record<keyof typeof RedisModules, IModuleSummary> {
-  customModules: RedisModuleDto[]
+  customModules: AdditionalRedisModule[]
 }

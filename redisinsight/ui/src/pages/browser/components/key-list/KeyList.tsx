@@ -20,33 +20,39 @@ import {
   bufferToString,
   bufferFormatRangeItems,
   isEqualBuffers,
+  Nullable,
 } from 'uiSrc/utils'
 import {
   NoKeysToDisplayText,
   NoResultsFoundText,
   FullScanNoResultsFoundText,
   ScanNoResultsFoundText,
+  NoSelectedIndexText,
 } from 'uiSrc/constants/texts'
 import {
   fetchKeysMetadata,
   keysDataSelector,
   keysSelector,
+  resetKeysData,
   selectedKeySelector,
   setLastBatchKeys,
   sourceKeysFetch,
 } from 'uiSrc/slices/browser/keys'
 import {
   appContextBrowser,
-  setBrowserKeyListScrollPosition
+  setBrowserPatternScrollPosition,
+  setBrowserIsNotRendered,
+  setBrowserRedisearchScrollPosition,
 } from 'uiSrc/slices/app/context'
 import { GroupBadge } from 'uiSrc/components'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { KeysStoreData, KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { KeysStoreData, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import styles from './styles.module.scss'
@@ -55,6 +61,7 @@ export interface Props {
   hideHeader?: boolean
   keysState: KeysStoreData
   loading: boolean
+  scrollTopPosition?: number
   hideFooter?: boolean
   selectKey: ({ rowData }: { rowData: any }) => void
   loadMoreItems?: (
@@ -65,20 +72,22 @@ export interface Props {
 
 const KeyList = forwardRef((props: Props, ref) => {
   let wheelTimer = 0
-  const { selectKey, loadMoreItems, loading, keysState, hideFooter } = props
+  const { selectKey, loadMoreItems, loading, keysState, scrollTopPosition, hideFooter } = props
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const selectedKey = useSelector(selectedKeySelector)
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered, viewType } = useSelector(keysSelector)
-  const { keyList: { scrollTopPosition } } = useSelector(appContextBrowser)
+  const { isSearched, isFiltered, viewType, searchMode } = useSelector(keysSelector)
+  const { selectedIndex } = useSelector(redisearchSelector)
+  const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
-  const [firstDataLoaded, setFirstDataLoaded] = useState(!!keysState.keys.length)
+  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(!!keysState.keys.length)
 
+  const controller = useRef<Nullable<AbortController>>(null)
   const itemsRef = useRef(keysState.keys)
-  const isNotRendered = useRef(true)
+  const isNotRendered = useRef(isNotRenderedContext)
   const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
 
   const dispatch = useDispatch()
@@ -89,15 +98,9 @@ const KeyList = forwardRef((props: Props, ref) => {
     }
   }))
 
-  useEffect(() =>
-    () => {
-      if (viewType === KeyViewType.Tree) {
-        return
-      }
-      rerender(() => {
-        dispatch(setLastBatchKeys(itemsRef.current?.slice(-SCAN_COUNT_DEFAULT)))
-      })
-    }, [])
+  useEffect(() => {
+    cancelAllMetadataRequests()
+  }, [searchMode])
 
   useEffect(() => {
     itemsRef.current = [...keysState.keys]
@@ -107,10 +110,16 @@ const KeyList = forwardRef((props: Props, ref) => {
     }
 
     isNotRendered.current = false
+    dispatch(setBrowserIsNotRendered(isNotRendered.current))
     if (itemsRef.current.length === 0) {
+      cancelAllMetadataRequests()
+      setFirstDataLoaded(true)
       rerender({})
       return
     }
+
+    cancelAllMetadataRequests()
+    controller.current = new AbortController()
 
     const { startIndex, lastIndex } = renderedRowsIndexesRef.current
     onRowsRendered(startIndex, lastIndex)
@@ -129,6 +138,10 @@ const KeyList = forwardRef((props: Props, ref) => {
     rerender({})
   }, [selectedKey])
 
+  const cancelAllMetadataRequests = () => {
+    controller.current?.abort()
+  }
+
   const onNoKeysLinkClick = () => {
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
@@ -146,8 +159,14 @@ const KeyList = forwardRef((props: Props, ref) => {
     if (isNotRendered.current) {
       return ''
     }
+    if (searchMode === SearchMode.Redisearch && !selectedIndex) {
+      return NoSelectedIndexText
+    }
     if (total === 0) {
       return NoKeysToDisplayText(Pages.workbench(instanceId), onNoKeysLinkClick)
+    }
+    if (isSearched && searchMode === SearchMode.Redisearch) {
+      return keysState.scanned < total ? NoResultsFoundText : FullScanNoResultsFoundText
     }
     if (isSearched) {
       return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
@@ -159,6 +178,12 @@ const KeyList = forwardRef((props: Props, ref) => {
   }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
+    if (searchMode === SearchMode.Redisearch
+      && keysState.maxResults
+      && keysState.keys.length >= keysState.maxResults
+    ) {
+      return
+    }
     loadMoreItems?.(itemsRef.current, props)
   }
 
@@ -178,9 +203,13 @@ const KeyList = forwardRef((props: Props, ref) => {
     }
   }
 
-  const setScrollTopPosition = (position: number) => {
-    dispatch(setBrowserKeyListScrollPosition(position))
-  }
+  const setScrollTopPosition = useCallback((position: number) => {
+    if (searchMode === SearchMode.Pattern) {
+      dispatch(setBrowserPatternScrollPosition(position))
+    } else {
+      dispatch(setBrowserRedisearchScrollPosition(position))
+    }
+  }, [searchMode])
 
   const formatItem = useCallback((item: GetKeyInfoResponse): GetKeyInfoResponse => ({
     ...item,
@@ -221,6 +250,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
     dispatch(fetchKeysMetadata(
       emptyItems.map(({ name }) => name),
+      controller.current?.signal,
       (loadedItems) =>
         onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
       () => { rerender({}) }
@@ -368,32 +398,37 @@ const KeyList = forwardRef((props: Props, ref) => {
     },
   ]
 
+  const VirtualizeTable = () => (
+    <VirtualTable
+      selectable
+      onRowClick={selectKey}
+      headerHeight={0}
+      rowHeight={43}
+      threshold={50}
+      columns={columns}
+      loadMoreItems={onLoadMoreItems}
+      onWheel={onWheelSearched}
+      loading={loading || !firstDataLoaded}
+      items={itemsRef.current}
+      totalItemsCount={keysState.total ? keysState.total : Infinity}
+      scanned={isSearched || isFiltered ? keysState.scanned : 0}
+      noItemsMessage={getNoItemsMessage()}
+      selectedKey={selectedKey.data}
+      scrollTopProp={scrollTopPosition}
+      setScrollTopPosition={setScrollTopPosition}
+      hideFooter={hideFooter}
+      onRowsRendered={({ overscanStartIndex, overscanStopIndex }) =>
+        onRowsRenderedDebounced(overscanStartIndex, overscanStopIndex)}
+    />
+  )
+
   return (
     <div className={styles.page}>
       <div className={styles.content}>
         <div className={cx(styles.table, { [styles.table__withoutFooter]: hideFooter })}>
           <div className="key-list-table" data-testid="keyList-table">
-            <VirtualTable
-              selectable
-              onRowClick={selectKey}
-              headerHeight={0}
-              rowHeight={43}
-              threshold={50}
-              columns={columns}
-              loadMoreItems={onLoadMoreItems}
-              onWheel={onWheelSearched}
-              loading={loading || !firstDataLoaded}
-              items={itemsRef.current}
-              totalItemsCount={keysState.total ? keysState.total : Infinity}
-              scanned={isSearched || isFiltered ? keysState.scanned : 0}
-              noItemsMessage={getNoItemsMessage()}
-              selectedKey={selectedKey.data}
-              scrollTopProp={scrollTopPosition}
-              setScrollTopPosition={setScrollTopPosition}
-              hideFooter={hideFooter}
-              onRowsRendered={({ overscanStartIndex, overscanStopIndex }) =>
-                onRowsRenderedDebounced(overscanStartIndex, overscanStopIndex)}
-            />
+            {searchMode === SearchMode.Pattern && VirtualizeTable()}
+            {searchMode !== SearchMode.Pattern && VirtualizeTable()}
           </div>
         </div>
       </div>

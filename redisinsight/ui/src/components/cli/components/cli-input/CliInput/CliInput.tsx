@@ -7,11 +7,11 @@ import { parseContentEditableChangeHtml } from 'uiSrc/components/ContentEditable
 import styles from './styles.module.scss'
 
 export interface Props {
-  command: string;
-  setInputEl: Function;
-  setCommand: (command: string) => void;
-  onKeyDown: (event: React.KeyboardEvent<HTMLSpanElement>) => void;
-  dbIndex: number;
+  command: string
+  setInputEl: Function
+  setCommand: (command: string) => void
+  onKeyDown: (event: React.KeyboardEvent<HTMLSpanElement>) => void
+  dbIndex: number
 }
 
 const CliInput = (props: Props) => {

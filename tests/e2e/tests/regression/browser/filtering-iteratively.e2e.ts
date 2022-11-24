@@ -31,7 +31,7 @@ test
         await browserPage.searchByKeyName('*');
         const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
         // Verify that number of results is 500
-        await t.expect(keysNumberOfResults).contains('500', 'Number of results is not 500');
+        await t.expect(keysNumberOfResults).match(/50[0-9]/, 'Number of results is not 500');
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can search iteratively via Scan more for search pattern and selected data type', async t => {

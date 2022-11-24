@@ -5,7 +5,7 @@ import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
 import { AppTool } from 'src/models';
 import { Socket } from 'socket.io';
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/contants';
+import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { DeleteBulkActionSimpleRunner } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 

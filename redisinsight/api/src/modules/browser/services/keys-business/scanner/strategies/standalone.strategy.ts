@@ -1,7 +1,7 @@
 import * as isGlob from 'is-glob';
-import { isNull, get } from 'lodash';
+import { isNull } from 'lodash';
 import config from 'src/utils/config';
-import { unescapeGlob, convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
+import { unescapeGlob } from 'src/utils';
 import {
   GetKeyInfoResponse,
   GetKeysWithDetailsResponse,
@@ -10,6 +10,7 @@ import {
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { SettingsService } from 'src/modules/settings/settings.service';
+import { getTotal } from 'src/modules/database/utils/database.total.util';
 import { AbstractStrategy } from './abstract.strategy';
 import { IGetNodeKeysResult } from '../scanner.interface';
 
@@ -36,7 +37,6 @@ export class StandaloneStrategy extends AbstractStrategy {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
     const client = await this.redisManager.getRedisClient(clientOptions);
-    const currentDbIndex = get(client, ['options', 'db'], 0);
 
     const node = {
       total: 0,
@@ -45,21 +45,7 @@ export class StandaloneStrategy extends AbstractStrategy {
       cursor: parseInt(args.cursor, 10),
     };
 
-    const info = convertRedisInfoReplyToObject(
-      await this.redisManager.execCommand(
-        clientOptions,
-        BrowserToolKeysCommands.InfoKeyspace,
-        [],
-        'utf8',
-      ),
-    );
-    const dbInfo = get(info, 'keyspace', {});
-    if (!dbInfo[`db${currentDbIndex}`]) {
-      node.total = 0;
-    } else {
-      const { keys } = convertBulkStringsToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
-      node.total = parseInt(keys, 10);
-    }
+    node.total = await getTotal(client);
 
     if (!isGlob(match, { strict: false })) {
       const keyName = Buffer.from(unescapeGlob(match));

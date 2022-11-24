@@ -1,6 +1,6 @@
 import * as IORedis from 'ioredis';
 import { debounce } from 'lodash';
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/contants';
+import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
 import { Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';

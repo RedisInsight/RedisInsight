@@ -116,7 +116,6 @@ test
         // Check Keys details saved
         await t.expect(browserPage.keyNameFormDetails.innerText).eql(targetKeyName, 'Key details is not saved as context');
         // Check Key selected in Key List
-        console.log(`targetKey.getAttribute('class'): ${await targetKey.getAttribute('class')}`);
         await t.expect(await targetKey.getAttribute('class')).contains('table-row-selected', 'Not correct key selected in key list');
     });
 test

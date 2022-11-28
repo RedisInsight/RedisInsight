@@ -66,7 +66,7 @@ const NameSpacesTable = (props: Props) => {
     dispatch(setBrowserTreeDelimiter(delimiter))
     dispatch(setFilter(filter))
     dispatch(setSearchMatch(`${nsp}${delimiter}*`, SearchMode.Pattern))
-    dispatch(resetKeysData())
+    dispatch(resetKeysData(SearchMode.Pattern))
     dispatch(fetchKeys(
       SearchMode.Pattern,
       '0',

@@ -19,7 +19,6 @@ import {
   formatLongName,
   bufferToString,
   bufferFormatRangeItems,
-  isEqualBuffers,
   Nullable,
 } from 'uiSrc/utils'
 import {
@@ -33,9 +32,7 @@ import {
   fetchKeysMetadata,
   keysDataSelector,
   keysSelector,
-  resetKeysData,
   selectedKeySelector,
-  setLastBatchKeys,
   sourceKeysFetch,
 } from 'uiSrc/slices/browser/keys'
 import {
@@ -125,18 +122,6 @@ const KeyList = forwardRef((props: Props, ref) => {
     onRowsRendered(startIndex, lastIndex)
     rerender({})
   }, [keysState.keys])
-
-  useEffect(() => {
-    if (!selectedKey || !selectedKey?.data) return
-
-    const indexKeyForUpdate = itemsRef.current.findIndex(({ name }) =>
-      isEqualBuffers(name, selectedKey?.data?.name))
-
-    if (indexKeyForUpdate === -1) return
-
-    itemsRef.current[indexKeyForUpdate] = selectedKey.data
-    rerender({})
-  }, [selectedKey])
 
   const cancelAllMetadataRequests = () => {
     controller.current?.abort()

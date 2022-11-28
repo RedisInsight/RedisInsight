@@ -1,7 +1,6 @@
 import {
   BadRequestException, ConflictException, Injectable, Logger, NotFoundException,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { RedisErrorCodes } from 'src/constants';
 import { catchAclError, catchTransactionError } from 'src/utils';
 import {
@@ -19,6 +18,7 @@ import {
 } from 'src/modules/browser/dto/stream.dto';
 import { plainToClass } from 'class-transformer';
 import { RedisString } from 'src/common/constants';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class ConsumerGroupService {
@@ -30,18 +30,18 @@ export class ConsumerGroupService {
    * Get consumer groups list for particular stream
    * In addition fetch pending messages info for each group
    * !May be slow on huge streams as 'XPENDING' command tagged with as @slow
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   async getGroups(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: KeyDto,
   ): Promise<ConsumerGroupDto[]> {
     try {
       this.logger.log('Getting consumer groups list.');
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [dto.keyName],
       );
@@ -51,13 +51,13 @@ export class ConsumerGroupService {
       }
 
       const groups = ConsumerGroupService.formatReplyToDto(await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolStreamCommands.XInfoGroups,
         [dto.keyName],
       ));
 
       return await Promise.all(groups.map((group) => this.getGroupInfo(
-        clientOptions,
+        clientMetadata,
         dto,
         group,
       )));
@@ -76,17 +76,17 @@ export class ConsumerGroupService {
 
   /**
    * Get consumer group pending info using 'XPENDING' command
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    * @param group
    */
   async getGroupInfo(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: KeyDto,
     group: ConsumerGroupDto,
   ): Promise<ConsumerGroupDto> {
     const info = await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolStreamCommands.XPending,
       [dto.keyName, group.name],
     );
@@ -100,11 +100,11 @@ export class ConsumerGroupService {
 
   /**
    * Create consumer group(s)
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   async createGroups(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateConsumerGroupsDto,
   ): Promise<void> {
     try {
@@ -112,7 +112,7 @@ export class ConsumerGroupService {
       const { keyName, consumerGroups } = dto;
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -136,7 +136,7 @@ export class ConsumerGroupService {
       const [
         transactionError,
         transactionResults,
-      ] = await this.browserTool.execMulti(clientOptions, toolCommands);
+      ] = await this.browserTool.execMulti(clientMetadata, toolCommands);
       catchTransactionError(transactionError, transactionResults);
 
       this.logger.log('Stream consumer group(s) created.');
@@ -161,18 +161,18 @@ export class ConsumerGroupService {
 
   /**
    * Updates last delivered id for Consumer Group
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   async updateGroup(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: UpdateConsumerGroupDto,
   ): Promise<void> {
     try {
       this.logger.log('Updating consumer group.');
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [dto.keyName],
       );
@@ -182,7 +182,7 @@ export class ConsumerGroupService {
       }
 
       await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolStreamCommands.XGroupSetId,
         [dto.keyName, dto.name, dto.lastDeliveredId],
       );
@@ -209,18 +209,18 @@ export class ConsumerGroupService {
 
   /**
    * Delete consumer groups in batch
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   async deleteGroup(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: DeleteConsumerGroupsDto,
   ): Promise<DeleteConsumerGroupsResponse> {
     try {
       this.logger.log('Deleting consumer group.');
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [dto.keyName],
       );
@@ -243,7 +243,7 @@ export class ConsumerGroupService {
       const [
         transactionError,
         transactionResults,
-      ] = await this.browserTool.execMulti(clientOptions, toolCommands);
+      ] = await this.browserTool.execMulti(clientMetadata, toolCommands);
       catchTransactionError(transactionError, transactionResults);
 
       this.logger.log('Consumer group(s) successfully deleted.');

@@ -1,10 +1,8 @@
 import {
   Body,
   Controller, Delete,
-  Param, Patch,
+  Patch,
   Post,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
@@ -18,7 +16,8 @@ import {
 import { ConsumerGroupService } from 'src/modules/browser/services/stream/consumer-group.service';
 import { KeyDto } from 'src/modules/browser/dto';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Streams')
 @Controller('streams/consumer-groups')
@@ -42,10 +41,10 @@ export class ConsumerGroupController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getGroups(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: KeyDto,
   ): Promise<ConsumerGroupDto[]> {
-    return this.service.getGroups({ instanceId }, dto);
+    return this.service.getGroups(clientMetadata, dto);
   }
 
   @Post('')
@@ -54,10 +53,10 @@ export class ConsumerGroupController extends BaseController {
     statusCode: 201,
   })
   async createGroups(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateConsumerGroupsDto,
   ): Promise<void> {
-    return this.service.createGroups({ instanceId }, dto);
+    return this.service.createGroups(clientMetadata, dto);
   }
 
   @Patch('')
@@ -66,10 +65,10 @@ export class ConsumerGroupController extends BaseController {
     statusCode: 200,
   })
   async updateGroup(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: UpdateConsumerGroupDto,
   ): Promise<void> {
-    return this.service.updateGroup({ instanceId }, dto);
+    return this.service.updateGroup(clientMetadata, dto);
   }
 
   @Delete('')
@@ -85,9 +84,9 @@ export class ConsumerGroupController extends BaseController {
     ],
   })
   async deleteGroup(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: DeleteConsumerGroupsDto,
   ): Promise<DeleteConsumerGroupsResponse> {
-    return this.service.deleteGroup({ instanceId }, dto);
+    return this.service.deleteGroup(clientMetadata, dto);
   }
 }

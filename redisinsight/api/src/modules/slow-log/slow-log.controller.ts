@@ -1,14 +1,13 @@
 import {
-  Body,
-  Controller, Delete, Get, Param, Patch, Query, UsePipes, ValidationPipe,
+  Body, Controller, Delete, Get, Patch, Query, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { SlowLogService } from 'src/modules/slow-log/slow-log.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { SlowLog, SlowLogConfig } from 'src/modules/slow-log/models';
-import { AppTool } from 'src/models';
 import { UpdateSlowLogConfigDto } from 'src/modules/slow-log/dto/update-slow-log-config.dto';
 import { GetSlowLogsDto } from 'src/modules/slow-log/dto/get-slow-logs.dto';
+import { ClientMetadataFromRequest } from 'src/common/decorators';
 
 @ApiTags('Slow Logs')
 @Controller('slow-logs')
@@ -31,13 +30,10 @@ export class SlowLogController {
   })
   @Get('')
   async getSlowLogs(
-    @Param('dbInstance') instanceId: string,
+    @ClientMetadataFromRequest() clientMetadata,
       @Query() getSlowLogsDto: GetSlowLogsDto,
   ): Promise<any> {
-    return this.service.getSlowLogs({
-      instanceId,
-      tool: AppTool.Common,
-    }, getSlowLogsDto);
+    return this.service.getSlowLogs(clientMetadata, getSlowLogsDto);
   }
 
   @ApiEndpoint({
@@ -46,12 +42,9 @@ export class SlowLogController {
   })
   @Delete('')
   async resetSlowLogs(
-    @Param('dbInstance') instanceId: string,
+    @ClientMetadataFromRequest() clientMetadata,
   ): Promise<void> {
-    return this.service.reset({
-      instanceId,
-      tool: AppTool.Common,
-    });
+    return this.service.reset(clientMetadata);
   }
 
   @ApiEndpoint({
@@ -66,12 +59,9 @@ export class SlowLogController {
   })
   @Get('config')
   async getConfig(
-    @Param('dbInstance') instanceId: string,
+    @ClientMetadataFromRequest() clientMetadata,
   ): Promise<SlowLogConfig> {
-    return this.service.getConfig({
-      instanceId,
-      tool: AppTool.Common,
-    });
+    return this.service.getConfig(clientMetadata);
   }
 
   @ApiEndpoint({
@@ -86,12 +76,9 @@ export class SlowLogController {
   })
   @Patch('config')
   async updateConfig(
-    @Param('dbInstance') instanceId: string,
+    @ClientMetadataFromRequest() clientMetadata,
       @Body() dto: UpdateSlowLogConfigDto,
   ): Promise<SlowLogConfig> {
-    return this.service.updateConfig({
-      instanceId,
-      tool: AppTool.Common,
-    }, dto);
+    return this.service.updateConfig(clientMetadata, dto);
   }
 }

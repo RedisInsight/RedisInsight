@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Param,
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -17,7 +16,8 @@ import {
 } from 'src/modules/browser/dto/stream.dto';
 import { StreamService } from 'src/modules/browser/services/stream/stream.service';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Streams')
 @Controller('streams')
@@ -32,10 +32,10 @@ export class StreamController extends BaseController {
     statusCode: 201,
   })
   async createStream(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateStreamDto,
   ): Promise<void> {
-    return this.service.createStream({ instanceId }, dto);
+    return this.service.createStream(clientMetadata, dto);
   }
 
   @Post('entries')
@@ -52,10 +52,10 @@ export class StreamController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async addEntries(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: AddStreamEntriesDto,
   ): Promise<AddStreamEntriesResponse> {
-    return this.service.addEntries({ instanceId }, dto);
+    return this.service.addEntries(clientMetadata, dto);
   }
 
   @Post('/entries/get')
@@ -72,10 +72,10 @@ export class StreamController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getEntries(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: GetStreamEntriesDto,
   ): Promise<GetStreamEntriesResponse> {
-    return this.service.getEntries({ instanceId }, dto);
+    return this.service.getEntries(clientMetadata, dto);
   }
 
   @Delete('/entries')
@@ -91,14 +91,9 @@ export class StreamController extends BaseController {
     ],
   })
   async deleteEntries(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: DeleteStreamEntriesDto,
   ): Promise<DeleteStreamEntriesResponse> {
-    return await this.service.deleteEntries(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.service.deleteEntries(clientMetadata, dto);
   }
 }

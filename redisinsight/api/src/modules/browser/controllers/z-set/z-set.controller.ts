@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Param,
   Patch,
   Post,
   Put,
@@ -10,7 +9,8 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 import {
   AddMembersToZSetDto,
   CreateZSetWithExpireDto,
@@ -38,15 +38,10 @@ export class ZSetController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async createSet(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateZSetWithExpireDto,
   ): Promise<void> {
-    return await this.zSetBusinessService.createZSet(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.zSetBusinessService.createZSet(clientMetadata, dto);
   }
 
   // The key name can be very large, so it is better to send it in the request body
@@ -64,15 +59,10 @@ export class ZSetController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getZSet(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: GetZSetMembersDto,
   ): Promise<GetZSetResponse> {
-    return await this.zSetBusinessService.getMembers(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.zSetBusinessService.getMembers(clientMetadata, dto);
   }
 
   @Put('')
@@ -82,15 +72,10 @@ export class ZSetController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async addMembers(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: AddMembersToZSetDto,
   ): Promise<void> {
-    return await this.zSetBusinessService.addMembers(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.zSetBusinessService.addMembers(clientMetadata, dto);
   }
 
   @Patch('')
@@ -100,15 +85,10 @@ export class ZSetController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async updateMember(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: UpdateMemberInZSetDto,
   ): Promise<void> {
-    return await this.zSetBusinessService.updateMember(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.zSetBusinessService.updateMember(clientMetadata, dto);
   }
 
   @Delete('/members')
@@ -125,15 +105,10 @@ export class ZSetController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async deleteMembers(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: DeleteMembersFromZSetDto,
   ): Promise<DeleteMembersFromZSetResponse> {
-    return await this.zSetBusinessService.deleteMembers(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.zSetBusinessService.deleteMembers(clientMetadata, dto);
   }
 
   // The key name can be very large, so it is better to send it in the request body
@@ -151,14 +126,9 @@ export class ZSetController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async searchZSet(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: SearchZSetMembersDto,
   ): Promise<SearchZSetMembersResponse> {
-    return await this.zSetBusinessService.searchMembers(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.zSetBusinessService.searchMembers(clientMetadata, dto);
   }
 }

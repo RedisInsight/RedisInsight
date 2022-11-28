@@ -1,7 +1,7 @@
 import {
   BadRequestException, Injectable, InternalServerErrorException, Logger,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import {
   ClusterNodeRole, ClusterSingleNodeOptions,
   CommandExecutionStatus,
@@ -55,11 +55,11 @@ export class WorkbenchCommandsExecutor {
    * Entrypoint for any CommandExecution
    * Will determine type of a command (standalone, per node(s)) and format, and execute it
    * Also sis a single place of analytics events invocation
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async sendCommand(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateCommandExecutionDto,
   ): Promise<CommandExecutionResult[]> {
     let result;
@@ -77,7 +77,7 @@ export class WorkbenchCommandsExecutor {
 
       if (nodeOptions) {
         result = [await this.sendCommandForSingleNode(
-          clientOptions,
+          clientMetadata,
           command,
           commandArgs,
           role,
@@ -86,7 +86,7 @@ export class WorkbenchCommandsExecutor {
         )];
       } else if (role) {
         result = await this.sendCommandForNodes(
-          clientOptions,
+          clientMetadata,
           command,
           commandArgs,
           role,
@@ -94,7 +94,7 @@ export class WorkbenchCommandsExecutor {
         );
       } else {
         result = [await this.sendCommandForStandalone(
-          clientOptions,
+          clientMetadata,
           command,
           commandArgs,
           mode,
@@ -102,7 +102,7 @@ export class WorkbenchCommandsExecutor {
       }
 
       this.analyticsService.sendCommandExecutedEvents(
-        clientOptions.instanceId,
+        clientMetadata.databaseId,
         result,
         { command, rawMode: mode === RunQueryMode.Raw },
       );
@@ -113,7 +113,7 @@ export class WorkbenchCommandsExecutor {
 
       const errorResult = { response: error.message, status: CommandExecutionStatus.Fail };
       this.analyticsService.sendCommandExecutedEvent(
-        clientOptions.instanceId,
+        clientMetadata.databaseId,
         { ...errorResult, error },
         { command, rawMode: dto.mode === RunQueryMode.Raw },
       );
@@ -136,14 +136,14 @@ export class WorkbenchCommandsExecutor {
 
   /**
    * Sends command for standalone instances
-   * @param clientOptions
+   * @param clientMetadata
    * @param command
    * @param commandArgs
    * @param mode
    * @private
    */
   private async sendCommandForStandalone(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     command: string,
     commandArgs: string[],
     mode: RunQueryMode,
@@ -155,7 +155,7 @@ export class WorkbenchCommandsExecutor {
     const replyEncoding = checkHumanReadableCommands(`${command} ${commandArgs[0]}`) ? 'utf8' : undefined;
 
     const response = formatter.format(
-      await this.redisTool.execCommand(clientOptions, command, commandArgs, replyEncoding),
+      await this.redisTool.execCommand(clientMetadata, command, commandArgs, replyEncoding),
     );
 
     this.logger.log('Succeed to execute workbench command.');
@@ -165,7 +165,7 @@ export class WorkbenchCommandsExecutor {
 
   /**
    * Sends command for a single node in cluster by host and port (nodeOptions)
-   * @param clientOptions
+   * @param clientMetadata
    * @param command
    * @param commandArgs
    * @param role
@@ -174,7 +174,7 @@ export class WorkbenchCommandsExecutor {
    * @private
    */
   private async sendCommandForSingleNode(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     command: string,
     commandArgs: string[],
     role: ClusterNodeRole = ClusterNodeRole.All,
@@ -189,7 +189,7 @@ export class WorkbenchCommandsExecutor {
 
     const nodeAddress = `${nodeOptions.host}:${nodeOptions.port}`;
     let result = await this.redisTool.execCommandForNode(
-      clientOptions,
+      clientMetadata,
       command,
       commandArgs,
       role,
@@ -199,7 +199,7 @@ export class WorkbenchCommandsExecutor {
     if (result.error && checkRedirectionError(result.error) && nodeOptions.enableRedirection) {
       const { slot, address } = parseRedirectionError(result.error);
       result = await this.redisTool.execCommandForNode(
-        clientOptions,
+        clientMetadata,
         command,
         commandArgs,
         role,
@@ -222,7 +222,7 @@ export class WorkbenchCommandsExecutor {
 
   /**
    * Sends commands for multiple nodes in cluster based on their role
-   * @param clientOptions
+   * @param clientMetadata
    * @param command
    * @param commandArgs
    * @param role
@@ -230,7 +230,7 @@ export class WorkbenchCommandsExecutor {
    * @private
    */
   private async sendCommandForNodes(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     command: string,
     commandArgs: string[],
     role: ClusterNodeRole,
@@ -243,7 +243,7 @@ export class WorkbenchCommandsExecutor {
     const replyEncoding = checkHumanReadableCommands(`${command} ${commandArgs[0]}`) ? 'utf8' : undefined;
 
     return (
-      await this.redisTool.execCommandForNodes(clientOptions, command, commandArgs, role, replyEncoding)
+      await this.redisTool.execCommandForNodes(clientMetadata, command, commandArgs, role, replyEncoding)
     ).map((nodeExecReply) => {
       const {
         response, status, host, port,

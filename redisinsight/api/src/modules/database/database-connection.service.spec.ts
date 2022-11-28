@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockClientMetadata,
+  mockClientMetadata, mockCommonClientMetadata,
   mockDatabase,
   mockDatabaseAnalytics,
   mockDatabaseInfoProvider,
@@ -10,7 +10,7 @@ import {
   mockIORedisClient,
   mockRedisNoAuthError,
   mockRedisService,
-  MockType,
+  MockType
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -62,7 +62,7 @@ describe('DatabaseConnectionService', () => {
 
   describe('connect', () => {
     it('should connect to database', async () => {
-      expect(await service.connect(mockDatabase.id, AppTool.Common)).toEqual(undefined);
+      expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
       expect(redisService.connectToDatabaseInstance).not.toHaveBeenCalled();
     });
   });

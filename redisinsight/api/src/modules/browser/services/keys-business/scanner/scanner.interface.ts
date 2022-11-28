@@ -1,7 +1,7 @@
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { Cluster, Redis } from 'ioredis';
 import { RedisString } from 'src/common/constants';
+import { ClientMetadata } from 'src/common/models';
 
 interface IGetKeysArgs {
   cursor: string;
@@ -22,7 +22,7 @@ export interface IGetNodeKeysResult {
 
 export interface IScannerStrategy {
   getKeys(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     args: IGetKeysArgs,
   ): Promise<IGetNodeKeysResult[]>;
 

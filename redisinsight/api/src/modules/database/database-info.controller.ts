@@ -1,13 +1,14 @@
 import { ApiTags } from '@nestjs/swagger';
 import {
-  Controller, Get, Param, UseInterceptors,
+  Controller, Get, UseInterceptors,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
-import { AppTool } from 'src/models';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
+import { ClientMetadataFromRequest } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Database Instances')
 @Controller('databases')
@@ -30,12 +31,11 @@ export class DatabaseInfoController {
     ],
   })
   async getInfo(
-    @Param('id') id: string,
+    @ClientMetadataFromRequest({
+      paramPath: 'id',
+    }) clientMetadata: ClientMetadata,
   ): Promise<RedisDatabaseInfoResponse> {
-    return this.databaseInfoService.getInfo(
-      id,
-      AppTool.Common,
-    );
+    return this.databaseInfoService.getInfo(clientMetadata);
   }
 
   @Get(':id/overview')
@@ -52,8 +52,10 @@ export class DatabaseInfoController {
     ],
   })
   async getDatabaseOverview(
-    @Param('id') id: string,
+    @ClientMetadataFromRequest({
+      paramPath: 'id',
+    }) clientMetadata: ClientMetadata,
   ): Promise<DatabaseOverview> {
-    return this.databaseInfoService.getOverview(id);
+    return this.databaseInfoService.getOverview(clientMetadata);
   }
 }

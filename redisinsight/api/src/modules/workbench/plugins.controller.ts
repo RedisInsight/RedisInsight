@@ -1,15 +1,24 @@
 import {
-  Body, ClassSerializerInterceptor, Controller, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
-import { AppTool } from 'src/models';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { PluginsService } from 'src/modules/workbench/plugins.service';
 import { PluginCommandExecution } from 'src/modules/workbench/models/plugin-command-execution';
 import { CreatePluginStateDto } from 'src/modules/workbench/dto/create-plugin-state.dto';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
+import { ClientContext, ClientMetadata } from 'src/common/models';
+import { ClientMetadataFromRequest } from 'src/common/decorators';
 
 @ApiTags('Plugins')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -31,16 +40,10 @@ export class PluginsController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
   async sendCommand(
-    @Param('dbInstance') dbInstance: string,
+    @ClientMetadataFromRequest({ context: ClientContext.Workbench }) clientMetadata: ClientMetadata,
       @Body() dto: CreateCommandExecutionDto,
   ): Promise<PluginCommandExecution> {
-    return this.service.sendCommand(
-      {
-        instanceId: dbInstance,
-        tool: AppTool.Workbench,
-      },
-      dto,
-    );
+    return this.service.sendCommand(clientMetadata, dto);
   }
 
   @ApiEndpoint({
@@ -58,9 +61,9 @@ export class PluginsController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
   async getPluginCommands(
-    @Param('dbInstance') databaseId: string,
+    @ClientMetadataFromRequest({ context: ClientContext.Workbench }) clientMetadata: ClientMetadata,
   ): Promise<string[]> {
-    return this.service.getWhitelistCommands(databaseId);
+    return this.service.getWhitelistCommands(clientMetadata);
   }
 
   @ApiEndpoint({

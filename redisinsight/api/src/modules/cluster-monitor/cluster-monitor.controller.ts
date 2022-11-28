@@ -1,9 +1,10 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ClusterMonitorService } from 'src/modules/cluster-monitor/cluster-monitor.service';
-import { AppTool } from 'src/models';
 import { ApiTags } from '@nestjs/swagger';
 import { ClusterDetails } from 'src/modules/cluster-monitor/models';
+import { ClientMetadataFromRequest } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Cluster Monitor')
 @Controller('/cluster-details')
@@ -22,11 +23,8 @@ export class ClusterMonitorController {
   })
   @Get()
   async getClusterDetails(
-    @Param('dbInstance') instanceId: string,
+    @ClientMetadataFromRequest() clientMetadata: ClientMetadata,
   ): Promise<ClusterDetails> {
-    return this.clusterMonitorService.getClusterDetails({
-      instanceId,
-      tool: AppTool.Common,
-    });
+    return this.clusterMonitorService.getClusterDetails(clientMetadata);
   }
 }

@@ -8,6 +8,8 @@ import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
 import { AppTool } from 'src/models';
 import { PublishDto } from 'src/modules/pub-sub/dto/publish.dto';
 import { PublishResponse } from 'src/modules/pub-sub/dto/publish.response';
+import { ClientMetadataFromRequest } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Pub/Sub')
 @Controller('pub-sub')
@@ -28,12 +30,9 @@ export class PubSubController {
     ],
   })
   async publish(
-    @Param('dbInstance') instanceId: string,
+    @ClientMetadataFromRequest() clientMetadata: ClientMetadata,
       @Body() dto: PublishDto,
   ): Promise<PublishResponse> {
-    return this.service.publish({
-      instanceId,
-      tool: AppTool.Common,
-    }, dto);
+    return this.service.publish(clientMetadata, dto);
   }
 }

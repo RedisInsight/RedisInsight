@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AppTool } from 'src/models';
+import { ClientContext } from 'src/common/models';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { IRedisToolOptions } from 'src/modules/redis/redis-tool-options';
@@ -12,7 +12,7 @@ export class RedisToolFactory {
     protected databaseService: DatabaseService,
   ) {}
 
-  createRedisTool(appTool: AppTool, options: IRedisToolOptions = {}) {
-    return new RedisToolService(appTool, this.redisService, this.databaseService, options);
+  createRedisTool(clientContext: ClientContext, options: IRedisToolOptions = {}) {
+    return new RedisToolService(clientContext, this.redisService, this.databaseService, options);
   }
 }

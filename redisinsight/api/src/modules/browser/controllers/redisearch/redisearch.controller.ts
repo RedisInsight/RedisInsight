@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get, HttpCode,
-  Param,
   Post,
 } from '@nestjs/common';
 import {
@@ -12,7 +11,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
-import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
 import {
   CreateRedisearchIndexDto,
@@ -21,6 +20,7 @@ import {
 } from 'src/modules/browser/dto/redisearch';
 import { RedisearchService } from 'src/modules/browser/services/redisearch/redisearch.service';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('RediSearch')
 @Controller('redisearch')
@@ -35,13 +35,9 @@ export class RedisearchController extends BaseController {
   @ApiRedisParams()
   @ApiQueryRedisStringEncoding()
   async list(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
   ): Promise<ListRedisearchIndexesResponse> {
-    return this.service.list(
-      {
-        instanceId: dbInstance,
-      },
-    );
+    return this.service.list(clientMetadata);
   }
 
   @Post('')
@@ -50,15 +46,10 @@ export class RedisearchController extends BaseController {
   @HttpCode(201)
   @ApiBody({ type: CreateRedisearchIndexDto })
   async createIndex(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateRedisearchIndexDto,
   ): Promise<void> {
-    return await this.service.createIndex(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.service.createIndex(clientMetadata, dto);
   }
 
   @Post('search')
@@ -68,14 +59,9 @@ export class RedisearchController extends BaseController {
   @ApiRedisParams()
   @ApiQueryRedisStringEncoding()
   async search(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: SearchRedisearchDto,
   ): Promise<GetKeysWithDetailsResponse> {
-    return await this.service.search(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.service.search(clientMetadata, dto);
   }
 }

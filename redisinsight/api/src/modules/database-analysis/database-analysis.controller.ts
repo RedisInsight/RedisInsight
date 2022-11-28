@@ -7,8 +7,9 @@ import { ApiTags } from '@nestjs/swagger';
 import { DatabaseAnalysisService } from 'src/modules/database-analysis/database-analysis.service';
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
-import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { ApiQueryRedisStringEncoding, ClientMetadataFromRequest } from 'src/common/decorators';
 import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
+import { ClientMetadata } from 'src/common/models';
 
 @UseInterceptors(BrowserSerializeInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -30,10 +31,10 @@ export class DatabaseAnalysisController {
   @Post()
   @ApiQueryRedisStringEncoding()
   async create(
-    @Param('dbInstance') instanceId: string,
+    @ClientMetadataFromRequest() clientMetadata: ClientMetadata,
       @Body() dto: CreateDatabaseAnalysisDto,
   ): Promise<DatabaseAnalysis> {
-    return this.service.create({ instanceId }, dto);
+    return this.service.create(clientMetadata, dto);
   }
 
   @ApiEndpoint({

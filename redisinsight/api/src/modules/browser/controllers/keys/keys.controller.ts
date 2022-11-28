@@ -2,12 +2,9 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   HttpCode,
-  Param,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import {
   ApiBody, ApiOkResponse, ApiOperation, ApiTags,
@@ -16,7 +13,8 @@ import { KeysBusinessService } from 'src/modules/browser/services/keys-business/
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 import {
   DeleteKeysDto,
   DeleteKeysResponse,
@@ -50,15 +48,10 @@ export class KeysController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getKeys(
-    @Param('dbInstance') dbInstance: string,
-      @Body() getKeysDto: GetKeysDto,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: GetKeysDto,
   ): Promise<GetKeysWithDetailsResponse[]> {
-    return this.keysBusinessService.getKeys(
-      {
-        instanceId: dbInstance,
-      },
-      getKeysDto,
-    );
+    return this.keysBusinessService.getKeys(clientMetadata, dto);
   }
 
   @Post('get-metadata')
@@ -72,15 +65,10 @@ export class KeysController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getKeysInfo(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: GetKeysInfoDto,
   ): Promise<GetKeyInfoResponse[]> {
-    return this.keysBusinessService.getKeysInfo(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return this.keysBusinessService.getKeysInfo(clientMetadata, dto);
   }
 
   // The key name can be very large, so it is better to send it in the request body
@@ -95,15 +83,10 @@ export class KeysController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getKeyInfo(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: GetKeyInfoDto,
   ): Promise<GetKeyInfoResponse> {
-    return await this.keysBusinessService.getKeyInfo(
-      {
-        instanceId: dbInstance,
-      },
-      dto.keyName,
-    );
+    return await this.keysBusinessService.getKeyInfo(clientMetadata, dto.keyName);
   }
 
   @Delete('')
@@ -116,15 +99,10 @@ export class KeysController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async deleteKey(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: DeleteKeysDto,
   ): Promise<DeleteKeysResponse> {
-    return await this.keysBusinessService.deleteKeys(
-      {
-        instanceId: dbInstance,
-      },
-      dto.keyNames,
-    );
+    return await this.keysBusinessService.deleteKeys(clientMetadata, dto.keyNames);
   }
 
   @Patch('/name')
@@ -137,15 +115,10 @@ export class KeysController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async renameKey(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: RenameKeyDto,
   ): Promise<RenameKeyResponse> {
-    return await this.keysBusinessService.renameKey(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.keysBusinessService.renameKey(clientMetadata, dto);
   }
 
   @Patch('/ttl')
@@ -158,14 +131,9 @@ export class KeysController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async updateTtl(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: UpdateKeyTtlDto,
   ): Promise<KeyTtlResponse> {
-    return await this.keysBusinessService.updateTtl(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.keysBusinessService.updateTtl(clientMetadata, dto);
   }
 }

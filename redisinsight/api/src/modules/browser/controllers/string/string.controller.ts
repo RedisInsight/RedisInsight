@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   HttpCode,
-  Param,
   Post,
   Put,
 } from '@nestjs/common';
@@ -17,7 +16,8 @@ import {
 } from 'src/modules/browser/dto/string.dto';
 import { GetKeyInfoDto } from 'src/modules/browser/dto';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 import { StringBusinessService } from '../../services/string-business/string-business.service';
 
 @ApiTags('String')
@@ -33,15 +33,10 @@ export class StringController extends BaseController {
   @ApiBody({ type: SetStringWithExpireDto })
   @ApiQueryRedisStringEncoding()
   async setString(
-    @Param('dbInstance') dbInstance: string,
-      @Body() stringDto: SetStringWithExpireDto,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: SetStringWithExpireDto,
   ): Promise<void> {
-    return this.stringBusinessService.setString(
-      {
-        instanceId: dbInstance,
-      },
-      stringDto,
-    );
+    return this.stringBusinessService.setString(clientMetadata, dto);
   }
 
   // The key name can be very large, so it is better to send it in the request body
@@ -56,15 +51,10 @@ export class StringController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getStringValue(
-    @Param('dbInstance') dbInstance: string,
-      @Body() getKeyInfoDto: GetKeyInfoDto,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: GetKeyInfoDto,
   ): Promise<GetStringValueResponse> {
-    return this.stringBusinessService.getStringValue(
-      {
-        instanceId: dbInstance,
-      },
-      getKeyInfoDto.keyName,
-    );
+    return this.stringBusinessService.getStringValue(clientMetadata, dto);
   }
 
   @Put('')
@@ -73,14 +63,9 @@ export class StringController extends BaseController {
   @ApiBody({ type: SetStringDto })
   @ApiQueryRedisStringEncoding()
   async updateStringValue(
-    @Param('dbInstance') dbInstance: string,
-      @Body() setStringDto: SetStringDto,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: SetStringDto,
   ): Promise<void> {
-    return this.stringBusinessService.updateStringValue(
-      {
-        instanceId: dbInstance,
-      },
-      setStringDto,
-    );
+    return this.stringBusinessService.updateStringValue(clientMetadata, dto);
   }
 }

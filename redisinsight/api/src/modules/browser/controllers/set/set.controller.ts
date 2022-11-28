@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   HttpCode,
-  Param,
   Post,
   Put,
 } from '@nestjs/common';
@@ -11,8 +10,9 @@ import {
   ApiBody, ApiOkResponse, ApiOperation, ApiTags,
 } from '@nestjs/swagger';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
+import { ClientMetadata } from 'src/common/models';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
 import {
   AddMembersToSetDto,
   CreateSetWithExpireDto,
@@ -36,15 +36,10 @@ export class SetController extends BaseController {
   @ApiBody({ type: CreateSetWithExpireDto })
   @ApiQueryRedisStringEncoding()
   async createSet(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateSetWithExpireDto,
   ): Promise<void> {
-    return await this.setBusinessService.createSet(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.setBusinessService.createSet(clientMetadata, dto);
   }
 
   // The key name can be very large, so it is better to send it in the request body
@@ -61,15 +56,10 @@ export class SetController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getMembers(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: GetSetMembersDto,
   ): Promise<GetSetMembersResponse> {
-    return await this.setBusinessService.getMembers(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.setBusinessService.getMembers(clientMetadata, dto);
   }
 
   @Put('')
@@ -80,15 +70,10 @@ export class SetController extends BaseController {
   @ApiBody({ type: AddMembersToSetDto })
   @ApiQueryRedisStringEncoding()
   async addMembers(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: AddMembersToSetDto,
   ): Promise<void> {
-    return await this.setBusinessService.addMembers(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.setBusinessService.addMembers(clientMetadata, dto);
   }
 
   @Delete('/members')
@@ -99,14 +84,9 @@ export class SetController extends BaseController {
   @ApiBody({ type: DeleteMembersFromSetDto })
   @ApiQueryRedisStringEncoding()
   async deleteMembers(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: DeleteMembersFromSetDto,
   ): Promise<DeleteMembersFromSetResponse> {
-    return await this.setBusinessService.deleteMembers(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.setBusinessService.deleteMembers(clientMetadata, dto);
   }
 }

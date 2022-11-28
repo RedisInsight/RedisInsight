@@ -3,18 +3,16 @@ import {
   Controller,
   Delete,
   HttpCode,
-  Param,
   Post,
   Put,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody, ApiOkResponse, ApiOperation, ApiTags,
 } from '@nestjs/swagger';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 import {
   AddFieldsToHashDto,
   CreateHashWithExpireDto,
@@ -38,15 +36,10 @@ export class HashController extends BaseController {
   @ApiBody({ type: CreateHashWithExpireDto })
   @ApiQueryRedisStringEncoding()
   async createHash(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateHashWithExpireDto,
   ): Promise<void> {
-    return await this.hashBusinessService.createHash(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.hashBusinessService.createHash(clientMetadata, dto);
   }
 
   // The key name can be very large, so it is better to send it in the request body
@@ -63,15 +56,10 @@ export class HashController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getMembers(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: GetHashFieldsDto,
   ): Promise<GetHashFieldsResponse> {
-    return await this.hashBusinessService.getFields(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.hashBusinessService.getFields(clientMetadata, dto);
   }
 
   @Put('')
@@ -82,15 +70,10 @@ export class HashController extends BaseController {
   @ApiBody({ type: AddFieldsToHashDto })
   @ApiQueryRedisStringEncoding()
   async addMember(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: AddFieldsToHashDto,
   ): Promise<void> {
-    return await this.hashBusinessService.addFields(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.hashBusinessService.addFields(clientMetadata, dto);
   }
 
   @Delete('/fields')
@@ -101,14 +84,9 @@ export class HashController extends BaseController {
   @ApiBody({ type: DeleteFieldsFromHashDto })
   @ApiQueryRedisStringEncoding()
   async deleteFields(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: DeleteFieldsFromHashDto,
   ): Promise<DeleteFieldsFromHashResponse> {
-    return await this.hashBusinessService.deleteFields(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.hashBusinessService.deleteFields(clientMetadata, dto);
   }
 }

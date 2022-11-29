@@ -386,6 +386,25 @@ export const initDataHelper = (rte) => {
     } while (inserted < number)
   };
 
+  const generateHugeNumberOfMembersForSetKey = async (number: number = 100000, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const batchSize = 10000;
+    let inserted = 0;
+    do {
+      const pipeline = [];
+      const limit = inserted + batchSize;
+      for (inserted; inserted < limit && inserted < number; inserted++) {
+        pipeline.push(['sadd', constants.TEST_SET_KEY_1, inserted]);
+      }
+
+      await insertKeysBasedOnEnv(pipeline, true);
+    } while (inserted < number)
+  };
+
+
   const generateHugeNumberOfTinyStringKeys = async (number: number = 100000, clean: boolean) => {
     if (clean) {
       await truncate();
@@ -490,6 +509,7 @@ export const initDataHelper = (rte) => {
     generateNStreams,
     generateNGraphs,
     generateNCachedScripts,
+    generateHugeNumberOfMembersForSetKey,
     getClientNodes,
   }
 }

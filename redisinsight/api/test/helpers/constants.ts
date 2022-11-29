@@ -460,6 +460,12 @@ export const constants = {
   TEST_SMALLER_KEYS_DATABASE_ANALYSIS_RECOMMENDATION: {
     name: 'useSmallerKeys',
   },
+  TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION: {
+    name: 'increaseSetMaxIntsetEntries',
+  },
+  TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION: {
+    name: 'combineSmallStringsToHashes',
+  },
 
   // etc...
 }

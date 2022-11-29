@@ -37,6 +37,9 @@ export class RecommendationService {
       await this.recommendationProvider.determineLuaScriptRecommendation(client),
       await this.recommendationProvider.determineBigHashesRecommendation(keys),
       await this.recommendationProvider.determineBigTotalRecommendation(total),
+      await this.recommendationProvider.determineLogicalDatabasesRecommendation(client),
+      await this.recommendationProvider.determineCombineSmallStringsToHashesRecommendation(keys),
+      await this.recommendationProvider.determineIncreaseSetMaxIntsetEntriesRecommendation(client, keys),
     ]);
   }
 }

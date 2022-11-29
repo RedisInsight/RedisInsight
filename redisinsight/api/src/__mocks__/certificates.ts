@@ -41,8 +41,7 @@ export const mockCaCertificateRepository = jest.fn(() => ({
 }));
 
 export const mockCaCertificateService = jest.fn(() => ({
-  getAll: jest.fn(),
-  getOneById: jest.fn(),
+  get: jest.fn().mockResolvedValue(mockCaCertificate),
 }));
 
 // ================== Client Certificate ==================
@@ -85,6 +84,5 @@ export const mockClientCertificateRepository = jest.fn(() => ({
 }));
 
 export const mockClientCertificateService = jest.fn(() => ({
-  getAll: jest.fn(),
-  getOneById: jest.fn(),
+  get: jest.fn().mockResolvedValue(mockClientCertificate),
 }));

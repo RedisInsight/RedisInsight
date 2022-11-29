@@ -1,6 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockRedisNoPermError, mockDatabase, MockType, mockDatabaseConnectionService, mockIORedisClient, mockIORedisCluster,
+  mockRedisNoPermError,
+  mockDatabase,
+  MockType,
+  mockDatabaseConnectionService,
+  mockIORedisClient,
+  mockIORedisCluster,
+  mockIOClusterNode1,
+  mockIOClusterNode2,
 } from 'src/__mocks__';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { SlowLogService } from 'src/modules/slow-log/slow-log.service';
@@ -72,6 +79,8 @@ describe('SlowLogService', () => {
     analyticsService = await module.get(SlowLogAnalyticsService);
 
     mockIORedisClient.call.mockResolvedValue(mockSlowLogReply);
+    mockIOClusterNode1.call.mockResolvedValue(mockSlowLogReply);
+    mockIOClusterNode2.call.mockResolvedValue(mockSlowLogReply);
   });
 
   describe('getSlowLogs', () => {
@@ -121,7 +130,7 @@ describe('SlowLogService', () => {
     it('should reset slowlogs cluster', async () => {
       databaseConnectionService.getOrCreateClient.mockResolvedValueOnce(mockIORedisCluster);
       await service.reset(mockClientOptions);
-      expect(mockIORedisClient.call).toHaveBeenCalledWith(SlowLogCommands.SlowLog, SlowLogArguments.Reset);
+      expect(mockIOClusterNode1.call).toHaveBeenCalledWith(SlowLogCommands.SlowLog, SlowLogArguments.Reset);
     });
     it('should proxy HttpException', async () => {
       databaseConnectionService.getOrCreateClient.mockImplementationOnce(() => {

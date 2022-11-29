@@ -1,9 +1,9 @@
-import { DatabaseInstanceResponse } from 'apiSrc/modules/instances/dto/database-instance.dto'
 import { rest, RestHandler } from 'msw'
-import { ClusterDetails, HealthStatus, NodeRole } from 'apiSrc/modules/cluster-monitor/models'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { getUrl } from 'uiSrc/utils'
 import { getMswURL } from 'uiSrc/utils/test-utils'
+import { ClusterDetails, HealthStatus, NodeRole } from 'apiSrc/modules/cluster-monitor/models'
+import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 
 export const INSTANCE_ID_MOCK = 'instanceId'
 

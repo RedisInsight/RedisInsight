@@ -5,6 +5,7 @@ import cx from 'classnames'
 import { isNull } from 'lodash'
 import { CellMeasurerCache } from 'react-virtualized'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import { appContextBrowserKeyDetails, updateKeyDetailsSizes } from 'uiSrc/slices/app/context'
 
 import {
   listSelector,
@@ -18,6 +19,7 @@ import {
 import {
   ITableColumn,
   IColumnSearchState,
+  RelativeWidthSizes,
 } from 'uiSrc/components/virtual-table/interfaces'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -69,7 +71,7 @@ const cellCache = new CellMeasurerCache({
 
 interface IListElement extends SetListElementResponse {}
 
-interface Props {
+export interface Props {
   isFooterOpen: boolean
 }
 
@@ -84,6 +86,7 @@ const ListDetails = (props: Props) => {
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+  const { [KeyTypes.List]: listSizes } = useSelector(appContextBrowserKeyDetails)
 
   const [elements, setElements] = useState<IListElement[]>([])
   const [width, setWidth] = useState(100)
@@ -219,15 +222,22 @@ const ListDetails = (props: Props) => {
     }
   }
 
+  const onColResizeEnd = (sizes: RelativeWidthSizes) => {
+    dispatch(updateKeyDetailsSizes({
+      type: KeyTypes.List,
+      sizes
+    }))
+  }
+
   const columns: ITableColumn[] = [
     {
       id: 'index',
       label: 'Index',
-      minWidth: 220,
-      maxWidth: 220,
-      absoluteWidth: 220,
+      minWidth: 120,
+      relativeWidth: listSizes?.index || 30,
       truncateText: true,
       isSearchable: true,
+      isResizable: true,
       prependSearchName: 'Index:',
       initialSearchValue: '',
       searchValidation: validateListIndex,
@@ -257,6 +267,7 @@ const ListDetails = (props: Props) => {
     {
       id: 'element',
       label: 'Element',
+      minWidth: 150,
       truncateText: true,
       alignment: TableCellAlignment.Left,
       render: function Element(
@@ -435,6 +446,7 @@ const ListDetails = (props: Props) => {
         onRowToggleViewClick={handleRowToggleViewClick}
         expandedRows={expandedRows}
         setExpandedRows={setExpandedRows}
+        onColResizeEnd={onColResizeEnd}
       />
     </div>
   )

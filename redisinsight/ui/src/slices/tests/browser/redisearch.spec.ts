@@ -4,7 +4,7 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import { apiService } from 'uiSrc/services'
 import { cleanup, initialStateDefault, mockedStore, mockStore } from 'uiSrc/utils/test-utils'
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
-import { stringToBuffer } from 'uiSrc/utils'
+import { stringToBuffer, UTF8ToBuffer } from 'uiSrc/utils'
 import { REDISEARCH_LIST_DATA_MOCK } from 'uiSrc/mocks/handlers/browser/redisearchHandlers'
 import { SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { fetchKeys, fetchMoreKeys } from 'uiSrc/slices/browser/keys'
@@ -35,6 +35,7 @@ import reducer, {
   resetRedisearchKeysData,
   deleteRedisearchKeyFromList,
   editRedisearchKeyFromList,
+  editRedisearchKeyTTLFromList,
 } from '../../browser/redisearch'
 
 let store: typeof mockedStore
@@ -171,6 +172,33 @@ describe('redisearch slice', () => {
       })
       expect(redisearchSelector(rootState)).toEqual(state)
     })
+
+    it('should not properly set the error if no payload', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        loading: false,
+        error: initialState.error,
+        data: {
+          ...initialState.data,
+          keys: [],
+          nextCursor: '0',
+          total: 0,
+          scanned: 0,
+          shardsMeta: {},
+          previousResultCount: 0,
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadKeysFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
   })
 
   describe('loadMoreKeys', () => {
@@ -291,6 +319,33 @@ describe('redisearch slice', () => {
 
       // Act
       const nextState = reducer(initialState, loadMoreKeysFailure(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+
+    it('should not properly set the error if no payload', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        loading: false,
+        error: initialState.error,
+        data: {
+          ...initialState.data,
+          keys: [],
+          nextCursor: '0',
+          total: 0,
+          scanned: 0,
+          shardsMeta: {},
+          previousResultCount: 0,
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialState, loadMoreKeysFailure())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -650,6 +705,39 @@ describe('redisearch slice', () => {
         prevState,
         editRedisearchKeyFromList({ key: strToKey('4')?.name, newKey: strToKey('44')?.name }),
       )
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('editRedisearchKeyTTLFromList', () => {
+    it('should properly set the state before the edit key ttl', () => {
+      // Arrange
+
+      const key = UTF8ToBuffer('key')
+      const ttl = 12000
+
+      const prevState = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: [{ name: key }],
+        },
+      }
+      const state = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          keys: [{ name: key, ttl }],
+        },
+      }
+
+      // Act
+      const nextState = reducer(prevState, editRedisearchKeyTTLFromList([key, ttl]))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

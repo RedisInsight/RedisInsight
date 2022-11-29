@@ -11,7 +11,7 @@ import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/mo
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
 import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-master'
-import { CreateSentinelDatabasesDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.databases.dto'
+import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
 
 export interface Instance extends DatabaseInstanceResponse {
@@ -358,9 +358,9 @@ export interface ModifiedGetHashMembersResponse extends GetHashFieldsResponse {
   match?: string
 }
 
-export interface ModifiedSentinelMaster extends CreateSentinelDatabasesDto {
+export interface ModifiedSentinelMaster extends CreateSentinelDatabaseDto {
   id?: string
-  alias?: string
+  alias: string
   host?: string
   port?: string
   username?: string

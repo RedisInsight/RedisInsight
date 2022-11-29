@@ -2,8 +2,8 @@ import { format } from 'date-fns'
 import { orderBy } from 'lodash'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_STREAM_START_DEFAULT, SCAN_STREAM_END_DEFAULT } from 'uiSrc/constants/api'
-import { ClaimPendingEntryDto, ConsumerDto, ConsumerGroupDto, PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { ClaimPendingEntryDto, ConsumerDto, ConsumerGroupDto, PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { isEqualBuffers } from './formatters'
 
 export enum ClaimTimeOptions {

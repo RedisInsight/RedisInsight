@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/quotes */
 import { randomBytes } from 'crypto';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CommandParsingError, RedirectionParsingError } from 'src/modules/cli/constants/errors';
@@ -20,64 +21,59 @@ import {
 
 describe('Cli helper', () => {
   describe('splitCliCommandLine', () => {
-    it('should correctly split simple command with args', () => {
-      const input = 'memory usage key';
-
-      const output = splitCliCommandLine(input);
-
-      expect(output).toEqual(['memory', 'usage', 'key']);
-    });
-    it('should correctly split command with special symbols in the args in the double quotes', () => {
-      const input = 'set test "—"';
-
-      const output = splitCliCommandLine(input);
-      const buffer = Buffer.from('e28094', 'hex');
-      expect(output).toEqual(['set', 'test', buffer]);
-    });
-    // todo: enable after review splitCliCommandLine functionality
-    xit('should correctly split command with special symbols in the args in the single quotes', () => {
-      const input = "set test '—'";
-
-      const output = splitCliCommandLine(input);
-
-      const buffer = Buffer.from('e28094', 'hex');
-      expect(output).toEqual(['set', 'test', buffer]);
-    });
-    it('should correctly split simple command without args', () => {
-      const input = 'info';
-
-      const output = splitCliCommandLine(input);
-
-      expect(output).toEqual(['info']);
-    });
-    it('should correctly split command with double quotes', () => {
-      const input = 'get "key name"';
-
-      const output = splitCliCommandLine(input);
-      expect(output).toEqual(['get', Buffer.from('key name')]);
-    });
-    it('should correctly split command with single quotes', () => {
-      const input = "get 'key name'";
-
-      const output = splitCliCommandLine(input);
-
-      expect(output).toEqual(['get', 'key name']);
-    });
-    it('should correctly handle special character', () => {
-      const input = 'set key "\\a\\b\\t\\n\\r"';
-      const output = splitCliCommandLine(input);
-
-      expect(output).toEqual([
-        'set',
-        'key',
-        Buffer.alloc(5, String.fromCharCode(7, 8, 9, 10, 13)),
-      ]);
-    });
-    it('should correctly handle hexadecimal', () => {
-      const input = 'set key "\\xac\\xed"';
-      const output = splitCliCommandLine(input);
-
-      expect(output).toEqual(['set', 'key', Buffer.from([172, 237])]);
+    [
+      {
+        input: 'memory usage key',
+        output: ['memory', 'usage', 'key'],
+      },
+      {
+        input: 'set test "—"',
+        output: ['set', 'test', '—'],
+      },
+      {
+        input: "set test '—'",
+        output: ['set', 'test', '—'],
+      },
+      {
+        input: 'info',
+        output: ['info'],
+      },
+      {
+        input: 'get "key name"',
+        output: ['get', 'key name'],
+      },
+      {
+        input: `get "key ' name"`,
+        output: ['get', `key ' name`],
+      },
+      {
+        input: `get "key \\" name"`,
+        output: ['get', `key " name`],
+      },
+      {
+        input: "get 'key name'",
+        output: ['get', 'key name'],
+      },
+      {
+        input: `s"et" ~\\'\\nk"k "ey' 1`,
+        output: ['set', `~\\\\nk"k "ey`, '1'],
+      },
+      {
+        input: 'set key "\\a\\b\\t\\n\\r"',
+        output: ['set', 'key', `\u0007\u0008\u0009\n\r`],
+      },
+      {
+        input: 'set key "\\xac\\xed"',
+        output: ['set', 'key', Buffer.from([172, 237])],
+      },
+      {
+        input: `ACL SETUSER t on nopass ~'\\x00' &* +@all`,
+        output: ['ACL', 'SETUSER', 't', 'on', 'nopass', '~\\x00', '&*', '+@all'],
+      },
+    ].forEach((tc) => {
+      it(`should return ${JSON.stringify(tc.output)} for command ${tc.input}`, async () => {
+        expect(splitCliCommandLine(tc.input)).toEqual(tc.output);
+      });
     });
     it('should throw [CLI_INVALID_QUOTES_CLOSING] error for command with double quotes', () => {
       const input = 'get "key"a';

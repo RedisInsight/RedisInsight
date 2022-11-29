@@ -142,6 +142,51 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
+  it('should render code changes badge and configuration_changes in avoidLogicalDatabases recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'avoidLogicalDatabases' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
+  })
+
+  it('should render code changes badge and configuration_changes in combineSmallStringsToHashes recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'combineSmallStringsToHashes' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
+  })
+
+  it('should render code changes badge and configuration_changes in increaseSetMaxIntsetEntries recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'increaseSetMaxIntsetEntries' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
+  })
+
   it('should collapse/expand', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,

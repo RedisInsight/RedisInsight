@@ -2,6 +2,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { randomBytes } from 'crypto';
 import { getASCIISafeStringFromBuffer, getBufferFromSafeASCIIString } from "src/utils/cli-helper";
 
+const API = {
+  DATABASES: 'databases',
+};
+
 const TEST_RUN_ID = `=${uuidv4()}`;
 const KEY_TTL = 100;
 const CLUSTER_HASH_SLOT = '{slot1}';
@@ -18,6 +22,8 @@ const unprintableBuf = Buffer.concat([
 ]);
 
 export const constants = {
+  // api
+  API,
   // common
   TEST_RUN_ID,
   TEST_RUN_NAME: process.env.TEST_RUN_NAME || '',
@@ -285,8 +291,11 @@ export const constants = {
   TEST_GRAPH_NODE_2: TEST_RUN_ID + 'n2',
 
   // RediSearch
+  TEST_SEARCH_HASH_TYPE: 'hash',
   TEST_SEARCH_HASH_INDEX_1: TEST_RUN_ID + '_hash_search_idx_1' + CLUSTER_HASH_SLOT,
   TEST_SEARCH_HASH_KEY_PREFIX_1: TEST_RUN_ID + '_hash_search:',
+  TEST_SEARCH_HASH_INDEX_2: TEST_RUN_ID + '_hash_search_idx_2' + CLUSTER_HASH_SLOT,
+  TEST_SEARCH_HASH_KEY_PREFIX_2: TEST_RUN_ID + '_hash_search:',
   TEST_SEARCH_JSON_INDEX_1: TEST_RUN_ID + '_json_search_idx_1' + CLUSTER_HASH_SLOT,
   TEST_SEARCH_JSON_KEY_PREFIX_1: TEST_RUN_ID + '_json_search:',
 

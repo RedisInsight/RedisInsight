@@ -1,6 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { RouterModule } from 'nest-router';
-import { SharedModule } from 'src/modules/shared/shared.module';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { StreamController } from 'src/modules/browser/controllers/stream/stream.controller';
 import { StreamService } from 'src/modules/browser/services/stream/stream.service';
@@ -8,6 +7,8 @@ import { ConsumerGroupController } from 'src/modules/browser/controllers/stream/
 import { ConsumerGroupService } from 'src/modules/browser/services/stream/consumer-group.service';
 import { ConsumerController } from 'src/modules/browser/controllers/stream/consumer.controller';
 import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
+import { RedisearchController } from 'src/modules/browser/controllers/redisearch/redisearch.controller';
+import { RedisearchService } from 'src/modules/browser/services/redisearch/redisearch.service';
 import { HashController } from './controllers/hash/hash.controller';
 import { KeysController } from './controllers/keys/keys.controller';
 import { KeysBusinessService } from './services/keys-business/keys-business.service';
@@ -26,7 +27,6 @@ import { BrowserToolService } from './services/browser-tool/browser-tool.service
 import { BrowserToolClusterService } from './services/browser-tool-cluster/browser-tool-cluster.service';
 
 @Module({
-  imports: [SharedModule],
   controllers: [
     KeysController,
     StringController,
@@ -34,6 +34,7 @@ import { BrowserToolClusterService } from './services/browser-tool-cluster/brows
     SetController,
     ZSetController,
     RejsonRlController,
+    RedisearchController,
     HashController,
     StreamController,
     ConsumerGroupController,
@@ -46,6 +47,7 @@ import { BrowserToolClusterService } from './services/browser-tool-cluster/brows
     SetBusinessService,
     ZSetBusinessService,
     RejsonRlBusinessService,
+    RedisearchService,
     HashBusinessService,
     StreamService,
     ConsumerGroupService,

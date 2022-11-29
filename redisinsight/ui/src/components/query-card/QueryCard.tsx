@@ -38,6 +38,7 @@ export interface Props {
   createdAt?: Date
   loading?: boolean
   isNotStored?: boolean
+  executionTime?: number
   onQueryDelete: () => void
   onQueryReRun: () => void
   onQueryOpen: () => void
@@ -72,6 +73,7 @@ const QueryCard = (props: Props) => {
     loading,
     emptyCommand,
     isNotStored,
+    executionTime,
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -168,6 +170,7 @@ const QueryCard = (props: Props) => {
           activeResultsMode={activeResultsMode}
           emptyCommand={emptyCommand}
           summary={getSummaryText(summary)}
+          executionTime={executionTime}
           toggleOpen={toggleOpen}
           toggleFullScreen={toggleFullScreen}
           setSelectedValue={changeViewTypeSelected}
@@ -176,7 +179,7 @@ const QueryCard = (props: Props) => {
         />
         {isOpen && (
           <>
-            {React.isValidElement(commonError)
+            {React.isValidElement(commonError) && !isGroupMode(resultsMode)
               ? <QueryCardCommonResult loading={loading} result={commonError} />
               : (
                 <>

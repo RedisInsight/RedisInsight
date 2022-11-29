@@ -8,8 +8,8 @@ import {
   setSelectedGroup
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
-import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { stringToBuffer } from 'uiSrc/utils'
+import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import GroupsView, { Props as GroupsViewProps } from './GroupsView'
 import GroupsViewWrapper, { Props } from './GroupsViewWrapper'
 

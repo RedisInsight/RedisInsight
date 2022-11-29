@@ -1,7 +1,7 @@
 import * as isGlob from 'is-glob';
-import { isNull, get } from 'lodash';
+import { isNull } from 'lodash';
 import config from 'src/utils/config';
-import { unescapeGlob, convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
+import { unescapeGlob } from 'src/utils';
 import {
   GetKeyInfoResponse,
   GetKeysWithDetailsResponse,
@@ -9,7 +9,8 @@ import {
 } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { SettingsService } from 'src/modules/settings/settings.service';
+import { getTotal } from 'src/modules/database/utils/database.total.util';
 import { AbstractStrategy } from './abstract.strategy';
 import { IGetNodeKeysResult } from '../scanner.interface';
 
@@ -18,15 +19,15 @@ const REDIS_SCAN_CONFIG = config.get('redis_scan');
 export class StandaloneStrategy extends AbstractStrategy {
   private readonly redisManager: BrowserToolService;
 
-  private settingsProvider: ISettingsProvider;
+  private settingsService: SettingsService;
 
   constructor(
     redisManager: BrowserToolService,
-    settingsProvider: ISettingsProvider,
+    settingsService: SettingsService,
   ) {
     super(redisManager);
     this.redisManager = redisManager;
-    this.settingsProvider = settingsProvider;
+    this.settingsService = settingsService;
   }
 
   public async getKeys(
@@ -36,7 +37,6 @@ export class StandaloneStrategy extends AbstractStrategy {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
     const client = await this.redisManager.getRedisClient(clientOptions);
-    const currentDbIndex = get(client, ['options', 'db'], 0);
 
     const node = {
       total: 0,
@@ -45,24 +45,10 @@ export class StandaloneStrategy extends AbstractStrategy {
       cursor: parseInt(args.cursor, 10),
     };
 
-    const info = convertRedisInfoReplyToObject(
-      await this.redisManager.execCommand(
-        clientOptions,
-        BrowserToolKeysCommands.InfoKeyspace,
-        [],
-        'utf8',
-      ),
-    );
-    const dbInfo = get(info, 'keyspace', {});
-    if (!dbInfo[`db${currentDbIndex}`]) {
-      node.total = 0;
-    } else {
-      const { keys } = convertBulkStringsToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
-      node.total = parseInt(keys, 10);
-    }
+    node.total = await getTotal(client);
 
     if (!isGlob(match, { strict: false })) {
-      const keyName = unescapeGlob(match);
+      const keyName = Buffer.from(unescapeGlob(match));
       node.cursor = 0;
       node.scanned = isNull(node.total) ? 1 : node.total;
       node.keys = await this.getKeysInfo(client, [keyName]);
@@ -97,7 +83,8 @@ export class StandaloneStrategy extends AbstractStrategy {
     type?: RedisDataType,
   ): Promise<void> {
     let fullScanned = false;
-    const settings = await this.settingsProvider.getSettings();
+    // todo: remove settings from here. threshold should be part of query?
+    const settings = await this.settingsService.getAppSettings('1');
     while (
       (node.total > 0 || isNull(node.total))
       && !fullScanned

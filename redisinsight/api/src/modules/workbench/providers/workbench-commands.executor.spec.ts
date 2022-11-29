@@ -2,10 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { get } from 'lodash';
 import {
   mockRedisMovedError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
   mockWorkbenchAnalyticsService,
 } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { unknownCommand } from 'src/constants';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import {
   ClusterNodeRole,
@@ -17,17 +19,18 @@ import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException, ServiceUnavailableException } from '@nestjs/common';
 import {
   CommandNotSupportedError,
+  CommandParsingError,
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
-import { ICliExecResultFromNode, RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { ICliExecResultFromNode, RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { FormatterManager, IFormatterStrategy, FormatterTypes } from 'src/common/transformers';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const mockCliTool = () => ({
@@ -49,6 +52,7 @@ const mockCliNodeResponse: ICliExecResultFromNode = {
 };
 
 const mockSetCommand = 'set';
+const mockGetEscapedKeyCommand = 'get "\\\\key';
 const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
   command: `${mockSetCommand} foo bar`,
   nodeOptions: {
@@ -562,6 +566,36 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           );
         }
+      });
+    });
+    describe('CommandParsingError', () => {
+      it('should return response with [CLI_UNTERMINATED_QUOTES] error for sendCommandForNodes', async () => {
+        const mockResult = [
+          {
+            response: ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
+            status: CommandExecutionStatus.Fail,
+          },
+        ];
+
+        const result = await service.sendCommand(mockClientOptions, {
+          command: mockGetEscapedKeyCommand,
+          role: mockCreateCommandExecutionDto.role,
+          mode: RunQueryMode.ASCII,
+        });
+
+        expect(result).toEqual(mockResult);
+        expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockClientOptions.instanceId,
+          {
+            response: ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
+            error: new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES()),
+            status: CommandExecutionStatus.Fail,
+          },
+          {
+            command: unknownCommand,
+            rawMode: false,
+          },
+        );
       });
     });
   });

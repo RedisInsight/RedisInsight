@@ -7,8 +7,8 @@ xdescribe('dummy', () => {
 // import { v4 as uuidv4 } from 'uuid';
 // import { mockClientMonitorObserver, mockMonitorObserver } from 'src/__mocks__/monitor';
 // import ERROR_MESSAGES from 'src/constants/error-messages';
-// import { RedisService } from 'src/modules/core/services/redis/redis.service';
-// import { mockRedisClientInstance } from 'src/modules/shared/services/base/redis-consumer.abstract.service.spec';
+// import { RedisService } from 'src/modules/redis/redis.service';
+// import { mockRedisClientInstance } from 'src/modules/redis/redis-consumer.abstract.service.spec';
 // import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 // import { ProfilerService } from './monitor.service';
 // import { RedisMonitorClient } from './helpers/monitor-observer';

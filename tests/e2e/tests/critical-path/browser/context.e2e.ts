@@ -4,7 +4,7 @@ import {
     BrowserPage,
     CliPage
 } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
@@ -35,7 +35,7 @@ test('Verify that user can see saved CLI size on Browser page when he returns ba
     await t.click(cliPage.cliExpandButton);
     const cliAreaHeight = await cliPage.cliArea.clientHeight;
     const cliAreaHeightEnd = cliAreaHeight + 150;
-    const cliResizeButton = await cliPage.cliResizeButton;
+    const cliResizeButton = cliPage.cliResizeButton;
     await t.hover(cliResizeButton);
     // move resize 200px up
     await t.drag(cliResizeButton, 0, -offsetY, { speed: 0.01 });
@@ -92,19 +92,31 @@ test('Verify that user can see saved executed commands in CLI on Browser page wh
     }
 });
 test
+    .before(async() => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+    })
     .after(async() => {
-        // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        // Delete database
+        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see key details selected when he returns back to Browser page', async t => {
-        // Add and open new key details and navigate to Settings
-        keyName = common.generateWord(10);
-        await browserPage.addHashKey(keyName);
-        await browserPage.openKeyDetails(keyName);
+        // Scroll keys elements
+        const scrollY = 1000;
+        await t.scroll(browserPage.cssSelectorGrid, 0, scrollY);
+
+        const keysCount = await browserPage.virtualTableContainer.find(browserPage.cssVirtualTableRow).count;
+        const targetKey = browserPage.virtualTableContainer.find(browserPage.cssVirtualTableRow).nth(Math.floor(keysCount / 2));
+        const targetKeyName = await targetKey.find(browserPage.cssSelectorKey).innerText;
+        // Open key details
+        await t.click(targetKey);
+        await t.expect(await targetKey.getAttribute('class')).contains('table-row-selected', 'Not correct key selected in key list');
+
         await t.click(myRedisDatabasePage.settingsButton);
         // Return back to Browser and check key details selected
         await t.click(myRedisDatabasePage.browserButton);
-        await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is selected');
+        // Check Keys details saved
+        await t.expect(browserPage.keyNameFormDetails.innerText).eql(targetKeyName, 'Key details is not saved as context');
+        // Check Key selected in Key List
+        await t.expect(await targetKey.getAttribute('class')).contains('table-row-selected', 'Not correct key selected in key list');
     });
 test
     .after(async() => {

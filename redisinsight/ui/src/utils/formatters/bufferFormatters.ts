@@ -82,7 +82,7 @@ const bufferToASCII = (reply: RedisResponseBuffer): string => {
 }
 
 const anyToBuffer = (reply: UintArray): RedisResponseBuffer =>
-  ({ data: reply, type: RedisResponseBufferType.Buffer })
+  ({ data: reply, type: RedisResponseBufferType.Buffer }) as RedisResponseBuffer
 
 const ASCIIToBuffer = (strInit: string) => {
   let result = ''
@@ -134,7 +134,7 @@ const hexToBuffer = (data: string): RedisResponseBuffer => {
     result.push(parseInt(string.substring(0, 2), 16))
     string = string.substring(2, string.length)
   }
-  return { type: RedisResponseBufferType.Buffer, data: result }
+  return { type: RedisResponseBufferType.Buffer, data: result } as RedisResponseBuffer
 }
 
 const bufferToJava = (reply: RedisResponseBuffer) => {

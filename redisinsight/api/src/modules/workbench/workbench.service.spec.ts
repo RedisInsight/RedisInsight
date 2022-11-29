@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuidv4 } from 'uuid';
 import { when } from 'jest-when';
-import { mockStandaloneDatabaseEntity, mockWorkbenchAnalyticsService } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { mockDatabase, mockDatabaseConnectionService, mockWorkbenchAnalyticsService } from 'src/__mocks__';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
@@ -17,11 +17,12 @@ import { CommandExecutionResult } from 'src/modules/workbench/models/command-exe
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
@@ -71,7 +72,7 @@ const mockCommandExecutionResults: CommandExecutionResult[] = [
 ];
 const mockCommandExecutionToRun: CommandExecution = new CommandExecution({
   ...mockCreateCommandExecutionDto,
-  databaseId: mockStandaloneDatabaseEntity.id,
+  databaseId: mockDatabase.id,
 });
 
 const mockCommandExecution: CommandExecution = new CommandExecution({
@@ -126,6 +127,10 @@ describe('WorkbenchService', () => {
           provide: CommandExecutionProvider,
           useFactory: mockCommandExecutionProvider,
         },
+        {
+          provide: DatabaseConnectionService,
+          useFactory: mockDatabaseConnectionService,
+        },
       ],
     }).compile();
 
@@ -136,8 +141,10 @@ describe('WorkbenchService', () => {
 
   describe('createCommandExecution', () => {
     it('should successfully execute command and save it', async () => {
-      expect(await service.createCommandExecution(mockClientOptions, mockCreateCommandExecutionDto))
-        .toEqual(mockCommandExecutionToRun);
+      const result = await service.createCommandExecution(mockClientOptions, mockCreateCommandExecutionDto);
+      // can't predict execution time
+      expect(result).toMatchObject(mockCommandExecutionToRun);
+      expect(result.executionTime).toBeGreaterThan(0);
     });
     it('should save result as unsupported command message', async () => {
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
@@ -208,7 +215,7 @@ describe('WorkbenchService', () => {
       when(workbenchCommandsExecutor.sendCommand)
         .calledWith(mockClientOptions, {...mockCreateCommandExecutionDtoWithGroupMode, command: mockCommands[0]})
         .mockResolvedValue([mockSendCommandResultSuccess]);
-      
+
       when(workbenchCommandsExecutor.sendCommand)
         .calledWith(mockClientOptions, {...mockCreateCommandExecutionDtoWithGroupMode, command: mockCommands[1]})
         .mockResolvedValue([mockSendCommandResultFail]);

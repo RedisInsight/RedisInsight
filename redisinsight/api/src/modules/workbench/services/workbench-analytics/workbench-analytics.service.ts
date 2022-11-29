@@ -4,7 +4,7 @@ import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { RedisError, ReplyError } from 'src/models';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CommandsService } from 'src/modules/commands/commands.service';
-import { CommandTelemetryBaseService } from 'src/modules/shared/services/base/command.telemetry.base.service';
+import { CommandTelemetryBaseService } from 'src/modules/analytics/command.telemetry.base.service';
 
 export interface IExecResult {
   response: any;
@@ -81,7 +81,10 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
         this.sendFailedEvent(
           TelemetryEvents.WorkbenchCommandErrorReceived,
           error,
-          { databaseId, ...additionalData },
+          {
+            databaseId,
+            ...additionalData,
+          },
         );
       } else {
         this.sendEvent(

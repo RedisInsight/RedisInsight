@@ -1,5 +1,5 @@
-import { DATABASE_LIST_MODULES_TEXT, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { DATABASE_LIST_MODULES_TEXT, RedisDefaultModules, REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 export interface IDatabaseModule {
   abbreviation: string
@@ -31,8 +31,12 @@ export const sortModules = (modules: IDatabaseModule[]) => modules.sort((a, b) =
   return PREDEFINED_MODULES_ORDER.indexOf(a.moduleName) - PREDEFINED_MODULES_ORDER.indexOf(b.moduleName)
 })
 
-export const sortModulesByName = (modules: RedisModuleDto[]) => [...modules].sort((a, b) => {
+export const sortModulesByName = (modules: AdditionalRedisModule[]) => [...modules].sort((a, b) => {
   if (PREDEFINED_MODULE_NAMES_ORDER.indexOf(a.name) === -1) return 1
   if (PREDEFINED_MODULE_NAMES_ORDER.indexOf(b.name) === -1) return -1
   return PREDEFINED_MODULE_NAMES_ORDER.indexOf(a.name) - PREDEFINED_MODULE_NAMES_ORDER.indexOf(b.name)
 })
+
+export const isRedisearchAvailable = (modules: AdditionalRedisModule[]): boolean =>
+  modules?.some(({ name }) =>
+    REDISEARCH_MODULES.some((search) => name === search))

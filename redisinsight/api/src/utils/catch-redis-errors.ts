@@ -12,8 +12,7 @@ import {
 import { ReplyError } from 'src/models';
 import { RedisErrorCodes, CertificatesErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { ConnectionOptionsDto } from 'src/modules/instances/dto/database-instance.dto';
-import { EncryptionServiceErrorException } from 'src/modules/core/encryption/exceptions';
+import { EncryptionServiceErrorException } from 'src/modules/encryption/exceptions';
 
 export const isCertError = (error: ReplyError): boolean => {
   try {
@@ -31,10 +30,15 @@ export const isCertError = (error: ReplyError): boolean => {
 
 export const getRedisConnectionException = (
   error: ReplyError,
-  connectionOptions: ConnectionOptionsDto,
+  connectionOptions: { host: string, port: number },
   errorPlaceholder: string = '',
 ): HttpException => {
   const { host, port } = connectionOptions;
+
+  if (error instanceof HttpException) {
+    return error;
+  }
+
   if (error?.message) {
     if (error.message.includes(RedisErrorCodes.SentinelParamsRequired)) {
       return new HttpException(
@@ -100,7 +104,7 @@ export const getRedisConnectionException = (
 
 export const catchRedisConnectionError = (
   error: ReplyError,
-  connectionOptions: ConnectionOptionsDto,
+  connectionOptions: { host: string, port: number },
   errorPlaceholder: string = '',
 ): HttpException => {
   throw getRedisConnectionException(error, connectionOptions, errorPlaceholder);

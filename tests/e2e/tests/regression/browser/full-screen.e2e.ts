@@ -101,5 +101,5 @@ test
         const widthTableAfterFullScreen = await browserPage.keyListTable.clientWidth;
         await t.expect(widthTableAfterFullScreen).gt(widthKeysBeforeFullScreen, 'Width after switching to full screen not greater then before');
         // Verify that user can not see key details
-        await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).notOk('Key details not opened');
+        await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).visible).notOk('Key details not opened');
     });

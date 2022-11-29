@@ -242,7 +242,7 @@ export function fetchInstancesRedisCloud(payload: {
 
     try {
       const { data, status } = await apiService.post(
-        `${ApiEndpoints.REDIS_CLOUD_DATABASES}`,
+        `${ApiEndpoints.REDIS_CLOUD_GET_DATABASES}`,
         {
           apiKey: payload.credentials?.accessKey,
           apiSecretKey: payload.credentials?.secretKey,
@@ -273,7 +273,7 @@ export function addInstancesRedisCloud(payload: {
 
     try {
       const { data, status } = await apiService.post(
-        `${ApiEndpoints.INSTANCE_REDIS_CLOUD}`,
+        `${ApiEndpoints.REDIS_CLOUD_DATABASES}`,
         {
           apiKey: payload.credentials?.accessKey,
           apiSecretKey: payload.credentials?.secretKey,

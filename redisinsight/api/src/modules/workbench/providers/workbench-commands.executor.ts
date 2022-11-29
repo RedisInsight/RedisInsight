@@ -1,7 +1,7 @@
 import {
   BadRequestException, Injectable, InternalServerErrorException, Logger,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   ClusterNodeRole, ClusterSingleNodeOptions,
   CommandExecutionStatus,
@@ -18,9 +18,10 @@ import {
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
+import { unknownCommand } from 'src/constants';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CreateCommandExecutionDto, RunQueryMode } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { RedisToolService } from 'src/modules/shared/services/base/redis-tool.service';
+import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import {
   FormatterManager,
   FormatterTypes,
@@ -62,6 +63,8 @@ export class WorkbenchCommandsExecutor {
     dto: CreateCommandExecutionDto,
   ): Promise<CommandExecutionResult[]> {
     let result;
+    let command = unknownCommand;
+    let commandArgs: string[] = [];
 
     const {
       command: commandLine,
@@ -69,10 +72,9 @@ export class WorkbenchCommandsExecutor {
       nodeOptions,
       mode,
     } = dto;
-
-    const [command, ...commandArgs] = splitCliCommandLine(commandLine);
-
     try {
+      [command, ...commandArgs] = splitCliCommandLine(commandLine);
+
       if (nodeOptions) {
         result = [await this.sendCommandForSingleNode(
           clientOptions,

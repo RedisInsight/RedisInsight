@@ -4,12 +4,10 @@ export default {
   server: {
     excludeRoutes: [
       'redis-enterprise/*',
-      'instance/redis-enterprise-dbs',
-      'instance/redis-cloud-dbs',
-      'instance/sentinel-masters',
-      { path: 'instance', method: RequestMethod.POST },
-      { path: 'instance', method: RequestMethod.DELETE },
-      { path: 'instance/:id', method: RequestMethod.DELETE },
+      'redis-sentinel/*',
+      { path: 'databases', method: RequestMethod.POST },
+      { path: 'databases', method: RequestMethod.DELETE },
+      { path: 'databases/:id', method: RequestMethod.DELETE },
     ],
   },
 };

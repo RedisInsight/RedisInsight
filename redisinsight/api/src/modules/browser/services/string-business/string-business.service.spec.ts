@@ -11,9 +11,9 @@ import {
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
+  mockDatabase,
 } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   SetStringDto,
   SetStringWithExpireDto,
@@ -23,7 +23,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { KeytarUnavailableException } from 'src/modules/core/encryption/exceptions';
+import { KeytarUnavailableException } from 'src/modules/encryption/exceptions';
 import { StringBusinessService } from './string-business.service';
 
 const mockSetStringDto: SetStringDto = {
@@ -32,7 +32,7 @@ const mockSetStringDto: SetStringDto = {
 };
 
 const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+  instanceId: mockDatabase.id,
 };
 
 describe('StringBusinessService', () => {

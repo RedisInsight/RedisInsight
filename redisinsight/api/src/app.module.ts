@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import {
   MiddlewareConsumer, Module, NestModule, OnModuleInit,
 } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RouterModule } from 'nest-router';
 import { join } from 'path';
@@ -16,29 +15,29 @@ import { NotificationModule } from 'src/modules/notification/notification.module
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
 import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
-import { SharedModule } from './modules/shared/shared.module';
-import { InstancesModule } from './modules/instances/instances.module';
+import { ServerModule } from 'src/modules/server/server.module';
+import { LocalDatabaseModule } from 'src/local-database.module';
+import { CoreModule } from 'src/core.module';
+import { AutodiscoveryModule } from 'src/modules/autodiscovery/autodiscovery.module';
 import { BrowserModule } from './modules/browser/browser.module';
 import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterprise.module';
 import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.module';
 import { ProfilerModule } from './modules/profiler/profiler.module';
 import { CliModule } from './modules/cli/cli.module';
 import { StaticsManagementModule } from './modules/statics-management/statics-management.module';
-import { SettingsController } from './controllers/settings.controller';
-import { ServerInfoController } from './controllers/server-info.controller';
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import { routes } from './app.routes';
-import { ormModuleOptions } from '../config/ormconfig';
 
 const SERVER_CONFIG = config.get('server');
 const PATH_CONFIG = config.get('dir_path');
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ormModuleOptions),
+    LocalDatabaseModule,
+    CoreModule,
+    ServerModule.register(),
     RouterModule.forRoutes(routes),
-    SharedModule,
-    InstancesModule,
+    AutodiscoveryModule,
     RedisEnterpriseModule,
     RedisSentinelModule,
     BrowserModule,
@@ -79,7 +78,7 @@ const PATH_CONFIG = config.get('dir_path');
     }),
     StaticsManagementModule,
   ],
-  controllers: [SettingsController, ServerInfoController],
+  controllers: [],
   providers: [],
 })
 export class AppModule implements OnModuleInit, NestModule {

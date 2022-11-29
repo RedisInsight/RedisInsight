@@ -1,13 +1,11 @@
-import {
-  toNumber, omit, isNull, get,
-} from 'lodash';
+import { toNumber, omit, isNull } from 'lodash';
 import * as isGlob from 'is-glob';
 import config from 'src/utils/config';
-import { unescapeGlob, convertBulkStringsToObject } from 'src/utils';
+import { unescapeGlob } from 'src/utils';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import {
   GetKeyInfoResponse,
@@ -15,7 +13,8 @@ import {
   RedisDataType,
 } from 'src/modules/browser/dto';
 import { parseClusterCursor } from 'src/modules/browser/utils/clusterCursor';
-import { ISettingsProvider } from 'src/modules/core/models/settings-provider.interface';
+import { SettingsService } from 'src/modules/settings/settings.service';
+import { getTotal } from 'src/modules/database/utils/database.total.util';
 import { AbstractStrategy } from './abstract.strategy';
 import { IGetNodeKeysResult } from '../scanner.interface';
 
@@ -24,15 +23,15 @@ const REDIS_SCAN_CONFIG = config.get('redis_scan');
 export class ClusterStrategy extends AbstractStrategy {
   private readonly redisManager: BrowserToolClusterService;
 
-  private settingsProvider: ISettingsProvider;
+  private settingsService: SettingsService;
 
   constructor(
     redisManager: BrowserToolClusterService,
-    settingsProvider: ISettingsProvider,
+    settingsService: SettingsService,
   ) {
     super(redisManager);
     this.redisManager = redisManager;
-    this.settingsProvider = settingsProvider;
+    this.settingsService = settingsService;
   }
 
   public async getKeys(
@@ -42,13 +41,13 @@ export class ClusterStrategy extends AbstractStrategy {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
     const client = await this.redisManager.getRedisClient(clientOptions);
-    const currentDbIndex = get(client, ['options', 'db'], 0);
     const nodes = await this.getNodesToScan(clientOptions, args.cursor);
-    const settings = await this.settingsProvider.getSettings();
-    await this.calculateNodesTotalKeys(clientOptions, currentDbIndex, nodes);
+    // todo: remove settings from here. threshold should be part of query?
+    const settings = await this.settingsService.getAppSettings('1');
+    await this.calculateNodesTotalKeys(nodes);
 
     if (!isGlob(match, { strict: false })) {
-      const keyName = unescapeGlob(match);
+      const keyName = Buffer.from(unescapeGlob(match));
       nodes.forEach((node) => {
         // eslint-disable-next-line no-param-reassign
         node.cursor = 0;
@@ -138,27 +137,12 @@ export class ClusterStrategy extends AbstractStrategy {
   }
 
   private async calculateNodesTotalKeys(
-    clientOptions,
-    currentDbIndex: number,
     nodes: IGetNodeKeysResult[],
   ): Promise<void> {
     await Promise.all(
       nodes.map(async (node) => {
-        const result = await this.redisManager.execCommandFromNode(
-          clientOptions,
-          BrowserToolKeysCommands.InfoKeyspace,
-          [],
-          { host: node.host, port: node.port },
-        );
-
-        const info = convertBulkStringsToObject(result.result);
-
-        if (!info[`db${currentDbIndex}`]) {
-          node.total = 0;
-        } else {
-          const { keys } = convertBulkStringsToObject(info[`db${currentDbIndex}`], ',', '=');
-          node.total = parseInt(keys, 10);
-        }
+        // eslint-disable-next-line no-param-reassign
+        node.total = await getTotal(node?.node);
       }),
     );
   }

@@ -4,6 +4,7 @@ import { EuiText, EuiSpacer, EuiLink } from '@elastic/eui'
 import { getRouterLinkProps } from 'uiSrc/services'
 
 export const NoResultsFoundText = (<EuiText size="m">No results found.</EuiText>)
+export const NoSelectedIndexText = (<EuiText size="m">Select an index and enter a query to search per values of keys.</EuiText>)
 export const NoKeysToDisplayText = (path: string, onClick: ()=> void) => (
   <EuiText size="m" data-testid="no-result-found-msg">
     No keys to display.

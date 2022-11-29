@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
+import { Endpoint } from 'src/common/models';
 
-class ClusterNode extends EndpointDto {
+class ClusterNode extends Endpoint {
   @ApiPropertyOptional({
     description: 'Cluster node slot.',
     type: Number,

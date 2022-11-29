@@ -416,6 +416,13 @@ export const initDataHelper = (rte) => {
     await waitForInfoSync();
   };
 
+  const generateRedisearchIndexes = async (clean: boolean) => {
+    await generateNKeys(10_000, clean);
+
+    await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_1, 'on', 'hash', 'schema', 'field', 'text']);
+    await sendCommand('ft.create', [constants.TEST_SEARCH_HASH_INDEX_2, 'on', 'hash', 'schema', '*', 'text']);
+  };
+
   const generateNReJSONs = async (number: number = 300, clean: boolean) => {
     const jsonValue = JSON.stringify(constants.TEST_REJSON_VALUE_1);
     await generateAnyKeys([
@@ -449,6 +456,15 @@ export const initDataHelper = (rte) => {
     }
   }
 
+  const setRedisearchConfig = async (
+    rule: string,
+    value: string,
+  ): Promise<any> => {
+    const command = `FT.CONFIG SET ${rule} ${value}`;
+
+    return executeCommand(...command.split(' '));
+  };
+
   return {
     sendCommand,
     executeCommand,
@@ -461,6 +477,7 @@ export const initDataHelper = (rte) => {
     generateHugeNumberOfTinyStringKeys,
     generateHugeStream,
     generateNKeys,
+    generateRedisearchIndexes,
     generateNReJSONs,
     generateNTimeSeries,
     generateStrings,
@@ -469,5 +486,6 @@ export const initDataHelper = (rte) => {
     generateNStreams,
     generateNGraphs,
     getClientNodes,
+    setRedisearchConfig,
   }
 }

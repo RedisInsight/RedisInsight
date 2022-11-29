@@ -21,7 +21,7 @@ const endpoint = common.getEndpoint();
  */
 export async function addHashKeyApi(keyParameters: HashKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).post(`/instance/${databaseId}/hash?encoding=buffer`)
+    const response = await request(endpoint).post(`/databases/${databaseId}/hash?encoding=buffer`)
         .send({
             'keyName': keyParameters.keyName,
             'fields': keyParameters.fields
@@ -38,7 +38,7 @@ export async function addHashKeyApi(keyParameters: HashKeyParameters, databasePa
  */
 export async function addStreamKeyApi(keyParameters: StreamKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).post(`/instance/${databaseId}/streams?encoding=buffer`)
+    const response = await request(endpoint).post(`/databases/${databaseId}/streams?encoding=buffer`)
         .send({
             'keyName': keyParameters.keyName,
             'entries': keyParameters.entries
@@ -55,7 +55,7 @@ export async function addStreamKeyApi(keyParameters: StreamKeyParameters, databa
  */
 export async function addSetKeyApi(keyParameters: SetKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).post(`/instance/${databaseId}/set?encoding=buffer`)
+    const response = await request(endpoint).post(`/databases/${databaseId}/set?encoding=buffer`)
         .send({
             'keyName': keyParameters.keyName,
             'members': keyParameters.members
@@ -72,7 +72,7 @@ export async function addSetKeyApi(keyParameters: SetKeyParameters, databasePara
  */
 export async function addSortedSetKeyApi(keyParameters: SortedSetKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).post(`/instance/${databaseId}/zSet?encoding=buffer`)
+    const response = await request(endpoint).post(`/databases/${databaseId}/zSet?encoding=buffer`)
         .send({
             'keyName': keyParameters.keyName,
             'members': keyParameters.members
@@ -89,7 +89,7 @@ export async function addSortedSetKeyApi(keyParameters: SortedSetKeyParameters, 
  */
 export async function addListKeyApi(keyParameters: ListKeyParameters, databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).post(`/instance/${databaseId}/list?encoding=buffer`)
+    const response = await request(endpoint).post(`/databases/${databaseId}/list?encoding=buffer`)
         .send({
             'keyName': keyParameters.keyName,
             'element': keyParameters.element
@@ -106,7 +106,7 @@ export async function addListKeyApi(keyParameters: ListKeyParameters, databasePa
  */
 export async function searchKeyByNameApi(keyName: string, databaseParameters: AddNewDatabaseParameters): Promise<string[]> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).get(`/instance/${databaseId}/keys?cursor=0&count=5000&match=${keyName}`)
+    const response = await request(endpoint).get(`/databases/${databaseId}/keys?cursor=0&count=5000&match=${keyName}`)
         .set('Accept', 'application/json').expect(200);
 
     return await response.body[0].keys;
@@ -121,7 +121,7 @@ export async function deleteKeyByNameApi(keyName: string, databaseParameters: Ad
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
     const isKeyExist = await searchKeyByNameApi(keyName, databaseParameters);
     if (isKeyExist.length > 0) {
-        const response = await request(endpoint).delete(`/instance/${databaseId}/keys`)
+        const response = await request(endpoint).delete(`/databases/${databaseId}/keys`)
             .send({ 'keyNames': [keyName] })
             .set('Accept', 'application/json');
 
@@ -136,7 +136,7 @@ export async function deleteKeyByNameApi(keyName: string, databaseParameters: Ad
  */
 export async function deleteKeysApi(keyNames: string[], databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseByName(databaseParameters.databaseName);
-    const response = await request(endpoint).delete(`/instance/${databaseId}/keys`)
+    const response = await request(endpoint).delete(`/databases/${databaseId}/keys`)
         .send({ 'keyNames': keyNames })
         .set('Accept', 'application/json');
 

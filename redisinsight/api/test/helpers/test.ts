@@ -53,8 +53,6 @@ export const validateApiCall = async function ({
     request.query(query);
   }
 
-  request.expect(statusCode);
-
   const response = await request;
 
   // custom function to check conditions
@@ -66,6 +64,8 @@ export const validateApiCall = async function ({
   if (responseBody) {
     checkResponseBody(response.body, responseBody);
   }
+
+  expect(response.res.statusCode).to.eq(statusCode)
 
   // validate response schema if passed
   if (responseSchema) {

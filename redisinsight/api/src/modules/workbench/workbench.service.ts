@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { omit } from 'lodash';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/core/services/redis/redis.service';
+import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
@@ -10,12 +10,15 @@ import { getBlockingCommands, multilineCommandToOneLine } from 'src/utils/cli-he
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
+import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { AppTool } from 'src/models';
 import { getUnsupportedCommands } from './utils/getUnsupportedCommands';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
 export class WorkbenchService {
   constructor(
+    private readonly databaseConnectionService: DatabaseConnectionService,
     private commandsExecutor: WorkbenchCommandsExecutor,
     private commandExecutionProvider: CommandExecutionProvider,
     private analyticsService: WorkbenchAnalyticsService,
@@ -46,7 +49,10 @@ export class WorkbenchService {
         },
       ];
     } else {
+      const startCommandExecutionTime = process.hrtime.bigint();
       commandExecution.result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
+      const endCommandExecutionTime = process.hrtime.bigint();
+      commandExecution.executionTime = Math.round((Number(endCommandExecutionTime - startCommandExecutionTime) / 1000));
     }
 
     return commandExecution;
@@ -67,6 +73,9 @@ export class WorkbenchService {
       ...dto,
       databaseId: clientOptions.instanceId,
     };
+    let executionTimeInNanoseconds = BigInt(0);
+
+    const startCommandExecutionTime = process.hrtime.bigint();
 
     const executionResults = await Promise.all(commands.map(async (singleCommand) => {
       const command = multilineCommandToOneLine(singleCommand);
@@ -79,8 +88,15 @@ export class WorkbenchService {
         });
       }
       const result = await this.commandsExecutor.sendCommand(clientOptions, { ...dto, command });
+      const endCommandExecutionTime = process.hrtime.bigint();
+
+      executionTimeInNanoseconds += (endCommandExecutionTime - startCommandExecutionTime);
       return ({ ...result[0], command });
     }));
+
+    if (Number(executionTimeInNanoseconds) !== 0) {
+      commandExecution.executionTime = Math.round(Number(executionTimeInNanoseconds) / 1000);
+    }
 
     const successCommands = executionResults.filter(
       (command) => command.status === CommandExecutionStatus.Success,
@@ -114,6 +130,13 @@ export class WorkbenchService {
     clientOptions: IFindRedisClientInstanceByOptions,
     dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
+    // todo: handle concurrent client creation on RedisModule side
+    // temporary workaround. Just create client before any command execution precess
+    await this.databaseConnectionService.getOrCreateClient({
+      databaseId: clientOptions.instanceId,
+      namespace: AppTool.Workbench,
+    });
+
     if (dto.resultsMode === ResultsMode.GroupMode) {
       return this.commandExecutionProvider.createMany(
         [await this.createCommandsExecution(clientOptions, dto, dto.commands)],

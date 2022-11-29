@@ -2,17 +2,18 @@ import IORedis from 'ioredis';
 import * as MockedSocket from 'socket.io-mock';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  MockType,
+  mockDatabaseConnectionService,
+  MockType
 } from 'src/__mocks__';
 import { BulkActionsProvider } from 'src/modules/bulk-actions/providers/bulk-actions.provider';
-import { RedisService } from 'src/modules/core/services/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { RedisDataType } from 'src/modules/browser/dto';
-import { BulkActionType } from 'src/modules/bulk-actions/contants';
+import { BulkActionType } from 'src/modules/bulk-actions/constants';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { NotFoundException } from '@nestjs/common';
+import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 
 export const mockSocket1 = new MockedSocket();
 mockSocket1.id = '1';
@@ -55,11 +56,8 @@ describe('BulkActionsProvider', () => {
           }),
         },
         {
-          provide: InstancesBusinessService,
-          useFactory: () => ({
-            connectToInstance: jest.fn(),
-            getOneById: jest.fn(),
-          }),
+          provide: DatabaseConnectionService,
+          useFactory: mockDatabaseConnectionService,
         },
       ],
     }).compile();

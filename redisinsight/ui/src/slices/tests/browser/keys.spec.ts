@@ -2,10 +2,11 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { KeyTypes, KeyValueFormat } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { parseKeysListResponse, stringToBuffer } from 'uiSrc/utils'
+import { parseKeysListResponse, stringToBuffer, UTF8ToBuffer } from 'uiSrc/utils'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { SearchMode } from 'uiSrc/slices/interfaces/keys'
 import {
   CreateHashWithExpireDto,
   CreateListWithExpireDto,
@@ -41,8 +42,8 @@ import reducer, {
   deleteKey,
   deleteKeySuccess,
   deleteKeyFailure,
-  deleteKeyFromList,
-  editKeyFromList,
+  deletePatternKeyFromList,
+  editPatternKeyFromList,
   defaultSelectedKeyActionSuccess,
   editKey,
   defaultSelectedKeyActionFailure,
@@ -53,11 +54,12 @@ import reducer, {
   addListKey,
   addStringKey,
   addZsetKey,
-  setLastBatchKeys,
+  setLastBatchPatternKeys,
   updateSelectedKeyRefreshTime,
   resetKeyInfo,
   resetKeys,
   fetchKeysMetadata,
+  editPatternKeyTTLFromList,
 } from '../../browser/keys'
 import { getString } from '../../browser/string'
 
@@ -401,7 +403,7 @@ describe('keys slice', () => {
       }
 
       // Act
-      const nextState = reducer(prevState, setLastBatchKeys(data))
+      const nextState = reducer(prevState, setLastBatchPatternKeys(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -716,7 +718,7 @@ describe('keys slice', () => {
     })
   })
 
-  describe('editKeyFromList', () => {
+  describe('editPatternKeyFromList', () => {
     it('should properly set the state before the edit key', () => {
       // Arrange
 
@@ -734,12 +736,43 @@ describe('keys slice', () => {
       const state = {
         ...initialState,
         data: {
-          keys: [{ name: data.newKey }],
+          keys: [{ name: data.newKey, nameString: data.newKey }],
         },
       }
 
       // Act
-      const nextState = reducer(initialStateMock, editKeyFromList(data))
+      const nextState = reducer(initialStateMock, editPatternKeyFromList(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('editPatternKeyTTLFromList', () => {
+    it('should properly set the state before the edit key ttl', () => {
+      // Arrange
+
+      const key = UTF8ToBuffer('key')
+      const ttl = 12000
+
+      const initialStateMock = {
+        ...initialState,
+        data: {
+          keys: [{ name: key }],
+        },
+      }
+      const state = {
+        ...initialState,
+        data: {
+          keys: [{ name: key, ttl }],
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialStateMock, editPatternKeyTTLFromList([key, ttl]))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -834,7 +867,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchKeys(0, 20))
+        await store.dispatch<any>(fetchKeys(SearchMode.Pattern, 0, 20))
 
         // Assert
         const expectedActions = [
@@ -861,7 +894,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchKeys('0', 20))
+        await store.dispatch<any>(fetchKeys(SearchMode.Pattern, '0', 20))
 
         // Assert
         const expectedActions = [
@@ -912,7 +945,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchMoreKeys([], '0', 20))
+        await store.dispatch<any>(fetchMoreKeys(SearchMode.Pattern, [], '0', 20))
 
         // Assert
         const expectedActions = [
@@ -935,7 +968,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchMoreKeys('0', 20))
+        await store.dispatch<any>(fetchMoreKeys(SearchMode.Pattern, [], '0', 20))
 
         // Assert
         const expectedActions = [
@@ -1195,7 +1228,7 @@ describe('keys slice', () => {
     })
 
     describe('deleteKey', () => {
-      it('call both deleteKey, deleteKeySuccess and deleteKeyFromList when delete is successed', async () => {
+      it('call both deleteKey, deleteKeySuccess and deletePatternKeyFromList when delete is successed', async () => {
         // Arrange
         const data = {
           name: 'string',
@@ -1214,7 +1247,7 @@ describe('keys slice', () => {
         const expectedActions = [
           deleteKey(),
           deleteKeySuccess(),
-          deleteKeyFromList(data.name),
+          deletePatternKeyFromList(data.name),
           addMessageNotification(successMessages.DELETED_KEY(data.name)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1222,7 +1255,7 @@ describe('keys slice', () => {
     })
 
     describe('editKey', () => {
-      it('call both editKey, editKeySuccess and editKeyFromList when editing is successed', async () => {
+      it('call both editKey, editKeySuccess and editPatternKeyFromList when editing is successed', async () => {
         // Arrange
         const key = 'string'
         const newKey = 'string2'
@@ -1234,7 +1267,7 @@ describe('keys slice', () => {
         await store.dispatch<any>(editKey(key, newKey))
 
         // Assert
-        const expectedActions = [defaultSelectedKeyAction(), editKeyFromList({ key, newKey })]
+        const expectedActions = [defaultSelectedKeyAction(), editPatternKeyFromList({ key, newKey })]
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
@@ -1255,6 +1288,7 @@ describe('keys slice', () => {
         const expectedActions = [
           defaultSelectedKeyAction(),
           // fetch keyInfo
+          editPatternKeyTTLFromList([key, ttl]),
           defaultSelectedKeyAction(),
           defaultSelectedKeyActionSuccess(),
         ]
@@ -1276,7 +1310,7 @@ describe('keys slice', () => {
         const expectedActions = [
           defaultSelectedKeyAction(),
           deleteKeySuccess(),
-          deleteKeyFromList(key),
+          deletePatternKeyFromList(key),
           defaultSelectedKeyActionSuccess(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1314,20 +1348,22 @@ describe('keys slice', () => {
         const apiServiceMock = jest.fn().mockResolvedValue(responsePayload)
         const onSuccessMock = jest.fn()
         apiService.post = apiServiceMock
+        const controller = new AbortController()
 
         // Act
         await store.dispatch<any>(
           fetchKeysMetadata(
             data.map(({ name }) => ({ name })),
+            controller.signal,
             onSuccessMock
           )
         )
 
         // Assert
         expect(apiServiceMock).toBeCalledWith(
-          '/instance//keys/get-metadata',
+          '/databases//keys/get-metadata',
           { keys: data.map(({ name }) => ({ name })) },
-          { params: { encoding: 'buffer' } },
+          { params: { encoding: 'buffer' }, signal: controller.signal },
         )
 
         expect(onSuccessMock).toBeCalledWith(data)

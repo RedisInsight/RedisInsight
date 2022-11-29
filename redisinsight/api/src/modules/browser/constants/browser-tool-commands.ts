@@ -9,8 +9,6 @@ export enum BrowserToolKeysCommands {
   Rename = 'rename',
   RenameNX = 'renamenx',
   MemoryUsage = 'memory usage',
-  DbSize = 'dbsize',
-  InfoKeyspace = 'info keyspace',
 }
 
 export enum BrowserToolStringCommands {

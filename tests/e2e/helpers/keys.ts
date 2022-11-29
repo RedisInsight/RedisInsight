@@ -230,7 +230,7 @@ export async function verifyKeysDisplayedInTheList(keyNames: string[]): Promise<
 * @param keyNames The names of the keys
 */
 
-export async function verifyKeysIsNotDisplayedInTheList(keyNames: string[]): Promise<void> {
+export async function verifyKeysNotDisplayedInTheList(keyNames: string[]): Promise<void> {
     for (const keyName of keyNames) {
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk(`The key ${keyName} found`);
     }

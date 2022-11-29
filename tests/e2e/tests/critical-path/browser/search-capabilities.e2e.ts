@@ -10,7 +10,7 @@ import {
 import { rte } from '../../../helpers/constants';
 import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
-import { verifyKeysDisplayedInTheList, verifyKeysIsNotDisplayedInTheList } from '../../../helpers/keys';
+import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const common = new Common();
@@ -315,8 +315,7 @@ test
 
         await myRedisDatabasePage.clickOnDBByName(bigDbName); // click database name from ossStandaloneBigConfig.databaseName
 
-        await verifyKeysIsNotDisplayedInTheList(keyNames); // Verify that standandalone database keys are NOT visible
+        await verifyKeysNotDisplayedInTheList(keyNames); // Verify that standandalone database keys are NOT visible
 
-        await t.expect(Selector('span').withText('Select Index').exists).ok('verify index is not selected'); // Verify index is NOT selected
-
+        await t.expect(Selector('span').withText('Select Index').exists).ok('verify index is not selected');
     });

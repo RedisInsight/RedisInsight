@@ -8,7 +8,7 @@ import {
     ossStandaloneV5Config
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { verifyKeysDisplayedInTheList, verifyKeysIsNotDisplayedInTheList } from '../../../helpers/keys';
 
@@ -27,6 +27,12 @@ let indexName = common.generateWord(5);
 const databasesForAdding = [
     ossStandaloneConfig
 ];
+
+const keyNameSimpleDb = common.generateWord(10);
+const keyNameBigDb = common.generateWord(10);
+
+let indexNameSimpleDb = `idx:${keyNameSimpleDb}`; // index in the standalone database
+let indexNameBigDb = `idx:${keyNameBigDb}`; // index in the big standalone database
 
 const simpleDbName = ossStandaloneConfig.databaseName
 const bigDbName = ossStandaloneBigConfig.databaseName
@@ -241,30 +247,26 @@ test
     });
 
 test
-    .only
     .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, bigDbName);
-        await addNewStandaloneDatabasesApi(databasesForAdding);
+        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
     })
     .after(async () => {
+        await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexNameBigDb}`);
+
+        await t.click(browserPage.myRedisDbIcon); // go back to database selection page
+
+        await myRedisDatabasePage.clickOnDBByName(simpleDbName); // click standalone database
+
+        await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexNameSimpleDb}`);
         // Clear and delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
         // delete index and keys
     })('Verify that indexed keys from previous DB are NOT displayed when user connects to another DB', async t => {
         /* 
-         link add
-        
+            Link to ticket: https://redislabs.atlassian.net/browse/RI-3863
         */
-        const keyNameSimpleDb = common.generateWord(10);
-        const keyNameBigDb = common.generateWord(10);
-
-        const indexNameSimpleDb = `idx:${keyNameSimpleDb}`; // index in the standalone database
-        const indexNameBigDb = `idx:${keyNameBigDb}`; // index in the big standalone database
-
-        console.log("indexNameSimpleDb--- " + indexNameSimpleDb);
-        console.log("indexNameBigDb--- " + indexNameBigDb);
-
 
         // key names to validate in the standalone database
         keyNames = [`${keyNameSimpleDb}:1`, `${keyNameSimpleDb}:2`, `${keyNameSimpleDb}:3`, `${keyNameSimpleDb}:4`, `${keyNameSimpleDb}:5`];
@@ -301,7 +303,7 @@ test
 
         await browserPage.changeDelimiterInTreeView('-'); // change delimiter in tree view to be able to verify keys easily
 
-        await t.eval(() => location.reload()); // replace with existing
+        await common.reloadPage(); // reload page
 
         await t.click(browserPage.redisearchModeBtn); // click redisearch button
 
@@ -315,6 +317,6 @@ test
 
         await verifyKeysIsNotDisplayedInTheList(keyNames); // Verify that standandalone database keys are NOT visible
 
-        await t.expect(Selector('span').withText('Select Index').exists).ok(); // Verify index is NOT selected
+        await t.expect(Selector('span').withText('Select Index').exists).ok('verify index is not selected'); // Verify index is NOT selected
 
     });

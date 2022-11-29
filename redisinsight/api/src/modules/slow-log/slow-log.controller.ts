@@ -7,7 +7,8 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { SlowLog, SlowLogConfig } from 'src/modules/slow-log/models';
 import { UpdateSlowLogConfigDto } from 'src/modules/slow-log/dto/update-slow-log-config.dto';
 import { GetSlowLogsDto } from 'src/modules/slow-log/dto/get-slow-logs.dto';
-import { ClientMetadataFromRequest } from 'src/common/decorators';
+import { ClientMetadataParam } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Slow Logs')
 @Controller('slow-logs')
@@ -30,7 +31,7 @@ export class SlowLogController {
   })
   @Get('')
   async getSlowLogs(
-    @ClientMetadataFromRequest() clientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
       @Query() getSlowLogsDto: GetSlowLogsDto,
   ): Promise<any> {
     return this.service.getSlowLogs(clientMetadata, getSlowLogsDto);
@@ -42,7 +43,7 @@ export class SlowLogController {
   })
   @Delete('')
   async resetSlowLogs(
-    @ClientMetadataFromRequest() clientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
   ): Promise<void> {
     return this.service.reset(clientMetadata);
   }
@@ -59,7 +60,7 @@ export class SlowLogController {
   })
   @Get('config')
   async getConfig(
-    @ClientMetadataFromRequest() clientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
   ): Promise<SlowLogConfig> {
     return this.service.getConfig(clientMetadata);
   }
@@ -76,7 +77,7 @@ export class SlowLogController {
   })
   @Patch('config')
   async updateConfig(
-    @ClientMetadataFromRequest() clientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
       @Body() dto: UpdateSlowLogConfigDto,
   ): Promise<SlowLogConfig> {
     return this.service.updateConfig(clientMetadata, dto);

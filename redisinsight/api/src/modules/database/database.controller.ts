@@ -14,7 +14,8 @@ import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto'
 import { BuildType } from 'src/modules/server/models/server';
 import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dto';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
-import { ClientMetadataFromRequest } from 'src/common/decorators';
+import { ClientMetadataParam } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Database Instances')
 @Controller('databases')
@@ -160,9 +161,9 @@ export class DatabaseController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   async connect(
-    @ClientMetadataFromRequest({
-      paramPath: 'id',
-    }) clientMetadata,
+    @ClientMetadataParam({
+      databaseIdParam: 'id',
+    }) clientMetadata: ClientMetadata,
   ): Promise<void> {
     await this.connectionService.connect(clientMetadata);
   }

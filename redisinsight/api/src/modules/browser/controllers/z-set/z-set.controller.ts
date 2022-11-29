@@ -9,7 +9,8 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import {
   AddMembersToZSetDto,

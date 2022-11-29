@@ -1,72 +1,56 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { sessionFromRequestFactory } from 'src/common/decorators';
-import { API_PARAM_CLI_CLIENT_ID, API_PARAM_DATABASE_ID } from 'src/common/constants';
+import { Validator } from 'class-validator';
+import { API_PARAM_DATABASE_ID } from 'src/common/constants';
 
-export interface IClientMetadataDecoratorOptions {
-  paramPath?: string,
-  queryPath?: string,
-  bodyPath?: string,
+const validator = new Validator();
+
+export interface IClientMetadataParamOptions {
+  databaseIdParam?: string,
+  uniqueIdParam?: string,
   context?: ClientContext,
-  uniqueId?: string,
 }
 
-export const clientMetadataFromRequestFactory = (options: IClientMetadataDecoratorOptions, ctx: ExecutionContext) => {
-  const opts: IClientMetadataDecoratorOptions = {
+export const clientMetadataParamFactory = (
+  options: IClientMetadataParamOptions,
+  ctx: ExecutionContext,
+): ClientMetadata => {
+  const opts: IClientMetadataParamOptions = {
     context: ClientContext.Common,
+    databaseIdParam: API_PARAM_DATABASE_ID,
     ...options,
   };
 
-  const request = ctx.switchToHttp().getRequest();
+  const req = ctx.switchToHttp().getRequest();
 
   let databaseId;
-  if (opts.paramPath) {
-    databaseId = request.params?.[opts.paramPath];
-  } else if (opts.queryPath) {
-    // TBD
-  } else if (opts.bodyPath) {
-    // TBD
+  if (opts?.databaseIdParam) {
+    databaseId = req.params?.[opts.databaseIdParam];
   }
 
-  // todo: add validation
-  if (!databaseId) {
-    // todo: define proper error
-    throw new Error('No databaseId found');
+  let uniqueId;
+  if (opts?.uniqueIdParam) {
+    uniqueId = req.params?.[opts.uniqueIdParam];
   }
 
-  return plainToClass(ClientMetadata, {
+  const clientMetadata = plainToClass(ClientMetadata, {
     session: sessionFromRequestFactory(undefined, ctx),
     databaseId,
-    context: opts.context,
-    uniqueId: opts.uniqueId,
+    uniqueId,
+    context: opts?.context || ClientContext.Common,
   });
+
+  const errors = validator.validateSync(clientMetadata, {
+    whitelist: false, // we need this to allow additional fields if needed for flexibility
+  });
+
+  if (errors?.length) {
+    throw new BadRequestException(Object.values(errors[0].constraints) || 'Bad request');
+  }
+
+  return clientMetadata;
 };
 
-export const ClientMetadataFromRequest = createParamDecorator(clientMetadataFromRequestFactory);
-
-export const browserClientMetadataFactory = (
-  param = API_PARAM_DATABASE_ID,
-  ctx: ExecutionContext,
-): ClientMetadata => clientMetadataFromRequestFactory({
-  paramPath: param,
-  context: ClientContext.Browser,
-}, ctx);
-
-export const BrowserClientMetadata = createParamDecorator(browserClientMetadataFactory);
-
-export const cliClientMetadataFactory = (
-  options = { databaseParam: API_PARAM_DATABASE_ID, uuidParam: API_PARAM_CLI_CLIENT_ID },
-  ctx: ExecutionContext,
-): ClientMetadata => {
-  const request = ctx.switchToHttp().getRequest();
-
-  // todo: add validation
-  return clientMetadataFromRequestFactory({
-    paramPath: options.databaseParam,
-    context: ClientContext.CLI,
-    uniqueId: request.params?.[options.uuidParam],
-  }, ctx);
-};
-
-export const CliClientMetadata = createParamDecorator(cliClientMetadataFactory);
+export const ClientMetadataParam = createParamDecorator(clientMetadataParamFactory);

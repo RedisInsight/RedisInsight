@@ -65,6 +65,11 @@ export class DatabaseService {
   async get(id: string, ignoreEncryptionErrors = false): Promise<Database> {
     this.logger.log(`Getting database ${id}`);
 
+    if (!id) {
+      this.logger.error('Database id was not provided');
+      throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
+    }
+
     const model = await this.repository.get(id, ignoreEncryptionErrors);
 
     if (!model) {

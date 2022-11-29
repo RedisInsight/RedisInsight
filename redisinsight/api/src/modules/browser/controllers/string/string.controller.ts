@@ -16,7 +16,8 @@ import {
 } from 'src/modules/browser/dto/string.dto';
 import { GetKeyInfoDto } from 'src/modules/browser/dto';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import { StringBusinessService } from '../../services/string-business/string-business.service';
 

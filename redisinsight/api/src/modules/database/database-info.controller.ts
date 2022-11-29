@@ -7,8 +7,8 @@ import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor'
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
-import { ClientMetadataFromRequest } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
+import { ClientMetadataParam } from 'src/common/decorators';
 
 @ApiTags('Database Instances')
 @Controller('databases')
@@ -31,8 +31,8 @@ export class DatabaseInfoController {
     ],
   })
   async getInfo(
-    @ClientMetadataFromRequest({
-      paramPath: 'id',
+    @ClientMetadataParam({
+      databaseIdParam: 'id',
     }) clientMetadata: ClientMetadata,
   ): Promise<RedisDatabaseInfoResponse> {
     return this.databaseInfoService.getInfo(clientMetadata);
@@ -52,8 +52,8 @@ export class DatabaseInfoController {
     ],
   })
   async getDatabaseOverview(
-    @ClientMetadataFromRequest({
-      paramPath: 'id',
+    @ClientMetadataParam({
+      databaseIdParam: 'id',
     }) clientMetadata: ClientMetadata,
   ): Promise<DatabaseOverview> {
     return this.databaseInfoService.getOverview(clientMetadata);

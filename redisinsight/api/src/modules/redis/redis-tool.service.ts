@@ -173,12 +173,8 @@ export class RedisToolService extends RedisConsumerAbstractService {
     return clientMetadata.uniqueId;
   }
 
-  async deleteToolClient(databaseId: string, uniqueId: string): Promise<number> {
-    return this.redisService.removeClientInstance({
-      databaseId,
-      uniqueId,
-      context: this.consumer,
-    });
+  async deleteToolClient(clientMetadata: ClientMetadata): Promise<number> {
+    return this.redisService.removeClientInstance(clientMetadata);
   }
 
   private async getClusterNodes(

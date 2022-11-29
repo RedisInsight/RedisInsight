@@ -101,19 +101,17 @@ export class CliBusinessService {
 
   /**
    * Method to close exist redis client
-   * @param instanceId
-   * @param uuid
+   * @param clientMetadata
    */
   public async deleteClient(
-    instanceId: string,
-    uuid: string,
+    clientMetadata: ClientMetadata,
   ): Promise<DeleteClientResponse> {
     this.logger.log('Deleting Redis client for CLI.');
     try {
-      const affected = await this.cliTool.deleteToolClient(instanceId, uuid);
+      const affected = await this.cliTool.deleteToolClient(clientMetadata);
       this.logger.log('Succeed to delete Redis client for CLI.');
       if (affected) {
-        this.cliAnalyticsService.sendClientDeletedEvent(affected, instanceId);
+        this.cliAnalyticsService.sendClientDeletedEvent(affected, clientMetadata.databaseId);
       }
       return { affected };
     } catch (error) {

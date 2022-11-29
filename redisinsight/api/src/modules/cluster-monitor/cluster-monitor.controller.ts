@@ -3,8 +3,8 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ClusterMonitorService } from 'src/modules/cluster-monitor/cluster-monitor.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ClusterDetails } from 'src/modules/cluster-monitor/models';
-import { ClientMetadataFromRequest } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
+import { ClientMetadataParam } from 'src/common/decorators';
 
 @ApiTags('Cluster Monitor')
 @Controller('/cluster-details')
@@ -23,7 +23,7 @@ export class ClusterMonitorController {
   })
   @Get()
   async getClusterDetails(
-    @ClientMetadataFromRequest() clientMetadata: ClientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
   ): Promise<ClusterDetails> {
     return this.clusterMonitorService.getClusterDetails(clientMetadata);
   }

@@ -17,8 +17,8 @@ import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
-import { ClientMetadataFromRequest } from 'src/common/decorators';
-import { ClientContext } from 'src/common/models';
+import { ClientMetadata } from 'src/common/models';
+import { WorkbenchClientMetadata } from 'src/modules/workbench/decorators/workbench-client-metadata.decorator';
 
 @ApiTags('Workbench')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -40,7 +40,7 @@ export class WorkbenchController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
   async sendCommands(
-    @ClientMetadataFromRequest({ context: ClientContext.Workbench }) clientMetadata,
+    @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
     return this.service.createCommandExecutions(clientMetadata, dto);

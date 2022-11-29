@@ -12,7 +12,8 @@ import {
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { ClientMetadata } from 'src/common/models';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import {
   AddMembersToSetDto,
   CreateSetWithExpireDto,

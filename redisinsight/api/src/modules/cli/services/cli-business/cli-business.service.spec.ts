@@ -1,13 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { get } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
+
 import { when } from 'jest-when';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   mockRedisServerInfoResponse,
   mockRedisWrongTypeError,
-  mockDatabase,
   mockCliAnalyticsService,
   mockRedisMovedError, MockType,
   mockCliClientMetadata,
@@ -37,7 +36,6 @@ import { OutputFormatterManager } from './output-formatter/output-formatter-mana
 import { CliOutputFormatterTypes, IOutputFormatterStrategy } from './output-formatter/output-formatter.interface';
 import { CliBusinessService } from './cli-business.service';
 
-const mockClientUuid = uuidv4();
 const mockNode = {
   host: '127.0.0.1',
   port: 7002,
@@ -107,11 +105,11 @@ describe('CliBusinessService', () => {
 
   describe('getClient', () => {
     it('should successfully create new redis client', async () => {
-      cliTool.createNewToolClient.mockResolvedValue(mockClientUuid);
+      cliTool.createNewToolClient.mockResolvedValue(mockCliClientMetadata.uniqueId);
 
       const result = await service.getClient(mockCliClientMetadata);
 
-      expect(result).toEqual({ uuid: mockClientUuid });
+      expect(result).toEqual({ uuid: mockCliClientMetadata.uniqueId });
       expect(analyticsService.sendClientCreatedEvent).toHaveBeenCalledWith(
         mockCliClientMetadata.databaseId,
       );
@@ -152,11 +150,11 @@ describe('CliBusinessService', () => {
 
   describe('reCreateClient', () => {
     it('should successfully create new redis client', async () => {
-      cliTool.reCreateToolClient.mockResolvedValue(mockClientUuid);
+      cliTool.reCreateToolClient.mockResolvedValue(mockCliClientMetadata.uniqueId);
 
       const result = await service.reCreateClient(mockCliClientMetadata);
 
-      expect(result).toEqual({ uuid: mockClientUuid });
+      expect(result).toEqual({ uuid: mockCliClientMetadata.uniqueId });
       expect(analyticsService.sendClientRecreatedEvent).toHaveBeenCalledWith(
         mockCliClientMetadata.databaseId,
       );
@@ -199,10 +197,7 @@ describe('CliBusinessService', () => {
     it('should successfully close redis client', async () => {
       cliTool.deleteToolClient.mockResolvedValue(1);
 
-      const result = await service.deleteClient(
-        mockDatabase.id,
-        mockClientUuid,
-      );
+      const result = await service.deleteClient(mockCliClientMetadata);
 
       expect(result).toEqual({ affected: 1 });
       expect(analyticsService.sendClientDeletedEvent).toHaveBeenCalledWith(
@@ -215,10 +210,7 @@ describe('CliBusinessService', () => {
       cliTool.deleteToolClient.mockRejectedValue(new Error(mockENotFoundMessage));
 
       try {
-        await service.deleteClient(
-          mockDatabase.id,
-          mockClientUuid,
-        );
+        await service.deleteClient(mockCliClientMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);

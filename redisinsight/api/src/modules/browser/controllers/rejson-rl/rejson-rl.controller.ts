@@ -19,7 +19,7 @@ import {
 } from 'src/modules/browser/dto';
 import { RejsonRlBusinessService } from 'src/modules/browser/services/rejson-rl-business/rejson-rl-business.service';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
-import { BrowserClientMetadata } from 'src/common/decorators';
+import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('REJSON-RL')

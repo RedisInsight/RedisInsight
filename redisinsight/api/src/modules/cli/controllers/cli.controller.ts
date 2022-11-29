@@ -16,12 +16,11 @@ import {
   SendClusterCommandDto,
   SendCommandDto,
   SendCommandResponse,
-  CreateCliClientDto,
 } from 'src/modules/cli/dto/cli.dto';
 import { CliBusinessService } from 'src/modules/cli/services/cli-business/cli-business.service';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiCLIParams } from 'src/modules/cli/decorators/api-cli-params.decorator';
-import { CliClientMetadata, ClientMetadataFromRequest } from 'src/common/decorators';
+import { CliClientMetadata } from 'src/modules/cli/decorators/cli-client-metadata.decorator';
 import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('CLI')
@@ -44,7 +43,7 @@ export class CliController {
     ],
   })
   async getClient(
-    @ClientMetadataFromRequest() clientMetadata: ClientMetadata,
+    @CliClientMetadata() clientMetadata: ClientMetadata,
   ): Promise<CreateCliClientResponse> {
     return this.service.getClient(clientMetadata);
   }
@@ -104,10 +103,9 @@ export class CliController {
     ],
   })
   async deleteClient(
-    @Param('dbInstance') dbInstance: string,
-      @Param('uuid') uuid: string,
+    @CliClientMetadata() clientMetadata: ClientMetadata,
   ): Promise<DeleteClientResponse> {
-    return this.service.deleteClient(dbInstance, uuid);
+    return this.service.deleteClient(clientMetadata);
   }
 
   @Patch('/:uuid')

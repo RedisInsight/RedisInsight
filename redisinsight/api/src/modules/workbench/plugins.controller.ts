@@ -17,8 +17,8 @@ import { PluginsService } from 'src/modules/workbench/plugins.service';
 import { PluginCommandExecution } from 'src/modules/workbench/models/plugin-command-execution';
 import { CreatePluginStateDto } from 'src/modules/workbench/dto/create-plugin-state.dto';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
-import { ClientContext, ClientMetadata } from 'src/common/models';
-import { ClientMetadataFromRequest } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
+import { WorkbenchClientMetadata } from 'src/modules/workbench/decorators/workbench-client-metadata.decorator';
 
 @ApiTags('Plugins')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -40,7 +40,7 @@ export class PluginsController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
   async sendCommand(
-    @ClientMetadataFromRequest({ context: ClientContext.Workbench }) clientMetadata: ClientMetadata,
+    @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateCommandExecutionDto,
   ): Promise<PluginCommandExecution> {
     return this.service.sendCommand(clientMetadata, dto);
@@ -61,7 +61,7 @@ export class PluginsController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
   async getPluginCommands(
-    @ClientMetadataFromRequest({ context: ClientContext.Workbench }) clientMetadata: ClientMetadata,
+    @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
   ): Promise<string[]> {
     return this.service.getWhitelistCommands(clientMetadata);
   }

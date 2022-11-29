@@ -16,7 +16,8 @@ import {
 } from 'src/modules/browser/dto/stream.dto';
 import { StreamService } from 'src/modules/browser/services/stream/stream.service';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Streams')

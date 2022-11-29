@@ -30,7 +30,8 @@ import {
   DeleteListElementsResponse,
   PushListElementsResponse,
 } from 'src/modules/browser/dto';
-import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
 import { ClientMetadata } from 'src/common/models';
 import { ListBusinessService } from '../../services/list-business/list-business.service';

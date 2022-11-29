@@ -13,7 +13,8 @@ import { KeysBusinessService } from 'src/modules/browser/services/keys-business/
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
-import { ApiQueryRedisStringEncoding, BrowserClientMetadata } from 'src/common/decorators';
+import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
+import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import {
   DeleteKeysDto,

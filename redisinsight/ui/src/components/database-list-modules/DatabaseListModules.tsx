@@ -28,13 +28,13 @@ import RedisTimeSeriesLight from 'uiSrc/assets/img/modules/RedisTimeSeriesLight.
 import RedisTimeSeriesDark from 'uiSrc/assets/img/modules/RedisTimeSeriesDark.svg'
 import UnknownLight from 'uiSrc/assets/img/modules/UnknownLight.svg'
 import UnknownDark from 'uiSrc/assets/img/modules/UnknownDark.svg'
-import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   content?: JSX.Element
-  modules: RedisModuleDto[]
+  modules: AdditionalRedisModule[]
   inCircle?: boolean
   dark?: boolean
   highlight?: boolean

@@ -5,15 +5,19 @@ import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import { deleteAllKeysFromDB, populateDBWithHashes } from '../../../helpers/keys';
+import { deleteAllKeysFromDB, populateDBWithHashes, populateHashWithFields } from '../../../helpers/keys';
+import { Common } from '../../../helpers/common';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
+const common = new Common();
 const chance = new Chance();
 
 const keyToAddParameters = { keysCount: 13, keyNameStartWith: 'hashKey'};
+const keyName = `TestHashKey-${common.generateWord(10)}`;
+const keyToAddParameters2 = { fieldsCount: 80000, keyName, fieldStartWith: 'hashField', fieldValueStartWith: 'hashValue' };
 const members = [...Array(100).keys()].toString().replace(/,/g, ' '); // The smallest key
 const keyNamesMemory = ['string', 'list', 'bloom', 'set'];
 const keyNamesLength = ['string', 'set', 'list'];
@@ -65,4 +69,26 @@ test
         // Verify that user can click on a key name and see key details in Browser
         await t.click(memoryEfficiencyPage.topKeysKeyName.nth(1).find('button'));
         await t.expect(browserPage.keyNameFormDetails.find('b').textContent).eql(keyNamesLength[1]);
+    });
+test
+    .before(async t => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        // Create keys
+        await populateHashWithFields(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port, keyToAddParameters2);
+        // Go to Analysis Tools page
+        await t.click(myRedisDatabasePage.analysisPageButton);
+    })
+    .after(async t => {
+        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.deleteKeyByName(keyName);
+        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+    })('Big highlighted key tooltip', async t => {
+        const tooltipText = 'Consider splitting it into multiple keys';
+
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        // Tooltip with text "Consider splitting it into multiple keys" is displayed for highlighted keys
+        await t.hover(memoryEfficiencyPage.topKeysKeySizeCell);
+        await t.expect(browserPage.tooltip.textContent).contains(tooltipText, `"${tooltipText}" is not displayed in Key size tooltip`);
+        await t.hover(memoryEfficiencyPage.topKeysLengthCell);
+        await t.expect(browserPage.tooltip.textContent).contains(tooltipText, `"${tooltipText}" is not displayed in Length tooltip`);
     });

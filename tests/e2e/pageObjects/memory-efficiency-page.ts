@@ -31,6 +31,8 @@ export class MemoryEfficiencyPage {
     noRecommendationsMessage =  Selector('[data-testid=empty-recommendations-message]');
     codeChangesLabel = Selector('[data-testid=code_changes]');
     configurationChangesLabel = Selector('[data-testid=configuration_changes]');
+    topKeysKeySizeCell = Selector('[data-testid^=nsp-usedMemory-value]');
+    topKeysLengthCell = Selector('[data-testid^=length-value]');
     // TABLE
     namespaceTable = Selector('[data-testid=nsp-table-memory]');
     nameSpaceTableRows = this.namespaceTable.find('[data-testid^=row-]');

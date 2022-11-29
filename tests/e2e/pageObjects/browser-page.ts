@@ -9,7 +9,8 @@ export class BrowserPage {
     cssSelectorRows = '[aria-label="row"]';
     cssSelectorKey = '[data-testid^=key-]';
     cssFilteringLabel = '[data-testid=multi-search]';
-    cssJsonValue = '[data-tesid=value-as-json]';
+    cssJsonValue = '[data-testid=value-as-json]';
+    cssRowInVirtualizedTable = '[role=gridcell]';
     cssVirtualTableRow = '[aria-label=row]';
     cssKeyBadge = '[data-testid^=badge-]';
     cssKeyTtl = '[data-testid^=ttl-]';
@@ -123,7 +124,7 @@ export class BrowserPage {
     removeFromHeadSelection = Selector('#HEAD');
     selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
-    filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]');
+    filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]', { timeout: 500 });
     filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
     consumerOption = Selector('[data-testid=consumer-option]');
     claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
@@ -135,6 +136,7 @@ export class BrowserPage {
     createIndexBtn = Selector('[data-testid=create-index-btn]');
     cancelIndexCreationBtn = Selector('[data-testid=create-index-cancel-btn]');
     confirmIndexCreationBtn = Selector('[data-testid=create-index-btn]');
+    resizeTrigger =  Selector('[data-testid^=resize-trigger-]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -561,6 +563,16 @@ export class BrowserPage {
     }
 
     /**
+     * Delete keys by their Names
+     * @param keyNames The names of the key array
+     */
+     async deleteKeysByNames(keyNames: string[]): Promise<void> {
+        for(const name of keyNames) {
+            await this.deleteKeyByName(name);
+        }
+    }
+
+    /**
      * Edit key name from details
      * @param keyName The name of the key
      */
@@ -984,8 +996,7 @@ export class BrowserPage {
             const regExp = new RegExp(`${i} 00` + '.');
             await t
                 .expect(scannedValueText).match(regExp, `The database is not automatically scanned by ${i} 000 keys`)
-                .doubleClick(this.scanMoreButton)
-                .expect(this.progressKeyList.exists).ok('Progress Bar is not displayed');
+                .click(this.scanMoreButton);
             const scannedResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
             await t.expect(scannedResults).gt(rememberedScanResults);
         }

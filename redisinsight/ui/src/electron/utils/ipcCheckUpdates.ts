@@ -4,8 +4,8 @@ import { omit } from 'lodash'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setElectronInfo, setReleaseNotesViewed } from 'uiSrc/slices/app/info'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
-import { GetServerInfoResponse } from 'apiSrc/dto/server.dto'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { ElectronStorageItem, IpcEvent } from '../constants'
 
 export const ipcCheckUpdates = async (serverInfo: GetServerInfoResponse, dispatch: Dispatch<any>) => {

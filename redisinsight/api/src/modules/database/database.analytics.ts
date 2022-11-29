@@ -60,12 +60,12 @@ export class DatabaseAnalytics extends TelemetryBaseService {
           useSNI: instance?.tlsServername
             ? 'enabled'
             : 'disabled',
-          version: additionalInfo.version,
-          numberOfKeys: additionalInfo.totalKeys,
-          numberOfKeysRange: getRangeForNumber(additionalInfo.totalKeys, TOTAL_KEYS_BREAKPOINTS),
+          version: additionalInfo?.version,
+          numberOfKeys: additionalInfo?.totalKeys,
+          numberOfKeysRange: getRangeForNumber(additionalInfo?.totalKeys, TOTAL_KEYS_BREAKPOINTS),
           totalMemory: additionalInfo.usedMemory,
           numberedDatabases: additionalInfo.databases,
-          numberOfModules: instance.modules.length,
+          numberOfModules: instance.modules?.length || 0,
           ...modulesSummary,
         },
       );

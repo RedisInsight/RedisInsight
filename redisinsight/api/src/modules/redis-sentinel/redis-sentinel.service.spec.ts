@@ -1,168 +1,76 @@
-xdescribe('TBD', () => {
-  it('', () => {});
-});
+import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { RedisService } from 'src/modules/redis/redis.service';
+import {
+  mockDatabaseInfoProvider,
+  mockDatabaseService,
+  mockIORedisClient,
+  mockRedisSentinelAnalytics,
+  mockRedisSentinelMasterResponse, mockRedisService, mockSentinelDatabaseWithTlsAuth,
+  mockSentinelMasterDto,
+  MockType,
+} from 'src/__mocks__';
+import { RedisSentinelService } from 'src/modules/redis-sentinel/redis-sentinel.service';
+import { RedisSentinelAnalytics } from 'src/modules/redis-sentinel/redis-sentinel.analytics';
+import { DatabaseService } from 'src/modules/database/database.service';
+import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { BadRequestException, ForbiddenException } from '@nestjs/common';
-// import * as Redis from 'ioredis-mock';
-// import { ReplyError } from 'src/models';
-// import ERROR_MESSAGES from 'src/constants/error-messages';
-// import { RedisService } from 'src/modules/redis/redis.service';
-// import { ConnectionOptionsDto } from 'src/modules/instances/dto/database-instance.dto';
-// import {
-//   mockRedisNoPermError, mockRedisSentinelAnalytics,
-//   mockRedisSentinelMasterResponse,
-//   mockSentinelMasterDto,
-//   mockSentinelMasterInDownState,
-//   mockSentinelMasterInOkState,
-// } from 'src/__mocks__';
-// import { SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
-// import { RedisSentinelService } from 'src/modules/redis-sentinel/redis-sentinel.service';
-// import { RedisSentinelAnalytics } from 'src/modules/redis-sentinel/redis-sentinel.analytics';
-//
-// const mockConnectionOptions: ConnectionOptionsDto = {
-//   host: '127.0.0.1',
-//   port: 26379,
-// };
-//
-// const mockClient = new Redis();
-// mockClient.options = {
-//   ...mockConnectionOptions,
-// };
-// describe('RedisSentinelBusinessService', () => {
-//   let service: RedisSentinelService;
-//   let redisService;
-//
-//   beforeEach(async () => {
-//     const module: TestingModule = await Test.createTestingModule({
-//       providers: [
-//         RedisSentinelService,
-//         {
-//           provide: RedisSentinelAnalytics,
-//           useFactory: mockRedisSentinelAnalytics,
-//         },
-//         {
-//           provide: RedisService,
-//           useFactory: () => ({
-//             createStandaloneClient: jest.fn(),
-//           }),
-//         },
-//       ],
-//     }).compile();
-//
-//     service = module.get<RedisSentinelService>(RedisSentinelService);
-//     redisService = await module.get<RedisService>(RedisService);
-//     mockClient.call = jest.fn();
-//     mockClient.quit = jest.fn();
-//   });
-//
-//   describe('connectAndGetMasters', () => {
-//     it('connect and get sentinel masters', async () => {
-//       mockClient.call.mockResolvedValue(
-//         mockRedisSentinelMasterResponse,
-//       );
-//       service.getMasterEndpoints = jest
-//         .fn()
-//         .mockResolvedValue([mockConnectionOptions]);
-//       redisService.createStandaloneClient.mockResolvedValue(mockClient);
-//
-//       const result = await service.connectAndGetMasters(mockConnectionOptions);
-//
-//       expect(result).toEqual([mockSentinelMasterDto]);
-//       expect(mockClient.quit).toHaveBeenCalled();
-//     });
-//     it('failed connection to the redis database', async () => {
-//       redisService.createStandaloneClient.mockRejectedValue(
-//         new Error(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
-//       );
-//
-//       await expect(
-//         service.connectAndGetMasters(mockConnectionOptions),
-//       ).rejects.toThrow(BadRequestException);
-//     });
-//   });
-//
-//   describe('getMasters', () => {
-//     it('succeed to get sentinel masters', async () => {
-//       service.getMasterEndpoints = jest
-//         .fn()
-//         .mockResolvedValue([mockConnectionOptions]);
-//       mockClient.call.mockResolvedValue(
-//         [mockSentinelMasterInOkState, mockSentinelMasterInDownState],
-//       );
-//
-//       const result = await service.getMasters(mockClient);
-//
-//       expect(mockClient.call).toHaveBeenCalledWith('sentinel', [
-//         'masters',
-//       ]);
-//       expect(result).toEqual([
-//         mockSentinelMasterDto,
-//         {
-//           ...mockSentinelMasterDto,
-//           status: SentinelMasterStatus.Down,
-//         },
-//       ]);
-//     });
-//     it('wrong database type', async () => {
-//       mockClient.call.mockRejectedValue({
-//         message:
-//           'ERR unknown command `sentinel`, with args beginning with: `masters`',
-//       });
-//
-//       try {
-//         await service.getMasters(mockClient);
-//         fail('Should throw an error');
-//       } catch (err) {
-//         expect(err).toBeInstanceOf(BadRequestException);
-//         expect(err.message).toEqual(ERROR_MESSAGES.WRONG_DISCOVERY_TOOL());
-//       }
-//     });
-//     it("user don't have required permissions", async () => {
-//       const error: ReplyError = {
-//         ...mockRedisNoPermError,
-//         command: 'SENTINEL',
-//       };
-//       mockClient.call.mockRejectedValue(error);
-//
-//       await expect(service.getMasters(mockClient)).rejects.toThrow(
-//         ForbiddenException,
-//       );
-//     });
-//   });
-//   describe('getMasterEndpoints', () => {
-//     it('succeed to get sentinel master endpoints', async () => {
-//       const masterName = mockSentinelMasterDto.name;
-//       mockClient.call.mockResolvedValue([]);
-//
-//       const result = await service.getMasterEndpoints(mockClient, masterName);
-//
-//       expect(mockClient.call).toHaveBeenCalledWith('sentinel', [
-//         'sentinels',
-//         masterName,
-//       ]);
-//       expect(result).toEqual([mockConnectionOptions]);
-//     });
-//     it('wrong database type', async () => {
-//       mockClient.call.mockRejectedValue({
-//         message:
-//           'ERR unknown command `sentinel`, with args beginning with: `masters`',
-//       });
-//
-//       await expect(
-//         service.getMasterEndpoints(mockClient, mockSentinelMasterDto.name),
-//       ).rejects.toThrow(BadRequestException);
-//     });
-//     it("user don't have required permissions", async () => {
-//       const error: ReplyError = {
-//         ...mockRedisNoPermError,
-//         command: 'SENTINEL',
-//       };
-//       mockClient.call.mockRejectedValue(error);
-//
-//       await expect(
-//         service.getMasterEndpoints(mockClient, mockSentinelMasterDto.name),
-//       ).rejects.toThrow(ForbiddenException);
-//     });
-//   });
-// });
+describe('RedisSentinelService', () => {
+  let service: RedisSentinelService;
+  let redisService: MockType<RedisService>;
+  let databaseService: MockType<DatabaseService>;
+  let databaseInfoProvider: MockType<DatabaseInfoProvider>;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        RedisSentinelService,
+        {
+          provide: RedisSentinelAnalytics,
+          useFactory: mockRedisSentinelAnalytics,
+        },
+        {
+          provide: RedisService,
+          useFactory: mockRedisService,
+        },
+        {
+          provide: DatabaseService,
+          useFactory: mockDatabaseService,
+        },
+        {
+          provide: DatabaseInfoProvider,
+          useFactory: mockDatabaseInfoProvider,
+        },
+      ],
+    }).compile();
+
+    service = module.get(RedisSentinelService);
+    redisService = module.get(RedisService);
+    databaseService = module.get(DatabaseService);
+    databaseInfoProvider = module.get(DatabaseInfoProvider);
+  });
+
+  describe('getSentinelMasters', () => {
+    it('connect and get sentinel masters', async () => {
+      redisService.createStandaloneClient.mockResolvedValue(mockIORedisClient);
+      mockIORedisClient.call.mockResolvedValue(mockRedisSentinelMasterResponse);
+      databaseInfoProvider.determineSentinelMasterGroups.mockResolvedValue([mockSentinelMasterDto]);
+
+      const result = await service.getSentinelMasters(mockSentinelDatabaseWithTlsAuth);
+
+      expect(result).toEqual([mockSentinelMasterDto]);
+      expect(mockIORedisClient.disconnect).toHaveBeenCalled();
+    });
+
+    it('failed connection to the redis database', async () => {
+      redisService.createStandaloneClient.mockRejectedValue(
+        new Error(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
+      );
+
+      await expect(
+        service.getSentinelMasters(mockSentinelDatabaseWithTlsAuth),
+      ).rejects.toThrow(BadRequestException);
+    });
+  });
+});

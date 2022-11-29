@@ -1,10 +1,10 @@
 import { createSlice, current } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { isUndefined } from 'lodash'
-import { NotificationsDto, NotificationDto } from 'apiSrc/modules/notification/dto'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getApiErrorName, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
+import { NotificationsDto, NotificationDto } from 'apiSrc/modules/notification/dto'
 import { StateAppNotifications } from '../interfaces'
 
 import { AppDispatch, RootState } from '../store'

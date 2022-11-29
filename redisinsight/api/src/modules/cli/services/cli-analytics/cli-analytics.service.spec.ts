@@ -203,7 +203,7 @@ describe('CliAnalyticsService', () => {
         TelemetryEvents.CliCommandExecuted,
         {
           databaseId,
-          command: mockAdditionalData.command.toUpperCase(),
+          command: mockAdditionalData.command,
           commandType: CommandType.Core,
           moduleName: 'n/a',
           capability: 'string',
@@ -231,7 +231,7 @@ describe('CliAnalyticsService', () => {
         {
           databaseId,
           error: ReplyError.name,
-          command: mockAdditionalData.command.toUpperCase(),
+          command: mockAdditionalData.command,
           commandType: CommandType.Core,
           moduleName: 'n/a',
           capability: 'string',
@@ -246,7 +246,7 @@ describe('CliAnalyticsService', () => {
         {
           databaseId,
           error: ReplyError.name,
-          command: 'sadd'.toUpperCase(),
+          command: 'sadd',
         },
       );
     });
@@ -259,7 +259,7 @@ describe('CliAnalyticsService', () => {
         {
           databaseId,
           error: CommandParsingError.name,
-          command: mockAdditionalData.command.toUpperCase(),
+          command: mockAdditionalData.command,
           commandType: CommandType.Core,
           moduleName: 'n/a',
           capability: 'string',
@@ -312,7 +312,7 @@ describe('CliAnalyticsService', () => {
         TelemetryEvents.CliClusterNodeCommandExecuted,
         {
           databaseId,
-          command: mockAdditionalData.command.toUpperCase(),
+          command: mockAdditionalData.command,
           commandType: CommandType.Core,
           moduleName: 'n/a',
           capability: 'string',
@@ -335,7 +335,7 @@ describe('CliAnalyticsService', () => {
         {
           databaseId,
           error: redisReplyError.name,
-          command: 'sadd'.toUpperCase(),
+          command: 'sadd',
         },
       );
     });

@@ -1,5 +1,11 @@
 import { ReplyError } from 'src/models';
 
+export const mockRedisNoAuthError: ReplyError = {
+  name: 'ReplyError',
+  command: 'AUTH',
+  message: 'NOAUTH authentication is required',
+};
+
 export const mockRedisNoPermError: ReplyError = {
   name: 'ReplyError',
   command: 'GET',

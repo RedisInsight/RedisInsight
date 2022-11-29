@@ -9,14 +9,14 @@ const mockedProps = mock<Props>()
 const mockData = [
   {
     name: 'name',
-    type: 'HASH',
-    memory: 1000,
-    length: 10,
+    type: 'hash',
+    memory: 10_000_000,
+    length: 100_000_000,
     ttl: 10
   },
   {
     name: 'name_1',
-    type: 'HASH',
+    type: 'hash',
     memory: 1000,
     length: null,
     ttl: -1
@@ -46,6 +46,12 @@ describe('Table', () => {
   it('should render correct length', () => {
     render(<Table {...instance(mockedProps)} data={mockData} />)
     expect(screen.getByTestId('length-empty-name_1')).toHaveTextContent('-')
-    expect(screen.getByTestId('length-value-name')).toHaveTextContent('10')
+    expect(screen.getByTestId(/length-value-name/).textContent).toEqual('100 000 000')
+  })
+
+  it('should highlight big keys', () => {
+    render(<Table {...instance(mockedProps)} data={mockData} />)
+    expect(screen.getByTestId('nsp-usedMemory-value=10000000-highlighted')).toBeInTheDocument()
+    expect(screen.getByTestId('length-value-name-highlighted')).toBeInTheDocument()
   })
 })

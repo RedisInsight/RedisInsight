@@ -7,10 +7,11 @@ import {
   DeleteBulkActionSimpleRunner,
 } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/contants';
+import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
 import { BulkActionProgress } from 'src/modules/bulk-actions/models/bulk-action-progress';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
+import * as Utils from 'src/modules/database/utils/database.total.util';
 
 const mockExec = jest.fn();
 
@@ -43,7 +44,7 @@ const mockKeyBuffer = Buffer.from(mockKey);
 const mockRESPError = 'Reply Error: NOPERM for delete.';
 const mockRESPErrorBuffer = Buffer.from(mockRESPError);
 
-const mockRedisKeyspaceInfoResponse_1: string = '# Keyspace\r\ndb0:keys=10000,expires=0,avg_ttl=0\r\n';
+const mockGetTotalResponse_1: number = 10000;
 
 const generateErrors = (amount: number, raw = true): any => (
   new Array(amount).fill(1)
@@ -89,8 +90,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
   describe('prepare', () => {
     beforeEach(() => {
-      nodeClient.sendCommand.mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
-      clusterClient.sendCommand.mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
+      jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse_1);
       clusterClient.nodes = jest.fn().mockReturnValue([nodeClient, nodeClient]);
     });
 

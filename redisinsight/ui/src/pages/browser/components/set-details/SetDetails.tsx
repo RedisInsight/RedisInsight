@@ -34,8 +34,8 @@ import VirtualTable from 'uiSrc/components/virtual-table'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
+import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
 import styles from './styles.module.scss'
 
 const suffix = '_set'
@@ -51,10 +51,11 @@ const cellCache = new CellMeasurerCache({
 
 export interface Props {
   isFooterOpen: boolean
+  onRemoveKey: () => void
 }
 
 const SetDetails = (props: Props) => {
-  const { isFooterOpen } = props
+  const { isFooterOpen, onRemoveKey } = props
 
   const { loading } = useSelector(setSelector)
   const { members: loadedMembers, total, nextCursor } = useSelector(setDataSelector)
@@ -100,7 +101,8 @@ const SetDetails = (props: Props) => {
     setDeleting(`${member + suffix}`)
   }
 
-  const onSuccessRemoved = () => {
+  const onSuccessRemoved = (newTotal: number) => {
+    newTotal === 0 && onRemoveKey()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,

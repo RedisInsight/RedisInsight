@@ -51,4 +51,10 @@ describe('QueryCardHeader', () => {
 
     expect(screen.getByTestId('execution-time-tooltip')).toHaveTextContent('12 345 678.91 ms')
   })
+
+  it('should render disabled copy button', async () => {
+    render(<QueryCardHeader {...instance(mockedProps)} emptyCommand />)
+
+    expect(screen.getByTestId('copy-command')).toBeDisabled()
+  })
 })

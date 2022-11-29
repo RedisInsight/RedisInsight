@@ -1,4 +1,4 @@
-import { t } from 'testcafe';
+import { Selector, t } from 'testcafe';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage, CliPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
@@ -250,30 +250,10 @@ test
         // Clear and delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        // delete index and keys
     })('Verify that indexed keys from previous DB are NOT displayed when user connects to another DB', async t => {
         /* 
-        
-        Presetup:
-        
-                Create several hash/json keys in Standalone DB
-        
-                Create Index for created keys
-        
-                Create Index for hash/json for Standalone Big DB
-        
-            Steps to cover:
-        
-                Open DB (Standalone DB)
-        
-                Select Search mode
-        
-                Select created index from 2nd pre-setup step
-        
-                Validate displayed keys
-        
-                Open another DB (Standalone Big) → Search mode is displayed (saved as context)
-        
-                Validate that keys belong to the Standalone Big database
+         link add
         
         */
         const keyNameSimpleDb = common.generateWord(10);
@@ -281,6 +261,10 @@ test
 
         const indexNameSimpleDb = `idx:${keyNameSimpleDb}`; // index in the standalone database
         const indexNameBigDb = `idx:${keyNameBigDb}`; // index in the big standalone database
+
+        console.log("indexNameSimpleDb--- " + indexNameSimpleDb);
+        console.log("indexNameBigDb--- " + indexNameBigDb);
+
 
         // key names to validate in the standalone database
         keyNames = [`${keyNameSimpleDb}:1`, `${keyNameSimpleDb}:2`, `${keyNameSimpleDb}:3`, `${keyNameSimpleDb}:4`, `${keyNameSimpleDb}:5`];
@@ -315,9 +299,11 @@ test
         // Create 5 keys and index
         await cliPage.sendCommandsInCli(commandsForStandalone);
 
-        await browserPage.changeDelimiterInTreeView('-'); // change delimiter in tree view
+        await browserPage.changeDelimiterInTreeView('-'); // change delimiter in tree view to be able to verify keys easily
 
-        await t.eval(() => location.reload());
+        await t.debug()
+
+        await t.eval(() => location.reload()); // replace with existing
 
         await t.click(browserPage.redisearchModeBtn); // click redisearch button
 
@@ -329,7 +315,8 @@ test
 
         await myRedisDatabasePage.clickOnDBByName(bigDbName); // click database name from ossStandaloneBigConfig.databaseName
 
-        await verifyKeysIsNotDisplayedInTheList(keyNames); // Verify that standandalone database keys are not visible
+        await verifyKeysIsNotDisplayedInTheList(keyNames); // Verify that standandalone database keys are NOT visible
 
+        await t.expect(Selector('span').withText('Select Index').exists).ok(); // Verify index is NOT selected
 
     });

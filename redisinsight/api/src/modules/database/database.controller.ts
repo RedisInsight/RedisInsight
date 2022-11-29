@@ -113,7 +113,7 @@ export class DatabaseController {
     @Param('id') id: string,
       @Body() database: UpdateDatabaseDto,
   ): Promise<Database> {
-    return await this.service.update(id, database);
+    return await this.service.update(id, database, true);
   }
 
   @Delete('/:id')
@@ -147,7 +147,7 @@ export class DatabaseController {
   }
 
   @Get(':id/connect')
-  @UseInterceptors(new TimeoutInterceptor())
+  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @ApiEndpoint({
     description: 'Connect to database instance by id',
     statusCode: 200,

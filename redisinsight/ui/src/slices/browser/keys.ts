@@ -41,6 +41,7 @@ import { fetchStreamEntries, setStreamInitialState } from './stream'
 import {
   deleteRedisearchKeyFromList,
   editRedisearchKeyFromList,
+  editRedisearchKeyTTLFromList,
   fetchMoreRedisearchKeysAction,
   fetchRedisearchKeysAction,
   resetRedisearchKeysData,
@@ -253,6 +254,20 @@ const keysSlice = createSlice({
       }
     },
 
+    editPatternKeyTTLFromList: (state, { payload: [key, ttl] }: PayloadAction<[RedisResponseBuffer, number]>) => {
+      const keys = state.data.keys.map((keyData) => {
+        if (isEqualBuffers(keyData.name, key)) {
+          keyData.ttl = ttl
+        }
+        return keyData
+      })
+
+      state.data = {
+        ...state.data,
+        keys,
+      }
+    },
+
     // update length for Selected Key
     updateSelectedKeyLength: (state, { payload }) => {
       state.selectedKey = {
@@ -321,6 +336,8 @@ const keysSlice = createSlice({
 
     resetPatternKeysData: (state) => {
       // state.data.keys = []
+      state.data.total = 0
+      state.data.scanned = 0
       state.data.keys.length = 0
     },
 
@@ -365,6 +382,7 @@ export const {
   deleteKeyFailure,
   deletePatternKeyFromList,
   editPatternKeyFromList,
+  editPatternKeyTTLFromList,
   updateSelectedKeyLength,
   setPatternSearchMatch,
   setFilter,
@@ -795,7 +813,7 @@ export function deleteKeyAction(key: RedisResponseBuffer, onSuccessAction?: () =
           }
         })
         dispatch(deleteKeySuccess())
-        dispatch(deleteKeyFromList(key))
+        dispatch<any>(deleteKeyFromList(key))
         onSuccessAction?.()
         dispatch(addMessageNotification(successMessages.DELETED_KEY(key)))
       }
@@ -830,7 +848,7 @@ export function editKey(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(editKeyFromList({ key, newKey }))
+        dispatch<any>(editKeyFromList({ key, newKey }))
         onSuccess?.()
       }
     } catch (error) {
@@ -843,7 +861,7 @@ export function editKey(
 }
 
 // Asynchronous thunk action
-export function editKeyTTL(key: string, ttl: number) {
+export function editKeyTTL(key: RedisResponseBuffer, ttl: number) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(defaultSelectedKeyAction())
 
@@ -872,10 +890,11 @@ export function editKeyTTL(key: string, ttl: number) {
           }
         })
         if (ttl !== 0) {
+          dispatch<any>(editKeyTTLFromList([key, ttl]))
           dispatch<any>(fetchKeyInfo(key))
         } else {
           dispatch(deleteKeySuccess())
-          dispatch(deleteKeyFromList(key))
+          dispatch<any>(deleteKeyFromList(key))
         }
         dispatch(defaultSelectedKeyActionSuccess())
       }
@@ -930,8 +949,8 @@ export function fetchKeys(
     const isRedisearchExists = isRedisearchAvailable(state.connections.instances.connectedInstance.modules)
 
     return searchMode === SearchMode.Pattern || !isRedisearchExists
-      ? dispatch(fetchPatternKeysAction(cursor, count, onSuccess, onFailed))
-      : dispatch(fetchRedisearchKeysAction(cursor, count, onSuccess, onFailed))
+      ? dispatch<any>(fetchPatternKeysAction(cursor, count, onSuccess, onFailed))
+      : dispatch<any>(fetchRedisearchKeysAction(cursor, count, onSuccess, onFailed))
   }
 }
 
@@ -975,12 +994,22 @@ export function deleteKeyFromList(key: RedisResponseBuffer) {
   }
 }
 
-export function editKeyFromList(key: RedisResponseBuffer) {
+export function editKeyFromList(data: { key: RedisResponseBuffer, newKey: RedisResponseBuffer }) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
 
     return state.browser.keys?.searchMode === SearchMode.Pattern
-      ? dispatch(editPatternKeyFromList(key))
-      : dispatch(editRedisearchKeyFromList(key))
+      ? dispatch(editPatternKeyFromList(data))
+      : dispatch(editRedisearchKeyFromList(data))
+  }
+}
+
+export function editKeyTTLFromList(data: [RedisResponseBuffer, number]) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+
+    return state.browser.keys?.searchMode === SearchMode.Pattern
+      ? dispatch(editPatternKeyTTLFromList(data))
+      : dispatch(editRedisearchKeyTTLFromList(data))
   }
 }

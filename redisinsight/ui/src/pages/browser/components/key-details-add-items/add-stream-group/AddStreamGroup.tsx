@@ -18,8 +18,8 @@ import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { addNewGroupAction } from 'uiSrc/slices/browser/stream'
 import { consumerGroupIdRegex, stringToBuffer, validateConsumerGroupId } from 'uiSrc/utils'
-import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import styles from './styles.module.scss'
 

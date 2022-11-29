@@ -1,4 +1,4 @@
-export const isVersionHigherOrEquals = (sourceVersion: string, comparableVersion: string) => {
+export const isVersionHigherOrEquals = (sourceVersion: string = '', comparableVersion: string = '') => {
   const sourceVersionArray = sourceVersion.split('.')
   const comparableVersionArray = comparableVersion.split('.')
 

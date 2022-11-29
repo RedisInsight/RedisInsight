@@ -117,15 +117,7 @@ export class RedisSentinelService {
       result = await this.databaseInfoProvider.determineSentinelMasterGroups(client);
       this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(result);
 
-      if (client?.quit) {
-        try {
-          await client.quit();
-        } catch (e) {
-          this.logger.error('Unable to quit connection', e);
-        }
-      } else if (client?.disconnect) {
-        await client.disconnect();
-      }
+      await client.disconnect();
     } catch (error) {
       const exception: HttpException = getRedisConnectionException(error, dto);
       this.redisSentinelAnalytics.sendGetSentinelMastersFailedEvent(exception);

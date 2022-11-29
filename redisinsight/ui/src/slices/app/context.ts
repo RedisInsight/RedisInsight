@@ -1,16 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { getTreeLeafField, Nullable } from 'uiSrc/utils'
-import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
+import { BrowserStorageItem, DEFAULT_DELIMITER, KeyTypes } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { RootState } from '../store'
 import { RedisResponseBuffer, StateAppContext } from '../interfaces'
+import { SearchMode } from '../interfaces/keys'
 
 export const initialState: StateAppContext = {
   contextInstanceId: '',
   lastPage: '',
   browser: {
     keyList: {
-      isDataLoaded: false,
+      isDataPatternLoaded: false,
+      isDataRedisearchLoaded: false,
       scrollPatternTopPosition: 0,
       scrollRedisearchTopPosition: 0,
       isNotRendered: true,
@@ -25,6 +28,11 @@ export const initialState: StateAppContext = {
     },
     bulkActions: {
       opened: false,
+    },
+    keyDetailsSizes: {
+      [KeyTypes.Hash]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.hash ?? null,
+      [KeyTypes.List]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.list ?? null,
+      [KeyTypes.ZSet]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.zset ?? null,
     }
   },
   workbench: {
@@ -54,6 +62,10 @@ const appContextSlice = createSlice({
     // don't need to reset instanceId
     setAppContextInitialState: (state) => ({
       ...initialState,
+      browser: {
+        ...initialState.browser,
+        keyDetailsSizes: state.browser.keyDetailsSizes
+      },
       contextInstanceId: state.contextInstanceId
     }),
     // set connected instance
@@ -63,8 +75,11 @@ const appContextSlice = createSlice({
     setBrowserSelectedKey: (state, { payload }: { payload: Nullable<RedisResponseBuffer> }) => {
       state.browser.keyList.selectedKey = payload
     },
-    setBrowserKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
-      state.browser.keyList.isDataLoaded = payload
+    setBrowserPatternKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
+      state.browser.keyList.isDataPatternLoaded = payload
+    },
+    setBrowserRedisearchKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
+      state.browser.keyList.isDataRedisearchLoaded = payload
     },
     setBrowserPatternScrollPosition: (state, { payload }: { payload: number }) => {
       state.browser.keyList.scrollPatternTopPosition = payload
@@ -151,6 +166,14 @@ const appContextSlice = createSlice({
     setLastAnalyticsPage: (state, { payload }: { payload: string }) => {
       state.analytics.lastViewedPage = payload
     },
+    updateKeyDetailsSizes: (
+      state,
+      { payload }: { payload: { type: KeyTypes, sizes: RelativeWidthSizes } }
+    ) => {
+      const { type, sizes } = payload
+      state.browser.keyDetailsSizes[type] = sizes
+      localStorageService?.set(BrowserStorageItem.keyDetailSizes, state.browser.keyDetailsSizes)
+    }
   },
 })
 
@@ -158,7 +181,8 @@ const appContextSlice = createSlice({
 export const {
   setAppContextInitialState,
   setAppContextConnectedInstanceId,
-  setBrowserKeyListDataLoaded,
+  setBrowserPatternKeyListDataLoaded,
+  setBrowserRedisearchKeyListDataLoaded,
   setBrowserSelectedKey,
   setBrowserPatternScrollPosition,
   setBrowserRedisearchScrollPosition,
@@ -179,6 +203,7 @@ export const {
   setPubSubFieldsContext,
   setBrowserBulkActionOpen,
   setLastAnalyticsPage,
+  updateKeyDetailsSizes
 } = appContextSlice.actions
 
 // Selectors
@@ -188,6 +213,8 @@ export const appContextBrowser = (state: RootState) =>
   state.app.context.browser
 export const appContextBrowserTree = (state: RootState) =>
   state.app.context.browser.tree
+export const appContextBrowserKeyDetails = (state: RootState) =>
+  state.app.context.browser.keyDetailsSizes
 export const appContextWorkbench = (state: RootState) =>
   state.app.context.workbench
 export const appContextSelectedKey = (state: RootState) =>
@@ -201,3 +228,13 @@ export const appContextAnalytics = (state: RootState) =>
 
 // The reducer
 export default appContextSlice.reducer
+
+// Asynchronous thunk action
+export function setBrowserKeyListDataLoaded(
+  searchMode: SearchMode,
+  value: boolean,
+) {
+  return searchMode === SearchMode.Pattern
+    ? setBrowserPatternKeyListDataLoaded(value)
+    : setBrowserRedisearchKeyListDataLoaded(value)
+}

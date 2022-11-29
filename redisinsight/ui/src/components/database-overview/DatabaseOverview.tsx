@@ -13,7 +13,7 @@ import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight
 import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 
-import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { getResolutionLimits } from './utils/resolutionHelper'
 import { IMetric } from './components/OverviewMetrics'
 import DatabaseListModules from '../database-list-modules/DatabaseListModules'
@@ -23,7 +23,7 @@ import styles from './styles.module.scss'
 interface Props {
   windowDimensions: number
   metrics?: Array<IMetric>
-  modules?: Array<RedisModuleDto>
+  modules?: Array<AdditionalRedisModule>
   isRediStack?: boolean
 }
 

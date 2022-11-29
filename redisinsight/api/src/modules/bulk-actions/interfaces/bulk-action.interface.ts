@@ -1,4 +1,4 @@
-import { BulkActionStatus } from 'src/modules/bulk-actions/contants';
+import { BulkActionStatus } from 'src/modules/bulk-actions/constants';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
 import { Socket } from 'socket.io';
 

@@ -10,7 +10,7 @@ import {
   ClusterConnectionDetailsDto,
   RedisEnterpriseDatabase,
 } from 'apiSrc/modules/redis-enterprise/dto/cluster.dto'
-import { AddRedisEnterpriseDatabaseResponse } from 'apiSrc/modules/instances/dto/redis-enterprise-cluster.dto'
+import { AddRedisEnterpriseDatabaseResponse } from 'apiSrc/modules/redis-enterprise/dto/redis-enterprise-cluster.dto'
 import reducer, {
   initialState,
   loadInstancesRedisCluster,

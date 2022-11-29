@@ -13,6 +13,7 @@ import {
   isStatusSuccessful,
 } from 'uiSrc/utils'
 import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
+import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -61,6 +62,29 @@ const workbenchResultsSlice = createSlice({
         }
         return item
       })
+    },
+
+    processWBCommandsFailure: (state, { payload }: { payload: { commandsId: string[], error: string } }) => {
+      state.items = [...state.items].map((item) => {
+        let newItem = item
+        payload.commandsId.forEach(() => {
+          if (payload.commandsId.indexOf(item?.id as string) !== -1) {
+            newItem = {
+              ...item,
+              result: [{
+                response: payload.error,
+                status: CommandExecutionStatus.Fail,
+              }],
+              loading: false,
+              isOpen: true,
+              error: '',
+            }
+          }
+        })
+        return newItem
+      })
+      state.loading = false
+      state.processing = false
     },
 
     processWBCommandFailure: (state, { payload }: { payload: { id: string, error: string } }) => {
@@ -155,6 +179,7 @@ export const {
   processWBCommand,
   fetchWBCommandSuccess,
   processWBCommandFailure,
+  processWBCommandsFailure,
   sendWBCommand,
   sendWBCommandSuccess,
   toggleOpenWBResult,
@@ -242,7 +267,10 @@ export function sendWBCommandAction({
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      dispatch(processWBCommandFailure({ id: commandId, error: errorMessage }))
+      dispatch(processWBCommandsFailure({
+        commandsId: commands.map((_, i) => commandId + i),
+        error: errorMessage
+      }))
       onFailAction?.()
     }
   }
@@ -300,7 +328,10 @@ export function sendWBCommandClusterAction({
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      dispatch(processWBCommandFailure({ id: commandId, error: errorMessage }))
+      dispatch(processWBCommandsFailure({
+        commandsId: commands.map((_, i) => commandId + i),
+        error: errorMessage
+      }))
       onFailAction?.()
     }
   }

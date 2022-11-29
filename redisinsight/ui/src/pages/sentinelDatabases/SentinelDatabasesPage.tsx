@@ -26,7 +26,7 @@ import {
 } from 'uiSrc/slices/interfaces'
 import { InputFieldSentinel } from 'uiSrc/components'
 import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/InputFieldSentinel'
-import { AddSentinelMasterDto } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
+import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 
 import SentinelDatabases from './components'
 
@@ -68,7 +68,7 @@ const SentinelDatabasesPage = () => {
 
   const handleAddInstances = (databases: ModifiedSentinelMaster[]) => {
     const pikedDatabases = map(databases, (i) => {
-      const database: AddSentinelMasterDto = {
+      const database: CreateSentinelDatabaseDto = {
         name: i.name,
         alias: i.alias || i.name,
       }

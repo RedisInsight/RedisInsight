@@ -46,6 +46,10 @@ const TopNamespace = (props: Props) => {
     history.push(Pages.browser(instanceId))
   }
 
+  if (!data?.topMemoryNsp || data?.totalKeys?.total === 0) {
+    return null
+  }
+
   if (!data?.topMemoryNsp?.length && !data?.topKeysNsp?.length) {
     return (
       <div className={cx('section', styles.wrapper)} data-testid="top-namespaces-empty">

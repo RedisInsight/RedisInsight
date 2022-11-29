@@ -18,7 +18,7 @@ export class TimeoutInterceptor implements NestInterceptor {
 
   private readonly message: string;
 
-  constructor(message?: string) {
+  constructor(message: string = 'Request timeout') {
     this.message = message;
   }
 

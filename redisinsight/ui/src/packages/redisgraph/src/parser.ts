@@ -71,7 +71,7 @@ function responseParser(data: any): IResponseParser {
       if (Array.isArray(item)) {
         if (item[0][0] === 'id' && item[1][0] === 'labels') {
           const node: INode = {
-            id: item[0][1].toString(),
+            id: item[0][1],
             labels: item[1][1],
             properties: {}
           }
@@ -81,15 +81,15 @@ function responseParser(data: any): IResponseParser {
             const v = resolveProps(x)
             node['properties'][v.key] = v.value
           })
-          if (nodes.findIndex((e: INode) => e.id === item[0][1].toString()) === -1) {
+          if (nodes.findIndex((e: INode) => e.id === item[0][1]) === -1) {
             nodes.push(node)
           }
         } else if (item[0][0] === 'id' && item[1][0] === 'type') {
           const edge: IEdge = {
-            id: item[0][1].toString(),
+            id: item[0][1],
             type: item[1][1],
-            source: item[2][1].toString(),
-            target: item[3][1].toString(),
+            source: item[2][1],
+            target: item[3][1],
             properties: {}
           }
           types[item[1][1]] = (types[item[1][1]] + 1) || 1
@@ -155,7 +155,7 @@ function ResultsParser(data: any[][]) : {headers: any[], results: any[] }{
       if (Array.isArray(entity)) {
         if (entity[0][0] === 'id') {
           const item: any = {
-            id: entity[0][1].toString(),
+            id: entity[0][1],
             properties: {}
           }
           let propValues = []
@@ -164,8 +164,8 @@ function ResultsParser(data: any[][]) : {headers: any[], results: any[] }{
             propValues = entity[2][1]
           } else if (entity[1][0] === 'type') {
             item.type = entity[1][1]
-            item.source = entity[2][1].toString()
-            item.target = entity[3][1].toString()
+            item.source = entity[2][1]
+            item.target = entity[3][1]
             propValues = entity[4][1]
           }
           propValues.map((x: any) => {

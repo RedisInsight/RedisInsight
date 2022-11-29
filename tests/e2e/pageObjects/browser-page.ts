@@ -125,7 +125,7 @@ export class BrowserPage {
     removeFromHeadSelection = Selector('#HEAD');
     selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
-    filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]');
+    filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]', { timeout: 500 });
     filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
     consumerOption = Selector('[data-testid=consumer-option]');
     claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
@@ -997,8 +997,7 @@ export class BrowserPage {
             const regExp = new RegExp(`${i} 00` + '.');
             await t
                 .expect(scannedValueText).match(regExp, `The database is not automatically scanned by ${i} 000 keys`)
-                .doubleClick(this.scanMoreButton)
-                .expect(this.progressKeyList.exists).ok('Progress Bar is not displayed');
+                .click(this.scanMoreButton);
             const scannedResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
             await t.expect(scannedResults).gt(rememberedScanResults);
         }

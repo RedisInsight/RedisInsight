@@ -239,7 +239,7 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
       graphData: graphData,
       infoPanel: true,
       // nodeRadius: 25,
-      onLabelNode: (node) => node.properties?.name || node.properties?.title || node.id || (node.labels ? node.labels[0] : ''),
+      onLabelNode: (node) => node.properties?.name || node.properties?.title || node.id.toString() || (node.labels ? node.labels[0] : ''),
       onNodeClick: (nodeSvg, node, event) => {
         if (d3.select(nodeSvg).attr('class').indexOf('selected') > 0) {
           d3.select(nodeSvg)
@@ -378,9 +378,12 @@ export default function Graph(props: { graphKey: string, data: any[] }) {
             </div>
             <div className="info-props">
               {
-                Object.keys(selectedEntity.props).map(k => [k, selectedEntity.props[k]]).reduce(
-                  (a, b) => a.concat(b), []
-                ).map(k => <div>{k}</div>)
+                Object.keys(selectedEntity.props).map(k => (
+                    <>
+                      <div>{k}</div>
+                      <div>{JSON.stringify(selectedEntity.props[k])}</div>
+                    </>
+                  ))
               }
             </div>
           </div>

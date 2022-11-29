@@ -222,6 +222,7 @@ describe('RedisearchService', () => {
         cursor: mockSearchRedisearchDto.limit + mockSearchRedisearchDto.offset,
         scanned: 2,
         total: 100,
+        maxResults: null,
         keys: [{
           name: keyName1,
         }, {
@@ -229,7 +230,7 @@ describe('RedisearchService', () => {
         }],
       });
 
-      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(2);
       expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
         name: 'FT.SEARCH',
         args: [
@@ -237,6 +238,13 @@ describe('RedisearchService', () => {
           mockSearchRedisearchDto.query,
           'NOCONTENT',
           'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'FT.CONFIG',
+        args: [
+          'GET',
+          'MAXSEARCHRESULTS',
         ],
       }));
     });
@@ -252,13 +260,14 @@ describe('RedisearchService', () => {
         cursor: mockSearchRedisearchDto.limit + mockSearchRedisearchDto.offset,
         scanned: 2,
         total: 100,
+        maxResults: null,
         keys: [
           { name: keyName1 },
           { name: keyName2 },
         ],
       });
 
-      expect(clusterClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(clusterClient.sendCommand).toHaveBeenCalledTimes(2);
       expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
         name: 'FT.SEARCH',
         args: [
@@ -266,6 +275,13 @@ describe('RedisearchService', () => {
           mockSearchRedisearchDto.query,
           'NOCONTENT',
           'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'FT.CONFIG',
+        args: [
+          'GET',
+          'MAXSEARCHRESULTS',
         ],
       }));
     });

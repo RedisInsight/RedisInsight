@@ -6,7 +6,8 @@ import {
   DeleteBulkActionSimpleRunner,
 } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/contants';
+import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
+import * as Utils from 'src/modules/database/utils/database.total.util';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
 
 const mockExec = jest.fn();
@@ -35,8 +36,6 @@ const mockZeroCursorBuffer = Buffer.from('0');
 const mockRESPError = 'Reply Error: NOPERM for delete.';
 const mockRESPErrorBuffer = Buffer.from(mockRESPError);
 
-const mockRedisKeyspaceInfoResponse: string = '# keyspace\r\ndb1:keys=100,expires=0,avg_ttl=0\r\n';
-
 describe('AbstractBulkActionSimpleRunner', () => {
   let deleteRunner: DeleteBulkActionSimpleRunner;
 
@@ -56,7 +55,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
   describe('prepareToStart', () => {
     it('should get total before start', async () => {
-      nodeClient.sendCommand.mockResolvedValueOnce(mockRedisKeyspaceInfoResponse);
+      jest.spyOn(Utils, 'getTotal').mockResolvedValue(100);
 
       expect(deleteRunner['progress']['total']).toEqual(0);
       expect(deleteRunner['progress']['scanned']).toEqual(0);

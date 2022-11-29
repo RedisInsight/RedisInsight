@@ -37,7 +37,7 @@ export const renderBadges = (badges: string[]) => (
 export const parseContent = ({ type, value }: { type: string, value: any }) => {
   switch (type) {
     case 'paragraph':
-      return <EuiTextColor className={styles.text} color="subdued">{value}</EuiTextColor>
+      return <EuiTextColor component="div" className={styles.text} color="subdued">{value}</EuiTextColor>
     case 'span':
       return <EuiTextColor color="subdued" className={cx(styles.span, styles.text)}>{value}</EuiTextColor>
     case 'link':

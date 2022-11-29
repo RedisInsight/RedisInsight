@@ -58,5 +58,100 @@
       }
     ],
     "badges": ["code_changes", "configuration_changes"]
+  },
+  "avoidLogicalDatabases": {
+    "id": "avoidLogicalDatabases",
+    "title": "Avoid using logical databases",
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Redis supports multiple logical databases within an instance, though these logical databases are neither independent nor isolated in any other way and can freeze each other."
+      },
+      {
+        "id": "2",
+        "type": "span",
+        "value": "Also, they are not supported by any clustering system (open source or Redis Enterprise clustering), and some modules do not support numbered databases as well. "
+      },
+      {
+        "id": "3",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["code_changes"]
+  },
+  "combineSmallStringsToHashes": {
+    "id": "combineSmallStringsToHashes",
+    "title": "Combine small strings to hashes",
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Strings data type has an overhead of about 90 bytes on a 64-bit machine, so if there is no need for different expiration values for these keys, combine small strings into a larger hash to optimize the memory usage."
+      },
+      {
+        "id": "2",
+        "type": "paragraph",
+        "value": "Also, ensure that the hash has less than hash-max-ziplist-entries elements and the size of each element is within hash-max-ziplist-values bytes."
+      },
+      {
+        "id": "3",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "4",
+        "type": "span",
+        "value": "Though this approach should not be used if you need different expiration values for String keys. "
+      },
+      {
+        "id": "5",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["code_changes"]
+  },
+  "increaseSetMaxIntsetEntries": {
+    "id": "increaseSetMaxIntsetEntries",
+    "title": "Increase the set-max-intset-entries",
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Several set values with IntSet encoding exceed the set-max-intset-entries. Change the configuration in reds.conf to efficiently use the IntSet encoding." 
+      },
+      {
+        "id": "2",
+        "type": "paragraph",
+        "value": "Though increasing this value will lead to an increase in latency of set operations and CPU utilization."
+      },
+      {
+        "id": "3",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "4",
+        "type": "span",
+        "value": "Run `INFO COMMANDSTATS` before and after making this change to verify the latency numbers. "
+      },
+      {
+        "id": "5",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["configuration_changes"]
   }
 }

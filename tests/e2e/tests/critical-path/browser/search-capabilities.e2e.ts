@@ -301,8 +301,6 @@ test
 
         await browserPage.changeDelimiterInTreeView('-'); // change delimiter in tree view to be able to verify keys easily
 
-        await t.debug()
-
         await t.eval(() => location.reload()); // replace with existing
 
         await t.click(browserPage.redisearchModeBtn); // click redisearch button

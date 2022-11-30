@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
-import { setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
+import { resetBrowserTree, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
 import { localStorageService } from 'uiSrc/services'
 import {
   cleanup,
@@ -104,6 +104,7 @@ describe('KeyTreeDelimiter', () => {
 
     const expectedActions = [
       setBrowserTreeDelimiter(value),
+      resetBrowserTree(),
     ]
 
     expect(clearStoreActions(store.getActions())).toEqual(
@@ -127,6 +128,7 @@ describe('KeyTreeDelimiter', () => {
 
     const expectedActions = [
       setBrowserTreeDelimiter(DEFAULT_DELIMITER),
+      resetBrowserTree(),
     ]
 
     expect(clearStoreActions(store.getActions())).toEqual(

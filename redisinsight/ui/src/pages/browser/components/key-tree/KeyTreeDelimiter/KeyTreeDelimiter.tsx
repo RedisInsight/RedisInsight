@@ -9,7 +9,7 @@ import { localStorageService } from 'uiSrc/services'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
-import { appContextBrowserTree, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
+import { appContextBrowserTree, resetBrowserTree, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
 
 import styles from './styles.module.scss'
 
@@ -62,6 +62,8 @@ const KeyTreeDelimiter = ({ loading }: Props) => {
     })
     closePopover()
     dispatch(setBrowserTreeDelimiter(value || DEFAULT_DELIMITER))
+
+    dispatch(resetBrowserTree())
   }
 
   return (

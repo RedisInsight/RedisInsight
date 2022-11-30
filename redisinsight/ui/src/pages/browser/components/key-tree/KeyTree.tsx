@@ -1,10 +1,12 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState, useTransition } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState, useTransition } from 'react'
 import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
+import { isEmpty } from 'lodash'
 
 import {
   appContextBrowserTree,
+  resetBrowserTree,
   setBrowserTreeNodesOpen,
   setBrowserTreeSelectedLeaf
 } from 'uiSrc/slices/app/context'
@@ -48,7 +50,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
   const [sizes, setSizes] = useState(panelSizes)
   const [keyListState, setKeyListState] = useState<KeysStoreData>(keysState)
   const [constructingTree, setConstructingTree] = useState(false)
-  const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(true)
+  const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(isEmpty(selectedLeaf))
   const [items, setItems] = useState<IKeyPropTypes[]>(keysState.keys ?? [])
 
   const dispatch = useDispatch()
@@ -68,21 +70,22 @@ const KeyTree = forwardRef((props: Props, ref) => {
   }, [openNodes])
 
   useEffect(() => {
-    if (selectedLeaf) {
-      setStatusSelected(selectedLeaf)
-      updateKeysList(Object.values(selectedLeaf)[0])
-    }
+    setStatusSelected(selectedLeaf)
+    updateKeysList(Object.values(selectedLeaf)?.[0])
+
+    setSelectDefaultLeaf(isEmpty(selectedLeaf))
   }, [selectedLeaf])
 
   useEffect(() => {
     setItems(parseKeyNames(keysState.keys))
+
     if (keysState.keys?.length === 0) {
-      dispatch(setBrowserTreeSelectedLeaf({}))
+      updateSelectedKeys()
     }
   }, [keysState.keys])
 
   useEffect(() => {
-    updateSelectedKeys()
+    setItems(parseKeyNames(keysState.keys))
   }, [delimiter, keysState.lastRefreshTime])
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
@@ -92,7 +95,8 @@ const KeyTree = forwardRef((props: Props, ref) => {
 
   // select default leaf "Keys" after each change delimiter, filter or search
   const updateSelectedKeys = () => {
-    setItems(parseKeyNames(keysState.keys))
+    dispatch(resetBrowserTree())
+
     setTimeout(() => {
       startTransition(() => {
         setStatusSelected({})

@@ -156,12 +156,12 @@
   },
   "convertHashtableToZiplist": {
   "id": "convertHashtableToZiplist",
-  "title": "Increase zset-max-ziplist-entries",
+  "title": "Increase hash-max-ziplist-entries",
   "content": [
     {
       "id": "1",
       "type": "span",
-      "value": "If any value for a key exceeds zset-max-ziplist-entries, it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization. "
+      "value": "If any value for a key exceeds hash-max-ziplist-entries, it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization. "
     },
     {
       "id": "2",

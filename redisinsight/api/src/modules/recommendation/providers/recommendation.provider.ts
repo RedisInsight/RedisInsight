@@ -24,7 +24,7 @@ export class RecommendationProvider {
     try {
       const info = convertRedisInfoReplyToObject(
         await redisClient.sendCommand(
-          new Command('info', [], { replyEncoding: 'utf8' }),
+          new Command('info', ['memory'], { replyEncoding: 'utf8' }),
         ) as string,
       );
       const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');

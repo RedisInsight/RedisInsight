@@ -58,4 +58,6 @@ export class MemoryEfficiencyPage {
     combineStringsAccordion = Selector('[data-testid=combineSmallStringsToHashes-accordion]');
     increaseSetAccordion = Selector('[data-testid=increaseSetMaxIntsetEntries-accordion]');
     avoidLogicalDbAccordion = Selector('[data-testid=avoidLogicalDatabases-accordion]');
+    convertHashToZipAccordion = Selector('[data-testid=convertHashtableToZiplist-accordion]');
+    compressHashAccordion = Selector('[data-testid=compressHashFieldNames-accordion]');
 }

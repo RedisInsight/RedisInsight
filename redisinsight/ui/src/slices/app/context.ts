@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
+import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { getTreeLeafField, Nullable } from 'uiSrc/utils'
-import { BrowserStorageItem, DEFAULT_DELIMITER, KeyTypes } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
+import { BrowserStorageItem, DEFAULT_DELIMITER, DEFAULT_SLOWLOG_DURATION_UNIT, KeyTypes } from 'uiSrc/constants'
+import { localStorageService, setDBConfigStorageField } from 'uiSrc/services'
 import { RootState } from '../store'
 import { RedisResponseBuffer, StateAppContext } from '../interfaces'
 import { SearchMode } from '../interfaces/keys'
@@ -10,6 +11,10 @@ import { SearchMode } from '../interfaces/keys'
 export const initialState: StateAppContext = {
   contextInstanceId: '',
   lastPage: '',
+  dbConfig: {
+    treeViewDelimiter: DEFAULT_DELIMITER,
+    slowLogDurationUnit: DEFAULT_SLOWLOG_DURATION_UNIT
+  },
   browser: {
     keyList: {
       isDataPatternLoaded: false,
@@ -72,6 +77,18 @@ const appContextSlice = createSlice({
     setAppContextConnectedInstanceId: (state, { payload }: { payload: string }) => {
       state.contextInstanceId = payload
     },
+    setDbConfig: (state, { payload }) => {
+      state.dbConfig.treeViewDelimiter = payload?.treeViewDelimiter ?? DEFAULT_DELIMITER
+      state.dbConfig.slowLogDurationUnit = payload?.slowLogDurationUnit ?? DEFAULT_SLOWLOG_DURATION_UNIT
+    },
+    setSlowLogUnits: (state, { payload }) => {
+      state.dbConfig.slowLogDurationUnit = payload
+      setDBConfigStorageField(state.contextInstanceId, ConfigDBStorageItem.slowLogDurationUnit, payload)
+    },
+    setBrowserTreeDelimiter: (state, { payload }: { payload: string }) => {
+      state.dbConfig.treeViewDelimiter = payload
+      setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.treeViewDelimiter, payload)
+    },
     setBrowserSelectedKey: (state, { payload }: { payload: Nullable<RedisResponseBuffer> }) => {
       state.browser.keyList.selectedKey = payload
     },
@@ -125,10 +142,6 @@ const appContextSlice = createSlice({
     setBrowserTreePanelSizes: (state, { payload }: { payload: any }) => {
       state.browser.tree.panelSizes = payload
     },
-    setBrowserTreeDelimiter: (state, { payload }: { payload: string }) => {
-      localStorageService.set(BrowserStorageItem.treeViewDelimiter + state.contextInstanceId, payload)
-      state.browser.tree.delimiter = payload
-    },
     setWorkbenchScript: (state, { payload }: { payload: string }) => {
       state.workbench.script = payload
     },
@@ -181,6 +194,8 @@ const appContextSlice = createSlice({
 export const {
   setAppContextInitialState,
   setAppContextConnectedInstanceId,
+  setDbConfig,
+  setSlowLogUnits,
   setBrowserPatternKeyListDataLoaded,
   setBrowserRedisearchKeyListDataLoaded,
   setBrowserSelectedKey,
@@ -209,6 +224,8 @@ export const {
 // Selectors
 export const appContextSelector = (state: RootState) =>
   state.app.context
+export const appContextDbConfig = (state: RootState) =>
+  state.app.context.dbConfig
 export const appContextBrowser = (state: RootState) =>
   state.app.context.browser
 export const appContextBrowserTree = (state: RootState) =>

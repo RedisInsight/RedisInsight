@@ -25,6 +25,7 @@ export * from './pubSubUtils'
 export * from './formatters'
 export * from './groupTypes'
 export * from './modules'
+export * from './optimizations'
 
 export {
   Maybe,

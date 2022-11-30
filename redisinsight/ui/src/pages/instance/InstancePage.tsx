@@ -15,6 +15,7 @@ import {
   appContextSelector,
   setAppContextConnectedInstanceId,
   setAppContextInitialState,
+  setDbConfig,
 } from 'uiSrc/slices/app/context'
 import { resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { BrowserStorageItem } from 'uiSrc/constants'
@@ -78,6 +79,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     }
 
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
+    dispatch(setDbConfig(localStorageService.get(BrowserStorageItem.dbConfig + connectionInstanceId)))
   }, [])
 
   useEffect(() => () => {

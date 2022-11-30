@@ -55,4 +55,7 @@ export class MemoryEfficiencyPage {
     luaScriptTextContainer = Selector('#luaScript');
     useSmallKeysAccordion = Selector('[data-testid=useSmallerKeys-accordion]');
     bigHashesAccordion = Selector('[data-testid=bigHashes-accordion]');
+    combineStringsAccordion = Selector('[data-testid=combineSmallStringsToHashes-accordion]');
+    increaseSetAccordion = Selector('[data-testid=increaseSetMaxIntsetEntries-accordion]');
+    avoidLogicalDbAccordion = Selector('[data-testid=avoidLogicalDatabases-accordion]');
 }

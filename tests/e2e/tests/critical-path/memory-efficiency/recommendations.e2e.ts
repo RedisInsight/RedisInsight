@@ -5,7 +5,7 @@ import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../..
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { CliActions } from '../../../common-actions/cli-actions';
 import { Common } from '../../../helpers/common';
-import { populateHashWithFields } from '../../../helpers/keys';
+import { populateHashWithFields, populateSetWithMembers, populateZSetWithMembers } from '../../../helpers/keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -16,10 +16,15 @@ const cliPage = new CliPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 
 const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
-const keyName = `hugeHashKey-${common.generateWord(10)}`;
-const stringKeyName = `smallStringKey-${common.generateWord(10)}`;
-const stringBigKeyName = `bigStringKey-${common.generateWord(10)}`;
+const keyName = `hugeHashKey-${common.generateWord(5)}`;
+const stringKeyName = `smallStringKey-${common.generateWord(5)}`;
+const setKeyName = `hugeSetKey-${common.generateWord(4)}`;
+const stringBigKeyName = `bigStringKey-${common.generateWord(5)}`;
 const index = '1';
+// const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port };
+const dbParameters = { host: 'localhost', port: '8100' };
+const setKeyParameters = { membersCount: 512, keyName: setKeyName, memberStartWith: 'setMember' };
+const zsetKeyParameters = { membersCount: 128, keyName: setKeyName, memberStartWith: 'zsetMember' };
 
 fixture `Memory Efficiency Recommendations`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -103,34 +108,9 @@ test
         await t.expect(memoryEfficiencyPage.codeChangesLabel.exists).ok('Big hashes recommendation not have Code Changes label');
         await t.expect(memoryEfficiencyPage.configurationChangesLabel.exists).ok('Big hashes recommendation not have Configuration Changes label');
     });
-    test
-    .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await browserPage.addStringKey(stringKeyName, '2147476121', 'field');
-        // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
-        await t.click(memoryEfficiencyPage.newReportBtn);
-        // Go to Recommendations tab
-        await t.click(memoryEfficiencyPage.recommendationsTab);
-    })
-    .after(async t => {
-        // Clear and delete database
-        await t.click(myRedisDatabasePage.browserButton);
-        await browserPage.deleteKeysByNames([stringKeyName, stringBigKeyName]);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })('Combine small strings to hashes recommendation', async t => {
-        const command = `SET ${stringBigKeyName} "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed accumsan lectus sed diam suscipit, eu ullamcorper ligula pulvinar."`;
-        
-        // Verify that user can see Combine small strings to hashes recommendation when there are strings that are less than 200 bytes
-        await t.expect(memoryEfficiencyPage.bigHashesAccordion.exists).ok('Combine small strings to hashes recommendation not displayed');
-        await t.expect(memoryEfficiencyPage.codeChangesLabel.exists).ok('Combine small strings to hashes recommendation not have Code Changes label');
 
-        // Add String key with more than 200 bytes
-        await cliPage.sendCommandInCli(command);
-        await t.click(memoryEfficiencyPage.newReportBtn);
-        // Verify that user can not see recommendation when there is at least one string that are more than 200 bytes
-        await t.expect(memoryEfficiencyPage.bigHashesAccordion.exists).notOk('Combine small strings to hashes recommendation not displayed');
-    });
+
+
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -144,12 +124,54 @@ test
     .after(async t => {
         // Clear and delete database
         await t.click(myRedisDatabasePage.browserButton);
-        await browserPage.deleteKeyByName(stringKeyName);
+        await browserPage.deleteKeyByName(stringBigKeyName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Combine small strings to hashes recommendation', async t => {
+        const command = `SET ${stringBigKeyName} "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed accumsan lectus sed diam suscipit, eu ullamcorper ligula pulvinar."`;
+        
+        // Verify that user can see Combine small strings to hashes recommendation when there are strings that are less than 200 bytes
+        await t.expect(memoryEfficiencyPage.combineStringsAccordion.exists).ok('Combine small strings to hashes recommendation not displayed for small string');
+        await t.expect(memoryEfficiencyPage.codeChangesLabel.exists).ok('Combine small strings to hashes recommendation not have Code Changes label');
+
+        // Add String key with more than 200 bytes
+        await cliPage.sendCommandInCli(command);
+        // Delete small String key
+        await cliPage.sendCommandInCli(`DEL ${stringKeyName}`);
+
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        // Verify that user can not see recommendation when there is at least one string that are more than 200 bytes
+        await t.expect(memoryEfficiencyPage.combineStringsAccordion.exists).notOk('Combine small strings to hashes recommendation is displayed for huge string');
+    });
+test
+    .before(async t => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await browserPage.addSetKey(setKeyName, '2147476121', 'member');
+        // Add 512 members to the set key
+        await populateSetWithMembers(dbParameters.host, dbParameters.port, setKeyParameters);
+        // Go to Analysis Tools page
+        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        // Go to Recommendations tab
+        await t.click(memoryEfficiencyPage.recommendationsTab);
+    })
+    .after(async t => {
+        // Clear and delete database
+        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.deleteKeyByName(setKeyName);
+        await cliPage.sendCommandInCli('config set set-max-intset-entries 512');
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Increase the set-max-intset-entries recommendation', async t => {
+        const command = 'config set set-max-intset-entries 1024';
+
         // Verify that user can see Increase the set-max-intset-entries recommendation when Found sets with length > set-max-intset-entries
-        await t.expect(memoryEfficiencyPage.bigHashesAccordion.exists).ok('Combine small strings to hashes recommendation not displayed');
-        await t.expect(memoryEfficiencyPage.configurationChangesLabel.exists).ok('Combine small strings to hashes recommendation not have Configuration Changes label');
+        await t.expect(memoryEfficiencyPage.increaseSetAccordion.exists).ok('Increase the set-max-intset-entries recommendation not displayed');
+        await t.expect(memoryEfficiencyPage.configurationChangesLabel.exists).ok('Increase the set-max-intset-entries recommendation not have Configuration Changes label');
+
+        // Change config max entries to 1024
+        await cliPage.sendCommandInCli(command);
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        // Verify that user can not see Increase the set-max-intset-entries recommendation when Found sets with length < set-max-intset-entries
+        await t.expect(memoryEfficiencyPage.increaseSetAccordion.exists).notOk('Increase the set-max-intset-entries recommendation is displayed');
     });
 test
     .before(async t => {
@@ -174,8 +196,38 @@ test
         await browserPage.deleteKeyByName(stringKeyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Avoid using logical databases', async t => {
-
         // Verify that user can see Avoid using logical databases recommendation when the database supports logical databases and there are keys in more than 1 logical database
-        await t.expect(memoryEfficiencyPage.bigHashesAccordion.exists).ok('Avoid using logical databases recommendation not displayed');
+        await t.expect(memoryEfficiencyPage.avoidLogicalDbAccordion.exists).ok('Avoid using logical databases recommendation not displayed');
         await t.expect(memoryEfficiencyPage.codeChangesLabel.exists).ok('Avoid using logical databases recommendation not have Code Changes label');
+    });
+test.only
+    .before(async t => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await browserPage.addZSetKey(setKeyName, '2147476121', 'member');
+        // Add 128 members to the zset key
+        await populateZSetWithMembers(dbParameters.host, dbParameters.port, zsetKeyParameters);
+        // Go to Analysis Tools page
+        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        // Go to Recommendations tab
+        await t.click(memoryEfficiencyPage.recommendationsTab);
+    })
+    .after(async t => {
+        // Clear and delete database
+        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.deleteKeyByName(setKeyName);
+        await cliPage.sendCommandInCli('config set zset-max-ziplist-entries 128');
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Convert hashtable to ziplist for hashes recommendation', async t => {
+        const command = 'config set zset-max-ziplist-entries 256';
+
+        // Verify that user can see Convert hashtable to ziplist for hashes recommendation when the number of hash entries exceeds hash-max-ziplist-entries
+        await t.expect(memoryEfficiencyPage.increaseSetAccordion.exists).ok('Increase the set-max-intset-entries recommendation not displayed');
+        await t.expect(memoryEfficiencyPage.configurationChangesLabel.exists).ok('Increase the set-max-intset-entries recommendation not have Configuration Changes label');
+
+         // Change config max entries to 256
+         await cliPage.sendCommandInCli(command);
+         await t.click(memoryEfficiencyPage.newReportBtn);
+         // Verify that user can not see Convert hashtable to ziplist for hashes recommendation when the number of hash entries not exceeds hash-max-ziplist-entries
+         await t.expect(memoryEfficiencyPage.increaseSetAccordion.exists).notOk('Increase the set-max-intset-entries recommendation is displayed');
     });

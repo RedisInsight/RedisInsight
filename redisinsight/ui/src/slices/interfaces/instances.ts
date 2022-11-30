@@ -26,7 +26,7 @@ export interface Instance extends DatabaseInstanceResponse {
   password?: Nullable<string>
   username?: Nullable<string>
   name?: string
-  db?: string
+  db?: number
   tls?: boolean
   tlsClientAuthRequired?: boolean
   verifyServerCert?: boolean

@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash'
 import {
   appContextBrowserTree,
   resetBrowserTree,
+  appContextDbConfig,
   setBrowserTreeNodesOpen,
   setBrowserTreeSelectedLeaf
 } from 'uiSrc/slices/app/context'
@@ -41,7 +42,8 @@ const KeyTree = forwardRef((props: Props, ref) => {
   const firstPanelId = 'tree'
   const secondPanelId = 'keys'
 
-  const { delimiter, panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
+  const { panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
+  const { treeViewDelimiter: delimiter = '' } = useSelector(appContextDbConfig)
 
   const [,startTransition] = useTransition()
 

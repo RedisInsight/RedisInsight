@@ -33,13 +33,16 @@ export class RecommendationService {
       total,
     } = dto;
 
-    return ([
-      await this.recommendationProvider.determineLuaScriptRecommendation(client),
-      await this.recommendationProvider.determineBigHashesRecommendation(keys),
-      await this.recommendationProvider.determineBigTotalRecommendation(total),
-      await this.recommendationProvider.determineLogicalDatabasesRecommendation(client),
-      await this.recommendationProvider.determineCombineSmallStringsToHashesRecommendation(keys),
-      await this.recommendationProvider.determineIncreaseSetMaxIntsetEntriesRecommendation(client, keys),
-    ]);
+    return (
+      Promise.all([
+        await this.recommendationProvider.determineLuaScriptRecommendation(client),
+        await this.recommendationProvider.determineBigHashesRecommendation(keys),
+        await this.recommendationProvider.determineBigTotalRecommendation(total),
+        await this.recommendationProvider.determineLogicalDatabasesRecommendation(client),
+        await this.recommendationProvider.determineCombineSmallStringsToHashesRecommendation(keys),
+        await this.recommendationProvider.determineIncreaseSetMaxIntsetEntriesRecommendation(client, keys),
+        await this.recommendationProvider.determineConvertHashtableToZiplistRecommendation(client, keys),
+        await this.recommendationProvider.determineCompressHashFieldNamesRecommendation(keys),
+      ]));
   }
 }

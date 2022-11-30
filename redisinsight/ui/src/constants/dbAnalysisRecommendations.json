@@ -153,5 +153,45 @@
       }
     ],
     "badges": ["configuration_changes"]
+  },
+  "convertHashtableToZiplist": {
+  "id": "convertHashtableToZiplist",
+  "title": "Increase zset-max-ziplist-entries",
+  "content": [
+    {
+      "id": "1",
+      "type": "span",
+      "value": "If any value for a key exceeds zset-max-ziplist-entries, it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization. "
+    },
+    {
+      "id": "2",
+      "type": "link",
+      "value": {
+        "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+        "name": "Read more"
+      }
+    }
+  ],
+  "badges": ["configuration_changes"]
+},
+  "compressHashFieldNames": {
+    "id": "compressHashFieldNames",
+    "title": "Compress Hash field names",
+    "content": [
+      {
+        "id": "1",
+        "type": "span",
+        "value": "Hash field name also consumes memory, so use smaller or shortened field names to reduce memory usage. "
+      },
+      {
+        "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["configuration_changes"]
   }
 }

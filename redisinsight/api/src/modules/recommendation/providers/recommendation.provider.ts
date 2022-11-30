@@ -8,8 +8,9 @@ import { Key } from 'src/modules/database-analysis/models';
 
 const minNumberOfCachedScripts = 10;
 const maxHashLength = 5000;
-const maxStringLength = 200;
+const maxStringMemory = 200;
 const maxDatabaseTotal = 1_000_000;
+const maxCompressHashLength = 1000;
 
 @Injectable()
 export class RecommendationProvider {
@@ -20,16 +21,20 @@ export class RecommendationProvider {
   async determineLuaScriptRecommendation(
     redisClient: Redis,
   ): Promise<Recommendation> {
-    const info = convertRedisInfoReplyToObject(
-      await redisClient.sendCommand(
-        new Command('info', [], { replyEncoding: 'utf8' }),
-      ) as string,
-    );
-    const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
+    try {
+      const info = convertRedisInfoReplyToObject(
+        await redisClient.sendCommand(
+          new Command('info', [], { replyEncoding: 'utf8' }),
+        ) as string,
+      );
+      const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
 
-    return parseInt(nodesNumbersOfCachedScripts, 10) > minNumberOfCachedScripts
-      ? { name: 'luaScript' }
-      : null;
+      return parseInt(nodesNumbersOfCachedScripts, 10) > minNumberOfCachedScripts
+        ? { name: 'luaScript' }
+        : null;
+    } catch (err) {
+      return null;
+    }
   }
 
   /**
@@ -63,15 +68,21 @@ export class RecommendationProvider {
     if (redisClient.isCluster) {
       return null;
     }
-    const info = convertRedisInfoReplyToObject(
-      await redisClient.info(),
-    );
-    const keyspace = get(info, 'keyspace', {});
-    const databasesWithKeys = Object.values(keyspace).filter((db) => {
-      const { keys } = convertBulkStringsToObject(db as string, ',', '=');
-      return keys > 0;
-    });
-    return databasesWithKeys.length > 1 ? { name: 'avoidLogicalDatabases' } : null;
+    try {
+      const info = convertRedisInfoReplyToObject(
+        await redisClient.sendCommand(
+          new Command('info', ['keyspace'], { replyEncoding: 'utf8' }),
+        ) as string,
+      );
+      const keyspace = get(info, 'keyspace', {});
+      const databasesWithKeys = Object.values(keyspace).filter((db) => {
+        const { keys } = convertBulkStringsToObject(db as string, ',', '=');
+        return keys > 0;
+      });
+      return databasesWithKeys.length > 1 ? { name: 'avoidLogicalDatabases' } : null;
+    } catch (err) {
+      return null;
+    }
   }
 
   /**
@@ -81,7 +92,7 @@ export class RecommendationProvider {
   async determineCombineSmallStringsToHashesRecommendation(
     keys: Key[],
   ): Promise<Recommendation> {
-    const smallString = keys.some((key) => key.type === RedisDataType.String && key.memory < maxStringLength);
+    const smallString = keys.some((key) => key.type === RedisDataType.String && key.memory < maxStringMemory);
     return smallString ? { name: 'combineSmallStringsToHashes' } : null;
   }
 
@@ -94,17 +105,55 @@ export class RecommendationProvider {
     redisClient: Redis | Cluster,
     keys: Key[],
   ): Promise<Recommendation> {
-    const [, setMaxIntsetEntries] = await redisClient.sendCommand(
-      new Command('config', ['get', 'set-max-intset-entries'], {
-        replyEncoding: 'utf8',
-      }),
-    ) as string[];
+    try {
+      const [, setMaxIntsetEntries] = await redisClient.sendCommand(
+        new Command('config', ['get', 'set-max-intset-entries'], {
+          replyEncoding: 'utf8',
+        }),
+      ) as string[];
 
-    if (!setMaxIntsetEntries) {
+      if (!setMaxIntsetEntries) {
+        return null;
+      }
+      const setMaxIntsetEntriesNumber = parseInt(setMaxIntsetEntries, 10);
+      const bigSet = keys.some((key) => key.type === RedisDataType.Set && key.length > setMaxIntsetEntriesNumber);
+      return bigSet ? { name: 'increaseSetMaxIntsetEntries' } : null;
+    } catch (err) {
       return null;
     }
+  }
+  /**
+   * Check convert hashtable to ziplist recommendation
+   * @param keys
+   * @param redisClient
+   */
 
-    const bigSet = keys.some((key) => key.type === RedisDataType.Set && key.length > parseInt(setMaxIntsetEntries, 10));
-    return bigSet ? { name: 'increaseSetMaxIntsetEntries' } : null;
+  async determineConvertHashtableToZiplistRecommendation(
+    redisClient: Redis | Cluster,
+    keys: Key[],
+  ): Promise<Recommendation> {
+    try {
+      const [, hashMaxZiplistEntries] = await redisClient.sendCommand(
+        new Command('config', ['get', 'hash-max-ziplist-entries'], {
+          replyEncoding: 'utf8',
+        }),
+      ) as string[];
+      const hashMaxZiplistEntriesNumber = parseInt(hashMaxZiplistEntries, 10);
+      const bigHash = keys.some((key) => key.type === RedisDataType.Hash && key.length > hashMaxZiplistEntriesNumber);
+      return bigHash ? { name: 'convertHashtableToZiplist' } : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  /**
+   * Check compress hash field names recommendation
+   * @param keys
+   */
+  async determineCompressHashFieldNamesRecommendation(
+    keys: Key[],
+  ): Promise<Recommendation> {
+    const bigHash = keys.some((key) => key.type === RedisDataType.Hash && key.length > maxCompressHashLength);
+    return bigHash ? { name: 'compressHashFieldNames' } : null;
   }
 }

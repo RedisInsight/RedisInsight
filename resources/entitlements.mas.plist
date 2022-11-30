@@ -24,5 +24,20 @@
     <string>UUK47G4BAZ.org.RedisLabs.RedisInsight-V2</string>
     <key>com.apple.developer.team-identifier</key>
     <string>UUK47G4BAZ</string>
+    <key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
+    <array>
+      <string>~/.redisinsight-v2/</string>
+      <string>/Library/Application Support/Mozilla/NativeMessagingHosts/</string>
+      <string>/Library/Application Support/Google/Chrome/NativeMessagingHosts/</string>
+      <string>/Library/Application Support/Google/Chrome Beta/NativeMessagingHosts/</string>
+      <string>/Library/Application Support/Google/Chrome Dev/NativeMessagingHosts/</string>
+      <string>/Library/Application Support/Google/Chrome Canary/NativeMessagingHosts/</string>
+      <string>/Library/Application Support/Chromium/NativeMessagingHosts/</string>
+      <string>/Library/Application Support/Microsoft Edge/NativeMessagingHosts/</string>
+      <string>/Library/Application Support/Microsoft Edge Beta/NativeMessagingHosts/</string>
+      <string>/Library/Application Support/Microsoft Edge Dev/NativeMessagingHosts/</string>
+      <string>/Library/Application Support/Microsoft Edge Canary/NativeMessagingHosts/</string>
+      <string>/Library/Application Support/Vivaldi/NativeMessagingHosts/</string>
+    </array>
   </dict>
 </plist>

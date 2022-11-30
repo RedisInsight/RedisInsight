@@ -32,7 +32,7 @@
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "bundleVersion": "0.0.5",
+    "bundleVersion": "0.0.6",
     "icon": "resources/icon.icns",
     "mergeASARs": false,
     "artifactName": "${productName}-${os}-${arch}.${ext}",
@@ -45,8 +45,10 @@
     "entitlements": "resources/entitlements.mas.plist",
     "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
     "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
-    "hardenedRuntime": true,
-    "asarUnpack": ["node_modules"],
+    "hardenedRuntime": false,
+    "extendInfo": {
+      "LSMinimumSystemVersion": "10.14.0"
+    },
     "artifactName": "${productName}-${os}-${arch}-mas.${ext}"
   },
   "masDev": {

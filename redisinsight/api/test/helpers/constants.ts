@@ -466,6 +466,12 @@ export const constants = {
   TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION: {
     name: 'combineSmallStringsToHashes',
   },
+  TEST_CONVERT_HASHTABLE_TO_ZIPLIST_RECOMMENDATION: {
+    name: 'convertHashtableToZiplist',
+  },
+  TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION: {
+    name: 'compressHashFieldNames',
+  },
 
   // etc...
 }

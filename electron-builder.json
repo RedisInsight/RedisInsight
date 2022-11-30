@@ -32,7 +32,7 @@
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "bundleVersion": "0.0.6",
+    "bundleVersion": "0.0.7",
     "icon": "resources/icon.icns",
     "mergeASARs": false,
     "artifactName": "${productName}-${os}-${arch}.${ext}",

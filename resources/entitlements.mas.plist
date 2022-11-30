@@ -24,6 +24,8 @@
     <string>UUK47G4BAZ.org.RedisLabs.RedisInsight-V2</string>
     <key>com.apple.developer.team-identifier</key>
     <string>UUK47G4BAZ</string>
+    <key>com.apple.security.keychain-access-groups</key>
+    <string>UUK47G4BAZ.org.RedisLabs.RedisInsight-V2</string>
     <key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
     <array>
       <string>~/.redisinsight-v2/</string>

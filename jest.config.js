@@ -54,10 +54,10 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      statements: 70,
-      branches: 50,
-      functions: 60,
-      lines: 72,
+      statements: 77,
+      branches: 55,
+      functions: 65,
+      lines: 75,
     },
     // './redisinsight/ui/src/slices/**/*.ts': {
     //   statements: 90,

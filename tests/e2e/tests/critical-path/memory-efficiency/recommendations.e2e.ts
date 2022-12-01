@@ -95,7 +95,7 @@ test('Shard big hashes to small hashes recommendation', async t => {
     // Generate new report
     await t.click(memoryEfficiencyPage.newReportBtn);
     // Verify that big keys recommendation not displayed when hash has 5000 fields
-    await t.expect(memoryEfficiencyPage.noRecommendationsMessage.textContent).eql(noRecommendationsMessage, 'No recommendations message not displayed');
+    await t.expect(memoryEfficiencyPage.bigHashesAccordion.exists).notOk('Shard big hashes to small hashes recommendation is displayed when hash has 5000 fields');
     // Add the last field in hash key
     await populateHashWithFields(dbParameters.host, dbParameters.port, keyToAddParameters2);
     // Generate new report
@@ -125,7 +125,7 @@ test('Combine small strings to hashes recommendation', async t => {
     // Delete small String key
     await cliPage.sendCommandInCli(`DEL ${stringKeyName}`);
     await t.click(memoryEfficiencyPage.newReportBtn);
-    // Verify that user can not see recommendation when there is no string that is less than 200 bytes
+    // Verify that user can not see recommendation when there are only strings with more than 200 bytes
     await t.expect(memoryEfficiencyPage.combineStringsAccordion.exists).notOk('Combine small strings to hashes recommendation is displayed for huge string');
 });
 test

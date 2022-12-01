@@ -36,6 +36,10 @@ export interface Props {
 export const firstPanelId = 'tree'
 export const secondPanelId = 'keys'
 
+const parseKeyNames = (keys: GetKeyInfoResponse[]) =>
+  keys.map((item) =>
+    ({ ...item, nameString: item.nameString ?? bufferToString(item.name) }))
+
 const KeyTree = forwardRef((props: Props, ref) => {
   const { selectKey, loadMoreItems, loading, keysState } = props
 
@@ -53,7 +57,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
   const [keyListState, setKeyListState] = useState<KeysStoreData>(keysState)
   const [constructingTree, setConstructingTree] = useState(false)
   const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(isEmpty(selectedLeaf))
-  const [items, setItems] = useState<IKeyPropTypes[]>(keysState.keys ?? [])
+  const [items, setItems] = useState<IKeyPropTypes[]>(parseKeyNames(keysState.keys ?? []))
 
   const dispatch = useDispatch()
 
@@ -106,10 +110,6 @@ const KeyTree = forwardRef((props: Props, ref) => {
       })
     }, 0)
   }
-
-  const parseKeyNames = (keys: GetKeyInfoResponse[]) =>
-    keys.map((item) =>
-      ({ ...item, nameString: item.nameString ?? bufferToString(item.name) }))
 
   const updateKeysList = (items:any = {}) => {
     startTransition(() => {

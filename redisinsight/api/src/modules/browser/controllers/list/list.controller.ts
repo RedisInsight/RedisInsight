@@ -30,8 +30,10 @@ import {
   DeleteListElementsResponse,
   PushListElementsResponse,
 } from 'src/modules/browser/dto';
+import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
+import { ClientMetadata } from 'src/common/models';
 import { ListBusinessService } from '../../services/list-business/list-business.service';
 
 @ApiTags('List')
@@ -47,15 +49,10 @@ export class ListController extends BaseController {
   @ApiBody({ type: CreateListWithExpireDto })
   @ApiQueryRedisStringEncoding()
   async createList(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateListWithExpireDto,
   ): Promise<void> {
-    return await this.listBusinessService.createList(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.listBusinessService.createList(clientMetadata, dto);
   }
 
   @Put('')
@@ -72,15 +69,10 @@ export class ListController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async pushElement(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: PushElementToListDto,
   ): Promise<PushListElementsResponse> {
-    return await this.listBusinessService.pushElement(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.listBusinessService.pushElement(clientMetadata, dto);
   }
 
   // The key name can be very large, so it is better to send it in the request body
@@ -96,15 +88,10 @@ export class ListController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getElements(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: GetListElementsDto,
   ): Promise<GetListElementsResponse> {
-    return this.listBusinessService.getElements(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return this.listBusinessService.getElements(clientMetadata, dto);
   }
 
   @Patch('')
@@ -115,15 +102,10 @@ export class ListController extends BaseController {
   @ApiBody({ type: SetListElementDto })
   @ApiQueryRedisStringEncoding()
   async updateElement(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: SetListElementDto,
   ): Promise<SetListElementResponse> {
-    return await this.listBusinessService.setElement(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return await this.listBusinessService.setElement(clientMetadata, dto);
   }
 
   @Post('/get-elements/:index')
@@ -149,17 +131,11 @@ export class ListController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getElement(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Param('index') index: number,
       @Body() dto: KeyDto,
   ): Promise<GetListElementResponse> {
-    return this.listBusinessService.getElement(
-      {
-        instanceId: dbInstance,
-      },
-      index,
-      dto,
-    );
+    return this.listBusinessService.getElement(clientMetadata, index, dto);
   }
 
   @Delete('/elements')
@@ -177,14 +153,9 @@ export class ListController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async deleteElement(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: DeleteListElementsDto,
   ): Promise<DeleteListElementsResponse> {
-    return this.listBusinessService.deleteElements(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return this.listBusinessService.deleteElements(clientMetadata, dto);
   }
 }

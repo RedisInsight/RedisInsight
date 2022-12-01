@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
+  mockBrowserClientMetadata,
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockDatabase,
 } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
@@ -12,12 +12,7 @@ import {
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { GraphTypeInfoStrategy } from './graph-type-info.strategy';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testGraph',
@@ -58,7 +53,7 @@ describe('GraphTypeInfoStrategy', () => {
     const key = getKeyInfoResponse.name;
     beforeEach(() => {
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
@@ -70,7 +65,7 @@ describe('GraphTypeInfoStrategy', () => {
           ],
         ]);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolGraphCommands.GraphQuery, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolGraphCommands.GraphQuery, [
           key,
           'MATCH (r) RETURN count(r)',
           '--compact',
@@ -79,7 +74,7 @@ describe('GraphTypeInfoStrategy', () => {
     });
     it('should return appropriate value', async () => {
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.Graph,
       );
@@ -92,14 +87,14 @@ describe('GraphTypeInfoStrategy', () => {
         command: BrowserToolKeysCommands.Ttl,
       };
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
         .mockResolvedValue([replyError, []]);
 
       try {
-        await strategy.getInfo(mockClientOptions, key, RedisDataType.Graph);
+        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.Graph);
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);
@@ -112,7 +107,7 @@ describe('GraphTypeInfoStrategy', () => {
         message: "ERR unknown command 'memory'",
       };
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
@@ -125,7 +120,7 @@ describe('GraphTypeInfoStrategy', () => {
         ]);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.Graph,
       );
@@ -139,7 +134,7 @@ describe('GraphTypeInfoStrategy', () => {
         message: "ERR unknown command 'graph.query",
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolGraphCommands.GraphQuery, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolGraphCommands.GraphQuery, [
           key,
           'MATCH (r) RETURN count(r)',
           '--compact',
@@ -147,7 +142,7 @@ describe('GraphTypeInfoStrategy', () => {
         .mockResolvedValue(replyError);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.Graph,
       );

@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
 import { convertStringsArrayToObject } from 'src/utils';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import {
   BrowserToolKeysCommands,
@@ -21,7 +21,7 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
   }
 
   public async getInfo(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
@@ -29,7 +29,7 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
     const [
       transactionError,
       transactionResults,
-    ] = await this.redisManager.execPipeline(clientOptions, [
+    ] = await this.redisManager.execPipeline(clientMetadata, [
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
     ]);
@@ -40,7 +40,7 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
         (item: [ReplyError, any]) => item[1],
       );
       const [ttl, size] = result;
-      const length = await this.getTotalSamples(clientOptions, key);
+      const length = await this.getTotalSamples(clientMetadata, key);
       return {
         name: key,
         type,
@@ -52,12 +52,12 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
   }
 
   private async getTotalSamples(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     key: RedisString,
   ): Promise<number> {
     try {
       const info = await this.redisManager.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolTSCommands.TSInfo,
         [key],
         'utf8',

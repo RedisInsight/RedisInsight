@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import {
   BrowserToolKeysCommands,
@@ -21,7 +21,7 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
   }
 
   public async getInfo(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
@@ -29,7 +29,7 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
     const [
       transactionError,
       transactionResults,
-    ] = await this.redisManager.execPipeline(clientOptions, [
+    ] = await this.redisManager.execPipeline(clientMetadata, [
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
     ]);
@@ -40,7 +40,7 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
         (item: [ReplyError, any]) => item[1],
       );
       const [ttl, size] = result;
-      const length = await this.getLength(clientOptions, key);
+      const length = await this.getLength(clientMetadata, key);
       return {
         name: key,
         type,
@@ -52,12 +52,12 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
   }
 
   private async getLength(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     key: RedisString,
   ): Promise<number> {
     try {
       const objectKeyType = await this.redisManager.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolRejsonRlCommands.JsonType,
         [key, '.'],
         'utf8',
@@ -66,21 +66,21 @@ export class RejsonRlTypeInfoStrategy implements IKeyInfoStrategy {
       switch (objectKeyType) {
         case 'object':
           return await this.redisManager.execCommand(
-            clientOptions,
+            clientMetadata,
             BrowserToolRejsonRlCommands.JsonObjLen,
             [key, '.'],
             'utf8',
           );
         case 'array':
           return await this.redisManager.execCommand(
-            clientOptions,
+            clientMetadata,
             BrowserToolRejsonRlCommands.JsonArrLen,
             [key, '.'],
             'utf8',
           );
         case 'string':
           return await this.redisManager.execCommand(
-            clientOptions,
+            clientMetadata,
             BrowserToolRejsonRlCommands.JsonStrLen,
             [key, '.'],
             'utf8',

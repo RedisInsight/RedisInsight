@@ -6,7 +6,7 @@ import { RedisToolFactory } from 'src/modules/redis/redis-tool.factory';
 import { CommandsModule } from 'src/modules/commands/commands.module';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { CommandsJsonProvider } from 'src/modules/commands/commands-json.provider';
-import { AppTool } from 'src/models';
+import { ClientContext } from 'src/common/models';
 import config from 'src/utils/config';
 import { CliController } from './controllers/cli.controller';
 import { CliBusinessService } from './services/cli-business/cli-business.service';
@@ -23,7 +23,7 @@ const COMMANDS_CONFIGS = config.get('commands');
     {
       provide: RedisToolService,
       useFactory: (redisToolFactory: RedisToolFactory) => redisToolFactory.createRedisTool(
-        AppTool.CLI,
+        ClientContext.CLI,
         { enableAutoConnection: false },
       ),
       inject: [RedisToolFactory],

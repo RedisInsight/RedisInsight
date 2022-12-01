@@ -15,10 +15,9 @@ import {
   mockDatabase,
   mockClusterDatabaseWithTlsAuth,
   mockDatabaseService,
-  MockType,
+  MockType, mockBrowserClientMetadata
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   GetKeyInfoResponse,
   GetKeysDto,
@@ -35,7 +34,6 @@ import { SettingsService } from 'src/modules/settings/settings.service';
 import IORedis from 'ioredis';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { RedisString } from 'src/common/constants';
 import { KeysBusinessService } from './keys-business.service';
 import { StringTypeInfoStrategy } from './key-info-manager/strategies/string-type-info/string-type-info.strategy';
 
@@ -44,10 +42,6 @@ const getKeyInfoResponse: GetKeyInfoResponse = {
   type: 'string',
   ttl: -1,
   size: 50,
-};
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
 };
 
 const mockGetKeysWithDetailsResponse: GetKeysWithDetailsResponse = {
@@ -114,7 +108,7 @@ describe('KeysBusinessService', () => {
   describe('getKeyInfo', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Type, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Type, [
           getKeyInfoResponse.name,
         ], 'utf8')
         .mockResolvedValue(RedisDataType.String);
@@ -128,7 +122,7 @@ describe('KeysBusinessService', () => {
       stringTypeInfoManager.getInfo = jest.fn().mockResolvedValue(mockResult);
 
       const result = await service.getKeyInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         getKeyInfoResponse.name,
       );
 
@@ -136,13 +130,13 @@ describe('KeysBusinessService', () => {
     });
     it('throw NotFound error when key not found for getKeyInfo', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Type, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Type, [
           getKeyInfoResponse.name,
         ], 'utf8')
         .mockResolvedValue('none');
 
       await expect(
-        service.getKeyInfo(mockClientOptions, getKeyInfoResponse.name),
+        service.getKeyInfo(mockBrowserClientMetadata, getKeyInfoResponse.name),
       ).rejects.toThrow(NotFoundException);
     });
     it("user don't have required permissions for getKeyInfo", async () => {
@@ -151,13 +145,13 @@ describe('KeysBusinessService', () => {
         command: 'TYPE',
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Type, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Type, [
           getKeyInfoResponse.name,
         ], 'utf8')
         .mockRejectedValue(replyError);
 
       await expect(
-        service.getKeyInfo(mockClientOptions, getKeyInfoResponse.name),
+        service.getKeyInfo(mockBrowserClientMetadata, getKeyInfoResponse.name),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -165,14 +159,14 @@ describe('KeysBusinessService', () => {
   describe('getKeysInfo', () => {
     beforeEach(() => {
       when(browserTool.getRedisClient)
-        .calledWith(mockClientOptions)
+        .calledWith(mockBrowserClientMetadata)
         .mockResolvedValue(nodeClient);
       standaloneScanner['getKeysInfo'] = jest.fn().mockResolvedValue([getKeyInfoResponse]);
     });
 
     it('should return keys with info', async () => {
       const result = await service.getKeysInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         { keys: [getKeyInfoResponse.name] },
       );
 
@@ -187,7 +181,7 @@ describe('KeysBusinessService', () => {
       standaloneScanner['getKeysInfo'] = jest.fn().mockRejectedValueOnce(replyError);
 
       await expect(
-        service.getKeysInfo(mockClientOptions, { keys: [getKeyInfoResponse.name] }),
+        service.getKeysInfo(mockBrowserClientMetadata, { keys: [getKeyInfoResponse.name] }),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -199,21 +193,18 @@ describe('KeysBusinessService', () => {
         .fn()
         .mockResolvedValue([mockGetKeysWithDetailsResponse]);
 
-      const result = await service.getKeys(mockClientOptions, getKeysDto);
+      const result = await service.getKeys(mockBrowserClientMetadata, getKeysDto);
 
       expect(standaloneScanner.getKeys).toHaveBeenCalled();
       expect(result).toEqual([mockGetKeysWithDetailsResponse]);
     });
     it('should return appropriate value for cluster', async () => {
-      const clientOptions: IFindRedisClientInstanceByOptions = {
-        instanceId: mockClusterDatabaseWithTlsAuth.id,
-      };
       databaseService.get.mockResolvedValueOnce(mockClusterDatabaseWithTlsAuth);
       clusterScanner.getKeys = jest
         .fn()
         .mockResolvedValue([mockGetKeysWithDetailsResponse]);
 
-      const result = await service.getKeys(clientOptions, getKeysDto);
+      const result = await service.getKeys(mockBrowserClientMetadata, getKeysDto);
 
       expect(clusterScanner.getKeys).toHaveBeenCalled();
       expect(result).toEqual([mockGetKeysWithDetailsResponse]);
@@ -226,7 +217,7 @@ describe('KeysBusinessService', () => {
       standaloneScanner.getKeys = jest.fn().mockRejectedValue(replyError);
 
       await expect(
-        service.getKeys(mockClientOptions, getKeysDto),
+        service.getKeys(mockBrowserClientMetadata, getKeysDto),
       ).rejects.toThrow(ForbiddenException);
     });
     it('scan per type not supported', async () => {
@@ -242,7 +233,7 @@ describe('KeysBusinessService', () => {
       standaloneScanner.getKeys = jest.fn().mockRejectedValue(replyError);
 
       try {
-        await service.getKeys(mockClientOptions, dto);
+        await service.getKeys(mockBrowserClientMetadata, dto);
         fail('Should throw an error');
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
@@ -258,12 +249,12 @@ describe('KeysBusinessService', () => {
 
     it('succeeded to delete keys', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Del, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Del, [
           ...keyNames,
         ])
         .mockResolvedValue(keyNames.length);
 
-      const result = await service.deleteKeys(mockClientOptions, [
+      const result = await service.deleteKeys(mockBrowserClientMetadata, [
         'testString1',
         'testString2',
       ]);
@@ -271,13 +262,13 @@ describe('KeysBusinessService', () => {
     });
     it('keys not found', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Del, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Del, [
           ...keyNames,
         ])
         .mockResolvedValue(null);
 
       await expect(
-        service.deleteKeys(mockClientOptions, keyNames),
+        service.deleteKeys(mockBrowserClientMetadata, keyNames),
       ).rejects.toThrow(NotFoundException);
     });
     it("user don't have required permissions for deleteKeys", async () => {
@@ -288,7 +279,7 @@ describe('KeysBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.deleteKeys(mockClientOptions, keyNames),
+        service.deleteKeys(mockBrowserClientMetadata, keyNames),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -301,47 +292,47 @@ describe('KeysBusinessService', () => {
 
     it('succeeded to rename key', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           renameKeyDto.keyName,
         ])
         .mockResolvedValue(true);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.RenameNX, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.RenameNX, [
           renameKeyDto.keyName,
           renameKeyDto.newKeyName,
         ])
         .mockResolvedValue(1);
 
       await expect(
-        service.renameKey(mockClientOptions, renameKeyDto),
+        service.renameKey(mockBrowserClientMetadata, renameKeyDto),
       ).resolves.not.toThrow();
     });
     it('key with keyName not exist', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           renameKeyDto.keyName,
         ])
         .mockResolvedValue(false);
 
       await expect(
-        service.renameKey(mockClientOptions, renameKeyDto),
+        service.renameKey(mockBrowserClientMetadata, renameKeyDto),
       ).rejects.toThrow(NotFoundException);
     });
     it('key with newKeyName already exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           renameKeyDto.keyName,
         ])
         .mockResolvedValue(true);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           renameKeyDto.keyName,
           renameKeyDto.newKeyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.renameKey(mockClientOptions, renameKeyDto),
+        service.renameKey(mockBrowserClientMetadata, renameKeyDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for renameKey", async () => {
@@ -352,7 +343,7 @@ describe('KeysBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.renameKey(mockClientOptions, renameKeyDto),
+        service.renameKey(mockBrowserClientMetadata, renameKeyDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -362,42 +353,42 @@ describe('KeysBusinessService', () => {
     it('set expiration time', async () => {
       const dto = { keyName, ttl: 1000 };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Ttl, [keyName])
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Ttl, [keyName])
         .mockResolvedValue(-1);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Expire, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Expire, [
           keyName,
           dto.ttl,
         ])
         .mockResolvedValue(1);
 
-      const result = await service.updateTtl(mockClientOptions, dto);
+      const result = await service.updateTtl(mockBrowserClientMetadata, dto);
 
       expect(result).toEqual({ ttl: dto.ttl });
     });
     it('remove the existing timeout on key', async () => {
       const dto = { keyName, ttl: -1 };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Ttl, [keyName])
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Ttl, [keyName])
         .mockResolvedValue(1000);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Persist, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Persist, [
           keyName,
         ])
         .mockResolvedValue(1);
 
-      const result = await service.updateTtl(mockClientOptions, dto);
+      const result = await service.updateTtl(mockBrowserClientMetadata, dto);
       expect(result).toEqual({ ttl: dto.ttl });
     });
     it('key not found', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Expire, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Expire, [
           keyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.updateTtl(mockClientOptions, { keyName, ttl: 1000 }),
+        service.updateTtl(mockBrowserClientMetadata, { keyName, ttl: 1000 }),
       ).rejects.toThrow(NotFoundException);
     });
     it("user don't have required permissions for updateTtl", async () => {
@@ -408,7 +399,7 @@ describe('KeysBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.updateTtl(mockClientOptions, { keyName, ttl: 1000 }),
+        service.updateTtl(mockBrowserClientMetadata, { keyName, ttl: 1000 }),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -417,27 +408,27 @@ describe('KeysBusinessService', () => {
     const keyName = 'testString';
     it('should remove key expiration', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Ttl, [keyName])
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Ttl, [keyName])
         .mockResolvedValue(1000);
 
-      const result = await service.removeKeyExpiration(mockClientOptions, {
+      const result = await service.removeKeyExpiration(mockBrowserClientMetadata, {
         keyName,
         ttl: -1,
       });
       expect(result).toEqual({ ttl: -1 });
       expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Persist,
         [keyName],
       );
     });
     it('key not found', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Ttl, [keyName])
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Ttl, [keyName])
         .mockResolvedValue(-2);
 
       await expect(
-        service.removeKeyExpiration(mockClientOptions, { keyName, ttl: -1 }),
+        service.removeKeyExpiration(mockBrowserClientMetadata, { keyName, ttl: -1 }),
       ).rejects.toThrow(NotFoundException);
     });
     it("user don't have required permissions for removeKeyExpiration", async () => {
@@ -448,7 +439,7 @@ describe('KeysBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.removeKeyExpiration(mockClientOptions, { keyName, ttl: -1 }),
+        service.removeKeyExpiration(mockBrowserClientMetadata, { keyName, ttl: -1 }),
       ).rejects.toThrow(ForbiddenException);
     });
   });

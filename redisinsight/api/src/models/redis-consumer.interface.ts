@@ -1,16 +1,16 @@
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { ReplyError } from 'src/models/redis-client';
 import { Cluster, Redis } from 'ioredis';
+import { ClientMetadata } from 'src/common/models';
 
 export interface IRedisConsumer {
   execCommand(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommand: any,
     args: Array<string | number | Buffer>,
   ): any;
 
   execPipeline(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommands: Array<
     [toolCommand: any, ...args: Array<string | number | Buffer>]
     >,

@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as IORedis from 'ioredis';
 import * as Redis from 'ioredis-mock';
-import { mockDatabase } from 'src/__mocks__';
+import { mockBrowserClientMetadata } from 'src/__mocks__';
 import {
-  IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
@@ -16,10 +15,6 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { mockKeyDto } from 'src/modules/browser/__mocks__';
 import { RedisString } from 'src/common/constants';
 import { DatabaseService } from 'src/modules/database/database.service';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const mockClient = new Redis();
 const mockConnectionErrorMessage = 'Could not connect to localhost, please check the connection details.';
@@ -67,7 +62,7 @@ describe('BrowserToolService', () => {
       getRedisClient.mockResolvedValue(mockClient);
 
       await service.execCommand(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.MemoryUsage,
         [keyName],
       );
@@ -91,7 +86,7 @@ describe('BrowserToolService', () => {
 
       await expect(
         service.execCommand(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.MemoryUsage,
           [keyName],
         ),
@@ -111,7 +106,7 @@ describe('BrowserToolService', () => {
       getRedisClient.mockResolvedValue(mockClient);
       execPipelineFromClient.mockResolvedValue();
 
-      await service.execPipeline(mockClientOptions, args);
+      await service.execPipeline(mockBrowserClientMetadata, args);
 
       expect(execPipelineFromClient).toHaveBeenCalledWith(mockClient, args);
     });
@@ -122,7 +117,7 @@ describe('BrowserToolService', () => {
       getRedisClient.mockRejectedValue(error);
 
       await expect(
-        service.execPipeline(mockClientOptions, args),
+        service.execPipeline(mockBrowserClientMetadata, args),
       ).rejects.toThrow(InternalServerErrorException);
       expect(execPipelineFromClient).not.toHaveBeenCalled();
     });
@@ -139,7 +134,7 @@ describe('BrowserToolService', () => {
       getRedisClient.mockResolvedValue(mockClient);
       execPipelineFromClient.mockResolvedValue();
 
-      await service.execMulti(mockClientOptions, args);
+      await service.execMulti(mockBrowserClientMetadata, args);
 
       expect(execMultiFromClient).toHaveBeenCalledWith(mockClient, args);
     });
@@ -149,7 +144,7 @@ describe('BrowserToolService', () => {
       );
       getRedisClient.mockRejectedValue(error);
 
-      await expect(service.execMulti(mockClientOptions, args)).rejects.toThrow(
+      await expect(service.execMulti(mockBrowserClientMetadata, args)).rejects.toThrow(
         InternalServerErrorException,
       );
       expect(execMultiFromClient).not.toHaveBeenCalled();

@@ -1,10 +1,7 @@
 import {
   Body,
   Controller, Delete,
-  Param,
   Post,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
@@ -16,7 +13,9 @@ import {
 } from 'src/modules/browser/dto/stream.dto';
 import { ConsumerService } from 'src/modules/browser/services/stream/consumer.service';
 import { BaseController } from 'src/modules/browser/controllers/base.controller';
+import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Streams')
 @Controller('streams/consumer-groups/consumers')
@@ -39,10 +38,10 @@ export class ConsumerController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getConsumers(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: GetConsumersDto,
   ): Promise<ConsumerDto[]> {
-    return this.service.getConsumers({ instanceId }, dto);
+    return this.service.getConsumers(clientMetadata, dto);
   }
 
   @Delete('')
@@ -51,10 +50,10 @@ export class ConsumerController extends BaseController {
     statusCode: 200,
   })
   async deleteConsumers(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: DeleteConsumersDto,
   ): Promise<void> {
-    return this.service.deleteConsumers({ instanceId }, dto);
+    return this.service.deleteConsumers(clientMetadata, dto);
   }
 
   @Post('/pending-messages/get')
@@ -71,10 +70,10 @@ export class ConsumerController extends BaseController {
   })
   @ApiQueryRedisStringEncoding()
   async getPendingEntries(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: GetPendingEntriesDto,
   ): Promise<PendingEntryDto[]> {
-    return this.service.getPendingEntries({ instanceId }, dto);
+    return this.service.getPendingEntries(clientMetadata, dto);
   }
 
   @Post('/pending-messages/ack')
@@ -89,10 +88,10 @@ export class ConsumerController extends BaseController {
     ],
   })
   async ackPendingEntries(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: AckPendingEntriesDto,
   ): Promise<AckPendingEntriesResponse> {
-    return this.service.ackPendingEntries({ instanceId }, dto);
+    return this.service.ackPendingEntries(clientMetadata, dto);
   }
 
   @Post('/pending-messages/claim')
@@ -107,9 +106,9 @@ export class ConsumerController extends BaseController {
     ],
   })
   async claimPendingEntries(
-    @Param('dbInstance') instanceId: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: ClaimPendingEntryDto,
   ): Promise<ClaimPendingEntriesResponse> {
-    return this.service.claimPendingEntries({ instanceId }, dto);
+    return this.service.claimPendingEntries(clientMetadata, dto);
   }
 }

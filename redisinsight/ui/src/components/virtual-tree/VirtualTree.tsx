@@ -9,7 +9,7 @@ import {
 import { EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 
-import { getTreeLeafField, Maybe } from 'uiSrc/utils'
+import { findTreeNode, getTreeLeafField, Maybe } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -118,7 +118,7 @@ const VirtualTree = (props: Props) => {
     }
 
     // if selected Keys folder is not exists (after a new search) needs reset Browser state
-    const selectedLeafExists = !!nodes.find((node) => Object.keys(statusSelected)?.[0]?.startsWith(node.fullName))
+    const selectedLeafExists = !!findTreeNode(nodes, Object.keys(statusSelected)?.[0], 'fullName')
 
     if (!selectedLeafExists) {
       dispatch(resetBrowserTree())

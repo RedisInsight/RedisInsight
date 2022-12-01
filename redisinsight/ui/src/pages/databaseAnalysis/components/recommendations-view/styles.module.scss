@@ -63,10 +63,14 @@
   }
 
   .badgesContainer {
-    margin-right: 48px;
-
     .badge {
+      width: 180px;
       margin: 14px 18px;
+
+      &:last-child {
+        padding-right: 48px;
+        align-items: flex-end;
+      }
   
       .badgeIcon {
         margin-right: 14px;

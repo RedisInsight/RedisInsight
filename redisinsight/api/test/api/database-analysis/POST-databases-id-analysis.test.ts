@@ -64,7 +64,6 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.topKeysLength.length).to.gt(0);
         expect(body.topKeysMemory.length).to.gt(0);
         expect(body.expirationGroups.length).to.gt(0);
-        expect(body.recommendations.length).to.eq(0);
       },
       after: async () => {
         expect(await repository.count()).to.eq(5);
@@ -143,7 +142,6 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.expirationGroups[0].label).to.eq('No Expiry');
         expect(body.expirationGroups[0].total).to.gt(0);
         expect(body.expirationGroups[0].threshold).to.eq(0);
-        expect(body.recommendations.length).to.eq(0);
       },
       after: async () => {
         expect(await repository.count()).to.eq(5);
@@ -157,7 +155,7 @@ describe('POST /databases/:instanceId/analysis', () => {
       statusCode: 201,
       responseSchema,
       before: async () => {
-        const KEYS_NUMBER = 1_000_001
+        const KEYS_NUMBER = 1_000_001;
         await rte.data.generateNKeys(KEYS_NUMBER, false);
       },
       checkFn: async ({ body }) => {
@@ -167,7 +165,10 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.topMemoryNsp.length).to.gt(0);
         expect(body.topKeysLength.length).to.gt(0);
         expect(body.topKeysMemory.length).to.gt(0);
-        expect(body.recommendations).to.deep.eq([constants.TEST_SMALLER_KEYS_DATABASE_ANALYSIS_RECOMMENDATION]);
+        expect(body.recommendations).to.deep.eq([
+          constants.TEST_SMALLER_KEYS_DATABASE_ANALYSIS_RECOMMENDATION,
+          constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION,
+        ]);
       },
       after: async () => {
         expect(await repository.count()).to.eq(5);
@@ -181,7 +182,7 @@ describe('POST /databases/:instanceId/analysis', () => {
       statusCode: 201,
       responseSchema,
       before: async () => {
-        const NUMBERS_OF_HASH_FIELDS = 5001
+        const NUMBERS_OF_HASH_FIELDS = 5001;
         await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
       },
       checkFn: async ({ body }) => {
@@ -191,7 +192,100 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.topMemoryNsp.length).to.gt(0);
         expect(body.topKeysLength.length).to.gt(0);
         expect(body.topKeysMemory.length).to.gt(0);
-        expect(body.recommendations).to.deep.eq([constants.TEST_BIG_HASHES_DATABASE_ANALYSIS_RECOMMENDATION]);
+        expect(body.recommendations).to.deep.eq([
+          constants.TEST_BIG_HASHES_DATABASE_ANALYSIS_RECOMMENDATION,
+          constants.TEST_CONVERT_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
+          constants.TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION,
+        ]);
+      },
+      after: async () => {
+        expect(await repository.count()).to.eq(5);
+      }
+    },
+    {
+      name: 'Should create new database analysis with increaseSetMaxIntsetEntries recommendation',
+      data: {
+        delimiter: '-',
+      },
+      statusCode: 201,
+      responseSchema,
+      before: async () => {
+        const NUMBERS_OF_SET_MEMBERS = 513;
+        await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
+      },
+      checkFn: async ({ body }) => {
+        expect(body.recommendations).to.deep.eq([constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION]);
+      },
+      after: async () => {
+        expect(await repository.count()).to.eq(5);
+      }
+    },
+    {
+      name: 'Should create new database analysis with combineSmallStringsToHashes recommendation',
+      data: {
+        delimiter: '-',
+      },
+      statusCode: 201,
+      responseSchema,
+      before: async () => {
+        await rte.data.generateStrings(true);
+      },
+      checkFn: async ({ body }) => {
+        expect(body.recommendations).to.deep.eq([constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION]);
+      },
+      after: async () => {
+        expect(await repository.count()).to.eq(5);
+      }
+    },
+    {
+      name: 'Should create new database analysis with convertHashtableToZiplist recommendation',
+      data: {
+        delimiter: '-',
+      },
+      statusCode: 201,
+      responseSchema,
+      before: async () => {
+        const NUMBERS_OF_HASH_FIELDS = 513;
+        await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
+      },
+      checkFn: async ({ body }) => {
+        expect(body.totalKeys.total).to.gt(0);
+        expect(body.totalMemory.total).to.gt(0);
+        expect(body.topKeysNsp.length).to.gt(0);
+        expect(body.topMemoryNsp.length).to.gt(0);
+        expect(body.topKeysLength.length).to.gt(0);
+        expect(body.topKeysMemory.length).to.gt(0);
+        expect(body.recommendations).to.deep.eq([
+          constants.TEST_CONVERT_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
+        ]);
+      },
+      after: async () => {
+        expect(await repository.count()).to.eq(5);
+      }
+    },
+    {
+      name: 'Should create new database analysis with compressHashFieldNames recommendation',
+      data: {
+        delimiter: '-',
+      },
+      statusCode: 201,
+      responseSchema,
+      before: async () => {
+        const NUMBERS_OF_HASH_FIELDS = 1001;
+        await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
+      },
+      checkFn: async ({ body }) => {
+        expect(body.totalKeys.total).to.gt(0);
+        expect(body.totalMemory.total).to.gt(0);
+        expect(body.topKeysNsp.length).to.gt(0);
+        expect(body.topMemoryNsp.length).to.gt(0);
+        expect(body.topKeysLength.length).to.gt(0);
+        expect(body.topKeysMemory.length).to.gt(0);
+        expect(body.recommendations).to.deep.eq([
+          constants.TEST_CONVERT_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
+          constants.TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION,
+
+        ]);
       },
       after: async () => {
         expect(await repository.count()).to.eq(5);

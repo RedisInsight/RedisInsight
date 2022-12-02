@@ -23,15 +23,13 @@ export interface Props {
   selectedKey: Nullable<RedisResponseBuffer>
   setSelectedKey: (keyName: Nullable<RedisResponseBuffer>) => void
   arePanelsCollapsed: boolean
-  panelsState: {
-    isAddKeyPanelOpen: boolean
-    handleAddKeyPanel: (value: boolean) => void
-    isBulkActionsPanelOpen: boolean
-    handleBulkActionsPanel: (value: boolean) => void
-    isCreateIndexPanelOpen: boolean
-    handleCreateIndexPanel?: (value: boolean) => void
-    closeRightPanels: () => void
-  }
+  isAddKeyPanelOpen: boolean
+  handleAddKeyPanel: (value: boolean) => void
+  isBulkActionsPanelOpen: boolean
+  handleBulkActionsPanel: (value: boolean) => void
+  isCreateIndexPanelOpen: boolean
+  handleCreateIndexPanel?: (value: boolean) => void
+  closeRightPanels: () => void
 }
 
 const BrowserRightPanel = (props: Props) => {
@@ -39,17 +37,13 @@ const BrowserRightPanel = (props: Props) => {
     selectedKey,
     arePanelsCollapsed,
     setSelectedKey,
-    panelsState
-  } = props
-
-  const {
     isAddKeyPanelOpen,
     handleAddKeyPanel,
     isBulkActionsPanelOpen,
     handleBulkActionsPanel,
     isCreateIndexPanelOpen,
     closeRightPanels
-  } = panelsState
+  } = props
 
   const { isBrowserFullScreen, viewType } = useSelector(keysSelector)
   const { type, length } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }

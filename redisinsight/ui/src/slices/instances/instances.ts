@@ -131,8 +131,8 @@ const instancesSlice = createSlice({
     getDatabaseConfigInfoSuccess: (state, { payload }) => {
       state.loading = false
       state.instanceOverview = {
-        version: state.instanceOverview.version,
-        ...payload
+        ...payload,
+        version: payload?.version || state.instanceOverview.version || '',
       }
     },
     getDatabaseConfigInfoFailure: (state, { payload }) => {

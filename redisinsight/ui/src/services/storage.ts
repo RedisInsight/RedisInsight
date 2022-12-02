@@ -26,6 +26,10 @@ class StorageService {
     return null
   }
 
+  getAll() {
+    return this.storage
+  }
+
   set(itemName: string = '', item: any) {
     try {
       if (isObjectLike(item)) {

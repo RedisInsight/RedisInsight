@@ -98,7 +98,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'set'.toUpperCase(),
+          command: 'set',
           commandType: CommandType.Core,
           moduleName: 'n/a',
           capability: 'string',
@@ -118,7 +118,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'set'.toUpperCase(),
+          command: 'set',
           commandType: CommandType.Core,
           moduleName: 'n/a',
           capability: 'string',
@@ -138,7 +138,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'set'.toUpperCase(),
+          command: 'set',
         },
       );
     });
@@ -153,7 +153,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'bF.rEsErvE'.toUpperCase(),
+          command: 'bF.rEsErvE',
           commandType: CommandType.Module,
           moduleName: 'redisbloom',
           capability: 'bf',
@@ -171,7 +171,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'CUSTOM.COMMAnd'.toUpperCase(),
+          command: 'CUSTOM.COMMAnd',
           commandType: CommandType.Module,
           moduleName: 'custommodule',
           capability: 'n/a',
@@ -189,7 +189,7 @@ describe('WorkbenchAnalyticsService', () => {
         TelemetryEvents.WorkbenchCommandExecuted,
         {
           databaseId: instanceId,
-          command: 'some.command'.toUpperCase(),
+          command: 'some.command',
           commandType: CommandType.Module,
           moduleName: 'custom',
           capability: 'n/a',
@@ -221,7 +221,7 @@ describe('WorkbenchAnalyticsService', () => {
         {
           databaseId: instanceId,
           error: ReplyError.name,
-          command: 'set'.toUpperCase(),
+          command: 'set',
           commandType: CommandType.Core,
           moduleName: 'n/a',
           capability: 'string',
@@ -240,7 +240,7 @@ describe('WorkbenchAnalyticsService', () => {
         {
           databaseId: instanceId,
           error: ReplyError.name,
-          command: 'sadd'.toUpperCase(),
+          command: 'sadd',
         },
       );
     });

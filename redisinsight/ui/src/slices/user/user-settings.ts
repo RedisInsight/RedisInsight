@@ -3,7 +3,7 @@ import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from 'apiSrc/dto/settings.dto'
+import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from 'apiSrc/modules/settings/dto/settings.dto'
 
 import { AppDispatch, RootState } from '../store'
 import { StateUserSettings } from '../interfaces/user'

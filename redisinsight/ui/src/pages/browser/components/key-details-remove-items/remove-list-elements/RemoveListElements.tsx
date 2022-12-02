@@ -40,7 +40,8 @@ import {
 import styles from '../styles.module.scss'
 
 export interface Props {
-  onCancel: () => void;
+  onCancel: () => void
+  onRemoveKey: () => void
 }
 
 const optionsDestinations: EuiSuperSelectOption<string>[] = [
@@ -55,7 +56,7 @@ const optionsDestinations: EuiSuperSelectOption<string>[] = [
 ]
 
 const RemoveListElements = (props: Props) => {
-  const { onCancel } = props
+  const { onCancel, onRemoveKey } = props
 
   const [count, setCount] = useState<string>('')
   const [destination, setDestination] = useState<ListElementDestination>(TAIL_DESTINATION)
@@ -119,7 +120,8 @@ const RemoveListElements = (props: Props) => {
     setIsPopoverOpen(false)
   }
 
-  const onSuccessRemoved = () => {
+  const onSuccessRemoved = (newTotal: number) => {
+    if (newTotal <= 0) onRemoveKey()
     onCancel()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(

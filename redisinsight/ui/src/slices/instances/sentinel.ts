@@ -37,7 +37,7 @@ export const initialState: InitialStateSentinel = {
   },
 }
 
-export const initialStateSentinelStatus: CreateSentinelDatabasesDto = {
+export const initialStateSentinelStatus: CreateSentinelDatabaseResponse = {
   name: '',
   status: AddRedisDatabaseStatus.Success,
   message: '',

@@ -310,7 +310,7 @@ export function addSetMembersAction(
 export function deleteSetMembers(
   key: RedisResponseBuffer,
   members: RedisResponseBuffer[],
-  onSuccessAction?: () => void,
+  onSuccessAction?: (newTotal: number) => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeSetMembers())
@@ -333,8 +333,9 @@ export function deleteSetMembers(
       )
 
       if (isStatusSuccessful(status)) {
-        onSuccessAction?.()
         const newTotalValue = state.browser.set.data.total - data.affected
+
+        onSuccessAction?.(newTotalValue)
         dispatch(removeSetMembersSuccess())
         dispatch(removeMembersFromList(members))
         if (newTotalValue > 0) {

@@ -5,6 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { unknownCommand } from 'src/constants';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import {
   ClusterNodeRole,
@@ -143,7 +144,7 @@ export class CliBusinessService {
   ): Promise<SendCommandResponse> {
     this.logger.log('Executing redis CLI command.');
     const { command: commandLine } = dto;
-    let command: string;
+    let command: string = unknownCommand;
     let args: string[] = [];
 
     const outputFormat = dto.outputFormat || CliOutputFormatterTypes.Raw;
@@ -160,7 +161,7 @@ export class CliBusinessService {
       this.cliAnalyticsService.sendCommandExecutedEvent(
         clientOptions.instanceId,
         {
-          command: command.toUpperCase(),
+          command,
           outputFormat,
         },
       );
@@ -177,14 +178,14 @@ export class CliBusinessService {
         || error?.name === 'ReplyError'
       ) {
         this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, error, {
-          command: command.toUpperCase(),
+          command,
           outputFormat,
         });
 
         return { response: error.message, status: CommandExecutionStatus.Fail };
       }
       this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, error, {
-        command: command.toUpperCase(),
+        command,
         outputFormat,
       });
 
@@ -229,7 +230,7 @@ export class CliBusinessService {
     outputFormat: CliOutputFormatterTypes = CliOutputFormatterTypes.Raw,
   ): Promise<SendClusterCommandResponse[]> {
     this.logger.log(`Executing redis.cluster CLI command for [${role}] nodes.`);
-    let command: string;
+    let command: string = unknownCommand;
     let args: string[] = [];
 
     try {
@@ -250,7 +251,7 @@ export class CliBusinessService {
         this.cliAnalyticsService.sendClusterCommandExecutedEvent(
           clientOptions.instanceId,
           nodeExecReply,
-          { command: command.toUpperCase(), outputFormat },
+          { command, outputFormat },
         );
         const {
           response, status, host, port,
@@ -266,7 +267,7 @@ export class CliBusinessService {
 
       if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
         this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, error, {
-          command: command.toUpperCase(),
+          command,
           outputFormat,
         });
         return [
@@ -298,7 +299,7 @@ export class CliBusinessService {
     outputFormat: CliOutputFormatterTypes = CliOutputFormatterTypes.Raw,
   ): Promise<SendClusterCommandResponse> {
     this.logger.log(`Executing redis.cluster CLI command for single node ${JSON.stringify(nodeOptions)}`);
-    let command: string;
+    let command: string = unknownCommand;
     let args: string[] = [];
 
     try {
@@ -333,7 +334,7 @@ export class CliBusinessService {
       this.cliAnalyticsService.sendClusterCommandExecutedEvent(
         clientOptions.instanceId,
         result,
-        { command: command.toUpperCase(), outputFormat },
+        { command, outputFormat },
       );
       const {
         host, port, error, slot, ...rest
@@ -344,14 +345,14 @@ export class CliBusinessService {
 
       if (error instanceof CommandParsingError || error instanceof CommandNotSupportedError) {
         this.cliAnalyticsService.sendCommandErrorEvent(clientOptions.instanceId, error, {
-          command: command.toUpperCase(),
+          command,
           outputFormat,
         });
         return { response: error.message, status: CommandExecutionStatus.Fail };
       }
 
       this.cliAnalyticsService.sendConnectionErrorEvent(clientOptions.instanceId, error, {
-        command: command.toUpperCase(),
+        command,
         outputFormat,
       });
 

@@ -5,7 +5,7 @@ import parse from 'html-react-parser'
 import { DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
 
 import { getModule, truncateText } from 'uiSrc/utils'
-import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import { IMetric } from '../OverviewMetrics'
 
@@ -16,7 +16,7 @@ const ModulesInfoText = 'More information about Redis modules can be found <a cl
 
 interface IProps {
   metrics: Array<IMetric>,
-  modules: Array<RedisModuleDto>
+  modules: Array<AdditionalRedisModule>
 }
 
 const MoreInfoPopover = ({ metrics, modules }: IProps) => {

@@ -11,7 +11,8 @@ import reducer, {
   initialState,
   setAppContextInitialState,
   setAppContextConnectedInstanceId,
-  setBrowserKeyListDataLoaded,
+  setBrowserPatternKeyListDataLoaded,
+  setBrowserRedisearchKeyListDataLoaded,
   setBrowserSelectedKey,
   setBrowserPatternScrollPosition,
   setBrowserPanelSizes,
@@ -34,6 +35,10 @@ import reducer, {
   setBrowserTreeDelimiter,
   setBrowserIsNotRendered,
   setBrowserRedisearchScrollPosition,
+  updateKeyDetailsSizes,
+  appContextBrowserKeyDetails,
+  appContextDbConfig,
+  setSlowLogUnits, setDbConfig,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -64,6 +69,7 @@ describe('slices', () => {
         ...initialState,
         contextInstanceId,
         browser: {
+          ...initialState.browser,
           keyList: {
             isDataLoaded: true,
             scrollTopPosition: 100,
@@ -74,7 +80,7 @@ describe('slices', () => {
           },
           bulkActions: {
             opened: true,
-          }
+          },
         },
         workbench: {
           script: '123123',
@@ -125,20 +131,44 @@ describe('slices', () => {
     })
   })
 
-  describe('setBrowserKeyListDataLoaded', () => {
+  describe('setBrowserPatternKeyListDataLoaded', () => {
     it('should properly set context is data loaded', () => {
       // Arrange
-      const isDataLoaded = true
+      const isDataPatternLoaded = true
       const state = {
         ...initialState.browser,
         keyList: {
           ...initialState.browser.keyList,
-          isDataLoaded
+          isDataPatternLoaded
         }
       }
 
       // Act
-      const nextState = reducer(initialState, setBrowserKeyListDataLoaded(isDataLoaded))
+      const nextState = reducer(initialState, setBrowserPatternKeyListDataLoaded(isDataPatternLoaded))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowser(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setBrowserRedisearchKeyListDataLoaded', () => {
+    it('should properly set context is data loaded', () => {
+      // Arrange
+      const isDataRedisearchLoaded = true
+      const state = {
+        ...initialState.browser,
+        keyList: {
+          ...initialState.browser.keyList,
+          isDataRedisearchLoaded
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setBrowserRedisearchKeyListDataLoaded(isDataRedisearchLoaded))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -525,14 +555,61 @@ describe('slices', () => {
     })
   })
 
+  describe('setDbConfig', () => {
+    it('should properly set db config', () => {
+      // Arrange
+      const data = {
+        slowLogDurationUnit: 'ms',
+        treeViewDelimiter: ':-'
+      }
+
+      const state = {
+        ...initialState.dbConfig,
+        ...data
+      }
+
+      // Act
+      const nextState = reducer(initialState, setDbConfig(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextDbConfig(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setSlowLogUnits', () => {
+    it('should properly set slow log units', () => {
+      // Arrange
+      const slowLogDurationUnit = 'ms'
+
+      const state = {
+        ...initialState.dbConfig,
+        slowLogDurationUnit
+      }
+
+      // Act
+      const nextState = reducer(initialState, setSlowLogUnits(slowLogDurationUnit))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextDbConfig(rootState)).toEqual(state)
+    })
+  })
+
   describe('setBrowserTreeDelimiter', () => {
     it('should properly set browser tree delimiter', () => {
       // Arrange
       const delimiter = '_'
 
       const state = {
-        ...initialState.browser.tree,
-        delimiter
+        ...initialState.dbConfig,
+        treeViewDelimiter: delimiter
       }
 
       // Act
@@ -543,7 +620,7 @@ describe('slices', () => {
         app: { context: nextState },
       })
 
-      expect(appContextBrowserTree(rootState)).toEqual(state)
+      expect(appContextDbConfig(rootState)).toEqual(state)
     })
   })
 
@@ -701,6 +778,33 @@ describe('slices', () => {
       })
 
       expect(appContextBrowserTree(rootState)).toEqual(state)
+    })
+  })
+
+  describe('updateKeyDetailsSizes', () => {
+    it('should properly update sizes', () => {
+      // Arrange
+      const payload = {
+        type: KeyTypes.Hash,
+        sizes: {
+          field: 50
+        }
+      }
+
+      const state = {
+        ...initialState.browser.keyDetailsSizes,
+        [KeyTypes.Hash]: { ...payload.sizes }
+      }
+
+      // Act
+      const nextState = reducer(initialState, updateKeyDetailsSizes(payload))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextBrowserKeyDetails(rootState)).toEqual(state)
     })
   })
 })

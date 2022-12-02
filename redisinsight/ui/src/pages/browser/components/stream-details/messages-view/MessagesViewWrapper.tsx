@@ -16,14 +16,14 @@ import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/sli
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { getFormatTime, getNextId } from 'uiSrc/utils/streamUtils'
 import { SortOrder } from 'uiSrc/constants'
+import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   AckPendingEntriesResponse,
   PendingEntryDto,
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse
 } from 'apiSrc/modules/browser/dto/stream.dto'
-import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import MessagesView from './MessagesView'
 import MessageClaimPopover from './MessageClaimPopover'

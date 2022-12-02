@@ -54,7 +54,7 @@ describe('SearchDatabasesList', () => {
     expect(render(<SearchDatabasesList />)).toBeTruthy()
   })
 
-  it.skip('should call loadInstancesSuccess with after typing', async () => {
+  it('should call loadInstancesSuccess with after typing', async () => {
     const state: RootState = store.getState();
     (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
       ...state,
@@ -79,9 +79,10 @@ describe('SearchDatabasesList', () => {
       )
     })
 
+    newInstancesMock[0].visible = false
     newInstancesMock[1].visible = false
 
     const expectedActions = [loadInstancesSuccess(newInstancesMock)]
-    expect(storeMock.getActions()).toEqual(expect.arrayContaining(expectedActions))
+    expect(storeMock.getActions()).toEqual(expectedActions)
   })
 })

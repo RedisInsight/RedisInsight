@@ -10,13 +10,14 @@ import {
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
-import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import { EMPTY_COMMAND } from 'uiSrc/constants'
+import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import reducer, {
   initialState,
   sendWBCommand,
   sendWBCommandSuccess,
   processWBCommandFailure,
+  processWBCommandsFailure,
   workbenchResultsSelector,
   sendWBCommandAction,
   sendWBCommandClusterAction,
@@ -207,6 +208,41 @@ describe('workbench results slice', () => {
     })
   })
 
+  describe('processWBCommandsFailure', () => {
+    it('should properly remove from items', () => {
+      // Arrange
+      const data = 'error'
+      const mockCommandExecution = {
+        commandsId: [mockItemId + 0],
+        error: data,
+      }
+      const state = {
+        ...initialStateWithItems,
+        items: [{
+          id: mockItemId + 0,
+          loading: false,
+          isOpen: true,
+          error: '',
+          result: [{
+            response: data,
+            status: 'fail',
+          }]
+        }]
+      }
+
+      // Act
+      const nextState = reducer(initialStateWithItems, processWBCommandsFailure(mockCommandExecution))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          results: nextState,
+        },
+      })
+      expect(workbenchResultsSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('loadWBHistorySuccess', () => {
     it('should properly set history items', () => {
       // Arrange
@@ -323,7 +359,7 @@ describe('workbench results slice', () => {
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
 
-      it('call both sendWBCommandAction and processWBCommandFailure when fetch is fail', async () => {
+      it('call both sendWBCommandAction and processWBCommandsFailure when fetch is fail', async () => {
         // Arrange
         const commands = ['keys *']
         const commandId = `${Date.now()}`
@@ -344,7 +380,10 @@ describe('workbench results slice', () => {
         const expectedActions = [
           sendWBCommand({ commands, commandId }),
           addErrorNotification(responsePayload as AxiosError),
-          processWBCommandFailure({ id: commandId, error: responsePayload.response.data.message }),
+          processWBCommandsFailure({
+            commandsId: commands.map((_, i) => commandId + i),
+            error: responsePayload.response.data.message
+          }),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -438,7 +477,10 @@ describe('workbench results slice', () => {
         const expectedActions = [
           sendWBCommand({ commands, commandId }),
           addErrorNotification(responsePayload as AxiosError),
-          processWBCommandFailure({ id: commandId, error: responsePayload.response.data.message }),
+          processWBCommandsFailure({
+            commandsId: commands.map((_, i) => commandId + i),
+            error: responsePayload.response.data.message
+          }),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })

@@ -1,16 +1,24 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
+import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { getTreeLeafField, Nullable } from 'uiSrc/utils'
-import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
+import { BrowserStorageItem, DEFAULT_DELIMITER, DEFAULT_SLOWLOG_DURATION_UNIT, KeyTypes } from 'uiSrc/constants'
+import { localStorageService, setDBConfigStorageField } from 'uiSrc/services'
 import { RootState } from '../store'
 import { RedisResponseBuffer, StateAppContext } from '../interfaces'
+import { SearchMode } from '../interfaces/keys'
 
 export const initialState: StateAppContext = {
   contextInstanceId: '',
   lastPage: '',
+  dbConfig: {
+    treeViewDelimiter: DEFAULT_DELIMITER,
+    slowLogDurationUnit: DEFAULT_SLOWLOG_DURATION_UNIT
+  },
   browser: {
     keyList: {
-      isDataLoaded: false,
+      isDataPatternLoaded: false,
+      isDataRedisearchLoaded: false,
       scrollPatternTopPosition: 0,
       scrollRedisearchTopPosition: 0,
       isNotRendered: true,
@@ -25,6 +33,11 @@ export const initialState: StateAppContext = {
     },
     bulkActions: {
       opened: false,
+    },
+    keyDetailsSizes: {
+      [KeyTypes.Hash]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.hash ?? null,
+      [KeyTypes.List]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.list ?? null,
+      [KeyTypes.ZSet]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.zset ?? null,
     }
   },
   workbench: {
@@ -54,17 +67,36 @@ const appContextSlice = createSlice({
     // don't need to reset instanceId
     setAppContextInitialState: (state) => ({
       ...initialState,
+      browser: {
+        ...initialState.browser,
+        keyDetailsSizes: state.browser.keyDetailsSizes
+      },
       contextInstanceId: state.contextInstanceId
     }),
     // set connected instance
     setAppContextConnectedInstanceId: (state, { payload }: { payload: string }) => {
       state.contextInstanceId = payload
     },
+    setDbConfig: (state, { payload }) => {
+      state.dbConfig.treeViewDelimiter = payload?.treeViewDelimiter ?? DEFAULT_DELIMITER
+      state.dbConfig.slowLogDurationUnit = payload?.slowLogDurationUnit ?? DEFAULT_SLOWLOG_DURATION_UNIT
+    },
+    setSlowLogUnits: (state, { payload }) => {
+      state.dbConfig.slowLogDurationUnit = payload
+      setDBConfigStorageField(state.contextInstanceId, ConfigDBStorageItem.slowLogDurationUnit, payload)
+    },
+    setBrowserTreeDelimiter: (state, { payload }: { payload: string }) => {
+      state.dbConfig.treeViewDelimiter = payload
+      setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.treeViewDelimiter, payload)
+    },
     setBrowserSelectedKey: (state, { payload }: { payload: Nullable<RedisResponseBuffer> }) => {
       state.browser.keyList.selectedKey = payload
     },
-    setBrowserKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
-      state.browser.keyList.isDataLoaded = payload
+    setBrowserPatternKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
+      state.browser.keyList.isDataPatternLoaded = payload
+    },
+    setBrowserRedisearchKeyListDataLoaded: (state, { payload }: { payload: boolean }) => {
+      state.browser.keyList.isDataRedisearchLoaded = payload
     },
     setBrowserPatternScrollPosition: (state, { payload }: { payload: number }) => {
       state.browser.keyList.scrollPatternTopPosition = payload
@@ -110,10 +142,6 @@ const appContextSlice = createSlice({
     setBrowserTreePanelSizes: (state, { payload }: { payload: any }) => {
       state.browser.tree.panelSizes = payload
     },
-    setBrowserTreeDelimiter: (state, { payload }: { payload: string }) => {
-      localStorageService.set(BrowserStorageItem.treeViewDelimiter + state.contextInstanceId, payload)
-      state.browser.tree.delimiter = payload
-    },
     setWorkbenchScript: (state, { payload }: { payload: string }) => {
       state.workbench.script = payload
     },
@@ -151,6 +179,14 @@ const appContextSlice = createSlice({
     setLastAnalyticsPage: (state, { payload }: { payload: string }) => {
       state.analytics.lastViewedPage = payload
     },
+    updateKeyDetailsSizes: (
+      state,
+      { payload }: { payload: { type: KeyTypes, sizes: RelativeWidthSizes } }
+    ) => {
+      const { type, sizes } = payload
+      state.browser.keyDetailsSizes[type] = sizes
+      localStorageService?.set(BrowserStorageItem.keyDetailSizes, state.browser.keyDetailsSizes)
+    }
   },
 })
 
@@ -158,7 +194,10 @@ const appContextSlice = createSlice({
 export const {
   setAppContextInitialState,
   setAppContextConnectedInstanceId,
-  setBrowserKeyListDataLoaded,
+  setDbConfig,
+  setSlowLogUnits,
+  setBrowserPatternKeyListDataLoaded,
+  setBrowserRedisearchKeyListDataLoaded,
   setBrowserSelectedKey,
   setBrowserPatternScrollPosition,
   setBrowserRedisearchScrollPosition,
@@ -179,15 +218,20 @@ export const {
   setPubSubFieldsContext,
   setBrowserBulkActionOpen,
   setLastAnalyticsPage,
+  updateKeyDetailsSizes
 } = appContextSlice.actions
 
 // Selectors
 export const appContextSelector = (state: RootState) =>
   state.app.context
+export const appContextDbConfig = (state: RootState) =>
+  state.app.context.dbConfig
 export const appContextBrowser = (state: RootState) =>
   state.app.context.browser
 export const appContextBrowserTree = (state: RootState) =>
   state.app.context.browser.tree
+export const appContextBrowserKeyDetails = (state: RootState) =>
+  state.app.context.browser.keyDetailsSizes
 export const appContextWorkbench = (state: RootState) =>
   state.app.context.workbench
 export const appContextSelectedKey = (state: RootState) =>
@@ -201,3 +245,13 @@ export const appContextAnalytics = (state: RootState) =>
 
 // The reducer
 export default appContextSlice.reducer
+
+// Asynchronous thunk action
+export function setBrowserKeyListDataLoaded(
+  searchMode: SearchMode,
+  value: boolean,
+) {
+  return searchMode === SearchMode.Pattern
+    ? setBrowserPatternKeyListDataLoaded(value)
+    : setBrowserRedisearchKeyListDataLoaded(value)
+}

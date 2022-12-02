@@ -21,7 +21,6 @@ export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewData
             'password': databaseParameters.databasePassword
         })
         .set('Accept', 'application/json');
-
     await t
         .expect(response.status).eql(201, 'The creation of new standalone database request failed')
         .expect(await response.body.name).eql(databaseParameters.databaseName, `Database Name is not equal to ${databaseParameters.databaseName} in response`);

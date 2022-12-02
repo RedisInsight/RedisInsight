@@ -192,14 +192,14 @@ describe('Recommendations', () => {
 
     const { container } = render(<Recommendations />)
 
-    expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
-
-    fireEvent.click(container.querySelector('[data-test-subj="luaScript-button"]') as HTMLInputElement)
-
     expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
 
     fireEvent.click(container.querySelector('[data-test-subj="luaScript-button"]') as HTMLInputElement)
 
     expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
+
+    fireEvent.click(container.querySelector('[data-test-subj="luaScript-button"]') as HTMLInputElement)
+
+    expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
   })
 })

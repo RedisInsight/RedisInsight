@@ -218,6 +218,25 @@ export const initDataHelper = (rte) => {
     );
   };
 
+
+  const generateHugeElementsForListKey = async (number: number = 100000, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const batchSize = 10000;
+    let inserted = 0;
+    do {
+      const pipeline = [];
+      const limit = inserted + batchSize;
+      for (inserted; inserted < limit && inserted < number; inserted++) {
+        pipeline.push(['lpush', constants.TEST_LIST_KEY_1, inserted]);
+      }
+
+      await insertKeysBasedOnEnv(pipeline, true);
+    } while (inserted < number)
+  };
+
   // Set
   const generateSets = async (clean: boolean = false) => {
     if (clean) {
@@ -507,6 +526,7 @@ export const initDataHelper = (rte) => {
     generateKeys,
     generateHugeNumberOfFieldsForHashKey,
     generateHugeNumberOfTinyStringKeys,
+    generateHugeElementsForListKey,
     generateHugeStream,
     generateNKeys,
     generateRedisearchIndexes,

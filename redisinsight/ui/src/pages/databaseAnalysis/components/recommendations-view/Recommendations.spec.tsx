@@ -47,56 +47,6 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('recommendations-loader')).not.toBeInTheDocument()
   })
 
-  describe('recommendations initial open', () => {
-    it('should render open recommendations', () => {
-      (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
-        ...mockdbAnalysisSelector,
-        data: {
-          recommendations: [
-            { name: 'luaScript' },
-            { name: 'luaScript' },
-            { name: 'luaScript' },
-            { name: 'luaScript' },
-            { name: 'luaScript' },
-          ]
-        }
-      }))
-
-      render(<Recommendations />)
-
-      expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
-      expect(screen.queryAllByTestId('luaScript-accordion')[1]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
-      expect(screen.queryAllByTestId('luaScript-accordion')[2]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
-      expect(screen.queryAllByTestId('luaScript-accordion')[3]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
-      expect(screen.queryAllByTestId('luaScript-accordion')[4]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
-    })
-
-    it('should render closed recommendations', () => {
-      (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
-        ...mockdbAnalysisSelector,
-        data: {
-          recommendations: [
-            { name: 'luaScript' },
-            { name: 'luaScript' },
-            { name: 'luaScript' },
-            { name: 'luaScript' },
-            { name: 'luaScript' },
-            { name: 'luaScript' },
-          ]
-        }
-      }))
-
-      render(<Recommendations />)
-
-      expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
-      expect(screen.queryAllByTestId('luaScript-accordion')[1]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
-      expect(screen.queryAllByTestId('luaScript-accordion')[2]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
-      expect(screen.queryAllByTestId('luaScript-accordion')[3]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
-      expect(screen.queryAllByTestId('luaScript-accordion')[4]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
-      expect(screen.queryAllByTestId('luaScript-accordion')[5]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
-    })
-  })
-
   it('should render code changes badge in luaScript recommendation', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
@@ -142,7 +92,7 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
-  it('should render code changes badge and configuration_changes in avoidLogicalDatabases recommendation', () => {
+  it('should render code changes badge in avoidLogicalDatabases recommendation', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
@@ -157,7 +107,7 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
   })
 
-  it('should render code changes badge and configuration_changes in combineSmallStringsToHashes recommendation', () => {
+  it('should render code changes badge in combineSmallStringsToHashes recommendation', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
@@ -172,7 +122,7 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
   })
 
-  it('should render configuration_changes badge and configuration_changes in increaseSetMaxIntsetEntries recommendation', () => {
+  it('should render configuration_changes badge in increaseSetMaxIntsetEntries recommendation', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
@@ -187,7 +137,7 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
-  it('should render code changes badge and configuration_changes in convertHashtableToZiplist recommendation', () => {
+  it('should render code changes badge in convertHashtableToZiplist recommendation', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
@@ -202,7 +152,7 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
-  it('should render configuration_changes badge and configuration_changes in compressHashFieldNames recommendation', () => {
+  it('should render configuration_changes badge in compressHashFieldNames recommendation', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
@@ -217,6 +167,20 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
+  it('should render configuration_changes badge in compressionForList recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'compressionForList' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
+  })
 
   it('should collapse/expand', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({

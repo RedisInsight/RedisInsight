@@ -284,7 +284,32 @@ describe('POST /databases/:instanceId/analysis', () => {
         expect(body.recommendations).to.deep.eq([
           constants.TEST_CONVERT_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
           constants.TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION,
-
+        ]);
+      },
+      after: async () => {
+        expect(await repository.count()).to.eq(5);
+      }
+    },
+    {
+      name: 'Should create new database analysis with compressionForList recommendation',
+      data: {
+        delimiter: '-',
+      },
+      statusCode: 201,
+      responseSchema,
+      before: async () => {
+        const NUMBERS_OF_LIST_ELEMENTS = 1001;
+        await rte.data.generateHugeElementsForListKey(NUMBERS_OF_LIST_ELEMENTS, true);
+      },
+      checkFn: async ({ body }) => {
+        expect(body.totalKeys.total).to.gt(0);
+        expect(body.totalMemory.total).to.gt(0);
+        expect(body.topKeysNsp.length).to.gt(0);
+        expect(body.topMemoryNsp.length).to.gt(0);
+        expect(body.topKeysLength.length).to.gt(0);
+        expect(body.topKeysMemory.length).to.gt(0);
+        expect(body.recommendations).to.deep.eq([
+          constants.TEST_COMPRESSION_FOR_LIST_RECOMMENDATION,
         ]);
       },
       after: async () => {

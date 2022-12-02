@@ -1,5 +1,6 @@
 import IORedis from 'ioredis';
 import { when } from 'jest-when';
+import { RECOMMENDATION_NAMES } from 'src/constants';
 import { RecommendationProvider } from 'src/modules/recommendation/providers/recommendation.provider';
 
 const nodeClient = Object.create(IORedis.prototype);
@@ -64,6 +65,10 @@ const mockBigSet = {
   name: Buffer.from('name'), type: 'set', length: 513, memory: 10, ttl: -1,
 };
 
+const mockBigListKey = {
+  name: Buffer.from('name'), type: 'list', length: 1001, memory: 10, ttl: -1,
+};
+
 describe('RecommendationProvider', () => {
   const service = new RecommendationProvider();
 
@@ -83,7 +88,7 @@ describe('RecommendationProvider', () => {
         .mockResolvedValue(mockRedisMemoryInfoResponse_2);
 
       const luaScriptRecommendation = await service.determineLuaScriptRecommendation(nodeClient);
-      expect(luaScriptRecommendation).toEqual({ name: 'luaScript' });
+      expect(luaScriptRecommendation).toEqual({ name: RECOMMENDATION_NAMES.LUA_SCRIPT });
     });
 
     it('should not return luaScript recommendation when info command executed with error', async () => {
@@ -105,7 +110,7 @@ describe('RecommendationProvider', () => {
       const bigHashesRecommendation = await service.determineBigHashesRecommendation(
         [...mockKeys, mockBigHashKey],
       );
-      expect(bigHashesRecommendation).toEqual({ name: 'bigHashes' });
+      expect(bigHashesRecommendation).toEqual({ name: RECOMMENDATION_NAMES.BIG_HASHES });
     });
   });
 
@@ -116,7 +121,7 @@ describe('RecommendationProvider', () => {
     });
     it('should return useSmallerKeys recommendation', async () => {
       const bigTotalRecommendation = await service.determineBigTotalRecommendation(1_000_001);
-      expect(bigTotalRecommendation).toEqual({ name: 'useSmallerKeys' });
+      expect(bigTotalRecommendation).toEqual({ name: RECOMMENDATION_NAMES.USE_SMALLER_KEYS });
     });
   });
 
@@ -178,7 +183,7 @@ describe('RecommendationProvider', () => {
     });
     it('should return combineSmallStringsToHashes recommendation', async () => {
       const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(mockKeys);
-      expect(smallStringRecommendation).toEqual({ name: 'combineSmallStringsToHashes' });
+      expect(smallStringRecommendation).toEqual({ name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES });
     });
   });
 
@@ -200,7 +205,8 @@ describe('RecommendationProvider', () => {
 
       const increaseSetMaxIntsetEntriesRecommendation = await service
         .determineIncreaseSetMaxIntsetEntriesRecommendation(nodeClient, [...mockKeys, mockBigSet]);
-      expect(increaseSetMaxIntsetEntriesRecommendation).toEqual({ name: 'increaseSetMaxIntsetEntries' });
+      expect(increaseSetMaxIntsetEntriesRecommendation)
+        .toEqual({ name: RECOMMENDATION_NAMES.INCREASE_SET_MAX_INTSET_ENTRIES });
     });
 
     it('should not return increaseSetMaxIntsetEntries recommendation when config command executed with error',
@@ -233,7 +239,8 @@ describe('RecommendationProvider', () => {
 
       const convertHashtableToZiplistRecommendation = await service
         .determineConvertHashtableToZiplistRecommendation(nodeClient, [...mockKeys, mockBigHashKey_3]);
-      expect(convertHashtableToZiplistRecommendation).toEqual({ name: 'convertHashtableToZiplist' });
+      expect(convertHashtableToZiplistRecommendation)
+        .toEqual({ name: RECOMMENDATION_NAMES.CONVERT_HASHTABLE_TO_ZIPLIST });
     });
 
     it('should not return convertHashtableToZiplist recommendation when config command executed with error',
@@ -257,7 +264,20 @@ describe('RecommendationProvider', () => {
     it('should return compressHashFieldNames recommendation', async () => {
       const compressHashFieldNamesRecommendation = await service
         .determineCompressHashFieldNamesRecommendation([mockBigHashKey_2]);
-      expect(compressHashFieldNamesRecommendation).toEqual({ name: 'compressHashFieldNames' });
+      expect(compressHashFieldNamesRecommendation).toEqual({ name: RECOMMENDATION_NAMES.COMPRESS_HASH_FIELD_NAMES });
+    });
+  });
+
+  describe('determineCompressionForListRecommendation', () => {
+    it('should not return compressionForList recommendation', async () => {
+      const compressHashFieldNamesRecommendation = await service
+        .determineCompressionForListRecommendation(mockKeys);
+      expect(compressHashFieldNamesRecommendation).toEqual(null);
+    });
+    it('should return compressionForList recommendation', async () => {
+      const compressHashFieldNamesRecommendation = await service
+        .determineCompressionForListRecommendation([mockBigListKey]);
+      expect(compressHashFieldNamesRecommendation).toEqual({ name: RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST });
     });
   });
 });

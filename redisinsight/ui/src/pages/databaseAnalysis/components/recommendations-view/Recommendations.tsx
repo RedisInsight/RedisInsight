@@ -12,8 +12,6 @@ import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.js
 import { parseContent, renderBadges } from './utils'
 import styles from './styles.module.scss'
 
-const countToCollapseRecommendations = 6
-
 const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
   const { recommendations = [] } = data ?? {}
@@ -45,7 +43,6 @@ const Recommendations = () => {
               buttonClassName={styles.accordionBtn}
               buttonProps={{ 'data-test-subj': `${id}-button` }}
               className={styles.accordion}
-              initialIsOpen={recommendations.length < countToCollapseRecommendations}
               data-testId={`${id}-accordion`}
             >
               <EuiPanel className={styles.accordionContent} color="subdued">

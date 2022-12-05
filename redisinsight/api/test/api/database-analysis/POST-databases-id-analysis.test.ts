@@ -261,13 +261,13 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          const KEYS_NUMBER = 1_000_006;
-          await rte.data.generateNKeys(KEYS_NUMBER, false);
+          const KEYS_NUMBER = 1_000_001;
+          // to avoid another recommendations
+          await rte.data.generateNGraphs(KEYS_NUMBER, false);
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.deep.eq([
             constants.TEST_SMALLER_KEYS_DATABASE_ANALYSIS_RECOMMENDATION,
-            constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION,
           ]);
         },
         after: async () => {

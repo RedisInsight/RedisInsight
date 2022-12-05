@@ -138,7 +138,7 @@ describe('DatabaseImportService', () => {
     it('should create standalone database', async () => {
       await service['createDatabase']({
         ...mockDatabase,
-      });
+      }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType']),
@@ -148,7 +148,7 @@ describe('DatabaseImportService', () => {
       await service['createDatabase']({
         ...mockDatabase,
         name: undefined,
-      });
+      }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType']),
@@ -159,7 +159,7 @@ describe('DatabaseImportService', () => {
       await service['createDatabase']({
         ...mockDatabase,
         cluster: true,
-      });
+      }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name']),

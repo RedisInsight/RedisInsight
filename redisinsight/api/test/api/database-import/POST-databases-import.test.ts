@@ -66,7 +66,8 @@ describe('POST /databases/import', () => {
           attach: ['file', Buffer.from(JSON.stringify([database])), 'file.json'],
           responseBody: {
             total: 1,
-            success: 0,
+            success: [],
+            partial: [],
           }
         }
       })
@@ -148,7 +149,14 @@ describe('POST /databases/import', () => {
           ])), 'file.json'],
           responseBody: {
             total: 1,
-            success: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat1.host,
+              port: parseInt(importDatabaseFormat1.port, 10),
+            }],
+            partial: [],
+            fail: [],
           },
         });
 
@@ -178,7 +186,14 @@ describe('POST /databases/import', () => {
             ])), 'file.json'],
             responseBody: {
               total: 1,
-              success: 1,
+              success: [{
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: parseInt(importDatabaseFormat1.port, 10),
+              }],
+              partial: [],
+              fail: [],
             },
           });
 
@@ -252,7 +267,14 @@ describe('POST /databases/import', () => {
           ])).toString('base64')), 'file.ano'],
           responseBody: {
             total: 1,
-            success: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat1.host,
+              port: parseInt(importDatabaseFormat1.port, 10),
+            }],
+            partial: [],
+            fail: [],
           },
         });
 

@@ -11,21 +11,31 @@ export class DatabaseImportAnalytics extends TelemetryBaseService {
   }
 
   sendImportResults(importResult: DatabaseImportResponse): void {
-    if (importResult.success) {
+    if (importResult.success?.length) {
       this.sendEvent(
         TelemetryEvents.DatabaseImportSucceeded,
         {
-          succeed: importResult.success,
+          succeed: importResult.success.length,
         },
       );
     }
 
-    if (importResult.errors?.length) {
+    if (importResult.fail?.length) {
       this.sendEvent(
         TelemetryEvents.DatabaseImportFailed,
         {
-          failed: importResult.errors.length,
-          errors: importResult.errors.map((e) => (e?.constructor?.name || 'UncaughtError')),
+          failed: importResult.fail.length,
+          errors: importResult.fail.map((res) => (res?.error?.constructor?.name || 'UncaughtError')),
+        },
+      );
+    }
+
+    if (importResult.partial?.length) {
+      this.sendEvent(
+        TelemetryEvents.DatabaseImportPartiallySucceeded,
+        {
+          partially: importResult.partial.length,
+          errors: importResult.partial.map((res) => (res?.error?.constructor?.name || 'UncaughtError')),
         },
       );
     }

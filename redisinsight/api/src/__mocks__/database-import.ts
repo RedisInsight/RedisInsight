@@ -1,7 +1,7 @@
-import { DatabaseImportResponse } from 'src/modules/database-import/dto/database-import.response';
+import { DatabaseImportResponse, DatabaseImportStatus } from 'src/modules/database-import/dto/database-import.response';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { mockDatabase } from 'src/__mocks__/databases';
-import { ValidationError } from 'class-validator';
+import { ValidationException } from 'src/common/exceptions';
 
 export const mockDatabasesToImportArray = new Array(10).fill(mockDatabase);
 
@@ -12,10 +12,33 @@ export const mockDatabaseImportFile = {
   buffer: Buffer.from(JSON.stringify(mockDatabasesToImportArray)),
 };
 
+export const mockDatabaseImportResultSuccess = {
+  index: 0,
+  status: DatabaseImportStatus.Success,
+  host: mockDatabase.host,
+  port: mockDatabase.port,
+};
+
+export const mockDatabaseImportResultFail = {
+  index: 0,
+  status: DatabaseImportStatus.Fail,
+  host: mockDatabase.host,
+  port: mockDatabase.port,
+  error: new BadRequestException(),
+};
+
 export const mockDatabaseImportResponse = Object.assign(new DatabaseImportResponse(), {
   total: 10,
-  success: 7,
-  errors: [new ValidationError(), new BadRequestException(), new ForbiddenException()],
+  success: (new Array(7).fill(mockDatabaseImportResultSuccess)).map((v, index) => ({
+    ...v,
+    index: index + 3,
+  })),
+  partial: [],
+  fail: [new ValidationException([]), new BadRequestException(), new ForbiddenException()].map((error, index) => ({
+    ...mockDatabaseImportResultFail,
+    index,
+    error,
+  })),
 });
 
 export const mockDatabaseImportParseFailedAnalyticsPayload = {
@@ -23,12 +46,12 @@ export const mockDatabaseImportParseFailedAnalyticsPayload = {
 };
 
 export const mockDatabaseImportFailedAnalyticsPayload = {
-  failed: mockDatabaseImportResponse.errors.length,
-  errors: ['ValidationError', 'BadRequestException', 'ForbiddenException'],
+  failed: mockDatabaseImportResponse.fail.length,
+  errors: ['ValidationException', 'BadRequestException', 'ForbiddenException'],
 };
 
 export const mockDatabaseImportSucceededAnalyticsPayload = {
-  succeed: mockDatabaseImportResponse.success,
+  succeed: mockDatabaseImportResponse.success.length,
 };
 
 export const mockDatabaseImportAnalytics = jest.fn(() => ({

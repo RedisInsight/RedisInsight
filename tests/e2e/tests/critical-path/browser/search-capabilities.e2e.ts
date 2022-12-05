@@ -247,7 +247,6 @@ test
     });
 
 test
-    .only
     .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, bigDbName);
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);

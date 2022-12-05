@@ -1,4 +1,4 @@
-import { isArray } from 'lodash';
+import { isArray, isString, isNumber } from 'lodash';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Transform, Type } from 'class-transformer';
 
@@ -28,6 +28,7 @@ export class DatabaseImportResult {
     type: String,
   })
   @Expose()
+  @Transform((v) => (isString(v) ? v : undefined), { toPlainOnly: true })
   host?: string;
 
   @ApiPropertyOptional({
@@ -35,6 +36,7 @@ export class DatabaseImportResult {
     type: Number,
   })
   @Expose()
+  @Transform((v) => (isNumber(v) ? v : undefined), { toPlainOnly: true })
   port?: number;
 
   @ApiPropertyOptional({

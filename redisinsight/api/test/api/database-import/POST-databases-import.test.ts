@@ -68,6 +68,18 @@ describe('POST /databases/import', () => {
             total: 1,
             success: [],
             partial: [],
+          },
+          checkFn: ({ body }) => {
+            expect(body.fail.length).to.eq(1);
+            expect(body.fail[0].status).to.eq('fail');
+            expect(body.fail[0].index).to.eq(0);
+            expect(body.fail[0].error).to.be.a('string');
+            if (body.fail[0].host) {
+              expect(body.fail[0].host).to.be.a('string');
+            }
+            if (body.fail[0].port) {
+              expect(body.fail[0].port).to.be.a('number');
+            }
           }
         }
       })

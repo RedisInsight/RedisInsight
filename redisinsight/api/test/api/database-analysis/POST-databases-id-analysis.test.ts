@@ -150,8 +150,10 @@ describe('POST /databases/:instanceId/analysis', () => {
   ].map(mainCheckFn);
 
   describe('recommendations', () => {
+    requirements('!rte.bigData');
+
     beforeEach(async () => {
-      await rte.data.truncate()
+      await rte.data.truncate();
     });
 
     [
@@ -261,8 +263,8 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          const KEYS_NUMBER = 1_000_001;
-          await rte.data.generateHugeNumberOfTinyStringKeys(KEYS_NUMBER, false);
+          const KEYS_NUMBER = 1_000_006;
+          await rte.data.generateNKeys(KEYS_NUMBER, false);
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.deep.eq([
@@ -333,5 +335,38 @@ describe('POST /databases/:instanceId/analysis', () => {
         }
       },
     ].map(mainCheckFn);
+
+    describe('useSmallerKeys recommendation', () => {
+      // generate 1M keys take a lot of time
+      requirements('!rte.cloud');
+  
+      beforeEach(async () => {
+        await rte.data.truncate();
+      });
+  
+      [
+        {
+          name: 'Should create new database analysis with useSmallerKeys recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          before: async () => {
+            const KEYS_NUMBER = 1_000_006;
+            await rte.data.generateNKeys(KEYS_NUMBER, false);
+          },
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.deep.eq([
+              constants.TEST_SMALLER_KEYS_DATABASE_ANALYSIS_RECOMMENDATION,
+              constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION,
+            ]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+      ].map(mainCheckFn);
+    });
   });
 });

@@ -247,6 +247,7 @@ test
     });
 
 test
+    .only
     .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, bigDbName);
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
@@ -259,6 +260,11 @@ test
         await myRedisDatabasePage.clickOnDBByName(simpleDbName); // click standalone database
 
         await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexNameSimpleDb}`);
+
+        await t.click(browserPage.patternModeBtn);
+
+        await browserPage.deleteKeysByNames(keyNames);
+
         // Clear and delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);

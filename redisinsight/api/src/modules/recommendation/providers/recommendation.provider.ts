@@ -13,6 +13,7 @@ const maxStringMemory = 200;
 const maxDatabaseTotal = 1_000_000;
 const maxCompressHashLength = 1000;
 const maxListLength = 1000;
+const bigStringMemory = 5_000_000;
 
 @Injectable()
 export class RecommendationProvider {
@@ -188,10 +189,26 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bugList = keys.some((key) => key.type === RedisDataType.List && key.length > maxListLength);
-      return bugList ? { name: RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST } : null;
+      const bigList = keys.some((key) => key.type === RedisDataType.List && key.length > maxListLength);
+      return bigList ? { name: RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST } : null;
     } catch (err) {
       this.logger.error('Can not determine Compression for list recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+ * Check big strings recommendation
+ * @param keys
+ */
+  async determineBigStringsRecommendation(
+    keys: Key[],
+  ): Promise<Recommendation> {
+    try {
+      const bigString = keys.some((key) => key.type === RedisDataType.String && key.memory > bigStringMemory);
+      return bigString ? { name: RECOMMENDATION_NAMES.BIG_STRINGS } : null;
+    } catch (err) {
+      this.logger.error('Can not determine Big strings recommendation', err);
       return null;
     }
   }

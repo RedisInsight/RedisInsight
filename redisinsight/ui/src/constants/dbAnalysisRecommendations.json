@@ -228,5 +228,25 @@
       }
     ],
     "badges": ["configuration_changes"]
+  },
+  "bigStrings": {
+    "id": "bigStrings",
+    "title": "Do not store large strings",
+    "content": [
+      {
+        "id": "1",
+        "type": "span",
+        "value": "Avoid storing large strings, since transferring them takes time and consumes the network bandwidth. Large keys are acceptable only to read/write portions of the string. "
+      },
+      {
+        "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["configuration_changes"]
   }
 }

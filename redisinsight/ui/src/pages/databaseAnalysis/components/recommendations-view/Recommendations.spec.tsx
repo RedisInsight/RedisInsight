@@ -182,6 +182,21 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
+  it('should render configuration_changes badge in bigStrings recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'bigStrings' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
+  })
+
   it('should collapse/expand', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
@@ -192,14 +207,14 @@ describe('Recommendations', () => {
 
     const { container } = render(<Recommendations />)
 
-    expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
-
-    fireEvent.click(container.querySelector('[data-test-subj="luaScript-button"]') as HTMLInputElement)
-
     expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
 
     fireEvent.click(container.querySelector('[data-test-subj="luaScript-button"]') as HTMLInputElement)
 
     expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
+
+    fireEvent.click(container.querySelector('[data-test-subj="luaScript-button"]') as HTMLInputElement)
+
+    expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
   })
 })

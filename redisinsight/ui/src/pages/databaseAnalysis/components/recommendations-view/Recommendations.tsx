@@ -43,6 +43,7 @@ const Recommendations = () => {
               buttonClassName={styles.accordionBtn}
               buttonProps={{ 'data-test-subj': `${id}-button` }}
               className={styles.accordion}
+              initialIsOpen
               data-testId={`${id}-accordion`}
             >
               <EuiPanel className={styles.accordionContent} color="subdued">

@@ -61,6 +61,10 @@ const mockBigStringKey = {
   name: Buffer.from('name'), type: 'string', length: 10, memory: 201, ttl: -1,
 };
 
+const mockHugeStringKey = {
+  name: Buffer.from('name'), type: 'string', length: 10, memory: 5_000_001, ttl: -1,
+};
+
 const mockBigSet = {
   name: Buffer.from('name'), type: 'set', length: 513, memory: 10, ttl: -1,
 };
@@ -278,6 +282,19 @@ describe('RecommendationProvider', () => {
       const compressHashFieldNamesRecommendation = await service
         .determineCompressionForListRecommendation([mockBigListKey]);
       expect(compressHashFieldNamesRecommendation).toEqual({ name: RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST });
+    });
+  });
+
+  describe('determineBigStringsRecommendation', () => {
+    it('should not return bigStrings recommendation', async () => {
+      const bigStringsRecommendation = await service
+        .determineBigStringsRecommendation(mockKeys);
+      expect(bigStringsRecommendation).toEqual(null);
+    });
+    it('should return bigStrings recommendation', async () => {
+      const bigStringsRecommendation = await service
+        .determineBigStringsRecommendation([mockHugeStringKey]);
+      expect(bigStringsRecommendation).toEqual({ name: RECOMMENDATION_NAMES.BIG_STRINGS });
     });
   });
 });

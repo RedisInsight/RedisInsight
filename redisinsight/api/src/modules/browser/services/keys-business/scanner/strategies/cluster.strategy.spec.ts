@@ -4,7 +4,7 @@ import {
   mockAppSettingsInitial,
   mockRedisClusterConsumer,
   mockRedisNoPermError, mockSettingsService,
-  mockDatabase,
+  mockBrowserClientMetadata,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import config from 'src/utils/config';
@@ -14,7 +14,6 @@ import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
 import IORedis from 'ioredis';
 import { SettingsService } from 'src/modules/settings/settings.service';
@@ -22,9 +21,6 @@ import * as Utils from 'src/modules/database/utils/database.total.util';
 import { ClusterStrategy } from './cluster.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
@@ -120,7 +116,7 @@ describe('Cluster Scanner Strategy', () => {
 
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           expect.anything(),
@@ -130,7 +126,7 @@ describe('Cluster Scanner Strategy', () => {
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([getKeyInfoResponse]);
 
-      const result = await strategy.getKeys(mockClientOptions, args);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, args);
 
       expect(result).toEqual([
         {
@@ -156,7 +152,7 @@ describe('Cluster Scanner Strategy', () => {
       expect(browserTool.execCommandFromNode).toBeCalledTimes(3);
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         1,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
         mockClusterNodes[0],
@@ -164,7 +160,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         2,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
         mockClusterNodes[1],
@@ -172,7 +168,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         3,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
         mockClusterNodes[2],
@@ -187,7 +183,7 @@ describe('Cluster Scanner Strategy', () => {
 
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           ['0', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
@@ -196,7 +192,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockResolvedValue({ result: ['1', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           ['1', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
@@ -205,7 +201,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockResolvedValue({ result: ['2', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           ['2', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
@@ -214,7 +210,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockResolvedValue({ result: ['0', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           ['0', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[1],
@@ -223,7 +219,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockResolvedValue({ result: ['1', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           ['1', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[1],
@@ -232,7 +228,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockResolvedValue({ result: ['0', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           mockClusterNodes[2],
@@ -242,7 +238,7 @@ describe('Cluster Scanner Strategy', () => {
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
 
-      const result = await strategy.getKeys(mockClientOptions, args);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, args);
 
       expect(result).toEqual([
         {
@@ -268,7 +264,7 @@ describe('Cluster Scanner Strategy', () => {
       expect(browserTool.execCommandFromNode).toBeCalledTimes(6);
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         1,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
@@ -276,7 +272,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         2,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[1],
@@ -284,7 +280,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         3,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[2],
@@ -292,7 +288,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         4,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
@@ -300,7 +296,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         5,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[1],
@@ -308,7 +304,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         6,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['2', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
@@ -323,7 +319,7 @@ describe('Cluster Scanner Strategy', () => {
 
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           ['0', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
@@ -332,7 +328,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockResolvedValue({ result: ['1', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           ['1', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
@@ -341,7 +337,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockResolvedValue({ result: ['2', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           ['2', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[0],
@@ -350,7 +346,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockResolvedValue({ result: ['0', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           ['0', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[1],
@@ -359,7 +355,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockResolvedValue({ result: ['1', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           ['1', 'MATCH', '*', 'COUNT', args.count],
           mockClusterNodes[1],
@@ -368,7 +364,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockResolvedValue({ result: ['0', [Buffer.from(getKeyInfoResponse.name)]] });
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           mockClusterNodes[2],
@@ -378,7 +374,7 @@ describe('Cluster Scanner Strategy', () => {
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
 
-      const result = await strategy.getKeys(mockClientOptions, args);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, args);
 
       expect(result).toEqual([
         {
@@ -410,7 +406,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         1,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
@@ -418,7 +414,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         2,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[1],
@@ -426,7 +422,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         3,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[2],
@@ -434,7 +430,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         4,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
@@ -442,7 +438,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         5,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[1],
@@ -450,7 +446,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         6,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[2],
@@ -458,7 +454,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         7,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['2', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[0],
@@ -466,7 +462,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         8,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[2],
@@ -474,7 +470,7 @@ describe('Cluster Scanner Strategy', () => {
       );
       expect(browserTool.execCommandFromNode).toHaveBeenNthCalledWith(
         9,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', args.count],
         mockClusterNodes[2],
@@ -487,7 +483,7 @@ describe('Cluster Scanner Strategy', () => {
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
 
-      const result = await strategy.getKeys(mockClientOptions, args);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, args);
 
       expect(result).toEqual([
         {
@@ -520,7 +516,7 @@ describe('Cluster Scanner Strategy', () => {
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
 
-      const result = await strategy.getKeys(mockClientOptions, args);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, args);
 
       expect(result).toEqual([
         {
@@ -554,7 +550,7 @@ describe('Cluster Scanner Strategy', () => {
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
 
-      const result = await strategy.getKeys(mockClientOptions, args);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, args);
 
       expect(result).toEqual([
         {
@@ -573,7 +569,7 @@ describe('Cluster Scanner Strategy', () => {
           ...getKeysDto,
           cursor: '172.1.0.1asd00@0||172.1.0.1:7001@0||172.1.0.1:7002@0',
         };
-        await strategy.getKeys(mockClientOptions, args);
+        await strategy.getKeys(mockBrowserClientMetadata, args);
         fail();
       } catch (err) {
         expect(err.message).toEqual(
@@ -592,7 +588,7 @@ describe('Cluster Scanner Strategy', () => {
 
       when(browserTool.execCommandFromNode)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           expect.anything(),
@@ -601,7 +597,7 @@ describe('Cluster Scanner Strategy', () => {
         .mockRejectedValue(replyError);
 
       try {
-        await strategy.getKeys(mockClientOptions, args);
+        await strategy.getKeys(mockBrowserClientMetadata, args);
         fail();
       } catch (err) {
         expect(err.message).toEqual(replyError.message);
@@ -619,7 +615,7 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scanNodes).toHaveBeenCalled();
       });
@@ -629,7 +625,7 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scanNodes).toHaveBeenCalled();
       });
@@ -639,7 +635,7 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scanNodes).toHaveBeenCalled();
       });
@@ -649,7 +645,7 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scanNodes).toHaveBeenCalled();
       });
@@ -659,7 +655,7 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scanNodes).toHaveBeenCalled();
       });
@@ -669,7 +665,7 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scanNodes).not.toHaveBeenCalled();
       });
@@ -690,7 +686,7 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue(getKeyInfoResponse);
 
-        const result = await strategy.getKeys(mockClientOptions, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(result).toEqual([
           {
@@ -720,7 +716,7 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue({ ...getKeyInfoResponse, name: searchPattern });
 
-        const result = await strategy.getKeys(mockClientOptions, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(result).toEqual([
           {
@@ -753,7 +749,7 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        const result = await strategy.getKeys(mockClientOptions, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(result).toEqual([
           {
@@ -783,7 +779,7 @@ describe('Cluster Scanner Strategy', () => {
           size: null,
         });
 
-        const result = await strategy.getKeys(mockClientOptions, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(result).toEqual([
           {
@@ -814,7 +810,7 @@ describe('Cluster Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        const result = await strategy.getKeys(mockClientOptions, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(result).toEqual([
           {

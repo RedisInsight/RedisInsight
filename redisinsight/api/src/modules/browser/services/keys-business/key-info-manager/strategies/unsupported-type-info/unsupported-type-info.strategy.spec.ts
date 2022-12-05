@@ -3,18 +3,13 @@ import { when } from 'jest-when';
 import {
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockDatabase,
+  mockBrowserClientMetadata,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { UnsupportedTypeInfoStrategy } from './unsupported-type-info.strategy';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testKey',
@@ -45,7 +40,7 @@ describe('UnsupportedTypeInfoStrategy', () => {
     const key = getKeyInfoResponse.name;
     it('should return appropriate value', async () => {
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
@@ -58,7 +53,7 @@ describe('UnsupportedTypeInfoStrategy', () => {
         ]);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         'custom-type',
       );
@@ -71,14 +66,14 @@ describe('UnsupportedTypeInfoStrategy', () => {
         command: BrowserToolKeysCommands.Ttl,
       };
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
         .mockResolvedValue([replyError, []]);
 
       try {
-        await strategy.getInfo(mockClientOptions, key, 'custom-type');
+        await strategy.getInfo(mockBrowserClientMetadata, key, 'custom-type');
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);
@@ -91,7 +86,7 @@ describe('UnsupportedTypeInfoStrategy', () => {
         message: "ERR unknown command 'memory'",
       };
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
@@ -104,7 +99,7 @@ describe('UnsupportedTypeInfoStrategy', () => {
         ]);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         'custom-type',
       );

@@ -4,14 +4,13 @@ import {
   mockAppSettingsInitial,
   mockRedisConsumer,
   mockRedisNoPermError, mockSettingsService,
-  mockDatabase,
+  mockBrowserClientMetadata,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import config from 'src/utils/config';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { GetKeysDto, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
 import IORedis from 'ioredis';
 import { SettingsService } from 'src/modules/settings/settings.service';
@@ -19,9 +18,6 @@ import * as Utils from 'src/modules/database/utils/database.total.util';
 import { StandaloneStrategy } from './standalone.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
@@ -77,7 +73,7 @@ describe('Standalone Scanner Strategy', () => {
 
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           null,
@@ -86,7 +82,7 @@ describe('Standalone Scanner Strategy', () => {
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([getKeyInfoResponse]);
 
-      const result = await strategy.getKeys(mockClientOptions, args);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, args);
 
       expect(result).toEqual([
         {
@@ -99,7 +95,7 @@ describe('Standalone Scanner Strategy', () => {
       expect(strategy.getKeysInfo).toHaveBeenCalled();
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         1,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
         null,
@@ -113,7 +109,7 @@ describe('Standalone Scanner Strategy', () => {
 
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           null,
@@ -122,7 +118,7 @@ describe('Standalone Scanner Strategy', () => {
 
       strategy.getKeysInfo = jest.fn();
 
-      const result = await strategy.getKeys(mockClientOptions, args);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, args);
 
       expect(strategy.getKeysInfo).not.toHaveBeenCalled();
       expect(result).toEqual([
@@ -138,7 +134,7 @@ describe('Standalone Scanner Strategy', () => {
       jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse_2);
 
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Scan, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Scan, [
           '0',
           'MATCH',
           '*',
@@ -147,7 +143,7 @@ describe('Standalone Scanner Strategy', () => {
         ], null)
         .mockResolvedValue(['1', new Array(3).fill(getKeyInfoResponse.name)]);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Scan, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Scan, [
           '1',
           'MATCH',
           '*',
@@ -156,7 +152,7 @@ describe('Standalone Scanner Strategy', () => {
         ], null)
         .mockResolvedValue(['2', new Array(3).fill(getKeyInfoResponse.name)]);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Scan, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Scan, [
           '2',
           'MATCH',
           '*',
@@ -169,7 +165,7 @@ describe('Standalone Scanner Strategy', () => {
         .fn()
         .mockResolvedValue(new Array(9).fill(getKeyInfoResponse));
 
-      const result = await strategy.getKeys(mockClientOptions, getKeysDto);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, getKeysDto);
 
       expect(result).toEqual([
         {
@@ -183,21 +179,21 @@ describe('Standalone Scanner Strategy', () => {
       expect(browserTool.execCommand).toBeCalledTimes(3);
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         1,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['0', 'MATCH', '*', 'COUNT', getKeysDto.count],
         null,
       );
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         2,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['1', 'MATCH', '*', 'COUNT', getKeysDto.count],
         null,
       );
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         3,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Scan,
         ['2', 'MATCH', '*', 'COUNT', getKeysDto.count],
         null,
@@ -208,7 +204,7 @@ describe('Standalone Scanner Strategy', () => {
 
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           null,
@@ -217,7 +213,7 @@ describe('Standalone Scanner Strategy', () => {
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
 
-      const result = await strategy.getKeys(mockClientOptions, getKeysDto);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, getKeysDto);
 
       expect(result).toEqual([
         {
@@ -238,7 +234,7 @@ describe('Standalone Scanner Strategy', () => {
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
 
-      const result = await strategy.getKeys(mockClientOptions, getKeysDto);
+      const result = await strategy.getKeys(mockBrowserClientMetadata, getKeysDto);
 
       expect(result).toEqual([
         {
@@ -254,13 +250,13 @@ describe('Standalone Scanner Strategy', () => {
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
       strategy.scan = jest.fn().mockResolvedValue(undefined);
 
-      const result = await strategy.getKeys(mockClientOptions, {
+      const result = await strategy.getKeys(mockBrowserClientMetadata, {
         cursor: '0',
         type: RedisDataType.String,
       });
 
       expect(strategy.scan).toHaveBeenLastCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         mockNodeEmptyResult,
         '*',
         REDIS_SCAN_CONFIG.countDefault,
@@ -278,7 +274,7 @@ describe('Standalone Scanner Strategy', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Scan,
           expect.anything(),
           null,
@@ -286,7 +282,7 @@ describe('Standalone Scanner Strategy', () => {
         .mockRejectedValue(replyError);
 
       try {
-        await strategy.getKeys(mockClientOptions, getKeysDto);
+        await strategy.getKeys(mockBrowserClientMetadata, getKeysDto);
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);
@@ -304,7 +300,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scan).toHaveBeenCalled();
       });
@@ -314,7 +310,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scan).toHaveBeenCalled();
       });
@@ -324,7 +320,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scan).toHaveBeenCalled();
       });
@@ -334,7 +330,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scan).toHaveBeenCalled();
       });
@@ -344,7 +340,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scan).toHaveBeenCalled();
       });
@@ -354,7 +350,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        await strategy.getKeys(mockClientOptions, dto);
+        await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(strategy.scan).not.toHaveBeenCalled();
       });
@@ -373,7 +369,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        const result = await strategy.getKeys(mockClientOptions, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(result).toEqual([
           {
@@ -395,7 +391,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([{ ...getKeyInfoResponse, name: mockSearchPattern }]);
 
-        const result = await strategy.getKeys(mockClientOptions, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(result).toEqual([
           {
@@ -418,7 +414,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        const result = await strategy.getKeys(mockClientOptions, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(result).toEqual([
           {
@@ -440,7 +436,7 @@ describe('Standalone Scanner Strategy', () => {
           },
         ]);
 
-        const result = await strategy.getKeys(mockClientOptions, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(result).toEqual([
           {
@@ -461,7 +457,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        const result = await strategy.getKeys(mockClientOptions, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
 
         expect(result).toEqual([
           {

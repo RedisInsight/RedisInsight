@@ -1,13 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockDatabase,
+  mockCommonClientMetadata,
   mockDatabaseConnectionService,
   mockDatabaseInfoProvider, mockDatabaseOverview, mockDatabaseOverviewProvider,
   mockRedisGeneralInfo,
 } from 'src/__mocks__';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
-import { AppTool } from 'src/models';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 
@@ -40,13 +39,13 @@ describe('DatabaseConnectionService', () => {
 
   describe('getInfo', () => {
     it('should create client and get general info', async () => {
-      expect(await service.getInfo(mockDatabase.id, AppTool.Common)).toEqual(mockRedisGeneralInfo);
+      expect(await service.getInfo(mockCommonClientMetadata)).toEqual(mockRedisGeneralInfo);
     });
   });
 
   describe('getOverview', () => {
     it('should create client and get overview', async () => {
-      expect(await service.getOverview(mockDatabase.id)).toEqual(mockDatabaseOverview);
+      expect(await service.getOverview(mockCommonClientMetadata)).toEqual(mockDatabaseOverview);
     });
   });
 });

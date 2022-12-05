@@ -3,7 +3,7 @@ import { when } from 'jest-when';
 import {
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockDatabase,
+  mockBrowserClientMetadata,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import {
@@ -12,13 +12,8 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { mockKeyDto } from 'src/modules/browser/__mocks__';
 import { RejsonRlTypeInfoStrategy } from './rejson-rl-type-info.strategy';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: mockKeyDto.keyName,
@@ -52,7 +47,7 @@ describe('RejsonRlTypeInfoStrategy', () => {
     const path = '.';
     beforeEach(() => {
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
@@ -64,13 +59,13 @@ describe('RejsonRlTypeInfoStrategy', () => {
           ],
         ]);
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonType, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonType, [
           key,
           path,
         ], 'utf8')
         .mockResolvedValue('object');
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonObjLen, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonObjLen, [
           key,
           path,
         ], 'utf8')
@@ -78,7 +73,7 @@ describe('RejsonRlTypeInfoStrategy', () => {
     });
     it('should return appropriate value for key that store object', async () => {
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.JSON,
       );
@@ -87,20 +82,20 @@ describe('RejsonRlTypeInfoStrategy', () => {
     });
     it('should return appropriate value for key that store string', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonType, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonType, [
           key,
           path,
         ])
         .mockResolvedValue('string');
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonStrLen, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonStrLen, [
           key,
           path,
         ], 'utf8')
         .mockResolvedValue(10);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.JSON,
       );
@@ -109,20 +104,20 @@ describe('RejsonRlTypeInfoStrategy', () => {
     });
     it('should return appropriate value for key that store array', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonType, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonType, [
           key,
           path,
         ], 'utf8')
         .mockResolvedValue('array');
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonArrLen, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonArrLen, [
           key,
           path,
         ], 'utf8')
         .mockResolvedValue(10);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.JSON,
       );
@@ -131,14 +126,14 @@ describe('RejsonRlTypeInfoStrategy', () => {
     });
     it('should return appropriate value for key that store not iterable type', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonType, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonType, [
           key,
           path,
         ], 'utf8')
         .mockResolvedValue('boolean');
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.JSON,
       );
@@ -151,14 +146,14 @@ describe('RejsonRlTypeInfoStrategy', () => {
         command: BrowserToolKeysCommands.Ttl,
       };
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
         .mockResolvedValue([replyError, []]);
 
       try {
-        await strategy.getInfo(mockClientOptions, key, RedisDataType.JSON);
+        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.JSON);
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);
@@ -171,7 +166,7 @@ describe('RejsonRlTypeInfoStrategy', () => {
         message: "ERR unknown command 'memory'",
       };
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
@@ -184,7 +179,7 @@ describe('RejsonRlTypeInfoStrategy', () => {
         ]);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.JSON,
       );

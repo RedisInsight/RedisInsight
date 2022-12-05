@@ -12,7 +12,7 @@ import {
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
-  mockDatabase,
+  mockDatabase, mockBrowserClientMetadata
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -21,12 +21,7 @@ import {
   BrowserToolKeysCommands,
   BrowserToolRejsonRlCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { RejsonRlBusinessService } from './rejson-rl-business.service';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const testKey = Buffer.from('somejson');
 const testSerializedObject = JSON.stringify({ some: 'object' });
@@ -62,7 +57,7 @@ describe('JsonBusinessService', () => {
     ) => {
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolRejsonRlCommands.JsonType, [
             testKey,
             path,
@@ -73,7 +68,7 @@ describe('JsonBusinessService', () => {
       if (value !== undefined) {
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonGet,
             [
               testKey,
@@ -87,7 +82,7 @@ describe('JsonBusinessService', () => {
         case 'array':
           when(browserTool.execCommand)
             .calledWith(
-              mockClientOptions,
+              mockBrowserClientMetadata,
               BrowserToolRejsonRlCommands.JsonArrLen,
               [testKey, path],
               'utf8',
@@ -97,7 +92,7 @@ describe('JsonBusinessService', () => {
         case 'object':
           when(browserTool.execCommand)
             .calledWith(
-              mockClientOptions,
+              mockBrowserClientMetadata,
               BrowserToolRejsonRlCommands.JsonObjLen,
               [testKey, path],
               'utf8',
@@ -112,7 +107,7 @@ describe('JsonBusinessService', () => {
       beforeEach(() => {
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonDebug,
             ['MEMORY', testKey, testPath],
           )
@@ -122,14 +117,14 @@ describe('JsonBusinessService', () => {
       it('should throw BadRequest error when no key found in the database', async () => {
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonDebug,
             ['MEMORY', testKey, testPath],
           )
           .mockResolvedValue(null);
 
         try {
-          await service.getJson(mockClientOptions, {
+          await service.getJson(mockBrowserClientMetadata, {
             keyName: testKey,
             path: testPath,
           });
@@ -143,14 +138,14 @@ describe('JsonBusinessService', () => {
       });
       it('should throw BadRequest error when incorrect type of a key', async () => {
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonGet, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
             testKey,
             testPath,
           ], 'utf8')
           .mockResolvedValue(null);
 
         try {
-          await service.getJson(mockClientOptions, {
+          await service.getJson(mockBrowserClientMetadata, {
             keyName: testKey,
             path: testPath,
             forceRetrieve: true,
@@ -168,7 +163,7 @@ describe('JsonBusinessService', () => {
         browserTool.execCommand.mockRejectedValue(replyError);
 
         try {
-          await service.getJson(mockClientOptions, {
+          await service.getJson(mockBrowserClientMetadata, {
             keyName: testKey,
             path: testPath,
           });
@@ -185,7 +180,7 @@ describe('JsonBusinessService', () => {
         browserTool.execCommand.mockRejectedValue(replyError);
 
         try {
-          await service.getJson(mockClientOptions, {
+          await service.getJson(mockBrowserClientMetadata, {
             keyName: testKey,
             path: testPath,
           });
@@ -203,7 +198,7 @@ describe('JsonBusinessService', () => {
         browserTool.execCommand.mockRejectedValue(replyError);
 
         try {
-          await service.getJson(mockClientOptions, {
+          await service.getJson(mockBrowserClientMetadata, {
             keyName: testKey,
             path: testPath,
           });
@@ -219,7 +214,7 @@ describe('JsonBusinessService', () => {
         browserTool.execCommand.mockRejectedValue(new Error()); // no message here
 
         try {
-          await service.getJson(mockClientOptions, {
+          await service.getJson(mockBrowserClientMetadata, {
             keyName: testKey,
             path: testPath,
           });
@@ -231,13 +226,13 @@ describe('JsonBusinessService', () => {
       it('should return data (string)', async () => {
         const testData = 'some string';
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonGet, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
             testKey,
             testPath,
           ], 'utf8')
           .mockReturnValue(JSON.stringify(testData));
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -251,13 +246,13 @@ describe('JsonBusinessService', () => {
       it('should return data (number)', async () => {
         const testData = 3.14;
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonGet, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
             testKey,
             testPath,
           ], 'utf8')
           .mockReturnValue(JSON.stringify(testData));
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -271,13 +266,13 @@ describe('JsonBusinessService', () => {
       it('should return data (integer)', async () => {
         const testData = 123;
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonGet, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
             testKey,
             testPath,
           ], 'utf8')
           .mockReturnValue(JSON.stringify(testData));
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -291,13 +286,13 @@ describe('JsonBusinessService', () => {
       it('should return data (boolean)', async () => {
         const testData = true;
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonGet, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
             testKey,
             testPath,
           ], 'utf8')
           .mockReturnValue(JSON.stringify(testData));
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -311,13 +306,13 @@ describe('JsonBusinessService', () => {
       it('should return data (null)', async () => {
         const testData = null;
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonGet, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
             testKey,
             testPath,
           ], 'utf8')
           .mockReturnValue(JSON.stringify(testData));
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -339,13 +334,13 @@ describe('JsonBusinessService', () => {
           { some: 'field' },
         ];
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonGet, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
             testKey,
             testPath,
           ], 'utf8')
           .mockReturnValue(JSON.stringify(testData));
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -365,13 +360,13 @@ describe('JsonBusinessService', () => {
           someInt: 1222,
         };
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonGet, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
             testKey,
             testPath,
           ], 'utf8')
           .mockReturnValue(JSON.stringify(testData));
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -393,20 +388,20 @@ describe('JsonBusinessService', () => {
 
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonDebug,
             ['MEMORY', testKey, testPath],
           )
           .mockReturnValue(1025);
 
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonGet, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
             testKey,
             testPath,
           ], 'utf8')
           .mockReturnValue(JSON.stringify(testData));
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
           forceRetrieve: true,
@@ -423,7 +418,7 @@ describe('JsonBusinessService', () => {
       beforeEach(() => {
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonDebug,
             ['MEMORY', testKey, testPath],
           )
@@ -433,14 +428,14 @@ describe('JsonBusinessService', () => {
       it('should return full string value even if size is above the limit', async () => {
         const testData = randomBytes(2000).toString('hex');
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonGet, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
             testKey,
             testPath,
           ], 'utf8')
           .mockReturnValue(JSON.stringify(testData));
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonType, [
               testKey,
               testPath,
@@ -448,7 +443,7 @@ describe('JsonBusinessService', () => {
             'utf8',
           ).mockReturnValue('string');
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -472,7 +467,7 @@ describe('JsonBusinessService', () => {
         ];
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonType,
             [
               testKey,
@@ -482,7 +477,7 @@ describe('JsonBusinessService', () => {
           ).mockReturnValue('array');
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonArrLen,
             [testKey, testPath],
             'utf8',
@@ -497,7 +492,7 @@ describe('JsonBusinessService', () => {
         mockRedisCallsForSafeResponse('[5]', 5, 'array', undefined, 3);
         mockRedisCallsForSafeResponse('[6]', 6, 'object', undefined, 2);
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -562,14 +557,14 @@ describe('JsonBusinessService', () => {
         const testData = [12, 'str'];
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonDebug,
             ['MEMORY', testKey, path],
           )
           .mockReturnValue(1025);
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonType,
             [
               testKey,
@@ -579,7 +574,7 @@ describe('JsonBusinessService', () => {
           ).mockReturnValue('array');
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonArrLen,
             [testKey, path],
             'utf8',
@@ -598,7 +593,7 @@ describe('JsonBusinessService', () => {
           testData[1],
         );
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path,
         });
@@ -637,14 +632,14 @@ describe('JsonBusinessService', () => {
         };
 
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonType, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonType, [
             testKey,
             testPath,
           ], 'utf8')
           .mockReturnValue('object');
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonObjKeys,
             [testKey, testPath],
             'utf8',
@@ -696,7 +691,7 @@ describe('JsonBusinessService', () => {
           2,
         );
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -765,20 +760,20 @@ describe('JsonBusinessService', () => {
 
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonDebug,
             ['MEMORY', testKey, path],
           )
           .mockReturnValue(1025);
         when(browserTool.execCommand)
-          .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonType, [
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonType, [
             testKey,
             path,
           ], 'utf8')
           .mockReturnValue('object');
         when(browserTool.execCommand)
           .calledWith(
-            mockClientOptions,
+            mockBrowserClientMetadata,
             BrowserToolRejsonRlCommands.JsonObjKeys,
             [testKey, path],
             'utf8',
@@ -798,7 +793,7 @@ describe('JsonBusinessService', () => {
           testData.fStr,
         );
 
-        const result = await service.getJson(mockClientOptions, {
+        const result = await service.getJson(mockBrowserClientMetadata, {
           keyName: testKey,
           path,
         });
@@ -835,7 +830,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockReturnValue(null);
 
       try {
-        await service.create(mockClientOptions, {
+        await service.create(mockBrowserClientMetadata, {
           keyName: testKey,
           data: testSerializedObject,
         });
@@ -852,7 +847,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       try {
-        await service.create(mockClientOptions, {
+        await service.create(mockBrowserClientMetadata, {
           keyName: testKey,
           data: testSerializedObject,
         });
@@ -870,7 +865,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       try {
-        await service.create(mockClientOptions, {
+        await service.create(mockBrowserClientMetadata, {
           keyName: testKey,
           data: testSerializedObject,
         });
@@ -887,7 +882,7 @@ describe('JsonBusinessService', () => {
         ...mockRedisNoPermError,
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolRejsonRlCommands.JsonSet, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonSet, [
           testKey,
           testPath,
           testSerializedObject,
@@ -895,26 +890,26 @@ describe('JsonBusinessService', () => {
         ])
         .mockReturnValue('OK');
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Expire, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Expire, [
           testKey,
           testExpire,
         ])
         .mockRejectedValue(replyError);
 
-      await service.create(mockClientOptions, {
+      await service.create(mockBrowserClientMetadata, {
         keyName: testKey,
         data: testSerializedObject,
         expire: testExpire,
       });
       expect(browserTool.execCommand).lastCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Expire,
         [testKey, testExpire],
       );
     });
 
     it('should successful create key', async () => {
-      await service.create(mockClientOptions, {
+      await service.create(mockBrowserClientMetadata, {
         keyName: testKey,
         data: testSerializedObject,
       });
@@ -928,7 +923,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockReturnValue(0);
 
       try {
-        await service.jsonSet(mockClientOptions, {
+        await service.jsonSet(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
           data: testSerializedObject,
@@ -948,7 +943,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       try {
-        await service.jsonSet(mockClientOptions, {
+        await service.jsonSet(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
           data: testSerializedObject,
@@ -970,7 +965,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       try {
-        await service.jsonSet(mockClientOptions, {
+        await service.jsonSet(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
           data: testSerializedObject,
@@ -988,7 +983,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       try {
-        await service.jsonSet(mockClientOptions, {
+        await service.jsonSet(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
           data: testSerializedObject,
@@ -999,7 +994,7 @@ describe('JsonBusinessService', () => {
       }
     });
     it('should successful modify data', async () => {
-      await service.jsonSet(mockClientOptions, {
+      await service.jsonSet(mockBrowserClientMetadata, {
         keyName: testKey,
         path: testPath,
         data: testSerializedObject,
@@ -1007,12 +1002,12 @@ describe('JsonBusinessService', () => {
 
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         1,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Exists,
         [testKey],
       );
       expect(browserTool.execCommand).lastCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolRejsonRlCommands.JsonSet,
         [testKey, testPath, testSerializedObject],
       );
@@ -1026,7 +1021,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockReturnValue(0);
 
       try {
-        await service.arrAppend(mockClientOptions, {
+        await service.arrAppend(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
           data: [testSerializedObject],
@@ -1046,7 +1041,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       try {
-        await service.arrAppend(mockClientOptions, {
+        await service.arrAppend(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
           data: [testSerializedObject],
@@ -1066,7 +1061,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       try {
-        await service.arrAppend(mockClientOptions, {
+        await service.arrAppend(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
           data: [testSerializedObject],
@@ -1077,7 +1072,7 @@ describe('JsonBusinessService', () => {
       }
     });
     it('should successful modify data', async () => {
-      await service.arrAppend(mockClientOptions, {
+      await service.arrAppend(mockBrowserClientMetadata, {
         keyName: testKey,
         path: testPath,
         data: [testSerializedObject, testSerializedObject],
@@ -1085,12 +1080,12 @@ describe('JsonBusinessService', () => {
 
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         1,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Exists,
         [testKey],
       );
       expect(browserTool.execCommand).lastCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolRejsonRlCommands.JsonArrAppend,
         [testKey, testPath, testSerializedObject, testSerializedObject],
       );
@@ -1104,7 +1099,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockReturnValue(0);
 
       try {
-        await service.remove(mockClientOptions, {
+        await service.remove(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -1123,7 +1118,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       try {
-        await service.remove(mockClientOptions, {
+        await service.remove(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -1142,7 +1137,7 @@ describe('JsonBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       try {
-        await service.remove(mockClientOptions, {
+        await service.remove(mockBrowserClientMetadata, {
           keyName: testKey,
           path: testPath,
         });
@@ -1152,19 +1147,19 @@ describe('JsonBusinessService', () => {
       }
     });
     it('should successful remove path', async () => {
-      await service.remove(mockClientOptions, {
+      await service.remove(mockBrowserClientMetadata, {
         keyName: testKey,
         path: testPath,
       });
 
       expect(browserTool.execCommand).toHaveBeenNthCalledWith(
         1,
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Exists,
         [testKey],
       );
       expect(browserTool.execCommand).lastCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolRejsonRlCommands.JsonDel,
         [testKey, testPath],
       );

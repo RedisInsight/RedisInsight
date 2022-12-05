@@ -247,27 +247,23 @@ test
     });
 
 test
+    .only
     .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, bigDbName);
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
     })
     .after(async () => {
+        //clear database
         await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexNameBigDb}`);
-
         await t.click(browserPage.myRedisDbIcon); // go back to database selection page
-
         await myRedisDatabasePage.clickOnDBByName(simpleDbName); // click standalone database
-
         await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexNameSimpleDb}`);
-
         await t.click(browserPage.patternModeBtn);
-
         await browserPage.deleteKeysByNames(keyNames);
 
-        // Clear and delete database
+        //delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
-        // delete index and keys
     })('Verify that indexed keys from previous DB are NOT displayed when user connects to another DB', async t => {
         /* 
             Link to ticket: https://redislabs.atlassian.net/browse/RI-3863
@@ -287,12 +283,7 @@ test
 
         await cliPage.sendCommandsInCli(commandsForBigStandalone);
 
-        await t.click(browserPage.treeViewButton); // switch to tree view
-
-        await t.click(browserPage.redisearchModeBtn);
-
         await t.click(browserPage.myRedisDbIcon); // go back to database selection page
-
         await myRedisDatabasePage.clickOnDBByName(simpleDbName); // click standalone database
 
         const commandsForStandalone = [
@@ -306,21 +297,17 @@ test
         // Create 5 keys and index
         await cliPage.sendCommandsInCli(commandsForStandalone);
 
-        await browserPage.changeDelimiterInTreeView('-'); // change delimiter in tree view to be able to verify keys easily
-
-        await common.reloadPage(); // reload page
-
+        await t.click(browserPage.treeViewButton); // switch to tree view
         await t.click(browserPage.redisearchModeBtn); // click redisearch button
-
         await browserPage.selectIndexByName(indexNameSimpleDb); // select pre-created index in the standalone database
+        await browserPage.changeDelimiterInTreeView('-'); // change delimiter in tree view to be able to verify keys easily
 
         await verifyKeysDisplayedInTheList(keyNames); // verify created keys are visible
 
         await t.click(browserPage.myRedisDbIcon); // go back to database selection page
-
         await myRedisDatabasePage.clickOnDBByName(bigDbName); // click database name from ossStandaloneBigConfig.databaseName
 
         await verifyKeysNotDisplayedInTheList(keyNames); // Verify that standandalone database keys are NOT visible
 
-        await t.expect(Selector('span').withText('Select Index').exists).ok('verify index is not selected');
+        await t.expect(Selector('span').withText('Select Index').exists).ok('Index is still selected');
     });

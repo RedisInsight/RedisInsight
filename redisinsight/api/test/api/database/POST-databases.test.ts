@@ -22,7 +22,7 @@ const dataSchema = Joi.object({
   db: Joi.number().integer().allow(null),
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
-  new: Joi.boolean().allow(null).required(),
+  new: Joi.boolean().allow(null),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),
@@ -120,6 +120,7 @@ describe('POST /databases', () => {
             username: null,
             password: null,
             connectionType: constants.STANDALONE,
+            new: true,
           },
         });
       });
@@ -167,6 +168,7 @@ describe('POST /databases', () => {
               username: null,
               password: null,
               connectionType: constants.STANDALONE,
+              new: true,
             },
             checkFn: ({ body }) => {
               addedId = body.id;
@@ -236,6 +238,7 @@ describe('POST /databases', () => {
             username: null,
             password: constants.TEST_REDIS_PASSWORD,
             connectionType: constants.STANDALONE,
+            new: true,
           },
         });
 
@@ -269,6 +272,7 @@ describe('POST /databases', () => {
             connectionType: constants.STANDALONE,
             tls: true,
             verifyServerCert: false,
+            new: true,
           },
         });
 
@@ -302,6 +306,7 @@ describe('POST /databases', () => {
             tls: true,
             verifyServerCert: true,
             tlsServername: null,
+            new: true,
           },
           checkFn: async ({ body }) => {
             expect(body.caCert.id).to.be.a('string');

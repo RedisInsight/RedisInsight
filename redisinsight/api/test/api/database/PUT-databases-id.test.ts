@@ -23,6 +23,7 @@ const dataSchema = Joi.object({
   db: Joi.number().integer().allow(null),
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
+  new: Joi.boolean().allow(null).required(),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),

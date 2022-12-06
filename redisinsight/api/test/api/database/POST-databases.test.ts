@@ -238,7 +238,9 @@ describe('POST /databases', () => {
           },
         });
 
-        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+        const db = await localDb.getInstanceByName(dbName)
+        expect(db).to.be.an('object');
+        expect(db.new).to.eql(true);
       });
       // todo: cover connection error for incorrect username/password
     });

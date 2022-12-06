@@ -21,6 +21,7 @@ import { databaseAnalysis1664785208236 } from './1664785208236-database-analysis
 import { databaseAnalysisExpirationGroups1664886479051 } from './1664886479051-database-analysis-expiration-groups';
 import { workbenchExecutionTime1667368983699 } from './1667368983699-workbench-execution-time';
 import { database1667477693934 } from './1667477693934-database';
+import { databaseNew1670252337342 } from './1670252337342-database-new';
 
 export default [
   initialMigration1614164490968,
@@ -46,4 +47,5 @@ export default [
   databaseAnalysisExpirationGroups1664886479051,
   workbenchExecutionTime1667368983699,
   database1667477693934,
+  databaseNew1670252337342,
 ];

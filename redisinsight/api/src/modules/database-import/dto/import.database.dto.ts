@@ -7,7 +7,7 @@ import {
 
 export class ImportDatabaseDto extends PickType(Database, [
   'host', 'port', 'name', 'db', 'username', 'password',
-  'connectionType',
+  'connectionType', 'new',
 ] as const) {
   @Expose()
   @IsNotEmpty()

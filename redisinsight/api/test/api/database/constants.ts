@@ -13,7 +13,7 @@ export const databaseSchema = Joi.object().keys({
   nameFromProvider: Joi.string().allow(null),
   lastConnection: Joi.string().isoDate().allow(null),
   provider: Joi.string().valid('LOCALHOST', 'UNKNOWN', 'RE_CLOUD', 'RE_CLUSTER'),
-  new: Joi.boolean().allow(null).required(),
+  new: Joi.boolean().allow(null),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),

@@ -22,6 +22,7 @@ export class BrowserPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
+    streamDeleteButton = Selector(`[data-testid="stream-delete-btn"]`);
     myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
@@ -1013,6 +1014,39 @@ export class BrowserPage {
             .click(this.selectIndexDdn)
             .click(option);
     }
+
+    /**
+    * Get text from first tree element
+    */
+
+    async getTextFromFirstTreeElement(): Promise<String> {
+        return (await Selector(`[role="treeitem"]`).nth(0).find(`div`).textContent).replace(/\s/g, '');
+    }
+
+    /**
+    * Get text from first tree element
+    * @param names folder names with sequence of subfolder
+    * Example: if names ['mobile', '2']
+    * It will go to mobile -> 2 -> keys
+    */
+
+    async openTreeFolders(names: string[]): Promise<void> {
+        let base = `node-item_${names[0]}:`
+        await t.click(Selector(`[data-testid="${base}"]`));
+        if (names.length > 1) {
+            for (let i = 1; i < names.length; i++) {
+                base = base + `${names[i]}:`;
+                await t.click(Selector(`[data-testid="${base}"]`));
+            }
+        }
+        await t.click(Selector(`[data-testid="${base}keys:keys:"]`));
+
+        await t.expect(
+            Selector(`[data-testid="${base}keys:keys:"]`).visible)
+            .ok("Folder is not selected");
+    }
+
+
 }
 
 /**

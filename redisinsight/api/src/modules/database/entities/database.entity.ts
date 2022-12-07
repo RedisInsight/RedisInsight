@@ -157,4 +157,8 @@ export class DatabaseEntity {
 
   @Column({ nullable: true })
   encryption: string;
+
+  @Expose()
+  @Column({ nullable: true })
+  new: boolean;
 }

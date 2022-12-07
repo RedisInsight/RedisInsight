@@ -118,7 +118,7 @@ describe('DatabaseImportService', () => {
       }
     });
 
-    it('should faile due to incorrect base64 + truncate filename', async () => {
+    it('should fail due to incorrect base64 + truncate filename', async () => {
       try {
         await service.import({
           ...mockDatabaseImportFile,
@@ -142,6 +142,7 @@ describe('DatabaseImportService', () => {
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType']),
+        new: true,
       });
     });
     it('should create standalone with created name', async () => {
@@ -153,6 +154,7 @@ describe('DatabaseImportService', () => {
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType']),
         name: `${mockDatabase.host}:${mockDatabase.port}`,
+        new: true,
       });
     });
     it('should create cluster database', async () => {
@@ -164,6 +166,7 @@ describe('DatabaseImportService', () => {
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name']),
         connectionType: ConnectionType.CLUSTER,
+        new: true,
       });
     });
   });

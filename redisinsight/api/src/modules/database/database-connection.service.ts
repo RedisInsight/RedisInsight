@@ -37,9 +37,11 @@ export class DatabaseConnectionService {
     });
 
     // refresh modules list and last connected time
+    // mark database as not a new
     // will be refreshed after user navigate to particular database from the databases list
     // Note: move to a different place in case if we need to update such info more often
     const toUpdate: Partial<Database> = {
+      new: false,
       lastConnection: new Date(),
       modules: await this.databaseInfoProvider.determineDatabaseModules(client),
     };

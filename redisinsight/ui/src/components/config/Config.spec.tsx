@@ -1,14 +1,17 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
+import { BuildType } from 'uiSrc/constants/env'
+import { localStorageService } from 'uiSrc/services'
+import { setFeaturesToHighlight } from 'uiSrc/slices/app/features-highlighting'
 import { getNotifications } from 'uiSrc/slices/app/notifications'
-import { render, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import { render, mockedStore, cleanup, MOCKED_HIGHLIGHTING_FEATURES } from 'uiSrc/utils/test-utils'
 
 import {
   getUserConfigSettings,
   setSettingsPopupState,
   userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
-import { getServerInfo } from 'uiSrc/slices/app/info'
+import { appServerInfoSelector, getServerInfo } from 'uiSrc/slices/app/info'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { getRedisCommands } from 'uiSrc/slices/app/redis-commands'
 import Config from './Config'
@@ -30,6 +33,19 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
       agreements: {},
     },
   }),
+}))
+
+jest.mock('uiSrc/slices/app/info', () => ({
+  ...jest.requireActual('uiSrc/slices/app/info'),
+  appServerInfoSelector: jest.fn()
+}))
+
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+  localStorageService: {
+    set: jest.fn(),
+    get: jest.fn(),
+  },
 }))
 
 describe('Config', () => {
@@ -74,5 +90,83 @@ describe('Config', () => {
       setSettingsPopupState(true),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
+  })
+
+  it('should call updateHighlightingFeatures for new user with empty features', () => {
+    const userSettingsSelectorMock = jest.fn().mockReturnValue({
+      config: {
+        agreements: null,
+      }
+    })
+    const appServerInfoSelectorMock = jest.fn().mockReturnValue({
+      buildType: BuildType.Electron,
+      appVersion: '2.0.0'
+    })
+    userSettingsSelector.mockImplementation(userSettingsSelectorMock)
+    appServerInfoSelector.mockImplementation(appServerInfoSelectorMock)
+
+    render(<Config />)
+
+    expect(store.getActions())
+      .toEqual(expect.arrayContaining([setFeaturesToHighlight({ version: '2.0.0', features: [] })]))
+  })
+
+  it('should call updateHighlightingFeatures for existing user with proper data', () => {
+    const userSettingsSelectorMock = jest.fn().mockReturnValue({
+      config: {
+        agreements: {},
+      }
+    })
+    const appServerInfoSelectorMock = jest.fn().mockReturnValue({
+      buildType: BuildType.Electron,
+      appVersion: '2.0.0'
+    })
+    userSettingsSelector.mockImplementation(userSettingsSelectorMock)
+    appServerInfoSelector.mockImplementation(appServerInfoSelectorMock)
+
+    render(<Config />)
+
+    expect(store.getActions())
+      .toEqual(expect.arrayContaining([setFeaturesToHighlight({ version: '2.0.0', features: MOCKED_HIGHLIGHTING_FEATURES })]))
+  })
+
+  it('should call updateHighlightingFeatures for existing user with proper data with features from LS', () => {
+    localStorageService.get = jest.fn().mockReturnValue({ version: '2.0.0', features: ['importDatabases'] })
+    const userSettingsSelectorMock = jest.fn().mockReturnValue({
+      config: {
+        agreements: {},
+      }
+    })
+    const appServerInfoSelectorMock = jest.fn().mockReturnValue({
+      buildType: BuildType.Electron,
+      appVersion: '2.0.0'
+    })
+    userSettingsSelector.mockImplementation(userSettingsSelectorMock)
+    appServerInfoSelector.mockImplementation(appServerInfoSelectorMock)
+
+    render(<Config />)
+
+    expect(store.getActions())
+      .toEqual(expect.arrayContaining([setFeaturesToHighlight({ version: '2.0.0', features: ['importDatabases'] })]))
+  })
+
+  it('should call updateHighlightingFeatures for existing user with proper data with features from LS for different version', () => {
+    localStorageService.get = jest.fn().mockReturnValue({ version: '2.0.0', features: ['importDatabases'] })
+    const userSettingsSelectorMock = jest.fn().mockReturnValue({
+      config: {
+        agreements: {},
+      }
+    })
+    const appServerInfoSelectorMock = jest.fn().mockReturnValue({
+      buildType: BuildType.Electron,
+      appVersion: '2.0.12'
+    })
+    userSettingsSelector.mockImplementation(userSettingsSelectorMock)
+    appServerInfoSelector.mockImplementation(appServerInfoSelectorMock)
+
+    render(<Config />)
+
+    expect(store.getActions())
+      .toEqual(expect.arrayContaining([setFeaturesToHighlight({ version: '2.0.12', features: MOCKED_HIGHLIGHTING_FEATURES })]))
   })
 })

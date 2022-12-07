@@ -193,5 +193,60 @@
       }
     ],
     "badges": ["configuration_changes"]
+  },
+  "compressionForList": {
+    "id": "compressionForList",
+    "title": "Enable compression for the list",
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "If you use long lists, and mostly access elements from the head and tail only, then you can enable compression."
+      },
+      {
+        "id": "2",
+        "type": "paragraph",
+        "value": "Set list-compression-depth=1 in redis.conf to compress every list node except the head and tail of the list. Though list operations that involve elements in the center of the list will get slower, the compression can increase CPU utilization."
+      },
+      {
+        "id": "3",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "4",
+        "type": "span",
+        "value": "Run `INFO COMMANDSTATS` before and after making this change to verify the latency numbers. "
+      },
+      {
+        "id": "5",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["configuration_changes"]
+  },
+  "bigStrings": {
+    "id": "bigStrings",
+    "title": "Do not store large strings",
+    "content": [
+      {
+        "id": "1",
+        "type": "span",
+        "value": "Avoid storing large strings, since transferring them takes time and consumes the network bandwidth. Large keys are acceptable only to read/write portions of the string. "
+      },
+      {
+        "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["configuration_changes"]
   }
 }

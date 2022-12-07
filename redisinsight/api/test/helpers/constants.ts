@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { randomBytes } from 'crypto';
 import { getASCIISafeStringFromBuffer, getBufferFromSafeASCIIString } from "src/utils/cli-helper";
+import { RECOMMENDATION_NAMES } from 'src/constants';
 
 const API = {
   DATABASES: 'databases',
@@ -452,25 +453,31 @@ export const constants = {
   },
 
   TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION: {
-    name: 'luaScript',
+    name: RECOMMENDATION_NAMES.LUA_SCRIPT,
   },
   TEST_BIG_HASHES_DATABASE_ANALYSIS_RECOMMENDATION: {
-    name: 'bigHashes',
+    name: RECOMMENDATION_NAMES.BIG_HASHES,
   },
   TEST_SMALLER_KEYS_DATABASE_ANALYSIS_RECOMMENDATION: {
-    name: 'useSmallerKeys',
+    name: RECOMMENDATION_NAMES.USE_SMALLER_KEYS,
   },
   TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION: {
-    name: 'increaseSetMaxIntsetEntries',
+    name: RECOMMENDATION_NAMES.INCREASE_SET_MAX_INTSET_ENTRIES,
   },
   TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION: {
-    name: 'combineSmallStringsToHashes',
+    name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES,
   },
   TEST_CONVERT_HASHTABLE_TO_ZIPLIST_RECOMMENDATION: {
-    name: 'convertHashtableToZiplist',
+    name: RECOMMENDATION_NAMES.CONVERT_HASHTABLE_TO_ZIPLIST,
   },
   TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION: {
-    name: 'compressHashFieldNames',
+    name: RECOMMENDATION_NAMES.COMPRESS_HASH_FIELD_NAMES,
+  },
+  TEST_COMPRESSION_FOR_LIST_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
+  },
+  TEST_BIG_STRINGS_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.BIG_STRINGS,
   },
 
   // etc...

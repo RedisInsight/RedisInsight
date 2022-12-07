@@ -190,7 +190,7 @@ const DatabasesListWrapper = ({
                 position="top"
                 anchorClassName={styles.newStatusAnchor}
               >
-                <div className={styles.newStatus} data-testid={`database-status-${id}`} />
+                <div className={styles.newStatus} data-testid={`database-status-new-${id}`} />
               </EuiToolTip>
             )}
             <EuiToolTip

@@ -7,6 +7,9 @@ export class MemoryEfficiencyPage {
     //*Target any element/component via data-id, if possible!
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
+    // CSS Selectors
+    cssCodeChangesLabel = '[data-testid=code_changes]';
+    cssConfigurationChangesLabel = '[data-testid=configuration_changes]';
     // BUTTONS
     newReportBtn = Selector('[data-testid=start-database-analysis-btn]');
     expandArrowBtn = Selector('[data-testid^=expand-arrow-]');
@@ -17,6 +20,7 @@ export class MemoryEfficiencyPage {
     sortByLength = Selector('[data-testid=btn-change-table-keys]');
     recommendationsTab = Selector('[data-testid=Recommendations-tab]');
     luaScriptButton = Selector('[data-test-subj=luaScript-button]');
+    useSmallKeysButton = Selector('[data-test-subj=useSmallerKeys-button]');
     // ICONS
     reportTooltipIcon = Selector('[data-testid=db-new-reports-icon]');
     // TEXT ELEMENTS

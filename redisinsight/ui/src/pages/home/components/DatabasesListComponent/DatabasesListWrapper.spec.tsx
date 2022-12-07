@@ -107,7 +107,7 @@ describe('DatabasesListWrapper', () => {
     const dbIdWithNewIndicator = mockInstances.find(({ new: newState }) => newState)?.id ?? ''
     const dbIdWithoutNewIndicator = mockInstances.find(({ new: newState }) => !newState)?.id ?? ''
 
-    expect(queryByTestId(`database-status-${dbIdWithNewIndicator}`)).toBeInTheDocument()
-    expect(queryByTestId(`database-status-${dbIdWithoutNewIndicator}`)).not.toBeInTheDocument()
+    expect(queryByTestId(`database-status-new-${dbIdWithNewIndicator}`)).toBeInTheDocument()
+    expect(queryByTestId(`database-status-new-${dbIdWithoutNewIndicator}`)).not.toBeInTheDocument()
   })
 })

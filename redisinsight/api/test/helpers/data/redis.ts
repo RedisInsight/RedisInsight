@@ -286,6 +286,24 @@ export const initDataHelper = (rte) => {
     );
   };
 
+  const generateHugeMembersForSortedListKey = async (number: number = 100000, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const batchSize = 10000;
+    let inserted = 0;
+    do {
+      const pipeline = [];
+      const limit = inserted + batchSize;
+      for (inserted; inserted < limit && inserted < number; inserted++) {
+        pipeline.push(['zadd', constants.TEST_ZSET_KEY_1, inserted, inserted]);
+      }
+
+      await insertKeysBasedOnEnv(pipeline, true);
+    } while (inserted < number)
+  };
+
   // Hash
   const generateHashes = async (clean: boolean = false) => {
     if (clean) {
@@ -527,6 +545,7 @@ export const initDataHelper = (rte) => {
     generateHugeNumberOfFieldsForHashKey,
     generateHugeNumberOfTinyStringKeys,
     generateHugeElementsForListKey,
+    generateHugeMembersForSortedListKey,
     generateHugeStream,
     generateNKeys,
     generateRedisearchIndexes,

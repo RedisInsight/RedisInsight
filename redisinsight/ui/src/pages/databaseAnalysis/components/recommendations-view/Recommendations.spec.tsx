@@ -137,11 +137,11 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
-  it('should render code changes badge in convertHashtableToZiplist recommendation', () => {
+  it('should render code changes badge in hashHashtableToZiplist recommendation', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
-        recommendations: [{ name: 'convertHashtableToZiplist' }]
+        recommendations: [{ name: 'hashHashtableToZiplist' }]
       }
     }))
 
@@ -187,6 +187,36 @@ describe('Recommendations', () => {
       ...mockdbAnalysisSelector,
       data: {
         recommendations: [{ name: 'bigStrings' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
+  })
+
+  it('should render configuration_changes badge in zSetHashtableToZiplist recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'zSetHashtableToZiplist' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
+  })
+
+  it('should render configuration_changes badge in bigSets recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'bigSets' }]
       }
     }))
 

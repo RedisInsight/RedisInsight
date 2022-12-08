@@ -13,6 +13,7 @@ const maxStringMemory = 200;
 const maxDatabaseTotal = 1_000_000;
 const maxCompressHashLength = 1000;
 const maxListLength = 1000;
+const maxSetLength = 5000;
 const bigStringMemory = 5_000_000;
 
 @Injectable()
@@ -146,7 +147,7 @@ export class RecommendationProvider {
    * @param redisClient
    */
 
-  async determineConvertHashtableToZiplistRecommendation(
+  async determineHashHashtableToZiplistRecommendation(
     redisClient: Redis | Cluster,
     keys: Key[],
   ): Promise<Recommendation> {
@@ -158,7 +159,7 @@ export class RecommendationProvider {
       ) as string[];
       const hashMaxZiplistEntriesNumber = parseInt(hashMaxZiplistEntries, 10);
       const bigHash = keys.some((key) => key.type === RedisDataType.Hash && key.length > hashMaxZiplistEntriesNumber);
-      return bigHash ? { name: RECOMMENDATION_NAMES.CONVERT_HASHTABLE_TO_ZIPLIST } : null;
+      return bigHash ? { name: RECOMMENDATION_NAMES.HASH_HASHTABLE_TO_ZIPLIST } : null;
     } catch (err) {
       this.logger.error('Can not determine Convert hashtable to ziplist recommendation', err);
       return null;
@@ -209,6 +210,48 @@ export class RecommendationProvider {
       return bigString ? { name: RECOMMENDATION_NAMES.BIG_STRINGS } : null;
     } catch (err) {
       this.logger.error('Can not determine Big strings recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+ * Check zSet hashtable to ziplist recommendation
+ * @param keys
+ * @param redisClient
+ */
+
+  async determineZSetHashtableToZiplistRecommendation(
+    redisClient: Redis | Cluster,
+    keys: Key[],
+  ): Promise<Recommendation> {
+    try {
+      const [, zSetMaxZiplistEntries] = await redisClient.sendCommand(
+        new Command('config', ['get', 'zset-max-ziplist-entries'], {
+          replyEncoding: 'utf8',
+        }),
+      ) as string[];
+      const zSetMaxZiplistEntriesNumber = parseInt(zSetMaxZiplistEntries, 10);
+      const bigHash = keys.some((key) => key.type === RedisDataType.ZSet && key.length > zSetMaxZiplistEntriesNumber);
+      return bigHash ? { name: RECOMMENDATION_NAMES.ZSET_HASHTABLE_TO_ZIPLIST } : null;
+    } catch (err) {
+      this.logger.error('Can not determine ZSet hashtable to ziplist recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+ * Check big sets recommendation
+ * @param keys
+ */
+
+  async determineBigSetsRecommendation(
+    keys: Key[],
+  ): Promise<Recommendation> {
+    try {
+      const bigSet = keys.some((key) => key.type === RedisDataType.Set && key.length > maxSetLength);
+      return bigSet ? { name: RECOMMENDATION_NAMES.BIG_SETS } : null;
+    } catch (err) {
+      this.logger.error('Can not determine Big sets recommendation', err);
       return null;
     }
   }

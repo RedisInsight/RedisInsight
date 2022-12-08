@@ -9,7 +9,7 @@ import {
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
 
-import { parseContent, renderBadges } from './utils'
+import { renderContent, renderBadges } from './utils'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -47,12 +47,13 @@ const Recommendations = () => {
               data-testId={`${id}-accordion`}
             >
               <EuiPanel className={styles.accordionContent} color="subdued">
-                {content.map((item: { type: string, value: any, id: string }) =>
+                {renderContent(content)}
+                {/* {content.map((item: { type: string, value: any, id: string }) =>
                   (
                     <React.Fragment key={item.id}>
-                      {parseContent(item)}
+                      {renderContent(item)}
                     </React.Fragment>
-                  ))}
+                  ))} */}
               </EuiPanel>
             </EuiAccordion>
             <div>

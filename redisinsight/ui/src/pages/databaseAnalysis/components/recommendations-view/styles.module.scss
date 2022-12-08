@@ -33,6 +33,15 @@
   margin-bottom: 6px;
   padding: 18px;
 
+  ul {
+    list-style: initial;
+    padding-left: 21px;
+
+    li::marker {
+      color: var(--euiTextSubduedColor);
+    }
+  }
+
   .accordion {
     margin-bottom: 18px;
   }

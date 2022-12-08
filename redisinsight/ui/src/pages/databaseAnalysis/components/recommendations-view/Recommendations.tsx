@@ -48,12 +48,6 @@ const Recommendations = () => {
             >
               <EuiPanel className={styles.accordionContent} color="subdued">
                 {renderContent(content)}
-                {/* {content.map((item: { type: string, value: any, id: string }) =>
-                  (
-                    <React.Fragment key={item.id}>
-                      {renderContent(item)}
-                    </React.Fragment>
-                  ))} */}
               </EuiPanel>
             </EuiAccordion>
             <div>

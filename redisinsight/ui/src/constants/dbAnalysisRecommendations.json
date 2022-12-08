@@ -154,8 +154,8 @@
     ],
     "badges": ["configuration_changes"]
   },
-  "convertHashtableToZiplist": {
-  "id": "convertHashtableToZiplist",
+  "hashHashtableToZiplist": {
+  "id": "hashHashtableToZiplist",
   "title": "Increase hash-max-ziplist-entries",
   "content": [
     {
@@ -240,6 +240,160 @@
       },
       {
         "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["configuration_changes"]
+  },
+  "zSetHashtableToZiplist": {
+    "id": "zSetHashtableToZiplist",
+    "title": "the number of sorted set members exceeds zset-max-ziplist-entries",
+    "content": [
+      {
+        "id": "1",
+        "type": "span",
+        "value": "If any value for a key exceeds zset-max-ziplist-entries, it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization. "
+      },
+      {
+        "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["configuration_changes"]
+  },
+  "bigSets": {
+    "id": "bigSets",
+    "title": "Switch to Bloom filter, cuckoo filter, or HyperLogLog",
+    "content": [
+      {
+        "id": "1",
+        "type": "span",
+        "value": "If you are using large "
+      },
+      {
+        "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/data-types/sets/",
+          "name": "sets"
+        }
+      },
+      {
+        "id": "3",
+        "type": "span",
+        "value": " to solve one of the following problems:"
+      },
+      {
+        "id": "4",
+        "type": "list",
+        "value": [
+          [
+            { 
+              "id": "1",
+              "type": "span",
+               "value": "Count the number of unique observations in a stream"
+            }
+          ],
+          [
+            { 
+              "id": "1",
+              "type": "span",
+              "value": "Check if an observation already appeared in the stream"
+            }
+          ],
+          [
+            { 
+              "id": "1",
+              "type": "span",
+              "value": "Find the fraction or the number of observations in the stream that are smaller or larger than a given value"
+            }
+          ]
+        ]
+      },
+      {
+        "id": "5",
+        "type": "span",
+        "value": "and you are ready to trade accuracy with speed and memory usage, consider using one of the following probabilistic data structures:"
+      },
+      {
+        "id": "6",
+        "type": "list",
+        "value": [
+          [
+            {
+              "id": "1",
+              "type": "link",
+              "value": {
+                "href": "https://redis.io/docs/data-types/hyperloglogs/",
+                "name": "HyperLogLog"
+              }
+            },
+            { 
+              "id": "2",
+              "type": "span",
+               "value": " can be used for estimating the number of unique observations in a set."
+            }
+          ],
+          [
+            {
+              "id": "1",
+              "type": "link",
+              "value": {
+                "href": "https://redis.io/docs/stack/bloom/",
+                "name": "Bloom filter or cuckoo filter"
+              }
+            },
+            { 
+              "id": "2",
+              "type": "span",
+               "value": " can be used for checking if an observation has already appeared in the stream (false positive matches are possible, but false negatives are not)."
+            }
+          ],
+          [
+            {
+              "id": "1",
+              "type": "link",
+              "value": {
+                "href": "https://redis.io/docs/stack/bloom/",
+                "name": "t-digest"
+              }
+            },
+            { 
+              "id": "2",
+              "type": "span",
+               "value": " can be used for estimating the fraction or the number of observations in the stream that are smaller or larger than a given value."
+            }
+          ]
+        ]
+      },
+      {
+        "id": "5",
+        "type": "span",
+        "value": "Bloom filter and cuckoo filter require "
+      },
+      {
+        "id": "6",
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/modules/redis-bloom/",
+          "name": "RedisBloom"
+        }
+      },
+      {
+        "id": "7",
+        "type": "span",
+        "value": ". "
+      },
+      {
+        "id": "8",
         "type": "link",
         "value": {
           "href": "https://docs.redis.com/latest/ri/memory-optimizations/",

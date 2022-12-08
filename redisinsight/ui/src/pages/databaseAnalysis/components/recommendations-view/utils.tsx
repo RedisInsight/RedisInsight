@@ -13,6 +13,11 @@ import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
 
 import styles from './styles.module.scss'
 
+interface IContentElement {
+  type: string
+  value: any[]
+}
+
 const badgesContent = [
   { id: 'code_changes', icon: <CodeIcon className={styles.badgeIcon} />, name: 'Code Changes' },
   { id: 'configuration_changes', icon: <ConfigurationIcon className={styles.badgeIcon} />, name: 'Configuration Changes' },
@@ -34,7 +39,7 @@ export const renderBadges = (badges: string[]) => (
   </EuiFlexGroup>
 )
 
-export const parseContent = ({ type, value }: { type: string, value: any }) => {
+const renderContentElement = ({ type, value }: IContentElement) => {
   switch (type) {
     case 'paragraph':
       return <EuiTextColor component="div" className={styles.text} color="subdued">{value}</EuiTextColor>
@@ -44,7 +49,18 @@ export const parseContent = ({ type, value }: { type: string, value: any }) => {
       return <EuiLink external={false} data-testid="read-more-link" target="_blank" href={value.href}>{value.name}</EuiLink>
     case 'spacer':
       return <EuiSpacer size={value} />
+    case 'list':
+      return (
+        <ul>
+          {value.map((listElement: IContentElement[]) => (
+            <li>{renderContent(listElement)}</li>
+          ))}
+        </ul>
+      )
     default:
       return value
   }
 }
+
+export const renderContent = (elements: IContentElement[]) => (
+  elements?.map((item) => renderContentElement(item)))

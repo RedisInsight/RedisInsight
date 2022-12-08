@@ -16,14 +16,7 @@
   "compression": "normal",
   "mac": {
     "target": [
-      {
-        "target": "dmg",
-        "arch": ["x64", "arm64"]
-      },
-      {
-        "target": "zip",
-        "arch": ["x64", "arm64"]
-      },
+
       {
         "target": "mas",
         "arch": ["x64", "universal"]
@@ -32,7 +25,7 @@
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "bundleVersion": "0.0.8",
+    "bundleVersion": "0.0.9",
     "icon": "resources/icon.icns",
     "mergeASARs": false,
     "artifactName": "${productName}-${os}-${arch}.${ext}",
@@ -46,6 +39,7 @@
     "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
     "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
     "hardenedRuntime": false,
+    "binaries": ["**/*.node"],
     "extendInfo": {
       "LSMinimumSystemVersion": "10.14.0"
     },

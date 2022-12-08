@@ -251,15 +251,25 @@
   },
   "zSetHashtableToZiplist": {
     "id": "zSetHashtableToZiplist",
-    "title": "the number of sorted set members exceeds zset-max-ziplist-entries",
+    "title": "Convert hashtable to ziplist for sorted sets",
     "content": [
       {
         "id": "1",
+        "type": "paragraph",
+        "value": "Increase zset-max-ziplist-entries"
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
         "type": "span",
         "value": "If any value for a key exceeds zset-max-ziplist-entries, it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization. "
       },
       {
-        "id": "2",
+        "id": "4",
         "type": "link",
         "value": {
           "href": "https://docs.redis.com/latest/ri/memory-optimizations/",

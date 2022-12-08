@@ -76,12 +76,12 @@ describe('HighlightedFeature', () => {
   it('should call onClick', () => {
     const onClick = jest.fn()
     render(
-      <HighlightedFeature type="plain" onClick={onClick} isHighlight>
+      <HighlightedFeature type="plain" onClick={onClick} isHighlight dataTestPostfix="feature">
         <Content />
       </HighlightedFeature>
     )
 
-    fireEvent.click(screen.getByTestId('feature-highlighted'))
+    fireEvent.click(screen.getByTestId('feature-highlighted-feature'))
 
     expect(onClick).toBeCalled()
   })

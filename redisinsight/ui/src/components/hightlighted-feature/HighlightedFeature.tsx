@@ -18,6 +18,7 @@ export interface Props {
   dotClassName?: string
   tooltipPosition?: ToolTipPositions
   hideFirstChild?: boolean
+  dataTestPostfix?: string
 }
 const HighlightedFeature = (props: Props) => {
   const {
@@ -31,7 +32,8 @@ const HighlightedFeature = (props: Props) => {
     wrapperClassName,
     dotClassName,
     tooltipPosition,
-    hideFirstChild
+    hideFirstChild,
+    dataTestPostfix = ''
   } = props
 
   const innerContent = hideFirstChild ? children.props.children : children
@@ -63,7 +65,7 @@ const HighlightedFeature = (props: Props) => {
       className={cx(styles.wrapper, wrapperClassName, { 'transform-on-hover': transformOnHover })}
       onClick={() => onClick?.()}
       role="presentation"
-      data-testid="feature-highlighted"
+      data-testid={`feature-highlighted-${dataTestPostfix}`}
     >
       {type === 'plain' && (<DotHighlighting />)}
       {type === 'tooltip' && (<TooltipHighlighting />)}

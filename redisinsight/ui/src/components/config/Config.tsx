@@ -81,7 +81,7 @@ const Config = () => {
       const userFeatures = localStorageService.get(BrowserStorageItem.featuresHighlighting)
 
       // existing user with the same version of app, get not viewed features from LS
-      if (userFeatures && userFeatures.version === serverInfo.appVersion) {
+      if (userFeatures?.version === serverInfo.appVersion) {
         dispatch(setFeaturesToHighlight(userFeatures))
         return
       }

@@ -69,6 +69,14 @@ const mockBigSet = {
   name: Buffer.from('name'), type: 'set', length: 513, memory: 10, ttl: -1,
 };
 
+const mockHugeSet = {
+  name: Buffer.from('name'), type: 'set', length: 5001, memory: 10, ttl: -1,
+};
+
+const mockBigZSetKey = {
+  name: Buffer.from('name'), type: 'zset', length: 513, memory: 10, ttl: -1,
+};
+
 const mockBigListKey = {
   name: Buffer.from('name'), type: 'list', length: 1001, memory: 10, ttl: -1,
 };
@@ -225,36 +233,36 @@ describe('RecommendationProvider', () => {
       });
   });
 
-  describe('determineConvertHashtableToZiplistRecommendation', () => {
-    it('should not return convertHashtableToZiplist recommendation', async () => {
+  describe('determineHashHashtableToZiplistRecommendation', () => {
+    it('should not return hashHashtableToZiplist recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'config' }))
         .mockResolvedValue(mockRedisConfigResponse);
 
       const convertHashtableToZiplistRecommendation = await service
-        .determineConvertHashtableToZiplistRecommendation(nodeClient, mockKeys);
+        .determineHashHashtableToZiplistRecommendation(nodeClient, mockKeys);
       expect(convertHashtableToZiplistRecommendation).toEqual(null);
     });
 
-    it('should return convertHashtableToZiplist recommendation', async () => {
+    it('should return hashHashtableToZiplist recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'config' }))
         .mockResolvedValue(mockRedisConfigResponse);
 
       const convertHashtableToZiplistRecommendation = await service
-        .determineConvertHashtableToZiplistRecommendation(nodeClient, [...mockKeys, mockBigHashKey_3]);
+        .determineHashHashtableToZiplistRecommendation(nodeClient, [...mockKeys, mockBigHashKey_3]);
       expect(convertHashtableToZiplistRecommendation)
-        .toEqual({ name: RECOMMENDATION_NAMES.CONVERT_HASHTABLE_TO_ZIPLIST });
+        .toEqual({ name: RECOMMENDATION_NAMES.HASH_HASHTABLE_TO_ZIPLIST });
     });
 
-    it('should not return convertHashtableToZiplist recommendation when config command executed with error',
+    it('should not return hashHashtableToZiplist recommendation when config command executed with error',
       async () => {
         when(nodeClient.sendCommand)
           .calledWith(jasmine.objectContaining({ name: 'config' }))
           .mockRejectedValue('some error');
 
         const convertHashtableToZiplistRecommendation = await service
-          .determineConvertHashtableToZiplistRecommendation(nodeClient, mockKeys);
+          .determineHashHashtableToZiplistRecommendation(nodeClient, mockKeys);
         expect(convertHashtableToZiplistRecommendation).toEqual(null);
       });
   });
@@ -295,6 +303,53 @@ describe('RecommendationProvider', () => {
       const bigStringsRecommendation = await service
         .determineBigStringsRecommendation([mockHugeStringKey]);
       expect(bigStringsRecommendation).toEqual({ name: RECOMMENDATION_NAMES.BIG_STRINGS });
+    });
+  });
+
+  describe('determineZSetHashtableToZiplistRecommendation', () => {
+    it('should not return zSetHashtableToZiplist recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'config' }))
+        .mockResolvedValue(mockRedisConfigResponse);
+
+      const zSetHashtableToZiplistRecommendation = await service
+        .determineZSetHashtableToZiplistRecommendation(nodeClient, mockKeys);
+      expect(zSetHashtableToZiplistRecommendation).toEqual(null);
+    });
+
+    it('should return zSetHashtableToZiplist recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'config' }))
+        .mockResolvedValue(mockRedisConfigResponse);
+
+      const zSetHashtableToZiplistRecommendation = await service
+        .determineZSetHashtableToZiplistRecommendation(nodeClient, [...mockKeys, mockBigZSetKey]);
+      expect(zSetHashtableToZiplistRecommendation)
+        .toEqual({ name: RECOMMENDATION_NAMES.ZSET_HASHTABLE_TO_ZIPLIST });
+    });
+
+    it('should not return zSetHashtableToZiplist recommendation when config command executed with error',
+      async () => {
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'config' }))
+          .mockRejectedValue('some error');
+
+        const zSetHashtableToZiplistRecommendation = await service
+          .determineZSetHashtableToZiplistRecommendation(nodeClient, mockKeys);
+        expect(zSetHashtableToZiplistRecommendation).toEqual(null);
+      });
+  });
+
+  describe('determineBigSetsRecommendation', () => {
+    it('should not return bigSets recommendation', async () => {
+      const bigSetsRecommendation = await service
+        .determineBigSetsRecommendation(mockKeys);
+      expect(bigSetsRecommendation).toEqual(null);
+    });
+    it('should return bigSets recommendation', async () => {
+      const bigSetsRecommendation = await service
+        .determineBigSetsRecommendation([mockHugeSet]);
+      expect(bigSetsRecommendation).toEqual({ name: RECOMMENDATION_NAMES.BIG_SETS });
     });
   });
 });

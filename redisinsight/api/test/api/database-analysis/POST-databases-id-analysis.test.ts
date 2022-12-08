@@ -171,7 +171,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.deep.eq([
             constants.TEST_BIG_HASHES_DATABASE_ANALYSIS_RECOMMENDATION,
-            constants.TEST_CONVERT_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
+            constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
             constants.TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION,
           ]);
         },
@@ -215,7 +215,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         }
       },
       {
-        name: 'Should create new database analysis with convertHashtableToZiplist recommendation',
+        name: 'Should create new database analysis with hashHashtableToZiplist recommendation',
         data: {
           delimiter: '-',
         },
@@ -227,7 +227,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.deep.eq([
-            constants.TEST_CONVERT_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
+            constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -247,7 +247,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.deep.eq([
-            constants.TEST_CONVERT_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
+            constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
             constants.TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION,
           ]);
         },
@@ -290,6 +290,48 @@ describe('POST /databases/:instanceId/analysis', () => {
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.deep.eq([constants.TEST_BIG_STRINGS_RECOMMENDATION]);
+        },
+        after: async () => {
+          expect(await repository.count()).to.eq(5);
+        }
+      },
+      {
+        name: 'Should create new database analysis with zSetHashtableToZiplist recommendation',
+        data: {
+          delimiter: '-',
+        },
+        statusCode: 201,
+        responseSchema,
+        before: async () => {
+          const NUMBERS_OF_ZSET_MEMBERS = 129;
+          await rte.data.generateHugeMembersForSortedListKey(NUMBERS_OF_ZSET_MEMBERS, true);
+        },
+        checkFn: async ({ body }) => {
+          expect(body.recommendations).to.deep.eq([
+            constants.TEST_ZSET_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
+          ]);
+        },
+        after: async () => {
+          expect(await repository.count()).to.eq(5);
+        }
+      },
+      {
+        name: 'Should create new database analysis with bigSets recommendation',
+        data: {
+          delimiter: '-',
+        },
+        statusCode: 201,
+        responseSchema,
+        before: async () => {
+          const NUMBERS_OF_SET_MEMBERS = 5001;
+          await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
+        },
+        checkFn: async ({ body }) => {
+          expect(body.recommendations).to.deep.eq([
+            // by default max_intset_entries = 512
+            constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION,
+            constants.TEST_BIG_SETS_RECOMMENDATION,
+          ]);
         },
         after: async () => {
           expect(await repository.count()).to.eq(5);

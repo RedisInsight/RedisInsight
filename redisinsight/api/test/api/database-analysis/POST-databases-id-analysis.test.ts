@@ -296,24 +296,6 @@ describe('POST /databases/:instanceId/analysis', () => {
         }
       },
       {
-        name: 'Should create new database analysis with luaScript recommendation',
-        data: {
-          delimiter: '-',
-        },
-        statusCode: 201,
-        responseSchema,
-        before: async () => {
-          await rte.data.generateNCachedScripts(11, true);
-        },
-        checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([constants.TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION]);
-        },
-        after: async () => {
-          await rte.data.sendCommand('script', ['flush']);
-          expect(await repository.count()).to.eq(5);
-        }
-      },
-      {
         name: 'Should create new database analysis with zSetHashtableToZiplist recommendation',
         data: {
           delimiter: '-',
@@ -352,6 +334,24 @@ describe('POST /databases/:instanceId/analysis', () => {
           ]);
         },
         after: async () => {
+          expect(await repository.count()).to.eq(5);
+        }
+      },
+      {
+        name: 'Should create new database analysis with luaScript recommendation',
+        data: {
+          delimiter: '-',
+        },
+        statusCode: 201,
+        responseSchema,
+        before: async () => {
+          await rte.data.generateNCachedScripts(11, true);
+        },
+        checkFn: async ({ body }) => {
+          expect(body.recommendations).to.deep.eq([constants.TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION]);
+        },
+        after: async () => {
+          await rte.data.sendCommand('script', ['flush']);
           expect(await repository.count()).to.eq(5);
         }
       },

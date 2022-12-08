@@ -1016,7 +1016,7 @@ export class BrowserPage {
     }
 
     /**
-    * Get text from first tree element
+    *Get text from first tree element
     */
 
     async getTextFromFirstTreeElement(): Promise<String> {

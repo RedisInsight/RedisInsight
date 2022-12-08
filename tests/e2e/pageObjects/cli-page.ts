@@ -177,8 +177,8 @@ export class CliPage {
     */
 
     async createRandomIndexNamewithCLI(): Promise<string> {
-        let word = common.generateWord(10);
-        let index = 'idx:' + word;
+        const word = common.generateWord(10);
+        const index = `idx:${word}`;
         const commands = [
             `FT.CREATE ${index} ON HASH SCHEMA "name" TEXT`,
         ];

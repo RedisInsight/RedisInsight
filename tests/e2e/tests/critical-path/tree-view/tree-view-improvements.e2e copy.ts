@@ -15,15 +15,11 @@ import { verifyKeysDisplayedInTheList } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const common = new Common();
-
 const cliPage = new CliPage();
-
 let keyNames: string[];
-
 let keyName1: string;
 let keyName2: string;
 let keynameSingle: string;
-
 let index: string;
 
 fixture`Tree view navigations improvement tests`

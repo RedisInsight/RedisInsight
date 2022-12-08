@@ -250,24 +250,6 @@ export const initDataHelper = (rte) => {
     );
   };
 
-  const generateHugeMembersSetKey = async (number: number = 100000, clean: boolean) => {
-    if (clean) {
-      await truncate();
-    }
-
-    const batchSize = 10000;
-    let inserted = 0;
-    do {
-      const pipeline = [];
-      const limit = inserted + batchSize;
-      for (inserted; inserted < limit && inserted < number; inserted++) {
-        pipeline.push(['sadd', constants.TEST_SET_KEY_1, inserted]);
-      }
-
-      await insertKeysBasedOnEnv(pipeline, true);
-    } while (inserted < number)
-  };
-
   // ZSet
   const generateZSets = async (clean: boolean = false) => {
     if (clean) {
@@ -564,7 +546,6 @@ export const initDataHelper = (rte) => {
     generateHugeNumberOfTinyStringKeys,
     generateHugeElementsForListKey,
     generateHugeMembersForSortedListKey,
-    generateHugeMembersSetKey,
     generateHugeStream,
     generateNKeys,
     generateRedisearchIndexes,

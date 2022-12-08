@@ -342,10 +342,12 @@ describe('POST /databases/:instanceId/analysis', () => {
         responseSchema,
         before: async () => {
           const NUMBERS_OF_SET_MEMBERS = 5001;
-          await rte.data.generateHugeMembersSetKey(NUMBERS_OF_SET_MEMBERS, true);
+          await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.deep.eq([
+            // by default max_intset_entries = 512
+            constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION,
             constants.TEST_BIG_SETS_RECOMMENDATION,
           ]);
         },

@@ -24,7 +24,7 @@ export const mockDatabaseImportResultFail = {
   status: DatabaseImportStatus.Fail,
   host: mockDatabase.host,
   port: mockDatabase.port,
-  error: new BadRequestException(),
+  errors: [new BadRequestException()],
 };
 
 export const mockDatabaseImportResponse = Object.assign(new DatabaseImportResponse(), {
@@ -34,10 +34,14 @@ export const mockDatabaseImportResponse = Object.assign(new DatabaseImportRespon
     index: index + 3,
   })),
   partial: [],
-  fail: [new ValidationException([]), new BadRequestException(), new ForbiddenException()].map((error, index) => ({
+  fail: [
+    new ValidationException('Bad request'),
+    new BadRequestException(),
+    new ForbiddenException(),
+  ].map((error, index) => ({
     ...mockDatabaseImportResultFail,
     index,
-    error,
+    errors: [error],
   })),
 });
 

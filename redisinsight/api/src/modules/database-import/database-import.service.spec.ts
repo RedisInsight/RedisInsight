@@ -59,10 +59,7 @@ describe('DatabaseImportService', () => {
     it('should import databases from json', async () => {
       const response = await service.import(mockDatabaseImportFile);
 
-      expect(response).toEqual({
-        ...mockDatabaseImportResponse,
-        errors: undefined, // errors omitted from response
-      });
+      expect(response).toEqual(mockDatabaseImportResponse);
       expect(analytics.sendImportResults).toHaveBeenCalledWith(mockDatabaseImportResponse);
     });
 
@@ -75,7 +72,6 @@ describe('DatabaseImportService', () => {
 
       expect(response).toEqual({
         ...mockDatabaseImportResponse,
-        errors: undefined, // errors omitted from response
       });
       expect(analytics.sendImportResults).toHaveBeenCalledWith(mockDatabaseImportResponse);
     });

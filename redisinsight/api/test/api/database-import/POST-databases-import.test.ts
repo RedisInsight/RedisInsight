@@ -73,7 +73,10 @@ describe('POST /databases/import', () => {
             expect(body.fail.length).to.eq(1);
             expect(body.fail[0].status).to.eq('fail');
             expect(body.fail[0].index).to.eq(0);
-            expect(body.fail[0].error).to.be.a('string');
+            expect(body.fail[0].errors.length).to.eq(1);
+            expect(body.fail[0].errors[0].message).to.be.a('string');
+            expect(body.fail[0].errors[0].statusCode).to.eq(400);
+            expect(body.fail[0].errors[0].error).to.eq('Bad Request');
             if (body.fail[0].host) {
               expect(body.fail[0].host).to.be.a('string');
             }

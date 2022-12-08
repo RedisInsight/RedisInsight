@@ -1,4 +1,4 @@
-import { isArray, isString, isNumber } from 'lodash';
+import { isString, isNumber } from 'lodash';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Transform, Type } from 'class-transformer';
 
@@ -49,13 +49,19 @@ export class DatabaseImportResult {
       return undefined;
     }
 
-    if (e?.response?.message) {
-      return isArray(e.response.message) ? e.response.message[e.response.message.length - 1] : e.response.message;
-    }
+    return e.map((error) => {
+      if (error?.response) {
+        return error.response;
+      }
 
-    return e?.message || 'Unhandled Error';
+      return {
+        statusCode: 500,
+        message: error?.message || 'Unhandled Error',
+        error: 'Unhandled Error',
+      };
+    });
   }, { toPlainOnly: true })
-  error?: Error;
+  errors?: Error[];
 }
 
 export class DatabaseImportResponse {

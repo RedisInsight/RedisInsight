@@ -1,4 +1,6 @@
-import { HttpException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  HttpException, Injectable, InternalServerErrorException, Logger,
+} from '@nestjs/common';
 import { get, isArray, set } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import { plainToClass } from 'class-transformer';
@@ -163,27 +165,32 @@ export class DatabaseImportService {
         port: database.port,
       };
     } catch (e) {
-      let error = e;
+      let errors = [e];
       if (isArray(e)) {
-        [error] = e;
+        errors = e;
       }
 
-      if (error instanceof ValidationError) {
-        error = new ValidationException(Object.values(error?.constraints || {}) || 'Bad request');
-      }
+      errors = errors.map((error) => {
+        if (error instanceof ValidationError) {
+          const messages = Object.values(error?.constraints || {});
+          return new ValidationException(messages[messages.length - 1] || 'Bad request');
+        }
 
-      if (!(error instanceof HttpException)) {
-        error = new InternalServerErrorException(error?.message);
-      }
+        if (!(error instanceof HttpException)) {
+          return new InternalServerErrorException(error?.message);
+        }
 
-      this.logger.warn(`Unable to import database: ${error?.constructor?.name || 'UncaughtError'}`, error);
+        return error;
+      });
+
+      this.logger.warn(`Unable to import database: ${errors[0]?.constructor?.name || 'UncaughtError'}`, errors[0]);
 
       return {
         index,
         status: DatabaseImportStatus.Fail,
         host: item?.host,
         port: item?.port,
-        error,
+        errors,
       };
     }
   }

@@ -41,10 +41,12 @@ export class RecommendationService {
         await this.recommendationProvider.determineLogicalDatabasesRecommendation(client),
         await this.recommendationProvider.determineCombineSmallStringsToHashesRecommendation(keys),
         await this.recommendationProvider.determineIncreaseSetMaxIntsetEntriesRecommendation(client, keys),
-        await this.recommendationProvider.determineConvertHashtableToZiplistRecommendation(client, keys),
+        await this.recommendationProvider.determineHashHashtableToZiplistRecommendation(client, keys),
         await this.recommendationProvider.determineCompressHashFieldNamesRecommendation(keys),
         await this.recommendationProvider.determineCompressionForListRecommendation(keys),
         await this.recommendationProvider.determineBigStringsRecommendation(keys),
+        await this.recommendationProvider.determineZSetHashtableToZiplistRecommendation(client, keys),
+        await this.recommendationProvider.determineBigSetsRecommendation(keys),
       ]));
   }
 }

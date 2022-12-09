@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { DEFAULT_SLOWLOG_DURATION_UNIT } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
+import { setSlowLogUnits } from 'uiSrc/slices/app/context'
 import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
@@ -111,12 +112,11 @@ describe('slowLog slice', () => {
         ...initialState,
         loading: false,
         data,
-        durationUnit: DEFAULT_SLOWLOG_DURATION_UNIT,
         lastRefreshTime: timestamp
       }
 
       // Act
-      const nextState = reducer(initialState, getSlowLogsSuccess([data, DEFAULT_SLOWLOG_DURATION_UNIT]))
+      const nextState = reducer(initialState, getSlowLogsSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -240,7 +240,7 @@ describe('slowLog slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, getSlowLogConfigSuccess([config, null]))
+      const nextState = reducer(initialState, getSlowLogConfigSuccess(config))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -296,7 +296,7 @@ describe('slowLog slice', () => {
         // Assert
         const expectedActions = [
           getSlowLogs(),
-          getSlowLogsSuccess([data, DEFAULT_SLOWLOG_DURATION_UNIT]),
+          getSlowLogsSuccess(data),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -386,7 +386,7 @@ describe('slowLog slice', () => {
         // Assert
         const expectedActions = [
           getSlowLogConfig(),
-          getSlowLogConfigSuccess([data, null]),
+          getSlowLogConfigSuccess(data),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -442,7 +442,8 @@ describe('slowLog slice', () => {
         // Assert
         const expectedActions = [
           getSlowLogConfig(),
-          getSlowLogConfigSuccess([data, DEFAULT_SLOWLOG_DURATION_UNIT]),
+          getSlowLogConfigSuccess(data),
+          setSlowLogUnits(DEFAULT_SLOWLOG_DURATION_UNIT)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

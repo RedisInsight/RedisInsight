@@ -4,6 +4,7 @@ import { toNumber, isNumber } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
+import { appContextBrowserKeyDetails, updateKeyDetailsSizes } from 'uiSrc/slices/app/context'
 
 import {
   zsetSelector,
@@ -36,7 +37,7 @@ import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchTy
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
-import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
+import { IColumnSearchState, ITableColumn, RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
@@ -60,10 +61,11 @@ interface IZsetMember extends ZsetMember {
 
 export interface Props {
   isFooterOpen: boolean
+  onRemoveKey: () => void
 }
 
 const ZSetDetails = (props: Props) => {
-  const { isFooterOpen } = props
+  const { isFooterOpen, onRemoveKey } = props
 
   const { loading, searching } = useSelector(zsetSelector)
   const { loading: updateLoading } = useSelector(updateZsetScoreStateSelector)
@@ -73,6 +75,7 @@ const ZSetDetails = (props: Props) => {
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+  const { [KeyTypes.ZSet]: ZSetSizes } = useSelector(appContextBrowserKeyDetails)
 
   const [match, setMatch] = useState<string>('')
   const [deleting, setDeleting] = useState('')
@@ -117,7 +120,8 @@ const ZSetDetails = (props: Props) => {
     setDeleting(`${member + suffix}`)
   }, [])
 
-  const onSuccessRemoved = () => {
+  const onSuccessRemoved = (newTotal: number) => {
+    newTotal === 0 && onRemoveKey()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,
@@ -231,6 +235,13 @@ const ZSetDetails = (props: Props) => {
     cellCache.clearAll()
   }
 
+  const onColResizeEnd = (sizes: RelativeWidthSizes) => {
+    dispatch(updateKeyDetailsSizes({
+      type: KeyTypes.ZSet,
+      sizes
+    }))
+  }
+
   const columns:ITableColumn[] = [
     {
       id: 'name',
@@ -239,6 +250,9 @@ const ZSetDetails = (props: Props) => {
       prependSearchName: 'Member:',
       initialSearchValue: '',
       truncateText: true,
+      isResizable: true,
+      minWidth: 140,
+      relativeWidth: ZSetSizes?.name || 60,
       alignment: TableCellAlignment.Left,
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
@@ -274,6 +288,7 @@ const ZSetDetails = (props: Props) => {
     {
       id: 'score',
       label: 'Score',
+      minWidth: 100,
       isSortable: true,
       truncateText: true,
       render: function Score(_name: string, { name: nameItem, score, editing }: IZsetMember, expanded?: boolean) {
@@ -443,6 +458,7 @@ const ZSetDetails = (props: Props) => {
           onRowToggleViewClick={handleRowToggleViewClick}
           expandedRows={expandedRows}
           setExpandedRows={setExpandedRows}
+          onColResizeEnd={onColResizeEnd}
         />
       </div>
     </>

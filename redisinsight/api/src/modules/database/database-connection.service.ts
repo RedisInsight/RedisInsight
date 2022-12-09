@@ -1,13 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AppTool } from 'src/models';
 import * as IORedis from 'ioredis';
 import { generateRedisConnectionName, getRedisConnectionException } from 'src/utils';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { RedisService } from 'src/modules/redis/redis.service';
-import { ClientMetadata } from 'src/modules/redis/models/client-metadata';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class DatabaseConnectionService {
@@ -23,27 +22,20 @@ export class DatabaseConnectionService {
 
   /**
    * Connects to database and updates modules list and last connected time
-   * @param databaseId
-   * @param namespace
+   * @param clientMetadata
    */
-  async connect(
-    databaseId: string,
-    namespace = AppTool.Common,
-  ): Promise<void> {
-    const client = await this.getOrCreateClient({
-      databaseId,
-      namespace,
-    });
+  async connect(clientMetadata: ClientMetadata): Promise<void> {
+    const client = await this.getOrCreateClient(clientMetadata);
 
     // refresh modules list and last connected time
     // will be refreshed after user navigate to particular database from the databases list
     // Note: move to a different place in case if we need to update such info more often
-    await this.repository.update(databaseId, {
+    await this.repository.update(clientMetadata.databaseId, {
       lastConnection: new Date(),
       modules: await this.databaseInfoProvider.determineDatabaseModules(client),
     });
 
-    this.logger.log(`Succeed to connect to database ${databaseId}`);
+    this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
   }
 
   /**
@@ -56,12 +48,7 @@ export class DatabaseConnectionService {
   async getOrCreateClient(clientMetadata: ClientMetadata) {
     this.logger.log('Getting database client.');
 
-    let client = (await this.redisService.getClientInstance({
-      // todo: change RedisService logic to match new metadata interface
-      instanceId: clientMetadata.databaseId,
-      tool: clientMetadata.namespace,
-      uuid: clientMetadata.uuid,
-    }))?.client;
+    let client = (await this.redisService.getClientInstance(clientMetadata))?.client;
 
     if (client && this.redisService.isClientConnected(client)) {
       return client;
@@ -69,14 +56,7 @@ export class DatabaseConnectionService {
 
     client = await this.createClient(clientMetadata);
 
-    this.redisService.setClientInstance(
-      {
-        instanceId: clientMetadata.databaseId,
-        tool: clientMetadata.namespace,
-        uuid: clientMetadata.uuid,
-      },
-      client,
-    );
+    this.redisService.setClientInstance(clientMetadata, client);
 
     return client;
   }
@@ -92,12 +72,12 @@ export class DatabaseConnectionService {
   async createClient(clientMetadata: ClientMetadata): Promise<IORedis.Redis | IORedis.Cluster> {
     this.logger.log('Creating database client.');
     const database = await this.databaseService.get(clientMetadata.databaseId);
-    const connectionName = generateRedisConnectionName(clientMetadata.namespace, clientMetadata.databaseId);
+    const connectionName = generateRedisConnectionName(clientMetadata.context, clientMetadata.databaseId);
 
     try {
       return await this.redisService.connectToDatabaseInstance(
         database,
-        clientMetadata.namespace,
+        clientMetadata.context,
         connectionName,
       );
     } catch (error) {

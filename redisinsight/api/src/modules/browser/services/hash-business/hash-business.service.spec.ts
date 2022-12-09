@@ -12,7 +12,7 @@ import {
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
+  mockBrowserClientMetadata,
 } from 'src/__mocks__';
 import {
   GetHashFieldsDto,
@@ -23,7 +23,6 @@ import {
   BrowserToolHashCommands,
   BrowserToolKeysCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   mockAddFieldsDto, mockDeleteFieldsDto,
   mockGetFieldsDto,
@@ -31,10 +30,6 @@ import {
   mockRedisHScanResponse,
 } from 'src/modules/browser/__mocks__';
 import { HashBusinessService } from './hash-business.service';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
-};
 
 describe('HashBusinessService', () => {
   let service: HashBusinessService;
@@ -58,7 +53,7 @@ describe('HashBusinessService', () => {
   describe('createHash', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockAddFieldsDto.keyName,
         ])
         .mockResolvedValue(false);
@@ -72,10 +67,10 @@ describe('HashBusinessService', () => {
       const commandArgs = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
 
       await expect(
-        service.createHash(mockClientOptions, { ...mockAddFieldsDto, expire }),
+        service.createHash(mockBrowserClientMetadata, { ...mockAddFieldsDto, expire }),
       ).resolves.not.toThrow();
       expect(service.createHashWithExpiration).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         keyName,
         commandArgs,
         expire,
@@ -87,14 +82,14 @@ describe('HashBusinessService', () => {
       const commandArgs = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
 
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolHashCommands.HSet, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolHashCommands.HSet, [
           keyName,
           ...commandArgs,
         ])
         .mockResolvedValue(1);
 
       await expect(
-        service.createHash(mockClientOptions, mockAddFieldsDto),
+        service.createHash(mockBrowserClientMetadata, mockAddFieldsDto),
       ).resolves.not.toThrow();
       expect(service.createHashWithExpiration).not.toHaveBeenCalled();
     });
@@ -103,18 +98,18 @@ describe('HashBusinessService', () => {
       const args = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
 
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           keyName,
         ])
         .mockResolvedValue(true);
 
       await expect(
-        service.createHash(mockClientOptions, mockAddFieldsDto),
+        service.createHash(mockBrowserClientMetadata, mockAddFieldsDto),
       ).rejects.toThrow(ConflictException);
       expect(
         browserTool.execCommand,
       ).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolHashCommands.HSet,
         [keyName, ...args],
       );
@@ -127,7 +122,7 @@ describe('HashBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.createHash(mockClientOptions, mockAddFieldsDto),
+        service.createHash(mockBrowserClientMetadata, mockAddFieldsDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -135,7 +130,7 @@ describe('HashBusinessService', () => {
   describe('getFields', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolHashCommands.HLen, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolHashCommands.HLen, [
           mockAddFieldsDto.keyName,
         ])
         .mockResolvedValue(mockAddFieldsDto.fields.length);
@@ -143,19 +138,19 @@ describe('HashBusinessService', () => {
     it('succeed to get fields of the hash', async () => {
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolHashCommands.HScan,
           expect.anything(),
         )
         .mockResolvedValue(mockRedisHScanResponse);
 
       const result = await service.getFields(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         mockGetFieldsDto,
       );
       expect(result).toEqual(mockGetFieldsResponse);
       expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolHashCommands.HScan,
         expect.anything(),
       );
@@ -167,17 +162,17 @@ describe('HashBusinessService', () => {
         match: item.field.toString(),
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolHashCommands.HGet, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolHashCommands.HGet, [
           dto.keyName,
           dto.match,
         ])
         .mockResolvedValue(item.value);
 
-      const result = await service.getFields(mockClientOptions, dto);
+      const result = await service.getFields(mockBrowserClientMetadata, dto);
 
       expect(result).toEqual(mockGetFieldsResponse);
       expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolHashCommands.HScan,
         expect.anything(),
       );
@@ -188,13 +183,13 @@ describe('HashBusinessService', () => {
         match: 'field',
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolHashCommands.HGet, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolHashCommands.HGet, [
           dto.keyName,
           dto.match,
         ])
         .mockResolvedValue(null);
 
-      const result = await service.getFields(mockClientOptions, dto);
+      const result = await service.getFields(mockBrowserClientMetadata, dto);
 
       expect(result).toEqual({ ...mockGetFieldsResponse, fields: [] });
     });
@@ -208,17 +203,17 @@ describe('HashBusinessService', () => {
         match: 'fi\\[a-e\\]ld',
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolHashCommands.HGet, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolHashCommands.HGet, [
           dto.keyName,
           item.field.toString(),
         ])
         .mockResolvedValue('value');
 
-      const result = await service.getFields(mockClientOptions, dto);
+      const result = await service.getFields(mockBrowserClientMetadata, dto);
 
       expect(result).toEqual({ ...mockGetFieldsResponse, fields: [item] });
       expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolHashCommands.HScan,
         expect.anything(),
       );
@@ -235,25 +230,25 @@ describe('HashBusinessService', () => {
     //   );
     //   when(browserTool.execCommand)
     //     .calledWith(
-    //       mockClientOptions,
+    //       mockBrowserClientMetadata,
     //       BrowserToolHashCommands.HScan,
     //       expect.anything(),
     //     )
     //     .mockResolvedValue(['200', []]);
     //
-    //   await service.getFields(mockClientOptions, dto);
+    //   await service.getFields(mockBrowserClientMetadata, dto);
     //
     //   expect(browserTool.execCommand).toHaveBeenCalledTimes(maxScanCalls + 1);
     // });
     it('key with this name does not exist for getFields', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolHashCommands.HLen, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolHashCommands.HLen, [
           mockGetFieldsDto.keyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.getFields(mockClientOptions, mockGetFieldsDto),
+        service.getFields(mockBrowserClientMetadata, mockGetFieldsDto),
       ).rejects.toThrow(NotFoundException);
     });
     it("try to use 'HLEN' command not for hash data type", async () => {
@@ -264,7 +259,7 @@ describe('HashBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.getFields(mockClientOptions, mockGetFieldsDto),
+        service.getFields(mockBrowserClientMetadata, mockGetFieldsDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for getFields", async () => {
@@ -275,7 +270,7 @@ describe('HashBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.getFields(mockClientOptions, mockGetFieldsDto),
+        service.getFields(mockBrowserClientMetadata, mockGetFieldsDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -283,7 +278,7 @@ describe('HashBusinessService', () => {
   describe('addFields', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockAddFieldsDto.keyName,
         ])
         .mockResolvedValue(true);
@@ -291,7 +286,7 @@ describe('HashBusinessService', () => {
     it('succeed to add/update fields to the Hash data type', async () => {
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolHashCommands.HSet,
           expect.anything(),
         )
@@ -300,31 +295,31 @@ describe('HashBusinessService', () => {
       const commandArgs = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
 
       await expect(
-        service.addFields(mockClientOptions, mockAddFieldsDto),
+        service.addFields(mockBrowserClientMetadata, mockAddFieldsDto),
       ).resolves.not.toThrow();
       expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
       expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolHashCommands.HSet,
         [keyName, ...commandArgs],
       );
     });
     it('key with this name does not exist for addFields', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockAddFieldsDto.keyName,
         ])
         .mockResolvedValue(false);
 
       await expect(
-        service.addFields(mockClientOptions, mockAddFieldsDto),
+        service.addFields(mockBrowserClientMetadata, mockAddFieldsDto),
       ).rejects.toThrow(NotFoundException);
       expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolHashCommands.HSet,
         expect.anything(),
       );
@@ -336,14 +331,14 @@ describe('HashBusinessService', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolHashCommands.HSet,
           expect.anything(),
         )
         .mockRejectedValue(replyError);
 
       await expect(
-        service.addFields(mockClientOptions, mockAddFieldsDto),
+        service.addFields(mockBrowserClientMetadata, mockAddFieldsDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for addFields", async () => {
@@ -353,14 +348,14 @@ describe('HashBusinessService', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolHashCommands.HSet,
           expect.anything(),
         )
         .mockRejectedValue(replyError);
 
       await expect(
-        service.addFields(mockClientOptions, mockAddFieldsDto),
+        service.addFields(mockBrowserClientMetadata, mockAddFieldsDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -368,7 +363,7 @@ describe('HashBusinessService', () => {
   describe('deleteFields', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockDeleteFieldsDto.keyName,
         ])
         .mockResolvedValue(true);
@@ -377,14 +372,14 @@ describe('HashBusinessService', () => {
       const { fields } = mockDeleteFieldsDto;
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolHashCommands.HDel,
           expect.anything(),
         )
         .mockResolvedValue(fields.length);
 
       const result = await service.deleteFields(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         mockDeleteFieldsDto,
       );
 
@@ -392,16 +387,16 @@ describe('HashBusinessService', () => {
     });
     it('key with this name does not exist for deleteFields', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockDeleteFieldsDto.keyName,
         ])
         .mockResolvedValue(false);
 
       await expect(
-        service.deleteFields(mockClientOptions, mockDeleteFieldsDto),
+        service.deleteFields(mockBrowserClientMetadata, mockDeleteFieldsDto),
       ).rejects.toThrow(NotFoundException);
       expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolHashCommands.HDel,
         expect.anything(),
       );
@@ -414,7 +409,7 @@ describe('HashBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.deleteFields(mockClientOptions, mockDeleteFieldsDto),
+        service.deleteFields(mockBrowserClientMetadata, mockDeleteFieldsDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for deleteFields", async () => {
@@ -425,7 +420,7 @@ describe('HashBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.deleteFields(mockClientOptions, mockDeleteFieldsDto),
+        service.deleteFields(mockBrowserClientMetadata, mockDeleteFieldsDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });

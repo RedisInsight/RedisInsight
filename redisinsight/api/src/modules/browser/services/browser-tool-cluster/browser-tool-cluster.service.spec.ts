@@ -1,12 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as IORedis from 'ioredis';
 import * as Redis from 'ioredis-mock';
-import { mockStandaloneDatabaseEntity } from 'src/__mocks__';
 import {
-  IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
 import {
   BrowserToolCommands,
   BrowserToolKeysCommands,
@@ -15,13 +12,10 @@ import { InternalServerErrorException } from '@nestjs/common';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
 import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
-};
+import { DatabaseService } from 'src/modules/database/database.service';
+import { mockBrowserClientMetadata } from 'src/__mocks__';
 
 const mockClient = new Redis();
 const mockCluster = new Redis.Cluster([]);
@@ -49,7 +43,7 @@ describe('BrowserToolClusterService', () => {
           useFactory: () => ({}),
         },
         {
-          provide: InstancesBusinessService,
+          provide: DatabaseService,
           useFactory: () => ({}),
         },
       ],
@@ -75,7 +69,7 @@ describe('BrowserToolClusterService', () => {
       getRedisClient.mockResolvedValue(mockClient);
 
       await service.execCommand(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.MemoryUsage,
         [keyName],
       );
@@ -93,7 +87,7 @@ describe('BrowserToolClusterService', () => {
 
       await expect(
         service.execCommand(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.MemoryUsage,
           [keyName],
         ),
@@ -114,7 +108,7 @@ describe('BrowserToolClusterService', () => {
       getRedisClient.mockResolvedValue(mockClient);
       execPipelineFromClient.mockResolvedValue();
 
-      await service.execPipeline(mockClientOptions, args);
+      await service.execPipeline(mockBrowserClientMetadata, args);
 
       expect(execPipelineFromClient).toHaveBeenCalledWith(mockClient, args);
     });
@@ -125,7 +119,7 @@ describe('BrowserToolClusterService', () => {
       getRedisClient.mockRejectedValue(error);
 
       await expect(
-        service.execPipeline(mockClientOptions, args),
+        service.execPipeline(mockBrowserClientMetadata, args),
       ).rejects.toThrow(InternalServerErrorException);
       expect(execPipelineFromClient).not.toHaveBeenCalled();
     });
@@ -142,7 +136,7 @@ describe('BrowserToolClusterService', () => {
       mockCluster.nodes.mockReturnValue([mockClusterNode1, mockClusterNode2]);
 
       const result = await service.execCommandFromNodes(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.MemoryUsage,
         [keyName],
         'all',
@@ -169,7 +163,7 @@ describe('BrowserToolClusterService', () => {
 
       await expect(
         service.execCommandFromNodes(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.MemoryUsage,
           [keyName],
           'all',
@@ -188,7 +182,7 @@ describe('BrowserToolClusterService', () => {
       mockCluster.nodes.mockReturnValue([mockClusterNode1, mockClusterNode2]);
 
       const result = await service.execCommandFromNode(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolKeysCommands.MemoryUsage,
         [keyName],
         { ...mockClusterNode1.options },
@@ -208,7 +202,7 @@ describe('BrowserToolClusterService', () => {
       ]))));
     });
     it('should throw error that cluster node not found', async () => {
-      const nodeOptions: EndpointDto = { host: '127.0.0.1', port: 7003 };
+      const nodeOptions = { host: '127.0.0.1', port: 7003 };
       const error = new ClusterNodeNotFoundError(
         ERROR_MESSAGES.CLUSTER_NODE_NOT_FOUND(
           `${nodeOptions.host}:${nodeOptions.port}`,
@@ -219,7 +213,7 @@ describe('BrowserToolClusterService', () => {
 
       await expect(
         service.execCommandFromNode(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.MemoryUsage,
           [keyName],
           nodeOptions,
@@ -234,7 +228,7 @@ describe('BrowserToolClusterService', () => {
 
       await expect(
         service.execCommandFromNode(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.MemoryUsage,
           [keyName],
           { ...mockClusterNode1.options },

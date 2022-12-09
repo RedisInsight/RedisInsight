@@ -57,6 +57,7 @@ export default {
     appVersion: process.env.APP_VERSION || '2.0.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 10000,
     excludeRoutes: [],
+    excludeAuthRoutes: [],
   },
   sockets: {
     cors: process.env.SOCKETS_CORS ? process.env.SOCKETS_CORS === 'true' : false,
@@ -155,7 +156,7 @@ export default {
         || 'https://raw.githubusercontent.com/RediSearch/RediSearch/master/commands.json',
     },
     {
-      name: 'redijson',
+      name: 'redisjson',
       url: process.env.COMMANDS_REDIJSON_URL
         || 'https://raw.githubusercontent.com/RedisJSON/RedisJSON/master/commands.json',
     },

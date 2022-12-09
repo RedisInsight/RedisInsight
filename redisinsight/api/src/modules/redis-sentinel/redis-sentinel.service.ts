@@ -4,9 +4,8 @@ import {
 import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/create.sentinel.database.response';
 import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
 import { RedisService } from 'src/modules/redis/redis.service';
-import { AppTool } from 'src/models';
 import { Database } from 'src/modules/database/models/database';
-import { ActionStatus } from 'src/common/models';
+import { ActionStatus, ClientContext } from 'src/common/models';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { getRedisConnectionException } from 'src/utils';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
@@ -113,19 +112,11 @@ export class RedisSentinelService {
     this.logger.log('Connection and getting sentinel masters.');
     let result: SentinelMaster[];
     try {
-      const client = await this.redisService.createStandaloneClient(dto, AppTool.Common, false);
+      const client = await this.redisService.createStandaloneClient(dto, ClientContext.Common, false);
       result = await this.databaseInfoProvider.determineSentinelMasterGroups(client);
       this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(result);
 
-      if (client?.quit) {
-        try {
-          await client.quit();
-        } catch (e) {
-          this.logger.error('Unable to quit connection', e);
-        }
-      } else if (client?.disconnect) {
-        await client.disconnect();
-      }
+      await client.disconnect();
     } catch (error) {
       const exception: HttpException = getRedisConnectionException(error, dto);
       this.redisSentinelAnalytics.sendGetSentinelMastersFailedEvent(exception);

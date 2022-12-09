@@ -3,7 +3,6 @@ import { concat } from 'lodash';
 import {
   BadRequestException, HttpException, Injectable, Logger,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { SlowLog, SlowLogConfig } from 'src/modules/slow-log/models';
 import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constants/commands';
@@ -11,6 +10,7 @@ import { catchAclError, convertStringsArrayToObject } from 'src/utils';
 import { UpdateSlowLogConfigDto } from 'src/modules/slow-log/dto/update-slow-log-config.dto';
 import { GetSlowLogsDto } from 'src/modules/slow-log/dto/get-slow-logs.dto';
 import { SlowLogAnalyticsService } from 'src/modules/slow-log/slow-log-analytics.service';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class SlowLogService {
@@ -23,20 +23,14 @@ export class SlowLogService {
 
   /**
    * Get slow logs for each node and return concatenated result
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
-  async getSlowLogs(
-    clientOptions: IFindRedisClientInstanceByOptions,
-    dto: GetSlowLogsDto,
-  ) {
+  async getSlowLogs(clientMetadata: ClientMetadata, dto: GetSlowLogsDto) {
     try {
       this.logger.log('Getting slow logs');
 
-      const client = await this.databaseConnectionService.getOrCreateClient({
-        databaseId: clientOptions.instanceId,
-        namespace: clientOptions.tool,
-      });
+      const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
       const nodes = await this.getNodes(client);
 
       return concat(...(await Promise.all(nodes.map((node) => this.getNodeSlowLogs(node, dto)))));
@@ -74,18 +68,13 @@ export class SlowLogService {
 
   /**
    * Clear slow logs in all nodes
-   * @param clientOptions
+   * @param clientMetadata
    */
-  async reset(
-    clientOptions: IFindRedisClientInstanceByOptions,
-  ): Promise<void> {
+  async reset(clientMetadata: ClientMetadata): Promise<void> {
     try {
       this.logger.log('Resetting slow logs');
 
-      const client = await this.databaseConnectionService.getOrCreateClient({
-        databaseId: clientOptions.instanceId,
-        namespace: clientOptions.tool,
-      });
+      const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
       const nodes = await this.getNodes(client);
 
       await Promise.all(nodes.map((node) => node.call(SlowLogCommands.SlowLog, SlowLogArguments.Reset)));
@@ -100,16 +89,11 @@ export class SlowLogService {
 
   /**
    * Get current slowlog config to show for user
-   * @param clientOptions
+   * @param clientMetadata
    */
-  async getConfig(
-    clientOptions: IFindRedisClientInstanceByOptions,
-  ): Promise<SlowLogConfig> {
+  async getConfig(clientMetadata: ClientMetadata): Promise<SlowLogConfig> {
     try {
-      const client = await this.databaseConnectionService.getOrCreateClient({
-        databaseId: clientOptions.instanceId,
-        namespace: clientOptions.tool,
-      });
+      const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
       const resp = convertStringsArrayToObject(
         await client.call(SlowLogCommands.Config, [SlowLogArguments.Get, 'slowlog*']),
       );
@@ -129,16 +113,13 @@ export class SlowLogService {
 
   /**
    * Update slowlog config
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
-  async updateConfig(
-    clientOptions: IFindRedisClientInstanceByOptions,
-    dto: UpdateSlowLogConfigDto,
-  ): Promise<SlowLogConfig> {
+  async updateConfig(clientMetadata: ClientMetadata, dto: UpdateSlowLogConfigDto): Promise<SlowLogConfig> {
     try {
       const commands = [];
-      const config = await this.getConfig(clientOptions);
+      const config = await this.getConfig(clientMetadata);
       const { slowlogLogSlowerThan, slowlogMaxLen } = config;
 
       if (dto.slowlogLogSlowerThan !== undefined) {
@@ -146,7 +127,7 @@ export class SlowLogService {
           command: SlowLogCommands.Config,
           args: [SlowLogArguments.Set, 'slowlog-log-slower-than', dto.slowlogLogSlowerThan],
           analytics: () => this.analyticsService.slowlogLogSlowerThanUpdated(
-            clientOptions.instanceId,
+            clientMetadata.databaseId,
             slowlogLogSlowerThan,
             dto.slowlogLogSlowerThan,
           ),
@@ -160,7 +141,7 @@ export class SlowLogService {
           command: SlowLogCommands.Config,
           args: [SlowLogArguments.Set, 'slowlog-max-len', dto.slowlogMaxLen],
           analytics: () => this.analyticsService.slowlogMaxLenUpdated(
-            clientOptions.instanceId,
+            clientMetadata.databaseId,
             slowlogMaxLen,
             dto.slowlogMaxLen,
           ),
@@ -170,12 +151,9 @@ export class SlowLogService {
       }
 
       if (commands.length) {
-        const client = await this.databaseConnectionService.getOrCreateClient({
-          databaseId: clientOptions.instanceId,
-          namespace: clientOptions.tool,
-        });
+        const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
 
-        if (client instanceof IORedis.Cluster) {
+        if (client.isCluster) {
           return Promise.reject(new BadRequestException('Configuration slowlog for cluster is deprecated'));
         }
         await Promise.all(commands.map((command) => client.call(
@@ -200,10 +178,10 @@ export class SlowLogService {
    * @private
    */
   private async getNodes(client: IORedis.Redis | IORedis.Cluster): Promise<IORedis.Redis[]> {
-    if (client instanceof IORedis.Cluster) {
-      return client.nodes();
+    if (client.isCluster) {
+      return (client as IORedis.Cluster).nodes();
     }
 
-    return [client];
+    return [client as IORedis.Redis];
   }
 }

@@ -19,3 +19,5 @@ export function classToClass<T, V>(
 
   return plainToClass(targetClass, classToPlain(classInstance, transformOptions), transformOptions);
 }
+
+export const cloneClassInstance = <V>(entity: V): V => classToClass(entity.constructor as ClassType<V>, entity);

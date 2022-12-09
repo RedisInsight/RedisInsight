@@ -16,6 +16,7 @@ import { localStorageService } from 'uiSrc/services'
 import { resetBrowserTree, setBrowserKeyListDataLoaded, } from 'uiSrc/slices/app/context'
 
 import { changeKeyViewType, changeSearchMode, fetchKeys, keysSelector, resetKeysData, } from 'uiSrc/slices/browser/keys'
+import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -30,7 +31,6 @@ import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 600
 const FULL_SCREEN_RESOLUTION = 1260
-export const REDISEARCH_MAX_KEYS_COUNT = 10_000
 
 interface ISwitchType<T> {
   tooltipText: string
@@ -71,6 +71,7 @@ const KeysHeader = (props: Props) => {
 
   const { id: instanceId, modules } = useSelector(connectedInstanceSelector)
   const { viewType, searchMode, isFiltered } = useSelector(keysSelector)
+  const { selectedIndex } = useSelector(redisearchSelector)
 
   const rootDivRef: Ref<HTMLDivElement> = useRef(null)
 
@@ -81,8 +82,8 @@ const KeysHeader = (props: Props) => {
   const viewTypes: ISwitchType<KeyViewType>[] = [
     {
       type: KeyViewType.Browser,
-      tooltipText: 'Browser',
-      ariaLabel: 'Browser view button',
+      tooltipText: 'List View',
+      ariaLabel: 'List view button',
       dataTestId: 'view-type-browser-btn',
       isActiveView() { return viewType === this.type },
       getClassName() {
@@ -150,10 +151,6 @@ const KeysHeader = (props: Props) => {
   const scanMoreStyle = {
     marginLeft: 10,
     height: '36px !important',
-    // RediSearch can't return more than 10_000 results
-    display: searchMode === SearchMode.Redisearch && keysState.keys.length >= REDISEARCH_MAX_KEYS_COUNT
-      ? 'none'
-      : 'inline-block'
   }
 
   const handleRefreshKeys = (enableAutoRefresh: boolean) => {
@@ -173,8 +170,8 @@ const KeysHeader = (props: Props) => {
       searchMode,
       '0',
       viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-      () => dispatch(setBrowserKeyListDataLoaded(true)),
-      () => dispatch(setBrowserKeyListDataLoaded(false)),
+      () => dispatch(setBrowserKeyListDataLoaded(searchMode, true)),
+      () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
     ))
   }
 
@@ -234,11 +231,17 @@ const KeysHeader = (props: Props) => {
         }
       })
     }
-    dispatch(resetKeysData(searchMode))
-    dispatch(changeKeyViewType(type))
     dispatch(resetBrowserTree())
+    dispatch(resetKeysData(searchMode))
     localStorageService.set(BrowserStorageItem.browserViewType, type)
-    loadKeys(type)
+
+    if (!(searchMode === SearchMode.Redisearch && !selectedIndex)) {
+      loadKeys(type)
+    }
+
+    setTimeout(() => {
+      dispatch(changeKeyViewType(type))
+    }, 0)
   }
 
   const handleSwitchSearchMode = (mode: SearchMode) => {
@@ -408,6 +411,11 @@ const KeysHeader = (props: Props) => {
                   || viewType === KeyViewType.Tree ? keysState.scanned : 0
                 }
                 loading={loading}
+                showScanMore={
+                  !(searchMode === SearchMode.Redisearch
+                    && keysState.maxResults
+                    && keysState.keys.length >= keysState.maxResults)
+                }
                 scanMoreStyle={scanMoreStyle}
                 loadMoreItems={handleScanMore}
                 nextCursor={nextCursor}

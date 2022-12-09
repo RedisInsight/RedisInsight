@@ -155,6 +155,19 @@
   padding: 12px;
 }
 
+.highlight {
+  background: var(--euiColorWarningLight);
+  color: var(--euiColorEmptyShade) !important;
+  border-radius: 4px;
+  padding: 1px 8px !important;
+  display: flex !important;
+  align-items: baseline;
+
+  .count, .valueUnit {
+    color: var(--euiColorEmptyShade) !important;
+  }
+}
+
 :global(.euiTableCellContent) .delimiter span {
   cursor: pointer;
   color: var(--buttonSecondaryTextColor);

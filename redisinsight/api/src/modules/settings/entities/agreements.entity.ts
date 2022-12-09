@@ -6,6 +6,7 @@ import { DataAsJsonString } from 'src/common/decorators';
 @Entity('agreements')
 export class AgreementsEntity {
   @PrimaryGeneratedColumn()
+  @Expose()
   id: number;
 
   @ApiProperty({

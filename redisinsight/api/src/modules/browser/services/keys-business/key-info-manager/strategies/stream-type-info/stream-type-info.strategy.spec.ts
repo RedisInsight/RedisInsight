@@ -3,7 +3,7 @@ import { when } from 'jest-when';
 import {
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockStandaloneDatabaseEntity,
+  mockBrowserClientMetadata,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import {
@@ -12,12 +12,7 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { StreamTypeInfoStrategy } from './stream-type-info.strategy';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
-};
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testStream',
@@ -49,7 +44,7 @@ describe('StreamTypeInfoStrategy', () => {
     const key = getKeyInfoResponse.name;
     it('should return appropriate value', async () => {
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           [BrowserToolStreamCommands.XLen, key],
@@ -64,7 +59,7 @@ describe('StreamTypeInfoStrategy', () => {
         ]);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.Stream,
       );
@@ -77,7 +72,7 @@ describe('StreamTypeInfoStrategy', () => {
         command: BrowserToolKeysCommands.Ttl,
       };
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           [BrowserToolStreamCommands.XLen, key],
@@ -85,7 +80,7 @@ describe('StreamTypeInfoStrategy', () => {
         .mockResolvedValue([replyError, []]);
 
       try {
-        await strategy.getInfo(mockClientOptions, key, RedisDataType.Stream);
+        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.Stream);
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);
@@ -98,7 +93,7 @@ describe('StreamTypeInfoStrategy', () => {
         message: "ERR unknown command 'memory'",
       };
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           [BrowserToolStreamCommands.XLen, key],
@@ -113,7 +108,7 @@ describe('StreamTypeInfoStrategy', () => {
         ]);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.Stream,
       );

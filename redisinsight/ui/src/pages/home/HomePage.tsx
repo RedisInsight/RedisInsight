@@ -7,7 +7,7 @@ import {
   resetDataRedisCluster,
   resetInstancesRedisCluster,
 } from 'uiSrc/slices/instances/cluster'
-import { setTitle } from 'uiSrc/utils'
+import { optimizeLSInstances, setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { Instance } from 'uiSrc/slices/interfaces'
@@ -62,6 +62,10 @@ const HomePage = () => {
     dispatch(resetInstancesRedisCluster())
     dispatch(resetSubscriptionsRedisCloud())
     dispatch(fetchCreateRedisButtonsAction())
+
+    return (() => {
+      dispatch(setEditedInstance(null))
+    })
   }, [])
 
   useEffect(() => {
@@ -88,6 +92,9 @@ const HomePage = () => {
       sendPageViewTelemetry({
         name: TelemetryPageView.DATABASES_LIST_PAGE
       })
+    }
+    if (instances.length && !isPageViewSent) {
+      optimizeLSInstances(instances)
     }
   }, [instances, analyticsIdentified, isPageViewSent, isChangedInstance])
 
@@ -164,6 +171,10 @@ const HomePage = () => {
       dispatch(setEditedInstance(null))
       setEditDialogIsOpen(false)
     }
+
+    instances.forEach((instance) => {
+      localStorageService.remove(BrowserStorageItem.dbConfig + instance.id)
+    })
   }
 
   const onResize = ({ width: innerWidth }: { width: number }) => {

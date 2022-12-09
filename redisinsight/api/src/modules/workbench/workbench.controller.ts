@@ -1,14 +1,24 @@
 import {
-  Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
-import { AppTool } from 'src/models';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
+import { ClientMetadata } from 'src/common/models';
+import { WorkbenchClientMetadata } from 'src/modules/workbench/decorators/workbench-client-metadata.decorator';
 
 @ApiTags('Workbench')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -30,16 +40,10 @@ export class WorkbenchController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiRedisParams()
   async sendCommands(
-    @Param('dbInstance') dbInstance: string,
+    @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
-    return this.service.createCommandExecutions(
-      {
-        instanceId: dbInstance,
-        tool: AppTool.Workbench,
-      },
-      dto,
-    );
+    return this.service.createCommandExecutions(clientMetadata, dto);
   }
 
   @ApiEndpoint({

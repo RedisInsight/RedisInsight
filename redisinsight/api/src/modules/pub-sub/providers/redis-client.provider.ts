@@ -1,31 +1,26 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
-import { RedisService } from 'src/modules/redis/redis.service';
-import { AppTool } from 'src/models';
 import { withTimeout } from 'src/utils/promise-with-timeout';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
 import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { ClientMetadata } from 'src/common/models';
 
 const serverConfig = config.get('server');
 
 @Injectable()
 export class RedisClientProvider {
   constructor(
-    private redisService: RedisService,
     private databaseConnectionService: DatabaseConnectionService,
   ) {}
 
-  createClient(databaseId: string): RedisClient {
-    return new RedisClient(databaseId, this.getConnectFn(databaseId));
+  createClient(clientMetadata: ClientMetadata): RedisClient {
+    return new RedisClient(clientMetadata.databaseId, this.getConnectFn(clientMetadata));
   }
 
-  private getConnectFn(databaseId: string) {
+  private getConnectFn(clientMetadata: ClientMetadata) {
     return () => withTimeout(
-      this.databaseConnectionService.createClient({
-        databaseId,
-        namespace: AppTool.Common,
-      }),
+      this.databaseConnectionService.createClient(clientMetadata),
       serverConfig.requestTimeout,
       new ServiceUnavailableException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
     );

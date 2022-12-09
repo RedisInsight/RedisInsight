@@ -203,4 +203,26 @@ describe('VirtualTable', () => {
       expect(onLoadMoreItems).toBeCalledWith(argMock)
     })
   })
+
+  it('should show resize trigger for resizable column', () => {
+    const updatedColumns = [
+      {
+        ...columns[0],
+        isResizable: true,
+      },
+    ]
+
+    render(
+      <VirtualTable
+        {...instance(mockedProps)}
+        items={members}
+        columns={updatedColumns}
+        loading={false}
+        loadMoreItems={jest.fn()}
+        totalItemsCount={members.length}
+      />
+    )
+
+    expect(screen.getByTestId('resize-trigger-name')).toBeInTheDocument()
+  })
 })

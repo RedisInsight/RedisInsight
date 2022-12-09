@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, fireEvent, screen } from 'uiSrc/utils/test-utils'
 import EncryptionErrorContent from './EncryptionErrorContent'
 
 let store: typeof mockedStore
@@ -21,5 +21,13 @@ jest.mock('uiSrc/services', () => ({
 describe('EncryptionErrorContent', () => {
   it('should render', () => {
     expect(render(<EncryptionErrorContent />)).toBeTruthy()
+  })
+
+  it('should call onClose', () => {
+    const onClose = jest.fn()
+    render(<EncryptionErrorContent onClose={onClose} />)
+    fireEvent.click(screen.getByTestId('toast-action-btn'))
+
+    expect(onClose).toBeCalled()
   })
 })

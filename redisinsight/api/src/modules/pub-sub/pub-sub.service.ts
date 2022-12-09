@@ -3,12 +3,12 @@ import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscribeDto } from 'src/modules/pub-sub/dto';
 import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription.provider';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { PublishResponse } from 'src/modules/pub-sub/dto/publish.response';
 import { PublishDto } from 'src/modules/pub-sub/dto/publish.dto';
 import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
 import { catchAclError } from 'src/utils';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class PubSubService {
@@ -73,24 +73,18 @@ export class PubSubService {
 
   /**
    * Publish a message to a particular channel
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
-  async publish(
-    clientOptions: IFindRedisClientInstanceByOptions,
-    dto: PublishDto,
-  ): Promise<PublishResponse> {
+  async publish(clientMetadata: ClientMetadata, dto: PublishDto): Promise<PublishResponse> {
     try {
       this.logger.log('Publishing message.');
 
-      const client = await this.databaseConnectionService.getOrCreateClient({
-        databaseId: clientOptions.instanceId,
-        namespace: clientOptions.tool,
-      });
+      const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
 
       const affected = await client.publish(dto.channel, dto.message);
 
-      this.analyticsService.sendMessagePublishedEvent(clientOptions.instanceId, affected);
+      this.analyticsService.sendMessagePublishedEvent(clientMetadata.databaseId, affected);
 
       return {
         affected,

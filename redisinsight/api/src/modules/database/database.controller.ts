@@ -8,13 +8,14 @@ import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
-import { AppTool } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
 import { BuildType } from 'src/modules/server/models/server';
 import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dto';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
+import { ClientMetadataParam } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Database Instances')
 @Controller('databases')
@@ -113,7 +114,7 @@ export class DatabaseController {
     @Param('id') id: string,
       @Body() database: UpdateDatabaseDto,
   ): Promise<Database> {
-    return await this.service.update(id, database);
+    return await this.service.update(id, database, true);
   }
 
   @Delete('/:id')
@@ -147,7 +148,7 @@ export class DatabaseController {
   }
 
   @Get(':id/connect')
-  @UseInterceptors(new TimeoutInterceptor())
+  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @ApiEndpoint({
     description: 'Connect to database instance by id',
     statusCode: 200,
@@ -160,11 +161,10 @@ export class DatabaseController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   async connect(
-    @Param('id') id: string,
+    @ClientMetadataParam({
+      databaseIdParam: 'id',
+    }) clientMetadata: ClientMetadata,
   ): Promise<void> {
-    await this.connectionService.connect(
-      id,
-      AppTool.Common,
-    );
+    await this.connectionService.connect(clientMetadata);
   }
 }

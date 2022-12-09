@@ -12,9 +12,8 @@ import {
   mockRedisNoPermError,
   mockRedisWrongNumberOfArgumentsError,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
+  mockBrowserClientMetadata,
 } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   CreateListWithExpireDto,
   ListElementDestination,
@@ -33,10 +32,6 @@ import {
   mockPushElementDto, mockSetListElementDto,
 } from 'src/modules/browser/__mocks__';
 import { ListBusinessService } from './list-business.service';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
-};
 
 describe('ListBusinessService', () => {
   let service: ListBusinessService;
@@ -60,7 +55,7 @@ describe('ListBusinessService', () => {
   describe('createList', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockPushElementDto.keyName,
         ])
         .mockResolvedValue(false);
@@ -72,7 +67,7 @@ describe('ListBusinessService', () => {
         .mockResolvedValue(undefined);
 
       await expect(
-        service.createList(mockClientOptions, {
+        service.createList(mockBrowserClientMetadata, {
           ...mockPushElementDto,
           expire: 1000,
         }),
@@ -81,26 +76,26 @@ describe('ListBusinessService', () => {
     });
     it('create list without expiration', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.LPush, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.LPush, [
           mockPushElementDto.keyName,
           mockPushElementDto.element,
         ])
         .mockResolvedValue(1);
 
       await expect(
-        service.createList(mockClientOptions, mockPushElementDto),
+        service.createList(mockBrowserClientMetadata, mockPushElementDto),
       ).resolves.not.toThrow();
       expect(service.createListWithExpiration).not.toHaveBeenCalled();
     });
     it('key with this name exist', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockPushElementDto.keyName,
         ])
         .mockResolvedValue(true);
 
       await expect(
-        service.createList(mockClientOptions, mockPushElementDto),
+        service.createList(mockBrowserClientMetadata, mockPushElementDto),
       ).rejects.toThrow(ConflictException);
       expect(browserTool.execCommand).toHaveBeenCalledTimes(1);
       expect(browserTool.execMulti).not.toHaveBeenCalled();
@@ -113,7 +108,7 @@ describe('ListBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.createList(mockClientOptions, mockPushElementDto),
+        service.createList(mockBrowserClientMetadata, mockPushElementDto),
       ).rejects.toThrow(ForbiddenException);
       expect(browserTool.execCommand).toHaveBeenCalledTimes(1);
       expect(browserTool.execMulti).not.toHaveBeenCalled();
@@ -123,25 +118,25 @@ describe('ListBusinessService', () => {
   describe('pushElement', () => {
     it('succeed to insert element at the tail of the list data type', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.RPushX, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.RPushX, [
           mockPushElementDto.keyName,
           mockPushElementDto.element,
         ])
         .mockResolvedValue(1);
 
       await expect(
-        service.pushElement(mockClientOptions, mockPushElementDto),
+        service.pushElement(mockBrowserClientMetadata, mockPushElementDto),
       ).resolves.not.toThrow();
     });
     it('succeed to insert element at the head of the list data type', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.LPushX, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.LPushX, [
           mockPushElementDto.keyName,
           mockPushElementDto.element,
         ])
         .mockResolvedValue(12);
 
-      const result = await service.pushElement(mockClientOptions, {
+      const result = await service.pushElement(mockBrowserClientMetadata, {
         ...mockPushElementDto,
         destination: ListElementDestination.Head,
       });
@@ -150,14 +145,14 @@ describe('ListBusinessService', () => {
     });
     it('key with this name does not exist for pushElement', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.RPushX, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.RPushX, [
           mockPushElementDto.keyName,
           mockPushElementDto.element,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.pushElement(mockClientOptions, mockPushElementDto),
+        service.pushElement(mockBrowserClientMetadata, mockPushElementDto),
       ).rejects.toThrow(NotFoundException);
     });
     it("user don't have required permissions for pushElement", async () => {
@@ -168,7 +163,7 @@ describe('ListBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.pushElement(mockClientOptions, mockPushElementDto),
+        service.pushElement(mockBrowserClientMetadata, mockPushElementDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -176,7 +171,7 @@ describe('ListBusinessService', () => {
   describe('getElements', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.LLen, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.LLen, [
           mockPushElementDto.keyName,
         ])
         .mockResolvedValue(mockListElements.length);
@@ -184,27 +179,27 @@ describe('ListBusinessService', () => {
     it('succeed to get elements of the list', async () => {
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolListCommands.Lrange,
           expect.anything(),
         )
         .mockResolvedValue(mockListElements);
 
       const result = await service.getElements(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         mockGetListElementsDto,
       );
       await expect(result).toEqual(mockGetListElementsResponse);
     });
     it('key with this name does not exist for getElements', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.LLen, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.LLen, [
           mockPushElementDto.keyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.getElements(mockClientOptions, mockGetListElementsDto),
+        service.getElements(mockBrowserClientMetadata, mockGetListElementsDto),
       ).rejects.toThrow(NotFoundException);
     });
     it("try to use 'LLEN' command not for list data type", async () => {
@@ -213,13 +208,13 @@ describe('ListBusinessService', () => {
         command: 'LLEN',
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.LLen, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.LLen, [
           mockPushElementDto.keyName,
         ])
         .mockRejectedValue(replyError);
 
       await expect(
-        service.getElements(mockClientOptions, mockGetListElementsDto),
+        service.getElements(mockBrowserClientMetadata, mockGetListElementsDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for getElements", async () => {
@@ -230,7 +225,7 @@ describe('ListBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.getElements(mockClientOptions, mockGetListElementsDto),
+        service.getElements(mockBrowserClientMetadata, mockGetListElementsDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -238,7 +233,7 @@ describe('ListBusinessService', () => {
   describe('getElement', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockKeyDto.keyName,
         ])
         .mockResolvedValue(1);
@@ -249,14 +244,14 @@ describe('ListBusinessService', () => {
         command: 'LINDEX',
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.LIndex, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.LIndex, [
           mockKeyDto.keyName,
           expect.anything(),
         ])
         .mockRejectedValue(replyError);
 
       await expect(
-        service.getElement(mockClientOptions, mockIndex, mockKeyDto),
+        service.getElement(mockBrowserClientMetadata, mockIndex, mockKeyDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user hasn't permissions to LINDEX", async () => {
@@ -266,14 +261,14 @@ describe('ListBusinessService', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolListCommands.LIndex,
           expect.anything(),
         )
         .mockRejectedValue(replyError);
 
       await expect(
-        service.getElement(mockClientOptions, mockIndex, mockKeyDto),
+        service.getElement(mockBrowserClientMetadata, mockIndex, mockKeyDto),
       ).rejects.toThrow(ForbiddenException);
     });
     it("user hasn't permissions to EXISTS", async () => {
@@ -283,51 +278,51 @@ describe('ListBusinessService', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolKeysCommands.Exists,
           expect.anything(),
         )
         .mockRejectedValue(replyError);
 
       await expect(
-        service.getElement(mockClientOptions, mockIndex, mockKeyDto),
+        service.getElement(mockBrowserClientMetadata, mockIndex, mockKeyDto),
       ).rejects.toThrow(ForbiddenException);
     });
     it('key with this name does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockKeyDto.keyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.getElement(mockClientOptions, mockIndex, mockKeyDto),
+        service.getElement(mockBrowserClientMetadata, mockIndex, mockKeyDto),
       ).rejects.toThrow(NotFoundException);
     });
     it('index is out of range', async () => {
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolListCommands.LIndex,
           expect.anything(),
         )
         .mockResolvedValue(null);
 
       await expect(
-        service.getElement(mockClientOptions, mockIndex, mockKeyDto),
+        service.getElement(mockBrowserClientMetadata, mockIndex, mockKeyDto),
       ).rejects.toThrow(NotFoundException);
     });
     it('succeed to get List element by index', async () => {
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolListCommands.LIndex,
           expect.anything(),
         )
         .mockResolvedValue(mockGetListElementResponse.value);
 
       const result = await service.getElement(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         mockIndex,
         mockKeyDto,
       );
@@ -338,7 +333,7 @@ describe('ListBusinessService', () => {
   describe('setElement', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockSetListElementDto.keyName,
         ])
         .mockResolvedValue(true);
@@ -346,7 +341,7 @@ describe('ListBusinessService', () => {
     it('succeed to set the list element at index', async () => {
       const { keyName, index, element } = mockSetListElementDto;
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.LSet, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.LSet, [
           keyName,
           index,
           element,
@@ -354,18 +349,18 @@ describe('ListBusinessService', () => {
         .mockResolvedValue('OK');
 
       await expect(
-        service.setElement(mockClientOptions, mockSetListElementDto),
+        service.setElement(mockBrowserClientMetadata, mockSetListElementDto),
       ).resolves.not.toThrow();
     });
     it('key with this name does not exist for setElement', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockSetListElementDto.keyName,
         ])
         .mockResolvedValue(false);
 
       await expect(
-        service.setElement(mockClientOptions, mockSetListElementDto),
+        service.setElement(mockBrowserClientMetadata, mockSetListElementDto),
       ).rejects.toThrow(NotFoundException);
     });
     it("try to use 'LSET' command not for list data type", async () => {
@@ -376,7 +371,7 @@ describe('ListBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.setElement(mockClientOptions, mockSetListElementDto),
+        service.setElement(mockBrowserClientMetadata, mockSetListElementDto),
       ).rejects.toThrow(BadRequestException);
     });
     it('index for LSET coomand is of out of range', async () => {
@@ -388,7 +383,7 @@ describe('ListBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.setElement(mockClientOptions, mockSetListElementDto),
+        service.setElement(mockBrowserClientMetadata, mockSetListElementDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions", async () => {
@@ -399,7 +394,7 @@ describe('ListBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.setElement(mockClientOptions, mockSetListElementDto),
+        service.setElement(mockBrowserClientMetadata, mockSetListElementDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -407,13 +402,13 @@ describe('ListBusinessService', () => {
   describe('deleteElements', () => {
     it('succeed to remove element from the tail', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.RPop, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.RPop, [
           mockDeleteElementsDto.keyName,
         ])
         .mockResolvedValue(mockListElements[0]);
 
       const result = await service.deleteElements(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         mockDeleteElementsDto,
       );
 
@@ -421,12 +416,12 @@ describe('ListBusinessService', () => {
     });
     it('succeed to remove element from the head', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.LPop, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.LPop, [
           mockDeleteElementsDto.keyName,
         ])
         .mockResolvedValue(mockListElements[0]);
 
-      const result = await service.deleteElements(mockClientOptions, {
+      const result = await service.deleteElements(mockBrowserClientMetadata, {
         ...mockDeleteElementsDto,
         destination: ListElementDestination.Head,
       });
@@ -436,13 +431,13 @@ describe('ListBusinessService', () => {
     it('succeed to remove multiple elements from the tail', async () => {
       const mockDeletedElements = [mockListElement, mockListElement2];
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.RPop, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.RPop, [
           mockDeleteElementsDto.keyName,
           2,
         ])
         .mockResolvedValue(mockDeletedElements);
 
-      const result = await service.deleteElements(mockClientOptions, {
+      const result = await service.deleteElements(mockBrowserClientMetadata, {
         ...mockDeleteElementsDto,
         count: 2,
       });
@@ -455,14 +450,14 @@ describe('ListBusinessService', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolListCommands.RPop,
           expect.anything(),
         )
         .mockRejectedValue(replyError);
 
       await expect(
-        service.deleteElements(mockClientOptions, mockDeleteElementsDto),
+        service.deleteElements(mockBrowserClientMetadata, mockDeleteElementsDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("redis doesn't support 'RPOP' with 'count' argument", async () => {
@@ -474,14 +469,14 @@ describe('ListBusinessService', () => {
         },
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.RPop, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.RPop, [
           mockDeleteElementsDto.keyName,
           2,
         ])
         .mockRejectedValue(replyError);
 
       await expect(
-        service.deleteElements(mockClientOptions, {
+        service.deleteElements(mockBrowserClientMetadata, {
           ...mockDeleteElementsDto,
           count: 2,
         }),
@@ -494,25 +489,25 @@ describe('ListBusinessService', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolListCommands.RPop,
           expect.anything(),
         )
         .mockRejectedValue(replyError);
 
       await expect(
-        service.deleteElements(mockClientOptions, mockDeleteElementsDto),
+        service.deleteElements(mockBrowserClientMetadata, mockDeleteElementsDto),
       ).rejects.toThrow(ForbiddenException);
     });
     it('key with this name does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolListCommands.RPop, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolListCommands.RPop, [
           mockDeleteElementsDto.keyName,
         ])
         .mockResolvedValue(null);
 
       await expect(
-        service.deleteElements(mockClientOptions, mockDeleteElementsDto),
+        service.deleteElements(mockBrowserClientMetadata, mockDeleteElementsDto),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -524,7 +519,7 @@ describe('ListBusinessService', () => {
     };
     it("shouldn't throw error", async () => {
       when(browserTool.execMulti)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolListCommands.LPush, dto.keyName, dto.element],
           [BrowserToolKeysCommands.Expire, dto.keyName, dto.expire],
         ])
@@ -537,7 +532,7 @@ describe('ListBusinessService', () => {
         ]);
 
       await expect(
-        service.createListWithExpiration(mockClientOptions, dto),
+        service.createListWithExpiration(mockBrowserClientMetadata, dto),
       ).resolves.not.toThrow();
     });
     it('should throw error', async () => {
@@ -546,14 +541,14 @@ describe('ListBusinessService', () => {
         command: 'LPUSH',
       };
       when(browserTool.execMulti)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolListCommands.LPush, dto.keyName, dto.element],
           [BrowserToolKeysCommands.Expire, dto.keyName, dto.expire],
         ])
         .mockResolvedValue([replyError, []]);
 
       try {
-        await service.createListWithExpiration(mockClientOptions, dto);
+        await service.createListWithExpiration(mockBrowserClientMetadata, dto);
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);

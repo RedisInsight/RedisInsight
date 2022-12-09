@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import { mockRedisConsumer, mockStandaloneDatabaseEntity, MockType } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { mockRedisConsumer, MockType, mockBrowserClientMetadata } from 'src/__mocks__';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolKeysCommands, BrowserToolStreamCommands,
@@ -26,10 +25,6 @@ import {
   mockPendingMessageReply,
 } from 'src/modules/browser/__mocks__';
 
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
-};
-
 describe('ConsumerService', () => {
   let service: ConsumerService;
   let browserTool: MockType<BrowserToolService>;
@@ -51,18 +46,18 @@ describe('ConsumerService', () => {
     browserTool = module.get(BrowserToolService);
 
     when(browserTool.execCommand)
-      .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+      .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
       .mockResolvedValue(true);
   });
 
   describe('getGroups', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XInfoConsumers, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoConsumers, expect.anything())
         .mockResolvedValue([mockConsumerReply, mockConsumerReply]);
     });
     it('should get consumers list', async () => {
-      const consumers = await service.getConsumers(mockClientOptions, {
+      const consumers = await service.getConsumers(mockBrowserClientMetadata, {
         ...mockKeyDto,
         groupName: mockConsumerGroup.name,
       });
@@ -70,11 +65,11 @@ describe('ConsumerService', () => {
     });
     it('should throw error when key does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
         .mockResolvedValueOnce(false);
 
       try {
-        await service.getConsumers(mockClientOptions, {
+        await service.getConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
         });
@@ -86,11 +81,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Not Found error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
         .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
 
       try {
-        await service.getConsumers(mockClientOptions, {
+        await service.getConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
         });
@@ -102,11 +97,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Not Found error when no group', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XInfoConsumers, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoConsumers, expect.anything())
         .mockRejectedValueOnce(new Error('NOGROUP no such group'));
 
       try {
-        await service.getConsumers(mockClientOptions, {
+        await service.getConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
         });
@@ -118,11 +113,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Wrong Type error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XInfoConsumers, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoConsumers, expect.anything())
         .mockRejectedValueOnce(new Error(RedisErrorCodes.WrongType));
 
       try {
-        await service.getConsumers(mockClientOptions, {
+        await service.getConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
         });
@@ -134,11 +129,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Internal Server error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XInfoConsumers, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoConsumers, expect.anything())
         .mockRejectedValueOnce(new Error('oO'));
 
       try {
-        await service.getConsumers(mockClientOptions, {
+        await service.getConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
         });
@@ -152,19 +147,19 @@ describe('ConsumerService', () => {
   describe('deleteConsumers', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
         .mockResolvedValue(true);
       browserTool.execMulti.mockResolvedValue([null, [[null, '123-1']]]);
     });
     it('delete consumers', async () => {
       await expect(
-        service.deleteConsumers(mockClientOptions, {
+        service.deleteConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
           consumerNames: [mockConsumer.name, mockConsumer.name],
         }),
       ).resolves.not.toThrow();
-      expect(browserTool.execMulti).toHaveBeenCalledWith(mockClientOptions, [
+      expect(browserTool.execMulti).toHaveBeenCalledWith(mockBrowserClientMetadata, [
         [
           BrowserToolStreamCommands.XGroupDelConsumer, mockKeyDto.keyName,
           mockConsumerGroup.name, mockConsumer.name,
@@ -177,11 +172,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Not Found when key does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
         .mockResolvedValueOnce(false);
 
       try {
-        await service.deleteConsumers(mockClientOptions, {
+        await service.deleteConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
           consumerNames: [mockConsumer.name, mockConsumer.name],
@@ -194,11 +189,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Not Found error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
         .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
 
       try {
-        await service.deleteConsumers(mockClientOptions, {
+        await service.deleteConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
           consumerNames: [mockConsumer.name, mockConsumer.name],
@@ -213,7 +208,7 @@ describe('ConsumerService', () => {
       browserTool.execMulti.mockResolvedValue([new Error(RedisErrorCodes.NoGroup), [[null, '123-1']]]);
 
       try {
-        await service.deleteConsumers(mockClientOptions, {
+        await service.deleteConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
           consumerNames: [mockConsumer.name, mockConsumer.name],
@@ -228,7 +223,7 @@ describe('ConsumerService', () => {
       browserTool.execMulti.mockResolvedValue([new Error(RedisErrorCodes.WrongType), [[null, '123-1']]]);
 
       try {
-        await service.deleteConsumers(mockClientOptions, {
+        await service.deleteConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
           consumerNames: [mockConsumer.name, mockConsumer.name],
@@ -246,7 +241,7 @@ describe('ConsumerService', () => {
       ]);
 
       try {
-        await service.deleteConsumers(mockClientOptions, {
+        await service.deleteConsumers(mockBrowserClientMetadata, {
           ...mockKeyDto,
           groupName: mockConsumerGroup.name,
           consumerNames: [mockConsumer.name, mockConsumer.name],
@@ -261,25 +256,25 @@ describe('ConsumerService', () => {
   describe('getPendingEntries', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XPending, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XPending, expect.anything())
         .mockResolvedValue([mockPendingMessageReply, mockPendingMessageReply]);
     });
     it('should get consumers list', async () => {
-      const consumers = await service.getPendingEntries(mockClientOptions, mockGetPendingMessagesDto);
+      const consumers = await service.getPendingEntries(mockBrowserClientMetadata, mockGetPendingMessagesDto);
       expect(consumers).toEqual([mockPendingMessage, mockPendingMessage]);
       expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolStreamCommands.XPending,
         Object.values(mockGetPendingMessagesDto),
       );
     });
     it('should throw error when key does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
         .mockResolvedValueOnce(false);
 
       try {
-        await service.getPendingEntries(mockClientOptions, mockGetPendingMessagesDto);
+        await service.getPendingEntries(mockBrowserClientMetadata, mockGetPendingMessagesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -288,11 +283,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Not Found error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
         .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
 
       try {
-        await service.getPendingEntries(mockClientOptions, mockGetPendingMessagesDto);
+        await service.getPendingEntries(mockBrowserClientMetadata, mockGetPendingMessagesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -301,11 +296,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Not Found error when no group', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XPending, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XPending, expect.anything())
         .mockRejectedValueOnce(new Error('NOGROUP no such group'));
 
       try {
-        await service.getPendingEntries(mockClientOptions, mockGetPendingMessagesDto);
+        await service.getPendingEntries(mockBrowserClientMetadata, mockGetPendingMessagesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -314,11 +309,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Wrong Type error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XPending, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XPending, expect.anything())
         .mockRejectedValueOnce(new Error(RedisErrorCodes.WrongType));
 
       try {
-        await service.getPendingEntries(mockClientOptions, mockGetPendingMessagesDto);
+        await service.getPendingEntries(mockBrowserClientMetadata, mockGetPendingMessagesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
@@ -327,11 +322,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Internal Server error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XPending, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XPending, expect.anything())
         .mockRejectedValueOnce(new Error('oO'));
 
       try {
-        await service.getPendingEntries(mockClientOptions, mockGetPendingMessagesDto);
+        await service.getPendingEntries(mockBrowserClientMetadata, mockGetPendingMessagesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);
@@ -342,15 +337,15 @@ describe('ConsumerService', () => {
   describe('ackPendingEntries', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
         .mockResolvedValue(true);
       browserTool.execCommand.mockResolvedValue(2);
     });
     it('ack pending entries', async () => {
-      const result = await service.ackPendingEntries(mockClientOptions, mockAckPendingMessagesDto);
+      const result = await service.ackPendingEntries(mockBrowserClientMetadata, mockAckPendingMessagesDto);
       expect(result).toEqual({ affected: 2 });
 
-      expect(browserTool.execCommand).toHaveBeenCalledWith(mockClientOptions,
+      expect(browserTool.execCommand).toHaveBeenCalledWith(mockBrowserClientMetadata,
         BrowserToolStreamCommands.XAck,
         [
           mockAckPendingMessagesDto.keyName,
@@ -360,11 +355,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Not Found when key does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
         .mockResolvedValueOnce(false);
 
       try {
-        await service.ackPendingEntries(mockClientOptions, mockAckPendingMessagesDto);
+        await service.ackPendingEntries(mockBrowserClientMetadata, mockAckPendingMessagesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -373,11 +368,11 @@ describe('ConsumerService', () => {
     });
     it('should proxy Not Found error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XAck, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XAck, expect.anything())
         .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
 
       try {
-        await service.ackPendingEntries(mockClientOptions, mockAckPendingMessagesDto);
+        await service.ackPendingEntries(mockBrowserClientMetadata, mockAckPendingMessagesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -386,11 +381,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Bad Request when key does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XAck, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XAck, expect.anything())
         .mockRejectedValueOnce(new Error(RedisErrorCodes.WrongType));
 
       try {
-        await service.ackPendingEntries(mockClientOptions, mockAckPendingMessagesDto);
+        await service.ackPendingEntries(mockBrowserClientMetadata, mockAckPendingMessagesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
@@ -399,11 +394,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Internal Server error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XAck, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XAck, expect.anything())
         .mockRejectedValueOnce(new Error('oO'));
 
       try {
-        await service.ackPendingEntries(mockClientOptions, mockAckPendingMessagesDto);
+        await service.ackPendingEntries(mockBrowserClientMetadata, mockAckPendingMessagesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);
@@ -414,15 +409,15 @@ describe('ConsumerService', () => {
   describe('claimPendingEntries', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
         .mockResolvedValue(mockClaimPendingEntriesReply);
     });
     it('claim pending entries', async () => {
-      const result = await service.claimPendingEntries(mockClientOptions, mockClaimPendingEntriesDto);
+      const result = await service.claimPendingEntries(mockBrowserClientMetadata, mockClaimPendingEntriesDto);
       expect(result).toEqual({ affected: mockClaimPendingEntriesReply });
 
       expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolStreamCommands.XClaim,
         [
           mockClaimPendingEntriesDto.keyName,
@@ -436,14 +431,14 @@ describe('ConsumerService', () => {
       );
     });
     it('claim pending entries with additional args', async () => {
-      const result = await service.claimPendingEntries(mockClientOptions, {
+      const result = await service.claimPendingEntries(mockBrowserClientMetadata, {
         ...mockClaimPendingEntriesDto,
         ...mockAdditionalClaimPendingEntriesDto,
       });
       expect(result).toEqual({ affected: mockClaimPendingEntriesReply });
 
       expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolStreamCommands.XClaim,
         [
           mockClaimPendingEntriesDto.keyName,
@@ -460,7 +455,7 @@ describe('ConsumerService', () => {
       );
     });
     it('claim pending entries with additional args and "idle" instead of "time"', async () => {
-      const result = await service.claimPendingEntries(mockClientOptions, {
+      const result = await service.claimPendingEntries(mockBrowserClientMetadata, {
         ...mockClaimPendingEntriesDto,
         ...mockAdditionalClaimPendingEntriesDto,
         idle: 0,
@@ -468,7 +463,7 @@ describe('ConsumerService', () => {
       expect(result).toEqual({ affected: mockClaimPendingEntriesReply });
 
       expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolStreamCommands.XClaim,
         [
           mockClaimPendingEntriesDto.keyName,
@@ -486,11 +481,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Not Found when key does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
         .mockResolvedValueOnce(false);
 
       try {
-        await service.claimPendingEntries(mockClientOptions, mockClaimPendingEntriesDto);
+        await service.claimPendingEntries(mockBrowserClientMetadata, mockClaimPendingEntriesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -499,11 +494,11 @@ describe('ConsumerService', () => {
     });
     it('should proxy Not Found error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
         .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
 
       try {
-        await service.claimPendingEntries(mockClientOptions, mockClaimPendingEntriesDto);
+        await service.claimPendingEntries(mockBrowserClientMetadata, mockClaimPendingEntriesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -512,11 +507,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Bad Request when key does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
         .mockRejectedValueOnce(new Error(RedisErrorCodes.WrongType));
 
       try {
-        await service.claimPendingEntries(mockClientOptions, mockClaimPendingEntriesDto);
+        await service.claimPendingEntries(mockBrowserClientMetadata, mockClaimPendingEntriesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
@@ -525,11 +520,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Not Found when key does not exists', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
         .mockRejectedValueOnce(new Error(RedisErrorCodes.NoGroup));
 
       try {
-        await service.claimPendingEntries(mockClientOptions, mockClaimPendingEntriesDto);
+        await service.claimPendingEntries(mockBrowserClientMetadata, mockClaimPendingEntriesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -538,11 +533,11 @@ describe('ConsumerService', () => {
     });
     it('should throw Internal Server error', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XClaim, expect.anything(), expect.anything())
         .mockRejectedValueOnce(new Error('oO'));
 
       try {
-        await service.claimPendingEntries(mockClientOptions, mockClaimPendingEntriesDto);
+        await service.claimPendingEntries(mockBrowserClientMetadata, mockClaimPendingEntriesDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);

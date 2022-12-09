@@ -9,10 +9,10 @@ import { when } from 'jest-when';
 import { SortOrder } from 'src/constants/sort';
 import { ReplyError } from 'src/models';
 import {
+  mockBrowserClientMetadata,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
 } from 'src/__mocks__';
 import {
   CreateZSetWithExpireDto,
@@ -22,7 +22,6 @@ import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   getZSetMembersInAscResponse, getZSetMembersInDescResponse,
   mockAddMembersDto, mockDeleteMembersDto,
@@ -31,10 +30,6 @@ import {
 } from 'src/modules/browser/__mocks__';
 import { ZSetBusinessService } from './z-set-business.service';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
-};
 
 describe('ZSetBusinessService', () => {
   let service: ZSetBusinessService;
@@ -58,7 +53,7 @@ describe('ZSetBusinessService', () => {
   describe('createZSet', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockAddMembersDto.keyName,
         ])
         .mockResolvedValue(0);
@@ -70,7 +65,7 @@ describe('ZSetBusinessService', () => {
         .mockResolvedValue(mockAddMembersDto.members.length);
 
       await expect(
-        service.createZSet(mockClientOptions, {
+        service.createZSet(mockBrowserClientMetadata, {
           ...mockAddMembersDto,
           expire: 1000,
         }),
@@ -80,26 +75,26 @@ describe('ZSetBusinessService', () => {
     it('create zset without expiration', async () => {
       const { keyName } = mockAddMembersDto;
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZAdd, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZAdd, [
           keyName,
           ...mockMembersForZAddCommand,
         ])
         .mockResolvedValue(mockAddMembersDto.members.length);
 
       await expect(
-        service.createZSet(mockClientOptions, mockAddMembersDto),
+        service.createZSet(mockBrowserClientMetadata, mockAddMembersDto),
       ).resolves.not.toThrow();
       expect(service.createZSetWithExpiration).not.toHaveBeenCalled();
     });
     it('key with this name exist', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockAddMembersDto.keyName,
         ])
         .mockResolvedValue(1);
 
       await expect(
-        service.createZSet(mockClientOptions, mockAddMembersDto),
+        service.createZSet(mockBrowserClientMetadata, mockAddMembersDto),
       ).rejects.toThrow(ConflictException);
       expect(browserTool.execCommand).toHaveBeenCalledTimes(1);
       expect(browserTool.execMulti).not.toHaveBeenCalled();
@@ -111,14 +106,14 @@ describe('ZSetBusinessService', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolZSetCommands.ZAdd,
           expect.anything(),
         )
         .mockRejectedValue(replyError);
 
       await expect(
-        service.createZSet(mockClientOptions, mockAddMembersDto),
+        service.createZSet(mockBrowserClientMetadata, mockAddMembersDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for createZSet", async () => {
@@ -129,7 +124,7 @@ describe('ZSetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.createZSet(mockClientOptions, mockAddMembersDto),
+        service.createZSet(mockBrowserClientMetadata, mockAddMembersDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -141,7 +136,7 @@ describe('ZSetBusinessService', () => {
     };
     it('succeed to create ZSet data type with expiration', async () => {
       when(browserTool.execMulti)
-        .calledWith(mockClientOptions, expect.anything())
+        .calledWith(mockBrowserClientMetadata, expect.anything())
         .mockResolvedValue([
           null,
           [
@@ -151,7 +146,7 @@ describe('ZSetBusinessService', () => {
         ]);
 
       const result = await service.createZSetWithExpiration(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         dto,
       );
       expect(result).toBe(mockAddMembersDto.members.length);
@@ -164,7 +159,7 @@ describe('ZSetBusinessService', () => {
       browserTool.execMulti.mockResolvedValue([transactionError, null]);
 
       await expect(
-        service.createZSetWithExpiration(mockClientOptions, dto),
+        service.createZSetWithExpiration(mockBrowserClientMetadata, dto),
       ).rejects.toEqual(transactionError);
     });
   });
@@ -172,7 +167,7 @@ describe('ZSetBusinessService', () => {
   describe('getMembers', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZCard, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZCard, [
           mockGetMembersDto.keyName,
         ])
         .mockResolvedValue(mockAddMembersDto.members.length);
@@ -180,14 +175,14 @@ describe('ZSetBusinessService', () => {
     it('get members sorted in asc', async () => {
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolZSetCommands.ZRange,
           expect.anything(),
         )
         .mockResolvedValue(['member1', '-inf', 'member2', '0', 'member3', '2', 'member4', 'inf']);
 
       const result = await service.getMembers(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         mockGetMembersDto,
       );
       await expect(result).toEqual(getZSetMembersInAscResponse);
@@ -195,13 +190,13 @@ describe('ZSetBusinessService', () => {
     it('get members sorted in desc', async () => {
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolZSetCommands.ZRevRange,
           expect.anything(),
         )
         .mockResolvedValue(['member4', 'inf', 'member3', '2', 'member2', '0', 'member1', '-inf']);
 
-      const result = await service.getMembers(mockClientOptions, {
+      const result = await service.getMembers(mockBrowserClientMetadata, {
         ...mockGetMembersDto,
         sortOrder: SortOrder.Desc,
       });
@@ -209,13 +204,13 @@ describe('ZSetBusinessService', () => {
     });
     it('key with this name does not exist for getMembers', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZCard, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZCard, [
           mockGetMembersDto.keyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.getMembers(mockClientOptions, mockGetMembersDto),
+        service.getMembers(mockBrowserClientMetadata, mockGetMembersDto),
       ).rejects.toThrow(NotFoundException);
       expect(browserTool.execCommand).toHaveBeenCalledTimes(1);
     });
@@ -227,7 +222,7 @@ describe('ZSetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.getMembers(mockClientOptions, mockGetMembersDto),
+        service.getMembers(mockBrowserClientMetadata, mockGetMembersDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for getMembers", async () => {
@@ -238,7 +233,7 @@ describe('ZSetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.getMembers(mockClientOptions, mockGetMembersDto),
+        service.getMembers(mockBrowserClientMetadata, mockGetMembersDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -246,7 +241,7 @@ describe('ZSetBusinessService', () => {
   describe('addMembers', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockAddMembersDto.keyName,
         ])
         .mockResolvedValue(1);
@@ -254,29 +249,29 @@ describe('ZSetBusinessService', () => {
     it('succeed to add members to the ZSet data type', async () => {
       const { keyName } = mockAddMembersDto;
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZAdd, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZAdd, [
           keyName,
           ...mockMembersForZAddCommand,
         ])
         .mockResolvedValue(mockAddMembersDto.members.length);
 
       await expect(
-        service.addMembers(mockClientOptions, mockAddMembersDto),
+        service.addMembers(mockBrowserClientMetadata, mockAddMembersDto),
       ).resolves.not.toThrow();
     });
     it('key with this name does not exist for addMembers', async () => {
       const { keyName } = mockAddMembersDto;
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           keyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.addMembers(mockClientOptions, mockAddMembersDto),
+        service.addMembers(mockBrowserClientMetadata, mockAddMembersDto),
       ).rejects.toThrow(NotFoundException);
       expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolZSetCommands.ZAdd,
         expect.anything(),
       );
@@ -288,14 +283,14 @@ describe('ZSetBusinessService', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolZSetCommands.ZAdd,
           expect.anything(),
         )
         .mockRejectedValue(replyError);
 
       await expect(
-        service.addMembers(mockClientOptions, mockAddMembersDto),
+        service.addMembers(mockBrowserClientMetadata, mockAddMembersDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for addMembers", async () => {
@@ -306,14 +301,14 @@ describe('ZSetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.addMembers(mockClientOptions, mockAddMembersDto),
+        service.addMembers(mockBrowserClientMetadata, mockAddMembersDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
 
   describe('updateMember', () => {
     beforeEach(() => when(browserTool.execCommand)
-      .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+      .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
         mockAddMembersDto.keyName,
       ])
       .mockResolvedValue(1));
@@ -321,7 +316,7 @@ describe('ZSetBusinessService', () => {
     it('succeed to update member in key', async () => {
       const { keyName, member } = mockUpdateMemberDto;
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZAdd, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZAdd, [
           keyName,
           'XX',
           'CH',
@@ -331,22 +326,22 @@ describe('ZSetBusinessService', () => {
         .mockResolvedValue(1);
 
       await expect(
-        service.updateMember(mockClientOptions, mockUpdateMemberDto),
+        service.updateMember(mockBrowserClientMetadata, mockUpdateMemberDto),
       ).resolves.not.toThrow();
     });
     it('key with this name does not exist for updateMember', async () => {
       const { keyName } = mockUpdateMemberDto;
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           keyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.updateMember(mockClientOptions, mockUpdateMemberDto),
+        service.updateMember(mockBrowserClientMetadata, mockUpdateMemberDto),
       ).rejects.toThrow(NotFoundException);
       expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolZSetCommands.ZAdd,
         expect.anything(),
       );
@@ -354,7 +349,7 @@ describe('ZSetBusinessService', () => {
     it('member does not exist in key', async () => {
       const { keyName, member } = mockUpdateMemberDto;
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZAdd, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZAdd, [
           keyName,
           'XX',
           'CH',
@@ -364,7 +359,7 @@ describe('ZSetBusinessService', () => {
         .mockResolvedValue(0);
 
       await expect(
-        service.updateMember(mockClientOptions, mockUpdateMemberDto),
+        service.updateMember(mockBrowserClientMetadata, mockUpdateMemberDto),
       ).rejects.toThrow(NotFoundException);
     });
     it("try to use 'ZADD' command not for zset data type for updateMember", async () => {
@@ -374,14 +369,14 @@ describe('ZSetBusinessService', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolZSetCommands.ZAdd,
           expect.anything(),
         )
         .mockRejectedValue(replyError);
 
       await expect(
-        service.updateMember(mockClientOptions, mockUpdateMemberDto),
+        service.updateMember(mockBrowserClientMetadata, mockUpdateMemberDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for updateMember", async () => {
@@ -392,7 +387,7 @@ describe('ZSetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.updateMember(mockClientOptions, mockUpdateMemberDto),
+        service.updateMember(mockBrowserClientMetadata, mockUpdateMemberDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -400,7 +395,7 @@ describe('ZSetBusinessService', () => {
   describe('deleteMembers', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           mockDeleteMembersDto.keyName,
         ])
         .mockResolvedValue(1);
@@ -408,14 +403,14 @@ describe('ZSetBusinessService', () => {
     it('succeeded to delete members from ZSet data type', async () => {
       const { members, keyName } = mockDeleteMembersDto;
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZRem, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZRem, [
           keyName,
           ...members,
         ])
         .mockResolvedValue(members.length);
 
       const result = await service.deleteMembers(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         mockDeleteMembersDto,
       );
 
@@ -424,18 +419,18 @@ describe('ZSetBusinessService', () => {
     it('key with this name does not exist for deleteMembers', async () => {
       const { members, keyName } = mockDeleteMembersDto;
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolKeysCommands.Exists, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
           keyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.deleteMembers(mockClientOptions, mockDeleteMembersDto),
+        service.deleteMembers(mockBrowserClientMetadata, mockDeleteMembersDto),
       ).rejects.toThrow(NotFoundException);
       expect(
         browserTool.execCommand,
       ).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolZSetCommands.ZRem,
         [keyName, ...members],
       );
@@ -447,14 +442,14 @@ describe('ZSetBusinessService', () => {
       };
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolZSetCommands.ZRem,
           expect.anything(),
         )
         .mockRejectedValue(replyError);
 
       await expect(
-        service.deleteMembers(mockClientOptions, mockDeleteMembersDto),
+        service.deleteMembers(mockBrowserClientMetadata, mockDeleteMembersDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for deleteMembers", async () => {
@@ -465,7 +460,7 @@ describe('ZSetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.deleteMembers(mockClientOptions, mockDeleteMembersDto),
+        service.deleteMembers(mockBrowserClientMetadata, mockDeleteMembersDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -473,7 +468,7 @@ describe('ZSetBusinessService', () => {
   describe('searchMembers', () => {
     beforeEach(() => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZCard, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZCard, [
           mockSearchMembersDto.keyName,
         ])
         .mockResolvedValue(mockAddMembersDto.members.length);
@@ -481,19 +476,19 @@ describe('ZSetBusinessService', () => {
     it('succeeded to search members in ZSet data type', async () => {
       when(browserTool.execCommand)
         .calledWith(
-          mockClientOptions,
+          mockBrowserClientMetadata,
           BrowserToolZSetCommands.ZScan,
           expect.anything(),
         )
         .mockResolvedValue([0, ['member1', '-inf', 'member2', '0', 'member3', '2', 'member4', 'inf']]);
 
       const result = await service.searchMembers(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         mockSearchMembersDto,
       );
       await expect(result).toEqual(mockSearchZSetMembersResponse);
       expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolZSetCommands.ZScan,
         expect.anything(),
       );
@@ -505,20 +500,20 @@ describe('ZSetBusinessService', () => {
         match: item.name.toString(),
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZScore, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZScore, [
           dto.keyName,
           dto.match,
         ])
         .mockResolvedValue(item.score);
 
-      const result = await service.searchMembers(mockClientOptions, dto);
+      const result = await service.searchMembers(mockBrowserClientMetadata, dto);
 
       expect(result).toEqual({
         ...mockSearchZSetMembersResponse,
         members: [item],
       });
       expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolZSetCommands.ZScan,
         expect.anything(),
       );
@@ -529,13 +524,13 @@ describe('ZSetBusinessService', () => {
         match: 'member',
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZScore, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZScore, [
           dto.keyName,
           dto.match,
         ])
         .mockResolvedValue(null);
 
-      const result = await service.searchMembers(mockClientOptions, dto);
+      const result = await service.searchMembers(mockBrowserClientMetadata, dto);
 
       expect(result).toEqual({ ...mockSearchZSetMembersResponse, members: [] });
     });
@@ -547,20 +542,20 @@ describe('ZSetBusinessService', () => {
         match: mockMatch,
       };
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZScore, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZScore, [
           dto.keyName,
           mockSpecialMember.toString(),
         ])
         .mockResolvedValue(1);
 
-      const result = await service.searchMembers(mockClientOptions, dto);
+      const result = await service.searchMembers(mockBrowserClientMetadata, dto);
 
       expect(result).toEqual({
         ...mockSearchZSetMembersResponse,
         members: [{ name: mockSpecialMember, score: 1 }],
       });
       expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         BrowserToolZSetCommands.ZScan,
         expect.anything(),
       );
@@ -577,25 +572,25 @@ describe('ZSetBusinessService', () => {
     //   );
     //   when(browserTool.execCommand)
     //     .calledWith(
-    //       mockClientOptions,
+    //       mockBrowserClientMetadata,
     //       BrowserToolZSetCommands.ZScan,
     //       expect.anything(),
     //     )
     //     .mockResolvedValue(['200', []]);
     //
-    //   await service.searchMembers(mockClientOptions, dto);
+    //   await service.searchMembers(mockBrowserClientMetadata, dto);
     //
     //   expect(browserTool.execCommand).toHaveBeenCalledTimes(maxScanCalls + 1);
     // });
     it('key with this name does not exist for searchMembers', async () => {
       when(browserTool.execCommand)
-        .calledWith(mockClientOptions, BrowserToolZSetCommands.ZCard, [
+        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZCard, [
           mockSearchMembersDto.keyName,
         ])
         .mockResolvedValue(0);
 
       await expect(
-        service.searchMembers(mockClientOptions, mockSearchMembersDto),
+        service.searchMembers(mockBrowserClientMetadata, mockSearchMembersDto),
       ).rejects.toThrow(NotFoundException);
       expect(browserTool.execCommand).toHaveBeenCalledTimes(1);
     });
@@ -607,7 +602,7 @@ describe('ZSetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.searchMembers(mockClientOptions, mockSearchMembersDto),
+        service.searchMembers(mockBrowserClientMetadata, mockSearchMembersDto),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for searchMembers", async () => {
@@ -618,7 +613,7 @@ describe('ZSetBusinessService', () => {
       browserTool.execCommand.mockRejectedValue(replyError);
 
       await expect(
-        service.searchMembers(mockClientOptions, mockSearchMembersDto),
+        service.searchMembers(mockBrowserClientMetadata, mockSearchMembersDto),
       ).rejects.toThrow(ForbiddenException);
     });
   });

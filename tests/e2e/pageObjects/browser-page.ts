@@ -9,7 +9,8 @@ export class BrowserPage {
     cssSelectorRows = '[aria-label="row"]';
     cssSelectorKey = '[data-testid^=key-]';
     cssFilteringLabel = '[data-testid=multi-search]';
-    cssJsonValue = '[data-tesid=value-as-json]';
+    cssJsonValue = '[data-testid=value-as-json]';
+    cssRowInVirtualizedTable = '[role=gridcell]';
     cssVirtualTableRow = '[aria-label=row]';
     cssKeyBadge = '[data-testid^=badge-]';
     cssKeyTtl = '[data-testid^=ttl-]';
@@ -21,6 +22,7 @@ export class BrowserPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
+    myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
     editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
@@ -97,8 +99,8 @@ export class BrowserPage {
     workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
     submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
-    patternModeBtn =  Selector('[data-testid=search-mode-pattern-btn]');
-    redisearchModeBtn =  Selector('[data-testid=search-mode-redisearch-btn]');
+    patternModeBtn = Selector('[data-testid=search-mode-pattern-btn]');
+    redisearchModeBtn = Selector('[data-testid=search-mode-redisearch-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -123,7 +125,7 @@ export class BrowserPage {
     removeFromHeadSelection = Selector('#HEAD');
     selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
-    filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]');
+    filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]', { timeout: 500 });
     filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
     consumerOption = Selector('[data-testid=consumer-option]');
     claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
@@ -135,6 +137,7 @@ export class BrowserPage {
     createIndexBtn = Selector('[data-testid=create-index-btn]');
     cancelIndexCreationBtn = Selector('[data-testid=create-index-cancel-btn]');
     confirmIndexCreationBtn = Selector('[data-testid=create-index-btn]');
+    resizeTrigger = Selector('[data-testid^=resize-trigger-]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -443,7 +446,7 @@ export class BrowserPage {
     async addEntryToStream(field: string, value: string, entryId?: string): Promise<void> {
         await t
             .click(this.addNewStreamEntry)
-        // Specify field, value and add new entry
+            // Specify field, value and add new entry
             .typeText(this.streamField, field, { replace: true, paste: true })
             .typeText(this.streamValue, value, { replace: true, paste: true });
         if (entryId !== undefined) {
@@ -451,7 +454,7 @@ export class BrowserPage {
         }
         await t
             .click(this.saveElementButton)
-        // Validate that new entry is added
+            // Validate that new entry is added
             .expect(this.streamEntriesContainer.textContent).contains(field, 'Field parameter not correct')
             .expect(this.streamEntriesContainer.textContent).contains(value, 'Value parameter not correct');
     }
@@ -558,6 +561,16 @@ export class BrowserPage {
         await t.click(this.keyNameInTheList);
         await t.click(this.deleteKeyButton);
         await t.click(this.confirmDeleteKeyButton);
+    }
+
+    /**
+     * Delete keys by their Names
+     * @param keyNames The names of the key array
+     */
+    async deleteKeysByNames(keyNames: string[]): Promise<void> {
+        for (const name of keyNames) {
+            await this.deleteKeyByName(name);
+        }
     }
 
     /**
@@ -984,8 +997,7 @@ export class BrowserPage {
             const regExp = new RegExp(`${i} 00` + '.');
             await t
                 .expect(scannedValueText).match(regExp, `The database is not automatically scanned by ${i} 000 keys`)
-                .doubleClick(this.scanMoreButton)
-                .expect(this.progressKeyList.exists).ok('Progress Bar is not displayed');
+                .click(this.scanMoreButton);
             const scannedResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
             await t.expect(scannedResults).gt(rememberedScanResults);
         }

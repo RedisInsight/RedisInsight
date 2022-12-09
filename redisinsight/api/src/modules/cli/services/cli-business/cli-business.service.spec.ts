@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { get } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
+
 import { when } from 'jest-when';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   mockRedisServerInfoResponse,
   mockRedisWrongTypeError,
-  mockStandaloneDatabaseEntity,
   mockCliAnalyticsService,
   mockRedisMovedError, MockType,
+  mockCliClientMetadata,
 } from 'src/__mocks__';
 import {
   ClusterNodeRole,
@@ -19,29 +19,24 @@ import {
   SendCommandDto,
   SendCommandResponse,
 } from 'src/modules/cli/dto/cli.dto';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { ReplyError } from 'src/models';
 import { CliToolUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
-import { EndpointDto } from 'src/modules/instances/dto/database-instance.dto';
 import {
   ClusterNodeNotFoundError,
   CommandNotSupportedError,
   CommandParsingError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
+import { unknownCommand } from 'src/constants';
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
-import { KeytarUnavailableException } from 'src/modules/core/encryption/exceptions';
+import { KeytarUnavailableException } from 'src/modules/encryption/exceptions';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes, IOutputFormatterStrategy } from './output-formatter/output-formatter.interface';
 import { CliBusinessService } from './cli-business.service';
 
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
-};
-const mockClientUuid = uuidv4();
-const mockNode: EndpointDto = {
+const mockNode = {
   host: '127.0.0.1',
   port: 7002,
 };
@@ -110,13 +105,13 @@ describe('CliBusinessService', () => {
 
   describe('getClient', () => {
     it('should successfully create new redis client', async () => {
-      cliTool.createNewToolClient.mockResolvedValue(mockClientUuid);
+      cliTool.createNewToolClient.mockResolvedValue(mockCliClientMetadata.uniqueId);
 
-      const result = await service.getClient(mockStandaloneDatabaseEntity.id);
+      const result = await service.getClient(mockCliClientMetadata);
 
-      expect(result).toEqual({ uuid: mockClientUuid });
+      expect(result).toEqual({ uuid: mockCliClientMetadata.uniqueId });
       expect(analyticsService.sendClientCreatedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
       );
     });
 
@@ -126,12 +121,12 @@ describe('CliBusinessService', () => {
       );
 
       try {
-        await service.getClient(mockStandaloneDatabaseEntity.id);
+        await service.getClient(mockCliClientMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
         expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new InternalServerErrorException(mockENotFoundMessage),
         );
       }
@@ -141,12 +136,12 @@ describe('CliBusinessService', () => {
       cliTool.createNewToolClient.mockRejectedValue(new KeytarUnavailableException());
 
       try {
-        await service.getClient(mockStandaloneDatabaseEntity.id);
+        await service.getClient(mockCliClientMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
         expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
         );
       }
@@ -155,16 +150,13 @@ describe('CliBusinessService', () => {
 
   describe('reCreateClient', () => {
     it('should successfully create new redis client', async () => {
-      cliTool.reCreateToolClient.mockResolvedValue(mockClientUuid);
+      cliTool.reCreateToolClient.mockResolvedValue(mockCliClientMetadata.uniqueId);
 
-      const result = await service.reCreateClient(
-        mockStandaloneDatabaseEntity.id,
-        mockClientUuid,
-      );
+      const result = await service.reCreateClient(mockCliClientMetadata);
 
-      expect(result).toEqual({ uuid: mockClientUuid });
+      expect(result).toEqual({ uuid: mockCliClientMetadata.uniqueId });
       expect(analyticsService.sendClientRecreatedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
       );
     });
 
@@ -174,15 +166,12 @@ describe('CliBusinessService', () => {
       );
 
       try {
-        await service.reCreateClient(
-          mockStandaloneDatabaseEntity.id,
-          mockClientUuid,
-        );
+        await service.reCreateClient(mockCliClientMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
         expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new InternalServerErrorException(mockENotFoundMessage),
         );
       }
@@ -192,15 +181,12 @@ describe('CliBusinessService', () => {
       cliTool.reCreateToolClient.mockRejectedValue(new KeytarUnavailableException());
 
       try {
-        await service.reCreateClient(
-          mockStandaloneDatabaseEntity.id,
-          mockClientUuid,
-        );
+        await service.reCreateClient(mockCliClientMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
         expect(analyticsService.sendClientCreationFailedEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
         );
       }
@@ -211,15 +197,12 @@ describe('CliBusinessService', () => {
     it('should successfully close redis client', async () => {
       cliTool.deleteToolClient.mockResolvedValue(1);
 
-      const result = await service.deleteClient(
-        mockStandaloneDatabaseEntity.id,
-        mockClientUuid,
-      );
+      const result = await service.deleteClient(mockCliClientMetadata);
 
       expect(result).toEqual({ affected: 1 });
       expect(analyticsService.sendClientDeletedEvent).toHaveBeenCalledWith(
         1,
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
       );
     });
 
@@ -227,10 +210,7 @@ describe('CliBusinessService', () => {
       cliTool.deleteToolClient.mockRejectedValue(new Error(mockENotFoundMessage));
 
       try {
-        await service.deleteClient(
-          mockStandaloneDatabaseEntity.id,
-          mockClientUuid,
-        );
+        await service.deleteClient(mockCliClientMetadata);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
@@ -248,15 +228,15 @@ describe('CliBusinessService', () => {
         status: CommandExecutionStatus.Success,
       };
       when(cliTool.execCommand)
-        .calledWith(mockClientOptions, 'memory', ['usage', 'key'], undefined)
+        .calledWith(mockCliClientMetadata, 'memory', ['usage', 'key'], undefined)
         .mockReturnValue(5);
 
-      const result = await service.sendCommand(mockClientOptions, dto);
+      const result = await service.sendCommand(mockCliClientMetadata, dto);
 
       expect(result).toEqual(mockResult);
       expect(formatSpy).toHaveBeenCalled();
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         {
           command: 'memory',
           outputFormat: CliOutputFormatterTypes.Raw,
@@ -274,15 +254,15 @@ describe('CliBusinessService', () => {
         status: CommandExecutionStatus.Success,
       };
       when(cliTool.execCommand)
-        .calledWith(mockClientOptions, 'memory', ['usage', 'key'], undefined)
+        .calledWith(mockCliClientMetadata, 'memory', ['usage', 'key'], undefined)
         .mockReturnValue(5);
 
-      const result = await service.sendCommand(mockClientOptions, dto);
+      const result = await service.sendCommand(mockCliClientMetadata, dto);
 
       expect(result).toEqual(mockResult);
       expect(formatSpy).toHaveBeenCalled();
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         {
           command: 'memory',
           outputFormat: CliOutputFormatterTypes.Raw,
@@ -299,11 +279,11 @@ describe('CliBusinessService', () => {
         status: CommandExecutionStatus.Fail,
       };
 
-      const result = await service.sendCommand(mockClientOptions, dto);
+      const result = await service.sendCommand(mockCliClientMetadata, dto);
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         new CommandNotSupportedError(
           ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED(command.toUpperCase()),
         ),
@@ -322,15 +302,16 @@ describe('CliBusinessService', () => {
         status: CommandExecutionStatus.Fail,
       };
 
-      const result = await service.sendCommand(mockClientOptions, dto);
+      const result = await service.sendCommand(mockCliClientMetadata, dto);
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         new CommandParsingError(
           ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
         ),
         {
+          command: unknownCommand,
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -349,11 +330,11 @@ describe('CliBusinessService', () => {
         status: CommandExecutionStatus.Fail,
       };
 
-      const result = await service.sendCommand(mockClientOptions, dto);
+      const result = await service.sendCommand(mockCliClientMetadata, dto);
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         replyError,
         {
           command: 'get',
@@ -367,12 +348,12 @@ describe('CliBusinessService', () => {
       cliTool.execCommand.mockRejectedValue(new Error(mockENotFoundMessage));
 
       try {
-        await service.sendCommand(mockClientOptions, dto);
+        await service.sendCommand(mockCliClientMetadata, dto);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new Error(mockENotFoundMessage),
           {
             command: 'get',
@@ -387,12 +368,12 @@ describe('CliBusinessService', () => {
       cliTool.execCommand.mockRejectedValue(new KeytarUnavailableException());
 
       try {
-        await service.sendCommand(mockClientOptions, dto);
+        await service.sendCommand(mockCliClientMetadata, dto);
         fail();
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
           {
             command: 'get',
@@ -408,14 +389,14 @@ describe('CliBusinessService', () => {
         status: CommandExecutionStatus.Success,
       };
       when(cliTool.execCommand)
-        .calledWith(mockClientOptions, 'info', ['server'], 'utf8')
+        .calledWith(mockCliClientMetadata, 'info', ['server'], 'utf8')
         .mockReturnValue(mockRedisServerInfoResponse);
 
-      const result = await service.sendCommand(mockClientOptions, dto);
+      const result = await service.sendCommand(mockCliClientMetadata, dto);
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         {
           command: 'info',
           outputFormat: CliOutputFormatterTypes.Raw,
@@ -435,7 +416,7 @@ describe('CliBusinessService', () => {
         role: ClusterNodeRole.Master,
       };
 
-      await service.sendClusterCommand(mockClientOptions, dto);
+      await service.sendClusterCommand(mockCliClientMetadata, dto);
 
       expect(service.sendCommandForNodes).toHaveBeenCalled();
     });
@@ -446,7 +427,7 @@ describe('CliBusinessService', () => {
         nodeOptions: { ...mockNode, enableRedirection: true },
       };
 
-      await service.sendClusterCommand(mockClientOptions, dto);
+      await service.sendClusterCommand(mockCliClientMetadata, dto);
 
       expect(service.sendCommandForSingleNode).toHaveBeenCalled();
     });
@@ -459,7 +440,7 @@ describe('CliBusinessService', () => {
       };
       service.sendCommandForSingleNode = jest.fn().mockRejectedValue(new KeytarUnavailableException());
 
-      await expect(service.sendClusterCommand(mockClientOptions, dto)).rejects.toThrow(KeytarUnavailableException);
+      await expect(service.sendClusterCommand(mockCliClientMetadata, dto)).rejects.toThrow(KeytarUnavailableException);
     });
   });
 
@@ -478,14 +459,14 @@ describe('CliBusinessService', () => {
       ]);
 
       const result = await service.sendCommandForNodes(
-        mockClientOptions,
+        mockCliClientMetadata,
         command,
         ClusterNodeRole.Master,
       );
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendClusterCommandExecutedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         {
           response: mockIntegerResponse,
           status: CommandExecutionStatus.Success,
@@ -515,21 +496,21 @@ describe('CliBusinessService', () => {
       ]);
 
       const result = await service.sendCommandForNodes(
-        mockClientOptions,
+        mockCliClientMetadata,
         mockServerInfoCommand,
         ClusterNodeRole.Master,
       );
 
       expect(result).toEqual(mockResult);
       expect(cliTool.execCommandForNodes).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockCliClientMetadata,
         'info',
         ['server'],
         ClusterNodeRole.Master,
         'utf8',
       );
       expect(analyticsService.sendClusterCommandExecutedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         {
           response: mockRedisServerInfoResponse,
           status: CommandExecutionStatus.Success,
@@ -554,14 +535,14 @@ describe('CliBusinessService', () => {
       ];
 
       const result = await service.sendCommandForNodes(
-        mockClientOptions,
+        mockCliClientMetadata,
         command,
         ClusterNodeRole.Master,
       );
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         new CommandNotSupportedError(ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED(
           command.toUpperCase(),
         )),
@@ -582,16 +563,17 @@ describe('CliBusinessService', () => {
       ];
 
       const result = await service.sendCommandForNodes(
-        mockClientOptions,
+        mockCliClientMetadata,
         command,
         ClusterNodeRole.Master,
       );
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES()),
         {
+          command: unknownCommand,
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -604,7 +586,7 @@ describe('CliBusinessService', () => {
 
       try {
         await service.sendCommandForNodes(
-          mockClientOptions,
+          mockCliClientMetadata,
           command,
           ClusterNodeRole.Master,
         );
@@ -613,7 +595,7 @@ describe('CliBusinessService', () => {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(ERROR_MESSAGES.WRONG_DATABASE_TYPE);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new WrongDatabaseTypeError(ERROR_MESSAGES.WRONG_DATABASE_TYPE),
           {
             command: 'memory',
@@ -628,7 +610,7 @@ describe('CliBusinessService', () => {
 
       try {
         await service.sendCommandForNodes(
-          mockClientOptions,
+          mockCliClientMetadata,
           command,
           ClusterNodeRole.Master,
         );
@@ -636,7 +618,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new Error(mockENotFoundMessage),
           {
             command: 'memory',
@@ -651,7 +633,7 @@ describe('CliBusinessService', () => {
 
       try {
         await service.sendCommandForNodes(
-          mockClientOptions,
+          mockCliClientMetadata,
           command,
           ClusterNodeRole.Master,
         );
@@ -659,7 +641,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
           {
             command: 'memory',
@@ -686,14 +668,14 @@ describe('CliBusinessService', () => {
       });
 
       const result = await service.sendCommandForSingleNode(
-        mockClientOptions,
+        mockCliClientMetadata,
         command,
         ClusterNodeRole.All,
         nodeOptions,
       );
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendClusterCommandExecutedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         {
           response: mockIntegerResponse,
           ...mockNode,
@@ -719,14 +701,14 @@ describe('CliBusinessService', () => {
       });
 
       const result = await service.sendCommandForSingleNode(
-        mockClientOptions,
+        mockCliClientMetadata,
         mockServerInfoCommand,
         ClusterNodeRole.All,
         nodeOptions,
       );
       expect(result).toEqual(mockResult);
       expect(cliTool.execCommandForNode).toHaveBeenCalledWith(
-        mockClientOptions,
+        mockCliClientMetadata,
         'info',
         ['server'],
         ClusterNodeRole.All,
@@ -734,7 +716,7 @@ describe('CliBusinessService', () => {
         'utf8',
       );
       expect(analyticsService.sendClusterCommandExecutedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         {
           response: mockRedisServerInfoResponse,
           ...mockNode,
@@ -768,7 +750,7 @@ describe('CliBusinessService', () => {
         });
 
       const result = await service.sendCommandForSingleNode(
-        mockClientOptions,
+        mockCliClientMetadata,
         command,
         ClusterNodeRole.All,
         nodeOptions,
@@ -778,7 +760,7 @@ describe('CliBusinessService', () => {
       expect(cliTool.execCommandForNode).toHaveBeenCalledTimes(2);
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendClusterCommandExecutedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         {
           response: 'OK',
           ...mockNode,
@@ -813,7 +795,7 @@ describe('CliBusinessService', () => {
         });
 
       const result = await service.sendCommandForSingleNode(
-        mockClientOptions,
+        mockCliClientMetadata,
         command,
         ClusterNodeRole.All,
         nodeOptions,
@@ -823,7 +805,7 @@ describe('CliBusinessService', () => {
       expect(cliTool.execCommandForNode).toHaveBeenCalledTimes(2);
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendClusterCommandExecutedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         {
           response: mockResult.response,
           ...mockNode,
@@ -852,7 +834,7 @@ describe('CliBusinessService', () => {
       });
 
       const result = await service.sendCommandForSingleNode(
-        mockClientOptions,
+        mockCliClientMetadata,
         command,
         ClusterNodeRole.All,
         { ...nodeOptions, enableRedirection: false },
@@ -861,7 +843,7 @@ describe('CliBusinessService', () => {
       expect(cliTool.execCommandForNode).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendClusterCommandExecutedEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         {
           error: mockRedisMovedError,
           response: mockRedisMovedError.message,
@@ -884,7 +866,7 @@ describe('CliBusinessService', () => {
       };
 
       const result = await service.sendCommandForSingleNode(
-        mockClientOptions,
+        mockCliClientMetadata,
         command,
         ClusterNodeRole.All,
         nodeOptions,
@@ -892,7 +874,7 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         new CommandNotSupportedError(ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED(
           command.toUpperCase(),
         )),
@@ -910,7 +892,7 @@ describe('CliBusinessService', () => {
       };
 
       const result = await service.sendCommandForSingleNode(
-        mockClientOptions,
+        mockCliClientMetadata,
         command,
         ClusterNodeRole.All,
         nodeOptions,
@@ -918,9 +900,10 @@ describe('CliBusinessService', () => {
 
       expect(result).toEqual(mockResult);
       expect(analyticsService.sendCommandErrorEvent).toHaveBeenCalledWith(
-        mockClientOptions.instanceId,
+        mockCliClientMetadata.databaseId,
         new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES()),
         {
+          command: unknownCommand,
           outputFormat: CliOutputFormatterTypes.Raw,
         },
       );
@@ -933,7 +916,7 @@ describe('CliBusinessService', () => {
 
       try {
         await service.sendCommandForSingleNode(
-          mockClientOptions,
+          mockCliClientMetadata,
           command,
           ClusterNodeRole.All,
           nodeOptions,
@@ -943,7 +926,7 @@ describe('CliBusinessService', () => {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.message).toEqual(ERROR_MESSAGES.WRONG_DATABASE_TYPE);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new WrongDatabaseTypeError(ERROR_MESSAGES.WRONG_DATABASE_TYPE),
           {
             command: 'get',
@@ -962,7 +945,7 @@ describe('CliBusinessService', () => {
 
       try {
         await service.sendCommandForSingleNode(
-          mockClientOptions,
+          mockCliClientMetadata,
           command,
           ClusterNodeRole.All,
           nodeOptions,
@@ -971,7 +954,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new ClusterNodeNotFoundError(
             ERROR_MESSAGES.CLUSTER_NODE_NOT_FOUND('127.0.0.1:7002'),
           ),
@@ -988,7 +971,7 @@ describe('CliBusinessService', () => {
 
       try {
         await service.sendCommandForSingleNode(
-          mockClientOptions,
+          mockCliClientMetadata,
           command,
           ClusterNodeRole.All,
           nodeOptions,
@@ -997,7 +980,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new Error(mockENotFoundMessage),
           {
             command: 'get',
@@ -1012,7 +995,7 @@ describe('CliBusinessService', () => {
 
       try {
         await service.sendCommandForSingleNode(
-          mockClientOptions,
+          mockCliClientMetadata,
           command,
           ClusterNodeRole.All,
           nodeOptions,
@@ -1021,7 +1004,7 @@ describe('CliBusinessService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(KeytarUnavailableException);
         expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockCliClientMetadata.databaseId,
           new KeytarUnavailableException(),
           {
             command: 'get',

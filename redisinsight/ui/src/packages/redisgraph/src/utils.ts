@@ -189,23 +189,23 @@ export function commandIsSuccess(resp: [{ response: any, status: string }]) {
 }
 
 
-export function getFetchNodesByIdQuery(graphKey: string, nodeIds: string[]): string {
+export function getFetchNodesByIdQuery(graphKey: string, nodeIds: number[]): string {
   return `graph.ro_query ${graphKey} "MATCH (n) WHERE id(n) IN [${nodeIds}] RETURN DISTINCT n"`
 }
 
-export function getFetchNodesByEdgeIdQuery(graphKey: string, edgeIds: string[], existingNodeIds: string[]): string {
+export function getFetchNodesByEdgeIdQuery(graphKey: string, edgeIds: number[], existingNodeIds: number[]): string {
   return `graph.ro_query ${graphKey} "MATCH (n)-[t]->(m) WHERE id(t) IN [${edgeIds}] AND NOT id(n) IN [${existingNodeIds}] AND NOT id(m) IN [${existingNodeIds}] RETURN n, m"`
 }
 
-export function getFetchEdgesByIdQuery(graphKey: string, edgeIds: string[]): string {
+export function getFetchEdgesByIdQuery(graphKey: string, edgeIds: number[]): string {
     return `graph.ro_query ${graphKey} "MATCH ()-[t]->() WHERE id(t) IN [${edgeIds}] RETURN DISTINCT t"`
 }
 
-export function getFetchDirectNeighboursOfNodeQuery(graphKey: string, nodeId: string): string {
+export function getFetchDirectNeighboursOfNodeQuery(graphKey: string, nodeId: number): string {
   return `graph.ro_query "${graphKey}" "MATCH (n)-[t]-(m) WHERE id(n)=${nodeId} RETURN t, m"`
 }
 
 
-export function getFetchNodeRelationshipsQuery(graphKey: string, sourceNodeIds: string[], destNodeIds: string[], existingEdgeIds: string[]): string {
+export function getFetchNodeRelationshipsQuery(graphKey: string, sourceNodeIds: number[], destNodeIds: number[], existingEdgeIds: number[]): string {
   return `graph.ro_query ${graphKey} "MATCH (n)-[t]->(m) WHERE (ID(n) IN [${sourceNodeIds}] OR ID(m) IN [${destNodeIds}]) AND NOT ID(t) IN [${existingEdgeIds}] RETURN DISTINCT t"`
 }

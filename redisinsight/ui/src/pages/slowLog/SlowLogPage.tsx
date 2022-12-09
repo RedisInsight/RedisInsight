@@ -15,6 +15,7 @@ import { AutoSizer } from 'react-virtualized'
 import { DEFAULT_SLOWLOG_MAX_LEN } from 'uiSrc/constants'
 import { DATE_FORMAT } from 'uiSrc/pages/slowLog/components/SlowLogTable/SlowLogTable'
 import { convertNumberByUnits } from 'uiSrc/pages/slowLog/utils'
+import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
@@ -51,7 +52,8 @@ const countOptions: EuiSuperSelectOption<string>[] = [
 
 const SlowLogPage = () => {
   const { connectionType, name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
-  const { data, loading, durationUnit, config } = useSelector(slowLogSelector)
+  const { data, loading, config } = useSelector(slowLogSelector)
+  const { slowLogDurationUnit: durationUnit } = useSelector(appContextDbConfig)
   const { slowlogLogSlowerThan = 0, slowlogMaxLen } = useSelector(slowLogConfigSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { viewTab } = useSelector(analyticsSettingsSelector)

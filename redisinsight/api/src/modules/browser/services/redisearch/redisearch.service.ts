@@ -1,20 +1,24 @@
 import { Cluster, Command, Redis } from 'ioredis';
-import { uniq } from 'lodash';
+import { toNumber, uniq } from 'lodash';
 import {
+  BadRequestException,
   ConflictException,
+  HttpException,
   Injectable,
   Logger,
 } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import {
   CreateRedisearchIndexDto,
   ListRedisearchIndexesResponse,
   SearchRedisearchDto,
 } from 'src/modules/browser/dto/redisearch';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
+import { RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
+import { numberWithSpaces } from 'src/utils/base.helper';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
 @Injectable()
@@ -27,13 +31,13 @@ export class RedisearchService {
 
   /**
    * Get list of all available redisearch indexes
-   * @param clientOptions
+   * @param clientMetadata
    */
-  public async list(clientOptions: IFindRedisClientInstanceByOptions): Promise<ListRedisearchIndexesResponse> {
+  public async list(clientMetadata: ClientMetadata): Promise<ListRedisearchIndexesResponse> {
     this.logger.log('Getting all redisearch indexes.');
 
     try {
-      const client = await this.browserTool.getRedisClient(clientOptions);
+      const client = await this.browserTool.getRedisClient(clientMetadata);
 
       const nodes = this.getShards(client);
 
@@ -53,11 +57,11 @@ export class RedisearchService {
 
   /**
    * Creates redisearch index
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async createIndex(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateRedisearchIndexDto,
   ): Promise<void> {
     this.logger.log('Creating redisearch index.');
@@ -67,7 +71,7 @@ export class RedisearchService {
         index, type, prefixes, fields,
       } = dto;
 
-      const client = await this.browserTool.getRedisClient(clientOptions);
+      const client = await this.browserTool.getRedisClient(clientMetadata);
 
       try {
         const indexInfo = await client.sendCommand(new Command('FT.INFO', [dto.index], {
@@ -127,24 +131,44 @@ export class RedisearchService {
   /**
    * Search for key names using RediSearch module
    * Response is the same as for keys "scan" to have the same behaviour in the browser
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async search(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: SearchRedisearchDto,
   ): Promise<GetKeysWithDetailsResponse> {
     this.logger.log('Searching keys using redisearch.');
 
     try {
+      let maxResults;
       const {
         index, query, offset, limit,
       } = dto;
 
-      const client = await this.browserTool.getRedisClient(clientOptions);
+      const client = await this.browserTool.getRedisClient(clientMetadata);
+
+      try {
+        const [[, maxSearchResults]] = await client.sendCommand(
+          // response: [ [ 'MAXSEARCHRESULTS', '10000' ] ]
+          new Command('FT.CONFIG', ['GET', 'MAXSEARCHRESULTS'], {
+            replyEncoding: 'utf8',
+          }),
+        ) as [[string, string]];
+
+        maxResults = toNumber(maxSearchResults);
+      } catch (error) {
+        maxResults = null;
+      }
+
+      // Workaround: recalculate limit to not query more then MAXSEARCHRESULTS
+      let safeLimit = limit;
+      if (maxResults && offset + limit > maxResults) {
+        safeLimit = offset <= maxResults ? maxResults - offset : limit;
+      }
 
       const [total, ...keyNames] = await client.sendCommand(
-        new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, limit]),
+        new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, safeLimit]),
       );
 
       return plainToClass(GetKeysWithDetailsResponse, {
@@ -152,10 +176,18 @@ export class RedisearchService {
         total,
         scanned: keyNames.length + offset,
         keys: keyNames.map((name) => ({ name })),
+        maxResults,
       });
     } catch (e) {
       this.logger.error('Failed to search keys using redisearch index', e);
 
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      if (e.message?.includes(RedisErrorCodes.RedisearchLimit)) {
+        throw new BadRequestException(ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(numberWithSpaces(dto.limit)));
+      }
       throw catchAclError(e);
     }
   }

@@ -11,7 +11,7 @@ import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/c
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { checkIsAnalyticsGranted, getAppType } from 'uiSrc/telemetry/checkAnalytics'
-import { RedisModuleDto } from 'apiSrc/modules/instances/dto/database-instance.dto'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import {
   ITelemetrySendEvent,
   ITelemetrySendPageView,
@@ -217,7 +217,7 @@ const getEnumKeyBValue = (myEnum: any, enumValue: number | string): string => {
   return index > -1 ? keys[index] : ''
 }
 
-const getRedisModulesSummary = (modules: RedisModuleDto[] = []): IRedisModulesSummary => {
+const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): IRedisModulesSummary => {
   const summary = cloneDeep(DEFAULT_SUMMARY)
   try {
     modules.forEach(((module) => {

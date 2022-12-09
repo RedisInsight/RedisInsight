@@ -1,37 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import Redis from 'ioredis';
 import {
-  // mockLogFile,
-  // mockRedisShardObserver,
   mockSocket,
-  mockStandaloneDatabaseEntity,
   MockType,
-  mockPubSubAnalyticsService
+  mockPubSubAnalyticsService,
+  mockDatabaseConnectionService,
+  mockIORedisClient,
+  mockCommonClientMetadata,
 } from 'src/__mocks__';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
-// import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
-import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/redis/redis.service';
-import { mockRedisClientInstance } from 'src/modules/redis/redis-consumer.abstract.service.spec';
-// import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
 import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription.provider';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscriptionType } from 'src/modules/pub-sub/constants';
-// import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
 import { UserSession } from 'src/modules/pub-sub/model/user-session';
 import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
 import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
-
-const nodeClient = Object.create(Redis.prototype);
-nodeClient.subscribe = jest.fn();
-nodeClient.psubscribe = jest.fn();
-nodeClient.unsubscribe = jest.fn();
-nodeClient.punsubscribe = jest.fn();
-nodeClient.status = 'ready';
-nodeClient.disconnect = jest.fn();
-nodeClient.publish = jest.fn();
+import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 
 const mockUserClient = new UserClient('socketId', mockSocket, 'databaseId');
 
@@ -55,10 +40,6 @@ mockUserSession['subscribe'] = mockSubscribe;
 mockUserSession['unsubscribe'] = mockUnsubscribe;
 mockUserSession['destroy'] = jest.fn();
 
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
-};
-
 const mockPublishDto = {
   message: 'message-a',
   channel: 'channel-a',
@@ -67,11 +48,10 @@ const mockPublishDto = {
 describe('PubSubService', () => {
   let service: PubSubService;
   let sessionProvider: MockType<UserSessionProvider>;
-  let redisService: MockType<RedisService>;
-  let databaseService: MockType<InstancesBusinessService>;
+  let databaseConnectionService: MockType<DatabaseConnectionService>;
 
   beforeEach(async () => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -91,37 +71,22 @@ describe('PubSubService', () => {
           useFactory: mockPubSubAnalyticsService,
         },
         {
-          provide: RedisService,
-          useFactory: () => ({
-            getClientInstance: jest.fn(),
-            isClientConnected: jest.fn(),
-          }),
-        },
-        {
-          provide: InstancesBusinessService,
-          useFactory: () => ({
-            connectToInstance: jest.fn(),
-            getOneById: jest.fn(),
-          }),
+          provide: DatabaseConnectionService,
+          useFactory: mockDatabaseConnectionService,
         },
       ],
     }).compile();
 
     service = await module.get(PubSubService);
-    redisService = await module.get(RedisService);
-    databaseService = await module.get(InstancesBusinessService);
+    databaseConnectionService = await module.get(DatabaseConnectionService);
     sessionProvider = await module.get(UserSessionProvider);
 
-    getRedisClientFn.mockResolvedValue(nodeClient);
     sessionProvider.getOrCreateUserSession.mockReturnValue(mockUserSession);
     sessionProvider.getUserSession.mockReturnValue(mockUserSession);
     sessionProvider.removeUserSession.mockReturnValue(undefined);
     mockSubscribe.mockResolvedValue('OK');
     mockUnsubscribe.mockResolvedValue('OK');
-    redisService.getClientInstance.mockReturnValue({ ...mockRedisClientInstance, client: nodeClient });
-    redisService.isClientConnected.mockReturnValue(true);
-    databaseService.connectToInstance.mockResolvedValue(nodeClient);
-    nodeClient.publish.mockResolvedValue(2);
+    mockIORedisClient.publish.mockResolvedValue(2);
   });
 
   describe('subscribe', () => {
@@ -184,33 +149,24 @@ describe('PubSubService', () => {
 
   describe('publish', () => {
     it('should publish using existing client', async () => {
-      const res = await service.publish(mockClientOptions, mockPublishDto);
+      const res = await service.publish(mockCommonClientMetadata, mockPublishDto);
       expect(res).toEqual({ affected: 2 });
     });
-    it('should publish using new client', async () => {
-      redisService.isClientConnected.mockReturnValueOnce(false);
-      const res = await service.publish(mockClientOptions, mockPublishDto);
-      expect(res).toEqual({ affected: 2 });
-    });
-    it('should handle HTTP error', async () => {
-      try {
-        redisService.getClientInstance.mockImplementation(() => {
-          throw new NotFoundException('Not Found');
-        });
+    it('should throw an error when client not found during publishing', async () => {
+      databaseConnectionService.getOrCreateClient.mockRejectedValueOnce(new NotFoundException('Not Found'));
 
-        await service.publish(mockClientOptions, mockPublishDto);
+      try {
+        await service.publish(mockCommonClientMetadata, mockPublishDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
       }
     });
-    it('should handle acl error', async () => {
-      try {
-        redisService.getClientInstance.mockImplementation(() => {
-          throw new Error('NOPERM');
-        });
+    it('should throw forbidden error when there is no permissions to publish', async () => {
+      databaseConnectionService.getOrCreateClient.mockRejectedValueOnce(new Error('NOPERM'));
 
-        await service.publish(mockClientOptions, mockPublishDto);
+      try {
+        await service.publish(mockCommonClientMetadata, mockPublishDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);

@@ -2,10 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { get } from 'lodash';
 import {
   mockRedisMovedError,
-  mockStandaloneDatabaseEntity,
   mockWorkbenchAnalyticsService,
+  mockWorkbenchClientMetadata,
 } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { unknownCommand } from 'src/constants';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import {
   ClusterNodeRole,
@@ -17,6 +18,7 @@ import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException, ServiceUnavailableException } from '@nestjs/common';
 import {
   CommandNotSupportedError,
+  CommandParsingError,
   ClusterNodeNotFoundError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
@@ -25,10 +27,6 @@ import { FormatterManager, IFormatterStrategy, FormatterTypes } from 'src/common
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 const MOCK_ERROR_MESSAGE = 'Some error';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
-};
 
 const mockCliTool = () => ({
   execCommand: jest.fn(),
@@ -49,6 +47,7 @@ const mockCliNodeResponse: ICliExecResultFromNode = {
 };
 
 const mockSetCommand = 'set';
+const mockGetEscapedKeyCommand = 'get "\\\\key';
 const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
   command: `${mockSetCommand} foo bar`,
   nodeOptions: {
@@ -112,7 +111,7 @@ describe('WorkbenchCommandsExecutor', () => {
       it('should successfully send command for standalone', async () => {
         cliTool.execCommand.mockResolvedValueOnce(mockCommandExecutionResult.response);
 
-        const result = await service.sendCommand(mockClientOptions, {
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, {
           command: mockCreateCommandExecutionDto.command,
           mode: RunQueryMode.ASCII,
         });
@@ -123,7 +122,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           [
             {
               response: mockCommandExecutionResult.response,
@@ -139,7 +138,7 @@ describe('WorkbenchCommandsExecutor', () => {
       it('should return fail status in case of unsupported command error', async () => {
         cliTool.execCommand.mockRejectedValueOnce(new CommandNotSupportedError(MOCK_ERROR_MESSAGE));
 
-        const result = await service.sendCommand(mockClientOptions, {
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, {
           command: mockCreateCommandExecutionDto.command,
           mode: RunQueryMode.ASCII,
         });
@@ -150,7 +149,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           {
             response: MOCK_ERROR_MESSAGE,
             error: new CommandNotSupportedError(MOCK_ERROR_MESSAGE),
@@ -170,7 +169,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         cliTool.execCommand.mockRejectedValueOnce(replyError);
 
-        const result = await service.sendCommand(mockClientOptions, {
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, {
           command: mockCreateCommandExecutionDto.command,
           mode: RunQueryMode.ASCII,
         });
@@ -181,7 +180,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           {
             response: MOCK_ERROR_MESSAGE,
             error: replyError,
@@ -198,7 +197,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         cliTool.execCommand.mockResolvedValueOnce(mockCommandExecutionResult.response);
 
-        const result = await service.sendCommand(mockClientOptions, {
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, {
           command: mockCreateCommandExecutionDto.command,
           mode: RunQueryMode.ASCII,
         });
@@ -210,7 +209,7 @@ describe('WorkbenchCommandsExecutor', () => {
         expect(formatSpy).toHaveBeenCalled();
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           [
             {
               response: mockCommandExecutionResult.response,
@@ -228,7 +227,7 @@ describe('WorkbenchCommandsExecutor', () => {
 
         cliTool.execCommand.mockResolvedValueOnce(mockCommandExecutionResult.response);
 
-        const result = await service.sendCommand(mockClientOptions, {
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, {
           command: mockCreateCommandExecutionDto.command,
           mode: RunQueryMode.Raw,
         });
@@ -240,7 +239,7 @@ describe('WorkbenchCommandsExecutor', () => {
         expect(formatSpy).toHaveBeenCalled();
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           [
             {
               response: mockCommandExecutionResult.response,
@@ -257,7 +256,7 @@ describe('WorkbenchCommandsExecutor', () => {
         cliTool.execCommand.mockRejectedValueOnce(new ServiceUnavailableException(MOCK_ERROR_MESSAGE));
 
         try {
-          await service.sendCommand(mockClientOptions, {
+          await service.sendCommand(mockWorkbenchClientMetadata, {
             command: mockCreateCommandExecutionDto.command,
             mode: RunQueryMode.ASCII,
           });
@@ -267,7 +266,7 @@ describe('WorkbenchCommandsExecutor', () => {
           expect(e.message).toEqual(MOCK_ERROR_MESSAGE);
 
           expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-            mockClientOptions.instanceId,
+            mockWorkbenchClientMetadata.databaseId,
             {
               response: MOCK_ERROR_MESSAGE,
               error: new ServiceUnavailableException(MOCK_ERROR_MESSAGE),
@@ -285,14 +284,14 @@ describe('WorkbenchCommandsExecutor', () => {
       it('should successfully send command for standalone', async () => {
         cliTool.execCommandForNode.mockResolvedValueOnce(mockCliNodeResponse);
 
-        const result = await service.sendCommand(mockClientOptions, mockCreateCommandExecutionDto);
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, mockCreateCommandExecutionDto);
 
         expect(result).toEqual([{
           ...mockCommandExecutionResult,
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           [
             {
               ...mockCommandExecutionResult,
@@ -310,7 +309,7 @@ describe('WorkbenchCommandsExecutor', () => {
           error: mockRedisMovedError,
         });
 
-        const result = await service.sendCommand(mockClientOptions, {
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, {
           ...mockCreateCommandExecutionDto,
           nodeOptions: {
             ...mockCreateCommandExecutionDto.nodeOptions,
@@ -323,7 +322,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           [
             {
               ...mockCommandExecutionResult,
@@ -342,7 +341,7 @@ describe('WorkbenchCommandsExecutor', () => {
         });
         cliTool.execCommandForNode.mockResolvedValueOnce(mockCliNodeResponse);
 
-        const result = await service.sendCommand(mockClientOptions, mockCreateCommandExecutionDto);
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, mockCreateCommandExecutionDto);
 
         expect(result).toEqual([{
           ...mockCommandExecutionResult,
@@ -353,7 +352,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           [
             {
               ...mockCommandExecutionResult,
@@ -372,7 +371,7 @@ describe('WorkbenchCommandsExecutor', () => {
       it('should return fail status when command is not supported', async () => {
         cliTool.execCommandForNode.mockRejectedValueOnce(new CommandNotSupportedError(MOCK_ERROR_MESSAGE));
 
-        const result = await service.sendCommand(mockClientOptions, mockCreateCommandExecutionDto);
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, mockCreateCommandExecutionDto);
 
         expect(result).toEqual([{
           response: MOCK_ERROR_MESSAGE,
@@ -380,7 +379,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           {
             response: MOCK_ERROR_MESSAGE,
             error: new CommandNotSupportedError(MOCK_ERROR_MESSAGE),
@@ -396,14 +395,14 @@ describe('WorkbenchCommandsExecutor', () => {
         cliTool.execCommandForNode.mockRejectedValueOnce(new ClusterNodeNotFoundError(MOCK_ERROR_MESSAGE));
 
         try {
-          await service.sendCommand(mockClientOptions, mockCreateCommandExecutionDto);
+          await service.sendCommand(mockWorkbenchClientMetadata, mockCreateCommandExecutionDto);
           fail();
         } catch (e) {
           expect(e).toBeInstanceOf(BadRequestException);
           expect(e.message).toEqual(MOCK_ERROR_MESSAGE);
 
           expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-            mockClientOptions.instanceId,
+            mockWorkbenchClientMetadata.databaseId,
             {
               response: MOCK_ERROR_MESSAGE,
               error: new ClusterNodeNotFoundError(MOCK_ERROR_MESSAGE),
@@ -420,14 +419,14 @@ describe('WorkbenchCommandsExecutor', () => {
         cliTool.execCommandForNode.mockRejectedValueOnce(new ServiceUnavailableException(MOCK_ERROR_MESSAGE));
 
         try {
-          await service.sendCommand(mockClientOptions, mockCreateCommandExecutionDto);
+          await service.sendCommand(mockWorkbenchClientMetadata, mockCreateCommandExecutionDto);
           fail();
         } catch (e) {
           expect(e).toBeInstanceOf(InternalServerErrorException);
           expect(e.message).toEqual(MOCK_ERROR_MESSAGE);
 
           expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-            mockClientOptions.instanceId,
+            mockWorkbenchClientMetadata.databaseId,
             {
               response: MOCK_ERROR_MESSAGE,
               error: new ServiceUnavailableException(MOCK_ERROR_MESSAGE),
@@ -451,7 +450,7 @@ describe('WorkbenchCommandsExecutor', () => {
           },
         ]);
 
-        const result = await service.sendCommand(mockClientOptions, {
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, {
           command: mockCreateCommandExecutionDto.command,
           role: mockCreateCommandExecutionDto.role,
           mode: RunQueryMode.ASCII,
@@ -466,7 +465,7 @@ describe('WorkbenchCommandsExecutor', () => {
         ]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           [
             mockCommandExecutionResult,
             {
@@ -483,7 +482,7 @@ describe('WorkbenchCommandsExecutor', () => {
       it('should return fail status when command is not supported', async () => {
         cliTool.execCommandForNodes.mockRejectedValueOnce(new CommandNotSupportedError(MOCK_ERROR_MESSAGE));
 
-        const result = await service.sendCommand(mockClientOptions, {
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, {
           command: mockCreateCommandExecutionDto.command,
           role: mockCreateCommandExecutionDto.role,
           mode: RunQueryMode.ASCII,
@@ -495,7 +494,7 @@ describe('WorkbenchCommandsExecutor', () => {
         }]);
 
         expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-          mockClientOptions.instanceId,
+          mockWorkbenchClientMetadata.databaseId,
           {
             response: MOCK_ERROR_MESSAGE,
             error: new CommandNotSupportedError(MOCK_ERROR_MESSAGE),
@@ -511,7 +510,7 @@ describe('WorkbenchCommandsExecutor', () => {
         cliTool.execCommandForNodes.mockRejectedValueOnce(new WrongDatabaseTypeError(MOCK_ERROR_MESSAGE));
 
         try {
-          await service.sendCommand(mockClientOptions, {
+          await service.sendCommand(mockWorkbenchClientMetadata, {
             command: mockCreateCommandExecutionDto.command,
             role: mockCreateCommandExecutionDto.role,
             mode: RunQueryMode.ASCII,
@@ -522,7 +521,7 @@ describe('WorkbenchCommandsExecutor', () => {
           expect(e.message).toEqual(MOCK_ERROR_MESSAGE);
 
           expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-            mockClientOptions.instanceId,
+            mockWorkbenchClientMetadata.databaseId,
             {
               response: MOCK_ERROR_MESSAGE,
               error: new WrongDatabaseTypeError(MOCK_ERROR_MESSAGE),
@@ -539,7 +538,7 @@ describe('WorkbenchCommandsExecutor', () => {
         cliTool.execCommandForNodes.mockRejectedValueOnce(new ServiceUnavailableException(MOCK_ERROR_MESSAGE));
 
         try {
-          await service.sendCommand(mockClientOptions, {
+          await service.sendCommand(mockWorkbenchClientMetadata, {
             command: mockCreateCommandExecutionDto.command,
             role: mockCreateCommandExecutionDto.role,
             mode: RunQueryMode.ASCII,
@@ -550,7 +549,7 @@ describe('WorkbenchCommandsExecutor', () => {
           expect(e.message).toEqual(MOCK_ERROR_MESSAGE);
 
           expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
-            mockClientOptions.instanceId,
+            mockWorkbenchClientMetadata.databaseId,
             {
               response: MOCK_ERROR_MESSAGE,
               error: new ServiceUnavailableException(MOCK_ERROR_MESSAGE),
@@ -562,6 +561,36 @@ describe('WorkbenchCommandsExecutor', () => {
             },
           );
         }
+      });
+    });
+    describe('CommandParsingError', () => {
+      it('should return response with [CLI_UNTERMINATED_QUOTES] error for sendCommandForNodes', async () => {
+        const mockResult = [
+          {
+            response: ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
+            status: CommandExecutionStatus.Fail,
+          },
+        ];
+
+        const result = await service.sendCommand(mockWorkbenchClientMetadata, {
+          command: mockGetEscapedKeyCommand,
+          role: mockCreateCommandExecutionDto.role,
+          mode: RunQueryMode.ASCII,
+        });
+
+        expect(result).toEqual(mockResult);
+        expect(mockAnalyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+          mockWorkbenchClientMetadata.databaseId,
+          {
+            response: ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES(),
+            error: new CommandParsingError(ERROR_MESSAGES.CLI_UNTERMINATED_QUOTES()),
+            status: CommandExecutionStatus.Fail,
+          },
+          {
+            command: unknownCommand,
+            rawMode: false,
+          },
+        );
       });
     });
   });

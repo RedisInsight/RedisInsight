@@ -1,15 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as Redis from 'ioredis-mock';
-import { mockStandaloneDatabaseEntity } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { mockCommonClientMetadata, mockDatabaseService } from 'src/__mocks__';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { InternalServerErrorException } from '@nestjs/common';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
-};
+import { DatabaseService } from 'src/modules/database/database.service';
 
 const mockClient = new Redis();
 
@@ -26,8 +22,8 @@ describe('CliToolService', () => {
           useFactory: () => ({}),
         },
         {
-          provide: InstancesBusinessService,
-          useFactory: () => ({}),
+          provide: DatabaseService,
+          useFactory: mockDatabaseService,
         },
       ],
     }).compile();
@@ -43,7 +39,7 @@ describe('CliToolService', () => {
       getRedisClient.mockResolvedValue(mockClient);
 
       await service.execCommand(
-        mockClientOptions,
+        mockCommonClientMetadata,
         BrowserToolKeysCommands.MemoryUsage,
         [keyName],
       );
@@ -60,7 +56,7 @@ describe('CliToolService', () => {
 
       await expect(
         service.execCommand(
-          mockClientOptions,
+          mockCommonClientMetadata,
           BrowserToolKeysCommands.MemoryUsage,
           [keyName],
         ),

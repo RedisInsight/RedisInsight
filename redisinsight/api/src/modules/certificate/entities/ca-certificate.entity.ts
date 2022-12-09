@@ -23,8 +23,4 @@ export class CaCertificateEntity {
 
   @OneToMany(() => DatabaseEntity, (database) => database.caCert)
   databases: DatabaseEntity[];
-
-  constructor(partial: Partial<CaCertificateEntity>) {
-    Object.assign(this, partial);
-  }
 }

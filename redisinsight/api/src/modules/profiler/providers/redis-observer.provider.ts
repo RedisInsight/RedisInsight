@@ -2,12 +2,11 @@ import * as IORedis from 'ioredis';
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { RedisObserver } from 'src/modules/profiler/models/redis.observer';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
-import { AppTool } from 'src/models';
 import { withTimeout } from 'src/utils/promise-with-timeout';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
-import { RedisService } from 'src/modules/redis/redis.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
+import { ClientContext, ClientMetadata } from 'src/common/models';
 
 const serverConfig = config.get('server');
 
@@ -18,7 +17,6 @@ export class RedisObserverProvider {
   private redisObservers: Map<string, RedisObserver> = new Map();
 
   constructor(
-    private redisService: RedisService,
     private databaseConnectionService: DatabaseConnectionService,
   ) {}
 
@@ -37,8 +35,13 @@ export class RedisObserverProvider {
         redisObserver = new RedisObserver();
         this.redisObservers.set(instanceId, redisObserver);
 
+        // todo: add multi user support
         // initialize redis observer
-        redisObserver.init(this.getRedisClientFn(instanceId)).catch();
+        redisObserver.init(this.getRedisClientFn({
+          session: undefined,
+          databaseId: instanceId,
+          context: ClientContext.Common,
+        })).catch();
       } else {
         switch (redisObserver.status) {
           case RedisObserverStatus.Ready:
@@ -48,8 +51,13 @@ export class RedisObserverProvider {
           case RedisObserverStatus.End:
           case RedisObserverStatus.Error:
             this.logger.debug(`Trying to reconnect. Current status: ${redisObserver.status}`);
+            // todo: add multiuser support
             // try to reconnect
-            redisObserver.init(this.getRedisClientFn(instanceId)).catch();
+            redisObserver.init(this.getRedisClientFn({
+              session: undefined,
+              databaseId: instanceId,
+              context: ClientContext.Common,
+            })).catch();
             break;
           case RedisObserverStatus.Initializing:
           case RedisObserverStatus.Wait:
@@ -92,15 +100,12 @@ export class RedisObserverProvider {
 
   /**
    * Get Redis existing common IORedis client for instance or create a new common connection
-   * @param databaseId
+   * @param clientMetadata
    * @private
    */
-  private getRedisClientFn(databaseId: string): () => Promise<IORedis.Redis | IORedis.Cluster> {
+  private getRedisClientFn(clientMetadata: ClientMetadata): () => Promise<IORedis.Redis | IORedis.Cluster> {
     return async () => withTimeout(
-      this.databaseConnectionService.getOrCreateClient({
-        databaseId,
-        namespace: AppTool.Common,
-      }),
+      this.databaseConnectionService.getOrCreateClient(clientMetadata),
       serverConfig.requestTimeout,
       new ServiceUnavailableException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
     );

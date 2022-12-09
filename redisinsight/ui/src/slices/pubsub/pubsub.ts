@@ -5,10 +5,10 @@ import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { StatePubSub } from 'uiSrc/slices/interfaces/pubsub'
 import { AppDispatch, RootState } from 'uiSrc/slices/store'
+import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { SubscriptionDto } from 'apiSrc/modules/pub-sub/dto/subscription.dto'
 import { MessagesResponse } from 'apiSrc/modules/pub-sub/dto/messages.response'
 import { PublishResponse } from 'apiSrc/modules/pub-sub/dto/publish.response'
-import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 
 export const initialState: StatePubSub = {
   loading: false,

@@ -456,6 +456,15 @@ export const initDataHelper = (rte) => {
     }
   }
 
+  const setRedisearchConfig = async (
+    rule: string,
+    value: string,
+  ): Promise<any> => {
+    const command = `FT.CONFIG SET ${rule} ${value}`;
+
+    return executeCommand(...command.split(' '));
+  };
+
   return {
     sendCommand,
     executeCommand,
@@ -477,5 +486,6 @@ export const initDataHelper = (rte) => {
     generateNStreams,
     generateNGraphs,
     getClientNodes,
+    setRedisearchConfig,
   }
 }

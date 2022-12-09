@@ -1,30 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import * as Redis from 'ioredis-mock';
 import { v4 as uuidv4 } from 'uuid';
-import { mockRepository, mockStandaloneDatabaseEntity } from 'src/__mocks__';
-import { AppTool } from 'src/models';
-import {
-  IFindRedisClientInstanceByOptions,
-  IRedisClientInstance,
-  RedisService,
-} from 'src/modules/redis/redis.service';
-import { InstancesBusinessService } from 'src/modules/shared/services/instances-business/instances-business.service';
+import { mockDatabase, mockDatabaseService } from 'src/__mocks__';
+import { IRedisClientInstance, RedisService } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { DatabaseInstanceEntity } from 'src/modules/core/models/database-instance.entity';
 import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
 import { RedisConsumerAbstractService } from 'src/modules/redis/redis-consumer.abstract.service';
 import { ClientNotFoundErrorException } from 'src/modules/redis/exceptions/client-not-found-error.exception';
+import { DatabaseService } from 'src/modules/database/database.service';
+import { ClientContext, ClientMetadata } from 'src/common/models';
 
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockStandaloneDatabaseEntity.id,
+const mockClientMetadata: ClientMetadata = {
+  session: undefined,
+  databaseId: mockDatabase.id,
+  context: ClientContext.Browser,
 };
 
 export const mockRedisClientInstance: IRedisClientInstance = {
-  uuid: uuidv4(),
-  tool: AppTool.Browser,
-  instanceId: mockClientOptions.instanceId,
+  ...mockClientMetadata,
+  uniqueId: uuidv4(),
   client: new Redis(),
   lastTimeUsed: 1619791508019,
 };
@@ -39,10 +34,6 @@ describe('RedisConsumerAbstractService', () => {
       providers: [
         BrowserToolService,
         {
-          provide: getRepositoryToken(DatabaseInstanceEntity),
-          useFactory: mockRepository,
-        },
-        {
           provide: RedisService,
           useFactory: () => ({
             getClientInstance: jest.fn(),
@@ -54,18 +45,13 @@ describe('RedisConsumerAbstractService', () => {
           }),
         },
         {
-          provide: InstancesBusinessService,
-          useFactory: () => ({
-            getOneById: jest.fn(),
-          }),
+          provide: DatabaseService,
+          useFactory: mockDatabaseService,
         },
       ],
     }).compile();
 
     redisService = await module.get<RedisService>(RedisService);
-    instancesBusinessService = await module.get<InstancesBusinessService>(
-      InstancesBusinessService,
-    );
     consumerInstance = await module.get<BrowserToolService>(BrowserToolService);
   });
 
@@ -79,7 +65,7 @@ describe('RedisConsumerAbstractService', () => {
         mockRedisClientInstance.client,
       );
 
-      const result = await consumerInstance.getRedisClient(mockClientOptions);
+      const result = await consumerInstance.getRedisClient(mockClientMetadata);
 
       expect(result).toEqual(mockRedisClientInstance.client);
       expect(consumerInstance.createNewClient).toHaveBeenCalled();
@@ -88,7 +74,7 @@ describe('RedisConsumerAbstractService', () => {
       redisService.getClientInstance.mockReturnValue(mockRedisClientInstance);
       redisService.isClientConnected.mockReturnValue(true);
 
-      const result = await consumerInstance.getRedisClient(mockClientOptions);
+      const result = await consumerInstance.getRedisClient(mockClientMetadata);
 
       expect(result).toEqual(mockRedisClientInstance.client);
       expect(consumerInstance.createNewClient).not.toHaveBeenCalled();
@@ -101,7 +87,7 @@ describe('RedisConsumerAbstractService', () => {
         mockRedisClientInstance.client,
       );
 
-      const result = await consumerInstance.getRedisClient(mockClientOptions);
+      const result = await consumerInstance.getRedisClient(mockClientMetadata);
 
       expect(result).toEqual(mockRedisClientInstance.client);
       expect(consumerInstance.createNewClient).toHaveBeenCalled();
@@ -112,7 +98,7 @@ describe('RedisConsumerAbstractService', () => {
 
       await expect(
         consumerInstance.getRedisClient({
-          ...mockClientOptions,
+          ...mockClientMetadata,
         }),
       ).resolves.not.toThrow();
 
@@ -127,7 +113,7 @@ describe('RedisConsumerAbstractService', () => {
 
       await expect(
         consumerInstance.getRedisClient({
-          ...mockClientOptions,
+          ...mockClientMetadata,
           dbNumber: 1,
         }),
       ).rejects.toThrow(error);
@@ -137,28 +123,23 @@ describe('RedisConsumerAbstractService', () => {
       // @ts-ignore
       class Tool extends RedisConsumerAbstractService {
         constructor() {
-          super(AppTool.CLI, redisService, instancesBusinessService, { enableAutoConnection: false });
+          super(ClientContext.CLI, redisService, instancesBusinessService, { enableAutoConnection: false });
         }
       }
 
-      await expect(new Tool().getRedisClient(mockClientOptions))
+      await expect(new Tool().getRedisClient(mockClientMetadata))
         .rejects.toThrow(new ClientNotFoundErrorException());
     });
   });
 
   describe('createNewClient', () => {
-    beforeEach(() => {
-      instancesBusinessService.getOneById.mockResolvedValue(
-        mockStandaloneDatabaseEntity,
-      );
-    });
     it('create new redis client', async () => {
       redisService.connectToDatabaseInstance.mockResolvedValue(
         mockRedisClientInstance.client,
       );
 
       const result = await consumerInstance.createNewClient(
-        mockRedisClientInstance.instanceId,
+        mockRedisClientInstance.databaseId,
       );
 
       expect(result).toEqual(mockRedisClientInstance.client);
@@ -170,7 +151,7 @@ describe('RedisConsumerAbstractService', () => {
       redisService.connectToDatabaseInstance.mockRejectedValue(error);
 
       await expect(
-        consumerInstance.createNewClient(mockRedisClientInstance.instanceId),
+        consumerInstance.createNewClient(mockRedisClientInstance.databaseId),
       ).rejects.toThrow(error);
     });
   });

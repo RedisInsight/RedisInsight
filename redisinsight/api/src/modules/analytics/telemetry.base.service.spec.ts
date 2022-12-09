@@ -33,11 +33,11 @@ describe('TelemetryBaseService', () => {
 
   describe('sendEvent', () => {
     it('should emit event', () => {
-      service.sendEvent(TelemetryEvents.RedisInstanceAdded, { data: 'Some data' });
+      service.sendEvent(TelemetryEvents.RedisInstanceAdded, { data: 'Some data', command: 'lowercase' });
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(AppAnalyticsEvents.Track, {
         event: TelemetryEvents.RedisInstanceAdded,
-        eventData: { data: 'Some data' },
+        eventData: { data: 'Some data', command: 'LOWERCASE' },
       });
     });
     it('should emit event with empty event data', () => {
@@ -87,13 +87,18 @@ describe('TelemetryBaseService', () => {
       });
     });
     it('should emit event with additional event data', () => {
-      service.sendFailedEvent(TelemetryEvents.RedisInstanceAddFailed, httpException, { data: 'Some data' });
+      service.sendFailedEvent(
+        TelemetryEvents.RedisInstanceAddFailed,
+        httpException,
+        { data: 'Some data', command: 'lowercase' },
+      );
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(AppAnalyticsEvents.Track, {
         event: TelemetryEvents.RedisInstanceAddFailed,
         eventData: {
           error: 'Internal Server Error',
           data: 'Some data',
+          command: 'LOWERCASE',
         },
       });
     });

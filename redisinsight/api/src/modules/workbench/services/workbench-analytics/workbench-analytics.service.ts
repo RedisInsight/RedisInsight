@@ -81,7 +81,10 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
         this.sendFailedEvent(
           TelemetryEvents.WorkbenchCommandErrorReceived,
           error,
-          { databaseId, ...additionalData },
+          {
+            databaseId,
+            ...additionalData,
+          },
         );
       } else {
         this.sendEvent(

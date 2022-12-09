@@ -26,6 +26,7 @@
         "arch": ["universal"]
       }
     ],
+    "mergeASARs": false,
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,

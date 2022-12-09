@@ -17,17 +17,19 @@
   "asarUnpack": ["node_modules/keytar","node_modules/sqlite3"],
   "mac": {
     "target": [
-
+      {
+        "target": "dmg",
+        "arch": ["x64", "arm64"]
+      },
       {
         "target": "mas",
         "arch": ["universal"]
       }
     ],
-    "mergeASARs": false,
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "bundleVersion": "0.0.9",
+    "bundleVersion": "0.0.12",
     "icon": "resources/icon.icns",
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",
@@ -36,6 +38,7 @@
     "gatekeeperAssess": false
   },
   "mas": {
+    "mergeASARs": false,
     "entitlements": "resources/entitlements.mas.plist",
     "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
     "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",

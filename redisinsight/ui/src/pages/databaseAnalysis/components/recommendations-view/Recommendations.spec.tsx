@@ -1,10 +1,17 @@
 import React from 'react'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
+import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import Recommendations from './Recommendations'
 
 const mockdbAnalysisSelector = jest.requireActual('uiSrc/slices/analytics/dbAnalysis')
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
 jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
   ...jest.requireActual('uiSrc/slices/analytics/dbAnalysis'),
@@ -227,13 +234,17 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
-  it('should collapse/expand', () => {
+  it('should collapse/expand and sent proper telemetry event', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
         recommendations: [{ name: 'luaScript' }]
       }
     }))
+
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
 
     const { container } = render(<Recommendations />)
 
@@ -242,9 +253,25 @@ describe('Recommendations', () => {
     fireEvent.click(container.querySelector('[data-test-subj="luaScript-button"]') as HTMLInputElement)
 
     expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_COLLAPSED,
+      eventData: {
+        databaseId: INSTANCE_ID_MOCK,
+        recommendation: 'luaScript',
+      }
+    })
+    sendEventTelemetry.mockRestore()
 
     fireEvent.click(container.querySelector('[data-test-subj="luaScript-button"]') as HTMLInputElement)
 
     expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_EXPANDED,
+      eventData: {
+        databaseId: INSTANCE_ID_MOCK,
+        recommendation: 'luaScript',
+      }
+    })
+    sendEventTelemetry.mockRestore()
   })
 })

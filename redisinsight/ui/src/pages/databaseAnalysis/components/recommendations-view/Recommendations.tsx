@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
 import {
   EuiAccordion,
@@ -8,6 +9,7 @@ import {
 } from '@elastic/eui'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { renderContent, renderBadges } from './utils'
 import styles from './styles.module.scss'
@@ -15,6 +17,8 @@ import styles from './styles.module.scss'
 const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
   const { recommendations = [] } = data ?? {}
+
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   if (loading) {
     return (
@@ -44,6 +48,15 @@ const Recommendations = () => {
               buttonProps={{ 'data-test-subj': `${id}-button` }}
               className={styles.accordion}
               initialIsOpen
+              onToggle={(isOpen) => sendEventTelemetry({
+                event: isOpen
+                  ? TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_EXPANDED
+                  : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_COLLAPSED,
+                eventData: {
+                  databaseId: instanceId,
+                  recommendation: id,
+                }
+              })}
               data-testId={`${id}-accordion`}
             >
               <EuiPanel className={styles.accordionContent} color="subdued">

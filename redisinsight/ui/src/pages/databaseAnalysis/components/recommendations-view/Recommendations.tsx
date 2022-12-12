@@ -20,6 +20,16 @@ const Recommendations = () => {
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
+  const handleToggle = (isOpen: boolean, id: string) => sendEventTelemetry({
+    event: isOpen
+      ? TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_EXPANDED
+      : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_COLLAPSED,
+    eventData: {
+      databaseId: instanceId,
+      recommendation: id,
+    }
+  })
+
   if (loading) {
     return (
       <div className={styles.loadingWrapper} data-testid="recommendations-loader" />
@@ -48,15 +58,7 @@ const Recommendations = () => {
               buttonProps={{ 'data-test-subj': `${id}-button` }}
               className={styles.accordion}
               initialIsOpen
-              onToggle={(isOpen) => sendEventTelemetry({
-                event: isOpen
-                  ? TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_EXPANDED
-                  : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_COLLAPSED,
-                eventData: {
-                  databaseId: instanceId,
-                  recommendation: id,
-                }
-              })}
+              onToggle={(isOpen) => handleToggle(isOpen, id)}
               data-testId={`${id}-accordion`}
             >
               <EuiPanel className={styles.accordionContent} color="subdued">

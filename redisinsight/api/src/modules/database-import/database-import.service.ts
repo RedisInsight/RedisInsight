@@ -21,6 +21,7 @@ import {
   UnableToParseDatabaseImportFileException,
 } from 'src/modules/database-import/exceptions';
 import { ValidationException } from 'src/common/exceptions';
+import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
 
 @Injectable()
 export class DatabaseImportService {
@@ -36,9 +37,17 @@ export class DatabaseImportService {
     ['port', ['port']],
     ['db', ['db']],
     ['isCluster', ['cluster']],
+    ['tls', ['tls', 'ssl']],
+    ['tlsServername', ['tlsServername', 'sni_name', 'sni_server_name']],
+    ['tlsCaName', ['caCert.name']],
+    ['tlsCaCert', ['caCert.certificate', 'sslOptions.ca', 'ssl_ca_cert_path']],
+    ['tlsClientName', ['clientCert.name']],
+    ['tlsClientCert', ['clientCert.certificate', 'sslOptions.cert', 'ssl_local_cert_path']],
+    ['tlsClientKey', ['clientCert.key', 'sslOptions.key', 'ssl_private_key_path']],
   ];
 
   constructor(
+    private readonly certificateImportService: CertificateImportService,
     private readonly databaseRepository: DatabaseRepository,
     private readonly analytics: DatabaseImportAnalytics,
   ) {}
@@ -115,6 +124,8 @@ export class DatabaseImportService {
    */
   private async createDatabase(item: any, index: number): Promise<DatabaseImportResult> {
     try {
+      let status = DatabaseImportStatus.Success;
+      const errors = [];
       const data: any = {};
 
       this.fieldsMapSchema.forEach(([field, paths]) => {
@@ -140,6 +151,33 @@ export class DatabaseImportService {
         data.connectionType = ConnectionType.STANDALONE;
       }
 
+      if (data?.tlsCaCert) {
+        try {
+          data.tls = true;
+          data.caCert = await this.certificateImportService.processCaCertificate({
+            certificate: data.tlsCaCert,
+            name: data?.tlsCaName,
+          });
+        } catch (e) {
+          status = DatabaseImportStatus.Partial;
+          errors.push(e);
+        }
+      }
+
+      if (data?.tlsClientCert || data?.tlsClientKey) {
+        try {
+          data.tls = true;
+          data.clientCert = await this.certificateImportService.processClientCertificate({
+            certificate: data.tlsClientCert,
+            key: data.tlsClientKey,
+            name: data?.tlsClientName,
+          });
+        } catch (e) {
+          status = DatabaseImportStatus.Partial;
+          errors.push(e);
+        }
+      }
+
       const dto = plainToClass(
         ImportDatabaseDto,
         // additionally replace empty strings ("") with null
@@ -148,6 +186,9 @@ export class DatabaseImportService {
             acc[key] = data[key] === '' ? null : data[key];
             return acc;
           }, {}),
+        {
+          groups: ['security'],
+        },
       );
 
       await this.validator.validateOrReject(dto, {
@@ -160,9 +201,10 @@ export class DatabaseImportService {
 
       return {
         index,
-        status: DatabaseImportStatus.Success,
+        status,
         host: database.host,
         port: database.port,
+        errors: errors?.length ? errors : undefined,
       };
     } catch (e) {
       let errors = [e];

@@ -9,9 +9,15 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import { isEmpty } from 'lodash'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { ImportDatabasesDialog } from 'uiSrc/components'
+import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
+import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
+import {
+  appFeaturesToHighlightSelector,
+  removeFeatureFromHighlighting
+} from 'uiSrc/slices/app/features-highlighting'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import HelpLinksMenu from 'uiSrc/pages/home/components/HelpLinksMenu'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
@@ -41,6 +47,10 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
   const [guides, setGuides] = useState<IHelpGuide[]>([])
   const [isImportDialogOpen, setIsImportDialogOpen] = useState<boolean>(false)
+
+  const { importDatabases: importDatabasesHighlighting } = useSelector(appFeaturesToHighlightSelector) ?? {}
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (loading || !data || isEmpty(data)) {
@@ -116,20 +126,30 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
   )
 
   const ImportDatabasesBtn = () => (
-    <EuiToolTip
-      content="Import Database Connections"
+    <HighlightedFeature
+      title={BUILD_FEATURES.importDatabases?.title}
+      content={BUILD_FEATURES.importDatabases?.content}
+      type={BUILD_FEATURES.importDatabases?.type}
+      isHighlight={BUILD_FEATURES.importDatabases && importDatabasesHighlighting}
+      onClick={() => dispatch(removeFeatureFromHighlighting('importDatabases'))}
+      transformOnHover
+      hideFirstChild
     >
-      <EuiButton
-        fill
-        color="secondary"
-        onClick={handleClickImportDbBtn}
-        className={styles.importDatabasesBtn}
-        size="m"
-        data-testid="import-dbs-btn"
+      <EuiToolTip
+        content="Import Database Connections"
       >
-        <EuiIcon type="importAction" />
-      </EuiButton>
-    </EuiToolTip>
+        <EuiButton
+          fill
+          color="secondary"
+          onClick={handleClickImportDbBtn}
+          className={styles.importDatabasesBtn}
+          size="m"
+          data-testid="import-dbs-btn"
+        >
+          <EuiIcon type="importAction" />
+        </EuiButton>
+      </EuiToolTip>
+    </HighlightedFeature>
   )
 
   const Guides = () => (

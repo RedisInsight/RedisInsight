@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { useParams } from 'react-router-dom'
 import { EuiTab, EuiTabs } from '@elastic/eui'
 import { isNull } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,6 +8,7 @@ import { EmptyAnalysisMessage } from 'uiSrc/pages/databaseAnalysis/components'
 import { setDatabaseAnalysisViewTab, dbAnalysisViewTabSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { Nullable } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import { databaseAnalysisTabs } from './constants'
@@ -23,11 +25,30 @@ const DatabaseAnalysisTabs = (props: Props) => {
 
   const viewTab = useSelector(dbAnalysisViewTabSelector)
 
+  const { instanceId } = useParams<{ instanceId: string }>()
+
   const dispatch = useDispatch()
 
   const selectedTabContent = useMemo(() => databaseAnalysisTabs.find((tab) => tab.id === viewTab)?.content, [viewTab])
 
   const onSelectedTabChanged = (id: DatabaseAnalysisViewTab) => {
+    if (id === DatabaseAnalysisViewTab.DataSummary) {
+      sendEventTelemetry({
+        event: TelemetryEvent.DATABASE_ANALYSIS_DATA_SUMMARY_CLICKED,
+        eventData: {
+          databaseId: instanceId,
+        }
+      })
+    }
+    if (id === DatabaseAnalysisViewTab.Recommendations) {
+      sendEventTelemetry({
+        event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED,
+        eventData: {
+          databaseId: instanceId,
+          recommendationsCount: data?.recommendations?.length,
+        }
+      })
+    }
     dispatch(setDatabaseAnalysisViewTab(id))
   }
 

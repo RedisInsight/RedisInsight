@@ -2,11 +2,18 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import { MOCK_ANALYSIS_REPORT_DATA } from 'uiSrc/mocks/data/analysis'
+import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
 import { render, screen, mockedStore, cleanup, fireEvent } from 'uiSrc/utils/test-utils'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { setDatabaseAnalysisViewTab } from 'uiSrc/slices/analytics/dbAnalysis'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import DatabaseAnalysisTabs, { Props } from './DatabaseAnalysisTabs'
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
 const mockedProps = mock<Props>()
 
@@ -78,6 +85,70 @@ describe('DatabaseAnalysisTabs', () => {
       render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
 
       expect(screen.queryByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`)).toHaveTextContent('Recommendations')
+    })
+  })
+
+  describe('Telemetry', () => {
+    it('should call DATABASE_ANALYSIS_DATA_SUMMARY_CLICKED telemetry event with 0 count', () => {
+      const sendEventTelemetryMock = jest.fn()
+      sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+      const mockData = {
+        recommendations: []
+      }
+      render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
+
+      fireEvent.click(screen.getByTestId(`${DatabaseAnalysisViewTab.DataSummary}-tab`))
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.DATABASE_ANALYSIS_DATA_SUMMARY_CLICKED,
+        eventData: {
+          databaseId: INSTANCE_ID_MOCK,
+        }
+      })
+      sendEventTelemetry.mockRestore()
+    })
+
+    it('should call DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED telemetry event with 0 count', () => {
+      const sendEventTelemetryMock = jest.fn()
+      sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+      const mockData = {
+        recommendations: []
+      }
+      render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
+
+      fireEvent.click(screen.getByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`))
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED,
+        eventData: {
+          databaseId: INSTANCE_ID_MOCK,
+          recommendationsCount: 0,
+        }
+      })
+      sendEventTelemetry.mockRestore()
+    })
+
+    it('should call DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED telemetry event with 2 count', () => {
+      const sendEventTelemetryMock = jest.fn()
+      sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+      const mockData = {
+        recommendations: [{ name: 'luaScript' }, { name: 'luaScript' }]
+      }
+      render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
+
+      fireEvent.click(screen.getByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`))
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED,
+        eventData: {
+          databaseId: INSTANCE_ID_MOCK,
+          recommendationsCount: 2,
+        }
+      })
+      sendEventTelemetry.mockRestore()
     })
   })
 })

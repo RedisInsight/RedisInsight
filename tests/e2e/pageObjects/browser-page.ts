@@ -22,7 +22,9 @@ export class BrowserPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
-    streamDeleteButton = Selector(`[data-testid="stream-delete-btn"]`);
+    hashDeleteButton = Selector('[data-testid=hash-delete-btn]');
+    setDeleteButton = Selector('[data-testid=set-delete-btn]');
+    streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
     myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
@@ -988,7 +990,7 @@ export class BrowserPage {
 
     /**
      * Verify that keys can be scanned more and results increased
-     */
+    */
     async verifyScannningMore(): Promise<void> {
         for (let i = 10; i < 100; i += 10) {
             // Remember results value
@@ -1007,7 +1009,7 @@ export class BrowserPage {
     /**
      * Open Select Index droprown and select option
      * @param index The name of format
-     */
+    */
     async selectIndexByName(index: string): Promise<void> {
         const option = Selector(`[data-test-subj="mode-option-type-${index}"]`);
         await t
@@ -1016,20 +1018,16 @@ export class BrowserPage {
     }
 
     /**
-    *Get text from first tree element
+    * Get text from first tree element
     */
-
-    async getTextFromFirstTreeElement(): Promise<String> {
-        return (await Selector(`[role="treeitem"]`).nth(0).find(`div`).textContent).replace(/\s/g, '');
+    async getTextFromNthTreeElement(number: number): Promise<string> {
+        return (await Selector(`[role="treeitem"]`).nth(number).find(`div`).textContent).replace(/\s/g, '');
     }
 
     /**
-    * Get text from first tree element
+    * Open tree folder with multiple level
     * @param names folder names with sequence of subfolder
-    * Example: if names ['mobile', '2']
-    * It will go to mobile -> 2 -> keys
     */
-
     async openTreeFolders(names: string[]): Promise<void> {
         let base = `node-item_${names[0]}:`
         await t.click(Selector(`[data-testid="${base}"]`));
@@ -1045,8 +1043,6 @@ export class BrowserPage {
             Selector(`[data-testid="${base}keys:keys:"]`).visible)
             .ok("Folder is not selected");
     }
-
-
 }
 
 /**

@@ -22,7 +22,7 @@ export class BrowserPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
-    streamDeleteButton = Selector(`[data-testid="stream-delete-btn"]`);
+    streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
     myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
@@ -1019,8 +1019,16 @@ export class BrowserPage {
      * Verify database status is visible
     */
     async verifyDatabaseStatusIsVisible(): Promise<void> {
-        await t.expect(Selector("div").withAttribute("data-testid", /database-status-new-*/).visible).
-            ok("Database status is not visible");
+        await t.expect(Selector("div").withAttribute("data-testid", /database-status-new-*/).visible)
+            .ok("Database status is not visible");
+    }
+
+    /**
+    * Verify database status is not visible
+    */
+    async verifyDatabaseStatusIsNotVisible(): Promise<void> {
+        await t.expect(Selector("div").withAttribute("data-testid", /database-status-new-*/).visible)
+            .notOk("Database status is still visible");
     }
 }
 

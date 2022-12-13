@@ -6,10 +6,11 @@ import {
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
-import { Selector, t } from 'testcafe';
+import { t } from 'testcafe';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 
-const browserPage = new BrowserPage()
+const browserPage = new BrowserPage();
+const myRedisDatabasePage = new MyRedisDatabasePage();
 
 fixture`Add database`
     .meta({ type: 'smoke' })
@@ -18,16 +19,17 @@ fixture`Add database`
         await acceptLicenseTerms();
     });
 test
+    .only
     .meta({ rte: rte.standalone })
     .after(async () => {
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user can add Standalone Database', async () => {
-        const myRedisDatabasePage = new MyRedisDatabasePage();
         await addNewStandaloneDatabase(ossStandaloneConfig);
         await browserPage.verifyDatabaseStatusIsVisible();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.click(browserPage.myRedisDbIcon);
-        await browserPage.verifyDatabaseStatusIsVisible();
+        // New connections indicator
+        await browserPage.verifyDatabaseStatusIsNotVisible();
     });
 test
     .meta({ rte: rte.reCluster })
@@ -35,6 +37,7 @@ test
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add database from RE Cluster via auto-discover flow', async () => {
         await addNewREClusterDatabase(redisEnterpriseClusterConfig);
+        // New connections indicator
         await browserPage.verifyDatabaseStatusIsVisible();
     });
 test
@@ -43,11 +46,12 @@ test
         await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
     })('Verify that user can add OSS Cluster DB', async () => {
         await addOSSClusterDatabase(ossClusterConfig);
+        // New connections indicator
         await browserPage.verifyDatabaseStatusIsVisible();
     });
-//skiped until the RE Cloud connection is implemented
-test.skip
+
+test
     .meta({ rte: rte.reCloud })('Verify that user can add database from RE Cloud via auto-discover flow', async () => {
-        //TODO: add api keys from env
+        // New connections indicator
         await addNewRECloudDatabase('', '');
     });

@@ -1,30 +1,30 @@
 import * as IORedis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
-import { AppTool, ReplyError, IRedisConsumer } from 'src/models';
+import { ReplyError, IRedisConsumer } from 'src/models';
 import {
   catchRedisConnectionError,
   generateRedisConnectionName,
   getConnectionNamespace,
 } from 'src/utils';
 import {
-  IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/redis/redis.service';
 import { ClientNotFoundErrorException } from 'src/modules/redis/exceptions/client-not-found-error.exception';
 import { IRedisToolOptions, DEFAULT_REDIS_TOOL_OPTIONS } from 'src/modules/redis/redis-tool-options';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { ClientContext, ClientMetadata } from 'src/common/models';
 
 export abstract class RedisConsumerAbstractService implements IRedisConsumer {
   protected redisService: RedisService;
 
   protected databaseService: DatabaseService;
 
-  protected consumer: AppTool;
+  protected consumer: ClientContext;
 
   private readonly options: IRedisToolOptions = DEFAULT_REDIS_TOOL_OPTIONS;
 
   protected constructor(
-    consumer: AppTool,
+    consumer: ClientContext,
     redisService: RedisService,
     databaseService: DatabaseService,
     options: IRedisToolOptions = {},
@@ -36,13 +36,13 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
   }
 
   abstract execCommand(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommand: any,
     args: Array<string | number | Buffer>,
   ): any;
 
   abstract execPipeline(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommands: Array<[toolCommand: any, ...args: Array<string | number | Buffer>]>,
   ): Promise<[ReplyError | null, any]>;
 
@@ -94,34 +94,29 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
     });
   }
 
-  async getRedisClient(
-    options: IFindRedisClientInstanceByOptions,
-  ): Promise<any> {
+  async getRedisClient(clientMetadata: ClientMetadata): Promise<any> {
     const redisClientInstance = this.redisService.getClientInstance({
-      ...options,
-      tool: this.consumer,
+      ...clientMetadata,
+      context: this.consumer,
     });
     if (!redisClientInstance || !this.redisService.isClientConnected(redisClientInstance.client)) {
       this.redisService.removeClientInstance({
-        instanceId: redisClientInstance?.instanceId,
-        tool: this.consumer,
+        databaseId: redisClientInstance?.databaseId,
+        context: this.consumer,
       });
       if (!this.options.enableAutoConnection) throw new ClientNotFoundErrorException();
 
-      return await this.createNewClient(
-        options.instanceId,
-        options.uuid,
-      );
+      return await this.createNewClient(clientMetadata);
     }
 
     return redisClientInstance.client;
   }
 
-  getRedisClientNamespace(options: IFindRedisClientInstanceByOptions): string {
+  getRedisClientNamespace(clientMetadata: ClientMetadata): string {
     try {
       const clientInstance = this.redisService.getClientInstance({
-        ...options,
-        tool: this.consumer,
+        ...clientMetadata,
+        context: this.consumer,
       });
       return clientInstance?.client ? getConnectionNamespace(clientInstance.client) : '';
     } catch (e) {
@@ -129,13 +124,14 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
     }
   }
 
-  protected async createNewClient(
-    instanceId: string,
-    uuid = uuidv4(),
-    namespace?: string,
-  ): Promise<IORedis.Redis | IORedis.Cluster> {
-    const instanceDto = await this.databaseService.get(instanceId);
-    const connectionName = generateRedisConnectionName(namespace || this.consumer, uuid);
+  protected async createNewClient(clientMetadata: ClientMetadata): Promise<IORedis.Redis | IORedis.Cluster> {
+    const instanceDto = await this.databaseService.get(clientMetadata.databaseId);
+    const uniqueId = clientMetadata.uniqueId || uuidv4();
+    const connectionName = generateRedisConnectionName(
+      clientMetadata.context || this.consumer,
+      uniqueId,
+    );
+
     try {
       const client = await this.redisService.connectToDatabaseInstance(
         instanceDto,
@@ -144,9 +140,9 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
       );
       this.redisService.setClientInstance(
         {
-          uuid,
-          instanceId,
-          tool: this.consumer,
+          ...clientMetadata,
+          uniqueId,
+          context: clientMetadata.context || this.consumer,
         },
         client,
       );

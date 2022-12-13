@@ -5,14 +5,20 @@ import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/tes
 import { setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
 import { loadKeys, resetKeyInfo, toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
-import { setBrowserBulkActionOpen } from 'uiSrc/slices/app/context'
+import {
+  setBrowserBulkActionOpen,
+  setBrowserPanelSizes,
+  setBrowserSelectedKey,
+  setLastPageContext
+} from 'uiSrc/slices/app/context'
 import BrowserPage from './BrowserPage'
 import KeyList, { Props as KeyListProps } from './components/key-list/KeyList'
 import KeyDetailsWrapper, {
   Props as KeyDetailsWrapperProps
 } from './components/key-details/KeyDetailsWrapper'
 import AddKey, { Props as AddKeyProps } from './components/add-key/AddKey'
-import KeysHeader, { Props as KeysHeaderProps } from './components/keys-header'
+import KeysHeader from './components/keys-header'
+import { Props as KeysHeaderProps } from './components/keys-header/KeysHeader'
 
 jest.mock('./components/key-list/KeyList', () => ({
   __esModule: true,
@@ -123,7 +129,7 @@ describe('BrowserPage', () => {
 
     fireEvent.click(screen.getByTestId('handleBulkActionsPanel-btn'))
 
-    const expectedActions = [resetKeyInfo(), toggleBrowserFullScreen(false), setBrowserBulkActionOpen(true)]
+    const expectedActions = [resetKeyInfo(), toggleBrowserFullScreen(false)]
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 
@@ -143,5 +149,21 @@ describe('BrowserPage', () => {
     fireEvent.click(screen.getByTestId('onCloseKey-btn'))
 
     expect(store.getActions()).toEqual([...afterRenderActions, toggleBrowserFullScreen(true)])
+  })
+
+  it('should call proper actions on onmount', () => {
+    const { unmount } = render(<BrowserPage />)
+    const afterRenderActions = [...store.getActions()]
+
+    unmount()
+
+    const unmountActions = [
+      setBrowserPanelSizes(expect.any(Object)),
+      setBrowserBulkActionOpen(expect.any(Boolean)),
+      setBrowserSelectedKey(null),
+      setLastPageContext('browser'),
+    ]
+
+    expect(store.getActions()).toEqual([...afterRenderActions, ...unmountActions])
   })
 })

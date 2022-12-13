@@ -11,7 +11,7 @@ import { catchAclError, catchTransactionError, unescapeGlob } from 'src/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
 import config from 'src/utils/config';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolHashCommands,
@@ -41,14 +41,14 @@ export class HashBusinessService {
   ) {}
 
   public async createHash(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateHashWithExpireDto,
   ): Promise<void> {
     this.logger.log('Creating Hash data type.');
     const { keyName, fields } = dto;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -63,13 +63,13 @@ export class HashBusinessService {
       const args = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
       if (dto.expire) {
         await this.createHashWithExpiration(
-          clientOptions,
+          clientMetadata,
           keyName,
           args,
           dto.expire,
         );
       } else {
-        await this.createSimpleHash(clientOptions, keyName, args);
+        await this.createSimpleHash(clientMetadata, keyName, args);
       }
       this.logger.log('Succeed to create Hash data type.');
     } catch (error) {
@@ -80,7 +80,7 @@ export class HashBusinessService {
   }
 
   public async getFields(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetHashFieldsDto,
   ): Promise<GetHashFieldsResponse> {
     this.logger.log('Getting fields of the Hash data type stored at key.');
@@ -93,7 +93,7 @@ export class HashBusinessService {
     };
     try {
       result.total = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolHashCommands.HLen,
         [keyName],
       );
@@ -109,7 +109,7 @@ export class HashBusinessService {
         const field = unescapeGlob(dto.match);
         result.nextCursor = 0;
         const value = await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolHashCommands.HGet,
           [keyName, field],
         );
@@ -117,7 +117,7 @@ export class HashBusinessService {
           result.fields.push(plainToClass(HashFieldDto, { field, value }));
         }
       } else {
-        const scanResult = await this.scanHash(clientOptions, dto);
+        const scanResult = await this.scanHash(clientMetadata, dto);
         result = { ...result, ...scanResult };
       }
       this.logger.log('Succeed to get fields of the Hash data type.');
@@ -132,14 +132,14 @@ export class HashBusinessService {
   }
 
   public async addFields(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: AddFieldsToHashDto,
   ): Promise<void> {
     this.logger.log('Adding fields to the Hash data type.');
     const { keyName, fields } = dto;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -153,7 +153,7 @@ export class HashBusinessService {
       }
       const args = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
       await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolHashCommands.HSet,
         [keyName, ...args],
       );
@@ -169,7 +169,7 @@ export class HashBusinessService {
   }
 
   public async deleteFields(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: DeleteFieldsFromHashDto,
   ): Promise<DeleteFieldsFromHashResponse> {
     this.logger.log('Deleting fields from the Hash data type.');
@@ -177,7 +177,7 @@ export class HashBusinessService {
     let result;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -190,7 +190,7 @@ export class HashBusinessService {
         );
       }
       result = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolHashCommands.HDel,
         [keyName, ...fields],
       );
@@ -206,19 +206,19 @@ export class HashBusinessService {
   }
 
   public async createSimpleHash(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     key: RedisString,
     args: RedisString[],
   ): Promise<void> {
     await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolHashCommands.HSet,
       [key, ...args],
     );
   }
 
   public async createHashWithExpiration(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     key: RedisString,
     args: RedisString[],
     expire,
@@ -226,7 +226,7 @@ export class HashBusinessService {
     const [
       transactionError,
       transactionResults,
-    ] = await this.browserTool.execMulti(clientOptions, [
+    ] = await this.browserTool.execMulti(clientMetadata, [
       [BrowserToolHashCommands.HSet, key, ...args],
       [BrowserToolKeysCommands.Expire, key, expire],
     ]);
@@ -234,7 +234,7 @@ export class HashBusinessService {
   }
 
   public async scanHash(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetHashFieldsDto,
   ): Promise<HashScanResponse> {
     const { keyName } = dto;
@@ -247,7 +247,7 @@ export class HashBusinessService {
     };
     while (result.nextCursor !== 0 && result.fields.length < count) {
       const scanResult = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolHashCommands.HScan,
         [
           keyName,

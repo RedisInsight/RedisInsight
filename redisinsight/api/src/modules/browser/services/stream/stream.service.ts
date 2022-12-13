@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { catchAclError, catchTransactionError } from 'src/utils';
 import { SortOrder } from 'src/constants/sort';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolCommands,
@@ -25,6 +24,7 @@ import {
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class StreamService {
@@ -37,11 +37,11 @@ export class StreamService {
    * Could be used for lazy loading with "start", "end" and "count" parameters
    * Could be sorted using "sortOrder" in ASC and DESC order
    *
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async getEntries(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetStreamEntriesDto,
   ): Promise<GetStreamEntriesResponse> {
     try {
@@ -50,7 +50,7 @@ export class StreamService {
       const { keyName, sortOrder } = dto;
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -60,16 +60,16 @@ export class StreamService {
       }
 
       const info = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolStreamCommands.XInfoStream,
         [keyName],
       );
 
       let entries = [];
       if (sortOrder && sortOrder === SortOrder.Asc) {
-        entries = await this.getRange(clientOptions, dto);
+        entries = await this.getRange(clientMetadata, dto);
       } else {
-        entries = await this.getRevRange(clientOptions, dto);
+        entries = await this.getRevRange(clientMetadata, dto);
       }
 
       this.logger.log('Succeed to get entries from the stream.');
@@ -100,11 +100,11 @@ export class StreamService {
   /**
    * Return specified number of entries in the time range in ASC order
    *
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async getRange(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetStreamEntriesDto,
   ): Promise<StreamEntryDto[]> {
     const {
@@ -112,7 +112,7 @@ export class StreamService {
     } = dto;
 
     const execResult = await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolStreamCommands.XRange,
       [keyName, start, end, 'COUNT', count],
     );
@@ -123,11 +123,11 @@ export class StreamService {
   /**
    * Return specified number of entries in the time range in DESC order
    *
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async getRevRange(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetStreamEntriesDto,
   ): Promise<StreamEntryDto[]> {
     const {
@@ -135,7 +135,7 @@ export class StreamService {
     } = dto;
 
     const execResult = await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolStreamCommands.XRevRange,
       [keyName, end, start, 'COUNT', count],
     );
@@ -145,11 +145,11 @@ export class StreamService {
 
   /**
    * Create streams with\without expiration time and add multiple entries in a transaction
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async createStream(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateStreamDto,
   ): Promise<void> {
     this.logger.log('Creating stream data type.');
@@ -158,7 +158,7 @@ export class StreamService {
       const { keyName, entries } = dto;
 
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -194,7 +194,7 @@ export class StreamService {
       const [
         transactionError,
         transactionResults,
-      ] = await this.browserTool.execMulti(clientOptions, toolCommands);
+      ] = await this.browserTool.execMulti(clientMetadata, toolCommands);
       catchTransactionError(transactionError, transactionResults);
 
       this.logger.log('Succeed to create stream.');
@@ -220,11 +220,11 @@ export class StreamService {
 
   /**
    * Add entries to the existing stream and return entries IDs list
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async addEntries(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: AddStreamEntriesDto,
   ): Promise<AddStreamEntriesResponse> {
     this.logger.log('Adding entries to stream.');
@@ -233,7 +233,7 @@ export class StreamService {
       const { keyName, entries } = dto;
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -261,7 +261,7 @@ export class StreamService {
       const [
         transactionError,
         transactionResults,
-      ] = await this.browserTool.execMulti(clientOptions, toolCommands);
+      ] = await this.browserTool.execMulti(clientMetadata, toolCommands);
       catchTransactionError(transactionError, transactionResults);
 
       this.logger.log('Succeed to add entries to the stream.');
@@ -290,11 +290,11 @@ export class StreamService {
 
   /**
  * Delete entries from the existing stream and return number of deleted entries
- * @param clientOptions
+ * @param clientMetadata
  * @param dto
  */
   public async deleteEntries(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: DeleteStreamEntriesDto,
   ): Promise<DeleteStreamEntriesResponse> {
     this.logger.log('Deleting entries from the Stream data type.');
@@ -302,7 +302,7 @@ export class StreamService {
     let result;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -315,7 +315,7 @@ export class StreamService {
         );
       }
       result = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolStreamCommands.XDel,
         [keyName, ...entries],
       );

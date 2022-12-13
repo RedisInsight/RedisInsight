@@ -1,5 +1,4 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { catchAclError } from 'src/utils';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { plainToClass } from 'class-transformer';
@@ -8,7 +7,7 @@ import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/provider
 import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
 import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
-import { AppTool } from 'src/models';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class DatabaseAnalysisService {
@@ -23,18 +22,15 @@ export class DatabaseAnalysisService {
 
   /**
    * Get cluster details and details for all nodes
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async create(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateDatabaseAnalysisDto,
   ): Promise<DatabaseAnalysis> {
     try {
-      const client = await this.databaseConnectionService.createClient({
-        databaseId: clientOptions.instanceId,
-        namespace: AppTool.Common,
-      });
+      const client = await this.databaseConnectionService.createClient(clientMetadata);
 
       const scanResults = await this.scanner.scan(client, {
         filter: dto.filter,
@@ -53,7 +49,7 @@ export class DatabaseAnalysisService {
       });
 
       const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
-        databaseId: clientOptions.instanceId,
+        databaseId: clientMetadata.databaseId,
         ...dto,
         progress,
       }, [].concat(...scanResults.map((nodeResult) => nodeResult.keys))));

@@ -1,8 +1,7 @@
 import * as Redis from 'ioredis';
 import { Injectable, Logger } from '@nestjs/common';
-import { AppTool, ReplyError } from 'src/models';
+import { ReplyError } from 'src/models';
 import {
-  IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/redis/redis.service';
 import { RedisConsumerAbstractService } from 'src/modules/redis/redis-consumer.abstract.service';
@@ -10,6 +9,7 @@ import { BrowserToolCommands } from 'src/modules/browser/constants/browser-tool-
 import { getRedisPipelineSummary } from 'src/utils/cli-helper';
 import { getConnectionName } from 'src/utils/redis-connection-helper';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { ClientContext, ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class BrowserToolService extends RedisConsumerAbstractService {
@@ -19,16 +19,16 @@ export class BrowserToolService extends RedisConsumerAbstractService {
     protected redisService: RedisService,
     protected databaseService: DatabaseService,
   ) {
-    super(AppTool.Browser, redisService, databaseService);
+    super(ClientContext.Browser, redisService, databaseService);
   }
 
   async execCommand(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommand: BrowserToolCommands,
     args: Array<string | number | Buffer>,
     replyEncoding: BufferEncoding = null,
   ): Promise<any> {
-    const client = await this.getRedisClient(clientOptions);
+    const client = await this.getRedisClient(clientMetadata);
     this.logger.log(`Execute command '${toolCommand}', connectionName: ${getConnectionName(client)}`);
     const [command, ...commandArgs] = toolCommand.split(' ');
     return client.sendCommand(
@@ -39,10 +39,10 @@ export class BrowserToolService extends RedisConsumerAbstractService {
   }
 
   async execPipeline(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommands: Array<[toolCommand: BrowserToolCommands, ...args: Array<string | number | Buffer>]>,
   ): Promise<[ReplyError | null, any]> {
-    const client = await this.getRedisClient(clientOptions);
+    const client = await this.getRedisClient(clientMetadata);
     const pipelineSummery = getRedisPipelineSummary(toolCommands);
     this.logger.log(
       `Execute pipeline ${pipelineSummery.summary}, length: ${pipelineSummery.length}, connectionName: ${getConnectionName(client)}`,
@@ -51,10 +51,10 @@ export class BrowserToolService extends RedisConsumerAbstractService {
   }
 
   async execMulti(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommands: Array<[toolCommand: BrowserToolCommands, ...args: Array<string | number | Buffer>]>,
   ): Promise<[ReplyError | null, any]> {
-    const client = await this.getRedisClient(clientOptions);
+    const client = await this.getRedisClient(clientMetadata);
     const pipelineSummery = getRedisPipelineSummary(toolCommands);
     this.logger.log(
       `Execute pipeline ${pipelineSummery.summary}, length: ${pipelineSummery.length}, connectionName: ${getConnectionName(client)}`,

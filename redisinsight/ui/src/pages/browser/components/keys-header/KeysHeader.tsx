@@ -82,8 +82,8 @@ const KeysHeader = (props: Props) => {
   const viewTypes: ISwitchType<KeyViewType>[] = [
     {
       type: KeyViewType.Browser,
-      tooltipText: 'Browser',
-      ariaLabel: 'Browser view button',
+      tooltipText: 'List View',
+      ariaLabel: 'List view button',
       dataTestId: 'view-type-browser-btn',
       isActiveView() { return viewType === this.type },
       getClassName() {

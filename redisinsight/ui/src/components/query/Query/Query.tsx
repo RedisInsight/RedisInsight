@@ -73,13 +73,13 @@ const Query = (props: Props) => {
     query = '',
     activeMode,
     resultsMode,
-    setQuery,
-    onKeyDown,
-    onSubmit,
-    setQueryEl,
-    setIsCodeBtnDisabled = () => { },
-    onQueryChangeMode,
-    onChangeGroupMode
+    setQuery = () => {},
+    onKeyDown = () => {},
+    onSubmit = () => {},
+    setQueryEl = () => {},
+    setIsCodeBtnDisabled = () => {},
+    onQueryChangeMode = () => {},
+    onChangeGroupMode = () => {}
   } = props
   let contribution: Nullable<ISnippetController> = null
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)

@@ -5,7 +5,7 @@ import { unescapeGlob } from 'src/utils';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import {
   GetKeyInfoResponse,
@@ -104,11 +104,11 @@ export class ClusterStrategy extends AbstractStrategy {
   }
 
   private async getNodesToScan(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     initialCursor: string,
   ): Promise<IGetNodeKeysResult[]> {
     const nodesClients = await this.redisManager.getNodes(
-      clientOptions,
+      clientMetadata,
       'master',
     );
 

@@ -3,6 +3,7 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   BIG_HASHES: 'bigHashes',
   BIG_STRINGS: 'bigStrings',
   BIG_SETS: 'bigSets',
+  BIG_CONNECTED_CLIENTS: 'bigConnectedClients',
   USE_SMALLER_KEYS: 'useSmallerKeys',
   AVOID_LOGICAL_DATABASES: 'avoidLogicalDatabases',
   COMBINE_SMALL_STRINGS_TO_HASHES: 'combineSmallStringsToHashes',

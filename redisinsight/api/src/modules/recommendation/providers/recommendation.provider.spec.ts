@@ -18,6 +18,9 @@ const mockRedisKeyspaceInfoResponse_3: string = `# Keyspace\r\ndb0:keys=2,expire
 
 const mockRedisConfigResponse = ['name', '512'];
 
+const mockRedisClientsResponse_1: string = '# Clients\r\nconnected_clients:100\r\n';
+const mockRedisClientsResponse_2: string = '# Clients\r\nconnected_clients:101\r\n';
+
 const mockKeys = [
   {
     name: Buffer.from('name'), type: 'string', length: 10, memory: 10, ttl: -1,
@@ -351,5 +354,39 @@ describe('RecommendationProvider', () => {
         .determineBigSetsRecommendation([mockHugeSet]);
       expect(bigSetsRecommendation).toEqual({ name: RECOMMENDATION_NAMES.BIG_SETS });
     });
+  });
+
+  describe('determineConnectionClientsRecommendation', () => {
+    it('should not return connectionClients recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'info' }))
+        .mockResolvedValue(mockRedisClientsResponse_1);
+
+      const connectionClientsRecommendation = await service
+        .determineConnectionClientsRecommendation(nodeClient);
+      expect(connectionClientsRecommendation).toEqual(null);
+    });
+
+    it('should return connectionClients recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'info' }))
+        .mockResolvedValue(mockRedisClientsResponse_2);
+
+      const connectionClientsRecommendation = await service
+        .determineConnectionClientsRecommendation(nodeClient);
+      expect(connectionClientsRecommendation)
+        .toEqual({ name: RECOMMENDATION_NAMES.BIG_CONNECTED_CLIENTS });
+    });
+
+    it('should not return connectionClients recommendation when info command executed with error',
+      async () => {
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'info' }))
+          .mockRejectedValue('some error');
+
+        const connectionClientsRecommendation = await service
+          .determineConnectionClientsRecommendation(nodeClient);
+        expect(connectionClientsRecommendation).toEqual(null);
+      });
   });
 });

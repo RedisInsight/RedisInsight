@@ -1014,22 +1014,6 @@ export class BrowserPage {
             .click(this.selectIndexDdn)
             .click(option);
     }
-
-    /**
-     * Verify database status is visible
-    */
-    async verifyDatabaseStatusIsVisible(): Promise<void> {
-        await t.expect(Selector("div").withAttribute("data-testid", /database-status-new-*/).visible)
-            .ok("Database status is not visible");
-    }
-
-    /**
-    * Verify database status is not visible
-    */
-    async verifyDatabaseStatusIsNotVisible(): Promise<void> {
-        await t.expect(Selector("div").withAttribute("data-testid", /database-status-new-*/).visible)
-            .notOk("Database status is still visible");
-    }
 }
 
 /**

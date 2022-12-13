@@ -285,11 +285,36 @@ export interface InitialStateInstances {
   importInstances: {
     loading: boolean
     error: string
-    data: Nullable<{
-      success: number,
-      total: number
-    }>
+    data: Nullable<ImportDatabasesData>
   }
+}
+
+export interface ErrorImportResult {
+  statusCode: number
+  message: string
+  error: string
+}
+
+export interface ImportDatabasesData {
+  fail: Array<FailedImportStatusResult>
+  partial: Array<FailedImportStatusResult>
+  success: Array<SuccessImportStatusResult>
+  total: number
+}
+
+export interface FailedImportStatusResult {
+  host?: string
+  port?: number
+  index: number
+  errors: Array<ErrorImportResult>
+  status: string
+}
+
+export interface SuccessImportStatusResult {
+  host: string
+  port: number
+  index: number
+  status: string
 }
 
 export interface InitialStateEditedInstances {

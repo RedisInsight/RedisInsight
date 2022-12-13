@@ -2,8 +2,7 @@ import {
   EuiButton,
   EuiFilePicker,
   EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
+  EuiFlexItem, EuiIcon,
   EuiLoadingSpinner,
   EuiModal,
   EuiModalBody,
@@ -24,6 +23,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
+import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
 
@@ -50,7 +50,9 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
 
   const handleOnClose = () => {
     dispatch(resetImportInstances())
-    data?.success && dispatch(fetchInstancesAction())
+    if (data?.success?.length || data?.partial?.length) {
+      dispatch(fetchInstancesAction())
+    }
     onClose(!data)
   }
 
@@ -72,17 +74,17 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
     <EuiModal onClose={handleOnClose} className={styles.modal} data-testid="import-dbs-dialog">
       <EuiModalHeader>
         <EuiModalHeaderTitle>
-          <EuiTitle size="xs">
-            <span>Import Database Connections</span>
+          <EuiTitle size="xs" data-testid="import-dbs-dialog-title">
+            <span>{(!data && !error) ? 'Import Database Connections' : 'Import results'}</span>
           </EuiTitle>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
 
       <EuiModalBody>
         <EuiFlexGroup justifyContent="center" gutterSize="none" responsive={false}>
-          <EuiFlexItem grow={false}>
+          <EuiFlexItem grow={!!data} style={{ maxWidth: '100%' }}>
             {isShowForm && (
-              <>
+              <EuiFlexItem>
                 <EuiFilePicker
                   id="import-databases-input-file"
                   initialPromptText="Select or drag and drop a file"
@@ -98,7 +100,7 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
                     File should not exceed {MAX_MB_FILE} MB
                   </EuiTextColor>
                 )}
-              </>
+              </EuiFlexItem>
             )}
 
             {loading && (
@@ -107,17 +109,8 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
                 <EuiText color="subdued" style={{ marginTop: 12 }}>Uploading...</EuiText>
               </div>
             )}
-
-            {data && data.success !== 0 && (
-              <div className={styles.result} data-testid="result-success">
-                <EuiIcon type="checkInCircleFilled" size="xxl" color="success" />
-                <EuiText color="subdued" style={{ marginTop: 12 }}>
-                  Successfully added {data.success} of {data.total} database connections
-                </EuiText>
-              </div>
-            )}
-
-            {(data?.success === 0 || error) && (
+            {data && (<ResultsLog data={data} />)}
+            {error && (
               <div className={styles.result} data-testid="result-failed">
                 <EuiIcon type="crossInACircleFilled" size="xxl" color="danger" />
                 <EuiText color="subdued" style={{ marginTop: 12 }}>
@@ -129,7 +122,7 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
         </EuiFlexGroup>
       </EuiModalBody>
 
-      {data && data.success !== 0 && (
+      {data && (
         <EuiModalFooter>
           <EuiButton
             color="secondary"

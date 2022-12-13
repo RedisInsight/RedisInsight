@@ -1,5 +1,5 @@
 import { rte } from '../../../helpers/constants';
-import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { AddRedisDatabasePage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossClusterConfig, ossSentinelConfig, ossStandaloneConfig } from '../../../helpers/conf';
 import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/database';
 import {
@@ -16,9 +16,8 @@ const addRedisDatabasePage = new AddRedisDatabasePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const common = new Common();
 const newOssDatabaseAlias = 'cloned oss cluster';
-const browserPage = new BrowserPage();
 
-fixture`Clone databases`
+fixture `Clone databases`
     .meta({ type: 'critical_path' })
     .page(commonUrl);
 test

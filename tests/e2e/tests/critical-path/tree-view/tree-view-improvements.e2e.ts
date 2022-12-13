@@ -33,7 +33,8 @@ test
         await t.click(browserPage.patternModeBtn);
         await browserPage.deleteKeysByNames(keyNames);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })('Tree view preselected folder', async t => {
+    })('Tree view preselected folder, Filterred Tree view preselected folder, Refreshed Tree view preselected folder, Search capability Filterred Tree view preselected folder', async t => {
+        // Search capability Refreshed Tree view preselected folder
         keyName1 = common.generateWord(10); // used to create index name
         keyName2 = common.generateWord(10); // used to create index name
         keynameSingle = common.generateWord(10);
@@ -139,7 +140,7 @@ test
         await t.click(browserPage.patternModeBtn);
         await browserPage.deleteKeysByNames(keyNames.slice(1));
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })('', async t => {
+    })('Refreshed Tree view preselected folder, Filterred Tree view preselected folder', async t => {
         keyName1 = common.generateWord(10); // used to create index name
         keyName2 = common.generateWord(10); // used to create index name
         keynameSingle = common.generateWord(10);

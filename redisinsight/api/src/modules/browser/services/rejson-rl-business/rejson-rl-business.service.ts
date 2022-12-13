@@ -61,11 +61,17 @@ export class RejsonRlBusinessService {
     keyName: RedisString,
     path: string,
   ): Promise<number | null> {
-    const size = await this.browserTool.execCommand(
-      clientMetadata,
-      BrowserToolRejsonRlCommands.JsonDebug,
-      ['MEMORY', keyName, path],
-    );
+    let size = 0
+
+    try {
+      size = await this.browserTool.execCommand(
+        clientMetadata,
+        BrowserToolRejsonRlCommands.JsonDebug,
+        ['MEMORY', keyName, path],
+      );
+    } catch (error) {
+      this.logger.error('Failed to estimate size of json.', error);
+    }
 
     if (size === null) {
       throw new BadRequestException(

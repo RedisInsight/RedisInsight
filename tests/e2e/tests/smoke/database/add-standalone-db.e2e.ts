@@ -1,10 +1,18 @@
 import { t } from 'testcafe';
-import { addNewStandaloneDatabase, addNewREClusterDatabase, addNewRECloudDatabase, addOSSClusterDatabase, acceptLicenseTerms, deleteDatabase } from '../../../helpers/database';
+import {
+    addNewStandaloneDatabase,
+    addNewREClusterDatabase,
+    addOSSClusterDatabase,
+    acceptLicenseTerms,
+    deleteDatabase,
+    acceptLicenseTermsAndAddRECloudDatabase
+} from '../../../helpers/database';
 import {
     commonUrl,
     ossStandaloneConfig,
     ossClusterConfig,
-    redisEnterpriseClusterConfig
+    redisEnterpriseClusterConfig,
+    cloudDatabaseConfig
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
@@ -12,14 +20,13 @@ import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
-fixture`Add database`
+fixture `Add database`
     .meta({ type: 'smoke' })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTerms();
     });
 test
-    .only
     .meta({ rte: rte.standalone })
     .after(async() => {
         await deleteDatabase(ossStandaloneConfig.databaseName);
@@ -53,5 +60,6 @@ test
 test
     .meta({ rte: rte.reCloud })('Verify that user can add database from RE Cloud via auto-discover flow', async() => {
         // New connections indicator
-        await addNewRECloudDatabase('', '');
+        await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
+        await browserPage.verifyDatabaseStatusIsVisible();
     });

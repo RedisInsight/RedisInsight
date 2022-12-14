@@ -413,8 +413,8 @@
     ],
     "badges": ["configuration_changes"]
   },
-  "bigConnectedClients": {
-    "id": "bigConnectedClients",
+  "bigAmountOfConnectedClients": {
+    "id": "bigAmountOfConnectedClients",
     "title":"Don't open a new connection for every request / every command",
     "content": [
       {

@@ -375,7 +375,7 @@ describe('RecommendationProvider', () => {
       const connectionClientsRecommendation = await service
         .determineConnectionClientsRecommendation(nodeClient);
       expect(connectionClientsRecommendation)
-        .toEqual({ name: RECOMMENDATION_NAMES.BIG_CONNECTED_CLIENTS });
+        .toEqual({ name: RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS });
     });
 
     it('should not return connectionClients recommendation when info command executed with error',

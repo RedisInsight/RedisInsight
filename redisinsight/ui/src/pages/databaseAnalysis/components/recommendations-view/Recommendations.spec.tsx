@@ -234,11 +234,11 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
-  it('should render code_changes badge in bigConnectedClients recommendation', () => {
+  it('should render code_changes badge in bigAmountOfConnectedClients recommendation', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
-        recommendations: [{ name: 'bigConnectedClients' }]
+        recommendations: [{ name: 'bigAmountOfConnectedClients' }]
       }
     }))
 

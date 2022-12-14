@@ -274,7 +274,7 @@ export class RecommendationProvider {
       const connectedClients = parseInt(get(info, 'clients.connected_clients'), 10);
 
       return connectedClients > maxConnectedClients
-        ? { name: RECOMMENDATION_NAMES.BIG_CONNECTED_CLIENTS } : null;
+        ? { name: RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS } : null;
     } catch (err) {
       this.logger.error('Can not determine Connection clients recommendation', err);
       return null;

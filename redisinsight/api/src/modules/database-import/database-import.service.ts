@@ -21,6 +21,7 @@ import {
   UnableToParseDatabaseImportFileException,
 } from 'src/modules/database-import/exceptions';
 import { ValidationException } from 'src/common/exceptions';
+import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
 
 @Injectable()
 export class DatabaseImportService {
@@ -36,9 +37,24 @@ export class DatabaseImportService {
     ['port', ['port']],
     ['db', ['db']],
     ['isCluster', ['cluster']],
+    ['type', ['type']],
+    ['connectionType', ['connectionType']],
+    ['tls', ['tls', 'ssl']],
+    ['tlsServername', ['tlsServername']],
+    ['tlsCaName', ['caCert.name']],
+    ['tlsCaCert', ['caCert.certificate', 'caCert', 'sslOptions.ca', 'ssl_ca_cert_path']],
+    ['tlsClientName', ['clientCert.name']],
+    ['tlsClientCert', ['clientCert.certificate', 'certificate', 'sslOptions.cert', 'ssl_local_cert_path']],
+    ['tlsClientKey', ['clientCert.key', 'keyFile', 'sslOptions.key', 'ssl_private_key_path']],
+    ['sentinelMasterName', ['sentinelMaster.name', 'sentinelOptions.masterName', 'sentinelOptions.name']],
+    ['sentinelMasterUsername', ['sentinelMaster.username']],
+    ['sentinelMasterPassword', [
+      'sentinelMaster.password', 'sentinelOptions.nodePassword', 'sentinelOptions.sentinelPassword',
+    ]],
   ];
 
   constructor(
+    private readonly certificateImportService: CertificateImportService,
     private readonly databaseRepository: DatabaseRepository,
     private readonly analytics: DatabaseImportAnalytics,
   ) {}
@@ -115,6 +131,8 @@ export class DatabaseImportService {
    */
   private async createDatabase(item: any, index: number): Promise<DatabaseImportResult> {
     try {
+      let status = DatabaseImportStatus.Success;
+      const errors = [];
       const data: any = {};
 
       this.fieldsMapSchema.forEach(([field, paths]) => {
@@ -133,11 +151,45 @@ export class DatabaseImportService {
         data.name = `${data.host}:${data.port}`;
       }
 
-      // determine database type
-      if (data.isCluster) {
-        data.connectionType = ConnectionType.CLUSTER;
-      } else {
-        data.connectionType = ConnectionType.STANDALONE;
+      data.connectionType = DatabaseImportService.determineConnectionType(data);
+
+      if (data?.sentinelMasterName) {
+        data.sentinelMaster = {
+          name: data.sentinelMasterName,
+          username: data.sentinelMasterUsername,
+          password: data.sentinelMasterPassword,
+        };
+        data.nodes = [{
+          host: data.host,
+          port: parseInt(data.port, 10),
+        }];
+      }
+
+      if (data?.tlsCaCert) {
+        try {
+          data.tls = true;
+          data.caCert = await this.certificateImportService.processCaCertificate({
+            certificate: data.tlsCaCert,
+            name: data?.tlsCaName,
+          });
+        } catch (e) {
+          status = DatabaseImportStatus.Partial;
+          errors.push(e);
+        }
+      }
+
+      if (data?.tlsClientCert || data?.tlsClientKey) {
+        try {
+          data.tls = true;
+          data.clientCert = await this.certificateImportService.processClientCertificate({
+            certificate: data.tlsClientCert,
+            key: data.tlsClientKey,
+            name: data?.tlsClientName,
+          });
+        } catch (e) {
+          status = DatabaseImportStatus.Partial;
+          errors.push(e);
+        }
       }
 
       const dto = plainToClass(
@@ -148,6 +200,9 @@ export class DatabaseImportService {
             acc[key] = data[key] === '' ? null : data[key];
             return acc;
           }, {}),
+        {
+          groups: ['security'],
+        },
       );
 
       await this.validator.validateOrReject(dto, {
@@ -160,9 +215,10 @@ export class DatabaseImportService {
 
       return {
         index,
-        status: DatabaseImportStatus.Success,
+        status,
         host: database.host,
         port: database.port,
+        errors: errors?.length ? errors : undefined,
       };
     } catch (e) {
       let errors = [e];
@@ -193,6 +249,42 @@ export class DatabaseImportService {
         errors,
       };
     }
+  }
+
+  /**
+   * Try to determine connection type based on input data
+   * Should return NOT_CONNECTED when it is not possible
+   * @param data
+   */
+  static determineConnectionType(data: any = {}): ConnectionType {
+    if (data?.connectionType) {
+      return (data.connectionType in ConnectionType)
+        ? ConnectionType[data.connectionType]
+        : ConnectionType.NOT_CONNECTED;
+    }
+
+    if (data?.type) {
+      switch (data.type) {
+        case 'cluster':
+          return ConnectionType.CLUSTER;
+        case 'sentinel':
+          return ConnectionType.SENTINEL;
+        case 'standalone':
+          return ConnectionType.STANDALONE;
+        default:
+          return ConnectionType.NOT_CONNECTED;
+      }
+    }
+
+    if (data?.isCluster === true) {
+      return ConnectionType.CLUSTER;
+    }
+
+    if (data?.sentinelMasterName) {
+      return ConnectionType.SENTINEL;
+    }
+
+    return ConnectionType.NOT_CONNECTED;
   }
 
   /**

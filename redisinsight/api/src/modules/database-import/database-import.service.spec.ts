@@ -1,6 +1,7 @@
 import { pick } from 'lodash';
 import { DatabaseImportService } from 'src/modules/database-import/database-import.service';
 import {
+  mockCertificateImportService,
   mockDatabase,
   mockDatabaseImportAnalytics,
   mockDatabaseImportFile,
@@ -14,9 +15,11 @@ import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import {
-  NoDatabaseImportFileProvidedException, SizeLimitExceededDatabaseImportFileException,
+  NoDatabaseImportFileProvidedException,
+  SizeLimitExceededDatabaseImportFileException,
   UnableToParseDatabaseImportFileException,
 } from 'src/modules/database-import/exceptions';
+import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
 
 describe('DatabaseImportService', () => {
   let service: DatabaseImportService;
@@ -35,6 +38,10 @@ describe('DatabaseImportService', () => {
           useFactory: jest.fn(() => ({
             create: jest.fn().mockResolvedValue(mockDatabase),
           })),
+        },
+        {
+          provide: CertificateImportService,
+          useFactory: mockCertificateImportService,
         },
         {
           provide: DatabaseImportAnalytics,
@@ -154,12 +161,73 @@ describe('DatabaseImportService', () => {
     it('should create cluster database', async () => {
       await service['createDatabase']({
         ...mockDatabase,
+        connectionType: undefined,
         cluster: true,
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name']),
         connectionType: ConnectionType.CLUSTER,
+      });
+    });
+  });
+
+  describe('determineConnectionType', () => {
+    const tcs = [
+      // common
+      { input: {}, output: ConnectionType.NOT_CONNECTED },
+      // isCluster
+      { input: { isCluster: true }, output: ConnectionType.CLUSTER },
+      { input: { isCluster: false }, output: ConnectionType.NOT_CONNECTED },
+      { input: { isCluster: undefined }, output: ConnectionType.NOT_CONNECTED },
+      // sentinelMasterName
+      { input: { sentinelMasterName: 'some name' }, output: ConnectionType.SENTINEL },
+      // connectionType
+      { input: { connectionType: ConnectionType.STANDALONE }, output: ConnectionType.STANDALONE },
+      { input: { connectionType: ConnectionType.CLUSTER }, output: ConnectionType.CLUSTER },
+      { input: { connectionType: ConnectionType.SENTINEL }, output: ConnectionType.SENTINEL },
+      { input: { connectionType: 'something not supported' }, output: ConnectionType.NOT_CONNECTED },
+      // type
+      { input: { type: 'standalone' }, output: ConnectionType.STANDALONE },
+      { input: { type: 'cluster' }, output: ConnectionType.CLUSTER },
+      { input: { type: 'sentinel' }, output: ConnectionType.SENTINEL },
+      { input: { type: 'something not supported' }, output: ConnectionType.NOT_CONNECTED },
+      // priority tests
+      {
+        input: {
+          connectionType: ConnectionType.SENTINEL,
+          type: 'standalone',
+          isCluster: true,
+          sentinelMasterName: 'some name',
+        },
+        output: ConnectionType.SENTINEL,
+      },
+      {
+        input: {
+          type: 'standalone',
+          isCluster: true,
+          sentinelMasterName: 'some name',
+        },
+        output: ConnectionType.STANDALONE,
+      },
+      {
+        input: {
+          isCluster: true,
+          sentinelMasterName: 'some name',
+        },
+        output: ConnectionType.CLUSTER,
+      },
+      {
+        input: {
+          sentinelMasterName: 'some name',
+        },
+        output: ConnectionType.SENTINEL,
+      },
+    ];
+
+    tcs.forEach((tc) => {
+      it(`should return ${tc.output} when called with ${JSON.stringify(tc.input)}`, () => {
+        expect(DatabaseImportService.determineConnectionType(tc.input)).toEqual(tc.output);
       });
     });
   });

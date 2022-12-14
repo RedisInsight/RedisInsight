@@ -280,4 +280,43 @@ export class RecommendationProvider {
       return null;
     }
   }
+
+  /**
+ * Check set password recommendation
+ * @param redisClient
+ */
+
+  async determineSetPasswordRecommendation(
+    redisClient: Redis | Cluster,
+  ): Promise<Recommendation> {
+    if (await this.checkAuth(redisClient)) {
+      return { name: RECOMMENDATION_NAMES.SET_PASSWORD };
+    }
+
+    try {
+      const users = await redisClient.sendCommand(
+        new Command('acl', ['list'], { replyEncoding: 'utf8' }),
+      ) as string[];
+
+      const nopassUser = users.some((user) => user.split(' ')[3] === 'nopass');
+
+      return nopassUser ? { name: RECOMMENDATION_NAMES.SET_PASSWORD } : null;
+    } catch (err) {
+      this.logger.error('Can not determine set password recommendation', err);
+      return null;
+    }
+  }
+
+  public async checkAuth(redisClient: Redis | Cluster): Promise<boolean> {
+    try {
+      await redisClient.sendCommand(
+        new Command('auth', ['pass']),
+      );
+    } catch (err) {
+      if (err.message.includes('Client sent AUTH, but no password is set')) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

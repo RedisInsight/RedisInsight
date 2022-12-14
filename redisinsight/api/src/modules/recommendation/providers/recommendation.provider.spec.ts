@@ -1,6 +1,7 @@
 import IORedis from 'ioredis';
 import { when } from 'jest-when';
 import { RECOMMENDATION_NAMES } from 'src/constants';
+import { mockRedisNoAuthError, mockRedisNoPasswordError } from 'src/__mocks__';
 import { RecommendationProvider } from 'src/modules/recommendation/providers/recommendation.provider';
 
 const nodeClient = Object.create(IORedis.prototype);
@@ -20,6 +21,16 @@ const mockRedisConfigResponse = ['name', '512'];
 
 const mockRedisClientsResponse_1: string = '# Clients\r\nconnected_clients:100\r\n';
 const mockRedisClientsResponse_2: string = '# Clients\r\nconnected_clients:101\r\n';
+
+const mockRedisAclListResponse_1: string[] = [
+  'user <pass off resetchannels -@all',
+  'user default on #d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1 ~* &* +@all',
+];
+
+const mockRedisAclListResponse_2: string[] = [
+  ...mockRedisAclListResponse_1,
+  'user test_2 on nopass ~* &* +@all',
+];
 
 const mockKeys = [
   {
@@ -387,6 +398,61 @@ describe('RecommendationProvider', () => {
         const connectionClientsRecommendation = await service
           .determineConnectionClientsRecommendation(nodeClient);
         expect(connectionClientsRecommendation).toEqual(null);
+      });
+  });
+
+  describe('determineSetPasswordRecommendation', () => {
+    it('should not return setPassword recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'acl' }))
+        .mockResolvedValue(mockRedisAclListResponse_1);
+
+      const setPasswordRecommendation = await service
+        .determineSetPasswordRecommendation(nodeClient);
+      expect(setPasswordRecommendation).toEqual(null);
+    });
+
+    it('should return setPassword recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'acl' }))
+        .mockResolvedValue(mockRedisAclListResponse_2);
+
+      const setPasswordRecommendation = await service
+        .determineSetPasswordRecommendation(nodeClient);
+      expect(setPasswordRecommendation).toEqual({ name: RECOMMENDATION_NAMES.SET_PASSWORD });
+    });
+
+    it('should not return setPassword recommendation when acl command executed with error',
+      async () => {
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'acl' }))
+          .mockRejectedValue('some error');
+
+        const setPasswordRecommendation = await service
+          .determineSetPasswordRecommendation(nodeClient);
+        expect(setPasswordRecommendation).toEqual(null);
+      });
+
+    it('should not return setPassword recommendation when acl command executed with error',
+      async () => {
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'auth' }))
+          .mockRejectedValue(mockRedisNoAuthError);
+
+        const setPasswordRecommendation = await service
+          .determineSetPasswordRecommendation(nodeClient);
+        expect(setPasswordRecommendation).toEqual(null);
+      });
+
+    it('should return setPassword recommendation when acl command executed with no password error',
+      async () => {
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'auth' }))
+          .mockRejectedValue(mockRedisNoPasswordError);
+
+        const setPasswordRecommendation = await service
+          .determineSetPasswordRecommendation(nodeClient);
+        expect(setPasswordRecommendation).toEqual({ name: RECOMMENDATION_NAMES.SET_PASSWORD });
       });
   });
 });

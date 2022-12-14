@@ -90,8 +90,6 @@ export class DatabaseImportService {
         fail: [],
       };
 
-      console.log('___ items', items);
-
       // it is very important to insert databases on-by-one to avoid db constraint errors
       await items.reduce((prev, item, index) => prev.finally(() => this.createDatabase(item, index)
         .then((result) => {
@@ -260,16 +258,9 @@ export class DatabaseImportService {
    */
   static determineConnectionType(data: any = {}): ConnectionType {
     if (data?.connectionType) {
-      switch (data.connectionType) {
-        case ConnectionType.CLUSTER:
-          return ConnectionType.CLUSTER;
-        case ConnectionType.SENTINEL:
-          return ConnectionType.SENTINEL;
-        case ConnectionType.STANDALONE:
-          return ConnectionType.STANDALONE;
-        default:
-          return ConnectionType.NOT_CONNECTED;
-      }
+      return (data.connectionType in ConnectionType)
+        ? ConnectionType[data.connectionType]
+        : ConnectionType.NOT_CONNECTED;
     }
 
     if (data?.type) {

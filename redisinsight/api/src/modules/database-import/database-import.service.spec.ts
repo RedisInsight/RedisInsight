@@ -59,10 +59,7 @@ describe('DatabaseImportService', () => {
     it('should import databases from json', async () => {
       const response = await service.import(mockDatabaseImportFile);
 
-      expect(response).toEqual({
-        ...mockDatabaseImportResponse,
-        errors: undefined, // errors omitted from response
-      });
+      expect(response).toEqual(mockDatabaseImportResponse);
       expect(analytics.sendImportResults).toHaveBeenCalledWith(mockDatabaseImportResponse);
     });
 
@@ -75,7 +72,6 @@ describe('DatabaseImportService', () => {
 
       expect(response).toEqual({
         ...mockDatabaseImportResponse,
-        errors: undefined, // errors omitted from response
       });
       expect(analytics.sendImportResults).toHaveBeenCalledWith(mockDatabaseImportResponse);
     });
@@ -138,7 +134,7 @@ describe('DatabaseImportService', () => {
     it('should create standalone database', async () => {
       await service['createDatabase']({
         ...mockDatabase,
-      });
+      }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType']),
@@ -149,7 +145,7 @@ describe('DatabaseImportService', () => {
       await service['createDatabase']({
         ...mockDatabase,
         name: undefined,
-      });
+      }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType']),
@@ -161,7 +157,7 @@ describe('DatabaseImportService', () => {
       await service['createDatabase']({
         ...mockDatabase,
         cluster: true,
-      });
+      }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name']),

@@ -1,6 +1,7 @@
 import {
+  ClassSerializerInterceptor,
   Controller, HttpCode, Post, UploadedFile,
-  UseInterceptors, UsePipes, ValidationPipe,
+  UseInterceptors, UsePipes, ValidationPipe
 } from '@nestjs/common';
 import {
   ApiBody, ApiConsumes, ApiResponse, ApiTags,
@@ -10,6 +11,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { DatabaseImportResponse } from 'src/modules/database-import/dto/database-import.response';
 
 @UsePipes(new ValidationPipe({ transform: true }))
+@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('Database')
 @Controller('/databases')
 export class DatabaseImportController {

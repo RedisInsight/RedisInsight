@@ -66,7 +66,23 @@ describe('POST /databases/import', () => {
           attach: ['file', Buffer.from(JSON.stringify([database])), 'file.json'],
           responseBody: {
             total: 1,
-            success: 0,
+            success: [],
+            partial: [],
+          },
+          checkFn: ({ body }) => {
+            expect(body.fail.length).to.eq(1);
+            expect(body.fail[0].status).to.eq('fail');
+            expect(body.fail[0].index).to.eq(0);
+            expect(body.fail[0].errors.length).to.eq(1);
+            expect(body.fail[0].errors[0].message).to.be.a('string');
+            expect(body.fail[0].errors[0].statusCode).to.eq(400);
+            expect(body.fail[0].errors[0].error).to.eq('Bad Request');
+            if (body.fail[0].host) {
+              expect(body.fail[0].host).to.be.a('string');
+            }
+            if (body.fail[0].port) {
+              expect(body.fail[0].port).to.be.a('number');
+            }
           }
         }
       })
@@ -148,7 +164,14 @@ describe('POST /databases/import', () => {
           ])), 'file.json'],
           responseBody: {
             total: 1,
-            success: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat1.host,
+              port: parseInt(importDatabaseFormat1.port, 10),
+            }],
+            partial: [],
+            fail: [],
           },
         });
 
@@ -179,7 +202,14 @@ describe('POST /databases/import', () => {
             ])), 'file.json'],
             responseBody: {
               total: 1,
-              success: 1,
+              success: [{
+                index: 0,
+                status: 'success',
+                host: importDatabaseFormat1.host,
+                port: parseInt(importDatabaseFormat1.port, 10),
+              }],
+              partial: [],
+              fail: [],
             },
           });
 
@@ -253,7 +283,14 @@ describe('POST /databases/import', () => {
           ])).toString('base64')), 'file.ano'],
           responseBody: {
             total: 1,
-            success: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat1.host,
+              port: parseInt(importDatabaseFormat1.port, 10),
+            }],
+            partial: [],
+            fail: [],
           },
         });
 

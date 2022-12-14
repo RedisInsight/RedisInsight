@@ -1,18 +1,26 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { isArray, get, set } from 'lodash';
+import {
+  HttpException, Injectable, InternalServerErrorException, Logger,
+} from '@nestjs/common';
+import { get, isArray, set } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import { plainToClass } from 'class-transformer';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
-import { DatabaseImportResponse } from 'src/modules/database-import/dto/database-import.response';
-import { Validator } from 'class-validator';
+import {
+  DatabaseImportResponse,
+  DatabaseImportResult,
+  DatabaseImportStatus,
+} from 'src/modules/database-import/dto/database-import.response';
+import { ValidationError, Validator } from 'class-validator';
 import { ImportDatabaseDto } from 'src/modules/database-import/dto/import.database.dto';
 import { classToClass } from 'src/utils';
 import { DatabaseImportAnalytics } from 'src/modules/database-import/database-import.analytics';
 import {
+  NoDatabaseImportFileProvidedException,
   SizeLimitExceededDatabaseImportFileException,
-  NoDatabaseImportFileProvidedException, UnableToParseDatabaseImportFileException,
+  UnableToParseDatabaseImportFileException,
 } from 'src/modules/database-import/exceptions';
+import { ValidationException } from 'src/common/exceptions';
 
 @Injectable()
 export class DatabaseImportService {
@@ -61,27 +69,32 @@ export class DatabaseImportService {
 
       let response = {
         total: items.length,
-        success: 0,
-        errors: [],
+        success: [],
+        partial: [],
+        fail: [],
       };
 
       // it is very important to insert databases on-by-one to avoid db constraint errors
-      await items.reduce((prev, item) => prev.finally(() => this.createDatabase(item)
-        .then(() => {
-          response.success += 1;
-        })
-        .catch((e) => {
-          let error = e;
-          if (isArray(e)) {
-            [error] = e;
+      await items.reduce((prev, item, index) => prev.finally(() => this.createDatabase(item, index)
+        .then((result) => {
+          switch (result.status) {
+            case DatabaseImportStatus.Fail:
+              response.fail.push(result);
+              break;
+            case DatabaseImportStatus.Partial:
+              response.partial.push(result);
+              break;
+            case DatabaseImportStatus.Success:
+              response.success.push(result);
+              break;
+            default:
+                // do not include into repost, since some unexpected behaviour
           }
-          this.logger.warn(`Unable to import database: ${error?.constructor?.name || 'UncaughtError'}`, error);
-          response.errors.push(error);
         })), Promise.resolve());
 
-      this.analytics.sendImportResults(response);
-
       response = plainToClass(DatabaseImportResponse, response);
+
+      this.analytics.sendImportResults(response);
 
       return response;
     } catch (e) {
@@ -97,54 +110,92 @@ export class DatabaseImportService {
    * Map data to known model, validate it and create database if possible
    * Note: will not create connection, simply create database
    * @param item
+   * @param index
    * @private
    */
-  private async createDatabase(item: any): Promise<Database> {
-    const data: any = {};
+  private async createDatabase(item: any, index: number): Promise<DatabaseImportResult> {
+    try {
+      const data: any = {};
 
-    // set this is a new connection
-    data.new = true
+      // set this is a new connection
+      data.new = true;
 
-    this.fieldsMapSchema.forEach(([field, paths]) => {
-      let value;
+      this.fieldsMapSchema.forEach(([field, paths]) => {
+        let value;
 
-      paths.every((path) => {
-        value = get(item, path);
-        return value === undefined;
+        paths.every((path) => {
+          value = get(item, path);
+          return value === undefined;
+        });
+
+        set(data, field, value);
       });
 
-      set(data, field, value);
-    });
+      // set database name if needed
+      if (!data.name) {
+        data.name = `${data.host}:${data.port}`;
+      }
 
-    // set database name if needed
-    if (!data.name) {
-      data.name = `${data.host}:${data.port}`;
+      // determine database type
+      if (data.isCluster) {
+        data.connectionType = ConnectionType.CLUSTER;
+      } else {
+        data.connectionType = ConnectionType.STANDALONE;
+      }
+
+      const dto = plainToClass(
+        ImportDatabaseDto,
+        // additionally replace empty strings ("") with null
+        Object.keys(data)
+          .reduce((acc, key) => {
+            acc[key] = data[key] === '' ? null : data[key];
+            return acc;
+          }, {}),
+      );
+
+      await this.validator.validateOrReject(dto, {
+        whitelist: true,
+      });
+
+      const database = classToClass(Database, dto);
+
+      await this.databaseRepository.create(database);
+
+      return {
+        index,
+        status: DatabaseImportStatus.Success,
+        host: database.host,
+        port: database.port,
+      };
+    } catch (e) {
+      let errors = [e];
+      if (isArray(e)) {
+        errors = e;
+      }
+
+      errors = errors.map((error) => {
+        if (error instanceof ValidationError) {
+          const messages = Object.values(error?.constraints || {});
+          return new ValidationException(messages[messages.length - 1] || 'Bad request');
+        }
+
+        if (!(error instanceof HttpException)) {
+          return new InternalServerErrorException(error?.message);
+        }
+
+        return error;
+      });
+
+      this.logger.warn(`Unable to import database: ${errors[0]?.constructor?.name || 'UncaughtError'}`, errors[0]);
+
+      return {
+        index,
+        status: DatabaseImportStatus.Fail,
+        host: item?.host,
+        port: item?.port,
+        errors,
+      };
     }
-
-    // determine database type
-    if (data.isCluster) {
-      data.connectionType = ConnectionType.CLUSTER;
-    } else {
-      data.connectionType = ConnectionType.STANDALONE;
-    }
-
-    const dto = plainToClass(
-      ImportDatabaseDto,
-      // additionally replace empty strings ("") with null
-      Object.keys(data)
-        .reduce((acc, key) => {
-          acc[key] = data[key] === '' ? null : data[key];
-          return acc;
-        }, {}),
-    );
-
-    await this.validator.validateOrReject(dto, {
-      whitelist: true,
-    });
-
-    const database = classToClass(Database, dto);
-
-    return this.databaseRepository.create(database);
   }
 
   /**

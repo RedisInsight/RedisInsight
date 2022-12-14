@@ -7,8 +7,6 @@ import { mockIORedisClient } from 'src/__mocks__/redis';
 import { mockSentinelMasterDto } from 'src/__mocks__/redis-sentinel';
 import { pick } from 'lodash';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
-import { ClientMetadata } from 'src/modules/redis/models/client-metadata';
-import { AppTool } from 'src/models';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';

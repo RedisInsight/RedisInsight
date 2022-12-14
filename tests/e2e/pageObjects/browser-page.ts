@@ -22,6 +22,7 @@ export class BrowserPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
+    myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
     myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');

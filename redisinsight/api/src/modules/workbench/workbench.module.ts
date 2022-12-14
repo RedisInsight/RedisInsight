@@ -10,7 +10,7 @@ import { CommandsService } from 'src/modules/commands/commands.service';
 import { CommandsJsonProvider } from 'src/modules/commands/commands-json.provider';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { RedisToolFactory } from 'src/modules/redis/redis-tool.factory';
-import { AppTool } from 'src/models';
+import { ClientContext } from 'src/common/models';
 import { PluginsService } from 'src/modules/workbench/plugins.service';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
 import { PluginsController } from 'src/modules/workbench/plugins.controller';
@@ -34,7 +34,7 @@ const COMMANDS_CONFIGS = config.get('commands');
     CommandExecutionProvider,
     {
       provide: RedisToolService,
-      useFactory: (redisToolFactory: RedisToolFactory) => redisToolFactory.createRedisTool(AppTool.Workbench),
+      useFactory: (redisToolFactory: RedisToolFactory) => redisToolFactory.createRedisTool(ClientContext.Workbench),
       inject: [RedisToolFactory],
     },
     {

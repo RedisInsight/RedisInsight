@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import {
   BrowserToolGraphCommands,
@@ -20,7 +20,7 @@ export class GraphTypeInfoStrategy implements IKeyInfoStrategy {
   }
 
   public async getInfo(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
@@ -28,7 +28,7 @@ export class GraphTypeInfoStrategy implements IKeyInfoStrategy {
     const [
       transactionError,
       transactionResults,
-    ] = await this.redisManager.execPipeline(clientOptions, [
+    ] = await this.redisManager.execPipeline(clientMetadata, [
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
     ]);
@@ -39,7 +39,7 @@ export class GraphTypeInfoStrategy implements IKeyInfoStrategy {
         (item: [ReplyError, any]) => item[1],
       );
       const [ttl, size] = result;
-      const length = await this.getNodesCount(clientOptions, key);
+      const length = await this.getNodesCount(clientMetadata, key);
       return {
         name: key,
         type,
@@ -51,12 +51,12 @@ export class GraphTypeInfoStrategy implements IKeyInfoStrategy {
   }
 
   private async getNodesCount(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     key: RedisString,
   ): Promise<number> {
     try {
       const queryReply = await this.redisManager.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolGraphCommands.GraphQuery,
         [key, 'MATCH (r) RETURN count(r)', '--compact'],
       );

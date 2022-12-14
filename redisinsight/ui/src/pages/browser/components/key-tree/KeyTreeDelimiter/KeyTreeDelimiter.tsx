@@ -8,7 +8,7 @@ import { replaceSpaces } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
-import { appContextDbConfig, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
+import { appContextDbConfig, resetBrowserTree, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
 
 import styles from './styles.module.scss'
 
@@ -51,6 +51,8 @@ const KeyTreeDelimiter = ({ loading }: Props) => {
     })
     closePopover()
     dispatch(setBrowserTreeDelimiter(value || DEFAULT_DELIMITER))
+
+    dispatch(resetBrowserTree())
   }
 
   return (

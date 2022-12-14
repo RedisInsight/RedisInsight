@@ -22,6 +22,9 @@ export class BrowserPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
+    hashDeleteButton = Selector('[data-testid=hash-delete-btn]');
+    setDeleteButton = Selector('[data-testid=set-delete-btn]');
+    streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
     myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
     myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
@@ -989,7 +992,7 @@ export class BrowserPage {
 
     /**
      * Verify that keys can be scanned more and results increased
-     */
+    */
     async verifyScannningMore(): Promise<void> {
         for (let i = 10; i < 100; i += 10) {
             // Remember results value
@@ -1008,12 +1011,39 @@ export class BrowserPage {
     /**
      * Open Select Index droprown and select option
      * @param index The name of format
-     */
+    */
     async selectIndexByName(index: string): Promise<void> {
         const option = Selector(`[data-test-subj="mode-option-type-${index}"]`);
         await t
             .click(this.selectIndexDdn)
             .click(option);
+    }
+
+    /**
+    * Get text from first tree element
+    */
+    async getTextFromNthTreeElement(number: number): Promise<string> {
+        return (await Selector(`[role="treeitem"]`).nth(number).find(`div`).textContent).replace(/\s/g, '');
+    }
+
+    /**
+    * Open tree folder with multiple level
+    * @param names folder names with sequence of subfolder
+    */
+    async openTreeFolders(names: string[]): Promise<void> {
+        let base = `node-item_${names[0]}:`
+        await t.click(Selector(`[data-testid="${base}"]`));
+        if (names.length > 1) {
+            for (let i = 1; i < names.length; i++) {
+                base = base + `${names[i]}:`;
+                await t.click(Selector(`[data-testid="${base}"]`));
+            }
+        }
+        await t.click(Selector(`[data-testid="${base}keys:keys:"]`));
+
+        await t.expect(
+            Selector(`[data-testid="${base}keys:keys:"]`).visible)
+            .ok("Folder is not selected");
     }
 }
 

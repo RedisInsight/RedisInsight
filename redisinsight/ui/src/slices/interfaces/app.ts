@@ -141,6 +141,13 @@ export interface StateAppSocketConnection {
   isConnected: boolean
 }
 
+export interface StateAppFeaturesHighlighting {
+  version: string
+  features: string[]
+  pages: {
+    [key: string]: string[]
+  }
+}
 export enum NotificationType {
   Global = 'global'
 }

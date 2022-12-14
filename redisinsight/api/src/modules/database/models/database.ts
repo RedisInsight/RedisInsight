@@ -203,4 +203,14 @@ export class Database {
   @Type(() => ClientCertificate)
   @ValidateNested()
   clientCert?: ClientCertificate;
+
+  @ApiPropertyOptional({
+    description: 'A new created connection',
+    type: Boolean,
+    default: false,
+  })
+  @Expose()
+  @IsOptional()
+  @IsBoolean({ always: true })
+  new?: boolean;
 }

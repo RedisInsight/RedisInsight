@@ -9,7 +9,7 @@ import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
 import config from 'src/utils/config';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import {
   CreateRejsonRlWithExpireDto,
   GetRejsonRlDto,
@@ -36,12 +36,12 @@ export class RejsonRlBusinessService {
   ) {}
 
   private async forceGetJson(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     keyName: RedisString,
     path: string,
   ): Promise<any> {
     const data = await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolRejsonRlCommands.JsonGet,
       [keyName, path],
       'utf8',
@@ -57,12 +57,12 @@ export class RejsonRlBusinessService {
   }
 
   private async estimateSize(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     keyName: RedisString,
     path: string,
   ): Promise<number | null> {
     const size = await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolRejsonRlCommands.JsonDebug,
       ['MEMORY', keyName, path],
     );
@@ -77,12 +77,12 @@ export class RejsonRlBusinessService {
   }
 
   private async getObjectKeys(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     keyName: RedisString,
     path: string,
   ): Promise<string[]> {
     return this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolRejsonRlCommands.JsonObjKeys,
       [keyName, path],
       'utf8',
@@ -90,12 +90,12 @@ export class RejsonRlBusinessService {
   }
 
   private async getJsonDataType(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     keyName: RedisString,
     path: string,
   ): Promise<string> {
     return this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolRejsonRlCommands.JsonType,
       [keyName, path],
       'utf8',
@@ -103,7 +103,7 @@ export class RejsonRlBusinessService {
   }
 
   private async getDetails(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     keyName: RedisString,
     path: string,
     key: string | number,
@@ -115,7 +115,7 @@ export class RejsonRlBusinessService {
     };
 
     const objectKeyType = await this.getJsonDataType(
-      clientOptions,
+      clientMetadata,
       keyName,
       path,
     );
@@ -126,7 +126,7 @@ export class RejsonRlBusinessService {
         details[
           'cardinality'
         ] = await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolRejsonRlCommands.JsonObjLen,
           [keyName, path],
           'utf8',
@@ -136,7 +136,7 @@ export class RejsonRlBusinessService {
         details[
           'cardinality'
         ] = await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolRejsonRlCommands.JsonArrLen,
           [keyName, path],
           'utf8',
@@ -144,7 +144,7 @@ export class RejsonRlBusinessService {
         break;
       default:
         details['value'] = await this.forceGetJson(
-          clientOptions,
+          clientMetadata,
           keyName,
           path,
         );
@@ -155,7 +155,7 @@ export class RejsonRlBusinessService {
   }
 
   private async safeGetJsonByType(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     keyName: RedisString,
     path: string,
     type: string,
@@ -167,7 +167,7 @@ export class RejsonRlBusinessService {
     switch (type) {
       case 'object':
         objectKeys = await this.getObjectKeys(
-          clientOptions,
+          clientMetadata,
           keyName,
           path,
         );
@@ -179,7 +179,7 @@ export class RejsonRlBusinessService {
           const fullObjectKeyPath = `${rootPath}${childPath}`;
           result.push(
             await this.getDetails(
-              clientOptions,
+              clientMetadata,
               keyName,
               fullObjectKeyPath,
               objectKey,
@@ -190,7 +190,7 @@ export class RejsonRlBusinessService {
         break;
       case 'array':
         arrayLength = await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolRejsonRlCommands.JsonArrLen,
           [keyName, path],
           'utf8',
@@ -199,12 +199,12 @@ export class RejsonRlBusinessService {
         for (let i = 0; i < arrayLength; i += 1) {
           const fullObjectKeyPath = `${path === '.' ? '' : path}[${i}]`;
           result.push(
-            await this.getDetails(clientOptions, keyName, fullObjectKeyPath, i),
+            await this.getDetails(clientMetadata, keyName, fullObjectKeyPath, i),
           );
         }
         break;
       default:
-        return this.forceGetJson(clientOptions, keyName, path);
+        return this.forceGetJson(clientMetadata, keyName, path);
     }
 
     return result;
@@ -214,11 +214,11 @@ export class RejsonRlBusinessService {
    * Method to create REJSON-RL type
    * Supports key TTL
    *
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async create(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateRejsonRlWithExpireDto,
   ): Promise<void> {
     this.logger.log('Creating REJSON-RL data type.');
@@ -226,7 +226,7 @@ export class RejsonRlBusinessService {
     const { keyName, data, expire } = dto;
     try {
       const result = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolRejsonRlCommands.JsonSet,
         [keyName, '.', data, 'NX'],
       );
@@ -240,7 +240,7 @@ export class RejsonRlBusinessService {
       if (expire) {
         try {
           await this.browserTool.execCommand(
-            clientOptions,
+            clientMetadata,
             BrowserToolKeysCommands.Expire,
             [keyName, expire],
           );
@@ -268,7 +268,7 @@ export class RejsonRlBusinessService {
   }
 
   public async getJson(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetRejsonRlDto,
   ): Promise<GetRejsonRlResponseDto> {
     this.logger.log('Getting json by key.'); // todo: investigate logger implementation
@@ -283,23 +283,23 @@ export class RejsonRlBusinessService {
     try {
       // Get value in the path without any checks
       if (forceRetrieve) {
-        result.data = await this.forceGetJson(clientOptions, keyName, path);
+        result.data = await this.forceGetJson(clientMetadata, keyName, path);
         return result;
       }
 
-      const jsonSize = await this.estimateSize(clientOptions, keyName, path);
+      const jsonSize = await this.estimateSize(clientMetadata, keyName, path);
       if (jsonSize > config.get('modules')['json']['sizeThreshold']) {
-        const type = await this.getJsonDataType(clientOptions, keyName, path);
+        const type = await this.getJsonDataType(clientMetadata, keyName, path);
         result.downloaded = false;
         result.type = type;
         result.data = await this.safeGetJsonByType(
-          clientOptions,
+          clientMetadata,
           keyName,
           path,
           type,
         );
       } else {
-        result.data = await this.forceGetJson(clientOptions, keyName, path);
+        result.data = await this.forceGetJson(clientMetadata, keyName, path);
       }
 
       return result;
@@ -327,11 +327,11 @@ export class RejsonRlBusinessService {
 
   /**
    * Method to modify REJSON-RL type using JSON.SET command
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async jsonSet(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: ModifyRejsonRlSetDto,
   ): Promise<void> {
     this.logger.log('Modifying REJSON-RL data type.');
@@ -339,7 +339,7 @@ export class RejsonRlBusinessService {
 
     try {
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -347,9 +347,9 @@ export class RejsonRlBusinessService {
       if (!exists) {
         throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
       }
-      await this.getJsonDataType(clientOptions, keyName, path);
+      await this.getJsonDataType(clientMetadata, keyName, path);
       await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolRejsonRlCommands.JsonSet,
         [keyName, path, data],
       );
@@ -381,18 +381,18 @@ export class RejsonRlBusinessService {
 
   /**
    * Method to modify REJSON-RL type using JSON.ARRAPPEND command
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async arrAppend(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: ModifyRejsonRlArrAppendDto,
   ): Promise<void> {
     this.logger.log('Modifying REJSON-RL data type.');
     const { keyName, path, data } = dto;
     try {
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -402,7 +402,7 @@ export class RejsonRlBusinessService {
       }
 
       await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolRejsonRlCommands.JsonArrAppend,
         [keyName, path, ...data],
       );
@@ -426,18 +426,18 @@ export class RejsonRlBusinessService {
 
   /**
    * Method to remove REJSON-RL path using JSON.DEL command
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async remove(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: RemoveRejsonRlDto,
   ): Promise<RemoveRejsonRlResponse> {
     this.logger.log('Removing REJSON-RL data.');
     const { keyName, path } = dto;
     try {
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -447,7 +447,7 @@ export class RejsonRlBusinessService {
       }
 
       const affected = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolRejsonRlCommands.JsonDel,
         [keyName, path],
       );

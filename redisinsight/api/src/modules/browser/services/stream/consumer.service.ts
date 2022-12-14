@@ -1,7 +1,6 @@
 import {
   BadRequestException, Injectable, Logger, NotFoundException,
 } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { RedisErrorCodes } from 'src/constants';
 import { catchAclError, catchTransactionError } from 'src/utils';
 import {
@@ -16,6 +15,7 @@ import {
   GetConsumersDto, GetPendingEntriesDto, PendingEntryDto,
 } from 'src/modules/browser/dto/stream.dto';
 import { plainToClass } from 'class-transformer';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class ConsumerService {
@@ -25,18 +25,18 @@ export class ConsumerService {
 
   /**
    * Get consumers list inside particular group
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   async getConsumers(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetConsumersDto,
   ): Promise<ConsumerDto[]> {
     try {
       this.logger.log('Getting consumers list.');
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [dto.keyName],
       );
@@ -46,7 +46,7 @@ export class ConsumerService {
       }
 
       return ConsumerService.formatReplyToDto(await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolStreamCommands.XInfoConsumers,
         [dto.keyName, dto.groupName],
       ));
@@ -69,18 +69,18 @@ export class ConsumerService {
 
   /**
    * Get consumers list inside particular group
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   async deleteConsumers(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: DeleteConsumersDto,
   ): Promise<void> {
     try {
       this.logger.log('Deleting consumers from the group.');
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [dto.keyName],
       );
@@ -104,7 +104,7 @@ export class ConsumerService {
       const [
         transactionError,
         transactionResults,
-      ] = await this.browserTool.execMulti(clientOptions, toolCommands);
+      ] = await this.browserTool.execMulti(clientMetadata, toolCommands);
       catchTransactionError(transactionError, transactionResults);
 
       return undefined;
@@ -127,18 +127,18 @@ export class ConsumerService {
 
   /**
    * Get list of pending entries info for particular consumer
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   async getPendingEntries(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetPendingEntriesDto,
   ): Promise<PendingEntryDto[]> {
     try {
       this.logger.log('Getting pending entries list.');
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [dto.keyName],
       );
@@ -148,7 +148,7 @@ export class ConsumerService {
       }
 
       return ConsumerService.formatReplyToPendingEntriesDto(await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolStreamCommands.XPending,
         [dto.keyName, dto.groupName, dto.start, dto.end, dto.count, dto.consumerName],
       ));
@@ -171,18 +171,18 @@ export class ConsumerService {
 
   /**
    * Acknowledge pending entries
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   async ackPendingEntries(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: AckPendingEntriesDto,
   ): Promise<AckPendingEntriesResponse> {
     try {
       this.logger.log('Acknowledging pending entries.');
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [dto.keyName],
       );
@@ -192,7 +192,7 @@ export class ConsumerService {
       }
 
       const affected = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolStreamCommands.XAck,
         [dto.keyName, dto.groupName, ...dto.entries],
       );
@@ -217,18 +217,18 @@ export class ConsumerService {
 
   /**
    * Claim pending entries with additional parameters
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   async claimPendingEntries(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: ClaimPendingEntryDto,
   ): Promise<ClaimPendingEntriesResponse> {
     try {
       this.logger.log('Claiming pending entries.');
 
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [dto.keyName],
       );
@@ -257,7 +257,7 @@ export class ConsumerService {
       args.push('justid');
 
       const affected = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolStreamCommands.XClaim,
         args,
         'utf8',

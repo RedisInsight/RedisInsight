@@ -117,6 +117,11 @@ export class DatabaseImportService {
     try {
       const data: any = {};
 
+    // set this is a new connection
+    data.new = true
+
+    this.fieldsMapSchema.forEach(([field, paths]) => {
+      let value;
       this.fieldsMapSchema.forEach(([field, paths]) => {
         let value;
 
@@ -125,8 +130,8 @@ export class DatabaseImportService {
           return value === undefined;
         });
 
-        set(data, field, value);
-      });
+      set(data, field, value);
+    });
 
       // set database name if needed
       if (!data.name) {

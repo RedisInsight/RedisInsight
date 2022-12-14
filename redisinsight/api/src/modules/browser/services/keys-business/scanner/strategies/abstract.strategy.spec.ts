@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
-  mockDatabase,
+  mockBrowserClientMetadata,
   mockRedisConsumer,
   mockRedisWrongTypeError,
   mockSettingsService,
@@ -9,16 +9,11 @@ import {
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { StandaloneStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/standalone.strategy';
 import { AbstractStrategy } from 'src/modules/browser/services/keys-business/scanner/strategies/abstract.strategy';
 import IORedis from 'ioredis';
 import { SettingsService } from 'src/modules/settings/settings.service';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const nodeClient = Object.create(IORedis.prototype);
 
@@ -127,7 +122,7 @@ describe('RedisScannerAbstract', () => {
 
       expect(result).toEqual(mockResult);
       expect(browserTool.execPipeline).not.toHaveBeenCalledWith(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
       );
     });

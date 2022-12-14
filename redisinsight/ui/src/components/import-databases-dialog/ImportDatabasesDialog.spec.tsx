@@ -92,31 +92,25 @@ describe('ImportDatabasesDialog', () => {
     expect(screen.getByTestId('file-loading-indicator')).toBeInTheDocument()
   })
 
-  it('should render success message when at least 1 database added', () => {
+  it('should not render error message without error', () => {
     (importInstancesSelector as jest.Mock).mockImplementation(() => ({
       loading: false,
-      data: {
-        success: 1,
-        total: 2
-      }
+      data: {}
     }))
 
     render(<ImportDatabasesDialog onClose={jest.fn()} />)
-    expect(screen.getByTestId('result-success')).toBeInTheDocument()
     expect(screen.queryByTestId('result-failed')).not.toBeInTheDocument()
   })
 
   it('should render error message when 0 success databases added', () => {
     (importInstancesSelector as jest.Mock).mockImplementation(() => ({
       loading: false,
-      data: {
-        success: 0,
-        total: 2
-      }
+      data: null,
+      error: 'Error message'
     }))
 
     render(<ImportDatabasesDialog onClose={jest.fn()} />)
     expect(screen.getByTestId('result-failed')).toBeInTheDocument()
-    expect(screen.queryByTestId('result-success')).not.toBeInTheDocument()
+    expect(screen.getByTestId('result-failed')).toHaveTextContent('Error message')
   })
 })

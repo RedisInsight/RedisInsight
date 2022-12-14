@@ -1,15 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as Redis from 'ioredis-mock';
-import { mockDatabase, mockDatabaseService } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions, RedisService } from 'src/modules/redis/redis.service';
+import { mockCommonClientMetadata, mockDatabaseService } from 'src/__mocks__';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { InternalServerErrorException } from '@nestjs/common';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { DatabaseService } from 'src/modules/database/database.service';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const mockClient = new Redis();
 
@@ -43,7 +39,7 @@ describe('CliToolService', () => {
       getRedisClient.mockResolvedValue(mockClient);
 
       await service.execCommand(
-        mockClientOptions,
+        mockCommonClientMetadata,
         BrowserToolKeysCommands.MemoryUsage,
         [keyName],
       );
@@ -60,7 +56,7 @@ describe('CliToolService', () => {
 
       await expect(
         service.execCommand(
-          mockClientOptions,
+          mockCommonClientMetadata,
           BrowserToolKeysCommands.MemoryUsage,
           [keyName],
         ),

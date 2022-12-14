@@ -22,6 +22,12 @@ export class BrowserPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
+    hashDeleteButton = Selector('[data-testid=hash-delete-btn]');
+    setDeleteButton = Selector('[data-testid=set-delete-btn]');
+    streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
+    myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
+    streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
+    myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
     editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
@@ -98,8 +104,8 @@ export class BrowserPage {
     workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
     submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
-    patternModeBtn =  Selector('[data-testid=search-mode-pattern-btn]');
-    redisearchModeBtn =  Selector('[data-testid=search-mode-redisearch-btn]');
+    patternModeBtn = Selector('[data-testid=search-mode-pattern-btn]');
+    redisearchModeBtn = Selector('[data-testid=search-mode-redisearch-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -136,7 +142,7 @@ export class BrowserPage {
     createIndexBtn = Selector('[data-testid=create-index-btn]');
     cancelIndexCreationBtn = Selector('[data-testid=create-index-cancel-btn]');
     confirmIndexCreationBtn = Selector('[data-testid=create-index-btn]');
-    resizeTrigger =  Selector('[data-testid^=resize-trigger-]');
+    resizeTrigger = Selector('[data-testid^=resize-trigger-]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -445,7 +451,7 @@ export class BrowserPage {
     async addEntryToStream(field: string, value: string, entryId?: string): Promise<void> {
         await t
             .click(this.addNewStreamEntry)
-        // Specify field, value and add new entry
+            // Specify field, value and add new entry
             .typeText(this.streamField, field, { replace: true, paste: true })
             .typeText(this.streamValue, value, { replace: true, paste: true });
         if (entryId !== undefined) {
@@ -453,7 +459,7 @@ export class BrowserPage {
         }
         await t
             .click(this.saveElementButton)
-        // Validate that new entry is added
+            // Validate that new entry is added
             .expect(this.streamEntriesContainer.textContent).contains(field, 'Field parameter not correct')
             .expect(this.streamEntriesContainer.textContent).contains(value, 'Value parameter not correct');
     }
@@ -566,8 +572,8 @@ export class BrowserPage {
      * Delete keys by their Names
      * @param keyNames The names of the key array
      */
-     async deleteKeysByNames(keyNames: string[]): Promise<void> {
-        for(const name of keyNames) {
+    async deleteKeysByNames(keyNames: string[]): Promise<void> {
+        for (const name of keyNames) {
             await this.deleteKeyByName(name);
         }
     }
@@ -986,7 +992,7 @@ export class BrowserPage {
 
     /**
      * Verify that keys can be scanned more and results increased
-     */
+    */
     async verifyScannningMore(): Promise<void> {
         for (let i = 10; i < 100; i += 10) {
             // Remember results value
@@ -1005,12 +1011,39 @@ export class BrowserPage {
     /**
      * Open Select Index droprown and select option
      * @param index The name of format
-     */
+    */
     async selectIndexByName(index: string): Promise<void> {
         const option = Selector(`[data-test-subj="mode-option-type-${index}"]`);
         await t
             .click(this.selectIndexDdn)
             .click(option);
+    }
+
+    /**
+    * Get text from first tree element
+    */
+    async getTextFromNthTreeElement(number: number): Promise<string> {
+        return (await Selector(`[role="treeitem"]`).nth(number).find(`div`).textContent).replace(/\s/g, '');
+    }
+
+    /**
+    * Open tree folder with multiple level
+    * @param names folder names with sequence of subfolder
+    */
+    async openTreeFolders(names: string[]): Promise<void> {
+        let base = `node-item_${names[0]}:`
+        await t.click(Selector(`[data-testid="${base}"]`));
+        if (names.length > 1) {
+            for (let i = 1; i < names.length; i++) {
+                base = base + `${names[i]}:`;
+                await t.click(Selector(`[data-testid="${base}"]`));
+            }
+        }
+        await t.click(Selector(`[data-testid="${base}keys:keys:"]`));
+
+        await t.expect(
+            Selector(`[data-testid="${base}keys:keys:"]`).visible)
+            .ok("Folder is not selected");
     }
 }
 

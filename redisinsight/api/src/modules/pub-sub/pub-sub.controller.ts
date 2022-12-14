@@ -1,13 +1,14 @@
 import {
   Body,
-  Controller, Param, Post, UsePipes, ValidationPipe
+  Controller, Post, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
-import { AppTool } from 'src/models';
 import { PublishDto } from 'src/modules/pub-sub/dto/publish.dto';
 import { PublishResponse } from 'src/modules/pub-sub/dto/publish.response';
+import { ClientMetadata } from 'src/common/models';
+import { ClientMetadataParam } from 'src/common/decorators';
 
 @ApiTags('Pub/Sub')
 @Controller('pub-sub')
@@ -28,12 +29,9 @@ export class PubSubController {
     ],
   })
   async publish(
-    @Param('dbInstance') instanceId: string,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
       @Body() dto: PublishDto,
   ): Promise<PublishResponse> {
-    return this.service.publish({
-      instanceId,
-      tool: AppTool.Common,
-    }, dto);
+    return this.service.publish(clientMetadata, dto);
   }
 }

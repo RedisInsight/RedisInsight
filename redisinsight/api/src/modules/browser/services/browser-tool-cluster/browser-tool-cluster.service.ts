@@ -1,12 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import IORedis, { NodeRole, Redis } from 'ioredis';
-import { AppTool } from 'src/models';
 import { RedisConsumerAbstractService } from 'src/modules/redis/redis-consumer.abstract.service';
 import {
-  IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/redis/redis.service';
-import { Endpoint } from 'src/common/models';
+import { ClientContext, ClientMetadata, Endpoint } from 'src/common/models';
 import { BrowserToolCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -28,15 +26,15 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
     protected redisService: RedisService,
     protected databaseService: DatabaseService,
   ) {
-    super(AppTool.Browser, redisService, databaseService);
+    super(ClientContext.Browser, redisService, databaseService);
   }
 
   async execCommand(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommand: BrowserToolCommands,
     args: Array<string | number>,
   ): Promise<any> {
-    const client = await this.getRedisClient(clientOptions);
+    const client = await this.getRedisClient(clientMetadata);
     this.logger.log(`Execute command '${toolCommand}', connectionName: ${getConnectionName(client)}`);
     const [command, ...commandArgs] = toolCommand.split(' ');
     // TODO: use sendCommand method
@@ -44,12 +42,12 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
   }
 
   async execPipeline(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommands: Array<
     [toolCommand: BrowserToolCommands, ...args: Array<string | number>]
     >,
   ): Promise<any> {
-    const client = await this.getRedisClient(clientOptions);
+    const client = await this.getRedisClient(clientMetadata);
     const pipelineSummery = getRedisPipelineSummary(toolCommands);
     this.logger.log(
       `Execute pipeline ${pipelineSummery.summary}, length: ${pipelineSummery.length}, connectionName: ${getConnectionName(client)}`,
@@ -58,12 +56,12 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
   }
 
   async execCommandFromNodes(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommand: BrowserToolCommands,
     args: Array<string | number>,
     nodeRole: NodeRole = 'all',
   ): Promise<IExecCommandFromClusterNode[]> {
-    const client = await this.getRedisClient(clientOptions);
+    const client = await this.getRedisClient(clientMetadata);
     const nodes: Redis[] = client.nodes(nodeRole);
     this.logger.log(`Execute command '${toolCommand}' from nodes, connectionName: ${getConnectionName(client)}`);
     return await Promise.all(
@@ -86,13 +84,13 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
   }
 
   async execCommandFromNode(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommand: BrowserToolCommands,
     args: Array<string | number>,
     exactNode: Endpoint,
     replyEncoding: BufferEncoding = 'utf8',
   ): Promise<IExecCommandFromClusterNode> {
-    const client = await this.getRedisClient(clientOptions);
+    const client = await this.getRedisClient(clientMetadata);
     this.logger.log(`Execute command '${toolCommand}' from node, connectionName: ${getConnectionName(client)}`);
 
     const [command, ...commandArgs] = toolCommand.split(' ');
@@ -130,10 +128,10 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
   }
 
   async getNodes(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     nodeRole: NodeRole = 'all',
   ) {
-    const client = await this.getRedisClient(clientOptions);
+    const client = await this.getRedisClient(clientMetadata);
     return client.nodes(nodeRole);
   }
 }

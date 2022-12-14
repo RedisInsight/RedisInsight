@@ -1,11 +1,12 @@
 .modal {
   background: var(--euiColorLightestShade) !important;
   min-width: 500px !important;
+  max-width: 700px !important;
   min-height: 270px !important;
 
   :global {
     .euiModalHeader {
-      padding: 4px 42px 42px 30px;
+      padding: 4px 42px 20px 30px;
     }
 
     .euiModalBody__overflow {

@@ -20,6 +20,7 @@ import { LocalDatabaseModule } from 'src/local-database.module';
 import { CoreModule } from 'src/core.module';
 import { AutodiscoveryModule } from 'src/modules/autodiscovery/autodiscovery.module';
 import { DatabaseImportModule } from 'src/modules/database-import/database-import.module';
+import { DummyAuthMiddleware } from 'src/common/middlewares/dummy-auth.middleware';
 import { BrowserModule } from './modules/browser/browser.module';
 import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterprise.module';
 import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.module';
@@ -99,6 +100,11 @@ export class AppModule implements OnModuleInit, NestModule {
   }
 
   configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(DummyAuthMiddleware)
+      .exclude(...SERVER_CONFIG.excludeAuthRoutes)
+      .forRoutes('*');
+
     consumer
       .apply(ExcludeRouteMiddleware)
       .forRoutes(

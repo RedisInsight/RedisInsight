@@ -3,7 +3,7 @@ import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { catchRedisConnectionError, getHostingProvider } from 'src/utils';
 import { Database } from 'src/modules/database/models/database';
 import * as IORedis from 'ioredis';
-import { AppTool } from 'src/models';
+import { ClientContext } from 'src/common/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
@@ -31,7 +31,7 @@ export class DatabaseFactory {
 
     const client = await this.redisService.createStandaloneClient(
       database,
-      AppTool.Common,
+      ClientContext.Common,
       false,
     );
 
@@ -46,6 +46,8 @@ export class DatabaseFactory {
 
     model.modules = await this.databaseInfoProvider.determineDatabaseModules(client);
     model.lastConnection = new Date();
+    model.new = true
+
     await client.disconnect();
 
     return model;
@@ -140,7 +142,7 @@ export class DatabaseFactory {
       const sentinelClient = await this.redisService.createSentinelClient(
         model,
         selectedMaster.nodes,
-        AppTool.Common,
+        ClientContext.Common,
       );
 
       model.connectionType = ConnectionType.SENTINEL;

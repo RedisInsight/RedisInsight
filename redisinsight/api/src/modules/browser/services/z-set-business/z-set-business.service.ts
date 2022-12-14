@@ -26,13 +26,13 @@ import { SortOrder } from 'src/constants/sort';
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ReplyError } from 'src/models';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { plainToClass } from 'class-transformer';
+import { ClientMetadata } from 'src/common/models';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -45,14 +45,14 @@ export class ZSetBusinessService {
   ) {}
 
   public async createZSet(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateZSetWithExpireDto,
   ): Promise<void> {
     this.logger.log('Creating ZSet data type.');
     const { keyName } = dto;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -65,9 +65,9 @@ export class ZSetBusinessService {
         );
       }
       if (dto.expire) {
-        await this.createZSetWithExpiration(clientOptions, dto);
+        await this.createZSetWithExpiration(clientMetadata, dto);
       } else {
-        await this.createSimpleZSet(clientOptions, dto);
+        await this.createSimpleZSet(clientMetadata, dto);
       }
       this.logger.log('Succeed to create ZSet data type.');
     } catch (error) {
@@ -81,7 +81,7 @@ export class ZSetBusinessService {
   }
 
   public async getMembers(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     getZSetDto: GetZSetMembersDto,
   ): Promise<GetZSetResponse> {
     this.logger.log('Getting members of the ZSet data type stored at key.');
@@ -89,7 +89,7 @@ export class ZSetBusinessService {
     let result: GetZSetResponse;
     try {
       const total = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolZSetCommands.ZCard,
         [keyName],
       );
@@ -104,9 +104,9 @@ export class ZSetBusinessService {
       let members: ZSetMemberDto[] = [];
 
       if (sortOrder && sortOrder === SortOrder.Asc) {
-        members = await this.getZRange(clientOptions, getZSetDto);
+        members = await this.getZRange(clientMetadata, getZSetDto);
       } else {
-        members = await this.getZRevRange(clientOptions, getZSetDto);
+        members = await this.getZRevRange(clientMetadata, getZSetDto);
       }
 
       this.logger.log('Succeed to get members of the ZSet data type.');
@@ -126,14 +126,14 @@ export class ZSetBusinessService {
   }
 
   public async addMembers(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: AddMembersToZSetDto,
   ): Promise<void> {
     this.logger.log('Adding members to the ZSet data type.');
     const { keyName, members } = dto;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -147,7 +147,7 @@ export class ZSetBusinessService {
       }
       const args = this.formatMembersDtoToCommandArgs(members);
       await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolZSetCommands.ZAdd,
         [keyName, ...args],
       );
@@ -163,14 +163,14 @@ export class ZSetBusinessService {
   }
 
   public async updateMember(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: UpdateMemberInZSetDto,
   ): Promise<void> {
     this.logger.log('Updating member in ZSet data type.');
     const { keyName, member } = dto;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -183,7 +183,7 @@ export class ZSetBusinessService {
         );
       }
       const result = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolZSetCommands.ZAdd,
         [keyName, 'XX', 'CH', `${member.score}`, member.name],
       );
@@ -207,7 +207,7 @@ export class ZSetBusinessService {
   }
 
   public async deleteMembers(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: DeleteMembersFromZSetDto,
   ): Promise<DeleteMembersFromZSetResponse> {
     this.logger.log('Deleting members from the ZSet data type.');
@@ -215,7 +215,7 @@ export class ZSetBusinessService {
     let result;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -228,7 +228,7 @@ export class ZSetBusinessService {
         );
       }
       result = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolZSetCommands.ZRem,
         [keyName, ...members],
       );
@@ -244,7 +244,7 @@ export class ZSetBusinessService {
   }
 
   public async searchMembers(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: SearchZSetMembersDto,
   ): Promise<SearchZSetMembersResponse> {
     this.logger.log('Search members of the ZSet data type stored at key.');
@@ -257,7 +257,7 @@ export class ZSetBusinessService {
     };
     try {
       result.total = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolZSetCommands.ZCard,
         [keyName],
       );
@@ -273,7 +273,7 @@ export class ZSetBusinessService {
         const member = unescapeGlob(dto.match);
         result.nextCursor = 0;
         const score = await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolZSetCommands.ZScore,
           [keyName, member],
         );
@@ -283,7 +283,7 @@ export class ZSetBusinessService {
           result.members.push(plainToClass(ZSetMemberDto, { name: member, score: formattedScore }));
         }
       } else {
-        const scanResult = await this.scanZSet(clientOptions, dto);
+        const scanResult = await this.scanZSet(clientMetadata, dto);
         result = { ...result, ...scanResult };
       }
       this.logger.log('Succeed to search members of the ZSet data type.');
@@ -300,13 +300,13 @@ export class ZSetBusinessService {
   }
 
   public async getZRange(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     getZSetDto: GetZSetMembersDto,
   ): Promise<ZSetMemberDto[]> {
     const { keyName, offset, count } = getZSetDto;
 
     const execResult = await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolZSetCommands.ZRange,
       [keyName, offset, offset + count - 1, 'WITHSCORES'],
     );
@@ -315,13 +315,13 @@ export class ZSetBusinessService {
   }
 
   public async getZRevRange(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     getZSetDto: GetZSetMembersDto,
   ): Promise<ZSetMemberDto[]> {
     const { keyName, offset, count } = getZSetDto;
 
     const execResult = await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolZSetCommands.ZRevRange,
       [keyName, offset, offset + count - 1, 'WITHSCORES'],
     );
@@ -330,21 +330,21 @@ export class ZSetBusinessService {
   }
 
   public async createSimpleZSet(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateZSetWithExpireDto,
   ): Promise<number> {
     const { keyName, members } = dto;
     const args = this.formatMembersDtoToCommandArgs(members);
 
     return await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolZSetCommands.ZAdd,
       [keyName, ...args],
     );
   }
 
   public async createZSetWithExpiration(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateZSetWithExpireDto,
   ): Promise<number> {
     const { keyName, members, expire } = dto;
@@ -353,7 +353,7 @@ export class ZSetBusinessService {
     const [
       transactionError,
       transactionResults,
-    ] = await this.browserTool.execMulti(clientOptions, [
+    ] = await this.browserTool.execMulti(clientMetadata, [
       [BrowserToolZSetCommands.ZAdd, keyName, ...args],
       [BrowserToolKeysCommands.Expire, keyName, expire],
     ]);
@@ -366,7 +366,7 @@ export class ZSetBusinessService {
   }
 
   public async scanZSet(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: SearchZSetMembersDto,
   ): Promise<ScanZSetResponse> {
     const { keyName } = dto;
@@ -379,7 +379,7 @@ export class ZSetBusinessService {
     };
     while (result.nextCursor !== 0 && result.members.length < count) {
       const scanResult = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolZSetCommands.ZScan,
         [
           keyName,

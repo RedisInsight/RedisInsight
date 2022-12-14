@@ -8,13 +8,14 @@ import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
-import { AppTool } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
 import { BuildType } from 'src/modules/server/models/server';
 import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dto';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
+import { ClientMetadataParam } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Database')
 @Controller('databases')
@@ -160,11 +161,10 @@ export class DatabaseController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   async connect(
-    @Param('id') id: string,
+    @ClientMetadataParam({
+      databaseIdParam: 'id',
+    }) clientMetadata: ClientMetadata,
   ): Promise<void> {
-    await this.connectionService.connect(
-      id,
-      AppTool.Common,
-    );
+    await this.connectionService.connect(clientMetadata);
   }
 }

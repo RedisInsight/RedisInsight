@@ -135,6 +135,9 @@ export class DatabaseImportService {
       const errors = [];
       const data: any = {};
 
+      // set this is a new connection
+      data.new = true;
+
       this.fieldsMapSchema.forEach(([field, paths]) => {
         let value;
 

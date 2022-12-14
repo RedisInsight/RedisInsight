@@ -142,6 +142,8 @@ export class Database {
     type: Endpoint,
     isArray: true,
   })
+  @IsOptional()
+  @Type(() => Endpoint)
   @Expose()
   nodes?: Endpoint[];
 

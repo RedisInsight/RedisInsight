@@ -11,6 +11,7 @@ import { getRedisConnectionException } from 'src/utils';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { RedisSentinelAnalytics } from 'src/modules/redis-sentinel/redis-sentinel.analytics';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 
 @Injectable()
 export class RedisSentinelService {
@@ -19,6 +20,7 @@ export class RedisSentinelService {
   constructor(
     private readonly redisService: RedisService,
     private readonly databaseService: DatabaseService,
+    private readonly databaseFactory: DatabaseFactory,
     private readonly databaseInfoProvider: DatabaseInfoProvider,
     private readonly redisSentinelAnalytics: RedisSentinelAnalytics,
   ) {}
@@ -112,7 +114,8 @@ export class RedisSentinelService {
     this.logger.log('Connection and getting sentinel masters.');
     let result: SentinelMaster[];
     try {
-      const client = await this.redisService.createStandaloneClient(dto, ClientContext.Common, false);
+      const database = await this.databaseFactory.createStandaloneDatabaseModel(dto);
+      const client = await this.redisService.createStandaloneClient(database, ClientContext.Common, false);
       result = await this.databaseInfoProvider.determineSentinelMasterGroups(client);
       this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(result);
 

@@ -7,6 +7,7 @@ import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { Database } from 'src/modules/database/models/database';
+import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
@@ -93,11 +94,29 @@ export class DatabaseConnectionService {
     const connectionName = generateRedisConnectionName(clientMetadata.context, clientMetadata.databaseId);
 
     try {
-      return await this.redisService.connectToDatabaseInstance(
+      const client = await this.redisService.connectToDatabaseInstance(
         database,
         clientMetadata.context,
         connectionName,
       );
+
+      if (database.connectionType === ConnectionType.NOT_CONNECTED) {
+        let connectionType = ConnectionType.STANDALONE;
+
+        // cluster check
+        if (client.isCluster) {
+          connectionType = ConnectionType.CLUSTER;
+        }
+
+        // sentinel check
+        if (client?.options?.['sentinels']?.length) {
+          connectionType = ConnectionType.SENTINEL;
+        }
+
+        await this.repository.update(database.id, { connectionType });
+      }
+
+      return client;
     } catch (error) {
       this.logger.error('Failed to create database client', error);
       const exception = getRedisConnectionException(

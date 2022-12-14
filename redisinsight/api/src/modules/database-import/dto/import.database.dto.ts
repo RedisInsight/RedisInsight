@@ -13,7 +13,7 @@ import { UseClientCertificateDto } from 'src/modules/certificate/dto/use.client-
 
 export class ImportDatabaseDto extends PickType(Database, [
   'host', 'port', 'name', 'db', 'username', 'password',
-  'connectionType', 'tls', 'verifyServerCert',
+  'connectionType', 'tls', 'verifyServerCert', 'sentinelMaster', 'nodes',
 ] as const) {
   @Expose()
   @IsNotEmpty()
@@ -43,5 +43,4 @@ export class ImportDatabaseDto extends PickType(Database, [
   @Type(clientCertTransformer)
   @ValidateNested()
   clientCert?: CreateClientCertificateDto | UseClientCertificateDto;
-
 }

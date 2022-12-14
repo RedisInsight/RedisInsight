@@ -21,6 +21,7 @@ export enum ConnectionType {
   STANDALONE = 'STANDALONE',
   CLUSTER = 'CLUSTER',
   SENTINEL = 'SENTINEL',
+  NOT_CONNECTED = 'NOT CONNECTED',
 }
 
 @Entity('database_instance')

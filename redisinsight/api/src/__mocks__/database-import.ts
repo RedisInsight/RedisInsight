@@ -62,3 +62,7 @@ export const mockDatabaseImportAnalytics = jest.fn(() => ({
   sendImportResults: jest.fn(),
   sendImportFailed: jest.fn(),
 }));
+
+export const mockCertificateImportService = jest.fn(() => {
+
+});

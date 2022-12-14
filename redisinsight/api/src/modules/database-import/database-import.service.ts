@@ -37,13 +37,20 @@ export class DatabaseImportService {
     ['port', ['port']],
     ['db', ['db']],
     ['isCluster', ['cluster']],
+    ['type', ['type']],
+    ['connectionType', ['connectionType']],
     ['tls', ['tls', 'ssl']],
-    ['tlsServername', ['tlsServername', 'sni_name', 'sni_server_name']],
+    ['tlsServername', ['tlsServername']],
     ['tlsCaName', ['caCert.name']],
-    ['tlsCaCert', ['caCert.certificate', 'sslOptions.ca', 'ssl_ca_cert_path']],
+    ['tlsCaCert', ['caCert.certificate', 'caCert', 'sslOptions.ca', 'ssl_ca_cert_path']],
     ['tlsClientName', ['clientCert.name']],
-    ['tlsClientCert', ['clientCert.certificate', 'sslOptions.cert', 'ssl_local_cert_path']],
-    ['tlsClientKey', ['clientCert.key', 'sslOptions.key', 'ssl_private_key_path']],
+    ['tlsClientCert', ['clientCert.certificate', 'certificate', 'sslOptions.cert', 'ssl_local_cert_path']],
+    ['tlsClientKey', ['clientCert.key', 'keyFile', 'sslOptions.key', 'ssl_private_key_path']],
+    ['sentinelMasterName', ['sentinelMaster.name', 'sentinelOptions.masterName', 'sentinelOptions.name']],
+    ['sentinelMasterUsername', ['sentinelMaster.username']],
+    ['sentinelMasterPassword', [
+      'sentinelMaster.password', 'sentinelOptions.nodePassword', 'sentinelOptions.sentinelPassword',
+    ]],
   ];
 
   constructor(
@@ -82,6 +89,8 @@ export class DatabaseImportService {
         partial: [],
         fail: [],
       };
+
+      console.log('___ items', items);
 
       // it is very important to insert databases on-by-one to avoid db constraint errors
       await items.reduce((prev, item, index) => prev.finally(() => this.createDatabase(item, index)
@@ -144,11 +153,18 @@ export class DatabaseImportService {
         data.name = `${data.host}:${data.port}`;
       }
 
-      // determine database type
-      if (data.isCluster) {
-        data.connectionType = ConnectionType.CLUSTER;
-      } else {
-        data.connectionType = ConnectionType.STANDALONE;
+      data.connectionType = DatabaseImportService.determineConnectionType(data);
+
+      if (data?.sentinelMasterName) {
+        data.sentinelMaster = {
+          name: data.sentinelMasterName,
+          username: data.sentinelMasterUsername,
+          password: data.sentinelMasterPassword,
+        };
+        data.nodes = [{
+          host: data.host,
+          port: parseInt(data.port, 10),
+        }];
       }
 
       if (data?.tlsCaCert) {
@@ -235,6 +251,49 @@ export class DatabaseImportService {
         errors,
       };
     }
+  }
+
+  /**
+   * Try to determine connection type based on input data
+   * Should return NOT_CONNECTED when it is not possible
+   * @param data
+   */
+  static determineConnectionType(data: any = {}): ConnectionType {
+    if (data?.connectionType) {
+      switch (data.connectionType) {
+        case ConnectionType.CLUSTER:
+          return ConnectionType.CLUSTER;
+        case ConnectionType.SENTINEL:
+          return ConnectionType.SENTINEL;
+        case ConnectionType.STANDALONE:
+          return ConnectionType.STANDALONE;
+        default:
+          return ConnectionType.NOT_CONNECTED;
+      }
+    }
+
+    if (data?.type) {
+      switch (data.type) {
+        case 'cluster':
+          return ConnectionType.CLUSTER;
+        case 'sentinel':
+          return ConnectionType.SENTINEL;
+        case 'standalone':
+          return ConnectionType.STANDALONE;
+        default:
+          return ConnectionType.NOT_CONNECTED;
+      }
+    }
+
+    if (data?.isCluster === true) {
+      return ConnectionType.CLUSTER;
+    }
+
+    if (data?.sentinelMasterName) {
+      return ConnectionType.SENTINEL;
+    }
+
+    return ConnectionType.NOT_CONNECTED;
   }
 
   /**

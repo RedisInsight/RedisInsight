@@ -259,6 +259,10 @@ const KeysHeader = (props: Props) => {
 
     dispatch(changeSearchMode(mode))
 
+    if (viewType === KeyViewType.Tree) {
+      dispatch(resetBrowserTree())
+    }
+
     localStorageService.set(BrowserStorageItem.browserSearchMode, mode)
   }
 

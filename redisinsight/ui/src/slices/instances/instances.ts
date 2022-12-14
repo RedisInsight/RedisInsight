@@ -544,7 +544,6 @@ export function uploadInstancesFile(
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
       dispatch(importInstancesFromFileFailure(errorMessage))
-      dispatch(addErrorNotification(error))
       onFailAction?.()
     }
   }

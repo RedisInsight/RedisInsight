@@ -26,19 +26,19 @@
 
   &:global(.success) {
     &:before {
-      background-color: #13A450;
+      background-color: var(--successBorderColor);
     }
   }
 
   &:global(.partial) {
     &:before {
-      background-color: #9D6901;
+      background-color: var(--warningBorderColor);
     }
   }
 
   &:global(.failed) {
     &:before {
-      background-color: #AD0017;
+      background-color: var(--errorBorderColor);
     }
   }
 
@@ -65,7 +65,7 @@
       background-color: var(--euiColorEmptyShade);
       padding: 12px 24px 12px 32px !important;
       border-radius: 4px;
-      border: 1px solid #3D3D3D;
+      border: 1px solid var(--separatorColor);
     }
     .euiCollapsibleNavGroup__children {
       padding: 0 !important;

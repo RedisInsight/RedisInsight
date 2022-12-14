@@ -2,7 +2,8 @@ import {
   EuiButton,
   EuiFilePicker,
   EuiFlexGroup,
-  EuiFlexItem, EuiIcon,
+  EuiFlexItem,
+  EuiIcon,
   EuiLoadingSpinner,
   EuiModal,
   EuiModalBody,
@@ -49,11 +50,11 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
   }
 
   const handleOnClose = () => {
-    dispatch(resetImportInstances())
     if (data?.success?.length || data?.partial?.length) {
       dispatch(fetchInstancesAction())
     }
     onClose(!data)
+    dispatch(resetImportInstances())
   }
 
   const onSubmit = () => {
@@ -75,7 +76,7 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
       <EuiModalHeader>
         <EuiModalHeaderTitle>
           <EuiTitle size="xs" data-testid="import-dbs-dialog-title">
-            <span>{(!data && !error) ? 'Import Database Connections' : 'Import results'}</span>
+            <span>{(!data && !error) ? 'Import Database Connections' : 'Import Results'}</span>
           </EuiTitle>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
@@ -113,9 +114,10 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
             {error && (
               <div className={styles.result} data-testid="result-failed">
                 <EuiIcon type="crossInACircleFilled" size="xxl" color="danger" />
-                <EuiText color="subdued" style={{ marginTop: 12 }}>
+                <EuiText color="subdued" style={{ marginTop: 16 }}>
                   Failed to add database connections
                 </EuiText>
+                <EuiText color="subdued">{error}</EuiText>
               </div>
             )}
           </EuiFlexItem>

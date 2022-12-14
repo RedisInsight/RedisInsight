@@ -190,7 +190,7 @@ export class RedisService {
     return client;
   }
 
-  public async createClientAutomatically(database: Database, tool: AppTool, connectionName) {
+  public async createClientAutomatically(database: Database, tool: ClientContext, connectionName) {
     // try sentinel connection
     if (database?.sentinelMaster) {
       try {

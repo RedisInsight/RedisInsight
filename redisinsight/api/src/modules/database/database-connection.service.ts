@@ -32,7 +32,6 @@ export class DatabaseConnectionService {
     // mark database as not a new
     // will be refreshed after user navigate to particular database from the databases list
     // Note: move to a different place in case if we need to update such info more often
-    await this.repository.update(clientMetadata.databaseId, {
     const toUpdate: Partial<Database> = {
       new: false,
       lastConnection: new Date(),
@@ -52,7 +51,7 @@ export class DatabaseConnectionService {
       }));
     }
 
-    await this.repository.update(databaseId, toUpdate);
+    await this.repository.update(clientMetadata.databaseId, toUpdate);
 
     this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
   }

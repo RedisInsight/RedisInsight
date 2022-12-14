@@ -21,12 +21,12 @@ fixture `Clone databases`
     .meta({ type: 'critical_path' })
     .page(commonUrl);
 test
-    .before(async() => {
+    .before(async () => {
         await acceptLicenseTerms();
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await common.reloadPage();
     })
-    .after(async() => {
+    .after(async () => {
         // Delete databases
         const dbNumber = await myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count;
         for (let i = 0; i < dbNumber; i++) {
@@ -37,6 +37,10 @@ test
         await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
         // Verify that user can cancel the Clone by clicking the “Cancel” or the “x” button
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
+        
+        // Verify new connection badge for cloned database
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
+
         await t.click(addRedisDatabasePage.cancelButton);
         await t.expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).notOk('Clone panel is still displayed', { timeout: 2000 });
         await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
@@ -53,12 +57,12 @@ test
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count).eql(2, 'DB was not cloned');
     });
 test
-    .before(async() => {
+    .before(async () => {
         await acceptLicenseTerms();
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
         await common.reloadPage();
     })
-    .after(async() => {
+    .after(async () => {
         // Delete database
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
         await myRedisDatabasePage.deleteDatabaseByName(newOssDatabaseAlias);
@@ -66,6 +70,10 @@ test
     .meta({ rte: rte.ossCluster })('Verify that user can clone OSS Cluster', async t => {
         await clickOnEditDatabaseByName(ossClusterConfig.ossClusterDatabaseName);
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
+        
+        // New connections indicator
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
+        
         await t
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
             .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossClusterConfig.ossClusterPort, 'Wrong port value')
@@ -77,13 +85,13 @@ test
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossClusterConfig.ossClusterDatabaseName).exists).ok('Original DB is not displayed');
     });
 test
-    .before(async() => {
+    .before(async () => {
         await acceptLicenseTerms();
         // Add Sentinel databases
         await discoverSentinelDatabaseApi(ossSentinelConfig);
         await common.reloadPage();
     })
-    .after(async() => {
+    .after(async () => {
         // Delete all primary groups
         const sentinelCopy = ossSentinelConfig;
         sentinelCopy.masters.push(ossSentinelConfig.masters[1]);
@@ -94,6 +102,10 @@ test
     .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
         await clickOnEditDatabaseByName(ossSentinelConfig.name[1]);
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
+
+        // Verify new connection badge for Sentinel db
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
+        
         // Verify that for Sentinel Host and Port fields are replaced with editable Primary Group Name field
         await t
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')

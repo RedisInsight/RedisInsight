@@ -158,6 +158,7 @@ describe('POST /databases/import', () => {
           endpoint: () => request(server).get(`/${constants.API.DATABASES}/${database.id}/connect`),
           statusCode: 200,
         });
+        expect(database.new).to.eq(true);
       });
       describe('Oss', () => {
         requirements('!rte.re');
@@ -260,6 +261,7 @@ describe('POST /databases/import', () => {
         // check connection
         const database = await localDb.getInstanceByName(name);
 
+        expect(database.new).to.eq(true);
         expect(database.nodes).to.eq('[]');
         expect(database.connectionType).to.eq('CLUSTER');
 

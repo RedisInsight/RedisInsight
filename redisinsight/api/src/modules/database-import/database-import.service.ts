@@ -102,6 +102,9 @@ export class DatabaseImportService {
   private async createDatabase(item: any): Promise<Database> {
     const data: any = {};
 
+    // set this is a new connection
+    data.new = true
+
     this.fieldsMapSchema.forEach(([field, paths]) => {
       let value;
 

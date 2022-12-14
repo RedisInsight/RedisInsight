@@ -27,6 +27,7 @@ export const mockDatabase = Object.assign(new Database(), {
   host: '127.0.100.1',
   port: 6379,
   connectionType: ConnectionType.STANDALONE,
+  new: false,
 });
 
 export const mockDatabaseEntity = Object.assign(new DatabaseEntity(), {
@@ -113,6 +114,11 @@ export const mockClusterDatabaseWithTlsAuthEntity = Object.assign(new DatabaseEn
   ...mockDatabaseWithTlsAuthEntity,
   connectionType: ConnectionType.CLUSTER,
   nodes: JSON.stringify(mockClusterNodes),
+});
+
+export const mockNewDatabase = Object.assign(new Database(), {
+  ...mockDatabase,
+  new: true,
 });
 
 export const mockClientMetadata: ClientMetadata = {

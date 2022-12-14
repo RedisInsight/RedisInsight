@@ -307,7 +307,7 @@ export class RecommendationProvider {
     }
   }
 
-  public async checkAuth(redisClient: Redis | Cluster): Promise<boolean> {
+  private async checkAuth(redisClient: Redis | Cluster): Promise<boolean> {
     try {
       await redisClient.sendCommand(
         new Command('auth', ['pass']),

@@ -47,7 +47,8 @@ import reducer, {
   importInstancesFromFileSuccess,
   importInstancesFromFileFailure,
   resetImportInstances,
-  importInstancesSelector, uploadInstancesFile
+  importInstancesSelector,
+  uploadInstancesFile
 } from '../../instances/instances'
 import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
@@ -542,9 +543,12 @@ describe('instances slice', () => {
   describe('importInstancesFromFileSuccess', () => {
     it('should properly set state', () => {
       // Arrange
+      const mockedError = { statusCode: 400, message: 'message', error: 'error' }
       const data = {
-        success: 3,
-        total: 5
+        total: 3,
+        fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
+        partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
+        success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
       }
       const state = {
         ...initialState.importInstances,
@@ -591,13 +595,16 @@ describe('instances slice', () => {
   describe('resetImportInstances', () => {
     it('should properly set state', () => {
       // Arrange
+      const mockedError = { statusCode: 400, message: 'message', error: 'error' }
       const currentState = {
         ...initialState,
         importInstances: {
           ...initialState.importInstances,
           data: {
-            success: 1,
-            total: 2
+            total: 3,
+            fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
+            partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
+            success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
           }
         }
       }
@@ -1110,9 +1117,12 @@ describe('instances slice', () => {
       it('should call proper actions on success', async () => {
         // Arrange
         const formData = new FormData()
+        const mockedError = { statusCode: 400, message: 'message', error: 'error' }
         const data = {
-          success: 0,
-          total: 1
+          total: 3,
+          fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
+          partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
+          success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
         }
 
         const responsePayload = { data, status: 200 }
@@ -1150,7 +1160,6 @@ describe('instances slice', () => {
         const expectedActions = [
           importInstancesFromFile(),
           importInstancesFromFileFailure(responsePayload.response.data.message),
-          addErrorNotification(responsePayload as AxiosError),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

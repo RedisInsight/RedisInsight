@@ -88,9 +88,10 @@ export class DatabaseService {
     try {
       this.logger.log('Creating new database.');
 
-      const database = await this.repository.create(
-        await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
-      );
+      const database = await this.repository.create({
+        ...await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
+        new: true,
+      });
 
       // todo: clarify if we need this and if yes - rethink implementation
       try {

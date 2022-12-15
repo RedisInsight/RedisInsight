@@ -46,7 +46,6 @@ export class DatabaseFactory {
 
     model.modules = await this.databaseInfoProvider.determineDatabaseModules(client);
     model.lastConnection = new Date();
-    model.new = true
 
     await client.disconnect();
 

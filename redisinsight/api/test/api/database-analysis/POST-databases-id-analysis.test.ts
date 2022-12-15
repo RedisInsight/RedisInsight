@@ -150,7 +150,7 @@ describe('POST /databases/:instanceId/analysis', () => {
   ].map(mainCheckFn);
 
   describe('recommendations', () => {
-    requirements('!rte.bigData', '!rte.pass');
+    requirements('!rte.bigData');
 
     beforeEach(async () => {
       await rte.data.truncate();
@@ -174,9 +174,31 @@ describe('POST /databases/:instanceId/analysis', () => {
             await rte.data.generateNKeys(KEYS_NUMBER, false);
           },
           checkFn: async ({ body }) => {
-            expect(body.recommendations).to.deep.eq([
+            expect(body.recommendations).to.include.deep.members([
               constants.TEST_SMALLER_KEYS_DATABASE_ANALYSIS_RECOMMENDATION,
               constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION,
+            ]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+
+
+    describe('setPassword recommendation', () => {
+      requirements('!rte.pass');
+      [
+        {
+          name: 'Should create new database analysis with useSmallerKeys recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([
               constants.TEST_SET_PASSWORD_RECOMMENDATION,
             ]);
           },
@@ -200,11 +222,10 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([
+          expect(body.recommendations).to.include.deep.members([
             constants.TEST_BIG_HASHES_DATABASE_ANALYSIS_RECOMMENDATION,
             constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
             constants.TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION,
-            constants.TEST_SET_PASSWORD_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -223,9 +244,8 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([
+          expect(body.recommendations).to.include.deep.members([
             constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION,
-            constants.TEST_SET_PASSWORD_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -243,9 +263,8 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateStrings(true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([
+          expect(body.recommendations).to.include.deep.members([
             constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION,
-            constants.TEST_SET_PASSWORD_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -264,9 +283,8 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([
+          expect(body.recommendations).to.include.deep.members([
             constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
-            constants.TEST_SET_PASSWORD_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -285,10 +303,9 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([
+          expect(body.recommendations).to.include.deep.members([
             constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
             constants.TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION,
-            constants.TEST_SET_PASSWORD_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -307,9 +324,8 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeElementsForListKey(NUMBERS_OF_LIST_ELEMENTS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([
+          expect(body.recommendations).to.include.deep.members([
             constants.TEST_COMPRESSION_FOR_LIST_RECOMMENDATION,
-            constants.TEST_SET_PASSWORD_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -330,9 +346,8 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.sendCommand('set', [constants.TEST_STRING_KEY_1, bigStringValue]);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([
+          expect(body.recommendations).to.include.deep.members([
             constants.TEST_BIG_STRINGS_RECOMMENDATION,
-            constants.TEST_SET_PASSWORD_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -351,9 +366,8 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeMembersForSortedListKey(NUMBERS_OF_ZSET_MEMBERS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([
+          expect(body.recommendations).to.include.deep.members([
             constants.TEST_ZSET_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
-            constants.TEST_SET_PASSWORD_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -372,11 +386,10 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([
+          expect(body.recommendations).to.include.deep.members([
             // by default max_intset_entries = 512
             constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION,
             constants.TEST_BIG_SETS_RECOMMENDATION,
-            constants.TEST_SET_PASSWORD_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -394,9 +407,8 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateNCachedScripts(11, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.deep.eq([
+          expect(body.recommendations).to.include.deep.members([
             constants.TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION,
-            constants.TEST_SET_PASSWORD_RECOMMENDATION,
           ]);
         },
         after: async () => {

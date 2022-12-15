@@ -488,5 +488,9 @@ export const constants = {
     name: RECOMMENDATION_NAMES.BIG_SETS,
   },
 
+  TEST_SET_PASSWORD_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.SET_PASSWORD,
+  },
+
   // etc...
 }

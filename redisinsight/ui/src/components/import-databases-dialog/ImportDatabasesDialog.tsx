@@ -16,6 +16,7 @@ import {
 } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import cx from 'classnames'
 import {
   fetchInstancesAction,
   importInstancesSelector,
@@ -24,7 +25,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
-import cx from 'classnames'
+
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'

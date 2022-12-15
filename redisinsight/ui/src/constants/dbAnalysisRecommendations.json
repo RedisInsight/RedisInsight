@@ -412,5 +412,27 @@
       }
     ],
     "badges": ["configuration_changes"]
+  },
+  "bigAmountOfConnectedClients": {
+    "id": "bigAmountOfConnectedClients",
+    "title":"Don't open a new connection for every request / every command",
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "When the value of your connected_clients is high, it usually means that your application is opening and closing a connection for every request it makes. Opening a connection is an expensive operation that adds to both client and server latency."
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "2",
+        "type": "paragraph",
+        "value": "To rectify this, consult your Redis client’s documentation and configure it to use persistent connections."
+      }
+    ],
+    "badges": ["code_changes"]
   }
 }

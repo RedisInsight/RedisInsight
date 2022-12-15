@@ -14,6 +14,7 @@ const maxDatabaseTotal = 1_000_000;
 const maxCompressHashLength = 1000;
 const maxListLength = 1000;
 const maxSetLength = 5000;
+const maxConnectedClients = 100;
 const bigStringMemory = 5_000_000;
 
 @Injectable()
@@ -252,6 +253,30 @@ export class RecommendationProvider {
       return bigSet ? { name: RECOMMENDATION_NAMES.BIG_SETS } : null;
     } catch (err) {
       this.logger.error('Can not determine Big sets recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+ * Check big connected clients recommendation
+ * @param redisClient
+ */
+
+  async determineConnectionClientsRecommendation(
+    redisClient: Redis | Cluster,
+  ): Promise<Recommendation> {
+    try {
+      const info = convertRedisInfoReplyToObject(
+        await redisClient.sendCommand(
+          new Command('info', ['clients'], { replyEncoding: 'utf8' }),
+        ) as string,
+      );
+      const connectedClients = parseInt(get(info, 'clients.connected_clients'), 10);
+
+      return connectedClients > maxConnectedClients
+        ? { name: RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS } : null;
+    } catch (err) {
+      this.logger.error('Can not determine Connection clients recommendation', err);
       return null;
     }
   }

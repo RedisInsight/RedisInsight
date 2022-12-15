@@ -234,6 +234,21 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
+  it('should render code_changes badge in bigAmountOfConnectedClients recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'bigAmountOfConnectedClients' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
+  })
+
   it('should collapse/expand and sent proper telemetry event', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,

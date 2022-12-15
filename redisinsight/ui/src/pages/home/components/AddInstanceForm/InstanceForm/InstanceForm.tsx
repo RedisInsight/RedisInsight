@@ -48,7 +48,7 @@ import {
 
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { handlePasteHostName, getDiffKeysOfObjectValues, checkRediStackModules } from 'uiSrc/utils'
+import { handlePasteHostName, getDiffKeysOfObjectValues, checkRediStackModules, selectOnFocus } from 'uiSrc/utils'
 import {
   MAX_PORT_NUMBER,
   validateCertName,
@@ -137,12 +137,15 @@ const getInitFieldsDisplayNames = ({ host, port, name, instanceType }: any) => {
   return {}
 }
 
+const getDefaultHost = () => '127.0.0.1'
+const getDefaultPort = (instanceType: InstanceType) => (instanceType === InstanceType.Sentinel ? '26379' : '6379')
+
 const AddStandaloneForm = (props: Props) => {
   const {
     formFields: {
       id,
       host,
-      name = '',
+      name,
       port,
       tls,
       db = null,
@@ -181,9 +184,9 @@ const AddStandaloneForm = (props: Props) => {
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
 
   const prepareInitialValues = () => ({
-    host,
-    port: port?.toString(),
-    name,
+    host: host ?? getDefaultHost(),
+    port: port ? port.toString() : getDefaultPort(instanceType),
+    name: name ?? `${getDefaultHost()}:${getDefaultPort(instanceType)}`,
     username,
     password,
     tls,
@@ -674,7 +677,7 @@ const AddStandaloneForm = (props: Props) => {
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Host*">
               <EuiFieldText
-                autoFocus={!isCloneMode}
+                autoFocus={!isCloneMode && isEditMode}
                 name="host"
                 id="host"
                 data-testid="host"
@@ -688,8 +691,8 @@ const AddStandaloneForm = (props: Props) => {
                     validateField(e.target.value.trim())
                   )
                 }}
-                onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
-                  handlePasteHostName(onHostNamePaste, event)}
+                onPaste={(event: React.ClipboardEvent<HTMLInputElement>) => handlePasteHostName(onHostNamePaste, event)}
+                onFocus={selectOnFocus}
                 append={<AppendHostName />}
               />
             </EuiFormRow>
@@ -711,6 +714,7 @@ const AddStandaloneForm = (props: Props) => {
                     validatePortNumber(e.target.value.trim())
                   )
                 }}
+                onFocus={selectOnFocus}
                 type="text"
                 min={0}
                 max={MAX_PORT_NUMBER}
@@ -734,6 +738,7 @@ const AddStandaloneForm = (props: Props) => {
                 id="name"
                 data-testid="name"
                 placeholder="Enter Database Alias"
+                onFocus={selectOnFocus}
                 value={formik.values.name ?? ''}
                 maxLength={500}
                 onChange={formik.handleChange}

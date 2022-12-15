@@ -38,7 +38,7 @@ const ResultsLog = ({ data }: Props) => {
 
   const CollapsibleNavTitle = ({ title, length = 0 }: { title: string, length: number }) => (
     <div className={styles.collapsibleNavTitle}>
-      <span data-testid="nav-group-title">{title}</span>
+      <span data-testid="nav-group-title">{title}:</span>
       <span data-testid="number-of-dbs">{length}</span>
     </div>
   )

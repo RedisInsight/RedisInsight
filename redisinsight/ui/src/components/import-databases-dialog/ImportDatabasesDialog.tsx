@@ -16,6 +16,7 @@ import {
 } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import cx from 'classnames'
 import {
   fetchInstancesAction,
   importInstancesSelector,
@@ -24,6 +25,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
+
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -72,7 +74,7 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
 
   const isShowForm = !loading && !data && !error
   return (
-    <EuiModal onClose={handleOnClose} className={styles.modal} data-testid="import-dbs-dialog">
+    <EuiModal onClose={handleOnClose} className={cx(styles.modal, { [styles.result]: !!data })} data-testid="import-dbs-dialog">
       <EuiModalHeader>
         <EuiModalHeaderTitle>
           <EuiTitle size="xs" data-testid="import-dbs-dialog-title">

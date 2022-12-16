@@ -26,8 +26,6 @@ export class BrowserPage {
     setDeleteButton = Selector('[data-testid=set-delete-btn]');
     streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
     myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
-    streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
-    myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
     editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');

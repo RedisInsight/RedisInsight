@@ -26,6 +26,7 @@ fixture`Tree view navigations improvement tests`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl);
 test
+    .only
     .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
@@ -138,6 +139,7 @@ test
     });
 
 test
+    .only
     .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })

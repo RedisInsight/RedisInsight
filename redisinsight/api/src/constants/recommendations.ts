@@ -12,4 +12,5 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   COMPRESS_HASH_FIELD_NAMES: 'compressHashFieldNames',
   COMPRESSION_FOR_LIST: 'compressionForList',
   ZSET_HASHTABLE_TO_ZIPLIST: 'zSetHashtableToZiplist',
+  SET_PASSWORD: 'setPassword',
 });

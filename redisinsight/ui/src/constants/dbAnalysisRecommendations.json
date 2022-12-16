@@ -434,5 +434,38 @@
       }
     ],
     "badges": ["code_changes"]
+  },
+  "setPassword": {
+    "id": "setPassword",
+    "title":"Set the password",
+    "content": [
+      {
+        "id": "1",
+        "type": "span",
+        "value": "Protect your database by setting a password and using the "
+      },
+      {
+        "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/commands/auth/",
+          "name": "AUTH"
+        }
+      },
+      {
+        "id": "3",
+        "type": "span",
+        "value": " command to authenticate the connection. "
+      },
+      {
+        "id": "4",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/management/security/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["configuration_changes"]
   }
 }

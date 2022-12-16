@@ -48,6 +48,7 @@ export class RecommendationService {
         await this.recommendationProvider.determineZSetHashtableToZiplistRecommendation(client, keys),
         await this.recommendationProvider.determineBigSetsRecommendation(keys),
         await this.recommendationProvider.determineConnectionClientsRecommendation(client),
+        await this.recommendationProvider.determineSetPasswordRecommendation(client),
       ]));
   }
 }

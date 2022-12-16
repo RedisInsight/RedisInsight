@@ -24,9 +24,8 @@ export class DatabasesActions {
             .click(myRedisDatabasePage.importDatabasesBtn)
             .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [fileParameters.path])
             .click(myRedisDatabasePage.submitImportBtn)
-            .expect(myRedisDatabasePage.successImportMessage.exists).ok(`Successfully added ${fileParameters.type} databases message not displayed`);
+            .expect(myRedisDatabasePage.importDialogTitle.textContent).eql('Import Results', `Databases from ${fileParameters.type} not imported`);
     }
-
 }
 
 /**

@@ -32,6 +32,7 @@ export const mockQueryBuilderExecute = jest.fn();
 export const mockCreateQueryBuilder = jest.fn(() => ({
   // where: jest.fn().mockReturnThis(),
   where: mockQueryBuilderWhere,
+  orWhere: mockQueryBuilderWhere,
   update: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
   set: jest.fn().mockReturnThis(),

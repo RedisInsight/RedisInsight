@@ -1,6 +1,7 @@
 import * as Redis from 'ioredis';
 import * as IORedis from 'ioredis';
 import * as semverCompare from 'node-version-compare';
+import * as fs from 'fs';
 import { constants } from './constants';
 import { parseReplToObject, parseClusterNodesResponse } from './utils';
 import { initDataHelper } from './data/redis';
@@ -201,6 +202,15 @@ export const initRTE = async () => {
   }
 
   rte.data = await initDataHelper(rte);
+
+  // generate cert files
+  if (rte.env.tls) {
+    fs.writeFileSync(constants.TEST_CA_CERT_PATH, constants.TEST_REDIS_TLS_CA);
+  }
+  if (rte.env.tlsAuth) {
+    fs.writeFileSync(constants.TEST_CLIENT_CERT_PATH, constants.TEST_USER_TLS_CERT);
+    fs.writeFileSync(constants.TEST_CLIENT_KEY_PATH, constants.TEST_USER_TLS_KEY);
+  }
 
   return rte;
 };

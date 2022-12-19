@@ -16,14 +16,14 @@ const racompassValidJson = 'racompass-valid.json';
 const racompassInvalidJson = 'racompass-invalid.json';
 const rdmFullJson = 'rdm-full.json';
 const ardmValidAno = 'ardm-valid.ano';
-const listOfDB = JSON.parse(fs.readFileSync(path.join('test-data', 'rdm-full.json'), 'utf-8'));
+const listOfDB = JSON.parse(fs.readFileSync(path.join('test-data', 'import-databases', 'rdm-full.json'), 'utf-8'));
 const dbSuccessNames = listOfDB.filter(element => element.result === 'success').map(item => item.name);
 const dbPartialNames = listOfDB.filter(element => element.result === 'partial').map(item => item.name);
 const dbFailedNames = listOfDB.filter(element => element.result === 'failed').map(item => item.name);
 const dbImportedNames = [...dbSuccessNames, ...dbPartialNames];
 const rdmData = {
     type: 'rdm',
-    path: path.join('..', '..', '..', 'test-data', rdmFullJson),
+    path: path.join('..', '..', '..', 'test-data', 'import-databases', rdmFullJson),
     connectionType: 'Cluster',
     successNumber: dbSuccessNames.length,
     partialNumber: dbPartialNames.length,
@@ -32,15 +32,16 @@ const rdmData = {
 const dbData = [
     {
         type: 'racompass',
-        path: path.join('..', '..', '..', 'test-data', racompassValidJson),
+        path: path.join('..', '..', '..', 'test-data', 'import-databases', racompassValidJson),
         dbNames: ['racompassCluster', 'racompassDbWithIndex:8100 [1]']
     },
     {
         type: 'ardm',
-        path: path.join('..', '..', '..', 'test-data', ardmValidAno),
+        path: path.join('..', '..', '..', 'test-data', 'import-databases', ardmValidAno),
         dbNames: ['ardmNoName:12001', 'ardmWithPassAndUsername']
     }
 ];
+const racompassInvalidJsonPath = path.join('..', '..', '..', 'test-data', 'import-databases', racompassInvalidJson);
 // List of all created databases to delete
 const databases = [
     dbData[0].dbNames[0],
@@ -79,7 +80,7 @@ test('Connection import from JSON', async t => {
 
     // Verify that user see the message when parse error appears
     await t
-        .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [path.join('..', '..', '..', 'test-data', racompassInvalidJson)])
+        .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [racompassInvalidJsonPath])
         .click(myRedisDatabasePage.submitImportBtn)
         .expect(myRedisDatabasePage.failedImportMessage.exists).ok('Failed to add database message not displayed')
         .expect(myRedisDatabasePage.failedImportMessage.textContent).contains(parseFailedMsg)

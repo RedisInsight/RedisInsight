@@ -25,7 +25,7 @@
     "lint:e2e": "yarn --cwd tests/e2e lint",
     "package": "yarn package:dev",
     "package:prod": "yarn build:prod && electron-builder build -p never",
-    "package:stage": "yarn build:stage && cross-env DEBUG=\"@malept/flatpak-bundler\" electron-builder build -p never",
+    "package:stage": "yarn build:stage && electron-builder build -p never",
     "package:dev": "yarn build && cross-env DEBUG=electron-builder electron-builder build -p never",
     "package:win": "yarn build:prod && electron-builder build --win --x64 -p never",
     "package:mac": "yarn build:prod && electron-builder build --mac -p never",

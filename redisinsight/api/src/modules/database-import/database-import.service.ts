@@ -297,11 +297,9 @@ export class DatabaseImportService {
   static parseFile(file): any {
     const data = file?.buffer?.toString();
 
-    let databases;
+    let databases = DatabaseImportService.parseJson(data);
 
-    if (file?.mimetype === 'application/json') {
-      databases = DatabaseImportService.parseJson(data);
-    } else {
+    if (!databases) {
       databases = DatabaseImportService.parseBase64(data);
     }
 

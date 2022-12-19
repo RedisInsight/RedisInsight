@@ -12,7 +12,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   db: Joi.number().integer().allow(null).required(),
   name: Joi.string().required(),
   new: Joi.boolean().allow(null).required(),
-  connectionType: Joi.string().valid('STANDALONE', 'SENTINEL', 'CLUSTER').required(),
+  connectionType: Joi.string().valid('STANDALONE', 'SENTINEL', 'CLUSTER', 'NOT CONNECTED').required(),
   lastConnection: Joi.string().isoDate().allow(null).required(),
   modules: Joi.array().items(Joi.object().keys({
     name: Joi.string().required(),

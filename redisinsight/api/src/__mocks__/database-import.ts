@@ -1,9 +1,13 @@
 import { DatabaseImportResponse, DatabaseImportStatus } from 'src/modules/database-import/dto/database-import.response';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
-import { mockDatabase } from 'src/__mocks__/databases';
+import { mockDatabase, mockSentinelDatabaseWithTlsAuth } from 'src/__mocks__/databases';
 import { ValidationException } from 'src/common/exceptions';
+import { mockCaCertificate, mockClientCertificate } from 'src/__mocks__/certificates';
+import {
+  InvalidCaCertificateBodyException, InvalidCertificateNameException,
+} from 'src/modules/database-import/exceptions';
 
-export const mockDatabasesToImportArray = new Array(10).fill(mockDatabase);
+export const mockDatabasesToImportArray = new Array(10).fill(mockSentinelDatabaseWithTlsAuth);
 
 export const mockDatabaseImportFile = {
   originalname: 'filename.json',
@@ -27,13 +31,28 @@ export const mockDatabaseImportResultFail = {
   errors: [new BadRequestException()],
 };
 
+export const mockDatabaseImportResultPartial = {
+  index: 0,
+  status: DatabaseImportStatus.Partial,
+  host: mockDatabase.host,
+  port: mockDatabase.port,
+  errors: [new InvalidCaCertificateBodyException()],
+};
+
 export const mockDatabaseImportResponse = Object.assign(new DatabaseImportResponse(), {
   total: 10,
-  success: (new Array(7).fill(mockDatabaseImportResultSuccess)).map((v, index) => ({
+  success: (new Array(5).fill(mockDatabaseImportResultSuccess)).map((v, index) => ({
     ...v,
-    index: index + 3,
+    index: index + 5,
   })),
-  partial: [],
+  partial: [
+    [new InvalidCaCertificateBodyException(), new InvalidCertificateNameException()],
+    [new InvalidCertificateNameException()],
+  ].map((errors, index) => ({
+    ...mockDatabaseImportResultPartial,
+    index: index + 3,
+    errors,
+  })),
   fail: [
     new ValidationException('Bad request'),
     new BadRequestException(),
@@ -45,8 +64,9 @@ export const mockDatabaseImportResponse = Object.assign(new DatabaseImportRespon
   })),
 });
 
-export const mockDatabaseImportParseFailedAnalyticsPayload = {
-
+export const mockDatabaseImportPartialAnalyticsPayload = {
+  partially: mockDatabaseImportResponse.partial.length,
+  errors: ['InvalidCaCertificateBodyException', 'InvalidCertificateNameException'],
 };
 
 export const mockDatabaseImportFailedAnalyticsPayload = {
@@ -63,6 +83,7 @@ export const mockDatabaseImportAnalytics = jest.fn(() => ({
   sendImportFailed: jest.fn(),
 }));
 
-export const mockCertificateImportService = jest.fn(() => {
-
-});
+export const mockCertificateImportService = jest.fn(() => ({
+  processCaCertificate: jest.fn().mockResolvedValue(mockCaCertificate),
+  processClientCertificate: jest.fn().mockResolvedValue(mockClientCertificate),
+}));

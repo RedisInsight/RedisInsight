@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
-  mockDatabaseImportFailedAnalyticsPayload,
+  mockDatabaseImportFailedAnalyticsPayload, mockDatabaseImportPartialAnalyticsPayload,
   mockDatabaseImportResponse, mockDatabaseImportSucceededAnalyticsPayload,
 } from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
@@ -43,6 +43,12 @@ describe('DatabaseImportAnalytics', () => {
         2,
         TelemetryEvents.DatabaseImportFailed,
         mockDatabaseImportFailedAnalyticsPayload,
+      );
+
+      expect(sendEventSpy).toHaveBeenNthCalledWith(
+        3,
+        TelemetryEvents.DatabaseImportPartiallySucceeded,
+        mockDatabaseImportPartialAnalyticsPayload,
       );
     });
   });

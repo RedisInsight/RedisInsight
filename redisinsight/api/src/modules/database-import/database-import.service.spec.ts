@@ -15,14 +15,16 @@ import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import {
+  InvalidCaCertificateBodyException, InvalidCertificateNameException, InvalidClientCertificateBodyException,
   NoDatabaseImportFileProvidedException,
   SizeLimitExceededDatabaseImportFileException,
-  UnableToParseDatabaseImportFileException,
+  UnableToParseDatabaseImportFileException
 } from 'src/modules/database-import/exceptions';
 import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
 
 describe('DatabaseImportService', () => {
   let service: DatabaseImportService;
+  let certificateImportService: MockType<CertificateImportService>;
   let databaseRepository: MockType<DatabaseRepository>;
   let analytics: MockType<DatabaseImportAnalytics>;
   let validatoSpy;
@@ -52,6 +54,7 @@ describe('DatabaseImportService', () => {
 
     service = await module.get(DatabaseImportService);
     databaseRepository = await module.get(DatabaseRepository);
+    certificateImportService = await module.get(CertificateImportService);
     analytics = await module.get(DatabaseImportAnalytics);
     validatoSpy = jest.spyOn(service['validator'], 'validateOrReject');
   });
@@ -61,6 +64,17 @@ describe('DatabaseImportService', () => {
       databaseRepository.create.mockRejectedValueOnce(new BadRequestException());
       databaseRepository.create.mockRejectedValueOnce(new ForbiddenException());
       validatoSpy.mockRejectedValueOnce([new ValidationError()]);
+      certificateImportService.processCaCertificate
+        .mockRejectedValueOnce(new InvalidCaCertificateBodyException())
+        .mockRejectedValueOnce(new InvalidCaCertificateBodyException())
+        .mockRejectedValueOnce(new InvalidCaCertificateBodyException())
+        .mockRejectedValueOnce(new InvalidCaCertificateBodyException())
+        .mockRejectedValueOnce(new InvalidCertificateNameException());
+      certificateImportService.processClientCertificate
+        .mockRejectedValueOnce(new InvalidClientCertificateBodyException())
+        .mockRejectedValueOnce(new InvalidClientCertificateBodyException())
+        .mockRejectedValueOnce(new InvalidClientCertificateBodyException())
+        .mockRejectedValueOnce(new InvalidCertificateNameException());
     });
 
     it('should import databases from json', async () => {

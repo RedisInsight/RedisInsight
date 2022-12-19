@@ -5,7 +5,6 @@ import {
 } from '../../../pageObjects';
 import {
     commonUrl,
-    ossStandaloneBigConfig,
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
@@ -22,11 +21,10 @@ let keyName2: string;
 let keynameSingle: string;
 let index: string;
 
-fixture`Tree view navigations improvement tests`
+fixture.only`Tree view navigations improvement tests`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl);
 test
-    .only
     .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
@@ -41,6 +39,7 @@ test
         keyNames = [`${keyName1}:1`, `${keyName1}:2`, `${keyName2}:1`, `${keyName2}:2`, keynameSingle];
 
         const commands = [
+            `flushdb`,
             `HSET ${keyNames[0]} field value`,
             `HSET ${keyNames[1]} field value`,
             `HSET ${keyNames[2]} field value`,
@@ -117,14 +116,27 @@ test
 
 test
     .before(async () => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .after(async () => {
         await cliPage.sendCommandInCli(`FT.DROPINDEX ${index}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify tree view navigation for index based search', async t => {
+        keyName1 = common.generateWord(10); // used to create index name
+        keyName2 = common.generateWord(10); // used to create index name
+        const subFolder1 = common.generateWord(10); // used to create index name
+        keyNames = [`${keyName1}:${subFolder1}:1`, `${keyName1}:${subFolder1}:2`, `${keyName2}:1:1`, `${keyName2}:1:2`];
+        const commands = [
+            `flushdb`,
+            `HSET ${keyNames[0]} field value`,
+            `HSET ${keyNames[1]} field value`,
+            `HSET ${keyNames[2]} field value`,
+            `HSET ${keyNames[3]} field value`,
+        ];
+        await cliPage.sendCommandsInCli(commands);
+
         // generate index based on keyName
-        const folders = ['mobile', '2014'];
+        const folders = [keyName1, subFolder1];
         index = await cliPage.createIndexwithCLI(folders.join(':'));
         await t.click(browserPage.redisearchModeBtn); // click redisearch button
         await browserPage.selectIndexByName(index);
@@ -139,7 +151,6 @@ test
     });
 
 test
-    .only
     .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
@@ -153,6 +164,7 @@ test
         keynameSingle = common.generateWord(10);
         keyNames = [`${keyName1}:1`, `${keyName1}:2`, `${keyName2}:1`, `${keyName2}:2`, keynameSingle];
         const commands = [
+            `flushdb`,
             `HSET ${keyNames[0]} field value`,
             `HSET ${keyNames[1]} field value`,
             `RPUSH ${keyNames[2]} field`,

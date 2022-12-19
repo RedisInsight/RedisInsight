@@ -15,7 +15,6 @@ import {
   mockRepository,
   MockType,
 } from 'src/__mocks__';
-import { LocalCaCertificateRepository } from 'src/modules/certificate/repositories/local.ca-certificate.repository';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';

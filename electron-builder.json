@@ -67,6 +67,10 @@
       {
         "target": "rpm",
         "arch": ["x64"]
+      },
+      {
+        "target": "snap",
+        "arch": ["x64"]
       }
     ],
     "synopsis": "Redis GUI by Redis Ltd.",
@@ -77,6 +81,14 @@
       "Type": "Application",
       "Comment": "Redis GUI by Redis Ltd"
     }
+  },
+  "snap": {
+    "plugs": [
+      "default",
+      "password-manager-service"
+    ],
+    "confinement": "strict",
+    "stagePackages": ["default"]
   },
   "directories": {
     "app": "redisinsight",

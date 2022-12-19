@@ -7,6 +7,8 @@ export class MyRedisDatabasePage {
     //*Target any element/component via data-id, if possible!
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
+    // CSS Selectors
+    cssNumberOfDbs = '[data-testid=number-of-dbs]';
     //BUTTONS
     settingsButton = Selector('[data-testid=settings-page-btn]');
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
@@ -63,8 +65,12 @@ export class MyRedisDatabasePage {
     noResultsFoundText = Selector('div').withExactText('No databases matched your search. Try reducing the criteria.');
     failedImportMessage = Selector('[data-testid=result-failed]');
     successImportMessage = Selector('[data-testid=result-success]');
+    importDialogTitle = Selector('[data-testid=import-dbs-dialog-title]');
     // DIALOG
     importDbDialog = Selector('[data-testid=import-dbs-dialog]');
+    successResultsAccordion = Selector('[data-testid^=success-results-]');
+    partialResultsAccordion = Selector('[data-testid^=partial-results-]');
+    failedResultsAccordion = Selector('[data-testid^=failed-results-]');
 
     /**
      * Click on the database by name

@@ -12,6 +12,7 @@ services:
       - ./plugins:/usr/src/app/plugins
       - .redisinsight-v2:/root/.redisinsight-v2
       - .ritmp:/tmp
+      - ./test-data/certs:/root/certs
     env_file:
       - ./.env
     entrypoint: [
@@ -40,4 +41,5 @@ services:
     volumes:
       - .redisinsight-v2:/root/.redisinsight-v2
       - .ritmp:/tmp
+      - ./test-data/certs:/root/certs
 

@@ -561,6 +561,7 @@ jobs:
             - release/RedisInsight*.rpm
             - release/RedisInsight*.AppImage
             - release/RedisInsight*.flatpak
+            - release/RedisInsight*.snap
             - release/*-linux.yml
             - release/redisstack
   macosx:

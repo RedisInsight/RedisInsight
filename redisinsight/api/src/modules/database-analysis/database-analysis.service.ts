@@ -29,8 +29,10 @@ export class DatabaseAnalysisService {
     clientMetadata: ClientMetadata,
     dto: CreateDatabaseAnalysisDto,
   ): Promise<DatabaseAnalysis> {
+    let client;
+
     try {
-      const client = await this.databaseConnectionService.createClient(clientMetadata);
+      client = await this.databaseConnectionService.createClient(clientMetadata);
 
       const scanResults = await this.scanner.scan(client, {
         filter: dto.filter,
@@ -54,8 +56,10 @@ export class DatabaseAnalysisService {
         progress,
       }, [].concat(...scanResults.map((nodeResult) => nodeResult.keys))));
 
+      client.disconnect();
       return this.databaseAnalysisProvider.create(analysis);
     } catch (e) {
+      client?.disconnect();
       this.logger.error('Unable to analyze database', e);
 
       if (e instanceof HttpException) {

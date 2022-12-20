@@ -11,6 +11,10 @@
 
   .badgesLegend {
     margin: 0 22px 14px 0 !important;
+
+    .badgeWrapper {
+      margin-right: 0;
+    }
   
     .badge {
       margin: 0 0 0 24px;
@@ -22,13 +26,13 @@
   }
   
   .badgeIcon {
-    margin-right: 24px;
     fill: var(--badgeIconColor);
   }
   
   .badgeWrapper {
     display: flex;
     align-items: center;
+    margin-right: 24px;
   }
 
   .accordionButton :global(.euiFlexItem) {

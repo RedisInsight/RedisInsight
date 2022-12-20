@@ -28,22 +28,20 @@ const badgesContent = [
 
 export const renderBadges = (badges: string[]) => (
   <EuiFlexGroup className={styles.badgesContainer} responsive={false} alignItems="center" justifyContent="spaceBetween">
-    {badgesContent.map(({ id, name, icon }) => (badges.indexOf(id) === -1
-      ? null
-      : (
-        <EuiFlexItem key={id} className={styles.badge} grow={false}>
-          <div data-testid={id} className={styles.badgeWrapper}>
-            <EuiToolTip
-              content={name}
-              position="top"
-              display="inlineBlock"
-              anchorClassName="flex-row"
-            >
-              {icon}
-            </EuiToolTip>
-          </div>
-        </EuiFlexItem>
-      )))}
+    {badgesContent.map(({ id, name, icon }) => (badges.indexOf(id) > -1 && (
+      <EuiFlexItem key={id} className={styles.badge} grow={false}>
+        <div data-testid={id} className={styles.badgeWrapper}>
+          <EuiToolTip
+            content={name}
+            position="top"
+            display="inlineBlock"
+            anchorClassName="flex-row"
+          >
+            {icon}
+          </EuiToolTip>
+        </div>
+      </EuiFlexItem>
+    )))}
   </EuiFlexGroup>
 )
 

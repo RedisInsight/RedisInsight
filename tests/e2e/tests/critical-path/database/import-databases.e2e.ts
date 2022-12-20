@@ -17,9 +17,9 @@ const racompassInvalidJson = 'racompass-invalid.json';
 const rdmFullJson = 'rdm-full.json';
 const ardmValidAno = 'ardm-valid.ano';
 const listOfDB = JSON.parse(fs.readFileSync(path.join('test-data', 'import-databases', 'rdm-full.json'), 'utf-8'));
-const dbSuccessNames = listOfDB.filter(element => element.result === 'success').map(item => item.name);
-const dbPartialNames = listOfDB.filter(element => element.result === 'partial').map(item => item.name);
-const dbFailedNames = listOfDB.filter(element => element.result === 'failed').map(item => item.name);
+const dbSuccessNames = myRedisDatabasePage.filterDatabaseListByResult(listOfDB, 'success');
+const dbPartialNames = myRedisDatabasePage.filterDatabaseListByResult(listOfDB, 'partial');
+const dbFailedNames = myRedisDatabasePage.filterDatabaseListByResult(listOfDB, 'failed');
 const dbImportedNames = [...dbSuccessNames, ...dbPartialNames];
 const rdmData = {
     type: 'rdm',
@@ -50,18 +50,19 @@ const databases = [
     dbData[1].dbNames[1]
 ];
 const databasesToDelete = [...dbImportedNames, ...databases];
+const findImportedDbNameInList = async(dbName: string) => dbImportedNames.find(item => item === dbName)!;
 
 fixture `Import databases`
-    .meta({ type: 'critical_path', rte: rte.standalone })
+    .meta({ type: 'critical_path', rte: rte.none })
     .page(commonUrl)
-    .beforeEach(async() => {
+    .beforeEach(async () => {
         await acceptLicenseTerms();
     })
-    .afterEach(async() => {
+    .afterEach(async () => {
         // Delete databases
         deleteStandaloneDatabasesByNamesApi(databasesToDelete);
-    });
-test('Connection import from JSON', async t => {
+    })
+test('Connection import modal window', async t => {
     const tooltipText = 'Import Database Connections';
     const defaultText = 'Select or drag and drop a file';
     const parseFailedMsg = 'Failed to add database connections';
@@ -95,8 +96,9 @@ test('Connection import from JSON', async t => {
     await t.click(myRedisDatabasePage.removeImportedFileBtn);
     await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(defaultText, 'File not removed from import input');
 
+});
+test('Connection import from JSON', async t => {
     // Verify that user can import database with mandatory/optional fields
-    await t.click(myRedisDatabasePage.closeDialogBtn);
     await databasesActions.importDatabase(rdmData);
 
     // Fully imported table
@@ -115,14 +117,37 @@ test('Connection import from JSON', async t => {
 
     await clickOnEditDatabaseByName(dbImportedNames[1]);
     // Verify username imported
-    await t.expect(addRedisDatabasePage.usernameInput.value).eql(listOfDB[1].username);
+    await t.expect(addRedisDatabasePage.usernameInput.value).eql(listOfDB[1].username, 'Username import incorrect');
     // Verify password imported
     await t.click(addRedisDatabasePage.showPasswordBtn);
-    await t.expect(addRedisDatabasePage.passwordInput.value).eql(listOfDB[1].auth);
+    await t.expect(addRedisDatabasePage.passwordInput.value).eql(listOfDB[1].auth, 'Password import incorrect');
 
     // Verify cluster connection type imported
     await clickOnEditDatabaseByName(dbImportedNames[2]);
-    await t.expect(addRedisDatabasePage.connectionType.textContent).eql(rdmData.connectionType);
+    await t.expect(addRedisDatabasePage.connectionType.textContent).eql(rdmData.connectionType, 'Connection type import incorrect');
+
+    // Verify that user can import database with CA certificate
+    await clickOnEditDatabaseByName(await findImportedDbNameInList('rdmHost+Port+Name+CaCert'));
+    await t.expect(addRedisDatabasePage.caCertField.textContent).eql('ca', 'CA certificate import incorrect');
+    await t.expect(addRedisDatabasePage.clientCertField.exists).notOk('Client certificate was imported');
+
+    // Verify that user can import database with Client certificate, Client private key
+    await clickOnEditDatabaseByName(await findImportedDbNameInList('rdmHost+Port+Name+clientCert+privateKey'));
+    await t.expect(addRedisDatabasePage.caCertField.textContent).eql('No CA Certificate', 'CA certificate was imported');
+    await t.expect(addRedisDatabasePage.clientCertField.textContent).eql('client', 'Client certificate import incorrect');
+
+    // Verify that user can import database with all certificates
+    await clickOnEditDatabaseByName(await findImportedDbNameInList('rdmHost+Port+Name+CaCert+clientCert+privateKey'));
+    await t.expect(addRedisDatabasePage.caCertField.textContent).eql('ca', 'CA certificate import incorrect');
+    await t.expect(addRedisDatabasePage.clientCertField.textContent).eql('client', 'Client certificate import incorrect');
+
+    // Verify that certificate not imported when any certificate field has not been parsed
+    await clickOnEditDatabaseByName(await findImportedDbNameInList('rdmCaCertInvalidBody'));
+    await t.expect(addRedisDatabasePage.caCertField.textContent).eql('No CA Certificate', 'CA certificate was imported');
+    await t.expect(addRedisDatabasePage.clientCertField.exists).notOk('Client certificate was imported');
+    await clickOnEditDatabaseByName(await findImportedDbNameInList('rdmInvalidClientCert'));
+    await t.expect(addRedisDatabasePage.caCertField.textContent).eql('No CA Certificate', 'CA certificate was imported');
+    await t.expect(addRedisDatabasePage.clientCertField.exists).notOk('Client certificate was imported');
 
     // Verify that user can import files from Racompass, ARDM, RDM
     for (const db of dbData) {

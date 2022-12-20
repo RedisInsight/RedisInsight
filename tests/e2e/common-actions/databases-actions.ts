@@ -46,6 +46,7 @@ export class DatabasesActions {
  * @param password The password of db
  * @param connectionType The connection type of db
  * @param fileName The file name
+ * @param parsedJson The parsed json content
  */
 export type ImportDatabaseParameters = {
     path: string,

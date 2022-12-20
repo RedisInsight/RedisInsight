@@ -1023,7 +1023,7 @@ describe('instances slice', () => {
           newName: 'newAlias',
         }
         const responsePayload = { status: 200, data }
-        apiService.put = jest.fn().mockResolvedValue(responsePayload)
+        apiService.patch = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
@@ -1047,7 +1047,7 @@ describe('instances slice', () => {
             data: { message: errorMessage },
           },
         }
-        apiService.put = jest.fn().mockRejectedValue(responsePayload)
+        apiService.patch = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(

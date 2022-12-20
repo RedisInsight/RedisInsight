@@ -158,7 +158,7 @@ export async function acceptLicenseTermsAndAddSentinelDatabaseApi(databaseParame
     // Reload Page to see the database added through api
     await common.reloadPage();
     // Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(databaseParameters.name[1] ?? '');
+    await myRedisDatabasePage.clickOnDBByName(databaseParameters.name![1] ?? '');
 }
 
 /**
@@ -273,7 +273,7 @@ export async function clickOnEditDatabaseByName(databaseName: string): Promise<v
  * Delete database button by name
  * @param databaseName The name of the database
  */
- export async function deleteDatabaseByNameApi(databaseName: string): Promise<void> {
+export async function deleteDatabaseByNameApi(databaseName: string): Promise<void> {
     const databaseId = await getDatabaseByName(databaseName);
     const databaseDeleteBtn = Selector(`[data-testid=delete-instance-${databaseId}-icon]`);
 

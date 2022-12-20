@@ -44,6 +44,7 @@ export class AddRedisDatabasePage {
     primaryGroupNameInput = Selector('[data-testid=primary-group]');
     masterGroupPassword = Selector('[data-testid=sentinel-master-password]');
     connectionType = Selector('[data-testid=connection-type]');
+    sentinelForm = Selector('[data-testid=form]');
     //Links
     buildFromSource = Selector('a').withExactText('Build from source');
     buildFromDocker = Selector('a').withExactText('Docker');

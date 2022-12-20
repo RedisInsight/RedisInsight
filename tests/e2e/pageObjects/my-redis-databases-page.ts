@@ -188,16 +188,16 @@ export class MyRedisDatabasePage {
      * Verify database status is visible
     */
     async verifyDatabaseStatusIsVisible(): Promise<void> {
-        await t.expect(Selector("div").withAttribute("data-testid", /database-status-new-*/).visible)
-            .ok("Database status is not visible");
+        await t.expect(Selector('div').withAttribute('data-testid', /database-status-new-*/).visible)
+            .ok('Database status is not visible');
     }
 
     /**
     * Verify database status is not visible
     */
     async verifyDatabaseStatusIsNotVisible(): Promise<void> {
-        await t.expect(Selector("div").withAttribute("data-testid", /database-status-new-*/).visible)
-            .notOk("Database status is still visible");
+        await t.expect(Selector('div').withAttribute('data-testid', /database-status-new-*/).visible)
+            .notOk('Database status is still visible');
     }
 
     /**
@@ -205,7 +205,7 @@ export class MyRedisDatabasePage {
      * @param listOfDb Actual databases list
      * @param result The expected import result
     */
-    filterDatabaseListByResult(listOfDb: DatabasesForImport, result: string) {
+    getDatabaseNamesFromListByResult(listOfDb: DatabasesForImport, result: string): string[] {
         return listOfDb.filter(element => element.result === result).map(item => item.name!);
     }
 }

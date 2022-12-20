@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   EuiTextColor,
+  EuiToolTip,
   EuiFlexGroup,
   EuiFlexItem,
   EuiLink,
@@ -14,6 +15,7 @@ import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
 import styles from './styles.module.scss'
 
 interface IContentElement {
+  id: string
   type: string
   value: any[]
 }
@@ -25,33 +27,52 @@ const badgesContent = [
 ]
 
 export const renderBadges = (badges: string[]) => (
-  <EuiFlexGroup className={styles.badgesContainer} responsive={false} justifyContent="spaceBetween">
-    {badgesContent.map(({ id, icon, name }) => (badges.indexOf(id) === -1
-      ? <EuiFlexItem key={id} className={styles.badge} grow={false} />
+  <EuiFlexGroup className={styles.badgesContainer} responsive={false} alignItems="center" justifyContent="spaceBetween">
+    {badgesContent.map(({ id, name, icon }) => (badges.indexOf(id) === -1
+      ? null
       : (
         <EuiFlexItem key={id} className={styles.badge} grow={false}>
           <div data-testid={id} className={styles.badgeWrapper}>
-            {icon}
-            {name}
+            <EuiToolTip
+              content={name}
+              position="top"
+              display="inlineBlock"
+              anchorClassName="flex-row"
+            >
+              {icon}
+            </EuiToolTip>
           </div>
         </EuiFlexItem>
       )))}
   </EuiFlexGroup>
 )
 
-const renderContentElement = ({ type, value }: IContentElement) => {
+export const renderBadgesLegend = () => (
+  <EuiFlexGroup data-testid="badges-legend" className={styles.badgesLegend} responsive={false} justifyContent="flexEnd">
+    {badgesContent.map(({ id, icon, name }) => (
+      <EuiFlexItem key={id} className={styles.badge} grow={false}>
+        <div className={styles.badgeWrapper}>
+          {icon}
+          {name}
+        </div>
+      </EuiFlexItem>
+    ))}
+  </EuiFlexGroup>
+)
+
+const renderContentElement = ({ id, type, value }: IContentElement) => {
   switch (type) {
     case 'paragraph':
-      return <EuiTextColor component="div" className={styles.text} color="subdued">{value}</EuiTextColor>
+      return <EuiTextColor key={id} component="div" className={styles.text} color="subdued">{value}</EuiTextColor>
     case 'span':
-      return <EuiTextColor color="subdued" className={cx(styles.span, styles.text)}>{value}</EuiTextColor>
+      return <EuiTextColor key={id} color="subdued" className={cx(styles.span, styles.text)}>{value}</EuiTextColor>
     case 'link':
-      return <EuiLink external={false} data-testid="read-more-link" target="_blank" href={value.href}>{value.name}</EuiLink>
+      return <EuiLink key={id} external={false} data-testid="read-more-link" target="_blank" href={value.href}>{value.name}</EuiLink>
     case 'spacer':
-      return <EuiSpacer size={value} />
+      return <EuiSpacer key={id} size={value} />
     case 'list':
       return (
-        <ul>
+        <ul key={id}>
           {value.map((listElement: IContentElement[]) => (
             <li>{renderContent(listElement)}</li>
           ))}

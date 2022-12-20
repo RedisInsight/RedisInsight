@@ -6,12 +6,14 @@ import {
   EuiAccordion,
   EuiPanel,
   EuiText,
+  EuiFlexGroup,
+  EuiFlexItem,
 } from '@elastic/eui'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import { renderContent, renderBadges } from './utils'
+import { renderContent, renderBadges, renderBadgesLegend } from './utils'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -46,28 +48,37 @@ const Recommendations = () => {
 
   return (
     <div className={styles.wrapper}>
+      <div>
+        {renderBadgesLegend()}
+      </div>
       {recommendations.map(({ name }) => {
         const { id = '', title = '', content = '', badges = [] } = recommendationsContent[name]
+
+        const buttonContent = (
+          <EuiFlexGroup className={styles.accordionButton} responsive={false} alignItems="center" justifyContent="spaceBetween">
+            <EuiFlexItem grow={false}>{title}</EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              {renderBadges(badges)}
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        )
         return (
           <div key={id} className={styles.recommendation}>
             <EuiAccordion
               id={name}
               arrowDisplay="right"
-              buttonContent={title}
+              buttonContent={buttonContent}
               buttonClassName={styles.accordionBtn}
               buttonProps={{ 'data-test-subj': `${id}-button` }}
               className={styles.accordion}
               initialIsOpen
               onToggle={(isOpen) => handleToggle(isOpen, id)}
-              data-testId={`${id}-accordion`}
+              data-testid={`${id}-accordion`}
             >
               <EuiPanel className={styles.accordionContent} color="subdued">
                 {renderContent(content)}
               </EuiPanel>
             </EuiAccordion>
-            <div>
-              {renderBadges(badges)}
-            </div>
           </div>
         )
       })}

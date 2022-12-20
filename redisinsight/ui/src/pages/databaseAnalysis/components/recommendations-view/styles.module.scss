@@ -8,6 +8,40 @@
   overflow-x: hidden;
   max-height: 100%;
   padding-top: 30px;
+
+  .badgesLegend {
+    margin: 0 22px 14px 0 !important;
+  
+    .badge {
+      margin: 0 0 0 24px;
+    }
+
+    .badgeIcon {
+      margin-right: 14px;
+    }
+  }
+  
+  .badgeIcon {
+    margin-right: 24px;
+    fill: var(--badgeIconColor);
+  }
+  
+  .badgeWrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .accordionButton :global(.euiFlexItem) {
+    margin: 0;
+  }
+
+  :global(.euiAccordion__buttonReverse .euiAccordion__iconWrapper) {
+    margin-left: 0;
+  }
+
+  :global(.euiFlexGroup--gutterLarge) {
+    margin: 0;
+  }
 }
 
 .container {
@@ -31,7 +65,7 @@
   border: 1px solid var(--recommendationBorderColor);
   background-color: var(--euiColorLightestShade);
   margin-bottom: 6px;
-  padding: 18px;
+  padding: 30px 18px;
 
   ul {
     list-style: initial;
@@ -42,12 +76,8 @@
     }
   }
 
-  .accordion {
-    margin-bottom: 18px;
-  }
-
   .accordionContent {
-    padding: 18px 0 17px !important;
+    padding: 18px 0 0 !important;
   }
 
   :global(.euiAccordion__triggerWrapper) {
@@ -62,35 +92,13 @@
     border-bottom: none;
   }
 
-  :global(.euiAccordion .euiAccordion__triggerWrapper) {
-    border-bottom: 1px solid var(--separatorColor);
+  :global(.euiIEFlexWrapFix) {
+    display: block;
+    width: 100%;
   }
 
   .accordionBtn {
     font: normal normal 500 16px/19px Graphik, sans-serif;
-    padding-bottom: 22px;
-  }
-
-  .badgesContainer {
-    .badge {
-      width: 180px;
-      margin: 14px 18px;
-
-      &:last-child {
-        padding-right: 48px;
-        align-items: flex-end;
-      }
-  
-      .badgeIcon {
-        margin-right: 14px;
-        fill: var(--badgeIconColor);
-      }
-
-      .badgeWrapper {
-        display: flex;
-        align-items: center;
-      }
-    }
   }
 
   .text {

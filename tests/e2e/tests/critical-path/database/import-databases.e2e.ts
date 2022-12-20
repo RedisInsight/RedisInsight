@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { ClientFunction } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl } from '../../../helpers/conf';
@@ -55,6 +56,8 @@ const databasesToDelete = [
     ...dbData[1].dbNames
 ];
 const findImportedRdmDbNameInList = async(dbName: string): Promise<string> => rdmData.dbImportedNames.find(item => item === dbName)!;
+// Returns the URL of the current web page
+const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `Import databases`
     .meta({ type: 'critical_path', rte: rte.none })
@@ -166,6 +169,8 @@ test
         // Verify that user can import Sentinel database connections by corresponding fields in JSON
         await clickOnEditDatabaseByName(dbData[1].dbNames[2]);
         await t.expect(addRedisDatabasePage.sentinelForm.textContent).contains('Sentinel', 'Sentinel connection type import incorrect');
+        await myRedisDatabasePage.clickOnDBByName(dbData[1].dbNames[2]);
+        await t.expect(getPageUrl()).contains('browser', 'Sentinel connection not opened');
     });
 test
     .after(async() => {

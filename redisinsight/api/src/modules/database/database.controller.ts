@@ -1,7 +1,17 @@
 import { ApiTags } from '@nestjs/swagger';
 import {
   Body,
-  ClassSerializerInterceptor, Controller, Delete, Get, Param, Post, Put, UseInterceptors, UsePipes, ValidationPipe,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Database } from 'src/modules/database/models/database';
@@ -16,6 +26,7 @@ import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dt
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 import { ClientMetadataParam } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
+import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
 
 @ApiTags('Database')
 @Controller('databases')
@@ -113,6 +124,34 @@ export class DatabaseController {
   async update(
     @Param('id') id: string,
       @Body() database: UpdateDatabaseDto,
+  ): Promise<Database> {
+    return await this.service.update(id, database, true);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
+  @Patch(':id')
+  @ApiEndpoint({
+    description: 'Update database instance by id',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Updated database instance\' response',
+        type: Database,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  async modify(
+    @Param('id') id: string,
+      @Body() database: ModifyDatabaseDto,
   ): Promise<Database> {
     return await this.service.update(id, database, true);
   }

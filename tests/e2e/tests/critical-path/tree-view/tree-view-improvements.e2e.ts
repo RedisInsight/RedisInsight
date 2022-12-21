@@ -21,7 +21,7 @@ let keyName2: string;
 let keyNameSingle: string;
 let index: string;
 
-fixture.only`Tree view navigations improvement tests`
+fixture`Tree view navigations improvement tests`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl);
 test

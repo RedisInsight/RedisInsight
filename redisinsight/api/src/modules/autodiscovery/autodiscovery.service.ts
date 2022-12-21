@@ -9,6 +9,7 @@ import config from 'src/utils/config';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { ClientContext } from 'src/common/models';
 
 const SERVER_CONFIG = config.get('server');
 
@@ -74,7 +75,7 @@ export class AutodiscoveryService implements OnModuleInit {
     try {
       const client = await this.redisService.createStandaloneClient(
         endpoint as Database,
-        AppTool.Common,
+        ClientContext.Common,
         false,
         'redisinsight-auto-discovery',
       );

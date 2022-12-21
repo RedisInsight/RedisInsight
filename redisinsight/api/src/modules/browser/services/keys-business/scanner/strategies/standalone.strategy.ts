@@ -72,6 +72,11 @@ export class StandaloneStrategy extends AbstractStrategy {
       node.keys = node.keys.map((name) => ({ name }));
     }
 
+    // workaround for "pika" databases
+    if (!node.total && (node.cursor > 0 || node.keys?.length)) {
+      node.total = null;
+    }
+
     return [node];
   }
 
@@ -86,12 +91,11 @@ export class StandaloneStrategy extends AbstractStrategy {
     // todo: remove settings from here. threshold should be part of query?
     const settings = await this.settingsService.getAppSettings('1');
     while (
-      (node.total > 0 || isNull(node.total))
+      (node.total >= 0 || isNull(node.total))
       && !fullScanned
       && node.keys.length < count
       && (
-        (node.total < settings.scanThreshold && node.cursor)
-        || node.scanned < settings.scanThreshold
+        node.scanned < settings.scanThreshold
       )
     ) {
       let commandArgs = [`${node.cursor}`, 'MATCH', match, 'COUNT', count];

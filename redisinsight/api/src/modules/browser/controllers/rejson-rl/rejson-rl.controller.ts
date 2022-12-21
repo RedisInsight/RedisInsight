@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Param,
   Patch,
   Post,
   UsePipes,
@@ -20,6 +19,8 @@ import {
 } from 'src/modules/browser/dto';
 import { RejsonRlBusinessService } from 'src/modules/browser/services/rejson-rl-business/rejson-rl-business.service';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
+import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('REJSON-RL')
 @Controller('rejson-rl')
@@ -41,15 +42,10 @@ export class RejsonRlController {
     ],
   })
   async getJson(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: GetRejsonRlDto,
   ): Promise<GetRejsonRlResponseDto> {
-    return this.service.getJson(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return this.service.getJson(clientMetadata, dto);
   }
 
   @Post('')
@@ -58,15 +54,10 @@ export class RejsonRlController {
     statusCode: 201,
   })
   async createJson(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: CreateRejsonRlWithExpireDto,
   ): Promise<void> {
-    return this.service.create(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return this.service.create(clientMetadata, dto);
   }
 
   @Patch('/set')
@@ -75,15 +66,10 @@ export class RejsonRlController {
     statusCode: 200,
   })
   async jsonSet(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: ModifyRejsonRlSetDto,
   ): Promise<void> {
-    return this.service.jsonSet(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return this.service.jsonSet(clientMetadata, dto);
   }
 
   @Patch('/arrappend')
@@ -92,15 +78,10 @@ export class RejsonRlController {
     statusCode: 200,
   })
   async arrAppend(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: ModifyRejsonRlArrAppendDto,
   ): Promise<void> {
-    return this.service.arrAppend(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return this.service.arrAppend(clientMetadata, dto);
   }
 
   @Delete('')
@@ -109,14 +90,9 @@ export class RejsonRlController {
     statusCode: 200,
   })
   async remove(
-    @Param('dbInstance') dbInstance: string,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: RemoveRejsonRlDto,
   ): Promise<RemoveRejsonRlResponse> {
-    return this.service.remove(
-      {
-        instanceId: dbInstance,
-      },
-      dto,
-    );
+    return this.service.remove(clientMetadata, dto);
   }
 }

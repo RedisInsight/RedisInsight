@@ -27,6 +27,7 @@ import {
   appContextBrowser,
   setBrowserPanelSizes,
   setLastPageContext,
+  setBrowserBulkActionOpen,
 } from 'uiSrc/slices/app/context'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
@@ -68,6 +69,7 @@ const BrowserPage = () => {
 
   const prevSelectedType = useRef<string>(type)
   const selectedKeyRef = useRef<Nullable<RedisResponseBuffer>>(selectedKey)
+  const isBulkActionsPanelOpenRef = useRef<boolean>(isBulkActionsPanelOpen)
 
   const dispatch = useDispatch()
 
@@ -86,10 +88,15 @@ const BrowserPage = () => {
         dispatch(setBrowserPanelSizes(prevSizes))
         return {}
       })
+      dispatch(setBrowserBulkActionOpen(isBulkActionsPanelOpenRef.current))
       dispatch(setBrowserSelectedKey(selectedKeyRef.current))
       dispatch(setLastPageContext('browser'))
     }
   }, [])
+
+  useEffect(() => {
+    isBulkActionsPanelOpenRef.current = isBulkActionsPanelOpen
+  }, [isBulkActionsPanelOpen])
 
   useEffect(() => {
     selectedKeyRef.current = selectedKey

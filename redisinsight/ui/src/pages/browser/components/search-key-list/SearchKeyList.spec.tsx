@@ -10,7 +10,6 @@ import {
   screen,
 } from 'uiSrc/utils/test-utils'
 import { loadKeys, setPatternSearchMatch } from 'uiSrc/slices/browser/keys'
-import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import SearchKeyList from './SearchKeyList'
 
 let store: typeof mockedStore
@@ -38,7 +37,7 @@ describe('SearchKeyList', () => {
 
     fireEvent.keyDown(screen.getByTestId('search-key'), { key: keys.ENTER })
 
-    const expectedActions = [setPatternSearchMatch(searchTerm), resetBrowserTree(), loadKeys()]
+    const expectedActions = [setPatternSearchMatch(searchTerm), loadKeys()]
 
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions(expectedActions)

@@ -22,7 +22,6 @@ import {
 import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { setBrowserBulkActionOpen } from 'uiSrc/slices/app/context'
 
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
@@ -52,8 +51,6 @@ const BulkActions = (props: Props) => {
 
   const dispatch = useDispatch()
   useEffect(() => {
-    dispatch(setBrowserBulkActionOpen(true))
-
     let matchValue = '*'
     if (search !== '*' && !!search) {
       matchValue = getMatchType(search)
@@ -86,7 +83,6 @@ const BulkActions = (props: Props) => {
   const closePanel = () => {
     onBulkActionsPanel(false)
     dispatch(setBulkActionsInitialState())
-    dispatch(setBrowserBulkActionOpen(false))
 
     onClosePanel()
 

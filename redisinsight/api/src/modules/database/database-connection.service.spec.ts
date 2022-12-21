@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockClientMetadata,
+  mockCommonClientMetadata,
   mockDatabase,
   mockDatabaseAnalytics,
   mockDatabaseInfoProvider,
@@ -19,7 +19,6 @@ import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { AppTool } from 'src/models';
 
 describe('DatabaseConnectionService', () => {
   let service: DatabaseConnectionService;
@@ -62,20 +61,20 @@ describe('DatabaseConnectionService', () => {
 
   describe('connect', () => {
     it('should connect to database', async () => {
-      expect(await service.connect(mockDatabase.id, AppTool.Common)).toEqual(undefined);
+      expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
       expect(redisService.connectToDatabaseInstance).not.toHaveBeenCalled();
     });
   });
 
   describe('getOrCreateClient', () => {
     it('should get existing client', async () => {
-      expect(await service.getOrCreateClient(mockClientMetadata)).toEqual(mockIORedisClient);
+      expect(await service.getOrCreateClient(mockCommonClientMetadata)).toEqual(mockIORedisClient);
       expect(redisService.connectToDatabaseInstance).not.toHaveBeenCalled();
     });
     it('should create new and save it client', async () => {
       redisService.getClientInstance.mockResolvedValue(null);
 
-      expect(await service.getOrCreateClient(mockClientMetadata)).toEqual(mockIORedisClient);
+      expect(await service.getOrCreateClient(mockCommonClientMetadata)).toEqual(mockIORedisClient);
       expect(redisService.connectToDatabaseInstance).toHaveBeenCalled();
       expect(redisService.setClientInstance).toHaveBeenCalled();
     });
@@ -83,11 +82,11 @@ describe('DatabaseConnectionService', () => {
 
   describe('createClient', () => {
     it('should create client for standalone datbaase', async () => {
-      expect(await service.createClient(mockClientMetadata)).toEqual(mockIORedisClient);
+      expect(await service.createClient(mockCommonClientMetadata)).toEqual(mockIORedisClient);
     });
     it('should throw Unauthorized error in case of NOAUTH', async () => {
       redisService.connectToDatabaseInstance.mockRejectedValueOnce(mockRedisNoAuthError);
-      await expect(service.createClient(mockClientMetadata)).rejects.toThrow(UnauthorizedException);
+      await expect(service.createClient(mockCommonClientMetadata)).rejects.toThrow(UnauthorizedException);
       expect(analytics.sendConnectionFailedEvent).toHaveBeenCalledWith(
         mockDatabase,
         new UnauthorizedException(ERROR_MESSAGES.AUTHENTICATION_FAILED()),

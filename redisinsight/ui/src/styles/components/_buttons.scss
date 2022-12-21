@@ -20,7 +20,8 @@
     }
     &:focus:not(:hover),
     &:focus-within:not(:hover) {
-      border: 2px solid var(--euiColorPrimary);
+      border: 1px solid var(--euiColorPrimary);
+      outline: 1px solid var(--euiColorPrimary);
     }
     .euiTextColor--default {
       color: currentColor;
@@ -38,7 +39,8 @@
     }
     &:focus:not(:hover),
     &:focus-within:not(:hover) {
-      border: 2px solid var(--euiColorPrimary);
+      border: 1px solid var(--euiColorPrimary);
+      outline: 1px solid var(--euiColorPrimary);
     }
   }
 }
@@ -54,7 +56,8 @@
       }
       &:focus:not(:hover),
       &:focus-within:not(:hover) {
-        border: 2px solid var(--euiColorPrimary);
+        border: 1px solid var(--euiColorPrimary);
+        outline: 1px solid var(--euiColorPrimary);
       }
     }
   }
@@ -118,6 +121,7 @@
     &:focus-within {
       background-color: var(--buttonWarningHoverColor);
       border-color: var(--buttonWarningHoverColor);
+      outline-color: var(--buttonWarningHoverColor);
     }
   }
 }

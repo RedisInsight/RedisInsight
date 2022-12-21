@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { ApiEndpoints, DEFAULT_SLOWLOG_DURATION_UNIT, DurationUnits } from 'uiSrc/constants'
-import { apiService, getDBConfigStorageField } from 'uiSrc/services'
+import { ApiEndpoints, DurationUnits } from 'uiSrc/constants'
+import { apiService } from 'uiSrc/services'
+import { setSlowLogUnits } from 'uiSrc/slices/app/context'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { StateSlowLog } from 'uiSrc/slices/interfaces/analytics'
-import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
-import { getApiErrorMessage, getUrl, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { SlowLog, SlowLogConfig } from 'apiSrc/modules/slow-log/models'
 
 import { AppDispatch, RootState } from '../store'
@@ -15,7 +15,6 @@ export const initialState: StateSlowLog = {
   error: '',
   data: [],
   lastRefreshTime: null,
-  durationUnit: DurationUnits.microSeconds,
   config: null
 }
 
@@ -29,11 +28,10 @@ const slowLogSlice = createSlice({
     },
     getSlowLogsSuccess: (
       state,
-      { payload: [data, durationUnit] }: PayloadAction<[SlowLog[], DurationUnits]>
+      { payload: data }: PayloadAction<SlowLog[]>
     ) => {
       state.loading = false
       state.data = data
-      state.durationUnit = durationUnit
       state.lastRefreshTime = Date.now()
     },
     getSlowLogsError: (state, { payload }) => {
@@ -56,14 +54,10 @@ const slowLogSlice = createSlice({
     },
     getSlowLogConfigSuccess: (
       state,
-      { payload: [data, durationUnit] }: PayloadAction<[SlowLogConfig, Nullable<DurationUnits> ]>
+      { payload: data }: PayloadAction<SlowLogConfig>
     ) => {
       state.loading = false
       state.config = data
-
-      if (durationUnit) {
-        state.durationUnit = durationUnit
-      }
     },
     getSlowLogConfigError: (state, { payload }) => {
       state.loading = false
@@ -113,13 +107,7 @@ export function fetchSlowLogsAction(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(
-          getSlowLogsSuccess([
-            data,
-            getDBConfigStorageField(instanceId, ConfigDBStorageItem.slowLogDurationUnit)
-              || DEFAULT_SLOWLOG_DURATION_UNIT
-          ])
-        )
+        dispatch(getSlowLogsSuccess(data))
 
         onSuccessAction?.(data)
       }
@@ -183,7 +171,7 @@ export function getSlowLogConfigAction(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(getSlowLogConfigSuccess([data, null]))
+        dispatch(getSlowLogConfigSuccess(data))
 
         onSuccessAction?.()
       }
@@ -218,7 +206,8 @@ export function patchSlowLogConfigAction(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(getSlowLogConfigSuccess([data, durationUnit]))
+        dispatch(getSlowLogConfigSuccess(data))
+        dispatch(setSlowLogUnits(durationUnit))
 
         onSuccessAction?.()
       }

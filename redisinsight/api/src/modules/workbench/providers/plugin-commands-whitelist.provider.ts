@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { filter, get, map } from 'lodash';
 import { pluginBlockingCommands, pluginUnsupportedCommands } from 'src/constants';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class PluginCommandsWhitelistProvider {
@@ -13,24 +14,23 @@ export class PluginCommandsWhitelistProvider {
 
   /**
    * Get cached commands list or determine it and cache
-   * @param instanceId
+   * @param clientMetadata
    */
-  async getWhitelistCommands(
-    instanceId: string,
-  ): Promise<string[]> {
-    return this.databasesCommands.get(instanceId) || this.determineWhitelistCommandsForDatabase(instanceId);
+  async getWhitelistCommands(clientMetadata: ClientMetadata): Promise<string[]> {
+    return this.databasesCommands.get(clientMetadata.databaseId)
+      || this.determineWhitelistCommandsForDatabase(clientMetadata);
   }
 
   /**
    * Get or create Workbench redis client, fetch commands and cache them
-   * @param instanceId
+   * @param clientMetadata
    */
-  async determineWhitelistCommandsForDatabase(instanceId: string): Promise<string[]> {
+  async determineWhitelistCommandsForDatabase(clientMetadata: ClientMetadata): Promise<string[]> {
     // no need to define AppTool since it was set on RedisTool creation. todo: do not forget after refactoring
-    const client = await this.redisTool.getRedisClient({ instanceId });
+    const client = await this.redisTool.getRedisClient(clientMetadata);
 
     const commands = await this.calculateWhiteListCommands(client);
-    this.databasesCommands.set(instanceId, commands);
+    this.databasesCommands.set(clientMetadata.databaseId, commands);
 
     return commands;
   }

@@ -1,11 +1,24 @@
-import { addNewStandaloneDatabase, addNewREClusterDatabase, addNewRECloudDatabase, addOSSClusterDatabase, acceptLicenseTerms, deleteDatabase } from '../../../helpers/database';
+import { t } from 'testcafe';
+import {
+    addNewStandaloneDatabase,
+    addNewREClusterDatabase,
+    addOSSClusterDatabase,
+    acceptLicenseTerms,
+    deleteDatabase,
+    acceptLicenseTermsAndAddRECloudDatabase
+} from '../../../helpers/database';
 import {
     commonUrl,
     ossStandaloneConfig,
     ossClusterConfig,
-    redisEnterpriseClusterConfig
+    redisEnterpriseClusterConfig,
+    cloudDatabaseConfig
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
+import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
+
+const browserPage = new BrowserPage();
+const myRedisDatabasePage = new MyRedisDatabasePage();
 
 fixture `Add database`
     .meta({ type: 'smoke' })
@@ -19,6 +32,12 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user can add Standalone Database', async() => {
         await addNewStandaloneDatabase(ossStandaloneConfig);
+        // Verify that user can see an indicator of databases that are added manually and not opened yet
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await t.click(browserPage.myRedisDbIcon);
+        // Verify that user can't see an indicator of databases that were opened
+        await myRedisDatabasePage.verifyDatabaseStatusIsNotVisible();
     });
 test
     .meta({ rte: rte.reCluster })
@@ -26,17 +45,23 @@ test
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add database from RE Cluster via auto-discover flow', async() => {
         await addNewREClusterDatabase(redisEnterpriseClusterConfig);
+        // Verify that user can see an indicator of databases that are added using autodiscovery and not opened yet
+        // Verify new connection badge for RE cluster
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
     });
 test
-    .meta({ env: env.web, rte: rte.ossCluster})
+    .meta({ env: env.web, rte: rte.ossCluster })
     .after(async() => {
         await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
     })('Verify that user can add OSS Cluster DB', async() => {
         await addOSSClusterDatabase(ossClusterConfig);
+        // Verify new connection badge for OSS cluster
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
     });
-//skiped until the RE Cloud connection is implemented
-test.skip
+
+test
     .meta({ rte: rte.reCloud })('Verify that user can add database from RE Cloud via auto-discover flow', async() => {
-        //TODO: add api keys from env
-        await addNewRECloudDatabase('', '');
+        await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
+        // Verify new connection badge for RE cloud
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
     });

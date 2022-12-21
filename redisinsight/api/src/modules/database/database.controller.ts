@@ -1,22 +1,34 @@
 import { ApiTags } from '@nestjs/swagger';
 import {
   Body,
-  ClassSerializerInterceptor, Controller, Delete, Get, Param, Post, Put, UseInterceptors, UsePipes, ValidationPipe,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
-import { AppTool } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
 import { BuildType } from 'src/modules/server/models/server';
 import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dto';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
+import { ClientMetadataParam } from 'src/common/decorators';
+import { ClientMetadata } from 'src/common/models';
+import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
 
-@ApiTags('Database Instances')
+@ApiTags('Database')
 @Controller('databases')
 export class DatabaseController {
   constructor(
@@ -116,6 +128,34 @@ export class DatabaseController {
     return await this.service.update(id, database, true);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
+  @Patch(':id')
+  @ApiEndpoint({
+    description: 'Update database instance by id',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Updated database instance\' response',
+        type: Database,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  async modify(
+    @Param('id') id: string,
+      @Body() database: ModifyDatabaseDto,
+  ): Promise<Database> {
+    return await this.service.update(id, database, true);
+  }
+
   @Delete('/:id')
   @ApiEndpoint({
     statusCode: 200,
@@ -160,11 +200,10 @@ export class DatabaseController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   async connect(
-    @Param('id') id: string,
+    @ClientMetadataParam({
+      databaseIdParam: 'id',
+    }) clientMetadata: ClientMetadata,
   ): Promise<void> {
-    await this.connectionService.connect(
-      id,
-      AppTool.Common,
-    );
+    await this.connectionService.connect(clientMetadata);
   }
 }

@@ -19,7 +19,6 @@ import {
   formatLongName,
   bufferToString,
   bufferFormatRangeItems,
-  isEqualBuffers,
   Nullable,
 } from 'uiSrc/utils'
 import {
@@ -33,9 +32,7 @@ import {
   fetchKeysMetadata,
   keysDataSelector,
   keysSelector,
-  resetKeysData,
   selectedKeySelector,
-  setLastBatchKeys,
   sourceKeysFetch,
 } from 'uiSrc/slices/browser/keys'
 import {
@@ -126,18 +123,6 @@ const KeyList = forwardRef((props: Props, ref) => {
     rerender({})
   }, [keysState.keys])
 
-  useEffect(() => {
-    if (!selectedKey || !selectedKey?.data) return
-
-    const indexKeyForUpdate = itemsRef.current.findIndex(({ name }) =>
-      isEqualBuffers(name, selectedKey?.data?.name))
-
-    if (indexKeyForUpdate === -1) return
-
-    itemsRef.current[indexKeyForUpdate] = selectedKey.data
-    rerender({})
-  }, [selectedKey])
-
   const cancelAllMetadataRequests = () => {
     controller.current?.abort()
   }
@@ -159,15 +144,25 @@ const KeyList = forwardRef((props: Props, ref) => {
     if (isNotRendered.current) {
       return ''
     }
-    if (searchMode === SearchMode.Redisearch && !selectedIndex) {
-      return NoSelectedIndexText
+
+    if (searchMode === SearchMode.Redisearch) {
+      if (!selectedIndex) {
+        return NoSelectedIndexText
+      }
+
+      if (total === 0) {
+        return NoResultsFoundText
+      }
+
+      if (isSearched) {
+        return keysState.scanned < total ? NoResultsFoundText : FullScanNoResultsFoundText
+      }
     }
+
     if (total === 0) {
       return NoKeysToDisplayText(Pages.workbench(instanceId), onNoKeysLinkClick)
     }
-    if (isSearched && searchMode === SearchMode.Redisearch) {
-      return keysState.scanned < total ? NoResultsFoundText : FullScanNoResultsFoundText
-    }
+
     if (isSearched) {
       return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
     }

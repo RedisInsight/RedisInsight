@@ -17,11 +17,13 @@ import {
   EuiTitle,
   EuiToolTip
 } from '@elastic/eui'
+import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
 import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { getRouterLinkProps } from 'uiSrc/services'
+import { appFeaturePagesHighlightingSelector } from 'uiSrc/slices/app/features-highlighting'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import {
   appElectronInfoSelector,
@@ -53,14 +55,15 @@ const browserPath = `/${PageNames.browser}`
 const pubSubPath = `/${PageNames.pubSub}`
 
 interface INavigations {
-  isActivePage: boolean;
-  tooltipText: string;
-  ariaLabel: string;
-  dataTestId: string;
-  connectedInstanceId?: string;
-  onClick: () => void;
-  getClassName: () => string;
-  getIconType: () => string;
+  isActivePage: boolean
+  pageName: string
+  tooltipText: string
+  ariaLabel: string
+  dataTestId: string
+  connectedInstanceId?: string
+  onClick: () => void
+  getClassName: () => string
+  getIconType: () => string
 }
 
 const NavigationMenu = () => {
@@ -74,6 +77,7 @@ const NavigationMenu = () => {
   const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
   const { isReleaseNotesViewed } = useSelector(appElectronInfoSelector)
   const { server } = useSelector(appInfoSelector)
+  const highlightedPages = useSelector(appFeaturePagesHighlightingSelector)
 
   useEffect(() => {
     setActivePage(`/${last(location.pathname.split('/'))}`)
@@ -93,6 +97,7 @@ const NavigationMenu = () => {
   const privateRoutes: INavigations[] = [
     {
       tooltipText: 'Browser',
+      pageName: PageNames.browser,
       isActivePage: activePage === browserPath,
       ariaLabel: 'Browser page button',
       onClick: () => handleGoPage(Pages.browser(connectedInstanceId)),
@@ -107,6 +112,7 @@ const NavigationMenu = () => {
     },
     {
       tooltipText: 'Workbench',
+      pageName: PageNames.workbench,
       ariaLabel: 'Workbench page button',
       onClick: () => handleGoPage(Pages.workbench(connectedInstanceId)),
       dataTestId: 'workbench-page-btn',
@@ -121,6 +127,7 @@ const NavigationMenu = () => {
     },
     {
       tooltipText: 'Analysis Tools',
+      pageName: PageNames.analytics,
       ariaLabel: 'Analysis Tools',
       onClick: () => handleGoPage(Pages.analytics(connectedInstanceId)),
       dataTestId: 'analytics-page-btn',
@@ -135,6 +142,7 @@ const NavigationMenu = () => {
     },
     {
       tooltipText: 'Pub/Sub',
+      pageName: PageNames.pubSub,
       ariaLabel: 'Pub/Sub page button',
       onClick: () => handleGoPage(Pages.pubSub(connectedInstanceId)),
       dataTestId: 'pub-sub-page-btn',
@@ -152,6 +160,7 @@ const NavigationMenu = () => {
   const publicRoutes: INavigations[] = [
     {
       tooltipText: 'Settings',
+      pageName: PageNames.settings,
       ariaLabel: 'Settings page button',
       onClick: () => handleGoPage(Pages.settings),
       dataTestId: 'settings-page-btn',
@@ -281,7 +290,36 @@ const NavigationMenu = () => {
 
         {connectedInstanceId && (
           privateRoutes.map((nav) => (
-            <EuiToolTip content={nav.tooltipText} position="right" key={nav.tooltipText}>
+            <HighlightedFeature
+              key={nav.tooltipText}
+              isHighlight={!!highlightedPages[nav.pageName]?.length}
+              dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
+              transformOnHover
+            >
+              <EuiToolTip content={nav.tooltipText} position="right">
+                <EuiButtonIcon
+                  className={nav.getClassName()}
+                  iconType={nav.getIconType()}
+                  aria-label={nav.ariaLabel}
+                  onClick={nav.onClick}
+                  data-testid={nav.dataTestId}
+                />
+              </EuiToolTip>
+            </HighlightedFeature>
+          ))
+        )}
+      </div>
+      <div className={styles.bottomContainer}>
+        <NotificationMenu />
+        {HelpMenu()}
+        {publicRoutes.map((nav) => (
+          <HighlightedFeature
+            key={nav.tooltipText}
+            isHighlight={!!highlightedPages[nav.pageName]?.length}
+            dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
+            transformOnHover
+          >
+            <EuiToolTip content={nav.tooltipText} position="right">
               <EuiButtonIcon
                 className={nav.getClassName()}
                 iconType={nav.getIconType()}
@@ -290,22 +328,7 @@ const NavigationMenu = () => {
                 data-testid={nav.dataTestId}
               />
             </EuiToolTip>
-          ))
-        )}
-      </div>
-      <div className={styles.bottomContainer}>
-        <NotificationMenu />
-        {HelpMenu()}
-        {publicRoutes.map((nav) => (
-          <EuiToolTip content={nav.tooltipText} position="right" key={nav.tooltipText}>
-            <EuiButtonIcon
-              className={nav.getClassName()}
-              iconType={nav.getIconType()}
-              aria-label={nav.ariaLabel}
-              onClick={nav.onClick}
-              data-testid={nav.dataTestId}
-            />
-          </EuiToolTip>
+          </HighlightedFeature>
         ))}
         <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
         <Divider

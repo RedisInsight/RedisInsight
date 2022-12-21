@@ -21,9 +21,8 @@ import {
   DURATION_UNITS,
   MINUS_ONE,
 } from 'uiSrc/constants'
+import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
-import { setDBConfigStorageField } from 'uiSrc/services'
 import { patchSlowLogConfigAction, slowLogConfigSelector, slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
 import { errorValidateNegativeInteger, validateNumber } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -40,13 +39,14 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
   const options = DURATION_UNITS
   const { instanceId } = useParams<{ instanceId: string }>()
   const { connectionType } = useSelector(connectedInstanceSelector)
-  const { loading, durationUnit: durationUnitStore } = useSelector(slowLogSelector)
+  const { loading } = useSelector(slowLogSelector)
+  const { slowLogDurationUnit } = useSelector(appContextDbConfig)
   const {
     slowlogMaxLen = DEFAULT_SLOWLOG_MAX_LEN,
     slowlogLogSlowerThan = DEFAULT_SLOWLOG_SLOWER_THAN,
   } = useSelector(slowLogConfigSelector)
 
-  const [durationUnit, setDurationUnit] = useState(durationUnitStore ?? DEFAULT_SLOWLOG_DURATION_UNIT)
+  const [durationUnit, setDurationUnit] = useState(slowLogDurationUnit ?? DEFAULT_SLOWLOG_DURATION_UNIT)
   const [maxLen, setMaxLen] = useState(`${slowlogMaxLen}`)
 
   const [slowerThan, setSlowerThan] = useState(slowlogLogSlowerThan !== MINUS_ONE
@@ -96,8 +96,6 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
   }
 
   const onSuccess = () => {
-    setDBConfigStorageField(instanceId, ConfigDBStorageItem.slowLogDurationUnit, durationUnit)
-
     onRefresh(maxLen ? toNumber(maxLen) : DEFAULT_SLOWLOG_MAX_LEN)
     closePopover()
   }

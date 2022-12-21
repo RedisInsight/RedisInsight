@@ -62,7 +62,7 @@ export async function addNewOSSClusterDatabaseApi(databaseParameters: OSSCluster
 export async function discoverSentinelDatabaseApi(databaseParameters: SentinelParameters, primaryGroupsNumber?: number): Promise<void> {
     let masters = databaseParameters.masters;
     if (primaryGroupsNumber) {
-        masters = databaseParameters.masters.slice(0, primaryGroupsNumber);
+        masters = databaseParameters.masters!.slice(0, primaryGroupsNumber);
     }
     const response = await request(endpoint).post('/redis-sentinel/databases')
         .send({
@@ -126,7 +126,7 @@ export async function getDatabaseByConnectionType(connectionType?: string): Prom
 export async function deleteAllDatabasesApi(): Promise<void> {
     const allDatabases = await getAllDatabases();
     if (allDatabases.length > 0) {
-        const databaseIds = [];
+        const databaseIds: string[] = [];
         for (let i = 0; i < allDatabases.length; i++) {
             const dbData = JSON.parse(JSON.stringify(allDatabases[i]));
             databaseIds.push(dbData.id);
@@ -153,6 +153,20 @@ export async function deleteStandaloneDatabaseApi(databaseParameters: AddNewData
 }
 
 /**
+ * Delete Standalone databases using their names through api
+ * @param databaseNames Databases names
+ */
+export async function deleteStandaloneDatabasesByNamesApi(databaseNames: string[]): Promise<void> {
+    databaseNames.forEach(async databaseName => {
+        const databaseId = await getDatabaseByName(databaseName);
+        await request(endpoint).delete('/databases')
+            .send({ 'ids': [`${databaseId}`] })
+            .set('Accept', 'application/json')
+            .expect(200);
+    });
+}
+
+/**
  * Delete database from OSS Cluster through api
  * @param databaseParameters The database parameters
  */
@@ -169,8 +183,8 @@ export async function deleteOSSClusterDatabaseApi(databaseParameters: OSSCluster
  * @param databaseParameters The database parameters
  */
 export async function deleteAllSentinelDatabasesApi(databaseParameters: SentinelParameters): Promise<void> {
-    for (let i = 0; i < databaseParameters.name.length; i++) {
-        const databaseId = await getDatabaseByName(databaseParameters.name[i]);
+    for (let i = 0; i < databaseParameters.name!.length; i++) {
+        const databaseId = await getDatabaseByName(databaseParameters.name![i]);
         const response = await request(endpoint).delete('/databases')
             .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
         await t.expect(response.status).eql(200, 'Delete Sentinel database request failed');

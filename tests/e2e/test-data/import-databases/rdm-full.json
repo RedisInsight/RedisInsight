@@ -1,0 +1,219 @@
+[
+    {
+        "host": "localhost",
+        "port": 8100,
+		"name": "rdmHost+Port+Name",
+        "result": "success"
+    },
+	{
+        "host": "localhost",
+		"port": 8101,
+		"name": "rdmHost+Port+Name+Username+Password",
+        "username": "rdmUsername",
+        "auth": "rdmAuth",
+        "result": "success"
+    },
+	{
+        "host": "172.30.100.151",
+        "port": 6379,
+		"name": "rdmHost+Port+Name+ClusterTrue",
+		"cluster": true,
+        "result": "success"
+    },
+	{
+        "host": "172.30.100.151",
+        "port": 6379,
+		"name": "rdmHost+Port+Name+ClusterFalse",
+		"cluster": false,
+        "result": "success"
+    },
+	{
+        "host": "localhost",
+        "port": 8102,
+		"name": "rdmHost+Port+Name+Index",
+		"db": 2,
+        "result": "success",
+        "indName": "rdmHost+Port+Name+Index [2]"
+    },
+	{
+        "host": "localhost",
+        "port": 8102,
+		"name": "rdmHost+Port+Name+otherFields",
+        "ssh_port": 22,
+        "timeout_connect": 60000,
+        "timeout_execute": 60000,
+		"other_field": "inv",
+        "result": "success"
+    },
+	{
+        "host": "localhost",
+        "port": 8102,
+		"name": "rdmHost+Port+Name+CaCert",
+		"ssl_ca_cert_path": "/root/certs/ca.crt",
+        "result": "success"
+    },
+	{
+        "host": "localhost",
+        "port": 8102,
+		"name": "rdmHost+Port+Name+clientCert+privateKey",
+		"ssl": true,
+		"ssl_local_cert_path": "/root/certs/client.crt",
+		"ssl_private_key_path": "/root/certs/client.key",
+        "result": "success"
+    },
+	{
+        "host": "localhost",
+        "port": 8102,
+		"name": "rdmHost+Port+Name+CaCert+clientCert+privateKey",
+		"ssl_ca_cert_path": "/root/certs/ca.crt",
+		"ssl_local_cert_path": "/root/certs/client.crt",
+		"ssl_private_key_path": "/root/certs/client.key",
+        "result": "success"
+    },
+	{
+        "host": "localhost",
+        "port": 8102,
+		"name": "rdmHost+Port+Name+CaCert+clientCert+privateKey(notbypath)",
+		"ssl_ca_cert_path": "/root/certs/ca.crt",
+		"ssl_local_cert_path": "/root/certs/client.crt",
+		"ssl_private_key_path": "/root/certs/client.key",
+        "result": "success"
+    },
+	{
+        "host": "172.30.100.103",
+        "port": 6379,
+		"name": "rdmHost+Port+Name+username+pass+CaCert+clientCert+privateKey",
+		"ssl": true,
+		"ssl_ca_cert_path": "/root/certs/ca.crt",
+		"ssl_local_cert_path": "/root/certs/client.crt",
+		"ssl_private_key_path": "/root/certs/client.key",
+		"username": "admin",
+        "auth": "pass",
+        "result": "success"
+    },
+	{
+        "host": "redis-13237.c263.us-east-1-2.ec2.cloud.redislabs.com",
+        "port": 13237,
+		"name": "rdmHost+Port+Name CloudDb",
+        "auth": "fRVdFcJftYnVoJmTCuiAPW6yu9qimXA1",
+        "result": "success"
+    },
+	{
+        "host": "3.85.88.37",
+        "port": 14547,
+		"name": "rdmHost+Port+Name Cluster+CloudDb",
+        "auth": "Admin123!",
+        "result": "success"
+    },
+	{
+        "host": "172.30.100.201",
+        "port": 6379,
+		"name": "rdmHost+Port+Name Sentinel",
+        "auth": "defaultpass",
+        "result": "success"
+    },
+	{
+        "port": 8100,
+		"name": "rdmnoHost",
+        "result": "failed"
+    },
+	{
+        "host": "localhost",
+		"name": "rdmnoPort",
+        "result": "failed"
+    },
+    {
+        "name": "rdmnoHost+noPort",
+        "result": "failed"
+    },
+
+	{
+        "host": "rdmLargeName",
+		"port": "8101",
+		"name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur metus in libero pretium congue. Curabitur eget eleifend nibh, cursus tincidunt lorem. Vivamus magna erat, vestibulum at sem et, bibendum volutpat velit. Cras dapibus lorem quam, at efficitur mi sollicitudin id. Vivamus dapibus nec elit ut tincidunt. Sed porta tempus lorem id iaculis. Vestibulum ut arcu vitae massa dapibus egestas. Suspendisse ante tortor, tristique vel malesuada id, finibus et libero. Nulla suscipit libero.1",
+        "result": "failed"
+    },
+	{
+        "host": "localhost",
+        "port": 65536,
+		"name": "rdmLargePort",
+        "result": "failed"
+    },
+	{
+        "host": "localhost",
+        "port": 8103,
+		"name": "rdmIndexNotNumber",
+		"db": "dsad",
+        "result": "failed"
+    },
+	{
+        "host": "localhost",
+        "port": 8102,
+		"name": "rdmCaCertInvalidBody",
+		"ssl_ca_cert_path": "invalid body",
+        "result": "partial"
+    },
+	{
+        "host": "localhost",
+        "port": 8103,
+		"name": "rdmOnlyClientCert",
+		"ssl_local_cert_path": "/root/certs/client.crt",
+        "result": "partial"
+    },
+	{
+        "host": "localhost",
+        "port": 8103,
+		"name": "rdmOnlyPrivateKey",
+		"ssl_private_key_path": "/root/certs/client.key",
+        "result": "partial"
+    },
+	{
+        "host": "localhost",
+        "port": 8103,
+		"name": "rdmInvalidClientCert",
+		"ssl_local_cert_path": "invalid client cert",
+		"ssl_private_key_path": "/root/certs/client.key",
+        "result": "partial"
+    },
+	{
+        "host": "localhost",
+        "port": 8103,
+		"name": "rdmInvalidPrivateKey",
+		"ssl_local_cert_path": "/root/certs/client.crt",
+		"ssl_private_key_path": "invalid private key",
+        "result": "partial"
+    },
+	    {
+        "auth": "",
+        "db_scan_limit": 21,
+        "host": "127.0.0.1",
+        "keys_pattern": "*1",
+        "lua_keys_loading": true,
+        "name": "rdmInvalidAllCertificates",
+        "namespace_separator": ":3",
+        "port": 8100,
+        "ssh_port": 22,
+        "ssl": false,
+        "ssl_ca_cert_path": "fdsafsadfsad",
+        "ssl_local_cert_path": "fsdfds",
+        "ssl_private_key_path": "fdsafasdf",
+        "timeout_connect": 61000,
+        "timeout_execute": 61000,
+        "result": "partial"
+    },
+	{
+        "host": "localhost",
+        "port": 8103,
+		"name": "rdmCaCertInvalidPath",
+		"ssl_ca_cert_path": "/root/certs/caInvalid.crt",
+        "result": "partial"
+    },
+	{
+        "host": "localhost",
+        "port": 8103,
+		"name": "rdmClientCert+PrivateKeyInvalidPathes",
+		"ssl_local_cert_path": "/root/certs/clientInvalid.crt",
+		"ssl_private_key_path": "/root/certs/clientInvalid.key",
+        "result": "partial"
+    }
+]

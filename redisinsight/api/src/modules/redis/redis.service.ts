@@ -72,14 +72,17 @@ export class RedisService {
 
   public async createClusterClient(
     database: Database,
-    nodes: IRedisClusterNodeAddress[],
+    nodes: IRedisClusterNodeAddress[] = [],
     useRetry: boolean = false,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<Cluster> {
     const config = await this.getRedisConnectionConfig(database);
     return new Promise((resolve, reject) => {
       try {
-        const cluster = new Redis.Cluster(nodes, {
+        const cluster = new Redis.Cluster([{
+          host: database.host,
+          port: database.port,
+        }].concat(nodes), {
           clusterRetryStrategy: useRetry ? this.retryStrategy : () => undefined,
           redisOptions: {
             ...config,
@@ -180,10 +183,32 @@ export class RedisService {
         client = await this.createSentinelClient(database, nodes, tool, true, connectionName);
         break;
       default:
-        client = await this.createStandaloneClient(database, tool, true, connectionName);
+        // AUTO
+        client = await this.createClientAutomatically(database, tool, connectionName);
     }
 
     return client;
+  }
+
+  public async createClientAutomatically(database: Database, tool: ClientContext, connectionName) {
+    // try sentinel connection
+    if (database?.sentinelMaster) {
+      try {
+        return await this.createSentinelClient(database, database.nodes, tool, true, connectionName);
+      } catch (e) {
+        // ignore error
+      }
+    }
+
+    // try cluster connection
+    try {
+      return await this.createClusterClient(database, database.nodes, true, connectionName);
+    } catch (e) {
+      // ignore error
+    }
+
+    // Standalone in any other case
+    return this.createStandaloneClient(database, tool, true, connectionName);
   }
 
   public isClientConnected(client: Redis | Cluster): boolean {

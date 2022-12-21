@@ -178,12 +178,21 @@ const DatabasesListWrapper = ({
       sortable: ({ name }) => name?.toLowerCase(),
       width: '30%',
       render: function InstanceCell(name: string = '', instance: Instance) {
-        const { id, db } = instance
+        const { id, db, new: newStatus = false } = instance
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div
             role="presentation"
           >
+            {newStatus && (
+              <EuiToolTip
+                content="New"
+                position="top"
+                anchorClassName={styles.newStatusAnchor}
+              >
+                <div className={styles.newStatus} data-testid={`database-status-new-${id}`} />
+              </EuiToolTip>
+            )}
             <EuiToolTip
               position="bottom"
               title="Database Alias"
@@ -345,14 +354,16 @@ const DatabasesListWrapper = ({
   const columnVariations = [columnsFull, columnsEditing, columnsTablet]
 
   return (
-    <DatabasesList
-      width={width}
-      editedInstance={editedInstance}
-      dialogIsOpen={dialogIsOpen}
-      columnVariations={columnVariations}
-      onDelete={handleDeleteInstances}
-      onWheel={closePopover}
-    />
+    <div className={styles.container}>
+      <DatabasesList
+        width={width}
+        editedInstance={editedInstance}
+        dialogIsOpen={dialogIsOpen}
+        columnVariations={columnVariations}
+        onDelete={handleDeleteInstances}
+        onWheel={closePopover}
+      />
+    </div>
   )
 }
 

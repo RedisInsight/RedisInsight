@@ -18,6 +18,7 @@ import { AppRedisInstanceEvents } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 import { ClientContext } from 'src/common/models';
+import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
 
 @Injectable()
 export class DatabaseService {
@@ -88,9 +89,10 @@ export class DatabaseService {
     try {
       this.logger.log('Creating new database.');
 
-      const database = await this.repository.create(
-        await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
-      );
+      const database = await this.repository.create({
+        ...await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
+        new: true,
+      });
 
       // todo: clarify if we need this and if yes - rethink implementation
       try {
@@ -117,7 +119,7 @@ export class DatabaseService {
   // todo: remove manualUpdate flag logic
   public async update(
     id: string,
-    dto: UpdateDatabaseDto,
+    dto: UpdateDatabaseDto | ModifyDatabaseDto,
     manualUpdate: boolean = true,
   ): Promise<Database> {
     this.logger.log(`Updating database: ${id}`);

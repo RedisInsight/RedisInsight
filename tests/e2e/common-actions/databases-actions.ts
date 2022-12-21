@@ -1,4 +1,5 @@
 import { t } from 'testcafe';
+import * as fs from 'fs';
 import { MyRedisDatabasePage } from '../pageObjects';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -26,6 +27,14 @@ export class DatabasesActions {
             .click(myRedisDatabasePage.submitImportBtn)
             .expect(myRedisDatabasePage.importDialogTitle.textContent).eql('Import Results', `Databases from ${fileParameters.type} not imported`);
     }
+
+    /**
+     * Parse json for importing databases
+     * @param path The path to json file
+     */
+    parseDbJsonByPath(path: string): any[] {
+        return JSON.parse(fs.readFileSync(path, 'utf-8'));
+    }
 }
 
 /**
@@ -37,6 +46,7 @@ export class DatabasesActions {
  * @param password The password of db
  * @param connectionType The connection type of db
  * @param fileName The file name
+ * @param parsedJson The parsed json content
  */
 export type ImportDatabaseParameters = {
     path: string,
@@ -45,5 +55,6 @@ export type ImportDatabaseParameters = {
     userName?: string,
     password?: string,
     connectionType?: string,
-    fileName?: string
+    fileName?: string,
+    parsedJson?: any
 };

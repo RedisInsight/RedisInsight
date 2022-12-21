@@ -44,10 +44,14 @@ export class AddRedisDatabasePage {
     primaryGroupNameInput = Selector('[data-testid=primary-group]');
     masterGroupPassword = Selector('[data-testid=sentinel-master-password]');
     connectionType = Selector('[data-testid=connection-type]');
+    sentinelForm = Selector('[data-testid=form]');
     //Links
     buildFromSource = Selector('a').withExactText('Build from source');
     buildFromDocker = Selector('a').withExactText('Docker');
     buildFromHomebrew = Selector('a').withExactText('Homebrew');
+    // DROPDOWNS
+    caCertField = Selector('[data-testid=select-ca-cert]', {timeout: 500});
+    clientCertField = Selector('[data-testid=select-cert]', {timeout: 500});
 
     /**
      * Adding a new redis database
@@ -61,7 +65,7 @@ export class AddRedisDatabasePage {
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
             .typeText(this.portInput, parameters.port, { replace: true, paste: true })
-            .typeText(this.databaseAliasInput, parameters.databaseName, { replace: true, paste: true });
+            .typeText(this.databaseAliasInput, parameters.databaseName!, { replace: true, paste: true });
         if (!!parameters.databaseUsername) {
             await t.typeText(this.usernameInput, parameters.databaseUsername, { replace: true, paste: true });
         }
@@ -82,7 +86,7 @@ export class AddRedisDatabasePage {
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
             .typeText(this.portInput, parameters.port, { replace: true, paste: true })
-            .typeText(this.databaseAliasInput, parameters.databaseName, { replace: true, paste: true });
+            .typeText(this.databaseAliasInput, parameters.databaseName!, { replace: true, paste: true });
         if (!!parameters.databaseUsername) {
             await t.typeText(this.usernameInput, parameters.databaseUsername, { replace: true, paste: true });
         }
@@ -128,8 +132,8 @@ export class AddRedisDatabasePage {
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
             .typeText(this.portInput, parameters.port, { replace: true, paste: true })
-            .typeText(this.usernameInput, parameters.databaseUsername, { replace: true, paste: true })
-            .typeText(this.passwordInput, parameters.databasePassword, { replace: true, paste: true });
+            .typeText(this.usernameInput, parameters.databaseUsername!, { replace: true, paste: true })
+            .typeText(this.passwordInput, parameters.databasePassword!, { replace: true, paste: true });
     }
 
     /**

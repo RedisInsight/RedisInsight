@@ -7,6 +7,8 @@ export class MyRedisDatabasePage {
     //*Target any element/component via data-id, if possible!
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
+    // CSS Selectors
+    cssNumberOfDbs = '[data-testid=number-of-dbs]';
     //BUTTONS
     settingsButton = Selector('[data-testid=settings-page-btn]');
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
@@ -15,7 +17,7 @@ export class MyRedisDatabasePage {
     githubButton = Selector('[data-testid=github-repo-icon]');
     browserButton = Selector('[data-testid=browser-page-btn]');
     pubSubButton = Selector('[data-testid=pub-sub-page-btn]');
-    myRedisDBButton = Selector('[data-test-subj=home-page-btn]');
+    myRedisDBButton = Selector('[data-test-subj=home-page-btn]', { timeout: 1000 });
     deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
     confirmDeleteButton = Selector('[data-testid^=delete-instance-]').withExactText('Remove');
     toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
@@ -30,6 +32,11 @@ export class MyRedisDatabasePage {
     sortByHostAndPort = Selector('span').withAttribute('title', 'Host:Port');
     sortByConnectionType = Selector('span').withAttribute('title', 'Connection Type');
     sortByLastConnection = Selector('span').withAttribute('title', 'Last connection');
+    importDatabasesBtn = Selector('[data-testid=import-dbs-btn]');
+    submitImportBtn = Selector('[data-testid=submit-btn]');
+    closeDialogBtn = Selector('[aria-label="Closes this modal window"]');
+    okDialogBtn = Selector('[data-testid=ok-btn]');
+    removeImportedFileBtn = Selector('[aria-label="Clear selected files"]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     //ICONS
@@ -46,6 +53,7 @@ export class MyRedisDatabasePage {
     //TEXT INPUTS (also referred to as 'Text fields')
     aliasInput = Selector('[data-testid=alias-input]');
     searchInput = Selector('[data-testid=search-database-list]');
+    importDatabaseInput = Selector('[data-testid=import-databases-input-file]');
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');
@@ -55,6 +63,14 @@ export class MyRedisDatabasePage {
     hostPort = Selector('[data-testid=host-port]');
     noResultsFoundMessage = Selector('div').withExactText('No results found');
     noResultsFoundText = Selector('div').withExactText('No databases matched your search. Try reducing the criteria.');
+    failedImportMessage = Selector('[data-testid=result-failed]');
+    successImportMessage = Selector('[data-testid=result-success]');
+    importDialogTitle = Selector('[data-testid=import-dbs-dialog-title]');
+    // DIALOG
+    importDbDialog = Selector('[data-testid=import-dbs-dialog]');
+    successResultsAccordion = Selector('[data-testid^=success-results-]');
+    partialResultsAccordion = Selector('[data-testid^=partial-results-]');
+    failedResultsAccordion = Selector('[data-testid^=failed-results-]');
 
     /**
      * Click on the database by name
@@ -167,4 +183,69 @@ export class MyRedisDatabasePage {
             await t.expect(actualList[k].trim()).eql(sortedList[k].trim());
         }
     }
+
+    /**
+     * Verify database status is visible
+    */
+    async verifyDatabaseStatusIsVisible(): Promise<void> {
+        await t.expect(Selector('div').withAttribute('data-testid', /database-status-new-*/).visible)
+            .ok('Database status is not visible');
+    }
+
+    /**
+    * Verify database status is not visible
+    */
+    async verifyDatabaseStatusIsNotVisible(): Promise<void> {
+        await t.expect(Selector('div').withAttribute('data-testid', /database-status-new-*/).visible)
+            .notOk('Database status is still visible');
+    }
+
+    /**
+    * Filter array with database objects by result field and return names
+     * @param listOfDb Actual databases list
+     * @param result The expected import result
+    */
+    getDatabaseNamesFromListByResult(listOfDb: DatabasesForImport, result: string): string[] {
+        return listOfDb.filter(element => element.result === result).map(item => item.name!);
+    }
 }
+
+/**
+ * Database for import parameters
+ * @param host Host of connection
+ * @param port Port of connection
+ * @param name The name of connection
+ * @param result The expected result of connection import
+ * @param username The username of connection
+ * @param auth Password of connection
+ * @param cluster Is the connection has cluster
+ * @param indName The name of coonection with index
+ * @param db The index of connection
+ * @param ssh_port The ssh port of connection
+ * @param timeout_connect The connect timeout of connection
+ * @param timeout_execute The execute timeout of connection
+ * @param other_field The test field
+ * @param ssl_ca_cert_path The CA certificate of connection by path
+ * @param ssl_local_cert_path The Client certificate of connection by path
+ * @param ssl_private_key_path The Client key of connection by path
+ * @param ssl Is the connection have ssl
+ */
+export type DatabasesForImport = {
+    host?: string,
+    port?: number | string,
+    name?: string,
+    result?: string,
+    username?: string,
+    auth?: string,
+    cluster?: boolean | string,
+    indName?: string,
+    db?: number,
+    ssh_port?: number,
+    timeout_connect?: number,
+    timeout_execute?: number,
+    other_field?: string,
+    ssl_ca_cert_path?: string,
+    ssl_local_cert_path?: string,
+    ssl_private_key_path?: string,
+    ssl?: boolean
+}[];

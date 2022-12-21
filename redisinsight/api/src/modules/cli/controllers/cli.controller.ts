@@ -16,11 +16,12 @@ import {
   SendClusterCommandDto,
   SendCommandDto,
   SendCommandResponse,
-  CreateCliClientDto,
 } from 'src/modules/cli/dto/cli.dto';
 import { CliBusinessService } from 'src/modules/cli/services/cli-business/cli-business.service';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiCLIParams } from 'src/modules/cli/decorators/api-cli-params.decorator';
+import { CliClientMetadata } from 'src/modules/cli/decorators/cli-client-metadata.decorator';
+import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('CLI')
 @Controller('cli')
@@ -42,10 +43,9 @@ export class CliController {
     ],
   })
   async getClient(
-    @Param('dbInstance') dbInstance: string,
-      @Body() dto: CreateCliClientDto,
+    @CliClientMetadata() clientMetadata: ClientMetadata,
   ): Promise<CreateCliClientResponse> {
-    return this.service.getClient(dbInstance, dto.namespace);
+    return this.service.getClient(clientMetadata);
   }
 
   @Post('/:uuid/send-command')
@@ -62,17 +62,10 @@ export class CliController {
     ],
   })
   async sendCommand(
-    @Param('dbInstance') dbInstance: string,
-      @Param('uuid') uuid: string,
+    @CliClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: SendCommandDto,
   ): Promise<SendCommandResponse> {
-    return this.service.sendCommand(
-      {
-        instanceId: dbInstance,
-        uuid,
-      },
-      dto,
-    );
+    return this.service.sendCommand(clientMetadata, dto);
   }
 
   @Post('/:uuid/send-cluster-command')
@@ -90,17 +83,10 @@ export class CliController {
     ],
   })
   async sendClusterCommand(
-    @Param('dbInstance') dbInstance: string,
-      @Param('uuid') uuid: string,
+    @CliClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: SendClusterCommandDto,
   ): Promise<SendClusterCommandResponse[]> {
-    return this.service.sendClusterCommand(
-      {
-        instanceId: dbInstance,
-        uuid,
-      },
-      dto,
-    );
+    return this.service.sendClusterCommand(clientMetadata, dto);
   }
 
   @Delete('/:uuid')
@@ -117,10 +103,9 @@ export class CliController {
     ],
   })
   async deleteClient(
-    @Param('dbInstance') dbInstance: string,
-      @Param('uuid') uuid: string,
+    @CliClientMetadata() clientMetadata: ClientMetadata,
   ): Promise<DeleteClientResponse> {
-    return this.service.deleteClient(dbInstance, uuid);
+    return this.service.deleteClient(clientMetadata);
   }
 
   @Patch('/:uuid')
@@ -130,10 +115,8 @@ export class CliController {
     statusCode: 200,
   })
   async reCreateClient(
-    @Param('dbInstance') dbInstance: string,
-      @Param('uuid') uuid: string,
-      @Body() dto: CreateCliClientDto,
+    @CliClientMetadata() clientMetadata: ClientMetadata,
   ): Promise<CreateCliClientResponse> {
-    return this.service.reCreateClient(dbInstance, uuid, dto.namespace);
+    return this.service.reCreateClient(clientMetadata);
   }
 }

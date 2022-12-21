@@ -2,8 +2,7 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
-import { setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
-import { localStorageService } from 'uiSrc/services'
+import { resetBrowserTree, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
 import {
   cleanup,
   clearStoreActions,
@@ -57,37 +56,6 @@ describe('KeyTreeDelimiter', () => {
     expect(screen.getByTestId(DELIMITER_INPUT)).toBeInTheDocument()
   })
 
-  it('"setBrowserTreeDelimiter" should be called with value for LocalStorage after render', async () => {
-    jest.useFakeTimers()
-    const localStorageValue = 'test'
-    localStorageService.get = jest.fn().mockReturnValue(localStorageValue)
-
-    render(<KeyTreeDelimiter {...instance(mockedProps)} />)
-
-    jest.advanceTimersByTime(0)
-
-    const expectedActions = [setBrowserTreeDelimiter(localStorageValue)]
-
-    expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions(expectedActions)
-    )
-  })
-
-  it('"setBrowserTreeDelimiter" should be called with DEFAULT_DELIMITER after render', async () => {
-    jest.useFakeTimers()
-    const localStorageValue = ''
-    localStorageService.get = jest.fn().mockReturnValue(localStorageValue)
-    render(<KeyTreeDelimiter {...instance(mockedProps)} />)
-
-    jest.advanceTimersByTime(0)
-
-    const expectedActions = [setBrowserTreeDelimiter(DEFAULT_DELIMITER)]
-
-    expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions(expectedActions)
-    )
-  })
-
   it('"setBrowserTreeDelimiter" should be called after Apply change delimiter', async () => {
     const value = 'val'
     render(<KeyTreeDelimiter {...instance(mockedProps)} />)
@@ -104,6 +72,7 @@ describe('KeyTreeDelimiter', () => {
 
     const expectedActions = [
       setBrowserTreeDelimiter(value),
+      resetBrowserTree(),
     ]
 
     expect(clearStoreActions(store.getActions())).toEqual(
@@ -127,6 +96,7 @@ describe('KeyTreeDelimiter', () => {
 
     const expectedActions = [
       setBrowserTreeDelimiter(DEFAULT_DELIMITER),
+      resetBrowserTree(),
     ]
 
     expect(clearStoreActions(store.getActions())).toEqual(

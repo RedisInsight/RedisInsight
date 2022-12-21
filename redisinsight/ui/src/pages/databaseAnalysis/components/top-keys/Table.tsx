@@ -7,7 +7,7 @@ import {
   PropertySort
 } from '@elastic/eui'
 import cx from 'classnames'
-import { isNull } from 'lodash'
+import { isNil } from 'lodash'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
@@ -138,6 +138,13 @@ const Table = (props: Props) => {
       sortable: true,
       align: 'left',
       render: (value: number, { name }) => {
+        if (isNil(value)) {
+          return (
+            <EuiTextColor color="subdued" style={{ maxWidth: '100%' }} data-testid={`ttl-empty-${value}`}>
+              -
+            </EuiTextColor>
+          )
+        }
         if (value === -1) {
           return (
             <EuiTextColor color="subdued" data-testid={`ttl-no-limit-${name}`}>
@@ -174,6 +181,13 @@ const Table = (props: Props) => {
       sortable: true,
       align: 'right',
       render: (value: number, { type }) => {
+        if (isNil(value)) {
+          return (
+            <EuiTextColor color="subdued" style={{ maxWidth: '100%' }} data-testid={`size-empty-${value}`}>
+              -
+            </EuiTextColor>
+          )
+        }
         const [number, size] = formatBytes(value, 3, true)
         const isHighlight = isBigKey(type, HighlightType.Memory, value)
         return (
@@ -207,7 +221,7 @@ const Table = (props: Props) => {
       sortable: ({ length }) => length ?? -1,
       align: 'right',
       render: (value: number, { name, type }) => {
-        if (isNull(value)) {
+        if (isNil(value)) {
           return (
             <EuiTextColor color="subdued" style={{ maxWidth: '100%' }} data-testid={`length-empty-${name}`}>
               -

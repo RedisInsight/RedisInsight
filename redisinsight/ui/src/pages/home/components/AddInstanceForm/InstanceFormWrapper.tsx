@@ -54,9 +54,10 @@ export enum TitleDatabaseText {
 }
 
 const getInitialValues = (editedInstance: Nullable<Instance>) => ({
-  host: editedInstance?.host ?? '',
-  port: editedInstance?.port?.toString() ?? '',
-  name: editedInstance?.name ?? '',
+  // undefined - to show default value, empty string - for existing db
+  host: editedInstance?.host ?? (editedInstance ? '' : undefined),
+  port: editedInstance?.port?.toString() ?? (editedInstance ? '' : undefined),
+  name: editedInstance?.name ?? (editedInstance ? '' : undefined),
   username: editedInstance?.username ?? '',
   password: editedInstance?.password ?? '',
   tls: !!editedInstance?.tls ?? false,

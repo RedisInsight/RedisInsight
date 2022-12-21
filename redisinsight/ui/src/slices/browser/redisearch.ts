@@ -183,6 +183,20 @@ const redisearchSlice = createSlice({
         keys,
       }
     },
+
+    editRedisearchKeyTTLFromList: (state, { payload: [key, ttl] }: PayloadAction<[RedisResponseBuffer, number]>) => {
+      const keys = state.data.keys.map((keyData) => {
+        if (isEqualBuffers(keyData.name, key)) {
+          keyData.ttl = ttl
+        }
+        return keyData
+      })
+
+      state.data = {
+        ...state.data,
+        keys,
+      }
+    },
   },
 })
 
@@ -207,6 +221,7 @@ export const {
   resetRedisearchKeysData,
   deleteRedisearchKeyFromList,
   editRedisearchKeyFromList,
+  editRedisearchKeyTTLFromList,
 } = redisearchSlice.actions
 
 // Selectors

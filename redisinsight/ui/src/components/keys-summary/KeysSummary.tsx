@@ -47,7 +47,7 @@ const KeysSummary = (props: Props) => {
                   <b>
                     {'Results: '}
                     <span data-testid="keys-number-of-results">{numberWithSpaces(resultsLength)}</span>
-                    {` key${resultsLength !== 1 && 's'}. `}
+                    {` key${resultsLength !== 1 ? 's' : ''}. `}
                   </b>
                   <EuiTextColor color="subdued">
                     {'Scanned '}

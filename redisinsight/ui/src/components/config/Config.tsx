@@ -1,6 +1,11 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
+import { BrowserStorageItem } from 'uiSrc/constants'
+import { BuildType } from 'uiSrc/constants/env'
+import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
+import { localStorageService } from 'uiSrc/services'
+import { setFeaturesToHighlight } from 'uiSrc/slices/app/features-highlighting'
 import { fetchNotificationsAction } from 'uiSrc/slices/app/notifications'
 
 import {
@@ -61,7 +66,35 @@ const Config = () => {
         dispatch(setAnalyticsIdentified(true))
       })()
     }
+
+    featuresHighlight()
   }, [serverInfo, config])
+
+  const featuresHighlight = () => {
+    if (serverInfo?.buildType === BuildType.Electron && config) {
+      // new user, set all features as viewed
+      if (!config.agreements) {
+        updateHighlightingFeatures({ version: serverInfo.appVersion, features: [] })
+        return
+      }
+
+      const userFeatures = localStorageService.get(BrowserStorageItem.featuresHighlighting)
+
+      // existing user with the same version of app, get not viewed features from LS
+      if (userFeatures?.version === serverInfo.appVersion) {
+        dispatch(setFeaturesToHighlight(userFeatures))
+        return
+      }
+
+      // existing user, no any new features viewed (after application update e.g.)
+      updateHighlightingFeatures({ version: serverInfo.appVersion, features: Object.keys(BUILD_FEATURES) })
+    }
+  }
+
+  const updateHighlightingFeatures = (data: { version: string, features: string[] }) => {
+    dispatch(setFeaturesToHighlight(data))
+    localStorageService.set(BrowserStorageItem.featuresHighlighting, data)
+  }
 
   const checkSettingsToShowPopup = () => {
     const specConsents = spec?.agreements

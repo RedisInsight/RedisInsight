@@ -3,11 +3,11 @@ import {
 } from '@nestjs/common';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
-import { AppTool } from 'src/models';
 import { Socket } from 'socket.io';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { DeleteBulkActionSimpleRunner } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { ClientContext } from 'src/common/models';
 
 @Injectable()
 export class BulkActionsProvider {
@@ -33,9 +33,11 @@ export class BulkActionsProvider {
 
     this.bulkActions.set(dto.id, bulkAction);
 
+    // todo: add multi user support
     const client = await this.databaseConnectionService.getOrCreateClient({
+      session: undefined,
       databaseId: dto.databaseId,
-      namespace: AppTool.Common,
+      context: ClientContext.Common,
     });
 
     await bulkAction.prepare(client, BulkActionsProvider.getSimpleRunnerClass(dto));

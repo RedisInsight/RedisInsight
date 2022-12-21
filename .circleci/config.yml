@@ -511,7 +511,13 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            sudo apt-get update -y && sudo apt-get install -y rpm
+            sudo apt-get update -y && sudo apt-get install -y rpm flatpak flatpak-builder ca-certificates
+            flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+            flatpak install flathub --no-deps --arch x86_64 --assumeyes \
+            runtime/org.freedesktop.Sdk/x86_64/20.08 \
+            runtime/org.freedesktop.Platform/x86_64/20.08 \
+            org.electronjs.Electron2.BaseApp/x86_64/20.08
+
             yarn --cwd redisinsight/api/ install
             yarn install
             yarn build:statics
@@ -554,6 +560,8 @@ jobs:
             - release/RedisInsight*.deb
             - release/RedisInsight*.rpm
             - release/RedisInsight*.AppImage
+            - release/RedisInsight*.flatpak
+            - release/RedisInsight*.snap
             - release/*-linux.yml
             - release/redisstack
   macosx:

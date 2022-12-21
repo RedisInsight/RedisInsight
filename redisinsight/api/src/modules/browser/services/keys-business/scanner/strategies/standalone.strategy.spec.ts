@@ -229,8 +229,17 @@ describe('Standalone Scanner Strategy', () => {
       ]);
       expect(strategy.getKeysInfo).toHaveBeenCalledTimes(0);
     });
-    it('should not call scan when total is 0', async () => {
-      jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse_3);
+    it('should call scan N times until threshold exceeds (even when total 0)', async () => {
+      jest.spyOn(Utils, 'getTotal').mockResolvedValue(0);
+
+      when(browserTool.execCommand)
+        .calledWith(
+          mockBrowserClientMetadata,
+          BrowserToolKeysCommands.Scan,
+          expect.anything(),
+          null,
+        )
+        .mockResolvedValue(['1', []]);
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
 
@@ -239,10 +248,16 @@ describe('Standalone Scanner Strategy', () => {
       expect(result).toEqual([
         {
           ...mockNodeEmptyResult,
+          cursor: 1,
+          total: null,
+          scanned:
+            Math.trunc(REDIS_SCAN_CONFIG.countThreshold / getKeysDto.count)
+            * getKeysDto.count
+            + getKeysDto.count,
+          keys: [],
         },
       ]);
-      expect(browserTool.execCommand).toBeCalledTimes(0);
-      expect(strategy.getKeysInfo).toBeCalledTimes(0);
+      expect(strategy.getKeysInfo).toHaveBeenCalledTimes(0);
     });
     it('should call scan with required args', async () => {
       jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse_3);

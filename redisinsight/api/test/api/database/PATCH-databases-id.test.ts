@@ -13,7 +13,7 @@ import { databaseSchema } from './constants';
 
 const { request, server, localDb, constants, rte } = deps;
 
-const endpoint = (id = constants.TEST_INSTANCE_ID) => request(server).put(`/${constants.API.DATABASES}/${id}`);
+const endpoint = (id = constants.TEST_INSTANCE_ID) => request(server).patch(`/${constants.API.DATABASES}/${id}`);
 
 // input data schema
 const dataSchema = Joi.object({
@@ -91,7 +91,27 @@ describe(`PUT /databases/:id`, () => {
     ].map(mainCheckFn);
   });
   describe('Common', () => {
+    const newName = constants.getRandomString();
+
     [
+      {
+        name: 'Should change name (only) for existing database',
+        data: {
+          name: newName,
+        },
+        responseSchema,
+        before: async () => {
+          oldDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID);
+          expect(oldDatabase.name).to.not.eq(newName);
+        },
+        responseBody: {
+          name: newName,
+        },
+        after: async () => {
+          newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID);
+          expect(newDatabase.name).to.eq(newName);
+        },
+      },
       {
         name: 'Should return 503 error if incorrect connection data provided',
         data: {

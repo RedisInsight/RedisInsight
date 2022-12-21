@@ -486,7 +486,7 @@ export function changeInstanceAliasAction(
       const { CancelToken } = axios
       sourceInstance = CancelToken.source()
 
-      const { status } = await apiService.put(
+      const { status } = await apiService.patch(
         `${ApiEndpoints.DATABASES}/${id}`,
         { name },
         { cancelToken: sourceInstance.token }

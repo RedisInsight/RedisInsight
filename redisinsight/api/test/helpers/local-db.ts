@@ -292,7 +292,8 @@ export const createDatabaseInstances = async () => {
       host: 'localhost',
       port: 3679,
       connectionType: 'STANDALONE',
-      ...instance
+      ...instance,
+      modules: '[]',
     });
   }
 }

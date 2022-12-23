@@ -219,7 +219,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         responseSchema,
         before: async () => {
           const NUMBERS_OF_HASH_FIELDS = 5001;
-          await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
+          await rte.data.sendCommand(NUMBERS_OF_HASH_FIELDS, true);
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.include.deep.members([
@@ -413,6 +413,25 @@ describe('POST /databases/:instanceId/analysis', () => {
         },
         after: async () => {
           await rte.data.sendCommand('script', ['flush']);
+          expect(await repository.count()).to.eq(5);
+        }
+      },
+      {
+        name: 'Should create new database analysis with RTS recommendation',
+        data: {
+          delimiter: '-',
+        },
+        statusCode: 201,
+        responseSchema,
+        before: async () => {
+          await rte.data.sendCommand('zadd', [constants.TEST_ZSET_TIMESTAMP_KEY, constants.TEST_ZSET_TIMESTAMP_MEMBER, constants.TEST_ZSET_TIMESTAMP_SCORE]);
+        },
+        checkFn: async ({ body }) => {
+          expect(body.recommendations).to.include.deep.members([
+            constants.TEST_RTS_RECOMMENDATION,
+          ]);
+        },
+        after: async () => {
           expect(await repository.count()).to.eq(5);
         }
       },

@@ -13,4 +13,5 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   COMPRESSION_FOR_LIST: 'compressionForList',
   ZSET_HASHTABLE_TO_ZIPLIST: 'zSetHashtableToZiplist',
   SET_PASSWORD: 'setPassword',
+  RTS: 'RTS',
 });

@@ -49,6 +49,7 @@ export class RecommendationService {
         await this.recommendationProvider.determineBigSetsRecommendation(keys),
         await this.recommendationProvider.determineConnectionClientsRecommendation(client),
         await this.recommendationProvider.determineSetPasswordRecommendation(client),
+        await this.recommendationProvider.determineRTSRecommendation(client, keys),
       ]));
   }
 }

@@ -219,7 +219,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         responseSchema,
         before: async () => {
           const NUMBERS_OF_HASH_FIELDS = 5001;
-          await rte.data.sendCommand(NUMBERS_OF_HASH_FIELDS, true);
+          await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.include.deep.members([

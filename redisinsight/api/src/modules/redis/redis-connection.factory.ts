@@ -157,7 +157,7 @@ export class RedisConnectionFactory {
         const connection = new Redis({
           ...config,
           // cover cases when we are connecting to sentinel as to standalone to discover master groups
-          db: config.db >= 0 && !database.sentinelMaster ? config.db : 0,
+          db: config.db > 0 && !database.sentinelMaster ? config.db : 0,
         });
         connection.on('error', (e): void => {
           this.logger.error('Failed connection to the redis database.', e);

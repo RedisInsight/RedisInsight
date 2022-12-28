@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import Redis, { Cluster } from 'ioredis';
 import {
-  isMatch, omit,
+  isMatch, omit, isNumber, pick,
 } from 'lodash';
 import apiConfig from 'src/utils/config';
 import { ClientMetadata } from 'src/common/models';
@@ -48,7 +48,11 @@ export class RedisService {
     if (found) {
       found.lastTimeUsed = Date.now();
     }
-    this.syncClients();
+
+    console.log('___ getting client instance: ID', RedisService.generateId(clientMetadata))
+    console.log('___ getting client instance: all clients', [...this.clients.values()].map((v) => pick(v, 'id')))
+
+    // this.syncClients();
     return found;
   }
 
@@ -71,6 +75,9 @@ export class RedisService {
     }
 
     this.clients.set(id, clientInstance);
+
+    console.log('___ set client instance: ID', RedisService.generateId(clientMetadata))
+    console.log('___ set client instance: all clients', [...this.clients.values()].map((v) => pick(v, 'id')))
 
     return 1;
   }
@@ -128,7 +135,7 @@ export class RedisService {
       cm.databaseId,
       cm.context,
       cm.uniqueId || empty,
-      cm.db || empty,
+      isNumber(cm.db) ? cm.db : empty,
     ].join(separator);
 
     // const uId = [

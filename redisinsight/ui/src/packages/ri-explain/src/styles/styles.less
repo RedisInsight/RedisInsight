@@ -1,0 +1,214 @@
+@import "_dark_theme.less";
+@import "_light_theme.less";
+
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+.theme_DARK {
+  --info-background: #20222B;
+  --info-color: white;
+  --svg-background: #010101;
+  --tooltip-background: #3E4B5E;
+
+  --node-border-color: #3D3D3D;
+  --node-border-shadow: #17336952;
+  --node-background: #212021;
+  --edge-background: #6B6B6B;
+  --text-color: #DFE5EF;
+}
+
+.theme_LIGHT {
+  --info-background: white;
+  --info-color: black;
+  --svg-background: #FFFFFF;
+  --tooltip-background: white;
+
+  --node-border-color: #E4EAF2;
+  --node-border-shadow: #17336926;
+  --node-background: #FFF;
+  --edge-background: #8992B3;
+  --text-color: #173369;
+}
+
+
+* div,
+* span {
+  font-family: 'Graphik', sans-serif !important;
+}
+
+.euiPagination__list {
+  list-style: none;
+  padding-inline-start: 0px;
+}
+
+
+.responseFail {
+  color: #e06c75;
+  padding: 12px !important;
+  font-family: monospace !important;
+}
+
+.responseInfo {
+  color: var(--info-color);
+  padding: 12px !important;
+  font-family: monospace !important;
+}
+
+.euiToolTip {
+  color: var(--info-color) !important;
+  background-color: var(--tooltip-background) !important;
+  font-size: 12px !important;
+}
+
+.euiToolTip__arrow {
+  background-color: var(--tooltip-background) !important;
+}
+
+.ExplainContainer {
+  width: 240px;
+  min-height: 42px;
+
+  box-shadow: 0px 3px 12px var(--node-border-shadow);
+  border: 1px solid var(--node-border-color) !important;
+  border-radius: 4px;
+  opacity: 1;
+
+  padding: 12px 18px 12px 18px !important;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
+  background-color: var(--node-background);
+
+  .Main {
+    // height: 42px;
+    font-size: 13px;
+    color: var(--text-color);
+
+    .Info {
+        display: flex;
+        justify-content: space-between;
+        .Type {
+            color: #CE915B
+        }
+    }
+
+  }
+
+  .Footer{
+    height: 24px;
+    font-size: 12px;
+    padding-top: 6px;
+    color: #B5B6C0;
+  }
+}
+
+
+.NodeContainer {
+  width: 320px;
+  height: 114px;
+
+  box-shadow: 0px 3px 12px #17336952;
+  border: 1px solid #3D3D3D !important;
+  border-radius: 4px;
+  opacity: 1;
+
+  padding: 12px 18px 12px 18px !important;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.NodeHeader {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 13px;
+
+  .NodeHeaderInfo {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .NodeHeaderMetadata{
+    display: flex;
+    justify-content: space-between;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    .MetadataSnippet {
+      font-family: monospace !important;
+    }
+
+    .MetadataCount {
+      display: flex;
+    }
+
+  }
+
+
+}
+
+.NodeType {
+  color: #CE915B;
+}
+
+.NodeMetadata {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: darkgrey;
+}
+
+.NodeIcon {
+  height: 13px;
+  width: 13px;
+}
+
+.NodeInfoDivider {
+  width: 284px;
+  height: 29px;
+  border-bottom: 1px solid #3D3D3D !important;
+  position: absolute;
+  color: #B5B6C0;
+}
+
+.NodeTime {
+  display: flex;
+  align-items: center;
+}
+
+
+.NodeContentInfo {
+  display: flex;
+  align-items: center;
+}
+
+
+.NodeToolTip {
+  background-color: #333D4F;
+  padding: 10px;
+}
+
+.NodeTimeIcon {
+  padding-right: 5px !important;
+}
+
+.NodeContentIcon {
+  padding-left: 5px !important;
+}
+
+.Box {
+  width: 5px;
+  height: 9px;
+  background-color: #FF6280;
+
+  align-self: center;
+
+  margin-left: 2px !important;
+}

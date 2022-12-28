@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import Redis, { Cluster } from 'ioredis';
-import {
-  isMatch, omit, isNumber, pick,
-} from 'lodash';
+import { isMatch, isNumber, omit } from 'lodash';
 import apiConfig from 'src/utils/config';
-import { ClientMetadata } from 'src/common/models';
+import { ClientContext, ClientMetadata } from 'src/common/models';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -43,26 +41,26 @@ export class RedisService {
    * @param clientMetadata
    */
   public getClientInstance(clientMetadata: ClientMetadata): IRedisClientInstance {
-    const found = this.clients.get(RedisService.generateId(clientMetadata));
+    const metadata = RedisService.prepareClientMetadata(clientMetadata);
+
+    const found = this.clients.get(RedisService.generateId(metadata));
 
     if (found) {
       found.lastTimeUsed = Date.now();
     }
 
-    console.log('___ getting client instance: ID', RedisService.generateId(clientMetadata))
-    console.log('___ getting client instance: all clients', [...this.clients.values()].map((v) => pick(v, 'id')))
-
-    // this.syncClients();
     return found;
   }
 
   public setClientInstance(clientMetadata: ClientMetadata, client): 0 | 1 {
-    const id = RedisService.generateId(clientMetadata);
+    const metadata = RedisService.prepareClientMetadata(clientMetadata);
+
+    const id = RedisService.generateId(metadata);
     const found = this.clients.get(id);
 
     const clientInstance = {
       id,
-      clientMetadata,
+      clientMetadata: metadata,
       client,
       lastTimeUsed: Date.now(),
     };
@@ -76,14 +74,13 @@ export class RedisService {
 
     this.clients.set(id, clientInstance);
 
-    console.log('___ set client instance: ID', RedisService.generateId(clientMetadata))
-    console.log('___ set client instance: all clients', [...this.clients.values()].map((v) => pick(v, 'id')))
-
     return 1;
   }
 
   public removeClientInstance(clientMetadata: ClientMetadata): number {
-    const id = RedisService.generateId(clientMetadata);
+    const metadata = RedisService.prepareClientMetadata(clientMetadata);
+
+    const id = RedisService.generateId(metadata);
     const found = this.clients.get(id);
 
     if (found) {
@@ -121,6 +118,20 @@ export class RedisService {
     } catch (e) {
       return false;
     }
+  }
+
+  /**
+   * @param clientMetadata
+   */
+  static prepareClientMetadata(clientMetadata: ClientMetadata): ClientMetadata {
+    return {
+      ...clientMetadata,
+      // Workaround: for cli connections we must ignore db index when storing/getting client
+      // since inside CLI itself users are able to "select" database manually
+      // uniqueness will be guaranteed by ClientMetadata.uniqueId and each opened CLI terminal
+      // will have own and a single client
+      db: clientMetadata.context === ClientContext.CLI ? null : clientMetadata.db,
+    };
   }
 
   /**

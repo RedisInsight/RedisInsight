@@ -159,7 +159,7 @@ const instancesSlice = createSlice({
       state.connectedInstance = payload
       state.connectedInstance.loading = false
       state.connectedInstance.isRediStack = isRediStack || false
-      state.connectedInstance.db = sessionStorageService.get(`${BrowserStorageItem.dbIndex}${payload.id}`) || payload.db
+      state.connectedInstance.db = sessionStorageService.get(`${BrowserStorageItem.dbIndex}${payload.id}`) ?? payload.db
     },
 
     // set edited instance

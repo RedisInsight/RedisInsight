@@ -1,3 +1,7 @@
+import { ClientContext, ClientMetadata, Session } from 'src/common/models';
+import { mockDatabase } from 'src/__mocks__/databases';
+import { v4 as uuidv4 } from 'uuid';
+
 export type MockType<T> = {
   [P in keyof T]: jest.Mock<any>;
 };
@@ -28,6 +32,7 @@ export const mockQueryBuilderExecute = jest.fn();
 export const mockCreateQueryBuilder = jest.fn(() => ({
   // where: jest.fn().mockReturnThis(),
   where: mockQueryBuilderWhere,
+  orWhere: mockQueryBuilderWhere,
   update: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
   set: jest.fn().mockReturnThis(),
@@ -57,3 +62,33 @@ export const mockRepository = jest.fn(() => ({
   remove: jest.fn(),
   createQueryBuilder: mockCreateQueryBuilder,
 }));
+
+export const mockSession: Session = {
+  userId: uuidv4(),
+  sessionId: uuidv4(),
+};
+
+export const mockCliClientMetadata: ClientMetadata = {
+  session: mockSession,
+  databaseId: mockDatabase.id,
+  context: ClientContext.CLI,
+  uniqueId: uuidv4(),
+};
+
+export const mockWorkbenchClientMetadata: ClientMetadata = {
+  session: mockSession,
+  databaseId: mockDatabase.id,
+  context: ClientContext.Workbench,
+};
+
+export const mockBrowserClientMetadata: ClientMetadata = {
+  session: mockSession,
+  databaseId: mockDatabase.id,
+  context: ClientContext.Browser,
+};
+
+export const mockCommonClientMetadata: ClientMetadata = {
+  session: mockSession,
+  databaseId: mockDatabase.id,
+  context: ClientContext.Common,
+};

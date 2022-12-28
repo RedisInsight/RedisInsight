@@ -23,3 +23,26 @@ test
         await t.expect(addRedisDatabasePage.errorMessage.textContent).contains('Error', 'Error message not displayed', { timeout: 10000 });
         await t.expect(addRedisDatabasePage.errorMessage.textContent).contains(errorMessage, 'Error message not displayed', { timeout: 10000 });
     });
+test
+    .meta({ rte: rte.none })('Fields to add database prepopulation', async t => {
+        const defaultHost = '127.0.0.1';
+        const defaultPort = '6379';
+        const defaultSentinelPort = '26379';
+
+        await t
+            .click(addRedisDatabasePage.addDatabaseButton)
+            .click(addRedisDatabasePage.addDatabaseManually);
+        // Verify that the Host, Port, Database Alias values pre-populated by default for the manual flow
+        await t
+            .expect(addRedisDatabasePage.hostInput.value).eql(defaultHost, 'Default host not prepopulated')
+            .expect(addRedisDatabasePage.portInput.value).eql(defaultPort, 'Default port not prepopulated')
+            .expect(addRedisDatabasePage.databaseAliasInput.value).eql(`${defaultHost}:${defaultPort}`, 'Default db alias not prepopulated');
+        // Verify that the Host, Port, Database Alias values pre-populated by default for Sentinel
+        await t
+            .click(addRedisDatabasePage.addAutoDiscoverDatabase)
+            .click(addRedisDatabasePage.redisSentinelType);
+        await t
+            .expect(addRedisDatabasePage.hostInput.value).eql(defaultHost, 'Default sentinel host not prepopulated')
+            .expect(addRedisDatabasePage.portInput.value).eql(defaultSentinelPort, 'Default sentinel port not prepopulated');
+
+    });

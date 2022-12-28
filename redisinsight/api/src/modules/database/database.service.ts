@@ -17,7 +17,8 @@ import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto'
 import { AppRedisInstanceEvents } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
-import { AppTool } from 'src/models';
+import { ClientContext } from 'src/common/models';
+import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
 
 @Injectable()
 export class DatabaseService {
@@ -65,6 +66,11 @@ export class DatabaseService {
   async get(id: string, ignoreEncryptionErrors = false): Promise<Database> {
     this.logger.log(`Getting database ${id}`);
 
+    if (!id) {
+      this.logger.error('Database id was not provided');
+      throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
+    }
+
     const model = await this.repository.get(id, ignoreEncryptionErrors);
 
     if (!model) {
@@ -83,13 +89,14 @@ export class DatabaseService {
     try {
       this.logger.log('Creating new database.');
 
-      const database = await this.repository.create(
-        await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
-      );
+      const database = await this.repository.create({
+        ...await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
+        new: true,
+      });
 
       // todo: clarify if we need this and if yes - rethink implementation
       try {
-        const client = await this.redisService.connectToDatabaseInstance(database, AppTool.Common);
+        const client = await this.redisService.connectToDatabaseInstance(database, ClientContext.Common);
         const redisInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
         this.analytics.sendInstanceAddedEvent(database, redisInfo);
         await client.disconnect();
@@ -112,7 +119,7 @@ export class DatabaseService {
   // todo: remove manualUpdate flag logic
   public async update(
     id: string,
-    dto: UpdateDatabaseDto,
+    dto: UpdateDatabaseDto | ModifyDatabaseDto,
     manualUpdate: boolean = true,
   ): Promise<Database> {
     this.logger.log(`Updating database: ${id}`);
@@ -130,7 +137,7 @@ export class DatabaseService {
       database = await this.repository.update(id, database);
 
       // todo: rethink
-      this.redisService.removeClientInstance({ instanceId: id });
+      this.redisService.removeClientInstance({ databaseId: id });
       this.analytics.sendInstanceEditedEvent(
         oldDatabase,
         database,
@@ -156,7 +163,7 @@ export class DatabaseService {
     try {
       await this.repository.delete(id);
       // todo: rethink
-      this.redisService.removeClientInstance({ instanceId: id });
+      this.redisService.removeClientInstance({ databaseId: id });
       this.logger.log('Succeed to delete database instance.');
 
       this.analytics.sendInstanceDeletedEvent(database);

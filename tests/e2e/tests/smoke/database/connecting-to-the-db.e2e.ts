@@ -27,6 +27,10 @@ test
     })('Verify that user can connect to Sentinel DB', async t => {
         // Add OSS Sentinel DB
         await discoverSentinelDatabase(ossSentinelConfig);
+
+        // Verify new connection badge for Sentinel db
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
+
         // Get groups & their count
         const sentinelGroups = myRedisDatabasePage.dbNameList;
         const sentinelGroupsCount = await sentinelGroups.count;

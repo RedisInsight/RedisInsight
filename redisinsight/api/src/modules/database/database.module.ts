@@ -41,6 +41,7 @@ export class DatabaseModule {
         },
       ],
       exports: [
+        DatabaseRepository,
         DatabaseService,
         DatabaseConnectionService,
         // todo: rethink everything below

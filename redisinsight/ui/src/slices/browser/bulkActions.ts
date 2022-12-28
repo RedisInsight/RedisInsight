@@ -77,10 +77,12 @@ export const {
   setLoading,
   setBulkActionType,
   setBulkActionConnected,
+  toggleBulkActions,
   disconnectBulkAction,
   toggleBulkActionTriggered,
   setOverview,
   setBulkActionsInitialState,
+  bulkDeleteSuccess
 } = bulkActionsSlice.actions
 
 // Selectors

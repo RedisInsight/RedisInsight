@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EuiIcon, EuiPopover } from '@elastic/eui'
 
 import { replaceSpaces } from 'uiSrc/utils'
-import { localStorageService } from 'uiSrc/services'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
-import { BrowserStorageItem, DEFAULT_DELIMITER } from 'uiSrc/constants'
-import { appContextBrowserTree, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
+import { DEFAULT_DELIMITER } from 'uiSrc/constants'
+import { appContextDbConfig, resetBrowserTree, setBrowserTreeDelimiter } from 'uiSrc/slices/app/context'
 
 import styles from './styles.module.scss'
 
@@ -19,23 +18,13 @@ export interface Props {
 const MAX_DELIMITER_LENGTH = 5
 const KeyTreeDelimiter = ({ loading }: Props) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { delimiter = '' } = useSelector(appContextBrowserTree)
+  const { treeViewDelimiter: delimiter = '' } = useSelector(appContextDbConfig)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   const dispatch = useDispatch()
 
   const onButtonClick = () => setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
   const closePopover = () => setIsPopoverOpen(false)
-
-  useEffect(() => {
-    const delimiterStorage = localStorageService.get(BrowserStorageItem.treeViewDelimiter + instanceId)
-      || delimiter
-      || DEFAULT_DELIMITER
-
-    setTimeout(() => {
-      dispatch(setBrowserTreeDelimiter(delimiterStorage))
-    }, 0)
-  }, [])
 
   const button = (
     <div
@@ -62,6 +51,8 @@ const KeyTreeDelimiter = ({ loading }: Props) => {
     })
     closePopover()
     dispatch(setBrowserTreeDelimiter(value || DEFAULT_DELIMITER))
+
+    dispatch(resetBrowserTree())
   }
 
   return (

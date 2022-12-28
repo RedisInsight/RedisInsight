@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import {
   CreateRedisearchIndexDto,
   ListRedisearchIndexesResponse,
@@ -31,13 +31,13 @@ export class RedisearchService {
 
   /**
    * Get list of all available redisearch indexes
-   * @param clientOptions
+   * @param clientMetadata
    */
-  public async list(clientOptions: IFindRedisClientInstanceByOptions): Promise<ListRedisearchIndexesResponse> {
+  public async list(clientMetadata: ClientMetadata): Promise<ListRedisearchIndexesResponse> {
     this.logger.log('Getting all redisearch indexes.');
 
     try {
-      const client = await this.browserTool.getRedisClient(clientOptions);
+      const client = await this.browserTool.getRedisClient(clientMetadata);
 
       const nodes = this.getShards(client);
 
@@ -57,11 +57,11 @@ export class RedisearchService {
 
   /**
    * Creates redisearch index
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async createIndex(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateRedisearchIndexDto,
   ): Promise<void> {
     this.logger.log('Creating redisearch index.');
@@ -71,7 +71,7 @@ export class RedisearchService {
         index, type, prefixes, fields,
       } = dto;
 
-      const client = await this.browserTool.getRedisClient(clientOptions);
+      const client = await this.browserTool.getRedisClient(clientMetadata);
 
       try {
         const indexInfo = await client.sendCommand(new Command('FT.INFO', [dto.index], {
@@ -131,11 +131,11 @@ export class RedisearchService {
   /**
    * Search for key names using RediSearch module
    * Response is the same as for keys "scan" to have the same behaviour in the browser
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async search(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: SearchRedisearchDto,
   ): Promise<GetKeysWithDetailsResponse> {
     this.logger.log('Searching keys using redisearch.');
@@ -146,7 +146,7 @@ export class RedisearchService {
         index, query, offset, limit,
       } = dto;
 
-      const client = await this.browserTool.getRedisClient(clientOptions);
+      const client = await this.browserTool.getRedisClient(clientMetadata);
 
       try {
         const [[, maxSearchResults]] = await client.sendCommand(

@@ -43,6 +43,11 @@ export const initialState: InitialStateInstances = {
   instanceOverview: {
     version: '',
   },
+  importInstances: {
+    loading: false,
+    error: '',
+    data: null
+  },
 }
 
 // A slice for recipes
@@ -169,6 +174,25 @@ const instancesSlice = createSlice({
     resetConnectedInstance: (state) => {
       state.connectedInstance = initialState.connectedInstance
     },
+
+    importInstancesFromFile: (state) => {
+      state.importInstances.loading = true
+      state.importInstances.error = ''
+    },
+
+    importInstancesFromFileSuccess: (state, { payload }) => {
+      state.importInstances.loading = false
+      state.importInstances.data = payload
+    },
+
+    importInstancesFromFileFailure: (state, { payload }) => {
+      state.importInstances.loading = false
+      state.importInstances.error = payload
+    },
+
+    resetImportInstances: (state) => {
+      state.importInstances = initialState.importInstances
+    }
   },
 })
 
@@ -196,6 +220,10 @@ export const {
   changeInstanceAliasFailure,
   resetInstanceUpdate,
   setEditedInstance,
+  importInstancesFromFile,
+  importInstancesFromFileSuccess,
+  importInstancesFromFileFailure,
+  resetImportInstances
 } = instancesSlice.actions
 
 // selectors
@@ -206,6 +234,8 @@ export const editedInstanceSelector = (state: RootState) =>
   state.connections.instances.editedInstance
 export const connectedInstanceOverviewSelector = (state: RootState) =>
   state.connections.instances.instanceOverview
+export const importInstancesSelector = (state: RootState) =>
+  state.connections.instances.importInstances
 
 // The reducer
 export default instancesSlice.reducer
@@ -456,7 +486,7 @@ export function changeInstanceAliasAction(
       const { CancelToken } = axios
       sourceInstance = CancelToken.source()
 
-      const { status } = await apiService.put(
+      const { status } = await apiService.patch(
         `${ApiEndpoints.DATABASES}/${id}`,
         { name },
         { cancelToken: sourceInstance.token }
@@ -483,5 +513,38 @@ export function resetInstanceUpdateAction() {
   return async (dispatch: AppDispatch) => {
     dispatch(resetInstanceUpdate())
     sourceInstance?.cancel?.()
+  }
+}
+
+// Asynchronous thunk action
+export function uploadInstancesFile(
+  file: FormData,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(importInstancesFromFile())
+
+    try {
+      const { status, data } = await apiService.post(
+        ApiEndpoints.DATABASES_IMPORT,
+        file,
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(importInstancesFromFileSuccess(data))
+        onSuccessAction?.()
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(importInstancesFromFileFailure(errorMessage))
+      onFailAction?.()
+    }
   }
 }

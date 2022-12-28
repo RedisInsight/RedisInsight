@@ -8,7 +8,6 @@ import {
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import {
   GetStringValueResponse,
   SetStringDto,
@@ -20,7 +19,8 @@ import {
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { plainToClass } from 'class-transformer';
-import { RedisString } from 'src/common/constants';
+import { GetKeyInfoDto } from 'src/modules/browser/dto';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class StringBusinessService {
@@ -31,7 +31,7 @@ export class StringBusinessService {
   ) {}
 
   public async setString(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: SetStringWithExpireDto,
   ): Promise<void> {
     this.logger.log('Setting string key type.');
@@ -40,13 +40,13 @@ export class StringBusinessService {
     try {
       if (expire) {
         result = await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolStringCommands.Set,
           [keyName, value, 'EX', `${expire}`, 'NX'],
         );
       } else {
         result = await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolStringCommands.Set,
           [keyName, value, 'NX'],
         );
@@ -65,14 +65,17 @@ export class StringBusinessService {
   }
 
   public async getStringValue(
-    clientOptions: IFindRedisClientInstanceByOptions,
-    keyName: RedisString,
+    clientMetadata: ClientMetadata,
+    dto: GetKeyInfoDto,
   ): Promise<GetStringValueResponse> {
     this.logger.log('Getting string value.');
+
+    const { keyName } = dto;
     let result: GetStringValueResponse;
+
     try {
       const value = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolStringCommands.Get,
         [keyName],
       );
@@ -96,7 +99,7 @@ export class StringBusinessService {
   }
 
   public async updateStringValue(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: SetStringDto,
   ): Promise<void> {
     this.logger.log('Updating string value.');
@@ -104,18 +107,18 @@ export class StringBusinessService {
     let result;
     try {
       const ttl = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Ttl,
         [keyName],
       );
       result = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolStringCommands.Set,
         [keyName, value, 'XX'],
       );
       if (result && ttl > 0) {
         await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolKeysCommands.Expire,
           [keyName, ttl],
         );

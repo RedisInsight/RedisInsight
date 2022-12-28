@@ -70,9 +70,12 @@ export const mockRedisService = jest.fn(() => ({
   }),
   setClientInstance: jest.fn(),
   isClientConnected: jest.fn().mockReturnValue(true),
-  connectToDatabaseInstance: jest.fn().mockResolvedValue(mockIORedisClient),
-  createStandaloneClient: jest.fn().mockResolvedValue(mockIORedisClient),
-  createSentinelClient: jest.fn().mockResolvedValue(mockIORedisSentinel),
-  createClusterClient: jest.fn().mockResolvedValue(mockIORedisCluster),
   removeClientInstance: jest.fn(),
+}));
+
+export const mockRedisConnectionFactory = jest.fn(() => ({
+  createRedisConnection: jest.fn().mockResolvedValue(mockIORedisClient),
+  createStandaloneConnection: jest.fn().mockResolvedValue(mockIORedisClient),
+  createSentinelConnection: jest.fn().mockResolvedValue(mockIORedisSentinel),
+  createClusterConnection: jest.fn().mockResolvedValue(mockIORedisCluster),
 }));

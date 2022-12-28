@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as IORedis from 'ioredis';
-import { generateRedisConnectionName, getRedisConnectionException } from 'src/utils';
+import { getRedisConnectionException } from 'src/utils';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { RedisService } from 'src/modules/redis/redis.service';
@@ -9,6 +9,7 @@ import { DatabaseInfoProvider } from 'src/modules/database/providers/database-in
 import { Database } from 'src/modules/database/models/database';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClientMetadata } from 'src/common/models';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 @Injectable()
 export class DatabaseConnectionService {
@@ -20,6 +21,7 @@ export class DatabaseConnectionService {
     private readonly repository: DatabaseRepository,
     private readonly analytics: DatabaseAnalytics,
     private readonly redisService: RedisService,
+    private readonly redisConnectionFactory: RedisConnectionFactory,
   ) {}
 
   /**
@@ -91,13 +93,11 @@ export class DatabaseConnectionService {
   async createClient(clientMetadata: ClientMetadata): Promise<IORedis.Redis | IORedis.Cluster> {
     this.logger.log('Creating database client.');
     const database = await this.databaseService.get(clientMetadata.databaseId);
-    const connectionName = generateRedisConnectionName(clientMetadata.context, clientMetadata.databaseId);
 
     try {
-      const client = await this.redisService.connectToDatabaseInstance(
+      const client = await this.redisConnectionFactory.createRedisConnection(
+        clientMetadata,
         database,
-        clientMetadata.context,
-        connectionName,
       );
 
       if (database.connectionType === ConnectionType.NOT_CONNECTED) {

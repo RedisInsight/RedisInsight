@@ -31,7 +31,9 @@ export class SlowLogController {
   })
   @Get('')
   async getSlowLogs(
-    @ClientMetadataParam() clientMetadata: ClientMetadata,
+    @ClientMetadataParam({
+      ignoreDbIndex: true,
+    }) clientMetadata: ClientMetadata,
       @Query() getSlowLogsDto: GetSlowLogsDto,
   ): Promise<any> {
     return this.service.getSlowLogs(clientMetadata, getSlowLogsDto);
@@ -43,7 +45,9 @@ export class SlowLogController {
   })
   @Delete('')
   async resetSlowLogs(
-    @ClientMetadataParam() clientMetadata: ClientMetadata,
+    @ClientMetadataParam({
+      ignoreDbIndex: true,
+    }) clientMetadata: ClientMetadata,
   ): Promise<void> {
     return this.service.reset(clientMetadata);
   }
@@ -60,7 +64,9 @@ export class SlowLogController {
   })
   @Get('config')
   async getConfig(
-    @ClientMetadataParam() clientMetadata: ClientMetadata,
+    @ClientMetadataParam({
+      ignoreDbIndex: true,
+    }) clientMetadata: ClientMetadata,
   ): Promise<SlowLogConfig> {
     return this.service.getConfig(clientMetadata);
   }
@@ -77,7 +83,9 @@ export class SlowLogController {
   })
   @Patch('config')
   async updateConfig(
-    @ClientMetadataParam() clientMetadata: ClientMetadata,
+    @ClientMetadataParam({
+      ignoreDbIndex: true,
+    }) clientMetadata: ClientMetadata,
       @Body() dto: UpdateSlowLogConfigDto,
   ): Promise<SlowLogConfig> {
     return this.service.updateConfig(clientMetadata, dto);

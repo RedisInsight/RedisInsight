@@ -3,7 +3,8 @@ import { plainToClass } from 'class-transformer';
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { sessionFromRequestFactory } from 'src/common/decorators';
 import { Validator } from 'class-validator';
-import { API_PARAM_DATABASE_ID } from 'src/common/constants';
+import { API_HEADER_DATABASE_INDEX, API_PARAM_DATABASE_ID } from 'src/common/constants';
+import { ApiHeader, ApiParam } from '@nestjs/swagger';
 
 const validator = new Validator();
 
@@ -11,35 +12,31 @@ export interface IClientMetadataParamOptions {
   databaseIdParam?: string,
   uniqueIdParam?: string,
   context?: ClientContext,
+  ignoreDbIndex?: boolean,
 }
 
 export const clientMetadataParamFactory = (
   options: IClientMetadataParamOptions,
   ctx: ExecutionContext,
 ): ClientMetadata => {
-  const opts: IClientMetadataParamOptions = {
-    context: ClientContext.Common,
-    databaseIdParam: API_PARAM_DATABASE_ID,
-    ...options,
-  };
-
   const req = ctx.switchToHttp().getRequest();
 
   let databaseId;
-  if (opts?.databaseIdParam) {
-    databaseId = req.params?.[opts.databaseIdParam];
+  if (options?.databaseIdParam) {
+    databaseId = req.params?.[options.databaseIdParam];
   }
 
   let uniqueId;
-  if (opts?.uniqueIdParam) {
-    uniqueId = req.params?.[opts.uniqueIdParam];
+  if (options?.uniqueIdParam) {
+    uniqueId = req.params?.[options.uniqueIdParam];
   }
 
   const clientMetadata = plainToClass(ClientMetadata, {
     session: sessionFromRequestFactory(undefined, ctx),
     databaseId,
     uniqueId,
-    context: opts?.context || ClientContext.Common,
+    context: options?.context || ClientContext.Common,
+    db: options?.ignoreDbIndex ? undefined : req?.headers?.[API_HEADER_DATABASE_INDEX],
   });
 
   const errors = validator.validateSync(clientMetadata, {
@@ -53,4 +50,35 @@ export const clientMetadataParamFactory = (
   return clientMetadata;
 };
 
-export const ClientMetadataParam = createParamDecorator(clientMetadataParamFactory);
+export const ClientMetadataParam = (
+  options?: IClientMetadataParamOptions,
+) => {
+  const opts: IClientMetadataParamOptions = {
+    context: ClientContext.Common,
+    databaseIdParam: API_PARAM_DATABASE_ID,
+    ignoreDbIndex: false,
+    ...options,
+  };
+
+  return createParamDecorator(clientMetadataParamFactory, [
+    (target: any, key: string) => {
+      // Here it is. Use the `@ApiQuery` decorator purely as a function to define the meta only once here.
+      ApiParam({
+        name: opts.databaseIdParam,
+        schema: { type: 'string' },
+        required: true,
+      })(target, key, Object.getOwnPropertyDescriptor(target, key));
+      if (!opts.ignoreDbIndex) {
+        ApiHeader({
+          name: API_HEADER_DATABASE_INDEX,
+          schema: {
+            default: undefined,
+            type: 'number',
+            minimum: 0,
+          },
+          required: false,
+        })(target, key, Object.getOwnPropertyDescriptor(target, key));
+      }
+    },
+  ])(opts);
+};

@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
 import ApiErrors from 'uiSrc/constants/apiErrors'
-import { apiService, localStorageService } from 'uiSrc/services'
+import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
@@ -159,6 +159,7 @@ const instancesSlice = createSlice({
       state.connectedInstance = payload
       state.connectedInstance.loading = false
       state.connectedInstance.isRediStack = isRediStack || false
+      state.connectedInstance.db = sessionStorageService.get(`${BrowserStorageItem.dbIndex}${payload.id}`) || payload.db
     },
 
     // set edited instance
@@ -192,6 +193,19 @@ const instancesSlice = createSlice({
 
     resetImportInstances: (state) => {
       state.importInstances = initialState.importInstances
+    },
+
+    checkDatabaseIndex: (state) => {
+      state.connectedInstance.loading = true
+    },
+    checkDatabaseIndexSuccess: (state, { payload }) => {
+      state.connectedInstance.db = payload
+      state.connectedInstance.loading = false
+
+      sessionStorageService.set(`${BrowserStorageItem.dbIndex}${state.connectedInstance.id}`, payload)
+    },
+    checkDatabaseIndexFailure: (state) => {
+      state.connectedInstance.loading = false
     }
   },
 })
@@ -223,7 +237,10 @@ export const {
   importInstancesFromFile,
   importInstancesFromFileSuccess,
   importInstancesFromFileFailure,
-  resetImportInstances
+  resetImportInstances,
+  checkDatabaseIndex,
+  checkDatabaseIndexSuccess,
+  checkDatabaseIndexFailure,
 } = instancesSlice.actions
 
 // selectors
@@ -505,6 +522,34 @@ export function changeInstanceAliasAction(
         dispatch(addErrorNotification(error))
         onFailAction?.()
       }
+    }
+  }
+}
+
+export function checkDatabaseIndexAction(
+  id: string,
+  index: number,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(checkDatabaseIndex())
+
+    try {
+      // TODO - update url
+      const { status } = await apiService.get(
+        `${ApiEndpoints.DATABASES}/${id}/db/${index}`
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(checkDatabaseIndexSuccess(index))
+        onSuccessAction?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      dispatch(checkDatabaseIndexFailure())
+      dispatch(addErrorNotification(error))
+      onFailAction?.()
     }
   }
 }

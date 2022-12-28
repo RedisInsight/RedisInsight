@@ -21,6 +21,7 @@ import {
   CommandExecution,
   StateWorkbenchResults,
 } from '../interfaces'
+import { setDbIndexState } from 'uiSrc/slices/app/context'
 
 export const initialState: StateWorkbenchResults = {
   loading: false,
@@ -247,6 +248,8 @@ export function sendWBCommandAction({
         commandId
       }))
 
+      dispatch(setDbIndexState(true))
+
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
@@ -261,6 +264,7 @@ export function sendWBCommandAction({
 
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
+        dispatch(setDbIndexState(!!multiCommands?.length))
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -271,6 +275,7 @@ export function sendWBCommandAction({
         commandsId: commands.map((_, i) => commandId + i),
         error: errorMessage
       }))
+      dispatch(setDbIndexState(false))
       onFailAction?.()
     }
   }
@@ -306,6 +311,8 @@ export function sendWBCommandClusterAction({
         commandId
       }))
 
+      dispatch(setDbIndexState(true))
+
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
@@ -321,7 +328,8 @@ export function sendWBCommandClusterAction({
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data) }))
+        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
+        dispatch(setDbIndexState(!!multiCommands?.length))
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -332,6 +340,7 @@ export function sendWBCommandClusterAction({
         commandsId: commands.map((_, i) => commandId + i),
         error: errorMessage
       }))
+      dispatch(setDbIndexState(false))
       onFailAction?.()
     }
   }

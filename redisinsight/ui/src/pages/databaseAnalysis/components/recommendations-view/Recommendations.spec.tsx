@@ -304,4 +304,30 @@ describe('Recommendations', () => {
     })
     sendEventTelemetry.mockRestore()
   })
+
+  it('should not render badges legend', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: []
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('badges-legend')).not.toBeInTheDocument()
+  })
+
+  it('should render badges legend', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'luaScript' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('badges-legend')).toBeInTheDocument()
+  })
 })

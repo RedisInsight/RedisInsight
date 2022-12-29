@@ -314,14 +314,14 @@
           ],
           [
             { 
-              "id": "1",
+              "id": "2",
               "type": "span",
               "value": "Check if an observation already appeared in the stream"
             }
           ],
           [
             { 
-              "id": "1",
+              "id": "3",
               "type": "span",
               "value": "Find the fraction or the number of observations in the stream that are smaller or larger than a given value"
             }
@@ -385,12 +385,12 @@
         ]
       },
       {
-        "id": "5",
+        "id": "7",
         "type": "span",
         "value": "Bloom filter and cuckoo filter require "
       },
       {
-        "id": "6",
+        "id": "8",
         "type": "link",
         "value": {
           "href": "https://redis.com/modules/redis-bloom/",
@@ -398,12 +398,12 @@
         }
       },
       {
-        "id": "7",
+        "id": "9",
         "type": "span",
         "value": ". "
       },
       {
-        "id": "8",
+        "id": "10",
         "type": "link",
         "value": {
           "href": "https://docs.redis.com/latest/ri/memory-optimizations/",

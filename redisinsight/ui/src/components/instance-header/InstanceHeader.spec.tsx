@@ -4,7 +4,6 @@ import { instance, mock } from 'ts-mockito'
 import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import { checkDatabaseIndex, connectedInstanceInfoSelector } from 'uiSrc/slices/instances/instances'
 
-import { BuildType } from 'uiSrc/constants/env'
 import InstanceHeader, { Props } from './InstanceHeader'
 
 const mockedProps = mock<Props>()

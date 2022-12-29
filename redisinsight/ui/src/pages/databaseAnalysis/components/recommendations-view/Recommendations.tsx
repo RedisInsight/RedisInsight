@@ -51,37 +51,39 @@ const Recommendations = () => {
       <div>
         {renderBadgesLegend()}
       </div>
-      {recommendations.map(({ name }) => {
-        const { id = '', title = '', content = '', badges = [] } = recommendationsContent[name]
+      <div className={styles.recommendationsContainer}>
+        {recommendations.map(({ name }) => {
+          const { id = '', title = '', content = '', badges = [] } = recommendationsContent[name]
 
-        const buttonContent = (
-          <EuiFlexGroup className={styles.accordionButton} responsive={false} alignItems="center" justifyContent="spaceBetween">
-            <EuiFlexItem grow={false}>{title}</EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              {renderBadges(badges)}
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        )
-        return (
-          <div key={id} className={styles.recommendation}>
-            <EuiAccordion
-              id={name}
-              arrowDisplay="right"
-              buttonContent={buttonContent}
-              buttonClassName={styles.accordionBtn}
-              buttonProps={{ 'data-test-subj': `${id}-button` }}
-              className={styles.accordion}
-              initialIsOpen
-              onToggle={(isOpen) => handleToggle(isOpen, id)}
-              data-testid={`${id}-accordion`}
-            >
-              <EuiPanel className={styles.accordionContent} color="subdued">
-                {renderContent(content)}
-              </EuiPanel>
-            </EuiAccordion>
-          </div>
-        )
-      })}
+          const buttonContent = (
+            <EuiFlexGroup className={styles.accordionButton} responsive={false} alignItems="center" justifyContent="spaceBetween">
+              <EuiFlexItem grow={false}>{title}</EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                {renderBadges(badges)}
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          )
+          return (
+            <div key={id} className={styles.recommendation}>
+              <EuiAccordion
+                id={name}
+                arrowDisplay="right"
+                buttonContent={buttonContent}
+                buttonClassName={styles.accordionBtn}
+                buttonProps={{ 'data-test-subj': `${id}-button` }}
+                className={styles.accordion}
+                initialIsOpen
+                onToggle={(isOpen) => handleToggle(isOpen, id)}
+                data-testid={`${id}-accordion`}
+              >
+                <EuiPanel className={styles.accordionContent} color="subdued">
+                  {renderContent(content)}
+                </EuiPanel>
+              </EuiAccordion>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

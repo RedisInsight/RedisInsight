@@ -66,6 +66,11 @@ describe('RedisService', () => {
     service.clients.set(mockRedisClientInstance4.id, mockRedisClientInstance4);
     service.clients.set(mockRedisClientInstance5.id, mockRedisClientInstance5);
   });
+
+  afterEach(() => {
+    service.onModuleDestroy();
+  });
+
   describe('isClientConnected', () => {
     it('should not remove any client since no idle time passed', async () => {
       expect(service.clients.size).toEqual(5);

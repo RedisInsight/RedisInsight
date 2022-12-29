@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import Redis, { Cluster } from 'ioredis';
 import { isMatch, isNumber, omit } from 'lodash';
 import apiConfig from 'src/utils/config';
@@ -14,11 +14,17 @@ export interface IRedisClientInstance {
 }
 
 @Injectable()
-export class RedisService {
+export class RedisService implements OnModuleDestroy {
   public clients: Map<string, IRedisClientInstance> = new Map();
+
+  private readonly syncInterval;
 
   constructor() {
     setInterval(this.syncClients.bind(this), 60 * 1000); // sync clients each minute
+  }
+
+  onModuleDestroy() {
+    clearInterval(this.syncInterval);
   }
 
   /**

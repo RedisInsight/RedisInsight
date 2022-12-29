@@ -1,17 +1,22 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { isNull } from 'lodash'
+import { isNull, sortBy } from 'lodash'
 import {
   EuiAccordion,
   EuiPanel,
   EuiText,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiIcon,
 } from '@elastic/eui'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import { Theme } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
+import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 
 import { renderContent, renderBadges, renderBadgesLegend } from './utils'
 import styles from './styles.module.scss'
@@ -20,6 +25,7 @@ const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
   const { recommendations = [] } = data ?? {}
 
+  const { theme } = useContext(ThemeContext)
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const handleToggle = (isOpen: boolean, id: string) => sendEventTelemetry({
@@ -31,6 +37,31 @@ const Recommendations = () => {
       recommendation: id,
     }
   })
+
+  const sortedRecommendations = sortBy(recommendations, ({ name }) =>
+    (recommendationsContent[name]?.redisStack ? -1 : 0))
+
+  const renderButtonContent = (redisStack: boolean, title: string, badges: string[]) => (
+    <EuiFlexGroup className={styles.accordionButton} responsive={false} alignItems="center" justifyContent="spaceBetween">
+      <EuiFlexGroup alignItems="center">
+        <EuiFlexItem grow={false}>
+          {redisStack && (
+            <EuiIcon
+              type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+              className={styles.redisStack}
+              data-testid="redis-stack-icon"
+            />
+          )}
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          {title}
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      <EuiFlexItem grow={false}>
+        {renderBadges(badges)}
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  )
 
   if (loading) {
     return (
@@ -51,37 +82,37 @@ const Recommendations = () => {
       <div>
         {renderBadgesLegend()}
       </div>
-      {recommendations.map(({ name }) => {
-        const { id = '', title = '', content = '', badges = [] } = recommendationsContent[name]
+      <div className={styles.recommendationsContainer}>
+        {sortedRecommendations.map(({ name }) => {
+          const {
+            id = '',
+            title = '',
+            content = '',
+            badges = [],
+            redisStack = false
+          } = recommendationsContent[name]
 
-        const buttonContent = (
-          <EuiFlexGroup className={styles.accordionButton} responsive={false} alignItems="center" justifyContent="spaceBetween">
-            <EuiFlexItem grow={false}>{title}</EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              {renderBadges(badges)}
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        )
-        return (
-          <div key={id} className={styles.recommendation}>
-            <EuiAccordion
-              id={name}
-              arrowDisplay="right"
-              buttonContent={buttonContent}
-              buttonClassName={styles.accordionBtn}
-              buttonProps={{ 'data-test-subj': `${id}-button` }}
-              className={styles.accordion}
-              initialIsOpen
-              onToggle={(isOpen) => handleToggle(isOpen, id)}
-              data-testid={`${id}-accordion`}
-            >
-              <EuiPanel className={styles.accordionContent} color="subdued">
-                {renderContent(content)}
-              </EuiPanel>
-            </EuiAccordion>
-          </div>
-        )
-      })}
+          return (
+            <div key={id} className={styles.recommendation}>
+              <EuiAccordion
+                id={name}
+                arrowDisplay="right"
+                buttonContent={renderButtonContent(redisStack, title, badges)}
+                buttonClassName={styles.accordionBtn}
+                buttonProps={{ 'data-test-subj': `${id}-button` }}
+                className={styles.accordion}
+                initialIsOpen
+                onToggle={(isOpen) => handleToggle(isOpen, id)}
+                data-testid={`${id}-accordion`}
+              >
+                <EuiPanel className={styles.accordionContent} color="subdued">
+                  {renderContent(content)}
+                </EuiPanel>
+              </EuiAccordion>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

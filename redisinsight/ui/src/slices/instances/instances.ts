@@ -9,6 +9,7 @@ import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
+import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
 import { fetchMastersSentinelAction } from './sentinel'
 
 import { AppDispatch, RootState } from '../store'
@@ -43,6 +44,10 @@ export const initialState: InitialStateInstances = {
   instanceOverview: {
     version: '',
   },
+  instanceInfo: {
+    version: '',
+    server: {}
+  },
   importInstances: {
     loading: false,
     error: '',
@@ -60,7 +65,7 @@ const instancesSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    loadInstancesSuccess: (state, { payload }: { payload: Instance[] }) => {
+    loadInstancesSuccess: (state, { payload }: { payload: DatabaseInstanceResponse[] }) => {
       state.data = checkRediStack(payload)
       state.loading = false
       if (state.connectedInstance.id) {
@@ -162,8 +167,16 @@ const instancesSlice = createSlice({
       state.connectedInstance.db = sessionStorageService.get(`${BrowserStorageItem.dbIndex}${payload.id}`) ?? payload.db
     },
 
+    setConnectedInfoInstance: (state) => {
+      state.instanceInfo = initialState.instanceInfo
+    },
+
+    setConnectedInfoInstanceSuccess: (state, { payload }: { payload: RedisNodeInfoResponse }) => {
+      state.instanceInfo = payload
+    },
+
     // set edited instance
-    setEditedInstance: (state, { payload }: { payload:Nullable<Instance> }) => {
+    setEditedInstance: (state, { payload }: { payload: Nullable<Instance> }) => {
       state.editedInstance.data = payload
     },
 
@@ -241,12 +254,16 @@ export const {
   checkDatabaseIndex,
   checkDatabaseIndexSuccess,
   checkDatabaseIndexFailure,
+  setConnectedInfoInstance,
+  setConnectedInfoInstanceSuccess,
 } = instancesSlice.actions
 
 // selectors
 export const instancesSelector = (state: RootState) => state.connections.instances
 export const connectedInstanceSelector = (state: RootState) =>
   state.connections.instances.connectedInstance
+export const connectedInstanceInfoSelector = (state: RootState) =>
+  state.connections.instances.instanceInfo
 export const editedInstanceSelector = (state: RootState) =>
   state.connections.instances.editedInstance
 export const connectedInstanceOverviewSelector = (state: RootState) =>
@@ -266,13 +283,7 @@ export function fetchInstancesAction(onSuccess?: (data?: DatabaseInstanceRespons
     dispatch(loadInstances())
 
     try {
-      const {
-        data,
-        status,
-      }: {
-        data: DatabaseInstanceResponse[];
-        status: number;
-      } = await apiService.get(`${ApiEndpoints.DATABASES}`)
+      const { data, status } = await apiService.get<DatabaseInstanceResponse[]>(`${ApiEndpoints.DATABASES}`)
 
       if (isStatusSuccessful(status)) {
         localStorageService.set(BrowserStorageItem.instancesCount, data?.length)
@@ -401,6 +412,24 @@ export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void)
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchConnectedInstanceInfoAction(id: string, onSuccess?: () => void, onFail?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setConnectedInfoInstance())
+
+    try {
+      const { data, status } = await apiService.get<RedisNodeInfoResponse>(`${ApiEndpoints.DATABASES}/${id}/info`)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setConnectedInfoInstanceSuccess(data))
+        onSuccess?.()
+      }
+    } catch (error) {
+      onFail?.()
     }
   }
 }
@@ -536,7 +565,6 @@ export function checkDatabaseIndexAction(
     dispatch(checkDatabaseIndex())
 
     try {
-      // TODO - update url
       const { status } = await apiService.get(
         `${ApiEndpoints.DATABASES}/${id}/db/${index}`
       )

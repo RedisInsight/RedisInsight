@@ -17,8 +17,9 @@ import { BuildType } from 'uiSrc/constants/env'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import {
   checkDatabaseIndexAction,
+  connectedInstanceInfoSelector,
   connectedInstanceOverviewSelector,
-  connectedInstanceSelector
+  connectedInstanceSelector,
 } from 'uiSrc/slices/instances/instances'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
@@ -45,6 +46,7 @@ const InstanceHeader = () => {
   const { version } = useSelector(connectedInstanceOverviewSelector)
   const { server } = useSelector(appInfoSelector)
   const { disabled: isDbIndexDisabled } = useSelector(appContextDbIndex)
+  const { databases = 0 } = useSelector(connectedInstanceInfoSelector)
   const history = useHistory()
   const [windowDimensions, setWindowDimensions] = useState(0)
   const [dbIndex, setDbIndex] = useState<string>(String(db || 0))
@@ -120,45 +122,47 @@ const InstanceHeader = () => {
                   <EuiFlexItem style={{ overflow: 'hidden' }}>
                     <b className={styles.dbName}>{name}</b>
                   </EuiFlexItem>
-                  <EuiFlexItem style={{ padding: '4px 0 4px 12px' }} grow={false}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      {isDbIndexEditing ? (
-                        <div style={{ marginRight: 48 }}>
-                          <InlineItemEditor
-                            controlsPosition="right"
-                            onApply={onChangeDbIndex}
-                            onDecline={() => setIsDbIndexEditing(false)}
-                            viewChildrenMode={false}
-                            controlsClassName={styles.controls}
+                  {databases > 1 && (
+                    <EuiFlexItem style={{ padding: '4px 0 4px 12px' }} grow={false}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {isDbIndexEditing ? (
+                          <div style={{ marginRight: 48 }}>
+                            <InlineItemEditor
+                              controlsPosition="right"
+                              onApply={onChangeDbIndex}
+                              onDecline={() => setIsDbIndexEditing(false)}
+                              viewChildrenMode={false}
+                              controlsClassName={styles.controls}
+                            >
+                              <EuiFieldNumber
+                                onFocus={selectOnFocus}
+                                onChange={(e) => setDbIndex(validateNumber(e.target.value.trim()))}
+                                value={dbIndex}
+                                placeholder="Database Index"
+                                className={styles.input}
+                                fullWidth={false}
+                                compressed
+                                autoComplete="off"
+                                type="text"
+                                data-testid="change-index-input"
+                              />
+                            </InlineItemEditor>
+                          </div>
+                        ) : (
+                          <EuiButtonEmpty
+                            iconType="pencil"
+                            iconSide="right"
+                            onClick={() => setIsDbIndexEditing(true)}
+                            className={styles.buttonDbIndex}
+                            disabled={isDbIndexDisabled || instanceLoading}
+                            data-testid="change-index-btn"
                           >
-                            <EuiFieldNumber
-                              onFocus={selectOnFocus}
-                              onChange={(e) => setDbIndex(validateNumber(e.target.value.trim()))}
-                              value={dbIndex}
-                              placeholder="Database Index"
-                              className={styles.input}
-                              fullWidth={false}
-                              compressed
-                              autoComplete="off"
-                              type="text"
-                              data-testid="change-index-input"
-                            />
-                          </InlineItemEditor>
-                        </div>
-                      ) : (
-                        <EuiButtonEmpty
-                          iconType="pencil"
-                          iconSide="right"
-                          onClick={() => setIsDbIndexEditing(true)}
-                          className={styles.buttonDbIndex}
-                          disabled={isDbIndexDisabled || instanceLoading}
-                          data-testid="change-index-btn"
-                        >
-                          <span style={{ fontSize: 14, marginBottom: '-2px' }}>db{db || 0}</span>
-                        </EuiButtonEmpty>
-                      )}
-                    </div>
-                  </EuiFlexItem>
+                            <span style={{ fontSize: 14, marginBottom: '-2px' }}>db{db || 0}</span>
+                          </EuiButtonEmpty>
+                        )}
+                      </div>
+                    </EuiFlexItem>
+                  )}
                   <EuiFlexItem style={{ paddingLeft: 6 }} grow={false}>
                     <EuiToolTip
                       position="right"
@@ -169,6 +173,7 @@ const InstanceHeader = () => {
                           info={{
                             name, host, port, user: username, connectionType, version, dbIndex: db
                           }}
+                          databases={databases}
                         />
                       )}
                     >

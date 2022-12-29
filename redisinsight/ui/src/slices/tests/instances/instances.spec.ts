@@ -48,7 +48,14 @@ import reducer, {
   importInstancesFromFileFailure,
   resetImportInstances,
   importInstancesSelector,
-  uploadInstancesFile
+  uploadInstancesFile,
+  checkDatabaseIndexFailure,
+  checkDatabaseIndexSuccess,
+  checkDatabaseIndex,
+  checkDatabaseIndexAction,
+  setConnectedInfoInstance,
+  setConnectedInfoInstanceSuccess,
+  fetchConnectedInstanceInfoAction
 } from '../../instances/instances'
 import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
@@ -493,6 +500,61 @@ describe('instances slice', () => {
     })
   })
 
+  describe('setConnectedInfoInstance', () => {
+    it('should properly set initial state', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        instanceInfo: {
+          version: '6.12.0',
+          databases: 12,
+          server: {}
+        }
+      }
+      const state: InitialStateInstances = {
+        ...initialState,
+        instanceInfo: initialState.instanceInfo
+      }
+
+      // Act
+      const nextState = reducer(currentState, setConnectedInfoInstance())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setConnectedInfoInstanceSuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const payload = {
+        version: '6.12.0',
+        databases: 12,
+        server: {}
+      }
+      const state: InitialStateInstances = {
+        ...initialState,
+        instanceInfo: payload
+      }
+
+      // Act
+      const nextState = reducer(initialState, setConnectedInfoInstanceSuccess(payload))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('setEditedInstance', () => {
     it('should properly set error', () => {
       // Arrange
@@ -623,6 +685,79 @@ describe('instances slice', () => {
         },
       })
       expect(importInstancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('checkDatabaseIndex', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          loading: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, checkDatabaseIndex())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('checkDatabaseIndexSuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          loading: false,
+          db: 5
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, checkDatabaseIndexSuccess(5))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('checkDatabaseIndexFailure', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, checkDatabaseIndexFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
     })
   })
 
@@ -1014,6 +1149,61 @@ describe('instances slice', () => {
       })
     })
 
+    describe('fetchConnectedInstanceInfoAction', () => {
+      it('succeed to get database instance info', async () => {
+        // Arrange
+        const requestId = '123'
+        const data = {
+          databases: 12,
+          server: {},
+          modules: [],
+          version: '6.52'
+        }
+        const responsePayload = { status: 200, data }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchConnectedInstanceInfoAction(requestId, jest.fn())
+        )
+
+        // Assert
+        const expectedActions = [
+          setConnectedInfoInstance(),
+          setConnectedInfoInstanceSuccess(data),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to get database config info', async () => {
+        // Arrange
+        const requestId = '123'
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchConnectedInstanceInfoAction(requestId, jest.fn())
+        )
+
+        // Assert
+        const expectedActions = [
+          setConnectedInfoInstance(),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
     describe('changeInstanceAliasAction', () => {
       const requestPayload = { id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff', name: 'newAlias' }
       it('succeed to change database alias', async () => {
@@ -1107,6 +1297,52 @@ describe('instances slice', () => {
           setDefaultInstance(),
           setConnectedInstanceFailure(),
           setDefaultInstanceFailure(responsePayload.response.data.message),
+          addErrorNotification(responsePayload as AxiosError),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('checkDatabaseIndexAction', () => {
+      it('should call proper actions on success', async () => {
+        // Arrange
+        const id = 'instanceId'
+        const index = 3
+        const responsePayload = { status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(checkDatabaseIndexAction(id, index))
+
+        // Assert
+        const expectedActions = [
+          checkDatabaseIndex(),
+          checkDatabaseIndexSuccess(index),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on fail', async () => {
+        // Arrange
+        const id = 'instanceId'
+        const errorMessage = 'some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(checkDatabaseIndexAction(id, 3))
+
+        // Assert
+        const expectedActions = [
+          checkDatabaseIndex(),
+          checkDatabaseIndexFailure(),
           addErrorNotification(responsePayload as AxiosError),
         ]
         expect(store.getActions()).toEqual(expectedActions)

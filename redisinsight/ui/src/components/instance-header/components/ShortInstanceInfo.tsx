@@ -22,8 +22,9 @@ export interface Props {
     dbIndex: number
     user?: Nullable<string>
   }
+  databases: number
 }
-const ShortInstanceInfo = ({ info }: Props) => {
+const ShortInstanceInfo = ({ info, databases }: Props) => {
   const { name, host, port, connectionType, version, user } = info
   return (
     <div data-testid="db-info-tooltip">
@@ -37,17 +38,19 @@ const ShortInstanceInfo = ({ info }: Props) => {
           {port}
         </span>
       </div>
-      <EuiFlexGroup className={styles.dbIndexInfo} alignItems="center" gutterSize="none">
-        <EuiFlexItem grow={false} style={{ marginRight: 16 }}>
-          <EuiIcon className={styles.messageInfoIcon} size="xxl" type={MessageInfoIcon} />
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <EuiText size="s">Logical Databases</EuiText>
-          <EuiText color="subdued" size="xs">
-            Select logical databases to work with in Browser, Workbench, and Database Analysis.
-          </EuiText>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+      {databases > 1 && (
+        <EuiFlexGroup className={styles.dbIndexInfo} alignItems="center" gutterSize="none">
+          <EuiFlexItem grow={false} style={{ marginRight: 16 }}>
+            <EuiIcon className={styles.messageInfoIcon} size="xxl" type={MessageInfoIcon} />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <EuiText size="s">Logical Databases</EuiText>
+            <EuiText color="subdued" size="xs">
+              Select logical databases to work with in Browser, Workbench, and Database Analysis.
+            </EuiText>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      )}
       <EuiFlexGroup
         className={styles.tooltipItem}
         gutterSize="none"

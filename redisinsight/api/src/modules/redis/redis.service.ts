@@ -27,10 +27,14 @@ export class RedisService {
    */
   private syncClients() {
     [...this.clients.keys()].forEach((id) => {
-      const redisClient = this.clients.get(id);
-      if (redisClient && (Date.now() - redisClient.lastTimeUsed) >= REDIS_CLIENTS_CONFIG.maxIdleThreshold) {
-        redisClient.client.disconnect();
-        this.clients.delete(id);
+      try {
+        const redisClient = this.clients.get(id);
+        if (redisClient && (Date.now() - redisClient.lastTimeUsed) >= REDIS_CLIENTS_CONFIG.maxIdleThreshold) {
+          redisClient.client.disconnect();
+          this.clients.delete(id);
+        }
+      } catch (e) {
+        // ignore error
       }
     });
   }

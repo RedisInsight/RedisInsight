@@ -71,6 +71,8 @@ export const mockRedisService = jest.fn(() => ({
   setClientInstance: jest.fn(),
   isClientConnected: jest.fn().mockReturnValue(true),
   removeClientInstance: jest.fn(),
+  removeClientInstances: jest.fn(),
+  findClientInstances: jest.fn(),
 }));
 
 export const mockRedisConnectionFactory = jest.fn(() => ({

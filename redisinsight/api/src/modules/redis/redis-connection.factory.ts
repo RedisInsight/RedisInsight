@@ -20,13 +20,16 @@ export interface IRedisConnectionOptions {
 export class RedisConnectionFactory {
   private logger = new Logger('RedisConnectionFactory');
 
-  // default retry strategy
+  // common retry strategy
   private retryStrategy = (times: number): number => {
     if (times < REDIS_CLIENTS_CONFIG.retryTimes) {
       return Math.min(times * REDIS_CLIENTS_CONFIG.retryDelay, 2000);
     }
     return undefined;
   };
+
+  // disable function such as retry or checkIdentity
+  private dummyFn = () => undefined;
 
   /**
    * Normalize data to be compatible with used redis connection library
@@ -53,7 +56,7 @@ export class RedisConnectionFactory {
         || generateRedisConnectionName(clientMetadata.context, clientMetadata.databaseId),
       showFriendlyErrorStack: true,
       maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
-      retryStrategy: options?.useRetry ? this.retryStrategy : () => undefined,
+      retryStrategy: options?.useRetry ? this.retryStrategy : this.dummyFn,
     };
 
     if (tls) {
@@ -76,7 +79,7 @@ export class RedisConnectionFactory {
     options: IRedisConnectionOptions,
   ): Promise<ClusterOptions> {
     return {
-      clusterRetryStrategy: options.useRetry ? this.retryStrategy : () => undefined,
+      clusterRetryStrategy: options.useRetry ? this.retryStrategy : this.dummyFn,
       redisOptions: await this.getRedisOptions(clientMetadata, database, options),
     };
   }
@@ -106,7 +109,7 @@ export class RedisConnectionFactory {
       password: sentinelMaster?.password,
       sentinelTLS: baseOptions.tls,
       enableTLSForSentinelMode: !!baseOptions.tls, // previously was always `true` for tls connections
-      sentinelRetryStrategy: options?.useRetry ? this.retryStrategy : () => undefined,
+      sentinelRetryStrategy: options?.useRetry ? this.retryStrategy : this.dummyFn,
     };
   }
 
@@ -119,7 +122,7 @@ export class RedisConnectionFactory {
     let config: ConnectionOptions;
     config = {
       rejectUnauthorized: database.verifyServerCert,
-      checkServerIdentity: () => undefined,
+      checkServerIdentity: this.dummyFn,
       servername: database.tlsServername || undefined,
     };
     if (database.caCert) {
@@ -190,7 +193,7 @@ export class RedisConnectionFactory {
     const config = await this.getRedisClusterOptions(clientMetadata, database, options);
     return new Promise((resolve, reject) => {
       try {
-        const cluster = new Redis.Cluster([{
+        const cluster = new Cluster([{
           host: database.host,
           port: database.port,
         }].concat(database.nodes), {
@@ -231,7 +234,6 @@ export class RedisConnectionFactory {
           reject(e);
         });
         client.on('ready', (): void => {
-          console.log('\n\n\n\n\n!!!READY!!!!\n\n\n\n', client.options);
           this.logger.log('Successfully connected to the redis oss sentinel.');
           resolve(client);
         });

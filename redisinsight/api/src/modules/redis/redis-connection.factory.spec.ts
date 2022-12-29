@@ -1,122 +1,236 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConnectionOptions } from 'tls';
 import * as Redis from 'ioredis';
 import {
-  generateMockRedisClientInstance,
-  mockCaCertificate,
-  mockClientCertificate, mockClientMetadata, mockClusterDatabaseWithTlsAuth,
+  mockClientMetadata, mockClusterDatabaseWithTlsAuth,
   mockDatabase,
-  mockDatabaseEntity,
+  mockDatabaseWithTlsAuth,
   mockIORedisClient, mockIORedisCluster, mockIORedisSentinel,
-  mockRedisConnectionFactory, mockSentinelDatabaseWithTlsAuth
+  mockSentinelDatabaseWithTlsAuth,
 } from 'src/__mocks__';
-import { ClientContext, Session } from 'src/common/models';
-import { RedisService } from './redis.service';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { Database } from 'src/modules/database/models/database';
-//
-// const mockClientMetadata = {
-//   session: {
-//     id: 'sessionId',
-//   },
-// };
+import { EventEmitter } from 'events';
+import apiConfig from 'src/utils/config';
 
-const mockRedisClientInstance = {
-  clientMetadata: {},
-  session: {},
-  databaseId: mockDatabase.id,
-  context: ClientContext.Common,
-  uniqueId: undefined,
-  client: mockIORedisClient,
-  lastTimeUsed: Date.now(),
-};
-
-const mockTlsConfigResult: ConnectionOptions = {
-  rejectUnauthorized: true,
-  servername: mockDatabaseEntity.tlsServername,
-  checkServerIdentity: () => undefined,
-  ca: [mockCaCertificate.certificate],
-  key: mockClientCertificate.key,
-  cert: mockClientCertificate.certificate,
-};
+const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
 jest.mock('ioredis', () => ({
   ...jest.requireActual('ioredis') as object,
-  // default: jest.fn(),
+  default: jest.requireActual('ioredis-mock/jest') as object,
+  Cluster: jest.requireActual('ioredis-mock/jest') as object,
 }));
 
 describe('RedisConnectionFactory', () => {
   let service: RedisConnectionFactory;
+  let mockClient;
+  let mockCluster;
+  let spyRedis;
+  let spyCluster;
+  const mockError = new Error('some error');
+  const checkError = (cb) => (e) => {
+    expect(e).toEqual(mockError);
+    cb();
+  };
+  const checkClient = (cb, client) => (result) => {
+    expect(result).toEqual(client);
+    cb();
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RedisConnectionFactory,
       ],
-    }).compile();
+    })
+      .compile();
 
     service = await module.get(RedisConnectionFactory);
+
+    mockClient = new EventEmitter();
+    mockCluster = new EventEmitter();
+    spyRedis = jest.spyOn(Redis, 'default');
+    spyRedis.mockImplementationOnce(() => mockClient);
+    spyCluster = jest.spyOn(Redis, 'Cluster');
+    spyCluster.mockImplementationOnce(() => mockCluster);
+  });
+
+  describe('retryStrategy', () => {
+    it('should return 500ms delay for first retry', () => {
+      expect(service['retryStrategy'](1)).toEqual(REDIS_CLIENTS_CONFIG.retryDelay);
+    });
+    it('should return 1000ms delay for second retry', () => {
+      expect(service['retryStrategy'](2)).toEqual(REDIS_CLIENTS_CONFIG.retryDelay * 2);
+    });
+    it('should return undefined when number of retries exceeded', () => {
+      expect(service['retryStrategy'](REDIS_CLIENTS_CONFIG.maxRetries + 1)).toEqual(undefined);
+    });
+  });
+
+  describe('createStandaloneConnection', () => {
+    it('should successfully create standalone client', (done) => {
+      service.createStandaloneConnection(mockClientMetadata, mockDatabaseWithTlsAuth, { useRetry: true })
+        .then(checkClient(done, mockClient));
+
+      process.nextTick(() => {
+        mockClient.emit('reconnecting');
+        process.nextTick(() => mockClient.emit('ready'));
+      });
+    });
+
+    it('should successfully create standalone client with reconnect', (done) => {
+      service.createStandaloneConnection(mockClientMetadata, mockDatabaseWithTlsAuth, { useRetry: true })
+        .then(checkClient(done, mockClient));
+      process.nextTick(() => mockClient.emit('ready'));
+    });
+
+    it('should fail to create standalone connection', (done) => {
+      service.createStandaloneConnection(mockClientMetadata, mockDatabaseWithTlsAuth, {})
+        .catch(checkError(done));
+
+      process.nextTick(() => mockClient.emit('error', mockError));
+    });
+
+    it('should handle sync error during standalone client creation', (done) => {
+      spyRedis.mockReset();
+      spyRedis.mockImplementationOnce(() => {
+        throw mockError;
+      });
+
+      service.createStandaloneConnection(mockClientMetadata, mockDatabaseWithTlsAuth, {})
+        .catch(checkError(done));
+    });
+  });
+
+  describe('createClusterConnection', () => {
+    it('should successfully create cluster client', (done) => {
+      service.createClusterConnection(mockClientMetadata, mockClusterDatabaseWithTlsAuth, {})
+        .then(checkClient(done, mockCluster));
+
+      process.nextTick(() => mockCluster.emit('ready'));
+    });
+
+    it('should fail to create cluster connection', (done) => {
+      service.createClusterConnection(mockClientMetadata, mockClusterDatabaseWithTlsAuth, {})
+        .catch(checkError(done));
+
+      process.nextTick(() => mockCluster.emit('error', mockError));
+    });
+
+    it('should handle sync error during cluster client creation', (done) => {
+      spyCluster.mockReset();
+      spyCluster.mockImplementationOnce(() => {
+        throw mockError;
+      });
+      service.createClusterConnection(mockClientMetadata, mockClusterDatabaseWithTlsAuth, {})
+        .catch(checkError(done));
+    });
+  });
+
+  describe('createSentinelConnection', () => {
+    it('should successfully create sentinel client', (done) => {
+      service.createSentinelConnection(mockClientMetadata, mockSentinelDatabaseWithTlsAuth, { useRetry: true })
+        .then(checkClient(done, mockClient));
+
+      process.nextTick(() => mockClient.emit('ready'));
+    });
+
+    it('should fail to create sentinel connection', (done) => {
+      service.createSentinelConnection(mockClientMetadata, mockSentinelDatabaseWithTlsAuth, {})
+        .catch(checkError(done));
+
+      process.nextTick(() => mockClient.emit('error', mockError));
+    });
+
+    it('should handle sync error during sentinel client creation', (done) => {
+      spyRedis.mockReset();
+      spyRedis.mockImplementationOnce(() => {
+        throw mockError;
+      });
+
+      service.createSentinelConnection(mockClientMetadata, mockSentinelDatabaseWithTlsAuth, {})
+        .catch(checkError(done));
+    });
   });
 
   describe('createClientAutomatically', () => {
     beforeEach(() => {
-      service.createSentinelConnection = jest.fn().mockRejectedValueOnce(new Error());
-      service.createClusterConnection = jest.fn().mockRejectedValueOnce(new Error());
-      service.createStandaloneConnection = jest.fn().mockRejectedValueOnce(new Error());
+      service.createSentinelConnection = jest.fn()
+        .mockRejectedValueOnce(new Error());
+      service.createClusterConnection = jest.fn()
+        .mockRejectedValueOnce(new Error());
+      service.createStandaloneConnection = jest.fn()
+        .mockRejectedValueOnce(new Error());
     });
     it('should create standalone client', async () => {
-      service.createStandaloneConnection = jest.fn().mockResolvedValue(mockIORedisClient);
+      service.createStandaloneConnection = jest.fn()
+        .mockResolvedValue(mockIORedisClient);
 
       const result = await service.createClientAutomatically(mockClientMetadata, mockDatabase);
 
-      expect(result).toEqual(mockIORedisClient);
+      expect(result)
+        .toEqual(mockIORedisClient);
       expect(service.createStandaloneConnection)
         .toHaveBeenCalledWith(mockClientMetadata, mockDatabase, { useRetry: true });
     });
 
     it('should create cluster client', async () => {
-      service.createClusterConnection = jest.fn().mockResolvedValue(mockIORedisCluster);
+      service.createClusterConnection = jest.fn()
+        .mockResolvedValue(mockIORedisCluster);
 
       const result = await service.createClientAutomatically(mockClientMetadata, mockClusterDatabaseWithTlsAuth);
 
-      expect(result).toEqual(mockIORedisCluster);
-      expect(service.createClusterConnection).toHaveBeenCalledWith(
-        mockClientMetadata,
-        mockClusterDatabaseWithTlsAuth,
-        { useRetry: true },
-      );
-      expect(service.createStandaloneConnection).not.toHaveBeenCalled();
+      expect(result)
+        .toEqual(mockIORedisCluster);
+      expect(service.createClusterConnection)
+        .toHaveBeenCalledWith(
+          mockClientMetadata,
+          mockClusterDatabaseWithTlsAuth,
+          { useRetry: true },
+        );
+      expect(service.createStandaloneConnection)
+        .not
+        .toHaveBeenCalled();
     });
 
     it('should create sentinel client', async () => {
-      service.createSentinelConnection = jest.fn().mockResolvedValue(mockIORedisSentinel);
+      service.createSentinelConnection = jest.fn()
+        .mockResolvedValue(mockIORedisSentinel);
 
       const result = await service.createClientAutomatically(mockClientMetadata, mockSentinelDatabaseWithTlsAuth);
 
-      expect(result).toEqual(mockIORedisSentinel);
-      expect(service.createSentinelConnection).toHaveBeenCalledWith(
-        mockClientMetadata,
-        mockSentinelDatabaseWithTlsAuth,
-        { useRetry: true },
-      );
-      expect(service.createClusterConnection).not.toHaveBeenCalled();
-      expect(service.createStandaloneConnection).not.toHaveBeenCalled();
+      expect(result)
+        .toEqual(mockIORedisSentinel);
+      expect(service.createSentinelConnection)
+        .toHaveBeenCalledWith(
+          mockClientMetadata,
+          mockSentinelDatabaseWithTlsAuth,
+          { useRetry: true },
+        );
+      expect(service.createClusterConnection)
+        .not
+        .toHaveBeenCalled();
+      expect(service.createStandaloneConnection)
+        .not
+        .toHaveBeenCalled();
     });
   });
 
-  describe('connectToDatabaseInstance', () => {
+  describe('createRedisConnection', () => {
     it('should create standalone client', async () => {
-      service.createStandaloneConnection = jest.fn().mockResolvedValue(mockIORedisClient);
+      service.createStandaloneConnection = jest.fn()
+        .mockResolvedValue(mockIORedisClient);
 
       const result = await service.createRedisConnection(mockClientMetadata, mockDatabase);
 
-      expect(result).toEqual(mockIORedisClient);
+      expect(result)
+        .toEqual(mockIORedisClient);
       expect(service.createStandaloneConnection)
         .toHaveBeenCalledWith(mockClientMetadata, mockDatabase, { useRetry: true });
     });
 
     it('should trigger auto discovery connection type (when no connectionType defined)', async () => {
-      service.createClientAutomatically = jest.fn().mockResolvedValue(mockIORedisClient);
+      service.createClientAutomatically = jest.fn()
+        .mockResolvedValue(mockIORedisClient);
       const mockDatabaseWithoutConnectionType = Object.assign(new Database(), {
         ...mockDatabase,
         connectionType: null,
@@ -124,7 +238,8 @@ describe('RedisConnectionFactory', () => {
 
       const result = await service.createRedisConnection(mockClientMetadata, mockDatabaseWithoutConnectionType);
 
-      expect(result).toEqual(mockIORedisClient);
+      expect(result)
+        .toEqual(mockIORedisClient);
       expect(service.createClientAutomatically)
         .toHaveBeenCalledWith(
           mockClientMetadata,
@@ -137,69 +252,35 @@ describe('RedisConnectionFactory', () => {
     });
 
     it('should create cluster client', async () => {
-      service.createClusterConnection = jest.fn().mockResolvedValue(mockIORedisCluster);
+      service.createClusterConnection = jest.fn()
+        .mockResolvedValue(mockIORedisCluster);
 
       const result = await service.createRedisConnection(mockClientMetadata, mockClusterDatabaseWithTlsAuth);
 
-      expect(result).toEqual(mockIORedisCluster);
-      expect(service.createClusterConnection).toHaveBeenCalledWith(
-        mockClientMetadata,
-        mockClusterDatabaseWithTlsAuth,
-        { useRetry: true },
-      );
+      expect(result)
+        .toEqual(mockIORedisCluster);
+      expect(service.createClusterConnection)
+        .toHaveBeenCalledWith(
+          mockClientMetadata,
+          mockClusterDatabaseWithTlsAuth,
+          { useRetry: true },
+        );
     });
 
     it('should create sentinel client', async () => {
-      service.createSentinelConnection = jest.fn().mockResolvedValue(mockIORedisSentinel);
+      service.createSentinelConnection = jest.fn()
+        .mockResolvedValue(mockIORedisSentinel);
 
       const result = await service.createRedisConnection(mockClientMetadata, mockSentinelDatabaseWithTlsAuth);
 
-      expect(result).toEqual(mockIORedisSentinel);
-      expect(service.createSentinelConnection).toHaveBeenCalledWith(
-        mockClientMetadata,
-        mockSentinelDatabaseWithTlsAuth,
-        { useRetry: true },
-      );
+      expect(result)
+        .toEqual(mockIORedisSentinel);
+      expect(service.createSentinelConnection)
+        .toHaveBeenCalledWith(
+          mockClientMetadata,
+          mockSentinelDatabaseWithTlsAuth,
+          { useRetry: true },
+        );
     });
   });
-
-  // describe('getRedisConnectionConfig', () => {
-  //   it('should return config with tls', async () => {
-  //     service['getTLSConfig'] = jest.fn().mockResolvedValue(mockTlsConfigResult);
-  //     const {
-  //       host, port, password, username, db,
-  //     } = mockClusterDatabaseWithTlsAuth;
-  //
-  //     const expectedResult = {
-  //       host, port, username, password, db, tls: mockTlsConfigResult,
-  //     };
-  //
-  //     const result = await service['getRedisConnectionConfig'](mockClusterDatabaseWithTlsAuth);
-  //
-  //     expect(JSON.stringify(result)).toEqual(JSON.stringify(expectedResult));
-  //   });
-  //   it('should return without tls', async () => {
-  //     const {
-  //       host, port, password, username, db,
-  //     } = mockDatabase;
-  //
-  //     const expectedResult = {
-  //       host, port, username, password, db,
-  //     };
-  //
-  //     const result = await service['getRedisConnectionConfig'](mockDatabase);
-  //
-  //     expect(result).toEqual(expectedResult);
-  //   });
-  // });
-  //
-  // xdescribe('getTLSConfig', () => {
-  //   it('should return tls config', async () => {
-  //     const result = await service['getTLSConfig'](mockClusterDatabaseWithTlsAuth);
-  //
-  //     expect(JSON.stringify(result)).toEqual(
-  //       JSON.stringify(mockTlsConfigResult),
-  //     );
-  //   });
-  // });
 });

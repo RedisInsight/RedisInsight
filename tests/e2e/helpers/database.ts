@@ -185,7 +185,7 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
     await addRedisDatabasePage.addRedisDataBase(databaseParameters);
     // Click for saving
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
-    await t.wait(2000);
+    await t.wait(3000);
     // Reload page until db appears
     do {
         await common.reloadPage();
@@ -194,6 +194,27 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 5000 });
     await myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName ?? '');
     await t.expect(browserPage.keysSummary.exists).ok('Key list not loaded', { timeout: 15000 });
+}
+
+/**
+ * Add RE Cloud database
+ * @param databaseParameters The database parameters
+*/
+export async function addRECloudDatabase(databaseParameters: AddNewDatabaseParameters): Promise<void> {
+    const searchTimeout = 60 * 1000; // 60 sec to wait database appearing
+    const dbSelector = myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '');
+    const startTime = Date.now();
+
+    await addRedisDatabasePage.addRedisDataBase(databaseParameters);
+    // Click for saving
+    await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+    await t.wait(3000);
+    // Reload page until db appears
+    do {
+        await common.reloadPage();
+    }
+    while (!(await dbSelector.exists) && Date.now() - startTime < searchTimeout);
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 5000 });
 }
 
 // Accept License terms

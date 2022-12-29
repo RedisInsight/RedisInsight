@@ -17,3 +17,4 @@ export * from './server';
 export * from './redis-enterprise';
 export * from './redis-sentinel';
 export * from './database-import';
+export * from './redis-client';

@@ -1,6 +1,6 @@
 import { ApiTags } from '@nestjs/swagger';
 import {
-  Controller, Get, UseInterceptors,
+  Controller, Get, Param, UseInterceptors,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
@@ -33,6 +33,7 @@ export class DatabaseInfoController {
   async getInfo(
     @ClientMetadataParam({
       databaseIdParam: 'id',
+      ignoreDbIndex: true,
     }) clientMetadata: ClientMetadata,
   ): Promise<RedisDatabaseInfoResponse> {
     return this.databaseInfoService.getInfo(clientMetadata);
@@ -54,8 +55,30 @@ export class DatabaseInfoController {
   async getDatabaseOverview(
     @ClientMetadataParam({
       databaseIdParam: 'id',
+      ignoreDbIndex: false, // do not ignore db index to calculate current (selected) keys in db
     }) clientMetadata: ClientMetadata,
   ): Promise<DatabaseOverview> {
     return this.databaseInfoService.getOverview(clientMetadata);
+  }
+
+  @Get(':id/db/:index')
+  @UseInterceptors(new TimeoutInterceptor())
+  @ApiEndpoint({
+    description: 'Try to create connection to specified database index',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+      },
+    ],
+  })
+  async getDatabaseIndex(
+    @Param('index') db: string,
+      @ClientMetadataParam({
+        databaseIdParam: 'id',
+        ignoreDbIndex: true,
+      }) clientMetadata: ClientMetadata,
+  ): Promise<void> {
+    return this.databaseInfoService.getDatabaseIndex(clientMetadata, db);
   }
 }

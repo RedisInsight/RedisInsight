@@ -16,11 +16,10 @@ const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
 jest.mock('ioredis', () => ({
   ...jest.requireActual('ioredis') as object,
-  default: jest.requireActual('ioredis-mock/jest') as object,
-  Cluster: jest.requireActual('ioredis-mock/jest') as object,
 }));
 
 describe('RedisConnectionFactory', () => {
+  let module: TestingModule;
   let service: RedisConnectionFactory;
   let mockClient;
   let mockCluster;
@@ -37,7 +36,7 @@ describe('RedisConnectionFactory', () => {
   };
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       providers: [
         RedisConnectionFactory,
       ],

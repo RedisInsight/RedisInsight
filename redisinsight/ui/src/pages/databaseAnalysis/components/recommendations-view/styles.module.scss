@@ -6,7 +6,8 @@
   height: 100%;
 
   .badgesLegend {
-    margin: 20px 22px 14px 0 !important;
+    margin: 0 22px 14px 0 !important;
+    padding-top: 20px;
 
     .badgeWrapper {
       margin-right: 0;
@@ -36,7 +37,7 @@
   @include euiScrollBar;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 100%;
+  max-height: calc(100% - 51px);
 
   .accordionButton :global(.euiFlexItem) {
     margin: 0;

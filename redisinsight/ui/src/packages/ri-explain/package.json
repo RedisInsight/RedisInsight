@@ -29,14 +29,15 @@
   },
   "visualizations": [
     {
-      "id": "explain-viz",
-      "name": "Explain",
-      "activationMethod": "renderSearchExplain",
+      "id": "profile-explain-viz",
+      "name": "Profile-Explain",
+      "activationMethod": "renderCore",
       "matchCommands": [
         "FT.EXPLAIN",
-        "FT.EXPLAINCLI"
+        "FT.EXPLAINCLI",
+        "FT.PROFILE"
       ],
-      "description": "Example of FT.EXPLAIN plugin",
+      "description": "Profile/Explain plugin Visualization",
       "default": true
     }
   ],

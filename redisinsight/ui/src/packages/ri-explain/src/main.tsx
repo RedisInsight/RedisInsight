@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react'
 import { render } from 'react-dom'
-import { ExplainApp } from './App'
+import { App } from './App'
 
 interface Props {
   command?: string
@@ -38,9 +38,9 @@ const renderApp = (element: JSX.Element) => render(
   document.getElementById('app')
 )
 
-const renderSearchExplain = (props: Props) => renderApp(
-  <ExplainApp data={props.data} command={props.command} />
+const renderCore = (props: Props) => renderApp(
+  <App data={props.data} command={props.command} />
 )
 
 // This is a required action - export the main function for execution of the visualization
-export default { renderSearchExplain }
+export default { renderCore }

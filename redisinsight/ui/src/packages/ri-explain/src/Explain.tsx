@@ -3,36 +3,62 @@ import { Model, Graph } from '@antv/x6'
 import { register} from '@antv/x6-react-shape';
 import Hierarchy from '@antv/hierarchy';
 
-import { AntHierarchyInput, ASTToJson } from './parser'
-import { ExplainNode } from './Node';
+import { ParseExplain, ParseProfile } from './parser'
+import { ExplainNode, ProfileNode } from './Node';
 
 interface IExplain {
-  data: [{response: string[] | string}]
+  command: string
+  data: [{response: string[] | string | any}]
+}
+
+enum CoreType {
+  Profile,
+  Explain,
 }
 
 export default function Explain(props: IExplain): JSX.Element {
+  const command = props.command.split(' ')[0]
+  if (command.toLowerCase() == 'ft.profile') {
+    const info = props.data[0].response[1];
+    const resp = ParseProfile(info)
+    return (
+      <ExplainDraw
+        data={resp}
+        type={CoreType.Profile}
+      />
+    )
+  }
 
   const resp = props.data[0].response
 
+  const data = ParseExplain(
+    Array.isArray(resp) ? resp.join('\n') : resp.split('\\n').join('\n')
+  );
   return (
     <ExplainDraw
-      data={
-        Array.isArray(resp) ? resp.join('\n') : resp.split('\\n').join('\n')
-      }
+      data={data}
+      type={CoreType.Explain}
     />
   )
 }
 
 register({
-  shape: 'react-node',
+  shape: 'react-explain-node',
   width: 100,
   height: 100,
   component: ExplainNode as any
 })
 
+register({
+  shape: 'react-profile-node',
+  width: 100,
+  height: 100,
+  component: ProfileNode as any,
+})
+
 const isDarkTheme = document.body.classList.contains('theme_DARK')
 
-function ExplainDraw(props: {data: any}): JSX.Element {
+function ExplainDraw({data, type}: {data: any, type: CoreType}): JSX.Element {
   const [done, setDone] = useState(false)
   const container = useRef<HTMLDivElement | null>(null)
 
@@ -59,22 +85,21 @@ function ExplainDraw(props: {data: any}): JSX.Element {
       virtual: true,
     })
 
-    graph.on("resize", () => {
-      graph.centerContent()
-    })
+    graph.on("resize", () => graph.centerContent())
 
     function resize() {
       const isFullScreen = parent.document.body.getElementsByClassName('fullscreen').length > 0
+      const b = graph.getAllCellsBBox();
+      const width = Math.max(b?.width || 1080, document.body.offsetWidth) + 100
       if (isFullScreen) {
-        graph.resize(document.body.offsetWidth, parent.document.body.offsetHeight)
+        const height = Math.max(b?.height || 585, parent.document.body.offsetHeight) + 100
+        graph.resize(width, height)
       } else {
-        graph.resize(document.body.offsetWidth, 585)
+        graph.resize(width, b?.height || 585)
       }
     }
 
     window.addEventListener('resize', resize);
-
-    let data = ASTToJson(props.data);
 
     const result = Hierarchy.dendrogram(data, {
       direction: 'BT',
@@ -98,16 +123,15 @@ function ExplainDraw(props: {data: any}): JSX.Element {
     const model: Model.FromJSONData = { nodes: [], edges: [] }
     const traverse = (data: any) => {
       if (data) {
-        const myData = data.data
+        const info = data.data
         model.nodes?.push({
           id: data.id,
           x: (data.x || 0) + document.body.clientWidth / 2,
           y: (data.y || 0) + document.body.clientHeight,
-          shape: 'react-node',
+          shape: 'react-explain-node',
           width: 240,
-          height: (myData.snippet ? 64 : 42),
-          label: data.id.toString(),
-          data: {...myData, label: myData.data.data, type: myData.data.type},
+          height: (info.snippet ? 64 : 42),
+          data: info,
           attrs: {
             body: {
               fill: isDarkTheme ? '#5F95FF' : '#8992B3',
@@ -151,26 +175,13 @@ function ExplainDraw(props: {data: any}): JSX.Element {
     traverse(result)
 
     graph.fromJSON(model)
-    // graph.centerContent()
 
     graph.centerContent()
-    // scroller.enableAutoResize()
-    // scroller.center()
-    // scroller.scrollToContent()
-
-    // scroller.enableAutoResize()
-    // scroller.center()
-    // scroller.resize(1636)
-    // scroller.centerContent()
-    // graph.center()
-    // graph.centerContent()
-
-
 
   }, [done])
 
   return (
-    <div style={{ height: '585px', width: `100vw`, margin: 0 }} ref={container} id="container"></div>
+    <div style={{ height: '585px', margin: 0, width: '100vw' }} ref={container} id="container"></div>
   )
 
 }

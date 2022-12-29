@@ -3,15 +3,15 @@ import Explain from './Explain'
 
 const isDarkTheme = document.body.classList.contains('theme_DARK')
 
-export function ExplainApp(props: { command?: string, data: any }) {
+export function App(props: { command?: string, data: any }) {
 
   const ErrorResponse = HandleError(props)
 
   if (ErrorResponse !== null) return ErrorResponse
 
   return (
-    <div style={{ height: "100%" }}>
-      <Explain data={props.data}/>
+    <div id="mainApp" style={{ height: "100%", width: '100%', overflowX: 'auto' }}>
+      <Explain command={props.command || ''} data={props.data}/>
     </div>
   )
 }

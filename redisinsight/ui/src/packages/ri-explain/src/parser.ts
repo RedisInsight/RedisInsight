@@ -191,38 +191,48 @@ class Lexer {
   }
 }
 
-type TNode = 'Expr' | 'UNION' | 'INTERSECT' | 'NUMERIC'
+export enum EntityType {
+  Expr = 'Expr',
+  UNION = 'UNION',
+  INTERSECT = 'INTERSECT',
+  NUMERIC = 'NUMERIC',
+
+  Index = 'Index',
+  Scorer = 'Scorer',
+  Sorter = 'Sorter',
+  Loader = 'Loader',
+}
 
 
-export interface AntHierarchyInput {
+export interface EntityInfo {
   id: string
-  x?: number
-  y?: number
-  data?: {
-    type: TNode,
-    data: string
-  }
+  type: EntityType,
+  data?: string
   snippet?: string
-  children: AntHierarchyInput[]
+  children: EntityInfo[]
+  time?: string
+  counter?: string
+  size?: string
 }
 
 class Expr {
   Core: string
+  Type?: string
+  Time?: string
 
   constructor(expr: string) {
     this.Core = expr
   }
 
-  toJSON(): AntHierarchyInput {
+  toJSON(): EntityInfo {
     return {
       id: uuidv4(),
       // data: 'Expr',
       // snippet: this.Core,
-      data: {
-        type: 'Expr',
-        data: this.Core
-      },
+      type: EntityType.Expr,
+      data: this.Core,
       children: [],
+      time: this.Time,
     }
   }
 }
@@ -245,13 +255,11 @@ class NumericExpr {
     this.RSign = rsign;
   }
 
-  toJSON(): AntHierarchyInput {
+  toJSON(): EntityInfo {
     return {
       id: uuidv4(),
-      data: {
-        type: 'NUMERIC',
-        data: 'Numeric',
-      },
+      type: EntityType.NUMERIC,
+      data: 'Numeric',
       snippet: `${this.Left.toString()} ${this.LSign.Data} ${this.Identifier.Data} ${this.RSign.Data} ${this.Right.toString()}`,
       children: [],
     }
@@ -269,14 +277,11 @@ class IntersectExpr {
     this.Core = e
   }
 
-  toJSON(): AntHierarchyInput {
+  toJSON(): EntityInfo {
     return {
       id: uuidv4(),
-      data: {
-        type: 'INTERSECT',
-        data: 'INTERSECT',
-      },
-      children: this.Core.map(x => x.toJSON())
+      type: EntityType.INTERSECT,
+      children: this.Core.map(x => x.toJSON()),
     }
   }
 }
@@ -288,45 +293,26 @@ class UnionExpr {
     this.Core = e
   }
 
-  toJSON(): AntHierarchyInput {
+  toJSON(): EntityInfo {
     return {
       id: uuidv4(),
-      data: {
-        type: 'UNION',
-        data: 'UNION',
-      },
+      type: EntityType.UNION,
       children: this.Core.map(x => x.toJSON())
     }
   }
 }
 
-class SearchResult {
-  Core: IntersectExpr | UnionExpr
-
-  constructor(e: IntersectExpr | UnionExpr) {
-    this.Core = e
-  }
-}
-
-enum PRECEDENCE {
-  CALL
-}
-
-
-type PrefixFunction = (T: Token, p: PRECEDENCE) => void
 
 class Parser {
   private L: Lexer
   CurrentToken: Token
   PeekToken: Token
   Errors: string[]
-  PrefixFunctions: Map<TokenType, PrefixFunction>
 
   constructor(l: Lexer) {
     this.L = l;
     
     this.Errors = [];
-    this.PrefixFunctions = new Map()
     this.CurrentToken = new Token(TokenType.INIT, '')
     this.PeekToken = new Token(TokenType.INIT, '')
 
@@ -517,7 +503,7 @@ function Parse(data: string): SearchExpr {
   }
 }
 
-export function ASTToJson(output: string) {
+export function ParseExplain(output: string) {
   return Parse(output).toJSON()
 }
 
@@ -545,4 +531,55 @@ function assertToken(expected: TokenType, actual: TokenType | undefined) {
   }
 
   assert(expected === actual, `Expected ${expected}, Actual: ${actual}`)
+}
+
+export function ParseProfile(info: any[][]): EntityInfo {
+  const parserData: any = info[info.length - 2]
+  let resp = ParseIteratorProfile(parserData[1])
+
+  const processorsProfile: string[][] = info[info.length - 1].slice(1);
+
+  for (let i = 0; i < processorsProfile.length; i++) {
+    const e = processorsProfile[i]
+    resp = {
+      id: uuidv4(),
+      type: e[1] as EntityType,
+      time: e[3],
+      counter: e[5],
+      children: [resp],
+    }
+  }
+
+  return resp;
+}
+
+export function ParseIteratorProfile(data: any[]): EntityInfo {
+  const t: EntityType = data[1];
+  if ([EntityType.UNION, EntityType.INTERSECT].includes(t)) {
+    const l = data.length;
+    return {
+      id: uuidv4(),
+      type: t,
+      time: data[5],
+      counter: data[7],
+      children: data.slice(l - 2).map(x => ParseIteratorProfile(x)),
+    }
+  } else if (t === EntityType.NUMERIC) {
+    return {
+      id: uuidv4(),
+      type: EntityType.NUMERIC,
+      snippet: 'Numeric',
+      children: [],
+    }
+  } else {
+    return {
+      id: uuidv4(),
+      type: EntityType.Expr,
+      data: data[3],
+      time: data[5],
+      counter: data[7],
+      size: data[9],
+      children: [],
+    }
+  }
 }

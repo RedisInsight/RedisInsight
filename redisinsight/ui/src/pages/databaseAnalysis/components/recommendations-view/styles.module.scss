@@ -3,14 +3,10 @@
 @import "@elastic/eui/src/global_styling/index";
 
 .wrapper {
-  @include euiScrollBar;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: 100%;
-  padding-top: 30px;
+  height: 100%;
 
   .badgesLegend {
-    margin: 0 22px 14px 0 !important;
+    margin: 20px 22px 14px 0 !important;
 
     .badgeWrapper {
       margin-right: 0;
@@ -34,6 +30,13 @@
     align-items: center;
     margin-right: 24px;
   }
+}
+
+.recommendationsContainer {
+  @include euiScrollBar;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100%;
 
   .accordionButton :global(.euiFlexItem) {
     margin: 0;

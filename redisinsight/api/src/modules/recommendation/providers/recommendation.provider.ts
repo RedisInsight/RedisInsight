@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
 import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/utils';
-import { RECOMMENDATION_NAMES } from 'src/constants';
+import { RECOMMENDATION_NAMES, IS_TIMESTAMP } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
@@ -16,6 +16,7 @@ const maxListLength = 1000;
 const maxSetLength = 5000;
 const maxConnectedClients = 100;
 const bigStringMemory = 5_000_000;
+const sortedSetCountForCheck = 100;
 
 @Injectable()
 export class RecommendationProvider {
@@ -303,6 +304,48 @@ export class RecommendationProvider {
       return nopassUser ? { name: RECOMMENDATION_NAMES.SET_PASSWORD } : null;
     } catch (err) {
       this.logger.error('Can not determine set password recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check set password recommendation
+   * @param redisClient
+   * @param keys
+   */
+
+  async determineRTSRecommendation(
+    redisClient: Redis | Cluster,
+    keys: Key[],
+  ): Promise<Recommendation> {
+    try {
+      let processedKeysNumber = 0;
+      let isTimeSeries = false;
+      let sortedSetNumber = 0;
+      while (
+        processedKeysNumber < keys.length
+        && !isTimeSeries
+        && sortedSetNumber <= sortedSetCountForCheck
+      ) {
+        if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
+          processedKeysNumber += 1;
+        } else {
+          const [, membersArray] = await redisClient.sendCommand(
+            // get first member-score pair
+            new Command('zscan', [keys[processedKeysNumber].name, '0', 'COUNT', 2], { replyEncoding: 'utf8' }),
+          ) as string[];
+          // check is pair member-score is timestamp
+          if (IS_TIMESTAMP.test(membersArray[0]) && IS_TIMESTAMP.test(membersArray[1])) {
+            isTimeSeries = true;
+          }
+          processedKeysNumber += 1;
+          sortedSetNumber += 1;
+        }
+      }
+
+      return isTimeSeries ? { name: RECOMMENDATION_NAMES.RTS } : null;
+    } catch (err) {
+      this.logger.error('Can not determine RTS recommendation', err);
       return null;
     }
   }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { EuiToolTip, EuiIcon } from '@elastic/eui'
-import { EntityInfo, EntityType } from './parser';
+import { EntityInfo, EntityType } from './parser'
 
 interface INodeProps {
   label: string
@@ -11,7 +11,7 @@ interface INodeProps {
 
 
 export function ExplainNode(props: INodeProps) {
-  const propData: EntityInfo = (props as any).node.getData();
+  const propData: EntityInfo = (props as any).node.getData()
   const { type, data, snippet } = propData
   return (
     <div className="ExplainContainer">
@@ -56,59 +56,22 @@ function NodeToolTipContent(props: INodeToolTip) {
     )
   }
 
-  return null;
+  return null
 }
 
 
 export function ProfileNode(props: INodeProps) {
-  const info: EntityInfo = (props as any).node.getData();
+  const info: EntityInfo = (props as any).node.getData()
   const {data, type, snippet, time, counter, size} = info
-  // const oldRender =  (
-  //   <div className="NodeContainer">
-  //     <div className="NodeHeader">
-  //       <div className="NodeHeaderInfo">
-  //         <div className="NodeLabel">{data ? data : type}</div>
-  //         <div className="NodeType">text</div>
-  //       </div>
-  //       <div className="NodeHeaderMetadata">
-  //         <div className="MetadataSnippet">{snippet}</div>
-  // {/*<div className="MetadataCount">
-  //           <div>100</div>
-  //           {[...Array(4)].map(() => <Box />)}
-  //         </div>*/}
-  //       </div>
-  //     </div>
-  //     <div className="NodeMetadata">
-  //       <EuiToolTip className="NodeToolTip" position="bottom" content={<NodeToolTipContent content={"Execution Time"} />}>
-  //         <div className="NodeTime">
-  //           <div className="NodeTimeIcon">
-  //             <EuiIcon className="NodeIcon" size="m" type="clock" />
-  //           </div>
-  //           <div className="NodeTimeUnit">{time} ms</div>
-  //         </div>
-  //       </EuiToolTip>
-  //       <EuiToolTip position="bottom" content={<NodeToolTipContent content={"Records Produced"} />}>
-  //         <div className="NodeContentInfo">
-  //           <div className="NodeContentUnit">
-  //             <span>{counter}</span>
-  //           </div>
-  //           <div className="NodeContentIcon">
-  //             <EuiIcon className="NodeIcon" size="m" type="iInCircle" />
-  //           </div>
-  //         </div>
-  //       </EuiToolTip>
-  //     </div>
-  //   </div>
-  // )
 
   let items = {}
 
   if (counter !== undefined) {
-    items['Counter'] = counter;
+    items['Counter'] = counter
   }
 
   if (size !== undefined) {
-    items['Size'] = size;
+    items['Size'] = size
   }
 
 

@@ -8,9 +8,9 @@ interface Props {
   data?: { response: any, status: string }[]
 }
 
-import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon';
-import { icon as EuiIconClock } from '@elastic/eui/es/components/icon/assets/clock';
-import { icon as EuiIconIInCircle } from '@elastic/eui/es/components/icon/assets/iInCircle';
+import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon'
+import { icon as EuiIconClock } from '@elastic/eui/es/components/icon/assets/clock'
+import { icon as EuiIconIInCircle } from '@elastic/eui/es/components/icon/assets/iInCircle'
 
 appendIconComponentCache({
   clock: EuiIconClock,

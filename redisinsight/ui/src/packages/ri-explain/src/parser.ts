@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 
 enum TokenType {
 
@@ -35,8 +35,8 @@ class Token {
     Data: string
 
     constructor(t: TokenType, data: string) {
-        this.T = t;
-        this.Data = data;
+        this.T = t
+        this.Data = data
     }
 
 }
@@ -60,26 +60,26 @@ class Lexer {
   C?: string
 
   constructor(input: string) {
-    this.Input = input;
-    this.Position = 0;
-    this.ReadPosition = 0;
-    this.C = undefined;
+    this.Input = input
+    this.Position = 0
+    this.ReadPosition = 0
+    this.C = undefined
 
-    this.ReadChar();
+    this.ReadChar()
   }
 
   ReadChar() {
     if (this.ReadPosition >= this.Input.length) {
-      this.C = undefined;
+      this.C = undefined
     } else {
-      this.C = this.Input[this.ReadPosition];
+      this.C = this.Input[this.ReadPosition]
     }
-    this.Position = this.ReadPosition++;
+    this.Position = this.ReadPosition++
   }
   
   PeekChar() {
     if (this.ReadPosition >= this.Input.length) {
-      return null;
+      return null
     } else {
       return this.Input[this.ReadPosition]
     }
@@ -92,40 +92,40 @@ class Lexer {
   }
 
   ReadIdentifier(): string {
-    let str = '';
+    let str = ''
 
     while (this.C !== undefined && isLetter(this.C)) {
-      str = str + this.C;
+      str = str + this.C
       this.ReadChar()
     }
 
-    return str;
+    return str
   }
 
   ReadNumber(): string {
-    let str = '';
+    let str = ''
     while (this.C !== undefined && (isDigit(this.C) || this.C === '.') && parseFloat(str + this.C) != NaN) {
-      str = str + this.C;
-      this.ReadChar();
+      str = str + this.C
+      this.ReadChar()
     }
-    return str;
+    return str
   }
 
   NextToken() {
-    let t: Token | null = null;
+    let t: Token | null = null
 
-    this.SkipWhitespace();
+    this.SkipWhitespace()
 
     switch (this.C) {
       case '\n':
-        t = new Token(TokenType.NEW_LINE, this.C);
+        t = new Token(TokenType.NEW_LINE, this.C)
         break
       case '{':
-        t = new Token(TokenType.LBRACE, this.C);
-        break;
+        t = new Token(TokenType.LBRACE, this.C)
+        break
       case '}':
-        t = new Token(TokenType.RBRACE, this.C);
-        break;
+        t = new Token(TokenType.RBRACE, this.C)
+        break
       case '(':
         t = new Token(TokenType.LPAREN, this.C)
         break
@@ -170,24 +170,24 @@ class Lexer {
         }
         break
       case undefined:
-        t = new Token(TokenType.EOF, '');
-        break;
+        t = new Token(TokenType.EOF, '')
+        break
       default:
         if (this.C !== undefined && isLetter(this.C)) {
-          const literal = this.ReadIdentifier();
+          const literal = this.ReadIdentifier()
           let tokenType = KEYWORDS[literal] || TokenType.IDENTIFIER
-          t = new Token(tokenType, literal);
-          return t;
+          t = new Token(tokenType, literal)
+          return t
         } else if (this.C !== undefined && isDigit(this.C)) {
-          const n = this.ReadNumber();
-          t = new Token(TokenType.NUMBER, n);
-          return t;
+          const n = this.ReadNumber()
+          t = new Token(TokenType.NUMBER, n)
+          return t
         } else {
-          t = new Token(TokenType.ILLEGAL, this.C);
+          t = new Token(TokenType.ILLEGAL, this.C)
         }
     }
-    this.ReadChar();
-    return t;
+    this.ReadChar()
+    return t
   }
 }
 
@@ -253,11 +253,11 @@ class NumericExpr {
 
 
   constructor(left: number, lsign: Token, identifier: Token, rsign: Token, right: number) {
-    this.Left = left;
-    this.LSign = lsign;
-    this.Identifier = identifier;
-    this.Right = right;
-    this.RSign = rsign;
+    this.Left = left
+    this.LSign = lsign
+    this.Identifier = identifier
+    this.Right = right
+    this.RSign = rsign
   }
 
   toJSON(): EntityInfo {
@@ -315,9 +315,9 @@ class Parser {
   Errors: string[]
 
   constructor(l: Lexer) {
-    this.L = l;
+    this.L = l
     
-    this.Errors = [];
+    this.Errors = []
     this.CurrentToken = new Token(TokenType.INIT, '')
     this.PeekToken = new Token(TokenType.INIT, '')
 
@@ -424,7 +424,7 @@ class Parser {
 
     assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
 
-    let str = '';
+    let str = ''
 
     while (this.CurrentToken.T !== TokenType.NEW_LINE) {
       str = str + this.CurrentToken.Data
@@ -445,17 +445,17 @@ class Parser {
 
     assertToken(TokenType.NUMBER, this.CurrentToken?.T)
 
-    let left = this.CurrentToken?.Data;
+    let left = this.CurrentToken?.Data
 
     this.nextToken()
 
-    let lsign = this.CurrentToken; // TODO: Check sign
+    let lsign = this.CurrentToken // TODO: Check sign
 
     this.nextToken()
     
     assertToken(TokenType.IDENTIFIER, this.CurrentToken?.T)
 
-    let identifier = this.CurrentToken;
+    let identifier = this.CurrentToken
 
     this.nextToken()
 
@@ -465,14 +465,14 @@ class Parser {
     }
 
 
-    let rsign = this.CurrentToken;
+    let rsign = this.CurrentToken
 
     this.nextToken()
 
 
     assertToken(TokenType.NUMBER, this.CurrentToken?.T)
 
-    let right = this.CurrentToken?.Data;
+    let right = this.CurrentToken?.Data
 
     this.nextToken()
 
@@ -493,7 +493,7 @@ class Parser {
 
 
 function Parse(data: string): SearchExpr {
-  const l = new Lexer(data);
+  const l = new Lexer(data)
 
   let p = new Parser(l)
   
@@ -518,7 +518,7 @@ function isLetter(str: string): boolean {
 }
 
 function isDigit(str: string): boolean {
-  return str >='0' && str <= '9';
+  return str >='0' && str <= '9'
 }
 
 
@@ -542,7 +542,7 @@ export function ParseProfile(info: any[][]): EntityInfo {
   const parserData: any = info[info.length - 2]
   let resp = ParseIteratorProfile(parserData[1])
 
-  const processorsProfile: string[][] = info[info.length - 1].slice(1);
+  const processorsProfile: string[][] = info[info.length - 1].slice(1)
 
   for (let i = 0; i < processorsProfile.length; i++) {
     const e = processorsProfile[i]
@@ -555,7 +555,7 @@ export function ParseProfile(info: any[][]): EntityInfo {
     }
   }
 
-  return resp;
+  return resp
 }
 
 export function ParseIteratorProfile(data: any[]): EntityInfo {
@@ -568,29 +568,29 @@ export function ParseIteratorProfile(data: any[]): EntityInfo {
     if (key === null) {
 
       while (data[x] === null) {
-        x = x + 1;
+        x = x + 1
       }
-      key = data[x];
+      key = data[x]
     }
 
-    let val = data[x + 1];
+    let val = data[x + 1]
 
-    while (data[x + 1] === null) x = x + 1;
-    val = data[x + 1];
+    while (data[x + 1] === null) x = x + 1
+    val = data[x + 1]
 
     if (Array.isArray(val)) {
       let arr: any[] = []
       while ((x + 1) < data.length && Array.isArray(data[x + 1])) {
         arr.push(data[x + 1])
-        x = x + 1;
+        x = x + 1
       }
-      props[key] = arr;
+      props[key] = arr
     } else {
-      props[key] = val;
+      props[key] = val
     }
   }
 
-  let childrens = props['Child iterators'] || [];
+  let childrens = props['Child iterators'] || []
 
   return {
     id: uuidv4(),
@@ -602,9 +602,9 @@ export function ParseIteratorProfile(data: any[]): EntityInfo {
     children: childrens.map(ParseIteratorProfile),
   }
 
-  // const t: EntityType = props['Type'];
+  // const t: EntityType = props['Type']
   // if ([EntityType.UNION, EntityType.INTERSECT].includes(t)) {
-  //   const l = data.length;
+  //   const l = data.length
 
   //   return {
   //     id: uuidv4(),

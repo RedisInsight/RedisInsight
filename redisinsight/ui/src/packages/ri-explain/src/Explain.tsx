@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Model, Graph } from '@antv/x6'
-import { register} from '@antv/x6-react-shape';
-import Hierarchy from '@antv/hierarchy';
+import { register} from '@antv/x6-react-shape'
+import Hierarchy from '@antv/hierarchy'
 
 import { ParseExplain, ParseProfile } from './parser'
-import { ExplainNode, ProfileNode } from './Node';
+import { ExplainNode, ProfileNode } from './Node'
 
 interface IExplain {
   command: string
@@ -19,7 +19,7 @@ enum CoreType {
 export default function Explain(props: IExplain): JSX.Element {
   const command = props.command.split(' ')[0]
   if (command.toLowerCase() == 'ft.profile') {
-    const info = props.data[0].response[1];
+    const info = props.data[0].response[1]
 
     const profilingTime: IProfilingTime = {
       profile: info[0][1],
@@ -40,7 +40,7 @@ export default function Explain(props: IExplain): JSX.Element {
 
   const data = ParseExplain(
     Array.isArray(resp) ? resp.join('\n') : resp.split('\\n').join('\n')
-  );
+  )
   return (
     <ExplainDraw
       data={data}
@@ -102,7 +102,7 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
 
     function resize() {
       const isFullScreen = parent.document.body.getElementsByClassName('fullscreen').length > 0
-      const b = graph.getAllCellsBBox();
+      const b = graph.getAllCellsBBox()
       const width = Math.max((b?.width || 1080) + 100, document.body.offsetWidth)
       if (isFullScreen) {
         const height = Math.max((b?.height || 585) + 100, parent.document.body.offsetHeight)
@@ -114,7 +114,7 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
     
     resize()
 
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', resize)
 
     const result = Hierarchy.dendrogram(data, {
       direction: 'BT',

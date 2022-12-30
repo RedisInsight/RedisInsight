@@ -24,6 +24,8 @@
 
   --node-border-color: #3D3D3D;
   --node-border-shadow: #17336952;
+  --node-metadata-border-color: #3C3C3C;
+  --node-metadata-color: #B5B6C0;
   --node-background: #212021;
   --edge-background: #6B6B6B;
   --text-color: #DFE5EF;
@@ -37,6 +39,8 @@
 
   --node-border-color: #E4EAF2;
   --node-border-shadow: #17336926;
+  --node-metadata-border-color: #CCD7E7;
+  --node-metadata-color: #415681;
   --node-background: #FFF;
   --edge-background: #8992B3;
   --text-color: #173369;
@@ -116,13 +120,13 @@
       display: flex;
       justify-content: space-between;
       line-height: 18px;
-      color: #B5B6C0;
+      color: var(--node-metadata-color);
 
       padding-top: 12px;
       padding-bottom: 12px;
 
       height: 42px;             //FIXME: fixed height?
-      border-top: 0.5px solid #3C3C3D;
+      border-top: 0.5px solid var(--node-metadata-border-color);
 
       .Time {
           display: flex;

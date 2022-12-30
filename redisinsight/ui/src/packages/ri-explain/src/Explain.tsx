@@ -72,8 +72,10 @@ interface IProfilingTime {
 }
 
 function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, profilingTime?: IProfilingTime}): JSX.Element {
-  const [done, setDone] = useState(false)
   const container = useRef<HTMLDivElement | null>(null)
+
+  const [done, setDone] = useState(false)
+  const [infoWidth, setInfoWidth] = useState(document.body.offsetWidth)
 
   useEffect(() => {
 
@@ -110,6 +112,7 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
       } else {
         graph.resize(width, (b?.height || 585) + 100)
       }
+      setInfoWidth(width)
     }
     
     resize()
@@ -212,7 +215,7 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
     <div>
       <div style={{ margin: 0, width: '100vw' }} ref={container} id="container" />
       { profilingTime && (
-        <div className="ProfileTimeInfo">
+        <div style={{ width: infoWidth}} id="profile-time-info" className="ProfileTimeInfo">
           <div className="Item">
             <div className="Value">{profilingTime.profile}</div>
             <div className="Key">Total Profile Time</div>

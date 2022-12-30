@@ -20,11 +20,18 @@ export default function Explain(props: IExplain): JSX.Element {
   const command = props.command.split(' ')[0]
   if (command.toLowerCase() == 'ft.profile') {
     const info = props.data[0].response[1];
-    const resp = ParseProfile(info)
+
+    const profilingTime: IProfilingTime = {
+      profile: info[0][1],
+      parsing: info[1][1],
+      pipelineCreation: info[2][1],
+    }
+
     return (
       <ExplainDraw
-        data={resp}
+        data={ParseProfile(info)}
         type={CoreType.Profile}
+        profilingTime={profilingTime}
       />
     )
   }
@@ -58,7 +65,13 @@ register({
 
 const isDarkTheme = document.body.classList.contains('theme_DARK')
 
-function ExplainDraw({data, type}: {data: any, type: CoreType}): JSX.Element {
+interface IProfilingTime {
+  profile: string
+  parsing: string
+  pipelineCreation: string
+}
+
+function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, profilingTime?: IProfilingTime}): JSX.Element {
   const [done, setDone] = useState(false)
   const container = useRef<HTMLDivElement | null>(null)
 
@@ -90,14 +103,16 @@ function ExplainDraw({data, type}: {data: any, type: CoreType}): JSX.Element {
     function resize() {
       const isFullScreen = parent.document.body.getElementsByClassName('fullscreen').length > 0
       const b = graph.getAllCellsBBox();
-      const width = Math.max(b?.width || 1080, document.body.offsetWidth) + 100
+      const width = Math.max((b?.width || 1080) + 100, document.body.offsetWidth)
       if (isFullScreen) {
-        const height = Math.max(b?.height || 585, parent.document.body.offsetHeight) + 100
+        const height = Math.max((b?.height || 585) + 100, parent.document.body.offsetHeight)
         graph.resize(width, height)
       } else {
-        graph.resize(width, b?.height || 585)
+        graph.resize(width, (b?.height || 585) + 100)
       }
     }
+    
+    resize()
 
     window.addEventListener('resize', resize);
 
@@ -115,7 +130,7 @@ function ExplainDraw({data, type}: {data: any, type: CoreType}): JSX.Element {
       getVGap() {
         return 0
       },
-      nodeSep: 250,
+      nodeSep: type === CoreType.Explain ? 250 : 350,
       rankSep: 150,
       subTreeSep: 0,
     })
@@ -124,13 +139,26 @@ function ExplainDraw({data, type}: {data: any, type: CoreType}): JSX.Element {
     const traverse = (data: any) => {
       if (data) {
         const info = data.data
+
+        let nodeProps = {
+          shape: 'react-explain-node',
+          width: 240,
+          height: (info.snippet ? 64 : 42),
+        }
+        if (type === CoreType.Profile) {
+          nodeProps = {
+            shape: 'react-profile-node',
+            width: 320,
+            height: 84,
+          }
+        }
+
+
         model.nodes?.push({
           id: data.id,
           x: (data.x || 0) + document.body.clientWidth / 2,
           y: (data.y || 0) + document.body.clientHeight,
-          shape: 'react-explain-node',
-          width: 240,
-          height: (info.snippet ? 64 : 42),
+          ...nodeProps,
           data: info,
           attrs: {
             body: {
@@ -162,7 +190,7 @@ function ExplainDraw({data, type}: {data: any, type: CoreType}): JSX.Element {
             },
             attrs: {
               line: {
-                stroke: '#6B6B6B',
+                stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
                 strokeWidth: 1,
                 targetMarker: null,
               },
@@ -181,7 +209,24 @@ function ExplainDraw({data, type}: {data: any, type: CoreType}): JSX.Element {
   }, [done])
 
   return (
-    <div style={{ height: '585px', margin: 0, width: '100vw' }} ref={container} id="container"></div>
+    <div>
+      <div style={{ margin: 0, width: '100vw' }} ref={container} id="container" />
+      { profilingTime && (
+        <div className="ProfileTimeInfo">
+          <div className="Item">
+            <div className="Value">{profilingTime.profile}</div>
+            <div className="Key">Total Profile Time</div>
+          </div>
+          <div className="Item">
+            <div className="Value">{profilingTime.parsing}</div>
+            <div className="Key">Parsing Time</div>
+          </div>
+          <div className="Item">
+            <div className="Value">{profilingTime.pipelineCreation}</div>
+            <div className="Key">Pipeline Creation Time</div>
+          </div>
+        </div>
+      )}
+    </div>
   )
-
 }

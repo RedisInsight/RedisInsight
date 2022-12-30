@@ -197,6 +197,11 @@ export enum EntityType {
   INTERSECT = 'INTERSECT',
   NUMERIC = 'NUMERIC',
 
+  // These are used exclusively in FT.PROFILE
+  GEO = 'GEO',
+  TEXT = 'TEXT',
+  TAG = 'TAG',
+
   Index = 'Index',
   Scorer = 'Scorer',
   Sorter = 'Sorter',
@@ -554,32 +559,76 @@ export function ParseProfile(info: any[][]): EntityInfo {
 }
 
 export function ParseIteratorProfile(data: any[]): EntityInfo {
-  const t: EntityType = data[1];
-  if ([EntityType.UNION, EntityType.INTERSECT].includes(t)) {
-    const l = data.length;
-    return {
-      id: uuidv4(),
-      type: t,
-      time: data[5],
-      counter: data[7],
-      children: data.slice(l - 2).map(x => ParseIteratorProfile(x)),
+
+  let props: {[key: string]: any} = {}
+
+  // Parse items with the following format [key1, value1, key2, value2, null, key3, value3, key4, value4_1[], value4_2[]]
+  for (let x = 0; x < data.length; x += 2) {
+    let key = data[x]
+    if (key === null) {
+
+      while (data[x] === null) {
+        x = x + 1;
+      }
+      key = data[x];
     }
-  } else if (t === EntityType.NUMERIC) {
-    return {
-      id: uuidv4(),
-      type: EntityType.NUMERIC,
-      snippet: 'Numeric',
-      children: [],
-    }
-  } else {
-    return {
-      id: uuidv4(),
-      type: EntityType.Expr,
-      data: data[3],
-      time: data[5],
-      counter: data[7],
-      size: data[9],
-      children: [],
+
+    let val = data[x + 1];
+
+    while (data[x + 1] === null) x = x + 1;
+    val = data[x + 1];
+
+    if (Array.isArray(val)) {
+      let arr: any[] = []
+      while ((x + 1) < data.length && Array.isArray(data[x + 1])) {
+        arr.push(data[x + 1])
+        x = x + 1;
+      }
+      props[key] = arr;
+    } else {
+      props[key] = val;
     }
   }
+
+  let childrens = props['Child iterators'] || [];
+
+  return {
+    id: uuidv4(),
+    type: props['Type'],
+    time: props['Time'],
+    counter: props['Counter'],
+    size: props['Size'],
+    data: props['Term'],
+    children: childrens.map(ParseIteratorProfile),
+  }
+
+  // const t: EntityType = props['Type'];
+  // if ([EntityType.UNION, EntityType.INTERSECT].includes(t)) {
+  //   const l = data.length;
+
+  //   return {
+  //     id: uuidv4(),
+  //     type: t,
+  //     time: data[5],
+  //     counter: data[7],
+  //     children: props['Child iterators'].map(x => ParseIteratorProfile(x)),
+  //   }
+  // // } else if (t === EntityType.NUMERIC) {
+  // //   return {
+  // //     id: uuidv4(),
+  // //     type: EntityType.NUMERIC,
+  // //     snippet: 'Numeric',
+  // //     children: [],
+  // //   }
+  // } else {
+  //   return {
+  //     id: uuidv4(),
+  //     type: data[1],
+  //     data: data[3],
+  //     time: data[5],
+  //     counter: data[7],
+  //     size: data[9],
+  //     children: [],
+  //   }
+  // }
 }

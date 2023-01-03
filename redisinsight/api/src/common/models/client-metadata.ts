@@ -1,7 +1,7 @@
 import { Session } from 'src/common/models/session';
 import { Type } from 'class-transformer';
 import {
-  IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString,
+  IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min,
 } from 'class-validator';
 
 export enum ClientContext {
@@ -31,5 +31,7 @@ export class ClientMetadata {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
+  @Min(0)
+  @Max(2147483647)
   db?: number;
 }

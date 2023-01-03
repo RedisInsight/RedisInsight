@@ -235,3 +235,12 @@ export async function verifyKeysNotDisplayedInTheList(keyNames: string[]): Promi
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk(`The key ${keyName} found`);
     }
 }
+
+/**
+* Verify search/filter value
+* @param value The value in search/filter input
+*/
+
+export async function verifySearchFilterValue(value: string): Promise<void> {
+    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', value).exists).ok('Filter per key name is not applied/correct');
+}

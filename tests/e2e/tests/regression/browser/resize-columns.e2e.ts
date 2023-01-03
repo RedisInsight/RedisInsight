@@ -1,7 +1,8 @@
 import { acceptLicenseTerms } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
-    BrowserPage
+    BrowserPage,
+    DatabaseOverviewPage
 } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -11,6 +12,7 @@ import { Common } from '../../../helpers/common';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const common = new Common();
+const databaseOverviewPage = new DatabaseOverviewPage();
 
 const keyName = common.generateWord(10);
 const longFieldName = common.generateSentence(20);
@@ -60,6 +62,7 @@ fixture `Resize columns in Key details`
     })
     .afterEach(async() => {
         // Clear and delete database
+        await databaseOverviewPage.changeDbIndex(0);
         await browserPage.deleteKeysByNames(keyNames);
         await deleteStandaloneDatabasesApi(databasesForAdding);
     });
@@ -93,4 +96,9 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
         await browserPage.openKeyDetails(key.name);
         await t.expect(field.clientWidth).eql(key.fieldWidthEnd, `Resize context not saved for ${key.type} key when switching between databases`);
     }
+
+    // Verify that logical db not changed after switching between databases
+    await databaseOverviewPage.changeDbIndex(1);
+    await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
+    await databaseOverviewPage.verifyDbIndexSelected(1);
 });

@@ -1,16 +1,20 @@
-import { map, isEqual } from 'lodash'
+import { isArray, map } from 'lodash'
 import { Instance, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 export const REDISTACK_PORT = 6379
-export const REDISTACK_MODULES = [
+export const REDISTACK_MODULES: Array<string | Array<string>> = [
   RedisDefaultModules.ReJSON,
-  RedisDefaultModules.Graph,
-  RedisDefaultModules.TimeSeries,
-  RedisDefaultModules.Search,
   RedisDefaultModules.Bloom,
-].sort()
+  RedisDefaultModules.Graph,
+  [RedisDefaultModules.Search, RedisDefaultModules.SearchLight],
+  RedisDefaultModules.TimeSeries,
+]
 
-const checkRediStackModules = (modules: any[]) => isEqual(map(modules, 'name').sort(), REDISTACK_MODULES)
+const checkRediStackModules = (modules: any[]) => map(modules, 'name')
+  .sort()
+  .every((m, index) => (isArray(REDISTACK_MODULES[index])
+    ? (REDISTACK_MODULES[index] as Array<string>).some((rm) => rm === m)
+    : REDISTACK_MODULES[index] === m))
 
 const checkRediStack = (instances: Instance[]): Instance[] => {
   let isRediStackCheck = false
@@ -25,6 +29,7 @@ const checkRediStack = (instances: Instance[]): Instance[] => {
     }
   })
 
+  // if no any database with redistack on port 6379 - mark others as redistack (with modules check)
   if (!isRediStackCheck) {
     newInstances = newInstances.map((instance) => ({
       ...instance,

@@ -4,12 +4,12 @@ import {
   BadRequestException, HttpException, Injectable, Logger,
 } from '@nestjs/common';
 import { catchAclError, convertRedisInfoReplyToObject } from 'src/utils';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
 import { ClusterNodesInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-nodes.info.strategy';
 import { ClusterShardsInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-shards.info.strategy';
 import { ClusterDetails } from 'src/modules/cluster-monitor/models';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { ClientMetadata } from 'src/common/models';
 
 export enum ClusterInfoStrategies {
   CLUSTER_NODES = 'CLUSTER_NODES',
@@ -31,14 +31,11 @@ export class ClusterMonitorService {
 
   /**
    * Get cluster details and details for all nodes
-   * @param clientOptions
+   * @param clientMetadata
    */
-  public async getClusterDetails(clientOptions: IFindRedisClientInstanceByOptions): Promise<ClusterDetails> {
+  public async getClusterDetails(clientMetadata: ClientMetadata): Promise<ClusterDetails> {
     try {
-      const client = await this.databaseConnectionService.getOrCreateClient({
-        databaseId: clientOptions.instanceId,
-        namespace: clientOptions.tool,
-      });
+      const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
 
       if (!(client instanceof IORedis.Cluster)) {
         return Promise.reject(new BadRequestException('Current database is not in a cluster mode'));

@@ -14,6 +14,12 @@ export enum TelemetryEvents {
   RedisInstanceConnectionFailed = 'DATABASE_CONNECTION_FAILED',
   RedisInstanceListReceived = 'CONFIG_DATABASES_DATABASE_LIST_DISPLAYED',
 
+  // Databases import
+  DatabaseImportParseFailed = 'CONFIG_DATABASES_REDIS_IMPORT_PARSE_FAILED',
+  DatabaseImportFailed = 'CONFIG_DATABASES_REDIS_IMPORT_FAILED',
+  DatabaseImportSucceeded = 'CONFIG_DATABASES_REDIS_IMPORT_SUCCEEDED',
+  DatabaseImportPartiallySucceeded = 'CONFIG_DATABASES_REDIS_IMPORT_PARTIALLY_SUCCEEDED',
+
   // Events for autodiscovery flows
   REClusterDiscoverySucceed = 'CONFIG_DATABASES_RE_CLUSTER_AUTODISCOVERY_SUCCEEDED',
   REClusterDiscoveryFailed = 'CONFIG_DATABASES_RE_CLUSTER_AUTODISCOVERY_FAILED',

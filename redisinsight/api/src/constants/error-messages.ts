@@ -17,6 +17,10 @@ export default {
   INCORRECT_CREDENTIALS: (url) => `Could not connect to ${url}, please check the Username or Password.`,
 
   CA_CERT_EXIST: 'This ca certificate name is already in use.',
+  INVALID_CA_BODY: 'Invalid CA body',
+  INVALID_CERTIFICATE_BODY: 'Invalid certificate body',
+  INVALID_PRIVATE_KEY: 'Invalid private key',
+  CERTIFICATE_NAME_IS_NOT_DEFINED: 'Certificate name is not defined',
   CLIENT_CERT_EXIST: 'This client certificate name is already in use.',
   INVALID_CERTIFICATE_ID: 'Invalid certificate id.',
   SENTINEL_MASTER_NAME_REQUIRED: 'Sentinel master name must be specified.',

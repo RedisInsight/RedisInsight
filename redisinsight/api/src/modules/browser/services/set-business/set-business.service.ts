@@ -11,7 +11,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
 import { catchAclError, catchTransactionError, unescapeGlob } from 'src/utils';
 import { ReplyError } from 'src/models';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import {
   BrowserToolKeysCommands,
   BrowserToolSetCommands,
@@ -39,14 +39,14 @@ export class SetBusinessService {
   ) {}
 
   public async createSet(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateSetWithExpireDto,
   ): Promise<void> {
     this.logger.log('Creating Set data type.');
     const { keyName } = dto;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -59,9 +59,9 @@ export class SetBusinessService {
         );
       }
       if (dto.expire) {
-        await this.createSetWithExpiration(clientOptions, dto);
+        await this.createSetWithExpiration(clientMetadata, dto);
       } else {
-        await this.createSimpleSet(clientOptions, dto);
+        await this.createSimpleSet(clientMetadata, dto);
       }
       this.logger.log('Succeed to create Set data type.');
     } catch (error) {
@@ -75,7 +75,7 @@ export class SetBusinessService {
   }
 
   public async getMembers(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetSetMembersDto,
   ): Promise<GetSetMembersResponse> {
     this.logger.log('Getting members of the Set data type stored at key.');
@@ -89,7 +89,7 @@ export class SetBusinessService {
 
     try {
       result.total = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolSetCommands.SCard,
         [keyName],
       );
@@ -105,7 +105,7 @@ export class SetBusinessService {
         const member = unescapeGlob(dto.match);
         result.nextCursor = 0;
         const memberIsExist = await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolSetCommands.SIsMember,
           [keyName, member],
         );
@@ -113,7 +113,7 @@ export class SetBusinessService {
           result.members.push(member);
         }
       } else {
-        const scanResult = await this.scanSet(clientOptions, dto);
+        const scanResult = await this.scanSet(clientMetadata, dto);
         result = { ...result, ...scanResult };
       }
       this.logger.log('Succeed to get members of the Set data type.');
@@ -128,14 +128,14 @@ export class SetBusinessService {
   }
 
   public async addMembers(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: AddMembersToSetDto,
   ): Promise<void> {
     this.logger.log('Adding members to the Set data type.');
     const { keyName, members } = dto;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -148,7 +148,7 @@ export class SetBusinessService {
         );
       }
       await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolSetCommands.SAdd,
         [keyName, ...members],
       );
@@ -164,7 +164,7 @@ export class SetBusinessService {
   }
 
   public async deleteMembers(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: DeleteMembersFromSetDto,
   ): Promise<DeleteMembersFromSetResponse> {
     this.logger.log('Deleting members from the Set data type.');
@@ -172,7 +172,7 @@ export class SetBusinessService {
     let result;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -185,7 +185,7 @@ export class SetBusinessService {
         );
       }
       result = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolSetCommands.SRem,
         [keyName, ...members],
       );
@@ -201,20 +201,20 @@ export class SetBusinessService {
   }
 
   public async createSimpleSet(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: AddMembersToSetDto,
   ): Promise<number> {
     const { keyName, members } = dto;
 
     return await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolSetCommands.SAdd,
       [keyName, ...members],
     );
   }
 
   public async createSetWithExpiration(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateSetWithExpireDto,
   ): Promise<number> {
     const { keyName, members, expire } = dto;
@@ -222,7 +222,7 @@ export class SetBusinessService {
     const [
       transactionError,
       transactionResults,
-    ] = await this.browserTool.execMulti(clientOptions, [
+    ] = await this.browserTool.execMulti(clientMetadata, [
       [BrowserToolSetCommands.SAdd, keyName, ...members],
       [BrowserToolKeysCommands.Expire, keyName, expire],
     ]);
@@ -235,7 +235,7 @@ export class SetBusinessService {
   }
 
   public async scanSet(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetSetMembersDto,
   ): Promise<SetScanResponse> {
     const { keyName } = dto;
@@ -249,7 +249,7 @@ export class SetBusinessService {
 
     while (result.nextCursor !== 0 && result.members.length < count) {
       const scanResult = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolSetCommands.SScan,
         [
           keyName,

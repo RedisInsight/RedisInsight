@@ -12,7 +12,7 @@ export interface Props {
 }
 
 const AckPopover = (props: Props) => {
-  const { id, isOpen, closePopover, showPopover, acknowledge } = props
+  const { id, isOpen, closePopover = () => {}, showPopover = () => {}, acknowledge = () => {} } = props
   return (
     <EuiPopover
       key={id}

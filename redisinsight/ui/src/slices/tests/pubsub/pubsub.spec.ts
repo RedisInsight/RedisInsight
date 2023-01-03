@@ -3,13 +3,20 @@ import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import reducer, {
+  clearPubSubMessages,
   concatPubSubMessages,
+  disconnectPubSub,
   initialState,
   PUB_SUB_ITEMS_MAX_COUNT,
   publishMessage,
   publishMessageAction,
   publishMessageError,
-  publishMessageSuccess, pubSubSelector
+  publishMessageSuccess,
+  pubSubSelector,
+  setIsPubSubUnSubscribed,
+  setLoading,
+  setPubSubConnected,
+  toggleSubscribeTriggerPubSub
 } from 'uiSrc/slices/pubsub/pubsub'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 
@@ -32,6 +39,72 @@ describe('pubsub slice', () => {
 
       // Assert
       expect(result).toEqual(nextState)
+    })
+
+    describe('setPubSubConnected', () => {
+      it('should properly set state', () => {
+        const isConnected = true
+
+        // Arrange
+        const state = {
+          ...initialState,
+          isConnected
+        }
+
+        // Act
+        const nextState = reducer(initialState, setPubSubConnected(isConnected))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          pubsub: nextState,
+        })
+        expect(pubSubSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('toggleSubscribeTriggerPubSub', () => {
+      it('should properly set state', () => {
+        const subscriptions = [{ channel: '1', type: 'ss' }]
+
+        // Arrange
+        const state = {
+          ...initialState,
+          isSubscribeTriggered: !initialState.isSubscribeTriggered,
+          subscriptions
+        }
+
+        // Act
+        const nextState = reducer(initialState, toggleSubscribeTriggerPubSub(subscriptions))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          pubsub: nextState,
+        })
+        expect(pubSubSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('setIsPubSubUnSubscribed', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          isSubscribed: true
+        }
+        const state = {
+          ...currentState,
+          isSubscribed: false
+        }
+
+        // Act
+        const nextState = reducer(currentState, setIsPubSubUnSubscribed())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          pubsub: nextState,
+        })
+        expect(pubSubSelector(rootState)).toEqual(state)
+      })
     })
 
     describe('concatPubSubMessages', () => {
@@ -84,6 +157,135 @@ describe('pubsub slice', () => {
 
         // Act
         const nextState = reducer(initialState, concatPubSubMessages(payload))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          pubsub: nextState,
+        })
+        expect(pubSubSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('clearPubSubMessages', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          messages: ['a', 'b', 'c'],
+          count: 3
+        }
+
+        const state = {
+          ...currentState,
+          messages: [],
+          count: 0
+        }
+
+        // Act
+        const nextState = reducer(currentState, clearPubSubMessages())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          pubsub: nextState,
+        })
+        expect(pubSubSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('setLoading', () => {
+      it('should properly set state', () => {
+        // Arrange
+
+        const state = {
+          ...initialState,
+          loading: true
+        }
+
+        // Act
+        const nextState = reducer(state, setLoading(true))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          pubsub: nextState,
+        })
+        expect(pubSubSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('disconnectPubSub', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          loading: true,
+          isSubscribed: true,
+          isSubscribeTriggered: true,
+          isConnected: true
+        }
+
+        const state = {
+          ...initialState,
+        }
+
+        // Act
+        const nextState = reducer(currentState, disconnectPubSub())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          pubsub: nextState,
+        })
+        expect(pubSubSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('publishMessage', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState,
+          publishing: true
+        }
+
+        // Act
+        const nextState = reducer(initialState, publishMessage())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          pubsub: nextState,
+        })
+        expect(pubSubSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('publishMessageSuccess', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState
+        }
+
+        // Act
+        const nextState = reducer(initialState, publishMessageSuccess())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          pubsub: nextState,
+        })
+        expect(pubSubSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('publishMessageError', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const error = 'Some error'
+        const state = {
+          ...initialState,
+          error
+        }
+
+        // Act
+        const nextState = reducer(initialState, publishMessageError(error))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {

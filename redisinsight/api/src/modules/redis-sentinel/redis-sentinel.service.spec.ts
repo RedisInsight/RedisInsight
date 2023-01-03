@@ -3,6 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisService } from 'src/modules/redis/redis.service';
 import {
+  mockDatabaseFactory,
   mockDatabaseInfoProvider,
   mockDatabaseService,
   mockIORedisClient,
@@ -15,6 +16,7 @@ import { RedisSentinelService } from 'src/modules/redis-sentinel/redis-sentinel.
 import { RedisSentinelAnalytics } from 'src/modules/redis-sentinel/redis-sentinel.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 
 describe('RedisSentinelService', () => {
   let service: RedisSentinelService;
@@ -37,6 +39,10 @@ describe('RedisSentinelService', () => {
         {
           provide: DatabaseService,
           useFactory: mockDatabaseService,
+        },
+        {
+          provide: DatabaseFactory,
+          useFactory: mockDatabaseFactory,
         },
         {
           provide: DatabaseInfoProvider,

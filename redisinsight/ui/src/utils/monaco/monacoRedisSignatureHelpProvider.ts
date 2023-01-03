@@ -2,8 +2,8 @@ import { MutableRefObject } from 'react'
 import * as monacoEditor from 'monaco-editor'
 import { isNull } from 'lodash'
 import { ICommands } from 'uiSrc/constants'
+import { findCommandEarlier } from 'uiSrc/utils'
 import { generateArgsNames } from 'uiSrc/utils/commands'
-import { findCommandEarlier } from './monacoUtils'
 
 export const getRedisSignatureHelpProvider = (
   commandsSpec: ICommands,

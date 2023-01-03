@@ -36,8 +36,6 @@ const SearchKeyList = () => {
 
   const handleApply = (match = value) => {
     dispatch(setSearchMatch(match, searchMode))
-    // reset browser tree context
-    dispatch(resetBrowserTree())
 
     dispatch(fetchKeys(
       searchMode,

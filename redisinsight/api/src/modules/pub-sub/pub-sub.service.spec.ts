@@ -1,13 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockSocket,
-  mockDatabase,
   MockType,
   mockPubSubAnalyticsService,
   mockDatabaseConnectionService,
   mockIORedisClient,
+  mockCommonClientMetadata,
 } from 'src/__mocks__';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
 import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription.provider';
@@ -40,10 +39,6 @@ const mockUnsubscribe = jest.fn();
 mockUserSession['subscribe'] = mockSubscribe;
 mockUserSession['unsubscribe'] = mockUnsubscribe;
 mockUserSession['destroy'] = jest.fn();
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const mockPublishDto = {
   message: 'message-a',
@@ -154,14 +149,14 @@ describe('PubSubService', () => {
 
   describe('publish', () => {
     it('should publish using existing client', async () => {
-      const res = await service.publish(mockClientOptions, mockPublishDto);
+      const res = await service.publish(mockCommonClientMetadata, mockPublishDto);
       expect(res).toEqual({ affected: 2 });
     });
     it('should throw an error when client not found during publishing', async () => {
       databaseConnectionService.getOrCreateClient.mockRejectedValueOnce(new NotFoundException('Not Found'));
 
       try {
-        await service.publish(mockClientOptions, mockPublishDto);
+        await service.publish(mockCommonClientMetadata, mockPublishDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -171,7 +166,7 @@ describe('PubSubService', () => {
       databaseConnectionService.getOrCreateClient.mockRejectedValueOnce(new Error('NOPERM'));
 
       try {
-        await service.publish(mockClientOptions, mockPublishDto);
+        await service.publish(mockCommonClientMetadata, mockPublishDto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);

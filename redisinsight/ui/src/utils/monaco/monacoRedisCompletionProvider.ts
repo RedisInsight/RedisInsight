@@ -7,7 +7,7 @@ type DependencyProposals = {
   [key: string]: monacoEditor.languages.CompletionItem
 }
 
-const getCommandMarkdown = (commandName = '', command: ICommand): string => {
+export const getCommandMarkdown = (commandName = '', command: ICommand): string => {
   const docUrl = getDocUrlForCommand(commandName)
   const linkMore = ` [Read more](${docUrl})`
   const lines: string[] = [command?.summary + linkMore]
@@ -24,7 +24,7 @@ const getCommandMarkdown = (commandName = '', command: ICommand): string => {
   return lines.join('\n'.repeat(2))
 }
 
-const createDependencyProposals = (commandsSpec: ICommands): DependencyProposals => {
+export const createDependencyProposals = (commandsSpec: ICommands): DependencyProposals => {
   const result: DependencyProposals = {}
   const commandsArr = Object.keys(commandsSpec).sort()
   commandsArr.forEach((command: string) => {

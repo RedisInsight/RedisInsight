@@ -5,34 +5,22 @@ import {
   find, findIndex, isEmpty, isNil, omitBy, remove,
 } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { AppTool } from 'src/models';
 import apiConfig from 'src/utils/config';
 import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
 import { IRedisClusterNodeAddress } from 'src/models/redis-cluster';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
 import { cloneClassInstance } from 'src/utils';
+import { ClientContext, ClientMetadata } from 'src/common/models';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
-export interface ISetClientInstanceOptions {
-  instanceId: string;
-  tool: AppTool;
-  uuid: string;
-}
-
 export interface IRedisClientInstance {
-  instanceId: string;
-  tool: AppTool;
+  databaseId: string;
+  context: ClientContext;
+  uniqueId: string;
   client: any;
-  uuid: string;
   lastTimeUsed: number;
-}
-
-export interface IFindRedisClientInstanceByOptions {
-  instanceId: string;
-  tool?: AppTool;
-  uuid?: string;
 }
 
 @Injectable()
@@ -49,7 +37,7 @@ export class RedisService {
 
   public async createStandaloneClient(
     database: Database,
-    appTool: AppTool,
+    appTool: ClientContext,
     useRetry: boolean,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<Redis> {
@@ -84,14 +72,17 @@ export class RedisService {
 
   public async createClusterClient(
     database: Database,
-    nodes: IRedisClusterNodeAddress[],
+    nodes: IRedisClusterNodeAddress[] = [],
     useRetry: boolean = false,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<Cluster> {
     const config = await this.getRedisConnectionConfig(database);
     return new Promise((resolve, reject) => {
       try {
-        const cluster = new Redis.Cluster(nodes, {
+        const cluster = new Redis.Cluster([{
+          host: database.host,
+          port: database.port,
+        }].concat(nodes), {
           clusterRetryStrategy: useRetry ? this.retryStrategy : () => undefined,
           redisOptions: {
             ...config,
@@ -117,7 +108,7 @@ export class RedisService {
   public async createSentinelClient(
     database: Database,
     sentinels: Array<{ host: string; port: number }>,
-    appTool: AppTool,
+    appTool: ClientContext,
     useRetry: boolean = false,
     connectionName: string = CONNECTION_NAME_GLOBAL_PREFIX,
   ): Promise<Redis> {
@@ -168,7 +159,7 @@ export class RedisService {
 
   public async connectToDatabaseInstance(
     databaseDto: Database,
-    tool = AppTool.Common,
+    tool = ClientContext.Common,
     connectionName?,
   ): Promise<Redis | Cluster> {
     const database = cloneClassInstance(databaseDto);
@@ -192,10 +183,32 @@ export class RedisService {
         client = await this.createSentinelClient(database, nodes, tool, true, connectionName);
         break;
       default:
-        client = await this.createStandaloneClient(database, tool, true, connectionName);
+        // AUTO
+        client = await this.createClientAutomatically(database, tool, connectionName);
     }
 
     return client;
+  }
+
+  public async createClientAutomatically(database: Database, tool: ClientContext, connectionName) {
+    // try sentinel connection
+    if (database?.sentinelMaster) {
+      try {
+        return await this.createSentinelClient(database, database.nodes, tool, true, connectionName);
+      } catch (e) {
+        // ignore error
+      }
+    }
+
+    // try cluster connection
+    try {
+      return await this.createClusterClient(database, database.nodes, true, connectionName);
+    } catch (e) {
+      // ignore error
+    }
+
+    // Standalone in any other case
+    return this.createStandaloneClient(database, tool, true, connectionName);
   }
 
   public isClientConnected(client: Redis | Cluster): boolean {
@@ -206,10 +219,8 @@ export class RedisService {
     }
   }
 
-  public getClientInstance(
-    options: IFindRedisClientInstanceByOptions,
-  ): IRedisClientInstance {
-    const found = this.findClientInstance(options.instanceId, options.tool, options.uuid);
+  public getClientInstance(clientMetadata: ClientMetadata): IRedisClientInstance {
+    const found = this.findClientInstance(clientMetadata.databaseId, clientMetadata.context, clientMetadata.uniqueId);
     if (found) {
       found.lastTimeUsed = Date.now();
     }
@@ -217,12 +228,10 @@ export class RedisService {
     return found;
   }
 
-  public removeClientInstance(
-    options: IFindRedisClientInstanceByOptions,
-  ): number {
+  public removeClientInstance(clientMetadata: Partial<ClientMetadata>): number {
     const removed: IRedisClientInstance[] = remove<IRedisClientInstance>(
       this.clients,
-      options,
+      clientMetadata,
     );
     removed.forEach((clientInstance) => {
       clientInstance.client.disconnect();
@@ -230,10 +239,15 @@ export class RedisService {
     return removed.length;
   }
 
-  public setClientInstance(options: ISetClientInstanceOptions, client): 0 | 1 {
-    const found = this.findClientInstance(options.instanceId, options.tool, options.uuid);
+  public setClientInstance(clientMetadata: ClientMetadata, client): 0 | 1 {
+    const found = this.findClientInstance(
+      clientMetadata.databaseId,
+      clientMetadata.context,
+      clientMetadata.uniqueId,
+    );
+
     if (found) {
-      const index = findIndex(this.clients, { uuid: found.uuid });
+      const index = findIndex(this.clients, { uniqueId: found.uniqueId });
       this.clients[index].client.disconnect();
       this.clients[index] = {
         ...this.clients[index],
@@ -242,9 +256,10 @@ export class RedisService {
       };
       return 0;
     }
+
     const clientInstance: IRedisClientInstance = {
-      ...options,
-      uuid: options.uuid || uuidv4(),
+      ...clientMetadata,
+      uniqueId: clientMetadata.uniqueId || uuidv4(),
       lastTimeUsed: Date.now(),
       client,
     };
@@ -315,11 +330,11 @@ export class RedisService {
   }
 
   private findClientInstance(
-    instanceId: string,
-    tool: AppTool = AppTool.Common,
-    uuid: string = undefined,
+    databaseId: string,
+    context: ClientContext = ClientContext.Common,
+    uniqueId: string = undefined,
   ): IRedisClientInstance {
-    const options = omitBy({ instanceId, uuid, tool }, isNil);
+    const options = omitBy({ databaseId, uniqueId, context }, isNil);
     return find<IRedisClientInstance>(this.clients, options);
   }
 }

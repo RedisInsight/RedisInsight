@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CreateCommandExecutionDto } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandNotSupportedError } from 'src/modules/cli/constants/errors';
@@ -13,6 +12,7 @@ import { CreatePluginStateDto } from 'src/modules/workbench/dto/create-plugin-st
 import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import config from 'src/utils/config';
+import { ClientMetadata } from 'src/common/models';
 
 const PLUGINS_CONFIG = config.get('plugins');
 
@@ -27,28 +27,28 @@ export class PluginsService {
   /**
    * Send redis command from workbench and save history
    *
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   async sendCommand(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateCommandExecutionDto,
   ): Promise<PluginCommandExecution> {
     try {
-      await this.checkWhitelistedCommands(clientOptions.instanceId, dto.command);
+      await this.checkWhitelistedCommands(clientMetadata, dto.command);
 
-      const result = await this.commandsExecutor.sendCommand(clientOptions, dto);
+      const result = await this.commandsExecutor.sendCommand(clientMetadata, dto);
 
       return plainToClass(PluginCommandExecution, {
         ...dto,
-        databaseId: clientOptions.instanceId,
+        databaseId: clientMetadata.databaseId,
         result,
       });
     } catch (error) {
       if (error instanceof CommandNotSupportedError) {
         return new PluginCommandExecution({
           ...dto,
-          databaseId: clientOptions.instanceId,
+          databaseId: clientMetadata.databaseId,
           result: [new CommandExecutionResult({
             response: error.message,
             status: CommandExecutionStatus.Fail,
@@ -62,10 +62,10 @@ export class PluginsService {
 
   /**
    * Get database white listed commands for plugins
-   * @param instanceId
+   * @param clientMetadata
    */
-  async getWhitelistCommands(instanceId: string): Promise<string[]> {
-    return await this.whitelistProvider.getWhitelistCommands(instanceId);
+  async getWhitelistCommands(clientMetadata: ClientMetadata): Promise<string[]> {
+    return await this.whitelistProvider.getWhitelistCommands(clientMetadata);
   }
 
   /**
@@ -99,14 +99,14 @@ export class PluginsService {
 
   /**
    * Check if command outside workbench commands black list
-   * @param databaseId
+   * @param clientMetadata
    * @param commandLine
    * @private
    */
-  private async checkWhitelistedCommands(databaseId: string, commandLine: string) {
+  private async checkWhitelistedCommands(clientMetadata: ClientMetadata, commandLine: string) {
     const targetCommand = commandLine.toLowerCase();
 
-    const whitelist = await this.getWhitelistCommands(databaseId);
+    const whitelist = await this.getWhitelistCommands(clientMetadata);
 
     if (!whitelist.find((command) => targetCommand.startsWith(command))) {
       throw new CommandNotSupportedError(

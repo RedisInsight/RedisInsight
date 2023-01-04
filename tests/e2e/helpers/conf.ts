@@ -45,13 +45,13 @@ export const ossSentinelConfig = {
         alias: 'primary-group-1',
         db: '0',
         name: 'primary-group-1',
-        password: 'defaultpass'
+        password: 'password'
     },
     {
         alias: 'primary-group-2',
         db: '0',
         name: 'primary-group-2',
-        password: 'defaultpass'
+        password: 'password'
     }],
     name: ['primary-group-1', 'primary-group-2']
 };

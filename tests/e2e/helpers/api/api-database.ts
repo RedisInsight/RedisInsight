@@ -73,7 +73,7 @@ export async function discoverSentinelDatabaseApi(databaseParameters: SentinelPa
         })
         .set('Accept', 'application/json');
 
-    await t.expect(response.status).eql(200, 'Autodiscovery of Sentinel database request failed');
+    await t.expect(response.status).eql(201, 'Autodiscovery of Sentinel database request failed');
 }
 
 /**

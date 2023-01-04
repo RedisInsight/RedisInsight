@@ -76,7 +76,14 @@ export class RedisService implements OnModuleDestroy {
     };
 
     if (found) {
-      found.client.disconnect();
+      // workaround for concurrent requests.
+      // At first try to gracefully close the connection using quit
+      try {
+        found.client.quit();
+      } catch (e) {
+        found.client.disconnect();
+      }
+
       this.clients.delete(id);
       this.clients.set(id, clientInstance);
       return 0; // todo: investigate why we need to distinguish between 1 | 0

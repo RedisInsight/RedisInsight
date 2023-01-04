@@ -77,9 +77,7 @@ export class DatabaseConnectionService {
 
     client = await this.createClient(clientMetadata);
 
-    this.redisService.setClientInstance(clientMetadata, client);
-
-    return client;
+    return this.redisService.setClientInstance(clientMetadata, client)?.client;
   }
 
   /**

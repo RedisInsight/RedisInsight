@@ -143,14 +143,13 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
         instanceDto,
         connectionName,
       );
-      this.redisService.setClientInstance(
+      return this.redisService.setClientInstance(
         {
           ...clientMetadata,
           context: clientMetadata.context || this.consumer,
         },
         client,
-      );
-      return client;
+      )?.client;
     } catch (error) {
       throw catchRedisConnectionError(error, instanceDto);
     }

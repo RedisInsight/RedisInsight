@@ -54,6 +54,8 @@ describe('RedisConsumerAbstractService', () => {
     redisService = await module.get<RedisService>(RedisService);
     consumerInstance = await module.get<BrowserToolService>(BrowserToolService);
     redisConnectionFactory = await module.get(RedisConnectionFactory);
+
+    redisService.setClientInstance.mockReturnValue(mockRedisClientInstance);
   });
 
   describe('getRedisClient', () => {

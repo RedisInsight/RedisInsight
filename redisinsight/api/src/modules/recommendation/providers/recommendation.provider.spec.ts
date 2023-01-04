@@ -1,5 +1,5 @@
 import IORedis from 'ioredis';
-import { when } from 'jest-when';
+import { when, resetAllWhenMocks } from 'jest-when';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { mockRedisNoAuthError, mockRedisNoPasswordError } from 'src/__mocks__';
 import { RecommendationProvider } from 'src/modules/recommendation/providers/recommendation.provider';
@@ -26,10 +26,18 @@ const mockRedisAclListResponse_1: string[] = [
   'user <pass off resetchannels -@all',
   'user default on #d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1 ~* &* +@all',
 ];
-
 const mockRedisAclListResponse_2: string[] = [
   ...mockRedisAclListResponse_1,
   'user test_2 on nopass ~* &* +@all',
+];
+
+const mockZScanResponse_1 = [
+  '0',
+  [123456789, 123456789, 12345678910, 12345678910],
+];
+const mockZScanResponse_2 = [
+  '0',
+  [12345678910, 12345678910, 1, 1],
 ];
 
 const mockKeys = [
@@ -94,6 +102,12 @@ const mockBigZSetKey = {
 const mockBigListKey = {
   name: Buffer.from('name'), type: 'list', length: 1001, memory: 10, ttl: -1,
 };
+
+const mockSortedSets = new Array(101).fill(
+  {
+    name: Buffer.from('name'), type: 'zset', length: 10, memory: 10, ttl: -1,
+  },
+);
 
 describe('RecommendationProvider', () => {
   const service = new RecommendationProvider();
@@ -453,6 +467,62 @@ describe('RecommendationProvider', () => {
         const setPasswordRecommendation = await service
           .determineSetPasswordRecommendation(nodeClient);
         expect(setPasswordRecommendation).toEqual({ name: RECOMMENDATION_NAMES.SET_PASSWORD });
+      });
+  });
+
+  describe('determineRTSRecommendation', () => {
+    it('should not return RTS recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'zscan' }))
+        .mockResolvedValue(mockZScanResponse_1);
+
+      const RTSRecommendation = await service
+        .determineRTSRecommendation(nodeClient, mockKeys);
+      expect(RTSRecommendation).toEqual(null);
+    });
+
+    it('should return RTS recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'zscan' }))
+        .mockResolvedValueOnce(mockZScanResponse_1);
+
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'zscan' }))
+        .mockResolvedValue(mockZScanResponse_2);
+
+      const RTSRecommendation = await service
+        .determineRTSRecommendation(nodeClient, mockSortedSets);
+      expect(RTSRecommendation).toEqual({ name: RECOMMENDATION_NAMES.RTS });
+    });
+
+    it('should not return RTS recommendation when only 101 sorted set contain timestamp', async () => {
+      let counter = 0;
+      while (counter <= 100) {
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'zscan' }))
+          .mockResolvedValueOnce(mockZScanResponse_1);
+        counter += 1;
+      }
+
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'zscan' }))
+        .mockResolvedValueOnce(mockZScanResponse_2);
+
+      const RTSRecommendation = await service
+        .determineRTSRecommendation(nodeClient, mockSortedSets);
+      expect(RTSRecommendation).toEqual(null);
+    });
+
+    it('should not return RTS recommendation when zscan command executed with error',
+      async () => {
+        resetAllWhenMocks();
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'zscan' }))
+          .mockRejectedValue('some error');
+
+        const RTSRecommendation = await service
+          .determineRTSRecommendation(nodeClient, mockKeys);
+        expect(RTSRecommendation).toEqual(null);
       });
   });
 });

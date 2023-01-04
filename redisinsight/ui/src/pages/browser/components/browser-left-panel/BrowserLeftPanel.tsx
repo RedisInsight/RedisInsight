@@ -66,9 +66,9 @@ const BrowserLeftPanel = (props: Props) => {
   const dispatch = useDispatch()
 
   const isDataLoaded = searchMode === SearchMode.Pattern ? isDataPatternLoaded : isDataRedisearchLoaded
-  const keysState = !isDataLoaded
-    ? initialKeyStateData
-    : (searchMode === SearchMode.Pattern ? patternKeysState : redisearchKeysState)
+  const keysState = searchMode === SearchMode.Pattern
+    ? (isDataLoaded ? patternKeysState : initialKeyStateData)
+    : redisearchKeysState
   const loading = searchMode === SearchMode.Pattern ? patternLoading : redisearchLoading || redisearchListLoading
   const isSearched = searchMode === SearchMode.Pattern ? patternIsSearched : redisearchIsSearched
   const scrollTopPosition = searchMode === SearchMode.Pattern ? scrollPatternTopPosition : scrollRedisearchTopPosition

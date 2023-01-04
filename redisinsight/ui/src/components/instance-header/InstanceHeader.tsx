@@ -25,14 +25,19 @@ import { appInfoSelector } from 'uiSrc/slices/app/info'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
 import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/DatabaseOverviewWrapper'
 
-import { appContextDbIndex, clearBrowserKeyListData } from 'uiSrc/slices/app/context'
+import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { selectOnFocus, validateNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { resetKeyInfo } from 'uiSrc/slices/browser/keys'
 import styles from './styles.module.scss'
 
-const InstanceHeader = () => {
+export interface Props {
+  onChangeDbIndex?: (index: number) => void
+}
+
+const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const {
     name = '',
     host = '',
@@ -72,7 +77,7 @@ const InstanceHeader = () => {
     history.push(Pages.home)
   }
 
-  const onChangeDbIndex = () => {
+  const handleChangeDbIndex = () => {
     setIsDbIndexEditing(false)
 
     if (db === +dbIndex) return
@@ -82,6 +87,10 @@ const InstanceHeader = () => {
       +dbIndex,
       () => {
         dispatch(clearBrowserKeyListData())
+        onChangeDbIndex?.(+dbIndex)
+        dispatch(resetKeyInfo())
+        dispatch(setBrowserSelectedKey(null))
+
         sendEventTelemetry({
           event: TelemetryEvent.BROWSER_DATABASE_INDEX_CHANGED,
           eventData: {
@@ -129,7 +138,7 @@ const InstanceHeader = () => {
                           <div style={{ marginRight: 48 }}>
                             <InlineItemEditor
                               controlsPosition="right"
-                              onApply={onChangeDbIndex}
+                              onApply={handleChangeDbIndex}
                               onDecline={() => setIsDbIndexEditing(false)}
                               viewChildrenMode={false}
                               controlsClassName={styles.controls}

@@ -16,6 +16,7 @@ import {
   TelemetryPageView,
 } from 'uiSrc/telemetry'
 import {
+  fetchKeys,
   keysSelector,
   resetKeyInfo,
   selectedKeyDataSelector,
@@ -35,6 +36,8 @@ import InstanceHeader from 'uiSrc/components/instance-header'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import BrowserLeftPanel from './components/browser-left-panel'
 import BrowserRightPanel from './components/browser-right-panel'
 
@@ -56,6 +59,7 @@ const BrowserPage = () => {
   } = useSelector(appContextBrowser)
   const { isBrowserFullScreen } = useSelector(keysSelector)
   const { type } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
+  const { viewType, searchMode } = useSelector(keysSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
   const [arePanelsCollapsed, setArePanelsCollapsed] = useState(false)
@@ -158,6 +162,19 @@ const BrowserPage = () => {
     setIsCreateIndexPanelOpen(false)
   }, [])
 
+  const onChangeDbIndex = () => {
+    if (selectedKey) {
+      dispatch(toggleBrowserFullScreen(true))
+      setSelectedKey(null)
+    }
+
+    dispatch(fetchKeys(
+      searchMode,
+      '0',
+      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT
+    ))
+  }
+
   const selectKey = ({ rowData }: { rowData: any }) => {
     if (!isEqualBuffers(rowData.name, selectedKey)) {
       dispatch(toggleBrowserFullScreen(false))
@@ -173,7 +190,7 @@ const BrowserPage = () => {
 
   return (
     <div className={`browserPage ${styles.container}`}>
-      <InstanceHeader />
+      <InstanceHeader onChangeDbIndex={onChangeDbIndex} />
       <div className={styles.main}>
         <div className={styles.resizableContainer}>
           <EuiResizableContainer onPanelWidthChange={onPanelWidthChange} style={{ height: '100%' }}>

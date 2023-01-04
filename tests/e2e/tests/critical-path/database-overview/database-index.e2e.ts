@@ -24,7 +24,7 @@ const common = new Common();
 const workbenchPage = new WorkbenchPage();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 
-let keyName = common.generateWord(10);
+const keyName = common.generateWord(10);
 const indexName = `idx:${keyName}`;
 const keyNames = [`${keyName}:1`, `${keyName}:2`];
 const commands = [
@@ -38,12 +38,12 @@ const logicalDbKey = `${keyName}:3`;
 fixture `Allow to change database index`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Create 3 keys and index
         await cliPage.sendCommandsInCli(commands);
     })
-    .afterEach(async () => {
+    .afterEach(async() => {
         // Delete keys in logical database
         await databaseOverviewPage.changeDbIndex(1);
         await cliPage.sendCommandsInCli([`DEL ${keyNameForSearchInLogicalDb}`, `DEL ${logicalDbKey}`]);
@@ -82,7 +82,7 @@ test('Switching between indexed databases', async t => {
     await browserPage.searchByKeyName(keyNameForSearchInLogicalDb);
     // Return to default database
     await databaseOverviewPage.changeDbIndex(0);
-    
+
     // Verify that search/filter saved after switching index in Browser
     await verifySearchFilterValue(keyNameForSearchInLogicalDb);
     await verifyKeysNotDisplayedInTheList([keyNameForSearchInLogicalDb]);
@@ -110,16 +110,20 @@ test('Switching between indexed databases', async t => {
     await databaseOverviewPage.changeDbIndex(1);
     // Verify that search/filter saved after switching index in Search capability
     // await t.expect(browserPage.keyListTable.textContent).contains('No results found.', 'Data not changed for indexed db');
-    await verifySearchFilterValue(keyNameForSearchInLogicalDb);
+    await verifySearchFilterValue('Hall School');
 
     // Open Workbench page
     await t.click(myRedisDatabasePage.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(command);
     // Open Browser page
     await t.click(myRedisDatabasePage.browserButton);
-    // check after fix TBD
-    // await verifyKeysDisplayedInTheList([logicalDbKey]);
+    // Clear filter
+    await t.click(browserPage.clearFilterButton);
+    // Verify that data changed for indexed db on Workbench page (on Search capability page)
+    await verifyKeysDisplayedInTheList([logicalDbKey]);
     await t.click(browserPage.patternModeBtn);
+    // Clear filter
+    await t.click(browserPage.clearFilterButton);
     // Verify that data changed for indexed db on Workbench page
     await verifyKeysDisplayedInTheList([keyNameForSearchInLogicalDb, logicalDbKey]);
     await databaseOverviewPage.changeDbIndex(0);

@@ -242,5 +242,5 @@ export async function verifyKeysNotDisplayedInTheList(keyNames: string[]): Promi
 */
 
 export async function verifySearchFilterValue(value: string): Promise<void> {
-    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', value).exists).ok('Filter per key name is not applied/correct');
+    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', value).exists).ok(`Filter per key name ${value} is not applied/correct`);
 }

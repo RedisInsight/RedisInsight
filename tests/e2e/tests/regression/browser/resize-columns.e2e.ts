@@ -99,6 +99,9 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
 
     // Verify that logical db not changed after switching between databases
     await databaseOverviewPage.changeDbIndex(1);
+    await t.click(myRedisDatabasePage.myRedisDBButton);
     await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
+    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
     await databaseOverviewPage.verifyDbIndexSelected(1);
 });

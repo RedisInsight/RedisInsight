@@ -9,6 +9,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
+  EuiLink,
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -46,11 +47,19 @@ const Recommendations = () => {
       <EuiFlexGroup alignItems="center">
         <EuiFlexItem grow={false}>
           {redisStack && (
-            <EuiIcon
-              type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
-              className={styles.redisStack}
-              data-testid="redis-stack-icon"
-            />
+            <EuiLink
+              external={false}
+              target="_blank"
+              href="https://redis.io/docs/stack/"
+              className={styles.redisStackLink}
+              data-testid="redis-stack-link"
+            >
+              <EuiIcon
+                type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+                className={styles.redisStackIcon}
+                data-testid="redis-stack-icon"
+              />
+            </EuiLink>
           )}
         </EuiFlexItem>
         <EuiFlexItem grow={false}>

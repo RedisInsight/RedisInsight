@@ -282,6 +282,7 @@
   "bigSets": {
     "id": "bigSets",
     "title": "Switch to Bloom filter, cuckoo filter, or HyperLogLog",
+    "redisStack": true,
     "content": [
       {
         "id": "1",
@@ -409,6 +410,29 @@
           "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
           "name": "Read more"
         }
+      },
+      {
+        "id": "11",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "12",
+        "type": "span",
+        "value": "Create a "
+      },
+      {
+        "id": "13",
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
+          "name": "free Redis Stack database"
+        }
+      },
+      {
+        "id": "14",
+        "type": "span",
+        "value": " to use modern data models and processing engines."
       }
     ],
     "badges": ["configuration_changes"]

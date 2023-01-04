@@ -330,4 +330,18 @@ describe('Recommendations', () => {
 
     expect(screen.queryByTestId('badges-legend')).toBeInTheDocument()
   })
+
+  it('should render redisstack link', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'bigSets' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('redis-stack-link')).toBeInTheDocument()
+    expect(screen.queryByTestId('redis-stack-link')).toHaveAttribute('href', 'https://redis.io/docs/stack/')
+  })
 })

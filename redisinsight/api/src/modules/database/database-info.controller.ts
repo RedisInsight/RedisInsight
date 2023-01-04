@@ -1,17 +1,19 @@
 import { ApiTags } from '@nestjs/swagger';
 import {
-  Controller, Get, Param, UseInterceptors,
+  Controller, Get, Param, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
-import { ClientMetadata } from 'src/common/models';
+import { ClientMetadata, DatabaseIndex } from 'src/common/models';
 import { ClientMetadataParam } from 'src/common/decorators';
+import { DbIndexValidationPipe } from 'src/common/pipes';
 
 @ApiTags('Database Instances')
 @Controller('databases')
+@UsePipes(new ValidationPipe({ transform: true }))
 export class DatabaseInfoController {
   constructor(
     private databaseInfoService: DatabaseInfoService,
@@ -73,12 +75,12 @@ export class DatabaseInfoController {
     ],
   })
   async getDatabaseIndex(
-    @Param('index') db: string,
+    @Param('index', new DbIndexValidationPipe({ transform: true })) databaseIndexDto: DatabaseIndex,
       @ClientMetadataParam({
         databaseIdParam: 'id',
         ignoreDbIndex: true,
       }) clientMetadata: ClientMetadata,
   ): Promise<void> {
-    return this.databaseInfoService.getDatabaseIndex(clientMetadata, db);
+    return this.databaseInfoService.getDatabaseIndex(clientMetadata, databaseIndexDto.db);
   }
 }

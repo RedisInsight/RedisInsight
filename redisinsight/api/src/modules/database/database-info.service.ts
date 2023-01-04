@@ -50,7 +50,7 @@ export class DatabaseInfoService {
    * @param clientMetadata
    * @param db
    */
-  public async getDatabaseIndex(clientMetadata: ClientMetadata, db: string): Promise<void> {
+  public async getDatabaseIndex(clientMetadata: ClientMetadata, db: number): Promise<void> {
     this.logger.log(`Connection to database index: ${db}`);
 
     let client;
@@ -58,7 +58,7 @@ export class DatabaseInfoService {
     try {
       client = await this.databaseConnectionService.createClient({
         ...clientMetadata,
-        db: parseInt(db, 10),
+        db,
       });
       client?.disconnect();
       return undefined;

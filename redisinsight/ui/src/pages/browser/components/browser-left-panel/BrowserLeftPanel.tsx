@@ -13,7 +13,7 @@ import {
   keysDataSelector,
   keysSelector,
 } from 'uiSrc/slices/browser/keys'
-import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
@@ -30,16 +30,6 @@ export interface Props {
   handleAddKeyPanel: (value: boolean) => void
   handleBulkActionsPanel: (value: boolean) => void
   handleCreateIndexPanel: (value: boolean) => void
-}
-
-const initialKeyStateData: KeysStoreData = {
-  total: 0,
-  scanned: 0,
-  nextCursor: '0',
-  keys: [],
-  shardsMeta: {},
-  previousResultCount: 0,
-  lastRefreshTime: null,
 }
 
 const BrowserLeftPanel = (props: Props) => {
@@ -66,9 +56,7 @@ const BrowserLeftPanel = (props: Props) => {
   const dispatch = useDispatch()
 
   const isDataLoaded = searchMode === SearchMode.Pattern ? isDataPatternLoaded : isDataRedisearchLoaded
-  const keysState = !isDataLoaded
-    ? initialKeyStateData
-    : (searchMode === SearchMode.Pattern ? patternKeysState : redisearchKeysState)
+  const keysState = searchMode === SearchMode.Pattern ? patternKeysState : redisearchKeysState
   const loading = searchMode === SearchMode.Pattern ? patternLoading : redisearchLoading || redisearchListLoading
   const isSearched = searchMode === SearchMode.Pattern ? patternIsSearched : redisearchIsSearched
   const scrollTopPosition = searchMode === SearchMode.Pattern ? scrollPatternTopPosition : scrollRedisearchTopPosition
@@ -77,7 +65,7 @@ const BrowserLeftPanel = (props: Props) => {
     if ((!isDataLoaded || contextInstanceId !== instanceId) && searchMode === SearchMode.Pattern) {
       loadKeys(viewType)
     }
-  }, [searchMode, isDataLoaded])
+  }, [searchMode])
 
   const loadKeys = useCallback((keyViewType: KeyViewType = KeyViewType.Browser) => {
     dispatch(setConnectedInstanceId(instanceId))

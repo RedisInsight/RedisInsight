@@ -62,7 +62,7 @@ table {
     overflow: hidden;
   }
 
-  &.noHeaderBorders {
+  &.noHeaderBorders, &.noBorders {
     .euiTableRow {
       &:not(:first-child) {
         .euiTableRowCell {
@@ -78,6 +78,35 @@ table {
 
     .euiTableHeaderCell {
       border: 0 !important;
+    }
+  }
+
+  &.noBorders {
+    .euiTableCaption {
+      height: 0;
+    }
+    .euiTableRowCell {
+      border-top: 0;
+    }
+    .euiTableRow:nth-child(odd) {
+      td {
+        &:first-child {
+          border-left: 1px solid var(--euiColorEmptyShade);
+        }
+        &:last-child {
+          border-right: 1px solid var(--euiColorEmptyShade);
+        }
+      }
+    }
+    .euiTableRow:nth-child(even) {
+      td {
+        &:first-child {
+          border-left: 1px solid var(--browserTableRowEven);
+        }
+        &:last-child {
+          border-right: 1px solid var(--browserTableRowEven);
+        }
+      }
     }
   }
 

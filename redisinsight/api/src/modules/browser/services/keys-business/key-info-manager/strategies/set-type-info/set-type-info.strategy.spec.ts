@@ -3,7 +3,7 @@ import { when } from 'jest-when';
 import {
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockDatabase,
+  mockBrowserClientMetadata,
 } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
@@ -12,12 +12,7 @@ import {
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
 import { SetTypeInfoStrategy } from './set-type-info.strategy';
-
-const mockClientOptions: IFindRedisClientInstanceByOptions = {
-  instanceId: mockDatabase.id,
-};
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testSet',
@@ -49,7 +44,7 @@ describe('SetTypeInfoStrategy', () => {
     const key = getKeyInfoResponse.name;
     it('should return appropriate value', async () => {
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           [BrowserToolSetCommands.SCard, key],
@@ -64,7 +59,7 @@ describe('SetTypeInfoStrategy', () => {
         ]);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.Set,
       );
@@ -77,7 +72,7 @@ describe('SetTypeInfoStrategy', () => {
         command: BrowserToolKeysCommands.Ttl,
       };
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           [BrowserToolSetCommands.SCard, key],
@@ -85,7 +80,7 @@ describe('SetTypeInfoStrategy', () => {
         .mockResolvedValue([replyError, []]);
 
       try {
-        await strategy.getInfo(mockClientOptions, key, RedisDataType.Set);
+        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.Set);
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);
@@ -98,7 +93,7 @@ describe('SetTypeInfoStrategy', () => {
         message: "ERR unknown command 'memory'",
       };
       when(browserTool.execPipeline)
-        .calledWith(mockClientOptions, [
+        .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           [BrowserToolSetCommands.SCard, key],
@@ -113,7 +108,7 @@ describe('SetTypeInfoStrategy', () => {
         ]);
 
       const result = await strategy.getInfo(
-        mockClientOptions,
+        mockBrowserClientMetadata,
         key,
         RedisDataType.Set,
       );

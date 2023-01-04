@@ -19,6 +19,7 @@ export * from './test/dataGenerator';
 interface ITestCaseInput {
   endpoint: Function; // function that returns prepared supertest with url
   data?: any;
+  attach?: any[];
   query?: any;
   statusCode?: number;
   responseSchema?: Joi.AnySchema;
@@ -35,6 +36,7 @@ interface ITestCaseInput {
 export const validateApiCall = async function ({
   endpoint,
   data,
+  attach,
   query,
   statusCode = 200,
   responseSchema,
@@ -46,6 +48,10 @@ export const validateApiCall = async function ({
   // data to send with POST, PUT etc
   if (data) {
     request.send(typeof data === 'function' ? data() : data);
+  }
+
+  if (attach) {
+    request.attach(...attach);
   }
 
   // data to send with url query string

@@ -17,7 +17,8 @@ export enum PageNames {
   pubSub = 'pub-sub',
   analytics = 'analytics',
   clusterDetails = 'cluster-details',
-  databaseAnalysis = 'database-analysis'
+  databaseAnalysis = 'database-analysis',
+  settings = 'settings'
 }
 
 const redisCloud = '/redis-cloud'
@@ -27,7 +28,7 @@ export const Pages = {
   home: '/',
   homeEditInstance: (instanceId: string) => `/?editInstance=${instanceId}`,
   redisEnterpriseAutodiscovery: '/redis-enterprise-autodiscovery',
-  settings: '/settings',
+  settings: `/${PageNames.settings}`,
   redisCloud,
   redisCloudSubscriptions: `${redisCloud}/subscriptions`,
   redisCloudDatabases: `${redisCloud}/databases`,

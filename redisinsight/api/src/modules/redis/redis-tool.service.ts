@@ -2,10 +2,10 @@ import { Logger } from '@nestjs/common';
 import * as Redis from 'ioredis';
 import * as IORedis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
-import { AppTool, ReplyError } from 'src/models';
+import { ReplyError } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { ClientContext, ClientMetadata } from 'src/common/models';
 import {
-  IFindRedisClientInstanceByOptions,
   RedisService,
 } from 'src/modules/redis/redis.service';
 import { RedisConsumerAbstractService } from 'src/modules/redis/redis-consumer.abstract.service';
@@ -34,7 +34,7 @@ export class RedisToolService extends RedisConsumerAbstractService {
   private logger: Logger;
 
   constructor(
-    private appTool: AppTool,
+    private appTool: ClientContext,
     protected redisService: RedisService,
     protected databaseService: DatabaseService,
     options: IRedisToolOptions = {},
@@ -44,12 +44,12 @@ export class RedisToolService extends RedisConsumerAbstractService {
   }
 
   async execCommand(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommand: string,
     args: Array<string | Buffer>,
     replyEncoding?: BufferEncoding,
   ): Promise<any> {
-    const client = await this.getRedisClient(clientOptions);
+    const client = await this.getRedisClient(clientMetadata);
     this.logger.log(`Execute command '${toolCommand}', connectionName: ${getConnectionName(client)}`);
     const [command, ...commandArgs] = toolCommand.split(' ');
     return client.sendCommand(
@@ -60,7 +60,7 @@ export class RedisToolService extends RedisConsumerAbstractService {
   }
 
   async execCommandForNodes(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommand: string,
     args: Array<string | Buffer>,
     nodeRole: ClusterNodeRole,
@@ -68,7 +68,7 @@ export class RedisToolService extends RedisConsumerAbstractService {
   ): Promise<ICliExecResultFromNode[]> {
     const [command, ...commandArgs] = toolCommand.split(' ');
     const nodes: IORedis.Redis[] = await this.getClusterNodes(
-      clientOptions,
+      clientMetadata,
       nodeRole,
     );
     return await Promise.all(
@@ -103,7 +103,7 @@ export class RedisToolService extends RedisConsumerAbstractService {
   }
 
   async execCommandForNode(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     toolCommand: string,
     args: Array<string | Buffer>,
     nodeRole: ClusterNodeRole,
@@ -112,7 +112,7 @@ export class RedisToolService extends RedisConsumerAbstractService {
   ): Promise<ICliExecResultFromNode> {
     const [command, ...commandArgs] = toolCommand.split(' ');
     const nodes: IORedis.Redis[] = await this.getClusterNodes(
-      clientOptions,
+      clientMetadata,
       nodeRole,
     );
     let node: any = nodes.find((item: IORedis.Redis) => {
@@ -156,37 +156,32 @@ export class RedisToolService extends RedisConsumerAbstractService {
     throw new Error('CLI ERROR: Pipeline not supported');
   }
 
-  async createNewToolClient(instanceId: string, namespace: string): Promise<string> {
-    const uuid = uuidv4();
-    await this.createNewClient(instanceId, uuid, namespace);
+  async createNewToolClient(clientMetadata: ClientMetadata): Promise<string> {
+    const uniqueId = uuidv4();
+    await this.createNewClient({
+      ...clientMetadata,
+      uniqueId,
+    });
 
-    return uuid;
+    return uniqueId;
   }
 
-  async reCreateToolClient(instanceId: string, uuid: string, namespace: string): Promise<string> {
-    this.redisService.removeClientInstance({
-      instanceId,
-      uuid,
-      tool: this.consumer,
-    });
-    await this.createNewClient(instanceId, uuid, namespace);
+  async reCreateToolClient(clientMetadata: ClientMetadata): Promise<string> {
+    this.redisService.removeClientInstance(clientMetadata);
+    await this.createNewClient(clientMetadata);
 
-    return uuid;
+    return clientMetadata.uniqueId;
   }
 
-  async deleteToolClient(instanceId: string, uuid: string): Promise<number> {
-    return this.redisService.removeClientInstance({
-      instanceId,
-      uuid,
-      tool: this.consumer,
-    });
+  async deleteToolClient(clientMetadata: ClientMetadata): Promise<number> {
+    return this.redisService.removeClientInstance(clientMetadata);
   }
 
   private async getClusterNodes(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     role: ClusterNodeRole,
   ): Promise<IORedis.Redis[]> {
-    const client = await this.getRedisClient(clientOptions);
+    const client = await this.getRedisClient(clientMetadata);
     if (!(client instanceof IORedis.Cluster)) {
       throw new WrongDatabaseTypeError(ERROR_MESSAGES.WRONG_DATABASE_TYPE);
     }

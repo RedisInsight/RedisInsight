@@ -20,7 +20,8 @@ enum BrowserStorageItem {
   wbCleanUp = 'wbCleanUp',
   viewFormat = 'viewFormat',
   wbGroupMode = 'wbGroupMode',
-  keyDetailSizes = 'keyDetailSizes'
+  keyDetailSizes = 'keyDetailSizes',
+  featuresHighlighting = 'featuresHighlighting'
 }
 
 export default BrowserStorageItem

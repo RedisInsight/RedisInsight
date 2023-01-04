@@ -1,12 +1,8 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
-import { ConnectionType } from 'uiSrc/slices/interfaces'
-import InstanceForm, {
-  ADD_NEW_CA_CERT,
-  DbConnectionInfo,
-  Props,
-} from './InstanceForm'
+import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { ConnectionType, InstanceType } from 'uiSrc/slices/interfaces'
+import InstanceForm, { ADD_NEW_CA_CERT, DbConnectionInfo, Props, } from './InstanceForm'
 
 const BTN_SUBMIT = 'btn-submit'
 const NEW_CA_CERT = 'new-ca-cert'
@@ -612,6 +608,30 @@ describe('InstanceForm', () => {
         />
       )
       expect(screen.getByTestId('db-alias')).toHaveTextContent('Clone ')
+    })
+
+    it('should render proper default values for standalone', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          formFields={{}}
+        />
+      )
+      expect(screen.getByTestId('host')).toHaveValue('127.0.0.1')
+      expect(screen.getByTestId('port')).toHaveValue('6379')
+      expect(screen.getByTestId('name')).toHaveValue('127.0.0.1:6379')
+    })
+
+    it('should render proper default values for sentinel', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          instanceType={InstanceType.Sentinel}
+          formFields={{}}
+        />
+      )
+      expect(screen.getByTestId('host')).toHaveValue('127.0.0.1')
+      expect(screen.getByTestId('port')).toHaveValue('26379')
     })
   })
 })

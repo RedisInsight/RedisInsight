@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import { GetKeyInfoResponse } from 'src/modules/browser/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { RedisString } from 'src/common/constants';
@@ -17,7 +17,7 @@ export class UnsupportedTypeInfoStrategy implements IKeyInfoStrategy {
   }
 
   public async getInfo(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
@@ -25,7 +25,7 @@ export class UnsupportedTypeInfoStrategy implements IKeyInfoStrategy {
     const [
       transactionError,
       transactionResults,
-    ] = await this.redisManager.execPipeline(clientOptions, [
+    ] = await this.redisManager.execPipeline(clientMetadata, [
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
     ]);

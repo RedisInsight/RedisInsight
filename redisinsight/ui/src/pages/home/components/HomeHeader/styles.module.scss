@@ -21,6 +21,17 @@
     font-weight: 500 !important;
   }
 }
+
+.importDatabasesBtn:global(.euiButton) {
+  height: 43px;
+  min-width: auto !important;
+
+  :global(.euiButton__text) {
+    display: flex;
+    align-items: center;
+  }
+}
+
 .followText {
   padding-top: 7px;
   font-size: 12px !important;
@@ -147,7 +158,7 @@
 
 .smallGuides {
   display: none !important;
-  @media (min-width: 1101px) and (max-width: 1251px) {
+  @media (min-width: 1101px) and (max-width: 1249px) {
     display: flex !important;
   }
 }

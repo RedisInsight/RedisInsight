@@ -9,7 +9,7 @@ import { isNull, isArray } from 'lodash';
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError, catchTransactionError } from 'src/utils';
-import { IFindRedisClientInstanceByOptions } from 'src/modules/redis/redis.service';
+import { ClientMetadata } from 'src/common/models';
 import {
   CreateListWithExpireDto,
   DeleteListElementsDto,
@@ -40,14 +40,14 @@ export class ListBusinessService {
   ) {}
 
   public async createList(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateListWithExpireDto,
   ): Promise<void> {
     this.logger.log('Creating list data type.');
     const { keyName } = dto;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -60,9 +60,9 @@ export class ListBusinessService {
         );
       }
       if (dto.expire) {
-        await this.createListWithExpiration(clientOptions, dto);
+        await this.createListWithExpiration(clientMetadata, dto);
       } else {
-        await this.createSimpleList(clientOptions, dto);
+        await this.createSimpleList(clientMetadata, dto);
       }
       this.logger.log('Succeed to create list data type.');
     } catch (error) {
@@ -73,14 +73,14 @@ export class ListBusinessService {
   }
 
   public async pushElement(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: PushElementToListDto,
   ): Promise<PushListElementsResponse> {
     this.logger.log('Insert element at the tail/head of the list data type.');
     const { keyName, element, destination } = dto;
     try {
       const total = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         destination === ListElementDestination.Tail
           ? BrowserToolListCommands.RPushX
           : BrowserToolListCommands.LPushX,
@@ -108,7 +108,7 @@ export class ListBusinessService {
   }
 
   public async getElements(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: GetListElementsDto,
   ): Promise<GetListElementsResponse> {
     this.logger.log('Getting elements of the list stored at key.');
@@ -116,7 +116,7 @@ export class ListBusinessService {
     let result: GetListElementsResponse;
     try {
       const total = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolListCommands.LLen,
         [keyName],
       );
@@ -129,7 +129,7 @@ export class ListBusinessService {
         );
       }
       const elements = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolListCommands.Lrange,
         [keyName, offset, offset + count - 1],
       );
@@ -148,12 +148,12 @@ export class ListBusinessService {
   /**
    * Get List element by index
    * NotFound exception when redis return null
-   * @param clientOptions
+   * @param clientMetadata
    * @param index
    * @param dto
    */
   public async getElement(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     index: number,
     dto: KeyDto,
   ): Promise<GetListElementResponse> {
@@ -161,7 +161,7 @@ export class ListBusinessService {
     const { keyName } = dto;
     try {
       const exists = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -173,7 +173,7 @@ export class ListBusinessService {
       }
 
       const value = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolListCommands.LIndex,
         [keyName, index],
       );
@@ -195,14 +195,14 @@ export class ListBusinessService {
   }
 
   public async setElement(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: SetListElementDto,
   ): Promise<SetListElementResponse> {
     this.logger.log('Setting the list element at index');
     const { keyName, element, index } = dto;
     try {
       const isExist = await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolKeysCommands.Exists,
         [keyName],
       );
@@ -215,7 +215,7 @@ export class ListBusinessService {
         );
       }
       await this.browserTool.execCommand(
-        clientOptions,
+        clientMetadata,
         BrowserToolListCommands.LSet,
         [keyName, index, element],
       );
@@ -236,11 +236,11 @@ export class ListBusinessService {
   /**
    * Delete and return the elements from the tail/head of list stored at key
    * NotFound exception when redis return null
-   * @param clientOptions
+   * @param clientMetadata
    * @param dto
    */
   public async deleteElements(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: DeleteListElementsDto,
   ): Promise<DeleteListElementsResponse> {
     this.logger.log('Deleting elements from the list stored at key.');
@@ -250,13 +250,13 @@ export class ListBusinessService {
       let result;
       if (destination === ListElementDestination.Head) {
         result = await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolListCommands.LPop,
           execArgs,
         );
       } else {
         result = await this.browserTool.execCommand(
-          clientOptions,
+          clientMetadata,
           BrowserToolListCommands.RPop,
           execArgs,
         );
@@ -287,27 +287,27 @@ export class ListBusinessService {
   }
 
   public async createSimpleList(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: PushElementToListDto,
   ): Promise<void> {
     const { keyName, element } = dto;
 
     await this.browserTool.execCommand(
-      clientOptions,
+      clientMetadata,
       BrowserToolListCommands.LPush,
       [keyName, element],
     );
   }
 
   public async createListWithExpiration(
-    clientOptions: IFindRedisClientInstanceByOptions,
+    clientMetadata: ClientMetadata,
     dto: CreateListWithExpireDto,
   ): Promise<void> {
     const { keyName, element, expire } = dto;
     const [
       transactionError,
       transactionResults,
-    ] = await this.browserTool.execMulti(clientOptions, [
+    ] = await this.browserTool.execMulti(clientMetadata, [
       [BrowserToolListCommands.LPush, keyName, element],
       [BrowserToolKeysCommands.Expire, keyName, expire],
     ]);

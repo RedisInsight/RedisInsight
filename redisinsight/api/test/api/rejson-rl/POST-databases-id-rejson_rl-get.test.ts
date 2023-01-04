@@ -229,17 +229,34 @@ describe('POST /databases/:instanceId/rejson-rl/get', () => {
           before: () => rte.data.setAclUserRules('~* +@all -json.get')
         },
         {
-          name: 'Should throw error if no permissions for "json.debug" command',
+          name: 'Should return regular item if no permissions for "json.debug" command',
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.TEST_REJSON_KEY_3,
             path: '.',
             forceRetrieve: false,
           },
-          statusCode: 403,
+          responseSchema,
           responseBody: {
-            statusCode: 403,
-            error: 'Forbidden',
+            downloaded: true,
+            path: '.',
+            data: constants.TEST_REJSON_VALUE_3,
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -json.debug')
+        },
+        {
+          name: 'Should get full json if no permissions for "json.debug" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: {
+            keyName: constants.TEST_REJSON_KEY_3,
+            path: '.',
+            forceRetrieve: false,
+          },
+          responseSchema,
+          responseBody: {
+            downloaded: true,
+            path: '.',
+            data: constants.TEST_REJSON_VALUE_3,
           },
           before: () => rte.data.setAclUserRules('~* +@all -json.debug')
         },

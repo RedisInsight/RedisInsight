@@ -4,7 +4,7 @@ import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
 import {
-  IsBoolean,
+  IsBoolean, IsEnum,
   IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
@@ -97,6 +97,7 @@ export class Database {
     enum: ConnectionType,
   })
   @Expose()
+  @IsEnum(ConnectionType)
   connectionType: ConnectionType;
 
   @ApiPropertyOptional({
@@ -141,6 +142,8 @@ export class Database {
     type: Endpoint,
     isArray: true,
   })
+  @IsOptional()
+  @Type(() => Endpoint)
   @Expose()
   nodes?: Endpoint[];
 
@@ -202,4 +205,14 @@ export class Database {
   @Type(() => ClientCertificate)
   @ValidateNested()
   clientCert?: ClientCertificate;
+
+  @ApiPropertyOptional({
+    description: 'A new created connection',
+    type: Boolean,
+    default: false,
+  })
+  @Expose()
+  @IsOptional()
+  @IsBoolean({ always: true })
+  new?: boolean;
 }

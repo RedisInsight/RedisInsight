@@ -2,9 +2,11 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import { EuiInMemoryTable } from '@elastic/eui'
+import { useSelector } from 'react-redux'
 
 import { first } from 'lodash'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
+import store, { RootState } from 'uiSrc/slices/store'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
 import DatabasesList, { Props as DatabasesListProps } from './DatabasesList/DatabasesList'
 
@@ -14,6 +16,11 @@ jest.mock('./DatabasesList/DatabasesList', () => ({
   __esModule: true,
   namedExport: jest.fn(),
   default: jest.fn(),
+}))
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn()
 }))
 
 const mockInstances = [
@@ -26,6 +33,7 @@ const mockInstances = [
     password: null,
     connectionType: ConnectionType.Standalone,
     nameFromProvider: null,
+    new: true,
     lastConnection: new Date('2021-04-22T09:03:56.917Z'),
   },
   {
@@ -62,6 +70,21 @@ const mockDatabasesList = (props: DatabasesListProps) => (
   </div>
 )
 
+beforeEach(() => {
+  const state: RootState = store.getState();
+
+  (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
+    ...state,
+    analytics: {
+      ...state.analytics
+    },
+    connections: {
+      ...state.connections,
+      instances: mockInstances,
+    }
+  }))
+})
+
 describe('DatabasesListWrapper', () => {
   beforeAll(() => {
     DatabasesList.mockImplementation(mockDatabasesList)
@@ -76,5 +99,15 @@ describe('DatabasesListWrapper', () => {
     const component = render(<DatabasesListWrapper {...instance(mockedProps)} />)
     fireEvent.click(screen.getByTestId('onDelete-btn'))
     expect(component).toBeTruthy()
+  })
+
+  it('should show indicator for a new connection', () => {
+    const { queryByTestId } = render(<DatabasesListWrapper {...instance(mockedProps)} />)
+
+    const dbIdWithNewIndicator = mockInstances.find(({ new: newState }) => newState)?.id ?? ''
+    const dbIdWithoutNewIndicator = mockInstances.find(({ new: newState }) => !newState)?.id ?? ''
+
+    expect(queryByTestId(`database-status-new-${dbIdWithNewIndicator}`)).toBeInTheDocument()
+    expect(queryByTestId(`database-status-new-${dbIdWithoutNewIndicator}`)).not.toBeInTheDocument()
   })
 })

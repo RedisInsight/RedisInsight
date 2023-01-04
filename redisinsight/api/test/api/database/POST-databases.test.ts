@@ -119,6 +119,7 @@ describe('POST /databases', () => {
             username: null,
             password: null,
             connectionType: constants.STANDALONE,
+            new: true,
           },
         });
       });
@@ -166,6 +167,7 @@ describe('POST /databases', () => {
               username: null,
               password: null,
               connectionType: constants.STANDALONE,
+              new: true,
             },
             checkFn: ({ body }) => {
               addedId = body.id;
@@ -235,10 +237,13 @@ describe('POST /databases', () => {
             username: null,
             password: constants.TEST_REDIS_PASSWORD,
             connectionType: constants.STANDALONE,
+            new: true,
           },
         });
 
-        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+        const db = await localDb.getInstanceByName(dbName)
+        expect(db).to.be.an('object');
+        expect(db.new).to.eql(true);
       });
       // todo: cover connection error for incorrect username/password
     });
@@ -266,6 +271,7 @@ describe('POST /databases', () => {
             connectionType: constants.STANDALONE,
             tls: true,
             verifyServerCert: false,
+            new: true,
           },
         });
 
@@ -299,6 +305,7 @@ describe('POST /databases', () => {
             tls: true,
             verifyServerCert: true,
             tlsServername: null,
+            new: true,
           },
           checkFn: async ({ body }) => {
             expect(body.caCert.id).to.be.a('string');

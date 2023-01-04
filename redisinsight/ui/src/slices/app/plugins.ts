@@ -96,11 +96,11 @@ export function loadPluginsAction() {
 
 // Asynchronous thunk action
 export function sendPluginCommandAction({ command = '', onSuccessAction, onFailAction }: {
-  command: string;
-  onSuccessAction?: (responseData: any) => void;
-  onFailAction?: (error: any) => void;
+  command: string
+  onSuccessAction?: (responseData: any) => void
+  onFailAction?: (error: any) => void
 }) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+  return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
@@ -126,12 +126,12 @@ export function sendPluginCommandAction({ command = '', onSuccessAction, onFailA
 }
 
 export function getPluginStateAction({ visualizationId = '', commandId = '', onSuccessAction, onFailAction }: {
-  visualizationId: string;
-  commandId: string;
-  onSuccessAction?: (responseData: any) => void;
-  onFailAction?: (error: any) => void;
+  visualizationId: string
+  commandId: string
+  onSuccessAction?: (responseData: any) => void
+  onFailAction?: (error: any) => void
 }) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+  return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
@@ -157,13 +157,13 @@ export function getPluginStateAction({ visualizationId = '', commandId = '', onS
 }
 
 export function setPluginStateAction({ visualizationId = '', commandId = '', pluginState, onSuccessAction, onFailAction }: {
-  visualizationId: string;
-  commandId: string;
-  pluginState: any;
-  onSuccessAction?: (responseData: any) => void;
-  onFailAction?: (error: any) => void;
+  visualizationId: string
+  commandId: string
+  pluginState: any
+  onSuccessAction?: (responseData: any) => void
+  onFailAction?: (error: any) => void
 }) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+  return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance

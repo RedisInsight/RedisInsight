@@ -43,6 +43,12 @@ import reducer, {
   setConnectedInstance,
   setConnectedInstanceFailure,
   setConnectedInstanceSuccess,
+  importInstancesFromFile,
+  importInstancesFromFileSuccess,
+  importInstancesFromFileFailure,
+  resetImportInstances,
+  importInstancesSelector,
+  uploadInstancesFile
 } from '../../instances/instances'
 import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
@@ -512,6 +518,114 @@ describe('instances slice', () => {
     })
   })
 
+  describe('importInstancesFromFile', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState.importInstances,
+        loading: true,
+        error: ''
+      }
+
+      // Act
+      const nextState = reducer(initialState, importInstancesFromFile())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(importInstancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('importInstancesFromFileSuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const mockedError = { statusCode: 400, message: 'message', error: 'error' }
+      const data = {
+        total: 3,
+        fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
+        partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
+        success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+      }
+      const state = {
+        ...initialState.importInstances,
+        loading: false,
+        data
+      }
+
+      // Act
+      const nextState = reducer(initialState, importInstancesFromFileSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(importInstancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('importInstancesFromFileFailure', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const error = 'Some error'
+      const state = {
+        ...initialState.importInstances,
+        loading: false,
+        error
+      }
+
+      // Act
+      const nextState = reducer(initialState, importInstancesFromFileFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(importInstancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetImportInstances', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const mockedError = { statusCode: 400, message: 'message', error: 'error' }
+      const currentState = {
+        ...initialState,
+        importInstances: {
+          ...initialState.importInstances,
+          data: {
+            total: 3,
+            fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
+            partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
+            success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+          }
+        }
+      }
+
+      const state = {
+        ...initialState.importInstances
+      }
+
+      // Act
+      const nextState = reducer(currentState, resetImportInstances())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(importInstancesSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchInstances', () => {
       it('call both fetchInstances and loadInstancesSuccess when fetch is successed', async () => {
@@ -909,7 +1023,7 @@ describe('instances slice', () => {
           newName: 'newAlias',
         }
         const responsePayload = { status: 200, data }
-        apiService.put = jest.fn().mockResolvedValue(responsePayload)
+        apiService.patch = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
@@ -933,7 +1047,7 @@ describe('instances slice', () => {
             data: { message: errorMessage },
           },
         }
-        apiService.put = jest.fn().mockRejectedValue(responsePayload)
+        apiService.patch = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
@@ -994,6 +1108,58 @@ describe('instances slice', () => {
           setConnectedInstanceFailure(),
           setDefaultInstanceFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as AxiosError),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('uploadInstancesFile', () => {
+      it('should call proper actions on success', async () => {
+        // Arrange
+        const formData = new FormData()
+        const mockedError = { statusCode: 400, message: 'message', error: 'error' }
+        const data = {
+          total: 3,
+          fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
+          partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
+          success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+        }
+
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(uploadInstancesFile(formData))
+
+        // Assert
+        const expectedActions = [
+          importInstancesFromFile(),
+          importInstancesFromFileSuccess(responsePayload.data)
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on fail', async () => {
+        // Arrange
+        const formData = new FormData()
+        const errorMessage = 'Some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(uploadInstancesFile(formData))
+
+        // Assert
+        const expectedActions = [
+          importInstancesFromFile(),
+          importInstancesFromFileFailure(responsePayload.response.data.message),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

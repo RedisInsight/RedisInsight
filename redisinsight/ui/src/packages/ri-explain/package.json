@@ -38,8 +38,8 @@
         "FT.EXPLAINCLI",
         "FT.PROFILE"
       ],
-      "iconDark": "./dist/table_view_icon_dark.svg",
-      "iconLight": "./dist/table_view_icon_light.svg",
+      "iconDark": "./dist/profile_icon_dark.svg",
+      "iconLight": "./dist/profile_icon_light.svg",
       "description": "Profile/Explain plugin Visualization",
       "default": true
     }

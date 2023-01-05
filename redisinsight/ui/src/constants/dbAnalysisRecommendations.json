@@ -282,6 +282,7 @@
   "bigSets": {
     "id": "bigSets",
     "title": "Switch to Bloom filter, cuckoo filter, or HyperLogLog",
+    "redisStack": true,
     "content": [
       {
         "id": "1",
@@ -409,6 +410,29 @@
           "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
           "name": "Read more"
         }
+      },
+      {
+        "id": "11",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "12",
+        "type": "span",
+        "value": "Create a "
+      },
+      {
+        "id": "13",
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight/",
+          "name": "free Redis Stack database"
+        }
+      },
+      {
+        "id": "14",
+        "type": "span",
+        "value": " to use modern data models and processing engines."
       }
     ],
     "badges": ["configuration_changes"]
@@ -464,6 +488,42 @@
           "href": "https://redis.io/docs/management/security/",
           "name": "Read more"
         }
+      }
+    ],
+    "badges": ["configuration_changes"]
+  },
+  "RTS": {
+    "id": "RTS",
+    "title":"Optimize the use of time series",
+    "redisStack": true,
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "If you are using sorted sets to work with time series data, consider using RedisTimeSeries to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
+        "type": "span",
+        "value": "Create a "
+      },
+      {
+        "id": "4",
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight/",
+          "name": "free Redis Stack database"
+        }
+      },
+      {
+        "id": "5",
+        "type": "span",
+        "value": " to use modern data models and processing engines."
       }
     ],
     "badges": ["configuration_changes"]

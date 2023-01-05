@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { RecommendationProvider } from 'src/modules/recommendation/providers/recommendation.provider';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
+import { RECOMMENDATION_NAMES } from 'src/constants';
 import { RedisString } from 'src/common/constants';
 import { Key } from 'src/modules/database-analysis/models';
 
@@ -10,6 +11,7 @@ interface RecommendationInput {
   keys?: Key[],
   info?: RedisString,
   total?: number,
+  exclude?: string[],
 }
 
 @Injectable()
@@ -31,6 +33,7 @@ export class RecommendationService {
       keys,
       info,
       total,
+      exclude,
     } = dto;
 
     return (
@@ -49,6 +52,8 @@ export class RecommendationService {
         await this.recommendationProvider.determineBigSetsRecommendation(keys),
         await this.recommendationProvider.determineConnectionClientsRecommendation(client),
         await this.recommendationProvider.determineSetPasswordRecommendation(client),
+        // TODO rework, need better solution to do not start determine recommendation
+        exclude.includes(RECOMMENDATION_NAMES.RTS) ? null : await this.recommendationProvider.determineRTSRecommendation(client, keys),
       ]));
   }
 }

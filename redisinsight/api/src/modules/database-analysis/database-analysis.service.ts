@@ -2,6 +2,7 @@ import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { isNull, flatten, uniqBy } from 'lodash';
 import { RecommendationService } from 'src/modules/recommendation/recommendation.service';
 import { catchAclError } from 'src/utils';
+import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { plainToClass } from 'class-transformer';
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
@@ -56,11 +57,13 @@ export class DatabaseAnalysisService {
 
       const recommendations = DatabaseAnalysisService.getRecommendationsSummary(
         flatten(await Promise.all(
-          scanResults.map(async (nodeResult) => (
+          scanResults.map(async (nodeResult, idx) => (
             await this.recommendationService.getRecommendations({
               client: nodeResult.client,
               keys: nodeResult.keys,
               total: progress.total,
+              // TODO: create generic solution to exclude recommendations
+              exclude: idx !== 0 ? [RECOMMENDATION_NAMES.RTS] : [],
             })
           )),
         )),

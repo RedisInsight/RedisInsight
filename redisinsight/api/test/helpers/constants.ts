@@ -193,6 +193,9 @@ export const constants = {
   TEST_ZSET_HUGE_KEY: 'big zset 1M',
   TEST_ZSET_HUGE_MEMBER: ' 356897',
   TEST_ZSET_HUGE_SCORE: 356897,
+  TEST_ZSET_TIMESTAMP_KEY: TEST_RUN_ID + '_zset_timestamp' + CLUSTER_HASH_SLOT,
+  TEST_ZSET_TIMESTAMP_MEMBER: '12345678910',
+  TEST_ZSET_TIMESTAMP_SCORE: 12345678910,
   TEST_ZSET_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('zsetk'), unprintableBuf]),
   get TEST_ZSET_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_ZSET_KEY_BIN_BUFFER_1] } },
   get TEST_ZSET_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_ZSET_KEY_BIN_BUFFER_1) },
@@ -497,6 +500,10 @@ export const constants = {
 
   TEST_SET_PASSWORD_RECOMMENDATION: {
     name: RECOMMENDATION_NAMES.SET_PASSWORD,
+  },
+
+  TEST_RTS_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.RTS,
   },
 
   // etc...

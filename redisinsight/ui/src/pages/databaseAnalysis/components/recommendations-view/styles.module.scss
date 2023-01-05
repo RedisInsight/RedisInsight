@@ -41,6 +41,16 @@
 
   .accordionButton :global(.euiFlexItem) {
     margin: 0;
+
+    .redisStackLink {
+      margin-right: 16px;
+      animation: none !important;
+    }
+  
+    .redisStackIcon {
+      width: 20px;
+      height: 20px;
+    }
   }
 
   :global(.euiAccordion__buttonReverse .euiAccordion__iconWrapper) {
@@ -115,14 +125,5 @@
 
   .span {
     display: inline;
-  }
-
-  .redisStackLink {
-    margin-right: 16px;
-  }
-
-  .redisStackIcon {
-    width: 20px;
-    height: 20px;
   }
 }

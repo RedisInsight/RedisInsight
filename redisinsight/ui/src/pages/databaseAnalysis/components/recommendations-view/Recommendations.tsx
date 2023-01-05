@@ -6,6 +6,7 @@ import {
   EuiAccordion,
   EuiPanel,
   EuiText,
+  EuiToolTip,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
@@ -39,6 +40,8 @@ const Recommendations = () => {
     }
   })
 
+  const onRedisStackClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => event.stopPropagation()
+
   const sortedRecommendations = sortBy(recommendations, ({ name }) =>
     (recommendationsContent[name]?.redisStack ? -1 : 0))
 
@@ -53,12 +56,20 @@ const Recommendations = () => {
               href="https://redis.io/docs/stack/"
               className={styles.redisStackLink}
               data-testid="redis-stack-link"
+              onClick={onRedisStackClick}
             >
-              <EuiIcon
-                type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
-                className={styles.redisStackIcon}
-                data-testid="redis-stack-icon"
-              />
+              <EuiToolTip
+                content="Redis Stack"
+                position="top"
+                display="inlineBlock"
+                anchorClassName="flex-row"
+              >
+                <EuiIcon
+                  type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+                  className={styles.redisStackIcon}
+                  data-testid="redis-stack-icon"
+                />
+              </EuiToolTip>
             </EuiLink>
           )}
         </EuiFlexItem>

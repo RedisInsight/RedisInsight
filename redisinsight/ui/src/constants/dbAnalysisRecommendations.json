@@ -425,7 +425,7 @@
         "id": "13",
         "type": "link",
         "value": {
-          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
+          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight/",
           "name": "free Redis Stack database"
         }
       },
@@ -516,7 +516,7 @@
         "id": "4",
         "type": "link",
         "value": {
-          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
+          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight/",
           "name": "free Redis Stack database"
         }
       },

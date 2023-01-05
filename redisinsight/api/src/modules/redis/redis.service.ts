@@ -62,7 +62,7 @@ export class RedisService implements OnModuleDestroy {
     return found;
   }
 
-  public setClientInstance(clientMetadata: ClientMetadata, client): 0 | 1 {
+  public setClientInstance(clientMetadata: ClientMetadata, client): IRedisClientInstance {
     const metadata = RedisService.prepareClientMetadata(clientMetadata);
 
     const id = RedisService.generateId(metadata);
@@ -76,15 +76,18 @@ export class RedisService implements OnModuleDestroy {
     };
 
     if (found) {
+      if (this.isClientConnected(found.client)) {
+        found.lastTimeUsed = Date.now();
+        client.disconnect();
+        return found;
+      }
+
       found.client.disconnect();
-      this.clients.delete(id);
-      this.clients.set(id, clientInstance);
-      return 0; // todo: investigate why we need to distinguish between 1 | 0
     }
 
     this.clients.set(id, clientInstance);
 
-    return 1;
+    return clientInstance;
   }
 
   public removeClientInstance(clientMetadata: ClientMetadata): number {

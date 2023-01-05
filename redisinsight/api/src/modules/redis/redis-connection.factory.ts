@@ -101,7 +101,9 @@ export class RedisConnectionFactory {
     const baseOptions = await this.getRedisOptions(clientMetadata, database, options);
     return {
       ...baseOptions,
-      sentinels: database.nodes,
+      host: undefined,
+      port: undefined,
+      sentinels: database.nodes?.length ? database.nodes : [{ host: database.host, port: database.port }],
       name: sentinelMaster?.name,
       sentinelUsername: database.username,
       sentinelPassword: database.password,

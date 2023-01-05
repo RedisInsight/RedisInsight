@@ -2,7 +2,12 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
-import { checkDatabaseIndex, connectedInstanceInfoSelector } from 'uiSrc/slices/instances/instances'
+import {
+  checkDatabaseIndex,
+  connectedInstanceInfoSelector,
+  connectedInstanceSelector
+} from 'uiSrc/slices/instances/instances'
+import { appContextDbIndex } from 'uiSrc/slices/app/context'
 
 import InstanceHeader, { Props } from './InstanceHeader'
 
@@ -27,6 +32,18 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceInfoSelector: jest.fn().mockReturnValue({
     databases: 16,
+  }),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    username: 'username',
+    id: 'instanceId',
+    loading: false,
+  })
+}))
+
+jest.mock('uiSrc/slices/app/context', () => ({
+  ...jest.requireActual('uiSrc/slices/app/context'),
+  appContextDbIndex: jest.fn().mockReturnValue({
+    disabled: false,
   })
 }))
 
@@ -76,5 +93,25 @@ describe('InstanceHeader', () => {
       checkDatabaseIndex()
     ]
     expect(store.getActions()).toEqual([...expectedActions])
+  })
+
+  it('should be disabled db index button with loading state', () => {
+    (connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
+      loading: true,
+    })
+
+    render(<InstanceHeader {...instance(mockedProps)} />)
+
+    expect(screen.getByTestId('change-index-btn')).toBeDisabled()
+  })
+
+  it('should be disabled db index button with disabled state', () => {
+    (appContextDbIndex as jest.Mock).mockReturnValueOnce({
+      disabled: true,
+    })
+
+    render(<InstanceHeader {...instance(mockedProps)} />)
+
+    expect(screen.getByTestId('change-index-btn')).toBeDisabled()
   })
 })

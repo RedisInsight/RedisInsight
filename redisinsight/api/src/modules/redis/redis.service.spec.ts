@@ -121,29 +121,32 @@ describe('RedisService', () => {
 
       const result = service.setClientInstance(mockRedisClientInstance1.clientMetadata, mockIORedisClient);
 
-      expect(result).toEqual(1);
+      expect(result.client).toEqual(mockIORedisClient);
       expect(service.clients.size).toEqual(1);
     });
 
-    it('should replace existing client and update last used time', async () => {
+    it('should use existing client instead of replacing with new one', async () => {
       expect(service.clients.size).toEqual(0);
 
-      expect(service.setClientInstance(mockRedisClientInstance1.clientMetadata, mockIORedisClient)).toEqual(1);
+      expect(service.setClientInstance(mockRedisClientInstance1.clientMetadata, mockIORedisClient).client)
+        .toEqual(mockIORedisClient);
       expect(service.clients.size).toEqual(1);
 
-      const [justAddedClient] = [...service.clients.values()];
+      let [justAddedClient] = [...service.clients.values()];
+      justAddedClient = { ...justAddedClient };
 
       // sleep
       await new Promise((res) => setTimeout(res, 100));
 
-      expect(service.setClientInstance(mockRedisClientInstance1.clientMetadata, mockIORedisSentinel)).toEqual(0);
+      expect(service.setClientInstance(mockRedisClientInstance1.clientMetadata, mockIORedisSentinel).client)
+        .toEqual(mockIORedisClient);
       expect(service.clients.size).toEqual(1);
 
-      const [overwrittenClient] = [...service.clients.values()];
-      expect(overwrittenClient.clientMetadata).toEqual(justAddedClient.clientMetadata);
-      expect(overwrittenClient.id).toEqual(justAddedClient.id);
-      expect(overwrittenClient.client).not.toEqual(justAddedClient.client);
-      expect(overwrittenClient.lastTimeUsed).toBeGreaterThan(justAddedClient.lastTimeUsed);
+      const [newClient] = [...service.clients.values()];
+      expect(newClient.clientMetadata).toEqual(justAddedClient.clientMetadata);
+      expect(newClient.id).toEqual(justAddedClient.id);
+      expect(newClient.client).toEqual(justAddedClient.client);
+      expect(newClient.lastTimeUsed).toBeGreaterThan(justAddedClient.lastTimeUsed);
     });
   });
 

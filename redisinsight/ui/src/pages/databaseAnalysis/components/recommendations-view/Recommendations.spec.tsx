@@ -341,7 +341,7 @@ describe('Recommendations', () => {
 
     render(<Recommendations />)
 
-    expect(screen.queryByTestId('redis-stack-link')).toBeInTheDocument()
-    expect(screen.queryByTestId('redis-stack-link')).toHaveAttribute('href', 'https://redis.io/docs/stack/')
+    expect(screen.queryByTestId('bigSets-redis-stack-link')).toBeInTheDocument()
+    expect(screen.queryByTestId('bigSets-redis-stack-link')).toHaveAttribute('href', 'https://redis.io/docs/stack/')
   })
 })

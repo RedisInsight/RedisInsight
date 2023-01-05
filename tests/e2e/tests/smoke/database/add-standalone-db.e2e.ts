@@ -5,7 +5,7 @@ import {
     addOSSClusterDatabase,
     acceptLicenseTerms,
     deleteDatabase,
-    acceptLicenseTermsAndAddRECloudDatabase
+    addRECloudDatabase
 } from '../../../helpers/database';
 import {
     commonUrl,
@@ -60,8 +60,11 @@ test
     });
 
 test
-    .meta({ rte: rte.reCloud })('Verify that user can add database from RE Cloud via auto-discover flow', async() => {
-        await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
+    .meta({ rte: rte.reCloud })
+    .after(async() => {
+        await deleteDatabase(cloudDatabaseConfig.databaseName);
+    })('Verify that user can add database from RE Cloud via auto-discover flow', async() => {
+        await addRECloudDatabase(cloudDatabaseConfig);
         // Verify new connection badge for RE cloud
         await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
     });

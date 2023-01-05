@@ -270,7 +270,7 @@ const DatabasesListWrapper = ({
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
           <AutoSizer>
             {({ width: columnWidth }) => (
-              <div style={{ width: columnWidth, height: 40 }}>
+              <div style={{ width: columnWidth, height: 40, marginLeft: -6 }}>
                 <DatabaseListModules
                   content={isRediStack ? (
                     <EuiIcon

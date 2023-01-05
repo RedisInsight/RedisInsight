@@ -57,6 +57,7 @@ test('Switching between indexed databases', async t => {
     const rememberedConnectedClients = await browserPage.overviewConnectedClients.textContent;
 
     // Change index to logical db
+    // Verify that database index switcher displayed for Standalone db
     await databaseOverviewPage.changeDbIndex(1);
     // Verify that the same client connections are used after changing index
     const logicalDbConnectedClients = await browserPage.overviewConnectedClients.textContent;
@@ -99,17 +100,14 @@ test('Switching between indexed databases', async t => {
     await verifyKeysDisplayedInTheList(keyNames);
     // Change index to logical db
     await databaseOverviewPage.changeDbIndex(1);
-    // Verify that data changed for indexed db on Search capability page
-    // await t.expect(browserPage.keyListTable.textContent).contains('No results found.', 'Data not changed for indexed db');
-
     // Search by value and return to default database
     await browserPage.searchByKeyName('Hall School');
     await databaseOverviewPage.changeDbIndex(0);
+    // Verify that data changed for indexed db on Search capability page
     await verifyKeysDisplayedInTheList([keyNames[0]]);
     // Change index to logical db
     await databaseOverviewPage.changeDbIndex(1);
     // Verify that search/filter saved after switching index in Search capability
-    // await t.expect(browserPage.keyListTable.textContent).contains('No results found.', 'Data not changed for indexed db');
     await verifySearchFilterValue('Hall School');
 
     // Open Workbench page

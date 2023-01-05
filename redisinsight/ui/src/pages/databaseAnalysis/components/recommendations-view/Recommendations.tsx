@@ -6,9 +6,11 @@ import {
   EuiAccordion,
   EuiPanel,
   EuiText,
+  EuiToolTip,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
+  EuiLink,
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -38,19 +40,36 @@ const Recommendations = () => {
     }
   })
 
+  const onRedisStackClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => event.stopPropagation()
+
   const sortedRecommendations = sortBy(recommendations, ({ name }) =>
     (recommendationsContent[name]?.redisStack ? -1 : 0))
 
-  const renderButtonContent = (redisStack: boolean, title: string, badges: string[]) => (
+  const renderButtonContent = (redisStack: boolean, title: string, badges: string[], id: string) => (
     <EuiFlexGroup className={styles.accordionButton} responsive={false} alignItems="center" justifyContent="spaceBetween">
       <EuiFlexGroup alignItems="center">
-        <EuiFlexItem grow={false}>
+        <EuiFlexItem onClick={onRedisStackClick} grow={false}>
           {redisStack && (
-            <EuiIcon
-              type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
-              className={styles.redisStack}
-              data-testid="redis-stack-icon"
-            />
+            <EuiLink
+              external={false}
+              target="_blank"
+              href="https://redis.io/docs/stack/"
+              className={styles.redisStackLink}
+              data-testid={`${id}-redis-stack-link`}
+            >
+              <EuiToolTip
+                content="Redis Stack"
+                position="top"
+                display="inlineBlock"
+                anchorClassName="flex-row"
+              >
+                <EuiIcon
+                  type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+                  className={styles.redisStackIcon}
+                  data-testid={`${id}-redis-stack-icon`}
+                />
+              </EuiToolTip>
+            </EuiLink>
           )}
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
@@ -97,7 +116,7 @@ const Recommendations = () => {
               <EuiAccordion
                 id={name}
                 arrowDisplay="right"
-                buttonContent={renderButtonContent(redisStack, title, badges)}
+                buttonContent={renderButtonContent(redisStack, title, badges, id)}
                 buttonClassName={styles.accordionBtn}
                 buttonProps={{ 'data-test-subj': `${id}-button` }}
                 className={styles.accordion}

@@ -49,7 +49,6 @@ export default {
     new webpack.IgnorePlugin({
       checkResource(resource) {
         const lazyImports = [
-          'ssh2',
           '@nestjs/microservices',
           // '@nestjs/platform-express',
           // 'pnpapi',

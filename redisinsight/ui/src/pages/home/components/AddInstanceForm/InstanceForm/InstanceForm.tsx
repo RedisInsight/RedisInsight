@@ -35,8 +35,6 @@ import {
   NO_CA_CERT,
   ADD_NEW,
   fieldDisplayNames,
-  optionsCertsCA,
-  optionsCertsClient,
   SshPassType
 } from './constants'
 
@@ -312,20 +310,6 @@ const AddStandaloneForm = (props: Props) => {
     },
   [])
 
-  caCertificates?.forEach((cert) => {
-    optionsCertsCA.push({
-      value: cert.id,
-      inputDisplay: cert.name,
-    })
-  })
-
-  certificates?.forEach((cert) => {
-    optionsCertsClient.push({
-      value: `${cert.id}`,
-      inputDisplay: cert.name,
-    })
-  })
-
   const handleCheckConnectToInstance = () => {
     const modulesSummary = getRedisModulesSummary(modules)
     sendEventTelemetry({
@@ -521,6 +505,8 @@ const AddStandaloneForm = (props: Props) => {
               formik={formik}
               flexItemClassName={flexItemClassName}
               flexGroupClassName={flexGroupClassName}
+              certificates={certificates}
+              caCertificates={caCertificates}
             />
             {instanceType !== InstanceType.Sentinel && (
               <SSHDetails
@@ -571,6 +557,8 @@ const AddStandaloneForm = (props: Props) => {
                 formik={formik}
                 flexItemClassName={flexItemClassName}
                 flexGroupClassName={flexGroupClassName}
+                certificates={certificates}
+                caCertificates={caCertificates}
               />
               <SSHDetails
                 formik={formik}
@@ -640,6 +628,8 @@ const AddStandaloneForm = (props: Props) => {
                       formik={formik}
                       flexItemClassName={flexItemClassName}
                       flexGroupClassName={flexGroupClassName}
+                      certificates={certificates}
+                      caCertificates={caCertificates}
                     />
                   </EuiCollapsibleNavGroup>
                 </>
@@ -692,6 +682,8 @@ const AddStandaloneForm = (props: Props) => {
                     formik={formik}
                     flexItemClassName={flexItemClassName}
                     flexGroupClassName={flexGroupClassName}
+                    certificates={certificates}
+                    caCertificates={caCertificates}
                   />
                 </>
               )}

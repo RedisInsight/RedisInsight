@@ -5,7 +5,9 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormRow,
-  EuiSuperSelect, EuiTextArea,
+  EuiSuperSelect,
+  EuiSuperSelectOption,
+  EuiTextArea,
   htmlIdGenerator
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -13,9 +15,7 @@ import { validateCertName, validateField } from 'uiSrc/utils'
 import { FormikProps } from 'formik'
 import {
   ADD_NEW_CA_CERT,
-  NO_CA_CERT,
-  optionsCertsCA,
-  optionsCertsClient
+  NO_CA_CERT
 } from '../constants'
 import { DbConnectionInfo } from '../interfaces'
 
@@ -25,9 +25,43 @@ export interface Props {
   flexGroupClassName?: string
   flexItemClassName?: string
   formik: FormikProps<DbConnectionInfo>
+  caCertificates?: { id: string; name: string }[]
+  certificates?: { id: number; name: string }[]
 }
 const TlsDetails = (props: Props) => {
-  const { flexGroupClassName = '', flexItemClassName = '', formik } = props
+  const { flexGroupClassName = '', flexItemClassName = '', formik, caCertificates, certificates } = props
+
+  const optionsCertsCA: EuiSuperSelectOption<string>[] = [
+    {
+      value: NO_CA_CERT,
+      inputDisplay: 'No CA Certificate',
+    },
+    {
+      value: ADD_NEW_CA_CERT,
+      inputDisplay: 'Add new CA certificate',
+    },
+  ]
+
+  caCertificates?.forEach((cert) => {
+    optionsCertsCA.push({
+      value: cert.id,
+      inputDisplay: cert.name,
+    })
+  })
+
+  const optionsCertsClient: EuiSuperSelectOption<string>[] = [
+    {
+      value: 'ADD_NEW',
+      inputDisplay: 'Add new certificate',
+    },
+  ]
+
+  certificates?.forEach((cert) => {
+    optionsCertsClient.push({
+      value: `${cert.id}`,
+      inputDisplay: cert.name,
+    })
+  })
 
   return (
     <>

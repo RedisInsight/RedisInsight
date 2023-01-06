@@ -168,3 +168,18 @@
 .fullWidth {
   flex-basis: 100% !important;
 }
+
+.sshPassTypeWrapper {
+  .sshPassType {
+    display: flex;
+    flex-direction: column;
+    :global {
+      .euiRadioGroup__item {
+        margin-bottom: 8px !important;
+        &:last-child {
+          margin-bottom: 0 !important;
+        }
+      }
+    }
+  }
+}

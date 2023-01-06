@@ -24,8 +24,8 @@ export interface DbConnectionInfo extends Instance {
   sentinelMasterName?: string
   ssh?: boolean
   sshPassType?: string
-  sshHost?: string
-  sshPort?: number
+  sshHost: string
+  sshPort: string
   sshUsername?: string
   sshPassword?: string
   sshPrivateKey?: string

@@ -256,7 +256,7 @@ const InstanceFormWrapper = (props: Props) => {
       database.ssh = true
       database.sshOptions = {
         host: sshHost,
-        port: sshPort,
+        port: +sshPort,
         username: sshUsername,
       }
 

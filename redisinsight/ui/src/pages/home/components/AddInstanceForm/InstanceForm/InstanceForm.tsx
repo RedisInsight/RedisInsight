@@ -36,7 +36,8 @@ import {
   ADD_NEW,
   fieldDisplayNames,
   optionsCertsCA,
-  optionsCertsClient, SshPassType
+  optionsCertsClient,
+  SshPassType
 } from './constants'
 
 import { DbConnectionInfo, ISubmitButton } from './interfaces'

@@ -3,7 +3,7 @@ import { Model, Graph } from '@antv/x6'
 import { register} from '@antv/x6-react-shape'
 import Hierarchy from '@antv/hierarchy'
 
-import { ParseExplain, ParseProfile } from './parser'
+import { EntityInfo, ParseExplain, ParseProfile, ParseProfileCluster } from './parser'
 import { ExplainNode, ProfileNode } from './Node'
 
 interface IExplain {
@@ -21,15 +21,25 @@ export default function Explain(props: IExplain): JSX.Element {
   if (command.toLowerCase() == 'ft.profile') {
     const info = props.data[0].response[1]
 
-    const profilingTime: IProfilingTime = {
-      profile: info[0][1],
-      parsing: info[1][1],
-      pipelineCreation: info[2][1],
+    let data: EntityInfo;
+    let profilingTime: IProfilingTime = {};
+
+    if (info.length > 5 && typeof info[0] === 'string' && info[0].toLowerCase().startsWith('shard')) {
+      let cluster: Object;
+      [cluster, data] = ParseProfileCluster(info)
+      cluster['Coordinator'].forEach((kv: [string, string]) => profilingTime[kv[0]] = kv[1]);
+    } else {
+      data = ParseProfile(info)
+      profilingTime = {
+        'Total Profile Time': info[0][1],
+        'Parsing Time': info[1][1],
+        'Pipeline Creation Time': info[2][1],
+      }
     }
 
     return (
       <ExplainDraw
-        data={ParseProfile(info)}
+        data={data}
         type={CoreType.Profile}
         profilingTime={profilingTime}
       />
@@ -66,9 +76,7 @@ register({
 const isDarkTheme = document.body.classList.contains('theme_DARK')
 
 interface IProfilingTime {
-  profile: string
-  parsing: string
-  pipelineCreation: string
+  [key: string]: string
 }
 
 function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, profilingTime?: IProfilingTime}): JSX.Element {
@@ -174,6 +182,7 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
       if (data.children) {
         data.children.forEach((item: any) => {
           model.edges?.push({
+            id: `${data.id}-${item.id}`,
             source: data.id,
             target: item.id,
             router: {
@@ -216,18 +225,14 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
       <div style={{ margin: 0, width: '100vw' }} ref={container} id="container" />
       { profilingTime && (
         <div style={{ width: infoWidth}} id="profile-time-info" className="ProfileTimeInfo">
-          <div className="Item">
-            <div className="Value">{profilingTime.profile}</div>
-            <div className="Key">Total Profile Time</div>
-          </div>
-          <div className="Item">
-            <div className="Value">{profilingTime.parsing}</div>
-            <div className="Key">Parsing Time</div>
-          </div>
-          <div className="Item">
-            <div className="Value">{profilingTime.pipelineCreation}</div>
-            <div className="Key">Pipeline Creation Time</div>
-          </div>
+          {
+            Object.keys(profilingTime).map(key => (
+              <div className="Item">
+                <div className="Value">{profilingTime[key]}</div>
+                <div className="Key">{key}</div>
+              </div>
+            ))
+          }
         </div>
       )}
     </div>

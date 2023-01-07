@@ -206,6 +206,8 @@ export enum EntityType {
   Scorer = 'Scorer',
   Sorter = 'Sorter',
   Loader = 'Loader',
+
+  CLUSTER_MERGE = 'CLUSTER MERGE'
 }
 
 
@@ -218,6 +220,7 @@ export interface EntityInfo {
   time?: string
   counter?: string
   size?: string
+  parentId?: string
 }
 
 class Expr {
@@ -538,6 +541,50 @@ function assertToken(expected: TokenType, actual: TokenType | undefined) {
   assert(expected === actual, `Expected ${expected}, Actual: ${actual}`)
 }
 
+
+export function ParseProfileCluster(info: any[]): [Object, EntityInfo] {
+
+  let i = 0;
+  let clusterInfo: {[key: string]: any[]} = {}
+  let key: string = '';
+  while (i < info.length) {
+    if (Array.isArray(info[i])) {
+      clusterInfo[key].push(info[i]);
+    } else if (typeof(info[i]) === 'string') {
+      key = info[i];
+      clusterInfo[key] = []
+    } else {
+      throw new Error("Expected array or string - " + JSON.stringify(info))
+    }
+    i++;
+  }
+
+  let shards: EntityInfo[] = []
+
+  Object.keys(clusterInfo).map(k => {
+    if (k.toLowerCase().startsWith('shard')) {
+      let shardProfileInfo = ParseProfile(clusterInfo[k]);
+      shards.push({
+        id: uuidv4(),
+        type: k as EntityType,
+        children: [shardProfileInfo],
+      })
+    }
+  })
+
+  return [
+    clusterInfo,
+    {
+      id: uuidv4(),
+      type: EntityType.CLUSTER_MERGE,
+      // children: shards,
+      children: Object.keys(clusterInfo).filter(k => k.toLowerCase().startsWith('shard')).map(k =>
+        ParseProfile(clusterInfo[k])
+      )
+    }
+  ]
+}
+
 export function ParseProfile(info: any[][]): EntityInfo {
   const parserData: any = info[info.length - 2]
   let resp = ParseIteratorProfile(parserData[1])
@@ -546,12 +593,13 @@ export function ParseProfile(info: any[][]): EntityInfo {
 
   for (let i = 0; i < processorsProfile.length; i++) {
     const e = processorsProfile[i]
+    let id = uuidv4()
     resp = {
-      id: uuidv4(),
+      id,
       type: e[1] as EntityType,
       time: e[3],
       counter: e[5],
-      children: [resp],
+      children: [{...resp, parentId: id}],
     }
   }
 
@@ -590,16 +638,17 @@ export function ParseIteratorProfile(data: any[]): EntityInfo {
     }
   }
 
-  let childrens = props['Child iterators'] || []
+  let childrens = props['Child iterators'] || props['Child Iterators'] || []
 
+  let id = uuidv4()
   return {
-    id: uuidv4(),
-    type: props['Type'],
+    id,
+    type: props['Type'] || props['TYPE'],
     time: props['Time'],
     counter: props['Counter'],
     size: props['Size'],
     data: props['Term'],
-    children: childrens.map(ParseIteratorProfile),
+    children: childrens.map(ParseIteratorProfile).map((d: EntityInfo) => ({...d, parentId: id})),
   }
 
   // const t: EntityType = props['Type']

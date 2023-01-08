@@ -702,11 +702,11 @@ export function ParseGraph(output: string[]) : EntityInfo {
 
     // Is GRAPH.PROFILE output
     if (metaData.startsWith('Records produced')) {
-      const sizeAndTime = metaData.trim().match(
-        /^Records produced: (?<size>[0-9]*), Execution time: (?<time>([+-]?([0-9]*[.])?[0-9]+)*) ms$/
-      )
-      time = sizeAndTime?.groups?.time;
-      size = sizeAndTime?.groups?.size;
+
+      [size, time] = metaData.trim().split(',')
+
+      size = size.split(': ')[1]
+      time = time.split(': ')[1].split(' ')[0]
       info.pop()
     }
 

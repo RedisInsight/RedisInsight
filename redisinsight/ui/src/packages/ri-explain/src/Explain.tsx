@@ -3,7 +3,14 @@ import { Model, Graph } from '@antv/x6'
 import { register} from '@antv/x6-react-shape'
 import Hierarchy from '@antv/hierarchy'
 
-import { EntityInfo, ParseExplain, ParseProfile, ParseProfileCluster } from './parser'
+import {
+  CoreType,
+  EntityInfo,
+  ParseExplain,
+  ParseGraph,
+  ParseProfile,
+  ParseProfileCluster,
+} from './parser'
 import { ExplainNode, ProfileNode } from './Node'
 
 interface IExplain {
@@ -11,14 +18,21 @@ interface IExplain {
   data: [{response: string[] | string | any}]
 }
 
-enum CoreType {
-  Profile,
-  Explain,
-}
-
 export default function Explain(props: IExplain): JSX.Element {
-  const command = props.command.split(' ')[0]
-  if (command.toLowerCase() == 'ft.profile') {
+  const command = props.command.split(' ')[0].toLowerCase()
+
+  if (command.startsWith('graph')) {
+    const info  = props.data[0].response
+    const resp = ParseGraph(info);
+    return (
+      <ExplainDraw
+        data={resp}
+        type={command.endsWith('explain') ? CoreType.Explain : CoreType.Profile}
+      />
+    )
+  }
+
+  if (command == 'ft.profile') {
     const info = props.data[0].response[1]
 
     let data: EntityInfo;

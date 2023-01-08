@@ -31,12 +31,14 @@
   "visualizations": [
     {
       "id": "profile-explain-viz",
-      "name": "Profile-Explain",
+      "name": "Visualization",
       "activationMethod": "renderCore",
       "matchCommands": [
         "FT.EXPLAIN",
         "FT.EXPLAINCLI",
-        "FT.PROFILE"
+        "FT.PROFILE",
+        "GRAPH.EXPLAIN",
+        "GRAPH.PROFILE"
       ],
       "iconDark": "./dist/profile_icon_dark.svg",
       "iconLight": "./dist/profile_icon_light.svg",
@@ -64,7 +66,6 @@
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "redisinsight-plugin-sdk": "^1.0.0",
     "uuid": "^9.0.0"
   }
 }

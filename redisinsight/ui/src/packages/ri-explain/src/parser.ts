@@ -640,7 +640,7 @@ export function ParseIteratorProfile(data: any[]): EntityInfo {
 
   let childrens = props['Child iterators'] || props['Child Iterators'] || []
 
-  let id = uuidv4()
+  const id = uuidv4()
   return {
     id,
     type: props['Type'] || props['TYPE'],
@@ -680,4 +680,51 @@ export function ParseIteratorProfile(data: any[]): EntityInfo {
   //     children: [],
   //   }
   // }
+}
+
+export enum CoreType {
+  Profile,
+  Explain,
+}
+
+export function ParseGraph(output: string[]) : EntityInfo {
+
+  const entities = [...output].reverse()
+
+  const first = entities.pop() as string
+
+  function ParseEntity(entity: string, children: EntityInfo[]): EntityInfo {
+    const info = entity.trim().split('|')
+
+    let time: string | undefined = '', size: string | undefined = ''
+
+    const metaData = info.slice(-1)[0].trim()
+
+    // Is GRAPH.PROFILE output
+    if (metaData.startsWith('Records produced')) {
+      const sizeAndTime = metaData.trim().match(
+        /^Records produced: (?<size>[0-9]*), Execution time: (?<time>([+-]?([0-9]*[.])?[0-9]+)*) ms$/
+      )
+      time = sizeAndTime?.groups?.time;
+      size = sizeAndTime?.groups?.size;
+      info.pop()
+    }
+
+    const snippet = [...info.slice(1)].join('|').trim()
+
+    return {
+      id: uuidv4(),
+      type: info[0] as EntityType,
+      snippet,
+      children,
+      time,
+      size,
+      counter: size,
+    }
+  }
+
+  return entities.reduce(
+    (a, c) => ParseEntity(c, [a]),
+    ParseEntity(first, [])
+  )
 }

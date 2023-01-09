@@ -8,20 +8,6 @@ export enum AdditionalRedisModuleName {
   RedisTimeSeries = 'timeseries',
 }
 
-enum RediSearchModuleName {
-  Search = 'search',
-  SearchLight = 'searchlight',
-  FT = 'ft',
-  FTL = 'ftl',
-}
-
-export const REDISEARCH_MODULES = [
-  RediSearchModuleName.Search,
-  RediSearchModuleName.SearchLight,
-  RediSearchModuleName.FT,
-  RediSearchModuleName.FTL,
-];
-
 export const SUPPORTED_REDIS_MODULES = Object.freeze({
   ai: AdditionalRedisModuleName.RedisAI,
   graph: AdditionalRedisModuleName.RedisGraph,

@@ -34,27 +34,6 @@ const mockRedisAclListResponse_2: string[] = [
   'user test_2 on nopass ~* &* +@all',
 ];
 
-const mockRedisModulesResponse_1 = [
-  { name: 'ai', ver: 10000 },
-  { name: 'graph', ver: 10000 },
-  { name: 'rg', ver: 10000 },
-  { name: 'bf', ver: 10000 },
-  { name: 'ReJSON', ver: 10000 },
-  { name: 'search', ver: 10000 },
-  { name: 'timeseries', ver: 10000 },
-  { name: 'customModule', ver: 10000 },
-].map((item) => ([].concat(...Object.entries(item))));
-
-const mockRedisModulesResponse_2 = [
-  { name: 'ai', ver: 10000 },
-  { name: 'graph', ver: 10000 },
-  { name: 'rg', ver: 10000 },
-  { name: 'bf', ver: 10000 },
-  { name: 'ReJSON', ver: 10000 },
-  { name: 'timeseries', ver: 10000 },
-  { name: 'customModule', ver: 10000 },
-].map((item) => ([].concat(...Object.entries(item))));
-
 const mockFTListResponse_1 = [];
 const mockFTListResponse_2 = ['idx'];
 
@@ -566,25 +545,7 @@ describe('RecommendationProvider', () => {
   });
 
   describe('determineRediSearchRecommendation', () => {
-    it('should not return rediSearch recommendation when rediSearch module was download with indexes', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'module' }))
-        .mockResolvedValue(mockRedisModulesResponse_1);
-
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_2);
-
-      const redisServerRecommendation = await service
-        .determineRediSearchRecommendation(nodeClient, [mockJSONKey]);
-      expect(redisServerRecommendation).toEqual(null);
-    });
-
     it('should return rediSearch recommendation when there is JSON key', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'module' }))
-        .mockResolvedValue(mockRedisModulesResponse_1);
-
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
         .mockResolvedValue(mockFTListResponse_1);
@@ -596,10 +557,6 @@ describe('RecommendationProvider', () => {
 
     it('should return rediSearch recommendation when there is huge string key', async () => {
       when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'module' }))
-        .mockResolvedValue(mockRedisModulesResponse_1);
-
-      when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
         .mockResolvedValue(mockFTListResponse_1);
 
@@ -610,10 +567,6 @@ describe('RecommendationProvider', () => {
 
     it('should not return rediSearch recommendation when there is small string key', async () => {
       when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'module' }))
-        .mockResolvedValue(mockRedisModulesResponse_1);
-
-      when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
         .mockResolvedValue(mockFTListResponse_1);
 
@@ -622,31 +575,33 @@ describe('RecommendationProvider', () => {
       expect(redisServerRecommendation).toEqual(null);
     });
 
-    it('should not return rediSearch recommendation when ft command execute with error', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'module' }))
-        .mockResolvedValue(mockRedisModulesResponse_1);
-
+    it('should not return rediSearch recommendation when there are no indexes', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockRejectedValue("some error");
+        .mockResolvedValue(mockFTListResponse_2);
 
       const redisServerRecommendation = await service
         .determineRediSearchRecommendation(nodeClient, [mockJSONKey]);
       expect(redisServerRecommendation).toEqual(null);
     });
 
-    it('should not return rediSearch recommendation when module command execute with error', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'module' }))
-        .mockResolvedValue("some error");
-
+    it('should ignore errors when ft command execute with error', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_1);
+        .mockRejectedValue("some error");
 
       const redisServerRecommendation = await service
         .determineRediSearchRecommendation(nodeClient, [mockJSONKey]);
+      expect(redisServerRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_SEARCH });
+    });
+
+    it('should ignore errors when ft command execute with error', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
+        .mockRejectedValue("some error");
+
+      const redisServerRecommendation = await service
+        .determineRediSearchRecommendation(nodeClient, [mockRediSearchStringKey_2]);
       expect(redisServerRecommendation).toEqual(null);
     });
   });

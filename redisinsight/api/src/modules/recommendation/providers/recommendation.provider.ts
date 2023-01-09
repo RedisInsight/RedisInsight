@@ -3,7 +3,7 @@ import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
 import { convertRedisInfoReplyToObject, convertBulkStringsToObject, convertStringsArrayToObject } from 'src/utils';
-import { RECOMMENDATION_NAMES, IS_TIMESTAMP, REDISEARCH_MODULES } from 'src/constants';
+import { RECOMMENDATION_NAMES, IS_TIMESTAMP } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
@@ -338,20 +338,15 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const reply = await redisClient.sendCommand(
-        new Command('module', ['list'], { replyEncoding: 'utf8' }),
-      ) as any[];
-      const modules = reply.map((module: any[]) => convertStringsArrayToObject(module));
-      const isRediSearchModule = modules.some(({ name }) => REDISEARCH_MODULES
-        .some((search: string) => name === search));
-
-      if (isRediSearchModule) {
+      try {
         const indexes = await redisClient.sendCommand(
           new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
         ) as any[];
         if (indexes.length) {
           return null;
         }
+      } catch (err) {
+        // Ignore errors
       }
 
       const isBigStringOrJSON = keys.some((key) => (

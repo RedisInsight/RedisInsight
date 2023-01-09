@@ -8,6 +8,10 @@ export enum AdditionalRedisModuleName {
   RedisTimeSeries = 'timeseries',
 }
 
+export const REDIS_SEARCH_MODULES = [
+  AdditionalRedisModuleName.RediSearch,
+];
+
 export const SUPPORTED_REDIS_MODULES = Object.freeze({
   ai: AdditionalRedisModuleName.RedisAI,
   graph: AdditionalRedisModuleName.RedisGraph,

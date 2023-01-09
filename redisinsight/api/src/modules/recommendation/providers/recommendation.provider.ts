@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
-import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/utils';
-import { RECOMMENDATION_NAMES, IS_TIMESTAMP } from 'src/constants';
+import { convertRedisInfoReplyToObject, convertBulkStringsToObject, convertStringsArrayToObject } from 'src/utils';
+import { RECOMMENDATION_NAMES, IS_TIMESTAMP, REDIS_SEARCH_MODULES } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
@@ -16,6 +16,7 @@ const maxCompressHashLength = 1000;
 const maxListLength = 1000;
 const maxSetLength = 5000;
 const maxConnectedClients = 100;
+const maxRediSearchStringMemory = 512 * 1024;
 const bigStringMemory = 5_000_000;
 const sortedSetCountForCheck = 100;
 const minRedisVersion = '6';
@@ -358,38 +359,33 @@ export class RecommendationProvider {
    * @param keys
    */
 
-  async determineRedisSearchRecommendation(
+  async determineRediSearchRecommendation(
     redisClient: Redis | Cluster,
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      let processedKeysNumber = 0;
-      let isTimeSeries = false;
-      let sortedSetNumber = 0;
-      while (
-        processedKeysNumber < keys.length
-        && !isTimeSeries
-        && sortedSetNumber <= sortedSetCountForCheck
-      ) {
-        if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
-          processedKeysNumber += 1;
-        } else {
-          const [, membersArray] = await redisClient.sendCommand(
-            // get first member-score pair
-            new Command('zscan', [keys[processedKeysNumber].name, '0', 'COUNT', 2], { replyEncoding: 'utf8' }),
-          ) as string[];
-          // check is pair member-score is timestamp
-          if (IS_TIMESTAMP.test(membersArray[0]) && IS_TIMESTAMP.test(membersArray[1])) {
-            isTimeSeries = true;
-          }
-          processedKeysNumber += 1;
-          sortedSetNumber += 1;
-        }
+      const reply = await redisClient.sendCommand(
+        new Command('module', ['list'], { replyEncoding: 'utf8' }),
+      ) as any[];
+      const modules = reply.map((module: any[]) => convertStringsArrayToObject(module));
+      const isRediSearchModule = modules.some(({ name }) => REDIS_SEARCH_MODULES
+        .some((search: string) => name === search));
+
+      const indexes = await redisClient.sendCommand(
+        new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
+      ) as any[];
+      if (isRediSearchModule && indexes.length) {
+        return null;
       }
 
-      return isTimeSeries ? { name: RECOMMENDATION_NAMES.RTS } : null;
+      const isBigStringOrJSON = keys.some((key) => (
+        key.type === RedisDataType.String && key.memory > maxRediSearchStringMemory
+      )
+        || key.type === RedisDataType.JSON);
+
+      return isBigStringOrJSON ? { name: RECOMMENDATION_NAMES.REDIS_SEARCH } : null;
     } catch (err) {
-      this.logger.error('Can not determine RTS recommendation', err);
+      this.logger.error('Can not determine redis search recommendation', err);
       return null;
     }
   }

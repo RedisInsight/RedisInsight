@@ -186,7 +186,6 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
-
     describe('setPassword recommendation', () => {
       requirements('!rte.pass');
       [

@@ -7,7 +7,7 @@ import {
     acceptLicenseTermsAndAddSentinelDatabaseApi,
     deleteDatabase
 } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage, CliPage, DatabaseOverviewPage } from '../../../pageObjects';
 import {
     cloudDatabaseConfig,
     commonUrl, ossClusterConfig,
@@ -20,6 +20,7 @@ import { deleteOSSClusterDatabaseApi, deleteAllSentinelDatabasesApi } from '../.
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const common = new Common();
+const databaseOverviewPage = new DatabaseOverviewPage();
 
 let keyName = common.generateWord(10);
 const verifyCommandsInCli = async(): Promise<void> => {
@@ -48,6 +49,9 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cluster DB', async() => {
+        // Verify that database index switcher not displayed for RE Cluster
+        await t.expect(databaseOverviewPage.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cluster DB');
+
         await verifyCommandsInCli();
     });
 test
@@ -60,6 +64,9 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cloud DB', async() => {
+        // Verify that database index switcher not displayed for RE Cloud
+        await t.expect(databaseOverviewPage.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cloud DB');
+
         await verifyCommandsInCli();
     });
 test
@@ -72,6 +79,9 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can add data via CLI in OSS Cluster DB', async() => {
+        // Verify that database index switcher not displayed for RE Cloud
+        await t.expect(databaseOverviewPage.changeIndexBtn.exists).notOk('Change Db index control displayed for OSS Cluster DB');
+
         await verifyCommandsInCli();
     });
 test
@@ -84,5 +94,8 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteAllSentinelDatabasesApi(ossSentinelConfig);
     })('Verify that user can add data via CLI in Sentinel Primary Group', async() => {
+        // Verify that database index switcher displayed for Sentinel
+        await t.expect(databaseOverviewPage.changeIndexBtn.exists).ok('Change Db index control not displayed for Sentinel DB');
+
         await verifyCommandsInCli();
     });

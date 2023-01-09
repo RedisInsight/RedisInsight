@@ -46,6 +46,18 @@ const getOutputCheckRediStackTests: any[] = [
     [{ port: 12000, modules: unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph']) }],
     [{ port: 12000, modules: unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph']), isRediStack: true }]
   ],
+  [
+    [{ port: 12000, modules: [] }],
+    [{ port: 12000, modules: [], isRediStack: false }]
+  ],
+  [
+    [{ port: 12000, modules: unmapWithName(['ReJSON']) }],
+    [{ port: 12000, modules: unmapWithName(['ReJSON']), isRediStack: false }]
+  ],
+  [
+    [{ port: 12000, modules: unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph', 'custom']) }],
+    [{ port: 12000, modules: unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph', 'custom']), isRediStack: false }]
+  ],
 ]
 
 describe('checkRediStack', () => {

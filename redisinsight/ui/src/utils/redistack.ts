@@ -10,11 +10,15 @@ export const REDISTACK_MODULES: Array<string | Array<string>> = [
   RedisDefaultModules.TimeSeries,
 ]
 
-const checkRediStackModules = (modules: any[]) => map(modules, 'name')
-  .sort()
-  .every((m, index) => (isArray(REDISTACK_MODULES[index])
-    ? (REDISTACK_MODULES[index] as Array<string>).some((rm) => rm === m)
-    : REDISTACK_MODULES[index] === m))
+const checkRediStackModules = (modules: any[]) => {
+  if (!modules.length || modules.length !== REDISTACK_MODULES.length) return false
+
+  return map(modules, 'name')
+    .sort()
+    .every((m, index) => (isArray(REDISTACK_MODULES[index])
+      ? (REDISTACK_MODULES[index] as Array<string>).some((rm) => rm === m)
+      : REDISTACK_MODULES[index] === m))
+}
 
 const checkRediStack = (instances: Instance[]): Instance[] => {
   let isRediStackCheck = false

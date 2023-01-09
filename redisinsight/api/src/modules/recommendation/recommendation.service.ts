@@ -54,6 +54,8 @@ export class RecommendationService {
         await this.recommendationProvider.determineSetPasswordRecommendation(client),
         // TODO rework, need better solution to do not start determine recommendation
         exclude.includes(RECOMMENDATION_NAMES.RTS) ? null : await this.recommendationProvider.determineRTSRecommendation(client, keys),
+        await this.recommendationProvider.determineRedisSearchRecommendation(client, keys),
+        await this.recommendationProvider.determineRedisVersionRecommendation(client),
       ]));
   }
 }

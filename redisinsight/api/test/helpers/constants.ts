@@ -506,5 +506,8 @@ export const constants = {
     name: RECOMMENDATION_NAMES.RTS,
   },
 
+  TEST_REDIS_VERSION_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.REDIS_VERSION,
+  },
   // etc...
 }

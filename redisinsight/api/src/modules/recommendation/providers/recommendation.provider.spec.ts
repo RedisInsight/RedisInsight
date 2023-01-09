@@ -22,6 +22,9 @@ const mockRedisConfigResponse = ['name', '512'];
 const mockRedisClientsResponse_1: string = '# Clients\r\nconnected_clients:100\r\n';
 const mockRedisClientsResponse_2: string = '# Clients\r\nconnected_clients:101\r\n';
 
+const mockRedisServerResponse_1: string = '# Server\r\nredis_version:6.0.0\r\n';
+const mockRedisServerResponse_2: string = '# Server\r\nredis_version:5.1.1\r\n';
+
 const mockRedisAclListResponse_1: string[] = [
   'user <pass off resetchannels -@all',
   'user default on #d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1 ~* &* +@all',
@@ -523,6 +526,40 @@ describe('RecommendationProvider', () => {
         const RTSRecommendation = await service
           .determineRTSRecommendation(nodeClient, mockKeys);
         expect(RTSRecommendation).toEqual(null);
+      });
+  });
+
+  describe('determineRedisVersionRecommendation', () => {
+    it('should not return redis version recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'info' }))
+        .mockResolvedValue(mockRedisServerResponse_1);
+
+      const redisServerRecommendation = await service
+        .determineRedisVersionRecommendation(nodeClient);
+      expect(redisServerRecommendation).toEqual(null);
+    });
+
+    it('should return redis version recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'info' }))
+        .mockResolvedValueOnce(mockRedisServerResponse_2);
+
+      const redisServerRecommendation = await service
+        .determineRedisVersionRecommendation(nodeClient);
+      expect(redisServerRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_VERSION });
+    });
+
+    it('should not return redis version recommendation when info command executed with error',
+      async () => {
+        resetAllWhenMocks();
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'info' }))
+          .mockRejectedValue('some error');
+
+        const redisServerRecommendation = await service
+          .determineRedisVersionRecommendation(nodeClient);
+        expect(redisServerRecommendation).toEqual(null);
       });
   });
 });

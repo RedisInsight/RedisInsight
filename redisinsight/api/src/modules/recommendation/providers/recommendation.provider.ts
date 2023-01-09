@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
+import * as semverCompare from 'node-version-compare';
 import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/utils';
 import { RECOMMENDATION_NAMES, IS_TIMESTAMP } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/dto';
@@ -17,6 +18,7 @@ const maxSetLength = 5000;
 const maxConnectedClients = 100;
 const bigStringMemory = 5_000_000;
 const sortedSetCountForCheck = 100;
+const minRedisVersion = '6';
 
 @Injectable()
 export class RecommendationProvider {
@@ -309,7 +311,7 @@ export class RecommendationProvider {
   }
 
   /**
-   * Check set password recommendation
+   * Check RTS recommendation
    * @param redisClient
    * @param keys
    */
@@ -346,6 +348,70 @@ export class RecommendationProvider {
       return isTimeSeries ? { name: RECOMMENDATION_NAMES.RTS } : null;
     } catch (err) {
       this.logger.error('Can not determine RTS recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check redis search recommendation
+   * @param redisClient
+   * @param keys
+   */
+
+  async determineRedisSearchRecommendation(
+    redisClient: Redis | Cluster,
+    keys: Key[],
+  ): Promise<Recommendation> {
+    try {
+      let processedKeysNumber = 0;
+      let isTimeSeries = false;
+      let sortedSetNumber = 0;
+      while (
+        processedKeysNumber < keys.length
+        && !isTimeSeries
+        && sortedSetNumber <= sortedSetCountForCheck
+      ) {
+        if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
+          processedKeysNumber += 1;
+        } else {
+          const [, membersArray] = await redisClient.sendCommand(
+            // get first member-score pair
+            new Command('zscan', [keys[processedKeysNumber].name, '0', 'COUNT', 2], { replyEncoding: 'utf8' }),
+          ) as string[];
+          // check is pair member-score is timestamp
+          if (IS_TIMESTAMP.test(membersArray[0]) && IS_TIMESTAMP.test(membersArray[1])) {
+            isTimeSeries = true;
+          }
+          processedKeysNumber += 1;
+          sortedSetNumber += 1;
+        }
+      }
+
+      return isTimeSeries ? { name: RECOMMENDATION_NAMES.RTS } : null;
+    } catch (err) {
+      this.logger.error('Can not determine RTS recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check redis version recommendation
+   * @param redisClient
+   */
+
+  async determineRedisVersionRecommendation(
+    redisClient: Redis | Cluster,
+  ): Promise<Recommendation> {
+    try {
+      const info = convertRedisInfoReplyToObject(
+        await redisClient.sendCommand(
+          new Command('info', ['server'], { replyEncoding: 'utf8' }),
+        ) as string,
+      );
+      const version = get(info, 'server.redis_version');
+      return semverCompare(version, minRedisVersion) >= 0 ? null : { name: RECOMMENDATION_NAMES.REDIS_VERSION };
+    } catch (err) {
+      this.logger.error('Can not determine redis version recommendation', err);
       return null;
     }
   }

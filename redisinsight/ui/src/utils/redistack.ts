@@ -11,7 +11,7 @@ export const REDISTACK_MODULES: Array<string | Array<string>> = [
 ]
 
 const checkRediStackModules = (modules: any[]) => {
-  if (!modules.length || modules.length !== REDISTACK_MODULES.length) return false
+  if (!modules?.length || modules.length !== REDISTACK_MODULES.length) return false
 
   return map(modules, 'name')
     .sort()

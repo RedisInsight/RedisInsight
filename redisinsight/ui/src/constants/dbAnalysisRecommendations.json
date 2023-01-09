@@ -598,7 +598,7 @@
         "value": "Create a "
       },
       {
-        "id": "4",
+        "id": "6",
         "type": "link",
         "value": {
           "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
@@ -606,7 +606,7 @@
         }
       },
       {
-        "id": "5",
+        "id": "7",
         "type": "span",
         "value": " which extends the core capabilities of Redis OSS and uses modern data models and processing engines."
       }

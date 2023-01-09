@@ -11,8 +11,10 @@ import {
   htmlIdGenerator
 } from '@elastic/eui'
 import cx from 'classnames'
-import { validateCertName, validateField } from 'uiSrc/utils'
 import { FormikProps } from 'formik'
+
+import { validateCertName, validateField } from 'uiSrc/utils'
+
 import {
   ADD_NEW_CA_CERT,
   NO_CA_CERT

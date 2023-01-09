@@ -1,9 +1,9 @@
 import React, { ChangeEvent } from 'react'
 import { EuiCheckbox, EuiFieldNumber, EuiFlexGroup, EuiFlexItem, EuiFormRow, htmlIdGenerator } from '@elastic/eui'
 import cx from 'classnames'
+import { FormikProps } from 'formik'
 
 import { validateNumber } from 'uiSrc/utils'
-import { FormikProps } from 'formik'
 
 import { DbConnectionInfo } from '../interfaces'
 import styles from '../styles.module.scss'

@@ -13,13 +13,15 @@ import {
   htmlIdGenerator
 } from '@elastic/eui'
 import cx from 'classnames'
+import { FormikProps } from 'formik'
+
 import {
   MAX_PORT_NUMBER,
   selectOnFocus,
   validateField,
   validatePortNumber
 } from 'uiSrc/utils'
-import { FormikProps } from 'formik'
+
 import { SshPassType } from '../constants'
 import { DbConnectionInfo } from '../interfaces'
 

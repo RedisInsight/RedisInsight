@@ -22,6 +22,9 @@ const mockRedisConfigResponse = ['name', '512'];
 const mockRedisClientsResponse_1: string = '# Clients\r\nconnected_clients:100\r\n';
 const mockRedisClientsResponse_2: string = '# Clients\r\nconnected_clients:101\r\n';
 
+const mockRedisServerResponse_1: string = '# Server\r\nredis_version:6.0.0\r\n';
+const mockRedisServerResponse_2: string = '# Server\r\nredis_version:5.1.1\r\n';
+
 const mockRedisAclListResponse_1: string[] = [
   'user <pass off resetchannels -@all',
   'user default on #d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1 ~* &* +@all',
@@ -30,6 +33,9 @@ const mockRedisAclListResponse_2: string[] = [
   ...mockRedisAclListResponse_1,
   'user test_2 on nopass ~* &* +@all',
 ];
+
+const mockFTListResponse_1 = [];
+const mockFTListResponse_2 = ['idx'];
 
 const mockZScanResponse_1 = [
   '0',
@@ -101,6 +107,18 @@ const mockBigZSetKey = {
 
 const mockBigListKey = {
   name: Buffer.from('name'), type: 'list', length: 1001, memory: 10, ttl: -1,
+};
+
+const mockJSONKey = {
+  name: Buffer.from('name'), type: 'ReJSON-RL', length: 1, memory: 10, ttl: -1,
+};
+
+const mockRediSearchStringKey_1 = {
+  name: Buffer.from('name'), type: 'string', length: 1, memory: 512 * 1024 + 1, ttl: -1,
+};
+
+const mockRediSearchStringKey_2 = {
+  name: Buffer.from('name'), type: 'string', length: 1, memory: 512 * 1024, ttl: -1,
 };
 
 const mockSortedSets = new Array(101).fill(
@@ -523,6 +541,102 @@ describe('RecommendationProvider', () => {
         const RTSRecommendation = await service
           .determineRTSRecommendation(nodeClient, mockKeys);
         expect(RTSRecommendation).toEqual(null);
+      });
+  });
+
+  describe('determineRediSearchRecommendation', () => {
+    it('should return rediSearch recommendation when there is JSON key', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
+        .mockResolvedValue(mockFTListResponse_1);
+
+      const redisServerRecommendation = await service
+        .determineRediSearchRecommendation(nodeClient, [mockJSONKey]);
+      expect(redisServerRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_SEARCH });
+    });
+
+    it('should return rediSearch recommendation when there is huge string key', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
+        .mockResolvedValue(mockFTListResponse_1);
+
+      const redisServerRecommendation = await service
+        .determineRediSearchRecommendation(nodeClient, [mockRediSearchStringKey_1]);
+      expect(redisServerRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_SEARCH });
+    });
+
+    it('should not return rediSearch recommendation when there is small string key', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
+        .mockResolvedValue(mockFTListResponse_1);
+
+      const redisServerRecommendation = await service
+        .determineRediSearchRecommendation(nodeClient, [mockRediSearchStringKey_2]);
+      expect(redisServerRecommendation).toEqual(null);
+    });
+
+    it('should not return rediSearch recommendation when there are no indexes', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
+        .mockResolvedValue(mockFTListResponse_2);
+
+      const redisServerRecommendation = await service
+        .determineRediSearchRecommendation(nodeClient, [mockJSONKey]);
+      expect(redisServerRecommendation).toEqual(null);
+    });
+
+    it('should ignore errors when ft command execute with error', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
+        .mockRejectedValue("some error");
+
+      const redisServerRecommendation = await service
+        .determineRediSearchRecommendation(nodeClient, [mockJSONKey]);
+      expect(redisServerRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_SEARCH });
+    });
+
+    it('should ignore errors when ft command execute with error', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
+        .mockRejectedValue("some error");
+
+      const redisServerRecommendation = await service
+        .determineRediSearchRecommendation(nodeClient, [mockRediSearchStringKey_2]);
+      expect(redisServerRecommendation).toEqual(null);
+    });
+  });
+
+  describe('determineRedisVersionRecommendation', () => {
+    it('should not return redis version recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'info' }))
+        .mockResolvedValue(mockRedisServerResponse_1);
+
+      const redisServerRecommendation = await service
+        .determineRedisVersionRecommendation(nodeClient);
+      expect(redisServerRecommendation).toEqual(null);
+    });
+
+    it('should return redis version recommendation', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'info' }))
+        .mockResolvedValueOnce(mockRedisServerResponse_2);
+
+      const redisServerRecommendation = await service
+        .determineRedisVersionRecommendation(nodeClient);
+      expect(redisServerRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_VERSION });
+    });
+
+    it('should not return redis version recommendation when info command executed with error',
+      async () => {
+        resetAllWhenMocks();
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'info' }))
+          .mockRejectedValue('some error');
+
+        const redisServerRecommendation = await service
+          .determineRedisVersionRecommendation(nodeClient);
+        expect(redisServerRecommendation).toEqual(null);
       });
   });
 });

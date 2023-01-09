@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
-import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/utils';
+import * as semverCompare from 'node-version-compare';
+import { convertRedisInfoReplyToObject, convertBulkStringsToObject, convertStringsArrayToObject } from 'src/utils';
 import { RECOMMENDATION_NAMES, IS_TIMESTAMP } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
@@ -15,8 +16,10 @@ const maxCompressHashLength = 1000;
 const maxListLength = 1000;
 const maxSetLength = 5000;
 const maxConnectedClients = 100;
+const maxRediSearchStringMemory = 512 * 1024;
 const bigStringMemory = 5_000_000;
 const sortedSetCountForCheck = 100;
+const minRedisVersion = '6';
 
 @Injectable()
 export class RecommendationProvider {
@@ -283,33 +286,7 @@ export class RecommendationProvider {
   }
 
   /**
- * Check set password recommendation
- * @param redisClient
- */
-
-  async determineSetPasswordRecommendation(
-    redisClient: Redis | Cluster,
-  ): Promise<Recommendation> {
-    if (await this.checkAuth(redisClient)) {
-      return { name: RECOMMENDATION_NAMES.SET_PASSWORD };
-    }
-
-    try {
-      const users = await redisClient.sendCommand(
-        new Command('acl', ['list'], { replyEncoding: 'utf8' }),
-      ) as string[];
-
-      const nopassUser = users.some((user) => user.split(' ')[3] === 'nopass');
-
-      return nopassUser ? { name: RECOMMENDATION_NAMES.SET_PASSWORD } : null;
-    } catch (err) {
-      this.logger.error('Can not determine set password recommendation', err);
-      return null;
-    }
-  }
-
-  /**
-   * Check set password recommendation
+   * Check RTS recommendation
    * @param redisClient
    * @param keys
    */
@@ -346,6 +323,88 @@ export class RecommendationProvider {
       return isTimeSeries ? { name: RECOMMENDATION_NAMES.RTS } : null;
     } catch (err) {
       this.logger.error('Can not determine RTS recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check redis search recommendation
+   * @param redisClient
+   * @param keys
+   */
+
+  async determineRediSearchRecommendation(
+    redisClient: Redis | Cluster,
+    keys: Key[],
+  ): Promise<Recommendation> {
+    try {
+      try {
+        const indexes = await redisClient.sendCommand(
+          new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
+        ) as any[];
+        if (indexes.length) {
+          return null;
+        }
+      } catch (err) {
+        // Ignore errors
+      }
+
+      const isBigStringOrJSON = keys.some((key) => (
+        key.type === RedisDataType.String && key.memory > maxRediSearchStringMemory
+      )
+        || key.type === RedisDataType.JSON);
+
+      return isBigStringOrJSON ? { name: RECOMMENDATION_NAMES.REDIS_SEARCH } : null;
+    } catch (err) {
+      this.logger.error('Can not determine redis search recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check redis version recommendation
+   * @param redisClient
+   */
+
+  async determineRedisVersionRecommendation(
+    redisClient: Redis | Cluster,
+  ): Promise<Recommendation> {
+    try {
+      const info = convertRedisInfoReplyToObject(
+        await redisClient.sendCommand(
+          new Command('info', ['server'], { replyEncoding: 'utf8' }),
+        ) as string,
+      );
+      const version = get(info, 'server.redis_version');
+      return semverCompare(version, minRedisVersion) >= 0 ? null : { name: RECOMMENDATION_NAMES.REDIS_VERSION };
+    } catch (err) {
+      this.logger.error('Can not determine redis version recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check set password recommendation
+   * @param redisClient
+   */
+
+  async determineSetPasswordRecommendation(
+    redisClient: Redis | Cluster,
+  ): Promise<Recommendation> {
+    if (await this.checkAuth(redisClient)) {
+      return { name: RECOMMENDATION_NAMES.SET_PASSWORD };
+    }
+
+    try {
+      const users = await redisClient.sendCommand(
+        new Command('acl', ['list'], { replyEncoding: 'utf8' }),
+      ) as string[];
+
+      const nopassUser = users.some((user) => user.split(' ')[3] === 'nopass');
+
+      return nopassUser ? { name: RECOMMENDATION_NAMES.SET_PASSWORD } : null;
+    } catch (err) {
+      this.logger.error('Can not determine set password recommendation', err);
       return null;
     }
   }

@@ -14,4 +14,6 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   ZSET_HASHTABLE_TO_ZIPLIST: 'zSetHashtableToZiplist',
   SET_PASSWORD: 'setPassword',
   RTS: 'RTS',
+  REDIS_VERSION: 'redisVersion',
+  REDIS_SEARCH: 'redisSearch',
 });

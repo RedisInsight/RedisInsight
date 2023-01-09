@@ -264,6 +264,36 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
+  it('should render upgrade badge in redisSearch recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'redisSearch' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
+  })
+
+  it('should render upgrade badge in redisVersion recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'redisVersion' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
+  })
+
   it('should collapse/expand and sent proper telemetry event', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,

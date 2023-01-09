@@ -29,6 +29,15 @@ export interface Instance extends DatabaseInstanceResponse {
   name?: string
   db?: number
   tls?: boolean
+  ssh?: boolean
+  sshOptions?: {
+    host: string
+    port: number
+    username?: string
+    password?: string
+    privateKey?: string
+    passphrase?: string
+  }
   tlsClientAuthRequired?: boolean
   verifyServerCert?: boolean
   caCert?: CaCertificate

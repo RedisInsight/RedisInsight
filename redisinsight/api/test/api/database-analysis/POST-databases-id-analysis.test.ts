@@ -246,7 +246,33 @@ describe('POST /databases/:instanceId/analysis', () => {
           responseSchema,
           checkFn: async ({ body }) => {
             expect(body.recommendations).to.include.deep.members([
-              constants.TEST_REDIS_VERSION_RECOMMENDATION,
+              constants.TEST_REDISEARCH_RECOMMENDATION,
+            ]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+
+    describe('rediSearch recommendation with ReJSON', () => {
+      requirements('rte.modules.rejson');
+      [
+        {
+          name: 'Should create new database analysis with rediSearch recommendation',
+          data: {
+            delimiter: '-',
+          },
+          before: async () => {
+            const NUMBERS_REJSONS = 1;
+            await rte.data.generateNReJSONs(NUMBERS_REJSONS, true);
+          },
+          statusCode: 201,
+          responseSchema,
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([
+              constants.TEST_REDISEARCH_RECOMMENDATION,
             ]);
           },
           after: async () => {

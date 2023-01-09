@@ -7,10 +7,11 @@ import { useParams } from 'react-router-dom'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { getMultiCommands, isGroupMode, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
+import { getMultiCommands, isGroupMode, isParamsLine, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { parseParams } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
 import Query from './Query'
 import styles from './Query/styles.module.scss'
 
@@ -79,13 +80,17 @@ const QueryWrapper = (props: Props) => {
       const multiCommands = getMultiCommands(rest).replaceAll('\n', ';')
       const command = [commandLine, multiCommands].join('') ? [commandLine, multiCommands].join(';') : null
 
+      const params = isParamsLine(commandLine) ? commandLine : ''
+      const parsedParams = parseParams(params)
+
       return {
         command: command?.toUpperCase(),
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: batchSize > 1,
         rawMode: state.activeMode === RunQueryMode.Raw,
-        group: isGroupMode(state.resultsMode)
+        group: isGroupMode(state.resultsMode) ? 'group' : 'single',
+        auto: !!parsedParams?.auto
       }
     })()
 

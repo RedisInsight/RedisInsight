@@ -1,5 +1,4 @@
 import { visit } from 'unist-util-visit'
-import { ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 enum ButtonLang {
   Redis = 'redis',
@@ -17,14 +16,12 @@ export const remarkRedisCode = (): (tree: Node) => void => (tree: any) => {
 
     // Check that it has a language unsupported by our editor
     if (lang.startsWith(ButtonLang.Redis)) {
-      const execute = lang.startsWith(ButtonLang.RedisAuto)
-        ? ExecuteButtonMode.Auto
-        : ExecuteButtonMode.Manual
       const [, params] = lang?.split(PARAMS_SEPARATOR)
+      const valueWithParams = params ? `${params}\n${value}` : value
 
       codeNode.type = 'html'
       // Replace it with our custom component
-      codeNode.value = `<Code label="${meta}" params="${params}" mode="${execute}">{${JSON.stringify(value)}}</Code>`
+      codeNode.value = `<Code label="${meta}" params="${params}">{${JSON.stringify(valueWithParams)}}</Code>`
     }
   })
 }

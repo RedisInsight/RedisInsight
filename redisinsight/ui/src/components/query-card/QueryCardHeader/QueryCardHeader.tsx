@@ -23,6 +23,7 @@ import {
   truncateText,
   urlForAsset,
   truncateMilliseconds,
+  isRawMode,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -36,6 +37,7 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
 import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
 import { ReactComponent as ExecutionTimeIcon } from 'uiSrc/assets/img/workbench/execution_time.svg'
+import { ReactComponent as GroupModeIcon } from 'uiSrc/assets/img/icons/group_mode.svg'
 
 import QueryCardTooltip from '../QueryCardTooltip'
 
@@ -49,6 +51,7 @@ export interface Props {
   summaryText?: string
   activeMode: RunQueryMode
   mode?: RunQueryMode
+  resultsMode?: ResultsMode
   activeResultsMode?: ResultsMode
   summary?: string
   queryType: WBQueryType
@@ -89,6 +92,7 @@ const QueryCardHeader = (props: Props) => {
     summaryText,
     createdAt,
     mode,
+    resultsMode,
     activeResultsMode,
     summary,
     activeMode,
@@ -117,7 +121,7 @@ const QueryCardHeader = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         command: getCommandNameFromQuery(query, COMMANDS_SPEC),
-        rawMode: activeMode === RunQueryMode.Raw,
+        rawMode: isRawMode(activeMode),
         group: isGroupMode(activeResultsMode),
         ...additionalData
       }
@@ -267,18 +271,6 @@ const QueryCardHeader = (props: Props) => {
           {!!createdAt && (
             <EuiTextColor className={styles.timeText} component="div">
               {getFormatTime()}
-              {mode === RunQueryMode.Raw && (
-                <EuiToolTip
-                  className={styles.tooltip}
-                  content="Raw Mode"
-                  position="bottom"
-                  data-testid="raw-mode-tooltip"
-                >
-                  <EuiTextColor className={cx(styles.timeText, styles.mode)} data-testid="raw-mode-anchor">
-                    -r
-                  </EuiTextColor>
-                </EuiToolTip>
-              )}
             </EuiTextColor>
           )}
         </EuiFlexItem>
@@ -378,6 +370,36 @@ const QueryCardHeader = (props: Props) => {
         {!isFullScreen && (
           <EuiFlexItem grow={false} className={styles.buttonIcon}>
             <EuiButtonIcon iconType={isOpen ? 'arrowUp' : 'arrowDown'} aria-label="toggle collapse" />
+          </EuiFlexItem>
+        )}
+        {(isRawMode(mode) || isGroupMode(resultsMode)) && (
+          <EuiFlexItem grow={false} className={styles.buttonIcon}>
+            <EuiToolTip
+              className={styles.tooltip}
+              anchorClassName={styles.tooltipAnchor}
+              content={(
+                <>
+                  {isGroupMode(resultsMode) && (
+                    <EuiTextColor className={cx(styles.mode)} data-testid="group-mode-tooltip">
+                      <EuiIcon type={GroupModeIcon} />
+                    </EuiTextColor>
+                  )}
+                  {isRawMode(mode) && (
+                    <EuiTextColor className={cx(styles.mode)} data-testid="raw-mode-tooltip">
+                      -r
+                    </EuiTextColor>
+                  )}
+                </>
+              )}
+              position="bottom"
+              data-testid="parameters-tooltip"
+            >
+              <EuiIcon
+                color="subdued"
+                type="boxesVertical"
+                data-testid="parameters-anchor"
+              />
+            </EuiToolTip>
           </EuiFlexItem>
         )}
       </EuiFlexGroup>

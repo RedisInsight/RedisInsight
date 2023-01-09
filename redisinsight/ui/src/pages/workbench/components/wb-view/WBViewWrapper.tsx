@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import { chunk, without } from 'lodash'
+import { chunk, first, without } from 'lodash'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 import {
@@ -14,6 +14,9 @@ import {
   scrollIntoView,
   getExecuteParams,
   isGroupMode,
+  isParamsLine,
+  getMonacoLines,
+  Maybe,
 } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import {
@@ -40,6 +43,8 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import WBView from './WBView'
+
+import { parseParams } from '../enablement-area/EnablementArea/utils'
 
 interface IState extends ExecuteQueryParams {
   loading: boolean
@@ -244,15 +249,26 @@ const WBViewWrapper = () => {
   }
 
   const sourceValueSubmit = (
-    value?: string,
+    value: string = script,
     commandId?: Nullable<string>,
     executeParams: CodeButtonParams = { clearEditor: true }
   ) => {
     if (state.loading || (!value && !script)) return
 
+    let parsedParams: Maybe<CodeButtonParams> = {}
+    const lines = getMonacoLines(value)
+
+    if (isParamsLine(first(lines))) {
+      const params = lines.shift()
+        ?.replaceAll?.('\n', '')
+        ?? ''
+      parsedParams = parseParams(params)
+    }
+
     const { clearEditor } = executeParams
-    handleSubmit(value, commandId, executeParams)
-    if (cleanupWB && clearEditor) {
+    handleSubmit(value, commandId, { ...executeParams, ...parsedParams })
+
+    if (cleanupWB && clearEditor && lines.length) {
       resetCommand()
     }
   }

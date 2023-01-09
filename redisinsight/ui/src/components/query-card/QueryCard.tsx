@@ -167,6 +167,7 @@ const QueryCard = (props: Props) => {
           selectedValue={selectedViewValue}
           activeMode={activeMode}
           mode={mode}
+          resultsMode={resultsMode}
           activeResultsMode={activeResultsMode}
           emptyCommand={emptyCommand}
           summary={getSummaryText(summary)}

@@ -19,7 +19,7 @@ $marginIcon: 12px;
     }
   }
 
-  :global(.euiFlexGroup--gutterLarge>.euiFlexItem) {
+  :global(.euiFlexGroup--gutterLarge > .euiFlexItem) {
     margin: $marginIcon $marginIcon/2 !important;
 
     @media (min-width: $breakpoint-m) {
@@ -79,16 +79,17 @@ $marginIcon: 12px;
 }
 
 .time {
-  max-width: 117px;
+  max-width: 70px;
   position: relative;
   height: 18px;
 }
 
-.mode {
-  margin-left: 6px;
+.mode + .mode {
+  margin-left: 18px;
 }
 
-.timeText, .summaryText {
+.timeText,
+.summaryText {
   font: normal normal normal 12px/16px Graphik, sans-serif;
   letter-spacing: -0.12px;
   color: var(--euiColorMediumShade) !important;
@@ -191,12 +192,12 @@ $marginIcon: 12px;
   margin-right: 6px;
 
   path {
-    fill: var(--iconsDefaultColor)
+    fill: var(--iconsDefaultColor);
   }
 }
 
 .dropdownOptionSeparator:after {
-  content: '';
+  content: "";
   display: block;
   height: 0;
   width: 100%;
@@ -270,4 +271,13 @@ $marginIcon: 12px;
 
 .container :global(.euiFlexItem).playIcon {
   margin-right: $marginIcon/3 !important;
+}
+
+.tooltipAnchor {
+  width: 16px;
+  margin-left: -4px;
+}
+
+:global(.fullscreen) .tooltipAnchor {
+  margin-left: 0;
 }

@@ -2,7 +2,7 @@ import { isInteger } from 'lodash'
 import { CodeButtonResults, CodeButtonRunQueryMode } from 'uiSrc/constants'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
-import { ExecuteQueryParams, IPluginVisualization, ResultsMode } from 'uiSrc/slices/interfaces'
+import { ExecuteQueryParams, IPluginVisualization, ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { getVisualizationsByCommand } from 'uiSrc/utils/plugins'
 
 const getWBQueryType = (query: string = '', views: IPluginVisualization[] = []) => {
@@ -30,5 +30,6 @@ const getExecuteParams = (params: CodeButtonParams = {}, state: ExecuteQueryPara
 }
 
 const isGroupMode = (mode?: ResultsMode) => mode === ResultsMode.GroupMode
+const isRawMode = (mode?: RunQueryMode) => mode === RunQueryMode.Raw
 
-export { getWBQueryType, getExecuteParams, isGroupMode }
+export { getWBQueryType, getExecuteParams, isGroupMode, isRawMode }

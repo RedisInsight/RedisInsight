@@ -84,7 +84,11 @@ const WBResults = (props: Props) => {
           activeResultsMode={activeResultsMode}
           resultsMode={resultsMode}
           onQueryOpen={() => onQueryOpen(id)}
-          onQueryReRun={() => onQueryReRun(command, null, { clearEditor: false })}
+          onQueryReRun={() => onQueryReRun(
+            command,
+            null,
+            { mode, results: resultsMode, clearEditor: false, },
+          )}
           onQueryDelete={() => onQueryDelete(id)}
         />
       ))}

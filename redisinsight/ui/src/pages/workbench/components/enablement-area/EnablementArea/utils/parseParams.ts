@@ -1,8 +1,11 @@
+import { Maybe } from 'uiSrc/utils'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
+import { identity, pickBy } from 'lodash'
 
-export const parseParams = (params?: string): CodeButtonParams | undefined => {
+export const parseParams = (params?: string): Maybe<CodeButtonParams> => {
   if (params?.match(/(^\[).+(]$)/g)) {
-    return params
+    return pickBy(params
+      ?.replaceAll(' ', '')
       ?.replace(/^\[|]$/g, '')
       ?.split(';')
       .reduce((prev: {}, next: string) => {
@@ -11,7 +14,8 @@ export const parseParams = (params?: string): CodeButtonParams | undefined => {
           ...prev,
           [key]: value
         }
-      }, {})
+      }, {}),
+    identity)
   }
   return undefined
 }

@@ -371,11 +371,13 @@ export class RecommendationProvider {
       const isRediSearchModule = modules.some(({ name }) => REDIS_SEARCH_MODULES
         .some((search: string) => name === search));
 
-      const indexes = await redisClient.sendCommand(
-        new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
-      ) as any[];
-      if (isRediSearchModule && indexes.length) {
-        return null;
+      if (isRediSearchModule) {
+        const indexes = await redisClient.sendCommand(
+          new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
+        ) as any[];
+        if (indexes.length) {
+          return null;
+        }
       }
 
       const isBigStringOrJSON = keys.some((key) => (

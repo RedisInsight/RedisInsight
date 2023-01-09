@@ -95,7 +95,7 @@ test
         await deleteAllSentinelDatabasesApi(ossSentinelConfig);
     })('Verify that user can add data via CLI in Sentinel Primary Group', async() => {
         // Verify that database index switcher displayed for Sentinel
-        await t.expect(databaseOverviewPage.changeIndexBtn.exists).notOk('Change Db index control not displayed for Sentinel DB');
+        await t.expect(databaseOverviewPage.changeIndexBtn.exists).ok('Change Db index control not displayed for Sentinel DB');
 
         await verifyCommandsInCli();
     });

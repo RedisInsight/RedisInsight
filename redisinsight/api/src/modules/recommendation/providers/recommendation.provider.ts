@@ -3,7 +3,7 @@ import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
 import { convertRedisInfoReplyToObject, convertBulkStringsToObject, convertStringsArrayToObject } from 'src/utils';
-import { RECOMMENDATION_NAMES, IS_TIMESTAMP, REDIS_SEARCH_MODULES } from 'src/constants';
+import { RECOMMENDATION_NAMES, IS_TIMESTAMP, REDISEARCH_MODULES } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
@@ -342,7 +342,7 @@ export class RecommendationProvider {
         new Command('module', ['list'], { replyEncoding: 'utf8' }),
       ) as any[];
       const modules = reply.map((module: any[]) => convertStringsArrayToObject(module));
-      const isRediSearchModule = modules.some(({ name }) => REDIS_SEARCH_MODULES
+      const isRediSearchModule = modules.some(({ name }) => REDISEARCH_MODULES
         .some((search: string) => name === search));
 
       if (isRediSearchModule) {

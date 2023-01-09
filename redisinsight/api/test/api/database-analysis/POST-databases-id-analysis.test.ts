@@ -209,7 +209,6 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
-
     describe('redisVersion recommendation', () => {
       requirements('rte.version <= 6');
       [

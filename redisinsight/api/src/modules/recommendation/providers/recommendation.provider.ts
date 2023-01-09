@@ -286,32 +286,6 @@ export class RecommendationProvider {
   }
 
   /**
- * Check set password recommendation
- * @param redisClient
- */
-
-  async determineSetPasswordRecommendation(
-    redisClient: Redis | Cluster,
-  ): Promise<Recommendation> {
-    if (await this.checkAuth(redisClient)) {
-      return { name: RECOMMENDATION_NAMES.SET_PASSWORD };
-    }
-
-    try {
-      const users = await redisClient.sendCommand(
-        new Command('acl', ['list'], { replyEncoding: 'utf8' }),
-      ) as string[];
-
-      const nopassUser = users.some((user) => user.split(' ')[3] === 'nopass');
-
-      return nopassUser ? { name: RECOMMENDATION_NAMES.SET_PASSWORD } : null;
-    } catch (err) {
-      this.logger.error('Can not determine set password recommendation', err);
-      return null;
-    }
-  }
-
-  /**
    * Check RTS recommendation
    * @param redisClient
    * @param keys
@@ -410,6 +384,32 @@ export class RecommendationProvider {
       return semverCompare(version, minRedisVersion) >= 0 ? null : { name: RECOMMENDATION_NAMES.REDIS_VERSION };
     } catch (err) {
       this.logger.error('Can not determine redis version recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check set password recommendation
+   * @param redisClient
+   */
+
+  async determineSetPasswordRecommendation(
+    redisClient: Redis | Cluster,
+  ): Promise<Recommendation> {
+    if (await this.checkAuth(redisClient)) {
+      return { name: RECOMMENDATION_NAMES.SET_PASSWORD };
+    }
+
+    try {
+      const users = await redisClient.sendCommand(
+        new Command('acl', ['list'], { replyEncoding: 'utf8' }),
+      ) as string[];
+
+      const nopassUser = users.some((user) => user.split(' ')[3] === 'nopass');
+
+      return nopassUser ? { name: RECOMMENDATION_NAMES.SET_PASSWORD } : null;
+    } catch (err) {
+      this.logger.error('Can not determine set password recommendation', err);
       return null;
     }
   }

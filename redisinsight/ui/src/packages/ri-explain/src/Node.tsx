@@ -21,10 +21,12 @@ export function ExplainNode(props: INodeProps) {
           {type === EntityType.Expr && <div className="Type">text</div> }
         </div>
       </div>
-      { snippet &&
-        <div className='Footer'>
-          {snippet}
-        </div>
+      {
+        snippet && (
+          <div className='Footer'>
+            {snippet}
+          </div>
+        )
       }
     </div>
   )

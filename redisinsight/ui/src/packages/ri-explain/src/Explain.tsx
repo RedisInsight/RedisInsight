@@ -23,7 +23,7 @@ export default function Explain(props: IExplain): JSX.Element {
 
   if (command.startsWith('graph')) {
     const info  = props.data[0].response
-    const resp = ParseGraph(info);
+    const resp = ParseGraph(info)
     return (
       <ExplainDraw
         data={resp}
@@ -35,13 +35,13 @@ export default function Explain(props: IExplain): JSX.Element {
   if (command == 'ft.profile') {
     const info = props.data[0].response[1]
 
-    let data: EntityInfo;
-    let profilingTime: IProfilingTime = {};
+    let data: EntityInfo
+    let profilingTime: IProfilingTime = {}
 
     if (info.length > 5 && typeof info[0] === 'string' && info[0].toLowerCase().startsWith('shard')) {
-      let cluster: Object;
-      [cluster, data] = ParseProfileCluster(info)
-      cluster['Coordinator'].forEach((kv: [string, string]) => profilingTime[kv[0]] = kv[1]);
+      let [cluster, entityInfo] = ParseProfileCluster(info)
+      cluster['Coordinator'].forEach((kv: [string, string]) => profilingTime[kv[0]] = kv[1])
+      data = entityInfo
     } else {
       data = ParseProfile(info)
       profilingTime = {

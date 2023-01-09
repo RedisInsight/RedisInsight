@@ -544,26 +544,26 @@ function assertToken(expected: TokenType, actual: TokenType | undefined) {
 
 export function ParseProfileCluster(info: any[]): [Object, EntityInfo] {
 
-  let i = 0;
   let clusterInfo: {[key: string]: any[]} = {}
-  let key: string = '';
+  let key: string = ''
+  let i = 0
   while (i < info.length) {
     if (Array.isArray(info[i])) {
-      clusterInfo[key].push(info[i]);
+      clusterInfo[key].push(info[i])
     } else if (typeof(info[i]) === 'string') {
-      key = info[i];
+      key = info[i]
       clusterInfo[key] = []
     } else {
       throw new Error("Expected array or string - " + JSON.stringify(info))
     }
-    i++;
+    i++
   }
 
   let shards: EntityInfo[] = []
 
   Object.keys(clusterInfo).map(k => {
     if (k.toLowerCase().startsWith('shard')) {
-      let shardProfileInfo = ParseProfile(clusterInfo[k]);
+      let shardProfileInfo = ParseProfile(clusterInfo[k])
       shards.push({
         id: uuidv4(),
         type: k as EntityType,

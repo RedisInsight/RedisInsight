@@ -232,6 +232,30 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
+    describe('rediSearch recommendation', () => {
+      [
+        {
+          name: 'Should create new database analysis with rediSearch recommendation',
+          data: {
+            delimiter: '-',
+          },
+          before: async () => {
+            await rte.data.sendCommand('SET', [constants.TEST_STRING_KEY_1, Buffer.alloc(513 * 1024, 'a').toString()]);
+          },
+          statusCode: 201,
+          responseSchema,
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([
+              constants.TEST_REDIS_VERSION_RECOMMENDATION,
+            ]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+
     [
       {
         name: 'Should create new database analysis with bigHashes recommendation',

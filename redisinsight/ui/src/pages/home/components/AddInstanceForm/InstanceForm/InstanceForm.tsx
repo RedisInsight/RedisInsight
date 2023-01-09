@@ -117,7 +117,7 @@ const AddStandaloneForm = (props: Props) => {
       servername,
       provider,
       ssh,
-      sshPassType,
+      sshPassType = SshPassType.Password,
       sshOptions
     },
     initialValues: initialValuesProp,

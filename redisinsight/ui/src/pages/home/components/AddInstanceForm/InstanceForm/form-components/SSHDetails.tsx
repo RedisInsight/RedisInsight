@@ -47,6 +47,7 @@ const SSHDetails = (props: Props) => {
           [styles.tlsSniOpened]: !!formik.values.ssh
         })}
         alignItems={!flexGroupClassName ? 'flexEnd' : undefined}
+        responsive={false}
       >
         <EuiFlexItem
           style={{ width: '230px' }}
@@ -59,148 +60,172 @@ const SSHDetails = (props: Props) => {
             label="Use SSH Tunnel"
             checked={!!formik.values.ssh}
             onChange={formik.handleChange}
-            data-testid="ssh"
+            data-testid="use-ssh"
           />
         </EuiFlexItem>
-
-        {formik.values.ssh && (
-          <>
-            <EuiFlexItem className={cx(flexItemClassName)}>
-              <EuiFormRow label="Host*">
-                <EuiFieldText
-                  name="sshHost"
-                  id="sshHost"
-                  data-testid="sshHost"
-                  color="secondary"
-                  maxLength={200}
-                  placeholder="Enter SSH Host"
-                  value={formik.values.sshHost ?? ''}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validateField(e.target.value.trim())
-                    )
-                  }}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
-                <EuiFieldNumber
-                  name="sshPort"
-                  id="sshPort"
-                  data-testid="sshPort"
-                  style={{ width: '100%' }}
-                  placeholder="Enter SSH Port"
-                  value={formik.values.sshPort ?? ''}
-                  maxLength={6}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validatePortNumber(e.target.value.trim())
-                    )
-                  }}
-                  onFocus={selectOnFocus}
-                  type="text"
-                  min={0}
-                  max={MAX_PORT_NUMBER}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-
-            <EuiFlexItem className={cx(flexItemClassName)}>
-              <EuiFormRow label="Username">
-                <EuiFieldText
-                  name="sshUsername"
-                  id="sshUsername"
-                  data-testid="sshUsername"
-                  color="secondary"
-                  maxLength={200}
-                  placeholder="Enter SSH Username"
-                  value={formik.values.sshUsername ?? ''}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validateField(e.target.value.trim())
-                    )
-                  }}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-
-            <EuiFlexItem className={cx(flexItemClassName, styles.sshPassTypeWrapper)}>
-              <EuiRadioGroup
-                id="sshPassType"
-                name="sshPassType"
-                options={sshPassTypeOptions}
-                idSelected={formik.values.sshPassType}
-                className={styles.sshPassType}
-                onChange={(id) => formik.setFieldValue('sshPassType', id)}
-                data-testid="ssh-pass-type"
-              />
-            </EuiFlexItem>
-
-            {formik.values.sshPassType === SshPassType.Password && (
-              <EuiFlexItem className={flexItemClassName}>
-                <EuiFormRow label="Password">
-                  <EuiFieldPassword
-                    type="dual"
-                    name="sshPassword"
-                    id="sshPassword"
-                    data-testid="sshPassword"
-                    fullWidth
-                    className="passwordField"
-                    maxLength={10_000}
-                    placeholder="Enter SSH Password"
-                    value={formik.values.sshPassword ?? ''}
-                    onChange={formik.handleChange}
-                    dualToggleProps={{ color: 'text' }}
-                    autoComplete="new-password"
-                  />
-                </EuiFormRow>
-              </EuiFlexItem>
-            )}
-
-            {formik.values.sshPassType === SshPassType.PrivateKey && (
-              <>
-                <EuiFlexItem className={flexItemClassName}>
-                  <EuiFormRow label="Private Key*">
-                    <EuiTextArea
-                      name="sshPrivateKey"
-                      id="sshPrivateKey"
-                      className={styles.customScroll}
-                      value={formik.values.sshPrivateKey ?? ''}
-                      onChange={formik.handleChange}
-                      fullWidth
-                      placeholder="Enter SSH Private Key"
-                      data-testid="sshPrivateKey"
-                    />
-                  </EuiFormRow>
-                </EuiFlexItem>
-                <EuiFlexItem className={flexItemClassName}>
-                  <EuiFormRow label="Passphrase">
-                    <EuiFieldPassword
-                      type="dual"
-                      name="sshPassphrase"
-                      id="sshPassphrase"
-                      data-testid="sshPassphrase"
-                      fullWidth
-                      className="passwordField"
-                      maxLength={50_000}
-                      placeholder="Enter Passphrase for Private Key"
-                      value={formik.values.sshPassphrase ?? ''}
-                      onChange={formik.handleChange}
-                      dualToggleProps={{ color: 'text' }}
-                      autoComplete="new-password"
-                    />
-                  </EuiFormRow>
-                </EuiFlexItem>
-              </>
-            )}
-          </>
-        )}
       </EuiFlexGroup>
+
+      {formik.values.ssh && (
+      <>
+        <EuiFlexGroup
+          className={flexGroupClassName}
+        >
+          <EuiFlexItem className={cx(flexItemClassName)}>
+            <EuiFormRow label="Host*">
+              <EuiFieldText
+                name="sshHost"
+                id="sshHost"
+                data-testid="sshHost"
+                color="secondary"
+                maxLength={200}
+                placeholder="Enter SSH Host"
+                value={formik.values.sshHost ?? ''}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(
+                    e.target.name,
+                    validateField(e.target.value.trim())
+                  )
+                }}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+
+          <EuiFlexItem className={flexItemClassName}>
+            <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
+              <EuiFieldNumber
+                name="sshPort"
+                id="sshPort"
+                data-testid="sshPort"
+                style={{ width: '100%' }}
+                placeholder="Enter SSH Port"
+                value={formik.values.sshPort ?? ''}
+                maxLength={6}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(
+                    e.target.name,
+                    validatePortNumber(e.target.value.trim())
+                  )
+                }}
+                onFocus={selectOnFocus}
+                type="text"
+                min={0}
+                max={MAX_PORT_NUMBER}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiFlexGroup
+          className={flexGroupClassName}
+        >
+          <EuiFlexItem className={cx(flexItemClassName)}>
+            <EuiFormRow label="Username">
+              <EuiFieldText
+                name="sshUsername"
+                id="sshUsername"
+                data-testid="sshUsername"
+                color="secondary"
+                maxLength={200}
+                placeholder="Enter SSH Username"
+                value={formik.values.sshUsername ?? ''}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(
+                    e.target.name,
+                    validateField(e.target.value.trim())
+                  )
+                }}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        <EuiFlexGroup
+          className={flexGroupClassName}
+        >
+          <EuiFlexItem className={cx(flexItemClassName, styles.sshPassTypeWrapper)}>
+            <EuiRadioGroup
+              id="sshPassType"
+              name="sshPassType"
+              options={sshPassTypeOptions}
+              idSelected={formik.values.sshPassType}
+              className={styles.sshPassType}
+              onChange={(id) => formik.setFieldValue('sshPassType', id)}
+              data-testid="ssh-pass-type"
+            />
+          </EuiFlexItem>
+        </EuiFlexGroup>
+
+        {formik.values.sshPassType === SshPassType.Password && (
+          <EuiFlexGroup
+            className={flexGroupClassName}
+          >
+            <EuiFlexItem className={flexItemClassName}>
+              <EuiFormRow label="Password">
+                <EuiFieldPassword
+                  type="dual"
+                  name="sshPassword"
+                  id="sshPassword"
+                  data-testid="sshPassword"
+                  fullWidth
+                  className="passwordField"
+                  maxLength={10_000}
+                  placeholder="Enter SSH Password"
+                  value={formik.values.sshPassword ?? ''}
+                  onChange={formik.handleChange}
+                  dualToggleProps={{ color: 'text' }}
+                  autoComplete="new-password"
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        )}
+
+        {formik.values.sshPassType === SshPassType.PrivateKey && (
+        <>
+          <EuiFlexGroup
+            className={flexGroupClassName}
+          >
+            <EuiFlexItem className={flexItemClassName}>
+              <EuiFormRow label="Private Key*">
+                <EuiTextArea
+                  name="sshPrivateKey"
+                  id="sshPrivateKey"
+                  className={styles.customScroll}
+                  value={formik.values.sshPrivateKey ?? ''}
+                  onChange={formik.handleChange}
+                  fullWidth
+                  placeholder="Enter SSH Private Key"
+                  data-testid="sshPrivateKey"
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiFlexGroup
+            className={flexGroupClassName}
+          >
+            <EuiFlexItem className={flexItemClassName}>
+              <EuiFormRow label="Passphrase">
+                <EuiFieldPassword
+                  type="dual"
+                  name="sshPassphrase"
+                  id="sshPassphrase"
+                  data-testid="sshPassphrase"
+                  fullWidth
+                  className="passwordField"
+                  maxLength={50_000}
+                  placeholder="Enter Passphrase for Private Key"
+                  value={formik.values.sshPassphrase ?? ''}
+                  onChange={formik.handleChange}
+                  dualToggleProps={{ color: 'text' }}
+                  autoComplete="new-password"
+                />
+              </EuiFormRow>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </>
+        )}
+      </>
+      )}
     </>
   )
 }

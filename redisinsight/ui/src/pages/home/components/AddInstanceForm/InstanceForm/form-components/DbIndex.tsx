@@ -29,8 +29,11 @@ const DbIndex = (props: Props) => {
   return (
     <>
       <EuiFlexGroup
-        className={flexGroupClassName}
+        className={cx(flexGroupClassName, {
+          [styles.tlsContainer]: !flexGroupClassName
+        })}
         responsive={false}
+        style={{ marginTop: 10 }}
       >
         <EuiFlexItem
           grow={false}

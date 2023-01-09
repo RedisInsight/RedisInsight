@@ -210,7 +210,7 @@ const TlsDetails = (props: Props) => {
         </div>
       )}
       {formik.values.tls && (
-        <EuiFlexGroup gutterSize="none" style={{ margin: '20px 0 0' }}>
+        <EuiFlexGroup gutterSize="none" style={{ margin: '20px 0 20px' }}>
           <EuiFlexItem className={flexItemClassName}>
             <EuiCheckbox
               id={`${htmlIdGenerator()()} is_tls_client_auth_required`}
@@ -224,7 +224,7 @@ const TlsDetails = (props: Props) => {
         </EuiFlexGroup>
       )}
       {formik.values.tls && formik.values.tlsClientAuthRequired && (
-        <div className="boxSection" style={{ marginTop: 15 }}>
+        <div className={cx('boxSection', styles.tslBoxSection)} style={{ marginTop: 15 }}>
           <EuiFlexGroup className={flexGroupClassName}>
             <EuiFlexItem className={flexItemClassName}>
               <EuiFormRow label="Client Certificate*">

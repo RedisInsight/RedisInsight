@@ -903,4 +903,26 @@ describe('InstanceForm', () => {
       })
     )
   })
+
+  it('should render password input with 10_000 length limit', () => {
+    render(
+      <InstanceForm
+        {...instance(mockedProps)}
+        formFields={{ ...formFields, connectionType: ConnectionType.Standalone }}
+      />
+    )
+
+    expect(screen.getByTestId('password')).toHaveAttribute('maxLength', '10000')
+  })
+
+  it('should render ssh password input with 10_000 length limit', () => {
+    render(
+      <InstanceForm
+        {...instance(mockedProps)}
+        formFields={{ ...formFields, connectionType: ConnectionType.Standalone, ssh: true }}
+      />
+    )
+
+    expect(screen.getByTestId('sshPassword')).toHaveAttribute('maxLength', '10000')
+  })
 })

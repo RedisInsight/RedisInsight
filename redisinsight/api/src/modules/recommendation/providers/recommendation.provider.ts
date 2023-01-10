@@ -1,9 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Redis, Cluster, Command } from 'ioredis';
-import { get } from 'lodash';
+import { get, isNumber } from 'lodash';
+import { isValid } from 'date-fns';
 import * as semverCompare from 'node-version-compare';
-import { convertRedisInfoReplyToObject, convertBulkStringsToObject, convertStringsArrayToObject } from 'src/utils';
-import { RECOMMENDATION_NAMES, IS_TIMESTAMP } from 'src/constants';
+import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/utils';
+import {
+  RECOMMENDATION_NAMES, IS_TIMESTAMP, IS_INTEGER_NUMBER_REGEX, IS_NUMBER_REGEX,
+} from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
@@ -311,8 +314,7 @@ export class RecommendationProvider {
             // get first member-score pair
             new Command('zscan', [keys[processedKeysNumber].name, '0', 'COUNT', 2], { replyEncoding: 'utf8' }),
           ) as string[];
-          // check is pair member-score is timestamp
-          if (IS_TIMESTAMP.test(membersArray[0]) && IS_TIMESTAMP.test(membersArray[1])) {
+          if (this.checkTimestamp(membersArray[0]) || this.checkTimestamp(membersArray[1])) {
             isTimeSeries = true;
           }
           processedKeysNumber += 1;
@@ -420,5 +422,26 @@ export class RecommendationProvider {
       }
     }
     return false;
+  }
+
+  private checkTimestamp(value: string): boolean {
+    try {
+      if (!IS_NUMBER_REGEX.test(value) && isValid(new Date(value))) {
+        return true;
+      }
+      const integerPart = parseInt(value, 10);
+      if (!IS_TIMESTAMP.test(integerPart.toString())) {
+        return false;
+      }
+      if (isNumber(value) || integerPart.toString().length === value.length) {
+        return true;
+      }
+      // check part after separator
+      const subPart = value.replace(integerPart.toString(), '');
+      return IS_INTEGER_NUMBER_REGEX.test(subPart.substring(1, subPart.length));
+    } catch (err) {
+      // ignore errors
+      return false;
+    }
   }
 }

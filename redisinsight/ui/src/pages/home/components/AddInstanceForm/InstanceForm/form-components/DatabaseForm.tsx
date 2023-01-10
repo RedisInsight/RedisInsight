@@ -176,7 +176,7 @@ const DatabaseForm = (props: Props) => {
               data-testid="password"
               fullWidth
               className="passwordField"
-              maxLength={200}
+              maxLength={10_000}
               placeholder="Enter Password"
               value={formik.values.password ?? ''}
               onChange={formik.handleChange}

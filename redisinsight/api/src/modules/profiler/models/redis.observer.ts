@@ -197,27 +197,6 @@ export class RedisObserver extends EventEmitter2 {
    * @param redis
    */
   static async createShardObserver(redis: IORedis.Redis): Promise<IShardObserver> {
-    await RedisObserver.isMonitorAvailable(redis);
     return await redis.monitor() as IShardObserver;
-  }
-
-  /**
-   * HACK: ioredis do not handle error when a user has no permissions to run the 'monitor' command
-   * Here we try to send "monitor" command directly to throw error (like NOPERM) if any
-   * @param redis
-   */
-  static async isMonitorAvailable(redis: IORedis.Redis): Promise<boolean> {
-    // @ts-ignore
-    const duplicate = redis.duplicate({
-      ...redis.options,
-      monitor: false,
-      lazyConnect: false,
-      connectionName: `redisinsight-monitor-perm-check-${Math.random()}`,
-    });
-
-    await duplicate.call('monitor');
-    duplicate.disconnect();
-
-    return true;
   }
 }

@@ -13,6 +13,9 @@ import { clientCertTransformer } from 'src/modules/certificate/transformers/clie
 import { UseClientCertificateDto } from 'src/modules/certificate/dto/use.client-certificate.dto';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
+import { CreateBasicSshOptionsDto } from 'src/modules/ssh/dto/create.basic-ssh-options.dto';
+import { CreateCertSshOptionsDto } from 'src/modules/ssh/dto/create.cert-ssh-options.dto';
+import { sshOptionsTransformer } from 'src/modules/ssh/transformers/ssh-options.transformer';
 
 export class UpdateDatabaseDto extends CreateDatabaseDto {
   @ValidateIf((object, value) => value !== undefined)
@@ -27,6 +30,31 @@ export class UpdateDatabaseDto extends CreateDatabaseDto {
   @ValidateIf((object, value) => value !== undefined)
   @IsInt({ always: true })
   port: number;
+
+  @ApiPropertyOptional({
+    description:
+      'Database username, if your database is ACL enabled, otherwise leave this field empty.',
+    type: String,
+  })
+  @Expose()
+  @IsString({ always: true })
+  @IsNotEmpty()
+  @IsOptional()
+  @Default(null)
+  username?: string;
+
+  @ApiPropertyOptional({
+    description:
+      'The password, if any, for your Redis database. '
+      + 'If your database doesn’t require a password, leave this field empty.',
+    type: String,
+  })
+  @Expose()
+  @IsString({ always: true })
+  @IsNotEmpty()
+  @IsOptional()
+  @Default(null)
+  password?: string;
 
   @ApiPropertyOptional({
     description: 'Logical database number.',
@@ -46,6 +74,15 @@ export class UpdateDatabaseDto extends CreateDatabaseDto {
   @IsOptional()
   @Default(false)
   tls?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Use SSH to connect.',
+    type: Boolean,
+  })
+  @IsBoolean()
+  @IsOptional()
+  @Default(false)
+  ssh?: boolean;
 
   @ApiPropertyOptional({
     description: 'SNI servername',
@@ -105,4 +142,19 @@ export class UpdateDatabaseDto extends CreateDatabaseDto {
   @ValidateNested()
   @Default(null)
   sentinelMaster?: SentinelMaster;
+
+  @ApiPropertyOptional({
+    description: 'SSH Options',
+    oneOf: [
+      { $ref: getSchemaPath(CreateBasicSshOptionsDto) },
+      { $ref: getSchemaPath(CreateCertSshOptionsDto) },
+    ],
+  })
+  @Expose()
+  @IsOptional()
+  @IsNotEmptyObject()
+  @Type(sshOptionsTransformer)
+  @ValidateNested()
+  @Default(null)
+  sshOptions?: CreateBasicSshOptionsDto | CreateCertSshOptionsDto;
 }

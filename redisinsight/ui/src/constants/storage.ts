@@ -21,7 +21,8 @@ enum BrowserStorageItem {
   viewFormat = 'viewFormat',
   wbGroupMode = 'wbGroupMode',
   keyDetailSizes = 'keyDetailSizes',
-  featuresHighlighting = 'featuresHighlighting'
+  featuresHighlighting = 'featuresHighlighting',
+  dbIndex = 'dbIndex_',
 }
 
 export default BrowserStorageItem

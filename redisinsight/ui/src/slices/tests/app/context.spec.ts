@@ -38,7 +38,10 @@ import reducer, {
   updateKeyDetailsSizes,
   appContextBrowserKeyDetails,
   appContextDbConfig,
-  setSlowLogUnits, setDbConfig,
+  setSlowLogUnits,
+  setDbConfig,
+  setDbIndexState,
+  appContextDbIndex,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -805,6 +808,26 @@ describe('slices', () => {
       })
 
       expect(appContextBrowserKeyDetails(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setDbIndexState', () => {
+    it('should properly set state for db index', () => {
+      // Arrange
+      const state = {
+        ...initialState.dbIndex,
+        disabled: true
+      }
+
+      // Act
+      const nextState = reducer(initialState, setDbIndexState(true))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextDbIndex(rootState)).toEqual(state)
     })
   })
 })

@@ -7,7 +7,7 @@ import {
   mockDatabaseInfoProvider,
   mockDatabaseRepository,
   mockDatabaseService,
-  mockIORedisClient,
+  mockIORedisClient, mockRedisConnectionFactory,
   mockRedisNoAuthError,
   mockRedisService,
   MockType,
@@ -19,10 +19,12 @@ import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 describe('DatabaseConnectionService', () => {
   let service: DatabaseConnectionService;
   let redisService: MockType<RedisService>;
+  let redisConnectionFactory: MockType<RedisConnectionFactory>;
   let analytics: MockType<DatabaseAnalytics>;
 
   beforeEach(async () => {
@@ -38,6 +40,10 @@ describe('DatabaseConnectionService', () => {
         {
           provide: RedisService,
           useFactory: mockRedisService,
+        },
+        {
+          provide: RedisConnectionFactory,
+          useFactory: mockRedisConnectionFactory,
         },
         {
           provide: DatabaseInfoProvider,
@@ -56,26 +62,27 @@ describe('DatabaseConnectionService', () => {
 
     service = await module.get(DatabaseConnectionService);
     redisService = await module.get(RedisService);
+    redisConnectionFactory = await module.get(RedisConnectionFactory);
     analytics = await module.get(DatabaseAnalytics);
   });
 
   describe('connect', () => {
     it('should connect to database', async () => {
       expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
-      expect(redisService.connectToDatabaseInstance).not.toHaveBeenCalled();
+      expect(redisConnectionFactory.createRedisConnection).not.toHaveBeenCalled();
     });
   });
 
   describe('getOrCreateClient', () => {
     it('should get existing client', async () => {
       expect(await service.getOrCreateClient(mockCommonClientMetadata)).toEqual(mockIORedisClient);
-      expect(redisService.connectToDatabaseInstance).not.toHaveBeenCalled();
+      expect(redisConnectionFactory.createRedisConnection).not.toHaveBeenCalled();
     });
     it('should create new and save it client', async () => {
       redisService.getClientInstance.mockResolvedValue(null);
 
       expect(await service.getOrCreateClient(mockCommonClientMetadata)).toEqual(mockIORedisClient);
-      expect(redisService.connectToDatabaseInstance).toHaveBeenCalled();
+      expect(redisConnectionFactory.createRedisConnection).toHaveBeenCalled();
       expect(redisService.setClientInstance).toHaveBeenCalled();
     });
   });
@@ -85,7 +92,7 @@ describe('DatabaseConnectionService', () => {
       expect(await service.createClient(mockCommonClientMetadata)).toEqual(mockIORedisClient);
     });
     it('should throw Unauthorized error in case of NOAUTH', async () => {
-      redisService.connectToDatabaseInstance.mockRejectedValueOnce(mockRedisNoAuthError);
+      redisConnectionFactory.createRedisConnection.mockRejectedValueOnce(mockRedisNoAuthError);
       await expect(service.createClient(mockCommonClientMetadata)).rejects.toThrow(UnauthorizedException);
       expect(analytics.sendConnectionFailedEvent).toHaveBeenCalledWith(
         mockDatabase,

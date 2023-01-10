@@ -1,7 +1,6 @@
 import {
   EuiButton,
   EuiButtonIcon,
-  EuiCallOut,
   EuiCheckbox,
   EuiCollapsibleNavGroup,
   EuiFieldNumber,
@@ -813,16 +812,6 @@ const AddStandaloneForm = (props: Props) => {
         <EuiFlexGroup
           className={flexGroupClassName}
         >
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiCallOut>
-              <EuiText size="s" data-testid="db-index-message">
-                When the database is added, you can select logical databases only in CLI.
-                To work with other logical databases in Browser and Workbench,
-                add another database with the same host and port,
-                but a different database index.
-              </EuiText>
-            </EuiCallOut>
-          </EuiFlexItem>
           <EuiFlexItem
             className={cx(
               flexItemClassName,

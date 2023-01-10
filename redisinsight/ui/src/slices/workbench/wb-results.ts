@@ -14,6 +14,7 @@ import {
 } from 'uiSrc/utils'
 import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+import { setDbIndexState } from 'uiSrc/slices/app/context'
 import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -247,6 +248,8 @@ export function sendWBCommandAction({
         commandId
       }))
 
+      dispatch(setDbIndexState(true))
+
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
           id,
@@ -261,6 +264,7 @@ export function sendWBCommandAction({
 
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
+        dispatch(setDbIndexState(!!multiCommands?.length))
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -271,6 +275,7 @@ export function sendWBCommandAction({
         commandsId: commands.map((_, i) => commandId + i),
         error: errorMessage
       }))
+      dispatch(setDbIndexState(false))
       onFailAction?.()
     }
   }
@@ -321,7 +326,7 @@ export function sendWBCommandClusterAction({
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data) }))
+        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {

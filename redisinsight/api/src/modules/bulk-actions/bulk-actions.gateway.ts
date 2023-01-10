@@ -46,7 +46,7 @@ export class BulkActionsGateway implements OnGatewayConnection, OnGatewayDisconn
 
   @SubscribeMessage(BulkActionsServerEvents.Abort)
   abort(@Body() dto: BulkActionIdDto) {
-    this.logger.log('Subscribing to bulk action.');
+    this.logger.log('Aborting bulk action.');
     return this.service.abort(dto);
   }
 

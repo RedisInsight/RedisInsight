@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import Redis from 'ioredis';
 import { when } from 'jest-when';
 import {
-  mockDatabase,
+  mockClientMetadata,
   mockStandaloneRedisInfoReply,
 } from 'src/__mocks__';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
@@ -59,7 +59,6 @@ const mockNodeInfo = {
 
 const mockGetTotalResponse_1 = 1;
 
-const databaseId = mockDatabase.id;
 export const mockDatabaseOverview: DatabaseOverview = {
   version: mockServerInfo.redis_version,
   usedMemory: 1,
@@ -99,7 +98,7 @@ describe('OverviewService', () => {
           .calledWith()
           .mockResolvedValue(mockStandaloneRedisInfoReply);
 
-        const result = await service.getOverview(databaseId, mockClient);
+        const result = await service.getOverview(mockClientMetadata, mockClient);
 
         expect(result).toEqual({
           ...mockDatabaseOverview,
@@ -122,7 +121,7 @@ describe('OverviewService', () => {
           },
         });
 
-        expect(await service.getOverview(databaseId, mockClient)).toEqual({
+        expect(await service.getOverview(mockClientMetadata, mockClient)).toEqual({
           ...mockDatabaseOverview,
           totalKeys: 0,
           totalKeysPerDb: undefined,
@@ -143,11 +142,11 @@ describe('OverviewService', () => {
           },
         });
 
-        expect(await service.getOverview(databaseId, mockClient)).toEqual({
+        expect(await service.getOverview(mockClientMetadata, mockClient)).toEqual({
           ...mockDatabaseOverview,
         });
 
-        expect(await service.getOverview(databaseId, mockClient)).toEqual({
+        expect(await service.getOverview(mockClientMetadata, mockClient)).toEqual({
           ...mockDatabaseOverview,
           cpuUsagePercentage: 50,
         });
@@ -167,11 +166,11 @@ describe('OverviewService', () => {
           },
         });
 
-        expect(await service.getOverview(databaseId, mockClient)).toEqual({
+        expect(await service.getOverview(mockClientMetadata, mockClient)).toEqual({
           ...mockDatabaseOverview,
         });
 
-        expect(await service.getOverview(databaseId, mockClient)).toEqual({
+        expect(await service.getOverview(mockClientMetadata, mockClient)).toEqual({
           ...mockDatabaseOverview,
           cpuUsagePercentage: 100,
         });
@@ -190,7 +189,7 @@ describe('OverviewService', () => {
           },
         });
 
-        expect(await service.getOverview(databaseId, mockClient)).toEqual({
+        expect(await service.getOverview(mockClientMetadata, mockClient)).toEqual({
           ...mockDatabaseOverview,
           cpuUsagePercentage: undefined,
         });
@@ -230,7 +229,7 @@ describe('OverviewService', () => {
           replication: { role: 'slave' },
         });
 
-        expect(await service.getOverview(databaseId, mockCluster)).toEqual({
+        expect(await service.getOverview(mockClientMetadata, mockCluster)).toEqual({
           ...mockDatabaseOverview,
           connectedClients: 1,
           totalKeys: 6,
@@ -285,7 +284,7 @@ describe('OverviewService', () => {
           cpu: { ...mockNodeInfo.cpu, used_cpu_sys: '1.5', used_cpu_user: '1.5' },
         });
 
-        expect(await service.getOverview(databaseId, mockCluster)).toEqual({
+        expect(await service.getOverview(mockClientMetadata, mockCluster)).toEqual({
           ...mockDatabaseOverview,
           connectedClients: 1,
           totalKeys: 6,

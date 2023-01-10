@@ -23,6 +23,6 @@ jest.mock('uiSrc/services', () => ({
 
 describe('ShortInstanceInfo', () => {
   it('should render', () => {
-    expect(render(<ShortInstanceInfo info={{ ...instance(mockedProps) }} />)).toBeTruthy()
+    expect(render(<ShortInstanceInfo info={{ ...instance(mockedProps) }} databases={2} />)).toBeTruthy()
   })
 })

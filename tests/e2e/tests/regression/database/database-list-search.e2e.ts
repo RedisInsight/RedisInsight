@@ -56,6 +56,10 @@ test('Verify DB list search', async t => {
     const searchTimeout = 60 * 1000; // 60 sec to wait for changing Last Connection time
     const dbSelector = myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[2].databaseName);
     const startTime = Date.now();
+    const noModulesDbRedisStackIcon = myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[2].databaseName).parent('tr').find(myRedisDatabasePage.cssRedisStackIcon);
+
+    // Verify that db without modules has no redis stack icon
+    await t.expect(noModulesDbRedisStackIcon.exists).notOk('The database with other alias is found');
 
     // Search for DB by Invalid search
     await t.typeText(myRedisDatabasePage.searchInput, searchedDBHostInvalid, { replace: true, paste: true });

@@ -11,6 +11,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { getRedisPipelineSummary } from 'src/utils/cli-helper';
 import { getConnectionName } from 'src/utils/redis-connection-helper';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 export interface IExecCommandFromClusterNode {
   host: string;
@@ -24,9 +25,10 @@ export class BrowserToolClusterService extends RedisConsumerAbstractService {
 
   constructor(
     protected redisService: RedisService,
+    protected redisConnectionFactory: RedisConnectionFactory,
     protected databaseService: DatabaseService,
   ) {
-    super(ClientContext.Browser, redisService, databaseService);
+    super(ClientContext.Browser, redisService, redisConnectionFactory, databaseService);
   }
 
   async execCommand(

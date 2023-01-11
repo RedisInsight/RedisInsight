@@ -7,6 +7,9 @@ const parseParamsTests: any[] = [
   ['[execute=auto;mode=group]', { execute: 'auto', mode: 'group' }],
   ['[execute=auto;mode=group;]', { execute: 'auto', mode: 'group' }],
   ['[execute=auto;  mode=group;   ]', { execute: 'auto', mode: 'group' }],
+  ['[mode=raw;mode=ascii;mode=group;]', { mode: 'raw' }], // first parameters should be applied
+  ['[mode=raw]\n', { mode: 'raw' }],
+  ['[mode=raw]\r', { mode: 'raw' }],
 ]
 
 describe('parseParams', () => {

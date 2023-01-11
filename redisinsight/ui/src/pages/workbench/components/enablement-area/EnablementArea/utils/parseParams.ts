@@ -3,16 +3,17 @@ import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-ar
 import { identity, pickBy } from 'lodash'
 
 export const parseParams = (params?: string): Maybe<CodeButtonParams> => {
-  if (params?.match(/(^\[).+(]$)/g)) {
+  if (params?.trim().match(/(^\[).+(]$)/g)) {
     return pickBy(params
+      ?.trim()
       ?.replaceAll(' ', '')
       ?.replace(/^\[|]$/g, '')
       ?.split(';')
       .reduce((prev: {}, next: string) => {
         const [key, value] = next.split('=')
         return {
+          [key]: value,
           ...prev,
-          [key]: value
         }
       }, {}),
     identity)

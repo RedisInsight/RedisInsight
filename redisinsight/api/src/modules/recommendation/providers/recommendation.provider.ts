@@ -7,6 +7,7 @@ import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/u
 import {
   RECOMMENDATION_NAMES, IS_TIMESTAMP, IS_INTEGER_NUMBER_REGEX, IS_NUMBER_REGEX,
 } from 'src/constants';
+import { checkRedirectionError, parseRedirectionError } from 'src/utils/cli-helper';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
@@ -410,6 +411,93 @@ export class RecommendationProvider {
       return null;
     }
   }
+  /**
+  * Check search indexes recommendation
+   * @param redisClient
+   * @param keys
+   * @param isCluster
+   */
+
+  async determineSearchIndexesRecommendation(
+    redisClient: Redis,
+    keys: Key[],
+    client: any,
+  ): Promise<Recommendation> {
+    if (client.isCluster) {
+      let processedKeysNumber = 0;
+      let isJSONOrHash = false;
+      let sortedSetNumber = 0;
+      while (
+        processedKeysNumber < keys.length
+        && !isJSONOrHash
+        && sortedSetNumber <= sortedSetCountForCheck
+      ) {
+        if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
+          processedKeysNumber += 1;
+        } else {
+          let keyBySortedSetMember;
+          const sortedSetMember = await redisClient.sendCommand(
+            new Command('zrange', [keys[processedKeysNumber].name, 0, 0], { replyEncoding: 'utf8' }),
+          ) as string[];
+
+          try {
+            keyBySortedSetMember = await redisClient.sendCommand(
+              new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
+            ) as string;
+          } catch (err) {
+            if (err && checkRedirectionError(err)) {
+              const { address } = parseRedirectionError(err);
+              const nodes = client.nodes('master');
+
+              const node: any = nodes.find(({ options: { host, port } }: Redis) => `${host}:${port}` === address);
+              // if (!node) {
+              //   node = nodeRole === ClusterNodeRole.All
+              //     ? nodeAddress
+              //     : `${nodeAddress} [${nodeRole.toLowerCase()}]`;
+              //   // throw new ClusterNodeNotFoundError(
+              //   //   ERROR_MESSAGES.CLUSTER_NODE_NOT_FOUND(node),
+              //   // );
+              // }
+
+              keyBySortedSetMember = await node.sendCommand(
+                new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
+              ) as string;
+            }
+          }
+          if (keyBySortedSetMember === RedisDataType.JSON || keyBySortedSetMember === RedisDataType.Hash) {
+            isJSONOrHash = true;
+          }
+          processedKeysNumber += 1;
+          sortedSetNumber += 1;
+        }
+      }
+
+      return isJSONOrHash ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
+    }
+    try {
+      const sortedSets = keys
+        .filter(({ type }) => type === RedisDataType.ZSet)
+        .slice(0, 100);
+      const res = await redisClient.pipeline(sortedSets.map(({ name }) => ([
+        'zrange',
+        name,
+        0,
+        0,
+      ]))).exec();
+
+      const types = await redisClient.pipeline(res.map(([, member]) => ([
+        'type',
+        member,
+      ]))).exec();
+
+      const isHashOrJSONName = types.some(([, type]) => type === RedisDataType.JSON || type === RedisDataType.Hash)
+      return isHashOrJSONName ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
+    } catch (err) {
+      this.logger.error('Can not determine search indexes recommendation', err);
+      return null;
+    }
+  }
+
 
   private async checkAuth(redisClient: Redis | Cluster): Promise<boolean> {
     try {

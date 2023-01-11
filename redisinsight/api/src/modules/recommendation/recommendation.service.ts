@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Redis } from 'ioredis';
+import { Redis, Cluster } from 'ioredis';
 import { RecommendationProvider } from 'src/modules/recommendation/providers/recommendation.provider';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { RECOMMENDATION_NAMES } from 'src/constants';
@@ -11,6 +11,7 @@ interface RecommendationInput {
   keys?: Key[],
   info?: RedisString,
   total?: number,
+  globalClient?: Redis | Cluster,
   exclude?: string[],
 }
 
@@ -33,6 +34,7 @@ export class RecommendationService {
       keys,
       info,
       total,
+      globalClient,
       exclude,
     } = dto;
 
@@ -55,6 +57,7 @@ export class RecommendationService {
         exclude.includes(RECOMMENDATION_NAMES.RTS) ? null : await this.recommendationProvider.determineRTSRecommendation(client, keys),
         await this.recommendationProvider.determineRediSearchRecommendation(client, keys),
         await this.recommendationProvider.determineRedisVersionRecommendation(client),        
+        await this.recommendationProvider.determineSearchIndexesRecommendation(client, keys, globalClient),
         await this.recommendationProvider.determineSetPasswordRecommendation(client),
       ]));
   }

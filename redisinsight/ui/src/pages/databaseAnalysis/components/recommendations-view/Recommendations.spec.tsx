@@ -294,6 +294,21 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
   })
 
+  it('should render upgrade badge in searchIndexes recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'searchIndexes' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.queryByTestId('code_changes')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
+  })
+
   it('should collapse/expand and sent proper telemetry event', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,

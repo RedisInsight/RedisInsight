@@ -612,5 +612,59 @@
       }
     ],
     "badges": ["upgrade"]
+  },
+  "searchIndexes": {
+    "id": "searchIndexes",
+    "title":"Enhance your search indexes",
+    "redisStack": true,
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Creating your own index structure manually? Consider the out-of-box option of FT.CREATE on RediSearch."
+      },
+      {
+        "id": "2",
+        "type": "span",
+        "value": "RediSearch was designed to help meet your query needs and support a better development experience when dealing with complex data scenarios. Take a look at the powerful API options "
+      },
+      {
+        "id": "3",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/commands/?name=Ft",
+          "name": "here"
+        }
+      },
+      {
+        "id": "4",
+        "type": "span",
+        "value": " and try it."
+      },
+      {
+        "id": "5",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "6",
+        "type": "span",
+        "value": "Create a "
+      },
+      {
+        "id": "7",
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
+          "name": "free Redis Stack database"
+        }
+      },
+      {
+        "id": "8",
+        "type": "span",
+        "value": " to use modern data models and processing engines."
+      }
+    ],
+    "badges": ["upgrade"]
   }
 }

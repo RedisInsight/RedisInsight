@@ -9,7 +9,8 @@ import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getApiErrorMessage,
   getUrl,
-  isGroupMode,
+  isGroupResults,
+  isSilentModeWithoutError,
   isStatusSuccessful,
 } from 'uiSrc/utils'
 import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
@@ -127,7 +128,9 @@ const workbenchResultsSlice = createSlice({
         let newItem = item
         data.forEach((command, i) => {
           if (item.id === (commandId + i)) {
-            newItem = { ...command, loading: false, isOpen: true, error: '' }
+            // don't open a card if silent mode and no errors
+            const isOpen = !isSilentModeWithoutError(command.resultsMode, command?.summary?.fail)
+            newItem = { ...command, isOpen, loading: false, error: '' }
           }
         })
         return newItem
@@ -243,7 +246,7 @@ export function sendWBCommandAction({
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(sendWBCommand({
-        commands: isGroupMode(resultsMode) ? [`${commands.length} - Command(s)`] : commands,
+        commands: isGroupResults(resultsMode) ? [`${commands.length} - Command(s)`] : commands,
         commandId
       }))
 
@@ -302,7 +305,7 @@ export function sendWBCommandClusterAction({
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(sendWBCommand({
-        commands: isGroupMode(resultsMode) ? [`${commands.length} - Commands`] : commands,
+        commands: isGroupResults(resultsMode) ? [`${commands.length} - Commands`] : commands,
         commandId
       }))
 

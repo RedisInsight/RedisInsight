@@ -26,6 +26,10 @@ $marginIcon: 12px;
       margin: $marginIcon !important;
     }
   }
+
+  &.notExpanded {
+    cursor: default;
+  }
 }
 
 .isOpen {
@@ -160,6 +164,7 @@ $marginIcon: 12px;
     text-overflow: ellipsis;
     width: 100%;
     white-space: nowrap;
+    cursor: pointer;
   }
 }
 
@@ -276,6 +281,7 @@ $marginIcon: 12px;
 .tooltipAnchor {
   width: 16px;
   margin-left: -4px;
+  cursor: pointer;
 }
 
 :global(.fullscreen) .tooltipAnchor {

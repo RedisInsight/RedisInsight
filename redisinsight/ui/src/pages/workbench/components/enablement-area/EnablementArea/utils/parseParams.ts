@@ -11,8 +11,8 @@ export const parseParams = (params?: string): Maybe<CodeButtonParams> => {
       .reduce((prev: {}, next: string) => {
         const [key, value] = next.split('=')
         return {
+          [key]: value,
           ...prev,
-          [key]: value
         }
       }, {}),
     identity)

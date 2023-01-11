@@ -24,6 +24,9 @@ import {
   urlForAsset,
   truncateMilliseconds,
   isRawMode,
+  isSilentMode,
+  isSilentModeWithoutError,
+  isGroupResults,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -31,13 +34,14 @@ import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getViewTypeOptions, WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
-import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
 import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
 import { ReactComponent as ExecutionTimeIcon } from 'uiSrc/assets/img/workbench/execution_time.svg'
 import { ReactComponent as GroupModeIcon } from 'uiSrc/assets/img/icons/group_mode.svg'
+import { ReactComponent as SilentModeIcon } from 'uiSrc/assets/img/icons/silent_mode.svg'
 
 import QueryCardTooltip from '../QueryCardTooltip'
 
@@ -48,12 +52,13 @@ export interface Props {
   isOpen: boolean
   isFullScreen: boolean
   createdAt?: Date
-  summaryText?: string
+  message?: string
   activeMode: RunQueryMode
   mode?: RunQueryMode
   resultsMode?: ResultsMode
   activeResultsMode?: ResultsMode
-  summary?: string
+  summary?: ResultsSummary
+  summaryText?: string
   queryType: WBQueryType
   selectedValue: string
   loading?: boolean
@@ -89,12 +94,13 @@ const QueryCardHeader = (props: Props) => {
     toggleFullScreen,
     query = '',
     loading,
-    summaryText,
+    message,
     createdAt,
     mode,
     resultsMode,
-    activeResultsMode,
     summary,
+    activeResultsMode,
+    summaryText,
     activeMode,
     selectedValue,
     executionTime,
@@ -172,7 +178,7 @@ const QueryCardHeader = (props: Props) => {
   ) || ''
 
   const handleToggleOpen = () => {
-    if (!isFullScreen) {
+    if (!isFullScreen && !isSilentModeWithoutError(resultsMode, summary?.fail)) {
       sendEvent(
         isOpen ? TelemetryEvent.WORKBENCH_RESULTS_COLLAPSED : TelemetryEvent.WORKBENCH_RESULTS_EXPANDED,
         query
@@ -244,7 +250,14 @@ const QueryCardHeader = (props: Props) => {
       onClick={handleToggleOpen}
       tabIndex={0}
       onKeyDown={() => {}}
-      className={cx(styles.container, 'query-card-header', { [styles.isOpen]: isOpen })}
+      className={cx(
+        styles.container,
+        'query-card-header',
+        {
+          [styles.isOpen]: isOpen,
+          [styles.notExpanded]: isSilentModeWithoutError(resultsMode, summary?.fail),
+        },
+      )}
       data-testid="query-card-open"
       role="button"
     >
@@ -255,7 +268,7 @@ const QueryCardHeader = (props: Props) => {
         >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
-              <QueryCardTooltip query={query} summary={summary} />
+              <QueryCardTooltip query={query} summary={summaryText} />
             </EuiTextColor>
             <EuiButtonIcon
               iconType="copy"
@@ -275,9 +288,9 @@ const QueryCardHeader = (props: Props) => {
           )}
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.summaryTextWrapper}>
-          {!!summaryText && !isOpen && (
+          {!!message && !isOpen && (
             <EuiTextColor className={styles.summaryText} component="div">
-              {truncateText(summaryText, 13)}
+              {truncateText(message, 13)}
             </EuiTextColor>
           )}
         </EuiFlexItem>
@@ -311,7 +324,7 @@ const QueryCardHeader = (props: Props) => {
           className={cx(styles.buttonIcon, styles.viewTypeIcon)}
           onClick={onDropDownViewClick}
         >
-          {isOpen && options.length > 1 && !summary && (
+          {isOpen && options.length > 1 && !summaryText && (
             <div className={styles.dropdownWrapper}>
               <div className={styles.dropdown}>
                 <EuiSuperSelect
@@ -369,10 +382,11 @@ const QueryCardHeader = (props: Props) => {
         )}
         {!isFullScreen && (
           <EuiFlexItem grow={false} className={styles.buttonIcon}>
-            <EuiButtonIcon iconType={isOpen ? 'arrowUp' : 'arrowDown'} aria-label="toggle collapse" />
+            {!isSilentModeWithoutError(resultsMode, summary?.fail)
+              && <EuiButtonIcon iconType={isOpen ? 'arrowUp' : 'arrowDown'} aria-label="toggle collapse" />}
           </EuiFlexItem>
         )}
-        {(isRawMode(mode) || isGroupMode(resultsMode)) && (
+        {(isRawMode(mode) || isGroupResults(resultsMode)) && (
           <EuiFlexItem grow={false} className={styles.buttonIcon}>
             <EuiToolTip
               className={styles.tooltip}
@@ -382,6 +396,11 @@ const QueryCardHeader = (props: Props) => {
                   {isGroupMode(resultsMode) && (
                     <EuiTextColor className={cx(styles.mode)} data-testid="group-mode-tooltip">
                       <EuiIcon type={GroupModeIcon} />
+                    </EuiTextColor>
+                  )}
+                  {isSilentMode(resultsMode) && (
+                    <EuiTextColor className={cx(styles.mode)} data-testid="silent-mode-tooltip">
+                      <EuiIcon type={SilentModeIcon} />
                     </EuiTextColor>
                   )}
                   {isRawMode(mode) && (

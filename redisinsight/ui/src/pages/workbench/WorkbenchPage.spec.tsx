@@ -169,7 +169,7 @@ describe('Telemetry', () => {
       eventData: {
         command: 'info;'.toUpperCase(),
         databaseId: INSTANCE_ID_MOCK,
-        group: 'single',
+        results: 'single',
         auto: false,
         multiple: 'Single',
         pipeline: true,
@@ -208,7 +208,7 @@ describe('Telemetry', () => {
       eventData: {
         command: 'info;'.toUpperCase(),
         databaseId: INSTANCE_ID_MOCK,
-        group: 'single',
+        results: 'single',
         auto: false,
         multiple: 'Single',
         pipeline: true,

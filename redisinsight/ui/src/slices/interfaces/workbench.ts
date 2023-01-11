@@ -54,6 +54,7 @@ export enum AutoExecute {
 }
 
 export enum ResultsMode {
+  Silent = 'SILENT',
   Default = 'DEFAULT',
   GroupMode = 'GROUP_MODE',
 }

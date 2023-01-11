@@ -168,7 +168,6 @@ const QueryCardHeader = (props: Props) => {
   }
 
   const handleQueryReRun = (event: React.MouseEvent) => {
-    sendEvent(TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN, query)
     eventStop(event)
     onQueryReRun()
   }

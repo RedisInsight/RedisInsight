@@ -1,14 +1,14 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { without } from 'lodash'
+import { first, isEmpty, without } from 'lodash'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import { EuiResizableContainer } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
-import { Maybe, Nullable, getMonacoLines, getMultiCommands, getParsedParamsInQuery, removeMonacoComments } from 'uiSrc/utils'
+import { Maybe, Nullable, getMonacoLines, getMultiCommands, getParsedParamsInQuery, isParamsLine, removeMonacoComments } from 'uiSrc/utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import InstanceHeader from 'uiSrc/components/instance-header'
@@ -18,7 +18,7 @@ import {
   appContextWorkbench
 } from 'uiSrc/slices/app/context'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode, AutoExecute } from 'uiSrc/slices/interfaces/workbench'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
@@ -108,14 +108,33 @@ const WBView = (props: Props) => {
   }, [])
 
   const handleSubmit = (value?: string) => {
-    sendEventSubmitTelemetry(value)
+    sendEventSubmitTelemetry(TelemetryEvent.WORKBENCH_COMMAND_SUBMITTED, value)
     onSubmit(value)
   }
 
-  const sendEventSubmitTelemetry = (commandInit = script) => {
+  const handleReRun = (query?: string, commandId?: Nullable<string>, executeParams: CodeButtonParams = {}) => {
+    sendEventSubmitTelemetry(TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN, query, executeParams)
+    onSubmit(query, commandId, executeParams)
+  }
+
+  const sendEventSubmitTelemetry = (
+    event: TelemetryEvent,
+    commandInit = script,
+    executeParams?: CodeButtonParams,
+  ) => {
     const eventData = (() => {
-      const parsedParams: Maybe<CodeButtonParams> = getParsedParamsInQuery(commandInit)
       const lines = getMonacoLines(commandInit)
+      const firstLine = first(lines) ?? ''
+
+      const parsedParams: Maybe<CodeButtonParams> = isEmpty(executeParams)
+        ? getParsedParamsInQuery(commandInit)
+        : executeParams
+
+      const auto = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
+        ? parsedParams?.auto === AutoExecute.True
+        : undefined
+
+      if (isParamsLine(firstLine)) lines.shift()
 
       const commands = without(
         lines
@@ -134,10 +153,10 @@ const WBView = (props: Props) => {
 
       return {
         command: command?.toUpperCase(),
+        auto,
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
         pipeline: (parsedParams?.pipeline || batchSize) > 1,
-        auto: !!parsedParams?.auto,
         rawMode: (parsedParams?.mode?.toUpperCase() || state.activeMode) === RunQueryMode.Raw,
         results:
           ResultsMode.GroupMode.startsWith?.(
@@ -152,7 +171,7 @@ const WBView = (props: Props) => {
 
     if (eventData.command) {
       sendEventTelemetry({
-        event: TelemetryEvent.WORKBENCH_COMMAND_SUBMITTED,
+        event,
         eventData
       })
     }
@@ -218,7 +237,7 @@ const WBView = (props: Props) => {
                     activeMode={activeMode}
                     activeResultsMode={resultsMode}
                     scrollDivRef={scrollDivRef}
-                    onQueryReRun={onSubmit}
+                    onQueryReRun={handleReRun}
                     onQueryOpen={onQueryOpen}
                     onQueryDelete={onQueryDelete}
                   />

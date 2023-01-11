@@ -231,9 +231,12 @@ describe('Telemetry', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN,
       eventData: {
-        command: 'info',
+        auto: undefined,
+        command: 'INFO;',
         databaseId: INSTANCE_ID_MOCK,
-        group: false,
+        multiple: 'Single',
+        results: 'single',
+        pipeline: true,
         rawMode: true,
       }
     })

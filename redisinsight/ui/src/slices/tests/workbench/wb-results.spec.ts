@@ -177,7 +177,7 @@ describe('workbench results slice', () => {
       expect(workbenchResultsSelector(rootState)).toEqual(state)
     })
 
-    it('should properly set the state with fetched data and isOpen = false, for request silent mode and 0 errors', () => {
+    it('should properly set the state with fetched data and isOpen = false, for request silent mode', () => {
       // Arrange
 
       const mockedId = '123'

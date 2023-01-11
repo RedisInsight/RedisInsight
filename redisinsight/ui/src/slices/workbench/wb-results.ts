@@ -10,7 +10,7 @@ import {
   getApiErrorMessage,
   getUrl,
   isGroupResults,
-  isSilentModeWithoutError,
+  isSilentMode,
   isStatusSuccessful,
 } from 'uiSrc/utils'
 import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
@@ -129,8 +129,12 @@ const workbenchResultsSlice = createSlice({
         data.forEach((command, i) => {
           if (item.id === (commandId + i)) {
             // don't open a card if silent mode and no errors
-            const isOpen = !isSilentModeWithoutError(command.resultsMode, command?.summary?.fail)
-            newItem = { ...command, isOpen, loading: false, error: '' }
+            newItem = {
+              ...command,
+              loading: false,
+              error: '',
+              isOpen: !isSilentMode(command.resultsMode),
+            }
           }
         })
         return newItem

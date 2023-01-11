@@ -2,7 +2,6 @@ import { visit } from 'unist-util-visit'
 
 enum ButtonLang {
   Redis = 'redis',
-  RedisAuto = 'redis-auto'
 }
 
 const PARAMS_SEPARATOR = ':'

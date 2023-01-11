@@ -1,11 +1,14 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
+import { first, isEmpty, without } from 'lodash'
+import { decode } from 'html-entities'
+import { useParams } from 'react-router-dom'
 import { EuiResizableContainer } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
-import { Nullable } from 'uiSrc/utils'
+import { Maybe, Nullable, getMonacoLines, getMultiCommands, getParsedParamsInQuery, isParamsLine, removeMonacoComments } from 'uiSrc/utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import InstanceHeader from 'uiSrc/components/instance-header'
@@ -15,11 +18,14 @@ import {
   appContextWorkbench
 } from 'uiSrc/slices/app/context'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode, AutoExecute } from 'uiSrc/slices/interfaces/workbench'
 
-import WBResultsWrapper from '../../wb-results'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
+import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import EnablementAreaWrapper from '../../enablement-area'
-
+import WBResultsWrapper from '../../wb-results'
 import styles from './styles.module.scss'
 
 const verticalPanelIds = {
@@ -43,6 +49,16 @@ export interface Props {
   onChangeGroupMode: () => void
 }
 
+interface IState {
+  activeMode: RunQueryMode
+  resultsMode?: ResultsMode
+}
+
+let state: IState = {
+  activeMode: RunQueryMode.ASCII,
+  resultsMode: ResultsMode.Default
+}
+
 const WBView = (props: Props) => {
   const {
     script = '',
@@ -59,12 +75,21 @@ const WBView = (props: Props) => {
     onChangeGroupMode,
     scrollDivRef,
   } = props
+
+  state = {
+    activeMode,
+    resultsMode
+  }
+
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
+  const { panelSizes: { vertical } } = useSelector(appContextWorkbench)
+  const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
+  const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
+
   const [isMinimized, setIsMinimized] = useState<boolean>(
     localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? false
   )
   const [isCodeBtnDisabled, setIsCodeBtnDisabled] = useState<boolean>(false)
-
-  const { panelSizes: { vertical } } = useSelector(appContextWorkbench)
 
   const verticalSizesRef = useRef(vertical)
 
@@ -82,6 +107,76 @@ const WBView = (props: Props) => {
     verticalSizesRef.current = newSizes
   }, [])
 
+  const handleSubmit = (value?: string) => {
+    sendEventSubmitTelemetry(TelemetryEvent.WORKBENCH_COMMAND_SUBMITTED, value)
+    onSubmit(value)
+  }
+
+  const handleReRun = (query?: string, commandId?: Nullable<string>, executeParams: CodeButtonParams = {}) => {
+    sendEventSubmitTelemetry(TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN, query, executeParams)
+    onSubmit(query, commandId, executeParams)
+  }
+
+  const sendEventSubmitTelemetry = (
+    event: TelemetryEvent,
+    commandInit = script,
+    executeParams?: CodeButtonParams,
+  ) => {
+    const eventData = (() => {
+      const lines = getMonacoLines(commandInit)
+      const firstLine = first(lines) ?? ''
+
+      const parsedParams: Maybe<CodeButtonParams> = isEmpty(executeParams)
+        ? getParsedParamsInQuery(commandInit)
+        : executeParams
+
+      const auto = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
+        ? parsedParams?.auto === AutoExecute.True
+        : undefined
+
+      if (isParamsLine(firstLine)) lines.shift()
+
+      const commands = without(
+        lines
+          .map((command) => removeMonacoComments(decode(command).trim())),
+        ''
+      )
+
+      const [commandLine, ...rest] = commands.map((command = '') => {
+        const matchedCommand = REDIS_COMMANDS_ARRAY.find((commandName) =>
+          command.toUpperCase().startsWith(commandName))
+        return matchedCommand ?? command.split(' ')?.[0]
+      })
+
+      const multiCommands = getMultiCommands(rest).replaceAll('\n', ';')
+      const command = [commandLine, multiCommands].join('') ? [commandLine, multiCommands].join(';') : null
+
+      return {
+        command: command?.toUpperCase(),
+        auto,
+        databaseId: instanceId,
+        multiple: multiCommands ? 'Multiple' : 'Single',
+        pipeline: (parsedParams?.pipeline || batchSize) > 1,
+        rawMode: (parsedParams?.mode?.toUpperCase() || state.activeMode) === RunQueryMode.Raw,
+        results:
+          ResultsMode.GroupMode.startsWith?.(
+            parsedParams?.results?.toUpperCase()
+            || state.resultsMode
+            || 'GROUP'
+          )
+            ? 'group'
+            : (parsedParams?.results === 'silent' ? 'silent' : 'single'),
+      }
+    })()
+
+    if (eventData.command) {
+      sendEventTelemetry({
+        event,
+        eventData
+      })
+    }
+  }
+
   return (
     <div className={cx('workbenchPage', styles.container)}>
       <InstanceHeader />
@@ -91,7 +186,7 @@ const WBView = (props: Props) => {
             isMinimized={isMinimized}
             setIsMinimized={setIsMinimized}
             setScript={setScript}
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit}
             scriptEl={scriptEl}
             isCodeBtnDisabled={isCodeBtnDisabled}
           />
@@ -116,7 +211,7 @@ const WBView = (props: Props) => {
                     setQuery={setScript}
                     setQueryEl={setScriptEl}
                     setIsCodeBtnDisabled={setIsCodeBtnDisabled}
-                    onSubmit={onSubmit}
+                    onSubmit={handleSubmit}
                     onQueryChangeMode={onQueryChangeMode}
                     onChangeGroupMode={onChangeGroupMode}
                   />
@@ -142,7 +237,7 @@ const WBView = (props: Props) => {
                     activeMode={activeMode}
                     activeResultsMode={resultsMode}
                     scrollDivRef={scrollDivRef}
-                    onQueryReRun={onSubmit}
+                    onQueryReRun={handleReRun}
                     onQueryOpen={onQueryOpen}
                     onQueryDelete={onQueryDelete}
                   />

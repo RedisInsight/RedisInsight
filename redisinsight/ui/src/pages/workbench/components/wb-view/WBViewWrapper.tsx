@@ -14,9 +14,10 @@ import {
   scrollIntoView,
   getExecuteParams,
   isGroupMode,
-  isParamsLine,
   getMonacoLines,
   Maybe,
+  isGroupResults,
+  getParsedParamsInQuery,
 } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import {
@@ -168,7 +169,7 @@ const WBViewWrapper = () => {
       ''
     )
 
-    const chunkSize = isGroupMode(resultsMode) ? commandsForExecuting.length : (batchSize > 1 ? batchSize : 1)
+    const chunkSize = isGroupResults(resultsMode) ? commandsForExecuting.length : (batchSize > 1 ? batchSize : 1)
 
     const [commands, ...rest] = chunk(commandsForExecuting, chunkSize)
     const multiCommands = rest.map((command) => getMultiCommands(command))
@@ -255,15 +256,8 @@ const WBViewWrapper = () => {
   ) => {
     if (state.loading || (!value && !script)) return
 
-    let parsedParams: Maybe<CodeButtonParams> = {}
     const lines = getMonacoLines(value)
-
-    if (isParamsLine(first(lines))) {
-      const params = lines.shift()
-        ?.replaceAll?.('\n', '')
-        ?? ''
-      parsedParams = parseParams(params)
-    }
+    const parsedParams: Maybe<CodeButtonParams> = getParsedParamsInQuery(value)
 
     const { clearEditor } = executeParams
     handleSubmit(value, commandId, { ...executeParams, ...parsedParams })

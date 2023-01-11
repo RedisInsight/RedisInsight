@@ -223,6 +223,36 @@ export interface EntityInfo {
   parentId?: string
 }
 
+interface IAncestors {
+  found: boolean
+  pairs: [string, string][]
+}
+
+export function GetAncestors(info: EntityInfo, searchId: string, a: IAncestors): IAncestors {
+  if (searchId === info.id) {
+    return {
+      found: true,
+      pairs: info.parentId ? [[info.parentId, info.id]] : []
+    }
+  } else {
+    let r: IAncestors = {...a}
+    for (let i = 0; i < info.children.length; i++) {
+      let c = info.children[i]
+      let ci = GetAncestors(c, searchId, a)
+      if (ci.found) {
+        r.found = true
+        r.pairs = [...a.pairs, ...ci.pairs]
+        if (info.parentId) {
+          r.pairs = [...r.pairs, [info.parentId, info.id]]
+        }
+        return r
+      }
+    }
+    return r
+  }
+}
+
+
 class Expr {
   Core: string
   Type?: string
@@ -286,10 +316,11 @@ class IntersectExpr {
   }
 
   toJSON(): EntityInfo {
+    const id = uuidv4()
     return {
-      id: uuidv4(),
+      id,
       type: EntityType.INTERSECT,
-      children: this.Core.map(x => x.toJSON()),
+      children: this.Core.map(x => x.toJSON()).map((d: EntityInfo) => ({...d, parentId: id})),
     }
   }
 }
@@ -302,10 +333,11 @@ class UnionExpr {
   }
 
   toJSON(): EntityInfo {
+    const id = uuidv4()
     return {
-      id: uuidv4(),
+      id,
       type: EntityType.UNION,
-      children: this.Core.map(x => x.toJSON())
+      children: this.Core.map(x => x.toJSON()).map((d: EntityInfo) => ({...d, parentId: id}))
     }
   }
 }

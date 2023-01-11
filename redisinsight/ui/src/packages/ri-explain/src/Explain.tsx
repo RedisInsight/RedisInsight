@@ -10,6 +10,7 @@ import {
   ParseGraph,
   ParseProfile,
   ParseProfileCluster,
+  GetAncestors,
 } from './parser'
 import { ExplainNode, ProfileNode } from './Node'
 
@@ -123,6 +124,29 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
     })
 
     graph.on("resize", () => graph.centerContent())
+    graph.on("node:mouseenter", x => {
+      const {id} = x.node.getData()
+      const ancestors = GetAncestors(data, id, {found: false, pairs: []})
+      if (ancestors.found) {
+        ancestors.pairs.forEach(p => {
+          document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k => {
+            (k as any).setAttribute("style", "stroke: #85A2FE; stroke-linecap: butt; stroke-width: 2px")
+          })
+        })
+      }
+    })
+
+    graph.on("node:mouseleave", x => {
+      const {id} = x.node.getData()
+      const ancestors = GetAncestors(data, id, {found: false, pairs: []})
+      if (ancestors.found) {
+        ancestors.pairs.forEach(p => {
+          document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k => {
+            (k as any).setAttribute("style", "")
+          })
+        })
+      }
+    })
 
     function resize() {
       const isFullScreen = parent.document.body.getElementsByClassName('fullscreen').length > 0

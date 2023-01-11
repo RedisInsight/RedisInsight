@@ -24,7 +24,12 @@ const commands = [
     `[mode=ascii;results=single] \
     ${counter} get ${keyName}`,
     `[mode=ascii;mode=raw;results=single] \
-    ${counter} get ${keyName}`
+    ${counter} get ${keyName}`,
+    `[mode=raw;results=silent;pipeline=3] \
+    ${counter} INFO`,
+    `[mode=ascii;results=silent;pipeline=1] \
+    ${counter} INFO
+    invalidCommand`
 ];
 const commandForSend = `set ${keyName} "${keyValue}"`;
 
@@ -37,12 +42,15 @@ fixture `Workbench modes to non-auto guides`
         await workbenchPage.sendCommandInWorkbench(commandForSend);
     })
     .afterEach(async t => {
-        // Clear and delete database
-        await t.click(myRedisDatabasePage.browserButton);
-        await browserPage.deleteKeyByName(keyName);
+        // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test('Workbench modes from editor', async t => {
+test.after(async t => {
+    // Clear and delete database
+    await t.click(myRedisDatabasePage.browserButton);
+    await browserPage.deleteKeyByName(keyName);
+    await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+})('Workbench modes from editor', async t => {
     const groupCommandResultName = `${counter} Command(s) - ${counter} success, 0 error(s)`;
     const containerOfCommand = await workbenchPage.getCardContainerByCommand(groupCommandResultName);
 
@@ -90,4 +98,26 @@ test('Workbench modes from editor', async t => {
     // Verify that if user specifies the same parameters he can see the first one is applied
     await workbenchPage.sendCommandInWorkbench(commands[4]);
     await t.expect(workbenchPage.queryTextResult.textContent).contains(`"${keyValue}"`, 'The first duplicated parameter not applied');
+});
+test('Workbench Silent mode', async t => {
+    const silentCommandSuccessResultName = `${counter} Command(s) - ${counter} success`;
+    const silentCommandErrorsResultName = `${counter + 1} Command(s) - ${counter} success, 1 error(s)`;
+
+    await workbenchPage.sendCommandInWorkbench(commands[5]);
+    // Verify that user can see the success command output with header: {number} Command(s) - {number} success
+    await t.expect(workbenchPage.queryCardCommand.textContent).eql(silentCommandSuccessResultName, 'Silent mode not applied');
+    // Verify that user can see the command output is grouped into one window when run any guide or tutorial with the [results=silent]
+    await t.expect(workbenchPage.queryTextResult.exists).notOk('The result is displayed in silent mode');
+
+    await t.hover(workbenchPage.parametersAnchor);
+    // Verify that silent mode icon displayed
+    await t.expect(workbenchPage.silentModeIcon.exists).ok('Silent mode icon not displayed');
+
+    await workbenchPage.sendCommandInWorkbench(commands[6]);
+    // Verify that user can expand the results to see the list of commands with errors and the list of errors per a command
+    await t.click(workbenchPage.queryCardContainer.nth(0));
+    await t.expect(workbenchPage.queryCardCommand.nth(0).textContent).contains('invalidCommand', 'Silent mode result does not contain error');
+    await t.expect(workbenchPage.queryCardCommand.nth(0).textContent).notContains('INFO', 'Silent mode result contains not only errors');
+    // Verify that user can see the errors command output with header: {number} Command(s) - {number} success, {number} error(s)
+    await t.expect(workbenchPage.queryCardCommand.textContent).eql(silentCommandErrorsResultName, 'Silent mode with errors header text is invalid');
 });

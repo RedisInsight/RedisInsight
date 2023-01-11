@@ -72,6 +72,7 @@ export class WorkbenchPage {
     parametersAnchor = Selector('[data-testid=parameters-anchor]');
     groupModeIcon = Selector('[data-testid=group-mode-tooltip]');
     rawModeIcon = Selector('[data-testid=raw-mode-tooltip]');
+    silentModeIcon = Selector('[data-testid=silent-mode-tooltip]');
     //LINKS
     timeSeriesLink = Selector('[data-testid=internal-link-redis_for_time_series]');
     redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');

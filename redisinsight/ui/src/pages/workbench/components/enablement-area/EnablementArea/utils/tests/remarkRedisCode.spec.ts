@@ -1,10 +1,9 @@
-import { ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { visit } from 'unist-util-visit'
-import { remarkRedisCode } from '../remarkRedisCode'
+import { remarkRedisCode } from '../transform/remarkRedisCode'
 
 jest.mock('unist-util-visit')
 
-const getValue = (meta: string = ExecuteButtonMode.Manual, params?: string, value?: string) =>
+const getValue = (meta: string, params?: string, value?: string) =>
   `<Code label="${meta}" params="${params}">{${JSON.stringify(value)}}</Code>`
 
 describe('remarkRedisCode', () => {

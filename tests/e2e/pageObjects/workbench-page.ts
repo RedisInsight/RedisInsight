@@ -183,6 +183,19 @@ export class WorkbenchPage {
     }
 
     /**
+     * Send multiple commands in Workbench
+     * @param commands The commands
+     */
+    async sendMultipleCommandsInWorkbench(commands: string[]): Promise<void> {
+        for (const command of commands) {
+            await t
+                .typeText(this.queryInput, command, { replace: false, speed: 1, paste: true })
+                .pressKey('enter');
+        }
+        await t.click(this.submitCommandButton);
+    }
+
+    /**
      * Send commands array in Workbench page
      * @param commands The array of commands to send
      */

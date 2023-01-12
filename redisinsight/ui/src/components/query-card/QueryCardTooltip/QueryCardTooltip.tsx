@@ -53,6 +53,7 @@ const QueryCardTooltip = (props: Props) => {
   return (
     <EuiToolTip
       className={styles.tooltip}
+      anchorClassName={styles.tooltipAnchor}
       content={<>{contentItems}</>}
       position="bottom"
     >

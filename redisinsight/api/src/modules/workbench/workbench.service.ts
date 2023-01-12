@@ -63,11 +63,13 @@ export class WorkbenchService {
    * @param clientMetadata
    * @param dto
    * @param commands
+   * @param onlyErrorResponse
    */
   async createCommandsExecution(
     clientMetadata: ClientMetadata,
     dto: Partial<CreateCommandExecutionDto>,
     commands: string[],
+    onlyErrorResponse: boolean = false,
   ): Promise<Partial<CommandExecution>> {
     const commandExecution: Partial<CommandExecution> = {
       ...dto,
@@ -114,7 +116,7 @@ export class WorkbenchService {
     commandExecution.command = commands.join('\r\n');
     commandExecution.result = [{
       status: CommandExecutionStatus.Success,
-      response: executionResults,
+      response: onlyErrorResponse ? failedCommands : executionResults,
     }];
 
     return commandExecution;
@@ -134,9 +136,9 @@ export class WorkbenchService {
     // temporary workaround. Just create client before any command execution precess
     await this.databaseConnectionService.getOrCreateClient(clientMetadata);
 
-    if (dto.resultsMode === ResultsMode.GroupMode) {
+    if (dto.resultsMode === ResultsMode.GroupMode || dto.resultsMode === ResultsMode.Silent) {
       return this.commandExecutionProvider.createMany(
-        [await this.createCommandsExecution(clientMetadata, dto, dto.commands)],
+        [await this.createCommandsExecution(clientMetadata, dto, dto.commands, dto.resultsMode === ResultsMode.Silent)],
       );
     }
     // todo: rework to support pipeline

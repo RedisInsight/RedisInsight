@@ -100,8 +100,8 @@ describe('splitMonacoValuePerLines', () => {
     ],
     // Multi commands with parameters and repeating syntax error
     [
-      '[results=group;mode=raw]\nget test\n3get test2\nget bar',
-      ['get test', '3get test2', 'get bar']
+      '[results=group;mode=raw]info\nget test\n3get test2\nget bar',
+      ['info', 'get test', '3get test2', 'get bar']
     ],
   ]
   test.each(cases)(

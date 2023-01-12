@@ -557,7 +557,7 @@ describe('instances slice', () => {
   })
 
   describe('setEditedInstance', () => {
-    it('should properly set error', () => {
+    it('should properly set state', () => {
       // Arrange
       const data = instances[1]
       const state = {
@@ -582,7 +582,7 @@ describe('instances slice', () => {
   })
 
   describe('updateEditedInstance', () => {
-    it('should properly set error', () => {
+    it('should properly set state', () => {
       // Arrange
       const data = instances[1]
       const state = {

@@ -7,6 +7,8 @@ import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/u
 import {
   RECOMMENDATION_NAMES, IS_TIMESTAMP, IS_INTEGER_NUMBER_REGEX, IS_NUMBER_REGEX,
 } from 'src/constants';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';
 import { checkRedirectionError, parseRedirectionError } from 'src/utils/cli-helper';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
@@ -24,6 +26,8 @@ const maxRediSearchStringMemory = 512 * 1024;
 const bigStringMemory = 5_000_000;
 const sortedSetCountForCheck = 100;
 const minRedisVersion = '6';
+
+const redisInsightCommands = ['info', 'monitor', 'slowlog', 'acl', 'config', 'module'];
 
 @Injectable()
 export class RecommendationProvider {
@@ -411,13 +415,14 @@ export class RecommendationProvider {
       return null;
     }
   }
+
   /**
   * Check search indexes recommendation
    * @param redisClient
    * @param keys
-   * @param isCluster
+   * @param client
    */
-
+  // eslint-disable-next-line
   async determineSearchIndexesRecommendation(
     redisClient: Redis,
     keys: Key[],
@@ -450,14 +455,11 @@ export class RecommendationProvider {
               const nodes = client.nodes('master');
 
               const node: any = nodes.find(({ options: { host, port } }: Redis) => `${host}:${port}` === address);
-              // if (!node) {
-              //   node = nodeRole === ClusterNodeRole.All
-              //     ? nodeAddress
-              //     : `${nodeAddress} [${nodeRole.toLowerCase()}]`;
-              //   // throw new ClusterNodeNotFoundError(
-              //   //   ERROR_MESSAGES.CLUSTER_NODE_NOT_FOUND(node),
-              //   // );
-              // }
+              if (!node) {
+                throw new ClusterNodeNotFoundError(
+                  ERROR_MESSAGES.CLUSTER_NODE_NOT_FOUND(node),
+                );
+              }
 
               keyBySortedSetMember = await node.sendCommand(
                 new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
@@ -490,7 +492,7 @@ export class RecommendationProvider {
         member,
       ]))).exec();
 
-      const isHashOrJSONName = types.some(([, type]) => type === RedisDataType.JSON || type === RedisDataType.Hash)
+      const isHashOrJSONName = types.some(([, type]) => type === RedisDataType.JSON || type === RedisDataType.Hash);
       return isHashOrJSONName ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
     } catch (err) {
       this.logger.error('Can not determine search indexes recommendation', err);
@@ -498,6 +500,32 @@ export class RecommendationProvider {
     }
   }
 
+  /*
+ * Check dangerous commands recommendation
+ * @param redisClient
+ */
+
+  async determineDangerousCommandsRecommendation(
+    redisClient: Redis | Cluster,
+  ): Promise<Recommendation> {
+    try {
+      const dangerousCommands = await redisClient.sendCommand(
+        new Command('command', ['LIST', 'FILTERBY', 'aclcat', 'dangerous'], { replyEncoding: 'utf8' }),
+      ) as string[];
+
+      const filteredDangerousCommands = dangerousCommands.filter((command) => {
+        const commandName = command.split('|')[0];
+        return !redisInsightCommands.includes(commandName);
+      });
+      const commands = filteredDangerousCommands.join('\r\n').toUpperCase();
+      return filteredDangerousCommands
+        ? { name: RECOMMENDATION_NAMES.DANGEROUS_COMMANDS, params: { commands } }
+        : null;
+    } catch (err) {
+      this.logger.error('Can not determine dangerous commands recommendation', err);
+      return null;
+    }
+  }
 
   private async checkAuth(redisClient: Redis | Cluster): Promise<boolean> {
     try {

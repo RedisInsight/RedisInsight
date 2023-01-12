@@ -1,5 +1,7 @@
 import React from 'react'
+import { isString, isArray } from 'lodash'
 import {
+  EuiText,
   EuiTextColor,
   EuiToolTip,
   EuiFlexGroup,
@@ -7,6 +9,7 @@ import {
   EuiLink,
   EuiSpacer,
 } from '@elastic/eui'
+import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
@@ -17,7 +20,8 @@ import styles from './styles.module.scss'
 interface IContentElement {
   id: string
   type: string
-  value: any[]
+  value: any[] | any
+  parameter: string[]
 }
 
 const badgesContent = [
@@ -58,21 +62,44 @@ export const renderBadgesLegend = () => (
   </EuiFlexGroup>
 )
 
-const renderContentElement = ({ id, type, value }: IContentElement) => {
+const replaceVariables = (value: any[] | any, parameter: string[], params: any) => (
+  parameter && isString(value) ? value.replace(/\$\{\d}/i, (matched) => {
+    const parameterIndex: string = matched.substring(
+      matched.indexOf('{') + 1,
+      matched.lastIndexOf('}')
+    )
+    return params[parameter[+parameterIndex]]
+  }) : value
+)
+
+const renderContentElement = ({ id, type, value: jsonValue, parameter }: IContentElement, params: any) => {
+  const value = replaceVariables(jsonValue, parameter, params)
   switch (type) {
     case 'paragraph':
-      return <EuiTextColor key={id} component="div" className={styles.text} color="subdued">{value}</EuiTextColor>
+      return (
+        <EuiTextColor key={id} component="div" className={styles.text} color="subdued">
+          {value}
+        </EuiTextColor>
+      )
+    case 'pre':
+      return (
+        <EuiTextColor key={id} color="subdued">
+          <pre className={cx(styles.span, styles.text)}>
+            {value}
+          </pre>
+        </EuiTextColor>
+      )
     case 'span':
       return <EuiTextColor key={id} color="subdued" className={cx(styles.span, styles.text)}>{value}</EuiTextColor>
     case 'link':
       return <EuiLink key={id} external={false} data-testid="read-more-link" target="_blank" href={value.href}>{value.name}</EuiLink>
     case 'spacer':
-      return <EuiSpacer key={id} size={value} />
+      return <EuiSpacer key={id} size={value as SpacerSize} />
     case 'list':
       return (
         <ul key={id}>
-          {value.map((listElement: IContentElement[]) => (
-            <li>{renderContent(listElement)}</li>
+          {isArray(jsonValue) && jsonValue.map((listElement: IContentElement[]) => (
+            <li>{renderContent(listElement, params)}</li>
           ))}
         </ul>
       )
@@ -81,5 +108,5 @@ const renderContentElement = ({ id, type, value }: IContentElement) => {
   }
 }
 
-export const renderContent = (elements: IContentElement[]) => (
-  elements?.map((item) => renderContentElement(item)))
+export const renderContent = (elements: IContentElement[], params: any) => (
+  elements?.map((item) => renderContentElement(item, params)))

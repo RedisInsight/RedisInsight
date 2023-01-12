@@ -439,7 +439,7 @@
   },
   "bigAmountOfConnectedClients": {
     "id": "bigAmountOfConnectedClients",
-    "title":"Don't open a new connection for every request / every command",
+    "title": "Don't open a new connection for every request / every command",
     "content": [
       {
         "id": "1",
@@ -461,7 +461,7 @@
   },
   "setPassword": {
     "id": "setPassword",
-    "title":"Set the password",
+    "title": "Set the password",
     "content": [
       {
         "id": "1",
@@ -501,11 +501,6 @@
         "id": "1",
         "type": "paragraph",
         "value": "If you are using sorted sets to work with time series data, consider using RedisTimeSeries to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
-      },
-      {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
       },
       {
         "id": "3",
@@ -666,5 +661,47 @@
       }
     ],
     "badges": ["upgrade"]
+  },
+  "dangerousCommands": {
+    "id": "dangerousCommands",
+    "title": "Rename or disable dangerous commands",
+    "content": [
+      {
+        "id": "2",
+        "type": "pre",
+        "parameter": ["commands"],
+        "value": "${0} "
+      },
+      {
+        "id": "2",
+        "type": "span",
+        "parameter": ["commands"],
+        "value": " are currently not renamed or disabled for your Instance."
+      },
+      {
+        "id": "2",
+        "type": "paragraph",
+        "value": "These commands are powerful and dangerous if not managed properly."
+      },
+      {
+        "id": "3",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "4",
+        "type": "span",
+        "value": "Rename or disable them, especially for the production environment. "
+      },
+      {
+        "id": "5",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/download/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["code_changes"]
   }
 }

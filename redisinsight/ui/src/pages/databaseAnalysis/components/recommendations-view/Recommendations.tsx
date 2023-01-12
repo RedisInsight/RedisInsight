@@ -102,7 +102,7 @@ const Recommendations = () => {
         {renderBadgesLegend()}
       </div>
       <div className={styles.recommendationsContainer}>
-        {sortedRecommendations.map(({ name }) => {
+        {sortedRecommendations.map(({ name, params }) => {
           const {
             id = '',
             title = '',
@@ -125,7 +125,7 @@ const Recommendations = () => {
                 data-testid={`${id}-accordion`}
               >
                 <EuiPanel className={styles.accordionContent} color="subdued">
-                  {renderContent(content)}
+                  {renderContent(content, params)}
                 </EuiPanel>
               </EuiAccordion>
             </div>

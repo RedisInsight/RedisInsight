@@ -2,14 +2,12 @@ import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { isNull, flatten, concat } from 'lodash';
 import { RecommendationService } from 'src/modules/recommendation/recommendation.service';
 import { catchAclError } from 'src/utils';
-import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { plainToClass } from 'class-transformer';
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
 import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
-import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { ClientMetadata } from 'src/common/models';
 
@@ -55,41 +53,25 @@ export class DatabaseAnalysisService {
         progress.total += nodeResult.progress.total;
       });
 
-      const recommendations = DatabaseAnalysisService.getRecommendationsSummary(
-        // flatten(await Promise.all(
-        //   scanResults.map(async (nodeResult, idx) => (
-        //     await this.recommendationService.getRecommendations({
-        //       client: nodeResult.client,
-        //       keys: nodeResult.keys,
-        //       total: progress.total,
-        //       globalClient: client,
-        //       // TODO: create generic solution to exclude recommendations
-        //       exclude: idx !== 0 ? [RECOMMENDATION_NAMES.RTS] : [],
-        //     })
-        //   )),
-        // )),
-        await scanResults.reduce(async (previousPromise, nodeResult) => {
-          const jobsArray = await previousPromise;
-          let recommendationToExclude = [];
-          const nodeRecommendations = await this.recommendationService.getRecommendations({
-            client: nodeResult.client,
-            keys: nodeResult.keys,
-            total: progress.total,
-            globalClient: client,
-            exclude: recommendationToExclude,
-            // TODO: create generic solution to exclude recommendations
-            // exclude: idx !== 0 ? [RECOMMENDATION_NAMES.RTS] : [],
-          });
-          recommendationToExclude = concat(recommendationToExclude, [RECOMMENDATION_NAMES.RTS]);
-          const foundedRecommendations = nodeRecommendations.filter((recommendation) => !isNull(recommendation));
-          const foundedRecommendationNames = foundedRecommendations.map(({ name }) => name);
-          recommendationToExclude = concat(recommendationToExclude, foundedRecommendationNames);
-          jobsArray.push(foundedRecommendations);
-          console.log(recommendationToExclude);
-          console.log(foundedRecommendations);
-          return flatten(jobsArray);
-        }, Promise.resolve([])),
-      );
+      let recommendationToExclude = [];
+
+      const recommendations = await scanResults.reduce(async (previousPromise, nodeResult) => {
+        const jobsArray = await previousPromise;
+        const nodeRecommendations = await this.recommendationService.getRecommendations({
+          client: nodeResult.client,
+          keys: nodeResult.keys,
+          total: progress.total,
+          globalClient: client,
+          exclude: recommendationToExclude,
+        });
+        // recommendationToExclude = concat(recommendationToExclude, [RECOMMENDATION_NAMES.RTS]);
+        const foundedRecommendations = nodeRecommendations.filter((recommendation) => !isNull(recommendation));
+        const foundedRecommendationNames = foundedRecommendations.map(({ name }) => name);
+        recommendationToExclude = concat(recommendationToExclude, foundedRecommendationNames);
+        recommendationToExclude.push(...foundedRecommendationNames);
+        jobsArray.push(foundedRecommendations);
+        return flatten(jobsArray);
+      }, Promise.resolve([]));
 
       const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
         databaseId: clientMetadata.databaseId,
@@ -126,18 +108,5 @@ export class DatabaseAnalysisService {
    */
   async list(databaseId: string): Promise<ShortDatabaseAnalysis[]> {
     return this.databaseAnalysisProvider.list(databaseId);
-  }
-
-  /**
-   * Get recommendations summary
-   * @param recommendations
-   */
-
-  static getRecommendationsSummary(recommendations: Recommendation[]): Recommendation[] {
-    // return uniqBy(
-    //   recommendations,
-    //   'name',
-    // );
-    return recommendations;
   }
 }

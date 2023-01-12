@@ -309,6 +309,20 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
   })
 
+  it('should render configuration_changes badge in dangerousCommands recommendation', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'dangerousCommands', params: { commands: 'some commands' } }]
+      }
+    }))
+
+    render(<Recommendations />)
+    expect(screen.queryByTestId('code_changes')).toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('configuration_changes')).not.toBeInTheDocument()
+  })
+
   it('should collapse/expand and sent proper telemetry event', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,

@@ -17,4 +17,5 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   REDIS_VERSION: 'redisVersion',
   REDIS_SEARCH: 'redisSearch',
   SEARCH_INDEXES: 'searchIndexes',
+  DANGEROUS_COMMANDS: 'dangerousCommands',
 });

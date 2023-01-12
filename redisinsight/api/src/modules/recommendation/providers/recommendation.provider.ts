@@ -428,55 +428,54 @@ export class RecommendationProvider {
     keys: Key[],
     client: any,
   ): Promise<Recommendation> {
-    if (client.isCluster) {
-      let processedKeysNumber = 0;
-      let isJSONOrHash = false;
-      let sortedSetNumber = 0;
-      while (
-        processedKeysNumber < keys.length
-        && !isJSONOrHash
-        && sortedSetNumber <= sortedSetCountForCheck
-      ) {
-        if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
-          processedKeysNumber += 1;
-        } else {
-          let keyType: string;
-          const sortedSetMember = await redisClient.sendCommand(
-            new Command('zrange', [keys[processedKeysNumber].name, 0, 0], { replyEncoding: 'utf8' }),
-          ) as string[];
-
-          try {
-            keyType = await redisClient.sendCommand(
-              new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
-            ) as string;
-          } catch (err) {
-            if (err && checkRedirectionError(err)) {
-              const { address } = parseRedirectionError(err);
-              const nodes = client.nodes('master');
-
-              const node: any = nodes.find(({ options: { host, port } }: Redis) => `${host}:${port}` === address);
-              if (!node) {
-                throw new ClusterNodeNotFoundError(
-                  ERROR_MESSAGES.CLUSTER_NODE_NOT_FOUND(node),
-                );
-              }
-
-              keyType = await node.sendCommand(
+    try {
+      if (client.isCluster) {
+        let processedKeysNumber = 0;
+        let isJSONOrHash = false;
+        let sortedSetNumber = 0;
+        while (
+          processedKeysNumber < keys.length
+          && !isJSONOrHash
+          && sortedSetNumber <= sortedSetCountForCheck
+        ) {
+          if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
+            processedKeysNumber += 1;
+          } else {
+            let keyType: string;
+            const sortedSetMember = await redisClient.sendCommand(
+              new Command('zrange', [keys[processedKeysNumber].name, 0, 0], { replyEncoding: 'utf8' }),
+            ) as string[];
+            try {
+              keyType = await redisClient.sendCommand(
                 new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
               ) as string;
-            }
-          }
-          if (keyType === RedisDataType.JSON || keyType === RedisDataType.Hash) {
-            isJSONOrHash = true;
-          }
-          processedKeysNumber += 1;
-          sortedSetNumber += 1;
-        }
-      }
+            } catch (err) {
+              if (err && checkRedirectionError(err)) {
+                const { address } = parseRedirectionError(err);
+                const nodes = client.nodes('master');
 
-      return isJSONOrHash ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
-    }
-    try {
+                const node: any = nodes.find(({ options: { host, port } }: Redis) => `${host}:${port}` === address);
+                if (!node) {
+                  throw new ClusterNodeNotFoundError(
+                    ERROR_MESSAGES.CLUSTER_NODE_NOT_FOUND(node),
+                  );
+                }
+
+                keyType = await node.sendCommand(
+                  new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
+                ) as string;
+              }
+            }
+            if (keyType === RedisDataType.JSON || keyType === RedisDataType.Hash) {
+              isJSONOrHash = true;
+            }
+            processedKeysNumber += 1;
+            sortedSetNumber += 1;
+          }
+        }
+
+        return isJSONOrHash ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
+      }
       const sortedSets = keys
         .filter(({ type }) => type === RedisDataType.ZSet)
         .slice(0, 100);

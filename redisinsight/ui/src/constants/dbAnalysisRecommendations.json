@@ -673,32 +673,22 @@
     "content": [
       {
         "id": "1",
+        "type": "paragraph",
+        "value": "The following commands are currently not renamed or disabled for your Instance. These commands are powerful and dangerous if not managed properly. Rename or disable them, especially for the production environment"
+      },
+      {
+        "id": "2",
         "type": "pre",
         "parameter": ["commands"],
         "value": "${0} "
       },
       {
-        "id": "2",
-        "type": "span",
-        "value": " are currently not renamed or disabled for your Instance."
-      },
-      {
         "id": "3",
-        "type": "paragraph",
-        "value": "These commands are powerful and dangerous if not managed properly."
+        "type": "spacer",
+        "value": "s"
       },
       {
         "id": "4",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "5",
-        "type": "span",
-        "value": "Rename or disable them, especially for the production environment. "
-      },
-      {
-        "id": "6",
         "type": "link",
         "value": {
           "href": "https://redis.io/download/",

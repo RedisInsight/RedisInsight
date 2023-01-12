@@ -9,6 +9,7 @@ export class MyRedisDatabasePage {
     //-------------------------------------------------------------------------------------------
     // CSS Selectors
     cssNumberOfDbs = '[data-testid=number-of-dbs]';
+    cssRedisStackIcon = '[data-testid=redis-stack-icon]';
     //BUTTONS
     settingsButton = Selector('[data-testid=settings-page-btn]');
     workbenchButton = Selector('[data-testid=workbench-page-btn]');

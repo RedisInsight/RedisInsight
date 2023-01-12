@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   mockDatabase, mockDatabaseAnalytics, mockDatabaseFactory, mockDatabaseInfoProvider, mockDatabaseRepository,
-  mockRedisService, MockType, mockRedisGeneralInfo,
+  mockRedisService, MockType, mockRedisGeneralInfo, mockRedisConnectionFactory,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -12,11 +12,12 @@ import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 describe('DatabaseService', () => {
   let service: DatabaseService;
   let databaseRepository: MockType<DatabaseRepository>;
-  let redisService: MockType<RedisService>;
+  let redisConnectionFactory: MockType<RedisConnectionFactory>;
   let analytics: MockType<DatabaseAnalytics>;
 
   beforeEach(async () => {
@@ -35,6 +36,10 @@ describe('DatabaseService', () => {
           useFactory: mockRedisService,
         },
         {
+          provide: RedisConnectionFactory,
+          useFactory: mockRedisConnectionFactory,
+        },
+        {
           provide: DatabaseInfoProvider,
           useFactory: mockDatabaseInfoProvider,
         },
@@ -51,7 +56,7 @@ describe('DatabaseService', () => {
 
     service = await module.get(DatabaseService);
     databaseRepository = await module.get(DatabaseRepository);
-    redisService = await module.get(RedisService);
+    redisConnectionFactory = await module.get(RedisConnectionFactory);
     analytics = await module.get(DatabaseAnalytics);
   });
 
@@ -91,7 +96,7 @@ describe('DatabaseService', () => {
       expect(analytics.sendInstanceAddFailedEvent).not.toHaveBeenCalled();
     });
     it('should not fail when collecting data for analytics event', async () => {
-      redisService.connectToDatabaseInstance.mockRejectedValueOnce(new Error());
+      redisConnectionFactory.createRedisConnection.mockRejectedValueOnce(new Error());
       expect(await service.create(mockDatabase)).toEqual(mockDatabase);
       expect(analytics.sendInstanceAddedEvent).not.toHaveBeenCalled();
       expect(analytics.sendInstanceAddFailedEvent).not.toHaveBeenCalled();

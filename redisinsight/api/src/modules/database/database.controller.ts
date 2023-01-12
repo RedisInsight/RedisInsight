@@ -202,6 +202,7 @@ export class DatabaseController {
   async connect(
     @ClientMetadataParam({
       databaseIdParam: 'id',
+      ignoreDbIndex: true,
     }) clientMetadata: ClientMetadata,
   ): Promise<void> {
     await this.connectionService.connect(clientMetadata);

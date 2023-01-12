@@ -232,11 +232,11 @@ describe('Telemetry', () => {
       event: TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN,
       eventData: {
         auto: undefined,
+        pipeline: undefined,
         command: 'INFO;',
         databaseId: INSTANCE_ID_MOCK,
         multiple: 'Single',
         results: 'single',
-        pipeline: true,
         rawMode: true,
       }
     })

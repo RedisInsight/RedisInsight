@@ -37,9 +37,11 @@ export const getParsedParamsInQuery = (query: string) => {
   const lines = getMonacoLines(query)
 
   if (isParamsLine(first(lines))) {
-    const params = lines.shift()
-      ?.replaceAll?.('\n', '')
+    const paramsLine = lines.shift() || ''
+    const params = paramsLine
+      ?.substring?.(paramsLine.indexOf(']') + 1, 0)
       ?? ''
+
     parsedParams = parseParams(params)
   }
 

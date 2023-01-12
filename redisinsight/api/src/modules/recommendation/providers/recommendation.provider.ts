@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Redis, Cluster, Command } from 'ioredis';
-import { get, isNumber } from 'lodash';
+import { get, isNull, isNumber } from 'lodash';
 import { isValid } from 'date-fns';
 import * as semverCompare from 'node-version-compare';
 import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/utils';
@@ -440,13 +440,13 @@ export class RecommendationProvider {
         if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
           processedKeysNumber += 1;
         } else {
-          let keyBySortedSetMember;
+          let keyType: string;
           const sortedSetMember = await redisClient.sendCommand(
             new Command('zrange', [keys[processedKeysNumber].name, 0, 0], { replyEncoding: 'utf8' }),
           ) as string[];
 
           try {
-            keyBySortedSetMember = await redisClient.sendCommand(
+            keyType = await redisClient.sendCommand(
               new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
             ) as string;
           } catch (err) {
@@ -461,12 +461,12 @@ export class RecommendationProvider {
                 );
               }
 
-              keyBySortedSetMember = await node.sendCommand(
+              keyType = await node.sendCommand(
                 new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
               ) as string;
             }
           }
-          if (keyBySortedSetMember === RedisDataType.JSON || keyBySortedSetMember === RedisDataType.Hash) {
+          if (keyType === RedisDataType.JSON || keyType === RedisDataType.Hash) {
             isJSONOrHash = true;
           }
           processedKeysNumber += 1;
@@ -517,8 +517,14 @@ export class RecommendationProvider {
         const commandName = command.split('|')[0];
         return !redisInsightCommands.includes(commandName);
       });
-      const commands = filteredDangerousCommands.join('\r\n').toUpperCase();
-      return filteredDangerousCommands
+
+      const activeDangerousCommands = await Promise.all(
+        filteredDangerousCommands.map(async (command) => await this.checkCommandInfo(redisClient, command)),
+      );
+      const commands = activeDangerousCommands
+        .filter((command) => !isNull(command))
+        .join('\r\n').toUpperCase();
+      return activeDangerousCommands.length
         ? { name: RECOMMENDATION_NAMES.DANGEROUS_COMMANDS, params: { commands } }
         : null;
     } catch (err) {
@@ -538,6 +544,20 @@ export class RecommendationProvider {
       }
     }
     return false;
+  }
+
+  private async checkCommandInfo(redisClient: Redis | Cluster, command: string): Promise<string> {
+    try {
+      const result = await redisClient.sendCommand(
+        new Command('command', ['info', command]),
+      );
+      if (isNull(result[0])) {
+        return null;
+      }
+    } catch (err) {
+      return null;
+    }
+    return command;
   }
 
   private checkTimestamp(value: string): boolean {

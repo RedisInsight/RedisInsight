@@ -1,4 +1,4 @@
-import { first, map } from 'lodash'
+import { first, isNull, map } from 'lodash'
 import { createSlice } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
@@ -180,6 +180,17 @@ const instancesSlice = createSlice({
       state.editedInstance.data = payload
     },
 
+    updateEditedInstance: (state, { payload }: { payload: Nullable<Instance> }) => {
+      if (isNull(state.editedInstance.data)) {
+        state.editedInstance.data = payload
+      } else {
+        state.editedInstance.data = {
+          ...state.editedInstance.data,
+          ...payload,
+        }
+      }
+    },
+
     setConnectedInstanceFailure: (state) => {
       state.connectedInstance.loading = false
     },
@@ -247,6 +258,7 @@ export const {
   changeInstanceAliasFailure,
   resetInstanceUpdate,
   setEditedInstance,
+  updateEditedInstance,
   importInstancesFromFile,
   importInstancesFromFileSuccess,
   importInstancesFromFileFailure,
@@ -435,20 +447,22 @@ export function fetchConnectedInstanceInfoAction(id: string, onSuccess?: () => v
 }
 
 // Asynchronous thunk action
-export function fetchEditedInstanceAction(id: string, onSuccess?: () => void) {
+export function fetchEditedInstanceAction(instance: Instance, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
+    dispatch(setEditedInstance(instance))
 
     try {
-      const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.DATABASES}/${id}`)
+      const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.DATABASES}/${instance.id}`)
 
       if (isStatusSuccessful(status)) {
-        dispatch(setEditedInstance(data))
+        dispatch(updateEditedInstance(data))
         dispatch(setDefaultInstanceSuccess())
       }
       onSuccess?.()
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
+      dispatch(setEditedInstance(null))
       dispatch(setConnectedInstanceFailure())
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))

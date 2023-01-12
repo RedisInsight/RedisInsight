@@ -1,9 +1,11 @@
 import React, { ReactNode } from 'react'
-import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { useSelector } from 'react-redux'
-import { appFeaturesToHighlightSelector } from 'uiSrc/slices/app/features-highlighting'
+
+import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
+import { appFeatureHighlightingSelector } from 'uiSrc/slices/app/features-highlighting'
 import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
+import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
 
 interface AnalyticsTabs {
   id: AnalyticsViewTab
@@ -11,7 +13,8 @@ interface AnalyticsTabs {
 }
 
 const DatabaseAnalyticsTab = () => {
-  const { recommendations: recommendationsHighlighting } = useSelector(appFeaturesToHighlightSelector) ?? {}
+  const { features } = useSelector(appFeatureHighlightingSelector)
+  const { recommendations: recommendationsHighlighting } = getHighlightingFeatures(features)
 
   return (
     <>
@@ -21,6 +24,7 @@ const DatabaseAnalyticsTab = () => {
         type={BUILD_FEATURES.recommendations?.type}
         isHighlight={BUILD_FEATURES.recommendations && recommendationsHighlighting}
         dotClassName="tab-highlighting-dot"
+        wrapperClassName="inner-highlighting-wrapper"
       >
         Database Analysis
       </HighlightedFeature>

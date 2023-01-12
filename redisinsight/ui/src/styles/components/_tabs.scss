@@ -67,6 +67,16 @@
     }
   }
 
+  .inner-highlighting-wrapper {
+    margin: -8px -12px;
+    padding: 8px 12px;
+
+    .tab-highlighting-dot {
+      top: 2px;
+      right: 2px;
+    }
+  }
+
   .tab-highlighting-dot {
     top: -6px;
     right: -12px;

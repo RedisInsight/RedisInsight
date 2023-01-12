@@ -17,3 +17,6 @@ export const getPagesForFeatures = (features: string[] = []) => {
 
   return result
 }
+
+export const getHighlightingFeatures = (features: string[]): { [key: string]: boolean } => features
+  .reduce((prev, next) => ({ ...prev, [next]: true }), {})

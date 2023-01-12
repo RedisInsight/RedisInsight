@@ -2,10 +2,14 @@ import React, { ReactNode } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
-import { appFeaturesToHighlightSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features-highlighting'
+import {
+  appFeatureHighlightingSelector,
+  removeFeatureFromHighlighting
+} from 'uiSrc/slices/app/features-highlighting'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 
+import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
 import Recommendations from '../recommendations-view'
 import AnalysisDataView from '../analysis-data-view'
 
@@ -16,22 +20,22 @@ interface DatabaseAnalysisTabs {
 }
 
 const RecommendationsTab = ({ count }: { count?: number }) => {
-  const { recommendations: recommendationsHighlighting } = useSelector(appFeaturesToHighlightSelector) ?? {}
+  const { features } = useSelector(appFeatureHighlightingSelector)
+  const { recommendations: recommendationsHighlighting } = getHighlightingFeatures(features)
 
   const dispatch = useDispatch()
 
-  return count ? (
-    <>
-      <HighlightedFeature
-        type="plain"
-        isHighlight={BUILD_FEATURES.recommendations && recommendationsHighlighting}
-        onClick={() => dispatch(removeFeatureFromHighlighting('recommendations'))}
-        dotClassName="tab-highlighting-dot"
-      >
-        <>Recommendations ({count})</>
-      </HighlightedFeature>
-    </>
-  ) : (<>Recommendations</>)
+  return (
+    <HighlightedFeature
+      type="plain"
+      isHighlight={BUILD_FEATURES.recommendations && recommendationsHighlighting}
+      onClick={() => dispatch(removeFeatureFromHighlighting('recommendations'))}
+      dotClassName="tab-highlighting-dot"
+      wrapperClassName="inner-highlighting-wrapper"
+    >
+      {count ? <>Recommendations ({count})</> : <>Recommendations</>}
+    </HighlightedFeature>
+  )
 }
 
 export const databaseAnalysisTabs: DatabaseAnalysisTabs[] = [

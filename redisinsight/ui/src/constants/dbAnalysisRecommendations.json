@@ -503,6 +503,11 @@
         "value": "If you are using sorted sets to work with time series data, consider using RedisTimeSeries to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
       },
       {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
         "id": "3",
         "type": "span",
         "value": "Create a "
@@ -667,7 +672,7 @@
     "title": "Rename or disable dangerous commands",
     "content": [
       {
-        "id": "2",
+        "id": "1",
         "type": "pre",
         "parameter": ["commands"],
         "value": "${0} "
@@ -679,22 +684,22 @@
         "value": " are currently not renamed or disabled for your Instance."
       },
       {
-        "id": "2",
+        "id": "3",
         "type": "paragraph",
         "value": "These commands are powerful and dangerous if not managed properly."
       },
       {
-        "id": "3",
+        "id": "4",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "4",
+        "id": "5",
         "type": "span",
         "value": "Rename or disable them, especially for the production environment. "
       },
       {
-        "id": "5",
+        "id": "6",
         "type": "link",
         "value": {
           "href": "https://redis.io/download/",

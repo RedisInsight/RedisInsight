@@ -44,9 +44,6 @@ export const {
 } = appFeaturesHighlightingSlice.actions
 
 export const appFeatureHighlightingSelector = (state: RootState) => state.app.featuresHighlighting
-export const appFeaturesToHighlightSelector = (state: RootState): { [key: string]: boolean } =>
-  state.app.featuresHighlighting.features
-    .reduce((prev, next) => ({ ...prev, [next]: true }), {})
 export const appFeaturePagesHighlightingSelector = (state: RootState) => state.app.featuresHighlighting.pages
 
 export default appFeaturesHighlightingSlice.reducer

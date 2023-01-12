@@ -1,4 +1,5 @@
 import React from 'react'
+import { PageNames } from 'uiSrc/constants/pages'
 
 export type FeaturesHighlightingType = 'plain' | 'tooltip' | 'popover'
 
@@ -9,9 +10,10 @@ interface BuildHighlightingFeature {
   page?: string
 }
 export const BUILD_FEATURES: { [key: string]: BuildHighlightingFeature } = {
-  importDatabases: {
+  recommendations: {
     type: 'tooltip',
-    title: 'Import Database Connections',
-    content: 'Import your database connections from other Redis UIs'
+    title: 'Database Recommendations',
+    content: 'Run database analysis to get recommendations for optimizing your database.',
+    page: PageNames.analytics
   }
 }

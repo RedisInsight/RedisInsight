@@ -163,7 +163,7 @@ const WBView = (props: Props) => {
             || 'GROUP'
           )
             ? 'group'
-            : (parsedParams?.results === 'silent' ? 'silent' : 'single'),
+            : (parsedParams?.results?.toLowerCase() === 'silent' ? 'silent' : 'single'),
       }
     })()
 

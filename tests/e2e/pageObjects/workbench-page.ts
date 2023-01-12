@@ -69,6 +69,10 @@ export class WorkbenchPage {
     documentHashCreateButton = Selector('[data-testid=preselect-auto-Create]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
+    parametersAnchor = Selector('[data-testid=parameters-anchor]');
+    groupModeIcon = Selector('[data-testid=group-mode-tooltip]');
+    rawModeIcon = Selector('[data-testid=raw-mode-tooltip]');
+    silentModeIcon = Selector('[data-testid=silent-mode-tooltip]');
     //LINKS
     timeSeriesLink = Selector('[data-testid=internal-link-redis_for_time_series]');
     redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
@@ -176,6 +180,19 @@ export class WorkbenchPage {
         await t
             .typeText(this.queryInput, command, { replace: true, speed, paste })
             .click(this.submitCommandButton);
+    }
+
+    /**
+     * Send multiple commands in Workbench
+     * @param commands The commands
+     */
+    async sendMultipleCommandsInWorkbench(commands: string[]): Promise<void> {
+        for (const command of commands) {
+            await t
+                .typeText(this.queryInput, command, { replace: false, speed: 1, paste: true })
+                .pressKey('enter');
+        }
+        await t.click(this.submitCommandButton);
     }
 
     /**

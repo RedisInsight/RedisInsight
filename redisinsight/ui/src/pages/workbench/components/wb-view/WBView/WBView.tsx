@@ -8,7 +8,7 @@ import { EuiResizableContainer } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
-import { Maybe, Nullable, getMonacoLines, getMultiCommands, getParsedParamsInQuery, isParamsLine, removeMonacoComments } from 'uiSrc/utils'
+import { Maybe, Nullable, getMultiCommands, getParsedParamsInQuery, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import InstanceHeader from 'uiSrc/components/instance-header'
@@ -123,21 +123,11 @@ const WBView = (props: Props) => {
     executeParams?: CodeButtonParams,
   ) => {
     const eventData = (() => {
-      const lines = getMonacoLines(commandInit)
-      const firstLine = first(lines) ?? ''
-
       const parsedParams: Maybe<CodeButtonParams> = isEmpty(executeParams)
         ? getParsedParamsInQuery(commandInit)
         : executeParams
-
-      const auto = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
-        ? parsedParams?.auto === AutoExecute.True
-        : undefined
-
-      if (isParamsLine(firstLine)) lines.shift()
-
       const commands = without(
-        lines
+        splitMonacoValuePerLines(commandInit)
           .map((command) => removeMonacoComments(decode(command).trim())),
         ''
       )
@@ -151,12 +141,20 @@ const WBView = (props: Props) => {
       const multiCommands = getMultiCommands(rest).replaceAll('\n', ';')
       const command = [commandLine, multiCommands].join('') ? [commandLine, multiCommands].join(';') : null
 
+      const auto = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
+        ? parsedParams?.auto === AutoExecute.True
+        : undefined
+
+      const pipeline = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
+        ? (parsedParams?.pipeline || batchSize) > 1
+        : undefined
+
       return {
         command: command?.toUpperCase(),
         auto,
+        pipeline,
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
-        pipeline: (parsedParams?.pipeline || batchSize) > 1,
         rawMode: (parsedParams?.mode?.toUpperCase() || state.activeMode) === RunQueryMode.Raw,
         results:
           ResultsMode.GroupMode.startsWith?.(

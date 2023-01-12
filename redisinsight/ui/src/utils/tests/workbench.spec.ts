@@ -42,6 +42,7 @@ describe('getParsedParamsInQuery', () => {
     ['get test\n[mode=raw]\nget test2\nget test3', {}],
     ['[mode=raw]\nget test\nget test2\nget test3', { mode: 'raw' }],
     ['[mode=raw;mode=ascii]\nget test\nget test2\nget test3', { mode: 'raw' }],
+    ['[mode=raw;results=ascii]info\nget test\nget test2\nget test3', { mode: 'raw', results: 'ascii' }],
     ['[mode=raw;results=group;pipeline=10]\nget test\nget test2\nget test3', { mode: 'raw', results: 'group', pipeline: '10' }],
   ])('for input: %s (input), should be output: %s',
     (input, expected) => {

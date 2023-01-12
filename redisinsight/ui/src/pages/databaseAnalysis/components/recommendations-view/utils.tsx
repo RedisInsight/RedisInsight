@@ -1,7 +1,6 @@
 import React from 'react'
 import { isString, isArray } from 'lodash'
 import {
-  EuiText,
   EuiTextColor,
   EuiToolTip,
   EuiFlexGroup,

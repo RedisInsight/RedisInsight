@@ -2,6 +2,7 @@ import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { isNull, flatten, concat } from 'lodash';
 import { RecommendationService } from 'src/modules/recommendation/recommendation.service';
 import { catchAclError } from 'src/utils';
+import { ONE_NODE_RECOMMENDATIONS } from 'src/constants';
 import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/database-analyzer';
 import { plainToClass } from 'class-transformer';
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
@@ -55,7 +56,7 @@ export class DatabaseAnalysisService {
 
       let recommendationToExclude = [];
 
-      const recommendations = await scanResults.reduce(async (previousPromise, nodeResult) => {
+      const recommendations = await scanResults.reduce(async (previousPromise, nodeResult, idx) => {
         const jobsArray = await previousPromise;
         const nodeRecommendations = await this.recommendationService.getRecommendations({
           client: nodeResult.client,
@@ -64,7 +65,9 @@ export class DatabaseAnalysisService {
           globalClient: client,
           exclude: recommendationToExclude,
         });
-        // recommendationToExclude = concat(recommendationToExclude, [RECOMMENDATION_NAMES.RTS]);
+        if (idx === 0) {
+          recommendationToExclude = concat(recommendationToExclude, ONE_NODE_RECOMMENDATIONS);
+        }
         const foundedRecommendations = nodeRecommendations.filter((recommendation) => !isNull(recommendation));
         const foundedRecommendationNames = foundedRecommendations.map(({ name }) => name);
         recommendationToExclude = concat(recommendationToExclude, foundedRecommendationNames);

@@ -9,6 +9,9 @@ import {
 import { Default } from 'src/common/decorators';
 
 export class SshOptions {
+  @Expose()
+  id: string;
+
   @ApiProperty({
     description: 'The hostname of SSH server',
     type: String,

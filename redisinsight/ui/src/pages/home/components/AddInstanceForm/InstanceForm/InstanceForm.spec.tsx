@@ -749,6 +749,15 @@ describe('InstanceForm', () => {
       )
     })
 
+    expect(screen.getByTestId(BTN_SUBMIT)).toBeDisabled()
+
+    await act(() => {
+      fireEvent.change(
+        screen.getByTestId('sshUsername'),
+        { target: { value: 'username' } }
+      )
+    })
+
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
   })
 
@@ -782,6 +791,10 @@ describe('InstanceForm', () => {
       fireEvent.change(
         screen.getByTestId('sshHost'),
         { target: { value: 'localhost' } }
+      )
+      fireEvent.change(
+        screen.getByTestId('sshUsername'),
+        { target: { value: 'username' } }
       )
     })
 
@@ -828,6 +841,11 @@ describe('InstanceForm', () => {
       )
 
       fireEvent.change(
+        screen.getByTestId('sshUsername'),
+        { target: { value: 'username' } }
+      )
+
+      fireEvent.change(
         screen.getByTestId('sshPassword'),
         { target: { value: '123' } }
       )
@@ -841,6 +859,7 @@ describe('InstanceForm', () => {
       expect.objectContaining({
         sshHost: 'localhost',
         sshPort: '1771',
+        sshUsername: 'username',
         sshPassword: '123',
       })
     )
@@ -880,6 +899,11 @@ describe('InstanceForm', () => {
       )
 
       fireEvent.change(
+        screen.getByTestId('sshUsername'),
+        { target: { value: 'username' } }
+      )
+
+      fireEvent.change(
         screen.getByTestId('sshPrivateKey'),
         { target: { value: '123444' } }
       )
@@ -898,6 +922,7 @@ describe('InstanceForm', () => {
       expect.objectContaining({
         sshHost: 'localhost',
         sshPort: '1771',
+        sshUsername: 'username',
         sshPrivateKey: '123444',
         sshPassphrase: '123444',
       })

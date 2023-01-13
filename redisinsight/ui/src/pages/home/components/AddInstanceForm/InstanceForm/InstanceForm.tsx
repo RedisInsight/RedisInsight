@@ -262,6 +262,9 @@ const AddStandaloneForm = (props: Props) => {
       if (!values.sshPort) {
         errs.sshPort = fieldDisplayNames.sshPort
       }
+      if (!values.sshUsername) {
+        errs.sshUsername = fieldDisplayNames.sshUsername
+      }
       if (values.sshPassType === SshPassType.PrivateKey && !values.sshPrivateKey) {
         errs.sshPrivateKey = fieldDisplayNames.sshPrivateKey
       }

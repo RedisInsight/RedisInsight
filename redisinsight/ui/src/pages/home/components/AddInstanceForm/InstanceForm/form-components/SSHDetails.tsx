@@ -121,7 +121,7 @@ const SSHDetails = (props: Props) => {
           className={flexGroupClassName}
         >
           <EuiFlexItem className={cx(flexItemClassName)}>
-            <EuiFormRow label="Username">
+            <EuiFormRow label="Username*">
               <EuiFieldText
                 name="sshUsername"
                 id="sshUsername"
@@ -196,6 +196,7 @@ const SSHDetails = (props: Props) => {
                   value={formik.values.sshPrivateKey ?? ''}
                   onChange={formik.handleChange}
                   fullWidth
+                  maxLength={50_000}
                   placeholder="Enter SSH Private Key"
                   data-testid="sshPrivateKey"
                 />

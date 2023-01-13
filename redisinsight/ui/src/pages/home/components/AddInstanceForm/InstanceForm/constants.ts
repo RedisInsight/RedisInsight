@@ -21,5 +21,6 @@ export const fieldDisplayNames = {
   sentinelMasterName: 'Primary Group Name',
   sshHost: 'SSH Host',
   sshPort: 'SSH Port',
-  sshPrivateKey: 'SSH Private Key'
+  sshPrivateKey: 'SSH Private Key',
+  sshUsername: 'SSH Username',
 }

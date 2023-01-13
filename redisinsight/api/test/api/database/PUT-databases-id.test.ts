@@ -163,7 +163,7 @@ describe(`PUT /databases/:id`, () => {
           after: async () => {
             newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
             expect(newDatabase).to.contain({
-              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new']),
+              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'ssh']),
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
             });

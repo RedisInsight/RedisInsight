@@ -30,6 +30,15 @@ const dataSchema = Joi.object({
     username: Joi.string(),
     password: Joi.string(),
   }).allow(null),
+  ssh: Joi.boolean().allow(null),
+  sshOptions: Joi.object({
+    host: Joi.string().required(),
+    port: Joi.number().required(),
+    username: Joi.string().required(),
+    password: Joi.string().allow(null),
+    privateKey: Joi.string().allow(null),
+    passphrase: Joi.string().allow(null),
+  }).allow(null),
 }).messages({
   'any.required': '{#label} should not be empty',
 }).strict(true);

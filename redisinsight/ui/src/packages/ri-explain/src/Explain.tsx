@@ -20,6 +20,10 @@ interface IExplain {
   data: [{response: string[] | string | any}]
 }
 
+function getEdgeSize(c: number) {
+  return (Math.log(c || 1) / Math.log(3)) + 1
+}
+
 export default function Explain(props: IExplain): JSX.Element {
   const command = props.command.split(' ')[0].toLowerCase()
 
@@ -139,8 +143,12 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
         ancestors.pairs.forEach(p => {
           const parentNode = document.querySelector(`#node-${p[0]}`)
           parentNode?.classList.add('ProfileContainerHover')
-          document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k => {
-            (k as any).setAttribute("style", "stroke: #85A2FE; stroke-linecap: butt; stroke-width: 2px")
+          document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach((k: any) => {
+
+            const entityNode = document.querySelector(`#node-${p[1]}`) as any
+
+            const strokeSize = getEdgeSize(parseInt(entityNode?.dataset?.size)) + 1;
+            k.setAttribute("style", `stroke: #85A2FE; stroke-linecap: butt; stroke-width: ${strokeSize}px`)
           })
         })
       }
@@ -205,7 +213,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
           info.recordsProduced = info.counter
           delete info.counter
           delete info.size
-
         }
 
         let nodeProps = {
@@ -238,6 +245,8 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       }
       if (data.children) {
         data.children.forEach((item: any) => {
+          const itemRecords = parseInt(item.data.counter || 0)
+
           model.edges?.push({
             id: `${data.id}-${item.id}`,
             source: data.id,
@@ -260,7 +269,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
             attrs: {
               line: {
                 stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
-                strokeWidth: 1,
+                strokeWidth: getEdgeSize(itemRecords),
                 targetMarker: null,
               },
             },

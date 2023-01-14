@@ -75,12 +75,15 @@ export function ProfileNode(props: INodeProps) {
     items['Size'] = size
   }
 
-  if (recordsProduced !== undefined) {
-    items['Records Produced'] = recordsProduced
+  const timeInFloat = parseFloat(time || '')
+  const timeStyles = {
+    fontWeight: 'bold',
+    color: 'white',
+    backgroundColor: (timeInFloat > 45 ? 'red' : timeInFloat > 25 ? 'yellow' : ''),
   }
 
   return (
-    <div className="ProfileContainer" id={`node-${id}`}>
+    <div className="ProfileContainer" id={`node-${id}`} data-size={counter || size || recordsProduced}>
       <div className="Main">
         <div>{data ? data : type}</div>
         <div className="Type">{[EntityType.GEO, EntityType.NUMERIC, EntityType.TEXT, EntityType.TAG].includes(type) ? type : ''}</div>
@@ -94,12 +97,21 @@ export function ProfileNode(props: INodeProps) {
       }
       <div className="MetaData">
         <EuiToolTip content={<NodeToolTipContent content={"Execution Time"} />}>
-          <div className="Time">
+          <div className="Time" style={timeInFloat > 25 ? timeStyles : {}}>
             <div className="IconContainer"><EuiIcon className="NodeIcon" size="m" type="clock" /></div>
             <div>{time} ms</div>
           </div>
         </EuiToolTip>
-        <EuiToolTip content={<NodeToolTipContent items={items} />}>
+        <EuiToolTip
+          content={
+            <NodeToolTipContent
+              {...{
+                items: recordsProduced === undefined ? items : undefined,
+                content: recordsProduced ? 'Records produced' : undefined
+              }}
+            />
+          }
+        >
           <div className="Size">
             <div>{
               counter !== undefined ? counter :

@@ -5,6 +5,7 @@ import Hierarchy from '@antv/hierarchy'
 
 import {
   CoreType,
+  ModuleType,
   EntityInfo,
   ParseExplain,
   ParseGraphV2,
@@ -30,10 +31,13 @@ export default function Explain(props: IExplain): JSX.Element {
     return (
       <ExplainDraw
         data={resp}
+        module={ModuleType.Graph}
         type={command.endsWith('explain') ? CoreType.Explain : CoreType.Profile}
       />
     )
   }
+
+  const module = ModuleType.Search
 
   if (command == 'ft.profile') {
     const info = props.data[0].response[1]
@@ -57,6 +61,7 @@ export default function Explain(props: IExplain): JSX.Element {
     return (
       <ExplainDraw
         data={data}
+        module={module}
         type={CoreType.Profile}
         profilingTime={profilingTime}
       />
@@ -71,6 +76,7 @@ export default function Explain(props: IExplain): JSX.Element {
   return (
     <ExplainDraw
       data={data}
+      module={module}
       type={CoreType.Explain}
     />
   )
@@ -96,7 +102,7 @@ interface IProfilingTime {
   [key: string]: string
 }
 
-function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, profilingTime?: IProfilingTime}): JSX.Element {
+function ExplainDraw({data, type, module, profilingTime}: {data: any, type: CoreType, module: ModuleType, profilingTime?: IProfilingTime}): JSX.Element {
   const container = useRef<HTMLDivElement | null>(null)
 
   const [done, setDone] = useState(false)
@@ -193,7 +199,14 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
     const model: Model.FromJSONData = { nodes: [], edges: [] }
     const traverse = (data: any) => {
       if (data) {
-        const info = data.data
+        const info = data.data as EntityInfo
+
+        if (module === ModuleType.Graph) {
+          info.recordsProduced = info.counter
+          delete info.counter
+          delete info.size
+
+        }
 
         let nodeProps = {
           shape: 'react-explain-node',

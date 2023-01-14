@@ -222,6 +222,7 @@ export interface EntityInfo {
   size?: string
   parentId?: string
   level?: number
+  recordsProduced?: string
 }
 
 interface IAncestors {
@@ -713,6 +714,11 @@ export function ParseIteratorProfile(data: any[]): EntityInfo {
   //     children: [],
   //   }
   // }
+}
+
+export enum ModuleType {
+  Graph,
+  Search,
 }
 
 export enum CoreType {

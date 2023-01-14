@@ -61,10 +61,9 @@ function NodeToolTipContent(props: INodeToolTip) {
   return null
 }
 
-
 export function ProfileNode(props: INodeProps) {
   const info: EntityInfo = (props as any).node.getData()
-  const {id, data, type, snippet, time, counter, size} = info
+  const {id, data, type, snippet, time, counter, size, recordsProduced} = info
 
   let items = {}
 
@@ -74,6 +73,10 @@ export function ProfileNode(props: INodeProps) {
 
   if (size !== undefined) {
     items['Size'] = size
+  }
+
+  if (recordsProduced !== undefined) {
+    items['Records Produced'] = recordsProduced
   }
 
   return (
@@ -93,12 +96,14 @@ export function ProfileNode(props: INodeProps) {
         <EuiToolTip content={<NodeToolTipContent content={"Execution Time"} />}>
           <div className="Time">
             <div className="IconContainer"><EuiIcon className="NodeIcon" size="m" type="clock" /></div>
-            <div>{time}</div>
+            <div>{time} ms</div>
           </div>
         </EuiToolTip>
         <EuiToolTip content={<NodeToolTipContent items={items} />}>
           <div className="Size">
-            <div>{counter}</div>
+            <div>{
+              counter !== undefined ? counter :
+                size !== undefined ? size : recordsProduced}</div>
             <div className="IconContainer"><EuiIcon className="NodeIcon" size="m" type="reportingApp" /></div>
           </div>
         </EuiToolTip>

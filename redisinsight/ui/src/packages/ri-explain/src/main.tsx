@@ -10,11 +10,11 @@ interface Props {
 
 import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon'
 import { icon as EuiIconClock } from '@elastic/eui/es/components/icon/assets/clock'
-import { icon as EuiIconIInCircle } from '@elastic/eui/es/components/icon/assets/iInCircle'
+import { icon as EuiIconReportingApp } from '@elastic/eui/es/components/icon/assets/app_reporting'
 
 appendIconComponentCache({
   clock: EuiIconClock,
-  iInCircle: EuiIconIInCircle,
+  reportingApp: EuiIconReportingApp,
 })
 
 const renderApp = (element: JSX.Element) => render(

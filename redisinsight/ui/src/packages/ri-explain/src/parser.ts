@@ -221,6 +221,7 @@ export interface EntityInfo {
   counter?: string
   size?: string
   parentId?: string
+  level?: number
 }
 
 interface IAncestors {
@@ -719,44 +720,80 @@ export enum CoreType {
   Explain,
 }
 
-export function ParseGraph(output: string[]) : EntityInfo {
+export function getOutputLevel(output: string) {
+  let i = 0
+  while (output[i] == ' ' && i < output.length) {
+    i++
+  }
+  return (i > 0 ? i / 4 : 0) + 1
+}
 
-  const entities = [...output].reverse()
+function ParseEntity(entity: string, children: EntityInfo[]): EntityInfo {
+  const info = entity.trim().split('|')
 
-  const first = entities.pop() as string
+  let time: string | undefined = '', size: string | undefined = ''
 
-  function ParseEntity(entity: string, children: EntityInfo[]): EntityInfo {
-    const info = entity.trim().split('|')
+  const metaData = info.slice(-1)[0].trim()
 
-    let time: string | undefined = '', size: string | undefined = ''
+  // Is GRAPH.PROFILE output
+  if (metaData.startsWith('Records produced')) {
 
-    const metaData = info.slice(-1)[0].trim()
+    [size, time] = metaData.trim().split(',')
 
-    // Is GRAPH.PROFILE output
-    if (metaData.startsWith('Records produced')) {
-
-      [size, time] = metaData.trim().split(',')
-
-      size = size.split(': ')[1]
-      time = time.split(': ')[1].split(' ')[0]
-      info.pop()
-    }
-
-    const snippet = [...info.slice(1)].join('|').trim()
-
-    return {
-      id: uuidv4(),
-      type: info[0] as EntityType,
-      snippet,
-      children,
-      time,
-      size,
-      counter: size,
-    }
+    size = size.split(': ')[1]
+    time = time.split(': ')[1].split(' ')[0]
+    info.pop()
   }
 
-  return entities.reduce(
-    (a, c) => ParseEntity(c, [a]),
-    ParseEntity(first, [])
-  )
+  const snippet = [...info.slice(1)].join('|').trim()
+
+  return {
+    id: uuidv4(),
+    type: info[0] as EntityType,
+    snippet,
+    children,
+    time,
+    size,
+    counter: size,
+    level: getOutputLevel(entity),
+  }
+}
+
+
+export function ParseGraphV2(output: string[]) {
+
+  const level = getOutputLevel(output[0]) + 1
+
+  let entity = ParseEntity(output[0], [])
+  let children: EntityInfo[] = []
+
+  let pairs: [number, number][] = []
+    
+  let s: number | null = null, e: number | null = null
+  let i = 1
+
+  while (i < output.length) {
+    let l = getOutputLevel(output[i])
+    if (l === level) {
+      if (s == null) {
+        s = i
+      } else if (s != null) {
+        pairs.push([s, i])
+        s = i
+      }
+    }
+    i++
+  }
+
+  if (s !== null) {
+    pairs.push([s, i])
+  }
+
+  for (let k = 0; k < pairs.length; k++) {
+    let p = pairs[k]
+    children.push({...ParseGraphV2(output.slice(p[0], p[1])), parentId: entity.id})
+  }
+
+  entity.children = children
+  return entity
 }

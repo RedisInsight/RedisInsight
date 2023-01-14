@@ -7,7 +7,7 @@ import {
   CoreType,
   EntityInfo,
   ParseExplain,
-  ParseGraph,
+  ParseGraphV2,
   ParseProfile,
   ParseProfileCluster,
   GetAncestors,
@@ -24,7 +24,9 @@ export default function Explain(props: IExplain): JSX.Element {
 
   if (command.startsWith('graph')) {
     const info  = props.data[0].response
-    const resp = ParseGraph(info)
+
+    const resp = ParseGraphV2(info)
+
     return (
       <ExplainDraw
         data={resp}
@@ -129,6 +131,8 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
       const ancestors = GetAncestors(data, id, {found: false, pairs: []})
       if (ancestors.found) {
         ancestors.pairs.forEach(p => {
+          const parentNode = document.querySelector(`#node-${p[0]}`)
+          parentNode?.classList.add('ProfileContainerHover')
           document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k => {
             (k as any).setAttribute("style", "stroke: #85A2FE; stroke-linecap: butt; stroke-width: 2px")
           })
@@ -141,6 +145,8 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
       const ancestors = GetAncestors(data, id, {found: false, pairs: []})
       if (ancestors.found) {
         ancestors.pairs.forEach(p => {
+          const parentNode = document.querySelector(`#node-${p[0]}`)
+          parentNode?.classList.remove('ProfileContainerHover')
           document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k => {
             (k as any).setAttribute("style", "")
           })
@@ -198,7 +204,7 @@ function ExplainDraw({data, type, profilingTime}: {data: any, type: CoreType, pr
           nodeProps = {
             shape: 'react-profile-node',
             width: 320,
-            height: 84,
+            height: (info.snippet ? 114 : 84),
           }
         }
 

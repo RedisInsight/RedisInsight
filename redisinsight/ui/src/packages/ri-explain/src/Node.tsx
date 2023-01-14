@@ -64,7 +64,7 @@ function NodeToolTipContent(props: INodeToolTip) {
 
 export function ProfileNode(props: INodeProps) {
   const info: EntityInfo = (props as any).node.getData()
-  const {data, type, snippet, time, counter, size} = info
+  const {id, data, type, snippet, time, counter, size} = info
 
   let items = {}
 
@@ -76,13 +76,19 @@ export function ProfileNode(props: INodeProps) {
     items['Size'] = size
   }
 
-
   return (
-    <div className="ProfileContainer">
+    <div className="ProfileContainer" id={`node-${id}`}>
       <div className="Main">
         <div>{data ? data : type}</div>
         <div className="Type">{[EntityType.GEO, EntityType.NUMERIC, EntityType.TEXT, EntityType.TAG].includes(type) ? type : ''}</div>
       </div>
+      {
+        snippet && (
+          <div className='Footer'>
+            {snippet}
+          </div>
+        )
+      }
       <div className="MetaData">
         <EuiToolTip content={<NodeToolTipContent content={"Execution Time"} />}>
           <div className="Time">
@@ -93,7 +99,7 @@ export function ProfileNode(props: INodeProps) {
         <EuiToolTip content={<NodeToolTipContent items={items} />}>
           <div className="Size">
             <div>{counter}</div>
-            <div className="IconContainer"><EuiIcon className="NodeIcon" size="m" type="iInCircle" /></div>
+            <div className="IconContainer"><EuiIcon className="NodeIcon" size="m" type="reportingApp" /></div>
           </div>
         </EuiToolTip>
       </div>

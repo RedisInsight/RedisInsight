@@ -80,9 +80,15 @@
   background-color: var(--tooltip-background) !important;
 }
 
+.ProfileContainerHover {
+  border: 1px solid #85A2FE !important;
+
+  width: 50px;
+}
+
 .ProfileContainer {
   width: 320px;
-  max-height: 84px;
+  min-height: 84px;
 
   padding-left: 18px !important;
   padding-right: 18px !important;
@@ -121,6 +127,14 @@
       }
   }
 
+  .Footer{
+    font-size: 12px;
+    padding-top: 4px;
+    padding-bottom: 12px;
+    height: auto;
+    color: #B5B6C0;
+  }
+
   .MetaData {
       display: flex;
       justify-content: space-between;
@@ -137,16 +151,30 @@
           display: flex;
           align-items: center;
           font-size: 12px;
+
+          div:first-child {
+              padding-right: 5px;
+          }
+
       }
 
       .Size {
           display: flex;
           align-items: center;
           font-size: 13px;
+
+          div:first-child {
+              padding-right: 5px;
+          }
+
+
       }
 
       .IconContainer {
-          align-self: end;
+          > svg {
+              width: 12px !important;
+              height: 13px !important;
+          }
       }
   }
 }
@@ -167,6 +195,10 @@
   justify-content: space-around;
 
   background-color: var(--node-background);
+
+  &:hover {
+      border: 1px solid #85A2FE !important;
+  }
 
   .Main {
     // height: 42px;

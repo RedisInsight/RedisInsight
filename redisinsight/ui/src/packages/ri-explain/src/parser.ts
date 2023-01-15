@@ -803,3 +803,8 @@ export function ParseGraphV2(output: string[]) {
   entity.children = children
   return entity
 }
+
+
+export function GetTotalExecutionTime(g: EntityInfo) {
+  return parseFloat(g.time || '') + g.children.reduce((a, c) => a + GetTotalExecutionTime(c), 0)
+}

@@ -12,6 +12,7 @@ import {
   ParseProfile,
   ParseProfileCluster,
   GetAncestors,
+  GetTotalExecutionTime,
 } from './parser'
 import { ExplainNode, ProfileNode } from './Node'
 
@@ -21,7 +22,7 @@ interface IExplain {
 }
 
 function getEdgeSize(c: number) {
-  return (Math.log(c || 1) / Math.log(3)) + 1
+  return (Math.log(c || 1) / Math.log(10)) + 1
 }
 
 export default function Explain(props: IExplain): JSX.Element {
@@ -29,14 +30,22 @@ export default function Explain(props: IExplain): JSX.Element {
 
   if (command.startsWith('graph')) {
     const info  = props.data[0].response
-
     const resp = ParseGraphV2(info)
+
+    let profilingTime: IProfilingTime = {}
+    let t = command.endsWith('explain') ? CoreType.Explain : CoreType.Profile
+    if (t === CoreType.Profile) {
+      profilingTime = {
+        'Total Execution Time': GetTotalExecutionTime(resp)
+      }
+    }
 
     return (
       <ExplainDraw
         data={resp}
         module={ModuleType.Graph}
-        type={command.endsWith('explain') ? CoreType.Explain : CoreType.Profile}
+        type={t}
+        profilingTime={profilingTime}
       />
     )
   }

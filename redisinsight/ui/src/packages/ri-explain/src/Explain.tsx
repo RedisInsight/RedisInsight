@@ -138,34 +138,31 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
     graph.on("resize", () => graph.centerContent())
     graph.on("node:mouseenter", x => {
       const {id} = x.node.getData()
+      // Find ancestors of a node
       const ancestors = GetAncestors(data, id, {found: false, pairs: []})
-      if (ancestors.found) {
-        ancestors.pairs.forEach(p => {
-          const parentNode = document.querySelector(`#node-${p[0]}`)
-          parentNode?.classList.add('ProfileContainerHover')
-          document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach((k: any) => {
+      ancestors.pairs.forEach(p => {
+        // Highlight ancestor and their ancestor
+        document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "border: 1px solid #85A2FE !important;")
 
-            const entityNode = document.querySelector(`#node-${p[1]}`) as any
-
-            const strokeSize = getEdgeSize(parseInt(entityNode?.dataset?.size)) + 1;
-            k.setAttribute("style", `stroke: #85A2FE; stroke-linecap: butt; stroke-width: ${strokeSize}px`)
-          })
-        })
-      }
+        // Get edge size of parent ancestor to apply the right edge stroke
+        const strokeSize = getEdgeSize(parseInt((document.querySelector(`#node-${p[1]}`) as HTMLElement)?.dataset?.size || '')) + 1
+        document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k =>
+          (k as HTMLElement)
+            .setAttribute(
+              "style",
+              `stroke: #85A2FE; stroke-linecap: butt; stroke-width: ${strokeSize}px`
+            )
+        )
+      })
     })
 
     graph.on("node:mouseleave", x => {
       const {id} = x.node.getData()
       const ancestors = GetAncestors(data, id, {found: false, pairs: []})
-      if (ancestors.found) {
-        ancestors.pairs.forEach(p => {
-          const parentNode = document.querySelector(`#node-${p[0]}`)
-          parentNode?.classList.remove('ProfileContainerHover')
-          document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k => {
-            (k as any).setAttribute("style", "")
-          })
-        })
-      }
+      ancestors.pairs.forEach(p => {
+        document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "")
+        document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k => (k as HTMLElement).setAttribute("style", ""))
+      })
     })
 
     function resize() {

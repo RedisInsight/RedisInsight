@@ -12,9 +12,9 @@ interface INodeProps {
 
 export function ExplainNode(props: INodeProps) {
   const propData: EntityInfo = (props as any).node.getData()
-  const { type, data, snippet } = propData
+  const { id, type, data, snippet } = propData
   return (
-    <div className="ExplainContainer">
+    <div className="ExplainContainer" id={`node-${id}`}>
       <div className="Main">
         <div className="Info">
           <div>{data ? data : type}</div>

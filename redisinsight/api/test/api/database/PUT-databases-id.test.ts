@@ -97,6 +97,7 @@ describe(`PUT /databases/:id`, () => {
         data: {
           name: 'new name',
           port: 1111,
+          ssh: false,
         },
         statusCode: 503,
         responseBody: {
@@ -130,7 +131,7 @@ describe(`PUT /databases/:id`, () => {
     ].map(mainCheckFn);
   });
   describe('STANDALONE', () => {
-    requirements('rte.type=STANDALONE');
+    requirements('rte.type=STANDALONE', '!rte.ssh');
     describe('NO AUTH', function () {
       requirements('!rte.tls', '!rte.pass');
 

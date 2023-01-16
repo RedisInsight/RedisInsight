@@ -106,7 +106,7 @@ describe('POST /databases', () => {
     ].map(mainCheckFn);
   });
   describe('STANDALONE', () => {
-    requirements('rte.type=STANDALONE');
+    requirements('rte.type=STANDALONE', '!rte.ssh');
     describe('NO AUTH', function () {
       requirements('!rte.tls', '!rte.pass');
       it('Create standalone without pass and tls', async () => {
@@ -607,6 +607,310 @@ describe('POST /databases', () => {
             tls: true,
             verifyServerCert: true,
             tlsServername: null,
+          },
+          checkFn: async ({ body }) => {
+            expect(body.caCert.id).to.be.a('string');
+            expect(body.caCert.name).to.eq(newCaName);
+            expect(body.caCert.certificate).to.be.undefined;
+
+            expect(body.clientCert.id).to.be.a('string');
+            expect(body.clientCert.name).to.deep.eq(newClientCertName);
+            expect(body.clientCert.certificate).to.be.undefined;
+            expect(body.clientCert.key).to.be.undefined;
+
+            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
+              .findOneBy({ id: body.caCert.id });
+
+            expect(ca.certificate).to.eql(constants.TEST_REDIS_TLS_CA);
+
+            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
+              .findOneBy({ id: body.clientCert.id });
+
+            expect(clientPair.certificate).to.eql(constants.TEST_USER_TLS_CERT);
+            expect(clientPair.key).to.eql(constants.TEST_USER_TLS_KEY);
+          },
+        });
+
+        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+      });
+    });
+  });
+  describe('STANDALONE SSH', () => {
+    requirements('rte.type=STANDALONE', 'rte.ssh');
+    describe('TLS AUTH', function () {
+      requirements('rte.tls', 'rte.tlsAuth');
+
+      let existingCACertId, existingClientCertId, existingCACertName, existingClientCertName;
+
+      after(localDb.initAgreements);
+
+      it('Create standalone instance and verify users certs + ssh (basic)', async () => {
+        const dbName = constants.getRandomString();
+        const newCaName = existingCACertName = constants.getRandomString();
+        const newClientCertName = existingClientCertName = constants.getRandomString();
+        // preconditions
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
+
+        const { body } = await validateApiCall({
+          endpoint,
+          statusCode: 201,
+          data: {
+            ...baseDatabaseData,
+            name: dbName,
+            tls: true,
+            verifyServerCert: true,
+            caCert: {
+              name: newCaName,
+              certificate: constants.TEST_REDIS_TLS_CA,
+            },
+            clientCert: {
+              name: newClientCertName,
+              certificate: constants.TEST_USER_TLS_CERT,
+              key: constants.TEST_USER_TLS_KEY,
+            },
+            ssh: true,
+            sshOptions: {
+              host: constants.TEST_SSH_HOST,
+              port: constants.TEST_SSH_PORT,
+              username: constants.TEST_SSH_USER,
+              password: constants.TEST_SSH_PASSWORD,
+            },
+          },
+          responseSchema,
+          responseBody: {
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            connectionType: constants.STANDALONE,
+            tls: true,
+            verifyServerCert: true,
+            tlsServername: null,
+            ssh: true,
+            sshOptions: {
+              host: constants.TEST_SSH_HOST,
+              port: constants.TEST_SSH_PORT,
+              username: constants.TEST_SSH_USER,
+              password: constants.TEST_SSH_PASSWORD,
+            }
+          },
+          checkFn: async ({ body }) => {
+            expect(body.caCert.id).to.be.a('string');
+            expect(body.caCert.name).to.eq(newCaName);
+            expect(body.caCert.certificate).to.be.undefined;
+
+            expect(body.clientCert.id).to.be.a('string');
+            expect(body.clientCert.name).to.deep.eq(newClientCertName);
+            expect(body.clientCert.certificate).to.be.undefined;
+            expect(body.clientCert.key).to.be.undefined;
+
+            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
+              .findOneBy({ id: body.caCert.id });
+
+            expect(ca.certificate).to.eql(localDb.encryptData(constants.TEST_REDIS_TLS_CA));
+
+            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
+              .findOneBy({ id: body.clientCert.id });
+
+            expect(clientPair.certificate).to.eql(localDb.encryptData(constants.TEST_USER_TLS_CERT));
+            expect(clientPair.key).to.eql(localDb.encryptData(constants.TEST_USER_TLS_KEY));
+
+            const sshOptions: any = await (await localDb.getRepository(localDb.repositories.SSH_OPTIONS_REPOSITORY))
+              .findOneBy({ id: body.sshOptions.id });
+
+            expect(sshOptions.username).to.eql(localDb.encryptData(constants.TEST_SSH_USER));
+            expect(sshOptions.password).to.eql(localDb.encryptData(constants.TEST_SSH_PASSWORD));
+          },
+        });
+
+        // remember certificates ids
+        existingCACertId = body.caCert.id;
+        existingClientCertId = body.clientCert.id;
+
+        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+      });
+      it('Should create standalone instance with existing certificates + ssh (pk)', async () => {
+        const dbName = constants.getRandomString();
+
+        // preconditions
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
+        await validateApiCall({
+          endpoint,
+          statusCode: 201,
+          data: {
+            ...baseDatabaseData,
+            name: dbName,
+            tls: true,
+            verifyServerCert: true,
+            caCert: {
+              id: existingCACertId,
+            },
+            clientCert: {
+              id: existingClientCertId,
+            },
+            ssh: true,
+            sshOptions: {
+              host: constants.TEST_SSH_HOST,
+              port: constants.TEST_SSH_PORT,
+              username: constants.TEST_SSH_USER,
+              privateKey: constants.TEST_SSH_PRIVATE_KEY,
+            }
+          },
+          responseSchema,
+          responseBody: {
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            connectionType: constants.STANDALONE,
+            tls: true,
+            verifyServerCert: true,
+            tlsServername: null,
+            ssh: true,
+            sshOptions: {
+              host: constants.TEST_SSH_HOST,
+              port: constants.TEST_SSH_PORT,
+              username: constants.TEST_SSH_USER,
+              privateKey: constants.TEST_SSH_PRIVATE_KEY,
+            }
+          },
+          checkFn: async ({ body }) => {
+            expect(body.caCert.name).to.be.a('string');
+            expect(body.caCert.id).to.eq(existingCACertId);
+            expect(body.caCert.certificate).to.be.undefined;
+
+            expect(body.clientCert.id).to.deep.eq(existingClientCertId);
+            expect(body.clientCert.name).to.be.a('string');
+            expect(body.clientCert.certificate).to.be.undefined;
+            expect(body.clientCert.key).to.be.undefined;
+
+            const sshOptions: any = await (await localDb.getRepository(localDb.repositories.SSH_OPTIONS_REPOSITORY))
+              .findOneBy({ id: body.sshOptions.id });
+
+            expect(sshOptions.username).to.eql(localDb.encryptData(constants.TEST_SSH_USER));
+            expect(sshOptions.privateKey).to.eql(localDb.encryptData(constants.TEST_SSH_PRIVATE_KEY));
+          },
+        });
+
+        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+      });
+      it('Should create standalone instance with existing certificates + ssh (pkp)', async () => {
+        const dbName = constants.getRandomString();
+
+        // preconditions
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
+        await validateApiCall({
+          endpoint,
+          statusCode: 201,
+          data: {
+            ...baseDatabaseData,
+            name: dbName,
+            tls: true,
+            verifyServerCert: true,
+            caCert: {
+              id: existingCACertId,
+            },
+            clientCert: {
+              id: existingClientCertId,
+            },
+            ssh: true,
+            sshOptions: {
+              host: constants.TEST_SSH_HOST,
+              port: constants.TEST_SSH_PORT,
+              username: constants.TEST_SSH_USER,
+              privateKey: constants.TEST_SSH_PRIVATE_KEY_P,
+              passphrase: constants.TEST_SSH_PASSPHRASE,
+            }
+          },
+          responseSchema,
+          responseBody: {
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            connectionType: constants.STANDALONE,
+            tls: true,
+            verifyServerCert: true,
+            tlsServername: null,
+            ssh: true,
+            sshOptions: {
+              host: constants.TEST_SSH_HOST,
+              port: constants.TEST_SSH_PORT,
+              username: constants.TEST_SSH_USER,
+              privateKey: constants.TEST_SSH_PRIVATE_KEY_P,
+              passphrase: constants.TEST_SSH_PASSPHRASE,
+            }
+          },
+          checkFn: async ({ body }) => {
+            expect(body.caCert.name).to.be.a('string');
+            expect(body.caCert.id).to.eq(existingCACertId);
+            expect(body.caCert.certificate).to.be.undefined;
+
+            expect(body.clientCert.id).to.deep.eq(existingClientCertId);
+            expect(body.clientCert.name).to.be.a('string');
+            expect(body.clientCert.certificate).to.be.undefined;
+            expect(body.clientCert.key).to.be.undefined;
+
+            const sshOptions: any = await (await localDb.getRepository(localDb.repositories.SSH_OPTIONS_REPOSITORY))
+              .findOneBy({ id: body.sshOptions.id });
+
+            expect(sshOptions.username).to.eql(localDb.encryptData(constants.TEST_SSH_USER));
+            expect(sshOptions.privateKey).to.eql(localDb.encryptData(constants.TEST_SSH_PRIVATE_KEY_P));
+            expect(sshOptions.passphrase).to.eql(localDb.encryptData(constants.TEST_SSH_PASSPHRASE));
+          },
+        });
+
+        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+      });
+      it('Create standalone instance and verify users certs (new certificates !do not encrypt) + ssh (basic)', async () => {
+        await localDb.setAgreements({
+          encryption: false,
+        });
+
+        const dbName = constants.getRandomString();
+        const newCaName = constants.getRandomString();
+        const newClientCertName = constants.getRandomString();
+        // preconditions
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
+
+        await validateApiCall({
+          endpoint,
+          statusCode: 201,
+          data: {
+            ...baseDatabaseData,
+            name: dbName,
+            tls: true,
+            verifyServerCert: true,
+            caCert: {
+              name: newCaName,
+              certificate: constants.TEST_REDIS_TLS_CA,
+            },
+            clientCert: {
+              name: newClientCertName,
+              certificate: constants.TEST_USER_TLS_CERT,
+              key: constants.TEST_USER_TLS_KEY,
+            },
+            ssh: true,
+            sshOptions: {
+              host: constants.TEST_SSH_HOST,
+              port: constants.TEST_SSH_PORT,
+              username: constants.TEST_SSH_USER,
+              password: constants.TEST_SSH_PASSWORD,
+            }
+          },
+          responseSchema,
+          responseBody: {
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            connectionType: constants.STANDALONE,
+            tls: true,
+            verifyServerCert: true,
+            tlsServername: null,
+            ssh: true,
+            sshOptions: {
+              host: constants.TEST_SSH_HOST,
+              port: constants.TEST_SSH_PORT,
+              username: constants.TEST_SSH_USER,
+              password: constants.TEST_SSH_PASSWORD,
+            }
           },
           checkFn: async ({ body }) => {
             expect(body.caCert.id).to.be.a('string');

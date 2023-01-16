@@ -83,7 +83,7 @@ describe('SshTunnelProvider', () => {
       process.nextTick(() => mockClient.emit('ready'));
     });
     it('should fail due to createServer failed', (done) => {
-      const mockError = new Error('some not processed error');
+      const mockError = new Error('Cannot parse privateKey: due to some reason');
       createServerSpy.mockReset().mockImplementationOnce(() => {
         throw mockError;
       });
@@ -91,6 +91,7 @@ describe('SshTunnelProvider', () => {
       service.createTunnel(mockDatabaseWithSshBasic)
         .catch((e) => {
           expect(e).toBeInstanceOf(UnableToCreateTunnelException);
+          expect(e.message).toEqual('Unable to create tunnel. Cannot parse privateKey');
           done();
         });
 

@@ -75,6 +75,7 @@ const AddKeyReJSON = (props: Props) => {
           value={ReJSONValue}
           onChange={setReJSONValue}
           disabled={loading}
+          data-testid="json-value"
         />
       </EuiFormRow>
 

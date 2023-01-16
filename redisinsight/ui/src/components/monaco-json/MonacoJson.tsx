@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
 import cx from 'classnames'
-import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
+import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco/cypher'
 
 import { Nullable } from 'uiSrc/utils'
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
@@ -13,7 +13,7 @@ import styles from './styles.modules.scss'
 export interface Props {
   value: string
   onChange: (value: string) => void
-  disabled: boolean
+  disabled?: boolean
   wrapperClassName?: string
   'data-testid'?: string
 }
@@ -53,8 +53,8 @@ const MonacoJson = (props: Props) => {
   }
 
   if (monaco?.editor) {
-    monaco.editor.defineTheme('dark', darkTheme)
-    monaco.editor.defineTheme('light', lightTheme)
+    monaco.editor.defineTheme(MonacoThemes.Dark, darkTheme)
+    monaco.editor.defineTheme(MonacoThemes.Light, lightTheme)
   }
 
   const options: monacoEditor.editor.IStandaloneEditorConstructionOptions = {

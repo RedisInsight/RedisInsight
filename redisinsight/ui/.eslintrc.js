@@ -80,6 +80,11 @@ module.exports = {
         ],
         pathGroups: [
           {
+            pattern: 'uiSrc/**',
+            group: 'internal',
+            position: 'after'
+          },
+          {
             pattern: 'apiSrc/**',
             group: 'internal',
             position: 'after'

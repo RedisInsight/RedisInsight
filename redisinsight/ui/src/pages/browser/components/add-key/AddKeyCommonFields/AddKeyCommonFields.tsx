@@ -66,6 +66,7 @@ const AddKeyCommonFields = (props: Props) => {
                 options={options}
                 valueOfSelected={typeSelected}
                 onChange={(value: string) => onChangeType(value)}
+                data-testid="select-key-type"
               />
             </EuiFormRow>
           </EuiFormFieldset>

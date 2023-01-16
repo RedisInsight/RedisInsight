@@ -223,7 +223,7 @@ export default merge(baseConfig, {
 
     new ReactRefreshWebpackPlugin(),
 
-    new MonacoWebpackPlugin({ languages: [], features: ['!rename'] }),
+    new MonacoWebpackPlugin({ languages: ['json'], features: ['!rename'] }),
   ],
 
   node: {

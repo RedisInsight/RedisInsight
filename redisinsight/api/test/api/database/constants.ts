@@ -33,4 +33,14 @@ export const databaseSchema = Joi.object().keys({
     version: Joi.number().integer(),
     semanticVersion: Joi.string(),
   }).allow(null),
+  ssh: Joi.boolean().allow(null),
+  sshOptions: Joi.object({
+    id: Joi.string().allow(null),
+    host: Joi.string().required(),
+    port: Joi.number().required(),
+    username: Joi.string().required(),
+    password: Joi.string().allow(null),
+    privateKey: Joi.string().allow(null),
+    passphrase: Joi.string().allow(null),
+  }).allow(null),
 });

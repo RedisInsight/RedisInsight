@@ -2,9 +2,15 @@ import * as Redis from 'ioredis';
 import * as IORedis from 'ioredis';
 import * as semverCompare from 'node-version-compare';
 import * as fs from 'fs';
+import { Server, createServer } from 'net';
+import { Client } from 'ssh2';
 import { constants } from './constants';
 import { parseReplToObject, parseClusterNodesResponse } from './utils';
 import { initDataHelper } from './data/redis';
+import {
+  UnableToCreateLocalServerException,
+  UnableToCreateSshConnectionException,
+} from 'src/modules/ssh/exceptions';
 
 /**
  * Connect to redis in standalone mode and return client
@@ -136,6 +142,60 @@ const getClient = async (
   return { client: standaloneClient, info };
 };
 
+const initTunnel = async () => {
+  const server = await new Promise((resolve, reject) => {
+    try {
+      const server = createServer();
+
+      server.on('listening', () => resolve(server));
+      server.on('error', (e) => {
+        reject(new UnableToCreateLocalServerException(e.message));
+      });
+
+      server.listen({
+        host: '127.0.0.1',
+        port: 44444,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  }) as Server;
+
+  const client = await new Promise((resolve, reject) => {
+    const conn = new Client();
+    conn.on('ready', () => resolve(conn));
+    conn.on('error', (e) => {
+      reject(new UnableToCreateSshConnectionException(e.message));
+    });
+    conn.connect({
+      host: constants.TEST_SSH_HOST,
+      port: constants.TEST_SSH_PORT,
+      username: constants.TEST_SSH_USER,
+      password: constants.TEST_SSH_PASSWORD || undefined,
+    });
+  }) as Client;
+
+  server.on('connection', (connection) => {
+    client.forwardOut(
+      '127.0.0.1',
+      44444,
+      constants.TEST_REDIS_HOST,
+      constants.TEST_REDIS_PORT,
+      (e, stream) => {
+        if (e) {
+          console.error(e);
+          client.emit('error', e);
+        } else {
+          return connection.pipe(stream).pipe(connection);
+        }
+      },
+    );
+
+    connection.on('error', (e) => {
+      client.emit('error', e);
+    });
+  });
+}
 
 let rte;
 /**
@@ -170,6 +230,12 @@ export const initRTE = async () => {
       }
     }
 
+    if (constants.TEST_SSH_USER) {
+      await initTunnel();
+      options.host = '127.0.0.1';
+      options.port = 44444;
+    }
+
     rte = await getClient(options);
   }
 
@@ -188,6 +254,7 @@ export const initRTE = async () => {
     tlsAuth: !!constants.TEST_USER_TLS_KEY && !!constants.TEST_USER_TLS_CERT,
     modules: await determineModulesInstalled(rte.client),
     re: !!constants.TEST_RE_USER,
+    ssh: !!constants.TEST_SSH_USER,
     cloud: !!constants.TEST_CLOUD_RTE,
     sharedData: constants.TEST_RTE_SHARED_DATA,
     bigData: constants.TEST_RTE_BIG_DATA,

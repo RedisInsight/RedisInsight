@@ -5,12 +5,13 @@ import {
   mockDatabase,
   mockDatabaseWithTlsAuth,
   mockIORedisClient, mockIORedisCluster, mockIORedisSentinel,
-  mockSentinelDatabaseWithTlsAuth,
+  mockSentinelDatabaseWithTlsAuth, mockSshTunnelProvider,
 } from 'src/__mocks__';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { Database } from 'src/modules/database/models/database';
 import { EventEmitter } from 'events';
 import apiConfig from 'src/utils/config';
+import { SshTunnelProvider } from 'src/modules/ssh/ssh-tunnel.provider';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -39,6 +40,10 @@ describe('RedisConnectionFactory', () => {
     module = await Test.createTestingModule({
       providers: [
         RedisConnectionFactory,
+        {
+          provide: SshTunnelProvider,
+          useFactory: mockSshTunnelProvider,
+        },
       ],
     })
       .compile();

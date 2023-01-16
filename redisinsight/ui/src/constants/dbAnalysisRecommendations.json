@@ -499,21 +499,34 @@
     "content": [
       {
         "id": "1",
-        "type": "paragraph",
-        "value": "If you are using sorted sets to work with time series data, consider using RedisTimeSeries to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
+        "type": "span",
+        "value": "If you are using sorted sets to work with time series data, consider using  "
       },
       {
         "id": "2",
-        "type": "spacer",
-        "value": "l"
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/timeseries/",
+          "name": "RedisTimeSeries"
+        }
       },
       {
         "id": "3",
         "type": "span",
-        "value": "Create a "
+        "value": " to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
       },
       {
         "id": "4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "5",
+        "type": "span",
+        "value": "Create a "
+      },
+      {
+        "id": "6",
         "type": "link",
         "value": {
           "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
@@ -521,7 +534,7 @@
         }
       },
       {
-        "id": "5",
+        "id": "7",
         "type": "span",
         "value": " to use modern data models and processing engines."
       }
@@ -566,39 +579,47 @@
   },
   "redisSearch": {
     "id": "redisSearch",
-    "title":"Optimize your search and query experience",
+    "title":"Optimize your query and search experience",
     "redisStack": true,
     "content": [
       {
         "id": "1",
-        "type": "span",
-        "value": "RediSearch was designed to help address your query needs and support a better development experience when dealing with complex data scenarios. Take a look at the powerful API options here ("
-      },
-      {
-        "id": "2",
         "type": "link",
         "value": {
-          "href": "https://redis.io/commands/?name=Ft",
-          "name": "Commands"
+          "href": "https://redis.io/docs/stack/search/",
+          "name": "RediSearch"
         }
       },
       {
-        "id": "3",
+        "id": "2",
         "type": "span",
-        "value": ") and try it. Supports full-text search, wildcards, fuzzy logic, and more."
+        "value": "was designed to help address your query needs and support a better development experience when dealing with complex data scenarios. Take a look at the "
+      },
+      {
+        "id": "3",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/commands/?name=Ft",
+          "name": "powerful API options"
+        }
       },
       {
         "id": "4",
+        "type": "span",
+        "value": " and try them. Supports full-text search, wildcards, fuzzy logic, and more."
+      },
+      {
+        "id": "5",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "5",
+        "id": "6",
         "type": "span",
         "value": "Create a "
       },
       {
-        "id": "6",
+        "id": "7",
         "type": "link",
         "value": {
           "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
@@ -606,7 +627,7 @@
         }
       },
       {
-        "id": "7",
+        "id": "8",
         "type": "span",
         "value": " which extends the core capabilities of Redis OSS and uses modern data models and processing engines."
       }

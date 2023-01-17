@@ -9,10 +9,11 @@ import { CommonErrorResponse } from '../QueryCardCommonResult'
 export interface Props {
   result?: Maybe<CommandExecutionResult[]>
   isFullScreen?: boolean
+  db?: number
 }
 
 const QueryCardCliGroupResult = (props: Props) => {
-  const { result = [], isFullScreen } = props
+  const { result = [], isFullScreen, db } = props
 
   return (
     <div data-testid="query-cli-default-result" className="query-card-output-response-success">
@@ -23,7 +24,7 @@ const QueryCardCliGroupResult = (props: Props) => {
           if (React.isValidElement(commonError)) {
             return ([wbSummaryCommand(item.command), commonError])
           }
-          return flatten(cliParseCommandsGroupResult(item))
+          return flatten(cliParseCommandsGroupResult(item, db))
         }))}
       />
     </div>

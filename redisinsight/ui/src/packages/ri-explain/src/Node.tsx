@@ -12,13 +12,13 @@ interface INodeProps {
 
 export function ExplainNode(props: INodeProps) {
   const propData: EntityInfo = (props as any).node.getData()
-  const { id, type, data, snippet } = propData
+  const { id, type, data, snippet, subType } = propData
   return (
     <div className="ExplainContainer" id={`node-${id}`}>
       <div className="Main">
         <div className="Info">
           <div>{data ? data : type}</div>
-          {type === EntityType.Expr && <div className="Type">text</div> }
+          {subType && [EntityType.GEO, EntityType.NUMERIC, EntityType.TEXT, EntityType.TAG].includes(subType) && <div className="Type">{subType}</div> }
         </div>
       </div>
       {

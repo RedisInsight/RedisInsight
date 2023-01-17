@@ -215,6 +215,11 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       if (data) {
         const info = data.data as EntityInfo
 
+        if (!info.snippet && info.parentSnippet && info.data?.startsWith(info.parentSnippet)) {
+          info.data = info.data.substr(info.parentSnippet.length)
+          info.snippet = info.parentSnippet
+        }
+
         if (module === ModuleType.Graph) {
           info.recordsProduced = info.counter
           delete info.counter

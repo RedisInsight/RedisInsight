@@ -9,6 +9,7 @@ enum TokenType {
 
   UNION = 'UNION',
   INTERSECT = 'INTERSECT',
+  TAG_EXPR = 'TAG_EXPR',
   NUMERIC = 'NUMERIC',
   LBRACE = 'LBRACE',
   RBRACE = 'RBRACE',
@@ -46,6 +47,7 @@ const KEYWORDS = {
   [TokenType.ILLEGAL.toString()]: TokenType.ILLEGAL,
 
   [TokenType.UNION.toString()]: TokenType.UNION,
+  [TokenType.TAG_EXPR.toString()]: TokenType.TAG_EXPR,
   [TokenType.INTERSECT.toString()]: TokenType.INTERSECT,
   [TokenType.NUMERIC.toString()]: TokenType.NUMERIC,
 
@@ -94,7 +96,7 @@ class Lexer {
   ReadIdentifier(): string {
     let str = ''
 
-    while (this.C !== undefined && isLetter(this.C)) {
+    while (this.C !== undefined && (isLetter(this.C) || ['@', ':'].includes(this.C))) {
       str = str + this.C
       this.ReadChar()
     }
@@ -138,9 +140,6 @@ class Lexer {
       case '-':// TODO: This should be MINUS token
         t = new Token(TokenType.IDENTIFIER, this.C)
         break
-      case '@':
-        t = new Token(TokenType.IDENTIFIER, this.C)
-        break
       case '<':
         let lPeekChar = this.PeekChar()
         if (lPeekChar !== null && lPeekChar === '=') {
@@ -173,9 +172,17 @@ class Lexer {
         t = new Token(TokenType.EOF, '')
         break
       default:
-        if (this.C !== undefined && isLetter(this.C)) {
+        if (this.C !== undefined && (isLetter(this.C) || ['@', ':'].includes(this.C))) {
           const literal = this.ReadIdentifier()
           let tokenType = KEYWORDS[literal] || TokenType.IDENTIFIER
+
+          if (literal.startsWith('TAG:')) {
+            tokenType = TokenType.TAG_EXPR
+          } else if (literal.startsWith('@') && literal.endsWith(':UNION')) {
+            tokenType = TokenType.UNION
+          } else if (literal.startsWith('@') && literal.endsWith(':INTERSECT')) {
+            tokenType = TokenType.INTERSECT
+          }
           t = new Token(tokenType, literal)
           return t
         } else if (this.C !== undefined && isDigit(this.C)) {
@@ -214,6 +221,7 @@ export enum EntityType {
 export interface EntityInfo {
   id: string
   type: EntityType,
+  subType?: EntityType,
   data?: string
   snippet?: string
   children: EntityInfo[]
@@ -221,6 +229,7 @@ export interface EntityInfo {
   counter?: string
   size?: string
   parentId?: string
+  parentSnippet?: string
   level?: number
   recordsProduced?: string
 }
@@ -257,19 +266,32 @@ export function GetAncestors(info: EntityInfo, searchId: string, a: IAncestors):
 
 class Expr {
   Core: string
-  Type?: string
+  Type: EntityType
+  SubType: EntityType
   Time?: string
+  Info?: string
 
-  constructor(expr: string) {
+  constructor(expr: string, subType: EntityType, info: string | undefined = undefined) {
     this.Core = expr
+    this.SubType = subType
+    this.Info = info
   }
 
   toJSON(): EntityInfo {
+
+    let snippet: string | undefined;
+
+    if (this.SubType === EntityType.TAG && this.Info?.startsWith('TAG:')) {
+      snippet = this.Info?.substr(4)
+    }
+
     return {
       id: uuidv4(),
       // data: 'Expr',
       // snippet: this.Core,
       type: EntityType.Expr,
+      subType: this.SubType,
+      snippet: snippet,
       data: this.Core,
       children: [],
       time: this.Time,
@@ -312,34 +334,54 @@ type ExprTuple2 = SearchExpr[]
 
 class IntersectExpr {
   Core: ExprTuple2
+  Info?: string
 
-  constructor(e: ExprTuple2) {
+  constructor(e: ExprTuple2, info?: string) {
     this.Core = e
+    this.Info = info
   }
 
   toJSON(): EntityInfo {
     const id = uuidv4()
+
+    let snippet: string | undefined;
+
+    if (!this.Info?.startsWith('INTERSECT')) {
+      snippet = this.Info?.substring(0, this.Info.indexOf(':INTERSECT'))
+    }
+
     return {
       id,
       type: EntityType.INTERSECT,
-      children: this.Core.map(x => x.toJSON()).map((d: EntityInfo) => ({...d, parentId: id})),
+      snippet,
+      children: this.Core.map(x => x.toJSON()).map((d: EntityInfo) => ({...d, parentId: id, parentSnippet: snippet})),
     }
   }
 }
 
 class UnionExpr {
+  Info?: string
   Core: ExprTuple2
 
-  constructor(e: ExprTuple2) {
+  constructor(e: ExprTuple2, info?: string) {
     this.Core = e
+    this.Info = info
   }
 
   toJSON(): EntityInfo {
     const id = uuidv4()
+
+    let snippet: string | undefined;
+
+    if (!this.Info?.startsWith('UNION')) {
+      snippet = this.Info?.substring(0, this.Info.indexOf(':UNION'))
+    }
+
     return {
       id,
       type: EntityType.UNION,
-      children: this.Core.map(x => x.toJSON()).map((d: EntityInfo) => ({...d, parentId: id}))
+      snippet,
+      children: this.Core.map(x => x.toJSON()).map((d: EntityInfo) => ({...d, parentId: id, parentSnippet: snippet}))
     }
   }
 }
@@ -374,6 +416,8 @@ class Parser {
     this.CurrentToken = this.PeekToken
     this.PeekToken = this.L.NextToken()
 
+    console.log("NEXT TOKEN", this.CurrentToken)
+
     if (this.CurrentToken.T === TokenType.EOF) {
       throw new Error("Didn't expect EOF token")
     }
@@ -382,6 +426,8 @@ class Parser {
   parseIntersectExpr(): IntersectExpr {
 
     assertToken(TokenType.INTERSECT, this.CurrentToken?.T)
+
+    let intersectData = this.CurrentToken.Data
 
     this.nextToken()
 
@@ -409,18 +455,22 @@ class Parser {
         Exprs.push(this.parseUnionExpr())
       } else if (this.CurrentToken.T === TokenType.INTERSECT) {
         Exprs.push(this.parseIntersectExpr())
+      } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
+        Exprs.push(this.parseTagExpr())
       }
 
       this.nextToken()
     }
 
-    return new IntersectExpr(Exprs)
+    return new IntersectExpr(Exprs, intersectData)
   }
 
 
   parseUnionExpr(): UnionExpr {
 
     assertToken(TokenType.UNION, this.CurrentToken?.T)
+
+    let unionData = this.CurrentToken.Data
 
     this.nextToken()
 
@@ -449,12 +499,14 @@ class Parser {
         Exprs.push(this.parseUnionExpr())
       } else if (this.CurrentToken.T === TokenType.INTERSECT) {
         Exprs.push(this.parseIntersectExpr())
+      } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
+        Exprs.push(this.parseTagExpr())
       }
 
       this.nextToken()
     }
 
-    return new UnionExpr(Exprs)
+    return new UnionExpr(Exprs, unionData)
   }
 
   parseExpr() {
@@ -468,7 +520,40 @@ class Parser {
       this.nextToken()
     }
 
-    return new Expr(str)
+    return new Expr(str, EntityType.TEXT)
+  }
+
+  parseTagExpr() {
+    assertToken(TokenType.TAG_EXPR, this.CurrentToken.T)
+
+    let tagData = this.CurrentToken.Data
+
+    this.nextToken()
+
+    assertToken(TokenType.LBRACE, this.CurrentToken.T)
+
+    this.nextToken()
+
+    assertToken(TokenType.NEW_LINE, this.CurrentToken?.T)
+
+    this.nextToken()
+
+    assertToken(TokenType.IDENTIFIER, this.CurrentToken?.T)
+
+    let identifier = this.CurrentToken.Data
+
+    this.nextToken()
+
+    assertToken(TokenType.NEW_LINE, this.CurrentToken?.T)
+
+    this.nextToken()
+
+    assertToken(TokenType.RBRACE, this.CurrentToken?.T)
+
+    this.nextToken()
+
+    return new Expr(identifier, EntityType.TAG, tagData)
+
   }
 
   parseNumericExpr() {
@@ -489,7 +574,7 @@ class Parser {
     let lsign = this.CurrentToken // TODO: Check sign
 
     this.nextToken()
-    
+
     assertToken(TokenType.IDENTIFIER, this.CurrentToken?.T)
 
     let identifier = this.CurrentToken
@@ -524,8 +609,6 @@ class Parser {
 
     return new NumericExpr(left !== 'inf' ? parseFloat(left) : Infinity, lsign, identifier, rsign, right !== 'inf' ? parseFloat(right) : Infinity)
   }
-      
-
 }
 
 
@@ -540,6 +623,8 @@ function Parse(data: string): SearchExpr {
     return p.parseNumericExpr()
   } else if (p.CurrentToken.T === TokenType.UNION) {
     return p.parseUnionExpr()
+  } else if (p.CurrentToken.T === TokenType.TAG_EXPR) {
+    return p.parseTagExpr()
   } else {
     return p.parseExpr()
   }

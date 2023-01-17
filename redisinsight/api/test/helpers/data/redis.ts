@@ -63,7 +63,7 @@ export const initDataHelper = (rte) => {
   ): Promise<any> => {
     const command = `ACL SETUSER ${constants.TEST_INSTANCE_ACL_USER} reset on ${rules} >${constants.TEST_INSTANCE_ACL_PASS}`;
 
-    return executeCommand(...command.split(' '));
+    return executeCommandAll(...command.split(' '));
   };
 
   const flushTestRunData = async (node) => {

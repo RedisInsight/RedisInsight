@@ -57,9 +57,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
           useTLSAuthClients: instance?.clientCert
             ? 'enabled'
             : 'disabled',
-          useSNI: instance?.tlsServername
-            ? 'enabled'
-            : 'disabled',
+          useSNI: instance?.tlsServername ? 'enabled' : 'disabled',
           useSSH: instance?.ssh ? 'enabled' : 'disabled',
           version: additionalInfo?.version,
           numberOfKeys: additionalInfo?.totalKeys,
@@ -97,10 +95,14 @@ export class DatabaseAnalytics extends TelemetryBaseService {
               ? 'enabled'
               : 'disabled',
             useTLSAuthClients: cur?.clientCert ? 'enabled' : 'disabled',
+            useSNI: cur?.tlsServername ? 'enabled' : 'disabled',
+            useSSH: cur?.ssh ? 'enabled' : 'disabled',
             previousValues: {
               connectionType: prev.connectionType,
               provider: prev.provider,
               useTLS: prev.tls ? 'enabled' : 'disabled',
+              useSNI: prev?.tlsServername ? 'enabled' : 'disabled',
+              useSSH: prev?.ssh ? 'enabled' : 'disabled',
               verifyTLSCertificate: prev?.verifyServerCert
                 ? 'enabled'
                 : 'disabled',

@@ -29,6 +29,7 @@ import {
 import { ConnectionType, InstanceType, } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getDiffKeysOfObjectValues, checkRediStackModules } from 'uiSrc/utils'
+import { BuildType } from 'uiSrc/constants/env'
 
 import {
   ADD_NEW_CA_CERT,
@@ -63,6 +64,7 @@ export interface Props {
   submitButtonText?: SubmitBtnText
   titleText?: TitleDatabaseText
   loading: boolean
+  buildType?: BuildType
   instanceType: InstanceType
   loadingMsg: LoadingDatabaseText
   isEditMode: boolean
@@ -127,6 +129,7 @@ const AddStandaloneForm = (props: Props) => {
     onHostNamePaste,
     submitButtonText,
     instanceType,
+    buildType,
     loading,
     isEditMode,
     isCloneMode,
@@ -511,7 +514,7 @@ const AddStandaloneForm = (props: Props) => {
               certificates={certificates}
               caCertificates={caCertificates}
             />
-            {instanceType !== InstanceType.Sentinel && (
+            {instanceType !== InstanceType.Sentinel && buildType !== BuildType.RedisStack && (
               <SSHDetails
                 formik={formik}
                 flexItemClassName={flexItemClassName}
@@ -563,11 +566,13 @@ const AddStandaloneForm = (props: Props) => {
                 certificates={certificates}
                 caCertificates={caCertificates}
               />
-              <SSHDetails
-                formik={formik}
-                flexItemClassName={flexItemClassName}
-                flexGroupClassName={flexGroupClassName}
-              />
+              {buildType !== BuildType.RedisStack && (
+                <SSHDetails
+                  formik={formik}
+                  flexItemClassName={flexItemClassName}
+                  flexGroupClassName={flexGroupClassName}
+                />
+              )}
             </EuiForm>
           </>
         )}

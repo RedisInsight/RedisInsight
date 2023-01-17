@@ -2,6 +2,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { ConnectionType, InstanceType } from 'uiSrc/slices/interfaces'
+import { BuildType } from 'uiSrc/constants/env'
 import InstanceForm, { Props } from './InstanceForm'
 import { ADD_NEW_CA_CERT } from './constants'
 import { DbConnectionInfo } from './interfaces'
@@ -656,6 +657,25 @@ describe('InstanceForm', () => {
     fireEvent.click(screen.getByTestId('use-ssh'))
 
     expect(screen.getByTestId('use-ssh')).toBeChecked()
+  })
+
+  it('should not render Use SSH checkbox for redis stack buidlType', async () => {
+    const handleSubmit = jest.fn()
+    render(
+      <div id="footerDatabaseForm">
+        <InstanceForm
+          {...instance(mockedProps)}
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Standalone,
+          }}
+          buildType={BuildType.RedisStack}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    )
+
+    expect(screen.queryByTestId('use-ssh')).not.toBeInTheDocument()
   })
 
   it('should change Use SSH checkbox and show proper fields for password radio', async () => {

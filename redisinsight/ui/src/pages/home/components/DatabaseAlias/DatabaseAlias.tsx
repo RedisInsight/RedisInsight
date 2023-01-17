@@ -12,9 +12,10 @@ import {
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
+import { toNumber } from 'lodash'
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import { Nullable } from 'uiSrc/utils'
+import { Nullable, getDbIndex } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
@@ -177,7 +178,7 @@ const DatabaseAlias = (props: Props) => {
                     {!isCloneMode && (<span className={cx(styles.aliasTextEditing)}>{alias}</span>)}
                   </b>
                   <b>
-                    {database ? `[${database}]` : ''}
+                    {getDbIndex(toNumber(database))}
                   </b>
                   {!isCloneMode && (<EuiIcon type="pencil" className={cx(styles.aliasEditIcon)} />)}
                 </EuiText>

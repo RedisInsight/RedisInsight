@@ -223,6 +223,11 @@ export class RedisConnectionFactory {
     options: IRedisConnectionOptions,
   ): Promise<Cluster> {
     const config = await this.getRedisClusterOptions(clientMetadata, database, options);
+
+    if (database.ssh) {
+      throw new Error('SSH is unsupported for cluster databases.');
+    }
+
     return new Promise((resolve, reject) => {
       try {
         const cluster = new Cluster([{

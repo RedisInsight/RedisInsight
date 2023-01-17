@@ -97,6 +97,7 @@ export class CommandExecutionProvider {
         'e.summary',
         'e.resultsMode',
         'e.executionTime',
+        'e.db',
       ])
       .orderBy('e.createdAt', 'DESC')
       .limit(WORKBENCH_CONFIG.maxItemsPerDb)

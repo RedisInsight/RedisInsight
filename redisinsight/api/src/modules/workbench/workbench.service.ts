@@ -28,13 +28,16 @@ export class WorkbenchService {
    *
    * @param clientMetadata
    * @param dto
+   * @param db
    */
   async createCommandExecution(
     clientMetadata: ClientMetadata,
     dto: CreateCommandExecutionDto,
+    db: number = 0,
   ): Promise<Partial<CommandExecution>> {
     const commandExecution: Partial<CommandExecution> = {
       ...omit(dto, 'commands'),
+      db,
       databaseId: clientMetadata.databaseId,
     };
 
@@ -63,16 +66,19 @@ export class WorkbenchService {
    * @param clientMetadata
    * @param dto
    * @param commands
+   * @param db
    * @param onlyErrorResponse
    */
   async createCommandsExecution(
     clientMetadata: ClientMetadata,
     dto: Partial<CreateCommandExecutionDto>,
     commands: string[],
+    db: number = 0,
     onlyErrorResponse: boolean = false,
   ): Promise<Partial<CommandExecution>> {
     const commandExecution: Partial<CommandExecution> = {
       ...dto,
+      db,
       databaseId: clientMetadata.databaseId,
     };
     let executionTimeInNanoseconds = BigInt(0);
@@ -134,17 +140,19 @@ export class WorkbenchService {
   ): Promise<CommandExecution[]> {
     // todo: handle concurrent client creation on RedisModule side
     // temporary workaround. Just create client before any command execution precess
-    await this.databaseConnectionService.getOrCreateClient(clientMetadata);
+    const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
 
     if (dto.resultsMode === ResultsMode.GroupMode || dto.resultsMode === ResultsMode.Silent) {
       return this.commandExecutionProvider.createMany(
-        [await this.createCommandsExecution(clientMetadata, dto, dto.commands, dto.resultsMode === ResultsMode.Silent)],
+        [await this.createCommandsExecution(clientMetadata, dto, dto.commands, client?.options?.db, dto.resultsMode === ResultsMode.Silent)],
       );
     }
     // todo: rework to support pipeline
     // prepare and execute commands
     const commandExecutions = await Promise.all(
-      dto.commands.map(async (command) => await this.createCommandExecution(clientMetadata, { ...dto, command })),
+      dto.commands.map(
+        async (command) => await this.createCommandExecution(clientMetadata, { ...dto, command }, client?.options?.db),
+      ),
     );
 
     // save history

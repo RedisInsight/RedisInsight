@@ -52,6 +52,7 @@ export class DatabaseAnalysisService {
 
       const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
         databaseId: clientMetadata.databaseId,
+        db: client?.options?.db,
         ...dto,
         progress,
       }, [].concat(...scanResults.map((nodeResult) => nodeResult.keys))));

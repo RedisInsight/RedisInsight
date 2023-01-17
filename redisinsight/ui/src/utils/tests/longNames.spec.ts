@@ -15,8 +15,8 @@ describe('formatLongName', () => {
 describe('getDbIndex', () => {
   it('should format long names', () => {
     expect(getDbIndex(0)).toEqual('')
-    expect(getDbIndex(1)).toEqual('[1]')
-    expect(getDbIndex(10)).toEqual('[10]')
+    expect(getDbIndex(1)).toEqual('[db1]')
+    expect(getDbIndex(10)).toEqual('[db10]')
   })
 })
 

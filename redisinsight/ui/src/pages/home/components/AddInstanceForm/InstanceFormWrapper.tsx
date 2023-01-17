@@ -21,6 +21,7 @@ import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
 import { BrowserStorageItem, DbType, Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
 import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
 
 import InstanceForm from './InstanceForm'
 import { DbConnectionInfo } from './InstanceForm/interfaces'
@@ -90,6 +91,7 @@ const InstanceFormWrapper = (props: Props) => {
   const { loading: loadingSentinel } = useSelector(sentinelSelector)
   const { data: caCertificates } = useSelector(caCertsSelector)
   const { data: certificates } = useSelector(clientCertsSelector)
+  const { server } = useSelector(appInfoSelector)
 
   const tlsClientAuthRequired = !!editedInstance?.clientCert?.id ?? false
   const selectedTlsClientCertId = editedInstance?.clientCert?.id ?? ADD_NEW
@@ -455,6 +457,7 @@ const InstanceFormWrapper = (props: Props) => {
         formFields={connectionFormData}
         initialValues={initialValues}
         loading={loadingStandalone || loadingSentinel}
+        buildType={server?.buildType}
         instanceType={instanceType}
         loadingMsg={
           editMode

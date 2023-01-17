@@ -168,7 +168,7 @@ export class DatabaseImportService {
       if (data?.sentinelMasterName) {
         data.sentinelMaster = {
           name: data.sentinelMasterName,
-          username: data.sentinelMasterUsername,
+          username: data.sentinelMasterUsername || undefined,
           password: data.sentinelMasterPassword,
         };
         data.nodes = [{

@@ -19,6 +19,8 @@ import { Theme } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
+import NoRecommendationsDark from 'uiSrc/assets/img/icons/recommendations_dark.svg'
+import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light.svg'
 
 import { renderContent, renderBadges, renderBadgesLegend } from './utils'
 import styles from './styles.module.scss'
@@ -91,7 +93,15 @@ const Recommendations = () => {
   if (isNull(recommendations) || !recommendations.length) {
     return (
       <div className={styles.container} data-testid="empty-recommendations-message">
-        <EuiText size="m">No Recommendations at the moment.</EuiText>
+        <EuiIcon
+          type={theme === Theme.Dark ? NoRecommendationsDark : NoRecommendationsLight}
+          className={styles.noRecommendationsIcon}
+          data-testid="no=recommendations-icon"
+        />
+        <EuiText className={styles.bigText}>AMAZING JOB!</EuiText>
+        <EuiText size="m">No Recommendations at the moment,</EuiText>
+        <br />
+        <EuiText size="m">keep up the good work!</EuiText>
       </div>
     )
   }

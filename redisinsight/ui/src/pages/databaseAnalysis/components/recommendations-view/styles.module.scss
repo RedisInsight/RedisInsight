@@ -68,6 +68,17 @@
   flex-direction: column;
   align-items: center;
   height: 100%;
+  padding-bottom: 162px;
+
+  .noRecommendationsIcon {
+    width: 154px;
+    height: 127px;
+  }
+}
+
+.bigText {
+  font: normal normal 600 18px/22px Graphik, sans-serif !important;
+  margin: 16px 0 12px;
 }
 
 .loadingWrapper {

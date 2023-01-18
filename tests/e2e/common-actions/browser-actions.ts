@@ -29,4 +29,15 @@ export class BrowserActions {
             }
         }
     }
+    
+    /**
+     * Verify toolip contains text
+     * @param expectedText Expected link that is compared with actual
+     * @param contains Should this tooltip contains or not contains text
+     */
+    async verifyTooltipContainsText(expectedText: string, contains: boolean): Promise<void> {
+        contains
+            ? await t.expect(browserPage.tooltip.textContent).contains(expectedText, `"${expectedText}" Text is incorrect in tooltip`)
+            : await t.expect(browserPage.tooltip.textContent).notContains(expectedText, `Tooltip still contains text "${expectedText}"`);
+    }
 }

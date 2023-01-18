@@ -2,8 +2,8 @@ import { Chance } from 'chance';
 const chance = new Chance();
 
 // Urls for using in the tests
-export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
-export const apiUrl = process.env.API_URL || 'https://localhost:5000/api';
+export const commonUrl = process.env.COMMON_URL || 'http://localhost:5000';
+export const apiUrl = process.env.API_URL || 'http://localhost:5000/api';
 
 const uniqueId = chance.string({ length: 10 });
 
@@ -93,5 +93,13 @@ export const ossStandaloneNoPermissionsConfig = {
     port: process.env.OSS_STANDALONE_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'oss-standalone-no-permissions'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME || 'noperm',
+    databasePassword: process.env.OSS_STANDALONE_PASSWORD
+};
+
+export const ossStandaloneForSSH = {
+    host: process.env.OSS_STANDALONE_HOST || '172.33.100.10',
+    port: process.env.OSS_STANDALONE_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'oss-standalone-for-ssh'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
 };

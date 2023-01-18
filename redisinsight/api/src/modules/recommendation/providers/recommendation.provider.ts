@@ -509,7 +509,7 @@ export class RecommendationProvider {
   ): Promise<Recommendation> {
     try {
       const dangerousCommands = await redisClient.sendCommand(
-        new Command('command', ['LIST', 'FILTERBY', 'aclcat', 'dangerous'], { replyEncoding: 'utf8' }),
+        new Command('ACL', ['CAT', 'dangerous'], { replyEncoding: 'utf8' }),
       ) as string[];
 
       const filteredDangerousCommands = dangerousCommands.filter((command) => {

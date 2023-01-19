@@ -36,22 +36,25 @@
   overflow: auto;
 }
 
+.monaco-params-line {
+  color: var(--monacoParamsColor) !important;
+}
+
 .monaco-glyph-run-command {
   color: var(--rsSubmitBtn);
   margin-left: 10px;
   opacity: 0.5 !important;
 
   &::before {
-    content: '';
+    content: "";
     width: 16px;
     height: 16px;
-    mask-image: url('uiSrc/assets/img/play_icon.svg');
-    -webkit-mask-image: url('uiSrc/assets/img/play_icon.svg');
+    mask-image: url("uiSrc/assets/img/play_icon.svg");
+    -webkit-mask-image: url("uiSrc/assets/img/play_icon.svg");
     background-color: var(--rsSubmitBtn);
     background-size: contain;
     font-size: 16px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-      Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
 }
 

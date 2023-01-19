@@ -51,6 +51,18 @@ const mockCreateCommandExecutionDtoWithGroupMode: CreateCommandExecutionsDto = {
   resultsMode: ResultsMode.GroupMode,
 };
 
+const mockCreateCommandExecutionDtoWithSilentMode: CreateCommandExecutionsDto = {
+  commands: mockCommands,
+  nodeOptions: {
+    host: '127.0.0.1',
+    port: 7002,
+    enableRedirection: true,
+  },
+  role: ClusterNodeRole.All,
+  mode: RunQueryMode.ASCII,
+  resultsMode: ResultsMode.Silent,
+};
+
 const mockCreateCommandExecutionsDto: CreateCommandExecutionsDto = {
   commands: [
     mockCreateCommandExecutionDto.command,
@@ -96,6 +108,21 @@ const mockCommandExecutionWithGroupMode = {
     status: 'success',
     response: [
       { response: 'OK', status: 'success', command: 'set 1 1' },
+      { response: 'error', status: 'fail', command: 'get 1' },
+    ],
+  }],
+};
+
+const mockCommandExecutionWithSilentMode = {
+  mode: 'ASCII',
+  commands: mockCommands,
+  resultsMode: 'GROUP_MODE',
+  databaseId: 'd05043d0 - 0d12- 4ce1-9ca3 - 30c6d7e391ea',
+  summary: { total: 2, success: 1, fail: 1 },
+  command: 'set 1 1\r\nget 1',
+  result: [{
+    status: 'success',
+    response: [
       { response: 'error', status: 'fail', command: 'get 1' },
     ],
   }],
@@ -215,6 +242,21 @@ describe('WorkbenchService', () => {
       expect(result).toEqual([mockCommandExecutionWithGroupMode]);
     });
 
+    it('should successfully execute commands and save in silent mode view', async () => {
+      when(workbenchCommandsExecutor.sendCommand)
+        .calledWith(mockWorkbenchClientMetadata, expect.anything())
+        .mockResolvedValue([mockSendCommandResultSuccess]);
+
+      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithSilentMode]);
+
+      const result = await service.createCommandExecutions(
+        mockWorkbenchClientMetadata,
+        mockCreateCommandExecutionDtoWithSilentMode,
+      );
+
+      expect(result).toEqual([mockCommandExecutionWithSilentMode]);
+    });
+
     it('should successfully execute commands with error and save summary', async () => {
       when(workbenchCommandsExecutor.sendCommand)
         .calledWith(mockWorkbenchClientMetadata, {
@@ -238,6 +280,31 @@ describe('WorkbenchService', () => {
       );
 
       expect(result).toEqual([mockCommandExecutionWithGroupMode]);
+    });
+
+    it('should successfully execute commands with error and save summary in silent mode view', async () => {
+      when(workbenchCommandsExecutor.sendCommand)
+        .calledWith(mockWorkbenchClientMetadata, {
+          ...mockCreateCommandExecutionDtoWithSilentMode,
+          command: mockCommands[0],
+        })
+        .mockResolvedValue([mockSendCommandResultSuccess]);
+
+      when(workbenchCommandsExecutor.sendCommand)
+        .calledWith(mockWorkbenchClientMetadata, {
+          ...mockCreateCommandExecutionDtoWithSilentMode,
+          command: mockCommands[1],
+        })
+        .mockResolvedValue([mockSendCommandResultFail]);
+
+      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithSilentMode]);
+
+      const result = await service.createCommandExecutions(
+        mockWorkbenchClientMetadata,
+        mockCreateCommandExecutionDtoWithSilentMode,
+      );
+
+      expect(result).toEqual([mockCommandExecutionWithSilentMode]);
     });
 
     it('should throw an error when command execution failed', async () => {

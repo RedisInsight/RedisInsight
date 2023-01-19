@@ -25,7 +25,7 @@ export interface Props {
   result: CommandExecutionResult[]
   query: any
   id: string
-  setSummaryText: (text: string) => void
+  setMessage: (text: string) => void
   commandId: string
 }
 
@@ -43,7 +43,7 @@ enum ActionTypes {
 const baseUrl = getBaseApiUrl()
 
 const QueryCardCliPlugin = (props: Props) => {
-  const { query, id, result, setSummaryText, commandId } = props
+  const { query, id, result, setMessage, commandId } = props
   const { visualizations = [], staticPath } = useSelector(appPluginsSelector)
   const { modules = [] } = useSelector(connectedInstanceSelector)
   const serverInfo = useSelector(appServerInfoSelector)
@@ -177,7 +177,7 @@ const QueryCardCliPlugin = (props: Props) => {
     })
 
     pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.setHeaderText, (text: string) => {
-      setSummaryText(text)
+      setMessage(text)
     })
 
     pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.executeRedisCommand, sendRedisCommand)

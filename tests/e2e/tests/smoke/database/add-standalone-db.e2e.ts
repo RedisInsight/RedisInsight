@@ -67,4 +67,6 @@ test
         await addRECloudDatabase(cloudDatabaseConfig);
         // Verify new connection badge for RE cloud
         await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
+        // Verify redis stack icon for RE Cloud with all 5 modules
+        await t.expect(myRedisDatabasePage.redisStackIcon.visible).ok('Redis Stack icon not found for RE Cloud db with all 5 modules');
     });

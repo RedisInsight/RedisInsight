@@ -17,6 +17,7 @@ const racompassInvalidJson = 'racompass-invalid.json';
 const rdmFullJson = 'rdm-full.json';
 const rdmCertsJson = 'rdm-certificates.json';
 const ardmValidAno = 'ardm-valid.ano';
+const racompFullSSHJson = 'racompFullSSH.json';
 const racompassInvalidJsonPath = path.join('..', '..', '..', 'test-data', 'import-databases', racompassInvalidJson);
 const rdmListOfDB = databasesActions.parseDbJsonByPath(path.join('test-data', 'import-databases', rdmFullJson));
 const rdmCertsListOfDB = databasesActions.parseDbJsonByPath(path.join('test-data', 'import-databases', rdmCertsJson));
@@ -24,6 +25,10 @@ const rdmSuccessNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(rdm
 const rdmPartialNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(rdmListOfDB, 'partial');
 const rdmFailedNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(rdmListOfDB, 'failed');
 const rdmCertsNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(rdmCertsListOfDB, 'success');
+const racompListOfSSHDB = databasesActions.parseDbJsonByPath(path.join('test-data', 'import-databases', racompFullSSHJson));
+const racompSSHSuccessNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(racompListOfSSHDB, 'success');
+const racompSSHPartialNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(racompListOfSSHDB, 'partial');
+const racompSSHFailedNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(racompListOfSSHDB, 'failed');
 const rdmData = {
     type: 'rdm',
     path: path.join('..', '..', '..', 'test-data', 'import-databases', rdmFullJson),
@@ -37,6 +42,13 @@ const rdmCertsData = {
     type: 'rdm',
     path: path.join('..', '..', '..', 'test-data', 'import-databases', rdmCertsJson),
     parsedJson: databasesActions.parseDbJsonByPath(path.join('test-data', 'import-databases', rdmCertsJson))
+};
+const racompSSHData = {
+    type: 'racompass',
+    path: path.join('..', '..', '..', 'test-data', 'import-databases', racompFullSSHJson),
+    successNumber: racompSSHSuccessNames.length,
+    partialNumber: racompSSHPartialNames.length,
+    failedNumber: racompSSHFailedNames.length
 };
 const dbData = [
     {
@@ -207,4 +219,27 @@ test
         await clickOnEditDatabaseByName(rdmCertsData.parsedJson[5].name);
         await t.expect(addRedisDatabasePage.caCertField.textContent).eql('1_caPath', 'CA certificate import incorrect');
         await t.expect(addRedisDatabasePage.clientCertField.textContent).eql('1_clientPath', 'Client certificate import incorrect');
+    });
+    test
+    .after(async() => {
+        // Delete databases
+        await deleteStandaloneDatabasesByNamesApi(rdmCertsNames);
+    })('Import SSH parameters', async t => {
+        const sshAgentsResult = 'SSH Agents are not supported';
+
+        await databasesActions.importDatabase(racompSSHData);
+        
+        // Fully imported table with SSH
+        await t.expect(myRedisDatabasePage.successResultsAccordion.find(myRedisDatabasePage.cssNumberOfDbs).textContent)
+            .contains(`${racompSSHData.successNumber}`, 'Not correct successfully SSH imported number');
+        // Partially imported table with SSH
+        await t.expect(myRedisDatabasePage.partialResultsAccordion.find(myRedisDatabasePage.cssNumberOfDbs).textContent)
+            .contains(`${racompSSHData.partialNumber}`, 'Not correct partially SSH imported number');
+        // Failed to import table with SSH
+        await t.expect(myRedisDatabasePage.failedResultsAccordion.find(myRedisDatabasePage.cssNumberOfDbs).textContent)
+            .contains(`${racompSSHData.failedNumber}`, 'Not correct SSH import failed number');
+        // Expand partial results
+        await t.click(myRedisDatabasePage.partialResultsAccordion);
+        // Verify that database is partially imported with corresponding message when the ssh_agent_path specified in imported JSON
+        await t.expect(myRedisDatabasePage.importResult.withText(sshAgentsResult).exists).ok('SSH agents not supported message not displayed in result');
     });

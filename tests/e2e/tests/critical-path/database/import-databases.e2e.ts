@@ -19,16 +19,19 @@ const rdmCertsJson = 'rdm-certificates.json';
 const ardmValidAno = 'ardm-valid.ano';
 const racompFullSSHJson = 'racompFullSSH.json';
 const racompassInvalidJsonPath = path.join('..', '..', '..', 'test-data', 'import-databases', racompassInvalidJson);
+
 const rdmListOfDB = databasesActions.parseDbJsonByPath(path.join('test-data', 'import-databases', rdmFullJson));
 const rdmCertsListOfDB = databasesActions.parseDbJsonByPath(path.join('test-data', 'import-databases', rdmCertsJson));
 const rdmSuccessNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(rdmListOfDB, 'success');
 const rdmPartialNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(rdmListOfDB, 'partial');
 const rdmFailedNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(rdmListOfDB, 'failed');
 const rdmCertsNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(rdmCertsListOfDB, 'success');
+
 const racompListOfSSHDB = databasesActions.parseDbJsonByPath(path.join('test-data', 'import-databases', racompFullSSHJson));
 const racompSSHSuccessNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(racompListOfSSHDB, 'success');
 const racompSSHPartialNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(racompListOfSSHDB, 'partial');
 const racompSSHFailedNames = myRedisDatabasePage.getDatabaseNamesFromListByResult(racompListOfSSHDB, 'failed');
+const importedSSHdbNames = [ ...racompSSHSuccessNames, ...racompSSHPartialNames ];
 const rdmData = {
     type: 'rdm',
     path: path.join('..', '..', '..', 'test-data', 'import-databases', rdmFullJson),
@@ -40,8 +43,7 @@ const rdmData = {
 };
 const rdmCertsData = {
     type: 'rdm',
-    path: path.join('..', '..', '..', 'test-data', 'import-databases', rdmCertsJson),
-    parsedJson: databasesActions.parseDbJsonByPath(path.join('test-data', 'import-databases', rdmCertsJson))
+    path: path.join('..', '..', '..', 'test-data', 'import-databases', rdmCertsJson)
 };
 const racompSSHData = {
     type: 'racompass',
@@ -193,42 +195,42 @@ test
         await t.click(myRedisDatabasePage.okDialogBtn);
 
         // Verify that when user imports a certificate and the same certificate body already exists, the existing certificate (with its name) is applied
-        await clickOnEditDatabaseByName(rdmCertsData.parsedJson[0].name);
-        await t.expect(addRedisDatabasePage.caCertField.textContent).eql(rdmCertsData.parsedJson[0].caCert.name, 'CA certificate import incorrect');
-        await t.expect(addRedisDatabasePage.clientCertField.textContent).eql(rdmCertsData.parsedJson[0].clientCert.name, 'Client certificate import incorrect');
+        await clickOnEditDatabaseByName(rdmCertsListOfDB[0].name);
+        await t.expect(addRedisDatabasePage.caCertField.textContent).eql(rdmCertsListOfDB[0].caCert.name, 'CA certificate import incorrect');
+        await t.expect(addRedisDatabasePage.clientCertField.textContent).eql(rdmCertsListOfDB[0].clientCert.name, 'Client certificate import incorrect');
 
-        await clickOnEditDatabaseByName(rdmCertsData.parsedJson[1].name);
-        await t.expect(addRedisDatabasePage.caCertField.textContent).eql(rdmCertsData.parsedJson[0].caCert.name, 'CA certificate name with the same body is incorrect');
-        await t.expect(addRedisDatabasePage.clientCertField.textContent).eql(rdmCertsData.parsedJson[0].clientCert.name, 'Client certificate name with the same body is incorrect');
+        await clickOnEditDatabaseByName(rdmCertsListOfDB[1].name);
+        await t.expect(addRedisDatabasePage.caCertField.textContent).eql(rdmCertsListOfDB[0].caCert.name, 'CA certificate name with the same body is incorrect');
+        await t.expect(addRedisDatabasePage.clientCertField.textContent).eql(rdmCertsListOfDB[0].clientCert.name, 'Client certificate name with the same body is incorrect');
 
         // Verify that when user imports a certificate and the same certificate name exists but with a different body, the certificate imported with "({incremental_number})_certificate_name" name
-        await clickOnEditDatabaseByName(rdmCertsData.parsedJson[2].name);
-        await t.expect(addRedisDatabasePage.caCertField.textContent).eql(`1_${rdmCertsData.parsedJson[0].caCert.name}`, 'CA certificate name with the same body is incorrect');
-        await t.expect(addRedisDatabasePage.clientCertField.textContent).eql(`1_${rdmCertsData.parsedJson[0].clientCert.name}`, 'Client certificate name with the same body is incorrect');
+        await clickOnEditDatabaseByName(rdmCertsListOfDB[2].name);
+        await t.expect(addRedisDatabasePage.caCertField.textContent).eql(`1_${rdmCertsListOfDB[0].caCert.name}`, 'CA certificate name with the same body is incorrect');
+        await t.expect(addRedisDatabasePage.clientCertField.textContent).eql(`1_${rdmCertsListOfDB[0].clientCert.name}`, 'Client certificate name with the same body is incorrect');
 
         // Verify that when user imports a certificate by path and the same certificate body already exists, the existing certificate (with its name) is applied
-        await clickOnEditDatabaseByName(rdmCertsData.parsedJson[3].name);
+        await clickOnEditDatabaseByName(rdmCertsListOfDB[3].name);
         await t.expect(addRedisDatabasePage.caCertField.textContent).eql('caPath', 'CA certificate import incorrect');
         await t.expect(addRedisDatabasePage.clientCertField.textContent).eql('clientPath', 'Client certificate import incorrect');
 
-        await clickOnEditDatabaseByName(rdmCertsData.parsedJson[4].name);
+        await clickOnEditDatabaseByName(rdmCertsListOfDB[4].name);
         await t.expect(addRedisDatabasePage.caCertField.textContent).eql('caPath', 'CA certificate import incorrect');
         await t.expect(addRedisDatabasePage.clientCertField.textContent).eql('clientPath', 'Client certificate import incorrect');
 
         // Verify that when user imports a certificate by path and the same certificate name exists but with a different body, the certificate imported with "({incremental_number})certificate_name" name
-        await clickOnEditDatabaseByName(rdmCertsData.parsedJson[5].name);
+        await clickOnEditDatabaseByName(rdmCertsListOfDB[5].name);
         await t.expect(addRedisDatabasePage.caCertField.textContent).eql('1_caPath', 'CA certificate import incorrect');
         await t.expect(addRedisDatabasePage.clientCertField.textContent).eql('1_clientPath', 'Client certificate import incorrect');
     });
-    test
+test
     .after(async() => {
         // Delete databases
-        await deleteStandaloneDatabasesByNamesApi(rdmCertsNames);
+        await deleteStandaloneDatabasesByNamesApi(importedSSHdbNames);
     })('Import SSH parameters', async t => {
         const sshAgentsResult = 'SSH Agents are not supported';
+        const sshPrivateKey = '-----BEGIN OPENSSH PRIVATE KEY-----';
 
         await databasesActions.importDatabase(racompSSHData);
-        
         // Fully imported table with SSH
         await t.expect(myRedisDatabasePage.successResultsAccordion.find(myRedisDatabasePage.cssNumberOfDbs).textContent)
             .contains(`${racompSSHData.successNumber}`, 'Not correct successfully SSH imported number');
@@ -242,4 +244,18 @@ test
         await t.click(myRedisDatabasePage.partialResultsAccordion);
         // Verify that database is partially imported with corresponding message when the ssh_agent_path specified in imported JSON
         await t.expect(myRedisDatabasePage.importResult.withText(sshAgentsResult).exists).ok('SSH agents not supported message not displayed in result');
+
+        await t.click(myRedisDatabasePage.okDialogBtn);
+        await clickOnEditDatabaseByName(racompListOfSSHDB[0].name);
+        // Verify that user can import the SSH parameters with Password
+        await t.expect(addRedisDatabasePage.sshHostInput.value).eql(racompListOfSSHDB[0].sshHost, 'SSH host import incorrect');
+        await t.expect(addRedisDatabasePage.sshPortInput.value).eql((racompListOfSSHDB[0].sshPort).toString(), 'SSH port import incorrect');
+        await t.expect(addRedisDatabasePage.sshUsernameInput.value).eql(racompListOfSSHDB[0].sshUser, 'SSH username import incorrect');
+        await t.expect(addRedisDatabasePage.sshPasswordInput.value).eql(racompListOfSSHDB[0].sshPassword, 'SSH password import incorrect');
+
+        await clickOnEditDatabaseByName(racompListOfSSHDB[1].name);
+        // Verify that user can import the SSH Private Key both by its value specified in the file and by the file path
+        await t.expect(addRedisDatabasePage.sshPrivateKeyInput.textContent).contains(sshPrivateKey, 'SSH Private key import incorrect');
+        // Verify that user can import the SSH parameters with Passcode
+        await t.expect(addRedisDatabasePage.sshPassphraseInput.value).eql(racompListOfSSHDB[1].sshKeyPassphrase, 'SSH Passphrase import incorrect');
     });

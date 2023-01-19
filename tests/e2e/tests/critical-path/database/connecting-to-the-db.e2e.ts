@@ -3,7 +3,7 @@ import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../..
 import { commonUrl, invalidOssStandaloneConfig, ossStandaloneForSSH } from '../../../helpers/conf';
 import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/database';
 import { deleteStandaloneDatabasesByNamesApi } from '../../../helpers/api/api-database';
-import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../test-data/ssh/sshPrivateKeys';
+import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../test-data/sshPrivateKeys';
 import { Common } from '../../../helpers/common';
 import { BrowserActions } from '../../../common-actions/browser-actions';
 
@@ -128,6 +128,7 @@ test
             .typeText(addRedisDatabasePage.sshPrivateKeyInput, sshWithPassphrase.sshPrivateKey, { replace: true, paste: true })
             .typeText(addRedisDatabasePage.sshPassphraseInput, sshWithPassphrase.sshPassphrase, { replace: true, paste: true });
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+        await t.expect(addRedisDatabasePage.addRedisDatabaseButton.exists).notOk('Edit database panel still displayed');
         await clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);
         await t
             .expect(addRedisDatabasePage.sshPrivateKeyInput.value).eql(sshWithPassphrase.sshPrivateKey, 'Edited Private key not saved')

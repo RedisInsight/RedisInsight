@@ -12,6 +12,7 @@ export const repositories = {
   DAtABASE: 'DatabaseEntity',
   CA_CERT_REPOSITORY: 'CaCertificateEntity',
   CLIENT_CERT_REPOSITORY: 'ClientCertificateEntity',
+  SSH_OPTIONS_REPOSITORY: 'SshOptionsEntity',
   AGREEMENTS: 'AgreementsEntity',
   COMMAND_EXECUTION: 'CommandExecutionEntity',
   PLUGIN_STATE: 'PluginStateEntity',
@@ -265,6 +266,17 @@ const createTesDbInstance = async (rte, server): Promise<void> => {
     }
   }
 
+  if (constants.TEST_SSH_USER) {
+    instance.ssh = true;
+    instance.sshOptions = {
+      host: constants.TEST_SSH_HOST,
+      port: constants.TEST_SSH_PORT,
+      encryption: constants.TEST_ENCRYPTION_STRATEGY,
+      username: encryptData(constants.TEST_SSH_USER),
+      privateKey: encryptData(constants.TEST_SSH_PRIVATE_KEY_P),
+      passphrase: encryptData(constants.TEST_SSH_PASSPHRASE),
+    };
+  }
   await rep.save(instance);
 }
 
@@ -349,6 +361,17 @@ export const createAclInstance = async (rte, server): Promise<void> => {
         key: encryptData(constants.TEST_USER_TLS_KEY),
       });
     }
+  }
+
+  if (constants.TEST_SSH_USER) {
+    instance.ssh = true;
+    instance.sshOptions = {
+      host: constants.TEST_SSH_HOST,
+      port: constants.TEST_SSH_PORT,
+      encryption: constants.TEST_ENCRYPTION_STRATEGY,
+      username: encryptData(constants.TEST_SSH_USER),
+      privateKey: encryptData(constants.TEST_SSH_PRIVATE_KEY),
+    };
   }
 
   await rep.save(instance);

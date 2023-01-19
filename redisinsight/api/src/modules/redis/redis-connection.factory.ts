@@ -8,6 +8,8 @@ import { cloneClassInstance, generateRedisConnectionName } from 'src/utils';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClientMetadata } from 'src/common/models';
 import { ClusterOptions } from 'ioredis/built/cluster/ClusterOptions';
+import { SshTunnelProvider } from 'src/modules/ssh/ssh-tunnel.provider';
+import { TunnelConnectionLostException } from 'src/modules/ssh/exceptions';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -19,6 +21,10 @@ export interface IRedisConnectionOptions {
 @Injectable()
 export class RedisConnectionFactory {
   private logger = new Logger('RedisConnectionFactory');
+
+  constructor(
+    private readonly sshTunnelProvider: SshTunnelProvider,
+  ) {}
 
   // common retry strategy
   private retryStrategy = (times: number): number => {
@@ -155,30 +161,54 @@ export class RedisConnectionFactory {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<Redis> {
-    const config = await this.getRedisOptions(clientMetadata, database, options);
+    let tnl;
 
-    return await new Promise((resolve, reject) => {
-      try {
-        const connection = new Redis({
-          ...config,
-          // cover cases when we are connecting to sentinel as to standalone to discover master groups
-          db: config.db > 0 && !database.sentinelMaster ? config.db : 0,
-        });
-        connection.on('error', (e): void => {
-          this.logger.error('Failed connection to the redis database.', e);
-          reject(e);
-        });
-        connection.on('ready', (): void => {
-          this.logger.log('Successfully connected to the redis database');
-          resolve(connection);
-        });
-        connection.on('reconnecting', (): void => {
-          this.logger.log('Reconnecting to the redis database');
-        });
-      } catch (e) {
-        reject(e);
+    try {
+      const config = await this.getRedisOptions(clientMetadata, database, options);
+
+      if (database.ssh) {
+        tnl = await this.sshTunnelProvider.createTunnel(database);
       }
-    }) as Redis;
+
+      return await new Promise((resolve, reject) => {
+        try {
+          if (tnl) {
+            tnl.on('error', (error) => {
+              reject(error);
+            });
+
+            tnl.on('close', () => {
+              reject(new TunnelConnectionLostException());
+            });
+
+            config.host = tnl.serverAddress.host;
+            config.port = tnl.serverAddress.port;
+          }
+
+          const connection = new Redis({
+            ...config,
+            // cover cases when we are connecting to sentinel as to standalone to discover master groups
+            db: config.db > 0 && !database.sentinelMaster ? config.db : 0,
+          });
+          connection.on('error', (e): void => {
+            this.logger.error('Failed connection to the redis database.', e);
+            reject(e);
+          });
+          connection.on('ready', (): void => {
+            this.logger.log('Successfully connected to the redis database');
+            resolve(connection);
+          });
+          connection.on('reconnecting', (): void => {
+            this.logger.log('Reconnecting to the redis database');
+          });
+        } catch (e) {
+          reject(e);
+        }
+      }) as Redis;
+    } catch (e) {
+      tnl?.close?.();
+      throw e;
+    }
   }
 
   /**

@@ -17,6 +17,7 @@ import {
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { Endpoint } from 'src/common/models';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
+import { SshOptions } from 'src/modules/ssh/models/ssh-options';
 
 export class Database {
   @ApiProperty({
@@ -215,4 +216,24 @@ export class Database {
   @IsOptional()
   @IsBoolean({ always: true })
   new?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Use SSH tunnel to connect.',
+    type: Boolean,
+  })
+  @Expose()
+  @IsBoolean()
+  @IsOptional()
+  ssh?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'SSH options',
+    type: SshOptions,
+  })
+  @Expose()
+  @IsOptional()
+  @IsNotEmptyObject()
+  @Type(() => SshOptions)
+  @ValidateNested()
+  sshOptions?: SshOptions;
 }

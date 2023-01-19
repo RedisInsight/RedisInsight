@@ -95,3 +95,11 @@ export const ossStandaloneNoPermissionsConfig = {
     databaseUsername: process.env.OSS_STANDALONE_USERNAME || 'noperm',
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
 };
+
+export const ossStandaloneForSSH = {
+    host: process.env.OSS_STANDALONE_HOST || '172.33.100.10',
+    port: process.env.OSS_STANDALONE_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'oss-standalone-for-ssh'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_PASSWORD
+};

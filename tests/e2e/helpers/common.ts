@@ -1,17 +1,18 @@
 import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
-import {apiUrl, commonUrl} from './conf';
+import { apiUrl, commonUrl } from './conf';
+
+const chance = new Chance();
 
 const settingsApiUrl = `${commonUrl}/api/settings`;
-const chance = new Chance();
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
-
 const mockedSettingsResponse = {
     agreements: {
         version: '0',
         eula: false,
         analytics: false
-    }};
+    }
+};
 
 export class Common {
     mock = RequestMock()
@@ -27,7 +28,7 @@ export class Common {
      * @param length The amount of array elements
      */
     createArrayWithKeys(length: number): string[] {
-        return Array.from({length}, (_, i) => `key${i}`);
+        return Array.from({ length }, (_, i) => `key${i}`);
     }
 
     /**
@@ -36,7 +37,7 @@ export class Common {
     */
     async createArrayWithKeyValue(length: number): Promise<string[]> {
         const arr: string[] = [];
-        for(let i = 1; i <= length * 2; i++) {
+        for (let i = 1; i <= length * 2; i++) {
             arr[i] = `${chance.word({ length: 10 })}-key${i}`;
             arr[i + 1] = `${chance.word({ length: 10 })}-value${i}`;
             i++;
@@ -50,7 +51,7 @@ export class Common {
     */
     async createArrayWithKeyValueAndDelimiter(length: number): Promise<string[]> {
         const keyNameArray: string[] = [];
-        for(let i = 1; i <= length; i++) {
+        for (let i = 1; i <= length; i++) {
             const key = `"key${i}:test${i}"`;
             const value = `"value${this.generateSentence(i * 2)}"`;
             keyNameArray.push(key, value);
@@ -64,7 +65,7 @@ export class Common {
     */
     async createArrayWithKeyAndDelimiter(length: number): Promise<string[]> {
         const keyNameArray: string[] = [];
-        for(let i = 1; i <= length; i++) {
+        for (let i = 1; i <= length; i++) {
             const key = `"key${i}:test${i}"`;
             keyNameArray.push(key);
         }
@@ -77,7 +78,7 @@ export class Common {
     */
     async createArrayWithKeyValueForOSSCluster(length: number): Promise<string[]> {
         const arr: string[] = [];
-        for(let i = 1; i <= length * 2; i++) {
+        for (let i = 1; i <= length * 2; i++) {
             arr[i] = `{user1}:${chance.word({ length: 10 })}-key${i}`;
             arr[i + 1] = `${chance.word({ length: 10 })}-value${i}`;
             i++;
@@ -92,7 +93,7 @@ export class Common {
     */
     async createArrayWithKeyValueAndKeyname(length: number, keyName: string): Promise<string[]> {
         const keyNameArray: string[] = [];
-        for(let i = 1; i <= length; i++) {
+        for (let i = 1; i <= length; i++) {
             const key = `${keyName}${i}`;
             const value = `value${i}`;
             keyNameArray.push(key, value);
@@ -114,7 +115,7 @@ export class Common {
     */
     async createArray(length: number): Promise<string[]> {
         const arr: string[] = [];
-        for(let i = 1; i <= length; i++) {
+        for (let i = 1; i <= length; i++) {
             arr[i] = `${i}`;
         }
         return arr;
@@ -165,5 +166,14 @@ export class Common {
     async checkURL(expectedUrl: string): Promise<void> {
         const getPageUrl = ClientFunction(() => window.location.href);
         await t.expect(getPageUrl()).eql(expectedUrl, 'Opened URL is not correct');
+    }
+
+    /**
+     * Check opened URL contains text
+     * @param expectedText Expected link that is compared with actual
+     */
+    async checkURLContainsText(expectedText: string): Promise<void> {
+        const getPageUrl = ClientFunction(() => window.location.href);
+        await t.expect(getPageUrl()).contains(expectedText, `Opened URL not contains text ${expectedText}`);
     }
 }

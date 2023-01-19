@@ -513,5 +513,10 @@ export const constants = {
   TEST_REDISEARCH_RECOMMENDATION: {
     name: RECOMMENDATION_NAMES.REDIS_SEARCH,
   },
+
+  TEST_LUA_SCRIPT_VOTE_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.LUA_SCRIPT,
+    vote: 'amazing',
+  },
   // etc...
 }

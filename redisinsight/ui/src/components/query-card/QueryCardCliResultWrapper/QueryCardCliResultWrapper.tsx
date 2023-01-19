@@ -5,7 +5,7 @@ import { isArray } from 'lodash'
 
 import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { cliParseTextResponse, formatToText, isGroupMode, Maybe } from 'uiSrc/utils'
+import { cliParseTextResponse, formatToText, isGroupResults, Maybe } from 'uiSrc/utils'
 
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import QueryCardCliDefaultResult from '../QueryCardCliDefaultResult'
@@ -35,7 +35,7 @@ const QueryCardCliResultWrapper = (props: Props) => {
               The result is too big to be saved. It will be deleted after the application is closed.
             </EuiText>
           )}
-          {isGroupMode(resultsMode) && isArray(result[0]?.response)
+          {isGroupResults(resultsMode) && isArray(result[0]?.response)
             ? <QueryCardCliGroupResult result={result} isFullScreen={isFullScreen} />
             : (
               <QueryCardCliDefaultResult

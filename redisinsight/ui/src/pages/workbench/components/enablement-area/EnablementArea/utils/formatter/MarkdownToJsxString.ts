@@ -6,9 +6,9 @@ import rehypeStringify from 'rehype-stringify'
 import { visit } from 'unist-util-visit'
 
 import { IFormatter, IFormatterConfig } from './formatter.interfaces'
-import { rehypeLinks } from '../rehypeLinks'
-import { remarkRedisCode } from '../remarkRedisCode'
-import { remarkImage } from '../remarkImage'
+import { rehypeLinks } from '../transform/rehypeLinks'
+import { remarkRedisCode } from '../transform/remarkRedisCode'
+import { remarkImage } from '../transform/remarkImage'
 
 class MarkdownToJsxString implements IFormatter {
   format(data: any, config?: IFormatterConfig): Promise<string> {

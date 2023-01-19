@@ -55,7 +55,8 @@ import reducer, {
   checkDatabaseIndexAction,
   setConnectedInfoInstance,
   setConnectedInfoInstanceSuccess,
-  fetchConnectedInstanceInfoAction
+  fetchConnectedInstanceInfoAction,
+  updateEditedInstance,
 } from '../../instances/instances'
 import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
@@ -556,7 +557,7 @@ describe('instances slice', () => {
   })
 
   describe('setEditedInstance', () => {
-    it('should properly set error', () => {
+    it('should properly set state', () => {
       // Arrange
       const data = instances[1]
       const state = {
@@ -569,6 +570,31 @@ describe('instances slice', () => {
 
       // Act
       const nextState = reducer(initialState, setEditedInstance(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('updateEditedInstance', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const data = instances[1]
+      const state = {
+        ...initialState,
+        editedInstance: {
+          ...initialState.editedInstance,
+          data,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, updateEditedInstance(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -1258,19 +1284,20 @@ describe('instances slice', () => {
     describe('fetchEditedInstanceAction', () => {
       it('call both setEditedInstance and setDefaultInstanceSuccess when fetch is successed', async () => {
         // Arrange
-        const id = 'instanceId'
+        const editedInstance = { id: 'instanceId', host: '1', port: 1, modules: [] }
         const data = instances[1]
         const responsePayload = { data, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchEditedInstanceAction(id))
+        await store.dispatch<any>(fetchEditedInstanceAction(editedInstance))
 
         // Assert
         const expectedActions = [
           setDefaultInstance(),
-          setEditedInstance(responsePayload.data),
+          setEditedInstance(editedInstance),
+          updateEditedInstance(responsePayload.data),
           setDefaultInstanceSuccess(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1278,7 +1305,7 @@ describe('instances slice', () => {
 
       it('call both setDefaultInstance and setDefaultInstanceFailure when fetch is fail', async () => {
         // Arrange
-        const id = 'instanceId'
+        const editedInstance = { id: 'instanceId', host: '1', port: 1, modules: [] }
         const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
@@ -1290,11 +1317,13 @@ describe('instances slice', () => {
         apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchEditedInstanceAction(id))
+        await store.dispatch<any>(fetchEditedInstanceAction(editedInstance))
 
         // Assert
         const expectedActions = [
           setDefaultInstance(),
+          setEditedInstance(editedInstance),
+          setEditedInstance(null),
           setConnectedInstanceFailure(),
           setDefaultInstanceFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as AxiosError),

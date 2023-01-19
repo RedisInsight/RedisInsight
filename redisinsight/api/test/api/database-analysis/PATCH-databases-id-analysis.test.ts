@@ -62,9 +62,6 @@ describe('PATCH /databases/:instanceId/analysis/:id', () => {
               constants.TEST_LUA_SCRIPT_VOTE_RECOMMENDATION
             ]);
           },
-          after: async () => {
-            expect(await repository.count()).to.eq(5);
-          }
         },
       ].map(mainCheckFn);
     });

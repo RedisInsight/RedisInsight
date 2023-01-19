@@ -18,7 +18,12 @@ import reducer, {
   dbAnalysisReportsSelector,
   dbAnalysisSelector,
   setShowNoExpiryGroup,
+  setRecommendationVote,
+  setRecommendationVoteSuccess,
+  setRecommendationVoteError,
+  putRecommendationVote,
 } from 'uiSrc/slices/analytics/dbAnalysis'
+import { Vote } from 'uiSrc/constants/recommendations'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 
 let store: typeof mockedStore
@@ -159,6 +164,26 @@ describe('db analysis slice', () => {
         expect(dbAnalysisSelector(rootState)).toEqual(state)
       })
     })
+    describe('setRecommendationVoteError', () => {
+      it('should properly set error', () => {
+        // Arrange
+        const error = 'Some error'
+        const state = {
+          ...initialState,
+          error,
+          loading: false,
+        }
+
+        // Act
+        const nextState = reducer(initialState, setRecommendationVoteError(error))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          analytics: { databaseAnalysis: nextState },
+        })
+        expect(dbAnalysisSelector(rootState)).toEqual(state)
+      })
+    })
     describe('getDBAnalysis', () => {
       it('should properly set loading: true', () => {
         // Arrange
@@ -210,6 +235,26 @@ describe('db analysis slice', () => {
 
         // Act
         const nextState = reducer(initialState, getDBAnalysisSuccess(payload))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          analytics: { databaseAnalysis: nextState },
+        })
+        expect(dbAnalysisSelector(rootState)).toEqual(state)
+      })
+    })
+    describe('setRecommendationVoteSuccess', () => {
+      it('should properly set data', () => {
+        const payload = mockAnalysis
+        // Arrange
+        const state = {
+          ...initialState,
+          loading: false,
+          data: mockAnalysis
+        }
+
+        // Act
+        const nextState = reducer(initialState, setRecommendationVoteSuccess(payload))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -406,6 +451,53 @@ describe('db analysis slice', () => {
           loadDBAnalysisReports(),
           addErrorNotification(responsePayload as AxiosError),
           loadDBAnalysisReportsError(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+    describe('putRecommendationVote', () => {
+      it('succeed to put recommendation vote', async () => {
+        const data = mockAnalysis
+        const responsePayload = { data, status: 200 }
+
+        apiService.patch = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          putRecommendationVote('name', Vote.Like)
+        )
+
+        // Assert
+        const expectedActions = [
+          setRecommendationVote(),
+          setRecommendationVoteSuccess(data),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to put recommendation vote', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.patch = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          putRecommendationVote('name', Vote.Like)
+        )
+
+        // Assert
+        const expectedActions = [
+          setRecommendationVote(),
+          addErrorNotification(responsePayload as AxiosError),
+          setRecommendationVoteError(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

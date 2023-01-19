@@ -13,6 +13,7 @@ import {
   EuiLink,
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { RecommendationVoting } from 'uiSrc/pages/databaseAnalysis/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { Theme } from 'uiSrc/constants'
@@ -21,7 +22,6 @@ import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-m
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import NoRecommendationsDark from 'uiSrc/assets/img/icons/recommendations_dark.svg'
 import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light.svg'
-
 import { renderContent, renderBadges, renderBadgesLegend } from './utils'
 import styles from './styles.module.scss'
 
@@ -112,7 +112,7 @@ const Recommendations = () => {
         {renderBadgesLegend()}
       </div>
       <div className={styles.recommendationsContainer}>
-        {sortedRecommendations.map(({ name, params }) => {
+        {sortedRecommendations.map(({ name, params, vote }) => {
           const {
             id = '',
             title = '',
@@ -138,6 +138,7 @@ const Recommendations = () => {
                   {renderContent(content, params)}
                 </EuiPanel>
               </EuiAccordion>
+              <RecommendationVoting vote={vote} name={name} />
             </div>
           )
         })}

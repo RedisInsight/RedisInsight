@@ -13,7 +13,7 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { DatabaseAnalysis } from 'src/modules/database-analysis/models';
-import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
+import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { plainToClass } from 'class-transformer';
 import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
@@ -150,6 +150,16 @@ const mockDatabaseAnalysis = {
   recommendations: [{ name: 'luaScript' }],
 } as DatabaseAnalysis;
 
+const mockDatabaseAnalysisWithVote = {
+  ...mockDatabaseAnalysis,
+  recommendations: [{ name: 'luaScript', vote: 'amazing' }],
+} as DatabaseAnalysis;
+
+const mockRecommendationVoteDto: RecommendationVoteDto = {
+  name: 'luaScript',
+  vote: 'amazing',
+};
+
 describe('DatabaseAnalysisProvider', () => {
   let service: DatabaseAnalysisProvider;
   let repository: MockType<Repository<DatabaseAnalysis>>;
@@ -252,6 +262,29 @@ describe('DatabaseAnalysisProvider', () => {
       expect(await service.cleanupDatabaseHistory(mockDatabase.id)).toEqual(
         undefined,
       );
+    });
+  });
+
+  describe('recommendationVote', () => {
+    it('should return updated database analysis', async () => {
+      repository.findOneBy.mockReturnValueOnce(mockDatabaseAnalysisEntity);
+      repository.update.mockReturnValueOnce(true);
+      await encryptionService.encrypt.mockReturnValue(mockEncryptResult);
+
+      expect(await service.recommendationVote(mockDatabaseAnalysis.id, mockRecommendationVoteDto))
+        .toEqual(mockDatabaseAnalysisWithVote);
+    });
+
+    it('should throw an error', async () => {
+      repository.findOneBy.mockReturnValueOnce(null);
+
+      try {
+        await service.recommendationVote(mockDatabaseAnalysis.id, mockRecommendationVoteDto);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+        expect(e.message).toEqual(ERROR_MESSAGES.DATABASE_ANALYSIS_NOT_FOUND);
+      }
     });
   });
 });

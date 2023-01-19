@@ -7,7 +7,7 @@ import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/databa
 import { plainToClass } from 'class-transformer';
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
-import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
+import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { ClientMetadata } from 'src/common/models';
@@ -111,5 +111,14 @@ export class DatabaseAnalysisService {
    */
   async list(databaseId: string): Promise<ShortDatabaseAnalysis[]> {
     return this.databaseAnalysisProvider.list(databaseId);
+  }
+
+  /**
+ * Set user vote for recommendation
+ * @param id
+  * @param recommendation
+ */
+  async vote(id: string, recommendation: RecommendationVoteDto): Promise<DatabaseAnalysis> {
+    return this.databaseAnalysisProvider.recommendationVote(id, recommendation);
   }
 }

@@ -113,6 +113,9 @@ test('Switching between indexed databases', async t => {
     // Open Workbench page
     await t.click(myRedisDatabasePage.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(command);
+    // Verify that user can see the database index before the command name executed in Workbench
+    await workbenchPage.checkWorkbenchCommandResult(`[db1] ${command}`, '8');
+
     // Open Browser page
     await t.click(myRedisDatabasePage.browserButton);
     // Clear filter
@@ -134,9 +137,16 @@ test('Switching between indexed databases', async t => {
     // Verify that data changed for indexed db on Database analysis page
     await t.expect(memoryEfficiencyPage.topKeysKeyName.withExactText(keyNames[0]).exists).ok('Keys from current db index not displayed in report');
     await t.expect(memoryEfficiencyPage.topKeysKeyName.withExactText(logicalDbKey).exists).notOk('Keys from other db index displayed in report');
+    await t.expect(memoryEfficiencyPage.selectedReport.textContent).notContains('[db', 'Index displayed for 0 index in report name');
     // Change index to logical db
     await databaseOverviewPage.changeDbIndex(1);
     await t.click(memoryEfficiencyPage.newReportBtn);
+    await t.expect(memoryEfficiencyPage.selectedReport.textContent).contains('[db1]', 'Index not displayed in report name');
     await t.expect(memoryEfficiencyPage.topKeysKeyName.withExactText(logicalDbKey).exists).ok('Keys from current db index not displayed in report');
     await t.expect(memoryEfficiencyPage.topKeysKeyName.withExactText(keyNames[0]).exists).notOk('Keys from other db index displayed in report');
+
+    // Verify that user can see the database index before the report date in Database Analysis
+    await t.click(memoryEfficiencyPage.selectedReport);
+    await t.expect(memoryEfficiencyPage.reportItem.nth(0).textContent).contains('[db1]', 'Index not displayed in report name');
+    await t.expect(memoryEfficiencyPage.reportItem.nth(1).textContent).notContains('[db', 'Index displayed for 0 index in report name');
 });

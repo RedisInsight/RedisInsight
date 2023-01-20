@@ -265,7 +265,9 @@
   }
 
   .euiFormRow__text {
-    position: absolute;
+    position: relative;
+    top: -10px;
+    margin-bottom: -10px;
   }
 
   .euiFormHelpText {

@@ -133,7 +133,7 @@ const AddDatabasesContainer = React.memo((props: Props) => {
 
   const radioBtnLegend = isResizablePanel ? '' : <span>Connect to:</span>
 
-  const onChange = (optionId: string) => {
+  const onChange = (optionId: InstanceType) => {
     setTypeSelected(optionId)
   }
 
@@ -157,7 +157,7 @@ const AddDatabasesContainer = React.memo((props: Props) => {
             options={typesFormStage}
             idSelected={typeSelected}
             className="dbTypes"
-            onChange={(id: string) => onChange(id)}
+            onChange={(id) => onChange(id as InstanceType)}
             name="radio group"
             legend={{
               children: radioBtnLegend,

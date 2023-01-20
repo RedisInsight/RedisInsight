@@ -22,6 +22,7 @@ import { databaseAnalysisExpirationGroups1664886479051 } from './1664886479051-d
 import { workbenchExecutionTime1667368983699 } from './1667368983699-workbench-execution-time';
 import { database1667477693934 } from './1667477693934-database';
 import { databaseNew1670252337342 } from './1670252337342-database-new';
+import { sshOptions1673035852335 } from './1673035852335-ssh-options';
 import { workbenchAndAnalysisDbIndex1673934231410 } from './1673934231410-workbench_and_analysis_db';
 
 export default [
@@ -50,4 +51,5 @@ export default [
   database1667477693934,
   databaseNew1670252337342,
   workbenchAndAnalysisDbIndex1673934231410,
+  sshOptions1673035852335,
 ];

@@ -23,6 +23,7 @@ import { workbenchExecutionTime1667368983699 } from './1667368983699-workbench-e
 import { database1667477693934 } from './1667477693934-database';
 import { databaseNew1670252337342 } from './1670252337342-database-new';
 import { sshOptions1673035852335 } from './1673035852335-ssh-options';
+import { browserHistory1674209957051 } from './1674209957051-browser-history';
 
 export default [
   initialMigration1614164490968,
@@ -50,4 +51,5 @@ export default [
   database1667477693934,
   databaseNew1670252337342,
   sshOptions1673035852335,
+  browserHistory1674209957051,
 ];

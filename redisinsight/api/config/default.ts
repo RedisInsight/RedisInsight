@@ -144,6 +144,9 @@ export default {
   database_analysis: {
     maxItemsPerDb: parseInt(process.env.DATABASE_ANALYSIS_MAX_ITEMS_PER_DB, 10) || 5,
   },
+  browser_history: {
+    maxItemsPerModeInDb: parseInt(process.env.BROWSER_HISTORY_MAX_ITEMS_PER_MODE_IN_DB, 10) || 5,
+  },
   commands: [
     {
       name: 'main',

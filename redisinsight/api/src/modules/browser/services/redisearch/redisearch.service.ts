@@ -19,7 +19,10 @@ import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
 import { RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
 import { numberWithSpaces } from 'src/utils/base.helper';
+import { BrowserHistoryMode } from 'src/common/constants';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
+import { BrowserHistoryService } from '../browser-history/browser-history.service';
+import { CreateBrowserHistoryDto } from '../../dto/browser-history/create.browser-history.dto';
 
 @Injectable()
 export class RedisearchService {
@@ -27,6 +30,7 @@ export class RedisearchService {
 
   constructor(
     private browserTool: BrowserToolService,
+    private browserHistory: BrowserHistoryService,
   ) {}
 
   /**
@@ -169,6 +173,14 @@ export class RedisearchService {
 
       const [total, ...keyNames] = await client.sendCommand(
         new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, safeLimit]),
+      );
+
+      await this.browserHistory.create(
+        clientMetadata,
+        plainToClass(
+          CreateBrowserHistoryDto,
+          { filter: { match: query, type: index }, mode: BrowserHistoryMode.Redisearch },
+        ),
       );
 
       return plainToClass(GetKeysWithDetailsResponse, {

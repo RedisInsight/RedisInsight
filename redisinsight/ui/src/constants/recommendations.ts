@@ -1,5 +1,5 @@
 export enum Vote {
-  DoubleLike = 'amazing',
+  DoubleLike = 'very useful',
   Like = 'useful',
   Dislike = 'not useful'
 }

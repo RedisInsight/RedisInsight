@@ -152,12 +152,12 @@ const mockDatabaseAnalysis = {
 
 const mockDatabaseAnalysisWithVote = {
   ...mockDatabaseAnalysis,
-  recommendations: [{ name: 'luaScript', vote: 'amazing' }],
+  recommendations: [{ name: 'luaScript', vote: 'useful' }],
 } as DatabaseAnalysis;
 
 const mockRecommendationVoteDto: RecommendationVoteDto = {
   name: 'luaScript',
-  vote: 'amazing',
+  vote: 'useful',
 };
 
 describe('DatabaseAnalysisProvider', () => {

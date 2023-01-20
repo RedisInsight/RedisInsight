@@ -19,7 +19,7 @@ export class Recommendation {
 
   @ApiPropertyOptional({
     description: 'User vote',
-    example: 'Amazing',
+    example: 'useful',
   })
   @Expose()
   vote?: string;

@@ -516,7 +516,7 @@ export const constants = {
 
   TEST_LUA_SCRIPT_VOTE_RECOMMENDATION: {
     name: RECOMMENDATION_NAMES.LUA_SCRIPT,
-    vote: 'amazing',
+    vote: 'useful',
   },
   // etc...
 }

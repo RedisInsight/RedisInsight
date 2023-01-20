@@ -39,9 +39,9 @@ describe('RecommendationVoting', () => {
     expect(render(<RecommendationVoting {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  it('should call "setRecommendationVote" action be called after click "amazing-vote-btn"', () => {
+  it('should call "setRecommendationVote" action be called after click "very-useful-vote-btn"', () => {
     render(<RecommendationVoting {...instance(mockedProps)} />)
-    fireEvent.click(screen.getByTestId('amazing-vote-btn'))
+    fireEvent.click(screen.getByTestId('very-useful-vote-btn'))
 
     const expectedActions = [setRecommendationVote()]
     expect(store.getActions()).toEqual(expectedActions)
@@ -75,9 +75,9 @@ describe('RecommendationVoting', () => {
   })
 
   it('should render component where all buttons are disabled"', async () => {
-    render(<RecommendationVoting {...instance(mockedProps)} vote="amazing" />)
+    render(<RecommendationVoting {...instance(mockedProps)} vote="useful" />)
 
-    expect(screen.getByTestId('amazing-vote-btn')).toBeDisabled()
+    expect(screen.getByTestId('very-useful-vote-btn')).toBeDisabled()
     expect(screen.getByTestId('useful-vote-btn')).toBeDisabled()
     expect(screen.getByTestId('not-useful-vote-btn')).toBeDisabled()
   })

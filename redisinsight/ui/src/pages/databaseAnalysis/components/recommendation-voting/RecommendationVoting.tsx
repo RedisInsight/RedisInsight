@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
   EuiButton,
@@ -11,6 +11,7 @@ import {
   EuiIcon,
   EuiLink,
 } from '@elastic/eui'
+import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -25,6 +26,7 @@ import styles from './styles.module.scss'
 export interface Props { vote?: Vote, name: string }
 
 const RecommendationVoting = ({ vote, name }: Props) => {
+  const config = useSelector(userSettingsConfigSelector)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const dispatch = useDispatch()
 
@@ -46,29 +48,33 @@ const RecommendationVoting = ({ vote, name }: Props) => {
     dispatch(putRecommendationVote(name, vote, onSuccessVoted))
   }
 
+  const getTooltipContent = (content: string) => (config?.agreements?.analytics
+    ? content
+    : 'Enable Analytics on the Settings page to vote for a recommendation')
+
   return (
     <EuiFlexGroup alignItems="center" className={styles.votingContainer}>
       <EuiText size="m">Rate Recommendation</EuiText>
       <div className={styles.vote}>
         <EuiToolTip
-          content="Amazing"
+          content={getTooltipContent('Very Useful')}
           position="bottom"
         >
           <EuiButtonIcon
-            disabled={!!vote}
+            disabled={!!vote || !config?.agreements?.analytics}
             iconType={DoubleLikeIcon}
             className={cx(styles.voteBtn, { [styles.selected]: vote === Vote.DoubleLike })}
-            aria-label="vote amazing"
-            data-testid="amazing-vote-btn"
+            aria-label="vote very useful"
+            data-testid="very-useful-vote-btn"
             onClick={() => handleClick(name, Vote.DoubleLike)}
           />
         </EuiToolTip>
         <EuiToolTip
-          content="Useful"
+          content={getTooltipContent('Useful')}
           position="bottom"
         >
           <EuiButtonIcon
-            disabled={!!vote}
+            disabled={!!vote || !config?.agreements?.analytics}
             iconType={LikeIcon}
             className={cx(styles.voteBtn, { [styles.selected]: vote === Vote.Like })}
             aria-label="vote useful"
@@ -77,7 +83,7 @@ const RecommendationVoting = ({ vote, name }: Props) => {
           />
         </EuiToolTip>
         <EuiToolTip
-          content="Not Useful"
+          content={getTooltipContent('Not Useful')}
           position="bottom"
         >
           <EuiPopover
@@ -89,7 +95,7 @@ const RecommendationVoting = ({ vote, name }: Props) => {
             panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
             button={(
               <EuiButtonIcon
-                disabled={!!vote}
+                disabled={!!vote || !config?.agreements?.analytics}
                 iconType={DislikeIcon}
                 className={cx(styles.voteBtn, { [styles.selected]: vote === Vote.Dislike })}
                 aria-label="vote not useful"

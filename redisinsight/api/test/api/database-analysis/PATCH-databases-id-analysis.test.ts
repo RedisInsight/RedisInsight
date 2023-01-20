@@ -53,7 +53,7 @@ describe('PATCH /databases/:instanceId/analysis/:id', () => {
           name: 'Should add vote for RTS recommendation',
           data: {
             name: 'luaScript',
-            vote: 'amazing',
+            vote: 'useful',
           },
           statusCode: 200,
           responseSchema,

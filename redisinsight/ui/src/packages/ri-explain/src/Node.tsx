@@ -10,6 +10,14 @@ interface INodeProps {
 }
 
 
+function Snippet({content}: {content: string}) {
+  return (
+    <div className="FooterCommon Footer">
+      <EuiToolTip delay='long' content={content}><span>{content}</span></EuiToolTip>
+    </div>
+  )
+}
+
 export function ExplainNode(props: INodeProps) {
   const propData: EntityInfo = (props as any).node.getData()
   const { id, type, data, snippet, subType } = propData
@@ -22,11 +30,7 @@ export function ExplainNode(props: INodeProps) {
         </div>
       </div>
       {
-        snippet && (
-          <div className='Footer'>
-            {snippet}
-          </div>
-        )
+        snippet && <Snippet content={snippet} />
       }
     </div>
   )
@@ -76,11 +80,24 @@ export function ProfileNode(props: INodeProps) {
   }
 
   const timeInFloat = parseFloat(time || '')
-  const timeStyles = {
-    fontWeight: 'bold',
+  let timeStyles: React.CSSProperties = {
     color: 'white',
-    backgroundColor: (timeInFloat > 45 ? 'red' : timeInFloat > 25 ? 'yellow' : ''),
   }
+
+  if (timeInFloat > 250) {
+    timeStyles = {
+      ...timeStyles,
+      backgroundColor: 'red',
+      paddingRight: '4px',
+      paddingLeft: '2px',
+      borderRadius: '5px',
+    }
+  } else if (timeInFloat > 49) {
+    timeStyles['color'] = 'red'
+  } else if (timeInFloat > 24) {
+    timeStyles['color'] = 'yellow'
+  }
+
 
   return (
     <div className="ProfileContainer" id={`node-${id}`} data-size={counter || size || recordsProduced}>
@@ -89,15 +106,11 @@ export function ProfileNode(props: INodeProps) {
         <div className="Type">{[EntityType.GEO, EntityType.NUMERIC, EntityType.TEXT, EntityType.TAG].includes(type) ? type : ''}</div>
       </div>
       {
-        snippet && (
-          <div className='Footer'>
-            {snippet}
-          </div>
-        )
+        snippet && <Snippet content={snippet} />
       }
       <div className="MetaData">
         <EuiToolTip content={<NodeToolTipContent content={"Execution Time"} />}>
-          <div className="Time" style={timeInFloat > 25 ? timeStyles : {}}>
+          <div className="Time" style={timeStyles}>
             <div className="IconContainer"><EuiIcon className="NodeIcon" size="m" type="clock" /></div>
             <div>{time} ms</div>
           </div>

@@ -416,8 +416,6 @@ class Parser {
     this.CurrentToken = this.PeekToken
     this.PeekToken = this.L.NextToken()
 
-    console.log("NEXT TOKEN", this.CurrentToken)
-
     if (this.CurrentToken.T === TokenType.EOF) {
       throw new Error("Didn't expect EOF token")
     }

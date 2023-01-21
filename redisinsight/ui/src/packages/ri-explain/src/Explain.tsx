@@ -22,7 +22,7 @@ interface IExplain {
 }
 
 function getEdgeSize(c: number) {
-  return (Math.log(c || 1) / Math.log(10)) + 1
+  return Math.floor(Math.log(c || 1) + 1)
 }
 
 export default function Explain(props: IExplain): JSX.Element {
@@ -151,7 +151,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       const ancestors = GetAncestors(data, id, {found: false, pairs: []})
       ancestors.pairs.forEach(p => {
         // Highlight ancestor and their ancestor
-        document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "border: 1px solid #85A2FE !important;")
+        document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "outline: 1px solid #85A2FE !important;")
 
         // Get edge size of parent ancestor to apply the right edge stroke
         const strokeSize = getEdgeSize(parseInt((document.querySelector(`#node-${p[1]}`) as HTMLElement)?.dataset?.size || '')) + 1
@@ -300,18 +300,26 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
   return (
     <div>
       <div style={{ margin: 0, width: '100vw' }} ref={container} id="container" />
-      { profilingTime && (
-        <div style={{ width: infoWidth}} id="profile-time-info" className="ProfileTimeInfo">
-          {
-            Object.keys(profilingTime).map(key => (
-              <div className="Item">
-                <div className="Value">{profilingTime[key]}</div>
-                <div className="Key">{key}</div>
+      { profilingTime &&
+        (
+          module === ModuleType.Search ?
+            (
+              <div style={{ width: infoWidth}} className="ProfileInfo ProfileTimeInfo">
+                {
+                  Object.keys(profilingTime).map(key => (
+                    <div className="Item">
+                      <div className="Value">{profilingTime[key]}</div>
+                      <div className="Key">{key}</div>
+                    </div>
+                  ))
+                }
               </div>
-            ))
-          }
-        </div>
-      )}
+            )
+            :
+            type === CoreType.Profile && (
+              <div style={{ width: infoWidth }} className="ProfileInfo ProfileTimeMini">Total execution time: {profilingTime['Total Execution Time']} ms</div>
+            )
+        )}
     </div>
   )
 }

@@ -1043,6 +1043,14 @@ export class BrowserPage {
             Selector(`[data-testid="${base}keys:keys:"]`).visible)
             .ok("Folder is not selected");
     }
+
+    /**
+    * Verify that database has no keys
+    */
+    async verifyNoKeysInDatabase(): Promise<void> {
+        await t.expect(this.keyListMessage.exists).ok('Database not empty')
+            .expect(this.keysSummary.exists).notOk('Total value is displayed for empty database');
+    }
 }
 
 /**

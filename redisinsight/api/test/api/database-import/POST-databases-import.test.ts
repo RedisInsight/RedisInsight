@@ -561,7 +561,7 @@ describe('POST /databases/import', () => {
     });
   });
   describe('STANDALONE', () => {
-    requirements('rte.type=STANDALONE');
+    requirements('rte.type=STANDALONE', '!rte.ssh');
     describe('NO TLS', function () {
       requirements('!rte.tls');
       it('Import standalone (format 0)', async () => {

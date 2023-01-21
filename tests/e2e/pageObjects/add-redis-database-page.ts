@@ -7,7 +7,7 @@ export class AddRedisDatabasePage {
     //*Target any element/component via data-id, if possible!
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
-    //BUTTONS
+    // BUTTONS
     addDatabaseButton = Selector('[data-testid=add-redis-database]');
     addRedisDatabaseButton = Selector('[data-testid=btn-submit]');
     addDatabaseManually = Selector('[data-testid=add-manual]');
@@ -29,7 +29,7 @@ export class AddRedisDatabasePage {
     cloneSentinelDatabaseNavigation = Selector('[data-testid=database-nav-group-clone]');
     cancelButton = Selector('[data-testid=btn-cancel]');
     showPasswordBtn = Selector('[aria-label^="Show password"]');
-    //TEXT INPUTS (also referred to as 'Text fields')
+    // TEXT INPUTS (also referred to as 'Text fields')
     hostInput = Selector('[data-testid=host]');
     portInput = Selector('[data-testid=port]');
     databaseAliasInput = Selector('[data-testid=name]');
@@ -45,13 +45,24 @@ export class AddRedisDatabasePage {
     masterGroupPassword = Selector('[data-testid=sentinel-master-password]');
     connectionType = Selector('[data-testid=connection-type]');
     sentinelForm = Selector('[data-testid=form]');
-    //Links
+    sshHostInput = Selector('[data-testid=sshHost]');
+    sshPortInput = Selector('[data-testid=sshPort]');
+    sshUsernameInput = Selector('[data-testid=sshUsername]');
+    sshPasswordInput = Selector('[data-testid=sshPassword]');
+    sshPrivateKeyInput = Selector('[data-testid=sshPrivateKey]');
+    sshPassphraseInput = Selector('[data-testid=sshPassphrase]');
+    // Links
     buildFromSource = Selector('a').withExactText('Build from source');
     buildFromDocker = Selector('a').withExactText('Docker');
     buildFromHomebrew = Selector('a').withExactText('Homebrew');
     // DROPDOWNS
     caCertField = Selector('[data-testid=select-ca-cert]', {timeout: 500});
     clientCertField = Selector('[data-testid=select-cert]', {timeout: 500});
+    // CHECKBOXES
+    useSSHCheckbox = Selector('[data-testid=use-ssh]~div', {timeout: 500});
+    // RADIO BUTTONS
+    sshPasswordRadioBtn = Selector('#password~div', {timeout: 500});
+    sshPrivateKeyRadioBtn = Selector('#privateKey~div', {timeout: 500});
 
     /**
      * Adding a new redis database
@@ -96,6 +107,50 @@ export class AddRedisDatabasePage {
         // Enter logical index
         await t.click(this.databaseIndexCheckbox);
         await t.typeText(this.databaseIndexInput, index, { replace: true, paste: true});
+        // Click for saving
+        await t.click(this.addRedisDatabaseButton);
+    }
+    
+    /**
+     * Adding a new standalone database with SSH
+     * @param databaseParameters the parameters of the database
+     * @param sshParameters the parameters of ssh
+     */
+    async addStandaloneSSHDatabase(databaseParameters: AddNewDatabaseParameters, sshParameters: SSHParameters): Promise<void> {
+        await t
+            .click(this.addDatabaseButton)
+            .click(this.addDatabaseManually);
+        await t
+            .typeText(this.hostInput, databaseParameters.host, { replace: true, paste: true })
+            .typeText(this.portInput, databaseParameters.port, { replace: true, paste: true })
+            .typeText(this.databaseAliasInput, databaseParameters.databaseName!, { replace: true, paste: true });
+        if (!!databaseParameters.databaseUsername) {
+            await t.typeText(this.usernameInput, databaseParameters.databaseUsername, { replace: true, paste: true });
+        }
+        if (!!databaseParameters.databasePassword) {
+            await t.typeText(this.passwordInput, databaseParameters.databasePassword, { replace: true, paste: true });
+        }
+        // Select SSH Tunnel checkbox
+        await t.click(this.useSSHCheckbox);
+        // Enter SSH fields
+        await t
+            .typeText(this.sshHostInput, sshParameters.sshHost, { replace: true, paste: true })
+            .typeText(this.sshPortInput, sshParameters.sshPort, { replace: true, paste: true })
+            .typeText(this.sshUsernameInput, sshParameters.sshUsername, { replace: true, paste: true });
+        if (!!sshParameters.sshPassword) {
+                await t.typeText(this.sshPasswordInput, sshParameters.sshPassword, { replace: true, paste: true });
+        }
+        if (!!sshParameters.sshPrivateKey) {
+            await t
+            .click(this.sshPrivateKeyRadioBtn)
+            .typeText(this.sshPrivateKeyInput, sshParameters.sshPrivateKey, { replace: true, paste: true });
+        }
+        if (!!sshParameters.sshPassphrase) {
+            await t
+            .click(this.sshPrivateKeyRadioBtn)
+            .typeText(this.sshPrivateKeyInput, sshParameters.sshPrivateKey!, { replace: true, paste: true })
+            .typeText(this.sshPassphraseInput, sshParameters.sshPassphrase, { replace: true, paste: true });
+        }
         // Click for saving
         await t.click(this.addRedisDatabaseButton);
     }
@@ -239,4 +294,22 @@ export type databaseParameters = {
 export type ClusterNodes = {
     host: string,
     port: string
+};
+
+/**
+ * SSH parameters
+ * @param sshHost The hostname of ssh
+ * @param sshPort The port of ssh
+ * @param sshUsername The username of ssh
+ * @param sshPassword The password of ssh
+ * @param sshPrivateKey The private key of ssh
+ * @param sshPassphrase The passphrase of ssh
+ */
+export type SSHParameters = {
+    sshHost: string,
+    sshPort: string,
+    sshUsername: string,
+    sshPassword?: string,
+    sshPrivateKey?: string,
+    sshPassphrase?: string
 };

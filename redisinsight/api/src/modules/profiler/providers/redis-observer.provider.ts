@@ -105,7 +105,7 @@ export class RedisObserverProvider {
    */
   private getRedisClientFn(clientMetadata: ClientMetadata): () => Promise<IORedis.Redis | IORedis.Cluster> {
     return async () => withTimeout(
-      this.databaseConnectionService.getOrCreateClient(clientMetadata),
+      this.databaseConnectionService.createClient(clientMetadata),
       serverConfig.requestTimeout,
       new ServiceUnavailableException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
     );

@@ -13,6 +13,7 @@ import { ClientNotFoundErrorException } from 'src/modules/redis/exceptions/clien
 import { IRedisToolOptions, DEFAULT_REDIS_TOOL_OPTIONS } from 'src/modules/redis/redis-tool-options';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { ClientContext, ClientMetadata } from 'src/common/models';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 export abstract class RedisConsumerAbstractService implements IRedisConsumer {
   protected redisService: RedisService;
@@ -21,17 +22,21 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
 
   protected consumer: ClientContext;
 
+  protected readonly redisConnectionFactory: RedisConnectionFactory;
+
   private readonly options: IRedisToolOptions = DEFAULT_REDIS_TOOL_OPTIONS;
 
   protected constructor(
     consumer: ClientContext,
     redisService: RedisService,
+    redisConnectionFactory: RedisConnectionFactory,
     databaseService: DatabaseService,
     options: IRedisToolOptions = {},
   ) {
     this.consumer = consumer;
     this.options = { ...this.options, ...options };
     this.redisService = redisService;
+    this.redisConnectionFactory = redisConnectionFactory;
     this.databaseService = databaseService;
   }
 
@@ -100,10 +105,7 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
       context: this.consumer,
     });
     if (!redisClientInstance || !this.redisService.isClientConnected(redisClientInstance.client)) {
-      this.redisService.removeClientInstance({
-        databaseId: redisClientInstance?.databaseId,
-        context: this.consumer,
-      });
+      this.redisService.removeClientInstance(clientMetadata);
       if (!this.options.enableAutoConnection) throw new ClientNotFoundErrorException();
 
       return await this.createNewClient(clientMetadata);
@@ -133,20 +135,21 @@ export abstract class RedisConsumerAbstractService implements IRedisConsumer {
     );
 
     try {
-      const client = await this.redisService.connectToDatabaseInstance(
-        instanceDto,
-        this.consumer,
-        connectionName,
-      );
-      this.redisService.setClientInstance(
+      const client = await this.redisConnectionFactory.createRedisConnection(
         {
           ...clientMetadata,
-          uniqueId,
+          context: this.consumer,
+        },
+        instanceDto,
+        connectionName,
+      );
+      return this.redisService.setClientInstance(
+        {
+          ...clientMetadata,
           context: clientMetadata.context || this.consumer,
         },
         client,
-      );
-      return client;
+      )?.client;
     } catch (error) {
       throw catchRedisConnectionError(error, instanceDto);
     }

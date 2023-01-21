@@ -42,6 +42,9 @@ export interface StateAppContext {
     treeViewDelimiter: string
     slowLogDurationUnit: DurationUnits
   }
+  dbIndex: {
+    disabled: boolean
+  }
   browser: {
     keyList: {
       isDataPatternLoaded: boolean

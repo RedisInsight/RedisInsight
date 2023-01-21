@@ -24,9 +24,9 @@ test('Verify that user can add DB with logical index via host and port from Add 
     // Enter logical index
     await t.click(addRedisDatabasePage.databaseIndexCheckbox);
     await t.typeText(addRedisDatabasePage.databaseIndexInput, index, { replace: true, paste: true });
-    // Verify that user when users select DB index they can see info message how to work with DB index in add DB screen
-    await t.expect(addRedisDatabasePage.databaseIndexMessage.exists).ok('Index message not displayed')
-        .expect(addRedisDatabasePage.databaseIndexMessage.innerText).eql(indexDbMessage)
+    // *** - outdated - Verify that user when users select DB index they can see info message how to work with DB index in add DB screen
+    // Verify that logical db message not displayed in add database form
+    await t.expect(addRedisDatabasePage.databaseIndexMessage.exists).notOk('Index message is still displayed')
         .expect(addRedisDatabasePage.databaseIndexCheckbox.parent().withExactText('Select Logical Database').exists).ok('Checkbox text not displayed');
     // Click for saving
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);

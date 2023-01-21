@@ -20,7 +20,8 @@
 }
 
 .overview {
-  &.noModules, &.RediStack {
+  &.noModules,
+  &.RediStack {
     .overviewItem {
       &:last-child {
         border-right: 1px solid var(--separatorColor);
@@ -74,9 +75,9 @@
 .commandsPerSecTip {
   margin-bottom: 8px;
 
-    &:last-child {
-      margin-bottom: 0;
-    }
+  &:last-child {
+    margin-bottom: 0;
+  }
   .moreInfoOverviewIcon {
     margin-right: 8px;
     width: auto !important;
@@ -99,6 +100,13 @@
 
 .RediStackLogoWrapper {
   padding: 0 6px;
+  cursor: pointer;
+  transition: transform 250ms ease-in-out;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
   .redistackLogoIcon {
     width: 24px;
     height: 24px;
@@ -124,4 +132,3 @@
     display: none !important;
   }
 }
-

@@ -3,6 +3,8 @@ import cx from 'classnames'
 import { EuiIcon, EuiText } from '@elastic/eui'
 
 import { Theme } from 'uiSrc/constants'
+import { ProfileQueryType } from 'uiSrc/pages/workbench/constants'
+import { generateProfileQueryForCommand } from 'uiSrc/pages/workbench/utils'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { Nullable } from 'uiSrc/utils'
 import QueryCard from 'uiSrc/components/query-card'
@@ -84,6 +86,16 @@ const WBResults = (props: Props) => {
           activeResultsMode={activeResultsMode}
           resultsMode={resultsMode}
           onQueryOpen={() => onQueryOpen(id)}
+          onQueryProfile={(profileType: ProfileQueryType) => {
+            const profileQuery = generateProfileQueryForCommand(command, profileType)
+            if (profileQuery) {
+              return onQueryReRun(
+                profileQuery,
+                null,
+                { mode, results: resultsMode, clearEditor: false, },
+              )
+            }
+          }}
           onQueryReRun={() => onQueryReRun(
             command,
             null,

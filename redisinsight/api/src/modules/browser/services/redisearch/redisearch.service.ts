@@ -16,7 +16,7 @@ import {
   SearchRedisearchDto,
 } from 'src/modules/browser/dto/redisearch';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
-import { RedisErrorCodes } from 'src/constants';
+import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
 import { numberWithSpaces } from 'src/utils/base.helper';
 import { BrowserHistoryMode } from 'src/common/constants';
@@ -175,13 +175,16 @@ export class RedisearchService {
         new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, safeLimit]),
       );
 
-      await this.browserHistory.create(
-        clientMetadata,
-        plainToClass(
-          CreateBrowserHistoryDto,
-          { filter: { match: query, type: null }, mode: BrowserHistoryMode.Redisearch },
-        ),
-      );
+      // Do not save default match "*"
+      if (query !== DEFAULT_MATCH) {
+        await this.browserHistory.create(
+          clientMetadata,
+          plainToClass(
+            CreateBrowserHistoryDto,
+            { filter: { match: query, type: null }, mode: BrowserHistoryMode.Redisearch },
+          ),
+        );
+      }
 
       return plainToClass(GetKeysWithDetailsResponse, {
         cursor: limit + offset,

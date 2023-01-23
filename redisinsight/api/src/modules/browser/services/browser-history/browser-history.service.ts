@@ -20,7 +20,7 @@ export class BrowserHistoryService {
   ) {}
 
   /**
-   * Get cluster details and details for all nodes
+   * Create a new browser history item
    * @param clientMetadata
    * @param dto
    */
@@ -33,7 +33,7 @@ export class BrowserHistoryService {
     try {
       client = await this.databaseConnectionService.createClient(clientMetadata);
 
-      const history = plainToClass(BrowserHistory, {...dto, databaseId: clientMetadata.databaseId,});
+      const history = plainToClass(BrowserHistory, { ...dto, databaseId: clientMetadata.databaseId });
 
       client.disconnect();
       return this.browserHistoryProvider.create(history);

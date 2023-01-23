@@ -75,6 +75,7 @@ export class BrowserHistoryProvider {
       .select([
         'a.id',
         'a.filter',
+        'a.mode',
         'a.encryption',
       ])
       .orderBy('a.createdAt', 'DESC')

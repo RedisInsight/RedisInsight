@@ -5,7 +5,6 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const indexDbMessage = 'When the database is added, you can select logical databases only in CLI. To work with other logical databases in Browser and Workbench, add another database with the same host and port, but a different database index.';
 
 fixture `Logical databases`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -33,5 +32,6 @@ test('Verify that user can add DB with logical index via host and port from Add 
     // Verify that the database is in the list
     await t.expect(myRedisDatabasePage.dbNameList.withText(ossStandaloneConfig.databaseName).exists).ok('Database not exist', { timeout: 10000 });
     // Verify that if user adds DB with logical DB > 0, DB name contains postfix "space+[{database index}]"
-    await t.expect(myRedisDatabasePage.dbNameList.textContent).eql(`${ossStandaloneConfig.databaseName} [${index}]`, 'The postfix is not added to the database name', { timeout: 10000 });
+    // Verify that user can see the db{index} instead of {index} in database alias
+    await t.expect(myRedisDatabasePage.dbNameList.textContent).eql(`${ossStandaloneConfig.databaseName} [db${index}]`, 'The postfix is not added to the database name', { timeout: 10000 });
 });

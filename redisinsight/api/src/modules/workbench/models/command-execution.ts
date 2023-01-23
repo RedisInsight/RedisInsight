@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDefined } from 'class-validator';
+import { IsDefined, IsInt, IsOptional, Min } from 'class-validator';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { ClusterNodeRole, RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';
@@ -116,6 +116,16 @@ export class CommandExecution {
   })
   @Expose()
   executionTime?: number;
+
+  @ApiPropertyOptional({
+    description: 'Logical database number.',
+    type: Number,
+  })
+  @Expose()
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  db?: number;
 
   constructor(partial: Partial<CommandExecution> = {}) {
     Object.assign(this, partial);

@@ -48,36 +48,37 @@ test
     });
 test('Verify that working with logical DBs, user can see N DB index in CLI', async t => {
     index = '1';
-    databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}[${index}]`;
+    databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}[db${index}]`;
 
     await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
-    await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName  } [${index}]`);
+    await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName  } [db${index}]`);
     // Open CLI
     await t.click(cliPage.cliExpandButton);
     // Verify that user can see DB index in CLI
+    // Verify that user can see the db{index} instead of {index} in CLI input and endpoint
     for (const text of cliMessage) {
         await t.expect(cliPage.cliArea.textContent).contains(text, 'DB index is not displayed in the CLI message');
     }
-    await t.expect(cliPage.cliDbIndex.textContent).eql(`[${index}] `, 'DB index before the > character in CLI is not displayed');
+    await t.expect(cliPage.cliDbIndex.textContent).eql(`[db${index}] `, 'DB index before the > character in CLI is not displayed');
     await t.expect(cliPage.cliEndpoint.textContent).eql(databaseEndpoint, 'Database index is not displayed in the CLI endpoint');
 });
 test('Verify that user can see DB index in the endpoint in CLI header is automatically changed when switched to another logical DB', async t => {
     index = '2';
     const indexAfter = '3';
-    databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}[${index}]`;
-    const databaseEndpointAfter = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}[${indexAfter}]`;
+    databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}[db${index}]`;
+    const databaseEndpointAfter = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}[db${indexAfter}]`;
 
     await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
-    await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName  } [${index}]`);
+    await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName  } [db${index}]`);
 
     // Open CLI and verify that user can see DB index in CLI
     await t.click(cliPage.cliExpandButton);
-    await t.expect(cliPage.cliDbIndex.textContent).eql(`[${index}] `, 'DB index before the > character in CLI is not displayed');
+    await t.expect(cliPage.cliDbIndex.textContent).eql(`[db${index}] `, 'DB index before the > character in CLI is not displayed');
     // Re-creates client in CLI
     await t.click(cliPage.cliCollapseButton);
     await t.click(cliPage.cliExpandButton);
     // Verify that when user re-creates client in CLI the new client is connected to the DB index selected for the DB by default
-    await t.expect(cliPage.cliDbIndex.textContent).eql(`[${index}] `, 'The new client is not connected to the DB index selected for the DB by default');
+    await t.expect(cliPage.cliDbIndex.textContent).eql(`[db${index}] `, 'The new client is not connected to the DB index selected for the DB by default');
 
     // Open CLI and verify the database index in the endpoint
     await t.expect(cliPage.cliEndpoint.textContent).eql(databaseEndpoint, `The endpoint in CLI header not contains ${index} index`);

@@ -85,6 +85,7 @@ const mockCommandExecutionResults: CommandExecutionResult[] = [
 const mockCommandExecutionToRun: CommandExecution = new CommandExecution({
   ...mockCreateCommandExecutionDto,
   databaseId: mockDatabase.id,
+  db: 0,
 });
 
 const mockCommandExecution: CommandExecution = new CommandExecution({
@@ -177,6 +178,12 @@ describe('WorkbenchService', () => {
       expect(result).toMatchObject(mockCommandExecutionToRun);
       expect(result.executionTime).toBeGreaterThan(0);
     });
+    it('should save db index', async () => {
+      const db = 2
+      const result = await service.createCommandExecution(mockWorkbenchClientMetadata, mockCreateCommandExecutionDto, db);
+      expect(result).toMatchObject({...mockCommandExecutionToRun, db});
+      expect(result.db).toBe(db);
+    });
     it('should save result as unsupported command message', async () => {
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
 
@@ -188,6 +195,7 @@ describe('WorkbenchService', () => {
 
       expect(await service.createCommandExecution(mockWorkbenchClientMetadata, dto)).toEqual({
         ...dto,
+        db: 0,
         databaseId: mockWorkbenchClientMetadata.databaseId,
         result: [
           {

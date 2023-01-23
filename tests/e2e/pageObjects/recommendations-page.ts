@@ -24,10 +24,10 @@ export class RecommendationsPage {
     async verifyVoteDisabled(): Promise<void>{
         // Verify that user can rate recommendations with one of 3 existing types at the same time
         await t.expect(this.veryUsefulVoteBtn
-            .hasAttribute('disabled')).ok();
+            .hasAttribute('disabled')).ok('very useful vote button is not disabled');
         await t.expect(this.usefulVoteBtn
-            .hasAttribute('disabled')).ok();
+            .hasAttribute('disabled')).ok('useful vote button is not disabled');
         await t.expect(this.notUsefulVoteBtn
-            .hasAttribute('disabled')).ok();
+            .hasAttribute('disabled')).ok('not useful vote button is not disabled');
     }
 }

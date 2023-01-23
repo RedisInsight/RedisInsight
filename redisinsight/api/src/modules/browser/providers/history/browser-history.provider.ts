@@ -120,20 +120,20 @@ export class BrowserHistoryProvider {
    */
   async cleanupDatabaseHistory(databaseId: string, mode: string): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works
-    const idsOverLimit = (await this.repository
-      .createQueryBuilder()
-      .where({ databaseId, mode })
-      .select('id')
-      .orderBy('createdAt', 'DESC')
-      .offset(BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb)
-      .getRawMany()).map((item) => item.id);
-
     const idsDuplicates = (await this.repository
       .createQueryBuilder()
       .where({ databaseId, mode })
       .select('id')
       .groupBy('filter')
       .having('COUNT(filter) > 1')
+      .getRawMany()).map((item) => item.id);
+
+    const idsOverLimit = (await this.repository
+      .createQueryBuilder()
+      .where({ databaseId, mode })
+      .select('id')
+      .orderBy('createdAt', 'DESC')
+      .offset(BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb + idsDuplicates.length)
       .getRawMany()).map((item) => item.id);
 
     await this.repository

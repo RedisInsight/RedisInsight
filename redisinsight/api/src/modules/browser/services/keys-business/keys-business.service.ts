@@ -4,7 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { RedisErrorCodes } from 'src/constants';
+import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
 import { catchAclError } from 'src/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
@@ -134,13 +134,16 @@ export class KeysBusinessService {
       const scanner = this.scanner.getStrategy(databaseInstance.connectionType);
       const result = await scanner.getKeys(clientMetadata, dto);
 
-      await this.browserHistory.create(
-        clientMetadata,
-        plainToClass(
-          CreateBrowserHistoryDto,
-          { filter: pick(dto, 'type', 'match'), mode: BrowserHistoryMode.Pattern },
-        ),
-      );
+      // Do not save default match "*"
+      if (dto.match !== DEFAULT_MATCH) {
+        await this.browserHistory.create(
+          clientMetadata,
+          plainToClass(
+            CreateBrowserHistoryDto,
+            { filter: pick(dto, 'type', 'match'), mode: BrowserHistoryMode.Pattern },
+          ),
+        );
+      }
 
       return result.map((nodeResult) => plainToClass(GetKeysWithDetailsResponse, nodeResult));
     } catch (error) {

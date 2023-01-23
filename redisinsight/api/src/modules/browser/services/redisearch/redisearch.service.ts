@@ -179,7 +179,7 @@ export class RedisearchService {
         clientMetadata,
         plainToClass(
           CreateBrowserHistoryDto,
-          { filter: { match: query, type: index }, mode: BrowserHistoryMode.Redisearch },
+          { filter: { match: query, type: null }, mode: BrowserHistoryMode.Redisearch },
         ),
       );
 

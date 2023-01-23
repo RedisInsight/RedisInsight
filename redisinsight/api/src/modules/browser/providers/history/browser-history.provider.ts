@@ -74,7 +74,6 @@ export class BrowserHistoryProvider {
       .where({ databaseId, mode })
       .select([
         'a.id',
-        'a.createdAt',
         'a.filter',
       ])
       .orderBy('a.createdAt', 'DESC')

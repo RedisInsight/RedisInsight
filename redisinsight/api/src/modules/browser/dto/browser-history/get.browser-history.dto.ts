@@ -25,19 +25,6 @@ export class ScanFilter {
   @IsString()
   @Expose()
   match?: string = '*';
-
-  /**
-   * Generate scan args array for filter
-   */
-  getScanArgsArray(): Array<number | string> {
-    const args = ['match', this.match];
-
-    if (this.type) {
-      args.push('type', this.type);
-    }
-
-    return args;
-  }
 }
 
 export class BrowserHistory {
@@ -63,7 +50,7 @@ export class BrowserHistory {
   })
   @Expose()
   @Type(() => ScanFilter)
-  filter: ScanFilter;
+  filter: ScanFilter = new ScanFilter();
 
   @ApiProperty({
     description: 'Mode of history',

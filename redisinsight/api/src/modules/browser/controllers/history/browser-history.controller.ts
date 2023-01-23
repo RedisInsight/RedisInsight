@@ -36,7 +36,7 @@ export class BrowserHistoryController {
   })
   async list(
     @Param('dbInstance') databaseId: string,
-    @Query() { mode }: { mode: BrowserHistoryMode },
+    @Query() { mode = BrowserHistoryMode.Pattern }: { mode: BrowserHistoryMode },
   ): Promise<BrowserHistory[]> {
     return this.service.list(databaseId, mode);
   }

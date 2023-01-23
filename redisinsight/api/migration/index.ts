@@ -50,6 +50,6 @@ export default [
   workbenchExecutionTime1667368983699,
   database1667477693934,
   databaseNew1670252337342,
-  workbenchAndAnalysisDbIndex1673934231410,
   sshOptions1673035852335,
+  workbenchAndAnalysisDbIndex1673934231410,
 ];

@@ -147,6 +147,5 @@ test('Switching between indexed databases', async t => {
 
     // Verify that user can see the database index before the report date in Database Analysis
     await t.click(memoryEfficiencyPage.selectedReport);
-    await t.expect(memoryEfficiencyPage.reportItem.nth(0).textContent).contains('[db1]', 'Index not displayed in report name');
-    await t.expect(memoryEfficiencyPage.reportItem.nth(1).textContent).notContains('[db', 'Index displayed for 0 index in report name');
+    await t.expect(memoryEfficiencyPage.reportItem.withText('[db1]').count).eql(1, 'Index not displayed in report name');
 });

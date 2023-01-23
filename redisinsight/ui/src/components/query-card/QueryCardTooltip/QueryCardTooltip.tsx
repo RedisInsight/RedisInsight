@@ -63,7 +63,7 @@ const QueryCardTooltip = (props: Props) => {
       position="bottom"
     >
       <span data-testid="query-card-tooltip-anchor">
-        {`${!isGroupResults(resultsMode) ? getDbIndex(db) : ''} ${command}`}
+        {`${!isGroupResults(resultsMode) ? getDbIndex(db) : ''} ${command}`.trim()}
       </span>
     </EuiToolTip>
   )

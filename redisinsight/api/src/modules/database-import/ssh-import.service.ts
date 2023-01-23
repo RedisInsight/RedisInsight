@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { isUndefined } from 'lodash';
 import {
   getPemBodyFromFileSync,
   isValidSshPrivateKey,
 } from 'src/common/utils';
 import {
-  InvalidSshPrivateKeyBodyException, SshAgentsAreNotSupportedException
+  InvalidSshPrivateKeyBodyException, InvalidSshBodyException, SshAgentsAreNotSupportedException,
 } from 'src/modules/database-import/exceptions';
 import { SshOptions } from 'src/modules/ssh/models/ssh-options';
 
@@ -17,12 +18,17 @@ export class SshImportService {
   async processSshOptions(data: any): Promise<Partial<SshOptions>> {
     let sshOptions: Partial<SshOptions> = {
       host: data.sshHost,
-      port: parseInt(data.sshPort, 10),
-      username: data.sshUsername,
     };
 
+    if (isUndefined(data.sshPort) || isUndefined(data.sshUsername)) {
+      throw new InvalidSshBodyException();
+    } else {
+      sshOptions.port = parseInt(data.sshPort, 10);
+      sshOptions.username = data.sshUsername;
+    }
+
     if (data.sshPrivateKey) {
-      sshOptions.passphrase = data.sshPassphrase || data.sshPassword;
+      sshOptions.passphrase = data.sshPassphrase || data.sshPassword || null;
 
       if (isValidSshPrivateKey(data.sshPrivateKey)) {
         sshOptions.privateKey = data.sshPrivateKey;

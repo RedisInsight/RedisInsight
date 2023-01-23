@@ -7,6 +7,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SshImportService } from 'src/modules/database-import/ssh-import.service';
 import {
   InvalidSshPrivateKeyBodyException,
+  InvalidSshBodyException,
   SshAgentsAreNotSupportedException,
 } from 'src/modules/database-import/exceptions';
 
@@ -105,11 +106,34 @@ describe('SshImportService', () => {
     it('should throw an error when ssh agent provided', async () => {
       try {
         await service.processSshOptions({
+          ...mockSshImportDataPK,
           sshAgentPath: '/agent/path',
         });
       } catch (e) {
         expect(e).toBeInstanceOf(SshAgentsAreNotSupportedException);
       }
     });
+  });
+
+  it('should throw an error when no username defined', async () => {
+    try {
+      await service.processSshOptions({
+        ...mockSshImportDataPK,
+        sshUsername: undefined,
+      });
+    } catch (e) {
+      expect(e).toBeInstanceOf(InvalidSshBodyException);
+    }
+  });
+
+  it('should throw an error when no port defined', async () => {
+    try {
+      await service.processSshOptions({
+        ...mockSshImportDataPK,
+        sshPassword: undefined,
+      });
+    } catch (e) {
+      expect(e).toBeInstanceOf(InvalidSshBodyException);
+    }
   });
 });

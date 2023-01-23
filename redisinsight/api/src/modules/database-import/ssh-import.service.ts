@@ -35,7 +35,7 @@ export class SshImportService {
         }
       }
     } else {
-      sshOptions.password = data.sshPassword;
+      sshOptions.password = data.sshPassword || null;
     }
 
     if (!sshOptions || (sshOptions?.privateKey && !isValidSshPrivateKey(sshOptions.privateKey))) {

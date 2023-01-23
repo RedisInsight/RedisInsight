@@ -27,7 +27,7 @@ fixture `Upvote recommendations`
     .afterEach(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test.only('Verify that user can upvote recommendations', async t => {
+test('Verify that user can upvote recommendations', async t => {
     await recommendationPage.voteForVeryUsefulAndVerifyDisabled();
     // Verify that user can see previous votes when reload the page
     await common.reloadPage();

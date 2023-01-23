@@ -245,7 +245,7 @@ const QueryCardHeader = (props: Props) => {
         <div className={cx(styles.dropdownOption, styles.dropdownProfileOption)}>
           <EuiIcon
             className={styles.iconDropdownOption}
-            type={'visTagCloud'}
+            type="visTagCloud"
             data-testid={`view-type-selected-${value}-${id}`}
           />
         </div>
@@ -259,7 +259,7 @@ const QueryCardHeader = (props: Props) => {
     }
   })
 
-  const canCommandProfile = isCommandAllowedForProfile(query.split(' ')[0].toLowerCase())
+  const canCommandProfile = isCommandAllowedForProfile(query)
 
   const indexForSeparator = findIndex(pluginsOptions, (option) => !option.internal)
   if (indexForSeparator > -1) {
@@ -349,7 +349,7 @@ const QueryCardHeader = (props: Props) => {
           className={cx(styles.buttonIcon, styles.viewTypeIcon)}
           onClick={onDropDownViewClick}
         >
-          {isOpen && profileOptions.length > 1 && canCommandProfile && !summaryText && (
+          {isOpen && canCommandProfile && !summaryText && (
             <div className={styles.dropdownWrapper}>
               <div className={styles.dropdown}>
                 <EuiSuperSelect

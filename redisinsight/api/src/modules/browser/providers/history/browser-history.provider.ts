@@ -75,6 +75,7 @@ export class BrowserHistoryProvider {
       .select([
         'a.id',
         'a.filter',
+        'a.encryption',
       ])
       .orderBy('a.createdAt', 'DESC')
       .limit(BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb)
@@ -82,13 +83,22 @@ export class BrowserHistoryProvider {
 
     this.logger.log('Succeed to get history list');
 
-    return entities.map((entity) => classToClass(BrowserHistory, entity));
+    const decryptedEntities = await Promise.all(
+      entities.map<Promise<BrowserHistoryEntity>>(async (entity) => {
+        try {
+          return await this.decryptEntity(entity, true);
+        } catch (e) {
+          return null;
+        }
+      }),
+    );
+
+    return decryptedEntities.map((entity) => classToClass(BrowserHistory, entity));
   }
 
   /**
-   * Delete database instance by id
-   * Also close all opened connections for this database
-   * Also emit an event to entire app to be processed by other parts
+   * Delete history item by id
+   * @param databaseId
    * @param id
    */
   async delete(databaseId: string, id: string): Promise<void> {
@@ -104,12 +114,13 @@ export class BrowserHistoryProvider {
   }
 
   /**
-   * Clean history for particular database to fit 30 items limitation
+   * Clean history for particular database to fit 5 items limitation for each mode
+   * and remove duplicates
    * @param databaseId
    */
   async cleanupDatabaseHistory(databaseId: string, mode: string): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works
-    const idsToDelete = (await this.repository
+    const idsOverLimit = (await this.repository
       .createQueryBuilder()
       .where({ databaseId, mode })
       .select('id')
@@ -117,10 +128,18 @@ export class BrowserHistoryProvider {
       .offset(BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb)
       .getRawMany()).map((item) => item.id);
 
+    const idsDuplicates = (await this.repository
+      .createQueryBuilder()
+      .where({ databaseId, mode })
+      .select('id')
+      .groupBy('filter')
+      .having('COUNT(filter) > 1')
+      .getRawMany()).map((item) => item.id);
+
     await this.repository
       .createQueryBuilder()
       .delete()
-      .whereInIds(idsToDelete)
+      .whereInIds([...idsOverLimit, ...idsDuplicates])
       .execute();
   }
 
@@ -149,7 +168,7 @@ export class BrowserHistoryProvider {
   }
 
   /**
-   * Decrypt required browser history fields
+   * Decrypt required filter field
    * This method should optionally not fail (to not block users to navigate across app
    * on decryption error, for example, to be able change encryption strategy in the future)
    *
@@ -164,16 +183,9 @@ export class BrowserHistoryProvider {
     entity: BrowserHistoryEntity,
     ignoreErrors: boolean = false,
   ): Promise<BrowserHistoryEntity> {
-    const decrypted = {
-      ...entity,
-    };
-
-    await Promise.all(this.encryptedFields.map(async (field) => {
-      decrypted[field] = await this.decryptField(entity, field, ignoreErrors);
-    }));
-
     return new BrowserHistoryEntity({
-      ...decrypted,
+      ...entity,
+      filter: await this.decryptField(entity, 'filter', ignoreErrors),
     });
   }
 

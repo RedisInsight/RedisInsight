@@ -71,9 +71,11 @@ const BrowserLeftPanel = (props: Props) => {
     dispatch(setConnectedInstanceId(instanceId))
 
     dispatch(fetchKeys(
-      searchMode,
-      '0',
-      keyViewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+      {
+        searchMode,
+        cursor: '0',
+        count: keyViewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+      },
       () => dispatch(setBrowserKeyListDataLoaded(searchMode, true)),
       () => dispatch(setBrowserKeyListDataLoaded(searchMode, false))
     ))

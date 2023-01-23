@@ -39,10 +39,11 @@ import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
 import { fetchStreamEntries, setStreamInitialState } from './stream'
 import {
+  deleteRedisearchHistoryAction,
   deleteRedisearchKeyFromList,
   editRedisearchKeyFromList,
   editRedisearchKeyTTLFromList,
-  fetchMoreRedisearchKeysAction,
+  fetchMoreRedisearchKeysAction, fetchRedisearchHistoryAction,
   fetchRedisearchKeysAction,
   resetRedisearchKeysData,
   setLastBatchRedisearchKeys,
@@ -88,6 +89,10 @@ export const initialState: KeysStore = {
     loading: false,
     error: '',
   },
+  searchHistory: {
+    data: null,
+    loading: false
+  }
 }
 
 export const initialKeyInfo = {
@@ -352,7 +357,29 @@ const keysSlice = createSlice({
     setViewFormat: (state, { payload }: PayloadAction<KeyValueFormat>) => {
       state.selectedKey.viewFormat = payload
       localStorageService?.set(BrowserStorageItem.viewFormat, payload)
-    }
+    },
+    loadSearchHistory: (state) => {
+      state.searchHistory.loading = true
+    },
+    loadSearchHistorySuccess: (state, { payload }: any) => {
+      state.searchHistory.loading = false
+      state.searchHistory.data = payload
+    },
+    loadSearchHistoryFailure: (state) => {
+      state.searchHistory.loading = false
+    },
+    deleteSearchHistory: (state) => {
+      state.searchHistory.loading = true
+    },
+    deleteSearchHistorySuccess: (state, { payload }: { payload: string[] }) => {
+      state.searchHistory.loading = false
+      if (state.searchHistory.data) {
+        remove(state.searchHistory.data, (item) => payload.includes(item.id))
+      }
+    },
+    deleteSearchHistoryFailure: (state) => {
+      state.searchHistory.loading = false
+    },
   },
 })
 
@@ -393,6 +420,12 @@ export const {
   toggleBrowserFullScreen,
   setViewFormat,
   changeSearchMode,
+  loadSearchHistory,
+  loadSearchHistorySuccess,
+  loadSearchHistoryFailure,
+  deleteSearchHistory,
+  deleteSearchHistorySuccess,
+  deleteSearchHistoryFailure
 } = keysSlice.actions
 
 // A selector
@@ -401,6 +434,7 @@ export const keysDataSelector = (state: RootState) => state.browser.keys.data
 export const selectedKeySelector = (state: RootState) => state.browser.keys?.selectedKey
 export const selectedKeyDataSelector = (state: RootState) => state.browser.keys?.selectedKey?.data
 export const addKeyStateSelector = (state: RootState) => state.browser.keys?.addKey
+export const keysSearchHistorySelector = (state: RootState) => state.browser.keys.searchHistory
 
 // The reducer
 export default keysSlice.reducer
@@ -425,7 +459,13 @@ export function setInitialStateByType(type: string) {
   }
 }
 // Asynchronous thunk action
-export function fetchPatternKeysAction(cursor: string, count: number, onSuccess?: () => void, onFailed?: () => void) {
+export function fetchPatternKeysAction(
+  cursor: string,
+  count: number,
+  telemetryProperties: { [key: string]: any } = {},
+  onSuccess?: () => void,
+  onFailed?: () => void
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadKeys())
 
@@ -480,6 +520,8 @@ export function fetchPatternKeysAction(cursor: string, count: number, onSuccess?
               databaseSize: data[0].total,
               numberOfKeysScanned: data[0].scanned,
               scanCount: count,
+              source: telemetryProperties.source ?? 'manual',
+              ...telemetryProperties,
             }
           })
         }
@@ -936,11 +978,76 @@ export function fetchKeysMetadata(
   }
 }
 
-// Asynchronous thunk action
-export function fetchKeys(
+export function fetchPatternHistoryAction(
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadSearchHistory())
+
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.get(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.HISTORY
+        ),
+        {
+          params: {
+            mode: 'pattern'
+          }
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(loadSearchHistorySuccess(data))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      dispatch(loadSearchHistoryFailure())
+      onFailed?.()
+    }
+  }
+}
+
+export function deletePatternHistoryAction(
+  ids: string[],
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(deleteSearchHistory())
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.delete(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.HISTORY
+        ),
+        {
+          data: {
+            ids
+          },
+          params: {
+            mode: 'pattern'
+          }
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(deleteSearchHistorySuccess(ids))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      dispatch(deleteSearchHistoryFailure())
+      onFailed?.()
+    }
+  }
+}
+
+export function fetchSearchHistoryAction(
   searchMode: SearchMode,
-  cursor: string,
-  count: number,
   onSuccess?: () => void,
   onFailed?: () => void,
 ) {
@@ -949,8 +1056,46 @@ export function fetchKeys(
     const isRedisearchExists = isRedisearchAvailable(state.connections.instances.connectedInstance.modules)
 
     return searchMode === SearchMode.Pattern || !isRedisearchExists
-      ? dispatch<any>(fetchPatternKeysAction(cursor, count, onSuccess, onFailed))
-      : dispatch<any>(fetchRedisearchKeysAction(cursor, count, onSuccess, onFailed))
+      ? dispatch<any>(fetchPatternHistoryAction(onSuccess, onFailed))
+      : dispatch<any>(fetchRedisearchHistoryAction(onSuccess, onFailed))
+  }
+}
+
+export function deleteSearchHistoryAction(
+  searchMode: SearchMode,
+  ids: string[],
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const isRedisearchExists = isRedisearchAvailable(state.connections.instances.connectedInstance.modules)
+
+    return searchMode === SearchMode.Pattern || !isRedisearchExists
+      ? dispatch<any>(deletePatternHistoryAction(ids, onSuccess, onFailed))
+      : dispatch<any>(deleteRedisearchHistoryAction(ids, onSuccess, onFailed))
+  }
+}
+
+// Asynchronous thunk action
+export function fetchKeys(
+  options: {
+    searchMode: SearchMode,
+    cursor: string,
+    count: number,
+    telemetryProperties?: {},
+  },
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const isRedisearchExists = isRedisearchAvailable(state.connections.instances.connectedInstance.modules)
+    const { searchMode, count, cursor, telemetryProperties } = options
+
+    return searchMode === SearchMode.Pattern || !isRedisearchExists
+      ? dispatch<any>(fetchPatternKeysAction(cursor, count, telemetryProperties, onSuccess, onFailed))
+      : dispatch<any>(fetchRedisearchKeysAction(cursor, count, telemetryProperties, onSuccess, onFailed))
   }
 }
 

@@ -816,7 +816,7 @@ describe('redisearch slice', () => {
         })
 
         // Act
-        await newStore.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
+        await newStore.dispatch<any>(fetchKeys({ searchMode: SearchMode.Redisearch, cursor: '0', count: 20 }))
 
         // Assert
         const expectedActions = [
@@ -851,7 +851,7 @@ describe('redisearch slice', () => {
         })
 
         // Act
-        await newStore.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
+        await newStore.dispatch<any>(fetchKeys({ searchMode: SearchMode.Redisearch, cursor: '0', count: 20 }))
 
         // Assert
         const expectedActions = [
@@ -887,7 +887,7 @@ describe('redisearch slice', () => {
         })
 
         // Act
-        await newStore.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
+        await newStore.dispatch<any>(fetchKeys({ searchMode: SearchMode.Redisearch, cursor: '0', count: 20 }))
 
         // Assert
         const expectedActions = [

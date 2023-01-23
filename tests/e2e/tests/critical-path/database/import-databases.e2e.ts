@@ -83,7 +83,7 @@ const databasesToDelete = [
 ];
 const findImportedRdmDbNameInList = async(dbName: string): Promise<string> => rdmData.dbImportedNames.find(item => item === dbName)!;
 
-fixture.only `Import databases`
+fixture `Import databases`
     .meta({ type: 'critical_path', rte: rte.none })
     .page(commonUrl)
     .beforeEach(async() => {

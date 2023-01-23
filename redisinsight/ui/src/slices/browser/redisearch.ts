@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { remove } from 'lodash'
 
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, SearchHistoryMode } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { bufferToString, getApiErrorMessage, getUrl, isEqualBuffers, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
@@ -479,7 +479,7 @@ export function fetchRedisearchHistoryAction(
         ),
         {
           params: {
-            mode: 'redisearch'
+            mode: SearchHistoryMode.Redisearch
           }
         }
       )
@@ -515,7 +515,7 @@ export function deleteRedisearchHistoryAction(
             ids
           },
           params: {
-            mode: 'redisearch'
+            mode: SearchHistoryMode.Redisearch
           }
         }
       )

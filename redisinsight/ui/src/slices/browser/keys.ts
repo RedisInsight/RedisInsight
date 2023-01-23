@@ -2,7 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem, KeyTypes, KeyValueFormat, SortOrder } from 'uiSrc/constants'
+import {
+  ApiEndpoints,
+  BrowserStorageItem,
+  KeyTypes,
+  KeyValueFormat,
+  SearchHistoryMode,
+  SortOrder
+} from 'uiSrc/constants'
 import {
   getApiErrorMessage,
   isStatusNotFoundError,
@@ -994,7 +1001,7 @@ export function fetchPatternHistoryAction(
         ),
         {
           params: {
-            mode: 'pattern'
+            mode: SearchHistoryMode.Pattern
           }
         }
       )
@@ -1030,7 +1037,7 @@ export function deletePatternHistoryAction(
             ids
           },
           params: {
-            mode: 'pattern'
+            mode: SearchHistoryMode.Pattern
           }
         }
       )

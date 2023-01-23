@@ -191,6 +191,7 @@ describe('MultiSearch', () => {
       />
     )
 
+    fireEvent.click(screen.getByTestId('show-suggestions-btn'))
     expect(screen.getByTestId('progress-suggestions')).toBeInTheDocument()
   })
 })

@@ -319,7 +319,7 @@ const InstanceFormWrapper = (props: Props) => {
       sentinelMasterUsername,
       sentinelMasterPassword,
     } = values
-    const database: any = { name, host, port: +port, db: db || 0, username, password }
+    const database: any = { name, host, port: +port, db: +(db || 0), username, password }
 
     // add tls & ssh for database (modifies database object)
     applyTlSDatabase(database, tlsSettings)

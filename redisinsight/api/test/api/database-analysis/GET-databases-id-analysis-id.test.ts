@@ -27,6 +27,7 @@ describe('GET /databases/:id/analysis/:id', () => {
         expect(body).to.deep.eq({
           id: constants.TEST_DATABASE_ANALYSIS_ID_1,
           databaseId: constants.TEST_INSTANCE_ID,
+          db: constants.TEST_DATABASE_ANALYSIS_DB_1,
           createdAt: constants.TEST_DATABASE_ANALYSIS_CREATED_AT_1.toISOString(),
           delimiter: constants.TEST_DATABASE_ANALYSIS_DELIMITER_1,
           filter: constants.TEST_DATABASE_ANALYSIS_FILTER_1,

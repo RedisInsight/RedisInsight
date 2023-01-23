@@ -68,7 +68,7 @@ const dbData = [
     {
         type: 'racompass',
         path: filePathes.racompassValidJson,
-        dbNames: ['racompassCluster', 'racompassDbWithIndex:8100 [1]']
+        dbNames: ['racompassCluster', 'racompassDbWithIndex:8100 [db1]']
     },
     {
         type: 'ardm',

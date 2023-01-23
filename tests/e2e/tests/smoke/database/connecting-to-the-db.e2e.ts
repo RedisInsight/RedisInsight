@@ -28,12 +28,14 @@ test
         // Add OSS Sentinel DB
         await discoverSentinelDatabase(ossSentinelConfig);
 
-        // Verify new connection badge for Sentinel db
-        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
-
         // Get groups & their count
-        const sentinelGroups = myRedisDatabasePage.dbNameList;
+        const sentinelGroups = myRedisDatabasePage.dbNameList.withText('primary-group');
         const sentinelGroupsCount = await sentinelGroups.count;
+
+        // Verify new connection badge for Sentinel db
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible('primary-group-1');
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible('primary-group-2');
+
         // Verify all groups for connection
         for (let i = 0; i < sentinelGroupsCount; i++) {
             const groupSelector = sentinelGroups.nth(i);

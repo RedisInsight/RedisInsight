@@ -24,7 +24,7 @@ export function formatNameShort(name = '') {
 }
 
 export function getDbIndex(db: number = 0) {
-  return db ? `[${db}]` : ''
+  return db ? `[db${db}]` : ''
 }
 
 export const truncateText = (text = '', maxLength = 0, separator = '...') =>

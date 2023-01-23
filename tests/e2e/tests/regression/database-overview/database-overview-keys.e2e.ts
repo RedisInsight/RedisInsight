@@ -1,4 +1,3 @@
-import { t } from 'testcafe';
 import { acceptLicenseTermsAndAddDatabase, acceptLicenseTermsAndAddRECloudDatabase, deleteCustomDatabase, deleteDatabase } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
@@ -35,16 +34,16 @@ fixture `Database overview`
         await browserPage.addStringKey(keyName);
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneRedisearch, index);
-        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [${index}]`);
+        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [db${index}]`);
         keys = await common.createArrayWithKeyValue(keysAmount);
         await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
     })
     .afterEach(async t => {
         // Clear and delete databases
         await t.click(myRedisDatabasePage.myRedisDBButton);
-        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [${index}]`);
+        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [db${index}]`);
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteCustomDatabase(`${ossStandaloneRedisearch.databaseName} [${index}]`);
+        await deleteCustomDatabase(`${ossStandaloneRedisearch.databaseName} [db${index}]`);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);

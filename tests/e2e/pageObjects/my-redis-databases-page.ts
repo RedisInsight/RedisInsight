@@ -68,6 +68,7 @@ export class MyRedisDatabasePage {
     failedImportMessage = Selector('[data-testid=result-failed]');
     successImportMessage = Selector('[data-testid=result-success]');
     importDialogTitle = Selector('[data-testid=import-dbs-dialog-title]');
+    importResult = Selector('[data-testid^=table-result-]');
     // DIALOG
     importDbDialog = Selector('[data-testid=import-dbs-dialog]');
     successResultsAccordion = Selector('[data-testid^=success-results-]');

@@ -42,7 +42,7 @@ const dbData = [
     {
         type: 'racompass',
         path: path.join('..', '..', '..', 'test-data', 'import-databases', racompassValidJson),
-        dbNames: ['racompassCluster', 'racompassDbWithIndex:8100 [1]']
+        dbNames: ['racompassCluster', 'racompassDbWithIndex:8100 [db1]']
     },
     {
         type: 'ardm',

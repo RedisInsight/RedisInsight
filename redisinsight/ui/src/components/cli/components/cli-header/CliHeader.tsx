@@ -22,6 +22,7 @@ import { sessionStorageService } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { outputSelector, resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
+import { getDbIndex } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -32,7 +33,7 @@ const CliHeader = () => {
 
   const { host, port } = useSelector(connectedInstanceSelector)
   const { db } = useSelector(outputSelector)
-  const endpoint = db > 0 ? `${host}:${port}[${db}]` : `${host}:${port}`
+  const endpoint = `${host}:${port}${getDbIndex(db)}`
 
   const removeCliClient = () => {
     const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''

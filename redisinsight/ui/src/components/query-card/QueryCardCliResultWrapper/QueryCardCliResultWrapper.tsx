@@ -20,10 +20,11 @@ export interface Props {
   resultsMode?: ResultsMode
   isNotStored?: boolean
   isFullScreen?: boolean
+  db?: number
 }
 
 const QueryCardCliResultWrapper = (props: Props) => {
-  const { result = [], query, loading, resultsMode, isNotStored, isFullScreen } = props
+  const { result = [], query, loading, resultsMode, isNotStored, isFullScreen, db } = props
 
   return (
     <div className={cx('queryResultsContainer', styles.container)}>
@@ -36,7 +37,7 @@ const QueryCardCliResultWrapper = (props: Props) => {
             </EuiText>
           )}
           {isGroupResults(resultsMode) && isArray(result[0]?.response)
-            ? <QueryCardCliGroupResult result={result} isFullScreen={isFullScreen} />
+            ? <QueryCardCliGroupResult result={result} isFullScreen={isFullScreen} db={db} />
             : (
               <QueryCardCliDefaultResult
                 isFullScreen={isFullScreen}

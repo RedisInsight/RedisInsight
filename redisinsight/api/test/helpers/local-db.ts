@@ -145,6 +145,7 @@ export const generateNDatabaseAnalysis = async (
     result.push(await rep.save({
       id: uuidv4(),
       databaseId: uuidv4(),
+      db: constants.TEST_DATABASE_ANALYSIS_DB_1,
       delimiter: constants.TEST_DATABASE_ANALYSIS_DELIMITER_1,
       filter: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_FILTER_1)),
       progress: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_PROGRESS_1)),

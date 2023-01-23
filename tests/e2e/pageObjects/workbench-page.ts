@@ -214,9 +214,9 @@ export class WorkbenchPage {
     async checkWorkbenchCommandResult(command: string, result: string, childNum = 0): Promise<void> {
         // Compare the command with executed command
         const actualCommand = await this.queryCardContainer.nth(childNum).find(this.cssQueryCardCommand).textContent;
-        await t.expect(actualCommand).eql(command, 'Actual command is not equal to executed');
+        await t.expect(actualCommand).contains(command, 'Actual command is not equal to executed');
         // Compare the command result with executed command
         const actualCommandResult = await this.queryCardContainer.nth(childNum).find(this.cssQueryTextResult).textContent;
-        await t.expect(actualCommandResult).eql(result, 'Actual command result is not equal to executed');
+        await t.expect(actualCommandResult).contains(result, 'Actual command result is not equal to executed');
     }
 }

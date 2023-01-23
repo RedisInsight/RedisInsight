@@ -20,6 +20,7 @@ export default {
   INVALID_CA_BODY: 'Invalid CA body',
   INVALID_SSH_PRIVATE_KEY_BODY: 'Invalid SSH private key body',
   SSH_AGENTS_ARE_NOT_SUPPORTED: 'SSH Agents are not supported',
+  INVALID_SSH_BODY: 'Invalid SSH body',
   INVALID_CERTIFICATE_BODY: 'Invalid certificate body',
   INVALID_PRIVATE_KEY: 'Invalid private key',
   CERTIFICATE_NAME_IS_NOT_DEFINED: 'Certificate name is not defined',

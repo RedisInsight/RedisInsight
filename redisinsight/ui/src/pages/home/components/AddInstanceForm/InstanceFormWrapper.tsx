@@ -66,7 +66,7 @@ const getInitialValues = (editedInstance: Nullable<Instance>) => ({
   tls: !!editedInstance?.tls ?? false,
   ssh: !!editedInstance?.ssh ?? false,
   sshPassType: editedInstance?.sshOptions
-    ? (editedInstance.sshOptions.password ? SshPassType.Password : SshPassType.PrivateKey)
+    ? (editedInstance.sshOptions.privateKey ? SshPassType.PrivateKey : SshPassType.Password)
     : SshPassType.Password
 })
 

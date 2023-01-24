@@ -4,6 +4,7 @@ import {
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { Expose, Transform } from 'class-transformer';
+import { IsInt, Min } from 'class-validator';
 
 @Entity('command_execution')
 export class CommandExecutionEntity {
@@ -83,6 +84,12 @@ export class CommandExecutionEntity {
   @Column({ nullable: true })
   @Expose()
   executionTime?: number;
+
+  @Column({ nullable: true })
+  @Expose()
+  @IsInt()
+  @Min(0)
+  db?: number;
 
   @CreateDateColumn()
   @Index()

@@ -384,6 +384,7 @@ export const constants = {
   TEST_DATABASE_ANALYSIS_ID_1: uuidv4(),
   TEST_DATABASE_ANALYSIS_CREATED_AT_1: new Date(),
   TEST_DATABASE_ANALYSIS_DELIMITER_1: ':',
+  TEST_DATABASE_ANALYSIS_DB_1: 2,
   TEST_DATABASE_ANALYSIS_FILTER_1: {
     type: null,
     match: '*',

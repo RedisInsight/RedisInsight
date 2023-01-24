@@ -64,6 +64,7 @@ export interface Props {
   loading?: boolean
   executionTime?: number
   emptyCommand?: boolean
+  db?: number
   toggleOpen: () => void
   toggleFullScreen: () => void
   setSelectedValue: (type: WBQueryType, value: string) => void
@@ -110,6 +111,7 @@ const QueryCardHeader = (props: Props) => {
     onQueryDelete,
     onQueryReRun,
     onQueryProfile,
+    db,
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -293,7 +295,7 @@ const QueryCardHeader = (props: Props) => {
         >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
-              <QueryCardTooltip query={query} summary={summaryText} />
+              <QueryCardTooltip query={query} summary={summaryText} db={db} resultsMode={resultsMode} />
             </EuiTextColor>
             <EuiButtonIcon
               iconType="copy"

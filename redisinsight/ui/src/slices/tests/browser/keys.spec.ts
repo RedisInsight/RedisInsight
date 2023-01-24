@@ -867,7 +867,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchKeys(SearchMode.Pattern, 0, 20))
+        await store.dispatch<any>(fetchKeys({ searchMode: SearchMode.Pattern, cursor: '0', count: 20 }))
 
         // Assert
         const expectedActions = [
@@ -894,7 +894,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchKeys(SearchMode.Pattern, '0', 20))
+        await store.dispatch<any>(fetchKeys({ searchMode: SearchMode.Pattern, cursor: '0', count: 20 }))
 
         // Assert
         const expectedActions = [

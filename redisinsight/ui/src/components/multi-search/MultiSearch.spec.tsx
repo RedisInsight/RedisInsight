@@ -6,6 +6,13 @@ import MultiSearch, { Props } from './MultiSearch'
 const mockedProps = mock<Props>()
 const searchInputId = 'search-key'
 
+const suggestionOptions = [
+  { id: '1', option: 'List', value: 'first' },
+  { id: '2', option: 'Hash', value: 'second' },
+  { id: '3', option: 'String', value: '*' },
+  { id: '4', value: '**]' },
+]
+
 describe('MultiSearch', () => {
   it('should render', () => {
     expect(render(<MultiSearch {...instance(mockedProps)} />)).toBeTruthy()
@@ -97,5 +104,94 @@ describe('MultiSearch', () => {
     )
     fireEvent.click(screen.getByTestId('search-btn'))
     expect(onSubmit).toBeCalled()
+  })
+
+  it('should not render suggestions by default', () => {
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        data-testid={searchInputId}
+      />
+    )
+    expect(screen.queryByTestId('suggestions')).not.toBeInTheDocument()
+  })
+
+  it('should show suggestions after click on button with proper text', () => {
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        suggestions={{
+          options: suggestionOptions,
+          onApply: jest.fn(),
+          onDelete: jest.fn(),
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+    fireEvent.click(screen.getByTestId('show-suggestions-btn'))
+
+    expect(screen.getByTestId('suggestions')).toBeInTheDocument()
+    suggestionOptions.forEach(({ id, option, value }) => {
+      expect(screen.getByTestId(`suggestion-item-${id}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`suggestion-item-${id}`)).toHaveTextContent((option ?? '') + value)
+    })
+  })
+
+  it('should call onApply after click on suggestion', () => {
+    const onApply = jest.fn()
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        suggestions={{
+          options: suggestionOptions,
+          onApply,
+          onDelete: jest.fn(),
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+    fireEvent.click(screen.getByTestId('show-suggestions-btn'))
+    fireEvent.click(screen.getByTestId('suggestion-item-2'))
+    expect(onApply).toBeCalledWith(suggestionOptions[1])
+  })
+
+  it('should call onDelete after click on delete suggestion', () => {
+    const onDelete = jest.fn()
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        suggestions={{
+          options: suggestionOptions,
+          onApply: jest.fn(),
+          onDelete,
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+    fireEvent.click(screen.getByTestId('show-suggestions-btn'))
+    fireEvent.click(screen.getByTestId('remove-suggestion-item-2'))
+    expect(onDelete).toBeCalledWith(['2'])
+  })
+
+  it('should show loading wth loading suggestions state', () => {
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        suggestions={{
+          loading: true,
+          options: suggestionOptions,
+          onApply: jest.fn(),
+          onDelete: jest.fn(),
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+
+    fireEvent.click(screen.getByTestId('show-suggestions-btn'))
+    expect(screen.getByTestId('progress-suggestions')).toBeInTheDocument()
   })
 })

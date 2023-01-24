@@ -40,3 +40,6 @@ export const sortModulesByName = (modules: AdditionalRedisModule[]) => [...modul
 export const isRedisearchAvailable = (modules: AdditionalRedisModule[]): boolean =>
   modules?.some(({ name }) =>
     REDISEARCH_MODULES.some((search) => name === search))
+
+export const isContainJSONModule = (modules: AdditionalRedisModule[]): boolean =>
+  modules?.some((m: AdditionalRedisModule) => m.name === RedisDefaultModules.ReJSON)

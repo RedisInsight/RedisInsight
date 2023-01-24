@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiButton,
@@ -7,11 +7,12 @@ import {
   EuiForm,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiPanel, EuiTextArea,
+  EuiPanel,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addReJSONKey, } from 'uiSrc/slices/browser/keys'
 
+import MonacoJson from 'uiSrc/components/monaco-json'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/dto'
 
 import {
@@ -70,15 +71,9 @@ const AddKeyReJSON = (props: Props) => {
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
       <EuiFormRow label={config.value.label} fullWidth>
-        <EuiTextArea
-          fullWidth
-          name="value"
-          id="value"
-          resize="vertical"
-          placeholder={config.value.placeholder}
+        <MonacoJson
           value={ReJSONValue}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            setReJSONValue(e.target.value)}
+          onChange={setReJSONValue}
           disabled={loading}
           data-testid="json-value"
         />

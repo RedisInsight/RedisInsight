@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class Recommendation {
   @ApiProperty({
@@ -9,4 +9,11 @@ export class Recommendation {
   })
   @Expose()
   name: string;
+
+  @ApiPropertyOptional({
+    description: 'Additional recommendation params',
+    example: 'luaScript',
+  })
+  @Expose()
+  params?: any;
 }

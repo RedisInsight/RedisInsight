@@ -562,9 +562,9 @@ describe('RecommendationProvider', () => {
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
         .mockResolvedValue(mockFTListResponse_1);
 
-      const redisServerRecommendation = await service
+      const redisSearchRecommendation = await service
         .determineRediSearchRecommendation(nodeClient, [mockJSONKey]);
-      expect(redisServerRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_SEARCH });
+      expect(redisSearchRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_SEARCH });
     });
 
     it('should return rediSearch recommendation when there is huge string key', async () => {
@@ -572,9 +572,9 @@ describe('RecommendationProvider', () => {
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
         .mockResolvedValue(mockFTListResponse_1);
 
-      const redisServerRecommendation = await service
+      const redisSearchRecommendation = await service
         .determineRediSearchRecommendation(nodeClient, [mockRediSearchStringKey_1]);
-      expect(redisServerRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_SEARCH });
+      expect(redisSearchRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_SEARCH });
     });
 
     it('should not return rediSearch recommendation when there is small string key', async () => {
@@ -582,9 +582,9 @@ describe('RecommendationProvider', () => {
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
         .mockResolvedValue(mockFTListResponse_1);
 
-      const redisServerRecommendation = await service
+      const redisSearchRecommendation = await service
         .determineRediSearchRecommendation(nodeClient, [mockRediSearchStringKey_2]);
-      expect(redisServerRecommendation).toEqual(null);
+      expect(redisSearchRecommendation).toEqual(null);
     });
 
     it('should not return rediSearch recommendation when there are no indexes', async () => {
@@ -592,9 +592,9 @@ describe('RecommendationProvider', () => {
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
         .mockResolvedValue(mockFTListResponse_2);
 
-      const redisServerRecommendation = await service
+      const redisSearchRecommendation = await service
         .determineRediSearchRecommendation(nodeClient, [mockJSONKey]);
-      expect(redisServerRecommendation).toEqual(null);
+      expect(redisSearchRecommendation).toEqual(null);
     });
 
     it('should ignore errors when ft command execute with error', async () => {
@@ -602,9 +602,9 @@ describe('RecommendationProvider', () => {
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
         .mockRejectedValue("some error");
 
-      const redisServerRecommendation = await service
+      const redisSearchRecommendation = await service
         .determineRediSearchRecommendation(nodeClient, [mockJSONKey]);
-      expect(redisServerRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_SEARCH });
+      expect(redisSearchRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_SEARCH });
     });
 
     it('should ignore errors when ft command execute with error', async () => {
@@ -612,9 +612,9 @@ describe('RecommendationProvider', () => {
         .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
         .mockRejectedValue("some error");
 
-      const redisServerRecommendation = await service
+      const redisSearchRecommendation = await service
         .determineRediSearchRecommendation(nodeClient, [mockRediSearchStringKey_2]);
-      expect(redisServerRecommendation).toEqual(null);
+      expect(redisSearchRecommendation).toEqual(null);
     });
   });
 
@@ -624,9 +624,9 @@ describe('RecommendationProvider', () => {
         .calledWith(jasmine.objectContaining({ name: 'info' }))
         .mockResolvedValue(mockRedisServerResponse_1);
 
-      const redisServerRecommendation = await service
+      const redisVersionRecommendation = await service
         .determineRedisVersionRecommendation(nodeClient);
-      expect(redisServerRecommendation).toEqual(null);
+      expect(redisVersionRecommendation).toEqual(null);
     });
 
     it('should return redis version recommendation', async () => {
@@ -634,9 +634,9 @@ describe('RecommendationProvider', () => {
         .calledWith(jasmine.objectContaining({ name: 'info' }))
         .mockResolvedValueOnce(mockRedisServerResponse_2);
 
-      const redisServerRecommendation = await service
+      const redisVersionRecommendation = await service
         .determineRedisVersionRecommendation(nodeClient);
-      expect(redisServerRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_VERSION });
+      expect(redisVersionRecommendation).toEqual({ name: RECOMMENDATION_NAMES.REDIS_VERSION });
     });
 
     it('should not return redis version recommendation when info command executed with error',
@@ -646,9 +646,23 @@ describe('RecommendationProvider', () => {
           .calledWith(jasmine.objectContaining({ name: 'info' }))
           .mockRejectedValue('some error');
 
-        const redisServerRecommendation = await service
+        const redisVersionRecommendation = await service
           .determineRedisVersionRecommendation(nodeClient);
-        expect(redisServerRecommendation).toEqual(null);
+        expect(redisVersionRecommendation).toEqual(null);
+      });
+  });
+
+  describe('determineDangerousCommandsRecommendation', () => {
+    it('should not return dangerous commands recommendation when "command" command executed with error',
+      async () => {
+        resetAllWhenMocks();
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'command' }))
+          .mockRejectedValue('some error');
+
+        const dangerousCommandsRecommendation = await service
+          .determineDangerousCommandsRecommendation(nodeClient);
+        expect(dangerousCommandsRecommendation).toEqual(null);
       });
   });
 });

@@ -439,7 +439,7 @@
   },
   "bigAmountOfConnectedClients": {
     "id": "bigAmountOfConnectedClients",
-    "title":"Don't open a new connection for every request / every command",
+    "title": "Don't open a new connection for every request / every command",
     "content": [
       {
         "id": "1",
@@ -461,7 +461,7 @@
   },
   "setPassword": {
     "id": "setPassword",
-    "title":"Set the password",
+    "title": "Set the password",
     "content": [
       {
         "id": "1",
@@ -499,21 +499,34 @@
     "content": [
       {
         "id": "1",
-        "type": "paragraph",
-        "value": "If you are using sorted sets to work with time series data, consider using RedisTimeSeries to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
+        "type": "span",
+        "value": "If you are using sorted sets to work with time series data, consider using "
       },
       {
         "id": "2",
-        "type": "spacer",
-        "value": "l"
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/timeseries/",
+          "name": "RedisTimeSeries"
+        }
       },
       {
         "id": "3",
         "type": "span",
-        "value": "Create a "
+        "value": " to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
       },
       {
         "id": "4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "5",
+        "type": "span",
+        "value": "Create a "
+      },
+      {
+        "id": "6",
         "type": "link",
         "value": {
           "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
@@ -521,7 +534,7 @@
         }
       },
       {
-        "id": "5",
+        "id": "7",
         "type": "span",
         "value": " to use modern data models and processing engines."
       }
@@ -566,39 +579,47 @@
   },
   "redisSearch": {
     "id": "redisSearch",
-    "title":"Optimize your search and query experience",
+    "title":"Optimize your query and search experience",
     "redisStack": true,
     "content": [
       {
         "id": "1",
-        "type": "span",
-        "value": "RediSearch was designed to help address your query needs and support a better development experience when dealing with complex data scenarios. Take a look at the powerful API options here ("
-      },
-      {
-        "id": "2",
         "type": "link",
         "value": {
-          "href": "https://redis.io/commands/?name=Ft",
-          "name": "Commands"
+          "href": "https://redis.io/docs/stack/search/",
+          "name": "RediSearch"
         }
       },
       {
-        "id": "3",
+        "id": "2",
         "type": "span",
-        "value": ") and try it. Supports full-text search, wildcards, fuzzy logic, and more."
+        "value": "was designed to help address your query needs and support a better development experience when dealing with complex data scenarios. Take a look at the "
+      },
+      {
+        "id": "3",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/commands/?name=Ft",
+          "name": "powerful API options"
+        }
       },
       {
         "id": "4",
+        "type": "span",
+        "value": " and try them. Supports full-text search, wildcards, fuzzy logic, and more."
+      },
+      {
+        "id": "5",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "5",
+        "id": "6",
         "type": "span",
         "value": "Create a "
       },
       {
-        "id": "6",
+        "id": "7",
         "type": "link",
         "value": {
           "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
@@ -606,11 +627,96 @@
         }
       },
       {
-        "id": "7",
+        "id": "8",
         "type": "span",
         "value": " which extends the core capabilities of Redis OSS and uses modern data models and processing engines."
       }
     ],
     "badges": ["upgrade"]
+  },
+  "searchIndexes": {
+    "id": "searchIndexes",
+    "title":"Enhance your search indexes",
+    "redisStack": true,
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Creating your own index structure manually? Consider the out-of-box option of FT.CREATE on RediSearch."
+      },
+      {
+        "id": "2",
+        "type": "span",
+        "value": "RediSearch was designed to help meet your query needs and support a better development experience when dealing with complex data scenarios. Take a look at the powerful API options "
+      },
+      {
+        "id": "3",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/commands/?name=Ft",
+          "name": "here"
+        }
+      },
+      {
+        "id": "4",
+        "type": "span",
+        "value": " and try it."
+      },
+      {
+        "id": "5",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "6",
+        "type": "span",
+        "value": "Create a "
+      },
+      {
+        "id": "7",
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
+          "name": "free Redis Stack database"
+        }
+      },
+      {
+        "id": "8",
+        "type": "span",
+        "value": " to use modern data models and processing engines."
+      }
+    ],
+    "badges": ["upgrade"]
+  },
+  "dangerousCommands": {
+    "id": "dangerousCommands",
+    "title": "Rename or disable dangerous commands",
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "The following commands are currently not renamed or disabled for your Instance. These commands are powerful and dangerous if not managed properly. Rename or disable them, especially for the production environment"
+      },
+      {
+        "id": "2",
+        "type": "pre",
+        "parameter": ["commands"],
+        "value": "${0} "
+      },
+      {
+        "id": "3",
+        "type": "spacer",
+        "value": "s"
+      },
+      {
+        "id": "4",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/download/",
+          "name": "Read more"
+        }
+      }
+    ],
+    "badges": ["code_changes"]
   }
 }

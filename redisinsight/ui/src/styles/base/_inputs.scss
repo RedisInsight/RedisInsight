@@ -25,7 +25,9 @@ textarea::placeholder {
 
 input[type='password'] ~ .euiFormControlLayoutIcons,
 input[name='password'] ~ .euiFormControlLayoutIcons,
-input[name='sentinelMasterPassword'] ~ .euiFormControlLayoutIcons {
+input[name='sentinelMasterPassword'] ~ .euiFormControlLayoutIcons,
+input[name='sshPassword'] ~ .euiFormControlLayoutIcons,
+input[name='sshPassphrase'] ~ .euiFormControlLayoutIcons {
   display: none;
 }
 

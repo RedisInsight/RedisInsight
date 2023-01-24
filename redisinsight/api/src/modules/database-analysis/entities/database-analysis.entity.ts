@@ -1,6 +1,7 @@
 import {
   Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
 } from 'typeorm';
+import { IsInt, Min } from 'class-validator';
 import { Expose, Transform } from 'class-transformer';
 import { DataAsJsonString } from 'src/common/decorators';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
@@ -122,6 +123,12 @@ export class DatabaseAnalysisEntity {
   @DataAsJsonString()
   @Expose()
   recommendations: string;
+
+  @Column({ nullable: true })
+  @Expose()
+  @IsInt()
+  @Min(0)
+  db?: number;
 
   @CreateDateColumn()
   @Index()

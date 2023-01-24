@@ -89,18 +89,21 @@ export async function getAllDatabases(): Promise<string[]> {
  * Get database through api using database name
  * @param databaseName The database name
  */
-export async function getDatabaseByName(databaseName?: string): Promise<string> {
+export async function getDatabaseIdByName(databaseName?: string): Promise<string> {
     if (!databaseName) {
         throw new Error('Error: Missing databaseName');
     }
+    let databaseId: any;
     const allDataBases = await getAllDatabases();
-    let response: object = {};
-    response = await asyncFilter(allDataBases, async(item: databaseParameters) => {
+    const response = await asyncFilter(allDataBases, async (item: databaseParameters) => {
         await doAsyncStuff();
-        return await item.name === databaseName;
+        return item.name === databaseName;
     });
 
-    return await response[0].id;
+    if (response.length !== 0) {
+        databaseId = await response[0].id;
+    };
+    return databaseId;
 }
 
 /**
@@ -145,7 +148,7 @@ export async function deleteAllDatabasesApi(): Promise<void> {
  * @param databaseParameters The database parameters
  */
 export async function deleteStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
-    const databaseId = await getDatabaseByName(databaseParameters.databaseName);
+    const databaseId = await getDatabaseIdByName(databaseParameters.databaseName);
     await request(endpoint).delete('/databases')
         .send({ 'ids': [`${databaseId}`] })
         .set('Accept', 'application/json')
@@ -158,11 +161,13 @@ export async function deleteStandaloneDatabaseApi(databaseParameters: AddNewData
  */
 export async function deleteStandaloneDatabasesByNamesApi(databaseNames: string[]): Promise<void> {
     databaseNames.forEach(async databaseName => {
-        const databaseId = await getDatabaseByName(databaseName);
-        await request(endpoint).delete('/databases')
-            .send({ 'ids': [`${databaseId}`] })
-            .set('Accept', 'application/json')
-            .expect(200);
+        const databaseId = await getDatabaseIdByName(databaseName);
+        if (databaseId) {
+            await request(endpoint).delete('/databases')
+                .send({ 'ids': [`${databaseId}`] })
+                .set('Accept', 'application/json')
+                .expect(200);
+        }
     });
 }
 
@@ -171,7 +176,7 @@ export async function deleteStandaloneDatabasesByNamesApi(databaseNames: string[
  * @param databaseParameters The database parameters
  */
 export async function deleteOSSClusterDatabaseApi(databaseParameters: OSSClusterParameters): Promise<void> {
-    const databaseId = await getDatabaseByName(databaseParameters.ossClusterDatabaseName);
+    const databaseId = await getDatabaseIdByName(databaseParameters.ossClusterDatabaseName);
     const response = await request(endpoint).delete('/databases')
         .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
 
@@ -184,7 +189,7 @@ export async function deleteOSSClusterDatabaseApi(databaseParameters: OSSCluster
  */
 export async function deleteAllSentinelDatabasesApi(databaseParameters: SentinelParameters): Promise<void> {
     for (let i = 0; i < databaseParameters.name!.length; i++) {
-        const databaseId = await getDatabaseByName(databaseParameters.name![i]);
+        const databaseId = await getDatabaseIdByName(databaseParameters.name![i]);
         const response = await request(endpoint).delete('/databases')
             .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
         await t.expect(response.status).eql(200, 'Delete Sentinel database request failed');
@@ -218,7 +223,7 @@ export async function deleteStandaloneDatabasesApi(databasesParameters: AddNewDa
  * @param databaseParameters The database parameters
  */
 export async function getClusterNodesApi(databaseParameters: OSSClusterParameters): Promise<string[]> {
-    const databaseId = await getDatabaseByName(databaseParameters.ossClusterDatabaseName);
+    const databaseId = await getDatabaseIdByName(databaseParameters.ossClusterDatabaseName);
     const response = await request(endpoint)
         .get(`/databases/${databaseId}/cluster-details`)
         .set('Accept', 'application/json')

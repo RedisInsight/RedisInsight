@@ -197,7 +197,7 @@ describe('RedisObserver', () => {
     });
 
     it('connect fail due to NOPERM', (done) => {
-      nodeClient.call.mockRejectedValueOnce(NO_PERM_ERROR);
+      nodeClient.monitor.mockRejectedValueOnce(NO_PERM_ERROR);
       redisObserver.init(getRedisClientFn);
       redisObserver.on('connect_error', (e) => {
         expect(redisObserver['shardsObservers']).toEqual([]);
@@ -208,7 +208,7 @@ describe('RedisObserver', () => {
     });
 
     it('connect fail due an error', (done) => {
-      nodeClient.call.mockRejectedValueOnce(new Error('some error'));
+      nodeClient.monitor.mockRejectedValueOnce(new Error('some error'));
       redisObserver.init(getRedisClientFn);
       redisObserver.on('connect_error', (e) => {
         expect(e).toBeInstanceOf(ServiceUnavailableException);

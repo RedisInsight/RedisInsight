@@ -56,6 +56,7 @@ export const analysisSchema = Joi.object().keys({
   }).required(),
   totalKeys: typedTotalSchema.required(),
   totalMemory: typedTotalSchema.required(),
+  db: Joi.number().integer().allow(null),
   topKeysNsp: Joi.array().items(nspSummarySchema).required().max(15),
   topMemoryNsp: Joi.array().items(nspSummarySchema).required().max(15),
   topKeysLength: Joi.array().items(keySchema).required().max(15),

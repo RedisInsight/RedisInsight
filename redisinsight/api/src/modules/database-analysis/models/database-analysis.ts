@@ -1,8 +1,9 @@
 import { NspSummary } from 'src/modules/database-analysis/models/nsp-summary';
 import { Key } from 'src/modules/database-analysis/models/key';
+import { IsInt, IsOptional, Min } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
 import { SimpleSummary } from 'src/modules/database-analysis/models/simple-summary';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
 import { AnalysisProgress } from 'src/modules/database-analysis/models/analysis-progress';
 import { SumGroup } from 'src/modules/database-analysis/models/sum-group';
@@ -124,4 +125,13 @@ export class DatabaseAnalysis {
   @Expose()
   @Type(() => Recommendation)
   recommendations: Recommendation[];
+  @ApiPropertyOptional({
+    description: 'Logical database number.',
+    type: Number,
+  })
+  @Expose()
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  db?: number;
 }

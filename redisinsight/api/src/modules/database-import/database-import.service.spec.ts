@@ -6,6 +6,7 @@ import {
   mockDatabaseImportAnalytics,
   mockDatabaseImportFile,
   mockDatabaseImportResponse,
+  mockSshImportService,
   MockType,
 } from 'src/__mocks__';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -18,9 +19,10 @@ import {
   InvalidCaCertificateBodyException, InvalidCertificateNameException, InvalidClientCertificateBodyException,
   NoDatabaseImportFileProvidedException,
   SizeLimitExceededDatabaseImportFileException,
-  UnableToParseDatabaseImportFileException
+  UnableToParseDatabaseImportFileException,
 } from 'src/modules/database-import/exceptions';
 import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
+import { SshImportService } from 'src/modules/database-import/ssh-import.service';
 
 describe('DatabaseImportService', () => {
   let service: DatabaseImportService;
@@ -44,6 +46,10 @@ describe('DatabaseImportService', () => {
         {
           provide: CertificateImportService,
           useFactory: mockCertificateImportService,
+        },
+        {
+          provide: SshImportService,
+          useFactory: mockSshImportService,
         },
         {
           provide: DatabaseImportAnalytics,

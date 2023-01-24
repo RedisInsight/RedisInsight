@@ -122,7 +122,7 @@ const HomePage = () => {
     if (editedInstance) {
       const found = instances.find((item: Instance) => item.id === editedInstance.id)
       if (found) {
-        dispatch(fetchEditedInstanceAction(found.id))
+        dispatch(fetchEditedInstanceAction(found))
       }
     }
   }, [instances])
@@ -160,12 +160,13 @@ const HomePage = () => {
     setEditDialogIsOpen(false)
   }
 
-  const handleEditInstance = ({ id }: Instance) => {
-    dispatch(fetchEditedInstanceAction(id))
-    setEditDialogIsOpen(true)
-    setAddDialogIsOpen(false)
+  const handleEditInstance = (editedInstance: Instance) => {
+    if (editedInstance) {
+      dispatch(fetchEditedInstanceAction(editedInstance))
+      setEditDialogIsOpen(true)
+      setAddDialogIsOpen(false)
+    }
   }
-
   const handleDeleteInstances = (instances: Instance[]) => {
     if (instances.find((instance) => instance.id === editedInstance?.id)) {
       dispatch(setEditedInstance(null))

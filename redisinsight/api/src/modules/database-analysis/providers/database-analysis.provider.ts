@@ -105,7 +105,7 @@ export class DatabaseAnalysisProvider {
     const entities = await this.repository
       .createQueryBuilder('a')
       .where({ databaseId })
-      .select(['a.id', 'a.createdAt'])
+      .select(['a.id', 'a.createdAt', 'a.db'])
       .orderBy('a.createdAt', 'DESC')
       .limit(DATABASE_ANALYSIS_CONFIG.maxItemsPerDb)
       .getMany();

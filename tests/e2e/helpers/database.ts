@@ -9,7 +9,7 @@ import {
     UserAgreementPage,
     CliPage
 } from '../pageObjects';
-import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi, getDatabaseByName } from './api/api-database';
+import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi, getDatabaseIdByName } from './api/api-database';
 import { Common } from './common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -283,7 +283,7 @@ export async function acceptTermsAddDatabaseOrConnectToRedisStack(databaseParame
  * @param databaseName The name of the database
  */
 export async function clickOnEditDatabaseByName(databaseName: string): Promise<void> {
-    const databaseId = await getDatabaseByName(databaseName);
+    const databaseId = await getDatabaseIdByName(databaseName);
     const databaseEditBtn = Selector(`[data-testid=edit-instance-${databaseId}]`);
 
     await t.expect(databaseEditBtn.exists).ok(`"${databaseName}" database not displayed`);
@@ -295,7 +295,7 @@ export async function clickOnEditDatabaseByName(databaseName: string): Promise<v
  * @param databaseName The name of the database
  */
 export async function deleteDatabaseByNameApi(databaseName: string): Promise<void> {
-    const databaseId = await getDatabaseByName(databaseName);
+    const databaseId = await getDatabaseIdByName(databaseName);
     const databaseDeleteBtn = Selector(`[data-testid=delete-instance-${databaseId}-icon]`);
 
     await t.expect(databaseDeleteBtn.exists).ok(`"${databaseName}" database not displayed`);

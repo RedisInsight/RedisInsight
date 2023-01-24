@@ -30,7 +30,11 @@ describe('Code', () => {
 
     const link = queryByTestId(`preselect-${label}`)
     fireEvent.click(link as Element)
-    expect(setScript).toBeCalledWith(MONACO_MANUAL, {}, undefined)
+    expect(setScript).toBeCalledWith(
+      MONACO_MANUAL,
+      { mode: ExecuteButtonMode.Manual, params: undefined },
+      undefined,
+    )
   })
 
   it('should correctly set script with auto execute', () => {
@@ -39,11 +43,15 @@ describe('Code', () => {
 
     render(
       <EnablementAreaProvider value={{ ...defaultValue, setScript }}>
-        <Code {...instance(mockedProps)} label={label} mode={ExecuteButtonMode.Auto}>{MONACO_MANUAL}</Code>
+        <Code {...instance(mockedProps)} label={label} params="[auto=true]">{MONACO_MANUAL}</Code>
       </EnablementAreaProvider>
     )
 
     fireEvent.click(screen.queryByTestId(`preselect-auto-${label}`) as Element)
-    expect(setScript).toBeCalledWith(MONACO_MANUAL, { mode: ExecuteButtonMode.Auto }, undefined)
+    expect(setScript).toBeCalledWith(
+      MONACO_MANUAL,
+      { mode: ExecuteButtonMode.Auto, params: { auto: 'true' } },
+      undefined,
+    )
   })
 })

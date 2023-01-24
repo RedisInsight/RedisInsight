@@ -102,6 +102,15 @@ export const constants = {
   CLUSTER: 'CLUSTER',
   SENTINEL: 'SENTINEL',
 
+  // ssh
+  TEST_SSH_HOST: process.env.TEST_SSH_HOST,
+  TEST_SSH_PORT: process.env.TEST_SSH_PORT ? parseInt(process.env.TEST_SSH_PORT, 10) : 22,
+  TEST_SSH_USER: process.env.TEST_SSH_USER,
+  TEST_SSH_PASSWORD: process.env.TEST_SSH_PASSWORD,
+  TEST_SSH_PRIVATE_KEY: process.env.TEST_SSH_PRIVATE_KEY,
+  TEST_SSH_PRIVATE_KEY_P: process.env.TEST_SSH_PRIVATE_KEY_P,
+  TEST_SSH_PASSPHRASE: process.env.TEST_SSH_PASSPHRASE,
+
   // certificates
   TEST_USER_CERT_ID: uuidv4(),
   TEST_USER_CERT_NAME: uuidv4(),
@@ -379,6 +388,7 @@ export const constants = {
   TEST_DATABASE_ANALYSIS_ID_1: uuidv4(),
   TEST_DATABASE_ANALYSIS_CREATED_AT_1: new Date(),
   TEST_DATABASE_ANALYSIS_DELIMITER_1: ':',
+  TEST_DATABASE_ANALYSIS_DB_1: 2,
   TEST_DATABASE_ANALYSIS_FILTER_1: {
     type: null,
     match: '*',

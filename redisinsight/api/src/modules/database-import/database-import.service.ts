@@ -22,6 +22,7 @@ import {
 } from 'src/modules/database-import/exceptions';
 import { ValidationException } from 'src/common/exceptions';
 import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
+import { SshImportService } from 'src/modules/database-import/ssh-import.service';
 
 @Injectable()
 export class DatabaseImportService {
@@ -51,10 +52,18 @@ export class DatabaseImportService {
     ['sentinelMasterPassword', [
       'sentinelMaster.password', 'sentinelOptions.nodePassword', 'sentinelOptions.sentinelPassword',
     ]],
+    ['sshHost', ['sshOptions.host', 'ssh_host', 'sshHost']],
+    ['sshPort', ['sshOptions.port', 'ssh_port', 'sshPort']],
+    ['sshUsername', ['sshOptions.username', 'ssh_user', 'sshUser']],
+    ['sshPassword', ['sshOptions.password', 'ssh_password', 'sshPassword']],
+    ['sshPrivateKey', ['sshOptions.privateKey', 'sshOptions.privatekey', 'ssh_private_key_path', 'sshKeyFile']],
+    ['sshPassphrase', ['sshOptions.passphrase', 'sshKeyPassphrase']],
+    ['sshAgentPath', ['ssh_agent_path']],
   ];
 
   constructor(
     private readonly certificateImportService: CertificateImportService,
+    private readonly sshImportService: SshImportService,
     private readonly databaseRepository: DatabaseRepository,
     private readonly analytics: DatabaseImportAnalytics,
   ) {}
@@ -159,13 +168,24 @@ export class DatabaseImportService {
       if (data?.sentinelMasterName) {
         data.sentinelMaster = {
           name: data.sentinelMasterName,
-          username: data.sentinelMasterUsername,
+          username: data.sentinelMasterUsername || undefined,
           password: data.sentinelMasterPassword,
         };
         data.nodes = [{
           host: data.host,
           port: parseInt(data.port, 10),
         }];
+      }
+
+      if (data?.sshHost || data?.sshAgentPath) {
+        data.ssh = true;
+        try {
+          data.sshOptions = await this.sshImportService.processSshOptions(data);
+        } catch (e) {
+          status = DatabaseImportStatus.Partial;
+          data.ssh = false;
+          errors.push(e);
+        }
       }
 
       if (data?.tlsCaCert) {

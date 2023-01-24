@@ -23,7 +23,8 @@ import { workbenchExecutionTime1667368983699 } from './1667368983699-workbench-e
 import { database1667477693934 } from './1667477693934-database';
 import { databaseNew1670252337342 } from './1670252337342-database-new';
 import { sshOptions1673035852335 } from './1673035852335-ssh-options';
-import { workbenchAndAnalysisDbIndex1673934231410 } from './1673934231410-workbench_and_analysis_db';
+import { workbenchAndAnalysisDbIndex1673934231410 } from './1673934231410-workbench-and-analysis-db';
+import { browserHistory1674539211397 } from './1674539211397-browser-history';
 
 export default [
   initialMigration1614164490968,
@@ -52,4 +53,5 @@ export default [
   databaseNew1670252337342,
   sshOptions1673035852335,
   workbenchAndAnalysisDbIndex1673934231410,
+  browserHistory1674539211397,
 ];

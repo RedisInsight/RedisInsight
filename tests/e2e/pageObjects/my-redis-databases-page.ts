@@ -1,5 +1,5 @@
 import { t, Selector } from 'testcafe';
-import { getDatabaseByName } from '../helpers/api/api-database';
+import { getDatabaseIdByName } from '../helpers/api/api-database';
 
 export class MyRedisDatabasePage {
     //-------------------------------------------------------------------------------------------
@@ -192,7 +192,7 @@ export class MyRedisDatabasePage {
      * @param databaseName The name of the database
     */
     async verifyDatabaseStatusIsVisible(databaseName: string): Promise<void> {
-        const databaseId = await getDatabaseByName(databaseName);
+        const databaseId = await getDatabaseIdByName(databaseName);
         const databaseEditBtn = Selector(`[data-testid=database-status-new-${databaseId}]`);
 
         await t.expect(databaseEditBtn.exists).ok(`Database status is not visible for ${databaseName}`);
@@ -203,7 +203,7 @@ export class MyRedisDatabasePage {
     * @param databaseName The name of the database
     */
     async verifyDatabaseStatusIsNotVisible(databaseName: string): Promise<void> {
-        const databaseId = await getDatabaseByName(databaseName);
+        const databaseId = await getDatabaseIdByName(databaseName);
         const databaseEditBtn = Selector(`[data-testid=database-status-new-${databaseId}]`);
 
         await t.expect(databaseEditBtn.exists).notOk(`Database status is still visible for ${databaseName}`);

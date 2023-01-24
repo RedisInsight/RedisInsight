@@ -3,16 +3,23 @@ import { MemoryEfficiencyPage } from '../pageObjects';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 export class MemoryEfficiencyActions {
+    /*
+        vote for very useful and verify others are disabled
+    */
     async voteForVeryUsefulAndVerifyDisabled(): Promise<void> {
         await t.click(memoryEfficiencyPage.veryUsefulVoteBtn);
         await this.verifyVoteDisabled();
     }
-
+    /*
+        vote for useful and verify others are disabled
+    */
     async voteForUsefulAndVerifyDisabled(): Promise<void> {
         await t.click(memoryEfficiencyPage.usefulVoteBtn);
         await this.verifyVoteDisabled();
     }
-
+    /*
+        vote for not useful and verify others are disabled
+    */
     async voteForNotUsefulAndVerifyDisabled(): Promise<void> {
         await t.click(memoryEfficiencyPage.notUsefulVoteBtn);
         await this.verifyVoteDisabled();

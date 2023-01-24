@@ -1,33 +1,29 @@
-import {Selector, t} from 'testcafe';
+import {t} from 'testcafe';
+import { MemoryEfficiencyPage } from '../pageObjects';
 
-export class RecommendationsPage {
-    veryUsefulVoteBtn = Selector('[data-testid=very-useful-vote-btn]').nth(0);
-    usefulVoteBtn = Selector('[data-testid=useful-vote-btn]').nth(0);
-    notUsefulVoteBtn = Selector('[data-testid=not-useful-vote-btn]').nth(0);
-    recommendationsFeedbackBtn = Selector('[data-testid=recommendation-feedback-btn]');
-
+const memoryEfficiencyPage = new MemoryEfficiencyPage();
+export class MemoryEfficiencyActions {
     async voteForVeryUsefulAndVerifyDisabled(): Promise<void> {
-        await t.click(this.veryUsefulVoteBtn);
+        await t.click(memoryEfficiencyPage.veryUsefulVoteBtn);
         await this.verifyVoteDisabled();
     }
 
     async voteForUsefulAndVerifyDisabled(): Promise<void> {
-        await t.click(this.usefulVoteBtn);
+        await t.click(memoryEfficiencyPage.usefulVoteBtn);
         await this.verifyVoteDisabled();
     }
 
     async voteForNotUsefulAndVerifyDisabled(): Promise<void> {
-        await t.click(this.notUsefulVoteBtn);
+        await t.click(memoryEfficiencyPage.notUsefulVoteBtn);
         await this.verifyVoteDisabled();
     }
-
     async verifyVoteDisabled(): Promise<void>{
         // Verify that user can rate recommendations with one of 3 existing types at the same time
-        await t.expect(this.veryUsefulVoteBtn
+        await t.expect(memoryEfficiencyPage.veryUsefulVoteBtn
             .hasAttribute('disabled')).ok('very useful vote button is not disabled');
-        await t.expect(this.usefulVoteBtn
+        await t.expect(memoryEfficiencyPage.usefulVoteBtn
             .hasAttribute('disabled')).ok('useful vote button is not disabled');
-        await t.expect(this.notUsefulVoteBtn
+        await t.expect(memoryEfficiencyPage.notUsefulVoteBtn
             .hasAttribute('disabled')).ok('not useful vote button is not disabled');
     }
 }

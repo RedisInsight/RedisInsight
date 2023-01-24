@@ -4,6 +4,7 @@ import { acceptLicenseTermsAndAddDatabaseApi, deleteCustomDatabase } from '../..
 import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { CliActions } from '../../../common-actions/cli-actions';
+import { MemoryEfficiencyActions } from '../../../common-actions/memory-efficiency-actions';
 import { Common } from '../../../helpers/common';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
@@ -13,6 +14,7 @@ const common = new Common();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
+const memoryEfficiencyActions = new MemoryEfficiencyActions();
 
 const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
 let keyName = `recomKey-${common.generateWord(10)}`;
@@ -118,4 +120,28 @@ test
         // Verify that user can see Avoid using logical databases recommendation when the database supports logical databases and there are keys in more than 1 logical database
         await t.expect(memoryEfficiencyPage.avoidLogicalDbAccordion.exists).ok('Avoid using logical databases recommendation not displayed');
         await t.expect(memoryEfficiencyPage.codeChangesLabel.exists).ok('Avoid using logical databases recommendation not have Code Changes label');
+    });
+test
+    .before(async t => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        // Go to Analysis Tools page and create new report and open recommendations
+        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        await t.click(memoryEfficiencyPage.recommendationsTab);
+    }).after(async() => {
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify that user can upvote recommendations', async t => {
+        await memoryEfficiencyActions.voteForVeryUsefulAndVerifyDisabled();
+        // Verify that user can see previous votes when reload the page
+        await common.reloadPage();
+        await t.click(memoryEfficiencyPage.recommendationsTab);
+        await memoryEfficiencyActions.verifyVoteDisabled();
+
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        await memoryEfficiencyActions.voteForUsefulAndVerifyDisabled();
+
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        await memoryEfficiencyActions.voteForNotUsefulAndVerifyDisabled();
+        // Verify that user can see the popup with link when he votes for “Not useful”
+        await t.expect(memoryEfficiencyPage.recommendationsFeedbackBtn.visible).ok('popup did not appear after voting for not useful');
     });

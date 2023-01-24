@@ -2,6 +2,8 @@ import { Joi } from '../../helpers/test';
 
 export const typedRecommendationSchema = Joi.object({
   name: Joi.string().required(),
+  vote: Joi.string(),
+  params: Joi.any(),
 });
 
 export const typedTotalSchema = Joi.object({

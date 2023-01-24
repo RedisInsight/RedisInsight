@@ -13,7 +13,7 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { DatabaseAnalysis } from 'src/modules/database-analysis/models';
-import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
+import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { plainToClass } from 'class-transformer';
 import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
@@ -43,6 +43,7 @@ const mockDatabaseAnalysisEntity = new DatabaseAnalysisEntity({
   topKeysLength: 'ENCRYPTED:topKeysLength',
   topKeysMemory: 'ENCRYPTED:topKeysMemory',
   expirationGroups: 'ENCRYPTED:expirationGroups',
+  recommendations: 'ENCRYPTED:recommendations',
   encryption: 'KEYTAR',
   createdAt: new Date(),
 });
@@ -146,7 +147,18 @@ const mockDatabaseAnalysis = {
       total: 0,
     },
   ],
+  recommendations: [{ name: 'luaScript' }],
 } as DatabaseAnalysis;
+
+const mockDatabaseAnalysisWithVote = {
+  ...mockDatabaseAnalysis,
+  recommendations: [{ name: 'luaScript', vote: 'useful' }],
+} as DatabaseAnalysis;
+
+const mockRecommendationVoteDto: RecommendationVoteDto = {
+  name: 'luaScript',
+  vote: 'useful',
+};
 
 describe('DatabaseAnalysisProvider', () => {
   let service: DatabaseAnalysisProvider;
@@ -175,7 +187,7 @@ describe('DatabaseAnalysisProvider', () => {
     // encryption mocks
     [
       'filter', 'totalKeys', 'totalMemory', 'topKeysNsp', 'topMemoryNsp',
-      'topKeysLength', 'topKeysMemory', 'expirationGroups',
+      'topKeysLength', 'topKeysMemory', 'expirationGroups', 'recommendations',
     ].forEach((field) => {
       when(encryptionService.encrypt)
         .calledWith(JSON.stringify(mockDatabaseAnalysis[field]))
@@ -250,6 +262,29 @@ describe('DatabaseAnalysisProvider', () => {
       expect(await service.cleanupDatabaseHistory(mockDatabase.id)).toEqual(
         undefined,
       );
+    });
+  });
+
+  describe('recommendationVote', () => {
+    it('should return updated database analysis', async () => {
+      repository.findOneBy.mockReturnValueOnce(mockDatabaseAnalysisEntity);
+      repository.update.mockReturnValueOnce(true);
+      await encryptionService.encrypt.mockReturnValue(mockEncryptResult);
+
+      expect(await service.recommendationVote(mockDatabaseAnalysis.id, mockRecommendationVoteDto))
+        .toEqual(mockDatabaseAnalysisWithVote);
+    });
+
+    it('should throw an error', async () => {
+      repository.findOneBy.mockReturnValueOnce(null);
+
+      try {
+        await service.recommendationVote(mockDatabaseAnalysis.id, mockRecommendationVoteDto);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+        expect(e.message).toEqual(ERROR_MESSAGES.DATABASE_ANALYSIS_NOT_FOUND);
+      }
     });
   });
 });

@@ -1,4 +1,4 @@
-import { Selector } from 'testcafe';
+import {Selector} from 'testcafe';
 
 export class MemoryEfficiencyPage {
     //-------------------------------------------------------------------------------------------
@@ -64,4 +64,8 @@ export class MemoryEfficiencyPage {
     avoidLogicalDbAccordion = Selector('[data-testid=avoidLogicalDatabases-accordion]');
     convertHashToZipAccordion = Selector('[data-testid=convertHashtableToZiplist-accordion]');
     compressHashAccordion = Selector('[data-testid=compressHashFieldNames-accordion]');
+    veryUsefulVoteBtn = Selector('[data-testid=very-useful-vote-btn]').nth(0);
+    usefulVoteBtn = Selector('[data-testid=useful-vote-btn]').nth(0);
+    notUsefulVoteBtn = Selector('[data-testid=not-useful-vote-btn]').nth(0);
+    recommendationsFeedbackBtn = Selector('[data-testid=recommendation-feedback-btn]');
 }

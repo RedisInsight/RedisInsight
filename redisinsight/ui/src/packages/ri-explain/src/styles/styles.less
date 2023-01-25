@@ -85,6 +85,19 @@
   display: unset !important;
 }
 
+.InfoData {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  // Make text selectable
+  -moz-user-select: text;
+  -khtml-user-select: text;
+  -webkit-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
 .FooterCommon {
   white-space: nowrap;
   overflow: hidden;

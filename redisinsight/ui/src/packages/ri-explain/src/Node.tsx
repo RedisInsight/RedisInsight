@@ -21,11 +21,16 @@ function Snippet({content}: {content: string}) {
 export function ExplainNode(props: INodeProps) {
   const propData: EntityInfo = (props as any).node.getData()
   const { id, type, data, snippet, subType } = propData
+
+  const infoData = data ? data : type
+
   return (
     <div className="ExplainContainer" id={`node-${id}`}>
       <div className="Main">
         <div className="Info">
-          <div>{data ? data : type}</div>
+          <div className="InfoData">
+            <EuiToolTip delay='long' content={infoData}><span>{infoData}</span></EuiToolTip>
+          </div>
           {subType && [EntityType.GEO, EntityType.NUMERIC, EntityType.TEXT, EntityType.TAG].includes(subType) && <div className="Type">{subType}</div> }
         </div>
       </div>
@@ -99,10 +104,14 @@ export function ProfileNode(props: INodeProps) {
   }
 
 
+  const infoData = data ? data : type
+
   return (
     <div className="ProfileContainer" id={`node-${id}`} data-size={counter || size || recordsProduced}>
       <div className="Main">
-        <div>{data ? data : type}</div>
+        <div className="InfoData">
+          <EuiToolTip delay='long' content={infoData}><span>{infoData}</span></EuiToolTip>
+        </div>
         <div className="Type">{[EntityType.GEO, EntityType.NUMERIC, EntityType.TEXT, EntityType.TAG].includes(type) ? type : ''}</div>
       </div>
       {

@@ -45,23 +45,23 @@ test('Recent filters history', async t => {
     await browserPage.selectFilterGroupType(KeyTypesTexts.String);
     await browserPage.searchByKeyName(`${keysForSearch[0]}*`);
     await t.click(browserPage.showFilterHistoryBtn);
-    await t.expect(browserPage.filterHistoryOption.withText(keysForSearch[0]).count).eql(1, 'Filter history requests can be duplicated in list');
+    await t.expect(browserPage.filterHistoryItemText.withText(keysForSearch[0]).count).eql(1, 'Filter history requests can be duplicated in list');
 
     // Refresh the page
     await common.reloadPage();
     // Verify that user can see the list of filters even when reloading page
     await t.click(browserPage.showFilterHistoryBtn);
-    await t.expect(browserPage.filterHistoryOption.withText(keysForSearch[0]).exists).ok('Filter history requests not saved after reloading page');
+    await t.expect(browserPage.filterHistoryItemText.withText(keysForSearch[0]).exists).ok('Filter history requests not saved after reloading page');
 
     // Open Tree view to check also there
     await t.click(browserPage.treeViewButton);
-    await browserPage.clearFilter();
     // Search by 2nd key name
     await browserPage.searchByKeyName(`${keysForSearch[1]}*`);
+    await t.click(browserPage.showFilterHistoryBtn);
     // Verify that user can remove saved filter from list by clicking on "X"
-    await t.click(browserPage.clearFilterHistoryBtn);
+    await t.hover(browserPage.filterHistoryItemText.withText(keysForSearch[1]));
     await t.click(browserPage.filterHistoryOption.withText(keysForSearch[1]).find(browserPage.cssRemoveSuggestionItem));
-    await t.expect(browserPage.filterHistoryOption.withText(keysForSearch[1]).exists).ok('Filter history request not deleted');
+    await t.expect(browserPage.filterHistoryItemText.withText(keysForSearch[1]).exists).notOk('Filter history request not deleted');
 
     // Verify that user can clear the history of requests
     await t.click(browserPage.clearFilterHistoryBtn);

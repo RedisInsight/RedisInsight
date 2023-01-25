@@ -145,6 +145,7 @@ export class BrowserPage {
     confirmIndexCreationBtn = Selector('[data-testid=create-index-btn]');
     resizeTrigger = Selector('[data-testid^=resize-trigger-]');
     filterHistoryOption = Selector('[data-testid^=suggestion-item-]');
+    filterHistoryItemText = Selector('[data-testid=suggestion-item-text]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');

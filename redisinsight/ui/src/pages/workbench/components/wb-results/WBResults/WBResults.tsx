@@ -3,6 +3,8 @@ import cx from 'classnames'
 import { EuiIcon, EuiText } from '@elastic/eui'
 
 import { Theme } from 'uiSrc/constants'
+import { ProfileQueryType } from 'uiSrc/pages/workbench/constants'
+import { generateProfileQueryForCommand } from 'uiSrc/pages/workbench/utils'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { Nullable } from 'uiSrc/utils'
 import QueryCard from 'uiSrc/components/query-card'
@@ -21,6 +23,7 @@ export interface Props {
   onQueryReRun: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   onQueryDelete: (commandId: string) => void
   onQueryOpen: (commandId: string) => void
+  onQueryProfile: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
 }
 const WBResults = (props: Props) => {
   const {
@@ -28,6 +31,7 @@ const WBResults = (props: Props) => {
     activeMode,
     activeResultsMode,
     onQueryReRun,
+    onQueryProfile,
     onQueryDelete,
     onQueryOpen,
     scrollDivRef
@@ -86,6 +90,16 @@ const WBResults = (props: Props) => {
           resultsMode={resultsMode}
           db={db}
           onQueryOpen={() => onQueryOpen(id)}
+          onQueryProfile={(profileType: ProfileQueryType) => {
+            const profileQuery = generateProfileQueryForCommand(command, profileType)
+            if (profileQuery) {
+              return onQueryProfile(
+                profileQuery,
+                null,
+                { mode, results: resultsMode, clearEditor: false, },
+              )
+            }
+          }}
           onQueryReRun={() => onQueryReRun(
             command,
             null,

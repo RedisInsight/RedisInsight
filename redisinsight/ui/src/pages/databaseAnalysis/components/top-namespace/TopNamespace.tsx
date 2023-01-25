@@ -1,4 +1,5 @@
 import { EuiButton, EuiLink, EuiSwitch, EuiTitle } from '@elastic/eui'
+import { isNull } from 'lodash'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -36,6 +37,10 @@ const TopNamespace = (props: Props) => {
 
   if (loading) {
     return <TableLoader />
+  }
+
+  if (isNull(data)) {
+    return null
   }
 
   const handleTreeViewClick = (e: React.MouseEvent<HTMLAnchorElement>) => {

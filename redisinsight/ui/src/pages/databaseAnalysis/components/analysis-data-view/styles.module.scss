@@ -8,7 +8,7 @@ $breakpoint-table: 1680px;
   @include euiScrollBar;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(100% - 104px);
+  max-height: 100%;
 }
 
 .grid {

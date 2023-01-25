@@ -88,8 +88,12 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
     await browserPage.openKeyDetails(keys[0].name);
     await t.expect(field.clientWidth).eql(keys[0].fieldWidthEnd, 'Resize context not saved for key when switching between pages');
 
+    // Apply filter to save it in filter history
+    await browserPage.searchByKeyName(`${keys[0].name}*`);
+
     // Verify that resize saved when switching between databases
     await t.click(myRedisDatabasePage.myRedisDBButton);
+    // Go to 2nd database
     await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
     // Verify that resize saved for specific data type
     for(const key of keys) {
@@ -97,10 +101,16 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
         await t.expect(field.clientWidth).eql(key.fieldWidthEnd, `Resize context not saved for ${key.type} key when switching between databases`);
     }
 
-    // Verify that logical db not changed after switching between databases
+    // Change db index for 2nd database
     await databaseOverviewPage.changeDbIndex(1);
     await t.click(myRedisDatabasePage.myRedisDBButton);
+    // Go back to 1st database
     await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
+    // Verify that user can see the list of filters even when switching between databases
+    await t.click(browserPage.showFilterHistoryBtn);
+    await t.expect(browserPage.filterHistoryOption.withText(keys[0].name).exists).ok('Filter history requests not saved after switching between db');
+
+    // Verify that logical db not changed after switching between databases
     await t.click(myRedisDatabasePage.myRedisDBButton);
     await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
     await databaseOverviewPage.verifyDbIndexSelected(1);

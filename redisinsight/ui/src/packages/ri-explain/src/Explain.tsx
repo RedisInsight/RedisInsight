@@ -191,7 +191,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
 
     window.addEventListener('resize', resize)
 
-    const result = Hierarchy.dendrogram(data, {
+    const result = Hierarchy.compactBox(data, {
       direction: 'BT',
       getHeight() {
         return 200
@@ -200,7 +200,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
         return 250
       },
       getHGap() {
-        return 0
+        return 50
       },
       getVGap() {
         return 0

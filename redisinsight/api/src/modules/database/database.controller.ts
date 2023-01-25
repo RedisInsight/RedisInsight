@@ -27,6 +27,8 @@ import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databas
 import { ClientMetadataParam } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
+import { ExportDatabasesDto } from 'src/modules/database/dto/export.databases.dto';
+import { ExportDatabase } from 'src/modules/database/models/export-database';
 
 @ApiTags('Database')
 @Controller('databases')
@@ -206,5 +208,25 @@ export class DatabaseController {
     }) clientMetadata: ClientMetadata,
   ): Promise<void> {
     await this.connectionService.connect(clientMetadata);
+  }
+
+  @Post('export')
+  @ApiEndpoint({
+    statusCode: 200,
+    excludeFor: [BuildType.RedisStack],
+    description: 'Export many databases by ids. With or without passwords and certificates bodies.',
+    responses: [
+      {
+        status: 200,
+        description: 'Export many databases by ids response',
+        type: ExportDatabase,
+      },
+    ],
+  })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async exportConnections(
+    @Body() dto: ExportDatabasesDto,
+  ): Promise<ExportDatabase[]> {
+    return await this.service.export(dto.ids, dto.withSecrets);
   }
 }

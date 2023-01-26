@@ -11,7 +11,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   port: Joi.number().integer().required(),
   db: Joi.number().integer().allow(null).required(),
   name: Joi.string().required(),
-  username: Joi.string().required(),
+  username: Joi.string().allow(null).required(),
   password: Joi.string(),
   provider: Joi.string().required(),
   tls: Joi.boolean().allow(null).required(),

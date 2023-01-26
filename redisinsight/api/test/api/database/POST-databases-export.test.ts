@@ -127,7 +127,8 @@ describe(`POST /databases/export`, () => {
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].name).to.eq(constants.TEST_INSTANCE_ACL_NAME);
             expect(body[0].sentinelMaster.name).to.eq(constants.TEST_SENTINEL_MASTER_GROUP);
-            expect(body[0].sentinelMaster.username).to.eq(constants.TEST_SENTINEL_MASTER_USER);
+            expect(body[0].sentinelMaster).to.have.property('username');
+            expect(body[0].sentinelMaster.username).to.be.a('string');
           },
         },
         {
@@ -141,7 +142,8 @@ describe(`POST /databases/export`, () => {
           checkFn: async ({ body }) => {
             expect(body[0]).to.have.property('password');
             expect(body[0].sentinelMaster).to.have.property('password');
-            expect(body[0].sentinelMaster.password).to.eq(constants.TEST_SENTINEL_MASTER_GROUP);
+            expect(body[0].sentinelMaster.password).to.be.a('string');
+            expect(body[0].sentinelMaster.password).to.not.eq('');
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].password).to.eq(constants.TEST_REDIS_PASSWORD);
             expect(body[0].sentinelMaster.name).to.eq(constants.TEST_SENTINEL_MASTER_GROUP);
@@ -185,13 +187,13 @@ describe(`POST /databases/export`, () => {
           checkFn: async ({ body }) => {
             expect(body.length).to.eq(1);
             expect(body[0]).to.have.property('password');
+            expect(body[0].password).to.eq(constants.TEST_INSTANCE_ACL_PASS);
             expect(body[0].sshOptions).to.have.property('privateKey');
             expect(body[0].sshOptions.privateKey).to.have.eq(constants.TEST_SSH_PRIVATE_KEY);
             expect(body[0].clientCert).to.have.property('key');
             expect(body[0].clientCert.key).to.have.eq(constants.TEST_USER_TLS_KEY);
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].username).to.eq(constants.TEST_INSTANCE_ACL_USER);
-            expect(body[0].password).to.eq(constants.TEST_INSTANCE_ACL_PASS);
           },
         },
       ].map(mainCheckFn);

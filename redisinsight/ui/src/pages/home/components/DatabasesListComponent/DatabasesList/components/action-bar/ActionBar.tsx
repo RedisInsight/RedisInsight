@@ -4,10 +4,10 @@ import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 import styles from './styles.module.scss'
 
 export interface Props {
-  width: number;
-  selectionCount: number;
-  actions: JSX.Element;
-  onCloseActionBar: () => void;
+  width: number
+  selectionCount: number
+  actions: JSX.Element[]
+  onCloseActionBar: () => void
 }
 
 const ActionBar = ({
@@ -24,15 +24,17 @@ const ActionBar = ({
       gutterSize="m"
       responsive={false}
       style={{
-        left: `calc(${width / 2}px - 136px)`,
+        left: `calc(${width / 2}px - 156px)`,
       }}
     >
       <EuiFlexItem grow={false} className={styles.text}>
         {`You selected: ${selectionCount} items`}
       </EuiFlexItem>
-      <EuiFlexItem grow={false} className={styles.actions}>
-        {actions}
-      </EuiFlexItem>
+      {actions.map((action, index) => (
+        <EuiFlexItem grow={false} className={styles.actions} key={index}>
+          {action}
+        </EuiFlexItem>
+      ))}
       <EuiFlexItem grow={false} className={styles.cross}>
         <EuiButtonIcon
           iconType="cross"

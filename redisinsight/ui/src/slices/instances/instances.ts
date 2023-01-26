@@ -10,8 +10,9 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
-import { fetchMastersSentinelAction } from './sentinel'
+import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
 
+import { fetchMastersSentinelAction } from './sentinel'
 import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
@@ -402,6 +403,39 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function exportInstancesAction(
+  ids: string[],
+  withSecrets: boolean,
+  onSuccess?: (data: ExportDatabase) => void,
+  onFail?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setDefaultInstance())
+
+    try {
+      const { data, status } = await apiService.post<ExportDatabase>(
+        ApiEndpoints.DATABASES_EXPORT,
+        {
+          ids,
+          withSecrets
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setDefaultInstanceSuccess())
+
+        onSuccess?.(data)
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(setDefaultInstanceFailure(errorMessage))
+      dispatch(addErrorNotification(error))
+      onFail?.()
     }
   }
 }

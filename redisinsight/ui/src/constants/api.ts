@@ -1,6 +1,7 @@
 enum ApiEndpoints {
   DATABASES = 'databases',
   DATABASES_IMPORT = 'databases/import',
+  DATABASES_EXPORT = 'databases/export',
 
   CA_CERTIFICATES = 'certificates/ca',
   CLIENT_CERTIFICATES = 'certificates/client',

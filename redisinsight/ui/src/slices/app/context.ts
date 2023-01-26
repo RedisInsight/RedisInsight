@@ -15,6 +15,9 @@ export const initialState: StateAppContext = {
     treeViewDelimiter: DEFAULT_DELIMITER,
     slowLogDurationUnit: DEFAULT_SLOWLOG_DURATION_UNIT
   },
+  dbIndex: {
+    disabled: false
+  },
   browser: {
     keyList: {
       isDataPatternLoaded: false,
@@ -107,6 +110,12 @@ const appContextSlice = createSlice({
     setBrowserIsNotRendered: (state, { payload }: { payload: boolean }) => {
       state.browser.keyList.isNotRendered = payload
     },
+    clearBrowserKeyListData: (state) => {
+      state.browser.keyList = {
+        ...initialState.browser.keyList,
+        selectedKey: state.browser.keyList.selectedKey
+      }
+    },
     setBrowserPanelSizes: (state, { payload }: { payload: any }) => {
       state.browser.panelSizes = payload
     },
@@ -186,6 +195,9 @@ const appContextSlice = createSlice({
       const { type, sizes } = payload
       state.browser.keyDetailsSizes[type] = sizes
       localStorageService?.set(BrowserStorageItem.keyDetailSizes, state.browser.keyDetailsSizes)
+    },
+    setDbIndexState: (state, { payload }: { payload: boolean }) => {
+      state.dbIndex.disabled = payload
     }
   },
 })
@@ -218,7 +230,9 @@ export const {
   setPubSubFieldsContext,
   setBrowserBulkActionOpen,
   setLastAnalyticsPage,
-  updateKeyDetailsSizes
+  updateKeyDetailsSizes,
+  clearBrowserKeyListData,
+  setDbIndexState
 } = appContextSlice.actions
 
 // Selectors
@@ -242,6 +256,8 @@ export const appContextPubSub = (state: RootState) =>
   state.app.context.pubsub
 export const appContextAnalytics = (state: RootState) =>
   state.app.context.analytics
+export const appContextDbIndex = (state: RootState) =>
+  state.app.context.dbIndex
 
 // The reducer
 export default appContextSlice.reducer

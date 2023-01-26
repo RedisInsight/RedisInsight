@@ -12,9 +12,10 @@ import {
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
+import { toNumber } from 'lodash'
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import { Nullable } from 'uiSrc/utils'
+import { Nullable, getDbIndex } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
@@ -43,7 +44,6 @@ const DatabaseAlias = (props: Props) => {
   const { server } = useSelector(appInfoSelector)
 
   const [isEditing, setIsEditing] = useState(false)
-  const [isHovering, setIsHovering] = useState(false)
   const [value, setValue] = useState(alias)
 
   const { theme } = useContext(ThemeContext)
@@ -51,14 +51,6 @@ const DatabaseAlias = (props: Props) => {
   useEffect(() => {
     setValue(alias)
   }, [alias])
-
-  const onMouseEnterAlias = () => {
-    setIsHovering(true)
-  }
-
-  const onMouseLeaveAlias = () => {
-    setIsHovering(false)
-  }
 
   const setEditMode = () => {
     setIsEditing(true)
@@ -82,15 +74,13 @@ const DatabaseAlias = (props: Props) => {
 
   const handleApplyChanges = () => {
     setIsEditing(false)
-    onApplyChanges(value, () => setIsHovering(false), () => setValue(alias))
+    onApplyChanges(value, () => {}, () => setValue(alias))
   }
 
   const handleDeclineChanges = (event?: React.MouseEvent<HTMLElement>) => {
     event?.stopPropagation()
     setValue(alias)
     setIsEditing(false)
-
-    setIsHovering(false)
   }
 
   return (
@@ -108,7 +98,7 @@ const DatabaseAlias = (props: Props) => {
             />
           </EuiFlexItem>
         )}
-        <EuiFlexItem grow={false} style={{ overflow: isEditing || isHovering ? 'inherit' : 'hidden' }}>
+        <EuiFlexItem grow={false} style={{ overflow: isEditing ? 'inherit' : 'hidden' }}>
           <EuiFlexGroup
             responsive={false}
             justifyContent="spaceBetween"
@@ -135,14 +125,12 @@ const DatabaseAlias = (props: Props) => {
               </EuiFlexItem>
             )}
             <EuiFlexItem
-              onMouseEnter={onMouseEnterAlias}
-              onMouseLeave={onMouseLeaveAlias}
-              onClick={setEditMode}
               grow
+              onClick={setEditMode}
               data-testid="edit-alias-btn"
-              style={{ overflow: isEditing || isHovering ? 'inherit' : 'hidden', maxWidth: '360px' }}
+              style={{ overflow: isEditing ? 'inherit' : 'hidden', maxWidth: '360px' }}
             >
-              {!isCloneMode && (isEditing || isHovering || isLoading) ? (
+              {!isCloneMode && (isEditing || isLoading) ? (
                 <EuiFlexGrid
                   responsive
                   className="relative"
@@ -184,14 +172,15 @@ const DatabaseAlias = (props: Props) => {
                   </EuiFlexItem>
                 </EuiFlexGrid>
               ) : (
-                <EuiText className={styles.alias}>
+                <EuiText className={cx(styles.alias, { [styles.aliasEditing]: !isCloneMode })}>
                   <b className={styles.aliasText} data-testid="db-alias">
-                    {isCloneMode && (<span>Clone </span>)}
-                    <span>{alias}</span>
+                    {isCloneMode && (<span>Clone {alias}</span>)}
+                    {!isCloneMode && (<span className={cx(styles.aliasTextEditing)}>{alias}</span>)}
                   </b>
                   <b>
-                    {database ? `[${database}]` : ''}
+                    {getDbIndex(toNumber(database))}
                   </b>
+                  {!isCloneMode && (<EuiIcon type="pencil" className={cx(styles.aliasEditIcon)} />)}
                 </EuiText>
               )}
             </EuiFlexItem>

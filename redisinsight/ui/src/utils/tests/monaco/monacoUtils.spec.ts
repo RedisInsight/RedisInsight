@@ -2,7 +2,9 @@ import {
   multilineCommandToOneLine,
   removeMonacoComments,
   splitMonacoValuePerLines,
-  findArgIndexByCursor
+  findArgIndexByCursor,
+  isParamsLine,
+  getMonacoLines
 } from 'uiSrc/utils'
 
 describe('removeMonacoComments', () => {
@@ -96,6 +98,11 @@ describe('splitMonacoValuePerLines', () => {
       'get test\n3get test2\nget bar',
       ['get test', '3get test2', 'get bar']
     ],
+    // Multi commands with parameters and repeating syntax error
+    [
+      '[results=group;mode=raw]info\nget test\n3get test2\nget bar',
+      ['info', 'get test', '3get test2', 'get bar']
+    ],
   ]
   test.each(cases)(
     'given %p as argument, returns %p',
@@ -143,6 +150,41 @@ describe('findArgIndexByCursor', () => {
     'given %p as args, %p as fullQuery, %p as cursor position, returns %p',
     (args: string[], fullQuery: string, cursorPosition: number, expectedResult) => {
       const result = findArgIndexByCursor(args, fullQuery, cursorPosition)
+      expect(result).toEqual(expectedResult)
+    }
+  )
+})
+
+describe('isParamsLine', () => {
+  const cases = [
+    ['[1]', true],
+    ['[1', false],
+    ['[groups=raw]', true],
+    ['[groups=raw]', true],
+    ['1]', false],
+    ['1[groups=raw]', false],
+    ['[groups==]aw', true],
+  ]
+  test.each(cases)(
+    'given %p as argument, returns %p',
+    (arg: string, expectedResult) => {
+      const result = isParamsLine(arg)
+      expect(result).toEqual(expectedResult)
+    }
+  )
+})
+
+describe('getMonacoLines', () => {
+  const cases = [
+    ['1', ['1']],
+    ['[1', ['[1']],
+    ['1\n2', ['1', '2']],
+    ['[groups=raw] \neget test\nget test2', ['[groups=raw] ', 'eget test', 'get test2']],
+  ]
+  test.each(cases)(
+    'given %p as argument, returns %p',
+    (arg: string, expectedResult) => {
+      const result = getMonacoLines(arg)
       expect(result).toEqual(expectedResult)
     }
   )

@@ -65,6 +65,34 @@ const baseSentinelData = {
   password: constants.TEST_SENTINEL_MASTER_PASS ? constants.TEST_SENTINEL_MASTER_PASS : constants.TEST_REDIS_PASSWORD,
 }
 
+const sshBasicData = {
+  ssh: true,
+  sshOptions: {
+    host: constants.TEST_SSH_HOST,
+    port: constants.TEST_SSH_PORT,
+    username: constants.TEST_SSH_USER,
+    password: constants.TEST_SSH_PASSWORD,
+  }
+}
+
+const sshPKData = {
+  ...sshBasicData,
+  sshOptions: {
+    ...sshBasicData.sshOptions,
+    password: undefined,
+    privateKey: constants.TEST_SSH_PRIVATE_KEY,
+  }
+}
+
+const sshPKPData = {
+  ...sshBasicData,
+  sshOptions: {
+    ...sshPKData.sshOptions,
+    privateKey: constants.TEST_SSH_PRIVATE_KEY_P,
+    passphrase: constants.TEST_SSH_PASSPHRASE,
+  }
+}
+
 const importDatabaseFormat0 = {
   ...baseDatabaseData,
   ...baseTls,
@@ -81,6 +109,25 @@ const baseSentinelDataFormat1 = {
   username: constants.TEST_SENTINEL_MASTER_USER ? constants.TEST_SENTINEL_MASTER_USER : constants.TEST_REDIS_USER,
   password: constants.TEST_SENTINEL_MASTER_PASS ? constants.TEST_SENTINEL_MASTER_PASS : constants.TEST_REDIS_PASSWORD,
 };
+
+const sshBasicDataFormat1 = {
+  sshHost: constants.TEST_SSH_HOST,
+  sshPort: constants.TEST_SSH_PORT,
+  sshUser: constants.TEST_SSH_USER,
+  sshPassword: constants.TEST_SSH_PASSWORD,
+}
+
+const sshPKDataFormat1 = {
+  ...sshBasicDataFormat1,
+  sshPassword: undefined,
+  sshKeyFile: constants.TEST_SSH_PRIVATE_KEY,
+}
+
+const sshPKPDataFormat1 = {
+  ...sshPKDataFormat1,
+  sshKeyFile: constants.TEST_SSH_PRIVATE_KEY_P,
+  sshKeyPassphrase: constants.TEST_SSH_PASSPHRASE,
+}
 
 const importDatabaseFormat1 = {
   id: "1393c216-3fd0-4ad5-8412-209a8e8ec77c",
@@ -109,6 +156,34 @@ const baseSentinelDataFormat2 = {
   auth: constants.TEST_SENTINEL_MASTER_PASS ? constants.TEST_SENTINEL_MASTER_PASS : constants.TEST_REDIS_PASSWORD,
 };
 
+const sshBasicDataFormat2 = {
+  ssh: true,
+  sshOptions: {
+    host: constants.TEST_SSH_HOST,
+    port: constants.TEST_SSH_PORT,
+    username: constants.TEST_SSH_USER,
+    password: constants.TEST_SSH_PASSWORD,
+  }
+}
+
+const sshPKDataFormat2 = {
+  ...sshBasicDataFormat2,
+  sshOptions: {
+    ...sshBasicDataFormat2.sshOptions,
+    password: undefined,
+    privatekey: constants.TEST_SSH_PRIVATE_KEY,
+  }
+}
+
+const sshPKPDataFormat2 = {
+  ...sshBasicDataFormat2,
+  sshOptions: {
+    ...sshBasicDataFormat2.sshOptions,
+    privatekey: constants.TEST_SSH_PRIVATE_KEY_P,
+    passphrase: constants.TEST_SSH_PASSPHRASE,
+  }
+}
+
 const importDatabaseFormat2 = {
   host: baseDatabaseData.host,
   port: `${baseDatabaseData.port}`,
@@ -129,6 +204,25 @@ const baseSentinelDataFormat3 = {
   username: constants.TEST_SENTINEL_MASTER_USER ? constants.TEST_SENTINEL_MASTER_USER : constants.TEST_REDIS_USER,
   auth: constants.TEST_SENTINEL_MASTER_PASS ? constants.TEST_SENTINEL_MASTER_PASS : constants.TEST_REDIS_PASSWORD,
 };
+
+const sshBasicDataFormat3 = {
+  ssh_host: constants.TEST_SSH_HOST,
+  ssh_port: constants.TEST_SSH_PORT,
+  ssh_user: constants.TEST_SSH_USER,
+  ssh_password: constants.TEST_SSH_PASSWORD,
+}
+
+const sshPKDataFormat3 = {
+  ...sshBasicDataFormat3,
+  ssh_password: undefined,
+  ssh_private_key_path: constants.TEST_SSH_PRIVATE_KEY,
+}
+
+const sshPKPDataFormat3 = {
+  ...sshPKDataFormat3,
+  ssh_private_key_path: constants.TEST_SSH_PRIVATE_KEY_P,
+  ssh_password: constants.TEST_SSH_PASSPHRASE,
+}
 
 const importDatabaseFormat3 = {
   name: baseDatabaseData.name,
@@ -561,7 +655,7 @@ describe('POST /databases/import', () => {
     });
   });
   describe('STANDALONE', () => {
-    requirements('rte.type=STANDALONE');
+    requirements('rte.type=STANDALONE', '!rte.ssh');
     describe('NO TLS', function () {
       requirements('!rte.tls');
       it('Import standalone (format 0)', async () => {
@@ -1142,6 +1236,312 @@ describe('POST /databases/import', () => {
           attach: ['file', Buffer.from(JSON.stringify([
             {
               ...importDatabaseFormat3,
+              name,
+            }
+          ])), 'file.json'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat3.host,
+              port: importDatabaseFormat3.port,
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'NOT CONNECTED', 'STANDALONE');
+      });
+    });
+  });
+  describe('STANDALONE SSH', () => {
+    requirements('rte.type=STANDALONE', 'rte.ssh');
+    describe('TLS AUTH', function () {
+      requirements('rte.tls', 'rte.tlsAuth');
+      it('Import standalone with CA + CLIENT tls + ssh basic (format 0)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat0,
+              ...sshBasicData,
+              name,
+            }
+          ])), 'file.json'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat0.host,
+              port: importDatabaseFormat0.port,
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'STANDALONE', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh PK (format 0)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat0,
+              ...sshPKData,
+              name,
+            }
+          ])), 'file.json'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat0.host,
+              port: importDatabaseFormat0.port,
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'STANDALONE', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh PKP (format 0)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat0,
+              ...sshPKPData,
+              name,
+            }
+          ])), 'file.json'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat0.host,
+              port: importDatabaseFormat0.port,
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'STANDALONE', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh basic (format 1)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat1,
+              ...sshBasicDataFormat1,
+              name,
+            }
+          ])), 'file.json'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat1.host,
+              port: importDatabaseFormat1.port,
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'STANDALONE', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh PK (format 1)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat1,
+              ...sshPKDataFormat1,
+              name,
+            }
+          ])), 'file.json'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat1.host,
+              port: importDatabaseFormat1.port,
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'STANDALONE', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh PKP (format 1)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat1,
+              ...sshPKPDataFormat1,
+              name,
+            }
+          ])), 'file.json'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat1.host,
+              port: importDatabaseFormat1.port,
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'STANDALONE', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh basic (format 2)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat2,
+              ...sshBasicDataFormat2,
+              name,
+            }
+          ])).toString('base64')), 'file.ano'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat2.host,
+              port: parseInt(importDatabaseFormat2.port, 10),
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'NOT CONNECTED', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh PK (format 2)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat2,
+              ...sshPKDataFormat2,
+              name,
+            }
+          ])).toString('base64')), 'file.ano'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat2.host,
+              port: parseInt(importDatabaseFormat2.port, 10),
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'NOT CONNECTED', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh PKP (format 2)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat2,
+              ...sshPKPDataFormat2,
+              name,
+            }
+          ])).toString('base64')), 'file.ano'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat2.host,
+              port: parseInt(importDatabaseFormat2.port, 10),
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'NOT CONNECTED', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh basic (format 3)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat3,
+              ...sshBasicDataFormat3,
+              name,
+            }
+          ])), 'file.json'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat3.host,
+              port: importDatabaseFormat3.port,
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'NOT CONNECTED', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh PK (format 3)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat3,
+              ...sshPKDataFormat3,
+              name,
+            }
+          ])), 'file.json'],
+          responseBody: {
+            total: 1,
+            success: [{
+              index: 0,
+              status: 'success',
+              host: importDatabaseFormat3.host,
+              port: importDatabaseFormat3.port,
+            }],
+            partial: [],
+            fail: [],
+          },
+        });
+
+        await validateImportedDatabase(name, 'NOT CONNECTED', 'STANDALONE');
+      });
+      it('Import standalone with CA + CLIENT tls + ssh PKP (format 3)', async () => {
+        await validateApiCall({
+          endpoint,
+          attach: ['file', Buffer.from(JSON.stringify([
+            {
+              ...importDatabaseFormat3,
+              ...sshPKPDataFormat3,
               name,
             }
           ])), 'file.json'],

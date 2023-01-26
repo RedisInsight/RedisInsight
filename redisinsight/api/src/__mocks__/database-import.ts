@@ -6,6 +6,7 @@ import { mockCaCertificate, mockClientCertificate } from 'src/__mocks__/certific
 import {
   InvalidCaCertificateBodyException, InvalidCertificateNameException,
 } from 'src/modules/database-import/exceptions';
+import { mockSshOptionsPrivateKey } from 'src/__mocks__/ssh';
 
 export const mockDatabasesToImportArray = new Array(10).fill(mockSentinelDatabaseWithTlsAuth);
 
@@ -86,4 +87,11 @@ export const mockDatabaseImportAnalytics = jest.fn(() => ({
 export const mockCertificateImportService = jest.fn(() => ({
   processCaCertificate: jest.fn().mockResolvedValue(mockCaCertificate),
   processClientCertificate: jest.fn().mockResolvedValue(mockClientCertificate),
+}));
+
+export const mockSshImportService = jest.fn(() => ({
+  processSshOptions: jest.fn().mockResolvedValue({
+    ...mockSshOptionsPrivateKey,
+    id: undefined,
+  }),
 }));

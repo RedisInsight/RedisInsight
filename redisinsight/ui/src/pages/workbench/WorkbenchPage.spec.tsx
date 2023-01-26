@@ -169,7 +169,8 @@ describe('Telemetry', () => {
       eventData: {
         command: 'info;'.toUpperCase(),
         databaseId: INSTANCE_ID_MOCK,
-        group: false,
+        results: 'single',
+        auto: false,
         multiple: 'Single',
         pipeline: true,
         rawMode: false,
@@ -207,7 +208,8 @@ describe('Telemetry', () => {
       eventData: {
         command: 'info;'.toUpperCase(),
         databaseId: INSTANCE_ID_MOCK,
-        group: false,
+        results: 'single',
+        auto: false,
         multiple: 'Single',
         pipeline: true,
         rawMode: true,
@@ -229,9 +231,12 @@ describe('Telemetry', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN,
       eventData: {
-        command: 'info',
+        auto: undefined,
+        pipeline: undefined,
+        command: 'INFO;',
         databaseId: INSTANCE_ID_MOCK,
-        group: false,
+        multiple: 'Single',
+        results: 'single',
         rawMode: true,
       }
     })
@@ -279,11 +284,11 @@ describe('Raw mode', () => {
     render(<WorkbenchPage />)
 
     await act(() => {
-      fireEvent.mouseOver(screen.getByTestId('raw-mode-anchor'))
+      fireEvent.mouseOver(screen.getByTestId('parameters-anchor'))
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('raw-mode-tooltip')).toBeInTheDocument()
+    expect(screen.getByTestId('parameters-tooltip')).toBeInTheDocument()
   })
 
   it('check button clickable and selected', async () => {

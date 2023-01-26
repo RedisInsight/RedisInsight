@@ -3,14 +3,17 @@ import { EuiToolTip } from '@elastic/eui'
 import { take } from 'lodash'
 import cx from 'classnames'
 
-import { Nullable, truncateText } from 'uiSrc/utils'
+import { Nullable, getDbIndex, isGroupResults, truncateText } from 'uiSrc/utils'
 import { EMPTY_COMMAND } from 'uiSrc/constants'
+import { ResultsMode } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
 
 export interface Props {
   query: Nullable<string>
   summary?: Nullable<string>
   maxLinesNumber?: number
+  resultsMode?: ResultsMode
+  db?: number
 }
 
 interface IQueryLine {
@@ -20,7 +23,8 @@ interface IQueryLine {
 }
 
 const QueryCardTooltip = (props: Props) => {
-  const { query = '', maxLinesNumber = 20, summary = '' } = props
+  const { query = '', maxLinesNumber = 20, summary = '', resultsMode, db } = props
+  const command = summary || query || EMPTY_COMMAND
 
   let queryLines: IQueryLine[] = (query || EMPTY_COMMAND).split('\n')
     .map((query: string, i) => ({
@@ -39,13 +43,14 @@ const QueryCardTooltip = (props: Props) => {
   const contentItems = queryLines
     .map((item: IQueryLine) => {
       const { value, index, isFolding } = item
-      return !isMultilineCommand ? <span key={index}>{value}</span> : (
+      const command = `${getDbIndex(db)} ${value}`
+      return !isMultilineCommand ? <span key={index}>{command}</span> : (
         <pre
           key={index}
           className={cx(styles.queryLine, styles.queryMultiLine, { [styles.queryLineFolding]: isFolding })}
         >
           <div className={styles.queryLineNumber}>{`${index + 1}`}</div>
-          <span>{value}</span>
+          <span>{command}</span>
         </pre>
       )
     })
@@ -53,10 +58,13 @@ const QueryCardTooltip = (props: Props) => {
   return (
     <EuiToolTip
       className={styles.tooltip}
+      anchorClassName={styles.tooltipAnchor}
       content={<>{contentItems}</>}
       position="bottom"
     >
-      <span data-testid="query-card-tooltip-anchor">{summary || query || EMPTY_COMMAND}</span>
+      <span data-testid="query-card-tooltip-anchor">
+        {`${!isGroupResults(resultsMode) ? getDbIndex(db) : ''} ${command}`.trim()}
+      </span>
     </EuiToolTip>
   )
 }

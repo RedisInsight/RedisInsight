@@ -43,6 +43,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
 const deletingMock = [{
   id: '123',
   databaseId: '1',
+  db: 1,
   type: BulkActionsType.Delete,
   filter: {
     type: null,

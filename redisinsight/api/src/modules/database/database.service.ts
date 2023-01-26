@@ -1,7 +1,7 @@
 import {
   Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
-import { merge, sum } from 'lodash';
+import { isEmpty, merge, omit, reject, sum } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -20,10 +20,20 @@ import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databas
 import { ClientContext, Session } from 'src/common/models';
 import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
+import { ExportDatabase } from 'src/modules/database/models/export-database';
 
 @Injectable()
 export class DatabaseService {
   private logger = new Logger('DatabaseService');
+
+  private exportSecurityFields: string[] = [
+    'password',
+    'clientCert.key',
+    'sshOptions.password',
+    'sshOptions.passphrase',
+    'sshOptions.privateKey',
+    'sentinelMaster.password',
+  ]
 
   constructor(
     private repository: DatabaseRepository,
@@ -201,5 +211,38 @@ export class DatabaseService {
         }
       }))),
     };
+  }
+
+  /**
+   * Export many databases by ids.
+   * Get full database model. With or without passwords and certificates bodies.
+   * @param ids
+   * @param withSecrets
+   */
+  async export(ids: string[], withSecrets = false): Promise<ExportDatabase[]> {
+    const paths = !withSecrets ? this.exportSecurityFields : []
+
+    this.logger.log(`Exporting many database: ${ids}`);
+
+    if (!ids.length) {
+      this.logger.error('Database ids were not provided');
+      throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
+    }
+
+    let entities: ExportDatabase[] = reject(
+      await Promise.all(ids.map(async (id) => {
+        try {
+          return await this.get(id);
+        } catch (e) {
+        }
+      })),
+    isEmpty)
+
+    return entities.map((database) =>
+      classToClass(
+        ExportDatabase,
+        omit(database, paths),
+        { groups: ['security'] },
+    ))
   }
 }

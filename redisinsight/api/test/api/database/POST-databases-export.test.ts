@@ -59,7 +59,6 @@ const responseSchema = Joi.array().items(Joi.object().keys({
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe(`POST /databases/export`, () => {
-  // requirements('rte.type=STANDALONE', 'rte.ssh');
   before(async () => {
     await localDb.createDatabaseInstances();
     // initializing modules list when ran as standalone test

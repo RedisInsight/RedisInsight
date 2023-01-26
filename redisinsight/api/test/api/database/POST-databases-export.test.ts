@@ -51,7 +51,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   clientCert: Joi.object({
     id: Joi.string().required(),
     name: Joi.string().required(),
-    key: Joi.string().required(),
+    key: Joi.string(),
     certificate: Joi.string(),
   }).allow(null),
 })).required().strict(true);
@@ -66,6 +66,7 @@ describe(`POST /databases/export`, () => {
     await request(server).get(`/databases/${constants.TEST_INSTANCE_ACL_ID}/connect`);
   });
   describe('STANDALONE', function () {
+    requirements('rte.type=STANDALONE');
     describe('TLS AUTH', function () {
       requirements('rte.tls', 'rte.tlsAuth');
       [
@@ -122,7 +123,7 @@ describe(`POST /databases/export`, () => {
             expect(body[0].sentinelMaster).to.not.have.property('password');
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].name).to.eq(constants.TEST_INSTANCE_ACL_NAME);
-            expect(body[0].username).to.eq(constants.TEST_INSTANCE_ACL_USER);
+            expect(body[0].username).to.eq(constants.TEST_REDIS_USER);
             expect(body[0].sentinelMasterName).to.eq(constants.TEST_SENTINEL_MASTER_GROUP);
             expect(body[0].sentinelMasterUsername).to.eq(constants.TEST_SENTINEL_MASTER_USER);
           },
@@ -140,8 +141,8 @@ describe(`POST /databases/export`, () => {
             expect(body[0]).to.have.property('password');
             expect(body[0].sentinelMaster).to.have.property('password');
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
-            expect(body[0].username).to.eq(constants.TEST_INSTANCE_ACL_USER);
-            expect(body[0].password).to.eq(constants.TEST_INSTANCE_ACL_PASS);
+            expect(body[0].username).to.eq(constants.TEST_REDIS_USER);
+            expect(body[0].password).to.eq(constants.TEST_REDIS_PASSWORD);
             expect(body[0].sentinelMasterName).to.eq(constants.TEST_SENTINEL_MASTER_GROUP);
             expect(body[0].sentinelMasterUsername).to.eq(constants.TEST_SENTINEL_MASTER_USER);
           },

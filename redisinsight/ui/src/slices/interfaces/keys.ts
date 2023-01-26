@@ -46,7 +46,7 @@ export interface KeysStore {
     error: string
   }
   searchHistory: {
-    data: Array<SearchHistoryItem>
+    data: null | Array<SearchHistoryItem>
     loading: boolean
   }
 }

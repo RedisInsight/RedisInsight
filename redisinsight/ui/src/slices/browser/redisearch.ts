@@ -11,6 +11,7 @@ import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import ApiErrors from 'uiSrc/constants/apiErrors'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { SearchHistoryItem } from 'uiSrc/slices/interfaces/keys'
 import { GetKeysWithDetailsResponse } from 'apiSrc/modules/browser/dto'
 import { CreateRedisearchIndexDto, ListRedisearchIndexesResponse } from 'apiSrc/modules/browser/dto/redisearch'
 
@@ -204,7 +205,7 @@ const redisearchSlice = createSlice({
     loadRediSearchHistory: (state) => {
       state.searchHistory.loading = true
     },
-    loadRediSearchHistorySuccess: (state, { payload }: any) => {
+    loadRediSearchHistorySuccess: (state, { payload }: PayloadAction<SearchHistoryItem[]>) => {
       state.searchHistory.loading = false
       state.searchHistory.data = payload
     },
@@ -472,7 +473,7 @@ export function fetchRedisearchHistoryAction(
 
     try {
       const state = stateInit()
-      const { data, status } = await apiService.get(
+      const { data, status } = await apiService.get<SearchHistoryItem[]>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.HISTORY

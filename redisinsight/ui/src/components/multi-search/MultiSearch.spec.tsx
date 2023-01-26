@@ -1,6 +1,8 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { map } from 'lodash'
+import { fireEvent, render, screen, act } from 'uiSrc/utils/test-utils'
+
 import MultiSearch, { Props } from './MultiSearch'
 
 const mockedProps = mock<Props>()
@@ -138,6 +140,74 @@ describe('MultiSearch', () => {
     })
   })
 
+  it('should show suggestions after key down arrow down', async () => {
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        suggestions={{
+          options: suggestionOptions,
+          onApply: jest.fn(),
+          onDelete: jest.fn(),
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'ArrowDown' })
+    })
+
+    expect(screen.getByTestId('suggestions')).toBeInTheDocument()
+  })
+
+  it('should call onApply after press enter on suggestion', async () => {
+    const onApply = jest.fn()
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        suggestions={{
+          options: suggestionOptions,
+          onApply,
+          onDelete: jest.fn(),
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'ArrowDown' })
+    })
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'ArrowDown' })
+    })
+
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'Enter' })
+    })
+    expect(onApply).toBeCalledWith(suggestionOptions[0])
+  })
+
+  it('should call onKeyDown if suggestions not opened', async () => {
+    const onKeyDown = jest.fn()
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        onKeyDown={onKeyDown}
+        suggestions={{
+          options: suggestionOptions,
+          onApply: jest.fn(),
+          onDelete: jest.fn(),
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'A', code: 'KeyA' })
+    })
+    expect(onKeyDown).toBeCalledTimes(1)
+  })
+
   it('should call onApply after click on suggestion', () => {
     const onApply = jest.fn()
     render(
@@ -174,6 +244,79 @@ describe('MultiSearch', () => {
     fireEvent.click(screen.getByTestId('show-suggestions-btn'))
     fireEvent.click(screen.getByTestId('remove-suggestion-item-2'))
     expect(onDelete).toBeCalledWith(['2'])
+  })
+
+  it('should call onDelete after click on delete all suggestion', () => {
+    const onDelete = jest.fn()
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        suggestions={{
+          options: suggestionOptions,
+          onApply: jest.fn(),
+          onDelete,
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+    fireEvent.click(screen.getByTestId('show-suggestions-btn'))
+    fireEvent.click(screen.getByTestId('clear-history-btn'))
+    expect(onDelete).toBeCalledWith(map(suggestionOptions, 'id'))
+  })
+
+  it('should call onDelete after press delete on suggestion', async () => {
+    const onDelete = jest.fn()
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        suggestions={{
+          options: suggestionOptions,
+          onApply: jest.fn(),
+          onDelete,
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'ArrowDown' })
+    })
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'ArrowDown' })
+    })
+
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'Delete' })
+    })
+    expect(onDelete).toBeCalledWith(['1'])
+  })
+
+  it('should close suggestion on Esc', async () => {
+    const onDelete = jest.fn()
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        suggestions={{
+          options: suggestionOptions,
+          onApply: jest.fn(),
+          onDelete,
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'ArrowDown' })
+    })
+
+    expect(screen.getByTestId('suggestions')).toBeInTheDocument()
+
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId(searchInputId), { key: 'Esc' })
+    })
+
+    expect(screen.queryByTestId('suggestions')).not.toBeInTheDocument()
   })
 
   it('should show loading wth loading suggestions state', () => {

@@ -50,14 +50,15 @@ import {
   deleteRedisearchKeyFromList,
   editRedisearchKeyFromList,
   editRedisearchKeyTTLFromList,
-  fetchMoreRedisearchKeysAction, fetchRedisearchHistoryAction,
+  fetchMoreRedisearchKeysAction,
+  fetchRedisearchHistoryAction,
   fetchRedisearchKeysAction,
   resetRedisearchKeysData,
   setLastBatchRedisearchKeys,
   setQueryRedisearch,
 } from './redisearch'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
-import { KeysStore, KeyViewType, SearchMode } from '../interfaces/keys'
+import { KeysStore, KeyViewType, SearchHistoryItem, SearchMode } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'
 import { StreamViewType } from '../interfaces/stream'
 import { RedisResponseBuffer, RedisString } from '../interfaces'
@@ -368,7 +369,7 @@ const keysSlice = createSlice({
     loadSearchHistory: (state) => {
       state.searchHistory.loading = true
     },
-    loadSearchHistorySuccess: (state, { payload }: any) => {
+    loadSearchHistorySuccess: (state, { payload }: PayloadAction<SearchHistoryItem[]>) => {
       state.searchHistory.loading = false
       state.searchHistory.data = payload
     },
@@ -994,7 +995,7 @@ export function fetchPatternHistoryAction(
 
     try {
       const state = stateInit()
-      const { data, status } = await apiService.get(
+      const { data, status } = await apiService.get<SearchHistoryItem[]>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
           ApiEndpoints.HISTORY

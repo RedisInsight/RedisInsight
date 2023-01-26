@@ -44,7 +44,8 @@ test('Recent filters history', async t => {
     await browserPage.clearFilter();
     await browserPage.selectFilterGroupType(KeyTypesTexts.String);
     await browserPage.searchByKeyName(`${keysForSearch[0]}*`);
-    await t.click(browserPage.showFilterHistoryBtn);
+    // Verify that user can see recent filters for key names and key types by pressing arrow up or down in filter
+    await t.pressKey('up');
     await t.expect(browserPage.filterHistoryItemText.withText(keysForSearch[0]).count).eql(1, 'Filter history requests can be duplicated in list');
 
     // Refresh the page
@@ -57,7 +58,7 @@ test('Recent filters history', async t => {
     await t.click(browserPage.treeViewButton);
     // Search by 2nd key name
     await browserPage.searchByKeyName(`${keysForSearch[1]}*`);
-    await t.click(browserPage.showFilterHistoryBtn);
+    await t.pressKey('down');
     // Verify that user can remove saved filter from list by clicking on "X"
     await t.hover(browserPage.filterHistoryItemText.withText(keysForSearch[1]));
     await t.click(browserPage.filterHistoryOption.withText(keysForSearch[1]).find(browserPage.cssRemoveSuggestionItem));

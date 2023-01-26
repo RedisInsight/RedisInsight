@@ -190,7 +190,8 @@ describe('POST /databases/:instanceId/analysis', () => {
     });
 
     describe('redisVersion recommendation', () => {
-      requirements('rte.version <= 6');
+      // todo find solution for redis pass
+      requirements('rte.version <= 6', !rte.pass);
       [
         {
           name: 'Should create new database analysis with redisVersion recommendation',
@@ -464,6 +465,26 @@ describe('POST /databases/:instanceId/analysis', () => {
             // by default max_intset_entries = 512
             constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION,
             constants.TEST_BIG_SETS_RECOMMENDATION,
+          ]);
+        },
+        after: async () => {
+          expect(await repository.count()).to.eq(5);
+        }
+      },
+      {
+        name: 'Should create new database analysis with searchIndexes recommendation',
+        data: {
+          delimiter: '-',
+        },
+        statusCode: 201,
+        responseSchema,
+        before: async () => {
+          await rte.data.sendCommand('zadd', constants.TEST_ZSET_KEY_1, constants.TEST_ZSET_MEMBER_1_SCORE, constants.TEST_ZSET_MEMBER_1);
+          await rte.data.sendCommand('zadd', constants.TEST_ZSET_MEMBER_1, constants.TEST_HASH_FIELD_1_NAME, constants.TEST_HASH_FIELD_1_VALUE);
+        },
+        checkFn: async ({ body }) => {
+          expect(body.recommendations).to.include.deep.members([
+            constants.TEST_SEARCH_INDEXES_RECOMMENDATION,
           ]);
         },
         after: async () => {

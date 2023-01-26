@@ -212,12 +212,12 @@ export class DatabaseController {
 
   @Post('export')
   @ApiEndpoint({
-    statusCode: 200,
+    statusCode: 201,
     excludeFor: [BuildType.RedisStack],
     description: 'Export many databases by ids. With or without passwords and certificates bodies.',
     responses: [
       {
-        status: 200,
+        status: 201,
         description: 'Export many databases by ids response',
         type: ExportDatabase,
       },

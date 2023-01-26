@@ -6,16 +6,17 @@ import {
   EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
-import { capitalize } from 'lodash'
+import { capitalize, map } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
+import { saveAs } from 'file-saver'
 import {
   checkConnectToInstanceAction,
-  deleteInstancesAction,
+  deleteInstancesAction, exportInstancesAction,
   instancesSelector,
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
@@ -165,6 +166,34 @@ const DatabasesListWrapper = ({
 
   const handleDeleteInstances = (instances: Instance[]) => {
     dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
+  }
+
+  const handleExportInstances = (instances: Instance[], withSecrets: boolean) => {
+    const ids = map(instances, 'id')
+
+    dispatch(exportInstancesAction(
+      ids,
+      withSecrets,
+      (data) => {
+        const file = new Blob([JSON.stringify(data)], { type: 'text/plain;charset=utf-8' })
+        saveAs(file, `RedisInsight_connections_${Date.now()}.json`)
+
+        sendEventTelemetry({
+          event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_SUCCEEDED,
+          eventData: {
+            numberOfDatabases: ids.length
+          }
+        })
+      },
+      () => {
+        sendEventTelemetry({
+          event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_FAILED,
+          eventData: {
+            numberOfDatabases: ids.length
+          }
+        })
+      }
+    ))
   }
 
   const columnsFull: EuiTableFieldDataColumnType<Instance>[] = [
@@ -361,6 +390,7 @@ const DatabasesListWrapper = ({
         dialogIsOpen={dialogIsOpen}
         columnVariations={columnVariations}
         onDelete={handleDeleteInstances}
+        onExport={handleExportInstances}
         onWheel={closePopover}
       />
     </div>

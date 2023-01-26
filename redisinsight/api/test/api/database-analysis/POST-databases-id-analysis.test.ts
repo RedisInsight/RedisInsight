@@ -479,8 +479,8 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          await rte.data.sendCommand('zadd', constants.TEST_ZSET_KEY_1, constants.TEST_ZSET_MEMBER_1_SCORE, constants.TEST_ZSET_MEMBER_1);
-          await rte.data.sendCommand('zadd', constants.TEST_ZSET_MEMBER_1, constants.TEST_HASH_FIELD_1_NAME, constants.TEST_HASH_FIELD_1_VALUE);
+          await rte.data.sendCommand('zadd', [constants.TEST_ZSET_KEY_1, constants.TEST_ZSET_MEMBER_1_SCORE, constants.TEST_ZSET_MEMBER_1]);
+          await rte.data.sendCommand('zadd', [constants.TEST_ZSET_MEMBER_1, constants.TEST_HASH_FIELD_1_NAME, constants.TEST_HASH_FIELD_1_VALUE]);
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.include.deep.members([

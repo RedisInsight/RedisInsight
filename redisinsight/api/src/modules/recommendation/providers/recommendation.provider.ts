@@ -531,11 +531,10 @@ export class RecommendationProvider {
       if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
         processedKeysNumber += 1;
       } else {
-        let keyType: string;
         const sortedSetMember = await client.sendCommand(
           new Command('zrange', [keys[processedKeysNumber].name, 0, 0], { replyEncoding: 'utf8' }),
         ) as string[];
-        keyType = await client.sendCommand(
+        const keyType = await client.sendCommand(
           new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
         ) as string;
         if (keyType === RedisDataType.JSON || keyType === RedisDataType.Hash) {

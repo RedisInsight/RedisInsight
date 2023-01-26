@@ -191,7 +191,7 @@ describe('POST /databases/:instanceId/analysis', () => {
 
     describe('redisVersion recommendation', () => {
       // todo find solution for redis pass
-      requirements('rte.version <= 6', !rte.pass);
+      requirements('rte.version <= 6', '!rte.pass');
       [
         {
           name: 'Should create new database analysis with redisVersion recommendation',
@@ -479,8 +479,8 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          await rte.data.sendCommand('zadd', [constants.TEST_ZSET_KEY_1, constants.TEST_ZSET_MEMBER_1_SCORE, constants.TEST_ZSET_MEMBER_1]);
-          await rte.data.sendCommand('zadd', [constants.TEST_ZSET_MEMBER_1, constants.TEST_HASH_FIELD_1_NAME, constants.TEST_HASH_FIELD_1_VALUE]);
+          await rte.data.sendCommand('ZADD', [constants.TEST_ZSET_KEY_1, constants.TEST_ZSET_MEMBER_1_SCORE, constants.TEST_ZSET_MEMBER_1]);
+          await rte.data.sendCommand('HSET', [constants.TEST_ZSET_MEMBER_1, constants.TEST_HASH_FIELD_1_NAME, constants.TEST_HASH_FIELD_1_VALUE]);
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.include.deep.members([

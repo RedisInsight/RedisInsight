@@ -81,6 +81,7 @@ describe(`POST /databases/export`, () => {
           checkFn: async ({ body }) => {
             expect(body.length).to.eq(1);
             expect(body[0]).to.not.have.property('password');
+            expect(body[0].clientCert).to.not.have.property('key');
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].name).to.eq(constants.TEST_INSTANCE_ACL_NAME);
             expect(body[0].username).to.eq(constants.TEST_INSTANCE_ACL_USER);
@@ -95,11 +96,15 @@ describe(`POST /databases/export`, () => {
           statusCode: 201,
           responseSchema,
           checkFn: async ({ body }) => {
+            console.log({instance: body[0]});
+
             expect(body.length).to.eq(1);
             expect(body[0]).to.have.property('password');
+            expect(body[0].password).to.eq(constants.TEST_INSTANCE_ACL_PASS);
+            expect(body[0].clientCert).to.have.property('key');
+            expect(body[0].clientCert.key).to.have.eq(constants.TEST_USER_TLS_KEY);
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].username).to.eq(constants.TEST_INSTANCE_ACL_USER);
-            expect(body[0].password).to.eq(constants.TEST_INSTANCE_ACL_PASS);
           },
         },
       ].map(mainCheckFn);
@@ -121,6 +126,7 @@ describe(`POST /databases/export`, () => {
             expect(body.length).to.eq(1);
             expect(body[0]).to.not.have.property('password');
             expect(body[0].sentinelMaster).to.not.have.property('password');
+            expect(body[0].sentinelMaster.password).to.eq(constants.TEST_SENTINEL_MASTER_GROUP);
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].name).to.eq(constants.TEST_INSTANCE_ACL_NAME);
             expect(body[0].username).to.eq(constants.TEST_REDIS_USER);
@@ -137,6 +143,7 @@ describe(`POST /databases/export`, () => {
           statusCode: 201,
           responseSchema,
           checkFn: async ({ body }) => {
+            console.log({instance: body[0]});
             expect(body.length).to.eq(1);
             expect(body[0]).to.have.property('password');
             expect(body[0].sentinelMaster).to.have.property('password');
@@ -167,6 +174,7 @@ describe(`POST /databases/export`, () => {
             expect(body.length).to.eq(1);
             expect(body[0]).to.not.have.property('password');
             expect(body[0].sshOptions).to.not.have.property('privateKey');
+            expect(body[0].clientCert).to.not.have.property('key');
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].name).to.eq(constants.TEST_INSTANCE_ACL_NAME);
             expect(body[0].username).to.eq(constants.TEST_INSTANCE_ACL_USER);
@@ -185,6 +193,9 @@ describe(`POST /databases/export`, () => {
             console.log({instance: body[0]});
             expect(body[0]).to.have.property('password');
             expect(body[0].sshOptions).to.have.property('privateKey');
+            expect(body[0].sshOptions.privateKey).to.have.eq(constants.TEST_SSH_PRIVATE_KEY);
+            expect(body[0].clientCert).to.have.property('key');
+            expect(body[0].clientCert.key).to.have.eq(constants.TEST_USER_TLS_KEY);
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].username).to.eq(constants.TEST_INSTANCE_ACL_USER);
             expect(body[0].password).to.eq(constants.TEST_INSTANCE_ACL_PASS);

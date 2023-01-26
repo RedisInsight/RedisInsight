@@ -25,6 +25,7 @@ import { databaseNew1670252337342 } from './1670252337342-database-new';
 import { sshOptions1673035852335 } from './1673035852335-ssh-options';
 import { workbenchAndAnalysisDbIndex1673934231410 } from './1673934231410-workbench-and-analysis-db';
 import { browserHistory1674539211397 } from './1674539211397-browser-history';
+import { databaseAnalysisRecommendations1674660306971 } from './1674660306971-database-analysis-recommendations';
 
 export default [
   initialMigration1614164490968,
@@ -53,5 +54,6 @@ export default [
   databaseNew1670252337342,
   sshOptions1673035852335,
   workbenchAndAnalysisDbIndex1673934231410,
+  databaseAnalysisRecommendations1674660306971,
   browserHistory1674539211397,
 ];

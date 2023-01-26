@@ -36,7 +36,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
+import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco/cypher'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
@@ -466,8 +466,8 @@ const Query = (props: Props) => {
   }
 
   if (monaco?.editor) {
-    monaco.editor.defineTheme('dark', darkTheme)
-    monaco.editor.defineTheme('light', lightTheme)
+    monaco.editor.defineTheme(MonacoThemes.Dark, darkTheme)
+    monaco.editor.defineTheme(MonacoThemes.Light, lightTheme)
   }
 
   const isLoading = loading || processing

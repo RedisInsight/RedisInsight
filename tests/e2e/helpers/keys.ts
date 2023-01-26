@@ -6,6 +6,7 @@ import { BrowserPage, CliPage } from '../pageObjects';
 import { KeyData, AddKeyArguments } from '../pageObjects/browser-page';
 import { KeyTypesTexts } from './constants';
 import { Common } from './common';
+import { random } from 'lodash';
 
 const common = new Common();
 const cliPage = new CliPage();
@@ -185,6 +186,39 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
             }
         }
         await client.sadd(keyArguments.keyName, members, async (error: string) => {
+            if (error) {
+                throw error;
+            }
+        });
+        await client.quit();
+    });
+}
+
+/**
+ * Populate Zset key with members
+ * @param host The host of database
+ * @param port The port of database
+ * @param keyArguments The arguments of key and its members
+ */
+ export async function populateZSetWithMembers(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
+    const dbConf = { host, port: Number(port) };
+    let minScoreValue: -10;
+    let maxScoreValue: 10;
+    const client = createClient(dbConf);
+    const members: string[] = [];
+
+    await client.on('error', async function(error: string) {
+        throw new Error(error);
+    });
+    await client.on('connect', async function() {
+        if (keyArguments.membersCount != undefined) {
+            for (let i = 0; i < keyArguments.membersCount; i++) {
+                const memberName = `${keyArguments.memberStartWith}${common.generateWord(10)}`;
+                const scoreValue = random(minScoreValue, maxScoreValue).toString(2);
+                members.push(scoreValue, memberName);
+            }
+        }
+        await client.zadd(keyArguments.keyName, members, async(error: string) => {
             if (error) {
                 throw error;
             }

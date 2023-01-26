@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { plainToClass } from 'class-transformer';
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
+import { RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { classToClass } from 'src/utils';
 import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -26,6 +27,7 @@ export class DatabaseAnalysisProvider {
     'filter',
     'progress',
     'expirationGroups',
+    'recommendations',
   ];
 
   constructor(
@@ -40,7 +42,9 @@ export class DatabaseAnalysisProvider {
    * @param analysis
    */
   async create(analysis: Partial<DatabaseAnalysis>): Promise<DatabaseAnalysis> {
-    const entity = await this.repository.save(await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, analysis)));
+    const entity = await this.repository.save(
+      await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, analysis)),
+    );
 
     // cleanup history and ignore error if any
     try {
@@ -65,6 +69,31 @@ export class DatabaseAnalysisProvider {
     }
 
     return classToClass(DatabaseAnalysis, await this.decryptEntity(entity, true));
+  }
+
+  /**
+   * Fetches entity, decrypt, update and return updated DatabaseAnalysis model
+   * @param id
+   * @param dto
+   */
+  async recommendationVote(id: string, dto: RecommendationVoteDto): Promise<DatabaseAnalysis> {
+    this.logger.log('Updating database analysis with recommendation vote');
+    const { name, vote } = dto;
+    const oldDatabaseAnalysis = await this.repository.findOneBy({ id });
+
+    if (!oldDatabaseAnalysis) {
+      this.logger.error(`Database analysis with id:${id} was not Found`);
+      throw new NotFoundException(ERROR_MESSAGES.DATABASE_ANALYSIS_NOT_FOUND);
+    }
+
+    const entity = classToClass(DatabaseAnalysis, await this.decryptEntity(oldDatabaseAnalysis, true));
+
+    entity.recommendations = entity.recommendations.map((recommendation) => (
+      recommendation.name === name ? { ...recommendation, vote } : recommendation));
+
+    await this.repository.update(id, await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, entity)));
+
+    return entity;
   }
 
   /**

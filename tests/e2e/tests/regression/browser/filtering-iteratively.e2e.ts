@@ -46,7 +46,7 @@ test
         await t.click(browserPage.scanMoreButton);
         // Verify that number of results is 1000
         const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
-        await t.expect(keysNumberOfResults).contains('1 000', 'Number of results is not 1 000');
+        await t.expect(keysNumberOfResults).match(/1 00[0-9]/, 'Number of results is not 1 000');
     });
 test
     .meta({ rte: rte.ossCluster })

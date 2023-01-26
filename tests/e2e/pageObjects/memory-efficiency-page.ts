@@ -10,6 +10,7 @@ export class MemoryEfficiencyPage {
     // CSS Selectors
     cssCodeChangesLabel = '[data-testid=code_changes]';
     cssConfigurationChangesLabel = '[data-testid=configuration_changes]';
+    cssReadMoreLink = '[data-testid=read-more-link]';
     // BUTTONS
     newReportBtn = Selector('[data-testid=start-database-analysis-btn]');
     expandArrowBtn = Selector('[data-testid^=expand-arrow-]');

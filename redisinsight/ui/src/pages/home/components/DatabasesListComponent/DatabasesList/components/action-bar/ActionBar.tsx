@@ -30,7 +30,7 @@ const ActionBar = ({
       <EuiFlexItem grow={false} className={styles.text}>
         {`You selected: ${selectionCount} items`}
       </EuiFlexItem>
-      {actions.map((action, index) => (
+      {actions?.map((action, index) => (
         <EuiFlexItem grow={false} className={styles.actions} key={index}>
           {action}
         </EuiFlexItem>

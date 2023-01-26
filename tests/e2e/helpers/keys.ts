@@ -82,7 +82,7 @@ export async function deleteKeysViaCli(keyData: KeyData): Promise<void> {
  * @param keyArguments The arguments of key
  */
 export async function populateDBWithHashes(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
 
     await client.on('error', async function (error: string) {
@@ -110,7 +110,7 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
  * @param keyArguments The arguments of key and its fields
  */
 export async function populateHashWithFields(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
     const fields: string[] = [];
 
@@ -141,7 +141,7 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
  * @param keyArguments The arguments of key and its members
  */
 export async function populateListWithElements(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
     const elements: string[] = [];
 
@@ -171,7 +171,7 @@ export async function populateListWithElements(host: string, port: string, keyAr
  * @param keyArguments The arguments of key and its members
  */
 export async function populateSetWithMembers(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
     const members: string[] = [];
 
@@ -201,7 +201,7 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
  * @param keyArguments The arguments of key and its members
  */
  export async function populateZSetWithMembers(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     let minScoreValue: -10;
     let maxScoreValue: 10;
     const client = createClient(dbConf);
@@ -233,7 +233,7 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
  * @param port The port of database
  */
 export async function deleteAllKeysFromDB(host: string, port: string): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
 
     await client.on('error', async function (error: string) {

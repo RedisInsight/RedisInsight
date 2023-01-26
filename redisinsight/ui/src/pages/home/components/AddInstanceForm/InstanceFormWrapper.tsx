@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { ConnectionString } from 'connection-string'
-import { pick } from 'lodash'
+import { isUndefined, pick } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -21,8 +21,11 @@ import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
 import { BrowserStorageItem, DbType, Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
 import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
 
-import InstanceForm, { ADD_NEW, ADD_NEW_CA_CERT, NO_CA_CERT } from './InstanceForm'
+import InstanceForm from './InstanceForm'
+import { DbConnectionInfo } from './InstanceForm/interfaces'
+import { ADD_NEW, ADD_NEW_CA_CERT, NO_CA_CERT, SshPassType } from './InstanceForm/constants'
 
 export interface Props {
   width: number
@@ -61,6 +64,10 @@ const getInitialValues = (editedInstance: Nullable<Instance>) => ({
   username: editedInstance?.username ?? '',
   password: editedInstance?.password ?? '',
   tls: !!editedInstance?.tls ?? false,
+  ssh: !!editedInstance?.ssh ?? false,
+  sshPassType: editedInstance?.sshOptions
+    ? (editedInstance.sshOptions.privateKey ? SshPassType.PrivateKey : SshPassType.Password)
+    : SshPassType.Password
 })
 
 const InstanceFormWrapper = (props: Props) => {
@@ -78,12 +85,13 @@ const InstanceFormWrapper = (props: Props) => {
   const [initialValues, setInitialValues] = useState(getInitialValues(editedInstance))
   const [isCloneMode, setIsCloneMode] = useState<boolean>(false)
 
-  const { host, port, name, username, password, tls } = initialValues
+  const { host, port, name, username, password, tls, ssh, sshPassType } = initialValues
 
   const { loadingChanging: loadingStandalone } = useSelector(instancesSelector)
   const { loading: loadingSentinel } = useSelector(sentinelSelector)
   const { data: caCertificates } = useSelector(caCertsSelector)
   const { data: certificates } = useSelector(clientCertsSelector)
+  const { server } = useSelector(appInfoSelector)
 
   const tlsClientAuthRequired = !!editedInstance?.clientCert?.id ?? false
   const selectedTlsClientCertId = editedInstance?.clientCert?.id ?? ADD_NEW
@@ -185,6 +193,8 @@ const InstanceFormWrapper = (props: Props) => {
           username: details.user || '',
           password: details.password || '',
           tls: details.protocol === 'rediss',
+          ssh: false,
+          sshPassType: SshPassType.Password
         })
         /*
          * auto fill was successfull so return true
@@ -198,7 +208,72 @@ const InstanceFormWrapper = (props: Props) => {
     return false
   }
 
-  const editDatabase = (tlsSettings, values) => {
+  const applyTlSDatabase = (database: any, tlsSettings: any) => {
+    const { useTls, verifyServerCert, servername, caCert, clientAuth, clientCert } = tlsSettings
+    if (!useTls) return
+
+    database.tls = useTls
+    database.tlsServername = servername
+    database.verifyServerCert = !!verifyServerCert
+
+    if (!isUndefined(caCert?.new)) {
+      database.caCert = {
+        name: caCert?.new.name,
+        certificate: caCert?.new.certificate,
+      }
+    }
+
+    if (!isUndefined(caCert?.name)) {
+      database.caCert = { id: caCert?.name }
+    }
+
+    if (clientAuth) {
+      if (!isUndefined(clientCert.new)) {
+        database.clientCert = {
+          name: clientCert.new.name,
+          certificate: clientCert.new.certificate,
+          key: clientCert.new.key,
+        }
+      }
+
+      if (!isUndefined(clientCert.id)) {
+        database.clientCert = { id: clientCert.id }
+      }
+    }
+  }
+
+  const applySSHDatabase = (database: any, values: DbConnectionInfo) => {
+    const {
+      ssh,
+      sshPassType,
+      sshHost,
+      sshPort,
+      sshPassword,
+      sshUsername,
+      sshPassphrase,
+      sshPrivateKey,
+    } = values
+
+    if (ssh) {
+      database.ssh = true
+      database.sshOptions = {
+        host: sshHost,
+        port: +sshPort,
+        username: sshUsername,
+      }
+
+      if (sshPassType === SshPassType.Password) {
+        database.sshOptions.password = sshPassword
+      }
+
+      if (sshPassType === SshPassType.PrivateKey) {
+        database.sshOptions.passphrase = sshPassphrase
+        database.sshOptions.privateKey = sshPrivateKey
+      }
+    }
+  }
+
+  const editDatabase = (tlsSettings: any, values: DbConnectionInfo) => {
     const {
       name,
       host,
@@ -209,7 +284,7 @@ const InstanceFormWrapper = (props: Props) => {
       sentinelMasterPassword,
     } = values
 
-    const database = {
+    const database: any = {
       id: editedInstance?.id,
       name,
       host,
@@ -218,44 +293,9 @@ const InstanceFormWrapper = (props: Props) => {
       password,
     }
 
-    const {
-      useTls,
-      servername,
-      verifyServerCert,
-      caCert,
-      clientAuth,
-      clientCert,
-    } = tlsSettings
-
-    if (useTls) {
-      database.tls = useTls
-      database.tlsServername = servername
-      database.verifyServerCert = !!verifyServerCert
-
-      if (typeof caCert?.new !== 'undefined') {
-        database.caCert = {
-          name: caCert?.new.name,
-          certificate: caCert?.new.certificate,
-        }
-      }
-      if (typeof caCert?.name !== 'undefined') {
-        database.caCert = { id: caCert?.name }
-      }
-
-      if (clientAuth) {
-        if (typeof clientCert.new !== 'undefined') {
-          database.clientCert = {
-            name: clientCert.new.name,
-            certificate: clientCert.new.certificate,
-            key: clientCert.new.key,
-          }
-        }
-
-        if (typeof clientCert.id !== 'undefined') {
-          database.clientCert = { id: clientCert.id }
-        }
-      }
-    }
+    // add tls & ssh for database (modifies database object)
+    applyTlSDatabase(database, tlsSettings)
+    applySSHDatabase(database, values)
 
     if (connectionType === ConnectionType.Sentinel) {
       database.sentinelMaster = {}
@@ -267,7 +307,7 @@ const InstanceFormWrapper = (props: Props) => {
     handleEditDatabase(removeEmpty(database))
   }
 
-  const addDatabase = (tlsSettings, values) => {
+  const addDatabase = (tlsSettings: any, values: DbConnectionInfo) => {
     const {
       name,
       host,
@@ -277,47 +317,13 @@ const InstanceFormWrapper = (props: Props) => {
       db,
       sentinelMasterName,
       sentinelMasterUsername,
-      sentinelMasterPassword
+      sentinelMasterPassword,
     } = values
-    const database: any = { name, host, port: +port, db: +db, username, password }
+    const database: any = { name, host, port: +port, db: +(db || 0), username, password }
 
-    const {
-      useTls,
-      servername,
-      verifyServerCert,
-      caCert,
-      clientAuth,
-      clientCert,
-    } = tlsSettings
-
-    if (useTls) {
-      database.tls = useTls
-      database.tlsServername = servername
-      database.verifyServerCert = !!verifyServerCert
-      if (typeof caCert?.new !== 'undefined') {
-        database.caCert = {
-          name: caCert?.new.name,
-          certificate: caCert?.new.certificate,
-        }
-      }
-      if (typeof caCert?.name !== 'undefined') {
-        database.caCert = { id: caCert?.name }
-      }
-
-      if (clientAuth) {
-        if (typeof clientCert.new !== 'undefined') {
-          database.clientCert = {
-            name: clientCert.new.name,
-            certificate: clientCert.new.certificate,
-            key: clientCert.new.key,
-          }
-        }
-
-        if (typeof clientCert.id !== 'undefined') {
-          database.clientCert = { id: clientCert.id }
-        }
-      }
-    }
+    // add tls & ssh for database (modifies database object)
+    applyTlSDatabase(database, tlsSettings)
+    applySSHDatabase(database, values)
 
     if (isCloneMode && connectionType === ConnectionType.Sentinel) {
       database.sentinelMaster = {
@@ -339,7 +345,7 @@ const InstanceFormWrapper = (props: Props) => {
     onDbAdded()
   }
 
-  const handleConnectionFormSubmit = (values) => {
+  const handleConnectionFormSubmit = (values: DbConnectionInfo) => {
     const {
       newCaCert,
       tls,
@@ -426,6 +432,8 @@ const InstanceFormWrapper = (props: Props) => {
     selectedCaCertName,
     sentinelMasterUsername,
     sentinelMasterPassword,
+    ssh,
+    sshPassType
   }
 
   const getSubmitButtonText = () => {
@@ -449,6 +457,7 @@ const InstanceFormWrapper = (props: Props) => {
         formFields={connectionFormData}
         initialValues={initialValues}
         loading={loadingStandalone || loadingSentinel}
+        buildType={server?.buildType}
         instanceType={instanceType}
         loadingMsg={
           editMode

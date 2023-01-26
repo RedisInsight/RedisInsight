@@ -10,7 +10,8 @@ import {
   getWBQueryType,
   getVisualizationsByCommand,
   Maybe,
-  isGroupMode
+  isGroupResults,
+  isSilentModeWithoutError,
 } from 'uiSrc/utils'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
@@ -39,6 +40,7 @@ export interface Props {
   loading?: boolean
   isNotStored?: boolean
   executionTime?: number
+  db?: number
   onQueryDelete: () => void
   onQueryReRun: () => void
   onQueryOpen: () => void
@@ -47,10 +49,14 @@ export interface Props {
 const getDefaultPlugin = (views: IPluginVisualization[], query: string) =>
   getVisualizationsByCommand(query, views).find((view) => view.default)?.uniqId || ''
 
-export const getSummaryText = (summary?: ResultsSummary) => {
+export const getSummaryText = (summary?: ResultsSummary, mode?: ResultsMode) => {
   if (summary) {
     const { total, success, fail } = summary
-    return `${total} Command(s) - ${success} success, ${fail} error(s)`
+    const summaryText = `${total} Command(s) - ${success} success`
+    if (!isSilentModeWithoutError(mode, summary?.fail)) {
+      return `${summaryText}, ${fail} error(s)`
+    }
+    return summaryText
   }
   return summary
 }
@@ -74,6 +80,7 @@ const QueryCard = (props: Props) => {
     emptyCommand,
     isNotStored,
     executionTime,
+    db,
   } = props
 
   const { visualizations = [] } = useSelector(appPluginsSelector)
@@ -82,7 +89,7 @@ const QueryCard = (props: Props) => {
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
   const [queryType, setQueryType] = useState<WBQueryType>(getWBQueryType(command, visualizations))
   const [viewTypeSelected, setViewTypeSelected] = useState<WBQueryType>(queryType)
-  const [summaryText, setSummaryText] = useState<string>('')
+  const [message, setMessage] = useState<string>('')
   const [selectedViewValue, setSelectedViewValue] = useState<string>(
     getDefaultPlugin(visualizations, command || '') || queryType
   )
@@ -130,7 +137,7 @@ const QueryCard = (props: Props) => {
   }, [visualizations])
 
   const toggleOpen = () => {
-    if (isFullScreen) return
+    if (isFullScreen || isSilentModeWithoutError(resultsMode, summary?.fail)) return
 
     dispatch(toggleOpenWBResult(id))
 
@@ -162,15 +169,18 @@ const QueryCard = (props: Props) => {
           query={command}
           loading={loading}
           createdAt={createdAt}
-          summaryText={summaryText}
+          message={message}
           queryType={queryType}
           selectedValue={selectedViewValue}
           activeMode={activeMode}
           mode={mode}
+          resultsMode={resultsMode}
           activeResultsMode={activeResultsMode}
           emptyCommand={emptyCommand}
-          summary={getSummaryText(summary)}
+          summary={summary}
+          summaryText={getSummaryText(summary, resultsMode)}
           executionTime={executionTime}
+          db={db}
           toggleOpen={toggleOpen}
           toggleFullScreen={toggleFullScreen}
           setSelectedValue={changeViewTypeSelected}
@@ -179,14 +189,15 @@ const QueryCard = (props: Props) => {
         />
         {isOpen && (
           <>
-            {React.isValidElement(commonError) && !isGroupMode(resultsMode)
+            {React.isValidElement(commonError) && !isGroupResults(resultsMode)
               ? <QueryCardCommonResult loading={loading} result={commonError} />
               : (
                 <>
-                  {isGroupMode(resultsMode) && (
+                  {isGroupResults(resultsMode) && (
                     <QueryCardCliResultWrapper
                       loading={loading}
                       query={command}
+                      db={db}
                       resultsMode={resultsMode}
                       result={result}
                       isNotStored={isNotStored}
@@ -203,7 +214,7 @@ const QueryCard = (props: Props) => {
                               id={selectedViewValue}
                               result={result}
                               query={command}
-                              setSummaryText={setSummaryText}
+                              setMessage={setMessage}
                               commandId={id}
                             />
                           ) : (

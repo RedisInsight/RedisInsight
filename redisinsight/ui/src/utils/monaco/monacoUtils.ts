@@ -1,5 +1,5 @@
 import * as monacoEditor from 'monaco-editor'
-import { isEmpty, isUndefined, reject } from 'lodash'
+import { first, isEmpty, isUndefined, reject } from 'lodash'
 import { ICommands } from 'uiSrc/constants'
 import { IMonacoCommand, IMonacoQuery } from './monacoInterfaces'
 import { Nullable } from '../types'
@@ -24,7 +24,12 @@ const removeCommentsFromLine = (text: string = '', prefix: string = ''): string 
 
 export const splitMonacoValuePerLines = (command = '') => {
   const linesResult: string[] = []
-  const lines = command.split(/\n(?=[^\s])/g)
+  const lines = getMonacoLines(command)
+  // remove execute params
+  if (isParamsLine(first(lines))) {
+    lines.splice(0, 1, removeParams(first(lines)))
+  }
+
   lines.forEach((line) => {
     const [commandLine, countRepeat] = getCommandRepeat(line || '')
 
@@ -34,6 +39,7 @@ export const splitMonacoValuePerLines = (command = '') => {
     }
     linesResult.push(...Array(countRepeat).fill(commandLine))
   })
+
   return linesResult
 }
 
@@ -195,3 +201,17 @@ export const createSyntaxWidget = (text: string, shortcutText: string) => {
 
   return widget
 }
+
+export const isParamsLine = (commandInit: string = '') => {
+  const command = commandInit.trim()
+  return command.startsWith('[') && (command.indexOf(']') !== -1)
+}
+
+const removeParams = (commandInit: string = '') => {
+  const command = commandInit.trim()
+  const paramsLastIndex = command.indexOf(']')
+  return command.substring(paramsLastIndex + 1).trim()
+}
+
+export const getMonacoLines = (command: string = '') =>
+  command.split(/\n(?=[^\s])/g)

@@ -166,9 +166,15 @@ const KeyList = forwardRef((props: Props, ref) => {
     if (isSearched) {
       return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
     }
+
     if (isFiltered && keysState.scanned < total) {
       return ScanNoResultsFoundText
     }
+
+    if (itemsRef.current.length < keysState.keys.length) {
+      return 'loading...'
+    }
+
     return NoResultsFoundText
   }
 

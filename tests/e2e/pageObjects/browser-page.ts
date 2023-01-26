@@ -158,7 +158,7 @@ export class BrowserPage {
     listKeyElementInput = Selector('[data-testid=element]');
     listKeyElementEditorInput = Selector('[data-testid=element-value-editor]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
-    jsonKeyValueInput = Selector('[data-testid=json-value]');
+    jsonKeyValueInput = Selector('[data-mode-id=json]');
     setMemberInput = Selector('[data-testid=member-name]');
     zsetMemberScoreInput = Selector('[data-testid=member-score]');
     filterByPatterSearchInput = Selector('[data-testid=search-key]');
@@ -1021,7 +1021,7 @@ export class BrowserPage {
     * Get text from first tree element
     */
     async getTextFromNthTreeElement(number: number): Promise<string> {
-        return (await Selector(`[role="treeitem"]`).nth(number).find(`div`).textContent).replace(/\s/g, '');
+        return (await Selector('[role="treeitem"]').nth(number).find('div').textContent).replace(/\s/g, '');
     }
 
     /**
@@ -1029,11 +1029,11 @@ export class BrowserPage {
     * @param names folder names with sequence of subfolder
     */
     async openTreeFolders(names: string[]): Promise<void> {
-        let base = `node-item_${names[0]}:`
+        let base = `node-item_${names[0]}:`;
         await t.click(Selector(`[data-testid="${base}"]`));
         if (names.length > 1) {
             for (let i = 1; i < names.length; i++) {
-                base = base + `${names[i]}:`;
+                base = `${base  }${names[i]}:`;
                 await t.click(Selector(`[data-testid="${base}"]`));
             }
         }
@@ -1041,7 +1041,15 @@ export class BrowserPage {
 
         await t.expect(
             Selector(`[data-testid="${base}keys:keys:"]`).visible)
-            .ok("Folder is not selected");
+            .ok('Folder is not selected');
+    }
+
+    /**
+    * Verify that database has no keys
+    */
+    async verifyNoKeysInDatabase(): Promise<void> {
+        await t.expect(this.keyListMessage.exists).ok('Database not empty')
+            .expect(this.keysSummary.exists).notOk('Total value is displayed for empty database');
     }
 }
 

@@ -1,11 +1,12 @@
 import {
-  Column, Entity, ManyToOne, PrimaryGeneratedColumn,
+  Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 import { DataAsJsonString } from 'src/common/decorators';
-import { Expose, Transform } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
+import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 
 export enum HostingProvider {
   UNKNOWN = 'UNKNOWN',
@@ -162,4 +163,21 @@ export class DatabaseEntity {
   @Expose()
   @Column({ nullable: true })
   new: boolean;
+
+  @Expose()
+  @Column({ nullable: true })
+  ssh: boolean;
+
+  @Expose()
+  @OneToOne(
+    () => SshOptionsEntity,
+    (sshOptions) => sshOptions.database,
+    {
+      eager: true,
+      onDelete: 'CASCADE',
+      cascade: true,
+    },
+  )
+  @Type(() => SshOptionsEntity)
+  sshOptions: SshOptionsEntity;
 }

@@ -25,7 +25,7 @@
 }
 
 .input {
-  font: normal normal 500 20px/24px 'Graphik' !important;
+  font: normal normal 500 20px/24px "Graphik" !important;
   backface-visibility: hidden;
 }
 
@@ -36,7 +36,8 @@
   padding-left: 9px;
   padding-top: 4px;
   margin-bottom: 5px;
-  font: normal normal 500 20px/25px 'Graphik' !important;
+  align-items: center;
+  font: normal normal 500 20px/25px "Graphik" !important;
 }
 
 .aliasText {
@@ -45,6 +46,24 @@
   max-width: 100%;
   overflow: hidden;
   padding-right: 5px;
+}
+
+.aliasEditing {
+  cursor: pointer;
+
+  span {
+    text-decoration: underline;
+  }
+
+  &:hover span {
+    text-decoration: none;
+  }
+}
+
+.aliasEditIcon {
+  margin: 0 6px 0 8px;
+  width: 18px !important;
+  height: 18px !important;
 }
 
 .redistackIcon {

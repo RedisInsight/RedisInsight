@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import { chunk, without } from 'lodash'
+import { chunk, first, without } from 'lodash'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 import {
@@ -14,6 +14,10 @@ import {
   scrollIntoView,
   getExecuteParams,
   isGroupMode,
+  getMonacoLines,
+  Maybe,
+  isGroupResults,
+  getParsedParamsInQuery,
 } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import {
@@ -40,6 +44,8 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import WBView from './WBView'
+
+import { parseParams } from '../enablement-area/EnablementArea/utils'
 
 interface IState extends ExecuteQueryParams {
   loading: boolean
@@ -163,7 +169,7 @@ const WBViewWrapper = () => {
       ''
     )
 
-    const chunkSize = isGroupMode(resultsMode) ? commandsForExecuting.length : (batchSize > 1 ? batchSize : 1)
+    const chunkSize = isGroupResults(resultsMode) ? commandsForExecuting.length : (batchSize > 1 ? batchSize : 1)
 
     const [commands, ...rest] = chunk(commandsForExecuting, chunkSize)
     const multiCommands = rest.map((command) => getMultiCommands(command))
@@ -244,15 +250,19 @@ const WBViewWrapper = () => {
   }
 
   const sourceValueSubmit = (
-    value?: string,
+    value: string = script,
     commandId?: Nullable<string>,
     executeParams: CodeButtonParams = { clearEditor: true }
   ) => {
     if (state.loading || (!value && !script)) return
 
+    const lines = getMonacoLines(value)
+    const parsedParams: Maybe<CodeButtonParams> = getParsedParamsInQuery(value)
+
     const { clearEditor } = executeParams
-    handleSubmit(value, commandId, executeParams)
-    if (cleanupWB && clearEditor) {
+    handleSubmit(value, commandId, { ...executeParams, ...parsedParams })
+
+    if (cleanupWB && clearEditor && lines.length) {
       resetCommand()
     }
   }

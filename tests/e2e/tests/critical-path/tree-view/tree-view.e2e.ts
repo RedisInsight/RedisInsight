@@ -7,6 +7,7 @@ import {
 import { rte, KeyTypesTexts } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const common = new Common();
@@ -62,7 +63,7 @@ test('Verify that when user switched from Tree View to Browser and goes back sta
     await t.click(browserPage.browserViewButton);
     await t.click(browserPage.treeViewButton);
     // Verify that state of filer by key name is saved
-    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is not applied');
+    await verifySearchFilterValue(keyName);
     await t.click(browserPage.treeViewButton);
     // Set filter by key type
     await browserPage.selectFilterGroupType(KeyTypesTexts.String);

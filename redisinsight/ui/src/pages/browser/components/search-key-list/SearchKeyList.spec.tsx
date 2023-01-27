@@ -47,7 +47,7 @@ describe('SearchKeyList', () => {
   })
 
   it('should load history after render', () => {
-    (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
+    (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
       id: '1'
     }))
 

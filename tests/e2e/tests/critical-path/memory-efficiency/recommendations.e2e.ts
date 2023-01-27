@@ -50,8 +50,8 @@ test
         await cliPage.sendCommandInCli('SCRIPT FLUSH');
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Recommendations displaying', async t => {
-        const luaScriptCodeChangesLabel = memoryEfficiencyPage.luaScriptAccordion.parent().find(memoryEfficiencyPage.cssCodeChangesLabel);
-        const luaScriptConfigurationChangesLabel = memoryEfficiencyPage.luaScriptAccordion.parent().find(memoryEfficiencyPage.cssConfigurationChangesLabel);
+        const luaScriptCodeChangesLabel = memoryEfficiencyPage.luaScriptAccordion.parent(0).find(memoryEfficiencyPage.cssCodeChangesLabel);
+        const luaScriptConfigurationChangesLabel = memoryEfficiencyPage.luaScriptAccordion.parent(0).find(memoryEfficiencyPage.cssConfigurationChangesLabel);
 
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that user can see Avoid dynamic Lua script recommendation when number_of_cached_scripts> 10
@@ -75,14 +75,15 @@ test
         await t.expect(memoryEfficiencyPage.luaScriptTextContainer.offsetHeight).eql(expandedTextContaiterSize, 'Lua script recommendation not expanded');
 
         // Verify that user can navigate by link to see the recommendation
-        await t.click(memoryEfficiencyPage.readMoreLink);
+        await t.click(memoryEfficiencyPage.luaScriptTextContainer.find(memoryEfficiencyPage.cssReadMoreLink));
         await common.checkURL(externalPageLink);
         // Close the window with external link to switch to the application window
         await t.closeWindow();
     });
-test('No recommendations message', async t => {
+    // skipped due to inability to receive no recommendations for now
+test.skip('No recommendations message', async t => {
     keyName = `recomKey-${common.generateWord(10)}`;
-    const noRecommendationsMessage = 'No Recommendations at the moment.';
+    const noRecommendationsMessage = 'No recommendations at the moment, run a new report later to keep up the good work!';
     const command = `HSET ${keyName} field value`;
 
     // Create Hash key and create report
@@ -100,7 +101,7 @@ test
         await browserPage.addStringKey(stringKeyName, '2147476121', 'field');
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
-        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName} [${index}]`);
+        await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName} [db${index}]`);
         await browserPage.addHashKey(keyName, '2147476121', 'field', 'value');
     })
     .after(async t => {

@@ -59,6 +59,7 @@ const RecommendationVoting = ({ vote, name }: Props) => {
         <EuiToolTip
           content={getTooltipContent('Very Useful')}
           position="bottom"
+          data-testid="very-useful-vote-tooltip"
         >
           <EuiButtonIcon
             disabled={!!vote || !config?.agreements?.analytics}
@@ -72,6 +73,7 @@ const RecommendationVoting = ({ vote, name }: Props) => {
         <EuiToolTip
           content={getTooltipContent('Useful')}
           position="bottom"
+          data-testid="useful-vote-tooltip"
         >
           <EuiButtonIcon
             disabled={!!vote || !config?.agreements?.analytics}
@@ -85,6 +87,7 @@ const RecommendationVoting = ({ vote, name }: Props) => {
         <EuiToolTip
           content={getTooltipContent('Not Useful')}
           position="bottom"
+          data-testid="not-useful-vote-tooltip"
         >
           <EuiPopover
             initialFocus={false}

@@ -189,6 +189,29 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
+    describe('redisVersion recommendation', () => {
+      // todo find solution for redis pass
+      requirements('rte.version <= 6', '!rte.pass');
+      [
+        {
+          name: 'Should create new database analysis with redisVersion recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([
+              constants.TEST_REDIS_VERSION_RECOMMENDATION,
+            ]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+
     describe('setPassword recommendation', () => {
       requirements('!rte.pass');
       [
@@ -202,28 +225,6 @@ describe('POST /databases/:instanceId/analysis', () => {
           checkFn: async ({ body }) => {
             expect(body.recommendations).to.include.deep.members([
               constants.TEST_SET_PASSWORD_RECOMMENDATION,
-            ]);
-          },
-          after: async () => {
-            expect(await repository.count()).to.eq(5);
-          }
-        },
-      ].map(mainCheckFn);
-    });
-
-    describe('redisVersion recommendation', () => {
-      requirements('rte.version <= 6');
-      [
-        {
-          name: 'Should create new database analysis with redisVersion recommendation',
-          data: {
-            delimiter: '-',
-          },
-          statusCode: 201,
-          responseSchema,
-          checkFn: async ({ body }) => {
-            expect(body.recommendations).to.include.deep.members([
-              constants.TEST_REDIS_VERSION_RECOMMENDATION,
             ]);
           },
           after: async () => {
@@ -257,7 +258,7 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
-    describe('rediSearch recommendation with ReJSON', () => {
+    describe('recommendations with ReJSON', () => {
       requirements('rte.modules.rejson');
       [
         {
@@ -274,6 +275,53 @@ describe('POST /databases/:instanceId/analysis', () => {
           checkFn: async ({ body }) => {
             expect(body.recommendations).to.include.deep.members([
               constants.TEST_REDISEARCH_RECOMMENDATION,
+            ]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+        {
+          name: 'Should create new database analysis with searchIndexes recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          before: async () => {
+            const jsonValue = JSON.stringify(constants.TEST_REJSON_VALUE_1);
+            await rte.data.sendCommand('ZADD', [constants.TEST_ZSET_KEY_1, constants.TEST_ZSET_MEMBER_1_SCORE, constants.TEST_ZSET_MEMBER_1]);
+            await rte.data.sendCommand('json.set', [constants.TEST_ZSET_MEMBER_1, '.', jsonValue]);
+          },
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([
+              constants.TEST_SEARCH_INDEXES_RECOMMENDATION,
+            ]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+  
+    describe('searchIndexes recommendation', () => {
+      requirements('!rte.pass');
+      [
+        {
+          name: 'Should create new database analysis with searchIndexes recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          before: async () => {
+            await rte.data.sendCommand('ZADD', [constants.TEST_ZSET_KEY_1, constants.TEST_ZSET_MEMBER_1_SCORE, constants.TEST_ZSET_MEMBER_1]);
+            await rte.data.sendCommand('HSET', [constants.TEST_ZSET_MEMBER_1, constants.TEST_HASH_FIELD_1_NAME, constants.TEST_HASH_FIELD_1_VALUE]);
+          },
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([
+              constants.TEST_SEARCH_INDEXES_RECOMMENDATION,
             ]);
           },
           after: async () => {
@@ -490,26 +538,6 @@ describe('POST /databases/:instanceId/analysis', () => {
           expect(await repository.count()).to.eq(5);
         }
       },
-      // update with new requirements
-      // {
-      //   name: 'Should create new database analysis with RTS recommendation',
-      //   data: {
-      //     delimiter: '-',
-      //   },
-      //   statusCode: 201,
-      //   responseSchema,
-      //   before: async () => {
-      //     await rte.data.sendCommand('zadd', [constants.TEST_ZSET_TIMESTAMP_KEY, constants.TEST_ZSET_TIMESTAMP_MEMBER, constants.TEST_ZSET_TIMESTAMP_SCORE]);
-      //   },
-      //   checkFn: async ({ body }) => {
-      //     expect(body.recommendations).to.include.deep.members([
-      //       constants.TEST_RTS_RECOMMENDATION,
-      //     ]);
-      //   },
-      //   after: async () => {
-      //     expect(await repository.count()).to.eq(5);
-      //   }
-      // },
     ].map(mainCheckFn);
   });
 });

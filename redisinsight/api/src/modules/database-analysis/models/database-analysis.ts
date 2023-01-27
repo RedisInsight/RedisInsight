@@ -125,6 +125,7 @@ export class DatabaseAnalysis {
   @Expose()
   @Type(() => Recommendation)
   recommendations: Recommendation[];
+
   @ApiPropertyOptional({
     description: 'Logical database number.',
     type: Number,

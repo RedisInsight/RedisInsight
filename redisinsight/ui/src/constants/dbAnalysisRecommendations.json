@@ -712,7 +712,7 @@
         "id": "4",
         "type": "link",
         "value": {
-          "href": "https://redis.io/download/",
+          "href": "https://redis.io/docs/management/security/acl/",
           "name": "Read more"
         }
       }

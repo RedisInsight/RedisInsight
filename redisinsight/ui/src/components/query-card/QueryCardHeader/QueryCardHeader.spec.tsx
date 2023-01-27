@@ -65,7 +65,7 @@ describe('QueryCardHeader', () => {
     expect(screen.getByTestId('copy-command')).toBeDisabled()
   })
 
-  it('should render disabled copy button', async () => {
+  it('event telemetry WORKBENCH_COMMAND_COPIED should be call after click on copy btn', async () => {
     const command = 'info'
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)

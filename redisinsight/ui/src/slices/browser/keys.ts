@@ -1059,14 +1059,9 @@ export function fetchSearchHistoryAction(
   onSuccess?: () => void,
   onFailed?: () => void,
 ) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    const state = stateInit()
-    const isRedisearchExists = isRedisearchAvailable(state.connections.instances.connectedInstance.modules)
-
-    return searchMode === SearchMode.Pattern || !isRedisearchExists
-      ? dispatch<any>(fetchPatternHistoryAction(onSuccess, onFailed))
-      : dispatch<any>(fetchRedisearchHistoryAction(onSuccess, onFailed))
-  }
+  return async (dispatch: AppDispatch) => (searchMode === SearchMode.Pattern
+    ? dispatch<any>(fetchPatternHistoryAction(onSuccess, onFailed))
+    : dispatch<any>(fetchRedisearchHistoryAction(onSuccess, onFailed)))
 }
 
 export function deleteSearchHistoryAction(
@@ -1075,14 +1070,9 @@ export function deleteSearchHistoryAction(
   onSuccess?: () => void,
   onFailed?: () => void,
 ) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    const state = stateInit()
-    const isRedisearchExists = isRedisearchAvailable(state.connections.instances.connectedInstance.modules)
-
-    return searchMode === SearchMode.Pattern || !isRedisearchExists
-      ? dispatch<any>(deletePatternHistoryAction(ids, onSuccess, onFailed))
-      : dispatch<any>(deleteRedisearchHistoryAction(ids, onSuccess, onFailed))
-  }
+  return async (dispatch: AppDispatch) => (searchMode === SearchMode.Pattern
+    ? dispatch<any>(deletePatternHistoryAction(ids, onSuccess, onFailed))
+    : dispatch<any>(deleteRedisearchHistoryAction(ids, onSuccess, onFailed)))
 }
 
 // Asynchronous thunk action

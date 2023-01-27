@@ -1695,7 +1695,7 @@ describe('keys slice', () => {
         apiService.delete = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(deleteSearchHistoryAction(SearchMode.Redisearch, ['1']))
+        await store.dispatch<any>(deleteSearchHistoryAction(SearchMode.Pattern, ['1']))
 
         // Assert
         const expectedActions = [

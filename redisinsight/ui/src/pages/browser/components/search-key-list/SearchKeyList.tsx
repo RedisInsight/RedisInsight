@@ -21,6 +21,7 @@ import {
   redisearchSelector
 } from 'uiSrc/slices/browser/redisearch'
 
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import styles from './styles.module.scss'
 
 const placeholders = {
@@ -29,6 +30,7 @@ const placeholders = {
 }
 
 const SearchKeyList = () => {
+  const { id } = useSelector(connectedInstanceSelector)
   const { search, viewType, filter, searchMode } = useSelector(keysSelector)
   const { search: redisearchQuery } = useSelector(redisearchSelector)
   const { data: rediSearchHistory, loading: rediSearchHistoryLoading } = useSelector(redisearchHistorySelector)
@@ -44,8 +46,10 @@ const SearchKeyList = () => {
   }, [filter])
 
   useEffect(() => {
-    dispatch(fetchSearchHistoryAction(searchMode))
-  }, [searchMode])
+    if (id) {
+      dispatch(fetchSearchHistoryAction(searchMode))
+    }
+  }, [id, searchMode])
 
   useEffect(() => {
     setValue(searchMode === SearchMode.Pattern ? search : redisearchQuery)

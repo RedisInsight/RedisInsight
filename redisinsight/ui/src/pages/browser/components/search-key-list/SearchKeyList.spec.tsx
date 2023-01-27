@@ -12,6 +12,7 @@ import {
 } from 'uiSrc/utils/test-utils'
 import { loadKeys, loadSearchHistory, setFilter, setPatternSearchMatch } from 'uiSrc/slices/browser/keys'
 
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import SearchKeyList from './SearchKeyList'
 
 jest.mock('uiSrc/slices/browser/keys', () => ({
@@ -22,6 +23,13 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
       { id: '2', mode: 'pattern', filter: { type: 'list', match: '*' } },
     ]
   })
+}))
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: '',
+  }),
 }))
 
 let store: typeof mockedStore
@@ -38,6 +46,17 @@ describe('SearchKeyList', () => {
     expect(searchInput).toBeInTheDocument()
   })
 
+  it('should load history after render', () => {
+    (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
+      id: '1'
+    }))
+
+    render(<SearchKeyList />)
+    const expectedActions = [loadSearchHistory()]
+
+    expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+  })
+
   it('"setSearchMatch" should be called after "onChange"', () => {
     const searchTerm = 'a'
 
@@ -49,7 +68,7 @@ describe('SearchKeyList', () => {
 
     fireEvent.keyDown(screen.getByTestId('search-key'), { key: keys.ENTER })
 
-    const expectedActions = [loadSearchHistory(), setPatternSearchMatch(searchTerm), loadKeys()]
+    const expectedActions = [setPatternSearchMatch(searchTerm), loadKeys()]
 
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions(expectedActions)

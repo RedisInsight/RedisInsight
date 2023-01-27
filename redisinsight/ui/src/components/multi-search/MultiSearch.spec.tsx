@@ -319,6 +319,28 @@ describe('MultiSearch', () => {
     expect(screen.queryByTestId('suggestions')).not.toBeInTheDocument()
   })
 
+  it('should close suggestion on click search button', async () => {
+    const onDelete = jest.fn()
+    render(
+      <MultiSearch
+        {...instance(mockedProps)}
+        onSubmit={jest.fn()}
+        suggestions={{
+          options: suggestionOptions,
+          onApply: jest.fn(),
+          onDelete,
+          buttonTooltipTitle: 'text'
+        }}
+        data-testid={searchInputId}
+      />
+    )
+
+    fireEvent.click(screen.getByTestId('show-suggestions-btn'))
+    expect(screen.getByTestId('suggestions')).toBeInTheDocument()
+    fireEvent.click(screen.getByTestId('search-btn'))
+    expect(screen.queryByTestId('suggestions')).not.toBeInTheDocument()
+  })
+
   it('should show loading wth loading suggestions state', () => {
     render(
       <MultiSearch

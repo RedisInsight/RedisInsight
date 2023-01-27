@@ -132,6 +132,11 @@ const MultiSearch = (props: Props) => {
     }
   }
 
+  const handleSubmit = () => {
+    exitAutoSuggestions()
+    onSubmit()
+  }
+
   return (
     <EuiOutsideClickDetector onOutsideClick={exitAutoSuggestions}>
       <div
@@ -255,7 +260,7 @@ const MultiSearch = (props: Props) => {
           color="primary"
           aria-label="Search"
           className={styles.searchButton}
-          onClick={() => onSubmit()}
+          onClick={handleSubmit}
           data-testid="search-btn"
         />
       </div>

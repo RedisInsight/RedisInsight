@@ -438,39 +438,6 @@ export class RecommendationProvider {
     }
   }
 
-  /*
- * Check dangerous commands recommendation
- * @param redisClient
- */
-
-  async determineDangerousCommandsRecommendation(
-    redisClient: Redis | Cluster,
-  ): Promise<Recommendation> {
-    try {
-      const dangerousCommands = await redisClient.sendCommand(
-        new Command('ACL', ['CAT', 'dangerous'], { replyEncoding: 'utf8' }),
-      ) as string[];
-
-      const filteredDangerousCommands = dangerousCommands.filter((command) => {
-        const commandName = command.split('|')[0];
-        return !redisInsightCommands.includes(commandName);
-      });
-
-      const activeDangerousCommands = await Promise.all(
-        filteredDangerousCommands.map(async (command) => await this.checkCommandInfo(redisClient, command)),
-      );
-      const commands = activeDangerousCommands
-        .filter((command) => !isNull(command))
-        .join('\r\n').toUpperCase();
-      return activeDangerousCommands.length
-        ? { name: RECOMMENDATION_NAMES.DANGEROUS_COMMANDS, params: { commands } }
-        : null;
-    } catch (err) {
-      this.logger.error('Can not determine dangerous commands recommendation', err);
-      return null;
-    }
-  }
-
   private async checkAuth(redisClient: Redis | Cluster): Promise<boolean> {
     try {
       await redisClient.sendCommand(
@@ -482,20 +449,6 @@ export class RecommendationProvider {
       }
     }
     return false;
-  }
-
-  private async checkCommandInfo(redisClient: Redis | Cluster, command: string): Promise<string> {
-    try {
-      const result = await redisClient.sendCommand(
-        new Command('command', ['info', command]),
-      );
-      if (isNull(result[0])) {
-        return null;
-      }
-    } catch (err) {
-      return null;
-    }
-    return command;
   }
 
   private checkTimestamp(value: string): boolean {

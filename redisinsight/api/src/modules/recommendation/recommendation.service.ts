@@ -109,10 +109,6 @@ export class RecommendationService {
         async () => await this.recommendationProvider.determineSearchIndexesRecommendation(client, keys, globalClient),
       ],
       [
-        RECOMMENDATION_NAMES.DANGEROUS_COMMANDS,
-        async () => await this.recommendationProvider.determineDangerousCommandsRecommendation(client),
-      ],
-      [
         RECOMMENDATION_NAMES.SET_PASSWORD,
         async () => await this.recommendationProvider.determineSetPasswordRecommendation(client),
       ],

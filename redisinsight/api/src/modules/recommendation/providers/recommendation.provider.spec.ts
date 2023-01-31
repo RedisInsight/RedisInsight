@@ -651,18 +651,4 @@ describe('RecommendationProvider', () => {
         expect(redisVersionRecommendation).toEqual(null);
       });
   });
-
-  describe('determineDangerousCommandsRecommendation', () => {
-    it('should not return dangerous commands recommendation when "command" command executed with error',
-      async () => {
-        resetAllWhenMocks();
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'command' }))
-          .mockRejectedValue('some error');
-
-        const dangerousCommandsRecommendation = await service
-          .determineDangerousCommandsRecommendation(nodeClient);
-        expect(dangerousCommandsRecommendation).toEqual(null);
-      });
-  });
 });

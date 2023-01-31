@@ -24,6 +24,7 @@ fixture `Database info tooltips`
     });
 test('Verify that user can see DB name, endpoint, connection type, Redis version, user name in tooltip when hover over the (i) icon', async t => {
     const version = /[0-9].[0-9].[0-9]/;
+    const logicalDbText = 'Select logical databases to work with in Browser, Workbench, and Database Analysis.';
 
     await t.hover(browserPage.databaseInfoIcon);
     await t.expect(browserPage.databaseInfoToolTip.textContent).contains(ossStandaloneConfig.databaseName, 'User can see database name in tooltip');
@@ -31,6 +32,9 @@ test('Verify that user can see DB name, endpoint, connection type, Redis version
     await t.expect(browserPage.databaseInfoToolTip.textContent).contains('Standalone', 'User can not see connection type in tooltip');
     await t.expect(browserPage.databaseInfoToolTip.textContent).match(version, 'User can not see Redis version in tooltip');
     await t.expect(browserPage.databaseInfoToolTip.textContent).contains('Default', 'User can not see user name in tooltip');
+    // Verify that user can see the tooltip by hovering on index control switcher
+    await t.expect(browserPage.databaseInfoToolTip.textContent).contains('Logical Databases', 'Logical Databases text not displayed in tooltip');
+    await t.expect(browserPage.databaseInfoToolTip.textContent).contains(logicalDbText, 'Logical Databases text not displayed in tooltip');
 
     // Verify that user can see an (i) icon next to the database name on Browser and Workbench pages
     await t.expect(browserPage.databaseInfoIcon.visible).ok('User can not see (i) icon on Browser page', { timeout: 10000 });

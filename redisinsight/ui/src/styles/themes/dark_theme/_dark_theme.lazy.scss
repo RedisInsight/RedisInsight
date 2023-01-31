@@ -126,11 +126,13 @@
 
   --moduleBackgroundColor: #{$commandGroupBadgeColor};
   --callOutBackgroundColor: #{$euiTooltipBackgroundColor};
+  --tooltipLightBgColor: #{$tooltipLightBgColor};
 
   --overlayPromoNYColor: #{$overlayPromoNYColor};
 
   --monacoBgColor: #{$monacoBgColor};
   --highlightDotColor: #{$highlightDotColor};
+  --monacoParamsColor: #{$monacoParamsColor};
 
   --successBorderColor: #{$successBorderColor};
   --warningBorderColor: #{$warningBorderColor};
@@ -180,4 +182,8 @@
 
   // Pub/Sub
   --pubSubClientsBadge: #{$pubSubClientsBadge};
+
+  // Database analysis
+  --badgeIconColor: #{$badgeIconColor};
+  --recommendationBorderColor: #{$recommendationBorderColor};
 }

@@ -23,7 +23,7 @@ describe('CliInput', () => {
     const dbIndexEl = queryByTestId('cli-db-index')
 
     expect(dbIndexEl).toBeInTheDocument()
-    expect(dbIndexEl).toHaveTextContent('[1]')
+    expect(dbIndexEl).toHaveTextContent('[db1]')
   })
 
   it('should not render db index if it is 0', () => {

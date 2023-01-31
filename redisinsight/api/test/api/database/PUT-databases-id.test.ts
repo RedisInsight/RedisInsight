@@ -97,6 +97,7 @@ describe(`PUT /databases/:id`, () => {
         data: {
           name: 'new name',
           port: 1111,
+          ssh: false,
         },
         statusCode: 503,
         responseBody: {
@@ -130,7 +131,7 @@ describe(`PUT /databases/:id`, () => {
     ].map(mainCheckFn);
   });
   describe('STANDALONE', () => {
-    requirements('rte.type=STANDALONE');
+    requirements('rte.type=STANDALONE', '!rte.ssh');
     describe('NO AUTH', function () {
       requirements('!rte.tls', '!rte.pass');
 
@@ -163,7 +164,7 @@ describe(`PUT /databases/:id`, () => {
           after: async () => {
             newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
             expect(newDatabase).to.contain({
-              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new']),
+              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'ssh']),
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
             });

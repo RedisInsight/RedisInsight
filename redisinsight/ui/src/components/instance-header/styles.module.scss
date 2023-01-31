@@ -17,11 +17,16 @@
 }
 
 .tooltip {
-  max-width: 372px !important;
+  max-width: 400px !important;
 }
 
 .tooltipAnchor {
   max-width: 100%;
+
+  .infoIcon {
+    transition: color ease .3s;
+  }
+
   &:hover {
     .infoIcon {
       color: currentColor;
@@ -43,3 +48,16 @@
 .infoIcon {
   color: var(--euiColorMediumShade);
 }
+
+.buttonDbIndex {
+  height: 32px !important;
+}
+
+.controls {
+  height: 32px !important;
+}
+
+.input {
+  width: 60px !important;
+}
+

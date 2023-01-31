@@ -79,8 +79,11 @@ describe('DatabaseAnalytics', () => {
   });
 
   describe('sendInstanceAddedEvent', () => {
-    it('should emit event with enabled tls and sni', () => {
-      service.sendInstanceAddedEvent(mockDatabaseWithTlsAuth, mockRedisGeneralInfo);
+    it('should emit event with enabled tls and sni, and ssh', () => {
+      service.sendInstanceAddedEvent({
+        ...mockDatabaseWithTlsAuth,
+        ssh: true,
+      }, mockRedisGeneralInfo);
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceAdded,
@@ -92,6 +95,7 @@ describe('DatabaseAnalytics', () => {
           verifyTLSCertificate: 'enabled',
           useTLSAuthClients: 'enabled',
           useSNI: 'enabled',
+          useSSH: 'enabled',
           version: mockRedisGeneralInfo.version,
           numberOfKeys: mockRedisGeneralInfo.totalKeys,
           numberOfKeysRange: '0 - 500 000',
@@ -119,6 +123,7 @@ describe('DatabaseAnalytics', () => {
           verifyTLSCertificate: 'disabled',
           useTLSAuthClients: 'disabled',
           useSNI: 'disabled',
+          useSSH: 'disabled',
           version: mockRedisGeneralInfo.version,
           numberOfKeys: mockRedisGeneralInfo.totalKeys,
           numberOfKeysRange: '0 - 500 000',
@@ -148,6 +153,7 @@ describe('DatabaseAnalytics', () => {
           verifyTLSCertificate: 'enabled',
           useTLSAuthClients: 'enabled',
           useSNI: 'enabled',
+          useSSH: 'disabled',
           version: mockRedisGeneralInfo.version,
           numberOfKeys: undefined,
           numberOfKeysRange: undefined,
@@ -187,12 +193,16 @@ describe('DatabaseAnalytics', () => {
           useTLS: 'disabled',
           verifyTLSCertificate: 'disabled',
           useTLSAuthClients: 'disabled',
+          useSNI: 'enabled',
+          useSSH: 'disabled',
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
             useTLS: 'enabled',
             verifyTLSCertificate: 'enabled',
             useTLSAuthClients: 'enabled',
+            useSNI: 'enabled',
+            useSSH: 'disabled',
           },
         },
       );
@@ -217,10 +227,14 @@ describe('DatabaseAnalytics', () => {
           useTLS: 'enabled',
           verifyTLSCertificate: 'enabled',
           useTLSAuthClients: 'enabled',
+          useSNI: 'enabled',
+          useSSH: 'disabled',
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
             useTLS: 'disabled',
+            useSNI: 'disabled',
+            useSSH: 'disabled',
             verifyTLSCertificate: 'disabled',
             useTLSAuthClients: 'disabled',
           },

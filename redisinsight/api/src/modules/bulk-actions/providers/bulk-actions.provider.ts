@@ -38,6 +38,7 @@ export class BulkActionsProvider {
       session: undefined,
       databaseId: dto.databaseId,
       context: ClientContext.Common,
+      db: dto.db,
     });
 
     await bulkAction.prepare(client, BulkActionsProvider.getSimpleRunnerClass(dto));

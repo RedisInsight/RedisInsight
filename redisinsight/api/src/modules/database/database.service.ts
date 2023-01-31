@@ -1,7 +1,7 @@
 import {
   Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
-import { sum, merge } from 'lodash';
+import { merge, sum } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -17,8 +17,9 @@ import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto'
 import { AppRedisInstanceEvents } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
-import { ClientContext } from 'src/common/models';
+import { ClientContext, Session } from 'src/common/models';
 import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 @Injectable()
 export class DatabaseService {
@@ -27,6 +28,7 @@ export class DatabaseService {
   constructor(
     private repository: DatabaseRepository,
     private redisService: RedisService,
+    private redisConnectionFactory: RedisConnectionFactory,
     private databaseInfoProvider: DatabaseInfoProvider,
     private databaseFactory: DatabaseFactory,
     private analytics: DatabaseAnalytics,
@@ -96,7 +98,14 @@ export class DatabaseService {
 
       // todo: clarify if we need this and if yes - rethink implementation
       try {
-        const client = await this.redisService.connectToDatabaseInstance(database, ClientContext.Common);
+        const client = await this.redisConnectionFactory.createRedisConnection(
+          {
+            session: {} as Session,
+            databaseId: database.id,
+            context: ClientContext.Common,
+          },
+          database,
+        );
         const redisInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
         this.analytics.sendInstanceAddedEvent(database, redisInfo);
         await client.disconnect();
@@ -137,7 +146,7 @@ export class DatabaseService {
       database = await this.repository.update(id, database);
 
       // todo: rethink
-      this.redisService.removeClientInstance({ databaseId: id });
+      this.redisService.removeClientInstances({ databaseId: id });
       this.analytics.sendInstanceEditedEvent(
         oldDatabase,
         database,
@@ -163,7 +172,7 @@ export class DatabaseService {
     try {
       await this.repository.delete(id);
       // todo: rethink
-      this.redisService.removeClientInstance({ databaseId: id });
+      this.redisService.removeClientInstances({ databaseId: id });
       this.logger.log('Succeed to delete database instance.');
 
       this.analytics.sendInstanceDeletedEvent(database);

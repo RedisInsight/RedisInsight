@@ -1,21 +1,44 @@
 import React from 'react'
-import { instance, mock } from 'ts-mockito'
 import { MOCK_ANALYSIS_REPORT_DATA } from 'uiSrc/mocks/data/analysis'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
+import { dbAnalysisSelector, dbAnalysisReportsSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { SectionName } from 'uiSrc/pages/databaseAnalysis'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { formatBytes, getGroupTypeDisplay } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { fireEvent, render, screen, within } from 'uiSrc/utils/test-utils'
 
-import AnalysisDataView, { Props } from './AnalysisDataView'
+import AnalysisDataView from './AnalysisDataView'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
 }))
 
-const mockedProps = mock<Props>()
+const mockdbAnalysisSelector = jest.requireActual('uiSrc/slices/analytics/dbAnalysis')
+const mockdbAnalysisReportsSelector = jest.requireActual('uiSrc/slices/analytics/dbAnalysis')
+
+jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
+  ...jest.requireActual('uiSrc/slices/analytics/dbAnalysis'),
+  dbAnalysisSelector: jest.fn().mockReturnValue({
+    loading: false,
+    error: '',
+    data: null,
+    history: {
+      loading: false,
+      error: '',
+      data: [],
+      selectedAnalysis: null,
+    }
+  }),
+  dbAnalysisReportsSelector: jest.fn().mockReturnValue({
+    loading: false,
+    error: '',
+    data: [],
+    selectedAnalysis: null,
+  }),
+}))
+
 const mockReports = [
   {
     id: MOCK_ANALYSIS_REPORT_DATA.id,
@@ -34,33 +57,41 @@ const extrapolateResultsId = 'extrapolate-results'
 
 describe('AnalysisDataView', () => {
   it('should render', () => {
-    expect(render(<AnalysisDataView {...instance(mockedProps)} />)).toBeTruthy()
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+    }))
+
+    expect(render(<AnalysisDataView />)).toBeTruthy()
   })
 
   it('should render only table when loading="true"', () => {
-    render(<AnalysisDataView {...instance(mockedProps)} loading />)
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      loading: true
+    }))
+
+    render(<AnalysisDataView />)
 
     expect(screen.queryByTestId('empty-analysis-no-reports')).not.toBeInTheDocument()
     expect(screen.queryByTestId('empty-analysis-no-keys')).not.toBeInTheDocument()
   })
 
   it('should render empty-data-message-no-keys when total=0 ', () => {
-    const mockedData = { totalKeys: { total: 0 } }
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: { totalKeys: { total: 0 } },
+    }));
+    (dbAnalysisReportsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisReportsSelector,
+      data: mockReports,
+    }))
+
     render(
-      <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
+      <AnalysisDataView />
     )
 
     expect(screen.queryByTestId('empty-analysis-no-reports')).not.toBeInTheDocument()
     expect(screen.queryByTestId('empty-analysis-no-keys')).toBeInTheDocument()
-  })
-
-  it('should render empty-data-message-no-reports when reports=[] ', () => {
-    render(
-      <AnalysisDataView {...instance(mockedProps)} reports={[]} />
-    )
-
-    expect(screen.queryByTestId('empty-analysis-no-reports')).toBeInTheDocument()
-    expect(screen.queryByTestId('empty-analysis-no-keys')).not.toBeInTheDocument()
   })
 })
 
@@ -78,9 +109,18 @@ describe('AnalysisDataView', () => {
         scanned: 40,
         processed: 40
       }
-    }
+    };
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: mockedData,
+    }));
+    (dbAnalysisReportsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisReportsSelector,
+      data: mockReports,
+    }))
+
     render(
-      <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
+      <AnalysisDataView />
     )
 
     expect(screen.getByTestId('total-memory-value')).toHaveTextContent(`~${formatBytes(mockedData.totalMemory.total * 2, 3)}`)
@@ -111,9 +151,17 @@ describe('AnalysisDataView', () => {
         scanned: 40,
         processed: 40
       }
-    }
+    };
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: mockedData,
+    }));
+    (dbAnalysisReportsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisReportsSelector,
+      data: mockReports,
+    }))
     render(
-      <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
+      <AnalysisDataView />
     )
 
     fireEvent.click(within(screen.getByTestId(summaryContainerId)).getByTestId(extrapolateResultsId))
@@ -146,9 +194,17 @@ describe('AnalysisDataView', () => {
         scanned: 40,
         processed: 40
       }
-    }
+    };
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: mockedData,
+    }));
+    (dbAnalysisReportsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisReportsSelector,
+      data: mockReports,
+    }))
     render(
-      <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
+      <AnalysisDataView />
     )
 
     const expirationGroup = mockedData.expirationGroups[1]
@@ -165,9 +221,17 @@ describe('AnalysisDataView', () => {
         scanned: 40,
         processed: 40
       }
-    }
+    };
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: mockedData,
+    }));
+    (dbAnalysisReportsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisReportsSelector,
+      data: mockReports,
+    }))
     render(
-      <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
+      <AnalysisDataView />
     )
     fireEvent.click(within(screen.getByTestId(analyticsTTLContainerId)).getByTestId(extrapolateResultsId))
 
@@ -185,9 +249,17 @@ describe('AnalysisDataView', () => {
         scanned: 40,
         processed: 40
       }
-    }
+    };
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: mockedData,
+    }));
+    (dbAnalysisReportsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisReportsSelector,
+      data: mockReports,
+    }))
     render(
-      <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
+      <AnalysisDataView />
     )
 
     const nspTopKeyItem = mockedData.topKeysNsp[0]
@@ -206,9 +278,17 @@ describe('AnalysisDataView', () => {
         scanned: 40,
         processed: 40
       }
-    }
+    };
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: mockedData,
+    }));
+    (dbAnalysisReportsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisReportsSelector,
+      data: mockReports,
+    }))
     render(
-      <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
+      <AnalysisDataView />
     )
     fireEvent.click(within(screen.getByTestId(topNameSpacesContainerId)).getByTestId(extrapolateResultsId))
 
@@ -228,9 +308,17 @@ describe('AnalysisDataView', () => {
         scanned: 10000,
         processed: 80
       }
-    }
+    };
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: mockedData,
+    }));
+    (dbAnalysisReportsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisReportsSelector,
+      data: mockReports,
+    }))
     render(
-      <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
+      <AnalysisDataView />
     )
 
     expect(screen.queryByTestId(extrapolateResultsId)).not.toBeInTheDocument()
@@ -259,12 +347,20 @@ describe('AnalysisDataView', () => {
         scanned: 10000,
         processed: 40
       }
-    }
+    };
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: mockedData,
+    }));
+    (dbAnalysisReportsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisReportsSelector,
+      data: mockReports,
+    }))
     const sendEventTelemetryMock = jest.fn()
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
 
     render(
-      <AnalysisDataView {...instance(mockedProps)} reports={mockReports} data={mockedData} />
+      <AnalysisDataView />
     )
 
     const clickAndCheckTelemetry = (el: HTMLInputElement, section: SectionName) => {

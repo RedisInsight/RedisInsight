@@ -1,6 +1,25 @@
 version: "3.4"
 
 services:
+  # ssh
+  ssh:
+    image: lscr.io/linuxserver/openssh-server:latest
+    environment:
+      - PASSWORD_ACCESS=true
+      - USER_PASSWORD=pass
+      - USER_NAME=u
+      - DOCKER_MODS=linuxserver/mods:openssh-server-ssh-tunnel
+      - PUBLIC_KEY_DIR=/keys/pub
+    volumes:
+      - ./rte/ssh/keys:/keys
+    ports:
+      - 2222:2222
+    networks:
+      default:
+        ipv4_address: 172.31.100.245
+      ssh:
+        ipv4_address: 172.33.100.245
+
   # oss standalone
   oss-standalone:
     image: redislabs/redismod
@@ -19,7 +38,11 @@ services:
     image: redis:5
     ports:
       - 8101:6379
-
+    networks:
+      default:
+        ipv4_address: 172.31.100.10
+      ssh:
+        ipv4_address: 172.33.100.10
   # oss standalone redisearch
   oss-standalone-redisearch:
     image: redislabs/redismod
@@ -93,3 +116,10 @@ networks:
       config:
         - subnet: 172.31.100.0/24
           gateway: 172.31.100.1
+  ssh:
+    name: "e2e-ssh-network"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.33.100.0/24
+          gateway: 172.33.100.1

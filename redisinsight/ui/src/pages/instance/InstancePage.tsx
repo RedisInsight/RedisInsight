@@ -6,7 +6,7 @@ import cx from 'classnames'
 
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import {
-  fetchConnectedInstanceAction,
+  fetchConnectedInstanceAction, fetchConnectedInstanceInfoAction,
   fetchInstancesAction,
   getDatabaseConfigInfoAction,
   instancesSelector,
@@ -73,6 +73,7 @@ const InstancePage = ({ routes = [] }: Props) => {
       !modulesData.length && dispatch(fetchInstancesAction())
     }))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
+    dispatch(fetchConnectedInstanceInfoAction(connectionInstanceId))
 
     if (contextInstanceId && contextInstanceId !== connectionInstanceId) {
       resetContext()

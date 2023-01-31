@@ -7,17 +7,6 @@ import DatabaseAnalysisPage from './DatabaseAnalysisPage'
 jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
   ...jest.requireActual('uiSrc/slices/analytics/dbAnalysis'),
   fetchDBAnalysisReportsHistory: jest.fn(),
-  dbAnalysisSelector: jest.fn().mockReturnValue({
-    loading: false,
-    error: '',
-    data: null,
-    history: {
-      loading: false,
-      error: '',
-      data: [],
-      selectedAnalysis: null,
-    }
-  }),
 }))
 
 /**

@@ -8,6 +8,7 @@ import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../..
 import { Common } from '../../../helpers/common';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -70,7 +71,7 @@ test('Verify that user can see saved filter per key type applied when he returns
     // Return back to Browser and check filter applied
     await t.click(myRedisDatabasePage.browserButton);
     // Verify that user can see saved input entered into the filter per Key name when he returns back to Browser page
-    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is still applied');
+    await verifySearchFilterValue(keyName);
 });
 test('Verify that user can see saved executed commands in CLI on Browser page when he returns back to Browser page', async t => {
     const commands = [

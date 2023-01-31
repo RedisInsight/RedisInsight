@@ -4,7 +4,7 @@ import {
   mockClientCertificateService, mockClusterDatabaseWithTlsAuth,
   mockDatabase,
   mockDatabaseInfoProvider, mockDatabaseWithTlsAuth,
-  mockIORedisClient, mockIORedisCluster, mockIORedisSentinel,
+  mockIORedisClient, mockIORedisCluster, mockIORedisSentinel, mockRedisConnectionFactory,
   mockRedisNoPermError,
   mockRedisService,
   mockSentinelDatabaseWithTlsAuth,
@@ -19,6 +19,7 @@ import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { NotFoundException } from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 describe('DatabaseFactory', () => {
   let service: DatabaseFactory;
@@ -33,6 +34,10 @@ describe('DatabaseFactory', () => {
         {
           provide: RedisService,
           useFactory: mockRedisService,
+        },
+        {
+          provide: RedisConnectionFactory,
+          useFactory: mockRedisConnectionFactory,
         },
         {
           provide: DatabaseInfoProvider,

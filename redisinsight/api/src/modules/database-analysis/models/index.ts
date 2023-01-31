@@ -6,3 +6,4 @@ export * from './simple-summary';
 export * from './database-analysis';
 export * from './short-database-analysis';
 export * from './sum-group';
+export * from './recommendation';

@@ -65,6 +65,7 @@ const WBResults = (props: Props) => {
           emptyCommand,
           isNotStored,
           executionTime,
+          db,
         }
       ) => (
         <QueryCard
@@ -83,8 +84,13 @@ const WBResults = (props: Props) => {
           mode={mode}
           activeResultsMode={activeResultsMode}
           resultsMode={resultsMode}
+          db={db}
           onQueryOpen={() => onQueryOpen(id)}
-          onQueryReRun={() => onQueryReRun(command, null, { clearEditor: false })}
+          onQueryReRun={() => onQueryReRun(
+            command,
+            null,
+            { mode, results: resultsMode, clearEditor: false, },
+          )}
           onQueryDelete={() => onQueryDelete(id)}
         />
       ))}

@@ -54,6 +54,7 @@ export const mockRepository = jest.fn(() => ({
   findOneBy: jest.fn(),
   find: jest.fn(),
   findByIds: jest.fn(),
+  merge: jest.fn(),
   create: jest.fn(),
   save: jest.fn(),
   insert: jest.fn(),

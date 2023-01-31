@@ -6,6 +6,12 @@ export const mockRedisNoAuthError: ReplyError = {
   message: 'NOAUTH authentication is required',
 };
 
+export const mockRedisNoPasswordError: ReplyError = {
+  name: 'ReplyError',
+  command: 'AUTH',
+  message: 'ERR Client sent AUTH, but no password is set',
+};
+
 export const mockRedisNoPermError: ReplyError = {
   name: 'ReplyError',
   command: 'GET',

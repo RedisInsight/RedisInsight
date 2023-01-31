@@ -18,7 +18,7 @@ import {
   ITelemetryService,
   IRedisModulesSummary,
   MatchType,
-  RedisModules, IRedisDefaultModules,
+  RedisModules,
 } from './interfaces'
 import { TelemetryEvent } from './events'
 import { NON_TRACKING_ANONYMOUS_ID, SegmentTelemetryService } from './segment'

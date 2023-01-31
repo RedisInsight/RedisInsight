@@ -65,10 +65,6 @@
         "arch": ["x64"]
       },
       {
-        "target": "flatpak",
-        "arch": ["x64"]
-      },
-      {
         "target": "rpm",
         "arch": ["x64"]
       },

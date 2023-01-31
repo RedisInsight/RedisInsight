@@ -117,11 +117,6 @@ const WBView = (props: Props) => {
     onSubmit(query, commandId, executeParams)
   }
 
-  const handleProfile = (query?: string, commandId?: Nullable<string>, executeParams: CodeButtonParams = {}) => {
-    sendEventSubmitTelemetry(TelemetryEvent.WORKBENCH_COMMAND_PROFILE, query, executeParams)
-    onSubmit(query, commandId, executeParams)
-  }
-
   const sendEventSubmitTelemetry = (
     event: TelemetryEvent,
     commandInit = script,
@@ -241,7 +236,6 @@ const WBView = (props: Props) => {
                     activeResultsMode={resultsMode}
                     scrollDivRef={scrollDivRef}
                     onQueryReRun={handleReRun}
-                    onQueryProfile={handleProfile}
                     onQueryOpen={onQueryOpen}
                     onQueryDelete={onQueryDelete}
                   />

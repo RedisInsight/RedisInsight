@@ -23,7 +23,6 @@ export interface Props {
   onQueryReRun: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   onQueryDelete: (commandId: string) => void
   onQueryOpen: (commandId: string) => void
-  onQueryProfile: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
 }
 const WBResults = (props: Props) => {
   const {
@@ -31,7 +30,6 @@ const WBResults = (props: Props) => {
     activeMode,
     activeResultsMode,
     onQueryReRun,
-    onQueryProfile,
     onQueryDelete,
     onQueryOpen,
     scrollDivRef
@@ -93,7 +91,7 @@ const WBResults = (props: Props) => {
           onQueryProfile={(profileType: ProfileQueryType) => {
             const profileQuery = generateProfileQueryForCommand(command, profileType)
             if (profileQuery) {
-              return onQueryProfile(
+              return onQueryReRun(
                 profileQuery,
                 null,
                 { mode, results: resultsMode, clearEditor: false, },

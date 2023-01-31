@@ -1,10 +1,10 @@
 import { ProfileQueryType, SEARCH_COMMANDS, GRAPH_COMMANDS } from './constants'
 
-export const generateGraphProfileQuery = (query: string, type: ProfileQueryType) => {
+export function generateGraphProfileQuery(query: string, type: ProfileQueryType) {
   return [`graph.${type.toLowerCase()}`, ...query.split(' ').slice(1)].join(' ')
 }
 
-export const generateSearchProfileQuery = (query: string, type: ProfileQueryType) => {
+export function generateSearchProfileQuery(query: string, type: ProfileQueryType) {
   const commandSplit = query.split(' ')
   const cmd = commandSplit[0]
 
@@ -18,7 +18,7 @@ export const generateSearchProfileQuery = (query: string, type: ProfileQueryType
   }
 }
 
-export const generateProfileQueryForCommand = (query: string, type: ProfileQueryType) => {
+export function generateProfileQueryForCommand(query: string, type: ProfileQueryType) {
   const cmd = query.split(' ')[0].toLowerCase()
 
   if (GRAPH_COMMANDS.includes(cmd)) {

@@ -63,7 +63,7 @@ export const initDataHelper = (rte) => {
   ): Promise<any> => {
     const command = `ACL SETUSER ${constants.TEST_INSTANCE_ACL_USER} reset on ${rules} >${constants.TEST_INSTANCE_ACL_PASS}`;
 
-    return executeCommand(...command.split(' '));
+    return executeCommandAll(...command.split(' '));
   };
 
   const flushTestRunData = async (node) => {
@@ -218,6 +218,25 @@ export const initDataHelper = (rte) => {
     );
   };
 
+
+  const generateHugeElementsForListKey = async (number: number = 100000, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const batchSize = 10000;
+    let inserted = 0;
+    do {
+      const pipeline = [];
+      const limit = inserted + batchSize;
+      for (inserted; inserted < limit && inserted < number; inserted++) {
+        pipeline.push(['lpush', constants.TEST_LIST_KEY_1, inserted]);
+      }
+
+      await insertKeysBasedOnEnv(pipeline, true);
+    } while (inserted < number)
+  };
+
   // Set
   const generateSets = async (clean: boolean = false) => {
     if (clean) {
@@ -265,6 +284,24 @@ export const initDataHelper = (rte) => {
         return toInsert;
       })(),
     );
+  };
+
+  const generateHugeMembersForSortedListKey = async (number: number = 100000, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const batchSize = 10000;
+    let inserted = 0;
+    do {
+      const pipeline = [];
+      const limit = inserted + batchSize;
+      for (inserted; inserted < limit && inserted < number; inserted++) {
+        pipeline.push(['zadd', constants.TEST_ZSET_KEY_1, inserted, inserted]);
+      }
+
+      await insertKeysBasedOnEnv(pipeline, true);
+    } while (inserted < number)
   };
 
   // Hash
@@ -386,6 +423,25 @@ export const initDataHelper = (rte) => {
     } while (inserted < number)
   };
 
+  const generateHugeNumberOfMembersForSetKey = async (number: number = 100000, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const batchSize = 10000;
+    let inserted = 0;
+    do {
+      const pipeline = [];
+      const limit = inserted + batchSize;
+      for (inserted; inserted < limit && inserted < number; inserted++) {
+        pipeline.push(['sadd', constants.TEST_SET_KEY_1, inserted]);
+      }
+
+      await insertKeysBasedOnEnv(pipeline, true);
+    } while (inserted < number)
+  };
+
+
   const generateHugeNumberOfTinyStringKeys = async (number: number = 100000, clean: boolean) => {
     if (clean) {
       await truncate();
@@ -456,6 +512,19 @@ export const initDataHelper = (rte) => {
     }
   }
 
+  // scripts
+  const generateNCachedScripts = async (number: number = 10, clean: boolean) => {
+    if (clean) {
+      await truncate();
+    }
+
+    const pipeline = [];
+    for (let i = 0; i < number; i++) {
+      pipeline.push(['eval', `return ${i}`, '0'])
+    }
+    await insertKeysBasedOnEnv(pipeline);
+  };
+
   const setRedisearchConfig = async (
     rule: string,
     value: string,
@@ -475,6 +544,8 @@ export const initDataHelper = (rte) => {
     generateKeys,
     generateHugeNumberOfFieldsForHashKey,
     generateHugeNumberOfTinyStringKeys,
+    generateHugeElementsForListKey,
+    generateHugeMembersForSortedListKey,
     generateHugeStream,
     generateNKeys,
     generateRedisearchIndexes,
@@ -485,6 +556,8 @@ export const initDataHelper = (rte) => {
     generateStreamsWithoutStrictMode,
     generateNStreams,
     generateNGraphs,
+    generateNCachedScripts,
+    generateHugeNumberOfMembersForSetKey,
     getClientNodes,
     setRedisearchConfig,
   }

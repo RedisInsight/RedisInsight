@@ -7,6 +7,7 @@ import {
   keyBy,
   sum,
   sumBy,
+  isNumber,
 } from 'lodash';
 import {
   convertBulkStringsToObject,
@@ -14,6 +15,7 @@ import {
 } from 'src/utils';
 import { getTotal } from 'src/modules/database/utils/database.total.util';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class DatabaseOverviewProvider {
@@ -21,24 +23,25 @@ export class DatabaseOverviewProvider {
 
   /**
    * Calculates redis database metrics based on connection type (eg Cluster or Standalone)
-   * @param id
+   * @param clientMetadata
    * @param client
    */
   async getOverview(
-    id: string,
+    clientMetadata: ClientMetadata,
     client: IORedis.Redis | IORedis.Cluster,
   ): Promise<DatabaseOverview> {
     let nodesInfo = [];
-    let currentDbIndex = 0;
     let totalKeys;
     let totalKeysPerDb;
 
+    const currentDbIndex = isNumber(clientMetadata.db)
+      ? clientMetadata.db
+      : get(client, ['options', 'db'], 0);
+
     if (client.isCluster) {
-      currentDbIndex = get(client, ['options', 'db'], 0);
       nodesInfo = await this.getNodesInfo(client as IORedis.Cluster);
       totalKeys = await this.calculateNodesTotalKeys(client as IORedis.Cluster);
     } else {
-      currentDbIndex = get(client, ['options', 'db'], 0);
       nodesInfo = [await this.getNodeInfo(client as IORedis.Redis)];
       const [calculatedTotalKeys, calculatedTotalKeysPerDb] = this.calculateTotalKeys(nodesInfo, currentDbIndex);
       totalKeys = calculatedTotalKeys;
@@ -54,7 +57,7 @@ export class DatabaseOverviewProvider {
       opsPerSecond: this.calculateOpsPerSec(nodesInfo),
       networkInKbps: this.calculateNetworkIn(nodesInfo),
       networkOutKbps: this.calculateNetworkOut(nodesInfo),
-      cpuUsagePercentage: this.calculateCpuUsage(id, nodesInfo),
+      cpuUsagePercentage: this.calculateCpuUsage(clientMetadata.databaseId, nodesInfo),
     };
   }
 

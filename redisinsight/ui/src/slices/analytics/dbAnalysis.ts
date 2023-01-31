@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
+import { Vote } from 'uiSrc/constants/recommendations'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { StateDatabaseAnalysis } from 'uiSrc/slices/interfaces/analytics'
+import { StateDatabaseAnalysis, DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
@@ -13,6 +14,7 @@ export const initialState: StateDatabaseAnalysis = {
   loading: false,
   error: '',
   data: null,
+  selectedViewTab: DatabaseAnalysisViewTab.DataSummary,
   history: {
     loading: false,
     error: '',
@@ -38,6 +40,15 @@ const databaseAnalysisSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    setRecommendationVote: () => {
+      // we don't have any loading here
+    },
+    setRecommendationVoteSuccess: (state, { payload }: PayloadAction<DatabaseAnalysis>) => {
+      state.data = payload
+    },
+    setRecommendationVoteError: (state, { payload }) => {
+      state.error = payload
+    },
     loadDBAnalysisReports: (state) => {
       state.history.loading = true
     },
@@ -55,11 +66,15 @@ const databaseAnalysisSlice = createSlice({
     setShowNoExpiryGroup: (state, { payload }: PayloadAction<boolean>) => {
       state.history.showNoExpiryGroup = payload
     },
+    setDatabaseAnalysisViewTab: (state, { payload }: PayloadAction<DatabaseAnalysisViewTab>) => {
+      state.selectedViewTab = payload
+    },
   }
 })
 
 export const dbAnalysisSelector = (state: RootState) => state.analytics.databaseAnalysis
 export const dbAnalysisReportsSelector = (state: RootState) => state.analytics.databaseAnalysis.history
+export const dbAnalysisViewTabSelector = (state: RootState) => state.analytics.databaseAnalysis.selectedViewTab
 
 export const {
   setDatabaseAnalysisInitialState,
@@ -71,6 +86,10 @@ export const {
   loadDBAnalysisReportsError,
   setSelectedAnalysisId,
   setShowNoExpiryGroup,
+  setDatabaseAnalysisViewTab,
+  setRecommendationVote,
+  setRecommendationVoteSuccess,
+  setRecommendationVoteError,
 } = databaseAnalysisSlice.actions
 
 // The reducer
@@ -105,6 +124,43 @@ export function fetchDBAnalysisAction(
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(getDBAnalysisError(errorMessage))
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function putRecommendationVote(
+  recommendationName: string,
+  vote: Vote,
+  onSuccessAction?: (instanceId: string, name: string, vote: Vote) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      dispatch(setRecommendationVote())
+      const state = stateInit()
+      const instanceId = state.connections.instances.connectedInstance?.id
+
+      const { data, status } = await apiService.patch(
+        getUrl(
+          instanceId,
+          ApiEndpoints.DATABASE_ANALYSIS,
+          state.analytics.databaseAnalysis.history.selectedAnalysis ?? '',
+        ),
+        { name: recommendationName, vote },
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setRecommendationVoteSuccess(data))
+
+        onSuccessAction?.(instanceId, recommendationName, vote)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(setRecommendationVoteError(errorMessage))
       onFailAction?.()
     }
   }

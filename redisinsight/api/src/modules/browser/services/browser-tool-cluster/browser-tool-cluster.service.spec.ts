@@ -15,7 +15,8 @@ import {
 import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { mockBrowserClientMetadata } from 'src/__mocks__';
+import { mockBrowserClientMetadata, mockRedisConnectionFactory } from 'src/__mocks__';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 const mockClient = new Redis();
 const mockCluster = new Redis.Cluster([]);
@@ -41,6 +42,10 @@ describe('BrowserToolClusterService', () => {
         {
           provide: RedisService,
           useFactory: () => ({}),
+        },
+        {
+          provide: RedisConnectionFactory,
+          useFactory: mockRedisConnectionFactory,
         },
         {
           provide: DatabaseService,

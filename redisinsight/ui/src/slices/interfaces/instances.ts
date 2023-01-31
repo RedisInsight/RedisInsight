@@ -13,6 +13,7 @@ import { SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
 import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-master'
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
+import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
 
 export interface Instance extends DatabaseInstanceResponse {
   host: string
@@ -28,6 +29,15 @@ export interface Instance extends DatabaseInstanceResponse {
   name?: string
   db?: number
   tls?: boolean
+  ssh?: boolean
+  sshOptions?: {
+    host: string
+    port: number
+    username?: string
+    password?: string
+    privateKey?: string
+    passphrase?: string
+  }
   tlsClientAuthRequired?: boolean
   verifyServerCert?: boolean
   caCert?: CaCertificate
@@ -282,6 +292,7 @@ export interface InitialStateInstances {
   connectedInstance: Instance
   editedInstance: InitialStateEditedInstances
   instanceOverview: DatabaseConfigInfo
+  instanceInfo: RedisNodeInfoResponse
   importInstances: {
     loading: boolean
     error: string

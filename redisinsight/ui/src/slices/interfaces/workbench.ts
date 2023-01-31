@@ -48,7 +48,13 @@ export enum RunQueryMode {
   ASCII = 'ASCII',
 }
 
+export enum AutoExecute {
+  True = 'true',
+  False = 'false',
+}
+
 export enum ResultsMode {
+  Silent = 'SILENT',
   Default = 'DEFAULT',
   GroupMode = 'GROUP_MODE',
 }

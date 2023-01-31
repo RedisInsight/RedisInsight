@@ -15,7 +15,8 @@ export default function MonacoEditor(props) {
         createContextKey: jest.fn(),
         focus: jest.fn(),
         onDidChangeCursorPosition: jest.fn(),
-        executeEdits: jest.fn()
+        executeEdits: jest.fn(),
+        updateOptions: jest.fn()
       },
       // monaco
       {
@@ -31,12 +32,21 @@ export default function MonacoEditor(props) {
           }),
           setLanguageConfiguration: jest.fn(),
           setMonarchTokensProvider: jest.fn(),
+          json: {
+            jsonDefaults:{
+              setDiagnosticsOptions: jest.fn()
+            }
+          }
         },
         KeyMod: {},
         KeyCode: {}
       })
   }, [])
-  return <input {...props} data-testid="monaco"/>;
+  return <textarea
+    {...props}
+    onChange={(e) => props.onChange && props.onChange(e.target.value)}
+    data-testid={props['data-testid'] ? props['data-testid'] : 'monaco'}
+  />;
 }
 
 export const languages = {

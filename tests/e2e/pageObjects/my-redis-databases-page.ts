@@ -1,4 +1,5 @@
 import { t, Selector } from 'testcafe';
+import { getDatabaseIdByName } from '../helpers/api/api-database';
 
 export class MyRedisDatabasePage {
     //-------------------------------------------------------------------------------------------
@@ -9,6 +10,7 @@ export class MyRedisDatabasePage {
     //-------------------------------------------------------------------------------------------
     // CSS Selectors
     cssNumberOfDbs = '[data-testid=number-of-dbs]';
+    cssRedisStackIcon = '[data-testid=redis-stack-icon]';
     //BUTTONS
     settingsButton = Selector('[data-testid=settings-page-btn]');
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
@@ -66,6 +68,7 @@ export class MyRedisDatabasePage {
     failedImportMessage = Selector('[data-testid=result-failed]');
     successImportMessage = Selector('[data-testid=result-success]');
     importDialogTitle = Selector('[data-testid=import-dbs-dialog-title]');
+    importResult = Selector('[data-testid^=table-result-]');
     // DIALOG
     importDbDialog = Selector('[data-testid=import-dbs-dialog]');
     successResultsAccordion = Selector('[data-testid^=success-results-]');
@@ -186,18 +189,24 @@ export class MyRedisDatabasePage {
 
     /**
      * Verify database status is visible
+     * @param databaseName The name of the database
     */
-    async verifyDatabaseStatusIsVisible(): Promise<void> {
-        await t.expect(Selector('div').withAttribute('data-testid', /database-status-new-*/).visible)
-            .ok('Database status is not visible');
+    async verifyDatabaseStatusIsVisible(databaseName: string): Promise<void> {
+        const databaseId = await getDatabaseIdByName(databaseName);
+        const databaseEditBtn = Selector(`[data-testid=database-status-new-${databaseId}]`);
+
+        await t.expect(databaseEditBtn.exists).ok(`Database status is not visible for ${databaseName}`);
     }
 
     /**
     * Verify database status is not visible
+    * @param databaseName The name of the database
     */
-    async verifyDatabaseStatusIsNotVisible(): Promise<void> {
-        await t.expect(Selector('div').withAttribute('data-testid', /database-status-new-*/).visible)
-            .notOk('Database status is still visible');
+    async verifyDatabaseStatusIsNotVisible(databaseName: string): Promise<void> {
+        const databaseId = await getDatabaseIdByName(databaseName);
+        const databaseEditBtn = Selector(`[data-testid=database-status-new-${databaseId}]`);
+
+        await t.expect(databaseEditBtn.exists).notOk(`Database status is still visible for ${databaseName}`);
     }
 
     /**

@@ -43,7 +43,7 @@ async function verifyContext(): Promise<void> {
         .expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('Key details not opened');
 }
 
-fixture`Search capabilities in Browser`
+fixture `Search capabilities in Browser`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl);
 test

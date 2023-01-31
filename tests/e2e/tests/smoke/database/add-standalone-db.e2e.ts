@@ -33,11 +33,11 @@ test
     })('Verify that user can add Standalone Database', async() => {
         await addNewStandaloneDatabase(ossStandaloneConfig);
         // Verify that user can see an indicator of databases that are added manually and not opened yet
-        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible(ossStandaloneConfig.databaseName);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.click(browserPage.myRedisDbIcon);
         // Verify that user can't see an indicator of databases that were opened
-        await myRedisDatabasePage.verifyDatabaseStatusIsNotVisible();
+        await myRedisDatabasePage.verifyDatabaseStatusIsNotVisible(ossStandaloneConfig.databaseName);
     });
 test
     .meta({ rte: rte.reCluster })
@@ -47,7 +47,7 @@ test
         await addNewREClusterDatabase(redisEnterpriseClusterConfig);
         // Verify that user can see an indicator of databases that are added using autodiscovery and not opened yet
         // Verify new connection badge for RE cluster
-        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible(redisEnterpriseClusterConfig.databaseName);
     });
 test
     .meta({ env: env.web, rte: rte.ossCluster })
@@ -56,7 +56,7 @@ test
     })('Verify that user can add OSS Cluster DB', async() => {
         await addOSSClusterDatabase(ossClusterConfig);
         // Verify new connection badge for OSS cluster
-        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible(ossClusterConfig.ossClusterDatabaseName);
     });
 
 test
@@ -66,5 +66,7 @@ test
     })('Verify that user can add database from RE Cloud via auto-discover flow', async() => {
         await addRECloudDatabase(cloudDatabaseConfig);
         // Verify new connection badge for RE cloud
-        await myRedisDatabasePage.verifyDatabaseStatusIsVisible();
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible(cloudDatabaseConfig.databaseName);
+        // Verify redis stack icon for RE Cloud with all 5 modules
+        await t.expect(myRedisDatabasePage.redisStackIcon.visible).ok('Redis Stack icon not found for RE Cloud db with all 5 modules');
     });

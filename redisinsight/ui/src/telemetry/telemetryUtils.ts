@@ -5,7 +5,7 @@
 import isGlob from 'is-glob'
 import { cloneDeep } from 'lodash'
 import * as jsonpath from 'jsonpath'
-import { Nullable } from 'uiSrc/utils'
+import { isRedisearchAvailable, Nullable } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
@@ -18,7 +18,7 @@ import {
   ITelemetryService,
   IRedisModulesSummary,
   MatchType,
-  RedisModules,
+  RedisModules, IRedisDefaultModules,
 } from './interfaces'
 import { TelemetryEvent } from './events'
 import { NON_TRACKING_ANONYMOUS_ID, SegmentTelemetryService } from './segment'
@@ -228,9 +228,20 @@ const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): IRedisMo
           version: module.version,
           semanticVersion: module.semanticVersion,
         }
-      } else {
-        summary.customModules.push(module)
+        return
       }
+
+      if (isRedisearchAvailable([module])) {
+        const redisearchName = getEnumKeyBValue(RedisModules, RedisModules.RediSearch)
+        summary[redisearchName] = {
+          loaded: true,
+          version: module.version,
+          semanticVersion: module.semanticVersion,
+        }
+        return
+      }
+
+      summary.customModules.push(module)
     }))
   } catch (e) {
     // continue regardless of error

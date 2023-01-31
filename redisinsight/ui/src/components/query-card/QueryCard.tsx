@@ -4,7 +4,7 @@ import cx from 'classnames'
 import { EuiLoadingContent, keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
-import { WBQueryType, ProfileQueryType } from 'uiSrc/pages/workbench/constants'
+import { WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
 import {
   getWBQueryType,
@@ -44,7 +44,6 @@ export interface Props {
   onQueryDelete: () => void
   onQueryReRun: () => void
   onQueryOpen: () => void
-  onQueryProfile: (type: ProfileQueryType) => void
 }
 
 const getDefaultPlugin = (views: IPluginVisualization[], query: string) =>
@@ -76,7 +75,6 @@ const QueryCard = (props: Props) => {
     createdAt,
     onQueryOpen,
     onQueryDelete,
-    onQueryProfile,
     onQueryReRun,
     loading,
     emptyCommand,
@@ -188,7 +186,6 @@ const QueryCard = (props: Props) => {
           setSelectedValue={changeViewTypeSelected}
           onQueryDelete={onQueryDelete}
           onQueryReRun={onQueryReRun}
-          onQueryProfile={onQueryProfile}
         />
         {isOpen && (
           <>

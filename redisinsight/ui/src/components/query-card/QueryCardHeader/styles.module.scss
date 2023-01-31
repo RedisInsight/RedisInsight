@@ -127,27 +127,6 @@ $marginIcon: 12px;
   height: 40px;
 }
 
-.dropdownProfileIcon {
-  padding: inherit !important;
-  :global {
-    .euiSuperSelectControl.euiFormControlLayoutIcons {
-      display: none !important;
-    }
-  }
-}
-
-.dropdownProfileOption {
-  display: inherit !important;
-}
-
-.dropdownProfileItem {
-  :global {
-    .euiContextMenu__icon {
-      display: none !important;
-    }
-  }
-}
-
 .dropdown {
   width: 168px;
   position: absolute;

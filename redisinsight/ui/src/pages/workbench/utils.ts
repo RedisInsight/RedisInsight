@@ -1,35 +1,25 @@
 import { ProfileQueryType, SEARCH_COMMANDS, GRAPH_COMMANDS } from './constants'
 
 export const generateGraphProfileQuery = (query: string, type: ProfileQueryType) => {
-  const q = query?.split(' ')?.slice(1)
-
-  if (q) {
-    return [`graph.${type.toLowerCase()}`, ...q].join(' ')
-  }
-
-  return null
+  return [`graph.${type.toLowerCase()}`, ...query.split(' ').slice(1)].join(' ')
 }
 
 export const generateSearchProfileQuery = (query: string, type: ProfileQueryType) => {
-  const commandSplit = query?.split(' ')
-  const cmd = commandSplit?.[0]
-
-  if (!commandSplit || !cmd) {
-    return null
-  }
+  const commandSplit = query.split(' ')
+  const cmd = commandSplit[0]
 
   if (type === ProfileQueryType.Explain) {
-    return [`ft.${type.toLowerCase()}`, ...commandSplit?.slice(1)].join(' ')
+    return [`ft.${type.toLowerCase()}`, ...commandSplit.slice(1)].join(' ')
   } else {
-    let index = commandSplit?.[1]
+    let index = commandSplit[1]
 
-    const queryType = cmd.split('.')?.[1] // SEARCH / AGGREGATE
-    return [`ft.${type.toLowerCase()}`, index, queryType, 'QUERY', ...commandSplit?.slice(2)].join(' ')
+    const queryType = cmd.split('.')[1] // SEARCH / AGGREGATE
+    return [`ft.${type.toLowerCase()}`, index, queryType, 'QUERY', ...commandSplit.slice(2)].join(' ')
   }
 }
 
 export const generateProfileQueryForCommand = (query: string, type: ProfileQueryType) => {
-  const cmd = query?.split(' ')?.[0]?.toLowerCase()
+  const cmd = query.split(' ')[0].toLowerCase()
 
   if (GRAPH_COMMANDS.includes(cmd)) {
     return generateGraphProfileQuery(query, type)

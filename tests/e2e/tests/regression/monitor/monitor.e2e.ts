@@ -14,7 +14,7 @@ import {
     ossStandaloneNoPermissionsConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -115,7 +115,8 @@ test
             await t.expect(previousTimestamp).notEql(nextTimestamp, 'Monitor results not correct');
         }
     });
-test
+    // Skipped due to redis issue https://redislabs.atlassian.net/browse/RI-4111
+test.skip
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await cliPage.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor');
@@ -123,17 +124,18 @@ test
         await t.click(cliPage.cliExpandButton);
         await t.expect(cliPage.cliOutputResponseSuccess.textContent).eql('"OK"', 'Command from autocomplete was not found & executed');
         await t.click(cliPage.cliCollapseButton);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     })
-    .after(async() => {
+    .after(async t => {
         // Delete created user
+        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await cliPage.sendCommandInCli('acl DELUSER noperm');
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
+        await deleteStandaloneDatabasesApi([ossStandaloneConfig, ossStandaloneNoPermissionsConfig]);
     })('Verify that if user doesn\'t have permissions to run monitor, user can see error message', async t => {
         // Expand the Profiler
         await t.click(monitorPage.expandMonitor);

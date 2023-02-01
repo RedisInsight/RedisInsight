@@ -197,7 +197,7 @@ const SSHDetails = (props: Props) => {
                   onChange={formik.handleChange}
                   fullWidth
                   maxLength={50_000}
-                  placeholder="Enter SSH Private Key"
+                  placeholder="Enter SSH Private Key in PEM format"
                   data-testid="sshPrivateKey"
                 />
               </EuiFormRow>

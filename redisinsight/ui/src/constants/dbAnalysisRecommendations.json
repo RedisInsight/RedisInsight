@@ -687,36 +687,5 @@
       }
     ],
     "badges": ["upgrade"]
-  },
-  "dangerousCommands": {
-    "id": "dangerousCommands",
-    "title": "Rename or disable dangerous commands",
-    "content": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "The following commands are currently not renamed or disabled for your Instance. These commands are powerful and dangerous if not managed properly. Rename or disable them, especially for the production environment"
-      },
-      {
-        "id": "2",
-        "type": "pre",
-        "parameter": ["commands"],
-        "value": "${0} "
-      },
-      {
-        "id": "3",
-        "type": "spacer",
-        "value": "s"
-      },
-      {
-        "id": "4",
-        "type": "link",
-        "value": {
-          "href": "https://redis.io/download/",
-          "name": "Read more"
-        }
-      }
-    ],
-    "badges": ["code_changes"]
   }
 }

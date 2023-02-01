@@ -7,9 +7,6 @@ import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/u
 import {
   RECOMMENDATION_NAMES, IS_TIMESTAMP, IS_INTEGER_NUMBER_REGEX, IS_NUMBER_REGEX,
 } from 'src/constants';
-import ERROR_MESSAGES from 'src/constants/error-messages';
-import { ClusterNodeNotFoundError } from 'src/modules/cli/constants/errors';
-import { checkRedirectionError, parseRedirectionError } from 'src/utils/cli-helper';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
@@ -426,108 +423,17 @@ export class RecommendationProvider {
   async determineSearchIndexesRecommendation(
     redisClient: Redis,
     keys: Key[],
-    client: any,
+    client: Redis | Cluster,
   ): Promise<Recommendation> {
     try {
       if (client.isCluster) {
-        let processedKeysNumber = 0;
-        let isJSONOrHash = false;
-        let sortedSetNumber = 0;
-        while (
-          processedKeysNumber < keys.length
-          && !isJSONOrHash
-          && sortedSetNumber <= sortedSetCountForCheck
-        ) {
-          if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
-            processedKeysNumber += 1;
-          } else {
-            let keyType: string;
-            const sortedSetMember = await redisClient.sendCommand(
-              new Command('zrange', [keys[processedKeysNumber].name, 0, 0], { replyEncoding: 'utf8' }),
-            ) as string[];
-            try {
-              keyType = await redisClient.sendCommand(
-                new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
-              ) as string;
-            } catch (err) {
-              if (err && checkRedirectionError(err)) {
-                const { address } = parseRedirectionError(err);
-                const nodes = client.nodes('master');
-
-                const node: any = nodes.find(({ options: { host, port } }: Redis) => `${host}:${port}` === address);
-                if (!node) {
-                  throw new ClusterNodeNotFoundError(
-                    ERROR_MESSAGES.CLUSTER_NODE_NOT_FOUND(node),
-                  );
-                }
-
-                keyType = await node.sendCommand(
-                  new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
-                ) as string;
-              }
-            }
-            if (keyType === RedisDataType.JSON || keyType === RedisDataType.Hash) {
-              isJSONOrHash = true;
-            }
-            processedKeysNumber += 1;
-            sortedSetNumber += 1;
-          }
-        }
-
-        return isJSONOrHash ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
+        const res = await this.determineSearchIndexesForCluster(keys, client);
+        return res ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
       }
-      const sortedSets = keys
-        .filter(({ type }) => type === RedisDataType.ZSet)
-        .slice(0, 100);
-      const res = await redisClient.pipeline(sortedSets.map(({ name }) => ([
-        'zrange',
-        name,
-        0,
-        0,
-      ]))).exec();
-
-      const types = await redisClient.pipeline(res.map(([, member]) => ([
-        'type',
-        member,
-      ]))).exec();
-
-      const isHashOrJSONName = types.some(([, type]) => type === RedisDataType.JSON || type === RedisDataType.Hash);
-      return isHashOrJSONName ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
+      const res = await this.determineSearchIndexesForStandalone(keys, redisClient);
+      return res ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
     } catch (err) {
       this.logger.error('Can not determine search indexes recommendation', err);
-      return null;
-    }
-  }
-
-  /*
- * Check dangerous commands recommendation
- * @param redisClient
- */
-
-  async determineDangerousCommandsRecommendation(
-    redisClient: Redis | Cluster,
-  ): Promise<Recommendation> {
-    try {
-      const dangerousCommands = await redisClient.sendCommand(
-        new Command('ACL', ['CAT', 'dangerous'], { replyEncoding: 'utf8' }),
-      ) as string[];
-
-      const filteredDangerousCommands = dangerousCommands.filter((command) => {
-        const commandName = command.split('|')[0];
-        return !redisInsightCommands.includes(commandName);
-      });
-
-      const activeDangerousCommands = await Promise.all(
-        filteredDangerousCommands.map(async (command) => await this.checkCommandInfo(redisClient, command)),
-      );
-      const commands = activeDangerousCommands
-        .filter((command) => !isNull(command))
-        .join('\r\n').toUpperCase();
-      return activeDangerousCommands.length
-        ? { name: RECOMMENDATION_NAMES.DANGEROUS_COMMANDS, params: { commands } }
-        : null;
-    } catch (err) {
-      this.logger.error('Can not determine dangerous commands recommendation', err);
       return null;
     }
   }
@@ -543,20 +449,6 @@ export class RecommendationProvider {
       }
     }
     return false;
-  }
-
-  private async checkCommandInfo(redisClient: Redis | Cluster, command: string): Promise<string> {
-    try {
-      const result = await redisClient.sendCommand(
-        new Command('command', ['info', command]),
-      );
-      if (isNull(result[0])) {
-        return null;
-      }
-    } catch (err) {
-      return null;
-    }
-    return command;
   }
 
   private checkTimestamp(value: string): boolean {
@@ -578,5 +470,52 @@ export class RecommendationProvider {
       // ignore errors
       return false;
     }
+  }
+
+  private async determineSearchIndexesForCluster(keys: Key[], client: Redis | Cluster): Promise<boolean> {
+    let processedKeysNumber = 0;
+    let isJSONOrHash = false;
+    let sortedSetNumber = 0;
+    while (
+      processedKeysNumber < keys.length
+      && !isJSONOrHash
+      && sortedSetNumber <= sortedSetCountForCheck
+    ) {
+      if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
+        processedKeysNumber += 1;
+      } else {
+        const sortedSetMember = await client.sendCommand(
+          new Command('zrange', [keys[processedKeysNumber].name, 0, 0], { replyEncoding: 'utf8' }),
+        ) as string[];
+        const keyType = await client.sendCommand(
+          new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
+        ) as string;
+        if (keyType === RedisDataType.JSON || keyType === RedisDataType.Hash) {
+          isJSONOrHash = true;
+        }
+        processedKeysNumber += 1;
+        sortedSetNumber += 1;
+      }
+    }
+    return isJSONOrHash;
+  }
+
+  private async determineSearchIndexesForStandalone(keys: Key[], redisClient: Redis): Promise<boolean> {
+    const sortedSets = keys
+      .filter(({ type }) => type === RedisDataType.ZSet)
+      .slice(0, 100);
+    const res = await redisClient.pipeline(sortedSets.map(({ name }) => ([
+      'zrange',
+      name,
+      0,
+      0,
+    ]))).exec();
+
+    const types = await redisClient.pipeline(res.map(([, member]) => ([
+      'type',
+      member,
+    ]))).exec();
+
+    return types.some(([, type]) => type === RedisDataType.JSON || type === RedisDataType.Hash);
   }
 }

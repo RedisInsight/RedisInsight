@@ -143,28 +143,8 @@ export class WorkbenchPage {
     typeSelectedClientsList = Selector('[data-testid=view-type-selected-Plugin-client-list__clients-list]');
     clientListTableHeaderCellId = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_id_/);
     clientListTableHeaderCellAddr = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_addr_/);
-    clientListTableHeaderCellLAddr = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_laddr_/);
-    clientListTableHeaderCellFd = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_fd_/);
     clientListTableHeaderCellName = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_name_/);
-    clientListTableHeaderCellAge = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_age_/);
-    clientListTableHeaderCellIdle = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_idle_/);
-    clientListTableHeaderCellFlags = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_flags_/);
-    clientListTableHeaderCellDb = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_db/);
-    clientListTableHeaderCellSub = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_sub_/);
-    clientListTableHeaderCellPSub = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_psub_/);
-    clientListTableHeaderCellMulti = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_multi_/);
-    clientListTableHeaderCellQBuf = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_qbuf_/);
-    clientListTableHeaderCellQBufFree = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_qbuf-free_/);
-    clientListTableHeaderCellQBufArgvMem = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_argv-mem_/);
-    clientListTableHeaderCellObl = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_obl_/);
-    clientListTableHeaderCellOll = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_oll_/);
-    clientListTableHeaderCellOmem = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_omem_/);
-    clientListTableHeaderCellTotMem = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_tot-mem_/);
-    clientListTableHeaderCellEvents = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_events_/);
-    clientListTableHeaderCellCmd = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_cmd_/);
     clientListTableHeaderCellUser = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_user_/);
-    clientListTableHeaderCellRedir = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_redir_/);
-
     /**
      * Get card container by command
      * @param command The command

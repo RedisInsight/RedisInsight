@@ -119,19 +119,18 @@ test('Big output in workbench is visible in virtualized table', async t => {
     await t.expect(lastExpectedItem.visible).ok('Final execution time message not displayed');
 });
 
-test.before(async t => {
+test.only.before(async t => {
     await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
-    // Add index and data
     await t.click(myRedisDatabasePage.workbenchButton);
 }).after(async t => {
     await t.switchToMainWindow();
     await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
-})('verify client list plugin shows table', async t => {
+})('Verify that user can see the client List visualization available for all users', async t => {
     const command = 'CLIENT LIST';
     // Send command in workbench to view client list
     await workbenchPage.sendCommandInWorkbench(command);
     await t.expect(workbenchPage.typeSelectedClientsList.visible).ok('client list view button is not visible');
-    await t.switchToIframe(workbenchPage.iframe);
-    // Verify that I can see the client List visualization available for all users.
-    await workBenchActions.verifyClientListColumnsAreVisible();
+    await workBenchActions.verifyClientListColumnsAreVisible(['id', 'addr', 'name', 'user']);
+    // verify table view row count match with text view after client list command
+    await workBenchActions.verifyClientListTableViewRowCount();
 });

@@ -141,10 +141,8 @@ export class WorkbenchPage {
     tableViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin]');
     graphViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin-graph]');
     typeSelectedClientsList = Selector('[data-testid=view-type-selected-Plugin-client-list__clients-list]');
-    clientListTableHeaderCellId = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_id_/);
-    clientListTableHeaderCellAddr = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_addr_/);
-    clientListTableHeaderCellName = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_name_/);
-    clientListTableHeaderCellUser = Selector('[data-test-subj]').withAttribute('data-test-subj', /^tableHeaderCell_user_/);
+    viewTypeOptionClientList = Selector('[data-test-subj=view-type-option-Plugin-client-list__clients-list]');
+    viewTypeOptionsText = Selector('[data-test-subj=view-type-option-Text-default__Text]');
     /**
      * Get card container by command
      * @param command The command

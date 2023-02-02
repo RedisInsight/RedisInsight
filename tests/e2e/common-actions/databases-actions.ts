@@ -1,6 +1,7 @@
-import { t } from 'testcafe';
+import { Selector, t } from 'testcafe';
 import * as fs from 'fs';
 import { MyRedisDatabasePage } from '../pageObjects';
+import { getDatabaseIdByName } from '../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
@@ -34,6 +35,18 @@ export class DatabasesActions {
      */
     parseDbJsonByPath(path: string): any[] {
         return JSON.parse(fs.readFileSync(path, 'utf-8'));
+    }
+
+    /**
+     * Select databases checkboxes by their names
+     * @param databases The list of databases to select
+     */
+    async selectDatabasesByNames(databases: string[]): Promise<void> {
+        for (const db of databases) {
+            const databaseId = await getDatabaseIdByName(db);
+            const databaseCheckbox = Selector(`[data-test-subj=checkboxSelectRow-${databaseId}]`);
+            await t.click(databaseCheckbox);
+        }
     }
 }
 

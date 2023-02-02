@@ -250,7 +250,12 @@ export type AddNewDatabaseParameters = {
 export type SentinelParameters = {
     sentinelHost: string,
     sentinelPort: string,
-    masters?: object[],
+    masters?: {
+        alias?: string,
+        db?: string,
+        name?: string,
+        password?: string,
+    }[],
     sentinelPassword?: string,
     name?: string[]
 };

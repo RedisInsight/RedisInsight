@@ -1,10 +1,13 @@
 import { Chance } from 'chance';
+import * as os from 'os';
+import { join as joinPath } from 'path';
 const chance = new Chance();
 
 // Urls for using in the tests
 export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
 export const apiUrl = process.env.API_URL || 'https://localhost:5000/api';
 
+export const fileDownloadPath = joinPath(os.homedir(), 'Downloads');
 const uniqueId = chance.string({ length: 10 });
 
 export const ossStandaloneConfig = {
@@ -42,13 +45,13 @@ export const ossSentinelConfig = {
     sentinelPort: process.env.OSS_SENTINEL_PORT || '26379',
     sentinelPassword: process.env.OSS_SENTINEL_PASSWORD || 'password',
     masters: [{
-        alias: 'primary-group-1',
+        alias: `primary-group-1}-${uniqueId}`,
         db: '0',
         name: 'primary-group-1',
         password: 'defaultpass'
     },
     {
-        alias: 'primary-group-2',
+        alias: `primary-group-2}-${uniqueId}`,
         db: '0',
         name: 'primary-group-2',
         password: 'defaultpass'

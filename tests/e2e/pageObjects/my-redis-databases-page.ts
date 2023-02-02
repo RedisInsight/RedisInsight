@@ -43,6 +43,7 @@ export class MyRedisDatabasePage {
     exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
+    exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', {timeout: 500});
     //ICONS
     moduleColumn = Selector('[data-test-subj=tableHeaderCell_modules_3]');
     moduleSearchIcon = Selector('[data-testid^=RediSearch]');

@@ -73,7 +73,6 @@ export class DatabaseController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @Post('')
   @ApiEndpoint({
     description: 'Add database instance',
@@ -187,7 +186,6 @@ export class DatabaseController {
   }
 
   @Get(':id/connect')
-  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @ApiEndpoint({
     description: 'Connect to database instance by id',
     statusCode: 200,

@@ -119,7 +119,7 @@ test('Big output in workbench is visible in virtualized table', async t => {
     await t.expect(lastExpectedItem.visible).ok('Final execution time message not displayed');
 });
 
-test.only.before(async t => {
+test.before(async t => {
     await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
     await t.click(myRedisDatabasePage.workbenchButton);
 }).after(async t => {

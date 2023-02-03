@@ -238,7 +238,17 @@ export type AddNewDatabaseParameters = {
     port: string,
     databaseName?: string,
     databaseUsername?: string,
-    databasePassword?: string
+    databasePassword?: string,
+    tls?: boolean,
+    caCert?: {
+        name?: string,
+        certificate?: string
+    },
+    clientCert?: {
+        name?: string,
+        certificate?: string,
+        key?: string
+    },
 };
 
 /**

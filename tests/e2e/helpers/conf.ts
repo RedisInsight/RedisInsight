@@ -99,10 +99,27 @@ export const ossStandaloneNoPermissionsConfig = {
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
 };
 
-export const ossStandaloneForSSH = {
+export const ossStandaloneForSSHConfig = {
     host: process.env.OSS_STANDALONE_HOST || '172.33.100.10',
     port: process.env.OSS_STANDALONE_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'oss-standalone-for-ssh'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
+};
+
+export const ossStandaloneTlsConfig = {
+    host: process.env.OSS_STANDALONE_TLS_HOST || 'oss-standalone-tls',
+    port: process.env.OSS_STANDALONE_TLS_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_TLS_DATABASE_NAME || 'test_standalone_tls'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_TLS_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_TLS_PASSWORD,
+    caCert: {
+        name: 'ca',
+        certificate: process.env.E2E_CA_CRT
+    },
+    clientCert: {
+        name: 'client',
+        certificate: process.env.E2E_CLIENT_CRT,
+        key: process.env.E2E_CLIENT_KEY
+    }
 };

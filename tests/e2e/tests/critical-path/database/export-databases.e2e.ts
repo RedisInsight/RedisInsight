@@ -1,9 +1,17 @@
 import * as fs from 'fs';
 import { join as joinPath } from 'path';
 import { rte } from '../../../helpers/constants';
-import { MyRedisDatabasePage } from '../../../pageObjects';
-import { cloudDatabaseConfig, commonUrl, fileDownloadPath, ossClusterConfig, ossSentinelConfig, ossStandaloneConfig } from '../../../helpers/conf';
-import { acceptLicenseTerms, addRECloudDatabase, deleteDatabase } from '../../../helpers/database';
+import { AddRedisDatabasePage, MyRedisDatabasePage } from '../../../pageObjects';
+import {
+    cloudDatabaseConfig,
+    commonUrl,
+    fileDownloadPath,
+    ossClusterConfig,
+    ossSentinelConfig,
+    ossStandaloneConfig,
+    ossStandaloneTlsConfig
+} from '../../../helpers/conf';
+import { acceptLicenseTerms, addRECloudDatabase, clickOnEditDatabaseByName, deleteDatabase } from '../../../helpers/database';
 import {
     addNewOSSClusterDatabaseApi,
     addNewStandaloneDatabaseApi,
@@ -18,29 +26,37 @@ import { Common } from '../../../helpers/common';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databasesActions = new DatabasesActions();
 const common = new Common();
+const addRedisDatabasePage = new AddRedisDatabasePage();
 
 let foundExportedFiles: string[];
 
 fixture `Export databases`
     .meta({ type: 'critical_path', rte: rte.none })
-    .page(commonUrl)
+    .page(commonUrl);
 test
-    .before(async () => {
+    .before(async() => {
         await acceptLicenseTerms();
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
         await discoverSentinelDatabaseApi(ossSentinelConfig);
         await common.reloadPage();
     })
-    .after(async () => {
+    .after(async() => {
         // Delete all databases
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
         await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         // Delete exported file
         fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
     })('Exporting Standalone, OSS Cluster, and Sentinel connection types', async t => {
-        const databaseNames = [ossStandaloneConfig.databaseName, ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.masters[1].alias];
+        const databaseNames = [
+            ossStandaloneConfig.databaseName,
+            ossStandaloneTlsConfig.databaseName,
+            ossClusterConfig.ossClusterDatabaseName,
+            ossSentinelConfig.masters[1].alias
+        ];
 
         // Select databases checkboxes
         await databasesActions.selectDatabasesByNames(databaseNames);
@@ -55,11 +71,10 @@ test
         // Verify that user can export database with passwords and client certificates with “Export database passwords and client certificates” control selected
         await t.expect(foundExportedFiles.length).gt(0, 'The Exported file not saved');
 
-        // Delete standalone db
+        // Delete databases
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        // Delete OSS cluster db
+        await deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
-        // Delete all sentinel primary groups
         await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         await common.reloadPage();
 
@@ -75,22 +90,27 @@ test
         await t.click(myRedisDatabasePage.okDialogBtn);
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
+        await clickOnEditDatabaseByName(databaseNames[1]);
+        await t.expect(addRedisDatabasePage.caCertField.textContent).eql('ca', 'CA certificate import incorrect');
+        await t.expect(addRedisDatabasePage.clientCertField.textContent).eql('client', 'Client certificate import incorrect');
     });
 test
-    .before(async () => {
+    .before(async() => {
         await acceptLicenseTerms();
+        await addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await addRECloudDatabase(cloudDatabaseConfig);
         await discoverSentinelDatabaseApi(ossSentinelConfig);
         await common.reloadPage();
     })
-    .after(async () => {
+    .after(async() => {
         // Delete databases
+        await deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await deleteDatabase(cloudDatabaseConfig.databaseName);
         await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         // Delete exported file
         fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
     })('Export databases without passwords', async t => {
-        const databaseNames = [cloudDatabaseConfig.databaseName, ossSentinelConfig.masters[1].alias];
+        const databaseNames = [ossStandaloneTlsConfig.databaseName, cloudDatabaseConfig.databaseName, ossSentinelConfig.masters[1].alias];
 
         // Select databases checkboxes
         await databasesActions.selectDatabasesByNames(databaseNames);
@@ -103,9 +123,10 @@ test
 
         foundExportedFiles = await databasesActions.findFilesByFileStarts(fileDownloadPath, 'RedisInsight_connections_');
         const parsedExportedJson = await databasesActions.parseDbJsonByPath(joinPath(fileDownloadPath, foundExportedFiles[0]));
-        // Verify that user can export databases without database passwords and client certificates when “Export passwords” control not selected
+        // Verify that user can export databases without database passwords and client key when “Export passwords” control not selected
         for (const db of parsedExportedJson) {
             await t.expect(db.hasOwnProperty('password')).eql(false, 'Databases exported with passwords');
+            await t.expect(db.clientCert.hasOwnProperty('key')).eql(false, 'Databases exported with client key');
             // Verify for sentinel
             if ('sentinelMaster' in db) {
                 await t.expect(db.sentinelMaster.hasOwnProperty('password')).eql(false, 'Sentinel primary group exported with passwords');

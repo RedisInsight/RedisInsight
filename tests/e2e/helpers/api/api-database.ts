@@ -18,7 +18,17 @@ export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewData
             'host': databaseParameters.host,
             'port': Number(databaseParameters.port),
             'username': databaseParameters.databaseUsername,
-            'password': databaseParameters.databasePassword
+            'password': databaseParameters.databasePassword,
+            'tls': databaseParameters.tls,
+            'caCert': {
+                'name': databaseParameters.caCert!.name,
+                'certificate': databaseParameters.caCert!.certificate
+            },
+            'clientCert': {
+                'name': databaseParameters.clientCert!.name,
+                'certificate': databaseParameters.clientCert!.certificate,
+                'key': databaseParameters.clientCert!.key
+            }
         })
         .set('Accept', 'application/json');
     await t

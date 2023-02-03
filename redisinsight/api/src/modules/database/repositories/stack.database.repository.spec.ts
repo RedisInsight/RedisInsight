@@ -116,6 +116,7 @@ describe('StackDatabasesRepository', () => {
         port: 6379,
         connectionType: ConnectionType.STANDALONE,
         tls: false,
+        timeout: 30_000,
         verifyServerCert: false,
         lastConnection: null,
       });

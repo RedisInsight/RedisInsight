@@ -65,6 +65,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
           totalMemory: additionalInfo.usedMemory,
           numberedDatabases: additionalInfo.databases,
           numberOfModules: instance.modules?.length || 0,
+          timeout: instance.timeout,
           ...modulesSummary,
         },
       );
@@ -97,6 +98,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
             useTLSAuthClients: cur?.clientCert ? 'enabled' : 'disabled',
             useSNI: cur?.tlsServername ? 'enabled' : 'disabled',
             useSSH: cur?.ssh ? 'enabled' : 'disabled',
+            timeout: cur?.timeout,
             previousValues: {
               connectionType: prev.connectionType,
               provider: prev.provider,

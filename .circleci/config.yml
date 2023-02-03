@@ -81,27 +81,27 @@ aliases:
       shell: /bin/bash
       no_output_timeout: 15m
   iTestsNames: &iTestsNames
-    - oss-st-5 # OSS Standalone v5
-    - oss-st-5-pass # OSS Standalone v5 with admin pass required
-    - oss-st-6 # OSS Standalone v6 and all modules
-    - oss-st-big # OSS Standalone v6 and all modules and predefined amount of data inside (~3-4M)
-    - mods-preview # OSS Standalone and all preview modules
-    - oss-st-6-tls # OSS Standalone v6 with TLS enabled
-    - oss-st-6-tls-auth # OSS Standalone v6 with TLS auth required
-    - oss-st-6-tls-auth-ssh # OSS Standalone v6 with TLS auth required through ssh
-    - oss-clu # OSS Cluster
-    - oss-clu-tls # OSS Cluster with TLS enabled
-    - oss-sent # OSS Sentinel
-    - oss-sent-tls-auth # OSS Sentinel with TLS auth
-    - re-st # Redis Enterprise with Standalone inside
-    - re-clu # Redis Enterprise with Cluster inside
-    - re-crdt # Redis Enterprise with active-active database inside
+    - oss-st-5            # OSS Standalone v5
+    - oss-st-5-pass       # OSS Standalone v5 with admin pass required
+    - oss-st-6            # OSS Standalone v6 and all modules
+    - oss-st-big          # OSS Standalone v6 and all modules and predefined amount of data inside (~3-4M)
+    - mods-preview        # OSS Standalone and all preview modules
+    - oss-st-6-tls        # OSS Standalone v6 with TLS enabled
+    - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
+    - oss-st-6-tls-auth-ssh   # OSS Standalone v6 with TLS auth required through ssh
+    - oss-clu             # OSS Cluster
+    - oss-clu-tls         # OSS Cluster with TLS enabled
+    - oss-sent            # OSS Sentinel
+    - oss-sent-tls-auth   # OSS Sentinel with TLS auth
+    - re-st               # Redis Enterprise with Standalone inside
+    - re-clu              # Redis Enterprise with Cluster inside
+    - re-crdt             # Redis Enterprise with active-active database inside
   iTestsNamesShort: &iTestsNamesShort
-    - oss-st-5-pass # OSS Standalone v5 with admin pass required
-    - oss-st-6-tls-auth # OSS Standalone v6 with TLS auth required
-    - oss-clu-tls # OSS Cluster with TLS enabled
-    - re-crdt # Redis Enterprise with active-active database inside
-    - oss-sent-tls-auth # OSS Sentinel with TLS auth
+    - oss-st-5-pass       # OSS Standalone v5 with admin pass required
+    - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
+    - oss-clu-tls         # OSS Cluster with TLS enabled
+    - re-crdt             # Redis Enterprise with active-active database inside
+    - oss-sent-tls-auth   # OSS Sentinel with TLS auth
   guides-filter: &guidesFilter
     filters:
       branches:
@@ -248,7 +248,7 @@ jobs:
           <<: *apiDepsCacheKey
       - when:
           condition:
-            equal: ['docker', << parameters.build >>]
+            equal: [ 'docker', << parameters.build >> ]
           steps:
             - attach_workspace:
                 at: /tmp
@@ -266,7 +266,7 @@ jobs:
             cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/<< parameters.rte >>.coverage.json
       - when:
           condition:
-            equal: [true, << parameters.report >>]
+            equal: [ true, << parameters.report >> ]
           steps:
             - run:
                 name: Send report
@@ -318,7 +318,7 @@ jobs:
             .circleci/e2e/test.app-image.sh
       - when:
           condition:
-            equal: [true, << parameters.report >>]
+            equal: [ true, << parameters.report >> ]
           steps:
             - run:
                 name: Send report
@@ -356,7 +356,7 @@ jobs:
           shell: bash.exe
       - when:
           condition:
-            equal: [true, << parameters.report >>]
+            equal: [ true, << parameters.report >> ]
           steps:
             - run:
                 name: Send report
@@ -391,7 +391,7 @@ jobs:
       - checkout
       - when:
           condition:
-            equal: ['docker', << parameters.build >>]
+            equal: [ 'docker', << parameters.build >> ]
           steps:
             - attach_workspace:
                 at: /tmp
@@ -411,7 +411,7 @@ jobs:
                 no_output_timeout: 5m
       - when:
           condition:
-            equal: ['local', << parameters.build >>]
+            equal: [ 'local', << parameters.build >> ]
           steps:
             - run:
                 name: Run tests
@@ -425,7 +425,7 @@ jobs:
                 no_output_timeout: 5m
       - when:
           condition:
-            equal: [true, << parameters.report >>]
+            equal: [ true, << parameters.report >> ]
           steps:
             - run:
                 name: Send report
@@ -459,7 +459,7 @@ jobs:
         description: Build environment (stage || prod)
         type: enum
         default: stage
-        enum: ['dev', 'stage', 'prod']
+        enum: [ 'dev', 'stage', 'prod' ]
     docker:
       - image: cibuilds/docker:19.03.5
     steps:
@@ -539,7 +539,7 @@ jobs:
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
       - when:
           condition:
-            equal: [true, << parameters.redisstack >>]
+            equal: [ true, << parameters.redisstack >> ]
           steps:
             - run:
                 name: Repack AppImage to tar
@@ -724,10 +724,10 @@ jobs:
           name: publish
           command: |
             rm release/._* ||:
-            python .circleci/filesha256.py release/* > release/sha256.json
+            python .circleci/filesha256.py release/redisstack/* > release/redisstack/sha256.json
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
-            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive --exclude
 
   release-aws-private:
     executor: linux-executor
@@ -745,7 +745,7 @@ jobs:
       - run:
           name: publish
           command: |
-            python .circleci/filesha256.py release/* > release/sha256.json
+            python .circleci/filesha256.py release/redisstack/* > release/redisstack/sha256.json
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
             aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive
@@ -1068,6 +1068,7 @@ workflows:
           requires:
             - Build docker image
 
+
       # ================== STAGE ==================
       # prebuild (stage)
       - setup-sign-certificates:
@@ -1207,10 +1208,10 @@ workflows:
           name: Build app - Linux (stage)
           requires:
             - Setup build (stage)
-      #      - windows:
-      #          name: Build app - Windows (stage)
-      #          requires:
-      #            - Setup build (stage)
+#      - windows:
+#          name: Build app - Windows (stage)
+#          requires:
+#            - Setup build (stage)
       # integration tests on docker image build
       - integration-tests-run:
           matrix:

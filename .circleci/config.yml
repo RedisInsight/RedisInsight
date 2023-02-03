@@ -727,7 +727,7 @@ jobs:
             python .circleci/filesha256.py release/redisstack/* > release/redisstack/sha256.json
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
-            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive --exclude
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive
 
   release-aws-private:
     executor: linux-executor

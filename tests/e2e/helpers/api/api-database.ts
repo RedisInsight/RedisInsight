@@ -12,24 +12,29 @@ const endpoint = common.getEndpoint();
  * @param databaseParameters The database parameters
  */
 export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
+    const requestBody = {
+        'name': databaseParameters.databaseName,
+        'host': databaseParameters.host,
+        'port': Number(databaseParameters.port),
+        'username': databaseParameters.databaseUsername,
+        'password': databaseParameters.databasePassword
+    };
+
+    if (databaseParameters.caCert) {
+        requestBody['tls'] = databaseParameters.tls;
+        requestBody['caCert'] = {
+            'name': databaseParameters.caCert.name,
+            'certificate': databaseParameters.caCert.certificate
+        };
+        requestBody['clientCert'] = {
+            'name': databaseParameters.clientCert!.name,
+            'certificate': databaseParameters.clientCert!.certificate,
+            'key': databaseParameters.clientCert!.key
+        };
+    }
+
     const response = await request(endpoint).post('/databases')
-        .send({
-            'name': databaseParameters.databaseName,
-            'host': databaseParameters.host,
-            'port': Number(databaseParameters.port),
-            'username': databaseParameters.databaseUsername,
-            'password': databaseParameters.databasePassword,
-            'tls': databaseParameters.tls,
-            'caCert': {
-                'name': databaseParameters.caCert!.name,
-                'certificate': databaseParameters.caCert!.certificate
-            },
-            'clientCert': {
-                'name': databaseParameters.clientCert!.name,
-                'certificate': databaseParameters.clientCert!.certificate,
-                'key': databaseParameters.clientCert!.key
-            }
-        })
+        .send(requestBody)
         .set('Accept', 'application/json');
     await t
         .expect(response.status).eql(201, 'The creation of new standalone database request failed')
@@ -105,14 +110,14 @@ export async function getDatabaseIdByName(databaseName?: string): Promise<string
     }
     let databaseId: any;
     const allDataBases = await getAllDatabases();
-    const response = await asyncFilter(allDataBases, async (item: databaseParameters) => {
+    const response = await asyncFilter(allDataBases, async(item: databaseParameters) => {
         await doAsyncStuff();
         return item.name === databaseName;
     });
 
     if (response.length !== 0) {
         databaseId = await response[0].id;
-    };
+    }
     return databaseId;
 }
 

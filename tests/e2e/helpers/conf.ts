@@ -113,6 +113,7 @@ export const ossStandaloneTlsConfig = {
     databaseName: `${process.env.OSS_STANDALONE_TLS_DATABASE_NAME || 'test_standalone_tls'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_TLS_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_TLS_PASSWORD,
+    tls: true,
     caCert: {
         name: 'ca',
         certificate: process.env.E2E_CA_CRT

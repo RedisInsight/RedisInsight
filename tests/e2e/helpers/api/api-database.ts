@@ -21,7 +21,8 @@ export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewData
     };
 
     if (databaseParameters.caCert) {
-        requestBody['tls'] = databaseParameters.tls;
+        requestBody['tls'] = true;
+        requestBody['verifyServerCert'] = false;
         requestBody['caCert'] = {
             'name': databaseParameters.caCert.name,
             'certificate': databaseParameters.caCert.certificate

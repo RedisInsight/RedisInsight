@@ -239,7 +239,6 @@ export type AddNewDatabaseParameters = {
     databaseName?: string,
     databaseUsername?: string,
     databasePassword?: string,
-    tls?: boolean,
     caCert?: {
         name?: string,
         certificate?: string

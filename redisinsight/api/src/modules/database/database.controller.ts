@@ -156,6 +156,30 @@ export class DatabaseController {
     return await this.service.update(id, database, true);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
+  @Post('/test')
+  @ApiEndpoint({
+    description: 'Test connection',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  )
+  async testConnection(
+    @Body() database: CreateDatabaseDto,
+  ): Promise<void> {
+    return await this.service.testConnection(database);
+  }
+
   @Delete('/:id')
   @ApiEndpoint({
     statusCode: 200,

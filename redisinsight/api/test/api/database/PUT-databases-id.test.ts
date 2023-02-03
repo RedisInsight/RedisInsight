@@ -158,7 +158,6 @@ describe(`PUT /databases/:id`, () => {
             port: constants.TEST_REDIS_PORT,
             username: null,
             password: null,
-            // timeout: null,
             connectionType: constants.STANDALONE,
             tls: false,
             verifyServerCert: false,
@@ -166,11 +165,11 @@ describe(`PUT /databases/:id`, () => {
           },
           after: async () => {
             newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
-            // expect(newDatabase).to.contain({
-            //   ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'ssh']),
-            //   host: constants.TEST_REDIS_HOST,
-            //   port: constants.TEST_REDIS_PORT,
-            // });
+            expect(newDatabase).to.contain({
+              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'ssh', 'timeout']),
+              host: constants.TEST_REDIS_HOST,
+              port: constants.TEST_REDIS_PORT,
+            });
           },
         },
       ].map(mainCheckFn);

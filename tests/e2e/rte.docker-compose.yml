@@ -58,6 +58,14 @@ services:
     ports:
       - 8103:6379
 
+  # oss standalone еды
+  oss-standalone-tls:
+    build:
+      context: ./rte/oss-standalone-tls
+      dockerfile: Dockerfile
+    ports:
+      - 8104:6379
+
   # oss sentinel
   oss-sentinel:
     build: ./rte/oss-sentinel

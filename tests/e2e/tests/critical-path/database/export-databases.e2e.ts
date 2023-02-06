@@ -80,7 +80,7 @@ test
 
         const exportedData = {
             path: joinPath(fileDownloadPath, foundExportedFiles[0]),
-            successNumber: 3,
+            successNumber: 4,
             dbImportedNames: databaseNames
         };
 
@@ -126,7 +126,10 @@ test
         // Verify that user can export databases without database passwords and client key when “Export passwords” control not selected
         for (const db of parsedExportedJson) {
             await t.expect(db.hasOwnProperty('password')).eql(false, 'Databases exported with passwords');
-            await t.expect(db.clientCert.hasOwnProperty('key')).eql(false, 'Databases exported with client key');
+            // Verify for standalone with TLS
+            if (db.tls === true) {
+                await t.expect(db.clientCert.hasOwnProperty('key')).eql(false, 'Databases exported with client key');
+            }
             // Verify for sentinel
             if ('sentinelMaster' in db) {
                 await t.expect(db.sentinelMaster.hasOwnProperty('password')).eql(false, 'Sentinel primary group exported with passwords');

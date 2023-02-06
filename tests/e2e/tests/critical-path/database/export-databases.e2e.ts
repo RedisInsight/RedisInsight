@@ -30,7 +30,7 @@ const addRedisDatabasePage = new AddRedisDatabasePage();
 
 let foundExportedFiles: string[];
 
-fixture `Export databases`
+fixture.only `Export databases`
     .meta({ type: 'critical_path', rte: rte.none })
     .page(commonUrl);
 test

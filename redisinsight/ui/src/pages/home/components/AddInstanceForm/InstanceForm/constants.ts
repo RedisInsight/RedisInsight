@@ -24,3 +24,7 @@ export const fieldDisplayNames = {
   sshPrivateKey: 'SSH Private Key',
   sshUsername: 'SSH Username',
 }
+
+const DEFAULT_TIMEOUT_ENV = process.env.CONNECTIONS_TIMEOUT_DEFAULT || '30000' // 30 sec
+
+export const DEFAULT_TIMEOUT = parseInt(DEFAULT_TIMEOUT_ENV, 10)

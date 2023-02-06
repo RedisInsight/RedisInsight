@@ -8,7 +8,7 @@ import {
 } from '@elastic/eui'
 
 import { FormikErrors, useFormik } from 'formik'
-import { isEmpty, pick } from 'lodash'
+import { isEmpty, pick, toString } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -36,7 +36,8 @@ import {
   NO_CA_CERT,
   ADD_NEW,
   fieldDisplayNames,
-  SshPassType
+  SshPassType,
+  DEFAULT_TIMEOUT,
 } from './constants'
 
 import { DbConnectionInfo, ISubmitButton } from './interfaces'
@@ -113,6 +114,7 @@ const AddStandaloneForm = (props: Props) => {
       selectedCaCertName,
       username,
       password,
+      timeout,
       modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
@@ -142,6 +144,7 @@ const AddStandaloneForm = (props: Props) => {
   const prepareInitialValues = () => ({
     host: host ?? getDefaultHost(),
     port: port ? port.toString() : getDefaultPort(instanceType),
+    timeout: timeout ? timeout.toString() : toString(DEFAULT_TIMEOUT / 1_000),
     name: name ?? `${getDefaultHost()}:${getDefaultPort(instanceType)}`,
     username,
     password,

@@ -4,6 +4,12 @@ import { register} from '@antv/x6-react-shape'
 import Hierarchy from '@antv/hierarchy'
 
 import {
+  EuiButtonIcon,
+  EuiToolTip,
+  EuiIcon,
+} from '@elastic/eui'
+
+import {
   CoreType,
   ModuleType,
   EntityInfo,
@@ -119,8 +125,37 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
   const container = useRef<HTMLDivElement | null>(null)
 
   const [done, setDone] = useState(false)
+  const [collapse, setCollapse] = useState(true)
   const [infoWidth, setInfoWidth] = useState(document.body.offsetWidth)
+  const [isFullScreen, setIsFullScreen] = useState(false)
+  const [core, setCore] = useState<Graph>()
 
+  function resize() {
+    const isFullScreen = parent.document.body.getElementsByClassName('fullscreen').length > 0
+    const b = core?.getAllCellsBBox()
+    const width = Math.max((b?.width || 1080) + 100, document.body.offsetWidth)
+    if (isFullScreen) {
+      setIsFullScreen(true)
+      const height = Math.max((b?.height || 585) + 100, parent.document.body.offsetHeight)
+      if (collapse) {
+        core?.resize(width, window.outerHeight - 250)
+        core?.positionContent("top")
+      } else {
+        core?.resize(width, height)
+      }
+    } else {
+      setIsFullScreen(false)
+      if (collapse) {
+        core?.resize(width, 400)
+        core?.positionContent("top")
+      } else {
+        core?.resize(width, (b?.height || 585) + 100)
+      }
+    }
+    setInfoWidth(width)
+  }
+
+  window.addEventListener('resize', resize)
   useEffect(() => {
 
     if (done) return
@@ -133,16 +168,14 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       background: {
         color: isDarkTheme ? 'black' : 'white',
       },
-      panning: {
-        enabled: true,
-        modifiers:  ['ctrl'],
-      },
       translating: {
         restrict: true,
       },
       async: true,
       virtual: true,
     })
+
+    setCore(graph)
 
     graph.on("resize", () => graph.centerContent())
     graph.on("node:mouseenter", x => {
@@ -165,6 +198,50 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       })
     })
 
+    const ele = document.querySelector("#container-parent")
+
+    let pos = { top: 0, left: 0, x: 0, y: 0 }
+
+    const mouseMoveHandler = function (e) {
+      // How far the mouse has been moved
+      const dx = e.clientX - pos.x
+      const dy = e.clientY - pos.y
+
+      // Scroll the element
+      if (ele) {
+        ele.scrollTop = pos.top - dy
+        ele.scrollLeft = pos.left - dx
+      }
+    }
+
+
+    const mouseUpHandler = function () {
+      document.removeEventListener('mousemove', mouseMoveHandler)
+      document.removeEventListener('mouseup', mouseUpHandler)
+
+      if (ele) {
+        // ele.style.cursor = 'grab'
+        // ele.style.removeProperty('user-select')
+      }
+    }
+
+
+    const mouseDownHandler = function (e) {
+      pos = {
+        // The current scroll
+        left: ele?.scrollLeft || 0,
+        top: ele?.scrollTop || 0,
+        // Get the current mouse position
+        x: e.clientX,
+        y: e.clientY,
+      }
+
+      document.addEventListener('mousemove', mouseMoveHandler)
+      setTimeout(() => document.addEventListener('mouseup', mouseUpHandler), 100)
+    }
+
+    ele?.addEventListener('mousedown', mouseDownHandler)
+
     graph.on("node:mouseleave", x => {
       const {id} = x.node.getData()
       const ancestors = GetAncestors(data, id, {found: false, pairs: []})
@@ -174,22 +251,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       })
     })
 
-    function resize() {
-      const isFullScreen = parent.document.body.getElementsByClassName('fullscreen').length > 0
-      const b = graph.getAllCellsBBox()
-      const width = Math.max((b?.width || 1080) + 100, document.body.offsetWidth)
-      if (isFullScreen) {
-        const height = Math.max((b?.height || 585) + 100, parent.document.body.offsetHeight)
-        graph.resize(width, height)
-      } else {
-        graph.resize(width, (b?.height || 585) + 100)
-      }
-      setInfoWidth(width)
-    }
-    
     resize()
-
-    window.addEventListener('resize', resize)
 
     const result = Hierarchy.compactBox(data, {
       direction: 'BT',
@@ -235,7 +297,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
           nodeProps = {
             shape: 'react-profile-node',
             width: 320,
-            height: (info.snippet ? 114 : 84),
+            height: (info.snippet ? 114 : 86),
           }
         }
 
@@ -297,29 +359,109 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
 
   }, [done])
 
+  if (collapse) {
+    core?.resize(undefined, isFullScreen ? (window.outerHeight - 250) : 400)
+    core?.positionContent("top")
+  } else {
+    core?.resize(undefined, core?.getContentBBox().height + 100)
+  }
+
   return (
     <div>
-      <div style={{ margin: 0, width: '100vw' }} ref={container} id="container" />
-      { profilingTime &&
-        (
-          module === ModuleType.Search ?
-            (
-              <div style={{ width: infoWidth}} className="ProfileInfo ProfileTimeInfo">
+      { collapse && <div style={{ paddingTop: '50px' }}></div> }
+      <div id="container-parent" style={{ height: isFullScreen ? (window.outerHeight - 170) + 'px' : collapse ? '500px' : '585px', width: '100%', overflow: 'auto' }}>
+        <div style={{ margin: 0, width: '100vw' }} ref={container} id="container" />
+        { !collapse && (
+          <div className="ZoomMenu">
+            {
+              [
                 {
-                  Object.keys(profilingTime).map(key => (
-                    <div className="Item">
-                      <div className="Value">{profilingTime[key]}</div>
-                      <div className="Key">{key}</div>
-                    </div>
-                  ))
-                }
-              </div>
-            )
-            :
-            type === CoreType.Profile && (
-              <div style={{ width: infoWidth }} className="ProfileInfo ProfileTimeMini">Total execution time: {profilingTime['Total Execution Time']} ms</div>
-            )
+                  name: 'Zoom In',
+                  onClick: () => {
+                    core?.zoom(0.5)
+                    core?.resize(undefined, core?.getContentBBox().height + 50)
+                    // setInfoWidth(Math.max((core?.getContentBBox().width || 1080) + 100, document.body.offsetWidth))
+                  },
+                  icon: 'magnifyWithPlus'
+                },
+                {
+                  name: 'Zoom Out',
+                  onClick: () => {
+                    core && Math.floor(core.zoom()) <= 0.5 ? core?.zoom(0) : core?.zoom(-0.5)
+                    core?.resize(undefined, core?.getContentBBox().height + 50)
+                    // setInfoWidth(Math.max((core?.getContentBBox().width || 1080) + 100, document.body.offsetWidth))
+                  },
+                  icon: 'magnifyWithMinus'
+                },
+                {
+                  name: 'Reset Zoom',
+                  onClick: () => {
+                    core?.zoomTo(1)
+                    core?.resize(undefined, core?.getContentBBox().height + 50)
+                    // setInfoWidth(Math.max((core?.getContentBBox().width || 1080) + 100, document.body.offsetWidth))
+                  },
+                  icon: 'bullseye'
+                },
+              ].map(item => (
+                <EuiToolTip position="left" content={item.name}>
+                  <EuiButtonIcon
+                    color='text'
+                    onClick={item.onClick}
+                    iconType={item.icon}
+                    aria-label={item.name}
+                  />
+                </EuiToolTip>
+              ))
+            }
+          </div>
         )}
+        <div
+          style={{ paddingBottom: (isFullScreen && profilingTime && ModuleType.Search ? '60px' : '35px')}}
+          className="CollapseButton"
+          onClick={e => {
+            e.preventDefault()
+            if (!collapse) {     // About to collapse?
+              core?.zoomTo(1)
+              core?.resize(undefined, core?.getContentBBox().height + 50)
+            }
+            setCollapse(!collapse)
+          }}
+        >
+         {
+           collapse
+             ?
+             <>
+               <div>Expand</div>
+               <EuiIcon className="NodeIcon" size="m" type="arrowDown" />
+             </>
+             :
+             <>
+               <div>Collapse</div>
+               <EuiIcon className="NodeIcon" size="m" type="arrowUp" />
+             </>           
+         }
+        </div>
+        { profilingTime &&
+          (
+            module === ModuleType.Search ?
+              (
+                <div style={{ width: infoWidth }} className="ProfileInfo ProfileTimeInfo">
+                  {
+                    Object.keys(profilingTime).map(key => (
+                      <div className="Item">
+                        <div className="Value">{profilingTime[key]}</div>
+                        <div className="Key">{key}</div>
+                      </div>
+                    ))
+                  }
+                </div>
+              )
+              :
+              type === CoreType.Profile && (
+                <div style={{ width: infoWidth }} className="ProfileInfo ProfileTimeMini">Total execution time: {profilingTime['Total Execution Time']} ms</div>
+              )
+          )}
+      </div>
     </div>
   )
 }

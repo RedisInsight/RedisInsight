@@ -16,8 +16,23 @@
     background-clip: content-box;
 }
 
+#container-parent::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+#container-parent::-webkit-scrollbar-corner, #container-parent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#container-parent::-webkit-scrollbar-thumb {
+  background-color: rgba(105, 112, 125, 0.5);
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+
 .theme_DARK {
-  --info-background: #20222B;
+  --info-background: #2b2b2b;;
   --info-color: white;
   --svg-background: #010101;
   --tooltip-background: #3E4B5E;
@@ -32,7 +47,7 @@
 }
 
 .theme_LIGHT {
-  --info-background: white;
+  --info-background: #EBEFFA;
   --info-color: black;
   --svg-background: #FFFFFF;
   --tooltip-background: white;
@@ -44,6 +59,11 @@
   --node-background: #FFF;
   --edge-background: #8992B3;
   --text-color: #173369;
+}
+
+body {
+    background-color: var(--svg-background);
+    overflow: hidden;
 }
 
 
@@ -260,11 +280,16 @@
   font-family: 'Graphik', sans-serif !important;
   font-size: 13px;
 
-  padding-bottom: 13px !important;
+  padding-bottom: 3px !important;
+
+  position: absolute;
+  bottom: 0px;
 }
 
 .ProfileTimeInfo {
-    padding-top: 6px !important;
+    background-color: var(--info-background);
+
+    padding-top: 3px !important;
 
     .Item {
 
@@ -334,4 +359,27 @@
   align-self: center;
 
   margin-left: 2px !important;
+}
+
+.ZoomMenu {
+    position: absolute;
+    bottom: 110px;
+    right: 10px;
+    border-right: 4px;
+    box-shadow: 0 1px 6px rgb(0 0 0 / 16%), 0 1px 6px rgb(0 0 0 / 23%);
+    display: flex;
+    flex-direction: column;
+}
+
+.CollapseButton {
+    color: var(--text-color);
+    line-height: 18px;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+
+    div:first-child {
+        padding-right: 5px;
+    }
 }

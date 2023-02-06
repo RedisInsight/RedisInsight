@@ -287,10 +287,13 @@ const keysSlice = createSlice({
         error: '',
       }
     },
-    addKeySuccess: (state) => {
-      state.addKey = {
-        ...state.addKey,
-        loading: false,
+    addKeySuccess: (state, { payload }) => {
+      state.data?.keys.unshift({ name: payload.keyName })
+
+      state.data = {
+        ...state.data,
+        total: state.data.total + 1,
+        scanned: state.data.scanned + 1,
       }
     },
     addKeyFailure: (state, { payload }) => {
@@ -684,7 +687,7 @@ function addTypedKey(
         if (onSuccessAction) {
           onSuccessAction()
         }
-        dispatch(addKeySuccess())
+        dispatch<any>(addKeyIntoList({ key: data.keyName, keyType: endpoint }))
         dispatch(
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName))
         )
@@ -1001,6 +1004,19 @@ export function editKeyFromList(data: { key: RedisResponseBuffer, newKey: RedisR
     return state.browser.keys?.searchMode === SearchMode.Pattern
       ? dispatch(editPatternKeyFromList(data))
       : dispatch(editRedisearchKeyFromList(data))
+  }
+}
+
+export function addKeyIntoList({ key, keyType }) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    if (state.browser.keys?.search && state.browser.keys?.search !== '*') {
+      return null
+    }
+    if (!state.browser.keys?.filter || state.browser.keys?.filter === keyType) {
+      return dispatch(addKeySuccess({ keyName: key, keyType }))
+    }
+    return null
   }
 }
 

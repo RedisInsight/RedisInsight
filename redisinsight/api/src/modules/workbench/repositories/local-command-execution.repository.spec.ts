@@ -19,7 +19,6 @@ import { CommandExecution } from 'src/modules/workbench/models/command-execution
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { NotFoundException } from '@nestjs/common';
-import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -28,6 +27,7 @@ import { KeytarDecryptionErrorException } from 'src/modules/encryption/exception
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ICliExecResultFromNode } from 'src/modules/redis/redis-tool.service';
 import config from 'src/utils/config';
+import { LocalCommandExecutionRepository } from 'src/modules/workbench/repositories/local-command-execution.repository';
 
 const WORKBENCH_CONFIG = config.get('workbench');
 
@@ -78,15 +78,15 @@ const mockCommandExecutionPartial: Partial<CommandExecution> = new CommandExecut
   result: [mockCommandExecutionResult],
 });
 
-describe('CommandExecutionProvider', () => {
-  let service: CommandExecutionProvider;
+describe('LocalCommandExecutionRepository', () => {
+  let service: LocalCommandExecutionRepository;
   let repository: MockType<Repository<CommandExecutionEntity>>;
   let encryptionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CommandExecutionProvider,
+        LocalCommandExecutionRepository,
         {
           provide: getRepositoryToken(CommandExecutionEntity),
           useFactory: mockRepository,
@@ -98,7 +98,7 @@ describe('CommandExecutionProvider', () => {
       ],
     }).compile();
 
-    service = module.get<CommandExecutionProvider>(CommandExecutionProvider);
+    service = module.get(LocalCommandExecutionRepository);
     repository = module.get(getRepositoryToken(CommandExecutionEntity));
     encryptionService = module.get<EncryptionService>(EncryptionService);
   });
@@ -164,11 +164,11 @@ describe('CommandExecutionProvider', () => {
           response: 'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
         }),
       ]));
-    })
+    });
   });
   describe('getList', () => {
     it('should return list (2) of command execution', async () => {
-      const entityResponse = omit(mockCommandExecutionEntity, 'result');
+      const entityResponse = new CommandExecutionEntity({ ...omit(mockCommandExecutionEntity, 'result') });
       mockQueryBuilderGetMany.mockReturnValueOnce([entityResponse, entityResponse]);
       encryptionService.decrypt.mockReturnValueOnce(mockCreateCommandExecutionDto.command);
       encryptionService.decrypt.mockReturnValueOnce(mockCreateCommandExecutionDto.command);
@@ -185,7 +185,7 @@ describe('CommandExecutionProvider', () => {
       ]);
     });
     it('should return list (1) of command execution without failed decrypted item', async () => {
-      const entityResponse = omit(mockCommandExecutionEntity, 'result');
+      const entityResponse = new CommandExecutionEntity({ ...omit(mockCommandExecutionEntity, 'result') });
       mockQueryBuilderGetMany.mockReturnValueOnce([entityResponse, entityResponse]);
       encryptionService.decrypt.mockReturnValueOnce(mockCreateCommandExecutionDto.command);
       encryptionService.decrypt.mockRejectedValueOnce(new KeytarDecryptionErrorException());
@@ -260,7 +260,7 @@ describe('CommandExecutionProvider', () => {
         { id: mockCommandExecutionEntity.id },
       ]);
 
-      expect(await service.cleanupDatabaseHistory(mockDatabase.id)).toEqual(
+      expect(await service['cleanupDatabaseHistory'](mockDatabase.id)).toEqual(
         undefined,
       );
     });

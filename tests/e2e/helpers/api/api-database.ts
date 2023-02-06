@@ -1,11 +1,14 @@
 import { t } from 'testcafe';
+import { Chance } from 'chance';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
 import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters, ClusterNodes } from '../../pageObjects/add-redis-database-page';
 import { Common } from '../common';
 
+const chance = new Chance();
 const common = new Common();
 const endpoint = common.getEndpoint();
+const uniqueId = chance.string({ length: 10 });
 
 /**
  * Add a new Standalone database through api using host and port
@@ -24,19 +27,16 @@ export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewData
         requestBody['tls'] = true;
         requestBody['verifyServerCert'] = false;
         requestBody['caCert'] = {
-            'name': databaseParameters.caCert.name,
+            'name': `ca}-${uniqueId}`,
             'certificate': databaseParameters.caCert.certificate
         };
         requestBody['clientCert'] = {
-            'name': databaseParameters.clientCert!.name,
+            'name': `client}-${uniqueId}`,
             'certificate': databaseParameters.clientCert!.certificate,
             'key': databaseParameters.clientCert!.key
         };
     }
-    const getCerts = await request(endpoint).get('/certificates/ca')
-    .set('Accept', 'application/json');
 
-    await console.log(`certsTest:${await getCerts.body}`);
     const response = await request(endpoint).post('/databases')
         .send(requestBody)
         .set('Accept', 'application/json');

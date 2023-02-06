@@ -91,8 +91,8 @@ test
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
         await clickOnEditDatabaseByName(databaseNames[1]);
-        await t.expect(addRedisDatabasePage.caCertField.textContent).eql('ca', 'CA certificate import incorrect');
-        await t.expect(addRedisDatabasePage.clientCertField.textContent).eql('client', 'Client certificate import incorrect');
+        await t.expect(addRedisDatabasePage.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
+        await t.expect(addRedisDatabasePage.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
     });
 test
     .before(async() => {

@@ -1,19 +1,20 @@
 import { ProfileQueryType, SEARCH_COMMANDS, GRAPH_COMMANDS } from './constants'
 
-function generateGraphProfileQuery(query: string, type: ProfileQueryType) {
-  return [`graph.${type}`, ...query.split(' ').slice(1)].join(' ')
+export function generateGraphProfileQuery(query: string, type: ProfileQueryType) {
+  return [`graph.${type.toLowerCase()}`, ...query.split(' ').slice(1)].join(' ')
 }
 
-function generateSearchProfileQuery(query: string, type: ProfileQueryType) {
+export function generateSearchProfileQuery(query: string, type: ProfileQueryType) {
   const commandSplit = query.split(' ')
-  const key = commandSplit[0].toLowerCase()
+  const cmd = commandSplit[0]
 
   if (type === ProfileQueryType.Explain) {
-    return [`ft.${type}`, ...commandSplit.slice(1)].join(' ')
+    return [`ft.${type.toLowerCase()}`, ...commandSplit.slice(1)].join(' ')
   } else {
-    const index = commandSplit[1]
-    const queryType = key.split('.')[1] // SEARCH / AGGREGATE
-    return [`ft.${type}`, index, queryType, 'QUERY', ...commandSplit.slice(2)].join(' ')
+    let index = commandSplit[1]
+
+    const queryType = cmd.split('.')[1] // SEARCH / AGGREGATE
+    return [`ft.${type.toLowerCase()}`, index, queryType, 'QUERY', ...commandSplit.slice(2)].join(' ')
   }
 }
 

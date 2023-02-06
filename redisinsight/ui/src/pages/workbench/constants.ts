@@ -33,8 +33,8 @@ export const GRAPH_COMMANDS = ['graph.query']
 
 const ALLOWED_PROFILE_COMMANDS = [...SEARCH_COMMANDS, ...GRAPH_COMMANDS]
 
-export function isCommandAllowedForProfile(cmd: string) {
-  return ALLOWED_PROFILE_COMMANDS.includes(cmd)
+export const isCommandAllowedForProfile = (query: string) => {
+  return ALLOWED_PROFILE_COMMANDS.includes(query.split(' ')[0].toLowerCase())
 }
 
 export enum ProfileQueryType {

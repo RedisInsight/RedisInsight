@@ -36,12 +36,12 @@ export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewData
     const getCerts = await request(endpoint).get('/certificates/ca')
     .set('Accept', 'application/json');
 
-    await console.log(`certsTest:${getCerts.body}`);
+    await console.log(`certsTest:${await getCerts.body}`);
     const response = await request(endpoint).post('/databases')
         .send(requestBody)
         .set('Accept', 'application/json');
     await t
-        .expect(response.status).eql(201, `The creation of new standalone database request failed: ${await response.body.message}`)
+        .expect(response.status).eql(201, `The creation of ${databaseParameters.databaseName} standalone database request failed: ${await response.body.message}`)
         .expect(await response.body.name).eql(databaseParameters.databaseName, `Database Name is not equal to ${databaseParameters.databaseName} in response`);
 }
 

@@ -8,13 +8,13 @@ import { Common } from '../common';
 const chance = new Chance();
 const common = new Common();
 const endpoint = common.getEndpoint();
-const uniqueId = chance.string({ length: 10 });
 
 /**
  * Add a new Standalone database through api using host and port
  * @param databaseParameters The database parameters
  */
 export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
+    const uniqueId = chance.string({ length: 10 });
     const requestBody = {
         'name': databaseParameters.databaseName,
         'host': databaseParameters.host,

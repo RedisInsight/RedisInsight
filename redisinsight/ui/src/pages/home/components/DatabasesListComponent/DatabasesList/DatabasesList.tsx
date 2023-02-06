@@ -55,7 +55,7 @@ function DatabasesList({
     if (containerTableRef.current) {
       const { offsetWidth } = containerTableRef.current
 
-      if (dialogIsOpen && columns?.length !== columnVariations[1].length) {
+      if (dialogIsOpen) {
         setColumns(columnVariations[1])
         return
       }

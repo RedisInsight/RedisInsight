@@ -115,11 +115,11 @@ export const ossStandaloneTlsConfig = {
     databasePassword: process.env.OSS_STANDALONE_TLS_PASSWORD,
     caCert: {
         name: `ca}-${uniqueId}`,
-        certificate: process.env.E2E_CA_CRT
+        certificate: process.env.E2E_CA_CRT || ''
     },
     clientCert: {
         name: `client}-${uniqueId}`,
-        certificate: process.env.E2E_CLIENT_CRT,
-        key: process.env.E2E_CLIENT_KEY
+        certificate: process.env.E2E_CLIENT_CRT || '',
+        key: process.env.E2E_CLIENT_KEY || ''
     }
 };

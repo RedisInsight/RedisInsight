@@ -14,7 +14,7 @@ import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
-import { AppRedisInstanceEvents } from 'src/constants';
+import { AppRedisInstanceEvents, RedisErrorCodes } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 import { ClientContext, Session } from 'src/common/models';
@@ -156,6 +156,31 @@ export class DatabaseService {
       return database;
     } catch (error) {
       this.logger.error(`Failed to update database instance ${id}`, error);
+      throw catchRedisConnectionError(error, database);
+    }
+  }
+
+  /**
+   * Test connection for new/modified config before creating/updating database
+   * @param dto
+   */
+  public async testConnection(
+    dto: CreateDatabaseDto,
+  ): Promise<void> {
+    this.logger.log('Testing database connection');
+
+    const database = classToClass(Database, dto);
+    try {
+      await this.databaseFactory.createDatabaseModel(database);
+
+      return;
+    } catch (error) {
+      // don't throw an error to support sentinel autodiscovery flow
+      if (error.message === RedisErrorCodes.SentinelParamsRequired) {
+        return;
+      }
+
+      this.logger.error('Connection test failed', error);
       throw catchRedisConnectionError(error, database);
     }
   }

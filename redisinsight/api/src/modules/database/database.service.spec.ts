@@ -1,4 +1,4 @@
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
@@ -13,10 +13,12 @@ import { DatabaseInfoProvider } from 'src/modules/database/providers/database-in
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
+import { RedisErrorCodes } from 'src/constants';
 
 describe('DatabaseService', () => {
   let service: DatabaseService;
   let databaseRepository: MockType<DatabaseRepository>;
+  let databaseFactory: MockType<DatabaseFactory>;
   let redisConnectionFactory: MockType<RedisConnectionFactory>;
   let analytics: MockType<DatabaseAnalytics>;
 
@@ -56,6 +58,7 @@ describe('DatabaseService', () => {
 
     service = await module.get(DatabaseService);
     databaseRepository = await module.get(DatabaseRepository);
+    databaseFactory = await module.get(DatabaseFactory);
     redisConnectionFactory = await module.get(RedisConnectionFactory);
     analytics = await module.get(DatabaseAnalytics);
   });
@@ -86,6 +89,9 @@ describe('DatabaseService', () => {
     it('should throw NotFound if no database found', async () => {
       databaseRepository.get.mockResolvedValueOnce(null);
       await expect(service.get(mockDatabase.id)).rejects.toThrow(NotFoundException);
+    });
+    it('should throw NotFound if no database id was provided', async () => {
+      await expect(service.get('')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -131,6 +137,22 @@ describe('DatabaseService', () => {
         { password: 'password' } as UpdateDatabaseDto,
         true,
       )).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('test', () => {
+    it('should successfully test valid connection config', async () => {
+      expect(await service.testConnection(mockDatabase)).toEqual(undefined);
+    });
+    it('should successfully test valid sentinel config (without sentinelMaster)', async () => {
+      databaseFactory.createDatabaseModel.mockRejectedValueOnce(new Error(RedisErrorCodes.SentinelParamsRequired));
+      expect(await service.testConnection(mockDatabase)).toEqual(undefined);
+    });
+    it('should throw connection error', async () => {
+      databaseFactory.createDatabaseModel.mockRejectedValueOnce(new Error(RedisErrorCodes.ConnectionRefused));
+
+      await expect(service.testConnection(mockDatabase))
+        .rejects.toThrow(ServiceUnavailableException);
     });
   });
 

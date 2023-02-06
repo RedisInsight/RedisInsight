@@ -10,7 +10,7 @@ import {
   EuiFormRow, EuiIcon,
   EuiToolTip
 } from '@elastic/eui'
-import { handlePasteHostName, MAX_PORT_NUMBER, selectOnFocus, validateField, validatePortNumber } from 'uiSrc/utils'
+import { handlePasteHostName, MAX_PORT_NUMBER, MAX_TIMEOUT_NUMBER, selectOnFocus, validateField, validatePortNumber, validateTimeoutNumber } from 'uiSrc/utils'
 import { ConnectionType, InstanceType } from 'uiSrc/slices/interfaces'
 import { DbConnectionInfo } from '../interfaces'
 
@@ -182,6 +182,30 @@ const DatabaseForm = (props: Props) => {
               onChange={formik.handleChange}
               dualToggleProps={{ color: 'text' }}
               autoComplete="new-password"
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+
+        <EuiFlexItem className={flexItemClassName}>
+          <EuiFormRow label="Timeout">
+            <EuiFieldNumber
+              name="timeout"
+              id="timeout"
+              data-testid="timeout"
+              style={{ width: '100%' }}
+              placeholder="30"
+              value={formik.values.timeout ?? ''}
+              maxLength={7}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                formik.setFieldValue(
+                  e.target.name,
+                  validateTimeoutNumber(e.target.value.trim())
+                )
+              }}
+              onFocus={selectOnFocus}
+              type="text"
+              min={1}
+              max={MAX_TIMEOUT_NUMBER}
             />
           </EuiFormRow>
         </EuiFlexItem>

@@ -200,7 +200,10 @@ export default merge(baseConfig, {
       SCAN_TREE_COUNT_DEFAULT: '10000',
       PIPELINE_COUNT_DEFAULT: '5',
       SEGMENT_WRITE_KEY:
-        'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
+      'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
+      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
+        : toString(30 * 1000), // 30 sec
     }),
 
     new MiniCssExtractPlugin({

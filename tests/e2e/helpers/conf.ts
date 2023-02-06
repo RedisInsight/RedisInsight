@@ -1,5 +1,6 @@
 import { Chance } from 'chance';
 import * as os from 'os';
+import * as fs from 'fs';
 import { join as joinPath } from 'path';
 const chance = new Chance();
 
@@ -115,11 +116,11 @@ export const ossStandaloneTlsConfig = {
     databasePassword: process.env.OSS_STANDALONE_TLS_PASSWORD,
     caCert: {
         name: `ca}-${uniqueId}`,
-        certificate: process.env.E2E_CA_CRT || ''
+        certificate: process.env.E2E_CA_CRT || fs.readFileSync('./rte/oss-standalone-tls/certs/redisCA.crt', 'utf-8')
     },
     clientCert: {
         name: `client}-${uniqueId}`,
-        certificate: process.env.E2E_CLIENT_CRT || '',
-        key: process.env.E2E_CLIENT_KEY || ''
+        certificate: process.env.E2E_CLIENT_CRT || fs.readFileSync('./rte/oss-standalone-tls/certs/redis.crt', 'utf-8'),
+        key: process.env.E2E_CLIENT_KEY || fs.readFileSync('./rte/oss-standalone-tls/certs/redis.key', 'utf-8')
     }
 };

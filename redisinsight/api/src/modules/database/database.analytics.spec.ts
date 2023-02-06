@@ -187,6 +187,8 @@ describe('DatabaseAnalytics', () => {
       expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceEditedByUser,
         {
+          host: cur.host,
+          port: cur.port,
           databaseId: cur.id,
           connectionType: cur.connectionType,
           provider: HostingProvider.RE_CLUSTER,
@@ -196,6 +198,8 @@ describe('DatabaseAnalytics', () => {
           useSNI: 'enabled',
           useSSH: 'disabled',
           previousValues: {
+            host: prev.host,
+            port: prev.port,
             connectionType: prev.connectionType,
             provider: prev.provider,
             useTLS: 'enabled',
@@ -221,6 +225,8 @@ describe('DatabaseAnalytics', () => {
       expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceEditedByUser,
         {
+          host: cur.host,
+          port: cur.port,
           databaseId: cur.id,
           connectionType: cur.connectionType,
           provider: HostingProvider.RE_CLUSTER,
@@ -230,6 +236,8 @@ describe('DatabaseAnalytics', () => {
           useSNI: 'enabled',
           useSSH: 'disabled',
           previousValues: {
+            host: prev.host,
+            port: prev.port,
             connectionType: prev.connectionType,
             provider: prev.provider,
             useTLS: 'disabled',

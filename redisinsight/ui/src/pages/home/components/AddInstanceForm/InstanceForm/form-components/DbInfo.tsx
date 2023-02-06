@@ -77,31 +77,6 @@ const DbInfo = (props: Props) => {
         />
       )}
 
-      <EuiListGroupItem
-        label={(
-          <>
-            {!!nodes?.length && <AppendEndpoints />}
-            <EuiText color="subdued" size="s">
-              Host:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
-                {host}
-              </EuiTextColor>
-            </EuiText>
-          </>
-        )}
-      />
-
-      <EuiListGroupItem
-        label={(
-          <EuiText color="subdued" size="s">
-            Port:
-            <EuiTextColor color="default" className={styles.dbInfoListValue}>
-              {port}
-            </EuiTextColor>
-          </EuiText>
-        )}
-      />
-
       {!!db && (
         <EuiListGroupItem
           label={(

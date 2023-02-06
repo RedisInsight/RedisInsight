@@ -136,6 +136,72 @@ describe('InstanceForm', () => {
     )
   })
 
+  it('should change host input properly', async () => {
+    const handleSubmit = jest.fn()
+    render(
+      <div id="footerDatabaseForm">
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Sentinel,
+          }}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    )
+
+    await act(() => {
+      fireEvent.change(screen.getByTestId('host'), {
+        target: { value: 'host_1' },
+      })
+    })
+
+    const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    await act(() => {
+      fireEvent.click(submitBtn)
+    })
+    expect(handleSubmit).toBeCalledWith(
+      expect.objectContaining({
+        host: 'host_1',
+      })
+    )
+  })
+
+  it('should change port input properly', async () => {
+    const handleSubmit = jest.fn()
+    render(
+      <div id="footerDatabaseForm">
+        <InstanceForm
+          {...instance(mockedProps)}
+          isEditMode
+          formFields={{
+            ...formFields,
+            connectionType: ConnectionType.Standalone,
+          }}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    )
+
+    await act(() => {
+      fireEvent.change(screen.getByTestId('port'), {
+        target: { value: '123' },
+      })
+    })
+
+    const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    await act(() => {
+      fireEvent.click(submitBtn)
+    })
+    expect(handleSubmit).toBeCalledWith(
+      expect.objectContaining({
+        port: '123',
+      })
+    )
+  })
+
   it('should change tls checkbox', async () => {
     const handleSubmit = jest.fn()
     render(

@@ -75,57 +75,55 @@ const DatabaseForm = (props: Props) => {
 
   return (
     <>
-      {(!isEditMode || isCloneMode) && (
-        <EuiFlexGroup className={flexGroupClassName}>
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiFormRow label="Host*">
-              <EuiFieldText
-                autoFocus={!isCloneMode && isEditMode}
-                name="host"
-                id="host"
-                data-testid="host"
-                color="secondary"
-                maxLength={200}
-                placeholder="Enter Hostname / IP address / Connection URL"
-                value={formik.values.host ?? ''}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validateField(e.target.value.trim())
-                  )
-                }}
-                onPaste={(event: React.ClipboardEvent<HTMLInputElement>) => handlePasteHostName(onHostNamePaste, event)}
-                onFocus={selectOnFocus}
-                append={<AppendHostName />}
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
+      <EuiFlexGroup className={flexGroupClassName}>
+        <EuiFlexItem className={flexItemClassName}>
+          <EuiFormRow label="Host*">
+            <EuiFieldText
+              autoFocus={!isCloneMode && isEditMode}
+              name="host"
+              id="host"
+              data-testid="host"
+              color="secondary"
+              maxLength={200}
+              placeholder="Enter Hostname / IP address / Connection URL"
+              value={formik.values.host ?? ''}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                formik.setFieldValue(
+                  e.target.name,
+                  validateField(e.target.value.trim())
+                )
+              }}
+              onPaste={(event: React.ClipboardEvent<HTMLInputElement>) => handlePasteHostName(onHostNamePaste, event)}
+              onFocus={selectOnFocus}
+              append={<AppendHostName />}
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
 
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
-              <EuiFieldNumber
-                name="port"
-                id="port"
-                data-testid="port"
-                style={{ width: '100%' }}
-                placeholder="Enter Port"
-                value={formik.values.port ?? ''}
-                maxLength={6}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validatePortNumber(e.target.value.trim())
-                  )
-                }}
-                onFocus={selectOnFocus}
-                type="text"
-                min={0}
-                max={MAX_PORT_NUMBER}
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      )}
+        <EuiFlexItem className={flexItemClassName}>
+          <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
+            <EuiFieldNumber
+              name="port"
+              id="port"
+              data-testid="port"
+              style={{ width: '100%' }}
+              placeholder="Enter Port"
+              value={formik.values.port ?? ''}
+              maxLength={6}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                formik.setFieldValue(
+                  e.target.name,
+                  validatePortNumber(e.target.value.trim())
+                )
+              }}
+              onFocus={selectOnFocus}
+              type="text"
+              min={0}
+              max={MAX_PORT_NUMBER}
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+      </EuiFlexGroup>
 
       {(
         (!isEditMode || isCloneMode)

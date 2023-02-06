@@ -22,8 +22,8 @@ test
     .meta({ env: env.web, rte: rte.sentinel })
     .after(async() => {
         // Delete database
-        await myRedisDatabasePage.deleteDatabaseByName('primary-group-1');
-        await myRedisDatabasePage.deleteDatabaseByName('primary-group-2');
+        await myRedisDatabasePage.deleteDatabaseByName(ossSentinelConfig.masters[0].name);
+        await myRedisDatabasePage.deleteDatabaseByName(ossSentinelConfig.masters[1].name);
     })('Verify that user can connect to Sentinel DB', async t => {
         // Add OSS Sentinel DB
         await discoverSentinelDatabase(ossSentinelConfig);
@@ -33,8 +33,8 @@ test
         const sentinelGroupsCount = await sentinelGroups.count;
 
         // Verify new connection badge for Sentinel db
-        await myRedisDatabasePage.verifyDatabaseStatusIsVisible('primary-group-1');
-        await myRedisDatabasePage.verifyDatabaseStatusIsVisible('primary-group-2');
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible(ossSentinelConfig.masters[0].name);
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible(ossSentinelConfig.masters[1].name);
 
         // Verify all groups for connection
         for (let i = 0; i < sentinelGroupsCount; i++) {

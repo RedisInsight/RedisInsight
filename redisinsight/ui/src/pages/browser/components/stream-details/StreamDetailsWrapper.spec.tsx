@@ -1,16 +1,30 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { instance, mock } from 'ts-mockito'
-import { initialState } from 'uiSrc/slices/browser/stream'
-import store, { RootState } from 'uiSrc/slices/store'
+import { streamDataSelector, streamRangeSelector } from 'uiSrc/slices/browser/stream'
 import { bufferToString, stringToBuffer } from 'uiSrc/utils'
 import { render, screen } from 'uiSrc/utils/test-utils'
 import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP } from './constants'
 import StreamDetailsWrapper, { Props } from './StreamDetailsWrapper'
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn()
+jest.mock('uiSrc/slices/browser/stream', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/stream'),
+  streamRangeSelector: jest.fn().mockReturnValue({ start: '', end: '' }),
+  streamDataSelector: jest.fn().mockReturnValue({
+    total: 0,
+    entries: [],
+    keyName: '',
+    keyNameString: '',
+    lastGeneratedId: '',
+    firstEntry: {
+      id: '',
+      fields: []
+    },
+    lastEntry: {
+      id: '',
+      fields: []
+    },
+    lastRefreshTime: null,
+  }),
 }))
 
 const mockedProps = mock<Props>()
@@ -45,20 +59,6 @@ const mockedRangeData = {
 }
 
 describe('StreamDetailsWrapper', () => {
-  beforeEach(() => {
-    const state: RootState = store.getState();
-
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-      ...state,
-      browser: {
-        ...state.browser,
-        stream: {
-          ...state.browser.stream,
-        }
-      },
-    }))
-  })
-
   it('should render', () => {
     expect(render(<StreamDetailsWrapper {...instance(mockedProps)} />)).toBeTruthy()
   })
@@ -70,23 +70,12 @@ describe('StreamDetailsWrapper', () => {
   })
 
   it('should render Range filter', () => {
-    const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-      ...state,
-      browser: {
-        ...state.browser,
-        stream: {
-          ...initialState,
-          loading: false,
-          error: '',
-          range: {
-            ...mockedRangeData
-          },
-          data: {
-            ...mockedEntryData,
-          }
-        },
-      }
+    streamDataSelector.mockImplementation(() => ({
+      ...mockedEntryData,
+    }))
+
+    streamRangeSelector.mockImplementation(() => ({
+      ...mockedRangeData,
     }))
 
     render(<StreamDetailsWrapper {...instance(mockedProps)} />)
@@ -104,25 +93,15 @@ describe('StreamDetailsWrapper', () => {
       ...mockedEntryData.entries,
       entryWithHugeId
     ]
-    const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-      ...state,
-      browser: {
-        ...state.browser,
-        stream: {
-          ...initialState,
-          loading: false,
-          error: '',
-          range: {
-            ...mockedRangeData
-          },
-          data: {
-            ...mockedEntryData,
-            lastEntry: entryWithHugeId,
-            entries: mockedEntries,
-          }
-        },
-      }
+
+    streamDataSelector.mockImplementation(() => ({
+      ...mockedEntryData,
+      lastEntry: entryWithHugeId,
+      entries: mockedEntries,
+    }))
+
+    streamRangeSelector.mockImplementation(() => ({
+      ...mockedRangeData,
     }))
 
     const { queryByTestId } = render(<StreamDetailsWrapper {...instance(mockedProps)} />)

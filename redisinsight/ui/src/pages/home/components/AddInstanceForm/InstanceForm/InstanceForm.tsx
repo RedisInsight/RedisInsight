@@ -2,6 +2,8 @@ import {
   EuiButton,
   EuiCollapsibleNavGroup,
   EuiForm,
+  EuiFlexGroup,
+  EuiFlexItem,
   EuiSpacer,
   EuiToolTip,
   keys,
@@ -72,6 +74,7 @@ export interface Props {
   setIsCloneMode: (value: boolean) => void
   initialValues: DbConnectionInfo
   onSubmit: (values: DbConnectionInfo) => void
+  onTestConnection: (values: DbConnectionInfo) => void
   updateEditingName: (name: string) => void
   onHostNamePaste: (content: string) => boolean
   onClose?: () => void
@@ -126,6 +129,7 @@ const AddStandaloneForm = (props: Props) => {
     width,
     onClose,
     onSubmit,
+    onTestConnection,
     onHostNamePaste,
     submitButtonText,
     instanceType,
@@ -349,6 +353,10 @@ const AddStandaloneForm = (props: Props) => {
     })
   }
 
+  const handleTestConnectionDatabase = () => {
+    onTestConnection(formik.values)
+  }
+
   const handleChangeDatabaseAlias = (
     value: string,
     onSuccess?: () => void,
@@ -430,23 +438,59 @@ const AddStandaloneForm = (props: Props) => {
 
     if (footerEl) {
       return ReactDOM.createPortal(
-        <div className="footerAddDatabase">
-          {onClose && (
-            <EuiButton
-              onClick={onClose}
-              color="secondary"
-              className="btn-cancel"
-              data-testid="btn-cancel"
-            >
-              Cancel
-            </EuiButton>
-          )}
-          <SubmitButton
-            onClick={formik.submitForm}
-            text={submitButtonText}
-            submitIsDisabled={submitIsDisable()}
-          />
-        </div>,
+        <EuiFlexGroup
+          justifyContent="spaceBetween"
+          alignItems="center"
+          className="footerAddDatabase"
+          gutterSize="none"
+          style={{ height: '68px' }}
+        >
+          <EuiFlexItem className="btn-back" grow={false}>
+            {instanceType !== InstanceType.Sentinel && (
+              <EuiToolTip
+                position="top"
+                anchorClassName="euiToolTip__btn-disabled"
+                title={
+                  submitIsDisable()
+                    ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
+                    : null
+                }
+                content={getSubmitButtonContent(submitIsDisable())}
+              >
+                <EuiButton
+                  className="empty-btn"
+                  onClick={handleTestConnectionDatabase}
+                  disabled={submitIsDisable()}
+                  isLoading={loading}
+                  iconType={submitIsDisable() ? 'iInCircle' : undefined}
+                  data-testid="btn-test-connection"
+                >
+                  Test Connection
+                </EuiButton>
+              </EuiToolTip>
+            )}
+          </EuiFlexItem>
+
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup>
+              {onClose && (
+                <EuiButton
+                  onClick={onClose}
+                  color="secondary"
+                  className="btn-cancel"
+                  data-testid="btn-cancel"
+                >
+                  Cancel
+                </EuiButton>
+              )}
+              <SubmitButton
+                onClick={formik.submitForm}
+                text={submitButtonText}
+                submitIsDisabled={submitIsDisable()}
+              />
+            </EuiFlexGroup>
+            </EuiFlexItem>
+        </EuiFlexGroup>,
         footerEl
       )
     }

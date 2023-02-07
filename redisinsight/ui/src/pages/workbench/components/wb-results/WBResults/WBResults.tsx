@@ -52,6 +52,17 @@ const WBResults = (props: Props) => {
     </div>
   )
 
+  const handleQueryProfile = (profileType: ProfileQueryType) => {
+    const profileQuery = generateProfileQueryForCommand(command, profileType)
+    if (profileQuery) {
+      onQueryProfile(
+        profileQuery,
+        null,
+        { mode, results: resultsMode, clearEditor: false, },
+      )
+    }
+  }
+
   return (
     <div className={cx(styles.container)}>
       <div ref={scrollDivRef} />
@@ -90,16 +101,7 @@ const WBResults = (props: Props) => {
           resultsMode={resultsMode}
           db={db}
           onQueryOpen={() => onQueryOpen(id)}
-          onQueryProfile={(profileType: ProfileQueryType) => {
-            const profileQuery = generateProfileQueryForCommand(command, profileType)
-            if (profileQuery) {
-              return onQueryProfile(
-                profileQuery,
-                null,
-                { mode, results: resultsMode, clearEditor: false, },
-              )
-            }
-          }}
+          onQueryProfile={handleQueryProfile}
           onQueryReRun={() => onQueryReRun(
             command,
             null,

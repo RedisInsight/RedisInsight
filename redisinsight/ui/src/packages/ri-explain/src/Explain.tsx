@@ -218,11 +218,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
     const mouseUpHandler = function () {
       document.removeEventListener('mousemove', mouseMoveHandler)
       document.removeEventListener('mouseup', mouseUpHandler)
-
-      if (ele) {
-        // ele.style.cursor = 'grab'
-        // ele.style.removeProperty('user-select')
-      }
     }
 
 
@@ -380,7 +375,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
                   onClick: () => {
                     core?.zoom(0.5)
                     core?.resize(undefined, core?.getContentBBox().height + 50)
-                    // setInfoWidth(Math.max((core?.getContentBBox().width || 1080) + 100, document.body.offsetWidth))
                   },
                   icon: 'magnifyWithPlus'
                 },
@@ -389,7 +383,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
                   onClick: () => {
                     core && Math.floor(core.zoom()) <= 0.5 ? core?.zoom(0) : core?.zoom(-0.5)
                     core?.resize(undefined, core?.getContentBBox().height + 50)
-                    // setInfoWidth(Math.max((core?.getContentBBox().width || 1080) + 100, document.body.offsetWidth))
                   },
                   icon: 'magnifyWithMinus'
                 },
@@ -398,7 +391,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
                   onClick: () => {
                     core?.zoomTo(1)
                     core?.resize(undefined, core?.getContentBBox().height + 50)
-                    // setInfoWidth(Math.max((core?.getContentBBox().width || 1080) + 100, document.body.offsetWidth))
                   },
                   icon: 'bullseye'
                 },

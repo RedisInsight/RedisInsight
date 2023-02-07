@@ -443,29 +443,32 @@ const AddStandaloneForm = (props: Props) => {
           alignItems="center"
           className="footerAddDatabase"
           gutterSize="none"
+          style={{ height: '68px' }}
         >
           <EuiFlexItem className="btn-back" grow={false}>
-            <EuiToolTip
-              position="top"
-              anchorClassName="euiToolTip__btn-disabled"
-              title={
-                submitIsDisable()
-                  ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
-                  : null
-              }
-              content={getSubmitButtonContent(submitIsDisable())}
-            >
-              <EuiButton
-                style={{ borderColor: 'transparent' }}
-                onClick={handleTestConnectionDatabase}
-                disabled={submitIsDisable()}
-                isLoading={loading}
-                iconType={submitIsDisable() ? 'iInCircle' : undefined}
-                data-testid="btn-test-connection"
+            {instanceType !== InstanceType.Sentinel && (
+              <EuiToolTip
+                position="top"
+                anchorClassName="euiToolTip__btn-disabled"
+                title={
+                  submitIsDisable()
+                    ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
+                    : null
+                }
+                content={getSubmitButtonContent(submitIsDisable())}
               >
-                Test Connection
-              </EuiButton>
-            </EuiToolTip>
+                <EuiButton
+                  className="empty-btn"
+                  onClick={handleTestConnectionDatabase}
+                  disabled={submitIsDisable()}
+                  isLoading={loading}
+                  iconType={submitIsDisable() ? 'iInCircle' : undefined}
+                  data-testid="btn-test-connection"
+                >
+                  Test Connection
+                </EuiButton>
+              </EuiToolTip>
+            )}
           </EuiFlexItem>
 
           <EuiFlexItem grow={false}>

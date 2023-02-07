@@ -1,5 +1,5 @@
 import { acceptLicenseTermsAndAddDatabaseApi, clickOnEditDatabaseByName, deleteDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage } from '../../../pageObjects';
+import { AddRedisDatabasePage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -9,6 +9,7 @@ import { Common } from '../../../helpers/common';
 
 const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const addRedisDatabasePage = new AddRedisDatabasePage();
 const database = Object.assign({}, ossStandaloneConfig);
 
 const previousDatabaseName = common.generateWord(20);
@@ -29,6 +30,10 @@ test
         await t.click(myRedisDatabasePage.myRedisDBButton);
         // Edit alias of added database
         await clickOnEditDatabaseByName(database.databaseName);
+
+        // Verify that timeout input is displayed for edit db window with default value when it wasn't specified
+        await t.expect(addRedisDatabasePage.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30');
+
         await t.click(myRedisDatabasePage.editAliasButton);
         await t.typeText(myRedisDatabasePage.aliasInput, newDatabaseName, { replace: true });
         await t.click(myRedisDatabasePage.applyButton);

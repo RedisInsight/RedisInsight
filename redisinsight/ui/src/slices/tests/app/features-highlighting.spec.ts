@@ -2,10 +2,10 @@ import { cloneDeep } from 'lodash'
 import reducer, {
   initialState,
   setFeaturesInitialState,
-  appFeatureHighlightingSelector,
+  appFeatureSelector,
   setFeaturesToHighlight,
   removeFeatureFromHighlighting
-} from 'uiSrc/slices/app/features-highlighting'
+} from 'uiSrc/slices/app/features'
 import {
   cleanup,
   initialStateDefault,
@@ -26,9 +26,9 @@ describe('slices', () => {
     it('should properly set initial state', () => {
       const nextState = reducer(initialState, setFeaturesInitialState())
       const rootState = Object.assign(initialStateDefault, {
-        app: { featuresHighlighting: nextState },
+        app: { features: nextState },
       })
-      expect(appFeatureHighlightingSelector(rootState)).toEqual(initialState)
+      expect(appFeatureSelector(rootState)).toEqual(initialState)
     })
   })
 
@@ -40,10 +40,13 @@ describe('slices', () => {
       }
       const state = {
         ...initialState,
-        features: payload.features,
-        version: payload.version,
-        pages: {
-          browser: payload.features
+        highlighting: {
+          ...initialState.highlighting,
+          features: payload.features,
+          version: payload.version,
+          pages: {
+            browser: payload.features
+          }
         }
       }
 
@@ -52,10 +55,10 @@ describe('slices', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        app: { featuresHighlighting: nextState },
+        app: { features: nextState },
       })
 
-      expect(appFeatureHighlightingSelector(rootState)).toEqual(state)
+      expect(appFeatureSelector(rootState)).toEqual(state)
     })
   })
 
@@ -63,19 +66,25 @@ describe('slices', () => {
     it('should properly remove feature to highlight', () => {
       const prevState = {
         ...initialState,
-        features: mockFeatures,
-        version: '2.0.0',
-        pages: {
-          browser: mockFeatures
+        highlighting: {
+          ...initialState.highlighting,
+          features: mockFeatures,
+          version: '2.0.0',
+          pages: {
+            browser: mockFeatures
+          }
         }
       }
 
       const payload = mockFeatures[0]
       const state = {
         ...prevState,
-        features: [mockFeatures[1]],
-        pages: {
-          browser: [mockFeatures[1]]
+        highlighting: {
+          ...prevState.highlighting,
+          features: [mockFeatures[1]],
+          pages: {
+            browser: [mockFeatures[1]]
+          }
         }
       }
 
@@ -84,10 +93,10 @@ describe('slices', () => {
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
-        app: { featuresHighlighting: nextState },
+        app: { features: nextState },
       })
 
-      expect(appFeatureHighlightingSelector(rootState)).toEqual(state)
+      expect(appFeatureSelector(rootState)).toEqual(state)
     })
   })
 })

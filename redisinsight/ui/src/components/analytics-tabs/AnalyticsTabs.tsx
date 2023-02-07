@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { EuiTab, EuiTabs } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
@@ -9,16 +9,26 @@ import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/ana
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 
+import { appFeatureOnboardingSelector, setOnboardNextStep } from 'uiSrc/slices/app/features'
+import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
+import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { analyticsViewTabs } from './constants'
 
 const AnalyticsTabs = () => {
   const { viewTab } = useSelector(analyticsSettingsSelector)
   const { connectionType } = useSelector(connectedInstanceSelector)
+  const { currentStep } = useSelector(appFeatureOnboardingSelector)
   const history = useHistory()
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (connectionType !== ConnectionType.Cluster && currentStep === OnboardingSteps.AnalyticsOverview) {
+      dispatch(setOnboardNextStep())
+    }
+  }, [])
 
   const onSelectedTabChanged = (id: AnalyticsViewTab) => {
     if (id === AnalyticsViewTab.ClusterDetails) {
@@ -38,15 +48,20 @@ const AnalyticsTabs = () => {
       ? [...analyticsViewTabs]
       : [...analyticsViewTabs].filter((tab) => tab.id !== AnalyticsViewTab.ClusterDetails)
 
-    return filteredAnalyticsViewTabs.map(({ id, label }) => (
-      <EuiTab
-        isSelected={viewTab === id}
-        onClick={() => onSelectedTabChanged(id)}
-        key={id}
-        data-testid={`analytics-tab-${id}`}
-      >
-        {label}
-      </EuiTab>
+    return filteredAnalyticsViewTabs.map(({ id, label, onboard }) => renderOnboardingTourWithChild(
+      (
+        <EuiTab
+          isSelected={viewTab === id}
+          onClick={() => onSelectedTabChanged(id)}
+          key={id}
+          data-testid={`analytics-tab-${id}`}
+        >
+          {label}
+        </EuiTab>
+      ),
+      { options: onboard, anchorPosition: 'downLeft' },
+      viewTab === id,
+      id
     ))
   }, [viewTab, connectionType])
 

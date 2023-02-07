@@ -22,6 +22,10 @@ import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isRedisearchAvailable } from 'uiSrc/utils'
 
+import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
+import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
+import { OnboardingTour } from 'uiSrc/components'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import AutoRefresh from '../auto-refresh'
 import FilterKeyType from '../filter-key-type'
 import RediSearchIndexesList from '../redisearch-key-list'
@@ -106,7 +110,20 @@ const KeysHeader = (props: Props) => {
       getIconType() {
         return TreeViewIcon
       },
-      onClick() { handleSwitchView(this.type) }
+      onClick() {
+        handleSwitchView(this.type)
+        dispatch(incrementOnboardStepAction(
+          OnboardingSteps.BrowserTreeView,
+          undefined,
+          () => sendEventTelemetry({
+            event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
+            eventData: {
+              databaseId: instanceId,
+              step: OnboardingStepName.BrowserTreeView,
+            }
+          })
+        ))
+      }
     },
   ]
 
@@ -297,25 +314,28 @@ const KeysHeader = (props: Props) => {
   const ViewSwitch = (width: number) => (
     <div
       className={
-        cx(styles.viewTypeSwitch, {
-          [styles.middleScreen]: width > HIDE_REFRESH_LABEL_WIDTH,
-          [styles.fullScreen]: width > FULL_SCREEN_RESOLUTION
-        })
-      }
+          cx(styles.viewTypeSwitch, {
+            [styles.middleScreen]: width > HIDE_REFRESH_LABEL_WIDTH,
+            [styles.fullScreen]: width > FULL_SCREEN_RESOLUTION
+          })
+        }
       data-testid="view-type-switcher"
     >
-      {viewTypes.map((view) => (
-        <EuiToolTip content={view.tooltipText} position="top" key={view.tooltipText}>
-          <EuiButtonIcon
-            className={view.getClassName()}
-            iconType={view.getIconType()}
-            aria-label={view.ariaLabel}
-            onClick={() => view.onClick()}
-            data-testid={view.dataTestId}
-          />
-        </EuiToolTip>
-      ))}
-
+      <OnboardingTour options={ONBOARDING_FEATURES.BROWSER_TREE_VIEW}>
+        <>
+          {viewTypes.map((view) => (
+            <EuiToolTip content={view.tooltipText} position="top" key={view.tooltipText}>
+              <EuiButtonIcon
+                className={view.getClassName()}
+                iconType={view.getIconType()}
+                aria-label={view.ariaLabel}
+                onClick={() => view.onClick()}
+                data-testid={view.dataTestId}
+              />
+            </EuiToolTip>
+          ))}
+        </>
+      </OnboardingTour>
     </div>
   )
 
@@ -391,7 +411,13 @@ const KeysHeader = (props: Props) => {
         {({ width }) => (
           <div style={{ width }}>
             <div className={styles.top}>
-              {SearchModeSwitch(width)}
+              <OnboardingTour
+                options={ONBOARDING_FEATURES.BROWSER_FILTER_SEARCH}
+                anchorPosition="downLeft"
+                panelClassName={styles.browserFilterOnboard}
+              >
+                {SearchModeSwitch(width)}
+              </OnboardingTour>
               {searchMode === SearchMode.Pattern ? (
                 <FilterKeyType />
               ) : (

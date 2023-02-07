@@ -31,6 +31,11 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
   }, [])
 
   useEffect(() => {
+    if (pathname === Pages.clusterDetails(instanceId) && connectionType !== ConnectionType.Cluster) {
+      history.push(Pages.databaseAnalysis(instanceId))
+      return
+    }
+
     if (pathname === Pages.analytics(instanceId)) {
       // restore current inner page and ignore context (as we store context on unmount)
       if (pathnameRef.current && pathnameRef.current !== lastViewedPage) {

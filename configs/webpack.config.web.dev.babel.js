@@ -213,7 +213,6 @@ export default merge(commonConfig, {
       CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
         ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000),
-      SEGMENT_WRITE_KEY: 'Ba1YuGnxzsQN9zjqTSvzPc6f3AvmH1mj',
     }),
 
     new webpack.LoaderOptionsPlugin({

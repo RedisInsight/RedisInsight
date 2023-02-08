@@ -84,26 +84,6 @@ export function ProfileNode(props: INodeProps) {
     items['Size'] = size
   }
 
-  const timeInFloat = parseFloat(time || '')
-  let timeStyles: React.CSSProperties = {
-    color: 'white',
-  }
-
-  if (timeInFloat > 250) {
-    timeStyles = {
-      ...timeStyles,
-      backgroundColor: 'red',
-      paddingRight: '4px',
-      paddingLeft: '2px',
-      borderRadius: '5px',
-    }
-  } else if (timeInFloat > 49) {
-    timeStyles['color'] = 'red'
-  } else if (timeInFloat > 24) {
-    timeStyles['color'] = 'yellow'
-  }
-
-
   const infoData = data ? data : type
 
   return (
@@ -119,7 +99,7 @@ export function ProfileNode(props: INodeProps) {
       }
       <div className="MetaData">
         <EuiToolTip content={<NodeToolTipContent content={"Execution Time"} />}>
-          <div className="Time" style={timeStyles}>
+          <div className="Time">
             <div className="IconContainer"><EuiIcon className="NodeIcon" size="m" type="clock" /></div>
             <div>{time} ms</div>
           </div>

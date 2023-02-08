@@ -10,7 +10,7 @@ export function App(props: { command?: string, data: any }) {
   if (ErrorResponse !== null) return ErrorResponse
 
   return (
-    <div id="mainApp" style={{ height: "100%", width: '100%', overflowX: 'auto' }}>
+    <div id="mainApp" style={{ height: "100%", width: '100%', overflow: 'hidden'}}>
       <Explain command={props.command || ''} data={props.data}/>
     </div>
   )

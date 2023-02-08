@@ -279,7 +279,7 @@ class Expr {
 
   toJSON(): EntityInfo {
 
-    let snippet: string | undefined;
+    let snippet: string | undefined = undefined
 
     if (this.SubType === EntityType.TAG && this.Info?.startsWith('TAG:')) {
       snippet = this.Info?.substr(4)
@@ -344,7 +344,7 @@ class IntersectExpr {
   toJSON(): EntityInfo {
     const id = uuidv4()
 
-    let snippet: string | undefined;
+    let snippet: string | undefined = undefined
 
     if (!this.Info?.startsWith('INTERSECT')) {
       snippet = this.Info?.substring(0, this.Info.indexOf(':INTERSECT'))
@@ -371,7 +371,7 @@ class UnionExpr {
   toJSON(): EntityInfo {
     const id = uuidv4()
 
-    let snippet: string | undefined;
+    let snippet: string | undefined = undefined
 
     if (!this.Info?.startsWith('UNION')) {
       snippet = this.Info?.substring(0, this.Info.indexOf(':UNION'))

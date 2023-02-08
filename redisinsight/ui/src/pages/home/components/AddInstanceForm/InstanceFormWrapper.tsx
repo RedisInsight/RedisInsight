@@ -180,6 +180,7 @@ const InstanceFormWrapper = (props: Props) => {
       username,
       password,
       db,
+      timeout,
       sentinelMasterName,
       sentinelMasterUsername,
       sentinelMasterPassword,
@@ -232,7 +233,15 @@ const InstanceFormWrapper = (props: Props) => {
             : undefined,
     }
 
-    const database: any = { name, host, port: +port, db: +(db || 0), username, password }
+    const database: any = {
+      name,
+      host,
+      port: +port,
+      db: +(db || 0),
+      username,
+      password,
+      timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
+    }
 
     // add tls & ssh for database (modifies database object)
     applyTlSDatabase(database, tlsSettings)

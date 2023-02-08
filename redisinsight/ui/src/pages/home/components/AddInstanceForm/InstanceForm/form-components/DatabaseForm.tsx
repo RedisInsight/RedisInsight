@@ -186,29 +186,31 @@ const DatabaseForm = (props: Props) => {
           </EuiFormRow>
         </EuiFlexItem>
 
-        <EuiFlexItem className={flexItemClassName}>
-          <EuiFormRow label="Timeout">
-            <EuiFieldNumber
-              name="timeout"
-              id="timeout"
-              data-testid="timeout"
-              style={{ width: '100%' }}
-              placeholder="30"
-              value={formik.values.timeout ?? ''}
-              maxLength={7}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                formik.setFieldValue(
-                  e.target.name,
-                  validateTimeoutNumber(e.target.value.trim())
-                )
-              }}
-              onFocus={selectOnFocus}
-              type="text"
-              min={1}
-              max={MAX_TIMEOUT_NUMBER}
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
+        {connectionType !== ConnectionType.Sentinel && instanceType !== InstanceType.Sentinel && (
+          <EuiFlexItem className={flexItemClassName}>
+            <EuiFormRow label="Timeout">
+              <EuiFieldNumber
+                name="timeout"
+                id="timeout"
+                data-testid="timeout"
+                style={{ width: '100%' }}
+                placeholder="Enter Timeout"
+                value={formik.values.timeout ?? ''}
+                maxLength={7}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(
+                    e.target.name,
+                    validateTimeoutNumber(e.target.value.trim())
+                  )
+                }}
+                onFocus={selectOnFocus}
+                type="text"
+                min={1}
+                max={MAX_TIMEOUT_NUMBER}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        )}
       </EuiFlexGroup>
     </>
   )

@@ -1,5 +1,6 @@
 import path from 'path';
 import webpack from 'webpack';
+import { toString } from 'lodash'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';

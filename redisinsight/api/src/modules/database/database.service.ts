@@ -133,7 +133,8 @@ export class DatabaseService {
   ): Promise<Database> {
     this.logger.log(`Updating database: ${id}`);
     const oldDatabase = await this.get(id, true);
-    let database = merge(oldDatabase, dto);
+
+    let database = merge({}, oldDatabase, dto);
 
     try {
       database = await this.databaseFactory.createDatabaseModel(database);

@@ -158,7 +158,6 @@ export class DatabaseController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @Post('/test')
   @ApiEndpoint({
     description: 'Test connection',

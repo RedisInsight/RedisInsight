@@ -168,11 +168,11 @@ const BrowserPage = () => {
       setSelectedKey(null)
     }
 
-    dispatch(fetchKeys(
+    dispatch(fetchKeys({
       searchMode,
-      '0',
-      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT
-    ))
+      cursor: '0',
+      count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT
+    }))
   }
 
   const selectKey = ({ rowData }: { rowData: any }) => {

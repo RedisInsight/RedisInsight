@@ -33,3 +33,10 @@ yarn --cwd "${REDISTIMESERIES_DIR}"
 yarn --cwd "${REDISTIMESERIES_DIR}" build
 mkdir -p "${PLUGINS_DIR}/redistimeseries-app"
 cp -R "${REDISTIMESERIES_DIR}/dist" "${REDISTIMESERIES_DIR}/package.json" "${PLUGINS_DIR}/redistimeseries-app"
+
+# Build clients-list plugin
+CLIENTS_LIST_DIR="./redisinsight/ui/src/packages/clients-list"
+yarn --cwd "${CLIENTS_LIST_DIR}"
+yarn --cwd "${CLIENTS_LIST_DIR}" build
+mkdir -p "${PLUGINS_DIR}/clients-list"
+cp -R "${CLIENTS_LIST_DIR}/dist" "${CLIENTS_LIST_DIR}/package.json" "${PLUGINS_DIR}/clients-list"

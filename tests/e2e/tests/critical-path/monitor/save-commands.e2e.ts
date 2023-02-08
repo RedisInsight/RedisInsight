@@ -31,7 +31,6 @@ async function findByFileStarts(dir: string): Promise<number> {
         return matchedFiles.length;
     }
     return 0;
-
 }
 
 fixture `Save commands`

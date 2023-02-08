@@ -31,7 +31,6 @@ export interface Props {
   editMode: boolean;
   editedInstance: Nullable<Instance>;
   onClose?: () => void;
-  onDbAdded: () => void;
   onDbEdited?: () => void;
   onAliasEdited?: (value: string) => void;
   isFullWidth?: boolean;

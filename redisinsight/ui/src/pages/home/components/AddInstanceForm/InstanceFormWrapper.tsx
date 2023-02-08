@@ -33,7 +33,6 @@ export interface Props {
   instanceType: InstanceType
   editMode: boolean
   editedInstance: Nullable<Instance>
-  onDbAdded: () => void
   onClose?: () => void
   onDbEdited?: () => void
   onAliasEdited?: (value: string) => void
@@ -77,7 +76,6 @@ const InstanceFormWrapper = (props: Props) => {
     instanceType,
     isResizablePanel = false,
     onClose,
-    onDbAdded,
     onDbEdited,
     onAliasEdited,
     editedInstance,
@@ -342,7 +340,6 @@ const InstanceFormWrapper = (props: Props) => {
       BrowserStorageItem.instancesCount,
       databasesCount + 1
     )
-    onDbAdded()
   }
 
   const handleConnectionFormSubmit = (values: DbConnectionInfo) => {

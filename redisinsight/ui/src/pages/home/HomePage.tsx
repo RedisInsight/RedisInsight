@@ -133,9 +133,7 @@ const HomePage = () => {
     }
   }, [instances])
 
-  const onInstanceChanged = () => ({})
-
-  const onInstanceNotChanged = () => {
+  const onDbEdited = () => {
     if (contextInstanceId && contextInstanceId === editedInstance?.id) {
       dispatch(resetKeys())
       dispatch(resetRedisearchKeysData())
@@ -261,8 +259,7 @@ const HomePage = () => {
                               isResizablePanel
                               editedInstance={editedInstance}
                               onClose={closeEditDialog}
-                              onDbAdded={onInstanceChanged}
-                              onDbEdited={onInstanceNotChanged}
+                              onDbEdited={onDbEdited}
                             />
                           )}
 
@@ -273,7 +270,6 @@ const HomePage = () => {
                               isResizablePanel
                               editedInstance={sentinelInstance ?? null}
                               onClose={handleClose}
-                              onDbAdded={onInstanceChanged}
                               isFullWidth={!instances.length}
                             />
                           )}
@@ -302,7 +298,6 @@ const HomePage = () => {
                           isResizablePanel
                           editedInstance={sentinelInstance ?? null}
                           onClose={handleClose}
-                          onDbAdded={onInstanceChanged}
                           isFullWidth={!instances.length}
                         />
                       )}

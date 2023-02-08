@@ -102,6 +102,7 @@ enum ApiEndpoints {
 
   REDISEARCH = 'redisearch',
   REDISEARCH_SEARCH = 'redisearch/search',
+  HISTORY = 'history',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

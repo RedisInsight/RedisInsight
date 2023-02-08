@@ -111,11 +111,11 @@ const RediSearchIndexesList = (props: Props) => {
     setIsSelectOpen(false)
 
     dispatch(setSelectedIndex(value))
-    dispatch(fetchKeys(
+    dispatch(fetchKeys({
       searchMode,
-      '0',
-      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-    ))
+      cursor: '0',
+      count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+    }))
 
     sendEventTelemetry({
       event: TelemetryEvent.SEARCH_INDEX_CHANGED,

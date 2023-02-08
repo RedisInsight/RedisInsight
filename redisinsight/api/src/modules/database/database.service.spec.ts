@@ -112,7 +112,7 @@ describe('DatabaseService', () => {
     it('should update existing database and send analytics event', async () => {
       expect(await service.update(
         mockDatabase.id,
-        { password: 'password', port: 6380, host: '127.0.100.2' } as UpdateDatabaseDto,
+        { password: 'password', port: 6380 } as UpdateDatabaseDto,
         true,
       )).toEqual(mockDatabase);
       expect(analytics.sendInstanceEditedEvent).toHaveBeenCalledWith(
@@ -121,7 +121,6 @@ describe('DatabaseService', () => {
           ...mockDatabase,
           password: 'password',
           port: 6380,
-          host: '127.0.100.2',
         },
         true,
       );

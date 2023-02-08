@@ -80,8 +80,8 @@ const DatabaseForm = (props: Props) => {
 
   return (
     <>
-      {server?.buildType !== BuildType.RedisStack && (
-        <EuiFlexGroup className={flexGroupClassName}>
+      <EuiFlexGroup className={flexGroupClassName}>
+        {(!isEditMode || isCloneMode) && (
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Host*">
               <EuiFieldText
@@ -105,7 +105,8 @@ const DatabaseForm = (props: Props) => {
               />
             </EuiFormRow>
           </EuiFlexItem>
-
+        )}
+        {server?.buildType !== BuildType.RedisStack && (
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
               <EuiFieldNumber
@@ -129,8 +130,8 @@ const DatabaseForm = (props: Props) => {
               />
             </EuiFormRow>
           </EuiFlexItem>
-        </EuiFlexGroup>
-      )}
+        )}
+      </EuiFlexGroup>
 
       {(
         (!isEditMode || isCloneMode)

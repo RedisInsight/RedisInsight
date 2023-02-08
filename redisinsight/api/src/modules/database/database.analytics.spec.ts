@@ -187,7 +187,6 @@ describe('DatabaseAnalytics', () => {
       expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceEditedByUser,
         {
-          host: cur.host,
           port: cur.port,
           databaseId: cur.id,
           connectionType: cur.connectionType,
@@ -225,7 +224,6 @@ describe('DatabaseAnalytics', () => {
       expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceEditedByUser,
         {
-          host: cur.host,
           port: cur.port,
           databaseId: cur.id,
           connectionType: cur.connectionType,

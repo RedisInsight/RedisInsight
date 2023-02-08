@@ -47,7 +47,9 @@ test
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
             .expect(addRedisDatabasePage.hostInput.getAttribute('value')).eql(ossStandaloneConfig.host, 'Wrong host value')
             .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossStandaloneConfig.port, 'Wrong port value')
-            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossStandaloneConfig.databaseName, 'Wrong host value');
+            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossStandaloneConfig.databaseName, 'Wrong host value')
+            // Verify that timeout input is displayed for clone db window
+            .expect(addRedisDatabasePage.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30 on clone window');
         // Verify that user can confirm the creation of the database by clicking “Clone Database”
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count).eql(2, 'DB was not cloned');

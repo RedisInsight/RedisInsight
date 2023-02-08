@@ -3,6 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { toString } from 'lodash'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import { Instance } from 'uiSrc/slices/interfaces'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import InstanceFormWrapper, { Props } from './InstanceFormWrapper'
 import InstanceForm, {
   Props as InstanceProps,
@@ -40,9 +41,15 @@ jest.mock('./InstanceForm/InstanceForm', () => ({
   default: jest.fn(),
 }))
 
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
+
 jest.mock('uiSrc/slices/instances/instances', () => ({
   createInstanceStandaloneAction: () => jest.fn,
   updateInstanceAction: () => jest.fn,
+  testInstanceStandaloneAction: () => jest.fn,
   instancesSelector: jest.fn().mockReturnValue({ loadingChanging: false }),
 }))
 
@@ -63,6 +70,13 @@ jest.mock('uiSrc/slices/instances/sentinel', () => ({
 
 const MockInstanceForm = (props: InstanceProps) => (
   <div>
+    <button
+      type="button"
+      data-testid="btn-test-connection"
+      onClick={() => props.onTestConnection(mockedValues)}
+    >
+      onTestConnection
+    </button>
     <button type="button" data-testid="close-btn" onClick={() => props.onClose()}>
       onClose
     </button>
@@ -166,5 +180,23 @@ describe('InstanceFormWrapper', () => {
     )
     fireEvent.click(screen.getByTestId('paste-hostName-btn'))
     expect(component).toBeTruthy()
+  })
+
+  it('should call proper telemetry events after click test connection', () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(
+      <InstanceFormWrapper
+        {...instance(mockedProps)}
+        editedInstance={mockedEditedInstance}
+      />
+    )
+    fireEvent.click(screen.getByTestId('btn-test-connection'))
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CONFIG_DATABASES_TEST_CONNECTION_CLICKED,
+    })
+    sendEventTelemetry.mockRestore()
   })
 })

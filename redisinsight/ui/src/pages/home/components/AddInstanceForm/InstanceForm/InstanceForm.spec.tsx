@@ -11,6 +11,7 @@ const BTN_SUBMIT = 'btn-submit'
 const NEW_CA_CERT = 'new-ca-cert'
 const QA_CA_CERT = 'qa-ca-cert'
 const RADIO_BTN_PRIVATE_KEY = '[data-test-subj="radio-btn-privateKey"] label'
+const BTN_TEST_CONNECTION = 'btn-test-connection'
 
 const mockedProps = mock<Props>()
 const mockedDbConnectionInfo = mock<DbConnectionInfo>()
@@ -105,6 +106,8 @@ describe('InstanceForm', () => {
 
   it('should change sentinelMasterUsername input properly', async () => {
     const handleSubmit = jest.fn()
+    const handleTestConnection = jest.fn()
+
     render(
       <div id="footerDatabaseForm">
         <InstanceForm
@@ -115,6 +118,7 @@ describe('InstanceForm', () => {
             connectionType: ConnectionType.Sentinel,
           }}
           onSubmit={handleSubmit}
+          onTestConnection={handleTestConnection}
         />
       </div>
     )
@@ -126,6 +130,17 @@ describe('InstanceForm', () => {
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    const testConnectionBtn = screen.getByTestId(BTN_TEST_CONNECTION)
+
+    await act(() => {
+      fireEvent.click(testConnectionBtn)
+    })
+    expect(handleTestConnection).toBeCalledWith(
+      expect.objectContaining({
+        sentinelMasterUsername: 'user',
+      })
+    )
+
     await act(() => {
       fireEvent.click(submitBtn)
     })
@@ -138,6 +153,8 @@ describe('InstanceForm', () => {
 
   it('should change tls checkbox', async () => {
     const handleSubmit = jest.fn()
+    const handleTestConnection = jest.fn()
+
     render(
       <div id="footerDatabaseForm">
         <InstanceForm
@@ -148,13 +165,26 @@ describe('InstanceForm', () => {
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
+          onTestConnection={handleTestConnection}
         />
       </div>
     )
-
-    fireEvent.click(screen.getByTestId('tls'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('tls'))
+    })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    const testConnectionBtn = screen.getByTestId(BTN_TEST_CONNECTION)
+
+    await act(() => {
+      fireEvent.click(testConnectionBtn)
+    })
+    expect(handleTestConnection).toBeCalledWith(
+      expect.objectContaining({
+        tls: ['on'],
+      })
+    )
+
     await act(() => {
       fireEvent.click(submitBtn)
     })
@@ -168,6 +198,7 @@ describe('InstanceForm', () => {
 
   it('should change Database Index checkbox', async () => {
     const handleSubmit = jest.fn()
+    const handleTestConnection = jest.fn()
     render(
       <div id="footerDatabaseForm">
         <InstanceForm
@@ -177,13 +208,24 @@ describe('InstanceForm', () => {
             connectionType: ConnectionType.Standalone,
           }}
           onSubmit={handleSubmit}
+          onTestConnection={handleTestConnection}
         />
       </div>
     )
-
-    fireEvent.click(screen.getByTestId('showDb'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('showDb'))
+    })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    const testConnectionBtn = screen.getByTestId(BTN_TEST_CONNECTION)
+    await act(() => {
+      fireEvent.click(testConnectionBtn)
+    })
+    expect(handleTestConnection).toBeCalledWith(
+      expect.objectContaining({
+        showDb: true,
+      })
+    )
     await act(() => {
       fireEvent.click(submitBtn)
     })
@@ -197,6 +239,7 @@ describe('InstanceForm', () => {
 
   it('should change db checkbox and value', async () => {
     const handleSubmit = jest.fn()
+    const handleTestConnection = jest.fn()
     render(
       <div id="footerDatabaseForm">
         <InstanceForm
@@ -206,11 +249,13 @@ describe('InstanceForm', () => {
             connectionType: ConnectionType.Standalone,
           }}
           onSubmit={handleSubmit}
+          onTestConnection={handleTestConnection}
         />
       </div>
     )
-
-    fireEvent.click(screen.getByTestId('showDb'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('showDb'))
+    })
 
     await act(() => {
       fireEvent.change(screen.getByTestId('db'), {
@@ -219,6 +264,17 @@ describe('InstanceForm', () => {
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    const testConnectionBtn = screen.getByTestId(BTN_TEST_CONNECTION)
+
+    await act(() => {
+      fireEvent.click(testConnectionBtn)
+    })
+    expect(handleTestConnection).toBeCalledWith(
+      expect.objectContaining({
+        showDb: true,
+        db: '12'
+      })
+    )
     await act(() => {
       fireEvent.click(submitBtn)
     })
@@ -233,6 +289,7 @@ describe('InstanceForm', () => {
 
   it('should change "Use SNI" with prepopulated with host', async () => {
     const handleSubmit = jest.fn()
+    const handleTestConnection = jest.fn()
     render(
       <div id="footerDatabaseForm">
         <InstanceForm
@@ -244,12 +301,25 @@ describe('InstanceForm', () => {
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
+          onTestConnection={handleTestConnection}
         />
       </div>
     )
-    fireEvent.click(screen.getByTestId('sni'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('sni'))
+    })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    const testConnectionBtn = screen.getByTestId(BTN_TEST_CONNECTION)
+    await act(() => {
+      fireEvent.click(testConnectionBtn)
+    })
+    expect(handleTestConnection).toBeCalledWith(
+      expect.objectContaining({
+        sni: true,
+        servername: formFields.host
+      })
+    )
     await act(() => {
       fireEvent.click(submitBtn)
     })
@@ -264,6 +334,7 @@ describe('InstanceForm', () => {
 
   it('should change "Use SNI"', async () => {
     const handleSubmit = jest.fn()
+    const handleTestConnection = jest.fn()
     render(
       <div id="footerDatabaseForm">
         <InstanceForm
@@ -275,10 +346,13 @@ describe('InstanceForm', () => {
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
+          onTestConnection={handleTestConnection}
         />
       </div>
     )
-    fireEvent.click(screen.getByTestId('sni'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('sni'))
+    })
 
     await act(() => {
       fireEvent.change(screen.getByTestId('sni-servername'), {
@@ -287,6 +361,16 @@ describe('InstanceForm', () => {
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    const testConnectionBtn = screen.getByTestId(BTN_TEST_CONNECTION)
+    await act(() => {
+      fireEvent.click(testConnectionBtn)
+    })
+    expect(handleTestConnection).toBeCalledWith(
+      expect.objectContaining({
+        sni: true,
+        servername: '12'
+      })
+    )
     await act(() => {
       fireEvent.click(submitBtn)
     })
@@ -301,6 +385,7 @@ describe('InstanceForm', () => {
 
   it('should change "Verify TLS Certificate"', async () => {
     const handleSubmit = jest.fn()
+    const handleTestConnection = jest.fn()
     render(
       <div id="footerDatabaseForm">
         <InstanceForm
@@ -312,12 +397,24 @@ describe('InstanceForm', () => {
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
+          onTestConnection={handleTestConnection}
         />
       </div>
     )
-    fireEvent.click(screen.getByTestId('verify-tls-cert'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('verify-tls-cert'))
+    })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    const testConnectionBtn = screen.getByTestId(BTN_TEST_CONNECTION)
+    await act(() => {
+      fireEvent.click(testConnectionBtn)
+    })
+    expect(handleTestConnection).toBeCalledWith(
+      expect.objectContaining({
+        verifyServerTlsCert: ['on'],
+      })
+    )
     await act(() => {
       fireEvent.click(submitBtn)
     })
@@ -331,6 +428,7 @@ describe('InstanceForm', () => {
 
   it('should select value from "CA Certificate"', async () => {
     const handleSubmit = jest.fn()
+    const handleTestConnection = jest.fn()
     const { queryByText } = render(
       <div id="footerDatabaseForm">
         <InstanceForm
@@ -342,6 +440,7 @@ describe('InstanceForm', () => {
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
+          onTestConnection={handleTestConnection}
         />
       </div>
     )
@@ -367,6 +466,17 @@ describe('InstanceForm', () => {
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    const testConnectionBtn = screen.getByTestId(BTN_TEST_CONNECTION)
+    await act(() => {
+      fireEvent.click(testConnectionBtn)
+    })
+    expect(handleTestConnection).toBeCalledWith(
+      expect.objectContaining({
+        selectedCaCertName: ADD_NEW_CA_CERT,
+        newCaCertName: '321',
+        newCaCert: '123',
+      })
+    )
     await act(() => {
       fireEvent.click(submitBtn)
     })
@@ -382,6 +492,7 @@ describe('InstanceForm', () => {
 
   it('should render fields for add new CA and change them properly', async () => {
     const handleSubmit = jest.fn()
+    const handleTestConnection = jest.fn()
     render(
       <div id="footerDatabaseForm">
         <InstanceForm
@@ -394,22 +505,36 @@ describe('InstanceForm', () => {
             selectedCaCertName: 'ADD_NEW_CA_CERT',
           }}
           onSubmit={handleSubmit}
+          onTestConnection={handleTestConnection}
         />
       </div>
     )
 
     expect(screen.getByTestId(QA_CA_CERT)).toBeInTheDocument()
-    fireEvent.change(screen.getByTestId(QA_CA_CERT), {
-      target: { value: '321' },
+    await act(() => {
+      fireEvent.change(screen.getByTestId(QA_CA_CERT), {
+        target: { value: '321' },
+      })
     })
 
     expect(screen.getByTestId(NEW_CA_CERT)).toBeInTheDocument()
-    fireEvent.change(screen.getByTestId(NEW_CA_CERT), {
-      target: { value: '123' },
+    await act(() => {
+      fireEvent.change(screen.getByTestId(NEW_CA_CERT), {
+        target: { value: '123' },
+      })
     })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
-
+    const testConnectionBtn = screen.getByTestId(BTN_TEST_CONNECTION)
+    await act(() => {
+      fireEvent.click(testConnectionBtn)
+    })
+    expect(handleTestConnection).toBeCalledWith(
+      expect.objectContaining({
+        newCaCert: '123',
+        newCaCertName: '321',
+      })
+    )
     await act(() => {
       fireEvent.click(submitBtn)
     })
@@ -424,6 +549,7 @@ describe('InstanceForm', () => {
 
   it('should change "Requires TLS Client Authentication"', async () => {
     const handleSubmit = jest.fn()
+    const handleTestConnection = jest.fn()
     render(
       <div id="footerDatabaseForm">
         <InstanceForm
@@ -435,12 +561,24 @@ describe('InstanceForm', () => {
             connectionType: ConnectionType.Cluster,
           }}
           onSubmit={handleSubmit}
+          onTestConnection={handleTestConnection}
         />
       </div>
     )
-    fireEvent.click(screen.getByTestId('tls-required-checkbox'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('tls-required-checkbox'))
+    })
 
     const submitBtn = screen.getByTestId(BTN_SUBMIT)
+    const testConnectionBtn = screen.getByTestId(BTN_TEST_CONNECTION)
+    await act(() => {
+      fireEvent.click(testConnectionBtn)
+    })
+    expect(handleTestConnection).toBeCalledWith(
+      expect.objectContaining({
+        tlsClientAuthRequired: ['on'],
+      })
+    )
     await act(() => {
       fireEvent.click(submitBtn)
     })

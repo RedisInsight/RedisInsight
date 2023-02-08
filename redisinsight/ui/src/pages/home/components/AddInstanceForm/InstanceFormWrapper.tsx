@@ -9,6 +9,7 @@ import {
   createInstanceStandaloneAction,
   instancesSelector,
   updateInstanceAction,
+  testInstanceStandaloneAction,
 } from 'uiSrc/slices/instances/instances'
 import {
   fetchMastersSentinelAction,
@@ -166,6 +167,86 @@ const InstanceFormWrapper = (props: Props) => {
     ]
     const database = pick(editedInstance, ...requiredFields)
     dispatch(updateInstanceAction({ ...database, name }))
+  }
+
+  const handleTestConnectionDatabase = (values: DbConnectionInfo) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_TEST_CONNECTION_CLICKED
+    })
+    const {
+      name,
+      host,
+      port,
+      username,
+      password,
+      db,
+      sentinelMasterName,
+      sentinelMasterUsername,
+      sentinelMasterPassword,
+      newCaCert,
+      tls,
+      sni,
+      servername,
+      newCaCertName,
+      selectedCaCertName,
+      tlsClientAuthRequired,
+      verifyServerTlsCert,
+      newTlsCertPairName,
+      selectedTlsClientCertId,
+      newTlsClientCert,
+      newTlsClientKey,
+    } = values
+
+    const tlsSettings = {
+      useTls: tls,
+      servername: (sni && servername) || undefined,
+      verifyServerCert: verifyServerTlsCert,
+      caCert:
+        !tls || selectedCaCertName === NO_CA_CERT
+          ? undefined
+          : selectedCaCertName === ADD_NEW_CA_CERT
+            ? {
+              new: {
+                name: newCaCertName,
+                certificate: newCaCert,
+              },
+            }
+            : {
+              name: selectedCaCertName,
+            },
+      clientAuth: tls && tlsClientAuthRequired,
+      clientCert: !tls
+        ? undefined
+        : typeof selectedTlsClientCertId === 'string'
+          && tlsClientAuthRequired
+          && selectedTlsClientCertId !== ADD_NEW
+          ? { id: selectedTlsClientCertId }
+          : selectedTlsClientCertId === ADD_NEW && tlsClientAuthRequired
+            ? {
+              new: {
+                name: newTlsCertPairName,
+                certificate: newTlsClientCert,
+                key: newTlsClientKey,
+              },
+            }
+            : undefined,
+    }
+
+    const database: any = { name, host, port: +port, db: +(db || 0), username, password }
+
+    // add tls & ssh for database (modifies database object)
+    applyTlSDatabase(database, tlsSettings)
+    applySSHDatabase(database, values)
+
+    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
+      database.sentinelMaster = {
+        name: sentinelMasterName,
+        username: sentinelMasterUsername,
+        password: sentinelMasterPassword,
+      }
+    }
+
+    dispatch(testInstanceStandaloneAction(removeEmpty(database)))
   }
 
   const autoFillFormDetails = (content: string): boolean => {
@@ -486,6 +567,7 @@ const InstanceFormWrapper = (props: Props) => {
             : TitleDatabaseText.AddDatabase
         }
         onSubmit={handleConnectionFormSubmit}
+        onTestConnection={handleTestConnectionDatabase}
         onClose={handleOnClose}
         onHostNamePaste={autoFillFormDetails}
         isEditMode={editMode}

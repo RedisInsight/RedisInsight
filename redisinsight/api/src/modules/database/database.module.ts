@@ -57,6 +57,7 @@ export class DatabaseModule {
       .apply(ConnectionMiddleware)
       .forRoutes(
         { path: 'databases', method: RequestMethod.POST },
+        { path: 'databases/test', method: RequestMethod.POST },
         { path: 'databases/:id/connect', method: RequestMethod.GET },
       );
   }

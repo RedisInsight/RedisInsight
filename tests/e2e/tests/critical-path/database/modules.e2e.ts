@@ -56,7 +56,7 @@ test
         // Open Edit mode
         await t.click(myRedisDatabasePage.editDatabaseButton);
         // Verify that module column is not displayed
-        await t.expect(myRedisDatabasePage.moduleColumn.visible).notOk('Module column not found');
+        await t.expect(myRedisDatabasePage.moduleColumn.exists).notOk('Module column not found');
         // Verify modules in Edit mode
         await myRedisDatabasePage.checkModulesOnPage(moduleList);
     });

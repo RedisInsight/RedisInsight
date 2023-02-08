@@ -238,7 +238,16 @@ export type AddNewDatabaseParameters = {
     port: string,
     databaseName?: string,
     databaseUsername?: string,
-    databasePassword?: string
+    databasePassword?: string,
+    caCert?: {
+        name?: string,
+        certificate?: string
+    },
+    clientCert?: {
+        name?: string,
+        certificate?: string,
+        key?: string
+    },
 };
 
 /**
@@ -250,7 +259,12 @@ export type AddNewDatabaseParameters = {
 export type SentinelParameters = {
     sentinelHost: string,
     sentinelPort: string,
-    masters?: object[],
+    masters?: {
+        alias?: string,
+        db?: string,
+        name?: string,
+        password?: string,
+    }[],
     sentinelPassword?: string,
     name?: string[]
 };

@@ -8,7 +8,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { NotFoundException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
+import { LocalPluginStateRepository } from 'src/modules/workbench/repositories/local-plugin-state.repository';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -40,15 +40,15 @@ const mockPluginStateEntity = new PluginStateEntity({
   encryption: 'KEYTAR',
 });
 
-describe('PluginStateProvider', () => {
-  let service: PluginStateProvider;
+describe('LocalPluginStateRepository', () => {
+  let service: LocalPluginStateRepository;
   let repository: MockType<Repository<PluginStateEntity>>;
   let encryptionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        PluginStateProvider,
+        LocalPluginStateRepository,
         {
           provide: getRepositoryToken(PluginStateEntity),
           useFactory: mockRepository,
@@ -60,7 +60,7 @@ describe('PluginStateProvider', () => {
       ],
     }).compile();
 
-    service = module.get<PluginStateProvider>(PluginStateProvider);
+    service = module.get(LocalPluginStateRepository);
     repository = module.get(getRepositoryToken(PluginStateEntity));
     encryptionService = module.get<EncryptionService>(EncryptionService);
   });
@@ -71,6 +71,20 @@ describe('PluginStateProvider', () => {
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
       expect(await service.upsert(mockPluginStatePartial)).toEqual(undefined);
+    });
+    it('should throw origin error when error is not a SQL constraint error', async () => {
+      const constraintError: any = new Error('any error');
+
+      repository.save.mockRejectedValueOnce(constraintError);
+      encryptionService.encrypt.mockReturnValue(mockEncryptResult);
+
+      try {
+        await service.upsert(mockPluginStatePartial);
+        fail();
+      } catch (e) {
+        expect(e).not.toBeInstanceOf(NotFoundException);
+        expect(e.message).not.toEqual(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND);
+      }
     });
     it('should throw not found error ON SQL constraint error', async () => {
       const constraintError: any = new Error('FOREIGN_KEY error');

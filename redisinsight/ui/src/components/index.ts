@@ -1,7 +1,6 @@
 import NavigationMenu from './navigation-menu/NavigationMenu'
 import PageHeader from './page-header/PageHeader'
 import GroupBadge from './group-badge/GroupBadge'
-import ActionBar from './action-bar/ActionBar'
 import Notifications from './notifications/Notifications'
 import DatabaseListModules from './database-list-modules/DatabaseListModules'
 import DatabaseListOptions from './database-list-options/DatabaseListOptions'
@@ -26,7 +25,6 @@ export {
   NavigationMenu,
   PageHeader,
   GroupBadge,
-  ActionBar,
   Notifications,
   DatabaseListModules,
   DatabaseListOptions,

@@ -61,6 +61,7 @@ import reducer, {
   fetchConnectedInstanceInfoAction,
   testInstanceStandaloneAction,
   updateEditedInstance,
+  exportInstancesAction,
 } from '../../instances/instances'
 import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
@@ -1067,6 +1068,51 @@ describe('instances slice', () => {
         const expectedActions = [
           setDefaultInstance(),
           setDefaultInstanceFailure(responsePayload.response.data.message),
+          addErrorNotification(responsePayload as AxiosError),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('exportInstancesAction', () => {
+      it('should call proper actions on success', async () => {
+        // Arrange
+
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(exportInstancesAction(map(instances, 'id'), true))
+
+        // Assert
+        const expectedActions = [
+          setDefaultInstance(),
+          setDefaultInstanceSuccess(),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on fail', async () => {
+        // Arrange
+        const errorMessage = 'Some Error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(exportInstancesAction(map(instances, 'id'), false))
+
+        // Assert
+        const expectedActions = [
+          setDefaultInstance(),
+          setDefaultInstanceFailure(errorMessage),
           addErrorNotification(responsePayload as AxiosError),
         ]
         expect(store.getActions()).toEqual(expectedActions)

@@ -57,7 +57,7 @@ fixture `Remember database sorting`
     });
 test('Verify that sorting on the list of databases saved when database opened', async t => {
     // Sort by Connection Type
-    const sortedByConnectionType = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.name[0], ossStandaloneConfig.databaseName];
+    const sortedByConnectionType = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.masters[0].alias, ossStandaloneConfig.databaseName];
     await t.click(myRedisDatabasePage.sortByConnectionType);
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
     await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedByConnectionType);
@@ -70,7 +70,7 @@ test('Verify that sorting on the list of databases saved when database opened', 
     // Sort by Host and Port
     await t.click(myRedisDatabasePage.sortByHostAndPort);
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
-    const sortedDatabaseHost = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.name[0], ossStandaloneConfig.databaseName];
+    const sortedDatabaseHost = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.masters[0].alias, ossStandaloneConfig.databaseName];
     await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedDatabaseHost);
     // Verify that sorting on the list of databases saved when databases list refreshed
     await common.reloadPage();

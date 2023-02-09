@@ -179,3 +179,8 @@ export enum KeyValueFormat {
   Protobuf = 'Protobuf',
   Pickle = 'Pickle',
 }
+
+export enum SearchHistoryMode {
+  Pattern = 'pattern',
+  Redisearch = 'redisearch'
+}

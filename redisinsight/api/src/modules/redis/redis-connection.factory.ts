@@ -50,13 +50,14 @@ export class RedisConnectionFactory {
     options: IRedisConnectionOptions,
   ): Promise<RedisOptions> {
     const {
-      host, port, password, username, tls, db,
+      host, port, password, username, tls, db, timeout,
     } = database;
     const redisOptions: RedisOptions = {
       host,
       port,
       username,
       password,
+      connectTimeout: timeout,
       db: isNumber(clientMetadata.db) ? clientMetadata.db : db,
       connectionName: options?.connectionName
         || generateRedisConnectionName(clientMetadata.context, clientMetadata.databaseId),

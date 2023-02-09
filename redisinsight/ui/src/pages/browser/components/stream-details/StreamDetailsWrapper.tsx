@@ -1,7 +1,7 @@
 import { EuiProgress } from '@elastic/eui'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { isNull, last } from 'lodash'
+import { isNull, last, toString } from 'lodash'
 import cx from 'classnames'
 
 import {
@@ -30,6 +30,7 @@ import GroupsViewWrapper from './groups-view'
 import MessagesViewWrapper from './messages-view'
 import StreamDataViewWrapper from './stream-data-view'
 import StreamTabs from './stream-tabs'
+import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP } from './constants'
 
 import styles from './styles.module.scss'
 
@@ -57,6 +58,8 @@ const StreamDetailsWrapper = (props: Props) => {
     && (firstEntry.id !== '')
     && !isNull(lastEntry)
     && lastEntry.id !== ''
+    && toString(firstEntryTimeStamp)?.length < MAX_FORMAT_LENGTH_STREAM_TIMESTAMP
+    && toString(lastEntryTimeStamp)?.length < MAX_FORMAT_LENGTH_STREAM_TIMESTAMP
 
   useEffect(() =>
     () => {

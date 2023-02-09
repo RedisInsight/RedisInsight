@@ -15,7 +15,7 @@ import {
   mockDatabase,
   mockClusterDatabaseWithTlsAuth,
   mockDatabaseService,
-  MockType, mockBrowserClientMetadata
+  MockType, mockBrowserClientMetadata, mockBrowserHistoryService
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
@@ -36,6 +36,7 @@ import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { KeysBusinessService } from './keys-business.service';
 import { StringTypeInfoStrategy } from './key-info-manager/strategies/string-type-info/string-type-info.strategy';
+import { BrowserHistoryService } from '../browser-history/browser-history.service';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: Buffer.from('testString'),
@@ -61,6 +62,7 @@ describe('KeysBusinessService', () => {
   let standaloneScanner;
   let clusterScanner;
   let stringTypeInfoManager;
+  let browserHistory;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -92,12 +94,17 @@ describe('KeysBusinessService', () => {
           provide: SettingsService,
           useFactory: mockSettingsService,
         },
+        {
+          provide: BrowserHistoryService,
+          useFactory: mockBrowserHistoryService,
+        },
       ],
     }).compile();
 
     service = module.get<KeysBusinessService>(KeysBusinessService);
     databaseService = module.get(DatabaseService);
     browserTool = module.get<BrowserToolService>(BrowserToolService);
+    browserHistory = module.get<BrowserHistoryService>(BrowserHistoryService);
     const scannerManager = get(service, 'scanner');
     const keyInfoManager = get(service, 'keyInfoManager');
     standaloneScanner = scannerManager.getStrategy(ConnectionType.STANDALONE);
@@ -241,6 +248,26 @@ describe('KeysBusinessService', () => {
           ERROR_MESSAGES.SCAN_PER_KEY_TYPE_NOT_SUPPORT(),
         );
       }
+    });
+    it('should call create browser history item if match !== "*"', async () => {
+      standaloneScanner.getKeys = jest
+        .fn()
+        .mockResolvedValue([mockGetKeysWithDetailsResponse]);
+
+      await service.getKeys(mockBrowserClientMetadata, {...getKeysDto, match: '1'});
+
+      expect(standaloneScanner.getKeys).toHaveBeenCalled();
+      expect(browserHistory.create).toHaveBeenCalled();
+    });
+    it('should do not call create browser history item if match === "*"', async () => {
+      standaloneScanner.getKeys = jest
+        .fn()
+        .mockResolvedValue([mockGetKeysWithDetailsResponse]);
+
+      await service.getKeys(mockBrowserClientMetadata, {...getKeysDto, match: '*'});
+
+      expect(standaloneScanner.getKeys).toHaveBeenCalled();
+      expect(browserHistory.create).not.toHaveBeenCalled();
     });
   });
 

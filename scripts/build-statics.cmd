@@ -38,3 +38,12 @@ if not exist "%PLUGINS_DIR%\redistimeseries-app" mkdir "%PLUGINS_DIR%\redistimes
 if not exist "%PLUGINS_DIR%\redistimeseries-app\dist" mkdir "%PLUGINS_DIR%\redistimeseries-app\dist"
 xcopy "%REDISTIMESERSIES_DIR%\dist" "%PLUGINS_DIR%\redistimeseries-app\dist\" /s /e /y
 copy "%REDISTIMESERSIES_DIR%\package.json" "%PLUGINS_DIR%\redistimeseries-app\"
+
+: Build clients-list plugin
+set CLIENTS_LIST_DIR=".\redisinsight\ui\src\packages\clients-list"
+call yarn --cwd "%CLIENTS_LIST_DIR%"
+call yarn --cwd "%CLIENTS_LIST_DIR%" build
+if not exist "%PLUGINS_DIR%\clients-list" mkdir "%PLUGINS_DIR%\clients-list"
+if not exist "%PLUGINS_DIR%\clients-list\dist" mkdir "%PLUGINS_DIR%\clients-list\dist"
+xcopy "%CLIENTS_LIST_DIR%\dist" "%PLUGINS_DIR%\clients-list\dist\" /s /e /y
+copy "%CLIENTS_LIST_DIR%\package.json" "%PLUGINS_DIR%\clients-list\"

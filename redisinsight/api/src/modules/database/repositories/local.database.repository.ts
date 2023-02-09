@@ -76,7 +76,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     const entities = await this.repository
       .createQueryBuilder('d')
       .select([
-        'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new',
+        'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
         'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider',
       ])
       .getMany();

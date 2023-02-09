@@ -109,24 +109,24 @@ const AddKeyReJSON = (props: Props) => {
           />
           <EuiFlexGroup justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
-              <label htmlFor="upload-input-file" className={styles.uploadBtn}>
-                <EuiButtonEmpty
-                  iconType="folderOpen"
-                  className={styles.emptyBtn}
-                >
+              <EuiButtonEmpty
+                iconType="folderOpen"
+                className={styles.emptyBtn}
+              >
+                <label htmlFor="upload-input-file" className={styles.uploadBtn}>
                   <EuiText className={styles.label}>Upload</EuiText>
-                </EuiButtonEmpty>
-                <input
-                  type="file"
-                  id="upload-input-file"
-                  data-testid="upload-input-file"
-                  accept="application/json, text/plain"
-                  onChange={onFileChange}
-                  onClick={onClick}
-                  className={styles.fileDrop}
-                  aria-label="Select file"
-                />
-              </label>
+                  <input
+                    type="file"
+                    id="upload-input-file"
+                    data-testid="upload-input-file"
+                    accept="application/json, text/plain"
+                    onChange={onFileChange}
+                    onClick={onClick}
+                    className={styles.fileDrop}
+                    aria-label="Select file"
+                  />
+                </label>
+              </EuiButtonEmpty>
             </EuiFlexItem>
           </EuiFlexGroup>
         </>

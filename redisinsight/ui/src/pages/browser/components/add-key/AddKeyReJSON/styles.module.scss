@@ -4,16 +4,12 @@
 
 .uploadBtn {
   display: flex;
-  margin-top: 7px;
   cursor: pointer;
-}
-
-.uploadIcon {
-  margin-right: 4px;
 }
 
 .emptyBtn:global(.euiButtonEmpty) {
   height: 22px;
+  margin-top: 7px;
 }
 
 .emptyBtn:global(.euiButtonEmpty .euiButtonEmpty__content) {

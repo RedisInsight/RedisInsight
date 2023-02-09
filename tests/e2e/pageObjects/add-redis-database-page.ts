@@ -29,6 +29,7 @@ export class AddRedisDatabasePage {
     cloneSentinelDatabaseNavigation = Selector('[data-testid=database-nav-group-clone]');
     cancelButton = Selector('[data-testid=btn-cancel]');
     showPasswordBtn = Selector('[aria-label^="Show password"]');
+    testConnectionBtn = Selector('[data-testid=btn-test-connection]');
     // TEXT INPUTS (also referred to as 'Text fields')
     hostInput = Selector('[data-testid=host]');
     portInput = Selector('[data-testid=port]');

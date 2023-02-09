@@ -9,7 +9,7 @@ import {
 } from 'src/__mocks__';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
+import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
 import {
   ClusterNodeRole,
   CreateCommandExecutionDto,
@@ -129,7 +129,7 @@ const mockCommandExecutionWithSilentMode = {
   }],
 };
 
-const mockCommandExecutionProvider = () => ({
+const mockCommandExecutionRepository = () => ({
   createMany: jest.fn(),
   getList: jest.fn(),
   getOne: jest.fn(),
@@ -156,8 +156,8 @@ describe('WorkbenchService', () => {
           }),
         },
         {
-          provide: CommandExecutionProvider,
-          useFactory: mockCommandExecutionProvider,
+          provide: CommandExecutionRepository,
+          useFactory: mockCommandExecutionRepository,
         },
         {
           provide: DatabaseConnectionService,
@@ -168,7 +168,7 @@ describe('WorkbenchService', () => {
 
     service = module.get<WorkbenchService>(WorkbenchService);
     workbenchCommandsExecutor = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
-    commandExecutionProvider = module.get<CommandExecutionProvider>(CommandExecutionProvider);
+    commandExecutionProvider = module.get(CommandExecutionRepository);
   });
 
   describe('createCommandExecution', () => {
@@ -179,9 +179,13 @@ describe('WorkbenchService', () => {
       expect(result.executionTime).toBeGreaterThan(0);
     });
     it('should save db index', async () => {
-      const db = 2
-      const result = await service.createCommandExecution(mockWorkbenchClientMetadata, mockCreateCommandExecutionDto, db);
-      expect(result).toMatchObject({...mockCommandExecutionToRun, db});
+      const db = 2;
+      const result = await service.createCommandExecution(
+        mockWorkbenchClientMetadata,
+        mockCreateCommandExecutionDto,
+        db,
+      );
+      expect(result).toMatchObject({ ...mockCommandExecutionToRun, db });
       expect(result.db).toBe(db);
     });
     it('should save result as unsupported command message', async () => {
@@ -380,7 +384,10 @@ describe('WorkbenchService', () => {
     it('should not return anything on delete', async () => {
       commandExecutionProvider.delete.mockResolvedValueOnce('some response');
 
-      const result = await service.deleteCommandExecution(mockWorkbenchClientMetadata.databaseId, mockCommandExecution.id);
+      const result = await service.deleteCommandExecution(
+        mockWorkbenchClientMetadata.databaseId,
+        mockCommandExecution.id,
+      );
 
       expect(result).toEqual(undefined);
     });

@@ -79,14 +79,14 @@ test('Verify DB list search', async t => {
     // Verify that user can search DB by host on the List of databases
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[0].databaseName).exists).ok('The database with host not found', { timeout: 10000 });
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[1].databaseName).exists).ok('The database with host not found', { timeout: 10000 });
-    await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.name[0]).exists).notOk('The database with other host is found', { timeout: 10000 });
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.masters[0].alias).exists).notOk('The database with other host is found', { timeout: 10000 });
 
     // Search for DB by port
     await t.typeText(myRedisDatabasePage.searchInput, searchedDBPort, { replace: true, paste: true });
     // Verify that user can search DB by port on the List of databases
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[0].databaseName).exists).notOk('The database with port is found', { timeout: 10000 });
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databasesForSearch[1].databaseName).exists).notOk('The database with port is found', { timeout: 10000 });
-    await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.name[0]).exists).ok('The database with other port is not found', { timeout: 10000 });
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.masters[0].alias).exists).ok('The database with other port is not found', { timeout: 10000 });
 
     // Search for DB by connection type
     await t.typeText(myRedisDatabasePage.searchInput, searchedDBConType, { replace: true, paste: true });

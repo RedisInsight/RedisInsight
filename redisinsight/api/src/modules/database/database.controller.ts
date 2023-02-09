@@ -27,6 +27,8 @@ import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databas
 import { ClientMetadataParam } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
+import { ExportDatabasesDto } from 'src/modules/database/dto/export.databases.dto';
+import { ExportDatabase } from 'src/modules/database/models/export-database';
 
 @ApiTags('Database')
 @Controller('databases')
@@ -73,7 +75,6 @@ export class DatabaseController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @Post('')
   @ApiEndpoint({
     description: 'Add database instance',
@@ -156,6 +157,29 @@ export class DatabaseController {
     return await this.service.update(id, database, true);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('/test')
+  @ApiEndpoint({
+    description: 'Test connection',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  )
+  async testConnection(
+    @Body() database: CreateDatabaseDto,
+  ): Promise<void> {
+    return await this.service.testConnection(database);
+  }
+
   @Delete('/:id')
   @ApiEndpoint({
     statusCode: 200,
@@ -187,7 +211,6 @@ export class DatabaseController {
   }
 
   @Get(':id/connect')
-  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @ApiEndpoint({
     description: 'Connect to database instance by id',
     statusCode: 200,
@@ -206,5 +229,25 @@ export class DatabaseController {
     }) clientMetadata: ClientMetadata,
   ): Promise<void> {
     await this.connectionService.connect(clientMetadata);
+  }
+
+  @Post('export')
+  @ApiEndpoint({
+    statusCode: 201,
+    excludeFor: [BuildType.RedisStack],
+    description: 'Export many databases by ids. With or without passwords and certificates bodies.',
+    responses: [
+      {
+        status: 201,
+        description: 'Export many databases by ids response',
+        type: ExportDatabase,
+      },
+    ],
+  })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async exportConnections(
+    @Body() dto: ExportDatabasesDto,
+  ): Promise<ExportDatabase[]> {
+    return await this.service.export(dto.ids, dto.withSecrets);
   }
 }

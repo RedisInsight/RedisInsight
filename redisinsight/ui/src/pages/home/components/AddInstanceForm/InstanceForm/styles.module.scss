@@ -7,6 +7,15 @@
   color: var(--euiColorDangerText) !important;
 }
 
+:global(body .footerAddDatabase .empty-btn) {
+  border-color: transparent;
+
+  &:hover,
+  &:active {
+    background-color: var(--euiTooltipBackgroundColor);
+  }
+}
+
 .errorForm {
   color: var(--euiColorDangerText) !important;
   padding-top: 25px;

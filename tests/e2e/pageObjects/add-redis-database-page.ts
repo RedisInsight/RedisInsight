@@ -29,6 +29,7 @@ export class AddRedisDatabasePage {
     cloneSentinelDatabaseNavigation = Selector('[data-testid=database-nav-group-clone]');
     cancelButton = Selector('[data-testid=btn-cancel]');
     showPasswordBtn = Selector('[aria-label^="Show password"]');
+    testConnectionBtn = Selector('[data-testid=btn-test-connection]');
     // TEXT INPUTS (also referred to as 'Text fields')
     hostInput = Selector('[data-testid=host]');
     portInput = Selector('[data-testid=port]');
@@ -51,6 +52,7 @@ export class AddRedisDatabasePage {
     sshPasswordInput = Selector('[data-testid=sshPassword]');
     sshPrivateKeyInput = Selector('[data-testid=sshPrivateKey]');
     sshPassphraseInput = Selector('[data-testid=sshPassphrase]');
+    timeoutInput = Selector('[data-testid=timeout]');
     // Links
     buildFromSource = Selector('a').withExactText('Build from source');
     buildFromDocker = Selector('a').withExactText('Docker');
@@ -238,7 +240,16 @@ export type AddNewDatabaseParameters = {
     port: string,
     databaseName?: string,
     databaseUsername?: string,
-    databasePassword?: string
+    databasePassword?: string,
+    caCert?: {
+        name?: string,
+        certificate?: string
+    },
+    clientCert?: {
+        name?: string,
+        certificate?: string,
+        key?: string
+    },
 };
 
 /**
@@ -250,7 +261,12 @@ export type AddNewDatabaseParameters = {
 export type SentinelParameters = {
     sentinelHost: string,
     sentinelPort: string,
-    masters?: object[],
+    masters?: {
+        alias?: string,
+        db?: string,
+        name?: string,
+        password?: string,
+    }[],
     sentinelPassword?: string,
     name?: string[]
 };

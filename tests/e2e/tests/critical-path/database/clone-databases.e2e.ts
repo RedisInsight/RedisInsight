@@ -35,6 +35,11 @@ test
     })
     .meta({ rte: rte.standalone })('Verify that user can clone Standalone db', async t => {
         await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+
+        // Verify that user can test Standalone connection on edit and see the success message
+        await t.click(addRedisDatabasePage.testConnectionBtn);
+        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'Standalone connection is not successful');
+
         // Verify that user can cancel the Clone by clicking the “Cancel” or the “x” button
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         await t.click(addRedisDatabasePage.cancelButton);
@@ -68,6 +73,11 @@ test
     })
     .meta({ rte: rte.ossCluster })('Verify that user can clone OSS Cluster', async t => {
         await clickOnEditDatabaseByName(ossClusterConfig.ossClusterDatabaseName);
+
+        // Verify that user can test OSS Cluster connection on edit and see the success message
+        await t.click(addRedisDatabasePage.testConnectionBtn);
+        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'OSS Cluster connection is not successful');
+
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         await t
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
@@ -99,8 +109,12 @@ test
     })
     .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
         await clickOnEditDatabaseByName(ossSentinelConfig.name[1]);
-        await t.click(addRedisDatabasePage.cloneDatabaseButton);
 
+        // Verify that user can test Sentinel connection on edit and see the success message
+        await t.click(addRedisDatabasePage.testConnectionBtn);
+        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'Sentinel connection is not successful');
+
+        await t.click(addRedisDatabasePage.cloneDatabaseButton);
         // Verify that for Sentinel Host and Port fields are replaced with editable Primary Group Name field
         await t
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')

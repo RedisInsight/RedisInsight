@@ -1160,11 +1160,14 @@ export function editKeyFromList(data: { key: RedisResponseBuffer, newKey: RedisR
 export function addKeyIntoList({ key, keyType }: { key: RedisString, keyType: KeyTypes }) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
-    if (state.browser.keys?.search && state.browser.keys?.search !== '*') {
+    const { viewType, filter, search } = state.browser.keys
+
+    if (search && search !== '*') {
       return null
     }
-    if (!state.browser.keys?.filter || state.browser.keys?.filter === keyType) {
-      if (state.browser.keys?.viewType !== KeyViewType.Tree) {
+
+    if (!filter || filter === keyType) {
+      if (viewType !== KeyViewType.Tree) {
         dispatch(resetBrowserTree())
       }
       return dispatch(updateKeyList({ keyName: key, keyType }))

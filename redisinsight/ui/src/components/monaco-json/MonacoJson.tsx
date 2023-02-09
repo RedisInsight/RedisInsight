@@ -12,6 +12,7 @@ import styles from './styles.modules.scss'
 
 export interface Props {
   value: string
+  updatedValue: string
   onChange: (value: string) => void
   disabled?: boolean
   wrapperClassName?: string
@@ -20,6 +21,7 @@ export interface Props {
 const MonacoJson = (props: Props) => {
   const {
     value: valueProp,
+    updatedValue,
     onChange,
     disabled,
     wrapperClassName,
@@ -33,6 +35,10 @@ const MonacoJson = (props: Props) => {
   useEffect(() => {
     monacoObjects.current?.editor.updateOptions({ readOnly: disabled })
   }, [disabled])
+
+  useEffect(() => {
+    setValue(updatedValue)
+  }, [updatedValue])
 
   const handleChange = (val: string) => {
     setValue(val)

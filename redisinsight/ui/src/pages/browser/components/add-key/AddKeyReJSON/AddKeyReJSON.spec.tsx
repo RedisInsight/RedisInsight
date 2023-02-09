@@ -2,6 +2,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import AddKeyReJSON, { Props } from './AddKeyReJSON'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
@@ -12,6 +13,11 @@ jest.mock('../AddKeyFooter/AddKeyFooter', () => ({
   __esModule: true,
   namedExport: jest.fn(),
   default: jest.fn()
+}))
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
 }))
 
 const MockAddKeyFooter = (props: any) => (
@@ -60,5 +66,21 @@ describe('AddKeyReJSON', () => {
       { target: { value: '{}' } }
     )
     expect(screen.getByTestId('add-key-json-btn')).not.toBeDisabled()
+  })
+
+  it('should call proper telemetry events after click Upload', () => {
+    const sendEventTelemetryMock = jest.fn()
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<AddKeyReJSON {...instance(mockedProps)} />)
+
+    fireEvent.click(screen.getByTestId('upload-input-file'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.BROWSER_JSON_VALUE_IMPORT_CLICKED,
+      eventData: {
+        databaseId: 'instanceId',
+      }
+    })
   })
 })

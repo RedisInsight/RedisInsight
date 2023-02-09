@@ -1,0 +1,20 @@
+.fileDrop {
+  display: none;
+}
+
+.uploadBtn {
+  display: flex;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.uploadIcon {
+  margin-right: 4px;
+}
+
+.label {
+  color: var(--inputTextColor) !important;
+  line-height: 16px !important;
+  font-weight: 400 !important;
+  font-size: 12px !important;
+}

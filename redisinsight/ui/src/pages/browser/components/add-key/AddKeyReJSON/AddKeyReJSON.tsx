@@ -1,18 +1,23 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import {
   EuiButton,
   EuiFormRow,
+  EuiIcon,
+  EuiText,
   EuiTextColor,
   EuiForm,
   EuiFlexGroup,
   EuiFlexItem,
   EuiPanel,
 } from '@elastic/eui'
+
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addReJSONKey, } from 'uiSrc/slices/browser/keys'
 
 import MonacoJson from 'uiSrc/components/monaco-json'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/dto'
 
 import {
@@ -20,6 +25,8 @@ import {
 } from '../constants/fields-config'
 
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
+
+import styles from './styles.module.scss'
 
 export interface Props {
   keyName: string
@@ -31,10 +38,11 @@ const AddKeyReJSON = (props: Props) => {
   const { keyName = '', keyTTL, onCancel } = props
   const { loading } = useSelector(addKeyStateSelector)
   const [ReJSONValue, setReJSONValue] = useState<string>('')
-
+  const [valueFromFile, setValueFromFile] = useState<string>('')
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
   const dispatch = useDispatch()
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   useEffect(() => {
     try {
@@ -68,15 +76,56 @@ const AddKeyReJSON = (props: Props) => {
     dispatch(addReJSONKey(data, onCancel))
   }
 
+  const onFileChange = ({ target: { files } }: { target: { files: FileList | null } }) => {
+    if (files && files[0]) {
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        setValueFromFile(e?.target?.result as string)
+        setReJSONValue(e?.target?.result as string)
+      }
+      reader.readAsText(files[0])
+    }
+  }
+
+  const onClick = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.BROWSER_JSON_VALUE_IMPORT_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }
+
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
       <EuiFormRow label={config.value.label} fullWidth>
-        <MonacoJson
-          value={ReJSONValue}
-          onChange={setReJSONValue}
-          disabled={loading}
-          data-testid="json-value"
-        />
+        <>
+          <MonacoJson
+            value={ReJSONValue}
+            updatedValue={valueFromFile}
+            onChange={setReJSONValue}
+            disabled={loading}
+            data-testid="json-value"
+          />
+          <EuiFlexGroup justifyContent="flexEnd">
+            <EuiFlexItem grow={false}>
+              <label htmlFor="upload-input-file" className={styles.uploadBtn}>
+                <EuiIcon className={styles.uploadIcon} type="folderOpen" />
+                <EuiText className={styles.label}>Upload</EuiText>
+                <input
+                  type="file"
+                  id="upload-input-file"
+                  data-testid="upload-input-file"
+                  accept="application/json, text/plain"
+                  onChange={onFileChange}
+                  onClick={onClick}
+                  className={styles.fileDrop}
+                  aria-label="Select file"
+                />
+              </label>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </>
       </EuiFormRow>
 
       <EuiButton type="submit" fill style={{ display: 'none' }}>

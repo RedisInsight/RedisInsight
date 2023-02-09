@@ -56,7 +56,7 @@ describe('GET /databases/:id/cluster-details', () => {
   describe('Common', () => {
     [
       {
-        endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
+        endpoint: () => endpoint(constants.TEST_INSTANCE_ID_4),
         name: 'Should not connect to a database due to misconfiguration',
         statusCode: 503,
         responseBody: {

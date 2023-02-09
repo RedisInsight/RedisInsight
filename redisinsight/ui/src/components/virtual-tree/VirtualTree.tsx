@@ -126,10 +126,6 @@ const VirtualTree = (props: Props) => {
   }, [nodes])
 
   useEffect(() => {
-    dispatch(resetBrowserTree())
-  }, [items.length])
-
-  useEffect(() => {
     if (!items?.length) {
       setNodes([])
       runWebworker?.({ items: [], delimiter })

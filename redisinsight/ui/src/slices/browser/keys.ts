@@ -28,6 +28,7 @@ import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
 
 import {
   CreateListWithExpireDto,
@@ -1163,6 +1164,9 @@ export function addKeyIntoList({ key, keyType }: { key: RedisString, keyType: Ke
       return null
     }
     if (!state.browser.keys?.filter || state.browser.keys?.filter === keyType) {
+      if (state.browser.keys?.viewType !== KeyViewType.Tree) {
+        dispatch(resetBrowserTree())
+      }
       return dispatch(updateKeyList({ keyName: key, keyType }))
     }
     return null

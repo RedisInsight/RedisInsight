@@ -150,5 +150,8 @@ export default {
   CREATE_INDEX: () => ({
     title: 'Index has been created',
     message: 'Open the list of indexes to see it.'
+  }),
+  TEST_CONNECTION: () => ({
+    title: 'Connection is successful',
   })
 }

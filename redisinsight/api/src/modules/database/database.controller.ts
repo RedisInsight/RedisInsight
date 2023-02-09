@@ -75,7 +75,6 @@ export class DatabaseController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @Post('')
   @ApiEndpoint({
     description: 'Add database instance',
@@ -158,6 +157,29 @@ export class DatabaseController {
     return await this.service.update(id, database, true);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('/test')
+  @ApiEndpoint({
+    description: 'Test connection',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  )
+  async testConnection(
+    @Body() database: CreateDatabaseDto,
+  ): Promise<void> {
+    return await this.service.testConnection(database);
+  }
+
   @Delete('/:id')
   @ApiEndpoint({
     statusCode: 200,
@@ -189,7 +211,6 @@ export class DatabaseController {
   }
 
   @Get(':id/connect')
-  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @ApiEndpoint({
     description: 'Connect to database instance by id',
     statusCode: 200,

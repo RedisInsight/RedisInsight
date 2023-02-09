@@ -23,6 +23,7 @@ const dataSchema = Joi.object({
   db: Joi.number().integer().allow(null),
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
+  timeout: Joi.number().integer().allow(null),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),
@@ -40,6 +41,7 @@ const baseDatabaseData = {
   name: 'someName',
   host: constants.TEST_REDIS_HOST,
   port: constants.TEST_REDIS_PORT,
+  timeout: constants.TEST_REDIS_TIMEOUT,
   username: constants.TEST_REDIS_USER || undefined,
   password: constants.TEST_REDIS_PASSWORD || undefined,
 }
@@ -164,7 +166,7 @@ describe(`PUT /databases/:id`, () => {
           after: async () => {
             newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
             expect(newDatabase).to.contain({
-              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'ssh']),
+              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'ssh', 'timeout']),
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
             });

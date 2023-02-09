@@ -35,6 +35,11 @@ test
     })
     .meta({ rte: rte.standalone })('Verify that user can clone Standalone db', async t => {
         await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+
+        // Verify that user can test Standalone connection on edit and see the success message
+        await t.click(addRedisDatabasePage.testConnectionBtn);
+        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'Standalone connection is not successful');
+
         // Verify that user can cancel the Clone by clicking the “Cancel” or the “x” button
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         await t.click(addRedisDatabasePage.cancelButton);
@@ -47,7 +52,9 @@ test
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
             .expect(addRedisDatabasePage.hostInput.getAttribute('value')).eql(ossStandaloneConfig.host, 'Wrong host value')
             .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossStandaloneConfig.port, 'Wrong port value')
-            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossStandaloneConfig.databaseName, 'Wrong host value');
+            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossStandaloneConfig.databaseName, 'Wrong host value')
+            // Verify that timeout input is displayed for clone db window
+            .expect(addRedisDatabasePage.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30 on clone window');
         // Verify that user can confirm the creation of the database by clicking “Clone Database”
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count).eql(2, 'DB was not cloned');
@@ -68,6 +75,11 @@ test
     })
     .meta({ rte: rte.ossCluster })('Verify that user can clone OSS Cluster', async t => {
         await clickOnEditDatabaseByName(ossClusterConfig.ossClusterDatabaseName);
+
+        // Verify that user can test OSS Cluster connection on edit and see the success message
+        await t.click(addRedisDatabasePage.testConnectionBtn);
+        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'OSS Cluster connection is not successful');
+
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
         await t
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
@@ -98,6 +110,11 @@ test
         await clickOnEditDatabaseByName(ossSentinelConfig.masters[1].alias);
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
 
+        // Verify that user can test Sentinel connection on edit and see the success message
+        await t.click(addRedisDatabasePage.testConnectionBtn);
+        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'Sentinel connection is not successful');
+
+        await t.click(addRedisDatabasePage.cloneDatabaseButton);
         // Verify that for Sentinel Host and Port fields are replaced with editable Primary Group Name field
         await t
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')

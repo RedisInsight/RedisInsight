@@ -20,6 +20,11 @@ test('Verify that user can add DB with logical index via host and port from Add 
     const index = '10';
 
     await addRedisDatabasePage.addRedisDataBase(ossStandaloneConfig);
+
+    // Verify that user can test database connection and see success message
+    await t.click(addRedisDatabasePage.testConnectionBtn);
+    await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'Standalone connection is not successful');
+
     // Enter logical index
     await t.click(addRedisDatabasePage.databaseIndexCheckbox);
     await t.typeText(addRedisDatabasePage.databaseIndexInput, index, { replace: true, paste: true });

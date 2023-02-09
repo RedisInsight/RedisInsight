@@ -1,6 +1,7 @@
 enum ApiEndpoints {
   DATABASES = 'databases',
   DATABASES_IMPORT = 'databases/import',
+  DATABASES_TEST_CONNECTION = 'databases/test',
   DATABASES_EXPORT = 'databases/export',
 
   CA_CERTIFICATES = 'certificates/ca',
@@ -101,6 +102,7 @@ enum ApiEndpoints {
 
   REDISEARCH = 'redisearch',
   REDISEARCH_SEARCH = 'redisearch/search',
+  HISTORY = 'history',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

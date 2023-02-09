@@ -99,8 +99,10 @@ const listSlice = createSlice({
       { payload: { elements } }: PayloadAction<GetListElementsResponse>
     ) => {
       state.loading = false
+      const listIndex = state.data?.elements?.length
 
-      state.data.elements = state.data?.elements?.concat(elements.map((element, i) => ({ index: i, element })))
+      state.data.elements = state.data?.elements?.concat(elements.map((element, i) =>
+        ({ index: listIndex + i, element })))
     },
     loadMoreListElementsFailure: (state, { payload }) => {
       state.loading = false

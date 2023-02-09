@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { ConnectionString } from 'connection-string'
-import { isUndefined, pick } from 'lodash'
+import { isUndefined, pick, toNumber, toString } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -9,6 +9,7 @@ import {
   createInstanceStandaloneAction,
   instancesSelector,
   updateInstanceAction,
+  testInstanceStandaloneAction,
 } from 'uiSrc/slices/instances/instances'
 import {
   fetchMastersSentinelAction,
@@ -25,7 +26,7 @@ import { appInfoSelector } from 'uiSrc/slices/app/info'
 
 import InstanceForm from './InstanceForm'
 import { DbConnectionInfo } from './InstanceForm/interfaces'
-import { ADD_NEW, ADD_NEW_CA_CERT, NO_CA_CERT, SshPassType } from './InstanceForm/constants'
+import { ADD_NEW, ADD_NEW_CA_CERT, DEFAULT_TIMEOUT, NO_CA_CERT, SshPassType } from './InstanceForm/constants'
 
 export interface Props {
   width: number
@@ -63,6 +64,9 @@ const getInitialValues = (editedInstance: Nullable<Instance>) => ({
   name: editedInstance?.name ?? (editedInstance ? '' : undefined),
   username: editedInstance?.username ?? '',
   password: editedInstance?.password ?? '',
+  timeout: editedInstance?.timeout
+    ? toString(editedInstance?.timeout / 1_000)
+    : (editedInstance ? '' : undefined),
   tls: !!editedInstance?.tls ?? false,
   ssh: !!editedInstance?.ssh ?? false,
   sshPassType: editedInstance?.sshOptions
@@ -85,7 +89,7 @@ const InstanceFormWrapper = (props: Props) => {
   const [initialValues, setInitialValues] = useState(getInitialValues(editedInstance))
   const [isCloneMode, setIsCloneMode] = useState<boolean>(false)
 
-  const { host, port, name, username, password, tls, ssh, sshPassType } = initialValues
+  const { host, port, name, username, password, timeout, tls, ssh, sshPassType } = initialValues
 
   const { loadingChanging: loadingStandalone } = useSelector(instancesSelector)
   const { loading: loadingSentinel } = useSelector(sentinelSelector)
@@ -163,6 +167,95 @@ const InstanceFormWrapper = (props: Props) => {
     ]
     const database = pick(editedInstance, ...requiredFields)
     dispatch(updateInstanceAction({ ...database, name }))
+  }
+
+  const handleTestConnectionDatabase = (values: DbConnectionInfo) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_TEST_CONNECTION_CLICKED
+    })
+    const {
+      name,
+      host,
+      port,
+      username,
+      password,
+      db,
+      timeout,
+      sentinelMasterName,
+      sentinelMasterUsername,
+      sentinelMasterPassword,
+      newCaCert,
+      tls,
+      sni,
+      servername,
+      newCaCertName,
+      selectedCaCertName,
+      tlsClientAuthRequired,
+      verifyServerTlsCert,
+      newTlsCertPairName,
+      selectedTlsClientCertId,
+      newTlsClientCert,
+      newTlsClientKey,
+    } = values
+
+    const tlsSettings = {
+      useTls: tls,
+      servername: (sni && servername) || undefined,
+      verifyServerCert: verifyServerTlsCert,
+      caCert:
+        !tls || selectedCaCertName === NO_CA_CERT
+          ? undefined
+          : selectedCaCertName === ADD_NEW_CA_CERT
+            ? {
+              new: {
+                name: newCaCertName,
+                certificate: newCaCert,
+              },
+            }
+            : {
+              name: selectedCaCertName,
+            },
+      clientAuth: tls && tlsClientAuthRequired,
+      clientCert: !tls
+        ? undefined
+        : typeof selectedTlsClientCertId === 'string'
+          && tlsClientAuthRequired
+          && selectedTlsClientCertId !== ADD_NEW
+          ? { id: selectedTlsClientCertId }
+          : selectedTlsClientCertId === ADD_NEW && tlsClientAuthRequired
+            ? {
+              new: {
+                name: newTlsCertPairName,
+                certificate: newTlsClientCert,
+                key: newTlsClientKey,
+              },
+            }
+            : undefined,
+    }
+
+    const database: any = {
+      name,
+      host,
+      port: +port,
+      db: +(db || 0),
+      username,
+      password,
+      timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
+    }
+
+    // add tls & ssh for database (modifies database object)
+    applyTlSDatabase(database, tlsSettings)
+    applySSHDatabase(database, values)
+
+    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
+      database.sentinelMaster = {
+        name: sentinelMasterName,
+        username: sentinelMasterUsername,
+        password: sentinelMasterPassword,
+      }
+    }
+
+    dispatch(testInstanceStandaloneAction(removeEmpty(database)))
   }
 
   const autoFillFormDetails = (content: string): boolean => {
@@ -280,6 +373,7 @@ const InstanceFormWrapper = (props: Props) => {
       port,
       username,
       password,
+      timeout,
       sentinelMasterUsername,
       sentinelMasterPassword,
     } = values
@@ -291,6 +385,7 @@ const InstanceFormWrapper = (props: Props) => {
       port: +port,
       username,
       password,
+      timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
     }
 
     // add tls & ssh for database (modifies database object)
@@ -314,12 +409,21 @@ const InstanceFormWrapper = (props: Props) => {
       port,
       username,
       password,
+      timeout,
       db,
       sentinelMasterName,
       sentinelMasterUsername,
       sentinelMasterPassword,
     } = values
-    const database: any = { name, host, port: +port, db: +(db || 0), username, password }
+    const database: any = {
+      name,
+      host,
+      port: +port,
+      db: +(db || 0),
+      username,
+      password,
+      timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
+    }
 
     // add tls & ssh for database (modifies database object)
     applyTlSDatabase(database, tlsSettings)
@@ -423,6 +527,7 @@ const InstanceFormWrapper = (props: Props) => {
     tls,
     username,
     password,
+    timeout,
     connectionType,
     tlsClientAuthRequired,
     certificates,
@@ -471,6 +576,7 @@ const InstanceFormWrapper = (props: Props) => {
             : TitleDatabaseText.AddDatabase
         }
         onSubmit={handleConnectionFormSubmit}
+        onTestConnection={handleTestConnectionDatabase}
         onClose={handleOnClose}
         onHostNamePaste={autoFillFormDetails}
         isEditMode={editMode}

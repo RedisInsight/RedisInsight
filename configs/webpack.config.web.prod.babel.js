@@ -1,6 +1,7 @@
 import { merge } from 'webpack-merge';
 import { resolve } from 'path';
 import webpack from 'webpack';
+import { toString } from 'lodash'
 import TerserPlugin from 'terser-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
@@ -56,6 +57,9 @@ export default merge(commonConfig, {
       PIPELINE_COUNT_DEFAULT: '5',
       SEGMENT_WRITE_KEY:
         'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
+      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
+        : toString(30 * 1000), // 30 sec
     }),
 
     new BundleAnalyzerPlugin({

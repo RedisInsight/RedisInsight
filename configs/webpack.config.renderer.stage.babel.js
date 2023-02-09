@@ -1,5 +1,6 @@
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
+import { toString } from 'lodash'
 import baseConfig from './webpack.config.base';
 import rendererProdConfig from './webpack.config.renderer.prod.babel';
 import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
@@ -23,6 +24,9 @@ export default merge(baseConfig, {
       SCAN_COUNT_MEMORY_ANALYSES: '10000',
       SEGMENT_WRITE_KEY:
         'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
+      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
+        : toString(30 * 1000), // 30 sec
     }),
   ],
 });

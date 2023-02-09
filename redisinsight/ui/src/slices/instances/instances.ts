@@ -95,6 +95,19 @@ const instancesSlice = createSlice({
       state.errorChanging = payload.toString()
     },
 
+    // test database connection
+    testConnection: (state) => {
+      state.loadingChanging = true
+      state.errorChanging = ''
+    },
+    testConnectionSuccess: (state) => {
+      state.loadingChanging = false
+    },
+    testConnectionFailure: (state, { payload = '' }) => {
+      state.loadingChanging = false
+      state.errorChanging = payload.toString()
+    },
+
     changeInstanceAlias: (state) => {
       state.loadingChanging = true
       state.errorChanging = ''
@@ -243,6 +256,9 @@ export const {
   defaultInstanceChanging,
   defaultInstanceChangingSuccess,
   defaultInstanceChangingFailure,
+  testConnection,
+  testConnectionSuccess,
+  testConnectionFailure,
   setDefaultInstance,
   setDefaultInstanceSuccess,
   setDefaultInstanceFailure,
@@ -666,6 +682,38 @@ export function uploadInstancesFile(
       const errorMessage = getApiErrorMessage(error)
       dispatch(importInstancesFromFileFailure(errorMessage))
       onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function testInstanceStandaloneAction(
+  payload: Instance,
+  onRedirectToSentinel?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(testConnection())
+
+    try {
+      const { status } = await apiService.post(`${ApiEndpoints.DATABASES_TEST_CONNECTION}`, payload)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(testConnectionSuccess())
+
+        dispatch(addMessageNotification(successMessages.TEST_CONNECTION()))
+      }
+    } catch (_error) {
+      const error: AxiosError = _error
+      const errorMessage = getApiErrorMessage(error)
+
+      dispatch(testConnectionFailure(errorMessage))
+
+      if (error?.response?.data?.error === ApiErrors.SentinelParamsRequired) {
+        checkoutToSentinelFlow(payload, dispatch, onRedirectToSentinel)
+        return
+      }
+
+      dispatch(addErrorNotification(error))
     }
   }
 }

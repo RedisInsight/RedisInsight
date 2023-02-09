@@ -1108,4 +1108,41 @@ describe('InstanceForm', () => {
 
     expect(screen.getByTestId('sshPassword')).toHaveAttribute('maxLength', '10000')
   })
+
+  describe('timeout', () => {
+    it('should render timeout input with 7 length limit and 1_000_000 value', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          formFields={{ ...formFields, timeout: '30' }}
+        />
+      )
+
+      expect(screen.getByTestId('timeout')).toBeInTheDocument()
+      expect(screen.getByTestId('timeout')).toHaveAttribute('maxLength', '7')
+
+      fireEvent.change(
+        screen.getByTestId('timeout'),
+        { target: { value: '2000000' } }
+      )
+
+      expect(screen.getByTestId('timeout')).toHaveAttribute('value', '1000000')
+    })
+
+    it('should put only numbers', () => {
+      render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          formFields={{ ...formFields, timeout: '30' }}
+        />
+      )
+
+      fireEvent.change(
+        screen.getByTestId('timeout'),
+        { target: { value: '11a2EU$#@' } }
+      )
+
+      expect(screen.getByTestId('timeout')).toHaveAttribute('value', '112')
+    })
+  })
 })

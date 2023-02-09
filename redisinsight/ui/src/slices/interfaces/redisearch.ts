@@ -1,6 +1,6 @@
 import { Nullable } from 'uiSrc/utils'
 import { RedisResponseBuffer } from './app'
-import { KeysStoreData } from './keys'
+import { KeysStoreData, SearchHistoryItem } from './keys'
 
 export interface StateRedisearch {
   loading: boolean
@@ -17,5 +17,9 @@ export interface StateRedisearch {
   createIndex: {
     loading: boolean
     error: string
+  }
+  searchHistory: {
+    data: null | Array<SearchHistoryItem>
+    loading: boolean
   }
 }

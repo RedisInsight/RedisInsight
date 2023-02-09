@@ -1,6 +1,6 @@
 import { rte } from '../../../helpers/constants';
 import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
-import { commonUrl, invalidOssStandaloneConfig, ossStandaloneForSSH } from '../../../helpers/conf';
+import { commonUrl, invalidOssStandaloneConfig, ossStandaloneForSSHConfig } from '../../../helpers/conf';
 import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/database';
 import { deleteStandaloneDatabasesByNamesApi } from '../../../helpers/api/api-database';
 import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../test-data/sshPrivateKeys';
@@ -20,15 +20,15 @@ const sshParams = {
 };
 const newClonedDatabaseAlias = 'Cloned ssh database';
 const sshDbPass = {
-    ...ossStandaloneForSSH,
+    ...ossStandaloneForSSHConfig,
     databaseName: `SSH_${common.generateWord(5)}`
 };
 const sshDbPrivateKey = {
-    ...ossStandaloneForSSH,
+    ...ossStandaloneForSSHConfig,
     databaseName: `SSH_${common.generateWord(5)}`
 };
 const sshDbPasscode = {
-    ...ossStandaloneForSSH,
+    ...ossStandaloneForSSHConfig,
     databaseName: `SSH_${common.generateWord(5)}`
 };
 

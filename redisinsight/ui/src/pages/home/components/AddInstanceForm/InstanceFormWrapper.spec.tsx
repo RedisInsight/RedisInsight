@@ -1,5 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { toString } from 'lodash'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -13,6 +14,7 @@ const mockedEditedInstance: Instance = {
   name: 'name',
   host: 'host',
   port: 123,
+  timeout: 10_000,
   id: '123',
   modules: [],
   tls: true,
@@ -108,6 +110,26 @@ describe('InstanceFormWrapper', () => {
         />
       )
     ).toBeTruthy()
+  })
+
+  it('should send prop timeout / 1_000 (in seconds)', () => {
+    expect(
+      render(
+        <InstanceFormWrapper
+          {...instance(mockedProps)}
+          editedInstance={mockedEditedInstance}
+        />
+      )
+    ).toBeTruthy()
+
+    expect(InstanceForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formFields: expect.objectContaining({
+          timeout: toString(mockedEditedInstance?.timeout / 1_000),
+        }),
+      }),
+      {},
+    )
   })
 
   it('should call onClose', () => {

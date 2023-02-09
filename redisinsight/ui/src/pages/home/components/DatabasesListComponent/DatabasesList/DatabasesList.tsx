@@ -1,38 +1,34 @@
 import {
-  Direction,
   Criteria,
+  Direction,
   EuiBasicTableColumn,
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
   EuiInMemoryTable,
-  EuiPopover,
   EuiTableSelectionType,
-  EuiText,
   PropertySort,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { first, last } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { ActionBar } from 'uiSrc/components'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import { Instance } from 'uiSrc/slices/interfaces'
-import { formatLongName, Nullable } from 'uiSrc/utils'
+import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 
+import { ActionBar, DeleteAction, ExportAction } from './components'
+
 import styles from '../styles.module.scss'
 
 export interface Props {
-  width: number;
-  dialogIsOpen: boolean;
-  editedInstance: Nullable<Instance>;
-  columnVariations: EuiBasicTableColumn<Instance>[][];
-  onDelete: (ids: Instance[]) => void;
-  onWheel: () => void;
+  width: number
+  dialogIsOpen: boolean
+  editedInstance: Nullable<Instance>
+  columnVariations: EuiBasicTableColumn<Instance>[][]
+  onDelete: (ids: Instance[]) => void
+  onExport: (ids: Instance[], withSecrets: boolean) => void
+  onWheel: () => void
 }
 
 const columnsHideWidth = 950
@@ -43,31 +39,30 @@ function DatabasesList({
   dialogIsOpen,
   columnVariations,
   onDelete,
+  onExport,
   onWheel,
   editedInstance,
 }: Props) {
   const [columns, setColumns] = useState(first(columnVariations))
   const [selection, setSelection] = useState<Instance[]>([])
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   const { loading, data: instances } = useSelector(instancesSelector)
 
   const tableRef = useRef<EuiInMemoryTable<Instance>>(null)
   const containerTableRef = useRef<HTMLDivElement>(null)
-  const deleteSelectionListRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (containerTableRef.current) {
       const { offsetWidth } = containerTableRef.current
 
-      if (dialogIsOpen && columns.length !== columnVariations[1]) {
+      if (dialogIsOpen) {
         setColumns(columnVariations[1])
         return
       }
 
       if (
         offsetWidth < columnsHideWidth
-        && columns.length !== last(columnVariations)
+        && columns?.length !== last(columnVariations)?.length
       ) {
         setColumns(last(columnVariations))
         return
@@ -75,7 +70,7 @@ function DatabasesList({
 
       if (
         offsetWidth > columnsHideWidth
-        && columns.length !== first(columnVariations)
+        && columns?.length !== first(columnVariations)?.length
       ) {
         setColumns(first(columnVariations))
       }
@@ -95,18 +90,12 @@ function DatabasesList({
     tableRef.current?.setSelection([])
   }
 
-  const onButtonClick = () => {
+  const handleExport = (instances: Instance[], withSecrets: boolean) => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_MULTIPLE_DATABASES_DELETE_CLICKED,
-      eventData: {
-        databasesIds: selection.map((selected: Instance) => selected.id)
-      }
+      event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_CLICKED
     })
-    setIsPopoverOpen((prevState) => !prevState)
-  }
-
-  const closePopover = () => {
-    setIsPopoverOpen(false)
+    onExport(instances, withSecrets)
+    tableRef.current?.setSelection([])
   }
 
   const toggleSelectedRow = (instance: Instance) => ({
@@ -129,78 +118,6 @@ function DatabasesList({
       eventData: sort
     })
 
-  const deleteBtn = (
-    <EuiButton
-      onClick={onButtonClick}
-      fill
-      color="secondary"
-      size="s"
-      iconType="trash"
-      className={styles.actionDeleteBtn}
-    >
-      Delete
-    </EuiButton>
-  )
-
-  const PopoverDelete = (
-    <EuiPopover
-      id="deletePopover"
-      ownFocus
-      button={deleteBtn}
-      isOpen={isPopoverOpen}
-      closePopover={closePopover}
-      panelPaddingSize="l"
-    >
-      <EuiText size="m">
-        <p className={styles.popoverSubTitle}>
-          Selected
-          {' '}
-          {selection.length}
-          {' '}
-          databases will be deleted from
-          RedisInsight Databases:
-        </p>
-      </EuiText>
-      <div
-        className={styles.deleteBoxSection}
-        id="test"
-        ref={deleteSelectionListRef}
-      >
-        {selection.map((select: Instance) => (
-          <EuiFlexGroup
-            key={select.id}
-            gutterSize="s"
-            responsive={false}
-            className={styles.deleteNameList}
-          >
-            <EuiFlexItem grow={false}>
-              <EuiIcon type="check" />
-            </EuiFlexItem>
-            <EuiFlexItem className={styles.deleteNameListText}>
-              <span>{formatLongName(select.name)}</span>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        ))}
-      </div>
-      <div className={styles.popoverFooter}>
-        <EuiButton
-          fill
-          size="s"
-          color="warning"
-          iconType="trash"
-          onClick={() => {
-            closePopover()
-            onDelete(selection)
-          }}
-          className={styles.popoverDeleteBtn}
-          data-testid="delete-selected-dbs"
-        >
-          Delete
-        </EuiButton>
-      </div>
-    </EuiPopover>
-  )
-
   const noSearchResultsMsg = (
     <div className={styles.noSearchResults}>
       <div className={styles.tableMsgTitle}>No results found</div>
@@ -216,7 +133,7 @@ function DatabasesList({
         itemId="id"
         loading={loading}
         message={instances.length ? noSearchResultsMsg : loadingMsg}
-        columns={columns}
+        columns={columns ?? []}
         rowProps={toggleSelectedRow}
         sorting={{ sort }}
         selection={selectionValue}
@@ -225,11 +142,14 @@ function DatabasesList({
         isSelectable
       />
 
-      {selection.length > 1 && (
+      {selection.length > 0 && (
         <ActionBar
           selectionCount={selection.length}
           onCloseActionBar={handleResetSelection}
-          actions={PopoverDelete}
+          actions={[
+            <ExportAction selection={selection} onExport={handleExport} />,
+            <DeleteAction selection={selection} onDelete={onDelete} />
+          ]}
           width={width}
         />
       )}

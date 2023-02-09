@@ -1,9 +1,11 @@
 import { t } from 'testcafe';
+import { Chance } from 'chance';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
 import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters, ClusterNodes } from '../../pageObjects/add-redis-database-page';
 import { Common } from '../common';
 
+const chance = new Chance();
 const common = new Common();
 const endpoint = common.getEndpoint();
 
@@ -12,17 +14,34 @@ const endpoint = common.getEndpoint();
  * @param databaseParameters The database parameters
  */
 export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
+    const uniqueId = chance.string({ length: 10 });
+    const requestBody = {
+        'name': databaseParameters.databaseName,
+        'host': databaseParameters.host,
+        'port': Number(databaseParameters.port),
+        'username': databaseParameters.databaseUsername,
+        'password': databaseParameters.databasePassword
+    };
+
+    if (databaseParameters.caCert) {
+        requestBody['tls'] = true;
+        requestBody['verifyServerCert'] = false;
+        requestBody['caCert'] = {
+            'name': `ca}-${uniqueId}`,
+            'certificate': databaseParameters.caCert.certificate
+        };
+        requestBody['clientCert'] = {
+            'name': `client}-${uniqueId}`,
+            'certificate': databaseParameters.clientCert!.certificate,
+            'key': databaseParameters.clientCert!.key
+        };
+    }
+
     const response = await request(endpoint).post('/databases')
-        .send({
-            'name': databaseParameters.databaseName,
-            'host': databaseParameters.host,
-            'port': Number(databaseParameters.port),
-            'username': databaseParameters.databaseUsername,
-            'password': databaseParameters.databasePassword
-        })
+        .send(requestBody)
         .set('Accept', 'application/json');
     await t
-        .expect(response.status).eql(201, 'The creation of new standalone database request failed')
+        .expect(response.status).eql(201, `The creation of ${databaseParameters.databaseName} standalone database request failed: ${await response.body.message}`)
         .expect(await response.body.name).eql(databaseParameters.databaseName, `Database Name is not equal to ${databaseParameters.databaseName} in response`);
 }
 
@@ -95,14 +114,14 @@ export async function getDatabaseIdByName(databaseName?: string): Promise<string
     }
     let databaseId: any;
     const allDataBases = await getAllDatabases();
-    const response = await asyncFilter(allDataBases, async (item: databaseParameters) => {
+    const response = await asyncFilter(allDataBases, async(item: databaseParameters) => {
         await doAsyncStuff();
         return item.name === databaseName;
     });
 
     if (response.length !== 0) {
         databaseId = await response[0].id;
-    };
+    }
     return databaseId;
 }
 

@@ -51,6 +51,7 @@ export class AddRedisDatabasePage {
     sshPasswordInput = Selector('[data-testid=sshPassword]');
     sshPrivateKeyInput = Selector('[data-testid=sshPrivateKey]');
     sshPassphraseInput = Selector('[data-testid=sshPassphrase]');
+    timeoutInput = Selector('[data-testid=timeout]');
     // Links
     buildFromSource = Selector('a').withExactText('Build from source');
     buildFromDocker = Selector('a').withExactText('Docker');

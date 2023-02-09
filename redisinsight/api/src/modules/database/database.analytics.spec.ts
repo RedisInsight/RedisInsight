@@ -197,7 +197,6 @@ describe('DatabaseAnalytics', () => {
           useSNI: 'enabled',
           useSSH: 'disabled',
           previousValues: {
-            host: prev.host,
             port: prev.port,
             connectionType: prev.connectionType,
             provider: prev.provider,
@@ -234,7 +233,6 @@ describe('DatabaseAnalytics', () => {
           useSNI: 'enabled',
           useSSH: 'disabled',
           previousValues: {
-            host: prev.host,
             port: prev.port,
             connectionType: prev.connectionType,
             provider: prev.provider,

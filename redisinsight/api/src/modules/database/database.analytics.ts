@@ -99,7 +99,6 @@ export class DatabaseAnalytics extends TelemetryBaseService {
             useSNI: cur?.tlsServername ? 'enabled' : 'disabled',
             useSSH: cur?.ssh ? 'enabled' : 'disabled',
             previousValues: {
-              host: prev.host,
               port: prev.port,
               connectionType: prev.connectionType,
               provider: prev.provider,

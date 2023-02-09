@@ -1,5 +1,6 @@
 enum OnboardingSteps {
-  BrowserPage = 1,
+  Start,
+  BrowserPage,
   BrowserTreeView,
   BrowserFilterSearch,
   BrowserCLI,

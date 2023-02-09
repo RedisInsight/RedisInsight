@@ -64,7 +64,7 @@ const ONBOARDING_FEATURES = {
   },
   BROWSER_TREE_VIEW: {
     step: OnboardingSteps.BrowserTreeView,
-    title: 'Browser',
+    title: 'Tree view',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.BrowserTreeView]
@@ -79,7 +79,7 @@ const ONBOARDING_FEATURES = {
   },
   BROWSER_FILTER_SEARCH: {
     step: OnboardingSteps.BrowserFilterSearch,
-    title: 'Browser',
+    title: 'Filter and search',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
       const dispatch = useDispatch()
@@ -182,7 +182,7 @@ const ONBOARDING_FEATURES = {
   },
   WORKBENCH_PAGE: {
     step: OnboardingSteps.WorkbenchPage,
-    title: 'Workbench',
+    title: 'Try Workbench!',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
 
@@ -219,7 +219,7 @@ const ONBOARDING_FEATURES = {
   },
   WORKBENCH_ENABLEMENT_GUIDE: {
     step: OnboardingSteps.WorkbenchEnablementGuide,
-    title: 'Enablement Area',
+    title: 'Explore and learn more',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
       const history = useHistory()
@@ -395,7 +395,7 @@ const ONBOARDING_FEATURES = {
     step: OnboardingSteps.Finish,
     title: (
       <>
-        You are done!
+        Great job!
         <EuiIcon style={{ marginLeft: 4, marginTop: -4 }} type={OnboardingEmoji} />
       </>
     ),
@@ -405,7 +405,13 @@ const ONBOARDING_FEATURES = {
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.Finish]
 
       return {
-        content: 'Take me back to Browser page.',
+        content: (
+          <>
+            You are done!
+            <EuiSpacer size="xs" />
+            Take me back.
+          </>
+        ),
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => sendBackTelemetryEvent(...telemetryArgs),
         onNext: () => {

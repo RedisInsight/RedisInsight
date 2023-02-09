@@ -5,7 +5,7 @@ import { appFeatureOnboardingSelector, setOnboardNextStep, skipOnboarding } from
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { OnboardingStepName } from 'uiSrc/constants/onboarding'
+import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import styles from './styles.module.scss'
 
 const OnboardingStartPopover = () => {
@@ -35,17 +35,18 @@ const OnboardingStartPopover = () => {
   return (
     <EuiPopover
       button={<></>}
-      isOpen={isActive && currentStep === 0}
+      isOpen={isActive && currentStep === OnboardingSteps.Start}
       ownFocus={false}
       closePopover={() => {}}
       panelClassName={styles.onboardingStartPopover}
       anchorPosition="upCenter"
+      data-testid="onboarding-start-popover"
     >
       <EuiTitle size="xs">
         <h5>Take a quick tour of RedisInsight?</h5>
       </EuiTitle>
       <EuiSpacer size="s" />
-      <EuiText>
+      <EuiText data-testid="onboarding-start-content">
         Hi! RedisInsight has many tools that can help you to optimize the development process.
         <br />
         Would you like us to show them to you?
@@ -55,6 +56,7 @@ const OnboardingStartPopover = () => {
           onClick={handleSkip}
           className={styles.skipTourBtn}
           size="xs"
+          data-testid="skip-tour-btn"
         >
           Skip tour
         </EuiButtonEmpty>
@@ -63,6 +65,7 @@ const OnboardingStartPopover = () => {
           color="secondary"
           size="s"
           fill
+          data-testid="start-tour-btn"
         >
           Show me around
         </EuiButton>

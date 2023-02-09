@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
   EuiButton,
+  EuiButtonEmpty,
   EuiFormRow,
-  EuiIcon,
   EuiText,
   EuiTextColor,
   EuiForm,
@@ -110,8 +110,12 @@ const AddKeyReJSON = (props: Props) => {
           <EuiFlexGroup justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
               <label htmlFor="upload-input-file" className={styles.uploadBtn}>
-                <EuiIcon className={styles.uploadIcon} type="folderOpen" />
-                <EuiText className={styles.label}>Upload</EuiText>
+                <EuiButtonEmpty
+                  iconType="folderOpen"
+                  className={styles.emptyBtn}
+                >
+                  <EuiText className={styles.label}>Upload</EuiText>
+                </EuiButtonEmpty>
                 <input
                   type="file"
                   id="upload-input-file"

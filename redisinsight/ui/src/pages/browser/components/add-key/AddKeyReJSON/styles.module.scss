@@ -4,7 +4,7 @@
 
 .uploadBtn {
   display: flex;
-  margin-top: 20px;
+  margin-top: 7px;
   cursor: pointer;
 }
 
@@ -12,7 +12,15 @@
   margin-right: 4px;
 }
 
-.label {
+.emptyBtn:global(.euiButtonEmpty) {
+  height: 22px;
+}
+
+.emptyBtn:global(.euiButtonEmpty .euiButtonEmpty__content) {
+  padding: 0 12px;
+}
+
+:global(.euiButtonEmpty.euiButtonEmpty--primary).emptyBtn .label {
   color: var(--inputTextColor) !important;
   line-height: 16px !important;
   font-weight: 400 !important;

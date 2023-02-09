@@ -57,6 +57,10 @@ export const constants = {
   TEST_INSTANCE_ID_3: uuidv4(),
   TEST_INSTANCE_NAME_3: uuidv4(),
   TEST_INSTANCE_HOST_3: uuidv4(),
+  TEST_INSTANCE_ID_4: uuidv4(),
+  TEST_INSTANCE_NAME_4: uuidv4(),
+  TEST_INSTANCE_HOST_4: '127.0.0.1',
+  TEST_INSTANCE_PORT_4: 3333,
 
   // redis client
   TEST_REDIS_HOST: process.env.TEST_REDIS_HOST || 'localhost',

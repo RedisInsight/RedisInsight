@@ -70,7 +70,6 @@ import { loadMastersSentinel } from '../../instances/sentinel'
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))
-jest.mock('uiSrc/constants')
 
 let store: typeof mockedStore
 let instances: Instance[]

@@ -181,7 +181,7 @@ export enum KeyValueFormat {
   Pickle = 'Pickle',
 }
 
-export const KEYS_BASED_ON_ENDPOINT = Object.freeze({
+export const ENDPOINT_BASED_ON_KEY_TYPE = Object.freeze({
   [KeyTypes.ZSet]: ApiEndpoints.ZSET,
   [KeyTypes.Set]: ApiEndpoints.SET,
   [KeyTypes.String]: ApiEndpoints.STRING,
@@ -191,7 +191,7 @@ export const KEYS_BASED_ON_ENDPOINT = Object.freeze({
   [KeyTypes.Stream]: ApiEndpoints.STREAMS,
 })
 
-export type EndpointBasedOnKeyType = keyof (typeof KEYS_BASED_ON_ENDPOINT)
+export type EndpointBasedOnKeyType = keyof (typeof ENDPOINT_BASED_ON_KEY_TYPE)
 export enum SearchHistoryMode {
   Pattern = 'pattern',
   Redisearch = 'redisearch'

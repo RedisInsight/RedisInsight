@@ -8,7 +8,7 @@ import {
   KeyTypes,
   KeyValueFormat,
   EndpointBasedOnKeyType,
-  KEYS_BASED_ON_ENDPOINT,
+  ENDPOINT_BASED_ON_KEY_TYPE,
   SearchHistoryMode,
   SortOrder
 } from 'uiSrc/constants'
@@ -734,7 +734,7 @@ function addTypedKey(
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(addKey())
-    const endpoint = KEYS_BASED_ON_ENDPOINT[keyType as EndpointBasedOnKeyType]
+    const endpoint = ENDPOINT_BASED_ON_KEY_TYPE[keyType as EndpointBasedOnKeyType]
 
     try {
       const state = stateInit()
@@ -783,8 +783,7 @@ export function addHashKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const keyType = KeyTypes.Hash
-  return addTypedKey(data, keyType, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.Hash, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -793,8 +792,7 @@ export function addZsetKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const keyType = KeyTypes.ZSet
-  return addTypedKey(data, keyType, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.ZSet, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -803,8 +801,7 @@ export function addSetKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const keyType = KeyTypes.Set
-  return addTypedKey(data, keyType, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.Set, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -813,8 +810,7 @@ export function addStringKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const keyType = KeyTypes.String
-  return addTypedKey(data, keyType, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.String, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -823,8 +819,7 @@ export function addListKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const keyType = KeyTypes.List
-  return addTypedKey(data, keyType, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.List, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -833,8 +828,7 @@ export function addReJSONKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const keyType = KeyTypes.ReJSON
-  return addTypedKey(data, keyType, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.ReJSON, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -843,8 +837,7 @@ export function addStreamKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const keyType = KeyTypes.Stream
-  return addTypedKey(data, keyType, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.Stream, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -1169,8 +1162,7 @@ export function addKeyIntoList({ key, keyType }: { key: RedisString, keyType: Ke
     if (state.browser.keys?.search && state.browser.keys?.search !== '*') {
       return null
     }
-    if (!state.browser.keys?.filter
-       || state.browser.keys?.filter === keyType) {
+    if (!state.browser.keys?.filter || state.browser.keys?.filter === keyType) {
       return dispatch(updateKeyList({ keyName: key, keyType }))
     }
     return null

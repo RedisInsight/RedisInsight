@@ -1291,7 +1291,7 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
-          updateKeyList({ keyName: data.keyName, keyType: 'zSet' }),
+          updateKeyList({ keyName: data.keyName, keyType: 'zset' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1392,7 +1392,7 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
-          updateKeyList({ keyName: data.keyName, keyType: 'rejson-rl' }),
+          updateKeyList({ keyName: data.keyName, keyType: 'ReJSON-RL' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)

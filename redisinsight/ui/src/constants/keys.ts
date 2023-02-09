@@ -182,16 +182,16 @@ export enum KeyValueFormat {
 }
 
 export const KEYS_BASED_ON_ENDPOINT = Object.freeze({
-  [ApiEndpoints.ZSET]: KeyTypes.ZSet,
-  [ApiEndpoints.SET]: KeyTypes.Set,
-  [ApiEndpoints.STRING]: KeyTypes.String,
-  [ApiEndpoints.HASH]: KeyTypes.Hash,
-  [ApiEndpoints.LIST]: KeyTypes.List,
-  [ApiEndpoints.REJSON]: KeyTypes.ReJSON,
-  [ApiEndpoints.STREAMS]: KeyTypes.Stream,
+  [KeyTypes.ZSet]: ApiEndpoints.ZSET,
+  [KeyTypes.Set]: ApiEndpoints.SET,
+  [KeyTypes.String]: ApiEndpoints.STRING,
+  [KeyTypes.Hash]: ApiEndpoints.HASH,
+  [KeyTypes.List]: ApiEndpoints.LIST,
+  [KeyTypes.ReJSON]: ApiEndpoints.REJSON,
+  [KeyTypes.Stream]: ApiEndpoints.STREAMS,
 })
 
-export type KeyTypeBasedOnEndpoint = keyof (typeof KEYS_BASED_ON_ENDPOINT)
+export type EndpointBasedOnKeyType = keyof (typeof KEYS_BASED_ON_ENDPOINT)
 export enum SearchHistoryMode {
   Pattern = 'pattern',
   Redisearch = 'redisearch'

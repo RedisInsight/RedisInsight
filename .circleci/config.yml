@@ -725,6 +725,7 @@ jobs:
           name: publish
           command: |
             rm release/._* ||:
+            chmod +x .circleci/redisstack/sum_sha256.sh
             .circleci/redisstack/sum_sha256.sh
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
@@ -746,6 +747,7 @@ jobs:
       - run:
           name: publish
           command: |
+            chmod +x .circleci/redisstack/sum_sha256.sh
             .circleci/redisstack/sum_sha256.sh
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 

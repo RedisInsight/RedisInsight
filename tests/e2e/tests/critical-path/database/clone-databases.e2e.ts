@@ -5,7 +5,7 @@ import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/
 import {
     addNewOSSClusterDatabaseApi,
     addNewStandaloneDatabaseApi,
-    deleteAllSentinelDatabasesApi,
+    deleteAllDatabasesByConnectionTypeApi,
     deleteOSSClusterDatabaseApi,
     deleteStandaloneDatabaseApi,
     discoverSentinelDatabaseApi
@@ -47,7 +47,9 @@ test
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
             .expect(addRedisDatabasePage.hostInput.getAttribute('value')).eql(ossStandaloneConfig.host, 'Wrong host value')
             .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossStandaloneConfig.port, 'Wrong port value')
-            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossStandaloneConfig.databaseName, 'Wrong host value');
+            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossStandaloneConfig.databaseName, 'Wrong host value')
+            // Verify that timeout input is displayed for clone db window
+            .expect(addRedisDatabasePage.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30 on clone window');
         // Verify that user can confirm the creation of the database by clicking “Clone Database”
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count).eql(2, 'DB was not cloned');
@@ -91,21 +93,18 @@ test
     })
     .after(async() => {
         // Delete all primary groups
-        const sentinelCopy = ossSentinelConfig;
-        sentinelCopy.masters.push(ossSentinelConfig.masters[1]);
-        sentinelCopy.name.push(ossSentinelConfig.name[1]);
-        await deleteAllSentinelDatabasesApi(sentinelCopy);
+        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         await common.reloadPage();
     })
     .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
-        await clickOnEditDatabaseByName(ossSentinelConfig.name[1]);
+        await clickOnEditDatabaseByName(ossSentinelConfig.masters[1].alias);
         await t.click(addRedisDatabasePage.cloneDatabaseButton);
 
         // Verify that for Sentinel Host and Port fields are replaced with editable Primary Group Name field
         await t
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
-            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossSentinelConfig.name[1], 'Invalid primary group alias value')
-            .expect(addRedisDatabasePage.primaryGroupNameInput.getAttribute('value')).eql(ossSentinelConfig.name[1], 'Invalid primary group name value');
+            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossSentinelConfig.masters[1].alias, 'Invalid primary group alias value')
+            .expect(addRedisDatabasePage.primaryGroupNameInput.getAttribute('value')).eql(ossSentinelConfig.masters[1].name, 'Invalid primary group name value');
         // Validate Databases section
         await t
             .click(addRedisDatabasePage.cloneSentinelDatabaseNavigation)
@@ -117,8 +116,8 @@ test
             .expect(addRedisDatabasePage.passwordInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPassword, 'Invalid sentinel password');
         // Clone Sentinel Primary Group
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
-        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.masters[1].name).count).gt(1, 'Primary Group was not cloned');
+        await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.masters[1].alias).count).gt(1, 'Primary Group was not cloned');
 
         // Verify new connection badge for Sentinel db
-        await myRedisDatabasePage.verifyDatabaseStatusIsVisible(ossSentinelConfig.name[1]);
+        await myRedisDatabasePage.verifyDatabaseStatusIsVisible(ossSentinelConfig.masters[1].alias);
     });

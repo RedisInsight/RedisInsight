@@ -39,8 +39,11 @@ export class MyRedisDatabasePage {
     closeDialogBtn = Selector('[aria-label="Closes this modal window"]');
     okDialogBtn = Selector('[data-testid=ok-btn]');
     removeImportedFileBtn = Selector('[aria-label="Clear selected files"]');
+    exportBtn = Selector('[data-testid=export-btn]');
+    exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
+    exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', {timeout: 500});
     //ICONS
     moduleColumn = Selector('[data-test-subj=tableHeaderCell_modules_3]');
     moduleSearchIcon = Selector('[data-testid^=RediSearch]');
@@ -234,10 +237,10 @@ export class MyRedisDatabasePage {
  * @param timeout_connect The connect timeout of connection
  * @param timeout_execute The execute timeout of connection
  * @param other_field The test field
+ * @param ssl Is the connection have ssl
  * @param ssl_ca_cert_path The CA certificate of connection by path
  * @param ssl_local_cert_path The Client certificate of connection by path
  * @param ssl_private_key_path The Client key of connection by path
- * @param ssl Is the connection have ssl
  */
 export type DatabasesForImport = {
     host?: string,
@@ -253,8 +256,8 @@ export type DatabasesForImport = {
     timeout_connect?: number,
     timeout_execute?: number,
     other_field?: string,
+    ssl?: boolean,
     ssl_ca_cert_path?: string,
     ssl_local_cert_path?: string,
-    ssl_private_key_path?: string,
-    ssl?: boolean
+    ssl_private_key_path?: string
 }[];

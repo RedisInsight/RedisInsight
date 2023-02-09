@@ -519,7 +519,8 @@ jobs:
             runtime/org.freedesktop.Platform/x86_64/20.08 \
             org.electronjs.Electron2.BaseApp/x86_64/20.08
 
-            yarn --cwd redisinsight/api/ install
+            yarn --cwd redisinsight/api/ install --ignore-optional
+            yarn --cwd redisinsight/ install --ignore-optional
             yarn install
             yarn build:statics
           no_output_timeout: 15m

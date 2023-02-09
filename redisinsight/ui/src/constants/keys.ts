@@ -192,3 +192,7 @@ export const KEYS_BASED_ON_ENDPOINT = Object.freeze({
 })
 
 export type KeyTypeBasedOnEndpoint = keyof (typeof KEYS_BASED_ON_ENDPOINT)
+export enum SearchHistoryMode {
+  Pattern = 'pattern',
+  Redisearch = 'redisearch'
+}

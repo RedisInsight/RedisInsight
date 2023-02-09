@@ -10,8 +10,9 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
-import { fetchMastersSentinelAction } from './sentinel'
+import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
 
+import { fetchMastersSentinelAction } from './sentinel'
 import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
@@ -91,6 +92,19 @@ const instancesSlice = createSlice({
     defaultInstanceChangingFailure: (state, { payload = '' }) => {
       state.loadingChanging = false
       state.changedSuccessfully = false
+      state.errorChanging = payload.toString()
+    },
+
+    // test database connection
+    testConnection: (state) => {
+      state.loadingChanging = true
+      state.errorChanging = ''
+    },
+    testConnectionSuccess: (state) => {
+      state.loadingChanging = false
+    },
+    testConnectionFailure: (state, { payload = '' }) => {
+      state.loadingChanging = false
       state.errorChanging = payload.toString()
     },
 
@@ -242,6 +256,9 @@ export const {
   defaultInstanceChanging,
   defaultInstanceChangingSuccess,
   defaultInstanceChangingFailure,
+  testConnection,
+  testConnectionSuccess,
+  testConnectionFailure,
   setDefaultInstance,
   setDefaultInstanceSuccess,
   setDefaultInstanceFailure,
@@ -402,6 +419,39 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function exportInstancesAction(
+  ids: string[],
+  withSecrets: boolean,
+  onSuccess?: (data: ExportDatabase) => void,
+  onFail?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setDefaultInstance())
+
+    try {
+      const { data, status } = await apiService.post<ExportDatabase>(
+        ApiEndpoints.DATABASES_EXPORT,
+        {
+          ids,
+          withSecrets
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setDefaultInstanceSuccess())
+
+        onSuccess?.(data)
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(setDefaultInstanceFailure(errorMessage))
+      dispatch(addErrorNotification(error))
+      onFail?.()
     }
   }
 }
@@ -632,6 +682,38 @@ export function uploadInstancesFile(
       const errorMessage = getApiErrorMessage(error)
       dispatch(importInstancesFromFileFailure(errorMessage))
       onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function testInstanceStandaloneAction(
+  payload: Instance,
+  onRedirectToSentinel?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(testConnection())
+
+    try {
+      const { status } = await apiService.post(`${ApiEndpoints.DATABASES_TEST_CONNECTION}`, payload)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(testConnectionSuccess())
+
+        dispatch(addMessageNotification(successMessages.TEST_CONNECTION()))
+      }
+    } catch (_error) {
+      const error: AxiosError = _error
+      const errorMessage = getApiErrorMessage(error)
+
+      dispatch(testConnectionFailure(errorMessage))
+
+      if (error?.response?.data?.error === ApiErrors.SentinelParamsRequired) {
+        checkoutToSentinelFlow(payload, dispatch, onRedirectToSentinel)
+        return
+      }
+
+      dispatch(addErrorNotification(error))
     }
   }
 }

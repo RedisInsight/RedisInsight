@@ -175,7 +175,7 @@ const DatabasesListWrapper = ({
       ids,
       withSecrets,
       (data) => {
-        const file = new Blob([JSON.stringify(data)], { type: 'text/plain;charset=utf-8' })
+        const file = new Blob([JSON.stringify(data, null, 2)], { type: 'text/plain;charset=utf-8' })
         saveAs(file, `RedisInsight_connections_${Date.now()}.json`)
 
         sendEventTelemetry({

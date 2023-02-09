@@ -1,4 +1,5 @@
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { ApiEndpoints } from 'uiSrc/constants'
 import { CommandGroup } from './commands'
 
 export enum KeyTypes {
@@ -179,3 +180,15 @@ export enum KeyValueFormat {
   Protobuf = 'Protobuf',
   Pickle = 'Pickle',
 }
+
+export const KEYS_BASED_ON_ENDPOINT = Object.freeze({
+  [ApiEndpoints.ZSET]: KeyTypes.ZSet,
+  [ApiEndpoints.SET]: KeyTypes.Set,
+  [ApiEndpoints.STRING]: KeyTypes.String,
+  [ApiEndpoints.HASH]: KeyTypes.Hash,
+  [ApiEndpoints.LIST]: KeyTypes.List,
+  [ApiEndpoints.REJSON]: KeyTypes.ReJSON,
+  [ApiEndpoints.STREAMS]: KeyTypes.Stream,
+})
+
+export type KeyTypeBasedOnEndpoint = keyof (typeof KEYS_BASED_ON_ENDPOINT)

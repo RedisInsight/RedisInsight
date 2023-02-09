@@ -36,7 +36,9 @@ import reducer, {
   refreshKeyInfoAction,
   addKey,
   addKeySuccess,
+  updateKeyList,
   addKeyFailure,
+  addKeyIntoList,
   resetAddKey,
   deleteKeyAction,
   deleteKey,
@@ -510,19 +512,21 @@ describe('keys slice', () => {
     })
   })
 
-  describe('addKeySuccess', () => {
+  describe('updateKeyList', () => {
     it('should properly set the state after successfully added key', () => {
       // Arrange
       const state = {
         ...initialState,
-        addKey: {
-          ...initialState.addKey,
-          loading: false,
-        },
+        data: {
+          ...initialState.data,
+          keys: [{ name: 'name' }],
+          scanned: 1,
+          total: 1,
+        }
       }
 
       // Act
-      const nextState = reducer(initialState, addKeySuccess())
+      const nextState = reducer(initialState, updateKeyList({ keyName: 'name', keyType: 'hash' }))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -1100,6 +1104,7 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          updateKeyList({ keyName: data.keyName, keyType: 'hash' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1124,6 +1129,7 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          updateKeyList({ keyName: data.keyName, keyType: 'zSet' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1148,6 +1154,7 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          updateKeyList({ keyName: data.keyName, keyType: 'set' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1172,6 +1179,7 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          updateKeyList({ keyName: data.keyName, keyType: 'string' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1197,6 +1205,7 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          updateKeyList({ keyName: data.keyName, keyType: 'list' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1221,6 +1230,7 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          updateKeyList({ keyName: data.keyName, keyType: 'rejson-rl' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1367,6 +1377,21 @@ describe('keys slice', () => {
         )
 
         expect(onSuccessMock).toBeCalledWith(data)
+      })
+    })
+
+    describe('addKeyIntoList', () => {
+      it('updateKeyList should be called', async () => {
+        // Act
+        await store.dispatch<any>(
+          addKeyIntoList({ key: 'key', keyType: 'hash' })
+        )
+
+        // Assert
+        const expectedActions = [
+          updateKeyList({ keyName: 'key', keyType: 'hash' })
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
       })
     })
   })

@@ -2,7 +2,15 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem, KeyTypes, KeyValueFormat, SortOrder } from 'uiSrc/constants'
+import {
+  ApiEndpoints,
+  BrowserStorageItem,
+  KeyTypes,
+  KeyValueFormat,
+  SortOrder,
+  KeyTypeBasedOnEndpoint,
+  KEYS_BASED_ON_ENDPOINT,
+} from 'uiSrc/constants'
 import {
   getApiErrorMessage,
   isStatusNotFoundError,
@@ -287,7 +295,14 @@ const keysSlice = createSlice({
         error: '',
       }
     },
-    addKeySuccess: (state, { payload }) => {
+    addKeySuccess: (state) => {
+      state.addKey = {
+        ...state.addKey,
+        loading: false,
+        error: '',
+      }
+    },
+    updateKeyList: (state, { payload }) => {
       state.data?.keys.unshift({ name: payload.keyName })
 
       state.data = {
@@ -377,8 +392,9 @@ export const {
   defaultSelectedKeyActionFailure,
   setLastBatchPatternKeys,
   addKey,
-  addKeySuccess,
+  updateKeyList,
   addKeyFailure,
+  addKeySuccess,
   resetAddKey,
   deleteKey,
   deleteKeySuccess,
@@ -687,6 +703,7 @@ function addTypedKey(
         if (onSuccessAction) {
           onSuccessAction()
         }
+        dispatch(addKeySuccess())
         dispatch<any>(addKeyIntoList({ key: data.keyName, keyType: endpoint }))
         dispatch(
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName))
@@ -1007,14 +1024,15 @@ export function editKeyFromList(data: { key: RedisResponseBuffer, newKey: RedisR
   }
 }
 
-export function addKeyIntoList({ key, keyType }) {
+export function addKeyIntoList({ key, keyType }: { key: RedisString, keyType: ApiEndpoints }) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     if (state.browser.keys?.search && state.browser.keys?.search !== '*') {
       return null
     }
-    if (!state.browser.keys?.filter || state.browser.keys?.filter === keyType) {
-      return dispatch(addKeySuccess({ keyName: key, keyType }))
+    if (!state.browser.keys?.filter
+       || state.browser.keys?.filter === KEYS_BASED_ON_ENDPOINT[keyType as KeyTypeBasedOnEndpoint]) {
+      return dispatch(updateKeyList({ keyName: key, keyType }))
     }
     return null
   }

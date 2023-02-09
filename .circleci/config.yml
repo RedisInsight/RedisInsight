@@ -1184,13 +1184,13 @@ workflows:
           <<: *prodFilter # double check for "latest"
   # Nightly tests
   nightly:
-#    triggers:
-#      - schedule:
-#          cron: '0 0 * * *'
-#          filters:
-#            branches:
-#              only:
-#                - main
+    triggers:
+      - schedule:
+          cron: '0 0 * * *'
+          filters:
+            branches:
+              only:
+                - main
     jobs:
       # build docker image
       - docker:

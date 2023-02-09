@@ -48,6 +48,12 @@ const responseSchema = databaseSchema.required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
+const baseSentinelData = {
+  name: constants.TEST_SENTINEL_MASTER_GROUP,
+  username: constants.TEST_SENTINEL_MASTER_USER || null,
+  password: constants.TEST_SENTINEL_MASTER_PASS || null,
+}
+
 let oldDatabase;
 let newDatabase;
 describe(`PUT /databases/:id`, () => {
@@ -750,6 +756,43 @@ describe(`PUT /databases/:id`, () => {
       });
       // todo: Should throw an error without CA cert when cert validation enabled
       // todo: Should throw an error with invalid CA cert
+    });
+  });
+  describe('SENTINEL', () => {
+    requirements('rte.type=SENTINEL');
+    describe('PASS', function () {
+      requirements('!rte.tls', 'rte.pass');
+      it('Update sentinel with password', async () => {
+        const dbName = constants.getRandomString();
+
+        // preconditions
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
+
+        await validateApiCall({
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          data: {
+            ...baseDatabaseData,
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            password: constants.TEST_REDIS_PASSWORD,
+            sentinelMaster: {
+              ...baseSentinelData,
+            },
+          },
+          responseSchema,
+          responseBody: {
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            username: null,
+            password: constants.TEST_REDIS_PASSWORD,
+            connectionType: constants.SENTINEL,
+          },
+        });
+
+        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+      });
     });
   });
 });

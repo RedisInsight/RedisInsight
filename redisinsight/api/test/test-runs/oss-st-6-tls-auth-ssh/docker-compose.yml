@@ -30,6 +30,11 @@ services:
       dockerfile: Dockerfile
     networks:
       - private
+  app:
+    links:
+      - ssh:ssh
+    networks:
+      - ssh
 
 networks:
   private:

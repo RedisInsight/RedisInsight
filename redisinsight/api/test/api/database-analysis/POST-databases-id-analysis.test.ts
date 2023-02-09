@@ -162,7 +162,7 @@ describe('POST /databases/:instanceId/analysis', () => {
     describe('useSmallerKeys recommendation', () => {
       // generate 1M keys take a lot of time
       requirements('!rte.type=CLUSTER');
-  
+
       [
         {
           name: 'Should create new database analysis with useSmallerKeys recommendation',
@@ -304,7 +304,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         },
       ].map(mainCheckFn);
     });
-  
+
     describe('searchIndexes recommendation', () => {
       requirements('!rte.pass');
       [

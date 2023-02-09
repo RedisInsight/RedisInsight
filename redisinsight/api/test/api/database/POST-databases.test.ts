@@ -68,6 +68,8 @@ const responseSchema = databaseSchema.required().strict(true);
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /databases', () => {
+  let existingCACertId, existingClientCertId, existingCACertName, existingClientCertName;
+
   describe('Validation', function () {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
       validateInvalidDataTestCase(endpoint, dataSchema),
@@ -389,7 +391,6 @@ describe('POST /databases', () => {
     describe('TLS AUTH', function () {
       requirements('rte.tls', 'rte.tlsAuth');
 
-      let existingCACertId, existingClientCertId, existingCACertName, existingClientCertName;
 
       after(localDb.initAgreements);
 
@@ -1033,27 +1034,30 @@ describe('POST /databases', () => {
     });
   });
   describe('SENTINEL', () => {
-    requirements('rte.type=SENTINEL', '!rte.tls');
-    it('Should always throw an Invalid Data error for sentinel', async () => {
-      await validateApiCall({
-        endpoint,
-        data: {
-          name: constants.getRandomString(),
-          host: constants.TEST_REDIS_HOST,
-          port: constants.TEST_REDIS_PORT,
-          password: constants.TEST_REDIS_PASSWORD,
-        },
-        statusCode: 400,
-        responseBody: {
+    requirements('rte.type=SENTINEL');
+    describe('COMMON', function () {
+      requirements('!rte.tls');
+      it('Should always throw an Invalid Data error for sentinel', async() => {
+        await validateApiCall({
+          endpoint,
+          data: {
+            name: constants.getRandomString(),
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            password: constants.TEST_REDIS_PASSWORD,
+          },
           statusCode: 400,
-          error: 'SENTINEL_PARAMS_REQUIRED',
-          message: 'Sentinel master name must be specified.'
-        },
+          responseBody: {
+            statusCode: 400,
+            error: 'SENTINEL_PARAMS_REQUIRED',
+            message: 'Sentinel master name must be specified.'
+          },
+        });
       });
     });
     describe('PASS', function () {
       requirements('!rte.tls', 'rte.pass');
-      it('Create sentinel with password', async () => {
+      it('Create sentinel with password (different sentinel and master passwords)', async () => {
         const dbName = constants.getRandomString();
 
         // preconditions
@@ -1080,6 +1084,77 @@ describe('POST /databases', () => {
             username: null,
             password: constants.TEST_REDIS_PASSWORD,
             connectionType: constants.SENTINEL,
+          },
+        });
+
+        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+      });
+      // todo: cover connection error for incorrect username/password
+    });
+    describe('TLS AUTH', function () {
+      requirements('rte.tls', 'rte.tlsAuth');
+      it('Create sentinel with tls pk', async () => {
+        const dbName = constants.getRandomString();
+        const newCaName = existingCACertName = constants.getRandomString();
+        const newClientCertName = existingClientCertName = constants.getRandomString();
+
+        // preconditions
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
+
+        await validateApiCall({
+          endpoint,
+          statusCode: 201,
+          data: {
+            ...baseDatabaseData,
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            password: constants.TEST_REDIS_PASSWORD,
+            tls: true,
+            verifyServerCert: true,
+            tlsServername: null,
+            caCert: {
+              name: newCaName,
+              certificate: constants.TEST_REDIS_TLS_CA,
+            },
+            clientCert: {
+              name: newClientCertName,
+              certificate: constants.TEST_USER_TLS_CERT,
+              key: constants.TEST_USER_TLS_KEY,
+            },
+            sentinelMaster: {
+              ...baseSentinelData,
+            },
+          },
+          responseSchema,
+          responseBody: {
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            username: null,
+            password: constants.TEST_REDIS_PASSWORD,
+            connectionType: constants.SENTINEL,
+          },
+          checkFn: async ({ body }) => {
+            expect(body.caCert.id).to.be.a('string');
+            expect(body.caCert.name).to.eq(newCaName);
+            expect(body.caCert.certificate).to.be.undefined;
+
+            expect(body.clientCert.id).to.be.a('string');
+            expect(body.clientCert.name).to.deep.eq(newClientCertName);
+            expect(body.clientCert.certificate).to.be.undefined;
+            expect(body.clientCert.key).to.be.undefined;
+
+            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
+              .findOneBy({ id: body.caCert.id });
+
+            expect(ca.certificate).to.eql(localDb.encryptData(constants.TEST_REDIS_TLS_CA));
+
+            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
+              .findOneBy({ id: body.clientCert.id });
+
+            expect(clientPair.certificate).to.eql(localDb.encryptData(constants.TEST_USER_TLS_CERT));
+            expect(clientPair.key).to.eql(localDb.encryptData(constants.TEST_USER_TLS_KEY));
           },
         });
 

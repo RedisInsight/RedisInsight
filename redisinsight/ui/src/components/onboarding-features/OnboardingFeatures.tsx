@@ -72,6 +72,7 @@ const ONBOARDING_FEATURES = {
       return {
         content: 'Switch from List to Tree view to see keys grouped into folders based on their namespaces.',
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
+        onBack: () => sendBackTelemetryEvent(...telemetryArgs),
         onNext: () => sendNextTelemetryEvent(...telemetryArgs),
       }
     }
@@ -106,10 +107,7 @@ const ONBOARDING_FEATURES = {
       return {
         content: 'Use CLI to run Redis commands.',
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
-        onBack: () => {
-          dispatch(openCli())
-          sendBackTelemetryEvent(...telemetryArgs)
-        },
+        onBack: () => sendBackTelemetryEvent(...telemetryArgs),
         onNext: () => {
           dispatch(openCliHelper())
           sendNextTelemetryEvent(...telemetryArgs)
@@ -303,10 +301,10 @@ const ONBOARDING_FEATURES = {
           if (!data?.recommendations?.length) {
             dispatch(setOnboardNextStep())
             history.push(Pages.slowLog(connectedInstanceId))
-            return
+          } else {
+            dispatch(setDatabaseAnalysisViewTab(DatabaseAnalysisViewTab.Recommendations))
           }
 
-          dispatch(setDatabaseAnalysisViewTab(DatabaseAnalysisViewTab.Recommendations))
           sendNextTelemetryEvent(...telemetryArgs)
         }
       }
@@ -356,9 +354,9 @@ const ONBOARDING_FEATURES = {
 
           if (!data?.recommendations?.length) {
             dispatch(setOnboardPrevStep())
-            return
+          } else {
+            dispatch(setDatabaseAnalysisViewTab(DatabaseAnalysisViewTab.Recommendations))
           }
-          dispatch(setDatabaseAnalysisViewTab(DatabaseAnalysisViewTab.Recommendations))
           sendBackTelemetryEvent(...telemetryArgs)
         },
         onNext: () => {

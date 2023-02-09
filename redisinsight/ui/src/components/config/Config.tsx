@@ -106,7 +106,7 @@ const Config = () => {
 
       if (!config.agreements || isNumber(userCurrentStep)) {
         dispatch(setOnboarding({
-          currentStep: userCurrentStep,
+          currentStep: config.agreements ? userCurrentStep : 0,
           totalSteps
         }))
       }

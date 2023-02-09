@@ -38,7 +38,12 @@ const OnboardingTour = (props: Props) => {
     fullSize
   } = props
   const { step, title, Inner } = options
-  const { content = '', onBack, onNext, onSkip } = Inner()
+  const {
+    content = '',
+    onBack = () => {},
+    onNext = () => {},
+    onSkip = () => {},
+  } = Inner ? Inner() : {}
 
   const [isOpen, setIsOpen] = useState(step === currentStep && isActive)
   const isLastStep = currentStep === totalSteps

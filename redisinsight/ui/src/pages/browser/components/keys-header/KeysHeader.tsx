@@ -314,11 +314,11 @@ const KeysHeader = (props: Props) => {
   const ViewSwitch = (width: number) => (
     <div
       className={
-          cx(styles.viewTypeSwitch, {
-            [styles.middleScreen]: width > HIDE_REFRESH_LABEL_WIDTH,
-            [styles.fullScreen]: width > FULL_SCREEN_RESOLUTION
-          })
-        }
+        cx(styles.viewTypeSwitch, {
+          [styles.middleScreen]: width > HIDE_REFRESH_LABEL_WIDTH,
+          [styles.fullScreen]: width > FULL_SCREEN_RESOLUTION
+        })
+      }
       data-testid="view-type-switcher"
     >
       <OnboardingTour options={ONBOARDING_FEATURES.BROWSER_TREE_VIEW}>

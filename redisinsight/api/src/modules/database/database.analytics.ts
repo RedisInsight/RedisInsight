@@ -87,7 +87,6 @@ export class DatabaseAnalytics extends TelemetryBaseService {
         this.sendEvent(
           TelemetryEvents.RedisInstanceEditedByUser,
           {
-            host: cur.host,
             port: cur.port,
             databaseId: cur.id,
             connectionType: cur.connectionType,

@@ -31,9 +31,7 @@ fixture `Onboarding new user tests`
     .afterEach(async() => {
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
-test.skip('verify onboard new user steps', async t => {
-    // start onboarding process
-    // Verify that when user agree with the onboarding, can see the steps and logic described in the “Steps” table.
+test('Verify onbarding new user steps', async t => {
     await onBoardActions.startOnboarding();
     // verify browser step is visible
     await onBoardActions.verifyStepVisible('Browser');
@@ -87,9 +85,9 @@ test.skip('verify onboard new user steps', async t => {
     await onBoardActions.verifyStepVisible('Great job!');
     await onBoardActions.clickNextStep();
     // verify onboarding step completed successfully
-    await onBoardActions.verifyOnbardingCompleted();
+    await onBoardActions.verifyOnboardingCompleted();
 });
-test.skip('verify onboard new user skip tour', async() => {
+test('verify onboard new user skip tour', async() => {
     // start onboarding process
     await onBoardActions.startOnboarding();
     // verify browser step is visible
@@ -101,9 +99,9 @@ test.skip('verify onboard new user skip tour', async() => {
     // click skip tour
     await onBoardActions.clickSkipTour();
     // verify onboarding step completed successfully
-    await onBoardActions.verifyOnbardingCompleted();
+    await onBoardActions.verifyOnboardingCompleted();
     await common.reloadPage();
     // verify onboarding step still not visible after refresh page
-    await onBoardActions.verifyOnbardingCompleted();
+    await onBoardActions.verifyOnboardingCompleted();
 });
 

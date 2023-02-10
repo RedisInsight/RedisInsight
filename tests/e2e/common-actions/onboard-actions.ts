@@ -1,42 +1,45 @@
-import {Selector, t} from 'testcafe';
+import {t} from 'testcafe';
+import {OnboardingPage, BrowserPage} from '../pageObjects';
 
+const onboardingPage = new OnboardingPage();
+const browserPage = new BrowserPage();
 export class OnboardActions {
     /**
         @param stepName title of the step
         verify onboarding step visible based on title
     */
     async verifyStepVisible(stepName: string): Promise<void> {
-        await t.expect(Selector('[data-testid=step-title]').withText(stepName).exists).ok(`${stepName} step is not visible`);
+        await t.expect(onboardingPage.stepTitle.withText(stepName).exists).ok(`${stepName} step is not visible`);
     }
     /**
         click next step
     */
     async clickNextStep(): Promise<void> {
-        await t.click(Selector('[data-testid=next-btn]'));
+        await t.click(onboardingPage.nextButton);
     }
     /**
         start onboarding process
     */
     async startOnboarding(): Promise<void> {
-        await t.click(Selector('span').withText('Show me around'));
+        await t.click(onboardingPage.showMeAroundButton);
     }
     /**
         complete onboarding process
      */
-    async verifyOnbardingCompleted(): Promise<void> {
-        await t.expect(Selector('span').withText('Show me around').visible).notOk('show me around button still visible');
-        await t.expect(Selector('[data-testid=search-mode-switcher]').visible).ok('browser page is not opened');
+    async verifyOnboardingCompleted(): Promise<void> {
+        await t.expect(onboardingPage.showMeAroundButton.visible).notOk('show me around button still visible');
+        await t.expect(browserPage.patternModeBtn.visible).ok('browser page is not opened');
     }
     /**
         click back step
      */
     async clickBackStep(): Promise<void> {
-        await t.click(Selector('[data-testid=back-btn]'));
+        await t.click(onboardingPage.backButton);
     }
     /**
         click skip tour step
      */
     async clickSkipTour(): Promise<void> {
-        await t.click(Selector('[data-testid=skip-tour-btn]'));
+        await t.click(onboardingPage.skipTourButton);
     }
 }

@@ -21,7 +21,7 @@ const monitorPage = new MonitorPage();
 const setLocalStorageItem = ClientFunction((key: string, value: string) => window.localStorage.setItem(key, value));
 
 fixture `Onboarding new user tests`
-    .meta({type: 'regression', rte: rte.standalone, env: env.desktop })
+    .meta({type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -31,77 +31,78 @@ fixture `Onboarding new user tests`
     .afterEach(async() => {
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
-test('Verify onbarding new user steps', async t => {
-    await onBoardActions.startOnboarding();
-    // verify browser step is visible
-    await onBoardActions.verifyStepVisible('Browser');
-    // move to next step
-    await onBoardActions.clickNextStep();
-    // verify tree view step is visible
-    await onBoardActions.verifyStepVisible('Tree view');
-    await onBoardActions.clickNextStep();
-    await onBoardActions.verifyStepVisible('Filter and search');
-    await onBoardActions.clickNextStep();
-    // verify cli is opened
-    await t.expect(cliPage.cliPanel.visible).ok('cli is not expanded');
-    await onBoardActions.verifyStepVisible('CLI');
-    await onBoardActions.clickNextStep();
-    // verify command helper area is opened
-    await t.expect(cliPage.commandHelperArea.visible).ok('command helper is not expanded');
-    await onBoardActions.verifyStepVisible('Command Helper');
-    await onBoardActions.clickNextStep();
-    // verify profiler is opened
-    await t.expect(monitorPage.monitorArea.visible).ok('profiler is not expanded');
-    await onBoardActions.verifyStepVisible('Profiler');
-    await onBoardActions.clickNextStep();
-    // verify workbench page is opened
-    await t.expect(workBenchPage.mainEditorArea.visible).ok('workbench is not opened');
-    await onBoardActions.verifyStepVisible('Try Workbench!');
-    // click back step button
-    await onBoardActions.clickBackStep();
-    // verify one step before is opened
-    await t.expect(monitorPage.monitorArea.visible).ok('profiler is not expanded');
-    await onBoardActions.verifyStepVisible('Profiler');
-    await onBoardActions.clickNextStep();
-    // verify workbench page is opened
-    await t.expect(workBenchPage.mainEditorArea.visible).ok('workbench is not opened');
-    await onBoardActions.verifyStepVisible('Try Workbench!');
-    await onBoardActions.clickNextStep();
-    await onBoardActions.verifyStepVisible('Explore and learn more');
-    await onBoardActions.clickNextStep();
-    // verify analysis tools page is opened
-    await t.expect(memoryEfficiencyPage.noReportsText.visible).ok('analysis tools is not opened');
-    await onBoardActions.verifyStepVisible('Database Analysis');
-    await onBoardActions.clickNextStep();
-    // verify slow log is opened
-    await t.expect(slowLogPage.slowLogTable.visible).ok('slow log is not opened');
-    await onBoardActions.verifyStepVisible('Slow Log');
-    await onBoardActions.clickNextStep();
-    // verify pub/sub page is opened
-    await t.expect(pubSubPage.subscribeButton.visible).ok('pub/sub page is not opened');
-    await onBoardActions.verifyStepVisible('Pub/Sub');
-    await onBoardActions.clickNextStep();
-    // verify last step of onboarding process is visible
-    await onBoardActions.verifyStepVisible('Great job!');
-    await onBoardActions.clickNextStep();
-    // verify onboarding step completed successfully
-    await onBoardActions.verifyOnboardingCompleted();
-});
-test('verify onboard new user skip tour', async() => {
+test
+    .meta({ env: env.desktop })('Verify onbarding new user steps', async t => {
+        await onBoardActions.startOnboarding();
+        // verify browser step is visible
+        await onBoardActions.verifyStepVisible('Browser');
+        // move to next step
+        await onBoardActions.clickNextStep();
+        // verify tree view step is visible
+        await onBoardActions.verifyStepVisible('Tree view');
+        await onBoardActions.clickNextStep();
+        await onBoardActions.verifyStepVisible('Filter and search');
+        await onBoardActions.clickNextStep();
+        // verify cli is opened
+        await t.expect(cliPage.cliPanel.visible).ok('cli is not expanded');
+        await onBoardActions.verifyStepVisible('CLI');
+        await onBoardActions.clickNextStep();
+        // verify command helper area is opened
+        await t.expect(cliPage.commandHelperArea.visible).ok('command helper is not expanded');
+        await onBoardActions.verifyStepVisible('Command Helper');
+        await onBoardActions.clickNextStep();
+        // verify profiler is opened
+        await t.expect(monitorPage.monitorArea.visible).ok('profiler is not expanded');
+        await onBoardActions.verifyStepVisible('Profiler');
+        await onBoardActions.clickNextStep();
+        // verify workbench page is opened
+        await t.expect(workBenchPage.mainEditorArea.visible).ok('workbench is not opened');
+        await onBoardActions.verifyStepVisible('Try Workbench!');
+        // click back step button
+        await onBoardActions.clickBackStep();
+        // verify one step before is opened
+        await t.expect(monitorPage.monitorArea.visible).ok('profiler is not expanded');
+        await onBoardActions.verifyStepVisible('Profiler');
+        await onBoardActions.clickNextStep();
+        // verify workbench page is opened
+        await t.expect(workBenchPage.mainEditorArea.visible).ok('workbench is not opened');
+        await onBoardActions.verifyStepVisible('Try Workbench!');
+        await onBoardActions.clickNextStep();
+        await onBoardActions.verifyStepVisible('Explore and learn more');
+        await onBoardActions.clickNextStep();
+        // verify analysis tools page is opened
+        await t.expect(memoryEfficiencyPage.noReportsText.visible).ok('analysis tools is not opened');
+        await onBoardActions.verifyStepVisible('Database Analysis');
+        await onBoardActions.clickNextStep();
+        // verify slow log is opened
+        await t.expect(slowLogPage.slowLogTable.visible).ok('slow log is not opened');
+        await onBoardActions.verifyStepVisible('Slow Log');
+        await onBoardActions.clickNextStep();
+        // verify pub/sub page is opened
+        await t.expect(pubSubPage.subscribeButton.visible).ok('pub/sub page is not opened');
+        await onBoardActions.verifyStepVisible('Pub/Sub');
+        await onBoardActions.clickNextStep();
+        // verify last step of onboarding process is visible
+        await onBoardActions.verifyStepVisible('Great job!');
+        await onBoardActions.clickNextStep();
+        // verify onboarding step completed successfully
+        await onBoardActions.verifyOnboardingCompleted();
+    });
+test
+    .meta({ env: env.desktop })('verify onboard new user skip tour', async() => {
     // start onboarding process
-    await onBoardActions.startOnboarding();
-    // verify browser step is visible
-    await onBoardActions.verifyStepVisible('Browser');
-    // move to next step
-    await onBoardActions.clickNextStep();
-    // verify tree view step is visible
-    await onBoardActions.verifyStepVisible('Tree view');
-    // click skip tour
-    await onBoardActions.clickSkipTour();
-    // verify onboarding step completed successfully
-    await onBoardActions.verifyOnboardingCompleted();
-    await common.reloadPage();
-    // verify onboarding step still not visible after refresh page
-    await onBoardActions.verifyOnboardingCompleted();
-});
-
+        await onBoardActions.startOnboarding();
+        // verify browser step is visible
+        await onBoardActions.verifyStepVisible('Browser');
+        // move to next step
+        await onBoardActions.clickNextStep();
+        // verify tree view step is visible
+        await onBoardActions.verifyStepVisible('Tree view');
+        // click skip tour
+        await onBoardActions.clickSkipTour();
+        // verify onboarding step completed successfully
+        await onBoardActions.verifyOnboardingCompleted();
+        await common.reloadPage();
+        // verify onboarding step still not visible after refresh page
+        await onBoardActions.verifyOnboardingCompleted();
+    });

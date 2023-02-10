@@ -20,6 +20,7 @@ import MonitorWrapper from './monitor'
 import PagePlaceholder from './page-placeholder'
 import BulkActionsConfig from './bulk-actions-config'
 import ImportDatabasesDialog from './import-databases-dialog'
+import OnboardingTour from './onboarding-tour'
 
 export {
   NavigationMenu,
@@ -46,5 +47,6 @@ export {
   ShortcutsFlyout,
   PagePlaceholder,
   BulkActionsConfig,
-  ImportDatabasesDialog
+  ImportDatabasesDialog,
+  OnboardingTour
 }

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import { chunk, first, without } from 'lodash'
+import { chunk, without } from 'lodash'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 import {
@@ -41,11 +41,12 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
+
+import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import WBView from './WBView'
-
-import { parseParams } from '../enablement-area/EnablementArea/utils'
 
 interface IState extends ExecuteQueryParams {
   loading: boolean
@@ -153,6 +154,18 @@ const WBViewWrapper = () => {
     setResultsMode(isGroupMode(resultsMode) ? ResultsMode.Default : ResultsMode.GroupMode)
   }
 
+  const updateOnboardingOnSubmit = () => dispatch(incrementOnboardStepAction(
+    OnboardingSteps.WorkbenchPage,
+    undefined,
+    () => sendEventTelemetry({
+      event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
+      eventData: {
+        databaseId: instanceId,
+        step: OnboardingStepName.WorkbenchIntro,
+      }
+    })
+  ))
+
   const handleSubmit = (
     commandInit: string = script,
     commandId?: Nullable<string>,
@@ -184,7 +197,10 @@ const WBViewWrapper = () => {
       commands,
       multiCommands,
       { activeRunQueryMode, resultsMode },
-      () => handleSubmit(multiCommands.join('\n'), commandId, executeParams)
+      () => {
+        updateOnboardingOnSubmit()
+        handleSubmit(multiCommands.join('\n'), commandId, executeParams)
+      }
     )
   }
 

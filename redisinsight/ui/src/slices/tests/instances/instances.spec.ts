@@ -1287,7 +1287,6 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           getDatabaseConfigInfo(),
-          addErrorNotification(responsePayload as AxiosError),
           getDatabaseConfigInfoFailure(errorMessage),
         ]
 

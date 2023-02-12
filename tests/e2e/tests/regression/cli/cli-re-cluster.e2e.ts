@@ -1,4 +1,4 @@
-import { t } from 'testcafe';
+import { Selector, t } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
 import {
     acceptLicenseTermsAndAddOSSClusterDatabase,
@@ -32,8 +32,9 @@ const verifyCommandsInCli = async(): Promise<void> => {
     await t.pressKey('enter');
     // Check that the key is added
     await browserPage.searchByKeyName(keyName);
-    const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-    await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
+    const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+    await common.waitForElementNotVisible(browserPage.loader);
+    await t.expect(keyNameInTheList.exists).ok(`${keyName} key is not added`);
 };
 
 fixture `Work with CLI in all types of databases`

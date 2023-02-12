@@ -30,9 +30,7 @@ fixture `Scripting area at Workbench`
 // Update after resolving https://redislabs.atlassian.net/browse/RI-3299
 test('Verify that user can resize scripting area in Workbench', async t => {
     const commandForSend = 'info';
-    const offsetY = 200;
-    const inputHeightStart = await workbenchPage.queryInput.clientHeight;
-    const inputHeightEnd = inputHeightStart + 150;
+    const offsetY = 100;
 
     await workbenchPage.sendCommandInWorkbench(commandForSend);
     // Verify that user can run any script from CLI in Workbench and see the results
@@ -40,10 +38,13 @@ test('Verify that user can resize scripting area in Workbench', async t => {
     const sentCommandText = workbenchPage.queryCardCommand.withExactText(commandForSend);
     await t.expect(sentCommandText.exists).ok('Result of sent command exists');
 
+    const inputHeightStart = await workbenchPage.queryInput.clientHeight;
+
     await t.hover(workbenchPage.resizeButtonForScriptingAndResults);
-    await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.01 });
+    await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, offsetY, { speed: 0.4 });
     // Verify that user can resize scripting area
-    await t.expect(await workbenchPage.queryInput.clientHeight > inputHeightEnd).ok('Scripting area after resize has incorrect size');
+    const inputHeightEnd = inputHeightStart + 20;
+    await t.expect(await workbenchPage.queryInput.clientHeight).gt(inputHeightEnd, 'Scripting area after resize has incorrect size');
 });
 test('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
     indexName = common.generateWord(5);

@@ -1,11 +1,6 @@
-import React, { ReactNode } from 'react'
-import { useSelector } from 'react-redux'
+import { ReactNode } from 'react'
 
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
-import { appFeatureHighlightingSelector } from 'uiSrc/slices/app/features'
-import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
-import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
 import { OnboardingTourOptions } from 'uiSrc/components/onboarding-tour'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
@@ -13,26 +8,6 @@ interface AnalyticsTabs {
   id: AnalyticsViewTab
   label: string | ReactNode
   onboard?: OnboardingTourOptions
-}
-
-const DatabaseAnalyticsTab = () => {
-  const { features } = useSelector(appFeatureHighlightingSelector)
-  const { recommendations: recommendationsHighlighting } = getHighlightingFeatures(features)
-
-  return (
-    <>
-      <HighlightedFeature
-        title={BUILD_FEATURES.recommendations?.title}
-        content={BUILD_FEATURES.recommendations?.content}
-        type={BUILD_FEATURES.recommendations?.type}
-        isHighlight={BUILD_FEATURES.recommendations && recommendationsHighlighting}
-        dotClassName="tab-highlighting-dot"
-        wrapperClassName="inner-highlighting-wrapper"
-      >
-        Database Analysis
-      </HighlightedFeature>
-    </>
-  )
 }
 
 export const analyticsViewTabs: AnalyticsTabs[] = [
@@ -43,7 +18,7 @@ export const analyticsViewTabs: AnalyticsTabs[] = [
   },
   {
     id: AnalyticsViewTab.DatabaseAnalysis,
-    label: <DatabaseAnalyticsTab />,
+    label: 'Database Analysis',
     onboard: ONBOARDING_FEATURES.ANALYTICS_DATABASE_ANALYSIS
   },
   {

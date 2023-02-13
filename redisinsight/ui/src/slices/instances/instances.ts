@@ -574,7 +574,6 @@ export function getDatabaseConfigInfoAction(
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
       dispatch(getDatabaseConfigInfoFailure(errorMessage))
       onFailAction?.()
     }

@@ -435,9 +435,9 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
         </div>
         { profilingTime &&
           (
-            module === ModuleType.Search ?
+            module === ModuleType.Search &&
               (
-                <div style={{ width: infoWidth }} className="ProfileInfo ProfileTimeInfo">
+                <div className="ProfileInfo ProfileTimeInfo">
                   {
                     Object.keys(profilingTime).map(key => (
                       <div className="Item">
@@ -447,10 +447,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
                     ))
                   }
                 </div>
-              )
-              :
-              type === CoreType.Profile && (
-                <div style={{ width: infoWidth }} className="ProfileInfo ProfileTimeMini">Total execution time: {profilingTime['Total Execution Time']} ms</div>
               )
           )}
       </div>

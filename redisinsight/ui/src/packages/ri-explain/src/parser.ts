@@ -538,19 +538,23 @@ class Parser {
 
     assertToken(TokenType.IDENTIFIER, this.CurrentToken?.T)
 
-    let identifier = this.CurrentToken.Data
+    let identifiers: string[] = []
 
-    this.nextToken()
+    while (this.CurrentToken?.T == TokenType.IDENTIFIER) {
+      identifiers.push(this.CurrentToken.Data)
 
-    assertToken(TokenType.NEW_LINE, this.CurrentToken?.T)
+      this.nextToken()
 
-    this.nextToken()
+      assertToken(TokenType.NEW_LINE, this.CurrentToken?.T)
+
+      this.nextToken()
+    }
 
     assertToken(TokenType.RBRACE, this.CurrentToken?.T)
 
     this.nextToken()
 
-    return new Expr(identifier, EntityType.TAG, tagData)
+    return new Expr(identifiers.join(", "), EntityType.TAG, tagData)
 
   }
 

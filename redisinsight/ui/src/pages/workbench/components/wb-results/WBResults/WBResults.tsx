@@ -52,7 +52,11 @@ const WBResults = (props: Props) => {
     </div>
   )
 
-  const handleQueryProfile = (profileType: ProfileQueryType) => {
+  const handleQueryProfile = (
+    profileType: ProfileQueryType,
+    commandExecution: { command: string, mode?: RunQueryMode, resultsMode?: ResultsMode }
+  ) => {
+    const { command, mode, resultsMode } = commandExecution
     const profileQuery = generateProfileQueryForCommand(command, profileType)
     if (profileQuery) {
       onQueryProfile(
@@ -101,7 +105,10 @@ const WBResults = (props: Props) => {
           resultsMode={resultsMode}
           db={db}
           onQueryOpen={() => onQueryOpen(id)}
-          onQueryProfile={handleQueryProfile}
+          onQueryProfile={(profileType) => handleQueryProfile(
+            profileType,
+            { command, mode, resultsMode },
+          )}
           onQueryReRun={() => onQueryReRun(
             command,
             null,

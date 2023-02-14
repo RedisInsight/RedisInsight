@@ -100,7 +100,7 @@ aliases:
     - oss-st-5-pass       # OSS Standalone v5 with admin pass required
     - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
     - oss-clu-tls         # OSS Cluster with TLS enabled
-    - re-crdt             # Redis Enterprise with active-active database inside
+    # - re-crdt             # Redis Enterprise with active-active database inside
     - oss-sent-tls-auth   # OSS Sentinel with TLS auth
   guides-filter: &guidesFilter
     filters:

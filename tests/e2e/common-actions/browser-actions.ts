@@ -1,4 +1,4 @@
-import { t } from 'testcafe';
+import {Selector, t} from 'testcafe';
 import { BrowserPage } from '../pageObjects';
 
 const browserPage = new BrowserPage();
@@ -29,9 +29,8 @@ export class BrowserActions {
             }
         }
     }
-    
     /**
-     * Verify toolip contains text
+     * Verify tooltip contains text
      * @param expectedText Expected link that is compared with actual
      * @param contains Should this tooltip contains or not contains text
      */
@@ -39,5 +38,18 @@ export class BrowserActions {
         contains
             ? await t.expect(browserPage.tooltip.textContent).contains(expectedText, `"${expectedText}" Text is incorrect in tooltip`)
             : await t.expect(browserPage.tooltip.textContent).notContains(expectedText, `Tooltip still contains text "${expectedText}"`);
+    }
+    /**
+     * Verify that the new key is displayed at the top of the list of keys and opened and pre-selected in List view
+     * */
+    async verifyKeyDisplayedTopAndOpened(keyName: string): Promise<void> {
+        await t.expect(Selector('[aria-rowindex="1"]').withText(keyName).visible).ok(`element with ${keyName} is not visible in the top of list`);
+        await t.expect(Selector('[data-testid="key-name-text"]').withText(keyName).visible).ok(`element with ${keyName} is not opened`);
+    }
+    /**
+     * Verify that the new key is not displayed at the top of the list of keys and opened and pre-selected in List view
+     * */
+    async verifyKeyIsNotDisplayedTop(keyName: string): Promise<void> {
+        await t.expect(Selector('[aria-rowindex="1"]').withText(keyName).visible).notOk(`element with ${keyName} is not visible in the top of list`);
     }
 }

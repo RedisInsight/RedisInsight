@@ -33,7 +33,7 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d ./config/ormconfig.ts",
     "test:api": "ts-mocha --paths -p test/api/api.tsconfig.json --config ./test/api/.mocharc.yml",
     "test:api:cov": "nyc --reporter=html --reporter=text --reporter=text-summary yarn run test:api",
-    "test:api:ci:cov": "nyc -r text -r text-summary -r html yarn run test:api --reporter mocha-multi-reporters --reporter-options configFile=test/api/reporters.json && nyc merge .nyc_output ./coverage/test-run-coverage.json && nyc check-coverage",
+    "test:api:ci:cov": "nyc -r text -r text-summary -r html yarn run test:api --reporter mocha-multi-reporters --reporter-options configFile=test/api/reporters.json && nyc merge .nyc_output ./coverage/test-run-coverage.json",
     "typeorm:migrate": "cross-env NODE_ENV=production yarn typeorm migration:generate ./migration/migration",
     "typeorm:run": "yarn typeorm migration:run"
   },
@@ -121,12 +121,6 @@
     "tsconfig-paths": "^3.9.0",
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "typescript": "^4.0.5"
-  },
-  "nyc": {
-    "branches": "99",
-    "lines": "99",
-    "functions": "99",
-    "statements": "99"
   },
   "jest": {
     "moduleFileExtensions": [

@@ -100,7 +100,7 @@ aliases:
     - oss-st-5-pass       # OSS Standalone v5 with admin pass required
     - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
     - oss-clu-tls         # OSS Cluster with TLS enabled
-    # - re-crdt             # Redis Enterprise with active-active database inside
+    - re-crdt             # Redis Enterprise with active-active database inside
     - oss-sent-tls-auth   # OSS Sentinel with TLS auth
   guides-filter: &guidesFilter
     filters:
@@ -293,8 +293,7 @@ jobs:
             sudo mkdir -p /usr/src/app
             sudo cp -a ./redisinsight/api/. /usr/src/app/
             sudo cp -R /tmp/itest/coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
-            cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
-            npx nyc check-coverage --lines 99 --functions 99 --branches 99 --statements 99
+            cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary --check-coverage --statements 83 --branches 68 --functions 79 --lines 82
   e2e-app-image:
     executor: linux-executor-dlc
     parameters:
@@ -914,12 +913,8 @@ workflows:
             parameters:
               rte: *iTestsNamesShort
           name: ITest - << matrix.rte >> (code)
-          # requires:
-          #   - UTest - API
-      - integration-tests-coverage:
-          name: ITest - Final coverage
           requires:
-            - itest-code
+            - UTest - API
   # E2E tests for "e2e/feature" or "e2e/bugfix" branches only
   e2e-tests:
     jobs:

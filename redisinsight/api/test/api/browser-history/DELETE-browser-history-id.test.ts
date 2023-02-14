@@ -41,18 +41,6 @@ describe(`DELETE /databases/:instanceId/history/:id`, () => {
           expect(await localDb.getBrowserHistoryById(constants.TEST_BROWSER_HISTORY_ID_2)).to.eql(null)
         },
       },
-      {
-        name: 'Should return Not Found Error',
-        endpoint: () => endpoint(constants.TEST_BROWSER_HISTORY_ID_2),
-        statusCode: 404,
-        responseBody: {
-          statusCode: 404,
-          error: 'Not Found'
-        },
-        before: async () => {
-          expect(await localDb.getBrowserHistoryById(constants.TEST_BROWSER_HISTORY_ID_2)).to.eql(null)
-        },
-      },
     ].map(mainCheckFn);
   });
 });

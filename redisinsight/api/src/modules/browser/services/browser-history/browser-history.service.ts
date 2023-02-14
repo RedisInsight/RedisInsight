@@ -5,10 +5,10 @@ import { plainToClass } from 'class-transformer';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserHistoryMode } from 'src/common/constants';
-import { BrowserHistoryProvider } from '../../providers/history/browser-history.provider';
-import { BrowserHistory } from '../../dto/browser-history/get.browser-history.dto';
-import { CreateBrowserHistoryDto } from '../../dto/browser-history/create.browser-history.dto';
-import { DeleteBrowserHistoryItemsResponse } from '../../dto/browser-history/delete.browser-history.response.dto';
+import { BrowserHistoryProvider } from 'src/modules/browser/providers/history/browser-history.provider';
+import { BrowserHistory } from 'src/modules/browser/dto/browser-history/get.browser-history.dto';
+import { CreateBrowserHistoryDto } from 'src/modules/browser/dto/browser-history/create.browser-history.dto';
+import { DeleteBrowserHistoryItemsResponse } from 'src/modules/browser/dto/browser-history/delete.browser-history.response.dto';
 
 @Injectable()
 export class BrowserHistoryService {

@@ -122,6 +122,12 @@
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "typescript": "^4.0.5"
   },
+  "nyc": {
+    "branches": "&gt;99",
+    "lines": "&gt;99",
+    "functions": "&gt;99",
+    "statements": "&gt;99"
+  },
   "jest": {
     "moduleFileExtensions": [
       "js",
@@ -140,6 +146,14 @@
       ".spec.ts$"
     ],
     "testEnvironment": "node",
+    "coverageThreshold": {
+      "global": {
+        "statements": 94,
+        "branches": 77,
+        "functions": 88,
+        "lines": 94
+      }
+    },
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/$1",
       "apiSrc/(.*)": "<rootDir>/$1",

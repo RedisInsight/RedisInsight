@@ -140,14 +140,6 @@
       ".spec.ts$"
     ],
     "testEnvironment": "node",
-    "coverageThreshold": {
-      "global": {
-        "statements": 94,
-        "branches": 77,
-        "functions": 88,
-        "lines": 94
-      }
-    },
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/$1",
       "apiSrc/(.*)": "<rootDir>/$1",

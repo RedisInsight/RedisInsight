@@ -307,7 +307,7 @@ describe('POST /databases/:instanceId/plugins/command-executions', () => {
     let nodes;
 
     before(async () => {
-      database = await (await localDb.getRepository(localDb.repositories.DAtABASE)).findOneBy({
+      database = await (await localDb.getRepository(localDb.repositories.DATABASE)).findOneBy({
         id: constants.TEST_INSTANCE_ID,
       });
       nodes = JSON.parse(database.nodes);

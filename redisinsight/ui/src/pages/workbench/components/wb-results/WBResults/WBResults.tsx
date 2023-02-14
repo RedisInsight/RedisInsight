@@ -105,7 +105,7 @@ const WBResults = (props: Props) => {
           resultsMode={resultsMode}
           db={db}
           onQueryOpen={() => onQueryOpen(id)}
-          onQueryProfile={profileType => handleQueryProfile(
+          onQueryProfile={(profileType) => handleQueryProfile(
             profileType,
             { command, mode, resultsMode },
           )}

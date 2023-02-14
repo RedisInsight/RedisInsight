@@ -293,7 +293,7 @@ jobs:
             sudo mkdir -p /usr/src/app
             sudo cp -a ./redisinsight/api/. /usr/src/app/
             sudo cp -R /tmp/itest/coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
-            cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary --check-coverage --statements 83 --branches 68 --functions 79 --lines 82
+            cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary --check-coverage --statements 86.39 --branches 71.98 --functions 83.51 --lines 85.69
   e2e-app-image:
     executor: linux-executor-dlc
     parameters:

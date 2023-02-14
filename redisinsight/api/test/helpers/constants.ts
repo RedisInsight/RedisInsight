@@ -538,5 +538,17 @@ export const constants = {
     name: RECOMMENDATION_NAMES.LUA_SCRIPT,
     vote: 'useful',
   },
+  TEST_BROWSER_HISTORY_DATABASE_ID: uuidv4(),
+  TEST_BROWSER_HISTORY_ID_1: uuidv4(),
+  TEST_BROWSER_HISTORY_ID_2: uuidv4(),
+  TEST_BROWSER_HISTORY_ID_3: uuidv4(),
+  TEST_BROWSER_HISTORY_FILTER_1: {
+    type: null,
+    match: 'hi',
+  },
+  TEST_BROWSER_HISTORY_FILTER_2: {
+    type: null,
+    match: 'hi',
+  },
   // etc...
 }

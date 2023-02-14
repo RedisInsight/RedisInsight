@@ -33,7 +33,7 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d ./config/ormconfig.ts",
     "test:api": "ts-mocha --paths -p test/api/api.tsconfig.json --config ./test/api/.mocharc.yml",
     "test:api:cov": "nyc --reporter=html --reporter=text --reporter=text-summary yarn run test:api",
-    "test:api:ci:cov": "nyc check-coverage --lines 95 -r text -r text-summary -r html yarn run test:api --reporter mocha-multi-reporters --reporter-options configFile=test/api/reporters.json && nyc check-coverage --lines 95 merge .nyc_output ./coverage/test-run-coverage.json",
+    "test:api:ci:cov": "nyc -r text -r text-summary -r html yarn run test:api --reporter mocha-multi-reporters --reporter-options configFile=test/api/reporters.json && nyc merge .nyc_output ./coverage/test-run-coverage.json && nyc check-coverage --lines 95",
     "typeorm:migrate": "cross-env NODE_ENV=production yarn typeorm migration:generate ./migration/migration",
     "typeorm:run": "yarn typeorm migration:run"
   },

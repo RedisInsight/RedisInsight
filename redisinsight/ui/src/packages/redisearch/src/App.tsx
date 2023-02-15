@@ -43,8 +43,8 @@ const App = (props: Props) => {
     return <TableResult query={command} result={result} matched={matched} />
   }
 
-  if (commandUpper.startsWith(Command.Search)) {
-    const [matched, ...arrayResponse] = response
+  if (commandUpper.startsWith(Command.Search) || commandUpper.startsWith(Command.Profile)) {
+    const [matched, ...arrayResponse] = commandUpper.startsWith(Command.Profile) ?  response[0] : response
     setHeaderText(`Matched:${matched}`)
 
     const result = parseSearchRawResponse(command, arrayResponse)

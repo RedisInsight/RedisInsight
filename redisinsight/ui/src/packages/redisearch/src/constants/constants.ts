@@ -4,6 +4,7 @@ export enum Command {
   Search = 'FT.SEARCH',
   Aggregate = 'FT.AGGREGATE',
   Info = 'FT.INFO',
+  Profile = 'FT.PROFILE',
 }
 
 export enum CommandArgument {

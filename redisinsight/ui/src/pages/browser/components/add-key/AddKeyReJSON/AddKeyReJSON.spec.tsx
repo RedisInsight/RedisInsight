@@ -1,7 +1,8 @@
 import React from 'react'
+import userEvent from '@testing-library/user-event'
 import { instance, mock } from 'ts-mockito'
 
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import AddKeyReJSON, { Props } from './AddKeyReJSON'
@@ -82,5 +83,55 @@ describe('AddKeyReJSON', () => {
         databaseId: 'instanceId',
       }
     })
+  })
+
+  it('should load file', async () => {
+    render(<AddKeyReJSON {...instance(mockedProps)} keyName="name" />)
+
+    const jsonString = JSON.stringify({ a: 12 })
+    const blob = new Blob([jsonString])
+    const file = new File([blob], 'empty.json', {
+      type: 'application/JSON',
+    })
+    const fileInput = screen.getByTestId('upload-input-file')
+
+    expect(fileInput).toHaveAttribute('accept', 'application/json, text/plain')
+    expect(fileInput.files.length).toBe(0)
+
+    await userEvent.upload(fileInput, file)
+
+    expect(fileInput.files.length).toBe(1)
+  })
+
+  it('should set the incorrect value from json file', async () => {
+    render(<AddKeyReJSON {...instance(mockedProps)} keyName="name" />)
+
+    const jsonString = JSON.stringify({ a: 12 })
+    const blob = new Blob([jsonString])
+    const file = new File([blob], 'empty.json', {
+      type: 'application/JSON',
+    })
+    const fileInput = screen.getByTestId('upload-input-file')
+
+    expect(fileInput).toHaveAttribute('accept', 'application/json, text/plain')
+
+    await userEvent.upload(fileInput, file)
+
+    await waitFor(() => expect(screen.getByTestId('json-value')).toHaveValue('{"a":12}'))
+  })
+
+  it('should set the value from json file', async () => {
+    render(<AddKeyReJSON {...instance(mockedProps)} keyName="name" />)
+
+    const jsonString = JSON.stringify('{ a: 12')
+    const blob = new Blob([jsonString])
+    const file = new File([blob], 'empty.json', {
+      type: 'application/JSON',
+    })
+    const fileInput = screen.getByTestId('upload-input-file')
+
+    await userEvent.upload(fileInput, file)
+
+    await waitFor(() => expect(screen.getByTestId('json-value')).toHaveValue('"{ a: 12"'))
   })
 })

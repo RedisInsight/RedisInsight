@@ -3,9 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
   EuiButton,
-  EuiButtonEmpty,
   EuiFormRow,
-  EuiText,
   EuiTextColor,
   EuiForm,
   EuiFlexGroup,
@@ -17,6 +15,7 @@ import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addReJSONKey, } from 'uiSrc/slices/browser/keys'
 
 import MonacoJson from 'uiSrc/components/monaco-json'
+import UploadFile from 'uiSrc/components/uploadFile'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/dto'
 
@@ -25,8 +24,6 @@ import {
 } from '../constants/fields-config'
 
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
-
-import styles from './styles.module.scss'
 
 export interface Props {
   keyName: string
@@ -38,7 +35,6 @@ const AddKeyReJSON = (props: Props) => {
   const { keyName = '', keyTTL, onCancel } = props
   const { loading } = useSelector(addKeyStateSelector)
   const [ReJSONValue, setReJSONValue] = useState<string>('')
-  const [valueFromFile, setValueFromFile] = useState<string>('')
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
   const dispatch = useDispatch()
@@ -80,7 +76,6 @@ const AddKeyReJSON = (props: Props) => {
     if (files && files[0]) {
       const reader = new FileReader()
       reader.onload = async (e) => {
-        setValueFromFile(e?.target?.result as string)
         setReJSONValue(e?.target?.result as string)
       }
       reader.readAsText(files[0])
@@ -102,31 +97,13 @@ const AddKeyReJSON = (props: Props) => {
         <>
           <MonacoJson
             value={ReJSONValue}
-            updatedValue={valueFromFile}
             onChange={setReJSONValue}
             disabled={loading}
             data-testid="json-value"
           />
           <EuiFlexGroup justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
-              <EuiButtonEmpty
-                iconType="folderOpen"
-                className={styles.emptyBtn}
-              >
-                <label htmlFor="upload-input-file" className={styles.uploadBtn}>
-                  <EuiText className={styles.label}>Upload</EuiText>
-                  <input
-                    type="file"
-                    id="upload-input-file"
-                    data-testid="upload-input-file"
-                    accept="application/json, text/plain"
-                    onChange={onFileChange}
-                    onClick={onClick}
-                    className={styles.fileDrop}
-                    aria-label="Select file"
-                  />
-                </label>
-              </EuiButtonEmpty>
+              <UploadFile onClick={onClick} onFileChange={onFileChange} />
             </EuiFlexItem>
           </EuiFlexGroup>
         </>

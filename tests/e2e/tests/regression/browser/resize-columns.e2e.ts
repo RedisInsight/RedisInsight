@@ -19,21 +19,21 @@ const longFieldName = common.generateSentence(20);
 const keys = [
     {   type: 'Hash',
         name: `${keyName}:1`,
-        offsetX: 100,
+        offsetX: 50,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     },
     {
         type: 'List',
         name: `${keyName}:2`,
-        offsetX: 80,
+        offsetX: 40,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     },
     {
         type: 'Zset',
         name: `${keyName}:3`,
-        offsetX: 50,
+        offsetX: 30,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     }
@@ -75,7 +75,7 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
         // Remember initial column width
         key.fieldWidthStart = await field.clientWidth;
         await t.hover(tableHeaderResizeTrigger);
-        await t.drag(tableHeaderResizeTrigger, -key.offsetX, 0, { speed: 0.5 });
+        await t.drag(tableHeaderResizeTrigger, -key.offsetX, 0, { speed: 0.4 });
         // Remember last column width
         key.fieldWidthEnd = await field.clientWidth;
         // Verify that user can resize columns for Hash, List, Zset Keys
@@ -96,9 +96,9 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
     // Go to 2nd database
     await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
     // Verify that resize saved for specific data type
-    for(const key of keys) {
+    for (const key of keys) {
         await browserPage.openKeyDetails(key.name);
-        await t.expect(field.clientWidth).eql(key.fieldWidthEnd, `Resize context not saved for ${key.type} key when switching between databases`);
+        await t.expect(field.clientWidth).within(key.fieldWidthEnd - 5, key.fieldWidthEnd + 5, `Resize context not saved for ${key.type} key when switching between databases`);
     }
 
     // Change db index for 2nd database

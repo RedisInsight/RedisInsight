@@ -37,6 +37,8 @@ export const mockCreateQueryBuilder = jest.fn(() => ({
   select: jest.fn().mockReturnThis(),
   set: jest.fn().mockReturnThis(),
   orderBy: jest.fn().mockReturnThis(),
+  groupBy: jest.fn().mockReturnThis(),
+  having: jest.fn().mockReturnThis(),
   limit: jest.fn().mockReturnThis(),
   leftJoin: jest.fn().mockReturnThis(),
   offset: jest.fn().mockReturnThis(),

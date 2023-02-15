@@ -394,6 +394,7 @@ export function fetchMoreRedisearchKeysAction(
 export function fetchRedisearchListAction(
   onSuccess?: (value: RedisResponseBuffer[]) => void,
   onFailed?: () => void,
+  showError = true
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadList())
@@ -418,7 +419,7 @@ export function fetchRedisearchListAction(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      showError && dispatch(addErrorNotification(error))
       dispatch(loadListFailure(errorMessage))
       onFailed?.()
     }

@@ -12,6 +12,8 @@ import {
 } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { resetCliHelperSettings, toggleCliHelper, toggleHideCliHelper } from 'uiSrc/slices/cli/cli-settings'
+import { OnboardingTour } from 'uiSrc/components'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import styles from './styles.module.scss'
 
@@ -51,7 +53,13 @@ const CommandHelperHeader = () => {
       >
         <EuiFlexItem grow={false} className={styles.title}>
           <EuiIcon type="documents" size="m" />
-          <EuiText style={{ lineHeight: '1rem' }}>Command Helper</EuiText>
+          <OnboardingTour
+            options={ONBOARDING_FEATURES.BROWSER_COMMAND_HELPER}
+            anchorPosition="upLeft"
+            panelClassName={styles.helperOnboardPanel}
+          >
+            <EuiText>Command Helper</EuiText>
+          </OnboardingTour>
         </EuiFlexItem>
         <EuiFlexItem grow />
         <EuiFlexItem grow={false}>

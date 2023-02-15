@@ -121,7 +121,7 @@ describe('POST /redis-sentinel/databases', () => {
           expect(body[0].status).to.eql('success');
           expect(body[0].message).to.eql('Added');
 
-          const db: any = await (await localDb.getRepository(localDb.repositories.DAtABASE)).findOneBy({
+          const db: any = await (await localDb.getRepository(localDb.repositories.DATABASE)).findOneBy({
             id: body[0].id,
           });
 
@@ -231,7 +231,7 @@ describe('POST /redis-sentinel/databases', () => {
           expect(body[0].status).to.eql('success');
           expect(body[0].message).to.eql('Added');
 
-          const db: any = await (await localDb.getRepository(localDb.repositories.DAtABASE)).findOneBy({
+          const db: any = await (await localDb.getRepository(localDb.repositories.DATABASE)).findOneBy({
             id: body[0].id,
           });
 
@@ -280,7 +280,7 @@ describe('POST /redis-sentinel/databases', () => {
           expect(body[0].status).to.eql('success');
           expect(body[0].message).to.eql('Added');
 
-          const db: any = await (await localDb.getRepository(localDb.repositories.DAtABASE)).findOneBy({
+          const db: any = await (await localDb.getRepository(localDb.repositories.DATABASE)).findOneBy({
             id: body[0].id,
           });
 

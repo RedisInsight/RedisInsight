@@ -1,11 +1,12 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
+import { isNumber } from 'lodash'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { BuildType } from 'uiSrc/constants/env'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import { localStorageService } from 'uiSrc/services'
-import { setFeaturesToHighlight } from 'uiSrc/slices/app/features-highlighting'
+import { setFeaturesToHighlight, setOnboarding } from 'uiSrc/slices/app/features'
 import { fetchNotificationsAction } from 'uiSrc/slices/app/notifications'
 
 import {
@@ -26,6 +27,7 @@ import { checkIsAnalyticsGranted } from 'uiSrc/telemetry/checkAnalytics'
 import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
 import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import favicon from 'uiSrc/assets/favicon.ico'
 
 const SETTINGS_PAGE_PATH = '/settings'
@@ -68,6 +70,7 @@ const Config = () => {
     }
 
     featuresHighlight()
+    onboardUsers()
   }, [serverInfo, config])
 
   const featuresHighlight = () => {
@@ -94,6 +97,20 @@ const Config = () => {
   const updateHighlightingFeatures = (data: { version: string, features: string[] }) => {
     dispatch(setFeaturesToHighlight(data))
     localStorageService.set(BrowserStorageItem.featuresHighlighting, data)
+  }
+
+  const onboardUsers = () => {
+    if (serverInfo?.buildType === BuildType.Electron && config) {
+      const totalSteps = Object.keys(ONBOARDING_FEATURES).length
+      const userCurrentStep = localStorageService.get(BrowserStorageItem.onboardingStep)
+
+      if (!config.agreements || isNumber(userCurrentStep)) {
+        dispatch(setOnboarding({
+          currentStep: config.agreements ? userCurrentStep : 0,
+          totalSteps
+        }))
+      }
+    }
   }
 
   const checkSettingsToShowPopup = () => {

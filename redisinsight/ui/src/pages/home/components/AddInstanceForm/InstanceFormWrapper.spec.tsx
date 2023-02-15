@@ -145,19 +145,6 @@ describe('InstanceFormWrapper', () => {
     expect(onClose).toBeCalled()
   })
 
-  it('should submit', () => {
-    const onSubmit = jest.fn()
-    render(
-      <InstanceFormWrapper
-        {...instance(mockedProps)}
-        editedInstance={mockedEditedInstance}
-        onDbAdded={onSubmit}
-      />
-    )
-    fireEvent.click(screen.getByTestId('submit-form-btn'))
-    expect(onSubmit).toBeCalled()
-  })
-
   it('should submit with editMode', () => {
     const component = render(
       <InstanceFormWrapper

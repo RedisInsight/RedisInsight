@@ -61,8 +61,6 @@ const baseSentinelData = {
     username: constants.TEST_SENTINEL_MASTER_USER || null,
     password: constants.TEST_SENTINEL_MASTER_PASS || null,
   } : undefined,
-  username: constants.TEST_SENTINEL_MASTER_USER ? constants.TEST_SENTINEL_MASTER_USER : constants.TEST_REDIS_USER,
-  password: constants.TEST_SENTINEL_MASTER_PASS ? constants.TEST_SENTINEL_MASTER_PASS : constants.TEST_REDIS_PASSWORD,
 }
 
 const sshBasicData = {
@@ -103,11 +101,9 @@ const importDatabaseFormat0 = {
 
 const baseSentinelDataFormat1 = {
   sentinelOptions: baseSentinelData.sentinelMaster ? {
-    sentinelPassword: baseSentinelData.password,
+    sentinelPassword: baseSentinelData.sentinelMaster.password,
     name: baseSentinelData.sentinelMaster.name,
   } : undefined,
-  username: constants.TEST_SENTINEL_MASTER_USER ? constants.TEST_SENTINEL_MASTER_USER : constants.TEST_REDIS_USER,
-  password: constants.TEST_SENTINEL_MASTER_PASS ? constants.TEST_SENTINEL_MASTER_PASS : constants.TEST_REDIS_PASSWORD,
 };
 
 const sshBasicDataFormat1 = {
@@ -150,10 +146,8 @@ const importDatabaseFormat1 = {
 const baseSentinelDataFormat2 = {
   sentinelOptions: baseSentinelData.sentinelMaster ? {
     masterName: baseSentinelData.sentinelMaster.name,
-    nodePassword: baseSentinelData.password,
+    nodePassword: baseSentinelData.sentinelMaster.password,
   } : undefined,
-  username: constants.TEST_SENTINEL_MASTER_USER ? constants.TEST_SENTINEL_MASTER_USER : constants.TEST_REDIS_USER,
-  auth: constants.TEST_SENTINEL_MASTER_PASS ? constants.TEST_SENTINEL_MASTER_PASS : constants.TEST_REDIS_PASSWORD,
 };
 
 const sshBasicDataFormat2 = {
@@ -199,12 +193,6 @@ const importDatabaseFormat2 = {
   ...baseSentinelDataFormat2,
 }
 
-
-const baseSentinelDataFormat3 = {
-  username: constants.TEST_SENTINEL_MASTER_USER ? constants.TEST_SENTINEL_MASTER_USER : constants.TEST_REDIS_USER,
-  auth: constants.TEST_SENTINEL_MASTER_PASS ? constants.TEST_SENTINEL_MASTER_PASS : constants.TEST_REDIS_PASSWORD,
-};
-
 const sshBasicDataFormat3 = {
   ssh_host: constants.TEST_SSH_HOST,
   ssh_port: constants.TEST_SSH_PORT,
@@ -234,7 +222,6 @@ const importDatabaseFormat3 = {
   ssl_ca_cert_path: baseTls.caCert ? constants.TEST_CA_CERT_PATH : undefined,
   ssl_local_cert_path: baseTls.clientCert ? constants.TEST_CLIENT_CERT_PATH : undefined,
   ssl_private_key_path: baseTls.clientCert ? constants.TEST_CLIENT_KEY_PATH : undefined,
-  ...baseSentinelDataFormat3,
 }
 
 const mainCheckFn = getMainCheckFn(endpoint);
@@ -1872,7 +1859,9 @@ describe('POST /databases/import', () => {
 
         await validateImportedDatabase(name, 'SENTINEL', 'SENTINEL');
       });
-      it('Import sentinel (format 3)', async () => {
+      // Note: disable this test since this export format does not support different passwords
+      // for sentinel and for the redis itself
+      xit('Import sentinel (format 3)', async () => {
         await validateApiCall({
           endpoint,
           attach: ['file', Buffer.from(JSON.stringify([

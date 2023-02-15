@@ -1,8 +1,7 @@
 import { InternalServerErrorException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { omit, forIn, get, update } from 'lodash';
-import { plainToClass } from 'class-transformer';
+import { omit, get, update } from 'lodash';
 
 import { classToClass } from 'src/utils';
 import {
@@ -33,7 +32,7 @@ describe('DatabaseService', () => {
     'sshOptions.passphrase',
     'sshOptions.privateKey',
     'sentinelMaster.password',
-  ]
+  ];
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -129,17 +128,21 @@ describe('DatabaseService', () => {
 
   describe('update', () => {
     it('should update existing database and send analytics event', async () => {
-      expect(await service.update(
+      databaseRepository.update.mockReturnValue({
+        ...mockDatabase,
+        port: 6380,
+        password: 'password',
+        provider: 'LOCALHOST',
+      });
+
+      await expect(await service.update(
         mockDatabase.id,
-        { password: 'password' } as UpdateDatabaseDto,
+        { password: 'password', port: 6380 } as UpdateDatabaseDto,
         true,
-      )).toEqual(mockDatabase);
+      )).toEqual({ ...mockDatabase, port: 6380, password: 'password' });
       expect(analytics.sendInstanceEditedEvent).toHaveBeenCalledWith(
         mockDatabase,
-        {
-          ...mockDatabase,
-          password: 'password',
-        },
+        { ...mockDatabase, port: 6380, password: 'password' },
         true,
       );
     });
@@ -198,48 +201,48 @@ describe('DatabaseService', () => {
     it('should return multiple databases without Standalone secrets', async () => {
       databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTlsAuth);
 
-      expect(await service.export([mockDatabaseWithTlsAuth.id], false)).toEqual([classToClass(ExportDatabase,omit(mockDatabaseWithTlsAuth, 'password'))]);
-    })
+      expect(await service.export([mockDatabaseWithTlsAuth.id], false)).toEqual([classToClass(ExportDatabase, omit(mockDatabaseWithTlsAuth, 'password'))]);
+    });
 
     it('should return multiple databases without SSH secrets', async () => {
       // remove SSH secrets
-      const mockDatabaseWithSshPrivateKeyTemp = {...mockDatabaseWithSshPrivateKey}
+      const mockDatabaseWithSshPrivateKeyTemp = { ...mockDatabaseWithSshPrivateKey };
       exportSecurityFields.forEach((field) => {
-        if(get(mockDatabaseWithSshPrivateKeyTemp, field)) {
-          update(mockDatabaseWithSshPrivateKeyTemp, field, () => null)
+        if (get(mockDatabaseWithSshPrivateKeyTemp, field)) {
+          update(mockDatabaseWithSshPrivateKeyTemp, field, () => null);
         }
-      })
+      });
 
       databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
-      expect(await service.export([mockDatabaseWithSshPrivateKey.id], false)).toEqual([classToClass(ExportDatabase, mockDatabaseWithSshPrivateKeyTemp)])
-    })
+      expect(await service.export([mockDatabaseWithSshPrivateKey.id], false)).toEqual([classToClass(ExportDatabase, mockDatabaseWithSshPrivateKeyTemp)]);
+    });
 
     it('should return multiple databases without Sentinel secrets', async () => {
       // remove secrets
-      const mockSentinelDatabaseWithTlsAuthTemp = {...mockSentinelDatabaseWithTlsAuth}
+      const mockSentinelDatabaseWithTlsAuthTemp = { ...mockSentinelDatabaseWithTlsAuth };
       exportSecurityFields.forEach((field) => {
-        if(get(mockSentinelDatabaseWithTlsAuthTemp, field)) {
-          update(mockSentinelDatabaseWithTlsAuthTemp, field, () => null)
+        if (get(mockSentinelDatabaseWithTlsAuthTemp, field)) {
+          update(mockSentinelDatabaseWithTlsAuthTemp, field, () => null);
         }
-      })
+      });
 
       databaseRepository.get.mockResolvedValue(mockSentinelDatabaseWithTlsAuth);
 
-      expect(await service.export([mockSentinelDatabaseWithTlsAuth.id], false)).toEqual([classToClass(ExportDatabase, omit(mockSentinelDatabaseWithTlsAuthTemp, 'password'))])
+      expect(await service.export([mockSentinelDatabaseWithTlsAuth.id], false)).toEqual([classToClass(ExportDatabase, omit(mockSentinelDatabaseWithTlsAuthTemp, 'password'))]);
     });
 
     it('should return multiple databases with secrets', async () => {
       // Standalone
       databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTls);
-      expect(await service.export([mockDatabaseWithTls.id], true)).toEqual([classToClass(ExportDatabase,mockDatabaseWithTls)]);
+      expect(await service.export([mockDatabaseWithTls.id], true)).toEqual([classToClass(ExportDatabase, mockDatabaseWithTls)]);
 
       // SSH
       databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
-      expect(await service.export([mockDatabaseWithSshPrivateKey.id], true)).toEqual([classToClass(ExportDatabase, mockDatabaseWithSshPrivateKey)])
+      expect(await service.export([mockDatabaseWithSshPrivateKey.id], true)).toEqual([classToClass(ExportDatabase, mockDatabaseWithSshPrivateKey)]);
 
       // Sentinel
       databaseRepository.get.mockResolvedValueOnce(mockSentinelDatabaseWithTlsAuth);
-      expect(await service.export([mockSentinelDatabaseWithTlsAuth.id], true)).toEqual([classToClass(ExportDatabase, mockSentinelDatabaseWithTlsAuth)])
+      expect(await service.export([mockSentinelDatabaseWithTlsAuth.id], true)).toEqual([classToClass(ExportDatabase, mockSentinelDatabaseWithTlsAuth)]);
     });
 
     it('should ignore errors', async () => {

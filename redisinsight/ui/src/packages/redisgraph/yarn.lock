@@ -3236,10 +3236,10 @@ react@^17.0.2:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
 
-redisinsight-plugin-sdk@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/redisinsight-plugin-sdk/-/redisinsight-plugin-sdk-1.0.1.tgz#c90235091a25a2f07eecf93b7f99273a3338ee41"
-  integrity sha512-ioAv/2IT4C7FyIf97zJ1Y7MnReHcELgDd6cDJQl1KLTzBHEv/0RetnmXU+vl46C25jpFpJZWqAWcvaL5qEV12w==
+redisinsight-plugin-sdk@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/redisinsight-plugin-sdk/-/redisinsight-plugin-sdk-1.1.0.tgz#5ac39dc5398b1f73f2357e67ce51e1875fbece4f"
+  integrity sha512-TtPYfpxVZlwASkO8WFEB8+l6H9N9SVGwVxU0hRGzkEdXZyeQ+Xm/1WwnkGKMaeJyvfpIGrPWVl+lN4pDQ3iqbA==
 
 redux@^4.0.0, redux@^4.0.4:
   version "4.2.0"

@@ -10,7 +10,8 @@ export const importPluginScript = () => (config) => {
     SET_HEADER_TEXT: 'setHeaderText',
     EXECUTE_REDIS_COMMAND: 'executeRedisCommand',
     GET_STATE: 'getState',
-    SET_STATE: 'setState'
+    SET_STATE: 'setState',
+    FORMAT_REDIS_REPLY: 'formatRedisReply'
   }
 
   Object.defineProperty(globalThis, 'state', {
@@ -55,7 +56,8 @@ export const importPluginScript = () => (config) => {
     const promiseEvents = [
       events.EXECUTE_REDIS_COMMAND,
       events.GET_STATE,
-      events.SET_STATE
+      events.SET_STATE,
+      events.FORMAT_REDIS_REPLY
     ]
     globalThis.onmessage = (e) => {
       // eslint-disable-next-line sonarjs/no-collapsible-if

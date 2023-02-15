@@ -9,6 +9,7 @@ call node-sass ".\redisinsight\ui\src\styles\main_plugin.scss" ".\vendor\global_
 call node-sass ".\redisinsight\ui\src\styles\themes\dark_theme\_dark_theme.lazy.scss" ".\vendor\dark_theme.css" --output-style compressed
 call node-sass ".\redisinsight\ui\src\styles\themes\light_theme\_light_theme.lazy.scss" ".\vendor\light_theme.css" --output-style compressed
 xcopy ".\redisinsight\ui\src\assets\fonts\graphik" ".\vendor\fonts\" /s /e /y
+xcopy ".\redisinsight\ui\src\assets\fonts\inconsolata" ".\vendor\fonts\" /s /e /y
 if not exist %PLUGINS_VENDOR_DIR% mkdir %PLUGINS_VENDOR_DIR%
 xcopy ".\vendor\." "%PLUGINS_VENDOR_DIR%" /s /e /y
 

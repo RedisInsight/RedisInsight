@@ -37,7 +37,8 @@
       "matchCommands": [
         "FT.INFO",
         "FT.SEARCH",
-        "FT.AGGREGATE"
+        "FT.AGGREGATE",
+        "FT.PROFILE"
       ],
       "iconDark": "./dist/table_view_icon_dark.svg",
       "iconLight": "./dist/table_view_icon_light.svg",

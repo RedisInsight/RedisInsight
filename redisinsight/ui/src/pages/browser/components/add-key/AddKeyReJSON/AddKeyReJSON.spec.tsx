@@ -103,7 +103,7 @@ describe('AddKeyReJSON', () => {
     expect(fileInput.files.length).toBe(1)
   })
 
-  it('should set the incorrect value from json file', async () => {
+  it('should set the value from json file', async () => {
     render(<AddKeyReJSON {...instance(mockedProps)} keyName="name" />)
 
     const jsonString = JSON.stringify({ a: 12 })
@@ -120,7 +120,7 @@ describe('AddKeyReJSON', () => {
     await waitFor(() => expect(screen.getByTestId('json-value')).toHaveValue('{"a":12}'))
   })
 
-  it('should set the value from json file', async () => {
+  it('should set the incorrect json value from json file', async () => {
     render(<AddKeyReJSON {...instance(mockedProps)} keyName="name" />)
 
     const jsonString = JSON.stringify('{ a: 12')

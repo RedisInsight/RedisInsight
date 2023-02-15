@@ -1,8 +1,10 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { hashDataSelector } from 'uiSrc/slices/browser/hash'
 import { RedisResponseBufferType } from 'uiSrc/slices/interfaces'
-import { bufferToString } from 'uiSrc/utils'
+import { anyToBuffer, bufferToString } from 'uiSrc/utils'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, GZIP_DECOMPRESSED_VALUE_1, GZIP_DECOMPRESSED_VALUE_2 } from 'uiSrc/utils/tests/decompressors/decompressors.spec'
 import HashDetails, { Props } from './HashDetails'
 
 const mockedProps = mock<Props>()
@@ -69,5 +71,25 @@ describe('HashDetails', () => {
   it('should render resize trigger for field column', () => {
     render(<HashDetails {...instance(mockedProps)} />)
     expect(screen.getByTestId('resize-trigger-field')).toBeInTheDocument()
+  })
+
+  it('should render decompressed GZIP data', () => {
+    const defaultState = jest.requireActual('uiSrc/slices/browser/hash').initialState
+    const hashDataSelectorMock = jest.fn().mockReturnValue({
+      ...defaultState,
+      total: 1,
+      key: '123zxczxczxc',
+      fields: [
+        { field: anyToBuffer(GZIP_COMPRESSED_VALUE_1), value: anyToBuffer(GZIP_COMPRESSED_VALUE_2) },
+      ]
+    })
+    hashDataSelector.mockImplementation(hashDataSelectorMock)
+
+    const { queryByTestId, queryAllByTestId } = render(<HashDetails {...instance(mockedProps)} />)
+    const fieldEl = queryAllByTestId(/hash-field-/)?.[0]
+    const valueEl = queryByTestId(/hash-field-value/)
+
+    expect(fieldEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
+    expect(valueEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_2)
   })
 })

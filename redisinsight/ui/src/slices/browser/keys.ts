@@ -6,6 +6,7 @@ import {
   ApiEndpoints,
   BrowserStorageItem,
   KeyTypes,
+  KeyValueCompressor,
   KeyValueFormat,
   SearchHistoryMode,
   SortOrder
@@ -92,6 +93,7 @@ export const initialState: KeysStore = {
     data: null,
     length: 0,
     viewFormat: localStorageService?.get(BrowserStorageItem.viewFormat) ?? defaultViewFormat,
+    compressor: null,
   },
   addKey: {
     loading: false,
@@ -388,6 +390,9 @@ const keysSlice = createSlice({
     deleteSearchHistoryFailure: (state) => {
       state.searchHistory.loading = false
     },
+    setCompressor: (state, { payload }:PayloadAction<Nullable<KeyValueCompressor>>) => {
+      state.selectedKey.compressor = payload
+    },
   },
 })
 
@@ -433,7 +438,8 @@ export const {
   loadSearchHistoryFailure,
   deleteSearchHistory,
   deleteSearchHistorySuccess,
-  deleteSearchHistoryFailure
+  deleteSearchHistoryFailure,
+  setCompressor,
 } = keysSlice.actions
 
 // A selector

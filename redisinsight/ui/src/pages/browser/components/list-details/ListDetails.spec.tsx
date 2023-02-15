@@ -1,6 +1,9 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
+import { listDataSelector } from 'uiSrc/slices/browser/list'
+import { anyToBuffer } from 'uiSrc/utils'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { GZIP_COMPRESSED_VALUE_1, GZIP_DECOMPRESSED_VALUE_1 } from 'uiSrc/utils/tests/decompressors/decompressors.spec'
 import ListDetails, { Props } from './ListDetails'
 
 const mockedProps = mock<Props>()
@@ -67,5 +70,22 @@ describe('ListDetails', () => {
   it('should render resize trigger for index column', () => {
     render(<ListDetails {...mockedProps} />)
     expect(screen.getByTestId('resize-trigger-index')).toBeInTheDocument()
+  })
+
+  it('should render decompressed GZIP data = "1"', () => {
+    const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
+    const listDataSelectorMock = jest.fn().mockReturnValue({
+      ...defaultState,
+      key: '123zxczxczxc',
+      elements: [
+        { element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 },
+      ]
+    })
+    listDataSelector.mockImplementation(listDataSelectorMock)
+
+    const { queryByTestId } = render(<ListDetails {...(mockedProps)} />)
+    const elementEl = queryByTestId(/list-element-value-/)
+
+    expect(elementEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
   })
 })

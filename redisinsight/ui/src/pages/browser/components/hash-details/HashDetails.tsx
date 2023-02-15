@@ -17,7 +17,9 @@ import {
   KeyTypes,
   OVER_RENDER_BUFFER_COUNT,
   TableCellAlignment,
+  TEXT_DISABLED_COMPRESSED_VALUE,
   TEXT_DISABLED_FORMATTER_EDITING,
+  TEXT_FAILED_CONVENT_FORMATTER,
   TEXT_INVALID_VALUE,
   TEXT_UNPRINTABLE_CHARACTERS
 } from 'uiSrc/constants'
@@ -53,6 +55,7 @@ import {
   stringToSerializedBufferFormat
 } from 'uiSrc/utils'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
+import { decompressingBuffer, getCompressor } from 'uiSrc/utils/decompressors'
 import { AddFieldsToHashDto, GetHashFieldsResponse, HashFieldDto, } from 'apiSrc/modules/browser/dto/hash.dto'
 
 import PopoverDelete from '../popover-delete/PopoverDelete'
@@ -292,17 +295,18 @@ const HashDetails = (props: Props) => {
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
       render: (_name: string, { field: fieldItem }: HashFieldDto, expanded?: boolean) => {
-        // Better to cut the long string, because it could affect virtual scroll performance
+        const { value: decompressedItem } = decompressingBuffer(fieldItem)
         const field = bufferToString(fieldItem) || ''
+        // Better to cut the long string, because it could affect virtual scroll performance
         const tooltipContent = formatLongName(field)
-        const { value, isValid } = formattingBuffer(fieldItem, viewFormatProp, { expanded })
+        const { value, isValid } = formattingBuffer(decompressedItem, viewFormatProp, { expanded })
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
             <div style={{ display: 'flex' }} data-testid={`hash-field-${field}`}>
               {!expanded && (
                 <EuiToolTip
-                  title={isValid ? 'Field' : `Failed to convert to ${viewFormatProp}`}
+                  title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                   className={styles.tooltip}
                   anchorClassName="truncateText"
                   position="bottom"
@@ -329,11 +333,13 @@ const HashDetails = (props: Props) => {
         expanded?: boolean,
         rowIndex = 0
       ) {
-        // Better to cut the long string, because it could affect virtual scroll performance
+        const { value: decompressedFieldItem } = decompressingBuffer(fieldItem)
+        const { value: decompressedValueItem } = decompressingBuffer(valueItem)
         const value = bufferToString(valueItem)
-        const field = bufferToString(fieldItem)
+        const field = bufferToString(decompressedFieldItem)
+        // Better to cut the long string, because it could affect virtual scroll performance
         const tooltipContent = formatLongName(value)
-        const { value: formattedValue, isValid } = formattingBuffer(valueItem, viewFormatProp, { expanded })
+        const { value: formattedValue, isValid } = formattingBuffer(decompressedValueItem, viewFormatProp, { expanded })
 
         if (rowIndex === editingIndex) {
           const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
@@ -404,7 +410,7 @@ const HashDetails = (props: Props) => {
             >
               {!expanded && (
                 <EuiToolTip
-                  title={isValid ? 'Value' : `Failed to convert to ${viewFormatProp}`}
+                  title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                   className={styles.tooltip}
                   position="bottom"
                   content={tooltipContent}
@@ -428,12 +434,14 @@ const HashDetails = (props: Props) => {
       minWidth: 95,
       maxWidth: 95,
       render: function Actions(_act: any, { field: fieldItem, value: valueItem }: HashFieldDto, _, rowIndex?: number) {
+        const compressor = getCompressor(valueItem)
         const field = bufferToString(fieldItem, viewFormat)
-        const isEditable = isFormatEditable(viewFormat)
+        const isEditable = !compressor && isFormatEditable(viewFormat)
+        const tooltipContent = compressor ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiToolTip content={!isEditable ? TEXT_DISABLED_FORMATTER_EDITING : null}>
+              <EuiToolTip content={!isEditable ? tooltipContent : null}>
                 <EuiButtonIcon
                   iconType="pencil"
                   aria-label="Edit field"

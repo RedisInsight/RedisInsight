@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { KeyTypes, KeyValueFormat } from 'uiSrc/constants'
+import { KeyTypes, KeyValueCompressor, KeyValueFormat } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { parseKeysListResponse, stringToBuffer, UTF8ToBuffer } from 'uiSrc/utils'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
@@ -68,6 +68,7 @@ import reducer, {
   resetAddKey,
   resetKeyInfo,
   resetKeys,
+  setCompressor,
   setLastBatchPatternKeys,
   updateSelectedKeyRefreshTime,
 } from '../../browser/keys'
@@ -981,6 +982,29 @@ describe('keys slice', () => {
 
       // Act
       const nextState = reducer(state, deleteSearchHistoryFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setCompressor', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const data: KeyValueCompressor = KeyValueCompressor.GZIP
+      const state = {
+        ...initialState,
+        selectedKey: {
+          ...initialState.selectedKey,
+          compressor: data,
+        }
+      }
+
+      // Act
+      const nextState = reducer(state, setCompressor(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

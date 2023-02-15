@@ -7,6 +7,11 @@ export enum Command {
   Profile = 'FT.PROFILE',
 }
 
+export enum ProfileType {
+  Search = 'SEARCH',
+  Aggregate = 'AGGREGATE',
+}
+
 export enum CommandArgument {
   NoContent = 'NOCONTENT',
   Return = 'RETURN',

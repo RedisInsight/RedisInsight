@@ -88,7 +88,6 @@ export class DatabaseAnalytics extends TelemetryBaseService {
         this.sendEvent(
           TelemetryEvents.RedisInstanceEditedByUser,
           {
-            port: cur.port,
             databaseId: cur.id,
             connectionType: cur.connectionType,
             provider: cur.provider,
@@ -101,7 +100,6 @@ export class DatabaseAnalytics extends TelemetryBaseService {
             useSSH: cur?.ssh ? 'enabled' : 'disabled',
             timeout: cur?.timeout / 1_000, // milliseconds to seconds
             previousValues: {
-              port: prev.port,
               connectionType: prev.connectionType,
               provider: prev.provider,
               useTLS: prev.tls ? 'enabled' : 'disabled',

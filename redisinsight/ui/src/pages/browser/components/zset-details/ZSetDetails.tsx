@@ -17,7 +17,7 @@ import {
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
 } from 'uiSrc/slices/browser/zset'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, SortOrder, TableCellAlignment } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, SortOrder, TableCellAlignment, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
@@ -41,6 +41,7 @@ import { IColumnSearchState, ITableColumn, RelativeWidthSizes } from 'uiSrc/comp
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
+import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
@@ -257,9 +258,10 @@ const ZSetDetails = (props: Props) => {
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
       render: function Name(_name: string, { name: nameItem }: IZsetMember, expanded?: boolean) {
+        const { value: decompressedNameItem } = decompressingBuffer(nameItem)
         const name = bufferToString(nameItem)
         const tooltipContent = formatLongName(name)
-        const { value, isValid } = formattingBuffer(nameItem, viewFormat, { expanded })
+        const { value, isValid } = formattingBuffer(decompressedNameItem, viewFormat, { expanded })
         const cellContent = value?.substring?.(0, 200) ?? value
 
         return (
@@ -270,7 +272,7 @@ const ZSetDetails = (props: Props) => {
             >
               {!expanded && (
                 <EuiToolTip
-                  title={isValid ? 'Member' : `Failed to convert to ${viewFormat}`}
+                  title={isValid ? 'Member' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                   className={styles.tooltip}
                   anchorClassName="truncateText"
                   position="bottom"

@@ -180,6 +180,19 @@ export enum KeyValueFormat {
   Pickle = 'Pickle',
 }
 
+export enum KeyValueCompressor {
+  GZIP = 'GZIP',
+  LZ4 = 'LZ4',
+  ZSTD = 'ZSTD',
+  SNAPPY = 'SNAPPY',
+  Brotli = 'Brotli',
+  PHPGZCompress = 'PHPGZCompress',
+}
+
+export const COMPRESSOR_MAGIC_SYMBOLS = Object.freeze({
+  [KeyValueCompressor.GZIP]: [31, 139], // 1f 8b hex
+})
+
 export enum SearchHistoryMode {
   Pattern = 'pattern',
   Redisearch = 'redisearch'

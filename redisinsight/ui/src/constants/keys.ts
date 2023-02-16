@@ -1,4 +1,5 @@
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
+import { ApiEndpoints } from 'uiSrc/constants'
 import { CommandGroup } from './commands'
 
 export enum KeyTypes {
@@ -180,6 +181,17 @@ export enum KeyValueFormat {
   Pickle = 'Pickle',
 }
 
+export const ENDPOINT_BASED_ON_KEY_TYPE = Object.freeze({
+  [KeyTypes.ZSet]: ApiEndpoints.ZSET,
+  [KeyTypes.Set]: ApiEndpoints.SET,
+  [KeyTypes.String]: ApiEndpoints.STRING,
+  [KeyTypes.Hash]: ApiEndpoints.HASH,
+  [KeyTypes.List]: ApiEndpoints.LIST,
+  [KeyTypes.ReJSON]: ApiEndpoints.REJSON,
+  [KeyTypes.Stream]: ApiEndpoints.STREAMS,
+})
+
+export type EndpointBasedOnKeyType = keyof (typeof ENDPOINT_BASED_ON_KEY_TYPE)
 export enum SearchHistoryMode {
   Pattern = 'pattern',
   Redisearch = 'redisearch'

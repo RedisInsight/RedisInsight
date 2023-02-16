@@ -60,20 +60,22 @@ describe('SetDetails', () => {
     expect(screen.getByTestId(/set-remove-btn-1-icon/)).toBeInTheDocument()
   })
 
-  it('should render decompressed GZIP data = "1"', () => {
-    const defaultState = jest.requireActual('uiSrc/slices/browser/set').initialState
-    const setDataSelectorMock = jest.fn().mockReturnValue({
-      ...defaultState,
-      key: '123zxczxczxc',
-      members: [
-        anyToBuffer(GZIP_COMPRESSED_VALUE_1),
-      ]
+  describe('decompressed  data', () => {
+    it('should render decompressed GZIP data = "1"', () => {
+      const defaultState = jest.requireActual('uiSrc/slices/browser/set').initialState
+      const setDataSelectorMock = jest.fn().mockReturnValue({
+        ...defaultState,
+        key: '123zxczxczxc',
+        members: [
+          anyToBuffer(GZIP_COMPRESSED_VALUE_1),
+        ]
+      })
+      setDataSelector.mockImplementation(setDataSelectorMock)
+
+      const { queryByTestId } = render(<SetDetails {...instance(mockedProps)} />)
+      const memberEl = queryByTestId(/set-member-value-/)
+
+      expect(memberEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
     })
-    setDataSelector.mockImplementation(setDataSelectorMock)
-
-    const { queryByTestId } = render(<SetDetails {...instance(mockedProps)} />)
-    const memberEl = queryByTestId(/set-member-value-/)
-
-    expect(memberEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
   })
 })

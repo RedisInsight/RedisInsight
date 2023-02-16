@@ -102,39 +102,41 @@ describe('StringDetails', () => {
     expect(textArea).toHaveValue(STRING_VALUE_SPACE)
   })
 
-  it('should render decompressed GZIP data = "1"', () => {
-    const stringDataSelectorMock = jest.fn().mockReturnValue({
-      value: anyToBuffer(GZIP_COMPRESSED_VALUE_1)
+  describe('decompressed  data', () => {
+    it('should render decompressed GZIP data = "1"', () => {
+      const stringDataSelectorMock = jest.fn().mockReturnValue({
+        value: anyToBuffer(GZIP_COMPRESSED_VALUE_1)
+      })
+      stringDataSelector.mockImplementation(stringDataSelectorMock)
+
+      render(
+        <StringDetails
+          {...instance(mockedProps)}
+          isEditItem
+          setIsEdit={jest.fn()}
+        />
+      )
+      const textArea = screen.getByTestId(STRING_VALUE)
+
+      expect(textArea).toHaveValue(GZIP_DECOMPRESSED_VALUE_1)
     })
-    stringDataSelector.mockImplementation(stringDataSelectorMock)
 
-    render(
-      <StringDetails
-        {...instance(mockedProps)}
-        isEditItem
-        setIsEdit={jest.fn()}
-      />
-    )
-    const textArea = screen.getByTestId(STRING_VALUE)
+    it('should render decompressed GZIP data = "2"', () => {
+      const stringDataSelectorMock = jest.fn().mockReturnValue({
+        value: anyToBuffer(GZIP_COMPRESSED_VALUE_2)
+      })
+      stringDataSelector.mockImplementation(stringDataSelectorMock)
 
-    expect(textArea).toHaveValue(GZIP_DECOMPRESSED_VALUE_1)
-  })
+      render(
+        <StringDetails
+          {...instance(mockedProps)}
+          isEditItem
+          setIsEdit={jest.fn()}
+        />
+      )
+      const textArea = screen.getByTestId(STRING_VALUE)
 
-  it('should render decompressed GZIP data = "2"', () => {
-    const stringDataSelectorMock = jest.fn().mockReturnValue({
-      value: anyToBuffer(GZIP_COMPRESSED_VALUE_2)
+      expect(textArea).toHaveValue(GZIP_DECOMPRESSED_VALUE_2)
     })
-    stringDataSelector.mockImplementation(stringDataSelectorMock)
-
-    render(
-      <StringDetails
-        {...instance(mockedProps)}
-        isEditItem
-        setIsEdit={jest.fn()}
-      />
-    )
-    const textArea = screen.getByTestId(STRING_VALUE)
-
-    expect(textArea).toHaveValue(GZIP_DECOMPRESSED_VALUE_2)
   })
 })

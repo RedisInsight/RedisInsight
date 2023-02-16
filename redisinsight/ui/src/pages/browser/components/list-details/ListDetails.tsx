@@ -385,7 +385,7 @@ const ListDetails = (props: Props) => {
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiToolTip content={!isEditable ? tooltipContent : null}>
+              <EuiToolTip content={!isEditable ? tooltipContent : null} data-testid="list-edit-tooltip">
                 <EuiButtonIcon
                   iconType="pencil"
                   aria-label="Edit element"

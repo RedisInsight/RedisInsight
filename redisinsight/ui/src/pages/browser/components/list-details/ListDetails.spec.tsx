@@ -1,8 +1,9 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
+import { TEXT_DISABLED_COMPRESSED_VALUE } from 'uiSrc/constants'
 import { listDataSelector } from 'uiSrc/slices/browser/list'
 import { anyToBuffer } from 'uiSrc/utils'
-import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { act, fireEvent, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, GZIP_DECOMPRESSED_VALUE_1 } from 'uiSrc/utils/tests/decompressors/decompressors.spec'
 import ListDetails, { Props } from './ListDetails'
 
@@ -72,20 +73,48 @@ describe('ListDetails', () => {
     expect(screen.getByTestId('resize-trigger-index')).toBeInTheDocument()
   })
 
-  it('should render decompressed GZIP data = "1"', () => {
-    const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
-    const listDataSelectorMock = jest.fn().mockReturnValue({
-      ...defaultState,
-      key: '123zxczxczxc',
-      elements: [
-        { element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 },
-      ]
+  describe('decompressed  data', () => {
+    it('should render decompressed GZIP data = "1"', () => {
+      const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
+      const listDataSelectorMock = jest.fn().mockReturnValue({
+        ...defaultState,
+        key: '123zxczxczxc',
+        elements: [
+          { element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 },
+        ]
+      })
+      listDataSelector.mockImplementation(listDataSelectorMock)
+
+      const { queryByTestId } = render(<ListDetails {...(mockedProps)} />)
+      const elementEl = queryByTestId(/list-element-value-/)
+
+      expect(elementEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
     })
-    listDataSelector.mockImplementation(listDataSelectorMock)
 
-    const { queryByTestId } = render(<ListDetails {...(mockedProps)} />)
-    const elementEl = queryByTestId(/list-element-value-/)
+    it('edit button should be disabled if data was compressed', async () => {
+      const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
+      const listDataSelectorMock = jest.fn().mockReturnValue({
+        ...defaultState,
+        key: '123zxczxczxc',
+        elements: [
+          { element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 },
+        ]
+      })
+      listDataSelector.mockImplementation(listDataSelectorMock)
 
-    expect(elementEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
+      const { queryByTestId } = render(<ListDetails {...(mockedProps)} />)
+      const editBtn = queryByTestId(/edit-list-button-/)
+
+      fireEvent.click(editBtn)
+
+      await act(async () => {
+        fireEvent.mouseOver(editBtn)
+      })
+      await waitForEuiToolTipVisible()
+
+      expect(editBtn).toBeDisabled()
+      expect(screen.getByTestId('list-edit-tooltip')).toHaveTextContent(TEXT_DISABLED_COMPRESSED_VALUE)
+      expect(queryByTestId('list-value-editor')).not.toBeInTheDocument()
+    })
   })
 })

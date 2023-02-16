@@ -79,20 +79,22 @@ describe('ZSetDetails', () => {
     expect(screen.getByTestId('resize-trigger-name')).toBeInTheDocument()
   })
 
-  it('should render decompressed GZIP data = "1"', () => {
-    const defaultState = jest.requireActual('uiSrc/slices/browser/zset').initialState
-    const zsetDataSelectorMock = jest.fn().mockReturnValue({
-      ...defaultState,
-      key: '123zxczxczxc',
-      members: [
-        { name: anyToBuffer(GZIP_COMPRESSED_VALUE_1), score: 1 },
-      ]
+  describe('decompressed  data', () => {
+    it('should render decompressed GZIP data = "1"', () => {
+      const defaultState = jest.requireActual('uiSrc/slices/browser/zset').initialState
+      const zsetDataSelectorMock = jest.fn().mockReturnValue({
+        ...defaultState,
+        key: '123zxczxczxc',
+        members: [
+          { name: anyToBuffer(GZIP_COMPRESSED_VALUE_1), score: 1 },
+        ]
+      })
+      zsetDataSelector.mockImplementation(zsetDataSelectorMock)
+
+      const { queryByTestId } = render(<ZSetDetails {...instance(mockedProps)} />)
+      const memberEl = queryByTestId(/zset-member-value-/)
+
+      expect(memberEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
     })
-    zsetDataSelector.mockImplementation(zsetDataSelectorMock)
-
-    const { queryByTestId } = render(<ZSetDetails {...instance(mockedProps)} />)
-    const memberEl = queryByTestId(/zset-member-value-/)
-
-    expect(memberEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
   })
 })

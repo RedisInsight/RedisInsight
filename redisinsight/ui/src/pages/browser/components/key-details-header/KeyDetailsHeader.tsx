@@ -404,6 +404,7 @@ const KeyDetailsHeader = ({
           <div className={styles.actionBtn}>
             <EuiToolTip
               content={!isEditable ? noEditableText : null}
+              data-testid="edit-key-value-tooltip"
             >
               <EuiButtonIcon
                 disabled={!isEditable}

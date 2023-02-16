@@ -110,31 +110,33 @@ describe('StreamDetailsWrapper', () => {
     expect(queryByTestId('range-bar')).not.toBeInTheDocument()
   })
 
-  it('should render decompressed GZIP data', () => {
-    const mockId = '1232-123123123'
-    const entryWithCompressedGZIPData = {
-      id: mockId,
-      fields: [{
-        name: anyToBuffer(GZIP_COMPRESSED_VALUE_1),
-        value: anyToBuffer(GZIP_COMPRESSED_VALUE_2),
-      }]
-    }
+  describe('decompressed  data', () => {
+    it('should render decompressed GZIP data', () => {
+      const mockId = '1232-123123123'
+      const entryWithCompressedGZIPData = {
+        id: mockId,
+        fields: [{
+          name: anyToBuffer(GZIP_COMPRESSED_VALUE_1),
+          value: anyToBuffer(GZIP_COMPRESSED_VALUE_2),
+        }]
+      }
 
-    streamDataSelector.mockImplementation(() => ({
-      ...mockedEntryData,
-      firstEntry: entryWithCompressedGZIPData,
-      lastEntry: entryWithCompressedGZIPData,
-      entries: [
-        entryWithCompressedGZIPData
-      ],
-    }))
+      streamDataSelector.mockImplementation(() => ({
+        ...mockedEntryData,
+        firstEntry: entryWithCompressedGZIPData,
+        lastEntry: entryWithCompressedGZIPData,
+        entries: [
+          entryWithCompressedGZIPData
+        ],
+      }))
 
-    const { queryAllByTestId } = render(<StreamDetailsWrapper {...instance(mockedProps)} />)
+      const { queryAllByTestId } = render(<StreamDetailsWrapper {...instance(mockedProps)} />)
 
-    const fieldNameEl = queryAllByTestId(/stream-field-name-/)?.[0]
-    const entryFieldEl = queryAllByTestId(/stream-entry-field-/)?.[0]
+      const fieldNameEl = queryAllByTestId(/stream-field-name-/)?.[0]
+      const entryFieldEl = queryAllByTestId(/stream-entry-field-/)?.[0]
 
-    expect(fieldNameEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
-    expect(entryFieldEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_2)
+      expect(fieldNameEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
+      expect(entryFieldEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_2)
+    })
   })
 })

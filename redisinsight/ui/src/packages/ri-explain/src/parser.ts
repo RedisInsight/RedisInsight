@@ -9,6 +9,7 @@ enum TokenType {
 
   UNION = 'UNION',
   INTERSECT = 'INTERSECT',
+  GEO_EXPR = 'GEO_EXPR',
   TAG_EXPR = 'TAG_EXPR',
   NUMERIC = 'NUMERIC',
   LBRACE = 'LBRACE',
@@ -20,6 +21,7 @@ enum TokenType {
 
   PLUS = 'PLUS',
   MINUS = 'MINUS',
+  COMMA = 'COMMA',
 
   LESS = 'LESS',
   GREATER = 'GREATER',
@@ -140,6 +142,9 @@ class Lexer {
       case '-':// TODO: This should be MINUS token
         t = new Token(TokenType.IDENTIFIER, this.C)
         break
+      case ',':
+        t = new Token(TokenType.COMMA, this.C)
+        break
       case '<':
         let lPeekChar = this.PeekChar()
         if (lPeekChar !== null && lPeekChar === '=') {
@@ -175,9 +180,10 @@ class Lexer {
         if (this.C !== undefined && (isLetter(this.C) || ['@', ':'].includes(this.C))) {
           const literal = this.ReadIdentifier()
           let tokenType = KEYWORDS[literal] || TokenType.IDENTIFIER
-
           if (literal.startsWith('TAG:')) {
             tokenType = TokenType.TAG_EXPR
+          } else if (literal === 'GEO') {
+            tokenType = TokenType.GEO_EXPR
           } else if (literal.startsWith('@') && literal.endsWith(':UNION')) {
             tokenType = TokenType.UNION
           } else if (literal.startsWith('@') && literal.endsWith(':INTERSECT')) {
@@ -283,6 +289,11 @@ class Expr {
 
     if (this.SubType === EntityType.TAG && this.Info?.startsWith('TAG:')) {
       snippet = this.Info?.substr(4)
+    } else if (this.SubType === EntityType.GEO) {
+      snippet = this.Info
+      if (snippet?.endsWith(':')) {
+        snippet = snippet?.slice(0, -1)
+      }
     }
 
     return {
@@ -455,6 +466,8 @@ class Parser {
         Exprs.push(this.parseIntersectExpr())
       } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
         Exprs.push(this.parseTagExpr())
+      } else if (this.CurrentToken.T === TokenType.GEO_EXPR) {
+        Exprs.push(this.parseTagExpr())
       }
 
       this.nextToken()
@@ -499,6 +512,8 @@ class Parser {
         Exprs.push(this.parseIntersectExpr())
       } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
         Exprs.push(this.parseTagExpr())
+      } else if (this.CurrentToken.T === TokenType.GEO_EXPR) {
+        Exprs.push(this.parseTagExpr())
       }
 
       this.nextToken()
@@ -519,6 +534,74 @@ class Parser {
     }
 
     return new Expr(str, EntityType.TEXT)
+  }
+
+  parseGeoExpr() {
+    assertToken(TokenType.GEO_EXPR, this.CurrentToken.T)
+
+    let geoData = this.CurrentToken.Data
+
+    this.nextToken()
+
+    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+
+    let identifierData = this.CurrentToken.Data
+
+    this.nextToken()
+
+    assertToken(TokenType.LBRACE, this.CurrentToken.T)
+
+    this.nextToken()
+
+    assertToken(TokenType.NUMBER, this.CurrentToken.T)
+
+    let first = this.CurrentToken.Data;
+
+    this.nextToken()
+
+    assertToken(TokenType.COMMA, this.CurrentToken.T)
+
+    this.nextToken()
+
+    assertToken(TokenType.NUMBER, this.CurrentToken.T)
+
+    let second = this.CurrentToken.Data;
+
+    this.nextToken()
+
+    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+
+    assert(this.CurrentToken.Data === '-', "Expected Identifier to be MINUS")
+
+    this.nextToken()
+
+    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+
+    assert(this.CurrentToken.Data === '-', "Expected Identifier to be MINUS")
+
+    this.nextToken()
+
+    assertToken(TokenType.GREATER, this.CurrentToken.T)
+
+    this.nextToken()
+
+    assertToken(TokenType.NUMBER, this.CurrentToken.T)
+
+    let third = this.CurrentToken.Data;
+
+    this.nextToken()
+
+    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+
+    let metric = this.CurrentToken.Data;
+
+    this.nextToken()
+
+    assertToken(TokenType.RBRACE, this.CurrentToken?.T)
+
+    this.nextToken()
+
+    return new Expr(`${first},${second} --> ${third} ${metric}`, EntityType.GEO, identifierData)
   }
 
   parseTagExpr() {
@@ -627,6 +710,8 @@ function Parse(data: string): SearchExpr {
     return p.parseUnionExpr()
   } else if (p.CurrentToken.T === TokenType.TAG_EXPR) {
     return p.parseTagExpr()
+  } else if (p.CurrentToken.T === TokenType.GEO_EXPR) {
+    return p.parseGeoExpr()
   } else {
     return p.parseExpr()
   }

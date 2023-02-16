@@ -52,7 +52,6 @@ test('Verify that user can create different types(string, number, null, array, b
 });
 // https://redislabs.atlassian.net/browse/RI-3995
 test
-    .only
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
     })

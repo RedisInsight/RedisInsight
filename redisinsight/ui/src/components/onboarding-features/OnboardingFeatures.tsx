@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { EuiIcon, EuiSpacer } from '@elastic/eui'
-import { partialRight } from 'lodash'
+import { isString, partialRight } from 'lodash'
 import { keysDataSelector } from 'uiSrc/slices/browser/keys'
 import { openCli, openCliHelper, resetCliHelperSettings, resetCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { setMonitorInitialState, showMonitor } from 'uiSrc/slices/cli/monitor'
@@ -17,6 +17,9 @@ import OnboardingEmoji from 'uiSrc/assets/img/onboarding-emoji.svg'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 
+import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
+import { bufferToString, Nullable } from 'uiSrc/utils'
+import { CodeBlock } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 const sendTelemetry = (databaseId: string, step: string, action: string) => sendEventTelemetry({
@@ -185,10 +188,21 @@ const ONBOARDING_FEATURES = {
     title: 'Try Workbench!',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+      const [firstIndex, setFirstIndex] = useState<Nullable<string>>(null)
 
       const dispatch = useDispatch()
       const history = useHistory()
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.WorkbenchIntro]
+
+      useEffect(() => {
+        dispatch(fetchRedisearchListAction(
+          (indexes) => {
+            setFirstIndex(indexes?.length ? bufferToString(indexes[0]) : '')
+          },
+          undefined,
+          false
+        ))
+      }, [])
 
       return {
         content: (
@@ -201,10 +215,36 @@ const ONBOARDING_FEATURES = {
             models such as documents, graphs, and time series.
             Or you <a href="https://github.com/RedisInsight/Packages" target="_blank" rel="noreferrer">can build your own visualization</a>.
 
-            <EuiSpacer size="s" />
-            Run this command to see information and statistics about client connections:
-            <EuiSpacer size="xs" />
-            <pre className={styles.pre}>CLIENT LIST</pre>
+            {isString(firstIndex) && (
+              <>
+                <EuiSpacer size="s" />
+                {firstIndex ? (
+                  <>
+                    Run this command to see information and statistics on your index:
+                    <EuiSpacer size="xs" />
+                    <CodeBlock
+                      isCopyable
+                      className={styles.pre}
+                      data-testid="wb-onboarding-command"
+                    >
+                      FT.INFO {firstIndex}
+                    </CodeBlock>
+                  </>
+                ) : (
+                  <>
+                    Run this command to see information and statistics about client connections:
+                    <EuiSpacer size="xs" />
+                    <CodeBlock
+                      isCopyable
+                      className={styles.pre}
+                      data-testid="wb-onboarding-command"
+                    >
+                      CLIENT LIST
+                    </CodeBlock>
+                  </>
+                )}
+              </>
+            )}
           </>
         ),
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),

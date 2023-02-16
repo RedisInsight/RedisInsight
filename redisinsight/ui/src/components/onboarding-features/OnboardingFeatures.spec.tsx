@@ -15,6 +15,9 @@ import { Pages } from 'uiSrc/constants'
 import { setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import { dbAnalysisSelector, setDatabaseAnalysisViewTab } from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
+import { fetchRedisearchListAction, loadList } from 'uiSrc/slices/browser/redisearch'
+import { stringToBuffer } from 'uiSrc/utils'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { ONBOARDING_FEATURES } from './OnboardingFeatures'
 
 jest.mock('uiSrc/slices/app/features', () => ({
@@ -31,6 +34,12 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
   keysDataSelector: jest.fn().mockReturnValue({
     total: 0
   })
+}))
+
+jest.mock('uiSrc/slices/browser/redisearch', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/redisearch'),
+  fetchRedisearchListAction: jest.fn()
+    .mockImplementation(jest.requireActual('uiSrc/slices/browser/redisearch').fetchRedisearchListAction)
 }))
 
 jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
@@ -341,12 +350,40 @@ describe('ONBOARDING_FEATURES', () => {
       checkAllTelemetryButtons(OnboardingStepName.WorkbenchIntro, sendEventTelemetry as jest.Mock)
     })
 
+    it('should call proper actions on mount', () => {
+      render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_PAGE}><span /></OnboardingTour>)
+
+      const expectedActions = [loadList()]
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+    })
+
+    it('should render FT.INFO when there are indexes in database', () => {
+      const fetchRedisearchListActionMock = (onSuccess?: (indexes: RedisResponseBuffer[]) => void) =>
+        jest.fn().mockImplementation(() => onSuccess?.([stringToBuffer('someIndex')]));
+
+      (fetchRedisearchListAction as jest.Mock).mockImplementation(fetchRedisearchListActionMock)
+      render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_PAGE}><span /></OnboardingTour>)
+
+      expect(screen.getByTestId('wb-onboarding-command')).toHaveTextContent('FT.INFO someIndex')
+    })
+
+    it('should render CLIENT LIST when there are no indexes in database', () => {
+      const fetchRedisearchListActionMock = (onSuccess?: (indexes: RedisResponseBuffer[]) => void) =>
+        jest.fn().mockImplementation(() => onSuccess?.([]));
+
+      (fetchRedisearchListAction as jest.Mock).mockImplementation(fetchRedisearchListActionMock)
+      render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_PAGE}><span /></OnboardingTour>)
+
+      expect(screen.getByTestId('wb-onboarding-command')).toHaveTextContent('CLIENT LIST')
+    })
+
     it('should call proper actions on back', () => {
       render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_PAGE}><span /></OnboardingTour>)
       fireEvent.click(screen.getByTestId('back-btn'))
 
       const expectedActions = [showMonitor(), setOnboardPrevStep()]
-      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      expect(clearStoreActions(store.getActions().slice(-2)))
+        .toEqual(clearStoreActions(expectedActions))
     })
 
     it('should properly push history on back', () => {

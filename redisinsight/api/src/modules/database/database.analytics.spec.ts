@@ -190,7 +190,6 @@ describe('DatabaseAnalytics', () => {
       expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceEditedByUser,
         {
-          port: cur.port,
           databaseId: cur.id,
           connectionType: cur.connectionType,
           provider: HostingProvider.RE_CLUSTER,
@@ -201,7 +200,6 @@ describe('DatabaseAnalytics', () => {
           useSSH: 'disabled',
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           previousValues: {
-            port: prev.port,
             connectionType: prev.connectionType,
             provider: prev.provider,
             useTLS: 'enabled',
@@ -227,7 +225,6 @@ describe('DatabaseAnalytics', () => {
       expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceEditedByUser,
         {
-          port: cur.port,
           databaseId: cur.id,
           connectionType: cur.connectionType,
           provider: HostingProvider.RE_CLUSTER,
@@ -238,7 +235,6 @@ describe('DatabaseAnalytics', () => {
           useSSH: 'disabled',
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           previousValues: {
-            port: prev.port,
             connectionType: prev.connectionType,
             provider: prev.provider,
             useTLS: 'disabled',

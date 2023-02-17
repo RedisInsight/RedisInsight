@@ -108,6 +108,33 @@ services:
       default:
         ipv4_address: 172.31.100.213
 
+  # oss cluster (v7) with rediserch > 2.2
+  cluster-rs-creator-7:
+    build:
+      context: &cluster-rs-7-build ./rte/oss-cluster-7-rs
+      dockerfile: creator.Dockerfile
+    depends_on:
+      - master-rs-7-1
+      - master-rs-7-2
+      - master-rs-7-3
+  master-rs-7-1:
+    build: *cluster-rs-7-build
+    ports:
+      - 8221:6379
+    networks:
+      default:
+        ipv4_address: 172.31.100.221
+  master-rs-7-2:
+    build: *cluster-rs-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.222
+  master-rs-7-3:
+    build: *cluster-rs-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.223
+
   # redis enterprise
   redis-enterprise:
     build: ./rte/redis-enterprise

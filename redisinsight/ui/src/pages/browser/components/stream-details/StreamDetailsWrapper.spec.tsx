@@ -3,7 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { streamDataSelector, streamRangeSelector } from 'uiSrc/slices/browser/stream'
 import { anyToBuffer, bufferToString, stringToBuffer } from 'uiSrc/utils'
 import { render, screen } from 'uiSrc/utils/test-utils'
-import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, GZIP_DECOMPRESSED_VALUE_1, GZIP_DECOMPRESSED_VALUE_2 } from 'uiSrc/utils/tests/decompressors/decompressors.spec'
+import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
 import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP } from './constants'
 import StreamDetailsWrapper, { Props } from './StreamDetailsWrapper'
 
@@ -135,8 +135,8 @@ describe('StreamDetailsWrapper', () => {
       const fieldNameEl = queryAllByTestId(/stream-field-name-/)?.[0]
       const entryFieldEl = queryAllByTestId(/stream-entry-field-/)?.[0]
 
-      expect(fieldNameEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
-      expect(entryFieldEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_2)
+      expect(fieldNameEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
+      expect(entryFieldEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_2)
     })
   })
 })

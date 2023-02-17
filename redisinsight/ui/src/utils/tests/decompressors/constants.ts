@@ -1,0 +1,14 @@
+export const DECOMPRESSED_VALUE_1 = [49]
+export const DECOMPRESSED_VALUE_2 = [50]
+export const DECOMPRESSED_VALUE_STR_1 = '1'
+export const DECOMPRESSED_VALUE_STR_2 = '2'
+
+export const GZIP_COMPRESSED_VALUE_1 = [
+  31, 139, 8, 0, 223, 246, 236, 99, 0, 3, 1, 1, 0, 254, 255, 49, 183, 239, 220, 131, 1, 0, 0, 0
+]
+export const GZIP_COMPRESSED_VALUE_2 = [
+  31, 139, 8, 0, 180, 246, 236, 99, 0, 3, 1, 1, 0, 254, 255, 50, 13, 190, 213, 26, 1, 0, 0, 0
+]
+
+export const ZSTD_COMPRESSED_VALUE_1 = [40, 181, 47, 253, 32, 1, 9, 0, 0, 49]
+export const ZSTD_COMPRESSED_VALUE_2 = [40, 181, 47, 253, 32, 1, 9, 0, 0, 50]

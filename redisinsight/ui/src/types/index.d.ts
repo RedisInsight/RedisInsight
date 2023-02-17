@@ -1,5 +1,7 @@
 import { Buffer } from 'buffer'
 // eslint-disable-next-line import/order
+import { Nullable } from 'uiSrc/utils'
+import { KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString, UintArray } from 'uiSrc/slices/interfaces'
 
 declare global {
@@ -15,10 +17,12 @@ declare global {
     UTF8ToBuffer: (reply: string) => RedisResponseBuffer
     ASCIIToBuffer: (reply: string) => RedisResponseBuffer
     stringToBuffer: (reply: string) => RedisResponseBuffer
+    anyToBuffer: (reply: UintArray) => RedisResponseBuffer
     bufferToString: (reply: RedisString) => string
     hexToBuffer: (reply: string) => RedisResponseBuffer,
     bufferToHex: (reply: RedisResponseBuffer) => string,
     bufferToBinary: (reply: RedisResponseBuffer) => string,
     binaryToBuffer: (reply: string) => RedisResponseBuffer
+    getCompressor: (reply: RedisResponseBuffer) => Nullable<KeyValueCompressor>
   }
 }

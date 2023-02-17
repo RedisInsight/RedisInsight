@@ -1,47 +1,68 @@
 import * as fflate from 'fflate'
-import { COMPRESSOR_MAGIC_SYMBOLS, KeyValueCompressor } from 'uiSrc/constants'
+import * as fzstd from 'fzstd'
+import { forIn } from 'lodash'
+import { COMPRESSOR_MAGIC_SYMBOLS, ICompressorMagicSymbols, KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
-import { anyToBuffer } from '../formatters'
-import { Nullable } from '../types'
+import { anyToBuffer, Nullable } from 'uiSrc/utils'
 
 const decompressingBuffer = (
   reply: RedisResponseBuffer,
 ): { value: RedisString, compressor: Nullable<KeyValueCompressor> } => {
   const compressor = getCompressor(reply)
 
-  switch (compressor) {
-    case KeyValueCompressor.GZIP: {
-      const value = fflate.gunzipSync(Buffer.from(reply))
+  try {
+    switch (compressor) {
+      case KeyValueCompressor.GZIP: {
+        const value = fflate.gunzipSync(Buffer.from(reply))
 
-      return {
-        value: anyToBuffer(Array.from((value))),
-        compressor: KeyValueCompressor.GZIP,
+        return {
+          compressor,
+          value: anyToBuffer((value)),
+        }
+      }
+      case KeyValueCompressor.ZSTD: {
+        const value = fzstd.decompress(Buffer.from(reply))
+
+        return {
+          compressor,
+          value: anyToBuffer(value),
+        }
+      }
+      default: {
+        return { value: reply, compressor: null }
       }
     }
-    case KeyValueCompressor.PHPGZCompress: {
-      return { value: reply, compressor: KeyValueCompressor.PHPGZCompress }
-    }
-    default: {
-      return { value: reply, compressor: null }
-    }
+  } catch (error) {
+    console.warn(`Error during decompressing data, compressor: ${compressor}`)
+    return { value: reply, compressor }
   }
 }
 
 const getCompressor = (reply: RedisResponseBuffer): Nullable<KeyValueCompressor> => {
-  const firstThree = reply.data?.slice?.(0, 3) ?? []
+  const replyStart = reply.data?.slice?.(0, 10)?.join?.(',') ?? ''
+  let compressor: Nullable<KeyValueCompressor> = null
 
-  // GZIP
-  const gzipSymbols = COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.GZIP]
-  const isGZIP = firstThree?.[0] === gzipSymbols?.[0] && firstThree?.[1] === gzipSymbols?.[1]
+  forIn<ICompressorMagicSymbols>(
+    COMPRESSOR_MAGIC_SYMBOLS,
+    (magicSymbols: string, compressorName: string) => {
+      if (replyStart.startsWith(magicSymbols) && replyStart.length > magicSymbols.length) {
+        compressor = compressorName as KeyValueCompressor
+        return false // break loop
+      }
 
-  if (isGZIP) {
-    return KeyValueCompressor.GZIP
-  }
+      return true
+    }
+  )
 
-  return null
+  return compressor
 }
 
 export {
   getCompressor,
   decompressingBuffer,
+}
+
+window.ri = {
+  ...window.ri,
+  getCompressor,
 }

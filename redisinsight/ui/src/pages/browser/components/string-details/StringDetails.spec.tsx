@@ -3,7 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { anyToBuffer, bufferToString } from 'uiSrc/utils'
 import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
-import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, GZIP_DECOMPRESSED_VALUE_1, GZIP_DECOMPRESSED_VALUE_2 } from 'uiSrc/utils/tests/decompressors/decompressors.spec'
+import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
 import StringDetails, { Props } from './StringDetails'
 
 const STRING_VALUE = 'string-value'
@@ -118,7 +118,7 @@ describe('StringDetails', () => {
       )
       const textArea = screen.getByTestId(STRING_VALUE)
 
-      expect(textArea).toHaveValue(GZIP_DECOMPRESSED_VALUE_1)
+      expect(textArea).toHaveValue(DECOMPRESSED_VALUE_STR_1)
     })
 
     it('should render decompressed GZIP data = "2"', () => {
@@ -136,7 +136,7 @@ describe('StringDetails', () => {
       )
       const textArea = screen.getByTestId(STRING_VALUE)
 
-      expect(textArea).toHaveValue(GZIP_DECOMPRESSED_VALUE_2)
+      expect(textArea).toHaveValue(DECOMPRESSED_VALUE_STR_2)
     })
   })
 })

@@ -182,16 +182,21 @@ export enum KeyValueFormat {
 
 export enum KeyValueCompressor {
   GZIP = 'GZIP',
-  LZ4 = 'LZ4',
   ZSTD = 'ZSTD',
-  SNAPPY = 'SNAPPY',
-  Brotli = 'Brotli',
-  PHPGZCompress = 'PHPGZCompress',
+  // LZ4 = 'LZ4',
+  // SNAPPY = 'SNAPPY',
+  // Brotli = 'Brotli',
+  // PHPGZCompress = 'PHPGZCompress',
 }
 
-export const COMPRESSOR_MAGIC_SYMBOLS = Object.freeze({
-  [KeyValueCompressor.GZIP]: [31, 139], // 1f 8b hex
+export const COMPRESSOR_MAGIC_SYMBOLS: ICompressorMagicSymbols = Object.freeze({
+  [KeyValueCompressor.GZIP]: '31,139', // 1f 8b hex
+  [KeyValueCompressor.ZSTD]: '40,181,47,253', // 28 b5 2f fd hex
 })
+
+export type ICompressorMagicSymbols = {
+  [key in KeyValueCompressor]: string
+}
 
 export enum SearchHistoryMode {
   Pattern = 'pattern',

@@ -14,7 +14,7 @@ const filePath = path.join('..', '..', '..', 'test-data', 'upload-json', 'sample
 const jsonValues = ['Live JSON generator', '3.1', '"2014-06-25T00:00:00.000Z"', 'true'];
 const keyName = common.generateWord(10);
 
-fixture `Different JSON types creation`
+fixture `Upload json file`
     .meta({
         type: 'regression',
         rte: rte.standalone

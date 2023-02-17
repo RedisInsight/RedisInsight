@@ -194,13 +194,13 @@ const DatabaseForm = (props: Props) => {
 
         {connectionType !== ConnectionType.Sentinel && instanceType !== InstanceType.Sentinel && (
           <EuiFlexItem className={flexItemClassName}>
-            <EuiFormRow label="Timeout">
+            <EuiFormRow label="Timeout (s)">
               <EuiFieldNumber
                 name="timeout"
                 id="timeout"
                 data-testid="timeout"
                 style={{ width: '100%' }}
-                placeholder="Enter Timeout"
+                placeholder="Enter Timeout (in seconds)"
                 value={formik.values.timeout ?? ''}
                 maxLength={7}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {

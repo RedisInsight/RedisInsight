@@ -190,8 +190,8 @@ export enum KeyValueCompressor {
 }
 
 export const COMPRESSOR_MAGIC_SYMBOLS = Object.freeze({
-  [KeyValueCompressor.GZIP]: [31, 139], // 1f 8b hex
-  [KeyValueCompressor.ZSTD]: [40, 181, 47, 253], // 28 b5 2f fd hex
+  [KeyValueCompressor.GZIP]: '31,139', // 1f 8b hex
+  [KeyValueCompressor.ZSTD]: '40,181,47,253', // 28 b5 2f fd hex
 })
 
 export enum SearchHistoryMode {

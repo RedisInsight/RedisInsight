@@ -34,12 +34,11 @@ const decompressingBuffer = (
 }
 
 const getCompressor = (reply: RedisResponseBuffer): Nullable<KeyValueCompressor> => {
-  const replyStart = reply.data?.slice?.(0, 10) ?? []
+  const replyStart = reply.data?.slice?.(0, 10).join(',') ?? ''
 
   // GZIP
   const gzipSymbols = COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.GZIP]
-  const gzipValueData = replyStart.slice(0, gzipSymbols.length)
-  const isGZIP = isEqual(gzipValueData, gzipSymbols)
+  const isGZIP = replyStart.startsWith(gzipSymbols)
 
   if (isGZIP) {
     return KeyValueCompressor.GZIP
@@ -47,8 +46,7 @@ const getCompressor = (reply: RedisResponseBuffer): Nullable<KeyValueCompressor>
 
   // ZSTD
   const zstdSymbols = COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.ZSTD]
-  const zstdValueData = replyStart.slice(0, zstdSymbols.length)
-  const isZSTD = isEqual(zstdValueData, zstdSymbols)
+  const isZSTD = replyStart.startsWith(zstdSymbols)
 
   if (isZSTD) {
     return KeyValueCompressor.ZSTD

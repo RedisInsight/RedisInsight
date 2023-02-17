@@ -1,8 +1,9 @@
 import * as fflate from 'fflate'
+import * as fzstd from 'fzstd'
+import { isEqual } from 'lodash'
 import { COMPRESSOR_MAGIC_SYMBOLS, KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
-import { anyToBuffer } from '../formatters'
-import { Nullable } from '../types'
+import { anyToBuffer, Nullable } from 'uiSrc/utils'
 
 const decompressingBuffer = (
   reply: RedisResponseBuffer,
@@ -18,8 +19,13 @@ const decompressingBuffer = (
         compressor: KeyValueCompressor.GZIP,
       }
     }
-    case KeyValueCompressor.PHPGZCompress: {
-      return { value: reply, compressor: KeyValueCompressor.PHPGZCompress }
+    case KeyValueCompressor.ZSTD: {
+      const value = fzstd.decompress(Buffer.from(reply))
+
+      return {
+        compressor: KeyValueCompressor.ZSTD,
+        value: anyToBuffer(value),
+      }
     }
     default: {
       return { value: reply, compressor: null }
@@ -28,14 +34,24 @@ const decompressingBuffer = (
 }
 
 const getCompressor = (reply: RedisResponseBuffer): Nullable<KeyValueCompressor> => {
-  const firstThree = reply.data?.slice?.(0, 3) ?? []
+  const replyStart = reply.data?.slice?.(0, 10) ?? []
 
   // GZIP
   const gzipSymbols = COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.GZIP]
-  const isGZIP = firstThree?.[0] === gzipSymbols?.[0] && firstThree?.[1] === gzipSymbols?.[1]
+  const gzipValueData = replyStart.slice(0, gzipSymbols.length)
+  const isGZIP = isEqual(gzipValueData, gzipSymbols)
 
   if (isGZIP) {
     return KeyValueCompressor.GZIP
+  }
+
+  // ZSTD
+  const zstdSymbols = COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.ZSTD]
+  const zstdValueData = replyStart.slice(0, zstdSymbols.length)
+  const isZSTD = isEqual(zstdValueData, zstdSymbols)
+
+  if (isZSTD) {
+    return KeyValueCompressor.ZSTD
   }
 
   return null

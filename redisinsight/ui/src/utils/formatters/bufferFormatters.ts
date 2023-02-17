@@ -183,6 +183,7 @@ export {
 
 window.ri = {
   ...window.ri,
+  anyToBuffer,
   bufferToUTF8,
   bufferToASCII,
   UTF8ToBuffer,

@@ -17,6 +17,7 @@ declare global {
     UTF8ToBuffer: (reply: string) => RedisResponseBuffer
     ASCIIToBuffer: (reply: string) => RedisResponseBuffer
     stringToBuffer: (reply: string) => RedisResponseBuffer
+    anyToBuffer: (reply: UintArray) => RedisResponseBuffer
     bufferToString: (reply: RedisString) => string
     hexToBuffer: (reply: string) => RedisResponseBuffer,
     bufferToHex: (reply: RedisResponseBuffer) => string,

@@ -16,15 +16,15 @@ const decompressingBuffer = (
         const value = fflate.gunzipSync(Buffer.from(reply))
 
         return {
-          value: anyToBuffer(Array.from((value))),
-          compressor: KeyValueCompressor.GZIP,
+          compressor,
+          value: anyToBuffer((value)),
         }
       }
       case KeyValueCompressor.ZSTD: {
         const value = fzstd.decompress(Buffer.from(reply))
 
         return {
-          compressor: KeyValueCompressor.ZSTD,
+          compressor,
           value: anyToBuffer(value),
         }
       }

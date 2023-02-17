@@ -5,7 +5,7 @@ import { hashDataSelector } from 'uiSrc/slices/browser/hash'
 import { RedisResponseBufferType } from 'uiSrc/slices/interfaces'
 import { anyToBuffer, bufferToString } from 'uiSrc/utils'
 import { act, fireEvent, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
-import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, GZIP_DECOMPRESSED_VALUE_1, GZIP_DECOMPRESSED_VALUE_2 } from 'uiSrc/utils/tests/decompressors/decompressors.spec'
+import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
 import HashDetails, { Props } from './HashDetails'
 
 const mockedProps = mock<Props>()
@@ -91,8 +91,8 @@ describe('HashDetails', () => {
       const fieldEl = queryAllByTestId(/hash-field-/)?.[0]
       const valueEl = queryByTestId(/hash-field-value/)
 
-      expect(fieldEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
-      expect(valueEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_2)
+      expect(fieldEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
+      expect(valueEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_2)
     })
 
     it('edit button should be disabled if data was compressed', async () => {

@@ -4,7 +4,7 @@ import { TEXT_DISABLED_COMPRESSED_VALUE } from 'uiSrc/constants'
 import { listDataSelector } from 'uiSrc/slices/browser/list'
 import { anyToBuffer } from 'uiSrc/utils'
 import { act, fireEvent, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
-import { GZIP_COMPRESSED_VALUE_1, GZIP_DECOMPRESSED_VALUE_1 } from 'uiSrc/utils/tests/decompressors/decompressors.spec'
+import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
 import ListDetails, { Props } from './ListDetails'
 
 const mockedProps = mock<Props>()
@@ -88,7 +88,7 @@ describe('ListDetails', () => {
       const { queryByTestId } = render(<ListDetails {...(mockedProps)} />)
       const elementEl = queryByTestId(/list-element-value-/)
 
-      expect(elementEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
+      expect(elementEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
     })
 
     it('edit button should be disabled if data was compressed', async () => {

@@ -3,7 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { setDataSelector } from 'uiSrc/slices/browser/set'
 import { anyToBuffer } from 'uiSrc/utils'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import { GZIP_COMPRESSED_VALUE_1, GZIP_DECOMPRESSED_VALUE_1 } from 'uiSrc/utils/tests/decompressors/decompressors.spec'
+import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
 import SetDetails, { Props } from './SetDetails'
 
 const members = [
@@ -75,7 +75,7 @@ describe('SetDetails', () => {
       const { queryByTestId } = render(<SetDetails {...instance(mockedProps)} />)
       const memberEl = queryByTestId(/set-member-value-/)
 
-      expect(memberEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
+      expect(memberEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
     })
   })
 })

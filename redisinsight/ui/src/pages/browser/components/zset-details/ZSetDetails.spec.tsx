@@ -3,7 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { zsetDataSelector } from 'uiSrc/slices/browser/zset'
 import { anyToBuffer } from 'uiSrc/utils'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
-import { GZIP_COMPRESSED_VALUE_1, GZIP_DECOMPRESSED_VALUE_1 } from 'uiSrc/utils/tests/decompressors/decompressors.spec'
+import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
 import ZSetDetails, { Props } from './ZSetDetails'
 
 const mockedProps = mock<Props>()
@@ -94,7 +94,7 @@ describe('ZSetDetails', () => {
       const { queryByTestId } = render(<ZSetDetails {...instance(mockedProps)} />)
       const memberEl = queryByTestId(/zset-member-value-/)
 
-      expect(memberEl).toHaveTextContent(GZIP_DECOMPRESSED_VALUE_1)
+      expect(memberEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
     })
   })
 })

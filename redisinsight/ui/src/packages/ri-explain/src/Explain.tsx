@@ -185,16 +185,39 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       ancestors.pairs.forEach(p => {
         // Highlight ancestor and their ancestor
         document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "outline: 1px solid #85A2FE !important;")
-
         // Get edge size of parent ancestor to apply the right edge stroke
-        const strokeSize = getEdgeSize(parseInt((document.querySelector(`#node-${p[1]}`) as HTMLElement)?.dataset?.size || '')) + 1
-        document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k =>
-          (k as HTMLElement)
-            .setAttribute(
-              "style",
-              `stroke: #85A2FE; stroke-linecap: butt; stroke-width: ${strokeSize}px`
-            )
-        )
+        const edge = graph.getCellById(`${p[0]}-${p[1]}`)
+        edge.setAttrs({
+          line: {
+            stroke: '#85A2FE',
+            strokeWidth: (edge.getAttrs() as any)?.line?.strokeWidth,
+            targetMarker: {
+              name: 'block',
+              stroke: '#85A2FE',
+              fill: '#85A2FE',
+            },
+          },
+        })
+      })
+    })
+
+    graph.on("node:mouseleave", x => {
+      const {id} = x.node.getData()
+      const ancestors = GetAncestors(data, id, {found: false, pairs: []})
+      ancestors.pairs.forEach(p => {
+        document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "")
+        const edge = graph.getCellById(`${p[0]}-${p[1]}`)
+        edge.setAttrs({
+          line: {
+            stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
+            strokeWidth: (edge.getAttrs() as any)?.line?.strokeWidth,
+            targetMarker: {
+              name: 'block',
+              fill: isDarkTheme ? '#6B6B6B' : '#8992B3',
+              stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
+            }
+          },
+        })
       })
     })
 
@@ -236,15 +259,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
     }
 
     ele?.addEventListener('mousedown', mouseDownHandler)
-
-    graph.on("node:mouseleave", x => {
-      const {id} = x.node.getData()
-      const ancestors = GetAncestors(data, id, {found: false, pairs: []})
-      ancestors.pairs.forEach(p => {
-        document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "")
-        document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k => (k as HTMLElement).setAttribute("style", ""))
-      })
-    })
 
     resize()
 
@@ -297,6 +311,20 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
         }
 
 
+        const portId = data.id + '-source'
+        let targetPort = {}
+        const targetItem: any = []
+        if (info.parentId) {
+          targetItem.push({id: `${info.id}-${info.parentId}-target`, group: `${info.parentId}-target`})
+          targetPort[info.parentId+'-target'] = {
+            position: { name: 'bottom' },
+            attrs: {
+              circle: {
+                r: 0
+              }
+            }
+          }
+        }
         model.nodes?.push({
           id: data.id,
           x: (data.x || 0) + document.body.clientWidth / 2,
@@ -309,6 +337,25 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
               stroke: 'transparent',
             },
           },
+          ports: {
+            groups: {
+              [portId]: {
+                position: { name: 'top' },
+                attrs: {
+                  circle: {
+                    r: 0
+                  }
+                }
+              },
+              ...targetPort,
+            },
+            items: [
+              ...data.children.map(c => ({
+                id: `${data.id}-${c.id}`, group: portId
+              })),
+              ...targetItem,
+            ],
+          },
         })
       }
       if (data.children) {
@@ -317,8 +364,14 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
 
           model.edges?.push({
             id: `${data.id}-${item.id}`,
-            source: data.id,
-            target: item.id,
+            source: {
+              cell: data.id,
+              port: `${data.id}-${item.id}`,
+            },
+            target: {
+              cell: item.id,
+              port: `${data.id}-${item.id}`
+            },
             router: {
               name: 'manhattan',
               args: {
@@ -338,7 +391,11 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
               line: {
                 stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
                 strokeWidth: getEdgeSize(itemRecords),
-                targetMarker: null,
+                targetMarker: {
+                  name: 'block',
+                  fill: isDarkTheme ? '#6B6B6B' : '#8992B3',
+                  stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
+                },
               },
             },
           })

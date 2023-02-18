@@ -126,7 +126,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
 
   const [done, setDone] = useState(false)
   const [collapse, setCollapse] = useState(true)
-  const [infoWidth, setInfoWidth] = useState(document.body.offsetWidth)
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [core, setCore] = useState<Graph>()
 
@@ -152,7 +151,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
         core?.resize(width, (b?.height || 585) + 100)
       }
     }
-    setInfoWidth(width)
   }
 
   window.addEventListener('resize', resize)
@@ -187,14 +185,15 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
         document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "outline: 1px solid #85A2FE !important;")
         // Get edge size of parent ancestor to apply the right edge stroke
         const edge = graph.getCellById(`${p[0]}-${p[1]}`)
+        const edgeColor = '#85A2FE'
         edge.setAttrs({
           line: {
-            stroke: '#85A2FE',
+            stroke: edgeColor,
             strokeWidth: (edge.getAttrs() as any)?.line?.strokeWidth,
             targetMarker: {
               name: 'block',
-              stroke: '#85A2FE',
-              fill: '#85A2FE',
+              stroke: edgeColor,
+              fill: edgeColor,
             },
           },
         })
@@ -207,14 +206,15 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       ancestors.pairs.forEach(p => {
         document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "")
         const edge = graph.getCellById(`${p[0]}-${p[1]}`)
+        const edgeColor = isDarkTheme ? '#6B6B6B' : '#8992B3'
         edge.setAttrs({
           line: {
-            stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
+            stroke: edgeColor,
             strokeWidth: (edge.getAttrs() as any)?.line?.strokeWidth,
             targetMarker: {
               name: 'block',
-              fill: isDarkTheme ? '#6B6B6B' : '#8992B3',
-              stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
+              fill: edgeColor,
+              stroke: edgeColor,
             }
           },
         })
@@ -361,7 +361,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       if (data.children) {
         data.children.forEach((item: any) => {
           const itemRecords = parseInt(item.data.counter || 0)
-
+          const edgeColor = isDarkTheme ? '#6B6B6B' : '#8992B3'
           model.edges?.push({
             id: `${data.id}-${item.id}`,
             source: {
@@ -389,12 +389,12 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
             },
             attrs: {
               line: {
-                stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
+                stroke: edgeColor,
                 strokeWidth: getEdgeSize(itemRecords),
                 targetMarker: {
                   name: 'block',
-                  fill: isDarkTheme ? '#6B6B6B' : '#8992B3',
-                  stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
+                  fill: edgeColor,
+                  stroke: edgeColor,
                 },
               },
             },

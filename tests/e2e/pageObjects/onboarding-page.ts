@@ -6,4 +6,6 @@ export class OnboardingPage {
     showMeAroundButton = Selector('span').withText('Show me around');
     skipTourButton = Selector('[data-testid=skip-tour-btn]');
     stepTitle = Selector('[data-testid=step-title]');
+    wbOnbardingCommand = Selector('[data-testid=wb-onboarding-command]');
+    copyCodeButton = Selector('[data-testid=copy-code-btn]');
 }

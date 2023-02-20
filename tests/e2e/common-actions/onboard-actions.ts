@@ -27,7 +27,7 @@ export class OnboardActions {
         complete onboarding process
      */
     async verifyOnboardingCompleted(): Promise<void> {
-        await t.expect(onboardingPage.showMeAroundButton.visible).notOk('show me around button still visible');
+        await t.expect(onboardingPage.showMeAroundButton.exists).notOk('show me around button still visible');
         await t.expect(browserPage.patternModeBtn.visible).ok('browser page is not opened');
     }
     /**

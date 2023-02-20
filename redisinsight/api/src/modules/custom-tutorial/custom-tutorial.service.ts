@@ -35,7 +35,8 @@ export class CustomTutorialService {
       // todo: mode to main folder
       const id = uuidv4();
       const path = join(PATH_CONFIG.customTutorials, id);
-      const uri = join('/', id);
+      const uri = id;
+      console.log('___ uri', uri);
       await fs.move(tmpPath, path);
 
       // todo: save entity

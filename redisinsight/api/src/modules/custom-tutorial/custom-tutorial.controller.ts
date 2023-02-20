@@ -1,7 +1,7 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Get, HttpCode, Post, UploadedFile,
+  Controller, Delete, Get, HttpCode, Param, Post, UploadedFile,
   UseInterceptors, UsePipes, ValidationPipe
 } from '@nestjs/common';
 import {
@@ -46,5 +46,16 @@ export class CustomTutorialController {
   })
   async getManifest(): Promise<void> {
     return this.service.getManifest();
+  }
+
+  @Delete('/:id')
+  @ApiEndpoint({
+    statusCode: 200,
+    description: 'Delete custom tutorial and its files',
+  })
+  async delete(
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.service.delete(id);
   }
 }

@@ -12,4 +12,9 @@ export abstract class CustomTutorialRepository {
    * Get list of custom tutorials
    */
   abstract list(): Promise<CustomTutorial[]>;
+
+  /**
+   * Delete custom tutorial by id
+   */
+  abstract delete(id: string): Promise<void>;
 }

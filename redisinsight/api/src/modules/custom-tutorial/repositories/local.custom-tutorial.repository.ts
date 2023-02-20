@@ -31,4 +31,12 @@ export class LocalCustomTutorialRepository extends CustomTutorialRepository {
 
     return entities.map((entity) => classToClass(CustomTutorial, entity));
   }
+
+  /**
+   * @inheritDoc
+   */
+  public async delete(id: string): Promise<void> {
+    const entity = await this.repository.findOneBy({ id });
+    await this.repository.remove(entity);
+  }
 }

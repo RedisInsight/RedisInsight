@@ -114,4 +114,23 @@ export class CustomTutorialService {
       },
     };
   }
+
+  public async delete(id): Promise<void> {
+    console.log('___ trynig to delete', id);
+    const path = join(PATH_CONFIG.customTutorials, id);
+    console.log('___ path', path);
+
+    try {
+      await this.customTutorialRepository.delete(id);
+      try {
+        await fs.remove(path);
+      } catch (e) {
+        console.log('___ err', e)
+        // ignore errors
+      }
+    } catch (e) {
+      // todo: logs
+      throw e;
+    }
+  }
 }

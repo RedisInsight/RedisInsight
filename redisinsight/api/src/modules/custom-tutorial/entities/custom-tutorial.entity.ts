@@ -17,6 +17,10 @@ export class CustomTutorialEntity {
   @Expose()
   link: string;
 
+  @Column({ nullable: false })
+  @Expose()
+  uri: string;
+
   @CreateDateColumn()
   @Expose()
   createdAt: Date;

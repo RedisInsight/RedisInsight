@@ -46,6 +46,7 @@ export default {
     staticUri: '/static',
     guidesUri: '/static/guides',
     tutorialsUri: '/static/tutorials',
+    customTutorialsUri: '/static/custom-tutorials',
     contentUri: '/static/content',
     defaultPluginsUri: '/static/plugins',
     pluginsAssetsUri: '/static/resources/plugins',

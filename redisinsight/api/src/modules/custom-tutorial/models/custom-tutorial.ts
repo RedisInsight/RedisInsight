@@ -8,7 +8,7 @@ export class CustomTutorial {
   name: string;
 
   @Expose()
-  path: string;
+  uri: string;
 
   @Expose()
   link: string;

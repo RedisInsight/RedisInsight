@@ -11,6 +11,7 @@ import config from 'src/utils/config';
 import { plainToClass } from 'class-transformer';
 
 const PATH_CONFIG = config.get('dir_path');
+const SERVER_CONFIG = config.get('server');
 const TMP_FOLDER = `${os.tmpdir()}/RedisInsight-v2/custom-tutorials`;
 
 @Injectable()
@@ -34,6 +35,7 @@ export class CustomTutorialService {
       // todo: mode to main folder
       const id = uuidv4();
       const path = join(PATH_CONFIG.customTutorials, id);
+      const uri = join(SERVER_CONFIG.customTutorialsUri, id);
       await fs.move(tmpPath, path);
 
       // todo: save entity
@@ -41,6 +43,7 @@ export class CustomTutorialService {
         ...dto,
         id,
         path,
+        uri,
       }));
 
       console.log('___ entity', entity);
@@ -54,8 +57,49 @@ export class CustomTutorialService {
     }
   }
 
+  private async generateTutorialManifest(tutorial: CustomTutorial): Promise<Record<string, any>> {
+    try {
+      const rootPath = join(PATH_CONFIG.customTutorials, tutorial.id);
+      const children = JSON.parse(
+        await fs.readFile(join(rootPath, 'manifest.json'), 'utf8'),
+      );
+
+      return {
+        type: 'group',
+        id: tutorial.id,
+        label: tutorial.name,
+        actions: ['delete'],
+        uri: tutorial.uri,
+        children,
+      };
+    } catch (e) {
+      console.log('___ oo', e);
+      // todo: error log
+      return null;
+    }
+  }
+
   // todo: replace any
   public async getManifest(): Promise<any> {
+    const children = {};
+
+    try {
+      const tutorials = await this.customTutorialRepository.list();
+      console.log('___ tutorials', tutorials);
+
+      const manifests = await Promise.all(tutorials.map(this.generateTutorialManifest.bind(this))) as Record<string, any>[];
+
+      console.log('___ manifests', manifests);
+
+      manifests.forEach((manifest) => {
+        if (manifest) {
+          children[manifest.id] = manifest;
+        }
+      });
+    } catch (e) {
+      // silent
+    }
+
     return {
       'my-tutorials': {
         type: 'group',
@@ -66,7 +110,7 @@ export class CustomTutorialService {
           withBorder: true,
           initialIsOpen: true,
         },
-        children: {},
+        children,
       },
     };
   }

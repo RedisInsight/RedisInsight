@@ -30,7 +30,7 @@ const monitorPage = new MonitorPage();
 const setLocalStorageItem = ClientFunction((key: string, value: string) => window.localStorage.setItem(key, value));
 const indexName = common.generateWord(10);
 
-fixture.only `Onboarding new user tests`
+fixture `Onboarding new user tests`
     .meta({type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {

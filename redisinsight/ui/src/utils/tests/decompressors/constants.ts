@@ -12,3 +12,6 @@ export const GZIP_COMPRESSED_VALUE_2 = [
 
 export const ZSTD_COMPRESSED_VALUE_1 = [40, 181, 47, 253, 32, 1, 9, 0, 0, 49]
 export const ZSTD_COMPRESSED_VALUE_2 = [40, 181, 47, 253, 32, 1, 9, 0, 0, 50]
+
+export const LZ4_COMPRESSED_VALUE_1 = [4, 34, 77, 24, 64, 112, 223, 1, 0, 0, 128, 49, 0, 0, 0, 0]
+export const LZ4_COMPRESSED_VALUE_2 = [4, 34, 77, 24, 64, 112, 223, 1, 0, 0, 128, 50, 0, 0, 0, 0]

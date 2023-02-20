@@ -1,5 +1,6 @@
 import * as fflate from 'fflate'
 import * as fzstd from 'fzstd'
+import * as lz4js from 'lz4js'
 import { forIn } from 'lodash'
 import { COMPRESSOR_MAGIC_SYMBOLS, ICompressorMagicSymbols, KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
@@ -25,6 +26,13 @@ const decompressingBuffer = (
 
         return {
           compressor,
+          value: anyToBuffer(value),
+        }
+      }
+      case KeyValueCompressor.LZ4: {
+        const value = lz4js.decompress(Buffer.from(reply))
+        return {
+          compressor: KeyValueCompressor.LZ4,
           value: anyToBuffer(value),
         }
       }

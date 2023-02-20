@@ -12,6 +12,8 @@ import {
   DECOMPRESSED_VALUE_STR_2,
   ZSTD_COMPRESSED_VALUE_1,
   ZSTD_COMPRESSED_VALUE_2,
+  LZ4_COMPRESSED_VALUE_1,
+  LZ4_COMPRESSED_VALUE_2,
 } from './constants'
 
 const defaultValues = [
@@ -50,6 +52,18 @@ const defaultValues = [
   {
     input: ZSTD_COMPRESSED_VALUE_2,
     compressor: KeyValueCompressor.ZSTD,
+    output: DECOMPRESSED_VALUE_2,
+    outputStr: DECOMPRESSED_VALUE_STR_2,
+  },
+  {
+    input: LZ4_COMPRESSED_VALUE_1,
+    compressor: KeyValueCompressor.LZ4,
+    output: DECOMPRESSED_VALUE_1,
+    outputStr: DECOMPRESSED_VALUE_STR_1,
+  },
+  {
+    input: LZ4_COMPRESSED_VALUE_2,
+    compressor: KeyValueCompressor.LZ4,
     output: DECOMPRESSED_VALUE_2,
     outputStr: DECOMPRESSED_VALUE_STR_2,
   },

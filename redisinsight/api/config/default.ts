@@ -24,6 +24,7 @@ export default {
     logs: join(homedir, 'logs'),
     defaultPlugins: join(staticDir, 'plugins'),
     customPlugins: join(homedir, 'plugins'),
+    customTutorials: join(homedir, 'custom-tutorials'),
     pluginsAssets: join(staticDir, 'resources', 'plugins'),
     commands: join(homedir, 'commands'),
     defaultCommandsDir: join(defaultsDir, 'commands'),

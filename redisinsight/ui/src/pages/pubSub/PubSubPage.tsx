@@ -9,6 +9,8 @@ import { SubscriptionType } from 'uiSrc/constants/pubSub'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 
+import { OnboardingTour } from 'uiSrc/components'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { MessagesListWrapper, PublishMessage, SubscriptionPanel } from './components'
 
 import styles from './styles.module.scss'
@@ -56,6 +58,15 @@ const PubSubPage = () => {
         </div>
         <div className={styles.footerPanel}>
           <PublishMessage />
+        </div>
+        <div className={styles.onboardAnchor}>
+          <OnboardingTour
+            options={ONBOARDING_FEATURES.FINISH}
+            anchorPosition="downCenter"
+            panelClassName={styles.onboardPanel}
+          >
+            <span />
+          </OnboardingTour>
         </div>
       </div>
     </>

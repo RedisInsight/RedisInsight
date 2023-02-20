@@ -32,6 +32,7 @@ export const mockDatabase = Object.assign(new Database(), {
   host: '127.0.100.1',
   port: 6379,
   connectionType: ConnectionType.STANDALONE,
+  timeout: 30_000,
   new: false,
 });
 

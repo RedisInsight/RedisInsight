@@ -57,10 +57,15 @@ export const constants = {
   TEST_INSTANCE_ID_3: uuidv4(),
   TEST_INSTANCE_NAME_3: uuidv4(),
   TEST_INSTANCE_HOST_3: uuidv4(),
+  TEST_INSTANCE_ID_4: uuidv4(),
+  TEST_INSTANCE_NAME_4: uuidv4(),
+  TEST_INSTANCE_HOST_4: '127.0.0.1',
+  TEST_INSTANCE_PORT_4: 3333,
 
   // redis client
   TEST_REDIS_HOST: process.env.TEST_REDIS_HOST || 'localhost',
   TEST_REDIS_PORT: parseInt(process.env.TEST_REDIS_PORT) || 6379,
+  TEST_REDIS_TIMEOUT: 30_000,
   TEST_REDIS_DB_INDEX: 7,
   TEST_REDIS_USER: process.env.TEST_REDIS_USER,
   TEST_REDIS_PASSWORD: process.env.TEST_REDIS_PASSWORD,
@@ -532,6 +537,18 @@ export const constants = {
   TEST_LUA_SCRIPT_VOTE_RECOMMENDATION: {
     name: RECOMMENDATION_NAMES.LUA_SCRIPT,
     vote: 'useful',
+  },
+  TEST_BROWSER_HISTORY_DATABASE_ID: uuidv4(),
+  TEST_BROWSER_HISTORY_ID_1: uuidv4(),
+  TEST_BROWSER_HISTORY_ID_2: uuidv4(),
+  TEST_BROWSER_HISTORY_ID_3: uuidv4(),
+  TEST_BROWSER_HISTORY_FILTER_1: {
+    type: null,
+    match: 'hi',
+  },
+  TEST_BROWSER_HISTORY_FILTER_2: {
+    type: null,
+    match: 'hi',
   },
   // etc...
 }

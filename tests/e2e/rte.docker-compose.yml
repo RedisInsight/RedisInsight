@@ -33,6 +33,18 @@ services:
     ports:
       - 8100:6379
 
+  oss-standalone-empty:
+    image: redislabs/redismod
+    command: [
+      "--loadmodule", "/usr/lib/redis/modules/redisearch.so",
+      "--loadmodule", "/usr/lib/redis/modules/redisgraph.so",
+      "--loadmodule", "/usr/lib/redis/modules/redistimeseries.so",
+      "--loadmodule", "/usr/lib/redis/modules/rejson.so",
+      "--loadmodule", "/usr/lib/redis/modules/redisbloom.so"
+    ]
+    ports:
+      - 8105:6379
+
   # oss standalone v5
   oss-standalone-v5:
     image: redis:5
@@ -57,6 +69,14 @@ services:
         TEST_DB_DUMP: $TEST_BIG_DB_DUMP
     ports:
       - 8103:6379
+
+  # oss standalone еды
+  oss-standalone-tls:
+    build:
+      context: ./rte/oss-standalone-tls
+      dockerfile: Dockerfile
+    ports:
+      - 8104:6379
 
   # oss sentinel
   oss-sentinel:
@@ -99,6 +119,33 @@ services:
     networks:
       default:
         ipv4_address: 172.31.100.213
+
+  # oss cluster (v7) with rediserch > 2.2
+  cluster-rs-creator-7:
+    build:
+      context: &cluster-rs-7-build ./rte/oss-cluster-7-rs
+      dockerfile: creator.Dockerfile
+    depends_on:
+      - master-rs-7-1
+      - master-rs-7-2
+      - master-rs-7-3
+  master-rs-7-1:
+    build: *cluster-rs-7-build
+    ports:
+      - 8221:6379
+    networks:
+      default:
+        ipv4_address: 172.31.100.221
+  master-rs-7-2:
+    build: *cluster-rs-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.222
+  master-rs-7-3:
+    build: *cluster-rs-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.223
 
   # redis enterprise
   redis-enterprise:

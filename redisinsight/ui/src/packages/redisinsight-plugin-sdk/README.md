@@ -120,3 +120,43 @@ try {
     console.error(e);
 }
 ```
+
+### formatRedisReply(response, command)
+
+Util function to parse Redis response
+
+Returns string with parsed cli-like response
+
+**Returns:**
+* `Promise<string>`
+
+```js
+/**
+ * @async
+ * @param {any} response
+ * @param {String} command
+ * @returns {Promise.<string>} data
+ * @throws {Error}
+ */
+```
+
+**Example:**
+
+```js
+import { formatRedisReply } from 'redisinsight-plugin-sdk';
+
+try {
+  const parsedReply = await formatRedisReply(data[0].response, command);
+  
+  /*
+    parsedReply:
+    
+    1) 1) "COUNT(a)"
+    2) 1) 1) "0"
+    3) 1) "Cached execution: 1"
+       2) "Query internal execution time: 3.134125 milliseconds"
+   */
+} catch (e) {
+    console.error(e);
+}
+```

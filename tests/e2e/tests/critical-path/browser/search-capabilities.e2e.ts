@@ -94,6 +94,12 @@ test
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[2])).ok(`The second valid key ${keyNames[2]} not found`);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
 
+        // Verify that user can use filter history for RediSearch query
+        await t.click(browserPage.showFilterHistoryBtn);
+        await t.click(browserPage.filterHistoryOption.withText('Hall School'));
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[0])).ok(`The key ${keyNames[0]} not found`);
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
+
         // Verify that user can clear the search
         await t.click(browserPage.clearFilterButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).ok(`The key ${keyNames[1]} not found`);

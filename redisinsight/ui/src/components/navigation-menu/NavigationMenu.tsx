@@ -23,7 +23,7 @@ import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-rou
 import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { getRouterLinkProps } from 'uiSrc/services'
-import { appFeaturePagesHighlightingSelector } from 'uiSrc/slices/app/features-highlighting'
+import { appFeaturePagesHighlightingSelector } from 'uiSrc/slices/app/features'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import {
   appElectronInfoSelector,
@@ -45,6 +45,8 @@ import PubSubActiveSVG from 'uiSrc/assets/img/sidebar/pubsub_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BuildType } from 'uiSrc/constants/env'
+import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import NotificationMenu from './components/notifications-center'
 
@@ -64,6 +66,7 @@ interface INavigations {
   onClick: () => void
   getClassName: () => string
   getIconType: () => string
+  onboard?: any
 }
 
 const NavigationMenu = () => {
@@ -109,6 +112,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? BrowserSVG : BrowserActiveSVG
       },
+      onboard: ONBOARDING_FEATURES.BROWSER_PAGE
     },
     {
       tooltipText: 'Workbench',
@@ -124,6 +128,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? WorkbenchSVG : WorkbenchActiveSVG
       },
+      onboard: ONBOARDING_FEATURES.WORKBENCH_PAGE
     },
     {
       tooltipText: 'Analysis Tools',
@@ -154,6 +159,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? PubSubActiveSVG : PubSubSVG
       },
+      onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE
     },
   ]
 
@@ -290,22 +296,30 @@ const NavigationMenu = () => {
 
         {connectedInstanceId && (
           privateRoutes.map((nav) => (
-            <HighlightedFeature
-              key={nav.tooltipText}
-              isHighlight={!!highlightedPages[nav.pageName]?.length}
-              dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
-              transformOnHover
-            >
-              <EuiToolTip content={nav.tooltipText} position="right">
-                <EuiButtonIcon
-                  className={nav.getClassName()}
-                  iconType={nav.getIconType()}
-                  aria-label={nav.ariaLabel}
-                  onClick={nav.onClick}
-                  data-testid={nav.dataTestId}
-                />
-              </EuiToolTip>
-            </HighlightedFeature>
+            <React.Fragment key={nav.tooltipText}>
+              {renderOnboardingTourWithChild(
+                (
+                  <HighlightedFeature
+                    key={nav.tooltipText}
+                    isHighlight={!!highlightedPages[nav.pageName]?.length}
+                    dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
+                    transformOnHover
+                  >
+                    <EuiToolTip content={nav.tooltipText} position="right">
+                      <EuiButtonIcon
+                        className={nav.getClassName()}
+                        iconType={nav.getIconType()}
+                        aria-label={nav.ariaLabel}
+                        onClick={nav.onClick}
+                        data-testid={nav.dataTestId}
+                      />
+                    </EuiToolTip>
+                  </HighlightedFeature>
+                ),
+                { options: nav.onboard },
+                nav.isActivePage
+              )}
+            </React.Fragment>
           ))
         )}
       </div>

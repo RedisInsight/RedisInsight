@@ -23,6 +23,7 @@ const dataSchema = Joi.object({
   db: Joi.number().integer().allow(null),
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
+  timeout: Joi.number().integer().allow(null),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),
@@ -40,6 +41,7 @@ const baseDatabaseData = {
   name: 'someName',
   host: constants.TEST_REDIS_HOST,
   port: constants.TEST_REDIS_PORT,
+  timeout: constants.TEST_REDIS_TIMEOUT,
   username: constants.TEST_REDIS_USER || undefined,
   password: constants.TEST_REDIS_PASSWORD || undefined,
 }
@@ -47,6 +49,12 @@ const baseDatabaseData = {
 const responseSchema = databaseSchema.required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
+
+const baseSentinelData = {
+  name: constants.TEST_SENTINEL_MASTER_GROUP,
+  username: constants.TEST_SENTINEL_MASTER_USER || null,
+  password: constants.TEST_SENTINEL_MASTER_PASS || null,
+}
 
 let oldDatabase;
 let newDatabase;
@@ -164,7 +172,7 @@ describe(`PUT /databases/:id`, () => {
           after: async () => {
             newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
             expect(newDatabase).to.contain({
-              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'ssh']),
+              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'ssh', 'timeout']),
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
             });
@@ -750,6 +758,43 @@ describe(`PUT /databases/:id`, () => {
       });
       // todo: Should throw an error without CA cert when cert validation enabled
       // todo: Should throw an error with invalid CA cert
+    });
+  });
+  describe('SENTINEL', () => {
+    requirements('rte.type=SENTINEL');
+    describe('PASS', function () {
+      requirements('!rte.tls', 'rte.pass');
+      it('Update sentinel with password', async () => {
+        const dbName = constants.getRandomString();
+
+        // preconditions
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
+
+        await validateApiCall({
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          data: {
+            ...baseDatabaseData,
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            password: constants.TEST_REDIS_PASSWORD,
+            sentinelMaster: {
+              ...baseSentinelData,
+            },
+          },
+          responseSchema,
+          responseBody: {
+            name: dbName,
+            host: constants.TEST_REDIS_HOST,
+            port: constants.TEST_REDIS_PORT,
+            username: null,
+            password: constants.TEST_REDIS_PASSWORD,
+            connectionType: constants.SENTINEL,
+          },
+        });
+
+        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+      });
     });
   });
 });

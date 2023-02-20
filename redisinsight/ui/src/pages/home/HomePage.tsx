@@ -10,6 +10,10 @@ import {
 import { optimizeLSInstances, setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
 import { BrowserStorageItem } from 'uiSrc/constants'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
+import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
+import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
+import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { cloudSelector, resetSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { editedInstanceSelector, fetchEditedInstanceAction, fetchInstancesAction, instancesSelector, setEditedInstance } from 'uiSrc/slices/instances/instances'
@@ -54,6 +58,8 @@ const HomePage = () => {
   } = useSelector(editedInstanceSelector)
 
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
+
+  const { contextInstanceId } = useSelector(appContextSelector)
 
   !welcomeIsShow && setTitle('My Redis databases')
 
@@ -127,7 +133,15 @@ const HomePage = () => {
     }
   }, [instances])
 
-  const onInstanceChanged = () => ({})
+  const onDbEdited = () => {
+    if (contextInstanceId && contextInstanceId === editedInstance?.id) {
+      dispatch(resetKeys())
+      dispatch(resetRedisearchKeysData())
+      dispatch(resetCliSettingsAction())
+      dispatch(resetCliHelperSettings())
+      dispatch(setAppContextInitialState())
+    }
+  }
 
   const closeEditDialog = () => {
     dispatch(setEditedInstance(null))
@@ -236,7 +250,7 @@ const HomePage = () => {
                           id="form"
                           minSize="538px"
                           paddingSize="none"
-                          style={{ minWidth: '494px' }}
+                          style={{ minWidth: '512px' }}
                         >
                           {editDialogIsOpen && (
                             <AddDatabaseContainer
@@ -245,7 +259,7 @@ const HomePage = () => {
                               isResizablePanel
                               editedInstance={editedInstance}
                               onClose={closeEditDialog}
-                              onDbAdded={onInstanceChanged}
+                              onDbEdited={onDbEdited}
                             />
                           )}
 
@@ -256,7 +270,6 @@ const HomePage = () => {
                               isResizablePanel
                               editedInstance={sentinelInstance ?? null}
                               onClose={handleClose}
-                              onDbAdded={onInstanceChanged}
                               isFullWidth={!instances.length}
                             />
                           )}
@@ -285,7 +298,6 @@ const HomePage = () => {
                           isResizablePanel
                           editedInstance={sentinelInstance ?? null}
                           onClose={handleClose}
-                          onDbAdded={onInstanceChanged}
                           isFullWidth={!instances.length}
                         />
                       )}

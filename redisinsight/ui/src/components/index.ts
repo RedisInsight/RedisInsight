@@ -21,6 +21,7 @@ import PagePlaceholder from './page-placeholder'
 import BulkActionsConfig from './bulk-actions-config'
 import ImportDatabasesDialog from './import-databases-dialog'
 import OnboardingTour from './onboarding-tour'
+import CodeBlock from './code-block'
 
 export {
   NavigationMenu,
@@ -48,5 +49,6 @@ export {
   PagePlaceholder,
   BulkActionsConfig,
   ImportDatabasesDialog,
-  OnboardingTour
+  OnboardingTour,
+  CodeBlock,
 }

@@ -19,10 +19,10 @@ export const ossStandaloneConfig = {
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
 };
 
-export const ossStandaloneConfig2 = {
-    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone-2',
+export const ossStandaloneConfigEmpty = {
+    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone-empty',
     port: process.env.OSS_STANDALONE_PORT || '6379',
-    databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone'}-${uniqueId}`,
+    databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone_empty'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
 };

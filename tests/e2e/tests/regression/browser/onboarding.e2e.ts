@@ -3,7 +3,7 @@ import {
     acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase
 } from '../../../helpers/database';
 import {
-    commonUrl, ossStandaloneConfig2
+    commonUrl, ossStandaloneConfigEmpty
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import {Common} from '../../../helpers/common';
@@ -34,13 +34,13 @@ fixture `Onboarding new user tests`
     .meta({type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig2, ossStandaloneConfig2.databaseName);
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfigEmpty, ossStandaloneConfigEmpty.databaseName);
         await setLocalStorageItem('onboardingStep', '0');
         await common.reloadPage();
     })
     .afterEach(async() => {
         await cliPage.sendCommandInCli(`DEL ${indexName}`);
-        await deleteDatabase(ossStandaloneConfig2.databaseName);
+        await deleteDatabase(ossStandaloneConfigEmpty.databaseName);
     });
 // https://redislabs.atlassian.net/browse/RI-4070, https://redislabs.atlassian.net/browse/RI-4067
 test

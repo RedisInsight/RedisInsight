@@ -33,7 +33,7 @@ services:
     ports:
       - 8100:6379
 
-  oss-standalone-2:
+  oss-standalone-empty:
     image: redislabs/redismod
     command: [
       "--loadmodule", "/usr/lib/redis/modules/redisearch.so",

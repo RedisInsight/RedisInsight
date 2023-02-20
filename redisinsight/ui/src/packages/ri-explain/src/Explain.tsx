@@ -10,6 +10,13 @@ import {
 } from '@elastic/eui'
 
 import {
+  EDGE_COLOR_BODY_DARK,
+  EDGE_COLOR_BODY_LIGHT,
+  NODE_COLOR_BODY_DARK,
+  NODE_COLOR_BODY_LIGHT,
+} from './constants'
+
+import {
   CoreType,
   ModuleType,
   EntityInfo,
@@ -29,6 +36,14 @@ interface IExplain {
 
 function getEdgeSize(c: number) {
   return Math.floor(Math.log(c || 1) + 1)
+}
+
+function getNodeColor(isDarkTheme: boolean) {
+  return isDarkTheme ? NODE_COLOR_BODY_DARK : NODE_COLOR_BODY_LIGHT
+}
+
+function getEdgeColor(isDarkTheme: boolean) {
+  return isDarkTheme ? EDGE_COLOR_BODY_DARK : EDGE_COLOR_BODY_LIGHT
 }
 
 export default function Explain(props: IExplain): JSX.Element {
@@ -206,7 +221,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       ancestors.pairs.forEach(p => {
         document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "")
         const edge = graph.getCellById(`${p[0]}-${p[1]}`)
-        const edgeColor = isDarkTheme ? '#6B6B6B' : '#8992B3'
+        const edgeColor = getEdgeColor(isDarkTheme)
         edge.setAttrs({
           line: {
             stroke: edgeColor,
@@ -333,7 +348,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
           data: info,
           attrs: {
             body: {
-              fill: isDarkTheme ? '#5F95FF' : '#8992B3',
+              fill: getNodeColor(isDarkTheme),
               stroke: 'transparent',
             },
           },
@@ -361,7 +376,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       if (data.children) {
         data.children.forEach((item: any) => {
           const itemRecords = parseInt(item.data.counter || 0)
-          const edgeColor = isDarkTheme ? '#6B6B6B' : '#8992B3'
+          const edgeColor = getEdgeColor(isDarkTheme)
           model.edges?.push({
             id: `${data.id}-${item.id}`,
             source: {
@@ -421,7 +436,14 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
   return (
     <div>
       { collapse && <div style={{ paddingTop: '50px' }}></div> }
-      <div id="container-parent" style={{ height: isFullScreen ? (window.outerHeight - 170) + 'px' : collapse ? '500px' : '585px', width: '100%', overflow: 'auto' }}>
+      <div
+        id="container-parent"
+        style={{
+          height: isFullScreen ? (window.outerHeight - 170) + 'px' : collapse ? '500px' : '585px',
+          width: '100%',
+          overflow: 'auto',
+        }}
+      >
         <div style={{ margin: 0, width: '100vw' }} ref={container} id="container" />
         { !collapse && (
           <div className="ZoomMenu">

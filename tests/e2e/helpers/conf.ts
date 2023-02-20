@@ -1,7 +1,7 @@
-import { Chance } from 'chance';
 import * as os from 'os';
 import * as fs from 'fs';
 import { join as joinPath } from 'path';
+import { Chance } from 'chance';
 const chance = new Chance();
 
 // Urls for using in the tests
@@ -13,6 +13,14 @@ const uniqueId = chance.string({ length: 10 });
 
 export const ossStandaloneConfig = {
     host: process.env.OSS_STANDALONE_HOST || 'oss-standalone',
+    port: process.env.OSS_STANDALONE_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_PASSWORD
+};
+
+export const ossStandaloneConfig2 = {
+    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone-2',
     port: process.env.OSS_STANDALONE_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,

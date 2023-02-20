@@ -33,6 +33,18 @@ services:
     ports:
       - 8100:6379
 
+  oss-standalone-2:
+    image: redislabs/redismod
+    command: [
+      "--loadmodule", "/usr/lib/redis/modules/redisearch.so",
+      "--loadmodule", "/usr/lib/redis/modules/redisgraph.so",
+      "--loadmodule", "/usr/lib/redis/modules/redistimeseries.so",
+      "--loadmodule", "/usr/lib/redis/modules/rejson.so",
+      "--loadmodule", "/usr/lib/redis/modules/redisbloom.so"
+    ]
+    ports:
+      - 8105:6379
+
   # oss standalone v5
   oss-standalone-v5:
     image: redis:5

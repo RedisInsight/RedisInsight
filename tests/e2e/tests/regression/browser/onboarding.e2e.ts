@@ -3,7 +3,7 @@ import {
     acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase
 } from '../../../helpers/database';
 import {
-    commonUrl, ossStandaloneConfig
+    commonUrl, ossStandaloneConfig2
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import {Common} from '../../../helpers/common';
@@ -34,21 +34,16 @@ fixture `Onboarding new user tests`
     .meta({type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig2, ossStandaloneConfig2.databaseName);
         await setLocalStorageItem('onboardingStep', '0');
         await common.reloadPage();
     })
     .afterEach(async() => {
         await cliPage.sendCommandInCli(`DEL ${indexName}`);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await deleteDatabase(ossStandaloneConfig2.databaseName);
     });
 // https://redislabs.atlassian.net/browse/RI-4070, https://redislabs.atlassian.net/browse/RI-4067
-test.before(async() => {
-    await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-    await cliPage.sendCommandInCli('flushdb'); // to delete all indexes in order not to fail FT.INFO ${indexName}
-    await setLocalStorageItem('onboardingStep', '0');
-    await common.reloadPage();
-})
+test
     .meta({ env: env.desktop })('Verify onbarding new user steps', async t => {
         await onBoardActions.startOnboarding();
         // verify browser step is visible
@@ -112,7 +107,7 @@ test.before(async() => {
         // verify onboarding step completed successfully
         await onBoardActions.verifyOnboardingCompleted();
     });
-// https://redislabs.atlassian.net/browse/RI-4070
+// https://redislabs.atlassian.net/browse/RI-4067
 test
     .meta({ env: env.desktop })('verify onboard new user skip tour', async() => {
     // start onboarding process

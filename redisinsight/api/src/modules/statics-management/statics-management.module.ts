@@ -28,6 +28,13 @@ const CONTENT_CONFIG = config.get('content');
       },
     }),
     ServeStaticModule.forRoot({
+      serveRoot: SERVER_CONFIG.customTutorialsUri,
+      rootPath: join(PATH_CONFIG.customTutorials),
+      serveStaticOptions: {
+        fallthrough: false,
+      },
+    }),
+    ServeStaticModule.forRoot({
       serveRoot: SERVER_CONFIG.contentUri,
       rootPath: join(PATH_CONFIG.content),
       serveStaticOptions: {

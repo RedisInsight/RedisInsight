@@ -25,6 +25,7 @@ const padding = parseInt(styles.paddingHorizontal)
 export interface Props {
   guides: Record<string, IEnablementAreaItem>
   tutorials: Record<string, IEnablementAreaItem>
+  customTutorials: Record<string, IEnablementAreaItem>
   loading: boolean
   openScript: (
     script: string,
@@ -39,6 +40,7 @@ const EnablementArea = (props: Props) => {
   const {
     guides = {},
     tutorials = {},
+    customTutorials = {},
     openScript,
     loading,
     onOpenInternalPage,
@@ -84,11 +86,12 @@ const EnablementArea = (props: Props) => {
     const { label, type, children, id, args } = item
     const paddingsStyle = { paddingLeft: `${padding + level * 8}px`, paddingRight: `${padding}px` }
     const borderStyle = { border: 'none', borderTop: '1px solid var(--separatorColor)' }
+    const currentSourcePath = sourcePath + (item?.uri || '')
     switch (type) {
       case EnablementAreaComponent.Group:
         return (
           <Group triggerStyle={paddingsStyle} testId={id} label={label} {...args}>
-            {renderTreeView(Object.values(children || {}) || [], sourcePath, level + 1)}
+            {renderTreeView(Object.values(children || {}) || [], currentSourcePath, level + 1)}
           </Group>
         )
       case EnablementAreaComponent.CodeButton:
@@ -105,7 +108,7 @@ const EnablementArea = (props: Props) => {
         )
       case EnablementAreaComponent.InternalLink:
         return (
-          <InternalLink sourcePath={sourcePath} style={paddingsStyle} testId={id || label} label={label} {...args}>
+          <InternalLink sourcePath={currentSourcePath} style={paddingsStyle} testId={id || label} label={label} {...args}>
             {args?.content || label}
           </InternalLink>
         )
@@ -139,6 +142,7 @@ const EnablementArea = (props: Props) => {
             >
               {renderTreeView(Object.values(guides), ApiEndpoints.GUIDES_PATH)}
               {renderTreeView(Object.values(tutorials), ApiEndpoints.TUTORIALS_PATH)}
+              {renderTreeView(Object.values(customTutorials), ApiEndpoints.CUSTOM_TUTORIALS_PATH)}
             </EuiListGroup>
           )}
         <div
@@ -155,6 +159,7 @@ const EnablementArea = (props: Props) => {
               sourcePath={getWBSourcePath(internalPage?.path)}
             />
           )}
+          екфефеф
         </div>
       </div>
     </EnablementAreaProvider>

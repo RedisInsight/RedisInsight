@@ -83,11 +83,14 @@ enum ApiEndpoints {
   GUIDES = 'static/guides/guides.json',
   // TODO double check it, when tutorials will be completed
   TUTORIALS = 'static/tutorials/tutorials.json',
+  CUSTOM_TUTORIALS = 'custom-tutorials/manifest',
   PLUGINS = 'plugins',
   STATE = 'state',
   CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
   GUIDES_PATH = 'static/guides',
   TUTORIALS_PATH = 'static/tutorials',
+  CUSTOM_TUTORIALS_PATH = '',
+  // CUSTOM_TUTORIALS_PATH = 'static/custom-tutorials',
 
   SLOW_LOGS = 'slow-logs',
   SLOW_LOGS_CONFIG = 'slow-logs/config',

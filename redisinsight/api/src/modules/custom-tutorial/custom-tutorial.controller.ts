@@ -1,19 +1,29 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Delete, Get, HttpCode, Param, Post, UploadedFile,
-  UseInterceptors, UsePipes, ValidationPipe
+  Controller, Delete, Get, HttpCode, Param, Post,
+  UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import {
-  ApiBody, ApiConsumes, ApiTags,
+  ApiConsumes, ApiExtraModels, ApiTags,
 } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { CustomTutorialService } from 'src/modules/custom-tutorial/custom-tutorial.service';
 import { UploadCustomTutorialDto } from 'src/modules/custom-tutorial/dto/upload.custom-tutorial.dto';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Database } from 'src/modules/database/models/database';
 import { FormDataRequest } from 'nestjs-form-data';
+import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
+import { UseCaCertificateDto } from 'src/modules/certificate/dto/use.ca-certificate.dto';
+import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.client-certificate.dto';
+import { UseClientCertificateDto } from 'src/modules/certificate/dto/use.client-certificate.dto';
+import { CreateBasicSshOptionsDto } from 'src/modules/ssh/dto/create.basic-ssh-options.dto';
+import { CreateCertSshOptionsDto } from 'src/modules/ssh/dto/create.cert-ssh-options.dto';
 
+@ApiExtraModels(
+  CreateCaCertificateDto, UseCaCertificateDto,
+  CreateClientCertificateDto, UseClientCertificateDto,
+  CreateBasicSshOptionsDto, CreateCertSshOptionsDto,
+)
 @UsePipes(new ValidationPipe({ transform: true }))
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('Tutorials')
@@ -21,31 +31,37 @@ import { FormDataRequest } from 'nestjs-form-data';
 export class CustomTutorialController {
   constructor(private readonly service: CustomTutorialService) {}
 
-  @Post('upload')
+  @Post('')
   @HttpCode(201)
   @ApiConsumes('multipart/form-data')
   @FormDataRequest()
-  async upload(
+  @ApiEndpoint({
+    description: 'Create new tutorial',
+    statusCode: 201,
+    responses: [
+      {
+        type: Object,
+      },
+    ],
+  })
+  async create(
     @Body() dto: UploadCustomTutorialDto,
   ): Promise<void> {
-    console.log('___ dto', dto);
-    return this.service.upload(dto);
+    return this.service.create(dto);
   }
 
   @Get('manifest')
   @ApiEndpoint({
-    description: 'Update database instance by id',
+    description: 'Get global manifest for custom tutorials',
     statusCode: 200,
     responses: [
       {
-        status: 200,
-        description: 'Updated database instance\' response',
-        type: Database,
+        type: Object,
       },
     ],
   })
-  async getManifest(): Promise<void> {
-    return this.service.getManifest();
+  async getGlobalManifest(): Promise<any> {
+    return this.service.getGlobalManifest();
   }
 
   @Delete('/:id')

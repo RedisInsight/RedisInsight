@@ -1,96 +1,68 @@
-import { Injectable } from '@nestjs/common';
-import * as AdmZip from 'adm-zip';
+import {
+  Injectable, InternalServerErrorException, Logger, NotFoundException,
+} from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import * as os from 'os';
-import * as fs from 'fs-extra';
-import { join } from 'path';
 import { CustomTutorialRepository } from 'src/modules/custom-tutorial/repositories/custom-tutorial.repository';
-import { CustomTutorial } from 'src/modules/custom-tutorial/models/custom-tutorial';
+import { CustomTutorial, CustomTutorialActions } from 'src/modules/custom-tutorial/models/custom-tutorial';
 import { UploadCustomTutorialDto } from 'src/modules/custom-tutorial/dto/upload.custom-tutorial.dto';
-import config from 'src/utils/config';
 import { plainToClass } from 'class-transformer';
-
-const PATH_CONFIG = config.get('dir_path');
-const SERVER_CONFIG = config.get('server');
-const TMP_FOLDER = `${os.tmpdir()}/RedisInsight-v2/custom-tutorials`;
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { CustomTutorialFsProvider } from 'src/modules/custom-tutorial/providers/custom-tutorial.fs.provider';
+import {
+  CustomTutorialManifestProvider,
+} from 'src/modules/custom-tutorial/providers/custom-tutorial.manifest.provider';
+import {
+  CustomTutorialManifestType,
+  ICustomTutorialManifest,
+} from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
 
 @Injectable()
 export class CustomTutorialService {
+  private logger = new Logger('CustomTutorialService');
+
   constructor(
     private readonly customTutorialRepository: CustomTutorialRepository,
+    private readonly customTutorialFsProvider: CustomTutorialFsProvider,
+    private readonly customTutorialManifestProvider: CustomTutorialManifestProvider,
   ) {}
 
-  public async upload(dto: UploadCustomTutorialDto) {
+  /**
+   * Create custom tutorial entity + static files based on input
+   * Currently from zip file only
+   * @param dto
+   */
+  public async create(dto: UploadCustomTutorialDto) {
     try {
-      // upload tutorial to tmp folder
-      const tmpFolderName = uuidv4();
-      const tmpPath = join(TMP_FOLDER, tmpFolderName);
-      await fs.ensureDir(tmpPath);
-      const zip = new AdmZip(dto.file.buffer);
-      await fs.remove(tmpPath);
-      await zip.extractAllTo(tmpPath, true);
+      const tmpPath = await this.customTutorialFsProvider.unzipToTmpFolder(dto.file);
 
       // todo: validate
 
-      // todo: mode to main folder
-      const id = uuidv4();
-      const path = join(PATH_CONFIG.customTutorials, id);
-      const uri = id;
-      console.log('___ uri', uri);
-      await fs.move(tmpPath, path);
-
-      // todo: save entity
-      const entity = await this.customTutorialRepository.create(plainToClass(CustomTutorial, {
+      // create tutorial model
+      const tutorial = plainToClass(CustomTutorial, {
         ...dto,
-        id,
-        path,
-        uri,
-      }));
+        id: uuidv4(),
+      });
 
-      console.log('___ entity', entity);
+      await this.customTutorialFsProvider.moveFolder(tmpPath, tutorial.absolutePath);
 
-      // await fs.writeFile(
-      //   join(this.options.destinationPath, this.options.buildInfo),
-      //   JSON.stringify(await this.getRemoteBuildInfo()),
-      // );
+      await this.customTutorialRepository.create(tutorial);
     } catch (e) {
-      throw e;
+      throw new InternalServerErrorException(e.message);
     }
   }
 
-  private async generateTutorialManifest(tutorial: CustomTutorial): Promise<Record<string, any>> {
-    try {
-      const rootPath = join(PATH_CONFIG.customTutorials, tutorial.id);
-      const children = JSON.parse(
-        await fs.readFile(join(rootPath, 'manifest.json'), 'utf8'),
-      );
-
-      return {
-        type: 'group',
-        id: tutorial.id,
-        label: tutorial.name,
-        actions: ['delete'],
-        uri: tutorial.uri,
-        children,
-      };
-    } catch (e) {
-      console.log('___ oo', e);
-      // todo: error log
-      return null;
-    }
-  }
-
-  // todo: replace any
-  public async getManifest(): Promise<any> {
+  /**
+   * Get global manifest for all custom tutorials
+   * In the future will be removed with some kind of partial load
+   */
+  public async getGlobalManifest(): Promise<Record<string, ICustomTutorialManifest>> {
     const children = {};
 
     try {
       const tutorials = await this.customTutorialRepository.list();
-      console.log('___ tutorials', tutorials);
-
-      const manifests = await Promise.all(tutorials.map(this.generateTutorialManifest.bind(this))) as Record<string, any>[];
-
-      console.log('___ manifests', manifests);
+      const manifests = await Promise.all(
+        tutorials.map(this.customTutorialManifestProvider.generateTutorialManifest),
+      ) as Record<string, any>[];
 
       manifests.forEach((manifest) => {
         if (manifest) {
@@ -98,15 +70,15 @@ export class CustomTutorialService {
         }
       });
     } catch (e) {
-      // silent
+      this.logger.warn('Unable to generate entire custom tutorials manifest', e);
     }
 
     return {
-      'my-tutorials': {
-        type: 'group',
-        id: 'mu-tutorials',
+      'custom-tutorials': {
+        type: CustomTutorialManifestType.Group,
+        id: 'custom-tutorials',
         label: 'My Tutorials',
-        actions: ['create'],
+        _actions: [CustomTutorialActions.CREATE],
         args: {
           withBorder: true,
           initialIsOpen: true,
@@ -116,21 +88,24 @@ export class CustomTutorialService {
     };
   }
 
-  public async delete(id): Promise<void> {
-    console.log('___ trynig to delete', id);
-    const path = join(PATH_CONFIG.customTutorials, id);
-    console.log('___ path', path);
+  public async get(id: string): Promise<CustomTutorial> {
+    const model = await this.customTutorialRepository.get(id);
 
+    if (!model) {
+      this.logger.error(`Custom Tutorial with ${id} was not Found`);
+      throw new NotFoundException(ERROR_MESSAGES.CUSTOM_TUTORIAL_NOT_FOUND);
+    }
+
+    return model;
+  }
+
+  public async delete(id: string): Promise<void> {
     try {
+      const tutorial = await this.customTutorialRepository.get(id);
       await this.customTutorialRepository.delete(id);
-      try {
-        await fs.remove(path);
-      } catch (e) {
-        console.log('___ err', e)
-        // ignore errors
-      }
+      await this.customTutorialFsProvider.removeFolder(tutorial.absolutePath);
     } catch (e) {
-      // todo: logs
+      this.logger.error('Unable to delete custom tutorial', e);
       throw e;
     }
   }

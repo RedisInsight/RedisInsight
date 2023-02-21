@@ -35,8 +35,14 @@ export class LocalCustomTutorialRepository extends CustomTutorialRepository {
   /**
    * @inheritDoc
    */
+  public async get(id: string): Promise<CustomTutorial> {
+    return classToClass(CustomTutorial, await this.repository.findOneBy({ id }));
+  }
+
+  /**
+   * @inheritDoc
+   */
   public async delete(id: string): Promise<void> {
-    const entity = await this.repository.findOneBy({ id });
-    await this.repository.remove(entity);
+    await this.repository.delete({ id });
   }
 }

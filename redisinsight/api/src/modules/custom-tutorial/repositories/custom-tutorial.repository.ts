@@ -9,6 +9,13 @@ export abstract class CustomTutorialRepository {
   abstract create(model: CustomTutorial): Promise<CustomTutorial>;
 
   /**
+   * Create custom tutorial entity
+   * @param id
+   * @return CustomTutorial
+   */
+  abstract get(id: string): Promise<CustomTutorial>;
+
+  /**
    * Get list of custom tutorials
    */
   abstract list(): Promise<CustomTutorial[]>;

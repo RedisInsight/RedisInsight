@@ -14,6 +14,8 @@ import {
   ZSTD_COMPRESSED_VALUE_2,
   LZ4_COMPRESSED_VALUE_1,
   LZ4_COMPRESSED_VALUE_2,
+  SNAPPY_COMPRESSED_VALUE_2,
+  SNAPPY_COMPRESSED_VALUE_1,
 } from './constants'
 
 const defaultValues = [
@@ -67,21 +69,42 @@ const defaultValues = [
     output: DECOMPRESSED_VALUE_2,
     outputStr: DECOMPRESSED_VALUE_STR_2,
   },
+  {
+    input: SNAPPY_COMPRESSED_VALUE_1,
+    compressor: KeyValueCompressor.SNAPPY,
+    compressorInit: KeyValueCompressor.SNAPPY,
+    output: DECOMPRESSED_VALUE_1,
+    outputStr: DECOMPRESSED_VALUE_STR_1,
+  },
+  {
+    input: SNAPPY_COMPRESSED_VALUE_2,
+    compressor: KeyValueCompressor.SNAPPY,
+    compressorInit: KeyValueCompressor.SNAPPY,
+    output: DECOMPRESSED_VALUE_2,
+    outputStr: DECOMPRESSED_VALUE_STR_2,
+  },
 ].map((value) => ({
   ...value,
   input: anyToBuffer(value.input)
 }))
 
 describe('getCompressor', () => {
-  test.each(defaultValues)('%j', ({ input, compressor: expected }) => {
+  test.each(defaultValues)('%j', ({ input, compressor }) => {
+    let expected = compressor
+
+    // SNAPPY doesn't have magic symbols
+    if (compressor === KeyValueCompressor.SNAPPY) {
+      expected = null
+    }
+
     const result = getCompressor(input)
     expect(result).toEqual(expected)
   })
 })
 
 describe('decompressingBuffer', () => {
-  test.each(defaultValues)('%j', ({ input, compressor, output }) => {
-    const result = decompressingBuffer(input)
+  test.each(defaultValues)('%j', ({ input, compressor, output, compressorInit = null }) => {
+    const result = decompressingBuffer(input, compressorInit)
     let value: UintArray = output
 
     if (compressor) {

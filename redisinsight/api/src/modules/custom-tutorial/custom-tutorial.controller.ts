@@ -10,7 +10,6 @@ import {
 import { CustomTutorialService } from 'src/modules/custom-tutorial/custom-tutorial.service';
 import { UploadCustomTutorialDto } from 'src/modules/custom-tutorial/dto/upload.custom-tutorial.dto';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
-import { Database } from 'src/modules/database/models/database';
 import { FormDataRequest } from 'nestjs-form-data';
 import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
 import { UseCaCertificateDto } from 'src/modules/certificate/dto/use.ca-certificate.dto';

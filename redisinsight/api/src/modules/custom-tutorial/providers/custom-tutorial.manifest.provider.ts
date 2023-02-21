@@ -47,7 +47,7 @@ export class CustomTutorialManifestProvider {
         children: await this.getManifest(tutorial.absolutePath),
       };
     } catch (e) {
-      this.logger.warn('Unable to generate manifest for tutorial', tutorial?.id);
+      this.logger.warn('Unable to generate manifest for tutorial', e);
       return null;
     }
   }

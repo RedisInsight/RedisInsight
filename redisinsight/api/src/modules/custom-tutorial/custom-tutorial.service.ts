@@ -61,7 +61,9 @@ export class CustomTutorialService {
     try {
       const tutorials = await this.customTutorialRepository.list();
       const manifests = await Promise.all(
-        tutorials.map(this.customTutorialManifestProvider.generateTutorialManifest),
+        tutorials.map(
+          this.customTutorialManifestProvider.generateTutorialManifest.bind(this.customTutorialManifestProvider),
+        ),
       ) as Record<string, any>[];
 
       manifests.forEach((manifest) => {

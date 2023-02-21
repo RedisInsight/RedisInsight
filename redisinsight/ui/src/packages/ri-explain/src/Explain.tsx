@@ -10,6 +10,13 @@ import {
 } from '@elastic/eui'
 
 import {
+  EDGE_COLOR_BODY_DARK,
+  EDGE_COLOR_BODY_LIGHT,
+  NODE_COLOR_BODY_DARK,
+  NODE_COLOR_BODY_LIGHT,
+} from './constants'
+
+import {
   CoreType,
   ModuleType,
   EntityInfo,
@@ -29,6 +36,14 @@ interface IExplain {
 
 function getEdgeSize(c: number) {
   return Math.floor(Math.log(c || 1) + 1)
+}
+
+function getNodeColor(isDarkTheme: boolean) {
+  return isDarkTheme ? NODE_COLOR_BODY_DARK : NODE_COLOR_BODY_LIGHT
+}
+
+function getEdgeColor(isDarkTheme: boolean) {
+  return isDarkTheme ? EDGE_COLOR_BODY_DARK : EDGE_COLOR_BODY_LIGHT
 }
 
 export default function Explain(props: IExplain): JSX.Element {
@@ -126,7 +141,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
 
   const [done, setDone] = useState(false)
   const [collapse, setCollapse] = useState(true)
-  const [infoWidth, setInfoWidth] = useState(document.body.offsetWidth)
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [core, setCore] = useState<Graph>()
 
@@ -152,7 +166,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
         core?.resize(width, (b?.height || 585) + 100)
       }
     }
-    setInfoWidth(width)
   }
 
   window.addEventListener('resize', resize)
@@ -185,16 +198,41 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       ancestors.pairs.forEach(p => {
         // Highlight ancestor and their ancestor
         document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "outline: 1px solid #85A2FE !important;")
-
         // Get edge size of parent ancestor to apply the right edge stroke
-        const strokeSize = getEdgeSize(parseInt((document.querySelector(`#node-${p[1]}`) as HTMLElement)?.dataset?.size || '')) + 1
-        document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k =>
-          (k as HTMLElement)
-            .setAttribute(
-              "style",
-              `stroke: #85A2FE; stroke-linecap: butt; stroke-width: ${strokeSize}px`
-            )
-        )
+        const edge = graph.getCellById(`${p[0]}-${p[1]}`)
+        const edgeColor = '#85A2FE'
+        edge.setAttrs({
+          line: {
+            stroke: edgeColor,
+            strokeWidth: (edge.getAttrs() as any)?.line?.strokeWidth,
+            targetMarker: {
+              name: 'block',
+              stroke: edgeColor,
+              fill: edgeColor,
+            },
+          },
+        })
+      })
+    })
+
+    graph.on("node:mouseleave", x => {
+      const {id} = x.node.getData()
+      const ancestors = GetAncestors(data, id, {found: false, pairs: []})
+      ancestors.pairs.forEach(p => {
+        document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "")
+        const edge = graph.getCellById(`${p[0]}-${p[1]}`)
+        const edgeColor = getEdgeColor(isDarkTheme)
+        edge.setAttrs({
+          line: {
+            stroke: edgeColor,
+            strokeWidth: (edge.getAttrs() as any)?.line?.strokeWidth,
+            targetMarker: {
+              name: 'block',
+              fill: edgeColor,
+              stroke: edgeColor,
+            }
+          },
+        })
       })
     })
 
@@ -236,15 +274,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
     }
 
     ele?.addEventListener('mousedown', mouseDownHandler)
-
-    graph.on("node:mouseleave", x => {
-      const {id} = x.node.getData()
-      const ancestors = GetAncestors(data, id, {found: false, pairs: []})
-      ancestors.pairs.forEach(p => {
-        document.querySelector(`#node-${p[0]}`)?.setAttribute("style", "")
-        document.querySelector(`[data-cell-id='${p[0]}-${p[1]}']`)?.childNodes.forEach(k => (k as HTMLElement).setAttribute("style", ""))
-      })
-    })
 
     resize()
 
@@ -297,6 +326,20 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
         }
 
 
+        const portId = data.id + '-source'
+        let targetPort = {}
+        const targetItem: any = []
+        if (info.parentId) {
+          targetItem.push({id: `${info.id}-${info.parentId}-target`, group: `${info.parentId}-target`})
+          targetPort[info.parentId+'-target'] = {
+            position: { name: 'bottom' },
+            attrs: {
+              circle: {
+                r: 0
+              }
+            }
+          }
+        }
         model.nodes?.push({
           id: data.id,
           x: (data.x || 0) + document.body.clientWidth / 2,
@@ -305,20 +348,45 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
           data: info,
           attrs: {
             body: {
-              fill: isDarkTheme ? '#5F95FF' : '#8992B3',
+              fill: getNodeColor(isDarkTheme),
               stroke: 'transparent',
             },
+          },
+          ports: {
+            groups: {
+              [portId]: {
+                position: { name: 'top' },
+                attrs: {
+                  circle: {
+                    r: 0
+                  }
+                }
+              },
+              ...targetPort,
+            },
+            items: [
+              ...data.children.map(c => ({
+                id: `${data.id}-${c.id}`, group: portId
+              })),
+              ...targetItem,
+            ],
           },
         })
       }
       if (data.children) {
         data.children.forEach((item: any) => {
           const itemRecords = parseInt(item.data.counter || 0)
-
+          const edgeColor = getEdgeColor(isDarkTheme)
           model.edges?.push({
             id: `${data.id}-${item.id}`,
-            source: data.id,
-            target: item.id,
+            source: {
+              cell: data.id,
+              port: `${data.id}-${item.id}`,
+            },
+            target: {
+              cell: item.id,
+              port: `${data.id}-${item.id}`
+            },
             router: {
               name: 'manhattan',
               args: {
@@ -336,9 +404,13 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
             },
             attrs: {
               line: {
-                stroke: isDarkTheme ? '#6B6B6B' : '#8992B3',
+                stroke: edgeColor,
                 strokeWidth: getEdgeSize(itemRecords),
-                targetMarker: null,
+                targetMarker: {
+                  name: 'block',
+                  fill: edgeColor,
+                  stroke: edgeColor,
+                },
               },
             },
           })
@@ -364,7 +436,14 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
   return (
     <div>
       { collapse && <div style={{ paddingTop: '50px' }}></div> }
-      <div id="container-parent" style={{ height: isFullScreen ? (window.outerHeight - 170) + 'px' : collapse ? '500px' : '585px', width: '100%', overflow: 'auto' }}>
+      <div
+        id="container-parent"
+        style={{
+          height: isFullScreen ? (window.outerHeight - 170) + 'px' : collapse ? '500px' : '585px',
+          width: '100%',
+          overflow: 'auto',
+        }}
+      >
         <div style={{ margin: 0, width: '100vw' }} ref={container} id="container" />
         { !collapse && (
           <div className="ZoomMenu">

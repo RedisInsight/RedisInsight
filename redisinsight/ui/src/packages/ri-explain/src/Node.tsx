@@ -85,9 +85,8 @@ export function ProfileNode(props: INodeProps) {
   }
 
   const infoData = data ? data : type
-
   return (
-    <div className="ProfileContainer" id={`node-${id}`} data-size={counter || size || recordsProduced}>
+    <div className="ProfileContainer" id={`node-${id}`}>
       <div className="Main">
         <div className="InfoData">
           <EuiToolTip delay='long' content={infoData}><span>{infoData}</span></EuiToolTip>

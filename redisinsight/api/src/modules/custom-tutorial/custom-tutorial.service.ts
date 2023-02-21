@@ -31,21 +31,23 @@ export class CustomTutorialService {
    * Currently from zip file only
    * @param dto
    */
-  public async create(dto: UploadCustomTutorialDto) {
+  public async create(dto: UploadCustomTutorialDto): Promise<Record<string, any>> {
     try {
       const tmpPath = await this.customTutorialFsProvider.unzipToTmpFolder(dto.file);
 
       // todo: validate
 
       // create tutorial model
-      const tutorial = plainToClass(CustomTutorial, {
+      const model = plainToClass(CustomTutorial, {
         ...dto,
         id: uuidv4(),
       });
 
-      await this.customTutorialFsProvider.moveFolder(tmpPath, tutorial.absolutePath);
+      await this.customTutorialFsProvider.moveFolder(tmpPath, model.absolutePath);
 
-      await this.customTutorialRepository.create(tutorial);
+      const tutorial = await this.customTutorialRepository.create(model);
+
+      return await this.customTutorialManifestProvider.generateTutorialManifest(tutorial);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

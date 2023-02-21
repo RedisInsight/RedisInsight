@@ -1,6 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsOptional, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 import { HasMimeType, IsFile, MemoryStoredFile } from 'nestjs-form-data';
 
 export class UploadCustomTutorialDto {

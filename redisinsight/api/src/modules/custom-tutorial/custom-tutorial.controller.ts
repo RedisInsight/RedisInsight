@@ -45,7 +45,7 @@ export class CustomTutorialController {
   })
   async create(
     @Body() dto: UploadCustomTutorialDto,
-  ): Promise<void> {
+  ): Promise<Record<string, any>> {
     return this.service.create(dto);
   }
 

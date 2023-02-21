@@ -27,7 +27,10 @@ export class LocalCustomTutorialRepository extends CustomTutorialRepository {
    * @inheritDoc
    */
   public async list(): Promise<CustomTutorial[]> {
-    const entities = await this.repository.find({});
+    const entities = await this.repository
+      .createQueryBuilder('t')
+      .orderBy('t.createdAt', 'DESC')
+      .getMany();
 
     return entities.map((entity) => classToClass(CustomTutorial, entity));
   }

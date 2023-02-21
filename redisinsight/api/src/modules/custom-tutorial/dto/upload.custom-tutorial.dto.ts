@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { HasMimeType, IsFile, MemoryStoredFile } from 'nestjs-form-data';
 
 export class UploadCustomTutorialDto {
@@ -18,5 +18,6 @@ export class UploadCustomTutorialDto {
   })
   @Expose()
   @IsString()
+  @IsNotEmpty()
   name: string;
 }

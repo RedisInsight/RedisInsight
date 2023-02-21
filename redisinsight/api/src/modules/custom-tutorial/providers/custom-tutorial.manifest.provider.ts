@@ -20,7 +20,7 @@ export class CustomTutorialManifestProvider {
    * So user will be able to fix (re-import) tutorial or remove it
    * @param path
    */
-  public async getManifest(path: string): Promise<ICustomTutorialManifest> {
+  public async getManifestJson(path: string): Promise<ICustomTutorialManifest> {
     try {
       return JSON.parse(
         await fs.readFile(join(path, MANIFEST_FILE), 'utf8'),
@@ -44,7 +44,7 @@ export class CustomTutorialManifestProvider {
         label: tutorial.name,
         _actions: tutorial.actions,
         _path: tutorial.path,
-        children: await this.getManifest(tutorial.absolutePath),
+        children: await this.getManifestJson(tutorial.absolutePath),
       };
     } catch (e) {
       this.logger.warn('Unable to generate manifest for tutorial', e);

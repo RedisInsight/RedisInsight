@@ -1,5 +1,5 @@
 import {
-  Injectable, InternalServerErrorException, Logger, NotFoundException,
+  Injectable, Logger, NotFoundException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CustomTutorialRepository } from 'src/modules/custom-tutorial/repositories/custom-tutorial.repository';
@@ -15,6 +15,7 @@ import {
   CustomTutorialManifestType,
   ICustomTutorialManifest,
 } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
+import { wrapHttpError } from 'src/common/utils';
 
 @Injectable()
 export class CustomTutorialService {
@@ -49,7 +50,8 @@ export class CustomTutorialService {
 
       return await this.customTutorialManifestProvider.generateTutorialManifest(tutorial);
     } catch (e) {
-      throw new InternalServerErrorException(e.message);
+      this.logger.error('Unable to create custom tutorials', e);
+      throw wrapHttpError(e);
     }
   }
 
@@ -62,6 +64,7 @@ export class CustomTutorialService {
 
     try {
       const tutorials = await this.customTutorialRepository.list();
+
       const manifests = await Promise.all(
         tutorials.map(
           this.customTutorialManifestProvider.generateTutorialManifest.bind(this.customTutorialManifestProvider),
@@ -105,12 +108,12 @@ export class CustomTutorialService {
 
   public async delete(id: string): Promise<void> {
     try {
-      const tutorial = await this.customTutorialRepository.get(id);
+      const tutorial = await this.get(id);
       await this.customTutorialRepository.delete(id);
       await this.customTutorialFsProvider.removeFolder(tutorial.absolutePath);
     } catch (e) {
       this.logger.error('Unable to delete custom tutorial', e);
-      throw e;
+      throw wrapHttpError(e);
     }
   }
 }

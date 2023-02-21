@@ -20,8 +20,7 @@ export class CustomTutorialFsProvider {
    */
   public async unzipToTmpFolder(file: MemoryStoredFile): Promise<string> {
     try {
-      const path = join(TMP_FOLDER, uuidv4());
-      await fs.ensureDir(path);
+      const path = await CustomTutorialFsProvider.prepareTmpFolder();
       const zip = new AdmZip(file.buffer);
       await fs.remove(path);
       await zip.extractAllTo(path, true);
@@ -64,5 +63,15 @@ export class CustomTutorialFsProvider {
     } catch (e) {
       this.logger.warn('Unable to delete tutorial folder', e);
     }
+  }
+
+  /**
+   * Create tmp folder in user's temporary directory and return path to it
+   */
+  static async prepareTmpFolder(): Promise<string> {
+    const path = join(TMP_FOLDER, uuidv4());
+    await fs.ensureDir(path);
+
+    return path;
   }
 }

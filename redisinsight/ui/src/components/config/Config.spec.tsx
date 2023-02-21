@@ -49,7 +49,7 @@ jest.mock('uiSrc/services', () => ({
   },
 }))
 
-const onboardingTotalSteps = Object.keys(ONBOARDING_FEATURES).length
+const onboardingTotalSteps = Object.keys(ONBOARDING_FEATURES)?.length
 
 describe('Config', () => {
   it('should render', () => {

@@ -24,6 +24,6 @@ export const databaseAnalysisTabs: DatabaseAnalysisTabs[] = [
     id: DatabaseAnalysisViewTab.Recommendations,
     name: (count?: number) => (count ? `Recommendations (${count})` : 'Recommendations'),
     content: <Recommendations />,
-    onboard: ONBOARDING_FEATURES.ANALYTICS_RECOMMENDATIONS
+    onboard: ONBOARDING_FEATURES?.ANALYTICS_RECOMMENDATIONS
   },
 ]

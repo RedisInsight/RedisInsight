@@ -18,6 +18,7 @@ export interface Props {
   value: string
   options: string[]
   placeholder: string
+  disableSubmit?: boolean
   onSubmit: () => void
   onKeyDown?: (e: React.KeyboardEvent) => void
   suggestions?: {
@@ -45,6 +46,7 @@ const MultiSearch = (props: Props) => {
     options = [],
     suggestions,
     placeholder,
+    disableSubmit,
     onSubmit,
     onChangeOptions,
     onChange,
@@ -259,6 +261,7 @@ const MultiSearch = (props: Props) => {
           iconType="search"
           color="primary"
           aria-label="Search"
+          disabled={disableSubmit}
           className={styles.searchButton}
           onClick={handleSubmit}
           data-testid="search-btn"

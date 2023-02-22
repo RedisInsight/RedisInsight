@@ -446,6 +446,7 @@ const AddStandaloneForm = (props: Props) => {
           alignItems="center"
           className="footerAddDatabase"
           gutterSize="none"
+          responsive={false}
           style={{ height: '68px' }}
         >
           <EuiFlexItem className="btn-back" grow={false}>
@@ -492,7 +493,7 @@ const AddStandaloneForm = (props: Props) => {
                 submitIsDisabled={submitIsDisable()}
               />
             </EuiFlexGroup>
-            </EuiFlexItem>
+          </EuiFlexItem>
         </EuiFlexGroup>,
         footerEl
       )

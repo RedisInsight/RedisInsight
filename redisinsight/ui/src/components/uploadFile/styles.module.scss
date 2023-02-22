@@ -5,6 +5,7 @@
 .uploadBtn {
   display: flex;
   cursor: pointer;
+  padding: 4px 12px;
 }
 
 .emptyBtn:global(.euiButtonEmpty) {
@@ -13,7 +14,14 @@
 }
 
 .emptyBtn:global(.euiButtonEmpty .euiButtonEmpty__content) {
-  padding: 0 12px;
+  padding: 0;
+}
+
+.emptyBtn .icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+  color: var(--inputTextColor);
 }
 
 :global(.euiButtonEmpty.euiButtonEmpty--primary).emptyBtn .label {

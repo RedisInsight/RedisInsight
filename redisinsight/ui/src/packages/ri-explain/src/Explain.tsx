@@ -82,6 +82,15 @@ export default function Explain(props: IExplain): JSX.Element {
       let [cluster, entityInfo] = ParseProfileCluster(info)
       cluster['Coordinator'].forEach((kv: [string, string]) => profilingTime[kv[0]] = kv[1])
       data = entityInfo
+    } else if (typeof info[0] === 'string' && info[0].toLowerCase().startsWith('coordinator')) {
+      const resultsProfile = info[2]
+      data = ParseProfile(resultsProfile)
+      profilingTime = {
+        'Total Coordinator time': info[4],
+        'Total profile time': resultsProfile[0][1],
+        'Parsing time': resultsProfile[1][1],
+        'Pipeline creation time': resultsProfile[2][1],
+      }
     } else {
       data = ParseProfile(info)
       profilingTime = {

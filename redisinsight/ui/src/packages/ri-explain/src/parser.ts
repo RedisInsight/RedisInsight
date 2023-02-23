@@ -825,7 +825,7 @@ export function ParseProfileCluster(info: any[]): [Object, EntityInfo] {
 
 export function ParseProfile(info: any[][]): EntityInfo {
   const parserData: any = info[info.length - 2]
-  let resp = ParseIteratorProfile(parserData[1])
+  let resp = parserData[0].toLowerCase().startsWith('iterators') ? ParseIteratorProfile(parserData[1]) : null
 
   const processorsProfile: string[][] = info[info.length - 1].slice(1)
 
@@ -837,11 +837,11 @@ export function ParseProfile(info: any[][]): EntityInfo {
       type: e[1] as EntityType,
       time: e[3],
       counter: e[5],
-      children: [{...resp, parentId: id}],
+      children: resp ? [{...resp, parentId: id}] : [],
     }
   }
 
-  return resp
+  return resp as EntityInfo
 }
 
 export function ParseIteratorProfile(data: any[]): EntityInfo {

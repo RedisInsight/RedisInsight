@@ -7,7 +7,6 @@ import axios from 'axios'
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
-import { ApiEndpoints } from 'uiSrc/constants'
 import {
   resetWorkbenchEASearch,
   appContextWorkbenchEA,
@@ -16,8 +15,8 @@ import {
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
-
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+
 import InternalPage from '../InternalPage'
 import { getFileInfo, getPagesInsideGroup, IFileInfo } from '../../utils/getFileInfo'
 import FormatSelector from '../../utils/formatter/FormatSelector'
@@ -32,42 +31,34 @@ export interface Props {
   onClose: () => void
   title?: string
   path: string
+  manifest: Nullable<Record<string, IEnablementAreaItem>>
   manifestPath?: Nullable<string>
   sourcePath: string
   search: string
 }
 
-const LazyInternalPage = ({ onClose, title, path, sourcePath, manifestPath, search }: Props) => {
+const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifestPath, search }: Props) => {
   const history = useHistory()
   const { itemScrollTop } = useSelector(appContextWorkbenchEA)
-  const guides = useSelector(workbenchGuidesSelector)
-  const tutorials = useSelector(workbenchTutorialsSelector)
-  const customTutorials = useSelector(workbenchCustomTutorialsSelector)
+  const { loading: guidesLoading } = useSelector(workbenchGuidesSelector)
+  const { loading: tutorialsLoading } = useSelector(workbenchTutorialsSelector)
+  const { loading: customTutorialsLoading } = useSelector(workbenchCustomTutorialsSelector)
   const [isLoading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
   const [pageData, setPageData] = useState<IPageData>(DEFAULT_PAGE_DATA)
   const dispatch = useDispatch()
   const fetchService = IS_ABSOLUTE_PATH.test(path) ? axios : resourcesService
 
-  const getRelatedPages = (sourcePath: string): IEnablementAreaItem[] => {
-    switch (sourcePath) {
-      case ApiEndpoints.GUIDES_PATH:
-        return getPagesInsideGroup(guides.items, manifestPath)
-      case ApiEndpoints.TUTORIALS_PATH:
-        return getPagesInsideGroup(tutorials.items, manifestPath)
-      case ApiEndpoints.CUSTOM_TUTORIALS_PATH:
-        return getPagesInsideGroup(customTutorials.items, manifestPath)
-      default:
-        return []
-    }
-  }
+  const isMarkdownLoading = isLoading || guidesLoading || tutorialsLoading || customTutorialsLoading
+
+  const getRelatedPages = (): IEnablementAreaItem[] => (manifest ? getPagesInsideGroup(manifest, manifestPath) : [])
 
   const loadContent = async () => {
     setLoading(true)
     setError('')
 
-    const pageInfo = getFileInfo(path)
-    const relatedPages = getRelatedPages(sourcePath)
+    const pageInfo = getFileInfo({ manifestPath, path }, manifest)
+    const relatedPages = getRelatedPages()
     setPageData({ ...DEFAULT_PAGE_DATA, ...pageInfo, relatedPages })
 
     try {
@@ -89,12 +80,10 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath, manifestPath, sear
 
   useEffect(() => {
     const startLoadContent = async () => {
-      if (!guides.loading && !tutorials.loading) {
-        await loadContent()
-      }
+      await loadContent()
     }
     startLoadContent()
-  }, [path, sourcePath, guides.loading, tutorials.loading])
+  }, [path, sourcePath])
 
   const handlePageScroll = (top: number) => {
     dispatch(setWorkbenchEAItemScrollTop(top))
@@ -108,7 +97,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath, manifestPath, sear
       onClose={onClose}
       title={startCase(title || pageData.name)}
       backTitle={startCase(pageData?.parent)}
-      isLoading={isLoading || guides.loading || tutorials.loading}
+      isLoading={isMarkdownLoading}
       content={pageData.content}
       error={error}
       onScroll={handlePageScroll}

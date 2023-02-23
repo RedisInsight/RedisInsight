@@ -65,6 +65,7 @@ const EnablementArea = (props: Props) => {
   const [isInternalPageVisible, setIsInternalPageVisible] = useState(false)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [internalPage, setInternalPage] = useState<IInternalPage>({ path: '' })
+  const [manifest, setManifest] = useState<Nullable<Record<string, IEnablementAreaItem>>>(null)
 
   const searchRef = useRef<string>('')
 
@@ -91,6 +92,7 @@ const EnablementArea = (props: Props) => {
     const manifestPath = new URLSearchParams(search).get('path')
     const contextManifestPath = new URLSearchParams(searchEAContext).get('path')
     const { manifest, prefixFolder } = getManifestByPath(manifestPath)
+    setManifest(manifest)
 
     if (isEmpty(manifest) && !contextManifestPath) {
       return
@@ -125,7 +127,7 @@ const EnablementArea = (props: Props) => {
       return ({ manifest: guides, prefixFolder: ApiEndpoints.GUIDES_PATH })
     }
 
-    return {}
+    return { manifest: null }
   }
 
   const getManifestItems = (manifest: Record<string, IEnablementAreaItem>) =>
@@ -150,7 +152,7 @@ const EnablementArea = (props: Props) => {
     dispatch(deleteCustomTutorial(id))
   }
 
-  const submitCreate = ({ file, name }: { file: any, name: string }) => {
+  const submitCreate = ({ file, name }: { file: File, name: string }) => {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('name', name)
@@ -273,6 +275,7 @@ const EnablementArea = (props: Props) => {
               onClose={handleCloseInternalPage}
               title={internalPage?.label}
               path={internalPage?.path}
+              manifest={manifest}
               manifestPath={internalPage?.manifestPath}
               sourcePath={getWBSourcePath(internalPage?.path)}
               search={searchRef.current}

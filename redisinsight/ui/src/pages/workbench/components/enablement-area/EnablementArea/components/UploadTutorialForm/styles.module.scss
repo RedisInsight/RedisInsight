@@ -23,6 +23,16 @@
       padding-left: 4px;
     }
   }
+
+  .btnSubmit {
+    margin-left: 6px;
+
+    svg {
+      width: 16px !important;
+      height: 16px !important;
+      margin-top: 0;
+    }
+  }
 }
 
 .footer {

@@ -69,7 +69,11 @@ export function fetchCustomTutorials(onSuccessAction?: () => void, onFailAction?
   }
 }
 
-export function uploadCustomTutorial(formData: any, onSuccessAction?: () => void, onFailAction?: () => void) {
+export function uploadCustomTutorial(
+  formData: FormData,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
   return async (dispatch: AppDispatch) => {
     try {
       const { status } = await apiService.post(
@@ -93,7 +97,7 @@ export function uploadCustomTutorial(formData: any, onSuccessAction?: () => void
   }
 }
 
-export function deleteCustomTutorial(id: any, onSuccessAction?: () => void, onFailAction?: () => void) {
+export function deleteCustomTutorial(id: string, onSuccessAction?: () => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch) => {
     try {
       const { status } = await apiService.delete(`${ApiEndpoints.CUSTOM_TUTORIALS}/${id}`)

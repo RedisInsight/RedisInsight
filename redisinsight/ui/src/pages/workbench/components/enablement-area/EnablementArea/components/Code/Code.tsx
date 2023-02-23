@@ -29,7 +29,7 @@ const Code = ({ children, params = '', ...rest }: Props) => {
     let file: Maybe<{ path: string, name: string }>
 
     if (pagePath) {
-      const pageInfo = getFileInfo(pagePath)
+      const pageInfo = getFileInfo({ path: pagePath })
       file = {
         path: `${pageInfo.location}/${pageInfo.name}`,
         name: startCase(rest.label)

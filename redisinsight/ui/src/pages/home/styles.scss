@@ -373,14 +373,10 @@
     padding: 12px;
   }
 
-  .euiButton.btn-add {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-
   .euiButton.btn-cancel,
   .euiButton.btn-back {
-    margin-right: 20px;
+    margin-right: 10px;
+    min-width: 71px !important;
   }
 
   .flexGroupResponsiveForm {

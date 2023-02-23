@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiButtonEmpty, EuiText } from '@elastic/eui'
+import { EuiButtonEmpty, EuiText, EuiIcon } from '@elastic/eui'
 
 import styles from './styles.module.scss'
 
@@ -10,10 +10,11 @@ export interface Props {
 
 const UploadFile = ({ onFileChange, onClick }: Props) => (
   <EuiButtonEmpty
-    iconType="folderOpen"
     className={styles.emptyBtn}
+    onClick={onClick}
   >
     <label htmlFor="upload-input-file" className={styles.uploadBtn}>
+      <EuiIcon className={styles.icon} type="folderOpen" />
       <EuiText className={styles.label}>Upload</EuiText>
       <input
         type="file"
@@ -21,7 +22,6 @@ const UploadFile = ({ onFileChange, onClick }: Props) => (
         data-testid="upload-input-file"
         accept="application/json, text/plain"
         onChange={onFileChange}
-        onClick={onClick}
         className={styles.fileDrop}
         aria-label="Select file"
       />

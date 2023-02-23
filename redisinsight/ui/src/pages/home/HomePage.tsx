@@ -249,7 +249,7 @@ const HomePage = () => {
                           })}
                           id="form"
                           paddingSize="none"
-                          style={{ minWidth: '545px' }}
+                          style={{ minWidth: '494px' }}
                         >
                           {editDialogIsOpen && (
                             <AddDatabaseContainer

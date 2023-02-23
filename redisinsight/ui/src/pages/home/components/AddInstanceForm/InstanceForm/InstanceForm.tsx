@@ -423,7 +423,6 @@ const AddStandaloneForm = (props: Props) => {
       <EuiButton
         fill
         color="secondary"
-        className="btn-add"
         type="submit"
         onClick={onClick}
         disabled={submitIsDisabled}
@@ -447,7 +446,6 @@ const AddStandaloneForm = (props: Props) => {
           className="footerAddDatabase"
           gutterSize="none"
           responsive={false}
-          style={{ height: '68px' }}
         >
           <EuiFlexItem className="btn-back" grow={false}>
             {instanceType !== InstanceType.Sentinel && (
@@ -476,7 +474,7 @@ const AddStandaloneForm = (props: Props) => {
           </EuiFlexItem>
 
           <EuiFlexItem grow={false}>
-            <EuiFlexGroup>
+            <EuiFlexGroup responsive={false}>
               {onClose && (
                 <EuiButton
                   onClick={onClose}

@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { HasMimeType, IsFile, MemoryStoredFile } from 'nestjs-form-data';
+import {
+  HasMimeType, IsFile, MaxFileSize, MemoryStoredFile,
+} from 'nestjs-form-data';
 
 export class UploadCustomTutorialDto {
   @ApiProperty({
@@ -11,6 +13,7 @@ export class UploadCustomTutorialDto {
   })
   @IsFile()
   @HasMimeType(['application/zip'])
+  @MaxFileSize(10 * 1024 * 1024)
   file: MemoryStoredFile;
 
   @ApiProperty({

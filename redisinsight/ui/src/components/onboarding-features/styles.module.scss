@@ -1,4 +1,12 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
 .pre {
-  padding: 8px 16px !important;
   background-color: var(--commandGroupBadgeColor) !important;
+  word-wrap: break-word;
+
+  max-height: 240px;
+  overflow-y: auto;
+  @include euiScrollBar;
 }

@@ -65,7 +65,7 @@ describe(`GET /databases/:id/info`, () => {
 
 
   describe('ACL', () => {
-    requirements('rte.acl', 'rte.type=STANDALONE', '!rte.re');
+    requirements('rte.acl', 'rte.type=STANDALONE', '!rte.re', '!rte.sharedData');
     before(async () => rte.data.setAclUserRules('~* +@all'));
     beforeEach(rte.data.truncate);
 

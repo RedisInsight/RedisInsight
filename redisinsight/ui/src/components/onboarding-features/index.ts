@@ -1,3 +1,1 @@
-import { ONBOARDING_FEATURES } from './OnboardingFeatures'
-
-export { ONBOARDING_FEATURES }
+export * from './OnboardingFeatures'

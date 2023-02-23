@@ -164,6 +164,7 @@ export class BrowserPage {
     listKeyElementEditorInput = Selector('[data-testid=element-value-editor]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
     jsonKeyValueInput = Selector('[data-mode-id=json]');
+    jsonUploadInput = Selector('[data-testid=upload-input-file]');
     setMemberInput = Selector('[data-testid=member-name]');
     zsetMemberScoreInput = Selector('[data-testid=member-score]');
     filterByPatterSearchInput = Selector('[data-testid=search-key]');

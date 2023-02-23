@@ -7,6 +7,7 @@ import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-util
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import {
   CreateHashWithExpireDto,
   CreateListWithExpireDto,
@@ -63,6 +64,8 @@ import reducer, {
   loadSearchHistorySuccess,
   refreshKeyInfo,
   refreshKeyInfoAction,
+  updateKeyList,
+  addKeyIntoList,
   refreshKeyInfoFail,
   refreshKeyInfoSuccess,
   resetAddKey,
@@ -521,19 +524,21 @@ describe('keys slice', () => {
     })
   })
 
-  describe('addKeySuccess', () => {
+  describe('updateKeyList', () => {
     it('should properly set the state after successfully added key', () => {
       // Arrange
       const state = {
         ...initialState,
-        addKey: {
-          ...initialState.addKey,
-          loading: false,
-        },
+        data: {
+          ...initialState.data,
+          keys: [{ name: 'name' }],
+          scanned: 1,
+          total: 1,
+        }
       }
 
       // Act
-      const nextState = reducer(initialState, addKeySuccess())
+      const nextState = reducer(initialState, updateKeyList({ keyName: 'name', keyType: 'hash' }))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -1286,6 +1291,8 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          resetBrowserTree(),
+          updateKeyList({ keyName: data.keyName, keyType: 'hash' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1310,6 +1317,8 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          resetBrowserTree(),
+          updateKeyList({ keyName: data.keyName, keyType: 'zset' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1334,6 +1343,8 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          resetBrowserTree(),
+          updateKeyList({ keyName: data.keyName, keyType: 'set' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1358,6 +1369,8 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          resetBrowserTree(),
+          updateKeyList({ keyName: data.keyName, keyType: 'string' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1383,6 +1396,8 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          resetBrowserTree(),
+          updateKeyList({ keyName: data.keyName, keyType: 'list' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1407,6 +1422,8 @@ describe('keys slice', () => {
         const expectedActions = [
           addKey(),
           addKeySuccess(),
+          resetBrowserTree(),
+          updateKeyList({ keyName: data.keyName, keyType: 'ReJSON-RL' }),
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName)),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1556,177 +1573,193 @@ describe('keys slice', () => {
       })
     })
 
-    describe('fetchPatternHistoryAction', () => {
-      it('success fetch history', async () => {
-        // Arrange
-        const data: SearchHistoryItem[] = [
-          { id: '1', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
-          { id: '2', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
-        ]
-        const responsePayload = { data, status: 200 }
-
-        apiService.get = jest.fn().mockResolvedValue(responsePayload)
-
+    describe('addKeyIntoList', () => {
+      it('updateKeyList should be called', async () => {
         // Act
-        await store.dispatch<any>(fetchPatternHistoryAction())
+        await store.dispatch<any>(
+          addKeyIntoList({ key: 'key', keyType: 'hash' })
+        )
 
         // Assert
         const expectedActions = [
-          loadSearchHistory(),
-          loadSearchHistorySuccess(data),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
-      })
-      it('failed to load history', async () => {
-        // Arrange
-        const errorMessage = 'some error'
-        const responsePayload = {
-          response: {
-            status: 500,
-            data: { message: errorMessage },
-          },
-        }
-
-        apiService.get = jest.fn().mockRejectedValue(responsePayload)
-
-        // Act
-        await store.dispatch<any>(fetchPatternHistoryAction())
-
-        // Assert
-        const expectedActions = [
-          loadSearchHistory(),
-          loadSearchHistoryFailure(),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
-      })
-    })
-
-    describe('fetchSearchHistoryAction', () => {
-      it('success fetch history', async () => {
-        // Arrange
-        const data: SearchHistoryItem[] = [
-          { id: '1', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
-          { id: '2', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
-        ]
-        const responsePayload = { data, status: 200 }
-
-        apiService.get = jest.fn().mockResolvedValue(responsePayload)
-
-        // Act
-        await store.dispatch<any>(fetchSearchHistoryAction(SearchMode.Pattern))
-
-        // Assert
-        const expectedActions = [
-          loadSearchHistory(),
-          loadSearchHistorySuccess(data),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
-      })
-      it('failed to load history', async () => {
-        // Arrange
-        const errorMessage = 'some error'
-        const responsePayload = {
-          response: {
-            status: 500,
-            data: { message: errorMessage },
-          },
-        }
-
-        apiService.get = jest.fn().mockRejectedValue(responsePayload)
-
-        // Act
-        await store.dispatch<any>(fetchSearchHistoryAction(SearchMode.Pattern))
-
-        // Assert
-        const expectedActions = [
-          loadSearchHistory(),
-          loadSearchHistoryFailure(),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
-      })
-    })
-
-    describe('deletePatternHistoryAction', () => {
-      it('success delete history', async () => {
-        // Arrange
-        const responsePayload = { status: 200 }
-
-        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
-
-        // Act
-        await store.dispatch<any>(deletePatternHistoryAction(['1']))
-
-        // Assert
-        const expectedActions = [
-          deleteSearchHistory(),
-          deleteSearchHistorySuccess(['1']),
+          resetBrowserTree(),
+          updateKeyList({ keyName: 'key', keyType: 'hash' })
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
 
-      it('failed to delete history', async () => {
-        // Arrange
-        const errorMessage = 'some error'
-        const responsePayload = {
-          response: {
-            status: 500,
-            data: { message: errorMessage },
-          },
-        }
+      describe('fetchPatternHistoryAction', () => {
+        it('success fetch history', async () => {
+          // Arrange
+          const data: SearchHistoryItem[] = [
+            { id: '1', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
+            { id: '2', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
+          ]
+          const responsePayload = { data, status: 200 }
 
-        apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+          apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
-        // Act
-        await store.dispatch<any>(deletePatternHistoryAction(['1']))
+          // Act
+          await store.dispatch<any>(fetchPatternHistoryAction())
 
-        // Assert
-        const expectedActions = [
-          deleteSearchHistory(),
-          deleteSearchHistoryFailure(),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
+          // Assert
+          const expectedActions = [
+            loadSearchHistory(),
+            loadSearchHistorySuccess(data),
+          ]
+          expect(store.getActions()).toEqual(expectedActions)
+        })
+        it('failed to load history', async () => {
+          // Arrange
+          const errorMessage = 'some error'
+          const responsePayload = {
+            response: {
+              status: 500,
+              data: { message: errorMessage },
+            },
+          }
+
+          apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+          // Act
+          await store.dispatch<any>(fetchPatternHistoryAction())
+
+          // Assert
+          const expectedActions = [
+            loadSearchHistory(),
+            loadSearchHistoryFailure(),
+          ]
+          expect(store.getActions()).toEqual(expectedActions)
+        })
       })
-    })
 
-    describe('deleteSearchHistoryAction', () => {
-      it('success delete history', async () => {
-        // Arrange
-        const responsePayload = { status: 200 }
+      describe('fetchSearchHistoryAction', () => {
+        it('success fetch history', async () => {
+          // Arrange
+          const data: SearchHistoryItem[] = [
+            { id: '1', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
+            { id: '2', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
+          ]
+          const responsePayload = { data, status: 200 }
 
-        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+          apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
-        // Act
-        await store.dispatch<any>(deleteSearchHistoryAction(SearchMode.Pattern, ['1']))
+          // Act
+          await store.dispatch<any>(fetchSearchHistoryAction(SearchMode.Pattern))
 
-        // Assert
-        const expectedActions = [
-          deleteSearchHistory(),
-          deleteSearchHistorySuccess(['1']),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
+          // Assert
+          const expectedActions = [
+            loadSearchHistory(),
+            loadSearchHistorySuccess(data),
+          ]
+          expect(store.getActions()).toEqual(expectedActions)
+        })
+        it('failed to load history', async () => {
+          // Arrange
+          const errorMessage = 'some error'
+          const responsePayload = {
+            response: {
+              status: 500,
+              data: { message: errorMessage },
+            },
+          }
+
+          apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+          // Act
+          await store.dispatch<any>(fetchSearchHistoryAction(SearchMode.Pattern))
+
+          // Assert
+          const expectedActions = [
+            loadSearchHistory(),
+            loadSearchHistoryFailure(),
+          ]
+          expect(store.getActions()).toEqual(expectedActions)
+        })
       })
 
-      it('failed to delete history', async () => {
-        // Arrange
-        const errorMessage = 'some error'
-        const responsePayload = {
-          response: {
-            status: 500,
-            data: { message: errorMessage },
-          },
-        }
+      describe('deletePatternHistoryAction', () => {
+        it('success delete history', async () => {
+          // Arrange
+          const responsePayload = { status: 200 }
 
-        apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+          apiService.delete = jest.fn().mockResolvedValue(responsePayload)
 
-        // Act
-        await store.dispatch<any>(deleteSearchHistoryAction(SearchMode.Pattern, ['1']))
+          // Act
+          await store.dispatch<any>(deletePatternHistoryAction(['1']))
 
-        // Assert
-        const expectedActions = [
-          deleteSearchHistory(),
-          deleteSearchHistoryFailure(),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
+          // Assert
+          const expectedActions = [
+            deleteSearchHistory(),
+            deleteSearchHistorySuccess(['1']),
+          ]
+          expect(store.getActions()).toEqual(expectedActions)
+        })
+
+        it('failed to delete history', async () => {
+          // Arrange
+          const errorMessage = 'some error'
+          const responsePayload = {
+            response: {
+              status: 500,
+              data: { message: errorMessage },
+            },
+          }
+
+          apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+
+          // Act
+          await store.dispatch<any>(deletePatternHistoryAction(['1']))
+
+          // Assert
+          const expectedActions = [
+            deleteSearchHistory(),
+            deleteSearchHistoryFailure(),
+          ]
+          expect(store.getActions()).toEqual(expectedActions)
+        })
+      })
+
+      describe('deleteSearchHistoryAction', () => {
+        it('success delete history', async () => {
+          // Arrange
+          const responsePayload = { status: 200 }
+
+          apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+          // Act
+          await store.dispatch<any>(deleteSearchHistoryAction(SearchMode.Pattern, ['1']))
+
+          // Assert
+          const expectedActions = [
+            deleteSearchHistory(),
+            deleteSearchHistorySuccess(['1']),
+          ]
+          expect(store.getActions()).toEqual(expectedActions)
+        })
+
+        it('failed to delete history', async () => {
+          // Arrange
+          const errorMessage = 'some error'
+          const responsePayload = {
+            response: {
+              status: 500,
+              data: { message: errorMessage },
+            },
+          }
+
+          apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+
+          // Act
+          await store.dispatch<any>(deleteSearchHistoryAction(SearchMode.Pattern, ['1']))
+
+          // Assert
+          const expectedActions = [
+            deleteSearchHistory(),
+            deleteSearchHistoryFailure(),
+          ]
+          expect(store.getActions()).toEqual(expectedActions)
+        })
       })
     })
   })

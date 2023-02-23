@@ -8,6 +8,8 @@ import {
   KeyTypes,
   KeyValueCompressor,
   KeyValueFormat,
+  EndpointBasedOnKeyType,
+  ENDPOINT_BASED_ON_KEY_TYPE,
   SearchHistoryMode,
   SortOrder
 } from 'uiSrc/constants'
@@ -27,6 +29,7 @@ import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
 
 import {
   CreateListWithExpireDto,
@@ -306,6 +309,16 @@ const keysSlice = createSlice({
       state.addKey = {
         ...state.addKey,
         loading: false,
+        error: '',
+      }
+    },
+    updateKeyList: (state, { payload }) => {
+      state.data?.keys.unshift({ name: payload.keyName })
+
+      state.data = {
+        ...state.data,
+        total: state.data.total + 1,
+        scanned: state.data.scanned + 1,
       }
     },
     addKeyFailure: (state, { payload }) => {
@@ -414,8 +427,9 @@ export const {
   defaultSelectedKeyActionFailure,
   setLastBatchPatternKeys,
   addKey,
-  addKeySuccess,
+  updateKeyList,
   addKeyFailure,
+  addKeySuccess,
   resetAddKey,
   deleteKey,
   deleteKeySuccess,
@@ -721,12 +735,14 @@ export function refreshKeyInfoAction(key: RedisResponseBuffer) {
 
 function addTypedKey(
   data: any,
-  endpoint: ApiEndpoints,
+  keyType: KeyTypes,
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(addKey())
+    const endpoint = ENDPOINT_BASED_ON_KEY_TYPE[keyType as EndpointBasedOnKeyType]
+
     try {
       const state = stateInit()
       const { encoding } = state.app.info
@@ -741,6 +757,7 @@ function addTypedKey(
           onSuccessAction()
         }
         dispatch(addKeySuccess())
+        dispatch<any>(addKeyIntoList({ key: data.keyName, keyType }))
         dispatch(
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName))
         )
@@ -773,8 +790,7 @@ export function addHashKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.HASH
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.Hash, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -783,8 +799,7 @@ export function addZsetKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.ZSET
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.ZSet, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -793,8 +808,7 @@ export function addSetKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.SET
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.Set, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -803,8 +817,7 @@ export function addStringKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.STRING
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.String, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -813,8 +826,7 @@ export function addListKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.LIST
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.List, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -823,8 +835,7 @@ export function addReJSONKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.REJSON
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.ReJSON, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -833,8 +844,7 @@ export function addStreamKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.STREAMS
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.Stream, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -1150,6 +1160,25 @@ export function editKeyFromList(data: { key: RedisResponseBuffer, newKey: RedisR
     return state.browser.keys?.searchMode === SearchMode.Pattern
       ? dispatch(editPatternKeyFromList(data))
       : dispatch(editRedisearchKeyFromList(data))
+  }
+}
+
+export function addKeyIntoList({ key, keyType }: { key: RedisString, keyType: KeyTypes }) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const { viewType, filter, search } = state.browser.keys
+
+    if (search && search !== '*') {
+      return null
+    }
+
+    if (!filter || filter === keyType) {
+      if (viewType !== KeyViewType.Tree) {
+        dispatch(resetBrowserTree())
+      }
+      return dispatch(updateKeyList({ keyName: key, keyType }))
+    }
+    return null
   }
 }
 

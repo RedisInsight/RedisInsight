@@ -87,6 +87,7 @@ export class WorkbenchPage {
     //TEXT ELEMENTS
     queryPluginResult = Selector('[data-testid=query-plugin-result]');
     responseInfo = Selector('[class="responseInfo"]');
+    parsedRedisReply = Selector('[class="parsedRedisReply"]');
     scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
     queryCardContainer = Selector('[data-testid^=query-card-container]');
     queryCardCommand = Selector('[data-testid=query-card-command]');

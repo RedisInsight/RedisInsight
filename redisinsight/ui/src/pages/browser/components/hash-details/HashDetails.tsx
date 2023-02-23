@@ -39,7 +39,7 @@ import {
 } from 'uiSrc/slices/browser/hash'
 import { keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   bufferToSerializedFormat,
@@ -154,8 +154,8 @@ const HashDetails = (props: Props) => {
     })
   }
 
-  const handleDeleteField = (field = '') => {
-    dispatch(deleteHashFields(key, [stringToBuffer(field, viewFormat)], onSuccessRemoved))
+  const handleDeleteField = (field: RedisString | string = '') => {
+    dispatch(deleteHashFields(key, [field], onSuccessRemoved))
     closePopover()
   }
 
@@ -453,9 +453,10 @@ const HashDetails = (props: Props) => {
                 />
               </EuiToolTip>
               <PopoverDelete
-                header={createDeleteFieldHeader(fieldItem)}
+                header={createDeleteFieldHeader(fieldItem as RedisString)}
                 text={createDeleteFieldMessage(key ?? '')}
                 item={field}
+                itemRaw={fieldItem as RedisString}
                 suffix={suffix}
                 deleting={deleting}
                 closePopover={closePopover}

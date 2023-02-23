@@ -4,20 +4,20 @@ import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 
-import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 import { ApiEndpoints } from 'uiSrc/constants'
 import {
-  setWorkbenchEAItem,
-  resetWorkbenchEAItem,
+  resetWorkbenchEASearch,
   appContextWorkbenchEA,
-  setWorkbenchEAItemScrollTop
+  setWorkbenchEAItemScrollTop, setWorkbenchEASearch
 } from 'uiSrc/slices/app/context'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 
+import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import InternalPage from '../InternalPage'
 import { getFileInfo, getPagesInsideGroup, IFileInfo } from '../../utils/getFileInfo'
 import FormatSelector from '../../utils/formatter/FormatSelector'
@@ -29,17 +29,20 @@ interface IPageData extends IFileInfo {
 const DEFAULT_PAGE_DATA = { content: '', name: '', parent: '', extension: '', location: '', relatedPages: [] }
 
 export interface Props {
-  onClose: () => void;
-  title?: string;
-  path: string;
-  sourcePath: string;
+  onClose: () => void
+  title?: string
+  path: string
+  manifestPath?: Nullable<string>
+  sourcePath: string
+  search: string
 }
 
-const LazyInternalPage = ({ onClose, title, path, sourcePath }: Props) => {
+const LazyInternalPage = ({ onClose, title, path, sourcePath, manifestPath, search }: Props) => {
   const history = useHistory()
   const { itemScrollTop } = useSelector(appContextWorkbenchEA)
   const guides = useSelector(workbenchGuidesSelector)
   const tutorials = useSelector(workbenchTutorialsSelector)
+  const customTutorials = useSelector(workbenchCustomTutorialsSelector)
   const [isLoading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
   const [pageData, setPageData] = useState<IPageData>(DEFAULT_PAGE_DATA)
@@ -47,13 +50,13 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath }: Props) => {
   const fetchService = IS_ABSOLUTE_PATH.test(path) ? axios : resourcesService
 
   const getRelatedPages = (sourcePath: string): IEnablementAreaItem[] => {
-    const pageInfo = getFileInfo(path)
-
     switch (sourcePath) {
       case ApiEndpoints.GUIDES_PATH:
-        return getPagesInsideGroup(guides.items, pageInfo.location)
+        return getPagesInsideGroup(guides.items, manifestPath)
       case ApiEndpoints.TUTORIALS_PATH:
-        return getPagesInsideGroup(tutorials.items, pageInfo.location)
+        return getPagesInsideGroup(tutorials.items, manifestPath)
+      case ApiEndpoints.CUSTOM_TUTORIALS_PATH:
+        return getPagesInsideGroup(customTutorials.items, manifestPath)
       default:
         return []
     }
@@ -62,14 +65,16 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath }: Props) => {
   const loadContent = async () => {
     setLoading(true)
     setError('')
+
     const pageInfo = getFileInfo(path)
     const relatedPages = getRelatedPages(sourcePath)
     setPageData({ ...DEFAULT_PAGE_DATA, ...pageInfo, relatedPages })
+
     try {
       const formatter = FormatSelector.selectFor(pageInfo.extension)
       const { data, status } = await fetchService.get<string>(path)
       if (isStatusSuccessful(status)) {
-        dispatch(setWorkbenchEAItem(path))
+        dispatch(setWorkbenchEASearch(search))
         const contentData = await formatter.format(data, { history })
         setPageData((prevState) => ({ ...prevState, content: contentData }))
         setLoading(false)
@@ -77,7 +82,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath }: Props) => {
     } catch (error) {
       setLoading(false)
       const errorMessage: string = getApiErrorMessage(error)
-      dispatch(resetWorkbenchEAItem())
+      dispatch(resetWorkbenchEASearch())
       setError(errorMessage)
     }
   }

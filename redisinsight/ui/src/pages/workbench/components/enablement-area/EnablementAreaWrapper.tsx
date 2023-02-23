@@ -9,6 +9,7 @@ import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/compo
 import { IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { fetchGuides, workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { fetchTutorials, workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+import { fetchCustomTutorials, workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { Nullable, } from 'uiSrc/utils'
@@ -33,15 +34,14 @@ const EnablementAreaWrapper = (props: Props) => {
   const { isMinimized, scriptEl, setScript, isCodeBtnDisabled, onSubmit } = props
   const { loading: loadingGuides, items: guides } = useSelector(workbenchGuidesSelector)
   const { loading: loadingTutorials, items: tutorials } = useSelector(workbenchTutorialsSelector)
+  const { loading: loadingCustomTutorials, items: customTutorials } = useSelector(workbenchCustomTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(fetchGuides())
-  }, [])
-
-  useEffect(() => {
     dispatch(fetchTutorials())
+    dispatch(fetchCustomTutorials())
   }, [])
 
   const sendEventButtonClickedTelemetry = (data?: Record<string, any>) => {
@@ -110,7 +110,8 @@ const EnablementAreaWrapper = (props: Props) => {
         <EnablementArea
           guides={guides}
           tutorials={tutorials}
-          loading={loadingGuides || loadingTutorials}
+          customTutorials={customTutorials}
+          loading={loadingGuides || loadingTutorials || loadingCustomTutorials}
           openScript={openScript}
           onOpenInternalPage={onOpenInternalPage}
           isCodeBtnDisabled={isCodeBtnDisabled}

@@ -1,7 +1,7 @@
 @import '@elastic/eui/src/global_styling/index';
 
 .pagination {
-  padding: 12px 18px;
+  padding: 12px 16px;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -53,7 +53,7 @@
 }
 
 .pagesItem {
-  padding: 4px 18px !important;
+  padding: 4px 16px !important;
   background-color: transparent;
   text-decoration: none !important;
   font: normal normal normal 14px/30px Graphik, sans-serif;

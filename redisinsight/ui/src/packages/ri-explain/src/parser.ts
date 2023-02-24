@@ -9,6 +9,7 @@ enum TokenType {
 
   UNION = 'UNION',
   INTERSECT = 'INTERSECT',
+  FUZZY_EXPR = 'FUZZY_EXPR',
   GEO_EXPR = 'GEO_EXPR',
   TAG_EXPR = 'TAG_EXPR',
   NUMERIC = 'NUMERIC',
@@ -182,6 +183,8 @@ class Lexer {
           let tokenType = KEYWORDS[literal] || TokenType.IDENTIFIER
           if (literal.startsWith('TAG:')) {
             tokenType = TokenType.TAG_EXPR
+          } else if (literal === 'FUZZY') {
+            tokenType = TokenType.FUZZY_EXPR
           } else if (literal === 'GEO') {
             tokenType = TokenType.GEO_EXPR
           } else if (literal.startsWith('@') && literal.endsWith(':UNION')) {
@@ -212,6 +215,7 @@ export enum EntityType {
 
   // These are used exclusively in FT.PROFILE
   GEO = 'GEO',
+  FUZZY = 'FUZZY',
   TEXT = 'TEXT',
   TAG = 'TAG',
 
@@ -467,7 +471,9 @@ class Parser {
       } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
         Exprs.push(this.parseTagExpr())
       } else if (this.CurrentToken.T === TokenType.GEO_EXPR) {
-        Exprs.push(this.parseTagExpr())
+        Exprs.push(this.parseGeoExpr())
+      } else if (this.CurrentToken.T === TokenType.FUZZY_EXPR) {
+        Exprs.push(this.parseFuzzyExpr())
       }
 
       this.nextToken()
@@ -513,7 +519,9 @@ class Parser {
       } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
         Exprs.push(this.parseTagExpr())
       } else if (this.CurrentToken.T === TokenType.GEO_EXPR) {
-        Exprs.push(this.parseTagExpr())
+        Exprs.push(this.parseGeoExpr())
+      } else if (this.CurrentToken.T === TokenType.FUZZY_EXPR) {
+        Exprs.push(this.parseFuzzyExpr())
       }
 
       this.nextToken()
@@ -534,6 +542,28 @@ class Parser {
     }
 
     return new Expr(str, EntityType.TEXT)
+  }
+
+  parseFuzzyExpr() {
+    assertToken(TokenType.FUZZY_EXPR, this.CurrentToken.T)
+
+    this.nextToken()
+
+    assertToken(TokenType.LBRACE, this.CurrentToken.T)
+
+    this.nextToken()
+
+    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+
+    let identifierData = this.CurrentToken.Data;
+
+    this.nextToken()
+
+    assertToken(TokenType.RBRACE, this.CurrentToken?.T)
+
+    this.nextToken()
+
+    return new Expr(identifierData, EntityType.FUZZY)
   }
 
   parseGeoExpr() {
@@ -712,6 +742,8 @@ function Parse(data: string): SearchExpr {
     return p.parseTagExpr()
   } else if (p.CurrentToken.T === TokenType.GEO_EXPR) {
     return p.parseGeoExpr()
+  } else if (p.CurrentToken.T === TokenType.FUZZY_EXPR) {
+    return p.parseFuzzyExpr()
   } else {
     return p.parseExpr()
   }
@@ -793,7 +825,7 @@ export function ParseProfileCluster(info: any[]): [Object, EntityInfo] {
 
 export function ParseProfile(info: any[][]): EntityInfo {
   const parserData: any = info[info.length - 2]
-  let resp = ParseIteratorProfile(parserData[1])
+  let resp = parserData[0].toLowerCase().startsWith('iterators') ? ParseIteratorProfile(parserData[1]) : null
 
   const processorsProfile: string[][] = info[info.length - 1].slice(1)
 
@@ -805,11 +837,11 @@ export function ParseProfile(info: any[][]): EntityInfo {
       type: e[1] as EntityType,
       time: e[3],
       counter: e[5],
-      children: [{...resp, parentId: id}],
+      children: resp ? [{...resp, parentId: id}] : [],
     }
   }
 
-  return resp
+  return resp as EntityInfo
 }
 
 export function ParseIteratorProfile(data: any[]): EntityInfo {

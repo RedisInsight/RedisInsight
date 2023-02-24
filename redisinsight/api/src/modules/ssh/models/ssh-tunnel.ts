@@ -34,7 +34,6 @@ export class SshTunnel extends EventEmitter {
     this.client?.end?.();
     this.server?.removeAllListeners?.();
     this.client?.removeAllListeners?.();
-    this.emit('close');
     this.removeAllListeners();
   }
 

@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiResizableContainer } from '@elastic/eui'
+import {
+  EuiResizableContainer,
+} from '@elastic/eui'
 
 import {
   formatLongName,
@@ -38,6 +40,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import OnboardingStartPopover from 'uiSrc/pages/browser/components/onboarding-start-popover'
 import BrowserLeftPanel from './components/browser-left-panel'
 import BrowserRightPanel from './components/browser-right-panel'
 
@@ -168,11 +171,11 @@ const BrowserPage = () => {
       setSelectedKey(null)
     }
 
-    dispatch(fetchKeys(
+    dispatch(fetchKeys({
       searchMode,
-      '0',
-      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT
-    ))
+      cursor: '0',
+      count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT
+    }))
   }
 
   const selectKey = ({ rowData }: { rowData: any }) => {
@@ -256,6 +259,7 @@ const BrowserPage = () => {
             )}
           </EuiResizableContainer>
         </div>
+        <OnboardingStartPopover />
       </div>
     </div>
   )

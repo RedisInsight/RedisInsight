@@ -1,4 +1,4 @@
-import { t } from 'testcafe';
+import { Selector, t } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
 import {
     acceptLicenseTermsAndAddOSSClusterDatabase,
@@ -15,7 +15,7 @@ import {
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { deleteOSSClusterDatabaseApi, deleteAllSentinelDatabasesApi } from '../../../helpers/api/api-database';
+import { deleteOSSClusterDatabaseApi, deleteAllDatabasesByConnectionTypeApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
@@ -32,8 +32,9 @@ const verifyCommandsInCli = async(): Promise<void> => {
     await t.pressKey('enter');
     // Check that the key is added
     await browserPage.searchByKeyName(keyName);
-    const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-    await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
+    const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+    await common.waitForElementNotVisible(browserPage.loader);
+    await t.expect(keyNameInTheList.exists).ok(`${keyName} key is not added`);
 };
 
 fixture `Work with CLI in all types of databases`
@@ -92,7 +93,7 @@ test
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteAllSentinelDatabasesApi(ossSentinelConfig);
+        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     })('Verify that user can add data via CLI in Sentinel Primary Group', async() => {
         // Verify that database index switcher displayed for Sentinel
         await t.expect(databaseOverviewPage.changeIndexBtn.exists).ok('Change Db index control not displayed for Sentinel DB');

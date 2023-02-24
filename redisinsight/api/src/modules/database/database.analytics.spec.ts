@@ -102,6 +102,7 @@ describe('DatabaseAnalytics', () => {
           totalMemory: mockRedisGeneralInfo.usedMemory,
           numberedDatabases: mockRedisGeneralInfo.databases,
           numberOfModules: 0,
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
@@ -130,6 +131,7 @@ describe('DatabaseAnalytics', () => {
           totalMemory: mockRedisGeneralInfo.usedMemory,
           numberedDatabases: mockRedisGeneralInfo.databases,
           numberOfModules: 0,
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
@@ -160,6 +162,7 @@ describe('DatabaseAnalytics', () => {
           totalMemory: undefined,
           numberedDatabases: undefined,
           numberOfModules: 2,
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           ...DEFAULT_REDIS_MODULES_SUMMARY,
           RediSearch: {
             loaded: true,
@@ -195,6 +198,7 @@ describe('DatabaseAnalytics', () => {
           useTLSAuthClients: 'disabled',
           useSNI: 'enabled',
           useSSH: 'disabled',
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
@@ -229,6 +233,7 @@ describe('DatabaseAnalytics', () => {
           useTLSAuthClients: 'enabled',
           useSNI: 'enabled',
           useSSH: 'disabled',
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,

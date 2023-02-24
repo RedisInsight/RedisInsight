@@ -11,6 +11,14 @@ import ClusterDetailsPage from './ClusterDetailsPage'
 
 let store: typeof mockedStore
 
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: '123',
+    connectionType: 'CLUSTER',
+  }),
+}))
+
 /**
  * ClusterDetailsPage tests
  *

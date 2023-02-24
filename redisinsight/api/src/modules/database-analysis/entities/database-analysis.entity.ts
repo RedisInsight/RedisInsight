@@ -119,6 +119,11 @@ export class DatabaseAnalysisEntity {
   @Column({ nullable: true })
   encryption: string;
 
+  @Column({ nullable: true, type: 'blob' })
+  @DataAsJsonString()
+  @Expose()
+  recommendations: string;
+
   @Column({ nullable: true })
   @Expose()
   @IsInt()

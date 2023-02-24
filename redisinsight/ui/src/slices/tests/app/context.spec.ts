@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import { DEFAULT_DELIMITER, KeyTypes } from 'uiSrc/constants'
-import { getTreeLeafField } from 'uiSrc/utils'
+import { getTreeLeafField, stringToBuffer } from 'uiSrc/utils'
 
 import {
   cleanup,
@@ -74,25 +74,31 @@ describe('slices', () => {
         browser: {
           ...initialState.browser,
           keyList: {
+            ...initialState.browser.keyList,
             isDataLoaded: true,
             scrollTopPosition: 100,
-            selectedKey: 'some key'
+            selectedKey: stringToBuffer('some key'),
           },
           tree: {
+            ...initialState.browser.tree,
             delimiter: '-',
           },
           bulkActions: {
+            ...initialState.browser.bulkActions,
             opened: true,
           },
         },
         workbench: {
+          ...initialState.workbench,
           script: '123123',
         },
         pubsub: {
+          ...initialState.pubsub,
           channel: '123123',
           message: '123123'
         },
         analytics: {
+          ...initialState.analytics,
           lastViewedPage: 'zxczxc'
         }
       }
@@ -185,7 +191,7 @@ describe('slices', () => {
   describe('setBrowserSelectedKey', () => {
     it('should properly set selectedKey', () => {
       // Arrange
-      const selectedKey = 'nameOfKey'
+      const selectedKey = stringToBuffer('nameOfKey')
       const state = {
         ...initialState.browser,
         keyList: {
@@ -337,6 +343,7 @@ describe('slices', () => {
         workbench: {
           ...initialState.workbench,
           enablementArea: {
+            ...initialState.workbench.enablementArea,
             itemPath: 'static/enablement-area/guides/guide1.html',
             itemScrollTop: 200,
           }
@@ -389,6 +396,7 @@ describe('slices', () => {
         workbench: {
           ...initialState.workbench,
           enablementArea: {
+            ...initialState.workbench.enablementArea,
             itemPath: 'static/enablement-area/guides/guide1.html',
             itemScrollTop: 200,
           }

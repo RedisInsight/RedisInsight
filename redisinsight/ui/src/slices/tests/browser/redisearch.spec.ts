@@ -6,8 +6,11 @@ import { cleanup, initialStateDefault, mockedStore, mockStore } from 'uiSrc/util
 import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import { stringToBuffer, UTF8ToBuffer } from 'uiSrc/utils'
 import { REDISEARCH_LIST_DATA_MOCK } from 'uiSrc/mocks/handlers/browser/redisearchHandlers'
-import { SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { fetchKeys, fetchMoreKeys } from 'uiSrc/slices/browser/keys'
+import { SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import {
+  fetchKeys,
+  fetchMoreKeys,
+} from 'uiSrc/slices/browser/keys'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import reducer, {
@@ -36,6 +39,14 @@ import reducer, {
   deleteRedisearchKeyFromList,
   editRedisearchKeyFromList,
   editRedisearchKeyTTLFromList,
+  loadRediSearchHistory,
+  loadRediSearchHistorySuccess,
+  loadRediSearchHistoryFailure,
+  deleteRediSearchHistory,
+  deleteRediSearchHistorySuccess,
+  deleteRediSearchHistoryFailure,
+  fetchRedisearchHistoryAction,
+  deleteRedisearchHistoryAction,
 } from '../../browser/redisearch'
 
 let store: typeof mockedStore
@@ -747,6 +758,158 @@ describe('redisearch slice', () => {
     })
   })
 
+  describe('loadRediSearchHistory', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        searchHistory: {
+          ...initialState.searchHistory,
+          loading: true
+        }
+      }
+
+      // Act
+      const nextState = reducer(state, loadRediSearchHistory())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadRediSearchHistorySuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const data: SearchHistoryItem[] = [
+        { id: '1', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } }
+      ]
+      const state = {
+        ...initialState,
+        searchHistory: {
+          ...initialState.searchHistory,
+          loading: false,
+          data
+        }
+      }
+
+      // Act
+      const nextState = reducer(state, loadRediSearchHistorySuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('loadRediSearchHistoryFailure', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        searchHistory: {
+          ...initialState.searchHistory,
+          loading: false
+        }
+      }
+
+      // Act
+      const nextState = reducer(state, loadRediSearchHistoryFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteRediSearchHistory', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        searchHistory: {
+          ...initialState.searchHistory,
+          loading: true
+        }
+      }
+
+      // Act
+      const nextState = reducer(state, deleteRediSearchHistory())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteRediSearchHistorySuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const data: SearchHistoryItem[] = [
+        { id: '1', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } },
+        { id: '2', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } },
+      ]
+      const currentState = {
+        ...initialState,
+        searchHistory: {
+          ...initialState.searchHistory,
+          loading: false,
+          data
+        }
+      }
+
+      const state = {
+        ...initialState,
+        searchHistory: {
+          ...initialState.searchHistory,
+          loading: false,
+          data: [
+            { id: '1', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } },
+          ]
+        }
+      }
+
+      // Act
+      const nextState = reducer(currentState, deleteRediSearchHistorySuccess(['2']))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteRediSearchHistoryFailure', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        searchHistory: {
+          ...initialState.searchHistory,
+          loading: false
+        }
+      }
+
+      // Act
+      const nextState = reducer(state, deleteRediSearchHistoryFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { redisearch: nextState },
+      })
+      expect(redisearchSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchRedisearchListAction', () => {
       it('call both fetchRedisearchListAction, loadListSuccess when fetch is successed', async () => {
@@ -816,7 +979,7 @@ describe('redisearch slice', () => {
         })
 
         // Act
-        await newStore.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
+        await newStore.dispatch<any>(fetchKeys({ searchMode: SearchMode.Redisearch, cursor: '0', count: 20 }))
 
         // Assert
         const expectedActions = [
@@ -851,7 +1014,7 @@ describe('redisearch slice', () => {
         })
 
         // Act
-        await newStore.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
+        await newStore.dispatch<any>(fetchKeys({ searchMode: SearchMode.Redisearch, cursor: '0', count: 20 }))
 
         // Assert
         const expectedActions = [
@@ -887,7 +1050,7 @@ describe('redisearch slice', () => {
         })
 
         // Act
-        await newStore.dispatch<any>(fetchKeys(SearchMode.Redisearch, '0', 20))
+        await newStore.dispatch<any>(fetchKeys({ searchMode: SearchMode.Redisearch, cursor: '0', count: 20 }))
 
         // Assert
         const expectedActions = [
@@ -1019,6 +1182,93 @@ describe('redisearch slice', () => {
           createIndex(),
           addErrorNotification(responsePayload as AxiosError),
           createIndexFailure(errorMessage),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchRedisearchHistoryAction', () => {
+      it('success fetch history', async () => {
+        // Arrange
+        const data: SearchHistoryItem[] = [
+          { id: '1', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } },
+          { id: '2', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } },
+        ]
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchRedisearchHistoryAction())
+
+        // Assert
+        const expectedActions = [
+          loadRediSearchHistory(),
+          loadRediSearchHistorySuccess(data),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+      it('failed to load history', async () => {
+        // Arrange
+        const errorMessage = 'some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchRedisearchHistoryAction())
+
+        // Assert
+        const expectedActions = [
+          loadRediSearchHistory(),
+          loadRediSearchHistoryFailure(),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('deleteRedisearchHistoryAction', () => {
+      it('success delete history', async () => {
+        // Arrange
+        const responsePayload = { status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(deleteRedisearchHistoryAction(['1']))
+
+        // Assert
+        const expectedActions = [
+          deleteRediSearchHistory(),
+          deleteRediSearchHistorySuccess(['1']),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to delete history', async () => {
+        // Arrange
+        const errorMessage = 'some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(deleteRedisearchHistoryAction(['1']))
+
+        // Assert
+        const expectedActions = [
+          deleteRediSearchHistory(),
+          deleteRediSearchHistoryFailure(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

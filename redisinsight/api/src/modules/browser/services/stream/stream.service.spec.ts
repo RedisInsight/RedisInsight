@@ -356,4 +356,63 @@ describe('StreamService', () => {
       }
     });
   });
+  describe('deleteEntries', () => {
+    const mockEntriesIds = mockStreamEntries.map(({ id}) => (id))
+    beforeEach(() => {
+      when(browserTool.execCommand)
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
+        .mockResolvedValue(true);
+      when(browserTool.execCommand)
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoStream, expect.anything())
+        .mockResolvedValue(mockStreamInfoReply);
+      when(browserTool.execCommand)
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XRevRange, expect.anything())
+        .mockResolvedValue(mockStreamEntriesReply);
+      when(browserTool.execCommand)
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XRange, expect.anything())
+        .mockResolvedValue(mockStreamEntriesReply);
+      when(browserTool.execCommand)
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XDel, expect.anything())
+        .mockResolvedValue(mockStreamEntries.length);
+    });
+    it('delete entries', async () => {
+
+      const result = await service.deleteEntries(mockBrowserClientMetadata, {
+        keyName: mockAddStreamEntriesDto.keyName,
+        entries: mockEntriesIds,
+      });
+      expect(result).toEqual({affected: mockStreamEntries.length});
+    });
+    it('should throw Not Found when key does not exists', async () => {
+      when(browserTool.execCommand)
+        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+        .mockResolvedValueOnce(false);
+
+      try {
+        await service.deleteEntries(mockBrowserClientMetadata, {
+          keyName: mockAddStreamEntriesDto.keyName,
+          entries: mockEntriesIds,
+        });
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+        expect(e.message).toEqual(ERROR_MESSAGES.KEY_NOT_EXIST);
+      }
+    });
+    it('should throw Wrong Type error', async () => {
+      when(browserTool.execCommand)
+        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoStream, [mockAddStreamEntriesDto.keyName])
+        .mockRejectedValueOnce(new Error(RedisErrorCodes.WrongType));
+
+      try {
+        await service.getEntries(mockBrowserClientMetadata, {
+          ...mockAddStreamEntriesDto,
+        });
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual(RedisErrorCodes.WrongType);
+      }
+    });
+  });
 });

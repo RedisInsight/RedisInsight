@@ -2,7 +2,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem, KeyTypes, KeyValueFormat, SortOrder } from 'uiSrc/constants'
+import {
+  ApiEndpoints,
+  BrowserStorageItem,
+  KeyTypes,
+  KeyValueFormat,
+  EndpointBasedOnKeyType,
+  ENDPOINT_BASED_ON_KEY_TYPE,
+  SearchHistoryMode,
+  SortOrder
+} from 'uiSrc/constants'
 import {
   getApiErrorMessage,
   isStatusNotFoundError,
@@ -19,6 +28,7 @@ import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
 
 import {
   CreateListWithExpireDto,
@@ -39,17 +49,19 @@ import { setHashInitialState, fetchHashFields } from './hash'
 import { setListInitialState, fetchListElements } from './list'
 import { fetchStreamEntries, setStreamInitialState } from './stream'
 import {
+  deleteRedisearchHistoryAction,
   deleteRedisearchKeyFromList,
   editRedisearchKeyFromList,
   editRedisearchKeyTTLFromList,
   fetchMoreRedisearchKeysAction,
+  fetchRedisearchHistoryAction,
   fetchRedisearchKeysAction,
   resetRedisearchKeysData,
   setLastBatchRedisearchKeys,
   setQueryRedisearch,
 } from './redisearch'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
-import { KeysStore, KeyViewType, SearchMode } from '../interfaces/keys'
+import { KeysStore, KeyViewType, SearchHistoryItem, SearchMode } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'
 import { StreamViewType } from '../interfaces/stream'
 import { RedisResponseBuffer, RedisString } from '../interfaces'
@@ -88,6 +100,10 @@ export const initialState: KeysStore = {
     loading: false,
     error: '',
   },
+  searchHistory: {
+    data: null,
+    loading: false
+  }
 }
 
 export const initialKeyInfo = {
@@ -291,6 +307,16 @@ const keysSlice = createSlice({
       state.addKey = {
         ...state.addKey,
         loading: false,
+        error: '',
+      }
+    },
+    updateKeyList: (state, { payload }) => {
+      state.data?.keys.unshift({ name: payload.keyName })
+
+      state.data = {
+        ...state.data,
+        total: state.data.total + 1,
+        scanned: state.data.scanned + 1,
       }
     },
     addKeyFailure: (state, { payload }) => {
@@ -352,7 +378,29 @@ const keysSlice = createSlice({
     setViewFormat: (state, { payload }: PayloadAction<KeyValueFormat>) => {
       state.selectedKey.viewFormat = payload
       localStorageService?.set(BrowserStorageItem.viewFormat, payload)
-    }
+    },
+    loadSearchHistory: (state) => {
+      state.searchHistory.loading = true
+    },
+    loadSearchHistorySuccess: (state, { payload }: PayloadAction<SearchHistoryItem[]>) => {
+      state.searchHistory.loading = false
+      state.searchHistory.data = payload
+    },
+    loadSearchHistoryFailure: (state) => {
+      state.searchHistory.loading = false
+    },
+    deleteSearchHistory: (state) => {
+      state.searchHistory.loading = true
+    },
+    deleteSearchHistorySuccess: (state, { payload }: { payload: string[] }) => {
+      state.searchHistory.loading = false
+      if (state.searchHistory.data) {
+        remove(state.searchHistory.data, (item) => payload.includes(item.id))
+      }
+    },
+    deleteSearchHistoryFailure: (state) => {
+      state.searchHistory.loading = false
+    },
   },
 })
 
@@ -374,8 +422,9 @@ export const {
   defaultSelectedKeyActionFailure,
   setLastBatchPatternKeys,
   addKey,
-  addKeySuccess,
+  updateKeyList,
   addKeyFailure,
+  addKeySuccess,
   resetAddKey,
   deleteKey,
   deleteKeySuccess,
@@ -393,6 +442,12 @@ export const {
   toggleBrowserFullScreen,
   setViewFormat,
   changeSearchMode,
+  loadSearchHistory,
+  loadSearchHistorySuccess,
+  loadSearchHistoryFailure,
+  deleteSearchHistory,
+  deleteSearchHistorySuccess,
+  deleteSearchHistoryFailure
 } = keysSlice.actions
 
 // A selector
@@ -401,6 +456,7 @@ export const keysDataSelector = (state: RootState) => state.browser.keys.data
 export const selectedKeySelector = (state: RootState) => state.browser.keys?.selectedKey
 export const selectedKeyDataSelector = (state: RootState) => state.browser.keys?.selectedKey?.data
 export const addKeyStateSelector = (state: RootState) => state.browser.keys?.addKey
+export const keysSearchHistorySelector = (state: RootState) => state.browser.keys.searchHistory
 
 // The reducer
 export default keysSlice.reducer
@@ -425,7 +481,13 @@ export function setInitialStateByType(type: string) {
   }
 }
 // Asynchronous thunk action
-export function fetchPatternKeysAction(cursor: string, count: number, onSuccess?: () => void, onFailed?: () => void) {
+export function fetchPatternKeysAction(
+  cursor: string,
+  count: number,
+  telemetryProperties: { [key: string]: any } = {},
+  onSuccess?: () => void,
+  onFailed?: () => void
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadKeys())
 
@@ -480,6 +542,8 @@ export function fetchPatternKeysAction(cursor: string, count: number, onSuccess?
               databaseSize: data[0].total,
               numberOfKeysScanned: data[0].scanned,
               scanCount: count,
+              source: telemetryProperties.source ?? 'manual',
+              ...telemetryProperties,
             }
           })
         }
@@ -665,12 +729,14 @@ export function refreshKeyInfoAction(key: RedisResponseBuffer) {
 
 function addTypedKey(
   data: any,
-  endpoint: ApiEndpoints,
+  keyType: KeyTypes,
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(addKey())
+    const endpoint = ENDPOINT_BASED_ON_KEY_TYPE[keyType as EndpointBasedOnKeyType]
+
     try {
       const state = stateInit()
       const { encoding } = state.app.info
@@ -685,6 +751,7 @@ function addTypedKey(
           onSuccessAction()
         }
         dispatch(addKeySuccess())
+        dispatch<any>(addKeyIntoList({ key: data.keyName, keyType }))
         dispatch(
           addMessageNotification(successMessages.ADDED_NEW_KEY(data.keyName))
         )
@@ -717,8 +784,7 @@ export function addHashKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.HASH
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.Hash, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -727,8 +793,7 @@ export function addZsetKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.ZSET
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.ZSet, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -737,8 +802,7 @@ export function addSetKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.SET
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.Set, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -747,8 +811,7 @@ export function addStringKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.STRING
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.String, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -757,8 +820,7 @@ export function addListKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.LIST
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.List, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -767,8 +829,7 @@ export function addReJSONKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.REJSON
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.ReJSON, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -777,8 +838,7 @@ export function addStreamKey(
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  const endpoint = ApiEndpoints.STREAMS
-  return addTypedKey(data, endpoint, onSuccessAction, onFailAction)
+  return addTypedKey(data, KeyTypes.Stream, onSuccessAction, onFailAction)
 }
 
 // Asynchronous thunk action
@@ -936,21 +996,114 @@ export function fetchKeysMetadata(
   }
 }
 
+export function fetchPatternHistoryAction(
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadSearchHistory())
+
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.get<SearchHistoryItem[]>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.HISTORY
+        ),
+        {
+          params: {
+            mode: SearchHistoryMode.Pattern
+          }
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(loadSearchHistorySuccess(data))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      dispatch(loadSearchHistoryFailure())
+      onFailed?.()
+    }
+  }
+}
+
+export function deletePatternHistoryAction(
+  ids: string[],
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(deleteSearchHistory())
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.delete(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.HISTORY
+        ),
+        {
+          data: {
+            ids
+          },
+          params: {
+            mode: SearchHistoryMode.Pattern
+          }
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(deleteSearchHistorySuccess(ids))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      dispatch(deleteSearchHistoryFailure())
+      onFailed?.()
+    }
+  }
+}
+
+export function fetchSearchHistoryAction(
+  searchMode: SearchMode,
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch) => (searchMode === SearchMode.Pattern
+    ? dispatch<any>(fetchPatternHistoryAction(onSuccess, onFailed))
+    : dispatch<any>(fetchRedisearchHistoryAction(onSuccess, onFailed)))
+}
+
+export function deleteSearchHistoryAction(
+  searchMode: SearchMode,
+  ids: string[],
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch) => (searchMode === SearchMode.Pattern
+    ? dispatch<any>(deletePatternHistoryAction(ids, onSuccess, onFailed))
+    : dispatch<any>(deleteRedisearchHistoryAction(ids, onSuccess, onFailed)))
+}
+
 // Asynchronous thunk action
 export function fetchKeys(
-  searchMode: SearchMode,
-  cursor: string,
-  count: number,
+  options: {
+    searchMode: SearchMode,
+    cursor: string,
+    count: number,
+    telemetryProperties?: {},
+  },
   onSuccess?: () => void,
   onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const isRedisearchExists = isRedisearchAvailable(state.connections.instances.connectedInstance.modules)
+    const { searchMode, count, cursor, telemetryProperties } = options
 
     return searchMode === SearchMode.Pattern || !isRedisearchExists
-      ? dispatch<any>(fetchPatternKeysAction(cursor, count, onSuccess, onFailed))
-      : dispatch<any>(fetchRedisearchKeysAction(cursor, count, onSuccess, onFailed))
+      ? dispatch<any>(fetchPatternKeysAction(cursor, count, telemetryProperties, onSuccess, onFailed))
+      : dispatch<any>(fetchRedisearchKeysAction(cursor, count, telemetryProperties, onSuccess, onFailed))
   }
 }
 
@@ -1001,6 +1154,25 @@ export function editKeyFromList(data: { key: RedisResponseBuffer, newKey: RedisR
     return state.browser.keys?.searchMode === SearchMode.Pattern
       ? dispatch(editPatternKeyFromList(data))
       : dispatch(editRedisearchKeyFromList(data))
+  }
+}
+
+export function addKeyIntoList({ key, keyType }: { key: RedisString, keyType: KeyTypes }) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const { viewType, filter, search } = state.browser.keys
+
+    if (search && search !== '*') {
+      return null
+    }
+
+    if (!filter || filter === keyType) {
+      if (viewType !== KeyViewType.Tree) {
+        dispatch(resetBrowserTree())
+      }
+      return dispatch(updateKeyList({ keyName: key, keyType }))
+    }
+    return null
   }
 }
 

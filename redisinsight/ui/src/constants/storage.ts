@@ -23,6 +23,7 @@ enum BrowserStorageItem {
   keyDetailSizes = 'keyDetailSizes',
   featuresHighlighting = 'featuresHighlighting',
   dbIndex = 'dbIndex_',
+  onboardingStep = 'onboardingStep'
 }
 
 export default BrowserStorageItem

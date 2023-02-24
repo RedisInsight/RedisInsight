@@ -87,6 +87,7 @@ export class WorkbenchPage {
     //TEXT ELEMENTS
     queryPluginResult = Selector('[data-testid=query-plugin-result]');
     responseInfo = Selector('[class="responseInfo"]');
+    parsedRedisReply = Selector('[class="parsedRedisReply"]');
     scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
     queryCardContainer = Selector('[data-testid^=query-card-container]');
     queryCardCommand = Selector('[data-testid=query-card-command]');
@@ -140,7 +141,9 @@ export class WorkbenchPage {
     textViewTypeOption = Selector('[data-test-subj^=view-type-option-Text]');
     tableViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin]');
     graphViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin-graph]');
-
+    typeSelectedClientsList = Selector('[data-testid=view-type-selected-Plugin-client-list__clients-list]');
+    viewTypeOptionClientList = Selector('[data-test-subj=view-type-option-Plugin-client-list__clients-list]');
+    viewTypeOptionsText = Selector('[data-test-subj=view-type-option-Text-default__Text]');
     /**
      * Get card container by command
      * @param command The command

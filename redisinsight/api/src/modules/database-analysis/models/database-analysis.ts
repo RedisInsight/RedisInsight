@@ -7,6 +7,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
 import { AnalysisProgress } from 'src/modules/database-analysis/models/analysis-progress';
 import { SumGroup } from 'src/modules/database-analysis/models/sum-group';
+import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 
 export class DatabaseAnalysis {
   @ApiProperty({
@@ -115,6 +116,15 @@ export class DatabaseAnalysis {
   @Expose()
   @Type(() => SumGroup)
   expirationGroups: SumGroup[];
+
+  @ApiProperty({
+    description: 'Recommendations',
+    isArray: true,
+    type: () => Recommendation,
+  })
+  @Expose()
+  @Type(() => Recommendation)
+  recommendations: Recommendation[];
 
   @ApiPropertyOptional({
     description: 'Logical database number.',

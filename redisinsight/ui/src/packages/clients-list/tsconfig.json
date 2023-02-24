@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    /* Specify ECMAScript target version */
+    "target": "es5",
+    /* Specify module code generation */
+    "module": "esnext",
+    /* Specify library files to be included in the compilation. */
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    /* Specify JSX code generation */
+    "jsx": "react",
+    /* Generate corresponding .map files */
+    "sourceMap": true,
+    /* Enable all strict type-checking options */
+    "strict": true,
+    /* Specify module resolution strategy */
+    "moduleResolution": "node",
+    /* Base directory to resolve non-absolute module names */
+    "baseUrl": "./src",
+    /* Maps imports to locations - e.g. ~models will go to ./src/models */
+    "paths": {
+      "~/*": [ "./*" ]
+    },
+    /* List of folders to include type definitions from */
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    /* allow import React instead of import * as React */
+    "allowSyntheticDefaultImports": true,
+    /*  Emit interop between CommonJS and ES modules */
+    "esModuleInterop": true,
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

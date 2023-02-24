@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { EuiFlexItem, EuiIcon, EuiLoadingContent, EuiTextColor } from '@elastic/eui'
 import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
+import { getBaseApiUrl, Nullable, formatToText } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
 import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { PluginEvents } from 'uiSrc/plugins/pluginEvents'
@@ -156,6 +156,28 @@ const QueryCardCliPlugin = (props: Props) => {
     )
   }
 
+  const formatRedisResponse = (
+    { requestId, data }: { requestId: string, data: { response: any, command: string } }
+  ) => {
+    try {
+      const reply = formatToText(data?.response || '(nil)', data.command)
+
+      sendMessageToPlugin({
+        event: PluginEvents.formatRedisReply,
+        requestId,
+        actionType: ActionTypes.Resolve,
+        data: reply
+      })
+    } catch (e) {
+      sendMessageToPlugin({
+        event: PluginEvents.formatRedisReply,
+        requestId,
+        actionType: ActionTypes.Reject,
+        data: e
+      })
+    }
+  }
+
   useEffect(() => {
     if (currentView === null) return
     pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.heightChanged, (height: string) => {
@@ -183,6 +205,7 @@ const QueryCardCliPlugin = (props: Props) => {
     pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.executeRedisCommand, sendRedisCommand)
     pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.getState, getPluginState)
     pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.setState, setPluginState)
+    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.formatRedisReply, formatRedisResponse)
   }, [currentView])
 
   const renderPluginIframe = (config: any) => {

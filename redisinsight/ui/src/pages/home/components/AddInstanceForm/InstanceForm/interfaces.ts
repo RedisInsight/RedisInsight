@@ -17,6 +17,7 @@ export interface DbConnectionInfo extends Instance {
   newCaCert?: string
   username?: string
   password?: string
+  timeout?: string
   showDb?: boolean
   sni?: boolean
   sentinelMasterUsername?: string

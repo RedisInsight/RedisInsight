@@ -1,0 +1,11 @@
+version: "3.4"
+
+services:
+  # openvpn server to reach private network from the host
+  openvpn:
+    extends:
+      file: ./rte/openvpn/docker-compose.yml
+      service: openvpn
+    networks:
+      default:
+        ipv4_address: 172.31.100.247

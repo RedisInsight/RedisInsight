@@ -24,6 +24,7 @@ import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
+import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP, MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP } from '../constants'
 
 const suffix = '_stream'
 const actionsWidth = 50
@@ -249,13 +250,17 @@ const StreamDataViewWrapper = (props: Props) => {
     render: function Id({ id }: StreamEntryDto) {
       const idStr = bufferToString(id, viewFormat)
       const timestamp = idStr.split('-')?.[0]
+      const formattedTimestamp = timestamp.length > MAX_FORMAT_LENGTH_STREAM_TIMESTAMP ? '-' : getFormatTime(timestamp)
+
       return (
         <div>
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
-              {getFormatTime(timestamp)}
-            </div>
-          </EuiText>
+          {id.length < MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP && (
+            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+              <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
+                {formattedTimestamp}
+              </div>
+            </EuiText>
+          )}
           <EuiText size="s" style={{ maxWidth: '100%' }}>
             <div className="streamItemId" data-testid={`stream-entry-${id}`}>
               {id}

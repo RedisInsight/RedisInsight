@@ -4,7 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { RedisErrorCodes } from 'src/constants';
+import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
 import { catchAclError } from 'src/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
@@ -27,10 +27,11 @@ import {
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { Scanner } from 'src/modules/browser/services/keys-business/scanner/scanner';
-import { RedisString } from 'src/common/constants';
+import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { pick } from 'lodash';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
 import { KeyInfoManager } from './key-info-manager/key-info-manager';
@@ -48,6 +49,8 @@ import {
 } from './key-info-manager/strategies/rejson-rl-type-info/rejson-rl-type-info.strategy';
 import { TSTypeInfoStrategy } from './key-info-manager/strategies/ts-type-info/ts-type-info.strategy';
 import { GraphTypeInfoStrategy } from './key-info-manager/strategies/graph-type-info/graph-type-info.strategy';
+import { BrowserHistoryService } from '../browser-history/browser-history.service';
+import { CreateBrowserHistoryDto } from '../../dto/browser-history/create.browser-history.dto';
 
 @Injectable()
 export class KeysBusinessService {
@@ -60,6 +63,7 @@ export class KeysBusinessService {
   constructor(
     private readonly databaseService: DatabaseService,
     private browserTool: BrowserToolService,
+    private browserHistory: BrowserHistoryService,
     private browserToolCluster: BrowserToolClusterService,
     private settingsService: SettingsService,
   ) {
@@ -129,6 +133,17 @@ export class KeysBusinessService {
       );
       const scanner = this.scanner.getStrategy(databaseInstance.connectionType);
       const result = await scanner.getKeys(clientMetadata, dto);
+
+      // Do not save default match "*"
+      if (dto.match !== DEFAULT_MATCH) {
+        await this.browserHistory.create(
+          clientMetadata,
+          plainToClass(
+            CreateBrowserHistoryDto,
+            { filter: pick(dto, 'type', 'match'), mode: BrowserHistoryMode.Pattern },
+          ),
+        );
+      }
 
       return result.map((nodeResult) => plainToClass(GetKeysWithDetailsResponse, nodeResult));
     } catch (error) {

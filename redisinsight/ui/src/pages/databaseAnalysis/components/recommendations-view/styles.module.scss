@@ -1,0 +1,140 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+.wrapper {
+  height: 100%;
+
+  .badgesLegend {
+    margin: 0 22px 14px 0 !important;
+    padding-top: 20px;
+
+    .badgeWrapper {
+      margin-right: 0;
+    }
+  
+    .badge {
+      margin: 0 0 0 24px;
+    }
+
+    .badgeIcon {
+      margin-right: 14px;
+    }
+  }
+  
+  .badgeIcon {
+    fill: var(--badgeIconColor);
+  }
+  
+  .badgeWrapper {
+    display: flex;
+    align-items: center;
+    margin-right: 24px;
+  }
+}
+
+.recommendationsContainer {
+  @include euiScrollBar;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100% - 51px);
+
+  .accordionButton :global(.euiFlexItem) {
+    margin: 0;
+
+    .redisStackLink {
+      margin-right: 16px;
+      animation: none !important;
+    }
+  
+    .redisStackIcon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  :global(.euiAccordion__buttonReverse .euiAccordion__iconWrapper) {
+    margin-left: 0;
+  }
+
+  :global(.euiFlexGroup--gutterLarge) {
+    margin: 0;
+  }
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding-bottom: 162px;
+
+  .noRecommendationsIcon {
+    width: 154px;
+    height: 127px;
+  }
+}
+
+.bigText {
+  font: normal normal 600 18px/22px Graphik, sans-serif !important;
+  margin: 16px 0 12px;
+}
+
+.loadingWrapper {
+  width: 100%;
+  height: 129px;
+  margin-top: 30px;
+  background-color: var(--euiColorLightestShade);
+  border-radius: 4px;
+}
+
+.recommendation {
+  border-radius: 8px;
+  border: 1px solid var(--recommendationBorderColor);
+  background-color: var(--euiColorLightestShade);
+  margin-bottom: 6px;
+  padding: 30px 18px 11px;
+
+  ul {
+    list-style: initial;
+    padding-left: 21px;
+
+    li::marker {
+      color: var(--euiTextSubduedColor);
+    }
+  }
+
+  .accordionContent {
+    padding: 18px 0 0 !important;
+  }
+
+  :global(.euiAccordion__triggerWrapper) {
+    background-color: transparent;
+  }
+
+  :global(.euiPanel.euiPanel--subdued) {
+    background-color: transparent;
+  }
+
+  :global(.euiAccordion.euiAccordion-isOpen .euiAccordion__triggerWrapper) {
+    border-bottom: none;
+  }
+
+  :global(.euiIEFlexWrapFix) {
+    display: block;
+    width: 100%;
+  }
+
+  .accordionBtn {
+    font: normal normal 500 16px/19px Graphik, sans-serif;
+  }
+
+  .text {
+    font: normal normal normal 14px/24px Graphik, sans-serif;
+  }
+
+  .span {
+    display: inline;
+  }
+}

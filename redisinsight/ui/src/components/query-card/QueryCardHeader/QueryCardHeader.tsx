@@ -110,7 +110,6 @@ const QueryCardHeader = (props: Props) => {
     setSelectedValue,
     onQueryDelete,
     onQueryReRun,
-    onQueryProfile,
     db,
   } = props
 
@@ -131,8 +130,6 @@ const QueryCardHeader = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         command: getCommandNameFromQuery(query, COMMANDS_SPEC),
-        rawMode: isRawMode(activeMode),
-        group: isGroupMode(activeResultsMode),
         ...additionalData
       }
     })
@@ -141,7 +138,7 @@ const QueryCardHeader = (props: Props) => {
   const handleCopy = (event: React.MouseEvent, query: string) => {
     sendEvent(TelemetryEvent.WORKBENCH_COMMAND_COPIED, query)
     eventStop(event)
-    navigator.clipboard.writeText(query)
+    navigator.clipboard?.writeText?.(query)
   }
 
   const onDropDownViewClick = (event: React.MouseEvent) => {
@@ -158,6 +155,8 @@ const QueryCardHeader = (props: Props) => {
       TelemetryEvent.WORKBENCH_RESULT_VIEW_CHANGED,
       query,
       {
+        rawMode: isRawMode(activeMode),
+        group: isGroupMode(activeResultsMode),
         previousView: previousView.name,
         isPreviousViewInternal: !!previousView?.internal,
         currentView: currentView.name,

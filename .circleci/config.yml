@@ -519,7 +519,8 @@ jobs:
             runtime/org.freedesktop.Platform/x86_64/20.08 \
             org.electronjs.Electron2.BaseApp/x86_64/20.08
 
-            yarn --cwd redisinsight/api/ install
+            yarn --cwd redisinsight/api/ install --ignore-optional
+            yarn --cwd redisinsight/ install --ignore-optional
             yarn install
             yarn build:statics
           no_output_timeout: 15m
@@ -724,8 +725,11 @@ jobs:
           name: publish
           command: |
             rm release/._* ||:
+            chmod +x .circleci/redisstack/sum_sha256.sh
+            .circleci/redisstack/sum_sha256.sh
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
-            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive --exclude "*.json"
+
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive
 
   release-aws-private:
     executor: linux-executor
@@ -743,9 +747,11 @@ jobs:
       - run:
           name: publish
           command: |
+            chmod +x .circleci/redisstack/sum_sha256.sh
+            .circleci/redisstack/sum_sha256.sh
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
-            aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive --exclude "*.json"
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive
 
   publish-prod-aws:
     executor: linux-executor

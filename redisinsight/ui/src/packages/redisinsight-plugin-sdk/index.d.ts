@@ -21,3 +21,10 @@ export function setState<State>(state?: State): Promise<State>
  *
  */
 export function getState(): Promise<any>
+
+/**
+ * Parse Redis response
+ * Returns string with parsed cli-like response
+ *
+ */
+export function formatRedisReply(response: any, command?: string): Promise<string>

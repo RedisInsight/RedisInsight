@@ -113,7 +113,7 @@ const getClient = async (
 
   // check for sentinel
   try {
-    const masterGroups = await standaloneClient.call('sentinel', ['masters']);
+    const masterGroups = await standaloneClient.call('sentinel', ['masters']) as [];
     if (!masterGroups?.length) {
       throw new Error('Invalid sentinel configuration')
     }

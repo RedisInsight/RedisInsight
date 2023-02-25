@@ -2,13 +2,15 @@ import {
   EuiButton,
   EuiCollapsibleNavGroup,
   EuiForm,
+  EuiFlexGroup,
+  EuiFlexItem,
   EuiSpacer,
   EuiToolTip,
   keys,
 } from '@elastic/eui'
 
 import { FormikErrors, useFormik } from 'formik'
-import { isEmpty, pick } from 'lodash'
+import { isEmpty, pick, toString } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -36,7 +38,8 @@ import {
   NO_CA_CERT,
   ADD_NEW,
   fieldDisplayNames,
-  SshPassType
+  SshPassType,
+  DEFAULT_TIMEOUT,
 } from './constants'
 
 import { DbConnectionInfo, ISubmitButton } from './interfaces'
@@ -72,6 +75,7 @@ export interface Props {
   setIsCloneMode: (value: boolean) => void
   initialValues: DbConnectionInfo
   onSubmit: (values: DbConnectionInfo) => void
+  onTestConnection: (values: DbConnectionInfo) => void
   updateEditingName: (name: string) => void
   onHostNamePaste: (content: string) => boolean
   onClose?: () => void
@@ -113,6 +117,7 @@ const AddStandaloneForm = (props: Props) => {
       selectedCaCertName,
       username,
       password,
+      timeout,
       modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
@@ -126,6 +131,7 @@ const AddStandaloneForm = (props: Props) => {
     width,
     onClose,
     onSubmit,
+    onTestConnection,
     onHostNamePaste,
     submitButtonText,
     instanceType,
@@ -142,6 +148,7 @@ const AddStandaloneForm = (props: Props) => {
   const prepareInitialValues = () => ({
     host: host ?? getDefaultHost(),
     port: port ? port.toString() : getDefaultPort(instanceType),
+    timeout: timeout ? timeout.toString() : toString(DEFAULT_TIMEOUT / 1_000),
     name: name ?? `${getDefaultHost()}:${getDefaultPort(instanceType)}`,
     username,
     password,
@@ -349,6 +356,10 @@ const AddStandaloneForm = (props: Props) => {
     })
   }
 
+  const handleTestConnectionDatabase = () => {
+    onTestConnection(formik.values)
+  }
+
   const handleChangeDatabaseAlias = (
     value: string,
     onSuccess?: () => void,
@@ -412,7 +423,6 @@ const AddStandaloneForm = (props: Props) => {
       <EuiButton
         fill
         color="secondary"
-        className="btn-add"
         type="submit"
         onClick={onClick}
         disabled={submitIsDisabled}
@@ -430,23 +440,59 @@ const AddStandaloneForm = (props: Props) => {
 
     if (footerEl) {
       return ReactDOM.createPortal(
-        <div className="footerAddDatabase">
-          {onClose && (
-            <EuiButton
-              onClick={onClose}
-              color="secondary"
-              className="btn-cancel"
-              data-testid="btn-cancel"
-            >
-              Cancel
-            </EuiButton>
-          )}
-          <SubmitButton
-            onClick={formik.submitForm}
-            text={submitButtonText}
-            submitIsDisabled={submitIsDisable()}
-          />
-        </div>,
+        <EuiFlexGroup
+          justifyContent="spaceBetween"
+          alignItems="center"
+          className="footerAddDatabase"
+          gutterSize="none"
+          responsive={false}
+        >
+          <EuiFlexItem className="btn-back" grow={false}>
+            {instanceType !== InstanceType.Sentinel && (
+              <EuiToolTip
+                position="top"
+                anchorClassName="euiToolTip__btn-disabled"
+                title={
+                  submitIsDisable()
+                    ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
+                    : null
+                }
+                content={getSubmitButtonContent(submitIsDisable())}
+              >
+                <EuiButton
+                  className="empty-btn"
+                  onClick={handleTestConnectionDatabase}
+                  disabled={submitIsDisable()}
+                  isLoading={loading}
+                  iconType={submitIsDisable() ? 'iInCircle' : undefined}
+                  data-testid="btn-test-connection"
+                >
+                  Test Connection
+                </EuiButton>
+              </EuiToolTip>
+            )}
+          </EuiFlexItem>
+
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup responsive={false}>
+              {onClose && (
+                <EuiButton
+                  onClick={onClose}
+                  color="secondary"
+                  className="btn-cancel"
+                  data-testid="btn-cancel"
+                >
+                  Cancel
+                </EuiButton>
+              )}
+              <SubmitButton
+                onClick={formik.submitForm}
+                text={submitButtonText}
+                submitIsDisabled={submitIsDisable()}
+              />
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        </EuiFlexGroup>,
         footerEl
       )
     }

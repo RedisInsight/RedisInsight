@@ -23,6 +23,8 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { outputSelector, resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 import { getDbIndex } from 'uiSrc/utils'
+import { OnboardingTour } from 'uiSrc/components'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import styles from './styles.module.scss'
 
@@ -81,7 +83,13 @@ const CliHeader = () => {
       >
         <EuiFlexItem grow={false} className={styles.title}>
           <EuiIcon type="console" size="m" />
-          <EuiText>CLI</EuiText>
+          <OnboardingTour
+            options={ONBOARDING_FEATURES.BROWSER_CLI}
+            anchorPosition="upLeft"
+            panelClassName={styles.cliOnboardPanel}
+          >
+            <EuiText>CLI</EuiText>
+          </OnboardingTour>
         </EuiFlexItem>
         <EuiFlexItem grow />
         <EuiFlexItem grow={false}>

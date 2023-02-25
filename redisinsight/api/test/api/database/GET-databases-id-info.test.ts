@@ -1,4 +1,4 @@
-import { describe, it, deps, validateApiCall, before, expect, getMainCheckFn } from '../deps';
+import { describe, deps, before, expect, getMainCheckFn, requirements } from '../deps';
 import { Joi } from '../../helpers/test';
 const { localDb, request, server, constants, rte } = deps;
 
@@ -61,4 +61,55 @@ describe(`GET /databases/:id/info`, () => {
       },
     },
   ].map(mainCheckFn);
+
+
+
+  describe('ACL', () => {
+    requirements('rte.acl', 'rte.type=STANDALONE', '!rte.re', '!rte.sharedData');
+    before(async () => rte.data.setAclUserRules('~* +@all'));
+    beforeEach(rte.data.truncate);
+
+    [
+      {
+        name: 'Should return 1 for empty databases',
+        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+        before: () => rte.data.setAclUserRules('~* +@all -config'),
+        responseBody: {
+          databases: 1,
+          // ...other fields
+        },
+        statusCode: 200,
+      },
+      {
+        name: 'Should return 1 for database with keys created for db0 only',
+        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+        before: async () => {
+          await rte.data.setAclUserRules('~* +@all -config')
+          await rte.data.generateStrings();
+        },
+        responseBody: {
+          databases: 1,
+          // ...other fields
+        },
+        statusCode: 200,
+      },
+      {
+        name: 'Should return > 1 databases since data persists there',
+        endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+        before: async () => {
+          await rte.data.setAclUserRules('~* +@all -config')
+
+          // generate data in > 0 logical database
+          await rte.data.executeCommand('select', `${constants.TEST_REDIS_DB_INDEX}`);
+          await rte.data.executeCommand('set', 'some', 'key');
+          await rte.data.executeCommand('select', '0');
+        },
+        responseBody: {
+          databases: constants.TEST_REDIS_DB_INDEX + 1,
+          // ...other fields
+        },
+        statusCode: 200,
+      },
+    ].map(mainCheckFn);
+  });
 });

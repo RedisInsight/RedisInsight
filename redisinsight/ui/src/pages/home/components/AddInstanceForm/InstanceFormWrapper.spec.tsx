@@ -1,7 +1,9 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { toString } from 'lodash'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import { Instance } from 'uiSrc/slices/interfaces'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import InstanceFormWrapper, { Props } from './InstanceFormWrapper'
 import InstanceForm, {
   Props as InstanceProps,
@@ -12,6 +14,7 @@ const mockedEditedInstance: Instance = {
   name: 'name',
   host: 'host',
   port: 123,
+  timeout: 10_000,
   id: '123',
   modules: [],
   tls: true,
@@ -38,9 +41,15 @@ jest.mock('./InstanceForm/InstanceForm', () => ({
   default: jest.fn(),
 }))
 
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
+
 jest.mock('uiSrc/slices/instances/instances', () => ({
   createInstanceStandaloneAction: () => jest.fn,
   updateInstanceAction: () => jest.fn,
+  testInstanceStandaloneAction: () => jest.fn,
   instancesSelector: jest.fn().mockReturnValue({ loadingChanging: false }),
 }))
 
@@ -61,6 +70,13 @@ jest.mock('uiSrc/slices/instances/sentinel', () => ({
 
 const MockInstanceForm = (props: InstanceProps) => (
   <div>
+    <button
+      type="button"
+      data-testid="btn-test-connection"
+      onClick={() => props.onTestConnection(mockedValues)}
+    >
+      onTestConnection
+    </button>
     <button type="button" data-testid="close-btn" onClick={() => props.onClose()}>
       onClose
     </button>
@@ -96,6 +112,26 @@ describe('InstanceFormWrapper', () => {
     ).toBeTruthy()
   })
 
+  it('should send prop timeout / 1_000 (in seconds)', () => {
+    expect(
+      render(
+        <InstanceFormWrapper
+          {...instance(mockedProps)}
+          editedInstance={mockedEditedInstance}
+        />
+      )
+    ).toBeTruthy()
+
+    expect(InstanceForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formFields: expect.objectContaining({
+          timeout: toString(mockedEditedInstance?.timeout / 1_000),
+        }),
+      }),
+      {},
+    )
+  })
+
   it('should call onClose', () => {
     const onClose = jest.fn()
     render(
@@ -107,19 +143,6 @@ describe('InstanceFormWrapper', () => {
     )
     fireEvent.click(screen.getByTestId('close-btn'))
     expect(onClose).toBeCalled()
-  })
-
-  it('should submit', () => {
-    const onSubmit = jest.fn()
-    render(
-      <InstanceFormWrapper
-        {...instance(mockedProps)}
-        editedInstance={mockedEditedInstance}
-        onDbAdded={onSubmit}
-      />
-    )
-    fireEvent.click(screen.getByTestId('submit-form-btn'))
-    expect(onSubmit).toBeCalled()
   })
 
   it('should submit with editMode', () => {
@@ -144,5 +167,23 @@ describe('InstanceFormWrapper', () => {
     )
     fireEvent.click(screen.getByTestId('paste-hostName-btn'))
     expect(component).toBeTruthy()
+  })
+
+  it('should call proper telemetry events after click test connection', () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(
+      <InstanceFormWrapper
+        {...instance(mockedProps)}
+        editedInstance={mockedEditedInstance}
+      />
+    )
+    fireEvent.click(screen.getByTestId('btn-test-connection'))
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CONFIG_DATABASES_TEST_CONNECTION_CLICKED,
+    })
+    sendEventTelemetry.mockRestore()
   })
 })

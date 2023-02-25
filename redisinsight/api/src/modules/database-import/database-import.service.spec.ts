@@ -164,7 +164,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout']),
         new: true,
       });
     });
@@ -175,7 +175,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout']),
         name: `${mockDatabase.host}:${mockDatabase.port}`,
         new: true,
       });
@@ -188,7 +188,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'timeout']),
         connectionType: ConnectionType.CLUSTER,
         new: true,
       });

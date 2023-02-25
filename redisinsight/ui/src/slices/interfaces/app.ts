@@ -81,6 +81,7 @@ export interface StateAppContext {
   workbench: {
     script: string
     enablementArea: {
+      isMinimized: boolean
       itemPath: string
       itemScrollTop: number
     },
@@ -144,11 +145,18 @@ export interface StateAppSocketConnection {
   isConnected: boolean
 }
 
-export interface StateAppFeaturesHighlighting {
-  version: string
-  features: string[]
-  pages: {
-    [key: string]: string[]
+export interface StateAppFeatures {
+  highlighting: {
+    version: string
+    features: string[]
+    pages: {
+      [key: string]: string[]
+    }
+  }
+  onboarding: {
+    currentStep: number
+    totalSteps: number
+    isActive: boolean
   }
 }
 export enum NotificationType {

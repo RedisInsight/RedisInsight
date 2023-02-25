@@ -1,4 +1,5 @@
 import React, { ChangeEvent } from 'react'
+import { useSelector } from 'react-redux'
 import { FormikProps } from 'formik'
 
 import {
@@ -10,7 +11,9 @@ import {
   EuiFormRow, EuiIcon,
   EuiToolTip
 } from '@elastic/eui'
-import { handlePasteHostName, MAX_PORT_NUMBER, selectOnFocus, validateField, validatePortNumber } from 'uiSrc/utils'
+import { BuildType } from 'uiSrc/constants/env'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
+import { handlePasteHostName, MAX_PORT_NUMBER, MAX_TIMEOUT_NUMBER, selectOnFocus, validateField, validatePortNumber, validateTimeoutNumber } from 'uiSrc/utils'
 import { ConnectionType, InstanceType } from 'uiSrc/slices/interfaces'
 import { DbConnectionInfo } from '../interfaces'
 
@@ -36,6 +39,8 @@ const DatabaseForm = (props: Props) => {
     instanceType,
     connectionType
   } = props
+
+  const { server } = useSelector(appInfoSelector)
 
   const AppendHostName = () => (
     <EuiToolTip
@@ -75,8 +80,8 @@ const DatabaseForm = (props: Props) => {
 
   return (
     <>
-      {(!isEditMode || isCloneMode) && (
-        <EuiFlexGroup className={flexGroupClassName}>
+      <EuiFlexGroup className={flexGroupClassName}>
+        {(!isEditMode || isCloneMode) && (
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Host*">
               <EuiFieldText
@@ -100,7 +105,8 @@ const DatabaseForm = (props: Props) => {
               />
             </EuiFormRow>
           </EuiFlexItem>
-
+        )}
+        {server?.buildType !== BuildType.RedisStack && (
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
               <EuiFieldNumber
@@ -124,8 +130,8 @@ const DatabaseForm = (props: Props) => {
               />
             </EuiFormRow>
           </EuiFlexItem>
-        </EuiFlexGroup>
-      )}
+        )}
+      </EuiFlexGroup>
 
       {(
         (!isEditMode || isCloneMode)
@@ -185,6 +191,32 @@ const DatabaseForm = (props: Props) => {
             />
           </EuiFormRow>
         </EuiFlexItem>
+
+        {connectionType !== ConnectionType.Sentinel && instanceType !== InstanceType.Sentinel && (
+          <EuiFlexItem className={flexItemClassName}>
+            <EuiFormRow label="Timeout (s)">
+              <EuiFieldNumber
+                name="timeout"
+                id="timeout"
+                data-testid="timeout"
+                style={{ width: '100%' }}
+                placeholder="Enter Timeout (in seconds)"
+                value={formik.values.timeout ?? ''}
+                maxLength={7}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(
+                    e.target.name,
+                    validateTimeoutNumber(e.target.value.trim())
+                  )
+                }}
+                onFocus={selectOnFocus}
+                type="text"
+                min={1}
+                max={MAX_TIMEOUT_NUMBER}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        )}
       </EuiFlexGroup>
     </>
   )

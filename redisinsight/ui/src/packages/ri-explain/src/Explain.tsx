@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Model, Graph } from '@antv/x6'
 import { register} from '@antv/x6-react-shape'
 import Hierarchy from '@antv/hierarchy'
+import { formatRedisReply } from 'redisinsight-plugin-sdk'
 
 import {
   EuiButtonIcon,
@@ -72,6 +73,18 @@ export default function Explain(props: IExplain): JSX.Element {
 
   const module = ModuleType.Search
 
+  const [parsedRedisReply, setParsedRedisReply] = useState('')
+
+  useEffect(() => {
+    if (command == 'ft.profile') {
+      const getParsedResponse = async () => {
+        const formattedResponse = await formatRedisReply(props.data[0].response, props.command)
+        setParsedRedisReply(formattedResponse)
+      }
+      getParsedResponse()
+    }
+  })
+
   if (command == 'ft.profile') {
     const info = props.data[0].response[1]
 
@@ -82,7 +95,12 @@ export default function Explain(props: IExplain): JSX.Element {
       let [cluster, entityInfo] = ParseProfileCluster(info)
       cluster['Coordinator'].forEach((kv: [string, string]) => profilingTime[kv[0]] = kv[1])
       data = entityInfo
-      return <div className="responseFail">Visualization of FT.PROFILE on cluster is not yet supported.</div>
+      return (
+        <>
+          <div className="responseFail">Visualization is not supported for a clustered database.</div>
+          <div className="parsedRedisReply">{parsedRedisReply}</div>
+        </>
+      )
     } else if (typeof info[0] === 'string' && info[0].toLowerCase().startsWith('coordinator')) {
       const resultsProfile = info[2]
       data = ParseProfile(resultsProfile)
@@ -92,7 +110,12 @@ export default function Explain(props: IExplain): JSX.Element {
         'Parsing time': resultsProfile[1][1],
         'Pipeline creation time': resultsProfile[2][1],
       }
-      return <div className="responseFail">Visualization of FT.PROFILE on cluster is not yet supported.</div>
+      return (
+        <>
+          <div className="responseFail">Visualization is not supported for a clustered database.</div>
+          <div className="parsedRedisReply">{parsedRedisReply}</div>
+        </>
+      )
     } else {
       data = ParseProfile(info)
       profilingTime = {

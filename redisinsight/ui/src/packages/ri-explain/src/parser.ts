@@ -9,9 +9,17 @@ enum TokenType {
 
   UNION = 'UNION',
   INTERSECT = 'INTERSECT',
-  FUZZY_EXPR = 'FUZZY_EXPR',
+  NOT = 'NOT',
+  OPTIONAL = 'OPTIONAL',
+  EXACT = 'EXACT',
+  VECTOR = 'VECTOR',
+  FUZZY_EXPR = 'FUZZY',
+  WILDCARD_EXPR = 'WILDCARD',
+  PREFIX_EXPR = 'PREFIX',
   GEO_EXPR = 'GEO_EXPR',
   TAG_EXPR = 'TAG_EXPR',
+  IDS_EXPR = 'IDS_EXPR',
+  LEXRANGE_EXPR = 'LEXRANGE_EXPR',
   NUMERIC = 'NUMERIC',
   LBRACE = 'LBRACE',
   RBRACE = 'RBRACE',
@@ -23,6 +31,7 @@ enum TokenType {
   PLUS = 'PLUS',
   MINUS = 'MINUS',
   COMMA = 'COMMA',
+  DOT = 'DOT',
 
   LESS = 'LESS',
   GREATER = 'GREATER',
@@ -50,8 +59,12 @@ const KEYWORDS = {
   [TokenType.ILLEGAL.toString()]: TokenType.ILLEGAL,
 
   [TokenType.UNION.toString()]: TokenType.UNION,
-  [TokenType.TAG_EXPR.toString()]: TokenType.TAG_EXPR,
   [TokenType.INTERSECT.toString()]: TokenType.INTERSECT,
+  [TokenType.NOT.toString()]: TokenType.NOT,
+  [TokenType.OPTIONAL.toString()]: TokenType.OPTIONAL,
+  [TokenType.EXACT.toString()]: TokenType.EXACT,
+  [TokenType.VECTOR.toString()]: TokenType.VECTOR,
+  [TokenType.TAG_EXPR.toString()]: TokenType.TAG_EXPR,
   [TokenType.NUMERIC.toString()]: TokenType.NUMERIC,
 
   'inf': TokenType.NUMBER,
@@ -99,11 +112,46 @@ class Lexer {
   ReadIdentifier(): string {
     let str = ''
 
-    while (this.C !== undefined && (isLetter(this.C) || ['@', ':'].includes(this.C))) {
+    // variable identifiers start with @
+    // For the below expression, we can parse the identifier "@t1" successfully
+    // @t1:INTERSECT
+    //
+    // Sample Query - `FT.EXPLAIN idx @t1:hello world @t2:howdy`
+    const startsWithAt = this.C === '@'
+
+    // If a '/' was found, next char can be escaped.
+    //
+    // Sample Query - `FT.EXPLAIN rs:recipes 'very simple | @t:hello @t2:{ free\\world } (@n:[1 2]|@n:[3 4]) (@g:[1.5 0.5 0.5 km] -@g:[2.5 1.5 0.5 km])'`
+    let prevEscape = false
+    while (
+      this.C !== undefined
+        && (
+          isLetter(this.C) ||
+            ['@', ':', '\\'].includes(this.C) ||
+            (startsWithAt && isDigit(this.C)) ||
+
+            // Text can be searched in multiple schemas via '|'
+            //
+            // Example:
+            // FT.CREATE idx SCHEMA t1 TEXT t2 TEXT
+            // FT.EXPLAIN idx '@t1|t2:(text value)'
+            (startsWithAt && this.C === '|') ||
+            str.startsWith('TAG:@') && isDigit(this.C) ||
+            prevEscape
+        )
+    ) {
       str = str + this.C
+      if (this.C === '\\' && this.PeekChar() === '\\') {
+        // '\' appears twice query result when escaped a character.
+        //
+        // For example, if space has to be escaped, instead of '\ ', you will find '\\ '.
+        this.ReadChar()         // read of extra '\'
+        prevEscape = true
+      } else {
+        prevEscape = false
+      }
       this.ReadChar()
     }
-
     return str
   }
 
@@ -146,6 +194,9 @@ class Lexer {
       case ',':
         t = new Token(TokenType.COMMA, this.C)
         break
+    case '.':
+      t = new Token(TokenType.DOT, this.C)
+      break
       case '<':
         let lPeekChar = this.PeekChar()
         if (lPeekChar !== null && lPeekChar === '=') {
@@ -185,8 +236,24 @@ class Lexer {
             tokenType = TokenType.TAG_EXPR
           } else if (literal === 'FUZZY') {
             tokenType = TokenType.FUZZY_EXPR
+          } else if (literal === 'WILDCARD') {
+            tokenType = TokenType.WILDCARD_EXPR
+          } else if (literal === 'PREFIX') {
+            tokenType = TokenType.PREFIX_EXPR
+          } else if (literal === 'IDS') {
+            tokenType = TokenType.IDS_EXPR
+          } else if (literal === 'LEXRANGE') {
+            tokenType = TokenType.LEXRANGE_EXPR
           } else if (literal === 'GEO') {
             tokenType = TokenType.GEO_EXPR
+          } else if (literal.startsWith('@') && literal.endsWith(':OPTIONAL')) {
+            tokenType = TokenType.OPTIONAL
+          } else if (literal.startsWith('@') && literal.endsWith(':NOT')) {
+            tokenType = TokenType.NOT
+          } else if (literal.startsWith('@') && literal.endsWith(':EXACT')) {
+            tokenType = TokenType.EXACT
+          } else if (literal.startsWith('@') && literal.endsWith(':VECTOR')) {
+            tokenType = TokenType.VECTOR
           } else if (literal.startsWith('@') && literal.endsWith(':UNION')) {
             tokenType = TokenType.UNION
           } else if (literal.startsWith('@') && literal.endsWith(':INTERSECT')) {
@@ -211,13 +278,22 @@ export enum EntityType {
   Expr = 'Expr',
   UNION = 'UNION',
   INTERSECT = 'INTERSECT',
+  OPTIONAL = 'OPTIONAL',
+  NOT = 'NOT',
+  EXACT = 'EXACT',
+  VECTOR = 'VECTOR',
   NUMERIC = 'NUMERIC',
 
   // These are used exclusively in FT.PROFILE
   GEO = 'GEO',
   FUZZY = 'FUZZY',
+  WILDCARD = 'WILDCARD',
+  PREFIX = 'PREFIX',
   TEXT = 'TEXT',
   TAG = 'TAG',
+
+  IDS = 'IDS',
+  LEXRANGE = 'LEXRANGE',
 
   Index = 'Index',
   Scorer = 'Scorer',
@@ -343,17 +419,19 @@ class NumericExpr {
   }
 }
 
-type SearchExpr = IntersectExpr | UnionExpr | NumericExpr | Expr
+type SearchExpr = NumericExpr | Expr | ExpandExpr
 
 type ExprTuple2 = SearchExpr[]
 
-class IntersectExpr {
-  Core: ExprTuple2
+class ExpandExpr {
+  Type: EntityType
   Info?: string
+  Core: ExprTuple2
 
-  constructor(e: ExprTuple2, info?: string) {
+  constructor(type: EntityType, e: ExprTuple2, info?: string) {
     this.Core = e
     this.Info = info
+    this.Type = type
   }
 
   toJSON(): EntityInfo {
@@ -361,42 +439,23 @@ class IntersectExpr {
 
     let snippet: string | undefined = undefined
 
-    if (!this.Info?.startsWith('INTERSECT')) {
-      snippet = this.Info?.substring(0, this.Info.indexOf(':INTERSECT'))
+    if (this.Type === EntityType.TAG && this.Info?.startsWith('TAG:')) {
+      snippet = this.Info?.substr(4)
+    }
+
+    if (!this.Info?.startsWith(this.Type)) {
+      snippet = this.Info?.substring(0, this.Info.indexOf(`:${this.Type}`))
     }
 
     return {
       id,
-      type: EntityType.INTERSECT,
+      type: this.Type,
       snippet,
-      children: this.Core.map(x => x.toJSON()).map((d: EntityInfo) => ({...d, parentId: id, parentSnippet: snippet})),
-    }
-  }
-}
-
-class UnionExpr {
-  Info?: string
-  Core: ExprTuple2
-
-  constructor(e: ExprTuple2, info?: string) {
-    this.Core = e
-    this.Info = info
-  }
-
-  toJSON(): EntityInfo {
-    const id = uuidv4()
-
-    let snippet: string | undefined = undefined
-
-    if (!this.Info?.startsWith('UNION')) {
-      snippet = this.Info?.substring(0, this.Info.indexOf(':UNION'))
-    }
-
-    return {
-      id,
-      type: EntityType.UNION,
-      snippet,
-      children: this.Core.map(x => x.toJSON()).map((d: EntityInfo) => ({...d, parentId: id, parentSnippet: snippet}))
+      children: this.Core.map(x => x.toJSON()).map((d: EntityInfo) => ({
+        ...d,
+        parentId: id,
+        parentSnippet: snippet,
+      }))
     }
   }
 }
@@ -436,67 +495,31 @@ class Parser {
     }
   }
 
-  parseIntersectExpr(): IntersectExpr {
-
-    assertToken(TokenType.INTERSECT, this.CurrentToken?.T)
-
-    let intersectData = this.CurrentToken.Data
-
-    this.nextToken()
-
-    assertToken(TokenType.LBRACE, this.CurrentToken?.T)
-
-    let Exprs: SearchExpr[] = []
-    this.nextToken()
-
-    assertToken(TokenType.NEW_LINE, this.CurrentToken?.T)
-
-    this.nextToken()
-
-    while (true) {
-
-      if (this.CurrentToken.T === TokenType.RBRACE && this.PeekToken.T === TokenType.NEW_LINE) {
-        this.nextToken()
-        break
-      }
-
-      if (this.CurrentToken?.T === TokenType.NUMERIC) {
-        Exprs.push(this.parseNumericExpr())
-      } else if (this.CurrentToken?.T === TokenType.IDENTIFIER) {
-        Exprs.push(this.parseExpr())
-      } else if (this.CurrentToken?.T === TokenType.UNION) {
-        Exprs.push(this.parseUnionExpr())
-      } else if (this.CurrentToken.T === TokenType.INTERSECT) {
-        Exprs.push(this.parseIntersectExpr())
-      } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
-        Exprs.push(this.parseTagExpr())
-      } else if (this.CurrentToken.T === TokenType.GEO_EXPR) {
-        Exprs.push(this.parseGeoExpr())
-      } else if (this.CurrentToken.T === TokenType.FUZZY_EXPR) {
-        Exprs.push(this.parseFuzzyExpr())
-      }
-
-      this.nextToken()
-    }
-
-    return new IntersectExpr(Exprs, intersectData)
+  assertToken(t: TokenType) {
+    assertToken(t, this.CurrentToken.T)
   }
 
+  // Parse an entity which can expand, i.e., has further children of
+  // an entity type.
+  //
+  // Example:
+  // <ENTITY_TYPE> { <ENTITY_TYPE> { ... } (<ENTITY_TYPE> { ... } ...) }
+  parseExpandExpr(t: EntityType): ExpandExpr {
 
-  parseUnionExpr(): UnionExpr {
+    assertExpandEntity(t)
 
-    assertToken(TokenType.UNION, this.CurrentToken?.T)
+    this.assertToken(t as unknown as TokenType)
 
-    let unionData = this.CurrentToken.Data
+    let data = this.CurrentToken.Data
 
     this.nextToken()
 
-    assertToken(TokenType.LBRACE, this.CurrentToken.T)
+    this.assertToken(TokenType.LBRACE)
 
     let Exprs: SearchExpr[] = []
     this.nextToken()
 
-    assertToken(TokenType.NEW_LINE, this.CurrentToken?.T)
+    this.assertToken(TokenType.NEW_LINE)
 
     this.nextToken()
 
@@ -508,31 +531,100 @@ class Parser {
         break
       }
 
+      const t = this.CurrentToken.T;
+
       if (this.CurrentToken?.T === TokenType.NUMERIC) {
         Exprs.push(this.parseNumericExpr())
       } else if (this.CurrentToken?.T === TokenType.IDENTIFIER) {
         Exprs.push(this.parseExpr())
-      } else if (this.CurrentToken?.T === TokenType.UNION) {
-        Exprs.push(this.parseUnionExpr())
-      } else if (this.CurrentToken.T === TokenType.INTERSECT) {
-        Exprs.push(this.parseIntersectExpr())
+      } else if ([TokenType.UNION, TokenType.INTERSECT, TokenType.NOT, TokenType.OPTIONAL, TokenType.EXACT, TokenType.VECTOR].includes(t)) {
+        Exprs.push(this.parseExpandExpr(EntityType[t]))
       } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
         Exprs.push(this.parseTagExpr())
       } else if (this.CurrentToken.T === TokenType.GEO_EXPR) {
         Exprs.push(this.parseGeoExpr())
-      } else if (this.CurrentToken.T === TokenType.FUZZY_EXPR) {
-        Exprs.push(this.parseFuzzyExpr())
+      } else if ([TokenType.FUZZY_EXPR, TokenType.WILDCARD_EXPR, TokenType.PREFIX_EXPR].includes(t)) {
+        Exprs.push(this.parseSimpleExpr(EntityType[t]))
+      } else if (this.CurrentToken.T === TokenType.IDS_EXPR) {
+        Exprs.push(this.parseIdsExpr())
+      } else if (this.CurrentToken.T === TokenType.LEXRANGE_EXPR) {
+        Exprs.push(this.parseLexrangeExpr())
       }
 
       this.nextToken()
     }
 
-    return new UnionExpr(Exprs, unionData)
+    return new ExpandExpr(t, Exprs, data)
+  }
+
+  parseLexrangeExpr() {
+    this.assertToken(TokenType.LEXRANGE_EXPR)
+
+    this.nextToken()
+
+    this.assertToken(TokenType.LBRACE)
+
+    this.nextToken()
+
+    this.assertToken(TokenType.IDENTIFIER)
+
+    let first = this.CurrentToken.Data
+
+    this.nextToken()
+
+    this.assertToken(TokenType.DOT)
+
+    this.nextToken()
+
+    this.assertToken(TokenType.DOT)
+
+    this.nextToken()
+
+    this.assertToken(TokenType.DOT)
+
+    this.nextToken()
+
+    let second = this.CurrentToken.Data
+
+    this.nextToken()
+
+    this.assertToken(TokenType.RBRACE)
+
+    return new Expr(`${first}...${second}`, EntityType.LEXRANGE)
+  }
+
+  parseIdsExpr() {
+    this.assertToken(TokenType.IDS_EXPR)
+
+    this.nextToken()
+
+    this.assertToken(TokenType.LBRACE)
+
+    this.nextToken()
+
+    let ids: number[] = []
+
+    while (this.CurrentToken.T !== TokenType.RBRACE) {
+      ids.push(parseInt(this.CurrentToken.Data))
+
+      this.nextToken()
+
+
+      this.assertToken(TokenType.COMMA)
+
+      this.nextToken()
+    }
+
+    this.assertToken(TokenType.RBRACE)
+
+    this.nextToken()
+
+    return new Expr(ids.join(','), EntityType.IDS)
   }
 
   parseExpr() {
 
-    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+    this.assertToken(TokenType.IDENTIFIER)
 
     let str = ''
 
@@ -544,90 +636,95 @@ class Parser {
     return new Expr(str, EntityType.TEXT)
   }
 
-  parseFuzzyExpr() {
-    assertToken(TokenType.FUZZY_EXPR, this.CurrentToken.T)
+  // Parse a very simple entity with format:
+  // <ENTITY_TYPE> { <IDENTIFIER> }
+  parseSimpleExpr(e: EntityType) {
+
+    assertSimpleEntity(e)
+
+    this.assertToken(TokenType[e])
 
     this.nextToken()
 
-    assertToken(TokenType.LBRACE, this.CurrentToken.T)
+    this.assertToken(TokenType.LBRACE)
 
     this.nextToken()
 
-    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+    this.assertToken(TokenType.IDENTIFIER)
 
     let identifierData = this.CurrentToken.Data;
 
     this.nextToken()
 
-    assertToken(TokenType.RBRACE, this.CurrentToken?.T)
+    this.assertToken(TokenType.RBRACE)
 
     this.nextToken()
 
-    return new Expr(identifierData, EntityType.FUZZY)
+    return new Expr(identifierData, e)
   }
 
   parseGeoExpr() {
-    assertToken(TokenType.GEO_EXPR, this.CurrentToken.T)
+    this.assertToken(TokenType.GEO_EXPR)
 
     let geoData = this.CurrentToken.Data
 
     this.nextToken()
 
-    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+    this.assertToken(TokenType.IDENTIFIER)
 
     let identifierData = this.CurrentToken.Data
 
     this.nextToken()
 
-    assertToken(TokenType.LBRACE, this.CurrentToken.T)
+    this.assertToken(TokenType.LBRACE)
 
     this.nextToken()
 
-    assertToken(TokenType.NUMBER, this.CurrentToken.T)
+    this.assertToken(TokenType.NUMBER)
 
     let first = this.CurrentToken.Data;
 
     this.nextToken()
 
-    assertToken(TokenType.COMMA, this.CurrentToken.T)
+    this.assertToken(TokenType.COMMA)
 
     this.nextToken()
 
-    assertToken(TokenType.NUMBER, this.CurrentToken.T)
+    this.assertToken(TokenType.NUMBER)
 
     let second = this.CurrentToken.Data;
 
     this.nextToken()
 
-    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+    this.assertToken(TokenType.IDENTIFIER)
 
     assert(this.CurrentToken.Data === '-', "Expected Identifier to be MINUS")
 
     this.nextToken()
 
-    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+    this.assertToken(TokenType.IDENTIFIER)
 
     assert(this.CurrentToken.Data === '-', "Expected Identifier to be MINUS")
 
     this.nextToken()
 
-    assertToken(TokenType.GREATER, this.CurrentToken.T)
+    this.assertToken(TokenType.GREATER)
 
     this.nextToken()
 
-    assertToken(TokenType.NUMBER, this.CurrentToken.T)
+    this.assertToken(TokenType.NUMBER)
 
     let third = this.CurrentToken.Data;
 
     this.nextToken()
 
-    assertToken(TokenType.IDENTIFIER, this.CurrentToken.T)
+    this.assertToken(TokenType.IDENTIFIER)
 
     let metric = this.CurrentToken.Data;
 
     this.nextToken()
 
-    assertToken(TokenType.RBRACE, this.CurrentToken?.T)
+    this.assertToken(TokenType.RBRACE)
 
     this.nextToken()
 
@@ -635,52 +732,65 @@ class Parser {
   }
 
   parseTagExpr() {
-    assertToken(TokenType.TAG_EXPR, this.CurrentToken.T)
+    this.assertToken(TokenType.TAG_EXPR)
 
     let tagData = this.CurrentToken.Data
 
     this.nextToken()
 
-    assertToken(TokenType.LBRACE, this.CurrentToken.T)
+    this.assertToken(TokenType.LBRACE)
 
     this.nextToken()
 
-    assertToken(TokenType.NEW_LINE, this.CurrentToken?.T)
+    this.assertToken(TokenType.NEW_LINE)
 
     this.nextToken()
 
-    assertToken(TokenType.IDENTIFIER, this.CurrentToken?.T)
+    let Exprs: SearchExpr[] = []
+    while (true) {
 
-    let identifiers: string[] = []
+      if (this.CurrentToken.T === TokenType.RBRACE && this.PeekToken.T === TokenType.NEW_LINE) {
 
-    while (this.CurrentToken?.T == TokenType.IDENTIFIER) {
-      identifiers.push(this.CurrentToken.Data)
+        this.nextToken()
+        break
+      }
 
-      this.nextToken()
+      const t = this.CurrentToken.T;
 
-      assertToken(TokenType.NEW_LINE, this.CurrentToken?.T)
+      if (this.CurrentToken?.T === TokenType.NUMERIC) {
+        Exprs.push(this.parseNumericExpr())
+      } else if (this.CurrentToken?.T === TokenType.IDENTIFIER) {
+        Exprs.push(this.parseExpr())
+      } else if ([TokenType.UNION, TokenType.INTERSECT, TokenType.NOT, TokenType.OPTIONAL, TokenType.EXACT, TokenType.VECTOR].includes(t)) {
+        Exprs.push(this.parseExpandExpr(EntityType[t]))
+      } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
+        Exprs.push(this.parseTagExpr())
+      } else if (this.CurrentToken.T === TokenType.GEO_EXPR) {
+        Exprs.push(this.parseGeoExpr())
+      } else if ([TokenType.FUZZY_EXPR, TokenType.WILDCARD_EXPR, TokenType.PREFIX_EXPR].includes(t)) {
+        Exprs.push(this.parseSimpleExpr(EntityType[t]))
+      } else if (this.CurrentToken.T === TokenType.IDS_EXPR) {
+        Exprs.push(this.parseIdsExpr())
+      } else if (this.CurrentToken.T === TokenType.LEXRANGE_EXPR) {
+        Exprs.push(this.parseLexrangeExpr())
+      }
 
       this.nextToken()
     }
 
-    assertToken(TokenType.RBRACE, this.CurrentToken?.T)
-
-    this.nextToken()
-
-    return new Expr(identifiers.join(", "), EntityType.TAG, tagData)
-
+    return new ExpandExpr(EntityType.TAG, Exprs, tagData)
   }
 
   parseNumericExpr() {
-    assertToken(TokenType.NUMERIC, this.CurrentToken.T)
+    this.assertToken(TokenType.NUMERIC)
 
     this.nextToken()
 
-    assertToken(TokenType.LBRACE, this.CurrentToken.T)
+    this.assertToken(TokenType.LBRACE)
 
     this.nextToken()
 
-    assertToken(TokenType.NUMBER, this.CurrentToken?.T)
+    this.assertToken(TokenType.NUMBER)
 
     let left = this.CurrentToken?.Data
 
@@ -690,7 +800,7 @@ class Parser {
 
     this.nextToken()
 
-    assertToken(TokenType.IDENTIFIER, this.CurrentToken?.T)
+    this.assertToken(TokenType.IDENTIFIER)
 
     let identifier = this.CurrentToken
 
@@ -707,14 +817,14 @@ class Parser {
     this.nextToken()
 
 
-    assertToken(TokenType.NUMBER, this.CurrentToken?.T)
+    this.assertToken(TokenType.NUMBER)
 
     let right = this.CurrentToken?.Data
 
     this.nextToken()
 
 
-    assertToken(TokenType.RBRACE, this.CurrentToken?.T)
+    this.assertToken(TokenType.RBRACE)
 
     this.nextToken()// read off RBRACE
 
@@ -732,18 +842,22 @@ function Parse(data: string): SearchExpr {
 
   let p = new Parser(l)
   
-  if (p.CurrentToken?.T === TokenType.INTERSECT) {
-    return p.parseIntersectExpr()
-  } else if (p.CurrentToken?.T === TokenType.NUMERIC) {
+  const t = p.CurrentToken.T;
+
+  if (p.CurrentToken?.T === TokenType.NUMERIC) {
     return p.parseNumericExpr()
-  } else if (p.CurrentToken.T === TokenType.UNION) {
-    return p.parseUnionExpr()
+  } else if ([TokenType.UNION, TokenType.INTERSECT, TokenType.NOT, TokenType.OPTIONAL, TokenType.EXACT, TokenType.VECTOR].includes(t)) {
+    return p.parseExpandExpr(EntityType[t])
   } else if (p.CurrentToken.T === TokenType.TAG_EXPR) {
     return p.parseTagExpr()
   } else if (p.CurrentToken.T === TokenType.GEO_EXPR) {
     return p.parseGeoExpr()
-  } else if (p.CurrentToken.T === TokenType.FUZZY_EXPR) {
-    return p.parseFuzzyExpr()
+  } else if ([TokenType.FUZZY_EXPR, TokenType.WILDCARD_EXPR, TokenType.PREFIX_EXPR].includes(t)) {
+    return p.parseSimpleExpr(EntityType[t])
+  } else if (p.CurrentToken.T === TokenType.IDS_EXPR) {
+    return p.parseIdsExpr()
+  } else if (p.CurrentToken.T === TokenType.LEXRANGE_EXPR) {
+    return p.parseLexrangeExpr()
   } else {
     return p.parseExpr()
   }
@@ -770,8 +884,6 @@ function assert(c: boolean, errorMsg: string) {
 }
 
 function assertToken(expected: TokenType, actual: TokenType | undefined) {
-
-
   if (actual === undefined) {
     throw new Error("Token is undefined")
   }
@@ -779,6 +891,29 @@ function assertToken(expected: TokenType, actual: TokenType | undefined) {
   assert(expected === actual, `Expected ${expected}, Actual: ${actual}`)
 }
 
+function assertExpandEntity(t: EntityType) {
+  if (![
+    EntityType.UNION,
+    EntityType.INTERSECT,
+    EntityType.NOT,
+    EntityType.OPTIONAL,
+    EntityType.EXACT,
+    EntityType.VECTOR,
+  ].includes(t)) {
+    throw new Error(`${t} is not an expand entity`)
+  }
+}
+
+
+function assertSimpleEntity(t: EntityType) {
+  if (![
+    EntityType.FUZZY,
+    EntityType.WILDCARD,
+    EntityType.PREFIX,
+  ].includes(t)) {
+    throw new Error(`${t} is not a simple entity`)
+  }
+}
 
 export function ParseProfileCluster(info: any[]): [Object, EntityInfo] {
 

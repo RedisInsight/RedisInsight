@@ -31,7 +31,7 @@ export function ExplainNode(props: INodeProps) {
           <div className="InfoData">
             <EuiToolTip delay='long' content={infoData}><span>{infoData}</span></EuiToolTip>
           </div>
-          {subType && [EntityType.GEO, EntityType.NUMERIC, EntityType.TEXT, EntityType.TAG, EntityType.FUZZY].includes(subType) && <div className="Type">{subType}</div> }
+          {subType && [EntityType.GEO, EntityType.NUMERIC, EntityType.TEXT, EntityType.TAG, EntityType.FUZZY, EntityType.WILDCARD, EntityType.PREFIX, EntityType.IDS, EntityType.LEXRANGE].includes(subType) && <div className="Type">{subType}</div> }
         </div>
       </div>
       {

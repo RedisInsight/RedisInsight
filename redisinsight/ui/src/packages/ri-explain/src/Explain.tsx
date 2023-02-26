@@ -82,6 +82,7 @@ export default function Explain(props: IExplain): JSX.Element {
       let [cluster, entityInfo] = ParseProfileCluster(info)
       cluster['Coordinator'].forEach((kv: [string, string]) => profilingTime[kv[0]] = kv[1])
       data = entityInfo
+      return <div className="responseFail">Visualization of FT.PROFILE on cluster is not yet supported.</div>
     } else if (typeof info[0] === 'string' && info[0].toLowerCase().startsWith('coordinator')) {
       const resultsProfile = info[2]
       data = ParseProfile(resultsProfile)
@@ -91,6 +92,7 @@ export default function Explain(props: IExplain): JSX.Element {
         'Parsing time': resultsProfile[1][1],
         'Pipeline creation time': resultsProfile[2][1],
       }
+      return <div className="responseFail">Visualization of FT.PROFILE on cluster is not yet supported.</div>
     } else {
       data = ParseProfile(info)
       profilingTime = {
@@ -213,11 +215,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
           line: {
             stroke: edgeColor,
             strokeWidth: (edge.getAttrs() as any)?.line?.strokeWidth,
-            targetMarker: {
-              name: 'block',
-              stroke: edgeColor,
-              fill: edgeColor,
-            },
           },
         })
       })
@@ -234,11 +231,6 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
           line: {
             stroke: edgeColor,
             strokeWidth: (edge.getAttrs() as any)?.line?.strokeWidth,
-            targetMarker: {
-              name: 'block',
-              fill: edgeColor,
-              stroke: edgeColor,
-            }
           },
         })
       })
@@ -270,8 +262,14 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
       if (data) {
         const info = data.data as EntityInfo
 
-        if (!info.snippet && info.parentSnippet && info.data?.startsWith(info.parentSnippet)) {
-          info.data = info.data.substr(info.parentSnippet.length)
+        // snippet if prefix with parent suffix will always be followed by ':'.
+        //
+        // Currently snippets are passed to child only for TAG
+        // expressions which has ':' at the center.
+        //
+        // Example child data with parent snippet: <PARENT_SNIPPET>:<DATA>
+        if (!info.snippet && info.parentSnippet && info.data?.startsWith(`${info.parentSnippet}:`)) {
+          info.data = info.data.substr(info.parentSnippet.length + 1)
           info.snippet = info.parentSnippet
         }
 
@@ -375,11 +373,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
               line: {
                 stroke: edgeColor,
                 strokeWidth: getEdgeSize(itemRecords),
-                targetMarker: {
-                  name: 'block',
-                  fill: edgeColor,
-                  stroke: edgeColor,
-                },
+                targetMarker: null,
               },
             },
           })
@@ -462,7 +456,7 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
                   name: 'Zoom In',
                   onClick: () => {
                     setTimeout(() => document.addEventListener('mouseup', mouseUpHandler), 100)
-                    core?.zoom(0.5)
+                    core && Math.floor(core.zoom()) <= 3 && core?.zoom(0.5)
                     core?.resize(undefined, core?.getContentBBox().height + 50)
                   },
                   icon: 'magnifyWithPlus'
@@ -471,7 +465,11 @@ function ExplainDraw({data, type, module, profilingTime}: {data: any, type: Core
                   name: 'Zoom Out',
                   onClick: () => {
                     setTimeout(() => document.addEventListener('mouseup', mouseUpHandler), 100)
-                    core && Math.floor(core.zoom()) <= 0.5 ? core?.zoom(0) : core?.zoom(-0.5)
+                    if (Math.floor(core?.zoom() || 0) <= 0.5) {
+                      core?.centerContent()
+                    } else {
+                      core?.zoom(-0.5)
+                    }
                     core?.resize(undefined, core?.getContentBBox().height + 50)
                   },
                   icon: 'magnifyWithMinus'

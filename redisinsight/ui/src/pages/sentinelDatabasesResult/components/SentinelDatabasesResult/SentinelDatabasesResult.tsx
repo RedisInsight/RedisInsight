@@ -158,7 +158,6 @@ const SentinelDatabasesResult = ({
                 size="m"
                 onClick={handleViewDatabases}
                 color="secondary"
-                className="btn-add"
                 data-testid="btn-view-databases"
               >
                 View Databases

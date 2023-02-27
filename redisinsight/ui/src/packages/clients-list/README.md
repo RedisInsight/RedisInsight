@@ -20,6 +20,9 @@ This command will generate the `vendor` folder with styles and fonts of the core
 inside the folder for your plugin and include appropriate styles to the `index.html` file.
 
 ```
+yarn
+yarn --cwd redisinsight/api/ install
+
 yarn build:statics - for Linux or MacOs
 yarn build:statics:win - for Windows
 ```

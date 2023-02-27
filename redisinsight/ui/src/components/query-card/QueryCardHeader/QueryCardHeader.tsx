@@ -110,6 +110,7 @@ const QueryCardHeader = (props: Props) => {
     setSelectedValue,
     onQueryDelete,
     onQueryReRun,
+    onQueryProfile,
     db,
   } = props
 

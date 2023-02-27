@@ -3,9 +3,11 @@ import { join } from 'path';
 import * as fs from 'fs-extra';
 import { CustomTutorial } from 'src/modules/custom-tutorial/models/custom-tutorial';
 import {
+  CustomTutorialManifest,
   CustomTutorialManifestType,
-  ICustomTutorialManifest,
+  RootCustomTutorialManifest,
 } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
+import { plainToClass } from 'class-transformer';
 
 const MANIFEST_FILE = 'manifest.json';
 
@@ -20,11 +22,15 @@ export class CustomTutorialManifestProvider {
    * So user will be able to fix (re-import) tutorial or remove it
    * @param path
    */
-  public async getManifestJson(path: string): Promise<ICustomTutorialManifest> {
+  public async getManifestJson(path: string): Promise<CustomTutorialManifest[]> {
     try {
-      return JSON.parse(
+      const manifestJson = JSON.parse(
         await fs.readFile(join(path, MANIFEST_FILE), 'utf8'),
       );
+
+      const model = plainToClass(CustomTutorialManifest, manifestJson as [], { excludeExtraneousValues: true });
+
+      return model?.length ? model : [];
     } catch (e) {
       this.logger.warn('Unable to get manifest for tutorial');
       return null;
@@ -36,7 +42,7 @@ export class CustomTutorialManifestProvider {
    * additional data from local database
    * @param tutorial
    */
-  public async generateTutorialManifest(tutorial: CustomTutorial): Promise<Record<string, any>> {
+  public async generateTutorialManifest(tutorial: CustomTutorial): Promise<RootCustomTutorialManifest> {
     try {
       return {
         type: CustomTutorialManifestType.Group,

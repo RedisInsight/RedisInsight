@@ -1,7 +1,9 @@
 import { CustomTutorialActions } from 'src/modules/custom-tutorial/models/custom-tutorial';
-import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Expose, Type } from 'class-transformer';
+import {
+  IsArray, IsBoolean, IsEnum, IsNotEmpty, IsString, ValidateNested,
+} from 'class-validator';
 
 export enum CustomTutorialManifestType {
   CodeButton = 'code-button',
@@ -17,6 +19,24 @@ export interface ICustomTutorialManifest {
   args?: Record<string, any>,
   _actions?: CustomTutorialActions[],
   _path?: string,
+}
+
+export class CustomTutorialManifestArgs {
+  @ApiPropertyOptional({ type: Boolean })
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  path?: string;
+
+  @ApiPropertyOptional({ type: Boolean })
+  @Expose()
+  @IsBoolean()
+  initialIsOpen?: boolean;
+
+  @ApiPropertyOptional({ type: Boolean })
+  @Expose()
+  @IsBoolean()
+  withBorder?: boolean;
 }
 
 export class CustomTutorialManifest {
@@ -35,5 +55,30 @@ export class CustomTutorialManifest {
   @IsNotEmpty()
   label: string;
 
-  children: Record<string, CustomTutorialManifest>
+  @ApiPropertyOptional({ type: CustomTutorialManifestArgs })
+  @Expose()
+  @ValidateNested()
+  @Type(() => CustomTutorialManifestArgs)
+  args?: CustomTutorialManifestArgs;
+
+  @ApiPropertyOptional({ type: CustomTutorialManifest })
+  @Expose()
+  @ValidateNested({ each: true })
+  @IsArray()
+  @Type(() => CustomTutorialManifest)
+  children?: CustomTutorialManifest[];
+}
+
+export class RootCustomTutorialManifest extends CustomTutorialManifest {
+  @ApiPropertyOptional({ enum: CustomTutorialActions })
+  @Expose()
+  @IsArray()
+  @IsEnum(CustomTutorialActions, { each: true })
+  _actions?: CustomTutorialActions[];
+
+  @ApiPropertyOptional({ type: String })
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  _path?: string;
 }

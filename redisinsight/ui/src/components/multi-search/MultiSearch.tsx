@@ -139,6 +139,18 @@ const MultiSearch = (props: Props) => {
     onSubmit()
   }
 
+  const SubmitBtn = () => (
+    <EuiButtonIcon
+      iconType="search"
+      color="primary"
+      aria-label="Search"
+      disabled={disableSubmit}
+      className={styles.searchButton}
+      onClick={handleSubmit}
+      data-testid="search-btn"
+    />
+  )
+
   return (
     <EuiOutsideClickDetector onOutsideClick={exitAutoSuggestions}>
       <div
@@ -257,15 +269,17 @@ const MultiSearch = (props: Props) => {
             </EuiToolTip>
           )}
         </div>
-        <EuiButtonIcon
-          iconType="search"
-          color="primary"
-          aria-label="Search"
-          disabled={disableSubmit}
-          className={styles.searchButton}
-          onClick={handleSubmit}
-          data-testid="search-btn"
-        />
+        {disableSubmit && (
+          <EuiToolTip
+            position="top"
+            display="inlineBlock"
+            anchorClassName={styles.anchorSubmitBtn}
+            content="Please choose index in order to preform the search"
+          >
+            {SubmitBtn()}
+          </EuiToolTip>
+        )}
+        {!disableSubmit && SubmitBtn()}
       </div>
     </EuiOutsideClickDetector>
   )

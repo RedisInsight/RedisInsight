@@ -15,7 +15,7 @@ import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addReJSONKey, } from 'uiSrc/slices/browser/keys'
 
 import MonacoJson from 'uiSrc/components/monaco-json'
-import UploadFile from 'uiSrc/components/uploadFile'
+import UploadFile from 'uiSrc/components/upload-file'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/dto'
 

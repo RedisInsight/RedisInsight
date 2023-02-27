@@ -12,12 +12,12 @@ enum TokenType {
   NOT = 'NOT',
   OPTIONAL = 'OPTIONAL',
   EXACT = 'EXACT',
+  TAG = 'TAG',
   VECTOR = 'VECTOR',
-  FUZZY_EXPR = 'FUZZY',
-  WILDCARD_EXPR = 'WILDCARD',
-  PREFIX_EXPR = 'PREFIX',
+  FUZZY = 'FUZZY',
+  WILDCARD = 'WILDCARD',
+  PREFIX = 'PREFIX',
   GEO_EXPR = 'GEO_EXPR',
-  TAG_EXPR = 'TAG_EXPR',
   IDS_EXPR = 'IDS_EXPR',
   LEXRANGE_EXPR = 'LEXRANGE_EXPR',
   NUMERIC = 'NUMERIC',
@@ -64,7 +64,7 @@ const KEYWORDS = {
   [TokenType.OPTIONAL.toString()]: TokenType.OPTIONAL,
   [TokenType.EXACT.toString()]: TokenType.EXACT,
   [TokenType.VECTOR.toString()]: TokenType.VECTOR,
-  [TokenType.TAG_EXPR.toString()]: TokenType.TAG_EXPR,
+  [TokenType.TAG.toString()]: TokenType.TAG,
   [TokenType.NUMERIC.toString()]: TokenType.NUMERIC,
 
   'inf': TokenType.NUMBER,
@@ -233,13 +233,13 @@ class Lexer {
           const literal = this.ReadIdentifier()
           let tokenType = KEYWORDS[literal] || TokenType.IDENTIFIER
           if (literal.startsWith('TAG:')) {
-            tokenType = TokenType.TAG_EXPR
+            tokenType = TokenType.TAG
           } else if (literal === 'FUZZY') {
-            tokenType = TokenType.FUZZY_EXPR
+            tokenType = TokenType.FUZZY
           } else if (literal === 'WILDCARD') {
-            tokenType = TokenType.WILDCARD_EXPR
+            tokenType = TokenType.WILDCARD
           } else if (literal === 'PREFIX') {
-            tokenType = TokenType.PREFIX_EXPR
+            tokenType = TokenType.PREFIX
           } else if (literal === 'IDS') {
             tokenType = TokenType.IDS_EXPR
           } else if (literal === 'LEXRANGE') {
@@ -290,6 +290,7 @@ export enum EntityType {
   WILDCARD = 'WILDCARD',
   PREFIX = 'PREFIX',
   TEXT = 'TEXT',
+  NUMBER = 'NUMBER',
   TAG = 'TAG',
 
   IDS = 'IDS',
@@ -352,7 +353,6 @@ export function GetAncestors(info: EntityInfo, searchId: string, a: IAncestors):
 
 class Expr {
   Core: string
-  Type: EntityType
   SubType: EntityType
   Time?: string
   Info?: string
@@ -537,18 +537,26 @@ class Parser {
         Exprs.push(this.parseNumericExpr())
       } else if (this.CurrentToken?.T === TokenType.IDENTIFIER) {
         Exprs.push(this.parseExpr())
-      } else if ([TokenType.UNION, TokenType.INTERSECT, TokenType.NOT, TokenType.OPTIONAL, TokenType.EXACT, TokenType.VECTOR].includes(t)) {
+      } else if ([
+        TokenType.UNION,
+        TokenType.INTERSECT,
+        TokenType.NOT,
+        TokenType.OPTIONAL,
+        TokenType.EXACT,
+        TokenType.VECTOR,
+        TokenType.TAG
+      ].includes(t)) {
         Exprs.push(this.parseExpandExpr(EntityType[t]))
-      } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
-        Exprs.push(this.parseTagExpr())
       } else if (this.CurrentToken.T === TokenType.GEO_EXPR) {
         Exprs.push(this.parseGeoExpr())
-      } else if ([TokenType.FUZZY_EXPR, TokenType.WILDCARD_EXPR, TokenType.PREFIX_EXPR].includes(t)) {
+      } else if ([TokenType.FUZZY, TokenType.WILDCARD, TokenType.PREFIX].includes(t)) {
         Exprs.push(this.parseSimpleExpr(EntityType[t]))
       } else if (this.CurrentToken.T === TokenType.IDS_EXPR) {
         Exprs.push(this.parseIdsExpr())
       } else if (this.CurrentToken.T === TokenType.LEXRANGE_EXPR) {
         Exprs.push(this.parseLexrangeExpr())
+      } else if (this.CurrentToken.T === TokenType.NUMBER) {
+        Exprs.push(new Expr(this.CurrentToken.Data.toString(), EntityType.NUMBER))
       }
 
       this.nextToken()
@@ -731,56 +739,6 @@ class Parser {
     return new Expr(`${first},${second} --> ${third} ${metric}`, EntityType.GEO, identifierData)
   }
 
-  parseTagExpr() {
-    this.assertToken(TokenType.TAG_EXPR)
-
-    let tagData = this.CurrentToken.Data
-
-    this.nextToken()
-
-    this.assertToken(TokenType.LBRACE)
-
-    this.nextToken()
-
-    this.assertToken(TokenType.NEW_LINE)
-
-    this.nextToken()
-
-    let Exprs: SearchExpr[] = []
-    while (true) {
-
-      if (this.CurrentToken.T === TokenType.RBRACE && this.PeekToken.T === TokenType.NEW_LINE) {
-
-        this.nextToken()
-        break
-      }
-
-      const t = this.CurrentToken.T;
-
-      if (this.CurrentToken?.T === TokenType.NUMERIC) {
-        Exprs.push(this.parseNumericExpr())
-      } else if (this.CurrentToken?.T === TokenType.IDENTIFIER) {
-        Exprs.push(this.parseExpr())
-      } else if ([TokenType.UNION, TokenType.INTERSECT, TokenType.NOT, TokenType.OPTIONAL, TokenType.EXACT, TokenType.VECTOR].includes(t)) {
-        Exprs.push(this.parseExpandExpr(EntityType[t]))
-      } else if (this.CurrentToken.T === TokenType.TAG_EXPR) {
-        Exprs.push(this.parseTagExpr())
-      } else if (this.CurrentToken.T === TokenType.GEO_EXPR) {
-        Exprs.push(this.parseGeoExpr())
-      } else if ([TokenType.FUZZY_EXPR, TokenType.WILDCARD_EXPR, TokenType.PREFIX_EXPR].includes(t)) {
-        Exprs.push(this.parseSimpleExpr(EntityType[t]))
-      } else if (this.CurrentToken.T === TokenType.IDS_EXPR) {
-        Exprs.push(this.parseIdsExpr())
-      } else if (this.CurrentToken.T === TokenType.LEXRANGE_EXPR) {
-        Exprs.push(this.parseLexrangeExpr())
-      }
-
-      this.nextToken()
-    }
-
-    return new ExpandExpr(EntityType.TAG, Exprs, tagData)
-  }
-
   parseNumericExpr() {
     this.assertToken(TokenType.NUMERIC)
 
@@ -846,13 +804,19 @@ function Parse(data: string): SearchExpr {
 
   if (p.CurrentToken?.T === TokenType.NUMERIC) {
     return p.parseNumericExpr()
-  } else if ([TokenType.UNION, TokenType.INTERSECT, TokenType.NOT, TokenType.OPTIONAL, TokenType.EXACT, TokenType.VECTOR].includes(t)) {
+  } else if ([
+    TokenType.UNION,
+    TokenType.INTERSECT,
+    TokenType.NOT,
+    TokenType.OPTIONAL,
+    TokenType.EXACT,
+    TokenType.VECTOR,
+    TokenType.TAG,
+  ].includes(t)) {
     return p.parseExpandExpr(EntityType[t])
-  } else if (p.CurrentToken.T === TokenType.TAG_EXPR) {
-    return p.parseTagExpr()
   } else if (p.CurrentToken.T === TokenType.GEO_EXPR) {
     return p.parseGeoExpr()
-  } else if ([TokenType.FUZZY_EXPR, TokenType.WILDCARD_EXPR, TokenType.PREFIX_EXPR].includes(t)) {
+  } else if ([TokenType.FUZZY, TokenType.WILDCARD, TokenType.PREFIX].includes(t)) {
     return p.parseSimpleExpr(EntityType[t])
   } else if (p.CurrentToken.T === TokenType.IDS_EXPR) {
     return p.parseIdsExpr()
@@ -899,6 +863,7 @@ function assertExpandEntity(t: EntityType) {
     EntityType.OPTIONAL,
     EntityType.EXACT,
     EntityType.VECTOR,
+    EntityType.TAG,
   ].includes(t)) {
     throw new Error(`${t} is not an expand entity`)
   }

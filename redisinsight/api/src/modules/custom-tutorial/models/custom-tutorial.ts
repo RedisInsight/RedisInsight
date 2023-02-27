@@ -7,6 +7,7 @@ const PATH_CONFIG = config.get('dir_path');
 export enum CustomTutorialActions {
   CREATE = 'create',
   DELETE = 'delete',
+  SYNC = 'sync',
 }
 
 export class CustomTutorial {
@@ -26,7 +27,13 @@ export class CustomTutorial {
   createdAt: Date;
 
   get actions(): CustomTutorialActions[] {
-    return [CustomTutorialActions.DELETE];
+    const actions = [CustomTutorialActions.DELETE];
+
+    if (this.link) {
+      actions.push(CustomTutorialActions.SYNC);
+    }
+
+    return actions;
   }
 
   get path(): string {

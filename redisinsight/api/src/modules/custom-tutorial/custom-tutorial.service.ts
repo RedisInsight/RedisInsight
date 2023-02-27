@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable, Logger, NotFoundException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -34,7 +35,15 @@ export class CustomTutorialService {
    */
   public async create(dto: UploadCustomTutorialDto): Promise<RootCustomTutorialManifest> {
     try {
-      const tmpPath = await this.customTutorialFsProvider.unzipToTmpFolder(dto.file);
+      let tmpPath = '';
+
+      if (dto.file) {
+        tmpPath = await this.customTutorialFsProvider.unzipFromMemoryStoredFile(dto.file);
+      } else if (dto.link) {
+        tmpPath = await this.customTutorialFsProvider.unzipFromExternalLink(dto.link);
+      } else {
+        throw new BadRequestException('File or external link should be provided');
+      }
 
       // todo: validate
 

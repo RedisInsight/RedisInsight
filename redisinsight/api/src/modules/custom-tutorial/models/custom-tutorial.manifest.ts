@@ -2,7 +2,7 @@ import { CustomTutorialActions } from 'src/modules/custom-tutorial/models/custom
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import {
-  IsArray, IsBoolean, IsEnum, IsNotEmpty, IsString, ValidateNested,
+  IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested
 } from 'class-validator';
 
 export enum CustomTutorialManifestType {
@@ -23,17 +23,20 @@ export interface ICustomTutorialManifest {
 
 export class CustomTutorialManifestArgs {
   @ApiPropertyOptional({ type: Boolean })
+  @IsOptional()
   @Expose()
   @IsString()
   @IsNotEmpty()
   path?: string;
 
   @ApiPropertyOptional({ type: Boolean })
+  @IsOptional()
   @Expose()
   @IsBoolean()
   initialIsOpen?: boolean;
 
   @ApiPropertyOptional({ type: Boolean })
+  @IsOptional()
   @Expose()
   @IsBoolean()
   withBorder?: boolean;
@@ -56,12 +59,14 @@ export class CustomTutorialManifest {
   label: string;
 
   @ApiPropertyOptional({ type: CustomTutorialManifestArgs })
+  @IsOptional()
   @Expose()
   @ValidateNested()
   @Type(() => CustomTutorialManifestArgs)
   args?: CustomTutorialManifestArgs;
 
   @ApiPropertyOptional({ type: CustomTutorialManifest })
+  @IsOptional()
   @Expose()
   @ValidateNested({ each: true })
   @IsArray()
@@ -71,12 +76,14 @@ export class CustomTutorialManifest {
 
 export class RootCustomTutorialManifest extends CustomTutorialManifest {
   @ApiPropertyOptional({ enum: CustomTutorialActions })
+  @IsOptional()
   @Expose()
   @IsArray()
   @IsEnum(CustomTutorialActions, { each: true })
   _actions?: CustomTutorialActions[];
 
   @ApiPropertyOptional({ type: String })
+  @IsOptional()
   @Expose()
   @IsString()
   @IsNotEmpty()

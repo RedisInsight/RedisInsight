@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash'
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
-import UploadFile from 'uiSrc/components/uploadFile'
+import UploadFile from 'uiSrc/components/upload-file'
 
 import styles from './styles.module.scss'
 

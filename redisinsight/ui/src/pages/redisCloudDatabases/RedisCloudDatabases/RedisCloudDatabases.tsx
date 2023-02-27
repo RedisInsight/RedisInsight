@@ -168,7 +168,6 @@ const RedisCloudDatabasesPage = ({
         onClick={handleSubmit}
         isLoading={loading}
         color="secondary"
-        className="btn-add"
         iconType={isDisabled ? 'iInCircle' : undefined}
         data-testid="btn-add-databases"
       >

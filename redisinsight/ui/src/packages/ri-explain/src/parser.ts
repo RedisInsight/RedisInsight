@@ -16,6 +16,7 @@ enum TokenType {
   VECTOR = 'VECTOR',
   FUZZY = 'FUZZY',
   WILDCARD = 'WILDCARD',
+  WILDCARD_EMPTY = 'WILDCARD_EMPTY', // <WILDCARD>}\n
   PREFIX = 'PREFIX',
   GEO_EXPR = 'GEO_EXPR',
   IDS_EXPR = 'IDS_EXPR',
@@ -190,6 +191,13 @@ class Lexer {
         break
       case '-':// TODO: This should be MINUS token
         t = new Token(TokenType.IDENTIFIER, this.C)
+        let p = this.PeekChar()
+        if (p !== null && isDigit(p)){
+          this.ReadChar()
+          const n = this.ReadNumber()
+          t = new Token(TokenType.NUMBER, '-' + n)
+          return t
+        }
         break
       case ',':
         t = new Token(TokenType.COMMA, this.C)
@@ -557,6 +565,8 @@ class Parser {
         Exprs.push(this.parseLexrangeExpr())
       } else if (this.CurrentToken.T === TokenType.NUMBER) {
         Exprs.push(new Expr(this.CurrentToken.Data.toString(), EntityType.NUMBER))
+      } else if (this.CurrentToken.T === TokenType.LESS) {
+        Exprs.push(this.parseWildcardEmpty())
       }
 
       this.nextToken()
@@ -628,6 +638,30 @@ class Parser {
     this.nextToken()
 
     return new Expr(ids.join(','), EntityType.IDS)
+  }
+
+  // This is a special result.
+  //
+  // Example output: <WILDCARD>}\n
+  parseWildcardEmpty() {
+    // TODO: Check for WILDCARD_EMPTY
+    this.assertToken(TokenType.LESS)
+
+    this.nextToken()
+
+    this.assertToken(TokenType.WILDCARD)
+
+    this.nextToken()
+
+    this.assertToken(TokenType.GREATER)
+
+    this.nextToken()
+
+    // TODO: Once fixed by redisearch team, remove this.
+    this.assertToken(TokenType.RBRACE)
+
+
+    return new Expr("<WILDCARD>", EntityType.WILDCARD)
   }
 
   parseExpr() {
@@ -822,6 +856,8 @@ function Parse(data: string): SearchExpr {
     return p.parseIdsExpr()
   } else if (p.CurrentToken.T === TokenType.LEXRANGE_EXPR) {
     return p.parseLexrangeExpr()
+  } else if (p.CurrentToken.T === TokenType.LESS) {
+    return p.parseWildcardEmpty()
   } else {
     return p.parseExpr()
   }

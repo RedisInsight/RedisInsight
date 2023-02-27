@@ -21,9 +21,7 @@ inside the folder for your plugin and include appropriate styles to the `index.h
 
 ```
 yarn
-cd redisinsight/api
-yarn
-cd ../../
+yarn --cwd redisinsight/api/ install
 
 yarn build:statics - for Linux or MacOs
 yarn build:statics:win - for Windows

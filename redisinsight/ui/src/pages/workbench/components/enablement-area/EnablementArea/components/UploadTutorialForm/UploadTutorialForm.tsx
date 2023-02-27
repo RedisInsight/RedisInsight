@@ -4,6 +4,7 @@ import { useFormik } from 'formik'
 import { FormikErrors } from 'formik/dist/types'
 import { isEmpty } from 'lodash'
 
+import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import UploadFile from 'uiSrc/components/uploadFile'
@@ -86,7 +87,11 @@ const UploadTutorialForm = (props: Props) => {
           />
           {formik.values.file ? (
             <div className={styles.uploadFileName}>
-              <EuiText color="subdued" size="xs">{formik.values.file.name}</EuiText>
+              <EuiText className={cx(styles.uploadFileNameTitle)} color="subdued" size="xs">
+                <div className="truncateText">
+                  <span>{formik.values.file.name}</span>
+                </div>
+              </EuiText>
               <EuiButtonIcon
                 style={{ marginLeft: '4px' }}
                 size="xs"

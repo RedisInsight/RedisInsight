@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
 import { EuiButton, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
 
+import { formatLongName } from 'uiSrc/utils'
+
 import styles from './styles.module.scss'
 
 export interface Props {
   id: string
-  label: string | React.ReactElement
+  label: string
+  isLoading?: boolean
   onDelete: (e: React.MouseEvent) => void
 }
 
 const DeleteTutorialButton = (props: Props) => {
-  const { id, label, onDelete } = props
+  const { id, label, onDelete, isLoading } = props
   const [isPopoverDeleteOpen, setIsPopoverDeleteOpen] = useState<boolean>(false)
 
   const handleClickDelete = (e: React.MouseEvent) => {
@@ -26,7 +29,7 @@ const DeleteTutorialButton = (props: Props) => {
       closePopover={() => setIsPopoverDeleteOpen(false)}
       panelPaddingSize="l"
       button={(
-        <div className="group-header__delete-btn" role="presentation" onClick={handleClickDelete}>
+        <div className="group-header__btn group-header__delete-btn" role="presentation" onClick={handleClickDelete}>
           <EuiIcon size="m" type="trash" />
         </div>
       )}
@@ -35,7 +38,7 @@ const DeleteTutorialButton = (props: Props) => {
       <div className={styles.popoverDeleteContainer}>
         <EuiText size="m">
           <h4 style={{ wordBreak: 'break-all' }}>
-            <b>{label}</b>
+            <b>{formatLongName(label)}</b>
           </h4>
           <EuiText size="s">
             will be deleted.
@@ -48,6 +51,7 @@ const DeleteTutorialButton = (props: Props) => {
             color="warning"
             iconType="trash"
             onClick={onDelete}
+            isLoading={isLoading}
             data-testid={`delete-tutorial-${id}`}
           >
             Delete

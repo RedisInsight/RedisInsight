@@ -5,10 +5,10 @@ import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/inter
 import { Nullable } from 'uiSrc/utils'
 
 export interface IFileInfo {
-  extension: string;
-  name: string;
-  parent: string;
-  location: string;
+  extension: string
+  name: string
+  parent: string
+  location: string
 }
 
 export const getFileInfo = (
@@ -22,13 +22,12 @@ export const getFileInfo = (
     const file = pathNames.pop() || ''
     const markdownParent = manifest ? getParentByManifest(manifest, manifestPath) : null
     const [fileName, extension] = file.split('.')
-    const parentName = pathNames.pop() || ''
 
     return {
       location: pathNames.join('/'),
       name: fileName || '',
       extension: extension || '',
-      parent: markdownParent ? markdownParent.label : parentName.replace(/[-_]+/g, ' ')
+      parent: markdownParent ? markdownParent.label : (pathNames.pop() || '').replace(/[-_]+/g, ' ')
     } as IFileInfo
   } catch (e) {
     return defaultResult

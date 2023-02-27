@@ -5,7 +5,7 @@ import cx from 'classnames'
 import { EuiListGroup, EuiLoadingContent } from '@elastic/eui'
 import { isEmpty } from 'lodash'
 import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
-import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
+import { DefaultCustomTutorialsItems, EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { appContextWorkbenchEA, resetWorkbenchEASearch } from 'uiSrc/slices/app/context'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -37,7 +37,7 @@ const padding = parseInt(styles.paddingHorizontal)
 export interface Props {
   guides: Record<string, IEnablementAreaItem>
   tutorials: Record<string, IEnablementAreaItem>
-  customTutorials: Record<string, IEnablementAreaItem>
+  customTutorials: DefaultCustomTutorialsItems
   loading: boolean
   openScript: (
     script: string,
@@ -184,6 +184,7 @@ const EnablementArea = (props: Props) => {
             id={id}
             label={label}
             actions={actions}
+            isShowActions={currentSourcePath.startsWith(ApiEndpoints.CUSTOM_TUTORIALS_PATH)}
             onCreate={() => setIsCreateOpen((v) => !v)}
             onDelete={onDeleteCustomTutorial}
             {...args}
@@ -208,7 +209,7 @@ const EnablementArea = (props: Props) => {
             </div>
             <div style={{ marginTop: '10px', marginBottom: '10px', ...paddingsStyle }}>
               {args?.path
-                ? <LazyCodeButton label={label} {...args} />
+                ? <LazyCodeButton label={label} sourcePath={sourcePath} {...args} />
                 : <CodeButton onClick={() => openScript(args?.content || '')} label={label} {...args} />}
             </div>
           </>

@@ -22,6 +22,10 @@
       align-items: center;
       padding-left: 4px;
     }
+
+    .uploadFileNameTitle {
+      max-width: calc(100% - 30px);
+    }
   }
 
   .btnSubmit {

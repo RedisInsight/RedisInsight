@@ -33,10 +33,19 @@ export interface IEnablementAreaItem {
   _groupPath?: string
 }
 
+export interface DefaultCustomTutorialsItems {
+  'custom-tutorials': IEnablementAreaItem
+}
+
 export interface StateWorkbenchEnablementArea {
-  loading: boolean;
-  error: string;
-  items: Record<string, IEnablementAreaItem>;
+  loading: boolean
+  deleting: boolean
+  error: string
+  items: Record<string, IEnablementAreaItem>
+}
+
+export interface StateWorkbenchCustomTutorials extends Omit<StateWorkbenchEnablementArea, 'items'> {
+  items: DefaultCustomTutorialsItems
 }
 
 export interface CommandExecutionUI extends Partial<CommandExecution> {

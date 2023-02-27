@@ -2,18 +2,29 @@ import { createSlice } from '@reduxjs/toolkit'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, } from 'uiSrc/utils'
 import { apiService } from 'uiSrc/services'
-import { IEnablementAreaItem, StateWorkbenchEnablementArea } from 'uiSrc/slices/interfaces'
+import {
+  DefaultCustomTutorialsItems,
+  EnablementAreaComponent,
+  IEnablementAreaItem,
+  StateWorkbenchCustomTutorials,
+} from 'uiSrc/slices/interfaces'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { AppDispatch, RootState } from '../store'
 
-export const defaultItems: Record<string, IEnablementAreaItem> = {
-
+export const defaultItems: DefaultCustomTutorialsItems = {
+  'custom-tutorials': {
+    id: 'custom-tutorials',
+    label: 'MY TUTORIALS',
+    type: EnablementAreaComponent.Group,
+    children: {}
+  }
 }
-export const initialState: StateWorkbenchEnablementArea = {
+export const initialState: StateWorkbenchCustomTutorials = {
   loading: false,
+  deleting: false,
   error: '',
-  items: {},
+  items: defaultItems,
 }
 
 // A slice for recipes
@@ -33,6 +44,34 @@ const workbenchCustomTutorialsSlice = createSlice({
       state.error = payload
       state.items = defaultItems
     },
+    uploadWbCustomTutorial: (state) => {
+      state.loading = true
+    },
+    uploadWBCustomTutorialSuccess: (state, { payload }) => {
+      state.loading = false
+      state.items['custom-tutorials'] = {
+        ...state.items['custom-tutorials'],
+        children: {
+          [payload.id]: payload,
+          ...state.items['custom-tutorials'].children,
+        },
+      }
+    },
+    uploadWBCustomTutorialFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
+    deleteWbCustomTutorial: (state) => {
+      state.deleting = true
+    },
+    deleteWBCustomTutorialSuccess: (state, { payload }) => {
+      state.deleting = false
+      delete state.items['custom-tutorials'].children?.[payload]
+    },
+    deleteWBCustomTutorialFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
   }
 })
 
@@ -44,6 +83,12 @@ export const {
   getWBCustomTutorials,
   getWBCustomTutorialsSuccess,
   getWBCustomTutorialsFailure,
+  uploadWbCustomTutorial,
+  uploadWBCustomTutorialSuccess,
+  uploadWBCustomTutorialFailure,
+  deleteWbCustomTutorial,
+  deleteWBCustomTutorialSuccess,
+  deleteWBCustomTutorialFailure
 } = workbenchCustomTutorialsSlice.actions
 
 // The reducer
@@ -75,8 +120,9 @@ export function uploadCustomTutorial(
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
+    dispatch(uploadWbCustomTutorial())
     try {
-      const { status } = await apiService.post(
+      const { status, data } = await apiService.post(
         ApiEndpoints.CUSTOM_TUTORIALS,
         formData,
         {
@@ -87,10 +133,12 @@ export function uploadCustomTutorial(
         }
       )
       if (isStatusSuccessful(status)) {
-        dispatch(fetchCustomTutorials())
+        dispatch(uploadWBCustomTutorialSuccess(data))
         onSuccessAction?.()
       }
     } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(uploadWBCustomTutorialFailure(errorMessage))
       dispatch(addErrorNotification(error))
       onFailAction?.()
     }
@@ -99,13 +147,16 @@ export function uploadCustomTutorial(
 
 export function deleteCustomTutorial(id: string, onSuccessAction?: () => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch) => {
+    dispatch(deleteWbCustomTutorial())
     try {
       const { status } = await apiService.delete(`${ApiEndpoints.CUSTOM_TUTORIALS}/${id}`)
       if (isStatusSuccessful(status)) {
-        dispatch(fetchCustomTutorials())
+        dispatch(deleteWBCustomTutorialSuccess(id))
         onSuccessAction?.()
       }
     } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(deleteWBCustomTutorialFailure(errorMessage))
       dispatch(addErrorNotification(error))
       onFailAction?.()
     }

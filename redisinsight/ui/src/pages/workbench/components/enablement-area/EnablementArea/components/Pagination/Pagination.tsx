@@ -12,10 +12,10 @@ import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementArea
 import styles from './styles.module.scss'
 
 export interface Props {
-  items: IEnablementAreaItem[];
-  sourcePath: string;
-  activePageId?: string;
-  compressed?: boolean;
+  items: IEnablementAreaItem[]
+  sourcePath: string
+  activePageId?: string
+  compressed?: boolean
 }
 
 const Pagination = ({ items = [], sourcePath, activePageId, compressed }: Props) => {
@@ -40,9 +40,12 @@ const Pagination = ({ items = [], sourcePath, activePageId, compressed }: Props)
 
   const handleOpenPage = (index: number) => {
     const path = items[index]?.args?.path
+    const groupPath = items[index]?._groupPath
+    const key = items[index]?._key
+
     closePopover()
     if (index !== activePage && openPage && path) {
-      openPage({ path: sourcePath + path })
+      openPage({ path: sourcePath + path, manifestPath: key ? (`${groupPath}/${key}`) : '' })
     }
   }
 

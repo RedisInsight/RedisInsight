@@ -22,10 +22,10 @@ import reducer, {
   appContextSelector,
   appContextBrowser,
   appContextWorkbench,
-  setWorkbenchEAItem,
+  setWorkbenchEASearch,
   appContextWorkbenchEA,
   setWorkbenchEAItemScrollTop,
-  resetWorkbenchEAItem,
+  resetWorkbenchEASearch,
   setBrowserTreeNodesOpen,
   setBrowserTreePanelSizes,
   resetBrowserTree,
@@ -335,7 +335,7 @@ describe('slices', () => {
     })
   })
 
-  describe('setWorkbenchEAItem', () => {
+  describe('setWorkbenchEASearch', () => {
     it('should properly set path to opened guide page', () => {
       // Arrange
       const prevState = {
@@ -357,7 +357,7 @@ describe('slices', () => {
       }
 
       // Act
-      const nextState = reducer(prevState, setWorkbenchEAItem(itemPath))
+      const nextState = reducer(prevState, setWorkbenchEASearch(itemPath))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -388,7 +388,7 @@ describe('slices', () => {
     })
   })
 
-  describe('resetWorkbenchEAItem', () => {
+  describe('resetWorkbenchEASearch', () => {
     it('should properly reset enablement-area context', () => {
       // Arrange
       const prevState = {
@@ -409,7 +409,7 @@ describe('slices', () => {
       }
 
       // Act
-      const nextState = reducer(prevState, resetWorkbenchEAItem())
+      const nextState = reducer(prevState, resetWorkbenchEASearch())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

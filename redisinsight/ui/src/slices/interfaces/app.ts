@@ -82,7 +82,7 @@ export interface StateAppContext {
     script: string
     enablementArea: {
       isMinimized: boolean
-      itemPath: string
+      search: string
       itemScrollTop: number
     },
     panelSizes: {

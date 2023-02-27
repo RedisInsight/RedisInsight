@@ -7,23 +7,36 @@ import styles from './styles.module.scss'
 import './styles.scss'
 
 export interface Props {
-  testId: string,
-  label: string;
-  children: React.ReactElement[] | string;
-  path?: string,
-  size?: 's' | 'xs' | 'm' | 'l';
-  iconType?: string;
-  iconPosition?: 'left' | 'right';
-  toolTip?: string;
-  style?: any;
-  sourcePath: string;
+  testId: string
+  label: string
+  children: React.ReactElement[] | string
+  path?: string
+  size?: 's' | 'xs' | 'm' | 'l'
+  iconType?: string
+  iconPosition?: 'left' | 'right'
+  toolTip?: string
+  style?: any
+  sourcePath: string
+  manifestPath?: string
 }
 const InternalLink = (props: Props) => {
-  const { label, testId, children, path = '', size = 's', iconType, iconPosition = 'left', toolTip, sourcePath, ...rest } = props
+  const {
+    label,
+    testId,
+    children,
+    path = '',
+    size = 's',
+    iconType,
+    iconPosition = 'left',
+    toolTip,
+    sourcePath,
+    manifestPath,
+    ...rest
+  } = props
   const { openPage } = useContext(EnablementAreaContext)
   const handleOpenPage = () => {
     if (path) {
-      openPage({ path: sourcePath + path, label })
+      openPage({ path: sourcePath, manifestPath, label })
     }
   }
 

@@ -100,7 +100,7 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        guides={{ manual: item }}
+        tutorials={{ manual: item }}
       />
     )
     const codeButtonEl = queryByTestId(`preselect-${item.label}`)

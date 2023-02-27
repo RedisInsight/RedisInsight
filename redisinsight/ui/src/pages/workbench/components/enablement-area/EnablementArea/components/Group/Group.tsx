@@ -1,45 +1,92 @@
 import React from 'react'
-import { EuiAccordion, EuiText } from '@elastic/eui'
+import { EuiAccordion, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { useSelector } from 'react-redux'
+
+import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import DeleteTutorialButton from '../DeleteTutorialButton'
+import { EAItemActions } from '../../constants'
+
 import './styles.scss'
 
 export interface Props {
-  testId: string
-  label: string | React.ReactElement
-  children: React.ReactElement[]
+  id: string
+  label: string
+  actions?: string[]
+  isShowActions?: boolean
+  onCreate?: () => void
+  onDelete?: (id: string) => void
+  children: React.ReactNode
   withBorder?: boolean
   initialIsOpen?: boolean
   forceState?: 'open' | 'closed'
   arrowDisplay?: 'left' | 'right' | 'none'
   onToggle?: (isOpen: boolean) => void
   triggerStyle?: any
+  isCustomTutorialsLoading?: boolean
 }
 
 const Group = (props: Props) => {
   const {
     label,
+    actions,
+    isShowActions,
     children,
-    testId,
+    id,
     forceState,
     withBorder = false,
     arrowDisplay = 'right',
     initialIsOpen = false,
     onToggle,
+    onCreate,
+    onDelete,
     triggerStyle,
   } = props
+  const { deleting: deletingCustomTutorials } = useSelector(workbenchCustomTutorialsSelector)
+
+  const handleCreate = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onCreate?.()
+  }
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onDelete?.(id)
+  }
+
+  const Actions = ({ actions }: { actions?: string[] }) => (
+    <>
+      {actions?.includes(EAItemActions.Create) && (
+        <EuiToolTip
+          content="Upload Tutorial"
+        >
+          <div className="group-header__btn group-header__create-btn" role="presentation" onClick={handleCreate}>
+            <EuiIcon type="plus" />
+          </div>
+        </EuiToolTip>
+      )}
+      {actions?.includes(EAItemActions.Delete) && (
+        <DeleteTutorialButton id={id} label={label} onDelete={handleDelete} isLoading={deletingCustomTutorials} />
+      )}
+    </>
+  )
+
   const buttonContent = (
-    <EuiText className="group-header" size="m">
-      {label}
-    </EuiText>
+    <div className="group-header-wrapper">
+      <EuiText className="group-header" size="m">
+        {label}
+      </EuiText>
+      {isShowActions && <Actions actions={actions} />}
+    </div>
   )
   const buttonProps: any = {
-    'data-testid': `accordion-button-${testId}`,
+    'data-testid': `accordion-button-${id}`,
     style: triggerStyle,
   }
 
   return (
     <EuiAccordion
-      id={testId}
-      data-testid={`accordion-${testId}`}
+      id={id}
+      data-testid={`accordion-${id}`}
       buttonContent={buttonContent}
       buttonProps={buttonProps}
       forceState={forceState}

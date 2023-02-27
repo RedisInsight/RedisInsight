@@ -16,7 +16,7 @@ export const initialState: StateWorkbenchEnablementArea = {
 }
 
 // A slice for recipes
-const workbencTutorialsSlice = createSlice({
+const workbenchTutorialsSlice = createSlice({
   name: 'workbenchTutorials',
   initialState,
   reducers: {
@@ -43,10 +43,10 @@ export const {
   getWBTutorials,
   getWBTutorialsSuccess,
   getWBTutorialsFailure,
-} = workbencTutorialsSlice.actions
+} = workbenchTutorialsSlice.actions
 
 // The reducer
-export default workbencTutorialsSlice.reducer
+export default workbenchTutorialsSlice.reducer
 
 // Asynchronous thunk action
 export function fetchTutorials(onSuccessAction?: () => void, onFailAction?: () => void) {

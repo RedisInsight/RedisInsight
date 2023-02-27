@@ -3,39 +3,39 @@ import { getFileInfo, getPagesInsideGroup } from '../getFileInfo'
 
 const getFileInfoTests = [
   {
-    input: 'static/workbench/quick-guides/file-name.txt',
+    input: { path: 'static/workbench/quick-guides/file-name.txt' },
     expected: { name: 'file-name', parent: 'quick guides', extension: 'txt', location: '/static/workbench/quick-guides' }
   },
   {
-    input: 'parent_folder\\file_name.txt',
+    input: { path: 'parent_folder\\file_name.txt' },
     expected: { name: 'file_name', parent: 'parent folder', extension: 'txt', location: '/parent_folder' }
   },
   {
-    input: 'https://domen.com/workbench/enablement-area/introduction.html',
+    input: { path: 'https://domen.com/workbench/enablement-area/introduction.html' },
     expected: { name: 'introduction', parent: 'enablement area', extension: 'html', location: '/workbench/enablement-area' }
   },
   {
-    input: 'https://domen.com/introduction.html',
+    input: { path: 'https://domen.com/introduction.html' },
     expected: { name: 'introduction', parent: '', extension: 'html', location: '' }
   },
   {
-    input: '/introduction.html',
+    input: { path: '/introduction.html' },
     expected: { name: 'introduction', parent: '', extension: 'html', location: '' }
   },
   {
-    input: '//parent/markdown.md',
+    input: { path: '//parent/markdown.md' },
     expected: { name: '', parent: '', extension: '', location: '' }
   },
   {
-    input: '/file.txt',
+    input: { path: '/file.txt' },
     expected: { name: 'file', parent: '', extension: 'txt', location: '' }
   },
   {
-    input: '',
+    input: { path: '' },
     expected: { name: '', parent: '', extension: '', location: '' }
   },
   {
-    input: '/',
+    input: { path: '/' },
     expected: { name: '', parent: '', extension: '', location: '' }
   },
 ]
@@ -52,12 +52,12 @@ describe('getFileInfo', () => {
 
 const getPagesInsideGroupTests = [
   {
-    input: [MOCK_GUIDES_ITEMS, '/static/guides/quick-guides'],
-    expected: Object.values(MOCK_GUIDES_ITEMS['quick-guides'].children || {})
-  },
-  {
-    input: [MOCK_GUIDES_ITEMS, '/static/workbench/'],
-    expected: [MOCK_GUIDES_ITEMS['internal-page'], MOCK_GUIDES_ITEMS['second-internal-page']]
+    input: [MOCK_GUIDES_ITEMS, '/quick-guides/document-capabilities'],
+    expected: Object.values(MOCK_GUIDES_ITEMS['quick-guides'].children || {}).map((item) => ({
+      ...item,
+      _groupPath: 'quick-guides',
+      _key: expect.any(String)
+    }))
   },
   {
     input: [MOCK_GUIDES_ITEMS, 'https://domen.com/workbench/enablement-area/'],

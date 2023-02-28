@@ -52,9 +52,9 @@ services:
       - 8101:6379
     networks:
       default:
-        ipv4_address: 172.31.100.10
+        ipv4_address: 172.31.100.111
       ssh:
-        ipv4_address: 172.33.100.10
+        ipv4_address: 172.33.100.111
   # oss standalone redisearch
   oss-standalone-redisearch:
     image: redislabs/redismod

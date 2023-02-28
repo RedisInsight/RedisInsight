@@ -1,8 +1,6 @@
 import React from 'react'
 import Explain from './Explain'
 
-const isDarkTheme = document.body.classList.contains('theme_DARK')
-
 export function App(props: { command?: string, data: any }) {
 
   const ErrorResponse = HandleError(props)

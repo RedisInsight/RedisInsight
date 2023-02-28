@@ -110,6 +110,7 @@ const QueryCardHeader = (props: Props) => {
     setSelectedValue,
     onQueryDelete,
     onQueryReRun,
+    onQueryProfile,
     db,
   } = props
 
@@ -345,12 +346,12 @@ const QueryCardHeader = (props: Props) => {
             </EuiToolTip>
           )}
         </EuiFlexItem>
-        <EuiFlexItem
-          grow={false}
-          className={cx(styles.buttonIcon, styles.viewTypeIcon)}
-          onClick={onDropDownViewClick}
-        >
-          {isOpen && canCommandProfile && !summaryText && (
+        {isOpen && canCommandProfile && !summaryText && (
+          <EuiFlexItem
+            grow={false}
+            className={cx(styles.buttonIcon, styles.viewTypeIcon)}
+            onClick={onDropDownViewClick}
+          >
             <div className={styles.dropdownWrapper}>
               <div className={styles.dropdown}>
                 <EuiSuperSelect
@@ -363,8 +364,8 @@ const QueryCardHeader = (props: Props) => {
                 />
               </div>
             </div>
-          )}
-        </EuiFlexItem>
+          </EuiFlexItem>
+        )}
         <EuiFlexItem
           grow={false}
           className={cx(styles.buttonIcon, styles.viewTypeIcon)}

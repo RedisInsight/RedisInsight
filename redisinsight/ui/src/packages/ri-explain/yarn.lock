@@ -2513,6 +2513,11 @@ react@^18.2.0:
   dependencies:
     loose-envify "^1.1.0"
 
+redisinsight-plugin-sdk@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/redisinsight-plugin-sdk/-/redisinsight-plugin-sdk-1.1.0.tgz#5ac39dc5398b1f73f2357e67ce51e1875fbece4f"
+  integrity sha512-TtPYfpxVZlwASkO8WFEB8+l6H9N9SVGwVxU0hRGzkEdXZyeQ+Xm/1WwnkGKMaeJyvfpIGrPWVl+lN4pDQ3iqbA==
+
 redux@^4.0.0, redux@^4.0.4:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/redux/-/redux-4.1.2.tgz#140f35426d99bb4729af760afcf79eaaac407104"

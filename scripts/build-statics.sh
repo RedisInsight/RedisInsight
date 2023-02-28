@@ -35,6 +35,13 @@ yarn --cwd "${REDISTIMESERIES_DIR}" build
 mkdir -p "${PLUGINS_DIR}/redistimeseries-app"
 cp -R "${REDISTIMESERIES_DIR}/dist" "${REDISTIMESERIES_DIR}/package.json" "${PLUGINS_DIR}/redistimeseries-app"
 
+# Build ri-explain plugin
+RI_EXPLIAIN_DIR="./redisinsight/ui/src/packages/ri-explain"
+yarn --cwd "${RI_EXPLIAIN_DIR}"
+yarn --cwd "${RI_EXPLIAIN_DIR}" build
+mkdir -p "${PLUGINS_DIR}/ri-explain"
+cp -R "${RI_EXPLIAIN_DIR}/dist" "${RI_EXPLIAIN_DIR}/package.json" "${PLUGINS_DIR}/ri-explain"
+
 # Build clients-list plugin
 CLIENTS_LIST_DIR="./redisinsight/ui/src/packages/clients-list"
 yarn --cwd "${CLIENTS_LIST_DIR}"

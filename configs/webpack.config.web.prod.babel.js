@@ -25,9 +25,10 @@ export default merge(commonConfig, {
   target: 'web',
   entry: ['regenerator-runtime/runtime', './index.tsx'],
   output: {
-    filename: 'js/bundle.[fullhash].min.js',
+    filename: 'js/bundle.[name].min.js',
     path: resolve(__dirname, '../redisinsight/ui/dist'),
     publicPath: '/',
+    chunkFilename: '[id].[chunkhash].js'
   },
   optimization: {
     minimize: true,
@@ -37,6 +38,34 @@ export default merge(commonConfig, {
       }),
       new CssMinimizerPlugin(),
     ],
+    runtimeChunk: 'single',
+    splitChunks: {
+      chunks: 'all',
+      maxInitialRequests: Infinity,
+      minSize: 0,
+      cacheGroups: {
+        reactVendor: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: "reactVendor"
+        },
+        elasticVendor: {
+          test: /[\\/]node_modules[\\/](@elastic)[\\/]/,
+          name: "elasticVendor"
+        },
+        monacoVendor: {
+          test: /[\\/]node_modules[\\/](monaco-editor)[\\/]/,
+          name: "monacoVendor"
+        },
+        utilityVendor: {
+          test: /[\\/]node_modules[\\/](lodash)[\\/]/,
+          name: "utilityVendor"
+        },
+        vendor: {
+          test: /[\\/]node_modules[\\/](!@elastic)(!monaco-editor)(!lodash)[\\/]/,
+          name: "vendor"
+        },
+      },
+    },
   },
   plugins: [
     new MiniCssExtractPlugin({

@@ -9,11 +9,12 @@ export interface IFileInfo {
   name: string
   parent: string
   location: string
+  _key?: Nullable<string>
 }
 
 export const getFileInfo = (
   { manifestPath, path }: { manifestPath?: Nullable<string>, path: string },
-  manifest?: Nullable<Record<string, IEnablementAreaItem>>
+  manifest?: Nullable<IEnablementAreaItem[]>
 ): IFileInfo => {
   const defaultResult: IFileInfo = { extension: '', name: '', parent: '', location: '' }
   try {
@@ -27,7 +28,8 @@ export const getFileInfo = (
       location: pathNames.join('/'),
       name: fileName || '',
       extension: extension || '',
-      parent: markdownParent ? markdownParent.label : (pathNames.pop() || '').replace(/[-_]+/g, ' ')
+      parent: markdownParent ? markdownParent.label : (pathNames.pop() || '').replace(/[-_]+/g, ' '),
+      _key: manifestPath?.split('/').pop() ?? null
     } as IFileInfo
   } catch (e) {
     return defaultResult
@@ -35,19 +37,18 @@ export const getFileInfo = (
 }
 
 export const getPagesInsideGroup = (
-  structure: Record<string, IEnablementAreaItem>,
+  structure: IEnablementAreaItem[],
   manifestPath: Nullable<string> = ''
 ): IEnablementAreaItem[] => {
   try {
     if (!manifestPath) return []
     const groupPath = getGroupPath(manifestPath)
-    const groupChildren = getParentByManifest(structure, manifestPath)?.children
+    const groupChildren: IEnablementAreaItem[] = getParentByManifest(structure, manifestPath)?.children
 
     if (groupChildren) {
-      return Object.keys(groupChildren)
-        .map((key) => ({ ...groupChildren[key], _key: key }))
+      return groupChildren
+        .map((item, index) => ({ ...item, _key: `${index}`, _groupPath: groupPath }))
         .filter((item) => item.type === EnablementAreaComponent.InternalLink)
-        .map((item) => ({ ...item, _groupPath: groupPath }))
     }
     return []
   } catch (e) {
@@ -68,48 +69,65 @@ export const getWBSourcePath = (path: string): string => {
   return ''
 }
 
-export const getMarkPathDownByManifest = (
-  manifest: Record<string, IEnablementAreaItem>,
+export const getMarkdownPathByManifest = (
+  manifest: Nullable<IEnablementAreaItem[]>,
   manifestPath: Nullable<string> = '',
   pathPrefix: string = ''
 ) => {
-  if (!manifestPath) return pathPrefix
-
-  const path = manifestPath.replace(/^\//, '')
+  if (!manifestPath || !manifest) return pathPrefix
+  const path = removeManifestPrefix(manifestPath)
   const pathToMarkDown = path.replaceAll('/', '.children.')
   const markDownPath = get(manifest, pathToMarkDown)?.args?.path
 
   if (!markDownPath) return pathPrefix
 
-  let currentObject = manifest
+  let currentChildren = manifest
   let folderPath = ''
 
-  forEach(path.split('/'), (key) => {
-    const structureObject = currentObject[key]
+  forEach(path.split('/'), (index) => {
+    const structureObject = currentChildren[Number(index)]
     if (!structureObject) return false
 
-    folderPath += (currentObject[key]._path || '')
+    folderPath += (currentChildren[Number(index)]._path || '')
 
     if (!structureObject.children) return false
 
-    currentObject = structureObject.children
+    currentChildren = structureObject.children
     return undefined
   })
 
   return pathPrefix + folderPath + markDownPath
 }
 
-const getGroupPath = (manifestPath: Nullable<string> = '') => manifestPath?.replace(/^\//, '').split('/').slice(0, -1).join('/')
+export const removeManifestPrefix = (path?: string): string => path
+  ?.replace(/^(quick-guides|tutorials|custom-tutorials)/, '')
+  ?.replace(/^\//, '') || ''
 
-const getParentByManifest = (
-  manifest: Record<string, IEnablementAreaItem>,
+export const getGroupPath = (manifestPath: Nullable<string> = '') => manifestPath
+  ?.replace(/^\//, '').split('/').slice(0, -1)
+  .join('/')
+
+export const getParentByManifest = (
+  manifest: IEnablementAreaItem[],
   manifestPath: Nullable<string> = ''
 ) => {
   if (!manifestPath) return null
 
   const groupPath = getGroupPath(manifestPath)
-  const groupObjectPath = groupPath?.replaceAll('/', '.children.') || ''
+  const groupObjectPath = removeManifestPrefix(groupPath).replaceAll('/', '.children.') || ''
+
   const parent = get(manifest, groupObjectPath)
+
+  return parent ?? null
+}
+
+export const getMarkdownByManifest = (
+  manifest: IEnablementAreaItem[],
+  manifestPath: Nullable<string> = ''
+) => {
+  if (!manifestPath) return null
+  const path = removeManifestPrefix(manifestPath).replaceAll('/', '.children.') || ''
+  const parent = get(manifest, path)
 
   return parent ?? null
 }

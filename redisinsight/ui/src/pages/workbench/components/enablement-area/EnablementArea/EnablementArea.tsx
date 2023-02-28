@@ -3,16 +3,19 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import cx from 'classnames'
 import { EuiListGroup, EuiLoadingContent } from '@elastic/eui'
-import { isEmpty } from 'lodash'
+import { isArray, isEmpty } from 'lodash'
 import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
-import { DefaultCustomTutorialsItems, EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
+import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { appContextWorkbenchEA, resetWorkbenchEASearch } from 'uiSrc/slices/app/context'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { Nullable } from 'uiSrc/utils'
 import {
-  getMarkPathDownByManifest,
+  FormValues
+} from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/components/UploadTutorialForm/UploadTutorialForm'
+import {
+  getMarkdownPathByManifest,
   getWBSourcePath
 } from './utils/getFileInfo'
 import {
@@ -35,9 +38,9 @@ import styles from './styles.module.scss'
 const padding = parseInt(styles.paddingHorizontal)
 
 export interface Props {
-  guides: Record<string, IEnablementAreaItem>
-  tutorials: Record<string, IEnablementAreaItem>
-  customTutorials: DefaultCustomTutorialsItems
+  guides: IEnablementAreaItem[]
+  tutorials: IEnablementAreaItem[]
+  customTutorials: IEnablementAreaItem[]
   loading: boolean
   openScript: (
     script: string,
@@ -50,9 +53,9 @@ export interface Props {
 
 const EnablementArea = (props: Props) => {
   const {
-    guides = {},
-    tutorials = {},
-    customTutorials = {},
+    guides = [],
+    tutorials = [],
+    customTutorials = [],
     openScript,
     loading,
     onOpenInternalPage,
@@ -65,7 +68,7 @@ const EnablementArea = (props: Props) => {
   const [isInternalPageVisible, setIsInternalPageVisible] = useState(false)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [internalPage, setInternalPage] = useState<IInternalPage>({ path: '' })
-  const [manifest, setManifest] = useState<Nullable<Record<string, IEnablementAreaItem>>>(null)
+  const [manifest, setManifest] = useState<Nullable<IEnablementAreaItem[]>>(null)
 
   const searchRef = useRef<string>('')
 
@@ -92,28 +95,27 @@ const EnablementArea = (props: Props) => {
     const manifestPath = new URLSearchParams(search).get('path')
     const contextManifestPath = new URLSearchParams(searchEAContext).get('path')
     const { manifest, prefixFolder } = getManifestByPath(manifestPath)
-    setManifest(manifest)
 
     if (isEmpty(manifest) && !contextManifestPath) {
       return
     }
 
-    const path = getMarkPathDownByManifest(manifest as Record<string, IEnablementAreaItem>, manifestPath, prefixFolder)
+    setManifest(manifest)
+
+    const path = getMarkdownPathByManifest(manifest, manifestPath, prefixFolder)
     if (path) {
       setIsInternalPageVisible(true)
       setInternalPage({ path, manifestPath })
-
       return
     }
 
     if (contextManifestPath) {
       handleOpenInternalPage({ path: '', manifestPath: contextManifestPath })
-
       return
     }
 
     setIsInternalPageVisible(false)
-  }, [search, customTutorials])
+  }, [search, customTutorials, guides, tutorials])
 
   const getManifestByPath = (path: Nullable<string> = '') => {
     const manifestPath = path?.replace(/^\//, '') || ''
@@ -130,8 +132,8 @@ const EnablementArea = (props: Props) => {
     return { manifest: null }
   }
 
-  const getManifestItems = (manifest: Record<string, IEnablementAreaItem>) =>
-    Object.keys(manifest).map((key) => ({ ...manifest[key], _key: key }))
+  const getManifestItems = (manifest: IEnablementAreaItem[]) =>
+    (isArray(manifest) ? manifest.map((item, index) => ({ ...item, _key: `${index}` })) : [])
 
   const handleOpenInternalPage = (page: IInternalPage) => {
     history.push({
@@ -152,10 +154,13 @@ const EnablementArea = (props: Props) => {
     dispatch(deleteCustomTutorial(id))
   }
 
-  const submitCreate = ({ file, name }: { file: File, name: string }) => {
+  const submitCreate = ({ file, name, link }: FormValues) => {
     const formData = new FormData()
-    formData.append('file', file)
     formData.append('name', name)
+    formData.append('link', link)
+    if (file) {
+      formData.append('file', file)
+    }
 
     dispatch(uploadCustomTutorial(
       formData,
@@ -174,7 +179,7 @@ const EnablementArea = (props: Props) => {
 
     const paddingsStyle = { paddingLeft: `${padding + level * 8}px`, paddingRight: `${padding}px` }
     const currentSourcePath = sourcePath + (uriPath ? `${uriPath}` : (args?.path ?? ''))
-    const currentManifestPath = (manifestPath + (uriPath ? `${uriPath}` : `/${key}`))
+    const currentManifestPath = `${manifestPath}/${key}`
 
     switch (type) {
       case EnablementAreaComponent.Group:
@@ -194,7 +199,7 @@ const EnablementArea = (props: Props) => {
                 <UploadTutorialForm onSubmit={submitCreate} onCancel={() => setIsCreateOpen(false)} />
               )}
               {renderTreeView(
-                children ? Object.keys(children).map((key) => ({ ...children[key], _key: key })) : [],
+                children ? getManifestItems(children) : [],
                 { sourcePath: currentSourcePath, manifestPath: currentManifestPath },
                 level + 1
               )}
@@ -260,9 +265,18 @@ const EnablementArea = (props: Props) => {
               flush
               className={cx(styles.innerContainer)}
             >
-              {renderTreeView(getManifestItems(guides), { sourcePath: ApiEndpoints.GUIDES_PATH })}
-              {renderTreeView(getManifestItems(tutorials), { sourcePath: ApiEndpoints.TUTORIALS_PATH })}
-              {renderTreeView(getManifestItems(customTutorials), { sourcePath: ApiEndpoints.CUSTOM_TUTORIALS_PATH })}
+              {renderTreeView(
+                getManifestItems(guides),
+                { sourcePath: ApiEndpoints.GUIDES_PATH, manifestPath: EAManifestFirstKey.GUIDES }
+              )}
+              {renderTreeView(
+                getManifestItems(tutorials),
+                { sourcePath: ApiEndpoints.TUTORIALS_PATH, manifestPath: EAManifestFirstKey.TUTORIALS }
+              )}
+              {renderTreeView(
+                getManifestItems(customTutorials),
+                { sourcePath: ApiEndpoints.CUSTOM_TUTORIALS_PATH, manifestPath: EAManifestFirstKey.CUSTOM_TUTORIALS }
+              )}
             </EuiListGroup>
           )}
         <div

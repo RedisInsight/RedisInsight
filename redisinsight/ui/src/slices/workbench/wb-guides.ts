@@ -6,8 +6,8 @@ import { EnablementAreaComponent, IEnablementAreaItem, StateWorkbenchEnablementA
 
 import { AppDispatch, RootState } from '../store'
 
-export const defaultItems: Record<string, IEnablementAreaItem> = {
-  manual: {
+export const defaultItems: IEnablementAreaItem[] = [
+  {
     type: EnablementAreaComponent.CodeButton,
     id: 'manual',
     label: 'Manual',
@@ -15,11 +15,12 @@ export const defaultItems: Record<string, IEnablementAreaItem> = {
       content: MONACO_MANUAL,
     }
   }
-}
+]
+
 export const initialState: StateWorkbenchEnablementArea = {
   loading: false,
   error: '',
-  items: {},
+  items: [],
 }
 
 // A slice for recipes
@@ -61,8 +62,7 @@ export function fetchGuides(onSuccessAction?: () => void, onFailAction?: () => v
     dispatch(getWBGuides())
 
     try {
-      const { data, status } = await resourcesService
-        .get<Record<string, IEnablementAreaItem>>(ApiEndpoints.GUIDES)
+      const { data, status } = await resourcesService.get(ApiEndpoints.GUIDES)
       if (isStatusSuccessful(status)) {
         dispatch(getWBGuidesSuccess(data))
         onSuccessAction?.()

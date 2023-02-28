@@ -58,15 +58,15 @@ describe('EnablementArea', () => {
 
     expect(loaderEl).not.toBeInTheDocument()
     expect(treeViewEl).toBeInTheDocument()
-    expect(treeViewEl?.childNodes.length).toEqual(Object.values(MOCK_GUIDES_ITEMS).length)
+    expect(treeViewEl?.childNodes.length).toEqual(MOCK_GUIDES_ITEMS.length)
   })
   it('should render Group component', () => {
     const item: IEnablementAreaItem = {
       type: EnablementAreaComponent.Group,
       id: 'quick-guides',
       label: 'Quick Guides',
-      children: {
-        document: {
+      children: [
+        {
           type: EnablementAreaComponent.InternalLink,
           id: 'document-capabilities',
           label: 'Document Capabilities',
@@ -74,13 +74,13 @@ describe('EnablementArea', () => {
             path: 'static/workbench/quick-guides/document-capabilities.html'
           },
         }
-      }
+      ]
     }
 
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        guides={{ 'quick-guides': item }}
+        guides={[item]}
       />
     )
 
@@ -100,7 +100,7 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        tutorials={{ manual: item }}
+        tutorials={[item]}
       />
     )
     const codeButtonEl = queryByTestId(`preselect-${item.label}`)
@@ -119,7 +119,7 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        guides={{ 'internal-page': item }}
+        guides={[item]}
       />
     )
 

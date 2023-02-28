@@ -53,7 +53,7 @@ const Group = (props: Props) => {
     onDelete?.(id)
   }
 
-  const Actions = ({ actions }: { actions?: string[] }) => (
+  const actionsContent = (
     <>
       {actions?.includes(EAItemActions.Create) && (
         <EuiToolTip
@@ -75,7 +75,7 @@ const Group = (props: Props) => {
       <EuiText className="group-header" size="m">
         {label}
       </EuiText>
-      {isShowActions && <Actions actions={actions} />}
+      {isShowActions && actionsContent}
     </div>
   )
   const buttonProps: any = {

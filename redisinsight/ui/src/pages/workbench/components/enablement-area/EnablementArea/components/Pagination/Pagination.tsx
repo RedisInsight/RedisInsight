@@ -6,29 +6,31 @@ import {
   EuiPopover
 } from '@elastic/eui'
 import cx from 'classnames'
+import { isNil } from 'lodash'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 
+import { Nullable } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
   items: IEnablementAreaItem[]
   sourcePath: string
-  activePageId?: string
+  activePageKey?: Nullable<string>
   compressed?: boolean
 }
 
-const Pagination = ({ items = [], sourcePath, activePageId, compressed }: Props) => {
+const Pagination = ({ items = [], sourcePath, activePageKey, compressed }: Props) => {
   const [isPopoverOpen, setPopover] = useState(false)
   const [activePage, setActivePage] = useState(0)
   const { openPage } = useContext(EnablementAreaContext)
 
   useEffect(() => {
-    if (activePageId) {
-      const index = items.findIndex((item) => item.id === activePageId)
+    if (activePageKey) {
+      const index = items.findIndex((item) => item._key === activePageKey)
       setActivePage(index)
     }
-  }, [activePageId])
+  }, [activePageKey])
 
   const togglePopover = () => {
     setPopover(!isPopoverOpen)
@@ -45,7 +47,7 @@ const Pagination = ({ items = [], sourcePath, activePageId, compressed }: Props)
 
     closePopover()
     if (index !== activePage && openPage && path) {
-      openPage({ path: sourcePath + path, manifestPath: key ? (`${groupPath}/${key}`) : '' })
+      openPage({ path: sourcePath + path, manifestPath: !isNil(key) ? (`${groupPath}/${key}`) : '' })
     }
   }
 

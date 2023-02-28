@@ -344,7 +344,7 @@ describe('slices', () => {
           ...initialState.workbench,
           enablementArea: {
             ...initialState.workbench.enablementArea,
-            itemPath: 'static/enablement-area/guides/guide1.html',
+            search: 'static/enablement-area/guides/guide1.html',
             itemScrollTop: 200,
           }
         },
@@ -352,7 +352,7 @@ describe('slices', () => {
       const itemPath = 'static/enablement-area/guides/guide2.html'
       const state = {
         ...initialState.workbench.enablementArea,
-        itemPath,
+        search: itemPath,
         itemScrollTop: 0,
       }
 
@@ -397,14 +397,14 @@ describe('slices', () => {
           ...initialState.workbench,
           enablementArea: {
             ...initialState.workbench.enablementArea,
-            itemPath: 'static/enablement-area/guides/guide1.html',
+            search: 'static/enablement-area/guides/guide1.html',
             itemScrollTop: 200,
           }
         },
       }
       const state = {
         ...initialState.workbench.enablementArea,
-        itemPath: '',
+        search: '',
         itemScrollTop: 0,
       }
 

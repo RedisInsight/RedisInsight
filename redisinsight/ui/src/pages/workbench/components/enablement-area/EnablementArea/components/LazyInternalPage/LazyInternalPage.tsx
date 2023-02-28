@@ -22,8 +22,8 @@ import { getFileInfo, getPagesInsideGroup, IFileInfo } from '../../utils/getFile
 import FormatSelector from '../../utils/formatter/FormatSelector'
 
 interface IPageData extends IFileInfo {
-  content: string;
-  relatedPages?: IEnablementAreaItem[];
+  content: string
+  relatedPages?: IEnablementAreaItem[]
 }
 const DEFAULT_PAGE_DATA = { content: '', name: '', parent: '', extension: '', location: '', relatedPages: [] }
 
@@ -31,7 +31,7 @@ export interface Props {
   onClose: () => void
   title?: string
   path: string
-  manifest: Nullable<Record<string, IEnablementAreaItem>>
+  manifest: Nullable<IEnablementAreaItem[]>
   manifestPath?: Nullable<string>
   sourcePath: string
   search: string
@@ -50,9 +50,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifest
   const fetchService = IS_ABSOLUTE_PATH.test(path) ? axios : resourcesService
 
   const isMarkdownLoading = isLoading || guidesLoading || tutorialsLoading || customTutorialsLoading
-
-  const getRelatedPages = (): IEnablementAreaItem[] => (manifest ? getPagesInsideGroup(manifest, manifestPath) : [])
-
+  const getRelatedPages = () => (manifest ? getPagesInsideGroup(manifest, manifestPath) : [])
   const loadContent = async () => {
     setLoading(true)
     setError('')
@@ -91,7 +89,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifest
 
   return (
     <InternalPage
-      id={pageData.name}
+      activeKey={pageData._key}
       path={path}
       sourcePath={sourcePath}
       onClose={onClose}

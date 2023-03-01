@@ -3,6 +3,8 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, mockedStore, render, fireEvent, act, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import QueryCardHeader, { Props } from './QueryCardHeader'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 
 const mockedProps = mock<Props>()
 
@@ -26,6 +28,11 @@ jest.mock('uiSrc/slices/app/plugins', () => ({
   appPluginsSelector: jest.fn().mockReturnValue({
     visualizations: []
   }),
+}))
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
 }))
 
 describe('QueryCardHeader', () => {
@@ -56,5 +63,26 @@ describe('QueryCardHeader', () => {
     render(<QueryCardHeader {...instance(mockedProps)} emptyCommand />)
 
     expect(screen.getByTestId('copy-command')).toBeDisabled()
+  })
+
+  it('event telemetry WORKBENCH_COMMAND_COPIED should be call after click on copy btn', async () => {
+    const command = 'info'
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    render(<QueryCardHeader {...instance(mockedProps)} query={command} />)
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('copy-command'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.WORKBENCH_COMMAND_COPIED,
+      eventData: {
+        command,
+        databaseId: INSTANCE_ID_MOCK,
+      }
+    });
+
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

@@ -9,7 +9,7 @@ import {
   parseSearchRawResponse,
   parseAggregateRawResponse
 } from './utils'
-import { Command } from './constants'
+import { Command, ProfileType } from './constants'
 import { TableInfoResult, TableResult } from './components'
 
 interface Props {
@@ -35,16 +35,25 @@ const App = (props: Props) => {
     return <TableInfoResult query={command} result={result} />
   }
 
-  if (commandUpper.startsWith(Command.Aggregate)) {
-    const [matched, ...arrayResponse] = response
+  const isProfileCommand = commandUpper.startsWith(Command.Profile)
+  const profileQueryType = command?.split(' ')?.[2]
+
+  if (
+    commandUpper.startsWith(Command.Aggregate)
+    || (isProfileCommand && profileQueryType.toUpperCase() === ProfileType.Aggregate)
+  ) {
+    const [matched, ...arrayResponse] = isProfileCommand ? response[0] : response
     setHeaderText(`Matched:${matched}`)
 
     const result = parseAggregateRawResponse(arrayResponse)
     return <TableResult query={command} result={result} matched={matched} />
   }
 
-  if (commandUpper.startsWith(Command.Search)) {
-    const [matched, ...arrayResponse] = response
+  if (
+    commandUpper.startsWith(Command.Search)
+    || (isProfileCommand && profileQueryType.toUpperCase() === ProfileType.Search)
+  ) {
+    const [matched, ...arrayResponse] = isProfileCommand ? response[0] : response
     setHeaderText(`Matched:${matched}`)
 
     const result = parseSearchRawResponse(command, arrayResponse)

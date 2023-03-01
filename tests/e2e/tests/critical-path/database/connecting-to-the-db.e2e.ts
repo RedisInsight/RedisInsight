@@ -1,6 +1,6 @@
 import { rte } from '../../../helpers/constants';
 import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
-import { commonUrl, invalidOssStandaloneConfig, ossStandaloneForSSH } from '../../../helpers/conf';
+import { commonUrl, invalidOssStandaloneConfig, ossStandaloneForSSHConfig } from '../../../helpers/conf';
 import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/database';
 import { deleteStandaloneDatabasesByNamesApi } from '../../../helpers/api/api-database';
 import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../test-data/sshPrivateKeys';
@@ -20,15 +20,15 @@ const sshParams = {
 };
 const newClonedDatabaseAlias = 'Cloned ssh database';
 const sshDbPass = {
-    ...ossStandaloneForSSH,
+    ...ossStandaloneForSSHConfig,
     databaseName: `SSH_${common.generateWord(5)}`
 };
 const sshDbPrivateKey = {
-    ...ossStandaloneForSSH,
+    ...ossStandaloneForSSHConfig,
     databaseName: `SSH_${common.generateWord(5)}`
 };
 const sshDbPasscode = {
-    ...ossStandaloneForSSH,
+    ...ossStandaloneForSSHConfig,
     databaseName: `SSH_${common.generateWord(5)}`
 };
 
@@ -44,6 +44,11 @@ test
 
         // Fill the add database form
         await addRedisDatabasePage.addRedisDataBase(invalidOssStandaloneConfig);
+
+        // Verify that when user request to test database connection is not successfull, can see standart connection error
+        await t.click(addRedisDatabasePage.testConnectionBtn);
+        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Error', 'Invalid connection has no error on test');
+
         // Click for saving
         await t.click(addRedisDatabasePage.addRedisDatabaseButton);
         // Verify that the database is not in the list
@@ -105,6 +110,11 @@ test
             .click(addRedisDatabasePage.useSSHCheckbox)
             .click(addRedisDatabasePage.sshPrivateKeyRadioBtn)
             .hover(addRedisDatabasePage.addRedisDatabaseButton);
+        for (const text of tooltipText) {
+            await browserActions.verifyTooltipContainsText(text, true);
+        }
+        // Verify that user can see the Test Connection button enabled/disabled with the same rules as the button to add/apply the changes
+        await t.hover(addRedisDatabasePage.testConnectionBtn);
         for (const text of tooltipText) {
             await browserActions.verifyTooltipContainsText(text, true);
         }

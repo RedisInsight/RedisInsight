@@ -9,6 +9,7 @@ import { setDatabaseAnalysisViewTab, dbAnalysisViewTabSelector } from 'uiSrc/sli
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import { databaseAnalysisTabs } from './constants'
@@ -53,15 +54,19 @@ const DatabaseAnalysisTabs = (props: Props) => {
   }
 
   const renderTabs = () => (
-    databaseAnalysisTabs.map(({ id, name }) => (
-      <EuiTab
-        key={id}
-        onClick={() => onSelectedTabChanged(id)}
-        isSelected={id === viewTab}
-        data-testid={`${id}-tab`}
-      >
-        {name(data?.recommendations?.length)}
-      </EuiTab>
+    databaseAnalysisTabs.map(({ id, name, onboard }) => renderOnboardingTourWithChild(
+      (
+        <EuiTab
+          key={id}
+          onClick={() => onSelectedTabChanged(id)}
+          isSelected={id === viewTab}
+          data-testid={`${id}-tab`}
+        >
+          {name(data?.recommendations?.length)}
+        </EuiTab>
+      ),
+      { options: onboard, anchorPosition: 'downLeft' },
+      id === viewTab
     )))
 
   if (!loading && !reports?.length) {

@@ -27,6 +27,37 @@ export const VIEW_TYPE_OPTIONS = [
 export const getViewTypeOptions = () =>
   [...VIEW_TYPE_OPTIONS]
 
+export const SEARCH_COMMANDS = ['ft.search', 'ft.aggregate']
+export const GRAPH_COMMANDS = ['graph.query']
+
+const ALLOWED_PROFILE_COMMANDS = [...SEARCH_COMMANDS, ...GRAPH_COMMANDS]
+
+export const isCommandAllowedForProfile = (query: string) => ALLOWED_PROFILE_COMMANDS.includes(query?.split(' ')?.[0]?.toLowerCase())
+
+export enum ProfileQueryType {
+  Profile = 'Profile',
+  Explain = 'Explain'
+}
+
+const PROFILE_VIEW_TYPE_OPTIONS = [
+  {
+    id: ProfileQueryType.Profile,
+    text: 'Profile the command',
+    name: 'Profile',
+    value: WBQueryType.Text,
+  },
+  {
+    id: ProfileQueryType.Explain,
+    text: 'Explain the command',
+    name: 'Explain',
+    value: WBQueryType.Text,
+  },
+]
+
+export const getProfileViewTypeOptions = () =>
+  [...PROFILE_VIEW_TYPE_OPTIONS]
+
+
 export enum ModuleCommandPrefix {
   RediSearch = 'FT.',
 }

@@ -1,5 +1,4 @@
 import React from 'react'
-import { PageNames } from 'uiSrc/constants/pages'
 
 export type FeaturesHighlightingType = 'plain' | 'tooltip' | 'popover'
 
@@ -10,10 +9,5 @@ interface BuildHighlightingFeature {
   page?: string
 }
 export const BUILD_FEATURES: { [key: string]: BuildHighlightingFeature } = {
-  recommendations: {
-    type: 'tooltip',
-    title: 'Database Recommendations',
-    content: 'Run database analysis to get recommendations for optimizing your database.',
-    page: PageNames.analytics
-  }
+
 }

@@ -10,6 +10,7 @@ export const databaseSchema = Joi.object().keys({
   connectionType: Joi.string().valid('STANDALONE', 'CLUSTER', 'SENTINEL').required(),
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
+  timeout: Joi.number().integer().required(),
   nameFromProvider: Joi.string().allow(null),
   lastConnection: Joi.string().isoDate().allow(null),
   provider: Joi.string().valid('LOCALHOST', 'UNKNOWN', 'RE_CLOUD', 'RE_CLUSTER'),

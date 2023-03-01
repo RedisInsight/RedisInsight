@@ -44,12 +44,12 @@ $marginIcon: 12px;
 }
 
 .titleWrapper {
-  width: calc(100% - 490px);
-  min-width: calc(100% - 490px);
+  width: calc(100% - 552px);
+  min-width: calc(100% - 552px);
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 627px);
-    min-width: calc(100% - 627px);
+    width: calc(100% - 689px);
+    min-width: calc(100% - 689px);
   }
 }
 
@@ -125,6 +125,27 @@ $marginIcon: 12px;
 .dropdownWrapper {
   position: relative;
   height: 40px;
+}
+
+.dropdownProfileIcon {
+  padding: inherit !important;
+  :global {
+    .euiSuperSelectControl.euiFormControlLayoutIcons {
+      display: none !important;
+    }
+  }
+}
+
+.dropdownProfileOption {
+  display: inherit !important;
+}
+
+.dropdownProfileItem {
+  :global {
+    .euiContextMenu__icon {
+      display: none !important;
+    }
+  }
 }
 
 .dropdown {

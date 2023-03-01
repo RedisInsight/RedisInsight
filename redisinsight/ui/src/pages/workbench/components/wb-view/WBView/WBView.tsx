@@ -1,7 +1,7 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { first, isEmpty, without } from 'lodash'
+import { isEmpty, without } from 'lodash'
 import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import { EuiResizableContainer } from '@elastic/eui'
@@ -9,13 +9,11 @@ import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 import { Maybe, Nullable, getMultiCommands, getParsedParamsInQuery, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import QueryWrapper from 'uiSrc/components/query'
 import {
   setWorkbenchVerticalPanelSizes,
-  appContextWorkbench
+  appContextWorkbench, appContextWorkbenchEA
 } from 'uiSrc/slices/app/context'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode, AutoExecute } from 'uiSrc/slices/interfaces/workbench'
@@ -83,12 +81,10 @@ const WBView = (props: Props) => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const { panelSizes: { vertical } } = useSelector(appContextWorkbench)
+  const { isMinimized } = useSelector(appContextWorkbenchEA)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
   const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
 
-  const [isMinimized, setIsMinimized] = useState<boolean>(
-    localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? false
-  )
   const [isCodeBtnDisabled, setIsCodeBtnDisabled] = useState<boolean>(false)
 
   const verticalSizesRef = useRef(vertical)
@@ -98,10 +94,6 @@ const WBView = (props: Props) => {
   useEffect(() => () => {
     dispatch(setWorkbenchVerticalPanelSizes(verticalSizesRef.current))
   }, [])
-
-  useEffect(() => {
-    localStorageService.set(BrowserStorageItem.isEnablementAreaMinimized, isMinimized)
-  }, [isMinimized])
 
   const onVerticalPanelWidthChange = useCallback((newSizes: any) => {
     verticalSizesRef.current = newSizes
@@ -114,6 +106,11 @@ const WBView = (props: Props) => {
 
   const handleReRun = (query?: string, commandId?: Nullable<string>, executeParams: CodeButtonParams = {}) => {
     sendEventSubmitTelemetry(TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN, query, executeParams)
+    onSubmit(query, commandId, executeParams)
+  }
+
+  const handleProfile = (query?: string, commandId?: Nullable<string>, executeParams: CodeButtonParams = {}) => {
+    sendEventSubmitTelemetry(TelemetryEvent.WORKBENCH_COMMAND_PROFILE, query, executeParams)
     onSubmit(query, commandId, executeParams)
   }
 
@@ -182,7 +179,6 @@ const WBView = (props: Props) => {
         <div className={cx(styles.sidebar, { [styles.minimized]: isMinimized })}>
           <EnablementAreaWrapper
             isMinimized={isMinimized}
-            setIsMinimized={setIsMinimized}
             setScript={setScript}
             onSubmit={handleSubmit}
             scriptEl={scriptEl}
@@ -236,6 +232,7 @@ const WBView = (props: Props) => {
                     activeResultsMode={resultsMode}
                     scrollDivRef={scrollDivRef}
                     onQueryReRun={handleReRun}
+                    onQueryProfile={handleProfile}
                     onQueryOpen={onQueryOpen}
                     onQueryDelete={onQueryDelete}
                   />

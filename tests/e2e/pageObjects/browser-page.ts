@@ -15,6 +15,7 @@ export class BrowserPage {
     cssKeyBadge = '[data-testid^=badge-]';
     cssKeyTtl = '[data-testid^=ttl-]';
     cssKeySize = '[data-testid^=size-]';
+    cssRemoveSuggestionItem = '[data-testid^=remove-suggestion-item-]';
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -104,6 +105,8 @@ export class BrowserPage {
     submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
     patternModeBtn = Selector('[data-testid=search-mode-pattern-btn]');
     redisearchModeBtn = Selector('[data-testid=search-mode-redisearch-btn]');
+    showFilterHistoryBtn = Selector('[data-testid=show-suggestions-btn]');
+    clearFilterHistoryBtn = Selector('[data-testid=clear-history-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -141,6 +144,8 @@ export class BrowserPage {
     cancelIndexCreationBtn = Selector('[data-testid=create-index-cancel-btn]');
     confirmIndexCreationBtn = Selector('[data-testid=create-index-btn]');
     resizeTrigger = Selector('[data-testid^=resize-trigger-]');
+    filterHistoryOption = Selector('[data-testid^=suggestion-item-]');
+    filterHistoryItemText = Selector('[data-testid=suggestion-item-text]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -159,6 +164,7 @@ export class BrowserPage {
     listKeyElementEditorInput = Selector('[data-testid=element-value-editor]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
     jsonKeyValueInput = Selector('[data-mode-id=json]');
+    jsonUploadInput = Selector('[data-testid=upload-input-file]');
     setMemberInput = Selector('[data-testid=member-name]');
     zsetMemberScoreInput = Selector('[data-testid=member-score]');
     filterByPatterSearchInput = Selector('[data-testid=search-key]');
@@ -1050,6 +1056,13 @@ export class BrowserPage {
     async verifyNoKeysInDatabase(): Promise<void> {
         await t.expect(this.keyListMessage.exists).ok('Database not empty')
             .expect(this.keysSummary.exists).notOk('Total value is displayed for empty database');
+    }
+
+    /**
+    * Clear filter on Browser page
+    */
+    async clearFilter(): Promise<void> {
+        await t.click(this.clearFilterButton);
     }
 }
 

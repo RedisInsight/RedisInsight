@@ -50,11 +50,16 @@ test
         await t.click(workbenchPage.submitCommandButton);
         // Check result
         await t.switchToIframe(workbenchPage.iframe);
-        await t.expect(workbenchPage.responseInfo.textContent).eql('No data to visualize. Switch to Text view to see raw information.', 'The info message is not displayed for Graph');
+        await t.expect(workbenchPage.responseInfo.textContent).eql('No data to visualize. Raw information is presented below.', 'The info message is not displayed for Graph');
+        
+        // Get result text content
+        const graphModeText = await workbenchPage.parsedRedisReply.textContent;
         // Switch to Text view and check result
         await t.switchToMainWindow();
         await workbenchPage.selectViewTypeText();
         await t.expect(workbenchPage.queryTextResult.exists).ok('The result in text view is not displayed');
+        // Verify that when there is nothing to visualize in RedisGraph, user can see: No data to visualize.{results from the text view}
+        await t.expect(workbenchPage.queryTextResult.textContent).eql(graphModeText, 'Text of command in Graph mode is not the same as in Text mode');
     });
 test('Verify that user can switches between Chart and Text for TimeSeries command and see results corresponding to their views', async t => {
     // Send TimeSeries command

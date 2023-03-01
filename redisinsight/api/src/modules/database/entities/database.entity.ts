@@ -57,6 +57,10 @@ export class DatabaseEntity {
 
   @Expose()
   @Column({ nullable: true })
+  timeout: number;
+
+  @Expose()
+  @Column({ nullable: true })
   @Transform((_, model) => (
     model?.sentinelMaster?.name
   ), { toClassOnly: true })

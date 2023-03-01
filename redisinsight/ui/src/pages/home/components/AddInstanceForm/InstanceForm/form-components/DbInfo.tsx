@@ -1,8 +1,11 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { EuiIcon, EuiListGroup, EuiListGroupItem, EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
 import { DatabaseListModules } from 'uiSrc/components'
+import { BuildType } from 'uiSrc/constants/env'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
 import { Endpoint } from 'apiSrc/common/models'
@@ -22,6 +25,9 @@ export interface Props {
 
 const DbInfo = (props: Props) => {
   const { connectionType, nameFromProvider, nodes = null, host, port, db, modules } = props
+
+  const { server } = useSelector(appInfoSelector)
+
   const AppendEndpoints = () => (
     <EuiToolTip
       title="Host:port"
@@ -76,7 +82,6 @@ const DbInfo = (props: Props) => {
           )}
         />
       )}
-
       <EuiListGroupItem
         label={(
           <>
@@ -90,17 +95,18 @@ const DbInfo = (props: Props) => {
           </>
         )}
       />
-
-      <EuiListGroupItem
-        label={(
-          <EuiText color="subdued" size="s">
-            Port:
-            <EuiTextColor color="default" className={styles.dbInfoListValue}>
-              {port}
-            </EuiTextColor>
-          </EuiText>
-        )}
-      />
+      {server?.buildType === BuildType.RedisStack && (
+        <EuiListGroupItem
+          label={(
+            <EuiText color="subdued" size="s">
+              Port:
+              <EuiTextColor color="default" className={styles.dbInfoListValue}>
+                {port}
+              </EuiTextColor>
+            </EuiText>
+          )}
+        />
+      )}
 
       {!!db && (
         <EuiListGroupItem

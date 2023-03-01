@@ -1,7 +1,6 @@
 import NavigationMenu from './navigation-menu/NavigationMenu'
 import PageHeader from './page-header/PageHeader'
 import GroupBadge from './group-badge/GroupBadge'
-import ActionBar from './action-bar/ActionBar'
 import Notifications from './notifications/Notifications'
 import DatabaseListModules from './database-list-modules/DatabaseListModules'
 import DatabaseListOptions from './database-list-options/DatabaseListOptions'
@@ -21,12 +20,13 @@ import MonitorWrapper from './monitor'
 import PagePlaceholder from './page-placeholder'
 import BulkActionsConfig from './bulk-actions-config'
 import ImportDatabasesDialog from './import-databases-dialog'
+import OnboardingTour from './onboarding-tour'
+import CodeBlock from './code-block'
 
 export {
   NavigationMenu,
   PageHeader,
   GroupBadge,
-  ActionBar,
   Notifications,
   DatabaseListModules,
   DatabaseListOptions,
@@ -48,5 +48,7 @@ export {
   ShortcutsFlyout,
   PagePlaceholder,
   BulkActionsConfig,
-  ImportDatabasesDialog
+  ImportDatabasesDialog,
+  OnboardingTour,
+  CodeBlock,
 }

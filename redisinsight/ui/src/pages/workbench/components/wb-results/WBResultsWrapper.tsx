@@ -13,6 +13,7 @@ export interface Props {
   onQueryReRun: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   onQueryOpen: (commandId: string) => void
   onQueryDelete: (commandId: string) => void
+  onQueryProfile: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
 }
 
 const WBResultsWrapper = (props: Props) => (

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import MonacoEditor, { monaco } from 'react-monaco-editor'
 import cx from 'classnames'
@@ -19,13 +19,12 @@ export interface Props {
 }
 const MonacoJson = (props: Props) => {
   const {
-    value: valueProp,
+    value,
     onChange,
     disabled,
     wrapperClassName,
     'data-testid': dataTestId
   } = props
-  const [value, setValue] = useState<string>(valueProp)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
 
   const { theme } = useContext(ThemeContext)
@@ -33,11 +32,6 @@ const MonacoJson = (props: Props) => {
   useEffect(() => {
     monacoObjects.current?.editor.updateOptions({ readOnly: disabled })
   }, [disabled])
-
-  const handleChange = (val: string) => {
-    setValue(val)
-    onChange(val)
-  }
 
   const editorDidMount = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
@@ -83,7 +77,7 @@ const MonacoJson = (props: Props) => {
         language="json"
         theme={theme === Theme.Dark ? 'dark' : 'light'}
         value={value}
-        onChange={handleChange}
+        onChange={onChange}
         options={options}
         className="json-monaco-editor"
         editorDidMount={editorDidMount}

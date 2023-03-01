@@ -20,6 +20,8 @@ import {
 } from 'uiSrc/slices/cli/monitor'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ReactComponent as BanIcon } from 'uiSrc/assets/img/monitor/ban.svg'
+import { OnboardingTour } from 'uiSrc/components'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import styles from './styles.module.scss'
 
@@ -85,7 +87,13 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
       >
         <EuiFlexItem grow={false} className={styles.title}>
           <EuiIcon type="inspect" size="m" />
-          <EuiText>Profiler</EuiText>
+          <OnboardingTour
+            options={ONBOARDING_FEATURES.BROWSER_PROFILER}
+            anchorPosition="upLeft"
+            panelClassName={styles.profilerOnboardPanel}
+          >
+            <EuiText>Profiler</EuiText>
+          </OnboardingTour>
         </EuiFlexItem>
         {isStarted && (
           <EuiFlexItem grow={false} className={styles.actions}>

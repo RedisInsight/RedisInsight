@@ -18,4 +18,8 @@
   .euiPopover__panelArrow.euiPopover__panelArrow--left:after {
     border-left-color: var(--euiTooltipBackgroundColor) !important;
   }
+
+  .euiPopover__panelArrow.euiPopover__panelArrow--top:after {
+    border-top-color: var(--euiTooltipBackgroundColor) !important;
+  }
 }

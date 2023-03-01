@@ -60,6 +60,7 @@ const MonacoJson = (props: Props) => {
       preview: false,
       showStatusBar: false,
       showIcons: false,
+      showProperties: false,
     },
     quickSuggestions: false,
     minimap: {

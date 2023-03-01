@@ -18,6 +18,7 @@ export interface Props {
   value: string
   options: string[]
   placeholder: string
+  disableSubmit?: boolean
   onSubmit: () => void
   onKeyDown?: (e: React.KeyboardEvent) => void
   suggestions?: {
@@ -45,6 +46,7 @@ const MultiSearch = (props: Props) => {
     options = [],
     suggestions,
     placeholder,
+    disableSubmit,
     onSubmit,
     onChangeOptions,
     onChange,
@@ -136,6 +138,18 @@ const MultiSearch = (props: Props) => {
     exitAutoSuggestions()
     onSubmit()
   }
+
+  const SubmitBtn = () => (
+    <EuiButtonIcon
+      iconType="search"
+      color="primary"
+      aria-label="Search"
+      disabled={disableSubmit}
+      className={styles.searchButton}
+      onClick={handleSubmit}
+      data-testid="search-btn"
+    />
+  )
 
   return (
     <EuiOutsideClickDetector onOutsideClick={exitAutoSuggestions}>
@@ -255,14 +269,17 @@ const MultiSearch = (props: Props) => {
             </EuiToolTip>
           )}
         </div>
-        <EuiButtonIcon
-          iconType="search"
-          color="primary"
-          aria-label="Search"
-          className={styles.searchButton}
-          onClick={handleSubmit}
-          data-testid="search-btn"
-        />
+        {disableSubmit && (
+          <EuiToolTip
+            position="top"
+            display="inlineBlock"
+            anchorClassName={styles.anchorSubmitBtn}
+            content="Please choose index in order to preform the search"
+          >
+            {SubmitBtn()}
+          </EuiToolTip>
+        )}
+        {!disableSubmit && SubmitBtn()}
       </div>
     </EuiOutsideClickDetector>
   )

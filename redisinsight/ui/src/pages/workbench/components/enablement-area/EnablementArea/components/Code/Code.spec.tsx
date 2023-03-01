@@ -33,7 +33,7 @@ describe('Code', () => {
     expect(setScript).toBeCalledWith(
       MONACO_MANUAL,
       { mode: ExecuteButtonMode.Manual, params: undefined },
-      undefined,
+      {},
     )
   })
 
@@ -51,7 +51,7 @@ describe('Code', () => {
     expect(setScript).toBeCalledWith(
       MONACO_MANUAL,
       { mode: ExecuteButtonMode.Auto, params: { auto: 'true' } },
-      undefined,
+      {},
     )
   })
 })

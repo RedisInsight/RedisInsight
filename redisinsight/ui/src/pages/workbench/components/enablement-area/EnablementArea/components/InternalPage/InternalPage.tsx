@@ -18,6 +18,7 @@ import {
   EmptyPrompt,
   Pagination
 } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/components'
+import { getTutorialSection } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -36,6 +37,7 @@ export interface Props {
   onScroll?: (top: number) => void
   activeKey?: Nullable<string>
   path: string
+  manifestPath?: Nullable<string>
   sourcePath: string
   pagination?: IEnablementAreaItem[]
 }
@@ -53,6 +55,7 @@ const InternalPage = (props: Props) => {
     pagination,
     activeKey,
     path,
+    manifestPath,
     sourcePath
   } = props
   const components: any = { LazyCodeButton, Image, Code }
@@ -70,6 +73,7 @@ const InternalPage = (props: Props) => {
       eventData: {
         path,
         link,
+        section: getTutorialSection(manifestPath),
         databaseId: instanceId,
       }
     })

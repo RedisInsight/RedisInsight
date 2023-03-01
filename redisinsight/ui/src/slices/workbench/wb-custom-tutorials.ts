@@ -114,7 +114,7 @@ export function fetchCustomTutorials(onSuccessAction?: () => void, onFailAction?
 export function uploadCustomTutorial(
   formData: FormData,
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: (error?: string) => void
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(uploadWbCustomTutorial())
@@ -137,7 +137,7 @@ export function uploadCustomTutorial(
       const errorMessage = getApiErrorMessage(error)
       dispatch(uploadWBCustomTutorialFailure(errorMessage))
       dispatch(addErrorNotification(error))
-      onFailAction?.()
+      onFailAction?.(error?.response?.data?.error)
     }
   }
 }

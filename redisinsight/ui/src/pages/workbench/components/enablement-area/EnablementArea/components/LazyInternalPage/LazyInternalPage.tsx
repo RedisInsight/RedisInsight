@@ -91,6 +91,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifest
     <InternalPage
       activeKey={pageData._key}
       path={path}
+      manifestPath={manifestPath}
       sourcePath={sourcePath}
       onClose={onClose}
       title={startCase(title || pageData.name)}

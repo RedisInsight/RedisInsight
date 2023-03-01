@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import cx from 'classnames'
 import { EuiListGroup, EuiLoadingContent } from '@elastic/eui'
@@ -14,6 +14,7 @@ import { Nullable } from 'uiSrc/utils'
 import {
   FormValues
 } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/components/UploadTutorialForm/UploadTutorialForm'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   getMarkdownPathByManifest,
   getWBSourcePath
@@ -45,7 +46,7 @@ export interface Props {
   openScript: (
     script: string,
     execute?: { mode?: ExecuteButtonMode, params?: CodeButtonParams },
-    file?: { path?: string, name?: string }
+    file?: { path?: string, name?: string, section?: string }
   ) => void
   onOpenInternalPage: (page: IInternalPage) => void
   isCodeBtnDisabled?: boolean
@@ -71,6 +72,7 @@ const EnablementArea = (props: Props) => {
   const [manifest, setManifest] = useState<Nullable<IEnablementAreaItem[]>>(null)
 
   const searchRef = useRef<string>('')
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   useEffect(() => {
     searchRef.current = search
@@ -151,21 +153,52 @@ const EnablementArea = (props: Props) => {
   }
 
   const onDeleteCustomTutorial = (id: string) => {
-    dispatch(deleteCustomTutorial(id))
+    dispatch(deleteCustomTutorial(id, () => {
+      sendEventTelemetry({
+        event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_TUTORIAL_DELETED,
+        eventData: {
+          databaseId: instanceId,
+        }
+      })
+    }))
   }
 
   const submitCreate = ({ file, name, link }: FormValues) => {
     const formData = new FormData()
     formData.append('name', name)
     formData.append('link', link)
+
     if (file) {
       formData.append('file', file)
     }
+
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_IMPORT_SUBMITTED,
+      eventData: {
+        databaseId: instanceId,
+        source: file ? 'Upload' : 'URL'
+      }
+    })
 
     dispatch(uploadCustomTutorial(
       formData,
       () => {
         setIsCreateOpen(false)
+        sendEventTelemetry({
+          event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_IMPORT_SUCCEEDED,
+          eventData: {
+            databaseId: instanceId,
+          }
+        })
+      },
+      (error) => {
+        sendEventTelemetry({
+          event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_IMPORT_FAILED,
+          eventData: {
+            databaseId: instanceId,
+            error
+          }
+        })
       }
     ))
   }

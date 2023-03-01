@@ -3,6 +3,7 @@ import { API_URL, ApiEndpoints } from 'uiSrc/constants'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
+import { EAManifestFirstKey } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/constants'
 
 export interface IFileInfo {
   extension: string
@@ -54,6 +55,13 @@ export const getPagesInsideGroup = (
   } catch (e) {
     return []
   }
+}
+
+export const getTutorialSection = (manifestPath?: Nullable<string>) => {
+  if (manifestPath?.startsWith(EAManifestFirstKey.CUSTOM_TUTORIALS)) return 'Custom Tutorials'
+  if (manifestPath?.startsWith(EAManifestFirstKey.TUTORIALS)) return 'Tutorials'
+  if (manifestPath?.startsWith(EAManifestFirstKey.GUIDES)) return 'Guides'
+  return undefined
 }
 
 export const getWBSourcePath = (path: string): string => {
@@ -117,17 +125,6 @@ export const getParentByManifest = (
   const groupObjectPath = removeManifestPrefix(groupPath).replaceAll('/', '.children.') || ''
 
   const parent = get(manifest, groupObjectPath)
-
-  return parent ?? null
-}
-
-export const getMarkdownByManifest = (
-  manifest: IEnablementAreaItem[],
-  manifestPath: Nullable<string> = ''
-) => {
-  if (!manifestPath) return null
-  const path = removeManifestPrefix(manifestPath).replaceAll('/', '.children.') || ''
-  const parent = get(manifest, path)
 
   return parent ?? null
 }

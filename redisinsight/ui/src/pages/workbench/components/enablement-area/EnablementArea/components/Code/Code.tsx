@@ -1,10 +1,13 @@
 import { startCase } from 'lodash'
 import React, { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
-import { getFileInfo, parseParams } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
+import {
+  getFileInfo,
+  getTutorialSection,
+  parseParams
+} from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
 import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
-import { Maybe } from 'uiSrc/utils'
 import { CodeButtonAutoExecute } from 'uiSrc/constants'
 
 import CodeButton from '../CodeButton'
@@ -26,14 +29,17 @@ const Code = ({ children, params = '', ...rest }: Props) => {
 
   const loadContent = (execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams }) => {
     const pagePath = new URLSearchParams(search).get('item')
-    let file: Maybe<{ path: string, name: string }>
+    const manifestPath = new URLSearchParams(search).get('path')
+    const file: { path?: string, name?: string, section?: string } = {}
 
     if (pagePath) {
       const pageInfo = getFileInfo({ path: pagePath })
-      file = {
-        path: `${pageInfo.location}/${pageInfo.name}`,
-        name: startCase(rest.label)
-      }
+      file.path = `${pageInfo.location}/${pageInfo.name}`
+      file.name = startCase(rest.label)
+    }
+
+    if (manifestPath) {
+      file.section = getTutorialSection(manifestPath)
     }
 
     setScript(children, execute, file)

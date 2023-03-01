@@ -18,11 +18,18 @@
     background-color: var(--browserTableRowEven);
     background-repeat: no-repeat;
     background-size: 0 100%;
-    transition: box-shadow 150ms ease-in, background-image 150ms ease-in, background-size 150ms ease-in, background-color 150ms ease-in;
+    transition: box-shadow 150ms ease-in, background-image 150ms ease-in, background-size 150ms ease-in,
+      background-color 150ms ease-in;
 
     &.isFocused {
       background-size: 100% 100%;
-      background-image: linear-gradient(to top, var(--euiColorPrimary), var(--euiColorPrimary) 2px, transparent 2px, transparent 100%) !important;
+      background-image: linear-gradient(
+        to top,
+        var(--euiColorPrimary),
+        var(--euiColorPrimary) 2px,
+        transparent 2px,
+        transparent 100%
+      ) !important;
     }
   }
 
@@ -48,7 +55,8 @@
     border-radius: 100%;
     margin-left: 5px;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       background-color: var(--separatorColor) !important;
     }
 
@@ -83,7 +91,8 @@
       padding: 6px 10px;
       cursor: default;
 
-      &:hover, &.focused {
+      &:hover,
+      &.focused {
         background: var(--comboBoxBadgeBgColor);
         .suggestionRemoveBtn {
           visibility: visible;
@@ -139,7 +148,9 @@
     color: var(--euiColorPrimaryText) !important;
     border-radius: 0 4px 4px 0;
 
-    &:hover, &:focus, &:focus-within {
+    &:hover:not(:disabled),
+    &:focus,
+    &:focus-within {
       background-color: var(--buttonSecondaryHoverColor) !important;
       transform: none !important;
     }
@@ -147,5 +158,15 @@
     &:hover {
       transform: none;
     }
+
+    &:disabled {
+      border: 1px solid var(--separatorColor);
+      border-left: none;
+      background-color: var(--euiColorLightestShade);
+    }
+  }
+
+  .anchorSubmitBtn {
+    height: 100%;
   }
 }

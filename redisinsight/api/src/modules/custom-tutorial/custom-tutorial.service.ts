@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable, Logger, NotFoundException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +14,7 @@ import {
 } from 'src/modules/custom-tutorial/providers/custom-tutorial.manifest.provider';
 import {
   CustomTutorialManifestType,
-  ICustomTutorialManifest,
+  RootCustomTutorialManifest,
 } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
 import { wrapHttpError } from 'src/common/utils';
 
@@ -32,9 +33,17 @@ export class CustomTutorialService {
    * Currently from zip file only
    * @param dto
    */
-  public async create(dto: UploadCustomTutorialDto): Promise<Record<string, any>> {
+  public async create(dto: UploadCustomTutorialDto): Promise<RootCustomTutorialManifest> {
     try {
-      const tmpPath = await this.customTutorialFsProvider.unzipToTmpFolder(dto.file);
+      let tmpPath = '';
+
+      if (dto.file) {
+        tmpPath = await this.customTutorialFsProvider.unzipFromMemoryStoredFile(dto.file);
+      } else if (dto.link) {
+        tmpPath = await this.customTutorialFsProvider.unzipFromExternalLink(dto.link);
+      } else {
+        throw new BadRequestException('File or external link should be provided');
+      }
 
       // todo: validate
 
@@ -59,8 +68,8 @@ export class CustomTutorialService {
    * Get global manifest for all custom tutorials
    * In the future will be removed with some kind of partial load
    */
-  public async getGlobalManifest(): Promise<Record<string, ICustomTutorialManifest>> {
-    const children = {};
+  public async getGlobalManifest(): Promise<RootCustomTutorialManifest[]> {
+    const children = [];
 
     try {
       const tutorials = await this.customTutorialRepository.list();
@@ -73,18 +82,18 @@ export class CustomTutorialService {
 
       manifests.forEach((manifest) => {
         if (manifest) {
-          children[manifest.id] = manifest;
+          children.push(manifest);
         }
       });
     } catch (e) {
       this.logger.warn('Unable to generate entire custom tutorials manifest', e);
     }
 
-    return {
-      'custom-tutorials': {
+    return [
+      {
         type: CustomTutorialManifestType.Group,
         id: 'custom-tutorials',
-        label: 'My Tutorials',
+        label: 'MY TUTORIALS',
         _actions: [CustomTutorialActions.CREATE],
         args: {
           withBorder: true,
@@ -92,7 +101,7 @@ export class CustomTutorialService {
         },
         children,
       },
-    };
+    ];
   }
 
   public async get(id: string): Promise<CustomTutorial> {

@@ -17,6 +17,7 @@ import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.c
 import { UseClientCertificateDto } from 'src/modules/certificate/dto/use.client-certificate.dto';
 import { CreateBasicSshOptionsDto } from 'src/modules/ssh/dto/create.basic-ssh-options.dto';
 import { CreateCertSshOptionsDto } from 'src/modules/ssh/dto/create.cert-ssh-options.dto';
+import { RootCustomTutorialManifest } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
 
 @ApiExtraModels(
   CreateCaCertificateDto, UseCaCertificateDto,
@@ -45,7 +46,7 @@ export class CustomTutorialController {
   })
   async create(
     @Body() dto: UploadCustomTutorialDto,
-  ): Promise<Record<string, any>> {
+  ): Promise<RootCustomTutorialManifest> {
     return this.service.create(dto);
   }
 
@@ -59,7 +60,7 @@ export class CustomTutorialController {
       },
     ],
   })
-  async getGlobalManifest(): Promise<any> {
+  async getGlobalManifest(): Promise<RootCustomTutorialManifest[]> {
     return this.service.getGlobalManifest();
   }
 

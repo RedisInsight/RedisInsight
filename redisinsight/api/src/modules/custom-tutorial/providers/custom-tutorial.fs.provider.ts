@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs-extra';
 import config from 'src/utils/config';
 import * as AdmZip from 'adm-zip';
+import axios from 'axios';
+import { wrapHttpError } from 'src/common/utils';
 
 const PATH_CONFIG = config.get('dir_path');
 
@@ -15,13 +17,13 @@ export class CustomTutorialFsProvider {
   private logger = new Logger('CustomTutorialFsProvider');
 
   /**
-   * Unzip custom tutorials to temporary folder
-   * @param file
+   * Unzip custom tutorials archive to temporary folder
+   * @param zip
    */
-  public async unzipToTmpFolder(file: MemoryStoredFile): Promise<string> {
+  public async unzipToTmpFolder(zip: AdmZip): Promise<string> {
     try {
       const path = await CustomTutorialFsProvider.prepareTmpFolder();
-      const zip = new AdmZip(file.buffer);
+
       await fs.remove(path);
       await zip.extractAllTo(path, true);
 
@@ -29,6 +31,31 @@ export class CustomTutorialFsProvider {
     } catch (e) {
       this.logger.error('Unable to unzip archive', e);
       throw new InternalServerErrorException(e.message);
+    }
+  }
+
+  /**
+   * Unzip archive from multipart/form-data file input
+   * @param file
+   */
+  public async unzipFromMemoryStoredFile(file: MemoryStoredFile): Promise<string> {
+    return this.unzipToTmpFolder(new AdmZip(file.buffer));
+  }
+
+  /**
+   * Download zip archive from external source and unzip it to temporary directory
+   * @param link
+   */
+  public async unzipFromExternalLink(link: string): Promise<string> {
+    try {
+      const { data } = await axios.get(link, {
+        responseType: 'arraybuffer',
+      });
+
+      return this.unzipToTmpFolder(new AdmZip(data));
+    } catch (e) {
+      this.logger.error('Unable fetch zip file from external source', e);
+      throw wrapHttpError(e);
     }
   }
 

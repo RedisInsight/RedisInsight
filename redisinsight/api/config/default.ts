@@ -110,14 +110,14 @@ export default {
   },
   guides: {
     updateUrl: process.env.GUIDES_UPDATE_URL
-      || 'https://github.com/RedisInsight/Guides/releases/download/release',
+      || 'https://github.com/RedisInsight/Guides/releases/download/2.x.x',
     zip: process.env.GUIDES_ZIP || dataZipFileName,
     buildInfo: process.env.GUIDES_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.GUIDES_DEV_PATH,
   },
   tutorials: {
     updateUrl: process.env.TUTORIALS_UPDATE_URL
-      || 'https://github.com/RedisInsight/Tutorials/releases/download/release',
+      || 'https://github.com/RedisInsight/Tutorials/releases/download/2.x.x',
     zip: process.env.TUTORIALS_ZIP || dataZipFileName,
     buildInfo: process.env.TUTORIALS_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.TUTORIALS_DEV_PATH,

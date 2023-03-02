@@ -25,7 +25,7 @@ export class CustomTutorialManifestProvider {
     try {
       const manifest = await this.generateManifestEntry(path, '/');
 
-      await fs.writeFile(SYS_MANIFEST_FILE, JSON.stringify(manifest), 'utf8');
+      await fs.writeFile(join(path, SYS_MANIFEST_FILE), JSON.stringify(manifest), 'utf8');
 
       return manifest;
     } catch (e) {

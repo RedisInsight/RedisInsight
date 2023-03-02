@@ -80,9 +80,8 @@ enum ApiEndpoints {
   PROFILER_LOGS = 'profiler/logs',
 
   REDIS_COMMANDS = 'commands',
-  GUIDES = 'static/guides/guides.json',
-  // TODO double check it, when tutorials will be completed
-  TUTORIALS = 'static/tutorials/tutorials.json',
+  GUIDES = 'static/guides/manifest.json',
+  TUTORIALS = 'static/tutorials/manifest.json',
   CUSTOM_TUTORIALS = 'custom-tutorials',
   CUSTOM_TUTORIALS_MANIFEST = 'custom-tutorials/manifest',
   PLUGINS = 'plugins',

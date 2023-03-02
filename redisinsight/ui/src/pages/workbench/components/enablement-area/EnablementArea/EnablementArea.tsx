@@ -166,10 +166,11 @@ const EnablementArea = (props: Props) => {
   const submitCreate = ({ file, name, link }: FormValues) => {
     const formData = new FormData()
     formData.append('name', name)
-    formData.append('link', link)
 
     if (file) {
       formData.append('file', file)
+    } else {
+      formData.append('link', link)
     }
 
     sendEventTelemetry({

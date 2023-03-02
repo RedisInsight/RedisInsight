@@ -27,15 +27,12 @@ export const VIEW_TYPE_OPTIONS = [
 export const getViewTypeOptions = () =>
   [...VIEW_TYPE_OPTIONS]
 
-
 export const SEARCH_COMMANDS = ['ft.search', 'ft.aggregate']
 export const GRAPH_COMMANDS = ['graph.query']
 
 const ALLOWED_PROFILE_COMMANDS = [...SEARCH_COMMANDS, ...GRAPH_COMMANDS]
 
-export const isCommandAllowedForProfile = (query: string) => {
-  return ALLOWED_PROFILE_COMMANDS.includes(query?.split(' ')?.[0]?.toLowerCase())
-}
+export const isCommandAllowedForProfile = (query: string) => ALLOWED_PROFILE_COMMANDS.includes(query?.split(' ')?.[0]?.toLowerCase())
 
 export enum ProfileQueryType {
   Profile = 'Profile',

@@ -32,12 +32,13 @@ const placeholders = {
 const SearchKeyList = () => {
   const { id } = useSelector(connectedInstanceSelector)
   const { search, viewType, filter, searchMode } = useSelector(keysSelector)
-  const { search: redisearchQuery } = useSelector(redisearchSelector)
+  const { search: redisearchQuery, selectedIndex } = useSelector(redisearchSelector)
   const { data: rediSearchHistory, loading: rediSearchHistoryLoading } = useSelector(redisearchHistorySelector)
   const { data: searchHistory, loading: searchHistoryLoading } = useSelector(keysSearchHistorySelector)
 
   const [options, setOptions] = useState<string[]>(filter ? [filter] : [])
   const [value, setValue] = useState(search || '')
+  const [disableSubmit, setDisableSubmit] = useState(false)
 
   const dispatch = useDispatch()
 
@@ -55,6 +56,10 @@ const SearchKeyList = () => {
     setValue(searchMode === SearchMode.Pattern ? search : redisearchQuery)
   }, [searchMode, search, redisearchQuery])
 
+  useEffect(() => {
+    setDisableSubmit(searchMode === SearchMode.Redisearch && !selectedIndex)
+  }, [searchMode, selectedIndex])
+
   const mapOptions = (data: null | Array<SearchHistoryItem>) => data?.map((item) => ({
     id: item.id,
     option: item.filter?.type,
@@ -62,6 +67,8 @@ const SearchKeyList = () => {
   })) || []
 
   const handleApply = (match = value, telemetryProperties: {} = {}) => {
+    if (disableSubmit) return
+
     dispatch(setSearchMatch(match, searchMode))
 
     dispatch(fetchKeys(
@@ -129,6 +136,7 @@ const SearchKeyList = () => {
           onApply: handleApplySuggestion,
           onDelete: handleDeleteSuggestions,
         }}
+        disableSubmit={disableSubmit}
         placeholder={placeholders[searchMode]}
         className={styles.input}
         data-testid="search-key"

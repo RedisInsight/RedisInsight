@@ -1,3 +1,7 @@
+.euiPanel.euiPopover__panel {
+  box-shadow: 0 3px 15px var(--controlsBoxShadowColor) !important;
+}
+
 .popoverLikeTooltip {
   border: none;
   max-width: 267px !important;

@@ -25,7 +25,7 @@ export interface IEnablementAreaItem {
   id: string
   type: EnablementAreaComponent
   label: string
-  children?: Record<string, IEnablementAreaItem>
+  children?: IEnablementAreaItem[]
   args?: Record<string, any>
   _actions?: string[]
   _path?: string
@@ -33,19 +33,11 @@ export interface IEnablementAreaItem {
   _groupPath?: string
 }
 
-export interface DefaultCustomTutorialsItems {
-  'custom-tutorials': IEnablementAreaItem
-}
-
 export interface StateWorkbenchEnablementArea {
   loading: boolean
-  deleting: boolean
+  deleting?: boolean
   error: string
-  items: Record<string, IEnablementAreaItem>
-}
-
-export interface StateWorkbenchCustomTutorials extends Omit<StateWorkbenchEnablementArea, 'items'> {
-  items: DefaultCustomTutorialsItems
+  items: IEnablementAreaItem[]
 }
 
 export interface CommandExecutionUI extends Partial<CommandExecution> {

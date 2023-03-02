@@ -1,12 +1,12 @@
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
-export const MOCK_GUIDES_ITEMS: Record<string, IEnablementAreaItem> = {
-  'quick-guides': {
+export const MOCK_GUIDES_ITEMS: IEnablementAreaItem[] = [
+  {
     type: EnablementAreaComponent.Group,
     id: 'quick-guides',
     label: 'Quick Guides',
-    children: {
-      'document-capabilities': {
+    children: [
+      {
         type: EnablementAreaComponent.InternalLink,
         id: 'document-capabilities',
         label: 'Document Capabilities',
@@ -14,7 +14,7 @@ export const MOCK_GUIDES_ITEMS: Record<string, IEnablementAreaItem> = {
           path: '/static/workbench/quick-guides/document/learn-more.md',
         },
       },
-      'working-with-json': {
+      {
         type: EnablementAreaComponent.InternalLink,
         id: 'working-with-json',
         label: 'Working with JSON',
@@ -22,7 +22,7 @@ export const MOCK_GUIDES_ITEMS: Record<string, IEnablementAreaItem> = {
           path: 'quick-guides/working-with-json.html',
         },
       },
-      'working-with-hash': {
+      {
         type: EnablementAreaComponent.InternalLink,
         id: 'working-with-hash',
         label: 'Working with HASH',
@@ -30,9 +30,9 @@ export const MOCK_GUIDES_ITEMS: Record<string, IEnablementAreaItem> = {
           path: 'quick-guides/working-with-hash.html',
         },
       }
-    }
+    ]
   },
-  'internal-page': {
+  {
     type: EnablementAreaComponent.InternalLink,
     id: 'internal-page',
     label: 'Internal Page',
@@ -40,7 +40,7 @@ export const MOCK_GUIDES_ITEMS: Record<string, IEnablementAreaItem> = {
       path: 'quick-guides/document-capabilities.html'
     },
   },
-  'second-internal-page': {
+  {
     type: EnablementAreaComponent.InternalLink,
     id: 'second-internal-page',
     label: 'Second Internal Page',
@@ -48,7 +48,7 @@ export const MOCK_GUIDES_ITEMS: Record<string, IEnablementAreaItem> = {
       path: 'quick-guides/document-capabilities.html'
     },
   },
-  manual: {
+  {
     type: EnablementAreaComponent.CodeButton,
     id: 'manual',
     label: 'Manual',
@@ -56,4 +56,4 @@ export const MOCK_GUIDES_ITEMS: Record<string, IEnablementAreaItem> = {
       path: '_scripts/manual.txt'
     },
   }
-}
+]

@@ -3,9 +3,14 @@ import React from 'react'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { ApiEndpoints, MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
 import { defaultValue, EnablementAreaProvider } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
+import { EnablementAreaComponent } from 'uiSrc/slices/interfaces'
+
 import Pagination from './Pagination'
 
-const paginationItems = Object.values(MOCK_GUIDES_ITEMS['quick-guides']?.children || {})
+const paginationItems = MOCK_GUIDES_ITEMS[0]?.children
+  ?.map((item, index) => ({ ...item, _key: `${index}` }))
+  ?.filter((item) => item.type === EnablementAreaComponent.InternalLink)
+  || []
 
 describe('Pagination', () => {
   it('should render', () => {
@@ -18,7 +23,7 @@ describe('Pagination', () => {
   })
   it('should correctly open popover', () => {
     const { queryByTestId } = render(
-      <Pagination sourcePath={ApiEndpoints.GUIDES_PATH} items={paginationItems} activePageId={paginationItems[0].id} />
+      <Pagination sourcePath={ApiEndpoints.GUIDES_PATH} items={paginationItems} activePageKey="0" />
     )
     fireEvent.click(screen.getByTestId('enablement-area__pagination-popover-btn'))
     const popover = queryByTestId('enablement-area__pagination-popover')
@@ -36,7 +41,7 @@ describe('Pagination', () => {
         <Pagination
           sourcePath={ApiEndpoints.GUIDES_PATH}
           items={paginationItems}
-          activePageId={paginationItems[pageIndex].id}
+          activePageKey="0"
         />
       </EnablementAreaProvider>
     )
@@ -44,7 +49,7 @@ describe('Pagination', () => {
 
     expect(openPage).toBeCalledWith({
       path: ApiEndpoints.GUIDES_PATH + paginationItems[pageIndex + 1]?.args?.path,
-      manifestPath: ''
+      manifestPath: expect.any(String)
     })
   })
   it('should correctly open previous page', () => {
@@ -56,7 +61,7 @@ describe('Pagination', () => {
         <Pagination
           sourcePath={ApiEndpoints.GUIDES_PATH}
           items={paginationItems}
-          activePageId={paginationItems[pageIndex].id}
+          activePageKey="1"
         />
       </EnablementAreaProvider>
     )
@@ -64,7 +69,7 @@ describe('Pagination', () => {
 
     expect(openPage).toBeCalledWith({
       path: ApiEndpoints.GUIDES_PATH + paginationItems[pageIndex - 1]?.args?.path,
-      manifestPath: ''
+      manifestPath: expect.any(String)
     })
   })
   it('should correctly open by using pagination popover', async () => {
@@ -74,7 +79,7 @@ describe('Pagination', () => {
         <Pagination
           sourcePath={ApiEndpoints.GUIDES_PATH}
           items={paginationItems}
-          activePageId={paginationItems[0].id}
+          activePageKey="0"
         />
       </EnablementAreaProvider>
     )
@@ -91,7 +96,7 @@ describe('Pagination', () => {
     expect(openPage)
       .lastCalledWith({
         path: ApiEndpoints.GUIDES_PATH + paginationItems[paginationItems.length - 1]?.args?.path,
-        manifestPath: ''
+        manifestPath: expect.any(String)
       })
   })
 })

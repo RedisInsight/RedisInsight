@@ -1,26 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { remove } from 'lodash'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, } from 'uiSrc/utils'
 import { apiService } from 'uiSrc/services'
 import {
-  DefaultCustomTutorialsItems,
   EnablementAreaComponent,
   IEnablementAreaItem,
-  StateWorkbenchCustomTutorials,
+  StateWorkbenchEnablementArea,
 } from 'uiSrc/slices/interfaces'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { AppDispatch, RootState } from '../store'
 
-export const defaultItems: DefaultCustomTutorialsItems = {
-  'custom-tutorials': {
+export const defaultItems: IEnablementAreaItem[] = [
+  {
     id: 'custom-tutorials',
     label: 'MY TUTORIALS',
     type: EnablementAreaComponent.Group,
-    children: {}
+    children: []
   }
-}
-export const initialState: StateWorkbenchCustomTutorials = {
+]
+export const initialState: StateWorkbenchEnablementArea = {
   loading: false,
   deleting: false,
   error: '',
@@ -49,12 +49,8 @@ const workbenchCustomTutorialsSlice = createSlice({
     },
     uploadWBCustomTutorialSuccess: (state, { payload }) => {
       state.loading = false
-      state.items['custom-tutorials'] = {
-        ...state.items['custom-tutorials'],
-        children: {
-          [payload.id]: payload,
-          ...state.items['custom-tutorials'].children,
-        },
+      if (state.items[0]?.children) {
+        state.items[0].children.unshift(payload)
       }
     },
     uploadWBCustomTutorialFailure: (state, { payload }) => {
@@ -66,10 +62,12 @@ const workbenchCustomTutorialsSlice = createSlice({
     },
     deleteWBCustomTutorialSuccess: (state, { payload }) => {
       state.deleting = false
-      delete state.items['custom-tutorials'].children?.[payload]
+      if (state.items[0].children) {
+        remove(state.items[0].children, (item) => item.id === payload)
+      }
     },
     deleteWBCustomTutorialFailure: (state, { payload }) => {
-      state.loading = false
+      state.deleting = false
       state.error = payload
     },
   }
@@ -100,8 +98,7 @@ export function fetchCustomTutorials(onSuccessAction?: () => void, onFailAction?
     dispatch(getWBCustomTutorials())
 
     try {
-      const { data, status } = await apiService
-        .get<Record<string, IEnablementAreaItem>>(ApiEndpoints.CUSTOM_TUTORIALS_MANIFEST)
+      const { data, status } = await apiService.get(ApiEndpoints.CUSTOM_TUTORIALS_MANIFEST)
       if (isStatusSuccessful(status)) {
         dispatch(getWBCustomTutorialsSuccess(data))
         onSuccessAction?.()
@@ -117,7 +114,7 @@ export function fetchCustomTutorials(onSuccessAction?: () => void, onFailAction?
 export function uploadCustomTutorial(
   formData: FormData,
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: (error?: string) => void
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(uploadWbCustomTutorial())
@@ -140,7 +137,7 @@ export function uploadCustomTutorial(
       const errorMessage = getApiErrorMessage(error)
       dispatch(uploadWBCustomTutorialFailure(errorMessage))
       dispatch(addErrorNotification(error))
-      onFailAction?.()
+      onFailAction?.(error?.response?.data?.error)
     }
   }
 }

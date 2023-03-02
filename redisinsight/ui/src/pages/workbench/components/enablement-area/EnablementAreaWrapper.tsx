@@ -17,6 +17,7 @@ import { Nullable, } from 'uiSrc/utils'
 import { setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { getTutorialSection } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
 import EnablementArea from './EnablementArea'
 import EnablementAreaCollapse from './EnablementAreaCollapse/EnablementAreaCollapse'
 
@@ -57,7 +58,7 @@ const EnablementAreaWrapper = (props: Props) => {
   const openScript = (
     script: string,
     execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams } = { mode: ExecuteButtonMode.Manual },
-    file?: { path?: string, name?: string }
+    file?: { path?: string, name?: string, source?: string }
   ) => {
     sendEventButtonClickedTelemetry(file)
 
@@ -73,11 +74,12 @@ const EnablementAreaWrapper = (props: Props) => {
     }, 0)
   }
 
-  const onOpenInternalPage = ({ path }: IInternalPage) => {
+  const onOpenInternalPage = ({ path, manifestPath }: IInternalPage) => {
     sendEventTelemetry({
       event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED,
       eventData: {
         path,
+        section: getTutorialSection(manifestPath),
         databaseId: instanceId,
       }
     })

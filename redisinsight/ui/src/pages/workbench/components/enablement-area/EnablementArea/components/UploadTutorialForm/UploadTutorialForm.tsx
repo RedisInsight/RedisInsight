@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiButtonIcon, EuiFieldText, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiFieldText, EuiFilePicker, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { FormikErrors } from 'formik/dist/types'
 import { isEmpty } from 'lodash'
 
-import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
-import UploadFile from 'uiSrc/components/upload-file'
 
 import styles from './styles.module.scss'
 
@@ -16,9 +14,10 @@ export interface Props {
   onCancel: () => void
 }
 
-interface FormValues {
+export interface FormValues {
   file: Nullable<File>
   name: string
+  link: string
 }
 
 const UploadTutorialForm = (props: Props) => {
@@ -27,7 +26,8 @@ const UploadTutorialForm = (props: Props) => {
 
   const initialValues: FormValues = {
     file: null,
-    name: ''
+    name: '',
+    link: ''
   }
 
   const isSubmitDisabled = !isEmpty(errors)
@@ -36,7 +36,7 @@ const UploadTutorialForm = (props: Props) => {
     const errs: FormikErrors<FormValues> = {}
 
     if (!values.name) errs.name = 'Tutorial Name'
-    if (!values.file) errs.file = 'Tutorial Archive'
+    if (!values.file && !values.link) errs.file = 'Tutorial Archive or Link'
 
     setErrors(errs)
     return errs
@@ -65,7 +65,7 @@ const UploadTutorialForm = (props: Props) => {
     return isSubmitDisabled ? (<span className="euiToolTip__content">{errorsArr}</span>) : null
   }
 
-  const handleFileChange = async ({ target: { files } }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (files: FileList | null) => {
     await formik.setFieldValue('file', files?.[0] ?? null)
 
     if (!formik.values.name) {
@@ -80,32 +80,30 @@ const UploadTutorialForm = (props: Props) => {
         <EuiSpacer size="m" />
         <div>
           <EuiFieldText
-            placeholder="Tutorial Name"
+            placeholder="Tutorial Name*"
             value={formik.values.name}
             onChange={(e) => formik.setFieldValue('name', e.target.value)}
             className={styles.input}
           />
-          {formik.values.file ? (
-            <div className={styles.uploadFileName}>
-              <EuiText className={cx(styles.uploadFileNameTitle)} color="subdued" size="xs">
-                <div className="truncateText">
-                  <span>{formik.values.file.name}</span>
-                </div>
-              </EuiText>
-              <EuiButtonIcon
-                style={{ marginLeft: '4px' }}
-                size="xs"
-                iconSize="s"
-                iconType="trash"
-                onClick={() => formik.setFieldValue('file', null)}
-                aria-label="remove-file"
-              />
-            </div>
-          ) : (
-            <div className={styles.uploadFileWrapper}>
-              <UploadFile onFileChange={handleFileChange} accept=".zip" />
-            </div>
-          )}
+          <div className={styles.uploadFileWrapper}>
+            <EuiFilePicker
+              id="import-tutorial"
+              initialPromptText="Select or drop a file"
+              className={styles.fileDrop}
+              onChange={handleFileChange}
+              display="large"
+              accept=".zip"
+              data-testid="import-tutorial"
+              aria-label="Select or drop file"
+            />
+          </div>
+          <div className={styles.hr}>OR</div>
+          <EuiFieldText
+            placeholder="Tutorial Link"
+            value={formik.values.link}
+            onChange={(e) => formik.setFieldValue('link', e.target.value)}
+            className={styles.input}
+          />
           <EuiSpacer size="l" />
           <div className={styles.footer}>
             <EuiButton color="secondary" size="s" onClick={() => onCancel()}>Cancel</EuiButton>

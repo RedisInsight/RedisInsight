@@ -18,24 +18,27 @@ import {
   EmptyPrompt,
   Pagination
 } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/components'
+import { getTutorialSection } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { Nullable } from 'uiSrc/utils'
 import './styles/main.scss'
 import styles from './styles.module.scss'
 
 export interface Props {
-  onClose: () => void;
-  title: string;
-  backTitle: string;
-  content: string;
-  isLoading?: boolean;
-  error?: string;
-  scrollTop?: number;
-  onScroll?: (top: number) => void;
-  id: string;
-  path: string;
-  sourcePath: string;
+  onClose: () => void
+  title: string
+  backTitle: string
+  content: string
+  isLoading?: boolean
+  error?: string
+  scrollTop?: number
+  onScroll?: (top: number) => void
+  activeKey?: Nullable<string>
+  path: string
+  manifestPath?: Nullable<string>
+  sourcePath: string
   pagination?: IEnablementAreaItem[]
 }
 const InternalPage = (props: Props) => {
@@ -50,8 +53,9 @@ const InternalPage = (props: Props) => {
     onScroll,
     scrollTop,
     pagination,
-    id,
+    activeKey,
     path,
+    manifestPath,
     sourcePath
   } = props
   const components: any = { LazyCodeButton, Image, Code }
@@ -69,6 +73,7 @@ const InternalPage = (props: Props) => {
       eventData: {
         path,
         link,
+        section: getTutorialSection(manifestPath),
         databaseId: instanceId,
       }
     })
@@ -103,6 +108,7 @@ const InternalPage = (props: Props) => {
   }, [isLoading, location])
 
   const contentComponent = useMemo(() => (
+    // @ts-ignore
     <JsxParser
       components={components}
       blacklistedTags={['iframe', 'script']}
@@ -148,10 +154,10 @@ const InternalPage = (props: Props) => {
       {!!pagination?.length && (
         <>
           <div className={cx(styles.footer, 'eui-showFor--xl')}>
-            <Pagination sourcePath={sourcePath} items={pagination} activePageId={id} />
+            <Pagination sourcePath={sourcePath} items={pagination} activePageKey={activeKey} />
           </div>
           <div className={cx(styles.footer, 'eui-hideFor--xl')}>
-            <Pagination sourcePath={sourcePath} items={pagination} activePageId={id} compressed />
+            <Pagination sourcePath={sourcePath} items={pagination} activePageKey={activeKey} compressed />
           </div>
         </>
       )}

@@ -61,7 +61,7 @@ describe('slices', () => {
   describe('getWBTutorialsSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
-      const items: Record<string, IEnablementAreaItem> = MOCK_TUTORIALS_ITEMS
+      const items: IEnablementAreaItem[] = MOCK_TUTORIALS_ITEMS
       const state = {
         ...initialState,
         items,

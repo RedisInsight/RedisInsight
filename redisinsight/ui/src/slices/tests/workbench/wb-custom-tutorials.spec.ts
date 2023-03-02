@@ -1,18 +1,26 @@
 import { cloneDeep } from 'lodash'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
-import { MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
-import { resourcesService } from 'uiSrc/services'
+import { MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
+import { apiService } from 'uiSrc/services'
 
 import reducer, {
   initialState,
-  workbenchGuidesSelector,
-  getWBGuides,
-  getWBGuidesFailure,
-  getWBGuidesSuccess,
-  fetchGuides,
+  getWBCustomTutorials,
+  getWBCustomTutorialsSuccess,
+  getWBCustomTutorialsFailure,
+  uploadWbCustomTutorial,
+  uploadWBCustomTutorialSuccess,
+  uploadWBCustomTutorialFailure,
+  deleteWbCustomTutorial,
+  deleteWBCustomTutorialSuccess,
+  deleteWBCustomTutorialFailure,
+  uploadCustomTutorial,
+  fetchCustomTutorials,
+  deleteCustomTutorial,
+  workbenchCustomTutorialsSelector,
   defaultItems,
-} from '../../workbench/wb-guides'
+} from '../../workbench/wb-custom-tutorials'
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -35,7 +43,7 @@ describe('slices', () => {
     })
   })
 
-  describe('getWBGuides', () => {
+  describe('getWBCustomTutorials', () => {
     it('should properly set loading', () => {
       // Arrange
       const loading = true
@@ -45,43 +53,43 @@ describe('slices', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, getWBGuides())
+      const nextState = reducer(initialState, getWBCustomTutorials())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         workbench: {
-          guides: nextState,
+          customTutorials: nextState,
         },
       })
 
-      expect(workbenchGuidesSelector(rootState)).toEqual(state)
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
     })
   })
 
-  describe('getWBGuidesSuccess', () => {
+  describe('getWBCustomTutorialsSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
-      const items: IEnablementAreaItem[] = MOCK_GUIDES_ITEMS
+      const items: IEnablementAreaItem[] = MOCK_TUTORIALS_ITEMS
       const state = {
         ...initialState,
         items,
       }
 
       // Act
-      const nextState = reducer(initialState, getWBGuidesSuccess(items))
+      const nextState = reducer(initialState, getWBCustomTutorialsSuccess(items))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         workbench: {
-          guides: nextState,
+          customTutorials: nextState,
         },
       })
 
-      expect(workbenchGuidesSelector(rootState)).toEqual(state)
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
     })
   })
 
-  describe('getWBGuidesFailure', () => {
+  describe('getWBCustomTutorialsFailure', () => {
     it('should properly set error', () => {
       // Arrange
       const error = 'error'
@@ -93,42 +101,42 @@ describe('slices', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, getWBGuidesFailure(error))
+      const nextState = reducer(initialState, getWBCustomTutorialsFailure(error))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         workbench: {
-          guides: nextState,
+          customTutorials: nextState,
         },
       })
 
-      expect(workbenchGuidesSelector(rootState)).toEqual(state)
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
     })
   })
 
   // thunks
 
-  describe('fetchGuides', () => {
-    it('succeed to fetch guides items', async () => {
+  describe('fetchCustomTutorials', () => {
+    it('succeed to fetch tutorials items', async () => {
       // Arrange
-      const data = MOCK_GUIDES_ITEMS
+      const data = MOCK_TUTORIALS_ITEMS
       const responsePayload = { status: 200, data }
 
-      resourcesService.get = jest.fn().mockResolvedValue(responsePayload)
+      apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(fetchGuides(jest.fn()))
+      await store.dispatch<any>(fetchCustomTutorials(jest.fn()))
 
       // Assert
       const expectedActions = [
-        getWBGuides(),
-        getWBGuidesSuccess(data),
+        getWBCustomTutorials(),
+        getWBCustomTutorialsSuccess(data),
       ]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
     })
 
-    it('failed to fetch guides items', async () => {
+    it('failed to fetch tutorials items', async () => {
       // Arrange
       const errorMessage = 'Something was wrong!'
       const responsePayload = {
@@ -137,15 +145,15 @@ describe('slices', () => {
           data: { message: errorMessage },
         },
       }
-      resourcesService.get = jest.fn().mockRejectedValue(responsePayload)
+      apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(fetchGuides())
+      await store.dispatch<any>(fetchCustomTutorials())
 
       // Assert
       const expectedActions = [
-        getWBGuides(),
-        getWBGuidesFailure(errorMessage),
+        getWBCustomTutorials(),
+        getWBCustomTutorialsFailure(errorMessage),
       ]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)

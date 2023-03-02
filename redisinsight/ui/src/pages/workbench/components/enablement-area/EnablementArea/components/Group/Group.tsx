@@ -1,7 +1,9 @@
 import React from 'react'
 import { EuiAccordion, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import DeleteTutorialButton from '../DeleteTutorialButton'
 import { EAItemActions } from '../../constants'
@@ -42,10 +44,17 @@ const Group = (props: Props) => {
     triggerStyle,
   } = props
   const { deleting: deletingCustomTutorials } = useSelector(workbenchCustomTutorialsSelector)
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const handleCreate = (e: React.MouseEvent) => {
     e.stopPropagation()
     onCreate?.()
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_IMPORT_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
   }
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -53,7 +62,7 @@ const Group = (props: Props) => {
     onDelete?.(id)
   }
 
-  const Actions = ({ actions }: { actions?: string[] }) => (
+  const actionsContent = (
     <>
       {actions?.includes(EAItemActions.Create) && (
         <EuiToolTip
@@ -75,7 +84,7 @@ const Group = (props: Props) => {
       <EuiText className="group-header" size="m">
         {label}
       </EuiText>
-      {isShowActions && <Actions actions={actions} />}
+      {isShowActions && actionsContent}
     </div>
   )
   const buttonProps: any = {

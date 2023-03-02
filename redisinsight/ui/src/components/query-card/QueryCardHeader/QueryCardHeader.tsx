@@ -32,7 +32,7 @@ import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { getViewTypeOptions, WBQueryType } from 'uiSrc/pages/workbench/constants'
+import { getViewTypeOptions, WBQueryType, getProfileViewTypeOptions, ProfileQueryType, isCommandAllowedForProfile } from 'uiSrc/pages/workbench/constants'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
@@ -70,6 +70,7 @@ export interface Props {
   setSelectedValue: (type: WBQueryType, value: string) => void
   onQueryDelete: () => void
   onQueryReRun: () => void
+  onQueryProfile: (type: ProfileQueryType) => void
 }
 
 const getExecutionTimeString = (value: number): string => {
@@ -109,6 +110,7 @@ const QueryCardHeader = (props: Props) => {
     setSelectedValue,
     onQueryDelete,
     onQueryReRun,
+    onQueryProfile,
     db,
   } = props
 
@@ -237,6 +239,30 @@ const QueryCardHeader = (props: Props) => {
     }
   })
 
+  const profileOptions: EuiSuperSelectOption<any>[] = (getProfileViewTypeOptions() as any[]).map((item) => {
+    const { value, id, text } = item
+    return {
+      value: id ?? value,
+      inputDisplay: (
+        <div className={cx(styles.dropdownOption, styles.dropdownProfileOption)}>
+          <EuiIcon
+            className={styles.iconDropdownOption}
+            type="visTagCloud"
+            data-testid={`view-type-selected-${value}-${id}`}
+          />
+        </div>
+      ),
+      dropdownDisplay: (
+        <div className={cx(styles.dropdownOption, styles.dropdownProfileOption)}>
+          <span>{truncateText(text, 20)}</span>
+        </div>
+      ),
+      'data-test-subj': `profile-type-option-${value}-${id}`,
+    }
+  })
+
+  const canCommandProfile = isCommandAllowedForProfile(query)
+
   const indexForSeparator = findIndex(pluginsOptions, (option) => !option.internal)
   if (indexForSeparator > -1) {
     modifiedOptions.splice(indexForSeparator + 1, 0, {
@@ -318,6 +344,26 @@ const QueryCardHeader = (props: Props) => {
                 </EuiTextColor>
               </>
             </EuiToolTip>
+          )}
+        </EuiFlexItem>
+        <EuiFlexItem
+          grow={false}
+          className={cx(styles.buttonIcon, styles.viewTypeIcon)}
+          onClick={onDropDownViewClick}
+        >
+          {isOpen && canCommandProfile && !summaryText && (
+            <div className={styles.dropdownWrapper}>
+              <div className={styles.dropdown}>
+                <EuiSuperSelect
+                  options={profileOptions}
+                  itemClassName={cx(styles.changeViewItem, styles.dropdownProfileItem)}
+                  className={cx(styles.changeView, styles.dropdownProfileIcon)}
+                  valueOfSelected={ProfileQueryType.Profile}
+                  onChange={(value: ProfileQueryType) => onQueryProfile(value)}
+                  data-testid="run-profile-type"
+                />
+              </div>
+            </div>
           )}
         </EuiFlexItem>
         <EuiFlexItem

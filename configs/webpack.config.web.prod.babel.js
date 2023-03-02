@@ -207,8 +207,5 @@ export default merge(commonConfig, {
       },
     ],
   },
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM',
-  },
+  externals: {},
 });

@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios'
+import { isNumber } from 'lodash'
 import { sessionStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import { isNumber } from 'lodash'
 
 const baseApiUrl = process.env.BASE_API_URL
 const apiPort = process.env.API_PORT
@@ -20,7 +20,7 @@ const axiosInstance = axios.create({
 
 export const requestInterceptor = (config: AxiosRequestConfig) => {
   if (config?.headers) {
-    const [instanceId] = (/(?<=databases\/)(.*?)(?=\/)/gi).exec(config.url || '') || []
+    const instanceId = /databases\/([\w-]+)\/?.*/.exec(config.url || '')?.[1]
 
     if (instanceId) {
       const dbIndex = sessionStorageService.get(`${BrowserStorageItem.dbIndex}${instanceId}`)

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { Dispatch, PayloadAction } from '@reduxjs/toolkit'
 import parse from 'html-react-parser'
 
@@ -8,10 +8,13 @@ import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-outpu
 import { BrowserStorageItem, ICommands } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 import { SelectCommand } from 'uiSrc/constants/cliOutput'
-import { ClusterNode, RedisDefaultModules, REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
+import {
+  ClusterNode,
+  RedisDefaultModules,
+  COMMAND_MODULES,
+} from 'uiSrc/slices/interfaces'
 
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
-import { Nullable } from './types'
 import formatToText from './transformers/cliTextFormatter'
 import { getDbIndex } from './longNames'
 
@@ -139,18 +142,42 @@ const checkUnsupportedCommand = (unsupportedCommands: string[], commandLine: str
 const checkBlockingCommand = (blockingCommands: string[], commandLine: string) =>
   blockingCommands?.find((command) => commandLine?.trim().toLowerCase().startsWith(command))
 
+const checkCommandModule = (command: string) => {
+  switch (true) {
+    case command.startsWith(ModuleCommandPrefix.RediSearch): {
+      return RedisDefaultModules.Search
+    }
+    case command.startsWith(ModuleCommandPrefix.JSON): {
+      return RedisDefaultModules.ReJSON
+    }
+    case command.startsWith(ModuleCommandPrefix.TimeSeries): {
+      return RedisDefaultModules.TimeSeries
+    }
+    case command.startsWith(ModuleCommandPrefix.Graph): {
+      return RedisDefaultModules.Graph
+    }
+    case command.startsWith(ModuleCommandPrefix.BF):
+    case command.startsWith(ModuleCommandPrefix.CF):
+    case command.startsWith(ModuleCommandPrefix.CMS):
+    case command.startsWith(ModuleCommandPrefix.TDIGEST):
+    case command.startsWith(ModuleCommandPrefix.TOPK): {
+      return RedisDefaultModules.Bloom
+    }
+    default: {
+      return null
+    }
+  }
+}
+
 const checkUnsupportedModuleCommand = (loadedModules: AdditionalRedisModule[], commandLine: string) => {
   const command = commandLine?.trim().toUpperCase()
-  let commandModule: Nullable<RedisDefaultModules> = null
 
-  if (command.startsWith(ModuleCommandPrefix.RediSearch)) {
-    commandModule = RedisDefaultModules.Search
+  const commandModule = checkCommandModule(command)
+  if (!commandModule) {
+    return null
   }
-
-  const isModuleLoaded = loadedModules?.some(({ name }) => name === commandModule)
-    // Redisearch has 4 names, need check all
-    || loadedModules?.some(({ name }) =>
-      REDISEARCH_MODULES.some((search) => name === search))
+  const isModuleLoaded = loadedModules?.some(({ name }) =>
+    COMMAND_MODULES[commandModule].some((module) => name === module))
 
   if (isModuleLoaded) {
     return null

@@ -68,7 +68,12 @@ const Group = (props: Props) => {
         <EuiToolTip
           content="Upload Tutorial"
         >
-          <div className="group-header__btn group-header__create-btn" role="presentation" onClick={handleCreate}>
+          <div
+            className="group-header__btn group-header__create-btn"
+            role="presentation"
+            onClick={handleCreate}
+            data-testid="open-upload-tutorial-btn"
+          >
             <EuiIcon type="plus" />
           </div>
         </EuiToolTip>

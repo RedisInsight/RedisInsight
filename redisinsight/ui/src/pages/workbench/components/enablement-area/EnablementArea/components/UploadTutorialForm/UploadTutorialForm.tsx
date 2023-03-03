@@ -9,15 +9,15 @@ import validationErrors from 'uiSrc/constants/validationErrors'
 
 import styles from './styles.module.scss'
 
-export interface Props {
-  onSubmit: (data: any) => void
-  onCancel: () => void
-}
-
 export interface FormValues {
   file: Nullable<File>
   name: string
   link: string
+}
+
+export interface Props {
+  onSubmit: (data: FormValues) => void
+  onCancel?: () => void
 }
 
 const UploadTutorialForm = (props: Props) => {
@@ -75,7 +75,7 @@ const UploadTutorialForm = (props: Props) => {
 
   return (
     <div className={styles.outerWrapper}>
-      <div className={styles.wrapper}>
+      <div className={styles.wrapper} data-testid="upload-tutorial-form">
         <EuiText>Add new Tutorial</EuiText>
         <EuiSpacer size="m" />
         <div>
@@ -84,6 +84,7 @@ const UploadTutorialForm = (props: Props) => {
             value={formik.values.name}
             onChange={(e) => formik.setFieldValue('name', e.target.value)}
             className={styles.input}
+            data-testid="tutorial-name-field"
           />
           <div className={styles.uploadFileWrapper}>
             <EuiFilePicker
@@ -103,10 +104,18 @@ const UploadTutorialForm = (props: Props) => {
             value={formik.values.link}
             onChange={(e) => formik.setFieldValue('link', e.target.value)}
             className={styles.input}
+            data-testid="tutorial-link-field"
           />
           <EuiSpacer size="l" />
           <div className={styles.footer}>
-            <EuiButton color="secondary" size="s" onClick={() => onCancel()}>Cancel</EuiButton>
+            <EuiButton
+              color="secondary"
+              size="s"
+              onClick={() => onCancel?.()}
+              data-testid="cancel-upload-tutorial-btn"
+            >
+              Cancel
+            </EuiButton>
             <EuiToolTip
               position="top"
               anchorClassName="euiToolTip__btn-disabled"
@@ -125,6 +134,7 @@ const UploadTutorialForm = (props: Props) => {
                 onClick={() => formik.handleSubmit()}
                 iconType={isSubmitDisabled ? 'iInCircle' : undefined}
                 disabled={isSubmitDisabled}
+                data-testid="submit-upload-tutorial-btn"
               >
                 Submit
               </EuiButton>

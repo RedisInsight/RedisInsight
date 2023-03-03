@@ -1,8 +1,6 @@
 .enablement-area {
   .euiAccordion {
     backface-visibility: hidden;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.2s ease-in-out;
 
     .group-header-wrapper {
       display: flex;
@@ -64,6 +62,7 @@
   .euiAccordion__button {
     padding: 3px 0;
     flex-grow: 1;
+    margin-bottom: 2px;
 
     & > span {
       overflow: hidden;
@@ -93,7 +92,6 @@
 
   .euiAccordion__childWrapper {
     padding-left: 0;
-    margin-bottom: 8px;
 
     .euiListGroupItem {
       button {
@@ -105,6 +103,7 @@
       .euiListGroupItem__label {
         font: normal normal normal 14px/20px Graphik, sans-serif;
         letter-spacing: -0.14px;
+        height: 24px;
       }
     }
 

@@ -16,9 +16,8 @@ const DeleteTutorialButton = (props: Props) => {
   const { id, label, onDelete, isLoading } = props
   const [isPopoverDeleteOpen, setIsPopoverDeleteOpen] = useState<boolean>(false)
 
-  const handleClickDelete = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setIsPopoverDeleteOpen(true)
+  const handleClickDelete = () => {
+    setIsPopoverDeleteOpen((v) => !v)
   }
 
   return (
@@ -32,7 +31,7 @@ const DeleteTutorialButton = (props: Props) => {
         <div className="group-header__btn group-header__delete-btn" role="presentation" onClick={handleClickDelete}>
           <EuiIcon size="m" type="trash" />
         </div>
-      )}
+        )}
       onClick={(e) => e.stopPropagation()}
     >
       <div className={styles.popoverDeleteContainer}>

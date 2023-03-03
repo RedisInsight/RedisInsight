@@ -299,17 +299,32 @@ const EnablementArea = (props: Props) => {
               flush
               className={cx(styles.innerContainer)}
             >
-              {renderTreeView(
-                getManifestItems(guides),
-                { sourcePath: ApiEndpoints.GUIDES_PATH, manifestPath: EAManifestFirstKey.GUIDES }
+              {guides && (
+                <div className={styles.tutorialWrapper}>
+                  {renderTreeView(
+                    getManifestItems(guides),
+                    { sourcePath: ApiEndpoints.GUIDES_PATH, manifestPath: EAManifestFirstKey.GUIDES }
+                  )}
+                </div>
               )}
-              {renderTreeView(
-                getManifestItems(tutorials),
-                { sourcePath: ApiEndpoints.TUTORIALS_PATH, manifestPath: EAManifestFirstKey.TUTORIALS }
+              {tutorials && (
+                <div className={styles.tutorialWrapper}>
+                  {renderTreeView(
+                    getManifestItems(tutorials),
+                    { sourcePath: ApiEndpoints.TUTORIALS_PATH, manifestPath: EAManifestFirstKey.TUTORIALS }
+                  )}
+                </div>
               )}
-              {renderTreeView(
-                getManifestItems(customTutorials),
-                { sourcePath: ApiEndpoints.CUSTOM_TUTORIALS_PATH, manifestPath: EAManifestFirstKey.CUSTOM_TUTORIALS }
+              {customTutorials && (
+                <div className={styles.tutorialWrapper}>
+                  {renderTreeView(
+                    getManifestItems(customTutorials),
+                    {
+                      sourcePath: ApiEndpoints.CUSTOM_TUTORIALS_PATH,
+                      manifestPath: EAManifestFirstKey.CUSTOM_TUTORIALS
+                    }
+                  )}
+                </div>
               )}
             </EuiListGroup>
           )}

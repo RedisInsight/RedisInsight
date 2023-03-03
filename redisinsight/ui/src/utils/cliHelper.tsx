@@ -222,6 +222,7 @@ export {
   cliCommandWrapper,
   clearOutput,
   updateCliHistoryStorage,
+  checkCommandModule,
   checkUnsupportedCommand,
   checkBlockingCommand,
   checkUnsupportedModuleCommand,

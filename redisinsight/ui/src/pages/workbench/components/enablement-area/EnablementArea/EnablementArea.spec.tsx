@@ -1,10 +1,11 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
+import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
+import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS, MOCK_CUSTOM_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
+import { deleteWbCustomTutorial, uploadWbCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import EnablementArea, { Props } from './EnablementArea'
 
 const mockedProps = mock<Props>()
@@ -124,5 +125,53 @@ describe('EnablementArea', () => {
     )
 
     expect(queryByTestId('internal-link-internal-page')).toBeInTheDocument()
+  })
+
+  describe('Custom Tutorials', () => {
+    it('should render custom tutorials', () => {
+      render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+      expect(screen.getByTestId('enablementArea')).toHaveTextContent('MY TUTORIALS')
+    })
+
+    it('should render add button and open form', () => {
+      render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+      fireEvent.click(screen.getByTestId('open-upload-tutorial-btn'))
+      expect(screen.getByTestId('upload-tutorial-form')).toBeInTheDocument()
+    })
+
+    it('should render call proper actions after upload form submit', async () => {
+      render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+      fireEvent.click(screen.getByTestId('open-upload-tutorial-btn'))
+
+      await act(() => {
+        fireEvent.change(
+          screen.getByTestId('tutorial-name-field'),
+          { target: { value: 'name' } }
+        )
+      })
+
+      await act(() => {
+        fireEvent.change(
+          screen.getByTestId('tutorial-link-field'),
+          { target: { value: 'link' } }
+        )
+      })
+
+      await act(() => {
+        fireEvent.click(screen.getByTestId('submit-upload-tutorial-btn'))
+      })
+
+      const expectedActions = [uploadWbCustomTutorial()]
+      expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    })
+
+    it('should render delete button and call proper actions after click on delete', () => {
+      render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+      fireEvent.click(screen.getByTestId('delete-tutorial-icon-12mfp-rem'))
+      fireEvent.click(screen.getByTestId('delete-tutorial-12mfp-rem'))
+
+      const expectedActions = [deleteWbCustomTutorial()]
+      expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    })
   })
 })

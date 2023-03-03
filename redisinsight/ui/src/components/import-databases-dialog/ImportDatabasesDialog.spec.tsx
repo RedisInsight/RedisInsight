@@ -1,9 +1,8 @@
-import { waitFor } from '@testing-library/react'
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { importInstancesFromFile, importInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import { render, screen, fireEvent, mockedStore, cleanup, act } from 'uiSrc/utils/test-utils'
 
 import ImportDatabasesDialog from './ImportDatabasesDialog'
 
@@ -60,7 +59,7 @@ describe('ImportDatabasesDialog', () => {
       type: 'application/JSON',
     })
 
-    await waitFor(() => {
+    await act(() => {
       fireEvent.change(
         screen.getByTestId('import-databases-input-file'),
         {

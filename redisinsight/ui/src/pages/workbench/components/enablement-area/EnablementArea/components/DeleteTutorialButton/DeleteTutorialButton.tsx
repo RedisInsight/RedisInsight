@@ -29,11 +29,17 @@ const DeleteTutorialButton = (props: Props) => {
       closePopover={() => setIsPopoverDeleteOpen(false)}
       panelPaddingSize="l"
       button={(
-        <div className="group-header__btn group-header__delete-btn" role="presentation" onClick={handleClickDelete}>
+        <div
+          className="group-header__btn group-header__delete-btn"
+          role="presentation"
+          onClick={handleClickDelete}
+          data-testid={`delete-tutorial-icon-${id}`}
+        >
           <EuiIcon size="m" type="trash" />
         </div>
       )}
       onClick={(e) => e.stopPropagation()}
+      data-testid={`delete-tutorial-popover-${id}`}
     >
       <div className={styles.popoverDeleteContainer}>
         <EuiText size="m">

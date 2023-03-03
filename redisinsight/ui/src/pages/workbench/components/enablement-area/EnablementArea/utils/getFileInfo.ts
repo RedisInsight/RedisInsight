@@ -58,9 +58,10 @@ export const getPagesInsideGroup = (
 }
 
 export const getTutorialSection = (manifestPath?: Nullable<string>) => {
-  if (manifestPath?.startsWith(EAManifestFirstKey.CUSTOM_TUTORIALS)) return 'Custom Tutorials'
-  if (manifestPath?.startsWith(EAManifestFirstKey.TUTORIALS)) return 'Tutorials'
-  if (manifestPath?.startsWith(EAManifestFirstKey.GUIDES)) return 'Guides'
+  const path = manifestPath?.replace(/^\//, '')
+  if (path?.startsWith(EAManifestFirstKey.CUSTOM_TUTORIALS)) return 'Custom Tutorials'
+  if (path?.startsWith(EAManifestFirstKey.TUTORIALS)) return 'Tutorials'
+  if (path?.startsWith(EAManifestFirstKey.GUIDES)) return 'Guides'
   return undefined
 }
 
@@ -87,7 +88,7 @@ export const getMarkdownPathByManifest = (
   const pathToMarkDown = path.replaceAll('/', '.children.')
   const markDownPath = get(manifest, pathToMarkDown)?.args?.path
 
-  if (!markDownPath) return pathPrefix
+  if (!markDownPath) return ''
 
   let currentChildren = manifest
   let folderPath = ''
@@ -104,10 +105,11 @@ export const getMarkdownPathByManifest = (
     return undefined
   })
 
-  return pathPrefix + folderPath + markDownPath
+  return pathPrefix + folderPath + (markDownPath.match(/^(\/|\\)/) ? markDownPath : '/'.concat(markDownPath))
 }
 
 export const removeManifestPrefix = (path?: string): string => path
+  ?.replace(/^\//, '')
   ?.replace(/^(quick-guides|tutorials|custom-tutorials)/, '')
   ?.replace(/^\//, '') || ''
 

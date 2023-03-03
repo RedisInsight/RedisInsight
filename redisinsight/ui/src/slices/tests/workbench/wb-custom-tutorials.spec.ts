@@ -1,9 +1,11 @@
 import { cloneDeep } from 'lodash'
+import { AxiosError } from 'axios'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import reducer, {
   initialState,
   getWBCustomTutorials,
@@ -114,6 +116,166 @@ describe('slices', () => {
     })
   })
 
+  describe('uploadWbCustomTutorial', () => {
+    it('should properly set loading', () => {
+      // Arrange
+      const loading = true
+      const state = {
+        ...initialState,
+        loading
+      }
+
+      // Act
+      const nextState = reducer(initialState, uploadWbCustomTutorial())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          customTutorials: nextState,
+        },
+      })
+
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('uploadWBCustomTutorialSuccess', () => {
+    it('should properly set state after success', () => {
+      // Arrange
+      const items: IEnablementAreaItem[] = MOCK_TUTORIALS_ITEMS
+      const currentState = {
+        ...initialState,
+        items: defaultItems
+      }
+      const state = {
+        ...initialState,
+        items: [{
+          ...defaultItems[0],
+          children: [
+            items[0],
+            ...(defaultItems[0].children as [])
+          ]
+        }],
+      }
+
+      // Act
+      const nextState = reducer(currentState, uploadWBCustomTutorialSuccess(items[0]))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          customTutorials: nextState,
+        },
+      })
+
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('uploadWBCustomTutorialFailure', () => {
+    it('should properly set error', () => {
+      // Arrange
+      const error = 'error'
+      const state = {
+        ...initialState,
+        loading: false,
+        error
+      }
+
+      // Act
+      const nextState = reducer(initialState, uploadWBCustomTutorialFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          customTutorials: nextState,
+        },
+      })
+
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteWbCustomTutorial', () => {
+    it('should properly set loading', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        deleting: true
+      }
+
+      // Act
+      const nextState = reducer(initialState, deleteWbCustomTutorial())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          customTutorials: nextState,
+        },
+      })
+
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteWBCustomTutorialSuccess', () => {
+    it('should properly set state after success', () => {
+      // Arrange
+      const id = 'quick-guides'
+      const currentState = {
+        ...initialState,
+        items: [{
+          ...defaultItems[0],
+          children: MOCK_TUTORIALS_ITEMS
+        }]
+      }
+
+      const state = {
+        ...initialState,
+        items: [{
+          ...defaultItems[0],
+          children: currentState.items[0].children.slice(1)
+        }]
+      }
+
+      // Act
+      const nextState = reducer(currentState, deleteWBCustomTutorialSuccess(id))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          customTutorials: nextState,
+        },
+      })
+
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteWBCustomTutorialFailure', () => {
+    it('should properly set error', () => {
+      // Arrange
+      const error = 'error'
+      const state = {
+        ...initialState,
+        deleting: false,
+        error
+      }
+
+      // Act
+      const nextState = reducer(initialState, deleteWBCustomTutorialFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          customTutorials: nextState,
+        },
+      })
+
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+    })
+  })
+
   // thunks
 
   describe('fetchCustomTutorials', () => {
@@ -154,6 +316,100 @@ describe('slices', () => {
       const expectedActions = [
         getWBCustomTutorials(),
         getWBCustomTutorialsFailure(errorMessage),
+      ]
+
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
+  })
+
+  describe('uploadCustomTutorial', () => {
+    it('succeed to upload tutorial', async () => {
+      // Arrange
+      const data = {}
+      const formData = new FormData()
+      formData.append('name', 'TutorialName')
+      formData.append('link', 'https://odkawokd.com')
+      const responsePayload = { status: 200, data }
+
+      apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(uploadCustomTutorial(formData, jest.fn()))
+
+      // Assert
+      const expectedActions = [
+        uploadWbCustomTutorial(),
+        uploadWBCustomTutorialSuccess(data),
+      ]
+
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
+
+    it('failed to fetch tutorials items', async () => {
+      // Arrange
+      const formData = new FormData()
+      const errorMessage = 'Something was wrong!'
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+      apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(uploadCustomTutorial(formData))
+
+      // Assert
+      const expectedActions = [
+        uploadWbCustomTutorial(),
+        uploadWBCustomTutorialFailure(errorMessage),
+        addErrorNotification(responsePayload as AxiosError),
+      ]
+
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
+  })
+
+  describe('deleteCustomTutorial', () => {
+    it('succeed to delete tutorial', async () => {
+      // Arrange
+      const id = '213123-13123123-123'
+      const responsePayload = { status: 200 }
+
+      apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(deleteCustomTutorial(id))
+
+      // Assert
+      const expectedActions = [
+        deleteWbCustomTutorial(),
+        deleteWBCustomTutorialSuccess(id),
+      ]
+
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
+
+    it('failed to delete tutorial', async () => {
+      // Arrange
+      const errorMessage = 'Something was wrong!'
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+      apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(deleteCustomTutorial('1'))
+
+      // Assert
+      const expectedActions = [
+        deleteWbCustomTutorial(),
+        deleteWBCustomTutorialFailure(errorMessage),
+        addErrorNotification(responsePayload as AxiosError),
       ]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)

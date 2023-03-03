@@ -19,8 +19,9 @@ export const MOCK_GUIDES_ITEMS: IEnablementAreaItem[] = [
         id: 'working-with-json',
         label: 'Working with JSON',
         args: {
-          path: 'quick-guides/working-with-json.html',
+          path: '/quick-guides/working-with-json.html',
         },
+        _path: '/123123-123123'
       },
       {
         type: EnablementAreaComponent.InternalLink,

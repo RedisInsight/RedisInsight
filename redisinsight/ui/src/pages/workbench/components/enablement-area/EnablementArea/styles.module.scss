@@ -8,6 +8,10 @@
   flex-grow: 1;
 }
 
+.tutorialWrapper {
+  margin-bottom: 6px;
+}
+
 .innerContainer {
   @include euiScrollBar;
   padding: 8px 0 !important;

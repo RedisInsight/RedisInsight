@@ -64,5 +64,4 @@ export enum ModuleCommandPrefix {
   CMS = 'CMS.',
   TOPK = 'TOPK.',
   TDIGEST = 'TDIGEST.',
-  // RedisBloom = RedisBloom,
 }

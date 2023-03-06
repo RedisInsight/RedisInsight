@@ -44,12 +44,22 @@
     }
   }
 
+  .list.bloomList {
+    display: flex;
+    flex-wrap: wrap;
+
+    .listItem {
+      margin-right: 18px;
+    }
+  }
+
   .listItem {
     display: flex;
     margin-bottom: 20px;
   
     .iconWrapper {
       display: flex;
+      flex: 0 0 16px;
       align-items: center;
       justify-content: center;
       width: 16px;
@@ -86,6 +96,8 @@
   }
 
   &.fullScreen {
+    padding: 89px 77px;
+
     .flex {
       flex-direction: column;
     }

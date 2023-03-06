@@ -71,7 +71,7 @@ const ModuleNotLoaded = ({ moduleName, id }: IProps) => {
         <div className={styles.contentWrapper}>
           {renderTitle(width, module)}
           <EuiText className={styles.bigText}>{CONTENT[moduleName]?.text}</EuiText>
-          <ul className={styles.list}>
+          <ul className={cx(styles.list, { [styles.bloomList]: moduleName === RedisDefaultModules.Bloom })}>
             {CONTENT[moduleName]?.improvements.map((item: string) => (
               <ListItem key={item} item={item} />
             ))}

@@ -16,6 +16,20 @@ const TMP_FOLDER = `${PATH_CONFIG.tmpDir}/RedisInsight-v2/custom-tutorials`;
 export class CustomTutorialFsProvider {
   private logger = new Logger('CustomTutorialFsProvider');
 
+  private async extractAll(zip: AdmZip, targetPath, overwrite = true, keepOriginalPermission = false) {
+    zip.getEntries().forEach((entry) => {
+      if (!entry.entryName.startsWith('__MACOSX')) {
+        zip.extractEntryTo(
+          entry,
+          targetPath,
+          true,
+          overwrite,
+          keepOriginalPermission,
+        );
+      }
+    });
+  }
+
   /**
    * Unzip custom tutorials archive to temporary folder
    * @param zip
@@ -25,7 +39,8 @@ export class CustomTutorialFsProvider {
       const path = await CustomTutorialFsProvider.prepareTmpFolder();
 
       await fs.remove(path);
-      await zip.extractAllTo(path, true);
+      await this.extractAll(zip, path, true);
+      // await zip.extractAllTo(path, true);
 
       return path;
     } catch (e) {

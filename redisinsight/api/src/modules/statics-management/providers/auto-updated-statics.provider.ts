@@ -65,7 +65,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
     const latestArchive = await this.getLatestArchive();
 
     if (latestArchive) {
-      const zip = new AdmZip(latestArchive);
+      const zip = new AdmZip(latestArchive as Buffer);
       await fs.remove(this.options.destinationPath);
       await zip.extractAllTo(this.options.destinationPath, true);
       await fs.writeFile(

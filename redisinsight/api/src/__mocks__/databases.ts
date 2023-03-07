@@ -1,7 +1,7 @@
 import { Database } from 'src/modules/database/models/database';
 import { mockCaCertificate, mockClientCertificate } from 'src/__mocks__/certificates';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
-import { ConnectionType, DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import { Compressor, ConnectionType, DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { mockIORedisClient } from 'src/__mocks__/redis';
 import { mockSentinelMasterDto } from 'src/__mocks__/redis-sentinel';
@@ -34,6 +34,7 @@ export const mockDatabase = Object.assign(new Database(), {
   connectionType: ConnectionType.STANDALONE,
   timeout: 30_000,
   new: false,
+  compressor: Compressor.NONE,
 });
 
 export const mockDatabaseEntity = Object.assign(new DatabaseEntity(), {

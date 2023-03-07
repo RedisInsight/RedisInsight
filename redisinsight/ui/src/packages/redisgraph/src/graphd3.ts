@@ -757,6 +757,14 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
   function dragged(event, d) {
     stickNode(this, event, d)
+
+    // Don't move other nodes on drag of one node.
+    svg.selectAll('.node').each((n: any) => {
+      if (d.id !== n.id) {
+        n.fx = n.x;
+        n.fy = n.y;
+      }
+    })
   }
 
   function dragStarted(event, d) {
@@ -771,6 +779,12 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     if (typeof options.onNodeDragStart === 'function') {
       options.onNodeDragStart(this, d, event)
     }
+
+    // Select the entity to display its info
+    if (info) {
+      updateInfo(d)
+    }
+
   }
 
   function clearInfo() {

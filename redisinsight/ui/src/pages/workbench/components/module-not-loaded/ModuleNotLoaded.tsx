@@ -26,7 +26,7 @@ const MAX_ELEMENT_WIDTH = 1440
 const renderTitle = (width: number, moduleName?: string) => (
   <EuiTitle size="m" className={styles.title} data-testid="welcome-page-title">
     <h4>
-      {`Looks like ${moduleName} is not available`}
+      {`Looks like ${moduleName} is not available `}
       {width > MAX_ELEMENT_WIDTH && <br />}
       for this database
     </h4>

@@ -94,10 +94,10 @@ const KeyDetailsHeader = ({
     nameString: keyProp,
     name: keyBuffer,
   } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewType: streamViewType } = useSelector(streamSelector)
-  const { viewFormat: viewFormatProp, compressor } = useSelector(selectedKeySelector)
+  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
   const [isPopoverDeleteOpen, setIsPopoverDeleteOpen] = useState(false)
 

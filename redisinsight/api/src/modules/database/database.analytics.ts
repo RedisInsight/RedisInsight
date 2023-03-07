@@ -67,6 +67,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
           numberOfModules: instance.modules?.length || 0,
           timeout: instance.timeout / 1_000, // milliseconds to seconds
           databaseIndex: instance.db || 0,
+          useCompressor: instance.compressor || null,
           ...modulesSummary,
         },
       );

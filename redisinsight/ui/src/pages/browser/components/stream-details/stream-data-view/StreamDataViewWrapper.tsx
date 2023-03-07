@@ -43,7 +43,7 @@ const StreamDataViewWrapper = (props: Props) => {
     keyNameString: keyString,
     lastRefreshTime,
   } = useSelector(streamDataSelector)
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType: browserViewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
@@ -97,7 +97,7 @@ const StreamDataViewWrapper = (props: Props) => {
             id: field,
             label: field,
             render: () => {
-              const { value: decompressedName } = decompressingBuffer(name)
+              const { value: decompressedName } = decompressingBuffer(name, compressor)
               const value = name ? bufferToString(name) : ''
               const { value: formattedValue, isValid } = formattingBuffer(decompressedName || stringToBuffer(''), viewFormatProp)
               const tooltipContent = formatLongName(value)
@@ -211,7 +211,7 @@ const StreamDataViewWrapper = (props: Props) => {
       const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name)
       const value = values[index] ? bufferToString(values[index]?.value) : ''
 
-      const { value: decompressedBufferValue } = decompressingBuffer(values[index]?.value || stringToBuffer(''))
+      const { value: decompressedBufferValue } = decompressingBuffer(values[index]?.value || stringToBuffer(''), compressor)
       // const bufferValue = values[index]?.value || stringToBuffer('')
       const { value: formattedValue, isValid } = formattingBuffer(decompressedBufferValue, viewFormatProp, { expanded })
       const cellContent = formattedValue?.substring?.(0, 650) ?? formattedValue

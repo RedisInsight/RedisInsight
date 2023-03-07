@@ -55,7 +55,7 @@ import {
   stringToSerializedBufferFormat
 } from 'uiSrc/utils'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
-import { decompressingBuffer, getCompressor } from 'uiSrc/utils/decompressors'
+import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { AddFieldsToHashDto, GetHashFieldsResponse, HashFieldDto, } from 'apiSrc/modules/browser/dto/hash.dto'
 
 import PopoverDelete from '../popover-delete/PopoverDelete'
@@ -88,7 +88,7 @@ const HashDetails = (props: Props) => {
   } = useSelector(hashDataSelector)
   const { loading } = useSelector(hashSelector)
   const { viewType } = useSelector(keysSelector)
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
   const { name: key, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { loading: updateLoading } = useSelector(updateHashValueStateSelector)
@@ -295,7 +295,7 @@ const HashDetails = (props: Props) => {
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
       render: (_name: string, { field: fieldItem }: HashFieldDto, expanded?: boolean) => {
-        const { value: decompressedItem } = decompressingBuffer(fieldItem)
+        const { value: decompressedItem } = decompressingBuffer(fieldItem, compressor)
         const field = bufferToString(fieldItem) || ''
         // Better to cut the long string, because it could affect virtual scroll performance
         const tooltipContent = formatLongName(field)
@@ -333,8 +333,8 @@ const HashDetails = (props: Props) => {
         expanded?: boolean,
         rowIndex = 0
       ) {
-        const { value: decompressedFieldItem } = decompressingBuffer(fieldItem)
-        const { value: decompressedValueItem } = decompressingBuffer(valueItem)
+        const { value: decompressedFieldItem } = decompressingBuffer(fieldItem, compressor)
+        const { value: decompressedValueItem } = decompressingBuffer(valueItem, compressor)
         const value = bufferToString(valueItem)
         const field = bufferToString(decompressedFieldItem)
         // Better to cut the long string, because it could affect virtual scroll performance
@@ -434,7 +434,6 @@ const HashDetails = (props: Props) => {
       minWidth: 95,
       maxWidth: 95,
       render: function Actions(_act: any, { field: fieldItem, value: valueItem }: HashFieldDto, _, rowIndex?: number) {
-        const compressor = getCompressor(valueItem)
         const field = bufferToString(fieldItem, viewFormat)
         const isEditable = !compressor && isFormatEditable(viewFormat)
         const tooltipContent = compressor ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING

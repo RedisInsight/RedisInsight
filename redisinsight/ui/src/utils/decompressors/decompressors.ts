@@ -1,4 +1,4 @@
-import { forIn } from 'lodash'
+import { forIn, isUndefined } from 'lodash'
 import { unzip } from 'gzip-js'
 import { decompress as decompressFzstd } from 'fzstd'
 import { decompress as decompressLz4 } from 'lz4js'
@@ -11,7 +11,7 @@ const decompressingBuffer = (
   reply: RedisResponseBuffer,
   compressorInit: Nullable<KeyValueCompressor> = null,
 ): { value: RedisString, compressor: Nullable<KeyValueCompressor> } => {
-  const compressor = compressorInit || getCompressor(reply)
+  const compressor = compressorInit
 
   try {
     switch (compressor) {

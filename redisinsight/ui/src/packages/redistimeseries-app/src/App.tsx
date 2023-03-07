@@ -26,7 +26,7 @@ const App = (props: Props) => {
 
     let [cmd, key, ..._] = command.split(' ')
 
-    if ([TS_CMD_RANGE_PREFIX.RANGE.toString(), TS_CMD_RANGE_PREFIX.REVRANGE.toString()].includes(cmd)) {
+    if ([TS_CMD_RANGE_PREFIX.RANGE.toString(), TS_CMD_RANGE_PREFIX.REVRANGE.toString()].includes(cmd.toUpperCase())) {
       return [{
         key,
         datapoints: data,

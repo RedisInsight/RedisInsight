@@ -1,17 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockCustomTutorial, mockCustomTutorialTmpPath, mockCustomTutorialZipFile,
+  mockCustomTutorial,
+  mockCustomTutorialAdmZipEntry,
+  mockCustomTutorialMacosxAdmZipEntry, mockCustomTutorialsHttpLink,
+  mockCustomTutorialTmpPath,
+  mockCustomTutorialZipFile, mockCustomTutorialZipFileAxiosResponse,
 } from 'src/__mocks__';
 import * as fs from 'fs-extra';
+import axios from 'axios';
 import { CustomTutorialFsProvider } from 'src/modules/custom-tutorial/providers/custom-tutorial.fs.provider';
 import { InternalServerErrorException } from '@nestjs/common';
+import AdmZip from 'adm-zip';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import config from 'src/utils/config';
+
+const PATH_CONFIG = config.get('dir_path');
 
 jest.mock('fs-extra');
 const mockedFs = fs as jest.Mocked<typeof fs>;
 
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+
 const mockedAdmZip = {
   extractAllTo: jest.fn(),
-};
+  getEntries: jest.fn(),
+  extractEntryTo: jest.fn(),
+} as unknown as jest.Mocked<AdmZip>;
+
 jest.mock('adm-zip', () => jest.fn().mockImplementation(() => mockedAdmZip));
 
 describe('CustomTutorialFsProvider', () => {
@@ -21,6 +37,7 @@ describe('CustomTutorialFsProvider', () => {
     jest.clearAllMocks();
     jest.mock('fs-extra', () => mockedFs);
     jest.mock('adm-zip', () => jest.fn().mockImplementation(() => mockedAdmZip));
+    jest.mock('axios', () => mockedAxios);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -35,27 +52,81 @@ describe('CustomTutorialFsProvider', () => {
     let prepareTmpFolderSpy;
 
     beforeEach(() => {
+      mockedAxios.get.mockResolvedValueOnce(mockCustomTutorialZipFileAxiosResponse);
+      mockedAdmZip.getEntries.mockReturnValue([]);
       mockedFs.ensureDir.mockImplementationOnce(() => Promise.resolve());
       mockedFs.remove.mockImplementationOnce(() => Promise.resolve());
       prepareTmpFolderSpy = jest.spyOn(CustomTutorialFsProvider, 'prepareTmpFolder');
-    });
-
-    it('should unzip data', async () => {
-      await service.unzipToTmpFolder(mockCustomTutorialZipFile);
-    });
-    it('should unzip data to particular tmp folder', async () => {
       prepareTmpFolderSpy.mockResolvedValueOnce(mockCustomTutorialTmpPath);
+    });
 
-      await service.unzipToTmpFolder(mockCustomTutorialZipFile);
+    describe('unzipFromMemoryStoredFile', () => {
+      it('should unzip data', async () => {
+        const result = await service.unzipFromMemoryStoredFile(mockCustomTutorialZipFile);
+        expect(result).toEqual(mockCustomTutorialTmpPath);
+      });
+      it('should unzip data into just generated tmp folder', async () => {
+        prepareTmpFolderSpy.mockRestore();
+        const result = await service.unzipFromMemoryStoredFile(mockCustomTutorialZipFile);
+        expect(result).toContain(`${PATH_CONFIG.tmpDir}/RedisInsight-v2/custom-tutorials`);
+      });
+    });
 
-      expect(mockedAdmZip.extractAllTo).toHaveBeenCalledWith(mockCustomTutorialTmpPath, true);
+    describe('unzipFromExternalLink', () => {
+      it('should unzip data from external link', async () => {
+        const result = await service.unzipFromExternalLink(mockCustomTutorialsHttpLink);
+        expect(result).toEqual(mockCustomTutorialTmpPath);
+      });
+
+      it('should throw InternalServerError when 4incorrect external link provided', async () => {
+        const responsePayload = {
+          response: {
+            status: 404,
+            data: { message: 'resource not found' },
+          },
+        };
+
+        mockedAxios.get.mockReset().mockRejectedValueOnce(responsePayload);
+
+        try {
+          await service.unzipFromExternalLink(mockCustomTutorialsHttpLink);
+          fail();
+        } catch (e) {
+          expect(e).toBeInstanceOf(InternalServerErrorException);
+          expect(e.message).toEqual(ERROR_MESSAGES.CUSTOM_TUTORIAL_UNABLE_TO_FETCH_FROM_EXTERNAL);
+        }
+      });
+    });
+
+    it('should unzip data to particular tmp folder', async () => {
+      mockedAdmZip.getEntries.mockReturnValueOnce([
+        mockCustomTutorialAdmZipEntry,
+        mockCustomTutorialMacosxAdmZipEntry,
+      ]);
+
+      const result = await service.unzipToTmpFolder(mockedAdmZip);
+
+      expect(result).toEqual(mockCustomTutorialTmpPath);
+      expect(mockedAdmZip.extractEntryTo).toHaveBeenCalledTimes(1);
+      expect(mockedAdmZip.extractEntryTo).toHaveBeenCalledWith(
+        mockCustomTutorialAdmZipEntry,
+        mockCustomTutorialTmpPath,
+        true,
+        true,
+        false,
+      );
     });
 
     it('should throw InternalServerError', async () => {
-      mockedAdmZip.extractAllTo.mockRejectedValueOnce(new Error('Unable to extract file'));
+      mockedAdmZip.getEntries.mockReturnValueOnce([
+        mockCustomTutorialAdmZipEntry,
+        mockCustomTutorialMacosxAdmZipEntry,
+      ]);
+      mockedAdmZip.extractEntryTo.mockImplementationOnce(() => { throw new Error('Unable to extract file'); });
 
       try {
-        await service.unzipToTmpFolder(mockCustomTutorialZipFile);
+        await service.unzipToTmpFolder(mockedAdmZip);
+        fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);
         expect(e.message).toEqual('Unable to extract file');
@@ -145,7 +216,7 @@ describe('CustomTutorialFsProvider', () => {
     });
 
     it('should not fail in case of any error', async () => {
-      mockedFs.remove.mockRejectedValueOnce(new Error('No file'));
+      mockedFs.remove.mockReset().mockRejectedValueOnce(new Error('No file'));
 
       await service.removeFolder(mockCustomTutorial.absolutePath);
 

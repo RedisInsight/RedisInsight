@@ -7,6 +7,7 @@ import config from 'src/utils/config';
 import * as AdmZip from 'adm-zip';
 import axios from 'axios';
 import { wrapHttpError } from 'src/common/utils';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 const PATH_CONFIG = config.get('dir_path');
 
@@ -16,6 +17,16 @@ const TMP_FOLDER = `${PATH_CONFIG.tmpDir}/RedisInsight-v2/custom-tutorials`;
 export class CustomTutorialFsProvider {
   private logger = new Logger('CustomTutorialFsProvider');
 
+  /**
+   * Custom implementation of AdmZip.extractAllTo to ignore __MACOSX folder in the root of archive
+   * In some cases when we try to delete __MACOSX folder Electron app might crash
+   * As workaround we will never extract this folder to user's FS
+   * @param zip
+   * @param targetPath
+   * @param overwrite
+   * @param keepOriginalPermission
+   * @private
+   */
   private async extractAll(zip: AdmZip, targetPath, overwrite = true, keepOriginalPermission = false) {
     zip.getEntries().forEach((entry) => {
       if (!entry.entryName.startsWith('__MACOSX')) {
@@ -70,7 +81,7 @@ export class CustomTutorialFsProvider {
       return this.unzipToTmpFolder(new AdmZip(data));
     } catch (e) {
       this.logger.error('Unable fetch zip file from external source', e);
-      throw wrapHttpError(e);
+      throw wrapHttpError(e, ERROR_MESSAGES.CUSTOM_TUTORIAL_UNABLE_TO_FETCH_FROM_EXTERNAL);
     }
   }
 

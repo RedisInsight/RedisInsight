@@ -21,9 +21,7 @@ export class LocalCustomTutorialRepository extends CustomTutorialRepository {
 
     entity.createdAt = new Date();
 
-    await this.repository.save(entity);
-
-    return classToClass(CustomTutorial, entity);
+    return classToClass(CustomTutorial, await this.repository.save(entity));
   }
 
   /**

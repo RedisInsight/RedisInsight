@@ -21,7 +21,14 @@ export async function depsInit () {
 
   // initializing Redis Test Environment
   deps.rte = await redis.initRTE();
-  testEnv.rte =  deps.rte.env;
+
+  testEnv.rte = deps.rte.env;
+
+  if (typeof deps.server === 'string') {
+    testEnv.rte.serverType = 'docker';
+  } else {
+    testEnv.rte.serverType = 'local';
+  }
 
   // initializing local database
   await localDb.initLocalDb(deps.rte, deps.server);

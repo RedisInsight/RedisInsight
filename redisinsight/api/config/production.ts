@@ -12,6 +12,7 @@ export default {
     prevHomedir,
     logs: join(homedir, 'logs'),
     customPlugins: join(homedir, 'plugins'),
+    customTutorials: join(homedir, 'custom-tutorials'),
     commands: join(homedir, 'commands'),
     guides: process.env.GUIDES_DEV_PATH || join(homedir, 'guides'),
     tutorials: process.env.TUTORIALS_DEV_PATH || join(homedir, 'tutorials'),

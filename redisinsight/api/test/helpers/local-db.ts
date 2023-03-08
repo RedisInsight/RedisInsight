@@ -20,6 +20,7 @@ export const repositories = {
   NOTIFICATION: 'NotificationEntity',
   DATABASE_ANALYSIS: 'DatabaseAnalysisEntity',
   BROWSER_HISTORY: 'BrowserHistoryEntity',
+  CUSTOM_TUTORIAL: 'CustomTutorialEntity',
 }
 
 let localDbConnection;
@@ -519,6 +520,7 @@ const truncateAll = async () => {
   await (await getRepository(repositories.DATABASE)).clear();
   await (await getRepository(repositories.CA_CERT_REPOSITORY)).clear();
   await (await getRepository(repositories.CLIENT_CERT_REPOSITORY)).clear();
+  await (await getRepository(repositories.CUSTOM_TUTORIAL)).clear();
   await (await resetSettings());
 }
 

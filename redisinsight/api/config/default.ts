@@ -24,6 +24,7 @@ export default {
     logs: join(homedir, 'logs'),
     defaultPlugins: join(staticDir, 'plugins'),
     customPlugins: join(homedir, 'plugins'),
+    customTutorials: join(homedir, 'custom-tutorials'),
     pluginsAssets: join(staticDir, 'resources', 'plugins'),
     commands: join(homedir, 'commands'),
     defaultCommandsDir: join(defaultsDir, 'commands'),
@@ -45,6 +46,7 @@ export default {
     staticUri: '/static',
     guidesUri: '/static/guides',
     tutorialsUri: '/static/tutorials',
+    customTutorialsUri: '/static/custom-tutorials',
     contentUri: '/static/content',
     defaultPluginsUri: '/static/plugins',
     pluginsAssetsUri: '/static/resources/plugins',
@@ -108,14 +110,14 @@ export default {
   },
   guides: {
     updateUrl: process.env.GUIDES_UPDATE_URL
-      || 'https://github.com/RedisInsight/Guides/releases/download/release',
+      || 'https://github.com/RedisInsight/Guides/releases/download/2.x.x',
     zip: process.env.GUIDES_ZIP || dataZipFileName,
     buildInfo: process.env.GUIDES_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.GUIDES_DEV_PATH,
   },
   tutorials: {
     updateUrl: process.env.TUTORIALS_UPDATE_URL
-      || 'https://github.com/RedisInsight/Tutorials/releases/download/release',
+      || 'https://github.com/RedisInsight/Tutorials/releases/download/2.x.x',
     zip: process.env.TUTORIALS_ZIP || dataZipFileName,
     buildInfo: process.env.TUTORIALS_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.TUTORIALS_DEV_PATH,

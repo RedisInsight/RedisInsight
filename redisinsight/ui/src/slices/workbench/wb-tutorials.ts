@@ -6,17 +6,15 @@ import { IEnablementAreaItem, StateWorkbenchEnablementArea } from 'uiSrc/slices/
 
 import { AppDispatch, RootState } from '../store'
 
-export const defaultItems: Record<string, IEnablementAreaItem> = {
-
-}
+export const defaultItems: IEnablementAreaItem[] = []
 export const initialState: StateWorkbenchEnablementArea = {
   loading: false,
   error: '',
-  items: {},
+  items: [],
 }
 
 // A slice for recipes
-const workbencTutorialsSlice = createSlice({
+const workbenchTutorialsSlice = createSlice({
   name: 'workbenchTutorials',
   initialState,
   reducers: {
@@ -43,10 +41,10 @@ export const {
   getWBTutorials,
   getWBTutorialsSuccess,
   getWBTutorialsFailure,
-} = workbencTutorialsSlice.actions
+} = workbenchTutorialsSlice.actions
 
 // The reducer
-export default workbencTutorialsSlice.reducer
+export default workbenchTutorialsSlice.reducer
 
 // Asynchronous thunk action
 export function fetchTutorials(onSuccessAction?: () => void, onFailAction?: () => void) {
@@ -54,8 +52,7 @@ export function fetchTutorials(onSuccessAction?: () => void, onFailAction?: () =
     dispatch(getWBTutorials())
 
     try {
-      const { data, status } = await resourcesService
-        .get<Record<string, IEnablementAreaItem>>(ApiEndpoints.TUTORIALS)
+      const { data, status } = await resourcesService.get(ApiEndpoints.TUTORIALS)
       if (isStatusSuccessful(status)) {
         dispatch(getWBTutorialsSuccess(data))
         onSuccessAction?.()

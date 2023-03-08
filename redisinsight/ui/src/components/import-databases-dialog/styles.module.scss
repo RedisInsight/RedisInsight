@@ -31,6 +31,7 @@
     .euiButtonEmpty.euiButtonEmpty--primary.euiFilePicker__clearButton,
     .euiButtonEmpty.euiButtonEmpty--primary.euiFilePicker__clearButton .euiButtonEmpty__text {
       color: var(--externalLinkColor) !important;
+      text-transform: lowercase;
     }
 
     .euiModalFooter {

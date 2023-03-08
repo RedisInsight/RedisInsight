@@ -12,15 +12,13 @@ import {
 import { cliTexts, SelectCommand } from 'uiSrc/constants/cliOutput'
 import { CommandMonitor, CommandPSubscribe, Pages } from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
-import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { RSNotLoadedContent } from 'uiSrc/pages/workbench/constants'
 
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import ModuleNotLoaded from 'uiSrc/pages/workbench/components/module-not-loaded'
 import { showMonitor } from 'uiSrc/slices/cli/monitor'
 
-const CommonErrorResponse = (command = '', result?: any) => {
+const CommonErrorResponse = (id: string, command = '', result?: any) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const { unsupportedCommands: cliUnsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
   const { modules } = useSelector(connectedInstanceSelector)
@@ -69,8 +67,8 @@ const CommonErrorResponse = (command = '', result?: any) => {
   }
   const unsupportedModule = checkUnsupportedModuleCommand(modules, commandLine)
 
-  if (unsupportedModule === RedisDefaultModules.Search) {
-    return <ModuleNotLoaded content={RSNotLoadedContent} />
+  if (unsupportedModule) {
+    return <ModuleNotLoaded moduleName={unsupportedModule} id={id} />
   }
 
   return null

@@ -2,7 +2,7 @@ import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
-    ossStandaloneRedisearch
+    ossStandaloneRedisearch, ossStandaloneV5Config
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
@@ -133,4 +133,22 @@ test.before(async t => {
     await workBenchActions.verifyClientListColumnsAreVisible(['id', 'addr', 'name', 'user']);
     // verify table view row count match with text view after client list command
     await workBenchActions.verifyClientListTableViewRowCount();
+});
+// https://redislabs.atlassian.net/browse/RI-4230
+test.only.before(async t => {
+    await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+    await t.click(myRedisDatabasePage.workbenchButton);
+}).after(async() => {
+    await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+})('Verify that change screens when  capability not available - JSON,RediSearch', async t => {
+    const commandJSON = 'JSON.ARRAPPEND key value';
+    const commandFT = 'FT.LIST';
+    await workbenchPage.sendCommandInWorkbench(commandJSON);
+    // Verify change screens when capability not available - 'Search'
+    await t.expect(workbenchPage.welcomePageTitle.withText('Looks like RedisJSON is not available').visible)
+        .ok('Missing RedisJSON title is not visible');
+    await workbenchPage.sendCommandInWorkbench(commandFT);
+    // Verify  change screens when  capability not available - 'JSON'
+    await t.expect(workbenchPage.welcomePageTitle.withText('Looks like RediSearch is not available').visible)
+        .ok('Missing RedisJSON title is not visible');
 });

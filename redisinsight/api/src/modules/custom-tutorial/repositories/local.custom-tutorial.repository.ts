@@ -18,9 +18,10 @@ export class LocalCustomTutorialRepository extends CustomTutorialRepository {
    */
   public async create(model: CustomTutorial): Promise<CustomTutorial> {
     const entity = classToClass(CustomTutorialEntity, model);
-    await this.repository.save(entity);
 
-    return classToClass(CustomTutorial, entity);
+    entity.createdAt = new Date();
+
+    return classToClass(CustomTutorial, await this.repository.save(entity));
   }
 
   /**

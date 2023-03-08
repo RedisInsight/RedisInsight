@@ -7,11 +7,11 @@ import {
   mockCustomTutorialManifestManifest, mockCustomTutorialManifestManifest2,
   mockCustomTutorialManifestProvider,
   mockCustomTutorialRepository,
-  MockType, mockUploadCustomTutorialDto,
+  MockType, mockUploadCustomTutorialDto, mockUploadCustomTutorialExternalLinkDto
 } from 'src/__mocks__';
 import * as fs from 'fs-extra';
 import { CustomTutorialFsProvider } from 'src/modules/custom-tutorial/providers/custom-tutorial.fs.provider';
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CustomTutorialService } from 'src/modules/custom-tutorial/custom-tutorial.service';
 import { CustomTutorialRepository } from 'src/modules/custom-tutorial/repositories/custom-tutorial.repository';
 import {
@@ -63,10 +63,25 @@ describe('CustomTutorialService', () => {
   });
 
   describe('create', () => {
-    it('Should create custom tutorial', async () => {
+    it('Should create custom tutorial from file', async () => {
       const result = await service.create(mockUploadCustomTutorialDto);
 
       expect(result).toEqual(mockCustomTutorialManifestManifest);
+    });
+
+    it('Should create custom tutorial from external url', async () => {
+      const result = await service.create(mockUploadCustomTutorialExternalLinkDto);
+
+      expect(result).toEqual(mockCustomTutorialManifestManifest);
+    });
+
+    it('Should throw BadRequestException in case when either link or file was not provided', async () => {
+      try {
+        await service.create({} as any);
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual('File or external link should be provided');
+      }
     });
 
     it('Should throw InternalServerError in case of any non-HttpException error', async () => {
@@ -98,14 +113,14 @@ describe('CustomTutorialService', () => {
 
       const result = await service.getGlobalManifest();
 
-      expect(result).toEqual({
-        'custom-tutorials': {
-          ...globalCustomTutorialManifest['custom-tutorials'],
-          children: {
-            [mockCustomTutorialManifestManifest.id]: mockCustomTutorialManifestManifest,
-          },
+      expect(result).toEqual([
+        {
+          ...globalCustomTutorialManifest[0],
+          children: [
+            mockCustomTutorialManifestManifest,
+          ],
         },
-      });
+      ]);
     });
 
     it('Should return global manifest without children in case of any error', async () => {
@@ -113,12 +128,12 @@ describe('CustomTutorialService', () => {
 
       const result = await service.getGlobalManifest();
 
-      expect(result).toEqual({
-        'custom-tutorials': {
-          ...globalCustomTutorialManifest['custom-tutorials'],
-          children: {},
+      expect(result).toEqual([
+        {
+          ...globalCustomTutorialManifest[0],
+          children: [],
         },
-      });
+      ]);
     });
   });
 

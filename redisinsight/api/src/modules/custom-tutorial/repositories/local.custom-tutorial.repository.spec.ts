@@ -69,7 +69,10 @@ describe('LocalCustomTutorialRepository', () => {
       const result = await service.create(mockCustomTutorial);
 
       expect(result).toEqual(mockCustomTutorial);
-      expect(repository.save).toHaveBeenCalledWith(mockCustomTutorialEntity);
+      expect(repository.save).toHaveBeenCalledWith({
+        ...mockCustomTutorialEntity,
+        createdAt: jasmine.anything(),
+      });
     });
   });
 

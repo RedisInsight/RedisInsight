@@ -483,6 +483,7 @@ export const initAgreements = async () => {
   agreements.data = JSON.stringify({
     eula: true,
     encryption: constants.TEST_ENCRYPTION_STRATEGY === 'KEYTAR',
+    analytics: true,
   });
 
   await rep.save(agreements);

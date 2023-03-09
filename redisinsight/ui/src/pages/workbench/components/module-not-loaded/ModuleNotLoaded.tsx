@@ -21,6 +21,7 @@ export interface IProps {
   id: string
 }
 
+const MIN_ELEMENT_WIDTH = 1210
 const MAX_ELEMENT_WIDTH = 1440
 
 const renderTitle = (width: number, moduleName?: string) => (
@@ -70,7 +71,11 @@ const ModuleNotLoaded = ({ moduleName, id }: IProps) => {
         </div>
         <div className={styles.contentWrapper}>
           {renderTitle(width, module)}
-          <EuiText className={styles.bigText}>{CONTENT[moduleName]?.text}</EuiText>
+          <EuiText className={styles.bigText}>
+            {CONTENT[moduleName]?.text.map((item: string) => (
+              width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
+            ))}
+          </EuiText>
           <ul className={cx(styles.list, { [styles.bloomList]: moduleName === RedisDefaultModules.Bloom })}>
             {CONTENT[moduleName]?.improvements.map((item: string) => (
               <ListItem key={item} item={item} />
@@ -78,7 +83,9 @@ const ModuleNotLoaded = ({ moduleName, id }: IProps) => {
           </ul>
           {!!CONTENT[moduleName]?.additionalText && (
             <EuiText className={cx(styles.text, styles.additionalText, styles.marginBottom)}>
-              {CONTENT[moduleName]?.additionalText}
+              {CONTENT[moduleName]?.additionalText.map((item: string) => (
+                width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
+              ))}
             </EuiText>
           )}
           {renderText(module)}

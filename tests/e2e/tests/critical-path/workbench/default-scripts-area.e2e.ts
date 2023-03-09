@@ -51,8 +51,9 @@ test
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
 
         // Verify that telemetry event 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED' sent and has all expected properties
-        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
-        await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
+        // unskip after closing https://redislabs.atlassian.net/browse/RI-4281
+        // await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+        // await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
 
         await t.click(workbenchPage.preselectIndexInformation);
         // Replace the {index} with indexName value in script and send

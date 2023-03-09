@@ -84,17 +84,18 @@ const PATH_CONFIG = config.get('dir_path');
 })
 export class AppModule implements OnModuleInit, NestModule {
   onModuleInit() {
+    // FIXME: we don't have permissions to do so in sandbox. Disable plugins for MAS builds?
     // creating required folders
-    const foldersToCreate = [
-      PATH_CONFIG.pluginsAssets,
-      PATH_CONFIG.customPlugins,
-    ];
+    // const foldersToCreate = [
+    //   PATH_CONFIG.pluginsAssets,
+    //   PATH_CONFIG.customPlugins,
+    // ];
 
-    foldersToCreate.forEach((folder) => {
-      if (!fs.existsSync(folder)) {
-        fs.mkdirSync(folder, { recursive: true });
-      }
-    });
+    // foldersToCreate.forEach((folder) => {
+    //   if (!fs.existsSync(folder)) {
+    //     fs.mkdirSync(folder, { recursive: true });
+    //   }
+    // });
   }
 
   configure(consumer: MiddlewareConsumer) {

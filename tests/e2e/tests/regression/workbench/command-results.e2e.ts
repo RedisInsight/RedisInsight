@@ -135,12 +135,12 @@ test.before(async t => {
     await workBenchActions.verifyClientListTableViewRowCount();
 });
 // https://redislabs.atlassian.net/browse/RI-4230
-test.only.before(async t => {
+test.before(async t => {
     await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
     await t.click(myRedisDatabasePage.workbenchButton);
 }).after(async() => {
     await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-})('Verify that change screens when  capability not available - JSON,RediSearch', async t => {
+})('Verify that user can see options on what can be done to work with capabilities in Workbench for docker', async t => {
     const commandJSON = 'JSON.ARRAPPEND key value';
     const commandFT = 'FT.LIST';
     await workbenchPage.sendCommandInWorkbench(commandJSON);

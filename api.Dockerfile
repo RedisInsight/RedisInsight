@@ -1,4 +1,4 @@
-FROM node:16.15.1-alpine as build
+FROM node:18.12.1-alpine as build
 
 RUN apk update && apk add bash libsecret dbus-x11 gnome-keyring
 RUN dbus-uuidgen > /var/lib/dbus/machine-id
@@ -19,7 +19,7 @@ RUN yarn install --production
 RUN cp .yarnclean.prod .yarnclean && yarn autoclean --force
 
 # Production image
-FROM node:16.15.1-alpine as production
+FROM node:18.12.1-alpine as production
 
 RUN apk update && apk add bash libsecret dbus-x11 gnome-keyring
 RUN dbus-uuidgen > /var/lib/dbus/machine-id

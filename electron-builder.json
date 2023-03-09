@@ -43,6 +43,7 @@
     "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
     "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
     "hardenedRuntime": false,
+    "asarUnpack": ["node_modules"],
     "binaries": [      
       "Contents/Resources/app-x64.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-arm64/node_sqlite3.node",
       "Contents/Resources/app-x64.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-x64/node_sqlite3.node",      

@@ -29,6 +29,7 @@ export class WorkbenchPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
+    welcomePageTitle = Selector('[data-testid=welcome-page-title]');
     submitCommandButton = Selector('[data-testid=btn-submit]');
     resizeButtonForScriptingAndResults = Selector('[data-test-subj=resize-btn-scripting-area-and-results]');
     collapsePreselectAreaButton = Selector('[data-testid=collapse-enablement-area]');
@@ -181,6 +182,7 @@ export class WorkbenchPage {
      */
     async sendCommandInWorkbench(command: string, speed = 1, paste = true): Promise<void> {
         await t
+            .click(this.queryInput)
             .typeText(this.queryInput, command, { replace: true, speed, paste })
             .click(this.submitCommandButton);
     }

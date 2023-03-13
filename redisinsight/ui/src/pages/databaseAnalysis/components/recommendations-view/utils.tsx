@@ -1,5 +1,5 @@
 import React from 'react'
-import { isString, isArray } from 'lodash'
+import { isString, isArray, sortBy } from 'lodash'
 import {
   EuiTextColor,
   EuiToolTip,
@@ -10,13 +10,15 @@ import {
 } from '@elastic/eui'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
+import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
 import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
+import { Recommendation } from 'apiSrc/modules/database-analysis/models/recommendation'
 
 import styles from './styles.module.scss'
 
-interface IContentElement {
+export interface IContentElement {
   id: string
   type: string
   value: any[] | any
@@ -61,8 +63,8 @@ export const renderBadgesLegend = () => (
   </EuiFlexGroup>
 )
 
-const replaceVariables = (value: any[] | any, parameter: string[], params: any) => (
-  parameter && isString(value) ? value.replace(/\$\{\d}/i, (matched) => {
+export const replaceVariables = (value: any[] | any, parameter: string[], params: any) => (
+  parameter && isString(value) ? value.replace(/\$\{\d}/g, (matched) => {
     const parameterIndex: string = matched.substring(
       matched.indexOf('{') + 1,
       matched.lastIndexOf('}')
@@ -109,3 +111,16 @@ const renderContentElement = ({ id, type, value: jsonValue, parameter }: IConten
 
 export const renderContent = (elements: IContentElement[], params: any) => (
   elements?.map((item) => renderContentElement(item, params)))
+
+export const sortRecommendations = (recommendations: Recommendation[]) => sortBy(recommendations, ({ name }) => {
+  if (name === 'redisSearch') {
+    return -3
+  }
+  if (name === 'searchIndexes') {
+    return -2
+  }
+  if (recommendationsContent[name as keyof typeof recommendationsContent]?.redisStack) {
+    return -1
+  }
+  return 0
+})

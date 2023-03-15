@@ -8,4 +8,5 @@ export class OnboardingPage {
     stepTitle = Selector('[data-testid=step-title]');
     wbOnbardingCommand = Selector('[data-testid=wb-onboarding-command]');
     copyCodeButton = Selector('[data-testid=copy-code-btn]');
+    resetOnboardingBtn = Selector('[data-testid=reset-onboarding-btn]');
 }

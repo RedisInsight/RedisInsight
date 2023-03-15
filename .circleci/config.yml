@@ -475,12 +475,12 @@ jobs:
             CURRENT_VERSION=$(jq -r ".version" redisinsight/package.json)
             echo "Version: ${CURRENT_VERSION}"
 
-            # if [ << parameters.env >> == "prod" ]; then
+            if [ << parameters.env >> == "prod" ]; then
               echo "Build version: $CURRENT_VERSION"
               cp ./redisinsight/package.json ./electron/package.json
               echo "$VERSION" > electron/version
               exit 0
-            # fi
+            fi
 
             VERSION=$CURRENT_VERSION-<< parameters.env >>-$CIRCLE_BUILD_NUM
             echo "Build version: $VERSION"

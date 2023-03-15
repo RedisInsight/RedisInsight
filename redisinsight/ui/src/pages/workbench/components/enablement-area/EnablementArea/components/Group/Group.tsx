@@ -46,10 +46,6 @@ const Group = (props: Props) => {
   const { deleting: deletingCustomTutorials } = useSelector(workbenchCustomTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  if (isShowActions) {
-    console.log(children)
-  }
-
   const handleCreate = (e: React.MouseEvent) => {
     e.stopPropagation()
     onCreate?.()

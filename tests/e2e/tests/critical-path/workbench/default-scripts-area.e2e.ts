@@ -35,7 +35,7 @@ fixture `Default scripts area at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test
+test.only
     .requestHooks(logger)('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });
@@ -51,9 +51,8 @@ test
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
 
         // Verify that telemetry event 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED' sent and has all expected properties
-        // unskip after closing https://redislabs.atlassian.net/browse/RI-4281
-        // await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
-        // await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
+        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+        await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
 
         await t.click(workbenchPage.preselectIndexInformation);
         // Replace the {index} with indexName value in script and send

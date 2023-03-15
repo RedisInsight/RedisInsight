@@ -41,7 +41,7 @@ fixture `Add database`
     .beforeEach(async() => {
         await acceptLicenseTerms();
     });
-test
+test.only
     .meta({ rte: rte.standalone })
     .requestHooks(logger)
     .after(async() => {
@@ -72,8 +72,7 @@ test
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
 
         // Verify that telemetry event 'CONFIG_DATABASES_OPEN_DATABASE' sent and has all expected properties
-        // // unskip after closing https://redislabs.atlassian.net/browse/RI-4281
-        // await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
 
         await t.click(browserPage.myRedisDbIcon);
         // Verify that user can't see an indicator of databases that were opened

@@ -31,7 +31,7 @@ fixture `Edit Key names verification`
         await browserPage.deleteKeyByName(keyNameAfter);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
-test
+test.only
     .requestHooks(logger)('Verify that user can edit String Key name', async t => {
         keyNameBefore = common.generateWord(10);
         keyNameAfter = common.generateWord(10);
@@ -41,9 +41,8 @@ test
         await t.expect(keyNameFromDetails).contains(keyNameBefore, 'The String Key Name not correct before editing');
 
         // Verify that telemetry event 'BROWSER_KEY_VALUE_VIEWED' sent and has all expected properties
-        // unskip after closing https://redislabs.atlassian.net/browse/RI-4281
-        // await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
-        // await telemetry.verifyEventPropertyValue(telemetryEvent, 'keyType', 'string', logger);
+        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+        await telemetry.verifyEventPropertyValue(telemetryEvent, 'keyType', 'string', logger);
 
         await browserPage.editKeyName(keyNameAfter);
         keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;

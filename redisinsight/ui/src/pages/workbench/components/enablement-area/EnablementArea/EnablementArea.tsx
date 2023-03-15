@@ -27,6 +27,7 @@ import {
   LazyInternalPage,
   PlainText,
   UploadTutorialForm,
+  WelcomeMyTutorials,
 } from './components'
 
 import {
@@ -229,8 +230,18 @@ const EnablementArea = (props: Props) => {
             {...args}
           >
             <>
-              {isCreateOpen && actions?.includes(EAItemActions.Create) && (
-                <UploadTutorialForm onSubmit={submitCreate} onCancel={() => setIsCreateOpen(false)} />
+              {level === 0 && actions?.includes(EAItemActions.Create) && (
+                <>
+                  {isCreateOpen && (
+                    <UploadTutorialForm
+                      onSubmit={submitCreate}
+                      onCancel={() => setIsCreateOpen(false)}
+                    />
+                  )}
+                  {!isCreateOpen && children?.length === 0 && (
+                    <WelcomeMyTutorials handleOpenUpload={() => setIsCreateOpen(true)} />
+                  )}
+                </>
               )}
               {renderTreeView(
                 children ? getManifestItems(children) : [],

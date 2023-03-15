@@ -35,7 +35,7 @@ fixture `Default scripts area at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test.only
+test
     .requestHooks(logger)('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         indexName = chance.word({ length: 5 });
         keyName = chance.word({ length: 5 });

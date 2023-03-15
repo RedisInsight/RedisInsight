@@ -31,7 +31,7 @@ fixture `Edit Key names verification`
         await browserPage.deleteKeyByName(keyNameAfter);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
-test.only
+test
     .requestHooks(logger)('Verify that user can edit String Key name', async t => {
         keyNameBefore = common.generateWord(10);
         keyNameAfter = common.generateWord(10);

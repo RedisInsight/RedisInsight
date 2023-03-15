@@ -41,7 +41,7 @@ fixture `Add database`
     .beforeEach(async() => {
         await acceptLicenseTerms();
     });
-test.only
+test
     .meta({ rte: rte.standalone })
     .requestHooks(logger)
     .after(async() => {

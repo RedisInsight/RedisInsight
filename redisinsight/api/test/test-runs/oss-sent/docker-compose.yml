@@ -5,20 +5,32 @@ services:
     env_file:
       - ./oss-sent/.env
   redis:
-    build: ./oss-sent
+    build:
+      context: &build ./oss-sent
+      dockerfile: sentinel.Dockerfile
     links:
       - p1:p1
+      - p2:p2
     depends_on:
+      - p1
       - s1_1
       - s1_2
-      - p1
-
+      - p2
+      - s2_1
+      - s2_2
   p1:
-    image: &r redis:5
-    command: redis-server
+    build: *build
   s1_1:
-    image: *r
-    command: redis-server --slaveof p1 6379
+    build: *build
+    command: --slaveof p1 6379 --masterauth defaultpass
   s1_2:
-    image: *r
-    command: redis-server --slaveof p1 6379
+    build: *build
+    command: --slaveof p1 6379 --masterauth defaultpass
+  p2:
+    build: *build
+  s2_1:
+    build: *build
+    command: --slaveof p2 6379 --masterauth defaultpass
+  s2_2:
+    build: *build
+    command: --slaveof p2 6379 --masterauth defaultpass

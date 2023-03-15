@@ -8,6 +8,7 @@ import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../..
 import { Common } from '../../../helpers/common';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -41,7 +42,7 @@ test('Verify that user can see saved CLI size on Browser page when he returns ba
     await t.drag(cliResizeButton, 0, -offsetY, { speed: 0.01 });
     await t.click(myRedisDatabasePage.myRedisDBButton);
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await t.expect(await cliPage.cliArea.clientHeight > cliAreaHeightEnd).ok('Saved context for resizable cli is incorrect');
+    await t.expect(await cliPage.cliArea.clientHeight).gt(cliAreaHeightEnd, 'Saved context for resizable cli is incorrect');
 });
 test('Verify that user can see saved Key details and Keys tables size on Browser page when he returns back to Browser page', async t => {
     const offsetX = 200;
@@ -70,7 +71,7 @@ test('Verify that user can see saved filter per key type applied when he returns
     // Return back to Browser and check filter applied
     await t.click(myRedisDatabasePage.browserButton);
     // Verify that user can see saved input entered into the filter per Key name when he returns back to Browser page
-    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is still applied');
+    await verifySearchFilterValue(keyName);
 });
 test('Verify that user can see saved executed commands in CLI on Browser page when he returns back to Browser page', async t => {
     const commands = [

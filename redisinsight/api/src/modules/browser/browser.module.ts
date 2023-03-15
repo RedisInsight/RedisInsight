@@ -25,6 +25,9 @@ import { ZSetBusinessService } from './services/z-set-business/z-set-business.se
 import { RejsonRlBusinessService } from './services/rejson-rl-business/rejson-rl-business.service';
 import { BrowserToolService } from './services/browser-tool/browser-tool.service';
 import { BrowserToolClusterService } from './services/browser-tool-cluster/browser-tool-cluster.service';
+import { BrowserHistoryService } from './services/browser-history/browser-history.service';
+import { BrowserHistoryProvider } from './providers/history/browser-history.provider';
+import { BrowserHistoryController } from './controllers/history/browser-history.controller';
 
 @Module({
   controllers: [
@@ -39,6 +42,7 @@ import { BrowserToolClusterService } from './services/browser-tool-cluster/brows
     StreamController,
     ConsumerGroupController,
     ConsumerController,
+    BrowserHistoryController,
   ],
   providers: [
     KeysBusinessService,
@@ -54,6 +58,8 @@ import { BrowserToolClusterService } from './services/browser-tool-cluster/brows
     ConsumerService,
     BrowserToolService,
     BrowserToolClusterService,
+    BrowserHistoryService,
+    BrowserHistoryProvider,
   ],
 })
 export class BrowserModule implements NestModule {

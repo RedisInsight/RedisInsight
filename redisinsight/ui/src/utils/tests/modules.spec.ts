@@ -1,5 +1,5 @@
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { IDatabaseModule, isRedisearchAvailable, sortModules } from 'uiSrc/utils/modules'
+import { IDatabaseModule, isContainJSONModule, isRedisearchAvailable, sortModules } from 'uiSrc/utils/modules'
 
 const modules1: IDatabaseModule[] = [
   { moduleName: 'RedisJSON', abbreviation: 'RS' },
@@ -56,10 +56,25 @@ const getOutputForRedisearchAvailable: any[] = [
   [['1', 'json', RedisDefaultModules.FTL].map(nameToModule), true],
 ]
 
-describe.only('isRedisearchAvailable', () => {
+describe('isRedisearchAvailable', () => {
   it.each(getOutputForRedisearchAvailable)('for input: %s (reply), should be output: %s',
     (reply, expected) => {
       const result = isRedisearchAvailable(reply)
+      expect(result).toBe(expected)
+    })
+})
+
+const getOutputForReJSONAvailable: any[] = [
+  [['1', 'json'].map(nameToModule), false],
+  [['1', 'json', RedisDefaultModules.ReJSON].map(nameToModule), true],
+  [['1', 'json', RedisDefaultModules.SearchLight].map(nameToModule), false],
+  [['1', 'json', RedisDefaultModules.SearchLight, RedisDefaultModules.ReJSON].map(nameToModule), true],
+]
+
+describe('isRedisearchAvailable', () => {
+  it.each(getOutputForReJSONAvailable)('for input: %s (reply), should be output: %s',
+    (reply, expected) => {
+      const result = isContainJSONModule(reply)
       expect(result).toBe(expected)
     })
 })

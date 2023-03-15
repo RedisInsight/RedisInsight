@@ -72,6 +72,7 @@ export class KeysScanner {
         scanned: opts.filter.count,
         processed: nodeKeys.length,
       },
+      client,
     };
   }
 }

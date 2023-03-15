@@ -200,13 +200,21 @@ describe('list slice', () => {
         loading: false,
         data: {
           ...initialState.data,
-          elements: data.elements.map((element, i) => ({ element, index: i })),
+          elements: data.elements.concat(data.elements).map((element, i) => ({ element, index: i })),
         },
+      }
+
+      const initialStateWithElements = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          elements: data.elements.map((element, i) => ({ element, index: i })),
+        }
       }
 
       // Act
       const nextState = reducer(
-        initialState,
+        initialStateWithElements,
         loadMoreListElementsSuccess(data)
       )
 

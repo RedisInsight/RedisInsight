@@ -9,7 +9,11 @@ import {
   EuiHealth,
   EuiPanel,
   EuiSuperSelect,
-  EuiTextColor
+  EuiTextColor,
+  EuiText,
+  EuiLink,
+  EuiPopover,
+  EuiButtonIcon,
 } from '@elastic/eui'
 import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
 import cx from 'classnames'
@@ -30,8 +34,8 @@ import { FIELD_TYPE_OPTIONS, KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './
 import styles from './styles.module.scss'
 
 export interface Props {
-  onClosePanel: () => void
-  onCreateIndex: () => void
+  onClosePanel?: () => void
+  onCreateIndex?: () => void
 }
 
 const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
@@ -62,6 +66,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   const [prefixes, setPrefixes] = useState<EuiComboBoxOptionOption[]>([])
   const [indexName, setIndexName] = useState<string>('')
   const [fields, setFields] = useState<any[]>([initialFieldValue()])
+  const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState<boolean>(false)
 
   const lastAddedIdentifier = useRef<HTMLInputElement>(null)
   const prevCountFields = useRef<number>(0)
@@ -118,10 +123,47 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       }
     })
 
-    onCreateIndex()
+    onCreateIndex?.()
   }
 
   const isClearDisabled = (item: any): boolean => fields.length === 1 && !(item.identifier.length)
+
+  const IdentifierInfo = () => (
+    <EuiPopover
+      anchorPosition="upCenter"
+      isOpen={isInfoPopoverOpen}
+      anchorClassName={styles.unsupportedInfo}
+      panelClassName={cx('euiToolTip', 'popoverLikeTooltip')}
+      closePopover={() => setIsInfoPopoverOpen(false)}
+      initialFocus={false}
+      button={(
+        <EuiButtonIcon
+          iconType="iInCircle"
+          color="subdued"
+          id="identifier-info-icon"
+          aria-label="identifier info icon"
+          data-testid="identifier-info-icon"
+          className={styles.infoIcon}
+          onClick={() => setIsInfoPopoverOpen((isPopoverOpen) => !isPopoverOpen)}
+        />
+      )}
+    >
+      <>
+        <EuiLink
+          external={false}
+          href="https://redis.io/commands/ft.create/#SCHEMA"
+          target="_blank"
+        >
+          Declares
+        </EuiLink>
+        {' fields to index. '}
+        {keyTypeSelected === RedisearchIndexKeyType.HASH
+          ? 'Enter a hash field name.'
+          : 'Enter a JSON path expression.'}
+
+      </>
+    </EuiPopover>
+  )
 
   return (
     <>
@@ -166,7 +208,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
             <EuiFlexGroup responsive={false} className={styles.row} style={{ maxWidth: '100%' }}>
               <EuiFlexItem style={{ minWidth: '100%', maxWidth: '100%' }}>
                 <EuiFormRow
-                  label="Prefixes"
+                  label="Key Prefixes"
                   fullWidth
                 >
                   <EuiComboBox
@@ -183,13 +225,18 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
               </EuiFlexItem>
             </EuiFlexGroup>
             <Divider colorVariable="separatorColor" className={styles.controlsDivider} />
+            <EuiText color="subdued">
+              Identifier
+              {IdentifierInfo()}
+            </EuiText>
+
             {
               fields.map((item, index) => (
                 <EuiFlexItem
                   key={item.id}
                   className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}
                   grow
-                  style={{ marginBottom: '8px', marginTop: '16px' }}
+                  style={{ marginBottom: '8px', marginTop: '10px' }}
                 >
                   <EuiFlexGroup gutterSize="m">
                     <EuiFlexItem grow>
@@ -259,7 +306,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           <EuiFlexItem grow={false}>
             <EuiButton
               color="secondary"
-              onClick={() => onClosePanel()}
+              onClick={() => onClosePanel?.()}
               className="btn-cancel btn-back"
               data-testid="create-index-cancel-btn"
             >

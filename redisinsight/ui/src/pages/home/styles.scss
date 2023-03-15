@@ -265,7 +265,9 @@
   }
 
   .euiFormRow__text {
-    position: absolute;
+    position: relative;
+    top: -10px;
+    margin-bottom: -10px;
   }
 
   .euiFormHelpText {
@@ -371,14 +373,10 @@
     padding: 12px;
   }
 
-  .euiButton.btn-add {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-
   .euiButton.btn-cancel,
   .euiButton.btn-back {
-    margin-right: 20px;
+    margin-right: 10px;
+    min-width: 71px !important;
   }
 
   .flexGroupResponsiveForm {

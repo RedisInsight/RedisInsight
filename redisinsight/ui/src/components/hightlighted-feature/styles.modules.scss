@@ -1,0 +1,25 @@
+.wrapper {
+  position: relative;
+
+  &:global(.transform-on-hover) {
+    &:hover {
+      .dot {
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  .dot {
+    position: absolute;
+    background: var(--highlightDotColor);
+    top: -4px;
+    right: -4px;
+    z-index: 1;
+
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+
+    transition: transform 250ms ease-in-out;
+  }
+}

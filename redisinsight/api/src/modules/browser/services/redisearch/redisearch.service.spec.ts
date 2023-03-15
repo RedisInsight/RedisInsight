@@ -6,6 +6,7 @@ import {
 import { when } from 'jest-when';
 import {
   mockBrowserClientMetadata,
+  mockBrowserHistoryService,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisUnknownIndexName,
@@ -17,6 +18,7 @@ import {
   RedisearchIndexDataType,
   RedisearchIndexKeyType,
 } from 'src/modules/browser/dto/redisearch';
+import { BrowserHistoryService } from '../browser-history/browser-history.service';
 
 const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
@@ -53,6 +55,7 @@ const mockSearchRedisearchDto = {
 describe('RedisearchService', () => {
   let service: RedisearchService;
   let browserTool;
+  let browserHistory;
 
   beforeEach(async () => {
     jest.resetAllMocks();
@@ -64,13 +67,19 @@ describe('RedisearchService', () => {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
         },
+        {
+          provide: BrowserHistoryService,
+          useFactory: mockBrowserHistoryService,
+        },
       ],
     }).compile();
 
     service = module.get<RedisearchService>(RedisearchService);
     browserTool = module.get<BrowserToolService>(BrowserToolService);
+    browserHistory = module.get<BrowserHistoryService>(BrowserHistoryService);
     browserTool.getRedisClient.mockResolvedValue(nodeClient);
     clusterClient.nodes.mockReturnValue([nodeClient, nodeClient]);
+    browserHistory.create.mockResolvedValue({});
   });
 
   describe('list', () => {
@@ -242,6 +251,7 @@ describe('RedisearchService', () => {
           'MAXSEARCHRESULTS',
         ],
       }));
+      expect(browserHistory.create).toHaveBeenCalled();
     });
     it('should search in cluster', async () => {
       browserTool.getRedisClient.mockResolvedValue(clusterClient);
@@ -279,6 +289,7 @@ describe('RedisearchService', () => {
           'MAXSEARCHRESULTS',
         ],
       }));
+      expect(browserHistory.create).toHaveBeenCalled();
     });
     it('should handle ACL error (ft.info command)', async () => {
       when(nodeClient.sendCommand)
@@ -291,6 +302,67 @@ describe('RedisearchService', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
       }
+    });
+    it('should call once "FT.CONFIG GET MAXSEARCHRESULTS" for all requests', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT.SEARCH' }))
+        .mockResolvedValue([100, keyName1, keyName2]);
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT.CONFIG' }))
+        .mockResolvedValue([['MAXSEARCHRESULTS', '10000']]);
+
+      const res = await service.search(mockBrowserClientMetadata, mockSearchRedisearchDto);
+      await service.search(mockBrowserClientMetadata, mockSearchRedisearchDto);
+      await service.search(mockBrowserClientMetadata, mockSearchRedisearchDto);
+
+      expect(res).toEqual({
+        cursor: mockSearchRedisearchDto.limit + mockSearchRedisearchDto.offset,
+        scanned: 2,
+        total: 100,
+        maxResults: 10_000,
+        keys: [{
+          name: keyName1,
+        }, {
+          name: keyName2,
+        }],
+      });
+
+      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(4);
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'FT.SEARCH',
+        args: [
+          mockSearchRedisearchDto.index,
+          mockSearchRedisearchDto.query,
+          'NOCONTENT',
+          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'FT.CONFIG',
+        args: [
+          'GET',
+          'MAXSEARCHRESULTS',
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'FT.SEARCH',
+        args: [
+          mockSearchRedisearchDto.index,
+          mockSearchRedisearchDto.query,
+          'NOCONTENT',
+          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'FT.SEARCH',
+        args: [
+          mockSearchRedisearchDto.index,
+          mockSearchRedisearchDto.query,
+          'NOCONTENT',
+          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(browserHistory.create).toHaveBeenCalled();
     });
   });
 });

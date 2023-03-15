@@ -1,3 +1,7 @@
+.euiPanel.euiPopover__panel {
+  box-shadow: 0 3px 15px var(--controlsBoxShadowColor) !important;
+}
+
 .popoverLikeTooltip {
   border: none;
   max-width: 267px !important;
@@ -13,5 +17,9 @@
 
   .euiPopover__panelArrow.euiPopover__panelArrow--left:after {
     border-left-color: var(--euiTooltipBackgroundColor) !important;
+  }
+
+  .euiPopover__panelArrow.euiPopover__panelArrow--top:after {
+    border-top-color: var(--euiTooltipBackgroundColor) !important;
   }
 }

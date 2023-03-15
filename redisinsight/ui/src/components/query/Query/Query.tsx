@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { useDispatch, useSelector } from 'react-redux'
-import { compact, findIndex } from 'lodash'
+import { compact, findIndex, first } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiButton, EuiIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
@@ -26,6 +26,7 @@ import {
   getRedisMonarchTokensProvider,
   getRedisSignatureHelpProvider,
   isGroupMode,
+  isParamsLine,
   MonacoAction,
   Nullable,
   toModelDeltaDecoration
@@ -35,7 +36,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { darkTheme, lightTheme } from 'uiSrc/constants/monaco/cypher'
+import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco/cypher'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
@@ -121,17 +122,26 @@ const Query = (props: Props) => {
   useEffect(() => {
     if (!monacoObjects.current) return
     const commands = query.split('\n')
+    const firstLine = first(commands) ?? ''
     const { monaco, editor } = monacoObjects.current
     const notCommandRegEx = /^[\s|//]/
 
     const newDecorations = compact(commands.map((command, index) => {
-      if (!command || notCommandRegEx.test(command)) return null
+      if (!command || notCommandRegEx.test(command) || (index === 0 && isParamsLine(command))) return null
       const lineNumber = index + 1
 
       return toModelDeltaDecoration(
         decoration(monaco, `decoration_${lineNumber}`, lineNumber, 1, lineNumber, 1)
       )
     }))
+
+    // highlight the first line with params
+    if (isParamsLine(firstLine)) {
+      newDecorations.push({
+        range: new monaco.Range(1, 1, 1, firstLine.indexOf(']') + 2),
+        options: { inlineClassName: 'monaco-params-line' }
+      })
+    }
 
     decorations = editor.deltaDecorations(
       decorations,
@@ -456,8 +466,8 @@ const Query = (props: Props) => {
   }
 
   if (monaco?.editor) {
-    monaco.editor.defineTheme('dark', darkTheme)
-    monaco.editor.defineTheme('light', lightTheme)
+    monaco.editor.defineTheme(MonacoThemes.Dark, darkTheme)
+    monaco.editor.defineTheme(MonacoThemes.Light, lightTheme)
   }
 
   const isLoading = loading || processing

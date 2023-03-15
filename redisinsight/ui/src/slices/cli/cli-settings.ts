@@ -42,6 +42,9 @@ const cliSettingsSlice = createSlice({
     toggleCli: (state) => {
       state.isShowCli = !state.isShowCli
     },
+    openCliHelper: (state) => {
+      state.isShowHelper = true
+    },
     // collapse / uncollapse CLI Helper
     toggleCliHelper: (state) => {
       state.isShowHelper = !state.isShowHelper
@@ -152,6 +155,7 @@ export const {
   setCliSettingsInitialState,
   openCli,
   toggleCli,
+  openCliHelper,
   toggleCliHelper,
   toggleHideCliHelper,
   setMatchedCommand,

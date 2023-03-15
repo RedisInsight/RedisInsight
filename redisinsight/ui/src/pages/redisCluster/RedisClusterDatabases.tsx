@@ -209,7 +209,6 @@ const RedisClusterDatabases = ({ columns, onClose, onBack, onSubmit }: Props) =>
                     onClick={handleSubmit}
                     isLoading={loading}
                     color="secondary"
-                    className="btn-add"
                     iconType={isSubmitDisabled() ? 'iInCircle' : undefined}
                     data-testid="btn-add-databases"
                   >

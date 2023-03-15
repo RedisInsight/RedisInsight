@@ -5,8 +5,10 @@ import { DatabaseAnalyzer } from 'src/modules/database-analysis/providers/databa
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
 import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
+import { RecommendationModule } from 'src/modules/recommendation/recommendation.module';
 
 @Module({
+  imports: [RecommendationModule],
   controllers: [DatabaseAnalysisController],
   providers: [
     DatabaseAnalysisService,

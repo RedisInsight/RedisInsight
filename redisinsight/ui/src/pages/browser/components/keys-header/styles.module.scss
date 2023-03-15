@@ -110,6 +110,7 @@
 }
 
 .searchModeSwitch {
+  display: flex;
   padding: 0 10px 0 0 !important;
 
   *:first-of-type .viewTypeBtn {
@@ -147,4 +148,8 @@
       }
     }
   }
+}
+
+.browserFilterOnboard {
+  margin-left: -5px;
 }

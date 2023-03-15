@@ -1,5 +1,5 @@
 import config from 'src/utils/config';
-import { Module, Type } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod, Type } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseController } from 'src/modules/database/database.controller';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -12,6 +12,7 @@ import { DatabaseInfoController } from 'src/modules/database/database-info.contr
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import { StackDatabasesRepository } from 'src/modules/database/repositories/stack.databases.repository';
+import { ConnectionMiddleware } from './middleware/connection.middleware';
 
 const SERVER_CONFIG = config.get('server');
 
@@ -41,6 +42,7 @@ export class DatabaseModule {
         },
       ],
       exports: [
+        DatabaseRepository,
         DatabaseService,
         DatabaseConnectionService,
         // todo: rethink everything below
@@ -49,6 +51,15 @@ export class DatabaseModule {
         DatabaseInfoProvider,
       ],
     };
+  }
+  configure(consumer: MiddlewareConsumer): any {
+    consumer
+      .apply(ConnectionMiddleware)
+      .forRoutes(
+        { path: 'databases', method: RequestMethod.POST },
+        { path: 'databases/test', method: RequestMethod.POST },
+        { path: 'databases/:id/connect', method: RequestMethod.GET },
+      );
   }
   // todo: check if still needed
   // configure(consumer: MiddlewareConsumer): any {

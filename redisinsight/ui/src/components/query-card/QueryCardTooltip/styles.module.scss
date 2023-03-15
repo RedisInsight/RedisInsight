@@ -23,6 +23,11 @@
   width: 26px;
 }
 
-.queryLineFolding > span, .queryLineNumber {
+.queryLineFolding > span,
+.queryLineNumber {
   opacity: 0.4;
+}
+
+.tooltipAnchor {
+  cursor: pointer;
 }

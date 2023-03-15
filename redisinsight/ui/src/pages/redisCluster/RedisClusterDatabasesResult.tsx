@@ -157,7 +157,6 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
                 size="m"
                 onClick={() => onView(false)}
                 color="secondary"
-                className="btn-add"
                 data-testid="btn-view-databases"
               >
                 View Databases

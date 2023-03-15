@@ -205,3 +205,12 @@ $sideBarWidth: 60px;
     transform: translateY(1px);
   }
 }
+
+.highlightDot {
+  top: 11px !important;
+  right: 11px !important;
+
+  &.activePage {
+    background-color: #465282 !important;
+  }
+}

@@ -86,10 +86,17 @@ $cliOutputResponseFailColor: #e06c75;
 
 $badgeBackgroundColor: #707070;
 $commandGroupBadgeColor: #3f4b5f;
+$tooltipLightBgColor: #455064;
 
 $overlayPromoNYColor: #0000001a;
 
 $monacoBgColor: #111;
+$highlightDotColor: #2BBBB2;
+$monacoParamsColor: #EC85AA;
+
+$successBorderColor: #13A450;
+$warningBorderColor: #9D6901;
+$errorBorderColor: #AD0017;
 
 // Types colors
 $typeHashColor: #364cff;
@@ -135,3 +142,7 @@ $wbActiveIconColor: #8ba2ff;
 
 // PubSub
 $pubSubClientsBadge: #008000;
+
+// Database analysis
+$badgeIconColor : #D8AB52;
+$recommendationBorderColor: #363636;

@@ -172,23 +172,6 @@ describe('JsonBusinessService', () => {
           expect(err).toBeInstanceOf(BadRequestException);
         }
       });
-      it('should throw Forbidden error when no perms for an action for getJson', async () => {
-        const replyError: ReplyError = {
-          ...mockRedisNoPermError,
-          command: 'JSON.DEBUG',
-        };
-        browserTool.execCommand.mockRejectedValue(replyError);
-
-        try {
-          await service.getJson(mockBrowserClientMetadata, {
-            keyName: testKey,
-            path: testPath,
-          });
-          fail();
-        } catch (err) {
-          expect(err).toBeInstanceOf(ForbiddenException);
-        }
-      });
       it('should throw BadRequest error when module not loaded for getJson', async () => {
         const replyError: ReplyError = {
           name: 'ReplyError',
@@ -413,6 +396,76 @@ describe('JsonBusinessService', () => {
           data: testData,
         });
       });
+    });
+
+    describe('user has no PERM for JSON.DEBUG', () => {
+      beforeEach(() => {
+        const replyError: ReplyError = {
+          ...mockRedisNoPermError,
+          command: 'JSON.DEBUG',
+        };
+
+        when(browserTool.execCommand)
+          .calledWith(
+            mockBrowserClientMetadata,
+            BrowserToolRejsonRlCommands.JsonDebug,
+            ['MEMORY', testKey, testPath],
+          )
+          .mockRejectedValue(replyError);
+      });
+
+      it('should return data (string)', async () => {
+        const testData = 'some string';
+        when(browserTool.execCommand)
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
+            testKey,
+            testPath,
+          ], 'utf8')
+          .mockReturnValue(JSON.stringify(testData));
+
+        const result = await service.getJson(mockBrowserClientMetadata, {
+          keyName: testKey,
+          path: testPath,
+        });
+
+        expect(result).toEqual({
+          downloaded: true,
+          path: testPath,
+          data: testData,
+        });
+      });
+
+      it('should return full json value even if size is above the limit', async () => {
+        const testData = {arr:[randomBytes(2000).toString('hex')]};
+        when(browserTool.execCommand)
+          .calledWith(mockBrowserClientMetadata, BrowserToolRejsonRlCommands.JsonGet, [
+            testKey,
+            testPath,
+          ], 'utf8')
+          .mockReturnValue(JSON.stringify(testData));
+
+        when(browserTool.execCommand)
+          .calledWith(
+            mockBrowserClientMetadata,
+            BrowserToolRejsonRlCommands.JsonType, [
+              testKey,
+              testPath,
+            ],
+            'utf8',
+          ).mockReturnValue('object');
+
+        const result = await service.getJson(mockBrowserClientMetadata, {
+          keyName: testKey,
+          path: testPath,
+        });
+
+        expect(result).toEqual({
+          downloaded: true,
+          path: testPath,
+          data: testData,
+        });
+      });
+
     });
     describe('partial json download', () => {
       beforeEach(() => {

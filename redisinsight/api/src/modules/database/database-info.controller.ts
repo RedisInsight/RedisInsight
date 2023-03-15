@@ -1,17 +1,19 @@
 import { ApiTags } from '@nestjs/swagger';
 import {
-  Controller, Get, UseInterceptors,
+  Controller, Get, Param, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
-import { ClientMetadata } from 'src/common/models';
+import { ClientMetadata, DatabaseIndex } from 'src/common/models';
 import { ClientMetadataParam } from 'src/common/decorators';
+import { DbIndexValidationPipe } from 'src/common/pipes';
 
 @ApiTags('Database Instances')
 @Controller('databases')
+@UsePipes(new ValidationPipe({ transform: true }))
 export class DatabaseInfoController {
   constructor(
     private databaseInfoService: DatabaseInfoService,
@@ -33,6 +35,7 @@ export class DatabaseInfoController {
   async getInfo(
     @ClientMetadataParam({
       databaseIdParam: 'id',
+      ignoreDbIndex: true,
     }) clientMetadata: ClientMetadata,
   ): Promise<RedisDatabaseInfoResponse> {
     return this.databaseInfoService.getInfo(clientMetadata);
@@ -54,8 +57,30 @@ export class DatabaseInfoController {
   async getDatabaseOverview(
     @ClientMetadataParam({
       databaseIdParam: 'id',
+      ignoreDbIndex: false, // do not ignore db index to calculate current (selected) keys in db
     }) clientMetadata: ClientMetadata,
   ): Promise<DatabaseOverview> {
     return this.databaseInfoService.getOverview(clientMetadata);
+  }
+
+  @Get(':id/db/:index')
+  @UseInterceptors(new TimeoutInterceptor())
+  @ApiEndpoint({
+    description: 'Try to create connection to specified database index',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+      },
+    ],
+  })
+  async getDatabaseIndex(
+    @Param('index', new DbIndexValidationPipe({ transform: true })) databaseIndexDto: DatabaseIndex,
+      @ClientMetadataParam({
+        databaseIdParam: 'id',
+        ignoreDbIndex: true,
+      }) clientMetadata: ClientMetadata,
+  ): Promise<void> {
+    return this.databaseInfoService.getDatabaseIndex(clientMetadata, databaseIndexDto.db);
   }
 }

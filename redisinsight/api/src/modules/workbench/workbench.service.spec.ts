@@ -9,7 +9,7 @@ import {
 } from 'src/__mocks__';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
+import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
 import {
   ClusterNodeRole,
   CreateCommandExecutionDto,
@@ -51,6 +51,18 @@ const mockCreateCommandExecutionDtoWithGroupMode: CreateCommandExecutionsDto = {
   resultsMode: ResultsMode.GroupMode,
 };
 
+const mockCreateCommandExecutionDtoWithSilentMode: CreateCommandExecutionsDto = {
+  commands: mockCommands,
+  nodeOptions: {
+    host: '127.0.0.1',
+    port: 7002,
+    enableRedirection: true,
+  },
+  role: ClusterNodeRole.All,
+  mode: RunQueryMode.ASCII,
+  resultsMode: ResultsMode.Silent,
+};
+
 const mockCreateCommandExecutionsDto: CreateCommandExecutionsDto = {
   commands: [
     mockCreateCommandExecutionDto.command,
@@ -73,6 +85,7 @@ const mockCommandExecutionResults: CommandExecutionResult[] = [
 const mockCommandExecutionToRun: CommandExecution = new CommandExecution({
   ...mockCreateCommandExecutionDto,
   databaseId: mockDatabase.id,
+  db: 0,
 });
 
 const mockCommandExecution: CommandExecution = new CommandExecution({
@@ -101,7 +114,22 @@ const mockCommandExecutionWithGroupMode = {
   }],
 };
 
-const mockCommandExecutionProvider = () => ({
+const mockCommandExecutionWithSilentMode = {
+  mode: 'ASCII',
+  commands: mockCommands,
+  resultsMode: 'GROUP_MODE',
+  databaseId: 'd05043d0 - 0d12- 4ce1-9ca3 - 30c6d7e391ea',
+  summary: { total: 2, success: 1, fail: 1 },
+  command: 'set 1 1\r\nget 1',
+  result: [{
+    status: 'success',
+    response: [
+      { response: 'error', status: 'fail', command: 'get 1' },
+    ],
+  }],
+};
+
+const mockCommandExecutionRepository = () => ({
   createMany: jest.fn(),
   getList: jest.fn(),
   getOne: jest.fn(),
@@ -128,8 +156,8 @@ describe('WorkbenchService', () => {
           }),
         },
         {
-          provide: CommandExecutionProvider,
-          useFactory: mockCommandExecutionProvider,
+          provide: CommandExecutionRepository,
+          useFactory: mockCommandExecutionRepository,
         },
         {
           provide: DatabaseConnectionService,
@@ -140,7 +168,7 @@ describe('WorkbenchService', () => {
 
     service = module.get<WorkbenchService>(WorkbenchService);
     workbenchCommandsExecutor = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
-    commandExecutionProvider = module.get<CommandExecutionProvider>(CommandExecutionProvider);
+    commandExecutionProvider = module.get(CommandExecutionRepository);
   });
 
   describe('createCommandExecution', () => {
@@ -149,6 +177,16 @@ describe('WorkbenchService', () => {
       // can't predict execution time
       expect(result).toMatchObject(mockCommandExecutionToRun);
       expect(result.executionTime).toBeGreaterThan(0);
+    });
+    it('should save db index', async () => {
+      const db = 2;
+      const result = await service.createCommandExecution(
+        mockWorkbenchClientMetadata,
+        mockCreateCommandExecutionDto,
+        db,
+      );
+      expect(result).toMatchObject({ ...mockCommandExecutionToRun, db });
+      expect(result.db).toBe(db);
     });
     it('should save result as unsupported command message', async () => {
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
@@ -161,6 +199,7 @@ describe('WorkbenchService', () => {
 
       expect(await service.createCommandExecution(mockWorkbenchClientMetadata, dto)).toEqual({
         ...dto,
+        db: 0,
         databaseId: mockWorkbenchClientMetadata.databaseId,
         result: [
           {
@@ -215,6 +254,21 @@ describe('WorkbenchService', () => {
       expect(result).toEqual([mockCommandExecutionWithGroupMode]);
     });
 
+    it('should successfully execute commands and save in silent mode view', async () => {
+      when(workbenchCommandsExecutor.sendCommand)
+        .calledWith(mockWorkbenchClientMetadata, expect.anything())
+        .mockResolvedValue([mockSendCommandResultSuccess]);
+
+      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithSilentMode]);
+
+      const result = await service.createCommandExecutions(
+        mockWorkbenchClientMetadata,
+        mockCreateCommandExecutionDtoWithSilentMode,
+      );
+
+      expect(result).toEqual([mockCommandExecutionWithSilentMode]);
+    });
+
     it('should successfully execute commands with error and save summary', async () => {
       when(workbenchCommandsExecutor.sendCommand)
         .calledWith(mockWorkbenchClientMetadata, {
@@ -238,6 +292,31 @@ describe('WorkbenchService', () => {
       );
 
       expect(result).toEqual([mockCommandExecutionWithGroupMode]);
+    });
+
+    it('should successfully execute commands with error and save summary in silent mode view', async () => {
+      when(workbenchCommandsExecutor.sendCommand)
+        .calledWith(mockWorkbenchClientMetadata, {
+          ...mockCreateCommandExecutionDtoWithSilentMode,
+          command: mockCommands[0],
+        })
+        .mockResolvedValue([mockSendCommandResultSuccess]);
+
+      when(workbenchCommandsExecutor.sendCommand)
+        .calledWith(mockWorkbenchClientMetadata, {
+          ...mockCreateCommandExecutionDtoWithSilentMode,
+          command: mockCommands[1],
+        })
+        .mockResolvedValue([mockSendCommandResultFail]);
+
+      commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithSilentMode]);
+
+      const result = await service.createCommandExecutions(
+        mockWorkbenchClientMetadata,
+        mockCreateCommandExecutionDtoWithSilentMode,
+      );
+
+      expect(result).toEqual([mockCommandExecutionWithSilentMode]);
     });
 
     it('should throw an error when command execution failed', async () => {
@@ -305,7 +384,10 @@ describe('WorkbenchService', () => {
     it('should not return anything on delete', async () => {
       commandExecutionProvider.delete.mockResolvedValueOnce('some response');
 
-      const result = await service.deleteCommandExecution(mockWorkbenchClientMetadata.databaseId, mockCommandExecution.id);
+      const result = await service.deleteCommandExecution(
+        mockWorkbenchClientMetadata.databaseId,
+        mockCommandExecution.id,
+      );
 
       expect(result).toEqual(undefined);
     });

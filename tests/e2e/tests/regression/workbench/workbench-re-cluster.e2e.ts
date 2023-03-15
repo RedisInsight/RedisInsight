@@ -9,7 +9,7 @@ import {
 } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { cloudDatabaseConfig, commonUrl, ossClusterConfig, ossSentinelConfig, redisEnterpriseClusterConfig } from '../../../helpers/conf';
-import { deleteOSSClusterDatabaseApi, deleteAllSentinelDatabasesApi } from '../../../helpers/api/api-database';
+import { deleteOSSClusterDatabaseApi, deleteAllDatabasesByConnectionTypeApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -84,7 +84,7 @@ test
     })
     .after(async() => {
         // Delete database
-        await deleteAllSentinelDatabasesApi(ossSentinelConfig);
+        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     })('Verify that user can run commands in Workbench in Sentinel Primary Group', async() => {
         await verifyCommandsInWorkbench();
     });

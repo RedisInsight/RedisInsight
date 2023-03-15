@@ -22,7 +22,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { ZsetMember } from 'uiSrc/slices/interfaces/zset'
 import {
   bufferToString,
@@ -40,7 +40,6 @@ import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEdit
 import { IColumnSearchState, ITableColumn, RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
-import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
@@ -136,8 +135,8 @@ const ZSetDetails = (props: Props) => {
     })
   }
 
-  const handleDeleteMember = (member = '') => {
-    dispatch(deleteZSetMembers(key, [stringToBuffer(member, viewFormat)], onSuccessRemoved))
+  const handleDeleteMember = (member: RedisString | string = '') => {
+    dispatch(deleteZSetMembers(key, [member], onSuccessRemoved))
     closePopover()
   }
 
@@ -361,6 +360,7 @@ const ZSetDetails = (props: Props) => {
                 header={createDeleteFieldHeader(nameItem)}
                 text={createDeleteFieldMessage(key ?? '')}
                 item={name}
+                itemRaw={nameItem}
                 suffix={suffix}
                 deleting={deleting}
                 closePopover={closePopover}

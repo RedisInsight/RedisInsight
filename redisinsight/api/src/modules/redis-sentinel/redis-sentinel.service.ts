@@ -5,12 +5,14 @@ import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/c
 import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { Database } from 'src/modules/database/models/database';
-import { ActionStatus, ClientContext } from 'src/common/models';
+import { ActionStatus, ClientContext, Session } from 'src/common/models';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { getRedisConnectionException } from 'src/utils';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { RedisSentinelAnalytics } from 'src/modules/redis-sentinel/redis-sentinel.analytics';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 @Injectable()
 export class RedisSentinelService {
@@ -18,7 +20,9 @@ export class RedisSentinelService {
 
   constructor(
     private readonly redisService: RedisService,
+    private readonly redisConnectionFactory: RedisConnectionFactory,
     private readonly databaseService: DatabaseService,
+    private readonly databaseFactory: DatabaseFactory,
     private readonly databaseInfoProvider: DatabaseInfoProvider,
     private readonly redisSentinelAnalytics: RedisSentinelAnalytics,
   ) {}
@@ -112,7 +116,12 @@ export class RedisSentinelService {
     this.logger.log('Connection and getting sentinel masters.');
     let result: SentinelMaster[];
     try {
-      const client = await this.redisService.createStandaloneClient(dto, ClientContext.Common, false);
+      const database = await this.databaseFactory.createStandaloneDatabaseModel(dto);
+      const client = await this.redisConnectionFactory.createStandaloneConnection({
+        session: {} as Session,
+        databaseId: database.id,
+        context: ClientContext.Common,
+      }, database, { useRetry: false });
       result = await this.databaseInfoProvider.determineSentinelMasterGroups(client);
       this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(result);
 

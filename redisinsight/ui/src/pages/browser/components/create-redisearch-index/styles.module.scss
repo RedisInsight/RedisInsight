@@ -32,8 +32,7 @@
   }
 
   .controlsDivider {
-    margin-top: 32px;
-    margin-bottom: 40px;
+    margin: 32px 0;
   }
 
   .contentFields {
@@ -65,5 +64,9 @@
     background-color: var(--browserTableRowEven) !important;
     border: 0 solid var(--euiColorLightShade) !important;
     border-top-width: 1px !important;
+  }
+
+  .infoIcon {
+    margin-top: -6px;
   }
 }

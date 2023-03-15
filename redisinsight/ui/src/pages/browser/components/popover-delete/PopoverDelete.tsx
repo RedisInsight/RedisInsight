@@ -1,18 +1,20 @@
 import React from 'react'
 import { EuiButton, EuiButtonIcon, EuiPopover, EuiText } from '@elastic/eui'
 
+import { RedisString } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
 
 export interface Props {
   header?: string
   text: JSX.Element | string
   item: string
+  itemRaw?: RedisString
   suffix: string
   deleting: string
   closePopover: () => void
   showPopover: (item: string) => void
   updateLoading: boolean
-  handleDeleteItem: (item: string) => void
+  handleDeleteItem: (item: RedisString | string) => void
   handleButtonClick?: () => void
   appendInfo?: JSX.Element | string | null
   testid?: string
@@ -23,6 +25,7 @@ const PopoverDelete = (props: Props) => {
     header,
     text,
     item,
+    itemRaw,
     suffix,
     deleting,
     closePopover,
@@ -83,7 +86,7 @@ const PopoverDelete = (props: Props) => {
             size="s"
             color="warning"
             iconType="trash"
-            onClick={() => handleDeleteItem(item)}
+            onClick={() => handleDeleteItem(itemRaw || item)}
             data-testid={testid || 'remove'}
           >
             Remove

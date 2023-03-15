@@ -1,4 +1,4 @@
-import { Selector } from 'testcafe';
+import {Selector} from 'testcafe';
 
 export class MemoryEfficiencyPage {
     //-------------------------------------------------------------------------------------------
@@ -7,6 +7,10 @@ export class MemoryEfficiencyPage {
     //*Target any element/component via data-id, if possible!
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
+    // CSS Selectors
+    cssCodeChangesLabel = '[data-testid=code_changes]';
+    cssConfigurationChangesLabel = '[data-testid=configuration_changes]';
+    cssReadMoreLink = '[data-testid=read-more-link]';
     // BUTTONS
     newReportBtn = Selector('[data-testid=start-database-analysis-btn]');
     expandArrowBtn = Selector('[data-testid^=expand-arrow-]');
@@ -15,6 +19,9 @@ export class MemoryEfficiencyPage {
     reportItem = Selector('[data-test-subj^=items-report-]');
     selectedReport = Selector('[data-testid=select-report]');
     sortByLength = Selector('[data-testid=btn-change-table-keys]');
+    recommendationsTab = Selector('[data-testid=Recommendations-tab]');
+    luaScriptButton = Selector('[data-test-subj=luaScript-button]');
+    useSmallKeysButton = Selector('[data-test-subj=useSmallerKeys-button]');
     // ICONS
     reportTooltipIcon = Selector('[data-testid=db-new-reports-icon]');
     // TEXT ELEMENTS
@@ -26,6 +33,9 @@ export class MemoryEfficiencyPage {
     topKeysKeyName = Selector('[data-testid=top-keys-table-name]');
     topNamespacesEmptyContainer = Selector('[data-testid=top-namespaces-empty]');
     topNamespacesEmptyMessage = Selector('[data-testid=top-namespaces-message]');
+    noRecommendationsMessage =  Selector('[data-testid=empty-recommendations-message]');
+    codeChangesLabel = Selector('[data-testid=code_changes]');
+    configurationChangesLabel = Selector('[data-testid=configuration_changes]');
     topKeysKeySizeCell = Selector('[data-testid^=nsp-usedMemory-value]');
     topKeysLengthCell = Selector('[data-testid^=length-value]');
     // TABLE
@@ -44,4 +54,19 @@ export class MemoryEfficiencyPage {
     noExpiryPoint = Selector('[data-testid*=bar-0-]:not(rect[data-testid=bar-0-0])');
     // LINKS
     treeViewLink = Selector('[data-testid=tree-view-page-link]');
+    readMoreLink = Selector('[data-testid=read-more-link]');
+    // CONTAINERS
+    luaScriptAccordion = Selector('[data-testid=luaScript-accordion]');
+    luaScriptTextContainer = Selector('#luaScript');
+    useSmallKeysAccordion = Selector('[data-testid=useSmallerKeys-accordion]');
+    bigHashesAccordion = Selector('[data-testid=bigHashes-accordion]');
+    combineStringsAccordion = Selector('[data-testid=combineSmallStringsToHashes-accordion]');
+    increaseSetAccordion = Selector('[data-testid=increaseSetMaxIntsetEntries-accordion]');
+    avoidLogicalDbAccordion = Selector('[data-testid=avoidLogicalDatabases-accordion]');
+    convertHashToZipAccordion = Selector('[data-testid=convertHashtableToZiplist-accordion]');
+    compressHashAccordion = Selector('[data-testid=compressHashFieldNames-accordion]');
+    veryUsefulVoteBtn = Selector('[data-testid=very-useful-vote-btn]').nth(0);
+    usefulVoteBtn = Selector('[data-testid=useful-vote-btn]').nth(0);
+    notUsefulVoteBtn = Selector('[data-testid=not-useful-vote-btn]').nth(0);
+    recommendationsFeedbackBtn = Selector('[data-testid=recommendation-feedback-btn]');
 }

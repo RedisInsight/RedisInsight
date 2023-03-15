@@ -5,7 +5,7 @@ import {
     MonitorPage,
     SettingsPage,
     BrowserPage,
-    CliPage
+    CliPage, WorkbenchPage
 } from '../../../pageObjects';
 import {
     commonUrl,
@@ -14,8 +14,9 @@ import {
     ossStandaloneNoPermissionsConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import {WorkbenchActions} from '../../../common-actions/workbench-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const monitorPage = new MonitorPage();
@@ -24,6 +25,8 @@ const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const chance = new Chance();
 const common = new Common();
+const workbenchPage = new WorkbenchPage();
+const workbencActions = new WorkbenchActions();
 
 fixture `Monitor`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -115,26 +118,29 @@ test
             await t.expect(previousTimestamp).notEql(nextTimestamp, 'Monitor results not correct');
         }
     });
-test
+// Skipped due to redis issue https://redislabs.atlassian.net/browse/RI-4111
+test.skip
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await cliPage.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor');
+        await cliPage.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor -client');
         // Check command result in CLI
         await t.click(cliPage.cliExpandButton);
         await t.expect(cliPage.cliOutputResponseSuccess.textContent).eql('"OK"', 'Command from autocomplete was not found & executed');
         await t.click(cliPage.cliCollapseButton);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     })
-    .after(async() => {
+    .after(async t => {
         // Delete created user
+        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await cliPage.sendCommandInCli('acl DELUSER noperm');
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
+        await deleteStandaloneDatabasesApi([ossStandaloneConfig, ossStandaloneNoPermissionsConfig]);
     })('Verify that if user doesn\'t have permissions to run monitor, user can see error message', async t => {
+        const command = 'CLIENT LIST';
         // Expand the Profiler
         await t.click(monitorPage.expandMonitor);
         // Click on run monitor button
@@ -145,4 +151,8 @@ test
         await t.expect(monitorPage.monitorNoPermissionsMessage.innerText).eql('The Profiler cannot be started. This user has no permissions to run the \'monitor\' command', 'No Permissions message not found');
         // Verify that if user doesn't have permissions to run monitor, run monitor button is not available
         await t.expect(monitorPage.runMonitorToggle.withAttribute('disabled').exists).ok('No permissions run icon not found');
+        await t.click(myRedisDatabasePage.workbenchButton);
+        await workbenchPage.sendCommandInWorkbench(command);
+        // Verify that user have the following error when there is no permission to run the CLIENT LIST: "NOPERM this user has no permissions to run the 'CLIENT LIST' command or its subcommand"
+        await workbencActions.verifyClientListErrorMessage();
     });

@@ -5,8 +5,8 @@ import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import styles from './styles.module.scss'
 
 export interface Props {
-  isMinimized: boolean;
-  setIsMinimized: (value: boolean) => void;
+  isMinimized: boolean
+  setIsMinimized: (value: boolean) => void
 }
 
 const EnablementAreaCollapse = ({ isMinimized, setIsMinimized }: Props) => (

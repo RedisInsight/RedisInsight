@@ -22,6 +22,9 @@ import reducer, {
   defaultInstanceChanging,
   defaultInstanceChangingSuccess,
   defaultInstanceChangingFailure,
+  testConnection,
+  testConnectionSuccess,
+  testConnectionFailure,
   updateInstanceAction,
   deleteInstancesAction,
   setDefaultInstance,
@@ -43,6 +46,22 @@ import reducer, {
   setConnectedInstance,
   setConnectedInstanceFailure,
   setConnectedInstanceSuccess,
+  importInstancesFromFile,
+  importInstancesFromFileSuccess,
+  importInstancesFromFileFailure,
+  resetImportInstances,
+  importInstancesSelector,
+  uploadInstancesFile,
+  checkDatabaseIndexFailure,
+  checkDatabaseIndexSuccess,
+  checkDatabaseIndex,
+  checkDatabaseIndexAction,
+  setConnectedInfoInstance,
+  setConnectedInfoInstanceSuccess,
+  fetchConnectedInstanceInfoAction,
+  testInstanceStandaloneAction,
+  updateEditedInstance,
+  exportInstancesAction,
 } from '../../instances/instances'
 import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
@@ -51,7 +70,6 @@ import { loadMastersSentinel } from '../../instances/sentinel'
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))
-jest.mock('uiSrc/constants')
 
 let store: typeof mockedStore
 let instances: Instance[]
@@ -164,6 +182,76 @@ describe('instances slice', () => {
 
       // Act
       const nextState = reducer(initialState, defaultInstanceChanging())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('testConnection', () => {
+    it('should properly set loading = true', () => {
+      // Arrange
+
+      const state = {
+        ...initialState,
+        loadingChanging: true,
+      }
+
+      // Act
+      const nextState = reducer(initialState, testConnection())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('testConnectionSuccess', () => {
+    it('should properly set loading = false', () => {
+      // Arrange
+      const prevState: InitialStateInstances = {
+        ...initialState,
+        loadingChanging: true,
+      }
+      const state = {
+        ...initialState,
+        loadingChanging: false,
+      }
+
+      // Act
+      const nextState = reducer(prevState, testConnectionSuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('testConnectionFailure', () => {
+    it('should properly set the error', () => {
+      // Arrange
+      const data = 'some error'
+      const state = {
+        ...initialState,
+        loadingChanging: false,
+        errorChanging: data,
+      }
+
+      // Act
+      const nextState = reducer(initialState, testConnectionFailure(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -487,8 +575,63 @@ describe('instances slice', () => {
     })
   })
 
+  describe('setConnectedInfoInstance', () => {
+    it('should properly set initial state', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        instanceInfo: {
+          version: '6.12.0',
+          databases: 12,
+          server: {}
+        }
+      }
+      const state: InitialStateInstances = {
+        ...initialState,
+        instanceInfo: initialState.instanceInfo
+      }
+
+      // Act
+      const nextState = reducer(currentState, setConnectedInfoInstance())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setConnectedInfoInstanceSuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const payload = {
+        version: '6.12.0',
+        databases: 12,
+        server: {}
+      }
+      const state: InitialStateInstances = {
+        ...initialState,
+        instanceInfo: payload
+      }
+
+      // Act
+      const nextState = reducer(initialState, setConnectedInfoInstanceSuccess(payload))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('setEditedInstance', () => {
-    it('should properly set error', () => {
+    it('should properly set state', () => {
       // Arrange
       const data = instances[1]
       const state = {
@@ -501,6 +644,212 @@ describe('instances slice', () => {
 
       // Act
       const nextState = reducer(initialState, setEditedInstance(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('updateEditedInstance', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const data = instances[1]
+      const state = {
+        ...initialState,
+        editedInstance: {
+          ...initialState.editedInstance,
+          data,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, updateEditedInstance(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('importInstancesFromFile', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState.importInstances,
+        loading: true,
+        error: ''
+      }
+
+      // Act
+      const nextState = reducer(initialState, importInstancesFromFile())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(importInstancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('importInstancesFromFileSuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const mockedError = { statusCode: 400, message: 'message', error: 'error' }
+      const data = {
+        total: 3,
+        fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
+        partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
+        success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+      }
+      const state = {
+        ...initialState.importInstances,
+        loading: false,
+        data
+      }
+
+      // Act
+      const nextState = reducer(initialState, importInstancesFromFileSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(importInstancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('importInstancesFromFileFailure', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const error = 'Some error'
+      const state = {
+        ...initialState.importInstances,
+        loading: false,
+        error
+      }
+
+      // Act
+      const nextState = reducer(initialState, importInstancesFromFileFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(importInstancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetImportInstances', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const mockedError = { statusCode: 400, message: 'message', error: 'error' }
+      const currentState = {
+        ...initialState,
+        importInstances: {
+          ...initialState.importInstances,
+          data: {
+            total: 3,
+            fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
+            partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
+            success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+          }
+        }
+      }
+
+      const state = {
+        ...initialState.importInstances
+      }
+
+      // Act
+      const nextState = reducer(currentState, resetImportInstances())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(importInstancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('checkDatabaseIndex', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          loading: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, checkDatabaseIndex())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('checkDatabaseIndexSuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          loading: false,
+          db: 5
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, checkDatabaseIndexSuccess(5))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          instances: nextState,
+        },
+      })
+      expect(instancesSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('checkDatabaseIndexFailure', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, checkDatabaseIndexFailure())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -724,6 +1073,51 @@ describe('instances slice', () => {
       })
     })
 
+    describe('exportInstancesAction', () => {
+      it('should call proper actions on success', async () => {
+        // Arrange
+
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(exportInstancesAction(map(instances, 'id'), true))
+
+        // Assert
+        const expectedActions = [
+          setDefaultInstance(),
+          setDefaultInstanceSuccess(),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on fail', async () => {
+        // Arrange
+        const errorMessage = 'Some Error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(exportInstancesAction(map(instances, 'id'), false))
+
+        // Assert
+        const expectedActions = [
+          setDefaultInstance(),
+          setDefaultInstanceFailure(errorMessage),
+          addErrorNotification(responsePayload as AxiosError),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
     describe('updateInstance', () => {
       it('call both updateInstance and defaultInstanceChangingSuccess when fetch is successed', async () => {
         // Arrange
@@ -892,8 +1286,62 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           getDatabaseConfigInfo(),
-          addErrorNotification(responsePayload as AxiosError),
           getDatabaseConfigInfoFailure(errorMessage),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchConnectedInstanceInfoAction', () => {
+      it('succeed to get database instance info', async () => {
+        // Arrange
+        const requestId = '123'
+        const data = {
+          databases: 12,
+          server: {},
+          modules: [],
+          version: '6.52'
+        }
+        const responsePayload = { status: 200, data }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchConnectedInstanceInfoAction(requestId, jest.fn())
+        )
+
+        // Assert
+        const expectedActions = [
+          setConnectedInfoInstance(),
+          setConnectedInfoInstanceSuccess(data),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to get database config info', async () => {
+        // Arrange
+        const requestId = '123'
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchConnectedInstanceInfoAction(requestId, jest.fn())
+        )
+
+        // Assert
+        const expectedActions = [
+          setConnectedInfoInstance(),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -909,7 +1357,7 @@ describe('instances slice', () => {
           newName: 'newAlias',
         }
         const responsePayload = { status: 200, data }
-        apiService.put = jest.fn().mockResolvedValue(responsePayload)
+        apiService.patch = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
@@ -933,7 +1381,7 @@ describe('instances slice', () => {
             data: { message: errorMessage },
           },
         }
-        apiService.put = jest.fn().mockRejectedValue(responsePayload)
+        apiService.patch = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
@@ -954,19 +1402,20 @@ describe('instances slice', () => {
     describe('fetchEditedInstanceAction', () => {
       it('call both setEditedInstance and setDefaultInstanceSuccess when fetch is successed', async () => {
         // Arrange
-        const id = 'instanceId'
+        const editedInstance = { id: 'instanceId', host: '1', port: 1, modules: [] }
         const data = instances[1]
         const responsePayload = { data, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchEditedInstanceAction(id))
+        await store.dispatch<any>(fetchEditedInstanceAction(editedInstance))
 
         // Assert
         const expectedActions = [
           setDefaultInstance(),
-          setEditedInstance(responsePayload.data),
+          setEditedInstance(editedInstance),
+          updateEditedInstance(responsePayload.data),
           setDefaultInstanceSuccess(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -974,7 +1423,7 @@ describe('instances slice', () => {
 
       it('call both setDefaultInstance and setDefaultInstanceFailure when fetch is fail', async () => {
         // Arrange
-        const id = 'instanceId'
+        const editedInstance = { id: 'instanceId', host: '1', port: 1, modules: [] }
         const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
@@ -986,13 +1435,172 @@ describe('instances slice', () => {
         apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchEditedInstanceAction(id))
+        await store.dispatch<any>(fetchEditedInstanceAction(editedInstance))
 
         // Assert
         const expectedActions = [
           setDefaultInstance(),
+          setEditedInstance(editedInstance),
+          setEditedInstance(null),
           setConnectedInstanceFailure(),
           setDefaultInstanceFailure(responsePayload.response.data.message),
+          addErrorNotification(responsePayload as AxiosError),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('checkDatabaseIndexAction', () => {
+      it('should call proper actions on success', async () => {
+        // Arrange
+        const id = 'instanceId'
+        const index = 3
+        const responsePayload = { status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(checkDatabaseIndexAction(id, index))
+
+        // Assert
+        const expectedActions = [
+          checkDatabaseIndex(),
+          checkDatabaseIndexSuccess(index),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on fail', async () => {
+        // Arrange
+        const id = 'instanceId'
+        const errorMessage = 'some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(checkDatabaseIndexAction(id, 3))
+
+        // Assert
+        const expectedActions = [
+          checkDatabaseIndex(),
+          checkDatabaseIndexFailure(),
+          addErrorNotification(responsePayload as AxiosError),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('uploadInstancesFile', () => {
+      it('should call proper actions on success', async () => {
+        // Arrange
+        const formData = new FormData()
+        const mockedError = { statusCode: 400, message: 'message', error: 'error' }
+        const data = {
+          total: 3,
+          fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
+          partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
+          success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+        }
+
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(uploadInstancesFile(formData))
+
+        // Assert
+        const expectedActions = [
+          importInstancesFromFile(),
+          importInstancesFromFileSuccess(responsePayload.data)
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on fail', async () => {
+        // Arrange
+        const formData = new FormData()
+        const errorMessage = 'Some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(uploadInstancesFile(formData))
+
+        // Assert
+        const expectedActions = [
+          importInstancesFromFile(),
+          importInstancesFromFileFailure(responsePayload.response.data.message),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('testInstanceStandaloneAction', () => {
+      it('call proper actions on success', async () => {
+        // Arrange
+        const requestData = {
+          id: '123',
+          name: 'db',
+          host: 'localhost',
+          port: 6379,
+        }
+
+        const responsePayload = { status: 201 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(testInstanceStandaloneAction(requestData))
+
+        // Assert
+        const expectedActions = [
+          testConnection(),
+          testConnectionSuccess(),
+          addMessageNotification(successMessages.TEST_CONNECTION())
+        ]
+
+        expect(store.getActions().splice(0, 3)).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on fail', async () => {
+        // Arrange
+        const requestData = {
+          id: '123',
+          name: 'db',
+          host: 'localhost',
+          port: 6379,
+        }
+
+        const errorMessage = 'some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(testInstanceStandaloneAction(requestData))
+
+        // Assert
+        const expectedActions = [
+          testConnection(),
+          testConnectionFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as AxiosError),
         ]
         expect(store.getActions()).toEqual(expectedActions)

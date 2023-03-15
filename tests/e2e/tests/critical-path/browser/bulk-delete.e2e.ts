@@ -56,7 +56,7 @@ test('Verify that user can access the bulk actions screen in the Browser', async
 });
 test('Verify that user can see summary of scanned level', async t => {
     const expectedAmount = new RegExp('Expected amount: ~(9|10) \\d{3} keys');
-    const scannedKeys = new RegExp('Scanned (5|10)% \\((500|1000)/10 \\d{3}\\) and found \\d{3,5} keys');
+    const scannedKeys = new RegExp('Scanned (5|10)% \\((500|1 000)/10 \\d{3}\\) and found \\d{3,5} keys');
     const messageTitle = 'No pattern or key type set';
     const messageText = 'To perform a bulk action, set the pattern or select the key type';
 

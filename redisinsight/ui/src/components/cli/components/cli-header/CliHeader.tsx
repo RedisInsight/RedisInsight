@@ -22,6 +22,9 @@ import { sessionStorageService } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { outputSelector, resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
+import { getDbIndex } from 'uiSrc/utils'
+import { OnboardingTour } from 'uiSrc/components'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import styles from './styles.module.scss'
 
@@ -32,7 +35,7 @@ const CliHeader = () => {
 
   const { host, port } = useSelector(connectedInstanceSelector)
   const { db } = useSelector(outputSelector)
-  const endpoint = db > 0 ? `${host}:${port}[${db}]` : `${host}:${port}`
+  const endpoint = `${host}:${port}${getDbIndex(db)}`
 
   const removeCliClient = () => {
     const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
@@ -80,7 +83,13 @@ const CliHeader = () => {
       >
         <EuiFlexItem grow={false} className={styles.title}>
           <EuiIcon type="console" size="m" />
-          <EuiText>CLI</EuiText>
+          <OnboardingTour
+            options={ONBOARDING_FEATURES.BROWSER_CLI}
+            anchorPosition="upLeft"
+            panelClassName={styles.cliOnboardPanel}
+          >
+            <EuiText>CLI</EuiText>
+          </OnboardingTour>
         </EuiFlexItem>
         <EuiFlexItem grow />
         <EuiFlexItem grow={false}>

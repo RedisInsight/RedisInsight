@@ -18,7 +18,8 @@ export enum PluginEvents {
   setHeaderText = 'setHeaderText',
   executeRedisCommand = 'executeRedisCommand',
   getState = 'getState',
-  setState = 'setState'
+  setState = 'setState',
+  formatRedisReply = 'formatRedisReply',
 }
 
 export const listenPluginsEvents = () => {
@@ -57,6 +58,13 @@ export const listenPluginsEvents = () => {
         pluginApi.sendEvent(e.data.iframeId, PluginEvents.setState, {
           requestId: e.data.requestId,
           state: e.data.state
+        })
+        break
+      }
+      case PluginEvents.formatRedisReply: {
+        pluginApi.sendEvent(e.data.iframeId, PluginEvents.formatRedisReply, {
+          requestId: e.data.requestId,
+          data: e.data.data
         })
         break
       }

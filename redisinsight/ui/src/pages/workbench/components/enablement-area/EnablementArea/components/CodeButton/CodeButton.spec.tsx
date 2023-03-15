@@ -2,6 +2,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { AutoExecute } from 'uiSrc/slices/interfaces'
 import CodeButton, { Props } from './CodeButton'
 
 const mockedProps = mock<Props>()
@@ -43,11 +44,11 @@ describe('CodeButton', () => {
         label={label}
         onClick={onClick}
         mode={ExecuteButtonMode.Auto}
-        params={{}}
+        params={{ auto: AutoExecute.True }}
       />
     )
     fireEvent.click(screen.getByTestId(`preselect-auto-${label}`))
 
-    expect(onClick).toBeCalledWith({ mode: ExecuteButtonMode.Auto, params: {} })
+    expect(onClick).toBeCalledWith({ mode: ExecuteButtonMode.Auto, params: { auto: AutoExecute.True } })
   })
 })

@@ -68,11 +68,13 @@ const NameSpacesTable = (props: Props) => {
     dispatch(setSearchMatch(`${nsp}${delimiter}*`, SearchMode.Pattern))
     dispatch(resetKeysData(SearchMode.Pattern))
     dispatch(fetchKeys(
-      SearchMode.Pattern,
-      '0',
-      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+      {
+        searchMode: SearchMode.Pattern,
+        cursor: '0',
+        count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+      },
       () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, true)),
-      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, false)),
+      () => dispatch(setBrowserKeyListDataLoaded(SearchMode.Pattern, false))
     ))
     dispatch(resetBrowserTree())
     history.push(Pages.browser(instanceId))

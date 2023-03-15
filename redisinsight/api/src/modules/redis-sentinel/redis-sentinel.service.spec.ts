@@ -3,9 +3,10 @@ import { BadRequestException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisService } from 'src/modules/redis/redis.service';
 import {
+  mockDatabaseFactory,
   mockDatabaseInfoProvider,
   mockDatabaseService,
-  mockIORedisClient,
+  mockIORedisClient, mockRedisConnectionFactory,
   mockRedisSentinelAnalytics,
   mockRedisSentinelMasterResponse, mockRedisService, mockSentinelDatabaseWithTlsAuth,
   mockSentinelMasterDto,
@@ -15,10 +16,13 @@ import { RedisSentinelService } from 'src/modules/redis-sentinel/redis-sentinel.
 import { RedisSentinelAnalytics } from 'src/modules/redis-sentinel/redis-sentinel.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 describe('RedisSentinelService', () => {
   let service: RedisSentinelService;
   let redisService: MockType<RedisService>;
+  let redisConnectionFactory: MockType<RedisConnectionFactory>;
   let databaseService: MockType<DatabaseService>;
   let databaseInfoProvider: MockType<DatabaseInfoProvider>;
 
@@ -35,8 +39,16 @@ describe('RedisSentinelService', () => {
           useFactory: mockRedisService,
         },
         {
+          provide: RedisConnectionFactory,
+          useFactory: mockRedisConnectionFactory,
+        },
+        {
           provide: DatabaseService,
           useFactory: mockDatabaseService,
+        },
+        {
+          provide: DatabaseFactory,
+          useFactory: mockDatabaseFactory,
         },
         {
           provide: DatabaseInfoProvider,
@@ -47,13 +59,14 @@ describe('RedisSentinelService', () => {
 
     service = module.get(RedisSentinelService);
     redisService = module.get(RedisService);
+    redisConnectionFactory = module.get(RedisConnectionFactory);
     databaseService = module.get(DatabaseService);
     databaseInfoProvider = module.get(DatabaseInfoProvider);
   });
 
   describe('getSentinelMasters', () => {
     it('connect and get sentinel masters', async () => {
-      redisService.createStandaloneClient.mockResolvedValue(mockIORedisClient);
+      redisConnectionFactory.createStandaloneConnection.mockResolvedValue(mockIORedisClient);
       mockIORedisClient.call.mockResolvedValue(mockRedisSentinelMasterResponse);
       databaseInfoProvider.determineSentinelMasterGroups.mockResolvedValue([mockSentinelMasterDto]);
 
@@ -64,7 +77,7 @@ describe('RedisSentinelService', () => {
     });
 
     it('failed connection to the redis database', async () => {
-      redisService.createStandaloneClient.mockRejectedValue(
+      redisConnectionFactory.createStandaloneConnection.mockRejectedValue(
         new Error(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
       );
 

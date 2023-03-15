@@ -3,4 +3,5 @@ export const EXTERNAL_LINKS = {
   githubIssues: 'https://github.com/RedisInsight/RedisInsight/issues',
   releaseNotes: 'https://github.com/RedisInsight/RedisInsight/releases',
   userSurvey: 'https://www.surveymonkey.com/r/redisinsight',
+  recommendationFeedback: 'https://github.com/RedisInsight/RedisInsight/issues/new/choose',
 }

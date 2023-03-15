@@ -5,6 +5,7 @@ import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -95,7 +96,7 @@ test
         // Verify filter by data type applied
         await t.expect(browserPage.filteringLabel.textContent).eql('Stream', 'Key type lable is not displayed in search input');
         // Verify keyname in search input prepopulated
-        await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keySpaces[0]).exists).ok('Filter per key name is not applied');
+        await verifySearchFilterValue(keySpaces[0]);
         // Verify key is displayed
         await t.click(browserPage.browserViewButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(streamKeyName)).ok('Key is not found');

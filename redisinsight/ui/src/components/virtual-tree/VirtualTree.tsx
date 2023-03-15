@@ -7,14 +7,16 @@ import {
   FixedSizeTree as Tree,
 } from 'react-vtree'
 import { EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
+import { useDispatch } from 'react-redux'
 
-import { getTreeLeafField, Maybe } from 'uiSrc/utils'
+import { findTreeNode, getTreeLeafField, Maybe } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { DEFAULT_DELIMITER, Theme } from 'uiSrc/constants'
 import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
 
 import { Node } from './components/Node'
 import { NodeMeta, TreeData, TreeNode } from './interfaces'
@@ -43,6 +45,8 @@ export interface Props {
   setConstructingTree: (status: boolean) => void
 }
 
+export const KEYS = 'keys'
+
 const VirtualTree = (props: Props) => {
   const {
     items,
@@ -63,6 +67,8 @@ const VirtualTree = (props: Props) => {
   const { theme } = useContext(ThemeContext)
   const [nodes, setNodes] = useState<TreeNode[]>([])
   const { result, run: runWebworker } = useDisposableWebworker(webworkerFn)
+
+  const dispatch = useDispatch()
 
   useEffect(() =>
     () => setNodes([]),
@@ -85,12 +91,39 @@ const VirtualTree = (props: Props) => {
     }
 
     if (isArray(nodes) && isEmpty(statusSelected)) {
-      const rootLeaf: Maybe<TreeNode> = nodes?.find(({ children = [] }) => children.length === 0)
+      let selectedLeaf: Maybe<TreeNode> = nodes?.find(({ children = [] }) => children.length === 0)
+
+      // if Keys folder not exists - first folder should be opened
+      if (!selectedLeaf && nodes.length) {
+        selectedLeaf = nodes?.[0]
+
+        onStatusOpen?.(selectedLeaf?.fullName ?? '', true)
+        onStatusSelected?.(
+          `${selectedLeaf?.fullName + KEYS + delimiter + KEYS + delimiter}` ?? '',
+          selectedLeaf?.keys ?? selectedLeaf?.children?.[0]?.keys
+        )
+      } else {
+        // if Keys folder exist - open it
+        onStatusSelected?.(selectedLeaf?.fullName ?? '', selectedLeaf?.keys)
+      }
+
       disableSelectDefaultLeaf?.()
-      onStatusSelected?.(rootLeaf?.fullName ?? '', rootLeaf?.keys)
-      onSelectLeaf?.(rootLeaf?.keys ?? [])
+      onSelectLeaf?.(selectedLeaf?.keys ?? selectedLeaf?.children?.[0]?.keys ?? [])
     }
   }, [nodes, loading, selectDefaultLeaf])
+
+  useEffect(() => {
+    if (isEmpty(statusSelected) || !nodes.length) {
+      return
+    }
+
+    // if selected Keys folder is not exists (after a new search) needs reset Browser state
+    const selectedLeafExists = !!findTreeNode(nodes, Object.keys(statusSelected)?.[0], 'fullName')
+
+    if (!selectedLeafExists) {
+      dispatch(resetBrowserTree())
+    }
+  }, [nodes])
 
   useEffect(() => {
     if (!items?.length) {

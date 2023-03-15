@@ -1,15 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
+import config from 'src/utils/config';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
 import {
-  IsBoolean,
+  IsBoolean, IsEnum,
   IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
   IsOptional,
   IsString,
+  Max,
   MaxLength,
   Min,
   ValidateNested,
@@ -17,6 +19,10 @@ import {
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { Endpoint } from 'src/common/models';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
+import { SshOptions } from 'src/modules/ssh/models/ssh-options';
+import { Default } from 'src/common/decorators';
+
+const CONNECTIONS_CONFIG = config.get('connections');
 
 export class Database {
   @ApiProperty({
@@ -91,12 +97,27 @@ export class Database {
   @IsOptional()
   password?: string;
 
+  @ApiPropertyOptional({
+    description: 'Connection timeout',
+    type: Number,
+    default: 30_000,
+  })
+  @Expose()
+  @IsNotEmpty()
+  @IsOptional()
+  @Min(1_000)
+  @Max(1_000_000_000)
+  @IsInt({ always: true })
+  @Default(CONNECTIONS_CONFIG.timeout)
+  timeout?: number = CONNECTIONS_CONFIG.timeout;
+
   @ApiProperty({
     description: 'Connection Type',
     default: ConnectionType.STANDALONE,
     enum: ConnectionType,
   })
   @Expose()
+  @IsEnum(ConnectionType)
   connectionType: ConnectionType;
 
   @ApiPropertyOptional({
@@ -141,6 +162,8 @@ export class Database {
     type: Endpoint,
     isArray: true,
   })
+  @IsOptional()
+  @Type(() => Endpoint)
   @Expose()
   nodes?: Endpoint[];
 
@@ -202,4 +225,34 @@ export class Database {
   @Type(() => ClientCertificate)
   @ValidateNested()
   clientCert?: ClientCertificate;
+
+  @ApiPropertyOptional({
+    description: 'A new created connection',
+    type: Boolean,
+    default: false,
+  })
+  @Expose()
+  @IsOptional()
+  @IsBoolean({ always: true })
+  new?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Use SSH tunnel to connect.',
+    type: Boolean,
+  })
+  @Expose()
+  @IsBoolean()
+  @IsOptional()
+  ssh?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'SSH options',
+    type: SshOptions,
+  })
+  @Expose()
+  @IsOptional()
+  @IsNotEmptyObject()
+  @Type(() => SshOptions)
+  @ValidateNested()
+  sshOptions?: SshOptions;
 }

@@ -12,10 +12,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
-import { fetchKeys, keysSelector, setFilter } from 'uiSrc/slices/browser/keys'
+import { fetchKeys, fetchSearchHistoryAction, keysSelector, setFilter } from 'uiSrc/slices/browser/keys'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import HelpTexts from 'uiSrc/constants/help-texts'
-import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
@@ -77,14 +76,16 @@ const FilterKeyType = () => {
     setTypeSelected(value)
     setIsSelectOpen(false)
     dispatch(setFilter(value || null))
-    dispatch(fetchKeys(
-      searchMode,
-      '0',
-      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-    ))
-
-    // reset browser tree context
-    dispatch(resetBrowserTree())
+    dispatch(
+      fetchKeys(
+        {
+          searchMode,
+          cursor: '0',
+          count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+        },
+        () => { dispatch(fetchSearchHistoryAction(searchMode)) }
+      )
+    )
   }
 
   const UnsupportedInfo = () => (

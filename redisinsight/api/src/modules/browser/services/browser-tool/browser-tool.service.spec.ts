@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as IORedis from 'ioredis';
 import * as Redis from 'ioredis-mock';
-import { mockBrowserClientMetadata } from 'src/__mocks__';
+import { mockBrowserClientMetadata, mockRedisConnectionFactory } from 'src/__mocks__';
 import {
   RedisService,
 } from 'src/modules/redis/redis.service';
@@ -15,6 +15,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { mockKeyDto } from 'src/modules/browser/__mocks__';
 import { RedisString } from 'src/common/constants';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 const mockClient = new Redis();
 const mockConnectionErrorMessage = 'Could not connect to localhost, please check the connection details.';
@@ -33,6 +34,10 @@ describe('BrowserToolService', () => {
         {
           provide: RedisService,
           useFactory: () => ({}),
+        },
+        {
+          provide: RedisConnectionFactory,
+          useFactory: mockRedisConnectionFactory,
         },
         {
           provide: DatabaseService,

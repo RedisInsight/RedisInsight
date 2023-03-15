@@ -9,11 +9,13 @@ import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   getApiErrorMessage,
   getUrl,
-  isGroupMode,
+  isGroupResults,
+  isSilentMode,
   isStatusSuccessful,
 } from 'uiSrc/utils'
 import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+import { setDbIndexState } from 'uiSrc/slices/app/context'
 import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -127,7 +129,13 @@ const workbenchResultsSlice = createSlice({
         let newItem = item
         data.forEach((command, i) => {
           if (item.id === (commandId + i)) {
-            newItem = { ...command, loading: false, isOpen: true, error: '' }
+            // don't open a card if silent mode and no errors
+            newItem = {
+              ...command,
+              loading: false,
+              error: '',
+              isOpen: !isSilentMode(command.resultsMode),
+            }
           }
         })
         return newItem
@@ -243,9 +251,11 @@ export function sendWBCommandAction({
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(sendWBCommand({
-        commands: isGroupMode(resultsMode) ? [`${commands.length} - Command(s)`] : commands,
+        commands: isGroupResults(resultsMode) ? [`${commands.length} - Command(s)`] : commands,
         commandId
       }))
+
+      dispatch(setDbIndexState(true))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
         getUrl(
@@ -261,6 +271,7 @@ export function sendWBCommandAction({
 
       if (isStatusSuccessful(status)) {
         dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
+        dispatch(setDbIndexState(!!multiCommands?.length))
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {
@@ -271,6 +282,7 @@ export function sendWBCommandAction({
         commandsId: commands.map((_, i) => commandId + i),
         error: errorMessage
       }))
+      dispatch(setDbIndexState(false))
       onFailAction?.()
     }
   }
@@ -302,7 +314,7 @@ export function sendWBCommandClusterAction({
       const { id = '' } = state.connections.instances.connectedInstance
 
       dispatch(sendWBCommand({
-        commands: isGroupMode(resultsMode) ? [`${commands.length} - Commands`] : commands,
+        commands: isGroupResults(resultsMode) ? [`${commands.length} - Commands`] : commands,
         commandId
       }))
 
@@ -321,7 +333,7 @@ export function sendWBCommandClusterAction({
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data) }))
+        dispatch(sendWBCommandSuccess({ commandId, data: reverse(data), processing: !!multiCommands?.length }))
         onSuccessAction?.(multiCommands)
       }
     } catch (_err) {

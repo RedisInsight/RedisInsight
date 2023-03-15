@@ -10,6 +10,8 @@ services:
       - ./results:/usr/src/app/results
       - ./plugins:/usr/src/app/plugins
       - .redisinsight-v2:/root/.redisinsight-v2
+      - ./test-data/certs:/root/certs
+      - ./test-data/ssh:/root/ssh
     env_file:
       - ./.env
     environment:
@@ -41,5 +43,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .redisinsight-v2:/root/.redisinsight-v2
+      - ./test-data/certs:/root/certs
+      - ./test-data/ssh:/root/ssh
     ports:
       - 5000:5000

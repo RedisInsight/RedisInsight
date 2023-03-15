@@ -52,15 +52,18 @@ export class ServerService implements OnApplicationBootstrap {
       appType: this.getAppType(SERVER_CONFIG.buildType),
     });
 
-    this.eventEmitter.emit(AppAnalyticsEvents.Track, {
-      event: startEvent,
-      eventData: {
-        appVersion: SERVER_CONFIG.appVersion,
-        osPlatform: process.platform,
-        buildType: SERVER_CONFIG.buildType,
-      },
-      nonTracking: true,
-    });
+    // do not track start events for non-electron builds
+    if (SERVER_CONFIG?.buildType.toUpperCase() === 'ELECTRON') {
+      this.eventEmitter.emit(AppAnalyticsEvents.Track, {
+        event: startEvent,
+        eventData: {
+          appVersion: SERVER_CONFIG.appVersion,
+          osPlatform: process.platform,
+          buildType: SERVER_CONFIG.buildType,
+        },
+        nonTracking: true,
+      });
+    }
   }
 
   /**

@@ -1,7 +1,17 @@
 import { ApiTags } from '@nestjs/swagger';
 import {
   Body,
-  ClassSerializerInterceptor, Controller, Delete, Get, Param, Post, Put, UseInterceptors, UsePipes, ValidationPipe,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Database } from 'src/modules/database/models/database';
@@ -16,8 +26,11 @@ import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dt
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 import { ClientMetadataParam } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
+import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
+import { ExportDatabasesDto } from 'src/modules/database/dto/export.databases.dto';
+import { ExportDatabase } from 'src/modules/database/models/export-database';
 
-@ApiTags('Database Instances')
+@ApiTags('Database')
 @Controller('databases')
 export class DatabaseController {
   constructor(
@@ -62,7 +75,6 @@ export class DatabaseController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @Post('')
   @ApiEndpoint({
     description: 'Add database instance',
@@ -117,6 +129,57 @@ export class DatabaseController {
     return await this.service.update(id, database, true);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
+  @Patch(':id')
+  @ApiEndpoint({
+    description: 'Update database instance by id',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Updated database instance\' response',
+        type: Database,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  async modify(
+    @Param('id') id: string,
+      @Body() database: ModifyDatabaseDto,
+  ): Promise<Database> {
+    return await this.service.update(id, database, true);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('/test')
+  @ApiEndpoint({
+    description: 'Test connection',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  )
+  async testConnection(
+    @Body() database: CreateDatabaseDto,
+  ): Promise<void> {
+    return await this.service.testConnection(database);
+  }
+
   @Delete('/:id')
   @ApiEndpoint({
     statusCode: 200,
@@ -148,7 +211,6 @@ export class DatabaseController {
   }
 
   @Get(':id/connect')
-  @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
   @ApiEndpoint({
     description: 'Connect to database instance by id',
     statusCode: 200,
@@ -163,8 +225,29 @@ export class DatabaseController {
   async connect(
     @ClientMetadataParam({
       databaseIdParam: 'id',
+      ignoreDbIndex: true,
     }) clientMetadata: ClientMetadata,
   ): Promise<void> {
     await this.connectionService.connect(clientMetadata);
+  }
+
+  @Post('export')
+  @ApiEndpoint({
+    statusCode: 201,
+    excludeFor: [BuildType.RedisStack],
+    description: 'Export many databases by ids. With or without passwords and certificates bodies.',
+    responses: [
+      {
+        status: 201,
+        description: 'Export many databases by ids response',
+        type: ExportDatabase,
+      },
+    ],
+  })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async exportConnections(
+    @Body() dto: ExportDatabasesDto,
+  ): Promise<ExportDatabase[]> {
+    return await this.service.export(dto.ids, dto.withSecrets);
   }
 }

@@ -15,6 +15,7 @@ import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { formatLongName, getDbIndex, getLetterByIndex, Nullable, setTitle, } from 'uiSrc/utils'
 import { ColorScheme, getRGBColorByScheme, RGBColor } from 'uiSrc/utils/colors'
 
+import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ClusterDetailsHeader, ClusterDetailsGraphics, ClusterNodesTable } from './components'
 
 import styles from './styles.module.scss'
@@ -33,6 +34,7 @@ const ClusterDetailsPage = () => {
   const {
     db,
     name: connectedInstanceName,
+    connectionType
   } = useSelector(connectedInstanceSelector)
   const { viewTab } = useSelector(analyticsSettingsSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
@@ -55,6 +57,8 @@ const ClusterDetailsPage = () => {
   }
 
   useEffect(() => {
+    if (connectionType !== ConnectionType.Cluster) return
+
     dispatch(fetchClusterDetailsAction(
       instanceId,
       () => {},

@@ -2425,6 +2425,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/file-saver@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@types/file-saver/-/file-saver-2.0.5.tgz#9ee342a5d1314bb0928375424a2f162f97c310c7"
+  integrity sha512-zv9kNf3keYegP5oThGLaPk8E081DFDuwfqjtiTzm6PoxChdJ1raSuADf2YGCVIyrSynLrgc8JWv296s7Q7pQSQ==
+
 "@types/fs-extra@^9.0.11":
   version "9.0.13"
   resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-9.0.13.tgz#7594fbae04fe7f1918ce8b3d213f74ff44ac1f45"
@@ -2719,13 +2724,6 @@
   integrity sha512-RxzEjd4gbLAAdLQ92Q68/AC+TfsAKTc4evsArUH1aIShIMqQMIMjsxoSnwyjtbFTO/AGIW/RQI94XSdvOxCz/w==
   dependencies:
     "@types/react" "*"
-
-"@types/react-monaco-editor@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@types/react-monaco-editor/-/react-monaco-editor-0.16.0.tgz#12913ab07221f3335eb56d12d38b9d310643db2f"
-  integrity sha512-3YxNIyZ+mlU6WN9UfQ/T66LYjHH3ZWOK4csfefkkXdDmUbHDbuDpfmVSYyJt1W0wlwhcfu4zc7BMwYrimN/GUg==
-  dependencies:
-    react-monaco-editor "*"
 
 "@types/react-redux@^7.1.12", "@types/react-redux@^7.1.20":
   version "7.1.20"
@@ -7553,6 +7551,11 @@ file-loader@^6.0.0:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
+file-saver@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
+  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
+
 file-selector@^0.2.2:
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/file-selector/-/file-selector-0.2.4.tgz#7b98286f9dbb9925f420130ea5ed0a69238d4d80"
@@ -11441,10 +11444,10 @@ monaco-editor-webpack-plugin@^6.0.0:
   dependencies:
     loader-utils "^2.0.0"
 
-monaco-editor@^0.26.1:
-  version "0.26.1"
-  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.26.1.tgz#62bb5f658bc95379f8abb64b147632bd1c019d73"
-  integrity sha512-mm45nUrBDk0DgZKgbD7+bhDOtcAFNGPJJRAdS6Su1kTGl6XEgC7U3xOmDUW/0RrLf+jlvCGaqLvD4p2VjwuwwQ==
+monaco-editor@^0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.27.0.tgz#4b69108bb1dc1f60174c5dcdf51bc5306ab5ba26"
+  integrity sha512-UhwP78Wb8w0ZSYoKXQNTV/0CHObp6NS3nCt51QfKE6sKyBo5PBsvuDOHoI2ooBakc6uIwByRLHVeT7+yXQe2fQ==
 
 mri@^1.1.0:
   version "1.2.0"
@@ -13269,12 +13272,12 @@ react-merge-refs@^1.1.0:
   resolved "https://registry.yarnpkg.com/react-merge-refs/-/react-merge-refs-1.1.0.tgz#73d88b892c6c68cbb7a66e0800faa374f4c38b06"
   integrity sha512-alTKsjEL0dKH/ru1Iyn7vliS2QRcBp9zZPGoWxUOvRGWPUYgjo+V01is7p04It6KhgrzhJGnIj9GgX8W4bZoCQ==
 
-react-monaco-editor@*, react-monaco-editor@^0.44.0:
-  version "0.44.0"
-  resolved "https://registry.yarnpkg.com/react-monaco-editor/-/react-monaco-editor-0.44.0.tgz#9f966fd00b6c30e8be8873a3fbc86f14a0da2ba4"
-  integrity sha512-GPheXTIpBXpwv857H7/jA8HX5yae4TJ7vFwDJ5iTvy05LxIQTsD3oofXznXGi66lVA93ST/G7wRptEf4CJ9dOg==
+react-monaco-editor@^0.45.0:
+  version "0.45.0"
+  resolved "https://registry.yarnpkg.com/react-monaco-editor/-/react-monaco-editor-0.45.0.tgz#fa7eeaddc61c44865508d63c40930b4d67d49e98"
+  integrity sha512-QgAFXdXm5e9QRCnjFBt5fHqmUWL2qIMHZuZSLR6rU9E3Bbo2pQO7FSqgVmB5trc5U+hs7KdIWVoWIOzQvZMu3w==
   dependencies:
-    monaco-editor "^0.26.1"
+    monaco-editor "^0.27.0"
     prop-types "^15.7.2"
 
 react-property@1.0.1:

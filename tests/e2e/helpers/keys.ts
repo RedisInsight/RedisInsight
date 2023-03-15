@@ -6,6 +6,7 @@ import { BrowserPage, CliPage } from '../pageObjects';
 import { KeyData, AddKeyArguments } from '../pageObjects/browser-page';
 import { KeyTypesTexts } from './constants';
 import { Common } from './common';
+import { random } from 'lodash';
 
 const common = new Common();
 const cliPage = new CliPage();
@@ -81,7 +82,7 @@ export async function deleteKeysViaCli(keyData: KeyData): Promise<void> {
  * @param keyArguments The arguments of key
  */
 export async function populateDBWithHashes(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
 
     await client.on('error', async function (error: string) {
@@ -109,7 +110,7 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
  * @param keyArguments The arguments of key and its fields
  */
 export async function populateHashWithFields(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
     const fields: string[] = [];
 
@@ -140,7 +141,7 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
  * @param keyArguments The arguments of key and its members
  */
 export async function populateListWithElements(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
     const elements: string[] = [];
 
@@ -170,7 +171,7 @@ export async function populateListWithElements(host: string, port: string, keyAr
  * @param keyArguments The arguments of key and its members
  */
 export async function populateSetWithMembers(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
     const members: string[] = [];
 
@@ -194,12 +195,45 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
 }
 
 /**
+ * Populate Zset key with members
+ * @param host The host of database
+ * @param port The port of database
+ * @param keyArguments The arguments of key and its members
+ */
+ export async function populateZSetWithMembers(host: string, port: string, keyArguments: AddKeyArguments): Promise<void> {
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
+    let minScoreValue: -10;
+    let maxScoreValue: 10;
+    const client = createClient(dbConf);
+    const members: string[] = [];
+
+    await client.on('error', async function(error: string) {
+        throw new Error(error);
+    });
+    await client.on('connect', async function() {
+        if (keyArguments.membersCount != undefined) {
+            for (let i = 0; i < keyArguments.membersCount; i++) {
+                const memberName = `${keyArguments.memberStartWith}${common.generateWord(10)}`;
+                const scoreValue = random(minScoreValue, maxScoreValue).toString(2);
+                members.push(scoreValue, memberName);
+            }
+        }
+        await client.zadd(keyArguments.keyName, members, async(error: string) => {
+            if (error) {
+                throw error;
+            }
+        });
+        await client.quit();
+    });
+}
+
+/**
  * Delete all keys from database
  * @param host The host of database
  * @param port The port of database
  */
 export async function deleteAllKeysFromDB(host: string, port: string): Promise<void> {
-    const dbConf = { host, port: Number(port) };
+    const dbConf = { port: Number.parseInt(port), host, username: 'default' };
     const client = createClient(dbConf);
 
     await client.on('error', async function (error: string) {
@@ -234,4 +268,13 @@ export async function verifyKeysNotDisplayedInTheList(keyNames: string[]): Promi
     for (const keyName of keyNames) {
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk(`The key ${keyName} found`);
     }
+}
+
+/**
+* Verify search/filter value
+* @param value The value in search/filter input
+*/
+
+export async function verifySearchFilterValue(value: string): Promise<void> {
+    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', value).exists).ok(`Filter per key name ${value} is not applied/correct`);
 }

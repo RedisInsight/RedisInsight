@@ -15,6 +15,7 @@ export class BrowserPage {
     cssKeyBadge = '[data-testid^=badge-]';
     cssKeyTtl = '[data-testid^=ttl-]';
     cssKeySize = '[data-testid^=size-]';
+    cssRemoveSuggestionItem = '[data-testid^=remove-suggestion-item-]';
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -22,6 +23,9 @@ export class BrowserPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
+    hashDeleteButton = Selector('[data-testid=hash-delete-btn]');
+    setDeleteButton = Selector('[data-testid=set-delete-btn]');
+    streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
     myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
@@ -101,6 +105,8 @@ export class BrowserPage {
     submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
     patternModeBtn = Selector('[data-testid=search-mode-pattern-btn]');
     redisearchModeBtn = Selector('[data-testid=search-mode-redisearch-btn]');
+    showFilterHistoryBtn = Selector('[data-testid=show-suggestions-btn]');
+    clearFilterHistoryBtn = Selector('[data-testid=clear-history-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -138,6 +144,8 @@ export class BrowserPage {
     cancelIndexCreationBtn = Selector('[data-testid=create-index-cancel-btn]');
     confirmIndexCreationBtn = Selector('[data-testid=create-index-btn]');
     resizeTrigger = Selector('[data-testid^=resize-trigger-]');
+    filterHistoryOption = Selector('[data-testid^=suggestion-item-]');
+    filterHistoryItemText = Selector('[data-testid=suggestion-item-text]');
     //TABS
     streamTabGroups = Selector('[data-testid=stream-tab-Groups]');
     streamTabConsumers = Selector('[data-testid=stream-tab-Consumers]');
@@ -155,7 +163,8 @@ export class BrowserPage {
     listKeyElementInput = Selector('[data-testid=element]');
     listKeyElementEditorInput = Selector('[data-testid=element-value-editor]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
-    jsonKeyValueInput = Selector('[data-testid=json-value]');
+    jsonKeyValueInput = Selector('[data-mode-id=json]');
+    jsonUploadInput = Selector('[data-testid=upload-input-file]');
     setMemberInput = Selector('[data-testid=member-name]');
     zsetMemberScoreInput = Selector('[data-testid=member-score]');
     filterByPatterSearchInput = Selector('[data-testid=search-key]');
@@ -987,7 +996,7 @@ export class BrowserPage {
 
     /**
      * Verify that keys can be scanned more and results increased
-     */
+    */
     async verifyScannningMore(): Promise<void> {
         for (let i = 10; i < 100; i += 10) {
             // Remember results value
@@ -1006,12 +1015,54 @@ export class BrowserPage {
     /**
      * Open Select Index droprown and select option
      * @param index The name of format
-     */
+    */
     async selectIndexByName(index: string): Promise<void> {
         const option = Selector(`[data-test-subj="mode-option-type-${index}"]`);
         await t
             .click(this.selectIndexDdn)
             .click(option);
+    }
+
+    /**
+    * Get text from first tree element
+    */
+    async getTextFromNthTreeElement(number: number): Promise<string> {
+        return (await Selector('[role="treeitem"]').nth(number).find('div').textContent).replace(/\s/g, '');
+    }
+
+    /**
+    * Open tree folder with multiple level
+    * @param names folder names with sequence of subfolder
+    */
+    async openTreeFolders(names: string[]): Promise<void> {
+        let base = `node-item_${names[0]}:`;
+        await t.click(Selector(`[data-testid="${base}"]`));
+        if (names.length > 1) {
+            for (let i = 1; i < names.length; i++) {
+                base = `${base  }${names[i]}:`;
+                await t.click(Selector(`[data-testid="${base}"]`));
+            }
+        }
+        await t.click(Selector(`[data-testid="${base}keys:keys:"]`));
+
+        await t.expect(
+            Selector(`[data-testid="${base}keys:keys:"]`).visible)
+            .ok('Folder is not selected');
+    }
+
+    /**
+    * Verify that database has no keys
+    */
+    async verifyNoKeysInDatabase(): Promise<void> {
+        await t.expect(this.keyListMessage.exists).ok('Database not empty')
+            .expect(this.keysSummary.exists).notOk('Total value is displayed for empty database');
+    }
+
+    /**
+    * Clear filter on Browser page
+    */
+    async clearFilter(): Promise<void> {
+        await t.click(this.clearFilterButton);
     }
 }
 

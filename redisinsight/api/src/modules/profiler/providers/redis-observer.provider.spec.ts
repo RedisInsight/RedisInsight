@@ -2,16 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockDatabaseConnectionService, mockIORedisClient,
   mockLogFile, mockRedisShardObserver,
-  MockType,
 } from 'src/__mocks__';
 import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
-import { mockRedisClientInstance } from 'src/modules/redis/redis-consumer.abstract.service.spec';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 
 describe('RedisObserverProvider', () => {
   let service: RedisObserverProvider;
-  let databaseConnectionService: MockType<DatabaseConnectionService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();

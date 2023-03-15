@@ -21,7 +21,7 @@ const dataSchema = Joi.object({
   command: Joi.string().required(),
   role: Joi.string().valid('ALL', 'MASTER', 'SLAVE').allow(null),
   mode: Joi.string().valid('RAW', 'ASCII').allow(null),
-  resultsMode: Joi.string().valid('DEFAULT', 'GROUP_MODE').allow(null),
+  resultsMode: Joi.string().valid('DEFAULT', 'GROUP_MODE', 'SILENT').allow(null),
   nodeOptions: Joi.object().keys({
     host: Joi.string().required(),
     // todo: fix BE transform to avoid handle boolean as number
@@ -307,7 +307,7 @@ describe('POST /databases/:instanceId/plugins/command-executions', () => {
     let nodes;
 
     before(async () => {
-      database = await (await localDb.getRepository(localDb.repositories.DAtABASE)).findOneBy({
+      database = await (await localDb.getRepository(localDb.repositories.DATABASE)).findOneBy({
         id: constants.TEST_INSTANCE_ID,
       });
       nodes = JSON.parse(database.nodes);

@@ -1,6 +1,7 @@
 import { EuiLink, EuiTextColor } from '@elastic/eui'
 import React, { Fragment } from 'react'
 import { getRouterLinkProps } from 'uiSrc/services'
+import { getDbIndex } from 'uiSrc/utils'
 
 export const ClearCommand = 'clear'
 export const SelectCommand = 'select'
@@ -38,8 +39,7 @@ export const InitOutputText = (
   '\n\n',
   'Pinging Redis server on ',
   <EuiTextColor color="default" key={Math.random()}>
-    {`${host}:${port}`}
-    {dbIndex > 0 && `[${dbIndex}]`}
+    {`${host}:${port}${getDbIndex(dbIndex)}`}
   </EuiTextColor>,
 ]
 

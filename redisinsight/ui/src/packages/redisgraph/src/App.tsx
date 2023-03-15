@@ -8,28 +8,27 @@ import { COMPACT_FLAG } from './constants'
 const isDarkTheme = document.body.classList.contains('theme_DARK')
 
 const json_tree_theme = {
-    scheme: 'solarized',
-    author: 'ethan schoonover (http://ethanschoonover.com/solarized)',
-    base00: '#002b36',
-    base01: '#073642',
-    base02: '#586e75',
-    base03: '#657b83',
-    base04: '#839496',
-    base05: '#93a1a1',
-    base06: '#eee8d5',
-    base07: '#fdf6e3',
-    base08: '#dc322f',
-    base09: '#098658',
-    base0A: '#b58900',
-    base0B: '#A31515',
-    base0C: '#2aa198',
-    base0D: '#0451A5',
-    base0E: '#6c71c4',
-    base0F: '#d33682',
+  scheme: 'solarized',
+  author: 'ethan schoonover (http://ethanschoonover.com/solarized)',
+  base00: '#002b36',
+  base01: '#073642',
+  base02: '#586e75',
+  base03: '#657b83',
+  base04: '#839496',
+  base05: '#93a1a1',
+  base06: '#eee8d5',
+  base07: '#fdf6e3',
+  base08: '#dc322f',
+  base09: '#098658',
+  base0A: '#b58900',
+  base0B: '#A31515',
+  base0C: '#2aa198',
+  base0D: '#0451A5',
+  base0E: '#6c71c4',
+  base0F: '#d33682',
 }
 
 export function TableApp(props: { command?: string, data: any }) {
-
   const ErrorResponse = HandleError(props)
 
   if (ErrorResponse !== null) return ErrorResponse
@@ -40,10 +39,10 @@ export function TableApp(props: { command?: string, data: any }) {
     <div className="table-view">
       <Table
         data={tableData.results}
-        columns={tableData.headers.map(h => ({
+        columns={tableData.headers.map((h) => ({
           field: h,
           name: h,
-          render: d => (
+          render: (d) => (
             <JSONTree
               invertTheme={isDarkTheme}
               theme={{
@@ -52,7 +51,7 @@ export function TableApp(props: { command?: string, data: any }) {
                   style: { ...style, backgroundColor: undefined }, // removing default background color from styles
                 }),
               }}
-              labelRenderer={(key) => key ? key : null}
+              labelRenderer={(key) => (key || null)}
               hideRoot
               data={d}
             />
@@ -63,16 +62,15 @@ export function TableApp(props: { command?: string, data: any }) {
   )
 }
 
-
 export function GraphApp(props: { command?: string, data: any }) {
-
+  const { data, command = '' } = props
   const ErrorResponse = HandleError(props)
 
   if (ErrorResponse !== null) return ErrorResponse
 
   return (
-    <div style={{ height: "100%" }}>
-      <Graph graphKey={props.command.split(' ')[1]} data={props.data[0].response} />
+    <div style={{ height: '100%' }}>
+      <Graph graphKey={command.split(' ')[1]} data={data[0].response} command={command} />
     </div>
   )
 }
@@ -84,7 +82,7 @@ function HandleError(props: { command?: string, data: any }): JSX.Element {
     return <div className="responseFail">{JSON.stringify(response)}</div>
   }
 
-  if (status === 'success' && typeof(response) === 'string') {
+  if (status === 'success' && typeof (response) === 'string') {
     return <div className="responseFail">{JSON.stringify(response)}</div>
   }
 

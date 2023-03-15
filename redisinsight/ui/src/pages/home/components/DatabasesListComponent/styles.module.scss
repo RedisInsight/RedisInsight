@@ -1,48 +1,5 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 $breakpoint-m: 1150px;
 $breakpoint-l: 1400px;
-
-.deletePopover {
-  padding: 31px 33px;
-}
-
-.popoverSubTitle {
-  width: 372px;
-  color: var(--textColorShade) !important;
-  line-height: 1.3;
-  font-size: 14px;
-}
-
-.deleteNameList:not(:last-child) {
-  padding-bottom: 7px;
-}
-
-.deleteNameListText {
-  line-height: 22px;
-}
-
-.deleteBoxSection {
-  @include euiScrollBar;
-
-  width: 400px;
-  max-height: 189px;
-  overflow-y: scroll;
-
-  padding: 13px 15px;
-  margin-top: 10px;
-
-  color: var(--textColorShade) !important;
-  background-color: var(--euiColorLightestShade) !important;
-
-  svg {
-    color: var(--euiTextColor) !important;
-    width: 22px !important;
-    height: 22px !important;
-  }
-}
 
 .tooltipColumnName {
   max-width: 370px !important;
@@ -85,15 +42,6 @@ $breakpoint-l: 1400px;
   }
 }
 
-.popoverFooter {
-  text-align: right;
-  margin-top: 24px;
-
-  span {
-    font-size: 13px !important;
-  }
-}
-
 .icon {
   margin-right: 5px;
 }
@@ -132,10 +80,33 @@ $breakpoint-l: 1400px;
   color: var(--htmlColor) !important;
 }
 
-.actionDeleteBtn {
-  min-width: 93px !important;
+.columnNew {
+  padding: 0 !important;
 
-  &:focus {
-    text-decoration: none !important;
+  .euiFlexItem {
+    margin: 0 !important;
+  }
+}
+
+.newStatus {
+  background-color: var(--euiColorPrimary) !important;
+  cursor: pointer;
+  width: 11px !important;
+  min-width: 11px !important;
+  height: 11px !important;
+  border-radius: 6px;
+}
+
+.newStatusAnchor {
+  margin-top: 20px;
+  margin-left: -19px;
+  position: absolute;
+}
+
+.container {
+  // Database alias column
+  tr > th:nth-child(2),
+  tr > td:nth-child(2) {
+    padding-left: 5px !important;
   }
 }

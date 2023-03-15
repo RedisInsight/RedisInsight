@@ -1,5 +1,4 @@
 import type { Nullable, Maybe } from './types'
-import handlePasteHostName from './handlePasteHostName'
 import getLetterByIndex from './getLetterByIndex'
 import RouterWithSubRoutes from './routerWithSubRoutes'
 
@@ -26,11 +25,11 @@ export * from './formatters'
 export * from './groupTypes'
 export * from './modules'
 export * from './optimizations'
+export * from './events'
 
 export {
   Maybe,
   Nullable,
-  handlePasteHostName,
   RouterWithSubRoutes,
   getLetterByIndex
 }

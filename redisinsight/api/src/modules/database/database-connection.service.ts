@@ -1,12 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as IORedis from 'ioredis';
-import { generateRedisConnectionName, getRedisConnectionException } from 'src/utils';
+import { getRedisConnectionException } from 'src/utils';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { Database } from 'src/modules/database/models/database';
+import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClientMetadata } from 'src/common/models';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 @Injectable()
 export class DatabaseConnectionService {
@@ -18,6 +21,7 @@ export class DatabaseConnectionService {
     private readonly repository: DatabaseRepository,
     private readonly analytics: DatabaseAnalytics,
     private readonly redisService: RedisService,
+    private readonly redisConnectionFactory: RedisConnectionFactory,
   ) {}
 
   /**
@@ -28,12 +32,30 @@ export class DatabaseConnectionService {
     const client = await this.getOrCreateClient(clientMetadata);
 
     // refresh modules list and last connected time
+    // mark database as not a new
     // will be refreshed after user navigate to particular database from the databases list
     // Note: move to a different place in case if we need to update such info more often
-    await this.repository.update(clientMetadata.databaseId, {
+    const toUpdate: Partial<Database> = {
+      new: false,
       lastConnection: new Date(),
+      timeout: client.options.connectTimeout,
       modules: await this.databaseInfoProvider.determineDatabaseModules(client),
-    });
+    };
+
+    // !Temporary. Refresh cluster nodes on connection
+    if (client?.isCluster) {
+      const primaryNodeOptions = client.nodes('master')[0].options;
+
+      toUpdate.host = primaryNodeOptions.host;
+      toUpdate.port = primaryNodeOptions.port;
+
+      toUpdate.nodes = client.nodes().map(({ options }) => ({
+        host: options.host,
+        port: options.port,
+      }));
+    }
+
+    await this.repository.update(clientMetadata.databaseId, toUpdate);
 
     this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
   }
@@ -56,9 +78,7 @@ export class DatabaseConnectionService {
 
     client = await this.createClient(clientMetadata);
 
-    this.redisService.setClientInstance(clientMetadata, client);
-
-    return client;
+    return this.redisService.setClientInstance(clientMetadata, client)?.client;
   }
 
   /**
@@ -72,14 +92,30 @@ export class DatabaseConnectionService {
   async createClient(clientMetadata: ClientMetadata): Promise<IORedis.Redis | IORedis.Cluster> {
     this.logger.log('Creating database client.');
     const database = await this.databaseService.get(clientMetadata.databaseId);
-    const connectionName = generateRedisConnectionName(clientMetadata.context, clientMetadata.databaseId);
 
     try {
-      return await this.redisService.connectToDatabaseInstance(
+      const client = await this.redisConnectionFactory.createRedisConnection(
+        clientMetadata,
         database,
-        clientMetadata.context,
-        connectionName,
       );
+
+      if (database.connectionType === ConnectionType.NOT_CONNECTED) {
+        let connectionType = ConnectionType.STANDALONE;
+
+        // cluster check
+        if (client.isCluster) {
+          connectionType = ConnectionType.CLUSTER;
+        }
+
+        // sentinel check
+        if (client?.options?.['sentinels']?.length) {
+          connectionType = ConnectionType.SENTINEL;
+        }
+
+        await this.repository.update(database.id, { connectionType });
+      }
+
+      return client;
     } catch (error) {
       this.logger.error('Failed to create database client', error);
       const exception = getRedisConnectionException(

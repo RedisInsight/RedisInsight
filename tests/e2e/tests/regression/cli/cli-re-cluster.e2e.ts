@@ -1,4 +1,4 @@
-import { t } from 'testcafe';
+import { Selector, t } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
 import {
     acceptLicenseTermsAndAddOSSClusterDatabase,
@@ -7,7 +7,7 @@ import {
     acceptLicenseTermsAndAddSentinelDatabaseApi,
     deleteDatabase
 } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage, CliPage, DatabaseOverviewPage } from '../../../pageObjects';
 import {
     cloudDatabaseConfig,
     commonUrl, ossClusterConfig,
@@ -15,11 +15,12 @@ import {
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { deleteOSSClusterDatabaseApi, deleteAllSentinelDatabasesApi } from '../../../helpers/api/api-database';
+import { deleteOSSClusterDatabaseApi, deleteAllDatabasesByConnectionTypeApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const common = new Common();
+const databaseOverviewPage = new DatabaseOverviewPage();
 
 let keyName = common.generateWord(10);
 const verifyCommandsInCli = async(): Promise<void> => {
@@ -31,8 +32,9 @@ const verifyCommandsInCli = async(): Promise<void> => {
     await t.pressKey('enter');
     // Check that the key is added
     await browserPage.searchByKeyName(keyName);
-    const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-    await t.expect(isKeyIsDisplayedInTheList).ok('The key is added');
+    const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+    await common.waitForElementNotVisible(browserPage.loader);
+    await t.expect(keyNameInTheList.exists).ok(`${keyName} key is not added`);
 };
 
 fixture `Work with CLI in all types of databases`
@@ -48,6 +50,9 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cluster DB', async() => {
+        // Verify that database index switcher not displayed for RE Cluster
+        await t.expect(databaseOverviewPage.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cluster DB');
+
         await verifyCommandsInCli();
     });
 test
@@ -60,6 +65,9 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cloud DB', async() => {
+        // Verify that database index switcher not displayed for RE Cloud
+        await t.expect(databaseOverviewPage.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cloud DB');
+
         await verifyCommandsInCli();
     });
 test
@@ -72,6 +80,9 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can add data via CLI in OSS Cluster DB', async() => {
+        // Verify that database index switcher not displayed for RE Cloud
+        await t.expect(databaseOverviewPage.changeIndexBtn.exists).notOk('Change Db index control displayed for OSS Cluster DB');
+
         await verifyCommandsInCli();
     });
 test
@@ -82,7 +93,10 @@ test
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteAllSentinelDatabasesApi(ossSentinelConfig);
+        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     })('Verify that user can add data via CLI in Sentinel Primary Group', async() => {
+        // Verify that database index switcher displayed for Sentinel
+        await t.expect(databaseOverviewPage.changeIndexBtn.exists).ok('Change Db index control not displayed for Sentinel DB');
+
         await verifyCommandsInCli();
     });

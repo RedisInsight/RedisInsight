@@ -19,12 +19,16 @@ $marginIcon: 12px;
     }
   }
 
-  :global(.euiFlexGroup--gutterLarge>.euiFlexItem) {
+  :global(.euiFlexGroup--gutterLarge > .euiFlexItem) {
     margin: $marginIcon $marginIcon/2 !important;
 
     @media (min-width: $breakpoint-m) {
       margin: $marginIcon !important;
     }
+  }
+
+  &.notExpanded {
+    cursor: default;
   }
 }
 
@@ -40,12 +44,12 @@ $marginIcon: 12px;
 }
 
 .titleWrapper {
-  width: calc(100% - 490px);
-  min-width: calc(100% - 490px);
+  width: calc(100% - 552px);
+  min-width: calc(100% - 552px);
 
   @media (min-width: $breakpoint-m) {
-    width: calc(100% - 627px);
-    min-width: calc(100% - 627px);
+    width: calc(100% - 689px);
+    min-width: calc(100% - 689px);
   }
 }
 
@@ -79,16 +83,17 @@ $marginIcon: 12px;
 }
 
 .time {
-  max-width: 117px;
+  max-width: 70px;
   position: relative;
   height: 18px;
 }
 
-.mode {
-  margin-left: 6px;
+.mode + .mode {
+  margin-left: 18px;
 }
 
-.timeText, .summaryText {
+.timeText,
+.summaryText {
   font: normal normal normal 12px/16px Graphik, sans-serif;
   letter-spacing: -0.12px;
   color: var(--euiColorMediumShade) !important;
@@ -120,6 +125,27 @@ $marginIcon: 12px;
 .dropdownWrapper {
   position: relative;
   height: 40px;
+}
+
+.dropdownProfileIcon {
+  padding: inherit !important;
+  :global {
+    .euiSuperSelectControl.euiFormControlLayoutIcons {
+      display: none !important;
+    }
+  }
+}
+
+.dropdownProfileOption {
+  display: inherit !important;
+}
+
+.dropdownProfileItem {
+  :global {
+    .euiContextMenu__icon {
+      display: none !important;
+    }
+  }
 }
 
 .dropdown {
@@ -159,6 +185,7 @@ $marginIcon: 12px;
     text-overflow: ellipsis;
     width: 100%;
     white-space: nowrap;
+    cursor: pointer;
   }
 }
 
@@ -191,12 +218,12 @@ $marginIcon: 12px;
   margin-right: 6px;
 
   path {
-    fill: var(--iconsDefaultColor)
+    fill: var(--iconsDefaultColor);
   }
 }
 
 .dropdownOptionSeparator:after {
-  content: '';
+  content: "";
   display: block;
   height: 0;
   width: 100%;
@@ -270,4 +297,14 @@ $marginIcon: 12px;
 
 .container :global(.euiFlexItem).playIcon {
   margin-right: $marginIcon/3 !important;
+}
+
+.tooltipAnchor {
+  width: 16px;
+  margin-left: -4px;
+  cursor: pointer;
+}
+
+:global(.fullscreen) .tooltipAnchor {
+  margin-left: 0;
 }

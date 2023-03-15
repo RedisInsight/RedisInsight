@@ -49,7 +49,7 @@
 .tabs-active-borders {
   .euiTab {
     border-radius: 0;
-    padding: 8px 12px !important;
+    padding: 0 !important;
     border-bottom: 1px solid var(--separatorColor);
     color: var(--euiTextSubduedColor) !important;
 
@@ -63,7 +63,23 @@
       font-size: 13px !important;
       line-height: 18px !important;
       font-weight: 500 !important;
+      padding: 8px 12px;
     }
+  }
+
+  .inner-highlighting-wrapper {
+    margin: -8px -12px;
+    padding: 8px 12px;
+
+    .tab-highlighting-dot {
+      top: 2px;
+      right: 2px;
+    }
+  }
+
+  .tab-highlighting-dot {
+    top: -6px;
+    right: -12px;
   }
 
   .euiTab + .euiTab {

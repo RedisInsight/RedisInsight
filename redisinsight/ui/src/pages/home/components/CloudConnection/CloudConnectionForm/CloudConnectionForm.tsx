@@ -62,8 +62,7 @@ const Message = () => (
     >
       documentation.
     </EuiLink>
-    {` If you want to add databases that belong to ${RESOURCES.Fixed} or ${RESOURCES.Annual}
-    subscription, please follow `}
+    {` If you want to add databases that belong to a ${RESOURCES.Fixed} subscription, please follow `}
     <EuiLink
       color="text"
       className={styles.link}
@@ -151,7 +150,6 @@ const CloudConnectionForm = (props: Props) => {
       <EuiButton
         fill
         color="secondary"
-        className="btn-add"
         type="submit"
         onClick={onClick}
         disabled={submitIsDisabled}

@@ -11,7 +11,10 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   port: Joi.number().integer().required(),
   db: Joi.number().integer().allow(null).required(),
   name: Joi.string().required(),
-  connectionType: Joi.string().valid('STANDALONE', 'SENTINEL', 'CLUSTER').required(),
+  provider: Joi.string().required(),
+  new: Joi.boolean().allow(null).required(),
+  timeout: Joi.number().integer().required(),
+  connectionType: Joi.string().valid('STANDALONE', 'SENTINEL', 'CLUSTER', 'NOT CONNECTED').required(),
   lastConnection: Joi.string().isoDate().allow(null).required(),
   modules: Joi.array().items(Joi.object().keys({
     name: Joi.string().required(),

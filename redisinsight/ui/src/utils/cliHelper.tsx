@@ -13,6 +13,7 @@ import { ClusterNode, RedisDefaultModules, REDISEARCH_MODULES } from 'uiSrc/slic
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { Nullable } from './types'
 import formatToText from './transformers/cliTextFormatter'
+import { getDbIndex } from './longNames'
 
 export enum CliPrefix {
   Cli = 'cli',
@@ -71,7 +72,7 @@ const cliParseTextResponse = (
 
 const cliCommandOutput = (command: string, dbIndex = 0) => ['\n', bashTextValue(dbIndex), cliCommandWrapper(command), '\n']
 
-const bashTextValue = (dbIndex = 0) => (dbIndex > 0 ? `[${dbIndex}] > ` : '> ')
+const bashTextValue = (dbIndex = 0) => `${getDbIndex(dbIndex)} > `.trimStart()
 
 const cliCommandWrapper = (command: string) => (
   <span className="cli-command-wrapper" data-testid="cli-command-wrapper" key={Math.random()}>
@@ -79,12 +80,12 @@ const cliCommandWrapper = (command: string) => (
   </span>
 )
 
-const wbSummaryCommand = (command: string) => (
+const wbSummaryCommand = (command: string, db?: number) => (
   <span
     className="cli-command-wrapper"
     data-testid="wb-command"
   >
-    {`> ${command} \n`}
+    {`${getDbIndex(db)} > ${command} \n`}
   </span>
 )
 
@@ -93,9 +94,10 @@ const clearOutput = (dispatch: any) => {
 }
 
 const cliParseCommandsGroupResult = (
-  result: IGroupModeCommand
+  result: IGroupModeCommand,
+  db?: number,
 ) => {
-  const executionCommand = wbSummaryCommand(result.command)
+  const executionCommand = wbSummaryCommand(result.command, db)
 
   let executionResult = []
   if (result.status === CommandExecutionStatus.Success) {
@@ -198,5 +200,5 @@ export {
   checkUnsupportedModuleCommand,
   getDbIndexFromSelectQuery,
   getCommandNameFromQuery,
-  wbSummaryCommand
+  wbSummaryCommand,
 }

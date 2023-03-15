@@ -1,6 +1,6 @@
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { ExecuteQueryParams, ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
-import { getExecuteParams } from 'uiSrc/utils'
+import { getExecuteParams, getParsedParamsInQuery } from 'uiSrc/utils'
 
 const paramsState: ExecuteQueryParams = {
   activeRunQueryMode: RunQueryMode.ASCII,
@@ -31,4 +31,22 @@ describe('getExecuteParams', () => {
     expect(getExecuteParams(btnParams5, paramsState)).toEqual(expect5)
     expect(getExecuteParams(btnParams6, paramsState)).toEqual(expect6)
   })
+})
+
+describe('getParsedParamsInQuery', () => {
+  it.each([
+    ['123', {}],
+    ['get test\nget test2', {}],
+    ['get test\nget test2\nget test3', {}],
+    ['[]\nget test\nget test2\nget test3', undefined],
+    ['get test\n[mode=raw]\nget test2\nget test3', {}],
+    ['[mode=raw]\nget test\nget test2\nget test3', { mode: 'raw' }],
+    ['[mode=raw;mode=ascii]\nget test\nget test2\nget test3', { mode: 'raw' }],
+    ['[mode=raw;results=ascii]info\nget test\nget test2\nget test3', { mode: 'raw', results: 'ascii' }],
+    ['[mode=raw;results=group;pipeline=10]\nget test\nget test2\nget test3', { mode: 'raw', results: 'group', pipeline: '10' }],
+  ])('for input: %s (input), should be output: %s',
+    (input, expected) => {
+      const result = getParsedParamsInQuery(input)
+      expect(result).toEqual(expected)
+    })
 })

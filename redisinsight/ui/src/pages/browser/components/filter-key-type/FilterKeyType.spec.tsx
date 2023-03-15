@@ -11,7 +11,6 @@ import {
 import { loadKeys, setFilter } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { KeyTypes } from 'uiSrc/constants'
-import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import FilterKeyType from './FilterKeyType'
 
 let store: typeof mockedStore
@@ -64,7 +63,6 @@ describe('FilterKeyType', () => {
     const expectedActions = [
       setFilter(KeyTypes.Hash),
       loadKeys(),
-      resetBrowserTree()
     ]
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions(expectedActions)

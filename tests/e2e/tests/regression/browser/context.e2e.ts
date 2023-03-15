@@ -8,6 +8,7 @@ import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -42,7 +43,7 @@ test('Verify that if user has saved context on Browser page and go to Settings p
     await t.expect(myRedisDatabasePage.workbenchButton.visible).ok('Workbench icon is not displayed');
     // Open Browser page and verify context
     await t.click(myRedisDatabasePage.browserButton);
-    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is not applied');
+    await verifySearchFilterValue(keyName);
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is not selected');
     await t.expect(cliPage.cliCommandExecuted.withExactText(command).exists).ok(`Executed command '${command}' in CLI is not saved`);
     await t.click(cliPage.cliCollapseButton);
@@ -55,7 +56,7 @@ test('Verify that when user reload the window with saved context(on any page), c
     await t.click(myRedisDatabasePage.workbenchButton);
     // Open Browser page and verify context
     await t.click(myRedisDatabasePage.browserButton);
-    await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).ok('Filter per key name is not applied');
+    await verifySearchFilterValue(keyName);
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is not selected');
     // Navigate to Workbench and reload the window
     await t.click(myRedisDatabasePage.workbenchButton);

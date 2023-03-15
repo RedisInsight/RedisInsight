@@ -14,6 +14,10 @@ import {
   scrollIntoView,
   getExecuteParams,
   isGroupMode,
+  getMonacoLines,
+  Maybe,
+  isGroupResults,
+  getParsedParamsInQuery,
 } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import {
@@ -37,6 +41,9 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
+
+import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
 
 import WBView from './WBView'
@@ -147,6 +154,18 @@ const WBViewWrapper = () => {
     setResultsMode(isGroupMode(resultsMode) ? ResultsMode.Default : ResultsMode.GroupMode)
   }
 
+  const updateOnboardingOnSubmit = () => dispatch(incrementOnboardStepAction(
+    OnboardingSteps.WorkbenchPage,
+    undefined,
+    () => sendEventTelemetry({
+      event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
+      eventData: {
+        databaseId: instanceId,
+        step: OnboardingStepName.WorkbenchIntro,
+      }
+    })
+  ))
+
   const handleSubmit = (
     commandInit: string = script,
     commandId?: Nullable<string>,
@@ -163,7 +182,7 @@ const WBViewWrapper = () => {
       ''
     )
 
-    const chunkSize = isGroupMode(resultsMode) ? commandsForExecuting.length : (batchSize > 1 ? batchSize : 1)
+    const chunkSize = isGroupResults(resultsMode) ? commandsForExecuting.length : (batchSize > 1 ? batchSize : 1)
 
     const [commands, ...rest] = chunk(commandsForExecuting, chunkSize)
     const multiCommands = rest.map((command) => getMultiCommands(command))
@@ -178,7 +197,10 @@ const WBViewWrapper = () => {
       commands,
       multiCommands,
       { activeRunQueryMode, resultsMode },
-      () => handleSubmit(multiCommands.join('\n'), commandId, executeParams)
+      () => {
+        updateOnboardingOnSubmit()
+        handleSubmit(multiCommands.join('\n'), commandId, executeParams)
+      }
     )
   }
 
@@ -244,15 +266,19 @@ const WBViewWrapper = () => {
   }
 
   const sourceValueSubmit = (
-    value?: string,
+    value: string = script,
     commandId?: Nullable<string>,
     executeParams: CodeButtonParams = { clearEditor: true }
   ) => {
     if (state.loading || (!value && !script)) return
 
+    const lines = getMonacoLines(value)
+    const parsedParams: Maybe<CodeButtonParams> = getParsedParamsInQuery(value)
+
     const { clearEditor } = executeParams
-    handleSubmit(value, commandId, executeParams)
-    if (cleanupWB && clearEditor) {
+    handleSubmit(value, commandId, { ...executeParams, ...parsedParams })
+
+    if (cleanupWB && clearEditor && lines.length) {
       resetCommand()
     }
   }

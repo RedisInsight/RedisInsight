@@ -3,15 +3,15 @@ import { EuiAccordion, EuiText } from '@elastic/eui'
 import './styles.scss'
 
 export interface Props {
-  testId: string,
-  label: string;
-  children: React.ReactElement[];
-  withBorder?: boolean;
-  initialIsOpen?: boolean;
-  forceState?: 'open' | 'closed';
-  arrowDisplay?: 'left' | 'right' | 'none';
-  onToggle?: (isOpen: boolean) => void;
-  triggerStyle?: any,
+  testId: string
+  label: string | React.ReactElement
+  children: React.ReactElement[]
+  withBorder?: boolean
+  initialIsOpen?: boolean
+  forceState?: 'open' | 'closed'
+  arrowDisplay?: 'left' | 'right' | 'none'
+  onToggle?: (isOpen: boolean) => void
+  triggerStyle?: any
 }
 
 const Group = (props: Props) => {

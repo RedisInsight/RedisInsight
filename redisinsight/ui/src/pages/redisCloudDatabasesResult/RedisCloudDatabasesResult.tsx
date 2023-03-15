@@ -152,7 +152,6 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
                 size="m"
                 onClick={onView}
                 color="secondary"
-                className="btn-add"
                 data-testid="btn-view-databases"
               >
                 View Databases

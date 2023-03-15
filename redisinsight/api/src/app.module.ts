@@ -19,6 +19,7 @@ import { ServerModule } from 'src/modules/server/server.module';
 import { LocalDatabaseModule } from 'src/local-database.module';
 import { CoreModule } from 'src/core.module';
 import { AutodiscoveryModule } from 'src/modules/autodiscovery/autodiscovery.module';
+import { DatabaseImportModule } from 'src/modules/database-import/database-import.module';
 import { DummyAuthMiddleware } from 'src/common/middlewares/dummy-auth.middleware';
 import { BrowserModule } from './modules/browser/browser.module';
 import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterprise.module';
@@ -43,7 +44,7 @@ const PATH_CONFIG = config.get('dir_path');
     RedisSentinelModule,
     BrowserModule,
     CliModule,
-    WorkbenchModule,
+    WorkbenchModule.register(),
     PluginModule,
     CommandsModule,
     ProfilerModule,
@@ -53,6 +54,7 @@ const PATH_CONFIG = config.get('dir_path');
     BulkActionsModule,
     ClusterMonitorModule,
     DatabaseAnalysisModule,
+    DatabaseImportModule,
     ...(SERVER_CONFIG.staticContent
       ? [
         ServeStaticModule.forRoot({

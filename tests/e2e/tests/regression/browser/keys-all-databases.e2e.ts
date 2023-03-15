@@ -1,4 +1,4 @@
-import { t } from 'testcafe';
+import { Selector, t } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
 import {
     acceptLicenseTermsAndAddDatabaseApi,
@@ -18,7 +18,11 @@ import {
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { deleteOSSClusterDatabaseApi, deleteAllSentinelDatabasesApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import {
+    deleteOSSClusterDatabaseApi,
+    deleteStandaloneDatabaseApi,
+    deleteAllDatabasesByConnectionTypeApi
+} from '../../../helpers/api/api-database';
 import { BrowserActions } from '../../../common-actions/browser-actions';
 
 const browserPage = new BrowserPage();
@@ -36,8 +40,9 @@ const verifyKeysAdded = async(): Promise<void> => {
     await t.expect(notification).contains('Key has been added', 'The notification not correct');
     // Check that new key is displayed in the list
     await browserPage.searchByKeyName(keyName);
-    const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-    await t.expect(isKeyIsDisplayedInTheList).ok('The key is not added');
+    const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+    await common.waitForElementNotVisible(browserPage.loader);
+    await t.expect(keyNameInTheList.exists).ok(`${keyName} key is not added`);
 };
 
 fixture `Work with keys in all types of databases`
@@ -87,7 +92,7 @@ test
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteAllSentinelDatabasesApi(ossSentinelConfig);
+        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     })('Verify that user can add Key in Sentinel Primary Group', async() => {
         await verifyKeysAdded();
     });

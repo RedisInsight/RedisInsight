@@ -17,7 +17,7 @@ import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, Telemetry
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 
 import Header from './components/header'
-import AnalysisDataView from './components/analysis-data-view'
+import DatabaseAnalysisTabs from './components/data-nav-tabs'
 import styles from './styles.module.scss'
 
 const DatabaseAnalysisPage = () => {
@@ -89,7 +89,11 @@ const DatabaseAnalysisPage = () => {
         progress={data?.progress}
         analysisLoading={analysisLoading}
       />
-      <AnalysisDataView loading={analysisLoading} reports={reports} data={data} />
+      <DatabaseAnalysisTabs
+        loading={analysisLoading}
+        reports={reports}
+        data={data}
+      />
     </div>
   )
 }

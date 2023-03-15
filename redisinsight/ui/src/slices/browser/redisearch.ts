@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { remove } from 'lodash'
 
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, SearchHistoryMode } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { bufferToString, getApiErrorMessage, getUrl, isEqualBuffers, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
@@ -11,6 +11,7 @@ import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import ApiErrors from 'uiSrc/constants/apiErrors'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { SearchHistoryItem } from 'uiSrc/slices/interfaces/keys'
 import { GetKeysWithDetailsResponse } from 'apiSrc/modules/browser/dto'
 import { CreateRedisearchIndexDto, ListRedisearchIndexesResponse } from 'apiSrc/modules/browser/dto/redisearch'
 
@@ -42,6 +43,10 @@ export const initialState: StateRedisearch = {
     loading: false,
     error: '',
   },
+  searchHistory: {
+    data: null,
+    loading: false,
+  }
 }
 
 // A slice for recipes
@@ -197,6 +202,28 @@ const redisearchSlice = createSlice({
         keys,
       }
     },
+    loadRediSearchHistory: (state) => {
+      state.searchHistory.loading = true
+    },
+    loadRediSearchHistorySuccess: (state, { payload }: PayloadAction<SearchHistoryItem[]>) => {
+      state.searchHistory.loading = false
+      state.searchHistory.data = payload
+    },
+    loadRediSearchHistoryFailure: (state) => {
+      state.searchHistory.loading = false
+    },
+    deleteRediSearchHistory: (state) => {
+      state.searchHistory.loading = true
+    },
+    deleteRediSearchHistorySuccess: (state, { payload }: { payload: string[] }) => {
+      state.searchHistory.loading = false
+      if (state.searchHistory.data) {
+        remove(state.searchHistory.data, (item) => payload.includes(item.id))
+      }
+    },
+    deleteRediSearchHistoryFailure: (state) => {
+      state.searchHistory.loading = false
+    },
   },
 })
 
@@ -222,6 +249,12 @@ export const {
   deleteRedisearchKeyFromList,
   editRedisearchKeyFromList,
   editRedisearchKeyTTLFromList,
+  loadRediSearchHistory,
+  loadRediSearchHistorySuccess,
+  loadRediSearchHistoryFailure,
+  deleteRediSearchHistory,
+  deleteRediSearchHistorySuccess,
+  deleteRediSearchHistoryFailure
 } = redisearchSlice.actions
 
 // Selectors
@@ -229,6 +262,7 @@ export const redisearchSelector = (state: RootState) => state.browser.redisearch
 export const redisearchDataSelector = (state: RootState) => state.browser.redisearch.data
 export const redisearchListSelector = (state: RootState) => state.browser.redisearch.list
 export const createIndexStateSelector = (state: RootState) => state.browser.redisearch.createIndex
+export const redisearchHistorySelector = (state: RootState) => state.browser.redisearch.searchHistory
 
 // The reducer
 export default redisearchSlice.reducer
@@ -240,6 +274,7 @@ export let controller: Nullable<AbortController> = null
 export function fetchRedisearchKeysAction(
   cursor: string,
   count: number,
+  telemetryProperties: { [key: string]: any } = {},
   onSuccess?: (value: GetKeysWithDetailsResponse) => void,
   onFailed?: () => void,
 ) {
@@ -279,6 +314,8 @@ export function fetchRedisearchKeysAction(
               view: state.browser.keys?.viewType,
               databaseId: state.connections.instances?.connectedInstance?.id,
               scanCount: data.scanned,
+              source: telemetryProperties.source ?? 'manual',
+              ...telemetryProperties,
             }
           })
         }
@@ -357,6 +394,7 @@ export function fetchMoreRedisearchKeysAction(
 export function fetchRedisearchListAction(
   onSuccess?: (value: RedisResponseBuffer[]) => void,
   onFailed?: () => void,
+  showError = true
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadList())
@@ -381,7 +419,7 @@ export function fetchRedisearchListAction(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      showError && dispatch(addErrorNotification(error))
       dispatch(loadListFailure(errorMessage))
       onFailed?.()
     }
@@ -422,6 +460,74 @@ export function createRedisearchIndexAction(
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(createIndexFailure(errorMessage))
+      onFailed?.()
+    }
+  }
+}
+
+export function fetchRedisearchHistoryAction(
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(loadRediSearchHistory())
+
+    try {
+      const state = stateInit()
+      const { data, status } = await apiService.get<SearchHistoryItem[]>(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.HISTORY
+        ),
+        {
+          params: {
+            mode: SearchHistoryMode.Redisearch
+          }
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(loadRediSearchHistorySuccess(data))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      dispatch(loadRediSearchHistoryFailure())
+      onFailed?.()
+    }
+  }
+}
+
+export function deleteRedisearchHistoryAction(
+  ids: string[],
+  onSuccess?: () => void,
+  onFailed?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(deleteRediSearchHistory())
+
+    try {
+      const state = stateInit()
+      const { status } = await apiService.delete(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.HISTORY
+        ),
+        {
+          data: {
+            ids
+          },
+          params: {
+            mode: SearchHistoryMode.Redisearch
+          }
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(deleteRediSearchHistorySuccess(ids))
+        onSuccess?.()
+      }
+    } catch (_err) {
+      dispatch(deleteRediSearchHistoryFailure())
       onFailed?.()
     }
   }

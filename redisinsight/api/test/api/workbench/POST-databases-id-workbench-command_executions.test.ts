@@ -72,6 +72,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   }).allow(null),
   createdAt: Joi.date().required(),
   executionTime: Joi.number().integer(),
+  db: Joi.number().integer().allow(null),
   isNotStored: Joi.boolean(),
   summary: Joi.object({
     total: Joi.number(),
@@ -133,6 +134,7 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
             expect(body[0].command).to.eql(`get ${constants.TEST_STRING_KEY_1}`);
             expect(body[0].role).to.eql(null);
             expect(body[0].executionTime).to.be.a('number');
+            expect(body[0].db).to.be.eql(0);
             expect(body[0].role).to.eql(null);
             expect(body[0].result.length).to.eql(1);
             expect(body[0].result[0].response).to.eql(bigStringValue);
@@ -1012,7 +1014,7 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
     let nodes;
 
     before(async () => {
-      database = await (await localDb.getRepository(localDb.repositories.DAtABASE)).findOneBy({
+      database = await (await localDb.getRepository(localDb.repositories.DATABASE)).findOneBy({
         id: constants.TEST_INSTANCE_ID,
       });
       nodes = JSON.parse(database.nodes);
@@ -1236,6 +1238,8 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
             expect(entity_2.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
             expect(body[0].executionTime).to.eql(entity_1.executionTime);
             expect(body[1].executionTime).to.eql(entity_2.executionTime);
+            expect(body[0].db).to.eql(entity_1.db);
+            expect(body[1].db).to.eql(entity_2.db);
             expect(localDb.encryptData(body[0].command)).to.eql(entity_1.command);
             expect(localDb.encryptData(body[1].command)).to.eql(entity_2.command);
             expect(body[0].result[0].status).to.eql('success');
@@ -1264,6 +1268,8 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
             expect(entity_2.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
             expect(body[0].executionTime).to.eql(entity_1.executionTime);
             expect(body[1].executionTime).to.eql(entity_2.executionTime);
+            expect(body[0].db).to.eql(entity_1.db);
+            expect(body[1].db).to.eql(entity_2.db);
             expect(localDb.encryptData(body[0].command)).to.eql(entity_1.command);
             expect(localDb.encryptData(body[1].command)).to.eql(entity_2.command);
             expect(body[0].result[0].status).to.eql('success');
@@ -1299,6 +1305,7 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
 
             expect(entity.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
             expect(body[0].executionTime).to.eql(entity.executionTime);
+            expect(body[0].db).to.eql(entity.db);
             // group mode should always return success
             expect(body[0].result[0].status).to.eql('success');
             expect(body[0].result[0].response[0].status).to.eql('success');
@@ -1346,6 +1353,8 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
             ]);
             expect(body[0].result[0].response[1].response).to.include('ERR unknown command');
             expect(localDb.encryptData(JSON.stringify(body[0].result))).to.eql(entity.result);
+            expect(body[0].db).to.be.a('number')
+            expect(body[0].db).to.eql(entity.db);
           }
         },
       ].map(mainCheckFn);

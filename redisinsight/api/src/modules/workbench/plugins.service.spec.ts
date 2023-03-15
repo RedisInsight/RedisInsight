@@ -15,7 +15,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { PluginsService } from 'src/modules/workbench/plugins.service';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
 import { PluginCommandExecution } from 'src/modules/workbench/models/plugin-command-execution';
-import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
+import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin-state.repository';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import config from 'src/utils/config';
 
@@ -94,7 +94,7 @@ describe('PluginsService', () => {
           useFactory: mockPluginCommandsWhitelistProvider,
         },
         {
-          provide: PluginStateProvider,
+          provide: PluginStateRepository,
           useFactory: mockPluginStateProvider,
         },
       ],
@@ -103,7 +103,7 @@ describe('PluginsService', () => {
     service = module.get<PluginsService>(PluginsService);
     workbenchCommandsExecutor = module.get<WorkbenchCommandsExecutor>(WorkbenchCommandsExecutor);
     pluginsCommandsWhitelistProvider = module.get<PluginCommandsWhitelistProvider>(PluginCommandsWhitelistProvider);
-    pluginStateProvider = module.get<PluginStateProvider>(PluginStateProvider);
+    pluginStateProvider = module.get(PluginStateRepository);
   });
 
   describe('sendCommand', () => {

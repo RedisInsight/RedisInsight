@@ -57,7 +57,7 @@ export const getTCPEndpoints = (processes: string[]): IEndpoint[] => {
 
     if (match) {
       endpoints.set(match[4], {
-        host: 'localhost',
+        host: '127.0.0.1',
         port: parseInt(match[4], 10),
       });
     }

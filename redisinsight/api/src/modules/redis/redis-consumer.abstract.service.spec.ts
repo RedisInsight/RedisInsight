@@ -1,15 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 import * as Redis from 'ioredis-mock';
-import { v4 as uuidv4 } from 'uuid';
-import { mockDatabase, mockDatabaseService } from 'src/__mocks__';
-import { IRedisClientInstance, RedisService } from 'src/modules/redis/redis.service';
+import {
+  mockDatabase, mockDatabaseService, mockRedisClientInstance, mockRedisConnectionFactory,
+} from 'src/__mocks__';
+import { RedisService } from 'src/modules/redis/redis.service';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
 import { RedisConsumerAbstractService } from 'src/modules/redis/redis-consumer.abstract.service';
 import { ClientNotFoundErrorException } from 'src/modules/redis/exceptions/client-not-found-error.exception';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { ClientContext, ClientMetadata } from 'src/common/models';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 const mockClientMetadata: ClientMetadata = {
   session: undefined,
@@ -17,15 +19,9 @@ const mockClientMetadata: ClientMetadata = {
   context: ClientContext.Browser,
 };
 
-export const mockRedisClientInstance: IRedisClientInstance = {
-  ...mockClientMetadata,
-  uniqueId: uuidv4(),
-  client: new Redis(),
-  lastTimeUsed: 1619791508019,
-};
-
 describe('RedisConsumerAbstractService', () => {
   let redisService;
+  let redisConnectionFactory;
   let instancesBusinessService;
   let consumerInstance;
 
@@ -45,6 +41,10 @@ describe('RedisConsumerAbstractService', () => {
           }),
         },
         {
+          provide: RedisConnectionFactory,
+          useFactory: mockRedisConnectionFactory,
+        },
+        {
           provide: DatabaseService,
           useFactory: mockDatabaseService,
         },
@@ -53,6 +53,9 @@ describe('RedisConsumerAbstractService', () => {
 
     redisService = await module.get<RedisService>(RedisService);
     consumerInstance = await module.get<BrowserToolService>(BrowserToolService);
+    redisConnectionFactory = await module.get(RedisConnectionFactory);
+
+    redisService.setClientInstance.mockReturnValue(mockRedisClientInstance);
   });
 
   describe('getRedisClient', () => {
@@ -123,7 +126,13 @@ describe('RedisConsumerAbstractService', () => {
       // @ts-ignore
       class Tool extends RedisConsumerAbstractService {
         constructor() {
-          super(ClientContext.CLI, redisService, instancesBusinessService, { enableAutoConnection: false });
+          super(
+            ClientContext.CLI,
+            redisService,
+            redisConnectionFactory,
+            instancesBusinessService,
+            { enableAutoConnection: false },
+          );
         }
       }
 
@@ -134,13 +143,11 @@ describe('RedisConsumerAbstractService', () => {
 
   describe('createNewClient', () => {
     it('create new redis client', async () => {
-      redisService.connectToDatabaseInstance.mockResolvedValue(
+      redisConnectionFactory.createRedisConnection.mockResolvedValue(
         mockRedisClientInstance.client,
       );
 
-      const result = await consumerInstance.createNewClient(
-        mockRedisClientInstance.databaseId,
-      );
+      const result = await consumerInstance.createNewClient(mockRedisClientInstance.clientMetadata);
 
       expect(result).toEqual(mockRedisClientInstance.client);
     });
@@ -148,10 +155,10 @@ describe('RedisConsumerAbstractService', () => {
       const error = new BadRequestException(
         ' Could not connect to localhost, please check the connection details.',
       );
-      redisService.connectToDatabaseInstance.mockRejectedValue(error);
+      redisConnectionFactory.createRedisConnection.mockRejectedValue(error);
 
       await expect(
-        consumerInstance.createNewClient(mockRedisClientInstance.databaseId),
+        consumerInstance.createNewClient(mockRedisClientInstance.clientMetadata),
       ).rejects.toThrow(error);
     });
   });

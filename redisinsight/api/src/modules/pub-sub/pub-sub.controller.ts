@@ -29,7 +29,9 @@ export class PubSubController {
     ],
   })
   async publish(
-    @ClientMetadataParam() clientMetadata: ClientMetadata,
+    @ClientMetadataParam({
+      ignoreDbIndex: true,
+    }) clientMetadata: ClientMetadata,
       @Body() dto: PublishDto,
   ): Promise<PublishResponse> {
     return this.service.publish(clientMetadata, dto);

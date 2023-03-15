@@ -1,5 +1,11 @@
 import { Joi } from '../../helpers/test';
 
+export const typedRecommendationSchema = Joi.object({
+  name: Joi.string().required(),
+  vote: Joi.string(),
+  params: Joi.any(),
+});
+
 export const typedTotalSchema = Joi.object({
   total: Joi.number().integer().required(),
   types: Joi.array().items(Joi.object({
@@ -50,9 +56,11 @@ export const analysisSchema = Joi.object().keys({
   }).required(),
   totalKeys: typedTotalSchema.required(),
   totalMemory: typedTotalSchema.required(),
+  db: Joi.number().integer().allow(null),
   topKeysNsp: Joi.array().items(nspSummarySchema).required().max(15),
   topMemoryNsp: Joi.array().items(nspSummarySchema).required().max(15),
   topKeysLength: Joi.array().items(keySchema).required().max(15),
   topKeysMemory: Joi.array().items(keySchema).required().max(15),
   expirationGroups: Joi.array().items(sumGroupSchema).required(),
+  recommendations: Joi.array().items(typedRecommendationSchema).required(),
 }).required();

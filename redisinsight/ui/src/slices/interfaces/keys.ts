@@ -45,6 +45,19 @@ export interface KeysStore {
     loading: boolean
     error: string
   }
+  searchHistory: {
+    data: null | Array<SearchHistoryItem>
+    loading: boolean
+  }
+}
+
+export interface SearchHistoryItem {
+  id: string
+  filter: {
+    type: string
+    match: string
+  }
+  mode: string
 }
 
 export interface KeysStoreData {

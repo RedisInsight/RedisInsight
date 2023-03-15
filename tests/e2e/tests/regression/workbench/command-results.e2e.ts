@@ -1,6 +1,5 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { WorkbenchPage } from '../../../pageObjects/workbench-page';
-import { MyRedisDatabasePage } from '../../../pageObjects';
+import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneRedisearch
@@ -8,9 +7,11 @@ import {
 import { env, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import {WorkbenchActions} from '../../../common-actions/workbench-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const workBenchActions = new WorkbenchActions();
 const common = new Common();
 
 const indexName = common.generateWord(5);
@@ -116,4 +117,20 @@ test('Big output in workbench is visible in virtualized table', async t => {
 
     // Verify that all commands scrolled
     await t.expect(lastExpectedItem.visible).ok('Final execution time message not displayed');
+});
+
+test.before(async t => {
+    await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+    await t.click(myRedisDatabasePage.workbenchButton);
+}).after(async t => {
+    await t.switchToMainWindow();
+    await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+})('Verify that user can see the client List visualization available for all users', async t => {
+    const command = 'CLIENT LIST';
+    // Send command in workbench to view client list
+    await workbenchPage.sendCommandInWorkbench(command);
+    await t.expect(workbenchPage.typeSelectedClientsList.visible).ok('client list view button is not visible');
+    await workBenchActions.verifyClientListColumnsAreVisible(['id', 'addr', 'name', 'user']);
+    // verify table view row count match with text view after client list command
+    await workBenchActions.verifyClientListTableViewRowCount();
 });

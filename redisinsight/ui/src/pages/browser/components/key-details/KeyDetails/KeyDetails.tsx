@@ -5,7 +5,7 @@ import {
   EuiButtonIcon,
   EuiToolTip
 } from '@elastic/eui'
-import { curryRight, isNull } from 'lodash'
+import { isNull } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {

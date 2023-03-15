@@ -69,6 +69,10 @@ export class WorkbenchPage {
     documentHashCreateButton = Selector('[data-testid=preselect-auto-Create]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
+    parametersAnchor = Selector('[data-testid=parameters-anchor]');
+    groupModeIcon = Selector('[data-testid=group-mode-tooltip]');
+    rawModeIcon = Selector('[data-testid=raw-mode-tooltip]');
+    silentModeIcon = Selector('[data-testid=silent-mode-tooltip]');
     //LINKS
     timeSeriesLink = Selector('[data-testid=internal-link-redis_for_time_series]');
     redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
@@ -83,6 +87,7 @@ export class WorkbenchPage {
     //TEXT ELEMENTS
     queryPluginResult = Selector('[data-testid=query-plugin-result]');
     responseInfo = Selector('[class="responseInfo"]');
+    parsedRedisReply = Selector('[class="parsedRedisReply"]');
     scriptsLines = Selector('[data-testid=query-input-container] .view-lines');
     queryCardContainer = Selector('[data-testid^=query-card-container]');
     queryCardCommand = Selector('[data-testid=query-card-command]');
@@ -136,7 +141,9 @@ export class WorkbenchPage {
     textViewTypeOption = Selector('[data-test-subj^=view-type-option-Text]');
     tableViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin]');
     graphViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin-graph]');
-
+    typeSelectedClientsList = Selector('[data-testid=view-type-selected-Plugin-client-list__clients-list]');
+    viewTypeOptionClientList = Selector('[data-test-subj=view-type-option-Plugin-client-list__clients-list]');
+    viewTypeOptionsText = Selector('[data-test-subj=view-type-option-Text-default__Text]');
     /**
      * Get card container by command
      * @param command The command
@@ -179,6 +186,19 @@ export class WorkbenchPage {
     }
 
     /**
+     * Send multiple commands in Workbench
+     * @param commands The commands
+     */
+    async sendMultipleCommandsInWorkbench(commands: string[]): Promise<void> {
+        for (const command of commands) {
+            await t
+                .typeText(this.queryInput, command, { replace: false, speed: 1, paste: true })
+                .pressKey('enter');
+        }
+        await t.click(this.submitCommandButton);
+    }
+
+    /**
      * Send commands array in Workbench page
      * @param commands The array of commands to send
      */
@@ -197,9 +217,9 @@ export class WorkbenchPage {
     async checkWorkbenchCommandResult(command: string, result: string, childNum = 0): Promise<void> {
         // Compare the command with executed command
         const actualCommand = await this.queryCardContainer.nth(childNum).find(this.cssQueryCardCommand).textContent;
-        await t.expect(actualCommand).eql(command, 'Actual command is not equal to executed');
+        await t.expect(actualCommand).contains(command, 'Actual command is not equal to executed');
         // Compare the command result with executed command
         const actualCommandResult = await this.queryCardContainer.nth(childNum).find(this.cssQueryTextResult).textContent;
-        await t.expect(actualCommandResult).eql(result, 'Actual command result is not equal to executed');
+        await t.expect(actualCommandResult).contains(result, 'Actual command result is not equal to executed');
     }
 }

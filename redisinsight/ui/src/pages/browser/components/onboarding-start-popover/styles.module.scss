@@ -1,0 +1,19 @@
+.onboardingStartPopover {
+  position: fixed !important;
+  top: calc(100% - 228px) !important;
+  left: calc(100% - 398px) !important;
+  width: 360px !important;
+
+  background-color: var(--euiTooltipBackgroundColor) !important;
+
+  :global(.euiPopover__panelArrow) {
+    display: none;
+  }
+}
+
+.onboardingActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+}

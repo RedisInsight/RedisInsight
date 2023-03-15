@@ -209,6 +209,35 @@ describe('DatabaseInfoProvider', () => {
     });
   });
 
+  describe('getDatabaseCountFromKeyspace', () => {
+    it('should return 1 since db0 keys presented only', async () => {
+      const result = await service['getDatabaseCountFromKeyspace']({
+        db0: 'keys=11,expires=0,avg_ttl=0',
+      });
+
+      expect(result).toBe(1);
+    });
+    it('should return 7 since db6 is the last logical databases with known keys', async () => {
+      const result = await service['getDatabaseCountFromKeyspace']({
+        db0: 'keys=21,expires=0,avg_ttl=0',
+        db1: 'keys=31,expires=0,avg_ttl=0',
+        db6: 'keys=41,expires=0,avg_ttl=0',
+      });
+
+      expect(result).toBe(7);
+    });
+    it('should return 1 when empty keySpace provided', async () => {
+      const result = await service['getDatabaseCountFromKeyspace']({});
+
+      expect(result).toBe(1);
+    });
+    it('should return 1 when incorrect keySpace provided', async () => {
+      const result = await service['getDatabaseCountFromKeyspace'](null);
+
+      expect(result).toBe(1);
+    });
+  });
+
   describe('determineDatabaseModules', () => {
     it('get modules by using MODULE LIST command', async () => {
       when(mockIORedisClient.call)

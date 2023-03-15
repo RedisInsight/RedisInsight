@@ -1,3 +1,6 @@
+import * as os from 'os';
+import * as fs from 'fs';
+import { join as joinPath } from 'path';
 import { Chance } from 'chance';
 const chance = new Chance();
 
@@ -5,12 +8,21 @@ const chance = new Chance();
 export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
 export const apiUrl = process.env.API_URL || 'https://localhost:5000/api';
 
+export const fileDownloadPath = joinPath(os.homedir(), 'Downloads');
 const uniqueId = chance.string({ length: 10 });
 
 export const ossStandaloneConfig = {
     host: process.env.OSS_STANDALONE_HOST || 'oss-standalone',
     port: process.env.OSS_STANDALONE_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_PASSWORD
+};
+
+export const ossStandaloneConfigEmpty = {
+    host: process.env.OSS_STANDALONE_HOST || 'oss-standalone-empty',
+    port: process.env.OSS_STANDALONE_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone_empty'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
 };
@@ -42,13 +54,13 @@ export const ossSentinelConfig = {
     sentinelPort: process.env.OSS_SENTINEL_PORT || '26379',
     sentinelPassword: process.env.OSS_SENTINEL_PASSWORD || 'password',
     masters: [{
-        alias: 'primary-group-1',
+        alias: `primary-group-1}-${uniqueId}`,
         db: '0',
         name: 'primary-group-1',
         password: 'defaultpass'
     },
     {
-        alias: 'primary-group-2',
+        alias: `primary-group-2}-${uniqueId}`,
         db: '0',
         name: 'primary-group-2',
         password: 'defaultpass'
@@ -94,4 +106,29 @@ export const ossStandaloneNoPermissionsConfig = {
     databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'oss-standalone-no-permissions'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME || 'noperm',
     databasePassword: process.env.OSS_STANDALONE_PASSWORD
+};
+
+export const ossStandaloneForSSHConfig = {
+    host: process.env.OSS_STANDALONE_HOST || '172.33.100.111',
+    port: process.env.OSS_STANDALONE_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'oss-standalone-for-ssh'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_PASSWORD
+};
+
+export const ossStandaloneTlsConfig = {
+    host: process.env.OSS_STANDALONE_TLS_HOST || 'oss-standalone-tls',
+    port: process.env.OSS_STANDALONE_TLS_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_TLS_DATABASE_NAME || 'test_standalone_tls'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_TLS_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_TLS_PASSWORD,
+    caCert: {
+        name: `ca}-${uniqueId}`,
+        certificate: process.env.E2E_CA_CRT || fs.readFileSync('./rte/oss-standalone-tls/certs/redisCA.crt', 'utf-8')
+    },
+    clientCert: {
+        name: `client}-${uniqueId}`,
+        certificate: process.env.E2E_CLIENT_CRT || fs.readFileSync('./rte/oss-standalone-tls/certs/redis.crt', 'utf-8'),
+        key: process.env.E2E_CLIENT_KEY || fs.readFileSync('./rte/oss-standalone-tls/certs/redis.key', 'utf-8')
+    }
 };

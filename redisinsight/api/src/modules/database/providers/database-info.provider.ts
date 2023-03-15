@@ -211,7 +211,7 @@ export class DatabaseInfoProvider {
     const clientsInfo = info['clients'];
     const statsInfo = info['stats'];
     const replicationInfo = info['replication'];
-    const databases = await this.getDatabasesCount(client);
+    const databases = await this.getDatabasesCount(client, keyspaceInfo);
     return {
       version: serverInfo?.redis_version,
       databases,
@@ -243,10 +243,30 @@ export class DatabaseInfoProvider {
     }));
   }
 
-  public async getDatabasesCount(client: any): Promise<number> {
+  public async getDatabasesCount(client: any, keyspaceInfo?: object): Promise<number> {
     try {
       const reply = await client.call('config', ['get', 'databases']);
       return reply.length ? parseInt(reply[1], 10) : 1;
+    } catch (e) {
+      return this.getDatabaseCountFromKeyspace(keyspaceInfo);
+    }
+  }
+
+  /**
+   * Try to determine number of logical database from the `info keyspace`
+   *
+   * Note: This is unreliable method which may return less logical databases count that database has
+   * However this is needed for workaround when `config` command is disabled to understand if we need
+   * to show logical database switcher on UI
+   * @param keyspaceInfo
+   * @private
+   */
+  private getDatabaseCountFromKeyspace(keyspaceInfo: object): number {
+    try {
+      const keySpaces = Object.keys(keyspaceInfo);
+      const matches = keySpaces[keySpaces.length - 1].match(/(\d+)/);
+
+      return matches[0] ? parseInt(matches[0], 10) + 1 : 1;
     } catch (e) {
       return 1;
     }

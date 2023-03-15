@@ -128,10 +128,17 @@
 
   --moduleBackgroundColor: #{$typeHashColor};
   --callOutBackgroundColor: #{$callOutBackgroundColor};
+  --tooltipLightBgColor: #{$tooltipLightBgColor};
 
   --overlayPromoNYColor: #{$overlayPromoNYColor};
 
   --monacoBgColor: #{$monacoBgColor};
+  --highlightDotColor: #{$highlightDotColor};
+  --monacoParamsColor: #{$monacoParamsColor};
+
+  --successBorderColor: #{$successBorderColor};
+  --warningBorderColor: #{$warningBorderColor};
+  --errorBorderColor: #{$errorBorderColor};
 
   // KeyTypes
   --typeHashColor: #{$typeHashColor};
@@ -177,4 +184,8 @@
 
   // Pub/Sub
   --pubSubClientsBadge: #{$pubSubClientsBadge};
+
+  // Database analysis
+  --badgeIconColor: #{$badgeIconColor};
+  --recommendationBorderColor: #{$recommendationBorderColor};
 }

@@ -1,7 +1,7 @@
 import {
   Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
-import { sum, merge } from 'lodash';
+import { isEmpty, merge, omit, reject, sum } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -14,18 +14,31 @@ import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
-import { AppRedisInstanceEvents } from 'src/constants';
+import { AppRedisInstanceEvents, RedisErrorCodes } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
-import { ClientContext } from 'src/common/models';
+import { ClientContext, Session } from 'src/common/models';
+import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
+import { ExportDatabase } from 'src/modules/database/models/export-database';
 
 @Injectable()
 export class DatabaseService {
   private logger = new Logger('DatabaseService');
 
+  private exportSecurityFields: string[] = [
+    'password',
+    'clientCert.key',
+    'sshOptions.password',
+    'sshOptions.passphrase',
+    'sshOptions.privateKey',
+    'sentinelMaster.password',
+  ]
+
   constructor(
     private repository: DatabaseRepository,
     private redisService: RedisService,
+    private redisConnectionFactory: RedisConnectionFactory,
     private databaseInfoProvider: DatabaseInfoProvider,
     private databaseFactory: DatabaseFactory,
     private analytics: DatabaseAnalytics,
@@ -88,13 +101,21 @@ export class DatabaseService {
     try {
       this.logger.log('Creating new database.');
 
-      const database = await this.repository.create(
-        await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
-      );
+      const database = await this.repository.create({
+        ...await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
+        new: true,
+      });
 
       // todo: clarify if we need this and if yes - rethink implementation
       try {
-        const client = await this.redisService.connectToDatabaseInstance(database, ClientContext.Common);
+        const client = await this.redisConnectionFactory.createRedisConnection(
+          {
+            session: {} as Session,
+            databaseId: database.id,
+            context: ClientContext.Common,
+          },
+          database,
+        );
         const redisInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
         this.analytics.sendInstanceAddedEvent(database, redisInfo);
         await client.disconnect();
@@ -117,12 +138,13 @@ export class DatabaseService {
   // todo: remove manualUpdate flag logic
   public async update(
     id: string,
-    dto: UpdateDatabaseDto,
+    dto: UpdateDatabaseDto | ModifyDatabaseDto,
     manualUpdate: boolean = true,
   ): Promise<Database> {
     this.logger.log(`Updating database: ${id}`);
     const oldDatabase = await this.get(id, true);
-    let database = merge(oldDatabase, dto);
+
+    let database = merge({}, oldDatabase, dto);
 
     try {
       database = await this.databaseFactory.createDatabaseModel(database);
@@ -135,7 +157,7 @@ export class DatabaseService {
       database = await this.repository.update(id, database);
 
       // todo: rethink
-      this.redisService.removeClientInstance({ databaseId: id });
+      this.redisService.removeClientInstances({ databaseId: id });
       this.analytics.sendInstanceEditedEvent(
         oldDatabase,
         database,
@@ -145,6 +167,31 @@ export class DatabaseService {
       return database;
     } catch (error) {
       this.logger.error(`Failed to update database instance ${id}`, error);
+      throw catchRedisConnectionError(error, database);
+    }
+  }
+
+  /**
+   * Test connection for new/modified config before creating/updating database
+   * @param dto
+   */
+  public async testConnection(
+    dto: CreateDatabaseDto,
+  ): Promise<void> {
+    this.logger.log('Testing database connection');
+
+    const database = classToClass(Database, dto);
+    try {
+      await this.databaseFactory.createDatabaseModel(database);
+
+      return;
+    } catch (error) {
+      // don't throw an error to support sentinel autodiscovery flow
+      if (error.message === RedisErrorCodes.SentinelParamsRequired) {
+        return;
+      }
+
+      this.logger.error('Connection test failed', error);
       throw catchRedisConnectionError(error, database);
     }
   }
@@ -161,7 +208,7 @@ export class DatabaseService {
     try {
       await this.repository.delete(id);
       // todo: rethink
-      this.redisService.removeClientInstance({ databaseId: id });
+      this.redisService.removeClientInstances({ databaseId: id });
       this.logger.log('Succeed to delete database instance.');
 
       this.analytics.sendInstanceDeletedEvent(database);
@@ -190,5 +237,38 @@ export class DatabaseService {
         }
       }))),
     };
+  }
+
+  /**
+   * Export many databases by ids.
+   * Get full database model. With or without passwords and certificates bodies.
+   * @param ids
+   * @param withSecrets
+   */
+  async export(ids: string[], withSecrets = false): Promise<ExportDatabase[]> {
+    const paths = !withSecrets ? this.exportSecurityFields : []
+
+    this.logger.log(`Exporting many database: ${ids}`);
+
+    if (!ids.length) {
+      this.logger.error('Database ids were not provided');
+      throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
+    }
+
+    let entities: ExportDatabase[] = reject(
+      await Promise.all(ids.map(async (id) => {
+        try {
+          return await this.get(id);
+        } catch (e) {
+        }
+      })),
+    isEmpty)
+
+    return entities.map((database) =>
+      classToClass(
+        ExportDatabase,
+        omit(database, paths),
+        { groups: ['security'] },
+    ))
   }
 }

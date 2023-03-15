@@ -3,12 +3,15 @@ import {
   EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiIcon,
   EuiSpacer,
   EuiText,
+  EuiToolTip,
 } from '@elastic/eui'
 import { isEmpty } from 'lodash'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
+import { ImportDatabasesDialog } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import HelpLinksMenu from 'uiSrc/pages/home/components/HelpLinksMenu'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
@@ -37,6 +40,7 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
   const { loading, data } = useSelector(contentSelector)
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
   const [guides, setGuides] = useState<IHelpGuide[]>([])
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState<boolean>(false)
 
   useEffect(() => {
     if (loading || !data || isEmpty(data)) {
@@ -74,6 +78,20 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
     }
   }
 
+  const handleClickImportDbBtn = () => {
+    setIsImportDialogOpen(true)
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_CLICKED,
+    })
+  }
+
+  const handleCloseImportDb = (isCancelled: boolean) => {
+    setIsImportDialogOpen(false)
+    isCancelled && sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_CANCELLED,
+    })
+  }
+
   const AddInstanceBtn = () => (
     <>
       <EuiButton
@@ -95,6 +113,23 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
         + ADD REDIS DATABASE
       </EuiButton>
     </>
+  )
+
+  const ImportDatabasesBtn = () => (
+    <EuiToolTip
+      content="Import Database Connections"
+    >
+      <EuiButton
+        fill
+        color="secondary"
+        onClick={handleClickImportDbBtn}
+        className={styles.importDatabasesBtn}
+        size="m"
+        data-testid="import-dbs-btn"
+      >
+        <EuiIcon type="importAction" />
+      </EuiButton>
+    </EuiToolTip>
   )
 
   const Guides = () => (
@@ -150,82 +185,92 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
     )
   }
 
-  return direction === 'column'
-    ? (
-      <div className={styles.containerWelc}>
-        <EuiFlexGroup alignItems="center" responsive={false}>
-          <EuiFlexItem>
-            <AddInstanceBtn />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiFlexGroup>
-          <EuiFlexItem>
-            <div className={styles.separator} />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        { !loading && !isEmpty(data) && (
-          <>
-            {promoData && (
-              <EuiFlexGroup>
-                <EuiFlexItem>
-                  <CreateBtn content={promoData} />
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            )}
-            <Guides />
-          </>
-        )}
-        <EuiSpacer />
-      </div>
-    ) : (
-      <div className={styles.containerDl}>
-        <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false}>
-          <EuiFlexItem grow={false}>
-            <AddInstanceBtn />
-          </EuiFlexItem>
-          <EuiFlexItem className={cx(styles.separatorContainer)} grow={false}>
-            <div className={styles.separator} />
-          </EuiFlexItem>
-          { !loading && !isEmpty(data) && (
+  return (
+    <>
+      {isImportDialogOpen && <ImportDatabasesDialog onClose={handleCloseImportDb} />}
+      {direction === 'column' ? (
+        <div className={styles.containerWelc}>
+          <EuiFlexGroup alignItems="center" justifyContent="center" responsive={false}>
+            <EuiFlexItem grow={false}>
+              <AddInstanceBtn />
+            </EuiFlexItem>
+            <EuiFlexItem grow={false} style={{ marginLeft: 0, marginRight: 0 }}>
+              <ImportDatabasesBtn />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          <EuiFlexGroup>
+            <EuiFlexItem>
+              <div className={styles.separator} />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          {!loading && !isEmpty(data) && (
             <>
-              <EuiFlexItem grow className={cx(styles.promo)}>
-                <EuiFlexGroup alignItems="center">
-                  {promoData && (
-                    <EuiFlexItem grow={false}>
-                      <CreateBtn content={promoData} />
-                    </EuiFlexItem>
-                  )}
-                  <EuiFlexItem className={styles.linkGuides}>
-                    <Guides />
+              {promoData && (
+                <EuiFlexGroup>
+                  <EuiFlexItem>
+                    <CreateBtn content={promoData} />
                   </EuiFlexItem>
                 </EuiFlexGroup>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false} className={styles.fullGuides}>
-                <HelpLinksMenu
-                  items={guides}
-                  buttonText={CREATE_DATABASE}
-                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
-                />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false} className={styles.smallGuides}>
-                <HelpLinksMenu
-                  emptyAnchor
-                  items={guides.slice(1)}
-                  buttonText={THE_GUIDES}
-                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
-                />
-              </EuiFlexItem>
+              )}
+              <Guides />
             </>
           )}
-          {instances.length > 0 && (
-            <EuiFlexItem className={styles.searchContainer}>
-              <SearchDatabasesList />
+          <EuiSpacer />
+        </div>
+      ) : (
+        <div className={styles.containerDl}>
+          <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false}>
+            <EuiFlexItem grow={false}>
+              <AddInstanceBtn />
             </EuiFlexItem>
-          )}
-        </EuiFlexGroup>
-        <EuiSpacer className={styles.spacerDl} />
-      </div>
-    )
+            <EuiFlexItem grow={false} style={{ marginLeft: 0, marginRight: 0 }}>
+              <ImportDatabasesBtn />
+            </EuiFlexItem>
+            <EuiFlexItem className={cx(styles.separatorContainer)} grow={false}>
+              <div className={styles.separator} />
+            </EuiFlexItem>
+            {!loading && !isEmpty(data) && (
+              <>
+                <EuiFlexItem grow className={cx(styles.promo)}>
+                  <EuiFlexGroup alignItems="center">
+                    {promoData && (
+                      <EuiFlexItem grow={false}>
+                        <CreateBtn content={promoData} />
+                      </EuiFlexItem>
+                    )}
+                    <EuiFlexItem className={styles.linkGuides}>
+                      <Guides />
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false} className={styles.fullGuides}>
+                  <HelpLinksMenu
+                    items={guides}
+                    buttonText={CREATE_DATABASE}
+                    onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
+                  />
+                </EuiFlexItem>
+                <EuiFlexItem grow={false} className={styles.smallGuides}>
+                  <HelpLinksMenu
+                    emptyAnchor
+                    items={guides.slice(1)}
+                    buttonText={THE_GUIDES}
+                    onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
+                  />
+                </EuiFlexItem>
+              </>
+            )}
+            {instances.length > 0 && (
+              <EuiFlexItem className={styles.searchContainer}>
+                <SearchDatabasesList />
+              </EuiFlexItem>
+            )}
+          </EuiFlexGroup>
+          <EuiSpacer className={styles.spacerDl} />
+        </div>
+      )}
+    </>
+  )
 }
 
 export default HomeHeader

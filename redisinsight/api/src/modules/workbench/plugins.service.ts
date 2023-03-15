@@ -9,10 +9,10 @@ import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
 import { CreatePluginStateDto } from 'src/modules/workbench/dto/create-plugin-state.dto';
-import { PluginStateProvider } from 'src/modules/workbench/providers/plugin-state.provider';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import config from 'src/utils/config';
 import { ClientMetadata } from 'src/common/models';
+import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin-state.repository';
 
 const PLUGINS_CONFIG = config.get('plugins');
 
@@ -20,7 +20,7 @@ const PLUGINS_CONFIG = config.get('plugins');
 export class PluginsService {
   constructor(
     private commandsExecutor: WorkbenchCommandsExecutor,
-    private pluginStateProvider: PluginStateProvider,
+    private pluginStateRepository: PluginStateRepository,
     private whitelistProvider: PluginCommandsWhitelistProvider,
   ) {}
 
@@ -80,7 +80,7 @@ export class PluginsService {
       throw new BadRequestException(ERROR_MESSAGES.PLUGIN_STATE_MAX_SIZE(PLUGINS_CONFIG.stateMaxSize));
     }
 
-    await this.pluginStateProvider.upsert({
+    await this.pluginStateRepository.upsert({
       visualizationId,
       commandExecutionId,
       ...dto,
@@ -94,7 +94,7 @@ export class PluginsService {
    * @param commandExecutionId
    */
   async getState(visualizationId: string, commandExecutionId: string): Promise<PluginState> {
-    return this.pluginStateProvider.getOne(visualizationId, commandExecutionId);
+    return this.pluginStateRepository.getOne(visualizationId, commandExecutionId);
   }
 
   /**

@@ -11,6 +11,8 @@ import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { EMPTY_COMMAND } from 'uiSrc/constants'
+import { ResultsMode } from 'uiSrc/slices/interfaces'
+import { setDbIndexState } from 'uiSrc/slices/app/context'
 import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 import reducer, {
   initialState,
@@ -152,6 +154,51 @@ describe('workbench results slice', () => {
           isOpen: true,
           error: '',
           loading: false,
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Success
+          }]
+        }]
+      }
+
+      const state = {
+        ...initialState,
+        items: [...mockCommandExecution.data]
+      }
+
+      // Act
+      const nextState = reducer(initialStateWithItems, sendWBCommandSuccess(mockCommandExecution))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          results: nextState,
+        },
+      })
+      expect(workbenchResultsSelector(rootState)).toEqual(state)
+    })
+
+    it('should properly set the state with fetched data and isOpen = false, for request silent mode', () => {
+      // Arrange
+
+      const mockedId = '123'
+
+      const mockCommandExecution = {
+        commandId: '123',
+        data: [{
+          command: 'command',
+          databaseId: '123',
+          id: mockedId + 0,
+          createdAt: new Date(),
+          resultsMode: ResultsMode.Silent,
+          isOpen: false,
+          error: '',
+          loading: false,
+          summary: {
+            fail: 0,
+            success: 1,
+            total: 1,
+          },
           result: [{
             response: 'test',
             status: CommandExecutionStatus.Success
@@ -324,7 +371,9 @@ describe('workbench results slice', () => {
         // Assert
         const expectedActions = [
           sendWBCommand({ commands, commandId }),
-          sendWBCommandSuccess({ data, commandId })
+          setDbIndexState(true),
+          sendWBCommandSuccess({ data, commandId }),
+          setDbIndexState(false)
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -353,7 +402,9 @@ describe('workbench results slice', () => {
         // Assert
         const expectedActions = [
           sendWBCommand({ commands, commandId }),
-          sendWBCommandSuccess({ data, commandId })
+          setDbIndexState(true),
+          sendWBCommandSuccess({ data, commandId }),
+          setDbIndexState(false)
         ]
 
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
@@ -379,11 +430,13 @@ describe('workbench results slice', () => {
         // Assert
         const expectedActions = [
           sendWBCommand({ commands, commandId }),
+          setDbIndexState(true),
           addErrorNotification(responsePayload as AxiosError),
           processWBCommandsFailure({
             commandsId: commands.map((_, i) => commandId + i),
             error: responsePayload.response.data.message
           }),
+          setDbIndexState(false),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -424,7 +477,7 @@ describe('workbench results slice', () => {
         // Assert
         const expectedActions = [
           sendWBCommand({ commands, commandId }),
-          sendWBCommandSuccess({ data, commandId })
+          sendWBCommandSuccess({ data, commandId }),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -452,7 +505,7 @@ describe('workbench results slice', () => {
         // Assert
         const expectedActions = [
           sendWBCommand({ commands, commandId }),
-          sendWBCommandSuccess({ data, commandId })
+          sendWBCommandSuccess({ data, commandId }),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -476,11 +529,13 @@ describe('workbench results slice', () => {
         // Assert
         const expectedActions = [
           sendWBCommand({ commands, commandId }),
+          setDbIndexState(true),
           addErrorNotification(responsePayload as AxiosError),
           processWBCommandsFailure({
             commandsId: commands.map((_, i) => commandId + i),
             error: responsePayload.response.data.message
           }),
+          setDbIndexState(false),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })

@@ -19,6 +19,7 @@ export enum RunQueryMode {
 export enum ResultsMode {
   Default = 'DEFAULT',
   GroupMode = 'GROUP_MODE',
+  Silent = 'SILENT',
 }
 
 export class CreateCommandExecutionDto {

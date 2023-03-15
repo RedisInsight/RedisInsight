@@ -2,9 +2,11 @@ import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useStat
 import cx from 'classnames'
 import { EuiResizableContainer } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
+import { isEmpty } from 'lodash'
 
 import {
   appContextBrowserTree,
+  resetBrowserTree,
   appContextDbConfig,
   setBrowserTreeNodesOpen,
   setBrowserTreeSelectedLeaf
@@ -34,6 +36,10 @@ export interface Props {
 export const firstPanelId = 'tree'
 export const secondPanelId = 'keys'
 
+const parseKeyNames = (keys: GetKeyInfoResponse[]) =>
+  keys.map((item) =>
+    ({ ...item, nameString: item.nameString ?? bufferToString(item.name) }))
+
 const KeyTree = forwardRef((props: Props, ref) => {
   const { selectKey, loadMoreItems, loading, keysState } = props
 
@@ -50,8 +56,8 @@ const KeyTree = forwardRef((props: Props, ref) => {
   const [sizes, setSizes] = useState(panelSizes)
   const [keyListState, setKeyListState] = useState<KeysStoreData>(keysState)
   const [constructingTree, setConstructingTree] = useState(false)
-  const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(true)
-  const [items, setItems] = useState<IKeyPropTypes[]>(keysState.keys ?? [])
+  const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(isEmpty(selectedLeaf))
+  const [items, setItems] = useState<IKeyPropTypes[]>(parseKeyNames(keysState.keys ?? []))
 
   const dispatch = useDispatch()
 
@@ -70,21 +76,22 @@ const KeyTree = forwardRef((props: Props, ref) => {
   }, [openNodes])
 
   useEffect(() => {
-    if (selectedLeaf) {
-      setStatusSelected(selectedLeaf)
-      updateKeysList(Object.values(selectedLeaf)[0])
-    }
+    setStatusSelected(selectedLeaf)
+    updateKeysList(Object.values(selectedLeaf)?.[0])
+
+    setSelectDefaultLeaf(isEmpty(selectedLeaf))
   }, [selectedLeaf])
 
   useEffect(() => {
     setItems(parseKeyNames(keysState.keys))
+
     if (keysState.keys?.length === 0) {
-      dispatch(setBrowserTreeSelectedLeaf({}))
+      updateSelectedKeys()
     }
   }, [keysState.keys])
 
   useEffect(() => {
-    updateSelectedKeys()
+    setItems(parseKeyNames(keysState.keys))
   }, [delimiter, keysState.lastRefreshTime])
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
@@ -94,7 +101,8 @@ const KeyTree = forwardRef((props: Props, ref) => {
 
   // select default leaf "Keys" after each change delimiter, filter or search
   const updateSelectedKeys = () => {
-    setItems(parseKeyNames(keysState.keys))
+    dispatch(resetBrowserTree())
+
     setTimeout(() => {
       startTransition(() => {
         setStatusSelected({})
@@ -102,10 +110,6 @@ const KeyTree = forwardRef((props: Props, ref) => {
       })
     }, 0)
   }
-
-  const parseKeyNames = (keys: GetKeyInfoResponse[]) =>
-    keys.map((item) =>
-      ({ ...item, nameString: item.nameString ?? bufferToString(item.name) }))
 
   const updateKeysList = (items:any = {}) => {
     startTransition(() => {

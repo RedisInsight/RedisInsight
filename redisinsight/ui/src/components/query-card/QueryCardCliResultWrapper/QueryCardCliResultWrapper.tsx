@@ -5,7 +5,7 @@ import { isArray } from 'lodash'
 
 import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { cliParseTextResponse, formatToText, isGroupMode, Maybe } from 'uiSrc/utils'
+import { cliParseTextResponse, formatToText, isGroupResults, Maybe } from 'uiSrc/utils'
 
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import QueryCardCliDefaultResult from '../QueryCardCliDefaultResult'
@@ -20,10 +20,11 @@ export interface Props {
   resultsMode?: ResultsMode
   isNotStored?: boolean
   isFullScreen?: boolean
+  db?: number
 }
 
 const QueryCardCliResultWrapper = (props: Props) => {
-  const { result = [], query, loading, resultsMode, isNotStored, isFullScreen } = props
+  const { result = [], query, loading, resultsMode, isNotStored, isFullScreen, db } = props
 
   return (
     <div className={cx('queryResultsContainer', styles.container)}>
@@ -35,8 +36,8 @@ const QueryCardCliResultWrapper = (props: Props) => {
               The result is too big to be saved. It will be deleted after the application is closed.
             </EuiText>
           )}
-          {isGroupMode(resultsMode) && isArray(result[0]?.response)
-            ? <QueryCardCliGroupResult result={result} isFullScreen={isFullScreen} />
+          {isGroupResults(resultsMode) && isArray(result[0]?.response)
+            ? <QueryCardCliGroupResult result={result} isFullScreen={isFullScreen} db={db} />
             : (
               <QueryCardCliDefaultResult
                 isFullScreen={isFullScreen}

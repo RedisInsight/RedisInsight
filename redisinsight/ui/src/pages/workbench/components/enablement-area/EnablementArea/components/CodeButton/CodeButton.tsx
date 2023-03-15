@@ -3,6 +3,7 @@ import cx from 'classnames'
 import React from 'react'
 import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { truncateText } from 'uiSrc/utils'
+import { CodeButtonAutoExecute } from 'uiSrc/constants'
 
 import styles from './styles.module.scss'
 
@@ -16,7 +17,7 @@ export interface Props {
   mode?: ExecuteButtonMode
 }
 const CodeButton = ({ onClick, label, isLoading, className, disabled, params, mode, ...rest }: Props) => {
-  const isAutoExecute = mode === ExecuteButtonMode.Auto
+  const isAutoExecute = params?.auto === CodeButtonAutoExecute.true
 
   return (
     <EuiButton

@@ -13,8 +13,8 @@ fixture `Add DBs from Sentinel`
     })
     .afterEach(async() => {
         //Delete database
-        await myRedisDatabasePage.deleteDatabaseByName('primary-group-1');
-        await myRedisDatabasePage.deleteDatabaseByName('primary-group-2');
+        await myRedisDatabasePage.deleteDatabaseByName(ossSentinelConfig.masters[0].alias);
+        await myRedisDatabasePage.deleteDatabaseByName(ossSentinelConfig.masters[1].alias);
     });
 test
     .meta({ env: env.web, rte: rte.standalone })('Verify that user can add Sentinel DB', async t => {

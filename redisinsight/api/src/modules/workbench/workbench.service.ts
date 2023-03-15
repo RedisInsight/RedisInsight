@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { omit } from 'lodash';
 import { ClientMetadata } from 'src/common/models';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
-import { CommandExecutionProvider } from 'src/modules/workbench/providers/command-execution.provider';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CreateCommandExecutionDto, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
@@ -11,6 +10,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
 import { getUnsupportedCommands } from './utils/getUnsupportedCommands';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
@@ -19,7 +19,7 @@ export class WorkbenchService {
   constructor(
     private readonly databaseConnectionService: DatabaseConnectionService,
     private commandsExecutor: WorkbenchCommandsExecutor,
-    private commandExecutionProvider: CommandExecutionProvider,
+    private commandExecutionRepository: CommandExecutionRepository,
     private analyticsService: WorkbenchAnalyticsService,
   ) {}
 
@@ -28,13 +28,16 @@ export class WorkbenchService {
    *
    * @param clientMetadata
    * @param dto
+   * @param db
    */
   async createCommandExecution(
     clientMetadata: ClientMetadata,
     dto: CreateCommandExecutionDto,
+    db: number = 0,
   ): Promise<Partial<CommandExecution>> {
     const commandExecution: Partial<CommandExecution> = {
       ...omit(dto, 'commands'),
+      db,
       databaseId: clientMetadata.databaseId,
     };
 
@@ -63,14 +66,19 @@ export class WorkbenchService {
    * @param clientMetadata
    * @param dto
    * @param commands
+   * @param db
+   * @param onlyErrorResponse
    */
   async createCommandsExecution(
     clientMetadata: ClientMetadata,
     dto: Partial<CreateCommandExecutionDto>,
     commands: string[],
+    db: number = 0,
+    onlyErrorResponse: boolean = false,
   ): Promise<Partial<CommandExecution>> {
     const commandExecution: Partial<CommandExecution> = {
       ...dto,
+      db,
       databaseId: clientMetadata.databaseId,
     };
     let executionTimeInNanoseconds = BigInt(0);
@@ -114,7 +122,7 @@ export class WorkbenchService {
     commandExecution.command = commands.join('\r\n');
     commandExecution.result = [{
       status: CommandExecutionStatus.Success,
-      response: executionResults,
+      response: onlyErrorResponse ? failedCommands : executionResults,
     }];
 
     return commandExecution;
@@ -132,22 +140,24 @@ export class WorkbenchService {
   ): Promise<CommandExecution[]> {
     // todo: handle concurrent client creation on RedisModule side
     // temporary workaround. Just create client before any command execution precess
-    await this.databaseConnectionService.getOrCreateClient(clientMetadata);
+    const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
 
-    if (dto.resultsMode === ResultsMode.GroupMode) {
-      return this.commandExecutionProvider.createMany(
-        [await this.createCommandsExecution(clientMetadata, dto, dto.commands)],
+    if (dto.resultsMode === ResultsMode.GroupMode || dto.resultsMode === ResultsMode.Silent) {
+      return this.commandExecutionRepository.createMany(
+        [await this.createCommandsExecution(clientMetadata, dto, dto.commands, client?.options?.db, dto.resultsMode === ResultsMode.Silent)],
       );
     }
     // todo: rework to support pipeline
     // prepare and execute commands
     const commandExecutions = await Promise.all(
-      dto.commands.map(async (command) => await this.createCommandExecution(clientMetadata, { ...dto, command })),
+      dto.commands.map(
+        async (command) => await this.createCommandExecution(clientMetadata, { ...dto, command }, client?.options?.db),
+      ),
     );
 
     // save history
     // todo: rework
-    return this.commandExecutionProvider.createMany(commandExecutions);
+    return this.commandExecutionRepository.createMany(commandExecutions);
   }
 
   /**
@@ -156,7 +166,7 @@ export class WorkbenchService {
    * @param databaseId
    */
   async listCommandExecutions(databaseId: string): Promise<ShortCommandExecution[]> {
-    return this.commandExecutionProvider.getList(databaseId);
+    return this.commandExecutionRepository.getList(databaseId);
   }
 
   /**
@@ -166,7 +176,7 @@ export class WorkbenchService {
    * @param id
    */
   async getCommandExecution(databaseId: string, id: string): Promise<CommandExecution> {
-    return this.commandExecutionProvider.getOne(databaseId, id);
+    return this.commandExecutionRepository.getOne(databaseId, id);
   }
 
   /**
@@ -176,7 +186,7 @@ export class WorkbenchService {
    * @param id
    */
   async deleteCommandExecution(databaseId: string, id: string): Promise<void> {
-    await this.commandExecutionProvider.delete(databaseId, id);
+    await this.commandExecutionRepository.delete(databaseId, id);
     this.analyticsService.sendCommandDeletedEvent(databaseId);
   }
 

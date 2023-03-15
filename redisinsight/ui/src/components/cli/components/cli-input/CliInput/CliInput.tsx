@@ -3,6 +3,7 @@ import { ContentEditableEvent } from 'react-contenteditable'
 
 import { ContentEditable } from 'uiSrc/components'
 import { parseContentEditableChangeHtml } from 'uiSrc/components/ContentEditable'
+import { getDbIndex } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -28,7 +29,7 @@ const CliInput = (props: Props) => {
   return (
     <>
       <span>
-        {dbIndex !== 0 && <span data-testid="cli-db-index">{`[${dbIndex}] `}</span>}
+        {dbIndex !== 0 && <span data-testid="cli-db-index">{`${getDbIndex(dbIndex)} `}</span>}
         &gt;&nbsp;
       </span>
       <ContentEditable

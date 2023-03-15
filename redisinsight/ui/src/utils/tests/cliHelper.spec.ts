@@ -2,7 +2,8 @@ import {
   getDbIndexFromSelectQuery,
   getCommandNameFromQuery,
   cliParseCommandsGroupResult,
-  CliPrefix
+  CliPrefix,
+  wbSummaryCommand
 } from 'uiSrc/utils'
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import { render, screen } from 'uiSrc/utils/test-utils'
@@ -81,4 +82,20 @@ describe('cliParseCommandsGroupResult error status', () => {
   render(cliParseCommandsGroupResult(mockResult))
 
   expect(screen.queryByTestId(`${CliPrefix.Cli}-output-response-fail`)).toBeInTheDocument()
+})
+
+const wbSummaryCommandTests: any[] = [
+  ['SET', 0, '> SET'],
+  ['iueigc h pb32 ueo', 0, '> iueigc h pb32 ueo'],
+  ['SET', 1, '[db1] > SET'],
+  ['INFO', 10, '[db10] > INFO'],
+  ['aoeuaoeu', 10, '[db10] > aoeuaoeu'],
+]
+
+describe('wbSummaryCommand', () => {
+  it.each(wbSummaryCommandTests)('for input: %s (command), should be output: %s',
+    (command, db, expected) => {
+      const { container } = render(wbSummaryCommand(command, db))
+      expect(container).toHaveTextContent(expected)
+    })
 })

@@ -6,6 +6,7 @@ import { CertificateModule } from 'src/modules/certificate/certificate.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RedisModule } from 'src/modules/redis/redis.module';
 import { AnalyticsModule } from 'src/modules/analytics/analytics.module';
+import { SshModule } from 'src/modules/ssh/ssh.module';
 
 @Global()
 @Module({
@@ -17,6 +18,7 @@ import { AnalyticsModule } from 'src/modules/analytics/analytics.module';
     CertificateModule.register(),
     DatabaseModule.register(),
     RedisModule,
+    SshModule,
   ],
   exports: [
     EncryptionModule,
@@ -24,6 +26,7 @@ import { AnalyticsModule } from 'src/modules/analytics/analytics.module';
     CertificateModule,
     DatabaseModule,
     RedisModule,
+    SshModule,
   ],
 })
 export class CoreModule {}

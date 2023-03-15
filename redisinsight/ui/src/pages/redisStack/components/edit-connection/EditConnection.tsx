@@ -123,7 +123,6 @@ const EditConnection = () => {
                     editMode
                     width={600}
                     editedInstance={state.data}
-                    onDbAdded={() => {}}
                     onDbEdited={onInstanceChanged}
                     onAliasEdited={onAliasChanged}
                     onClose={onClose}

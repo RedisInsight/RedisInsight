@@ -68,3 +68,23 @@ export const setState = (state) => new Promise((resolve, reject) => {
     requestId: callbacks.counter++
   })
 })
+
+/**
+ * Parse Redis response
+ * Returns string with parsed cli-like response
+ *
+ * @async
+ * @param {any} response
+ * @param {String} command
+ * @returns {Promise.<string>} data
+ * @throws {Error}
+ */
+export const formatRedisReply = (response, command = '') => new Promise((resolve, reject) => {
+  callbacks[callbacks.counter] = { resolve, reject }
+  sendMessageToMain({
+    event: POST_MESSAGE_EVENTS.formatRedisReply,
+    iframeId,
+    data: { response, command },
+    requestId: callbacks.counter++
+  })
+})

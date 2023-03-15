@@ -19,6 +19,7 @@ import {
 } from 'src/modules/cli/dto/cli.dto';
 import { getConnectionName } from 'src/utils/redis-connection-helper';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { IRedisToolOptions } from './redis-tool-options';
 
 export interface ICliExecResultFromNode {
@@ -36,10 +37,11 @@ export class RedisToolService extends RedisConsumerAbstractService {
   constructor(
     private appTool: ClientContext,
     protected redisService: RedisService,
+    protected redisConnectionFactory: RedisConnectionFactory,
     protected databaseService: DatabaseService,
     options: IRedisToolOptions = {},
   ) {
-    super(appTool, redisService, databaseService, options);
+    super(appTool, redisService, redisConnectionFactory, databaseService, options);
     this.logger = new Logger(`${appTool}ToolService`);
   }
 

@@ -90,6 +90,7 @@ aliases:
     - mods-preview        # OSS Standalone and all preview modules
     - oss-st-6-tls        # OSS Standalone v6 with TLS enabled
     - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
+    - oss-st-6-tls-auth-ssh   # OSS Standalone v6 with TLS auth required through ssh
     - oss-clu             # OSS Cluster
     - oss-clu-tls         # OSS Cluster with TLS enabled
     - oss-sent            # OSS Sentinel
@@ -515,8 +516,15 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            sudo apt-get update -y && sudo apt-get install -y rpm
-            yarn --cwd redisinsight/api/ install
+            sudo apt-get update -y && sudo apt-get install -y rpm flatpak flatpak-builder ca-certificates
+            flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+            flatpak install flathub --no-deps --arch x86_64 --assumeyes \
+            runtime/org.freedesktop.Sdk/x86_64/20.08 \
+            runtime/org.freedesktop.Platform/x86_64/20.08 \
+            org.electronjs.Electron2.BaseApp/x86_64/20.08
+
+            yarn --cwd redisinsight/api/ install --ignore-optional
+            yarn --cwd redisinsight/ install --ignore-optional
             yarn install
             yarn build:statics
           no_output_timeout: 15m
@@ -558,6 +566,8 @@ jobs:
             - release/RedisInsight*.deb
             - release/RedisInsight*.rpm
             - release/RedisInsight*.AppImage
+            - release/RedisInsight*.flatpak
+            - release/RedisInsight*.snap
             - release/*-linux.yml
             - release/redisstack
   macosx:
@@ -725,8 +735,11 @@ jobs:
           name: publish
           command: |
             rm release/._* ||:
+            chmod +x .circleci/redisstack/sum_sha256.sh
+            .circleci/redisstack/sum_sha256.sh
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
-            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive --exclude "*.json"
+
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive
 
   release-aws-private:
     executor: linux-executor
@@ -744,9 +757,11 @@ jobs:
       - run:
           name: publish
           command: |
+            chmod +x .circleci/redisstack/sum_sha256.sh
+            .circleci/redisstack/sum_sha256.sh
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
-            aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive --exclude "*.json"
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive
 
   publish-prod-aws:
     executor: linux-executor

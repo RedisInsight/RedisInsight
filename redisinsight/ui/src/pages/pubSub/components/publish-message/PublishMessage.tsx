@@ -121,7 +121,6 @@ const PublishMessage = () => {
           <EuiButton
             fill
             color="secondary"
-            className="btn-add"
             type="submit"
             data-testid="publish-message-submit"
           >

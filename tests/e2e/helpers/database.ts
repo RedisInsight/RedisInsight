@@ -9,7 +9,7 @@ import {
     UserAgreementPage,
     CliPage
 } from '../pageObjects';
-import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi, getDatabaseByName } from './api/api-database';
+import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi, getDatabaseIdByName } from './api/api-database';
 import { Common } from './common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -158,7 +158,7 @@ export async function acceptLicenseTermsAndAddSentinelDatabaseApi(databaseParame
     // Reload Page to see the database added through api
     await common.reloadPage();
     // Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(databaseParameters.name[1] ?? '');
+    await myRedisDatabasePage.clickOnDBByName(databaseParameters.masters![1].alias ?? '');
 }
 
 /**
@@ -185,7 +185,7 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
     await addRedisDatabasePage.addRedisDataBase(databaseParameters);
     // Click for saving
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
-    await t.wait(2000);
+    await t.wait(3000);
     // Reload page until db appears
     do {
         await common.reloadPage();
@@ -194,6 +194,27 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 5000 });
     await myRedisDatabasePage.clickOnDBByName(databaseParameters.databaseName ?? '');
     await t.expect(browserPage.keysSummary.exists).ok('Key list not loaded', { timeout: 15000 });
+}
+
+/**
+ * Add RE Cloud database
+ * @param databaseParameters The database parameters
+*/
+export async function addRECloudDatabase(databaseParameters: AddNewDatabaseParameters): Promise<void> {
+    const searchTimeout = 60 * 1000; // 60 sec to wait database appearing
+    const dbSelector = myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '');
+    const startTime = Date.now();
+
+    await addRedisDatabasePage.addRedisDataBase(databaseParameters);
+    // Click for saving
+    await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+    await t.wait(3000);
+    // Reload page until db appears
+    do {
+        await common.reloadPage();
+    }
+    while (!(await dbSelector.exists) && Date.now() - startTime < searchTimeout);
+    await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 5000 });
 }
 
 // Accept License terms
@@ -262,7 +283,7 @@ export async function acceptTermsAddDatabaseOrConnectToRedisStack(databaseParame
  * @param databaseName The name of the database
  */
 export async function clickOnEditDatabaseByName(databaseName: string): Promise<void> {
-    const databaseId = await getDatabaseByName(databaseName);
+    const databaseId = await getDatabaseIdByName(databaseName);
     const databaseEditBtn = Selector(`[data-testid=edit-instance-${databaseId}]`);
 
     await t.expect(databaseEditBtn.exists).ok(`"${databaseName}" database not displayed`);
@@ -273,8 +294,8 @@ export async function clickOnEditDatabaseByName(databaseName: string): Promise<v
  * Delete database button by name
  * @param databaseName The name of the database
  */
- export async function deleteDatabaseByNameApi(databaseName: string): Promise<void> {
-    const databaseId = await getDatabaseByName(databaseName);
+export async function deleteDatabaseByNameApi(databaseName: string): Promise<void> {
+    const databaseId = await getDatabaseIdByName(databaseName);
     const databaseDeleteBtn = Selector(`[data-testid=delete-instance-${databaseId}-icon]`);
 
     await t.expect(databaseDeleteBtn.exists).ok(`"${databaseName}" database not displayed`);

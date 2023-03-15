@@ -21,7 +21,7 @@ import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
-import { Nullable } from 'uiSrc/utils'
+import { Nullable, getDbIndex } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
@@ -57,11 +57,13 @@ const Header = (props: Props) => {
   const { treeViewDelimiter: delimiter = '' } = useSelector(appContextDbConfig)
 
   const analysisOptions: EuiSuperSelectOption<any>[] = items.map((item) => {
-    const { createdAt, id } = item
+    const { createdAt, id, db } = item
     return {
       value: id,
       inputDisplay: (
-        <span>{format(new Date(createdAt ?? ''), dateFormat)}</span>
+        <span>
+          {`${getDbIndex(db)} ${format(new Date(createdAt ?? ''), dateFormat)}`}
+        </span>
       ),
       'data-test-subj': `items-report-${id}`,
     }

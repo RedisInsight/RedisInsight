@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { ConnectionString } from 'connection-string'
-import { pick } from 'lodash'
+import { isUndefined, pick, toNumber, toString } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -9,6 +9,7 @@ import {
   createInstanceStandaloneAction,
   instancesSelector,
   updateInstanceAction,
+  testInstanceStandaloneAction,
 } from 'uiSrc/slices/instances/instances'
 import {
   fetchMastersSentinelAction,
@@ -21,8 +22,11 @@ import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
 import { BrowserStorageItem, DbType, Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
 import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
 
-import InstanceForm, { ADD_NEW, ADD_NEW_CA_CERT, NO_CA_CERT } from './InstanceForm'
+import InstanceForm from './InstanceForm'
+import { DbConnectionInfo } from './InstanceForm/interfaces'
+import { ADD_NEW, ADD_NEW_CA_CERT, DEFAULT_TIMEOUT, NO_CA_CERT, SshPassType } from './InstanceForm/constants'
 
 export interface Props {
   width: number
@@ -30,7 +34,6 @@ export interface Props {
   instanceType: InstanceType
   editMode: boolean
   editedInstance: Nullable<Instance>
-  onDbAdded: () => void
   onClose?: () => void
   onDbEdited?: () => void
   onAliasEdited?: (value: string) => void
@@ -54,12 +57,20 @@ export enum TitleDatabaseText {
 }
 
 const getInitialValues = (editedInstance: Nullable<Instance>) => ({
-  host: editedInstance?.host ?? '',
-  port: editedInstance?.port?.toString() ?? '',
-  name: editedInstance?.name ?? '',
+  // undefined - to show default value, empty string - for existing db
+  host: editedInstance?.host ?? (editedInstance ? '' : undefined),
+  port: editedInstance?.port?.toString() ?? (editedInstance ? '' : undefined),
+  name: editedInstance?.name ?? (editedInstance ? '' : undefined),
   username: editedInstance?.username ?? '',
   password: editedInstance?.password ?? '',
+  timeout: editedInstance?.timeout
+    ? toString(editedInstance?.timeout / 1_000)
+    : (editedInstance ? '' : undefined),
   tls: !!editedInstance?.tls ?? false,
+  ssh: !!editedInstance?.ssh ?? false,
+  sshPassType: editedInstance?.sshOptions
+    ? (editedInstance.sshOptions.privateKey ? SshPassType.PrivateKey : SshPassType.Password)
+    : SshPassType.Password
 })
 
 const InstanceFormWrapper = (props: Props) => {
@@ -69,7 +80,6 @@ const InstanceFormWrapper = (props: Props) => {
     instanceType,
     isResizablePanel = false,
     onClose,
-    onDbAdded,
     onDbEdited,
     onAliasEdited,
     editedInstance,
@@ -77,12 +87,13 @@ const InstanceFormWrapper = (props: Props) => {
   const [initialValues, setInitialValues] = useState(getInitialValues(editedInstance))
   const [isCloneMode, setIsCloneMode] = useState<boolean>(false)
 
-  const { host, port, name, username, password, tls } = initialValues
+  const { host, port, name, username, password, timeout, tls, ssh, sshPassType } = initialValues
 
   const { loadingChanging: loadingStandalone } = useSelector(instancesSelector)
   const { loading: loadingSentinel } = useSelector(sentinelSelector)
   const { data: caCertificates } = useSelector(caCertsSelector)
   const { data: certificates } = useSelector(clientCertsSelector)
+  const { server } = useSelector(appInfoSelector)
 
   const tlsClientAuthRequired = !!editedInstance?.clientCert?.id ?? false
   const selectedTlsClientCertId = editedInstance?.clientCert?.id ?? ADD_NEW
@@ -156,6 +167,95 @@ const InstanceFormWrapper = (props: Props) => {
     dispatch(updateInstanceAction({ ...database, name }))
   }
 
+  const handleTestConnectionDatabase = (values: DbConnectionInfo) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_TEST_CONNECTION_CLICKED
+    })
+    const {
+      name,
+      host,
+      port,
+      username,
+      password,
+      db,
+      timeout,
+      sentinelMasterName,
+      sentinelMasterUsername,
+      sentinelMasterPassword,
+      newCaCert,
+      tls,
+      sni,
+      servername,
+      newCaCertName,
+      selectedCaCertName,
+      tlsClientAuthRequired,
+      verifyServerTlsCert,
+      newTlsCertPairName,
+      selectedTlsClientCertId,
+      newTlsClientCert,
+      newTlsClientKey,
+    } = values
+
+    const tlsSettings = {
+      useTls: tls,
+      servername: (sni && servername) || undefined,
+      verifyServerCert: verifyServerTlsCert,
+      caCert:
+        !tls || selectedCaCertName === NO_CA_CERT
+          ? undefined
+          : selectedCaCertName === ADD_NEW_CA_CERT
+            ? {
+              new: {
+                name: newCaCertName,
+                certificate: newCaCert,
+              },
+            }
+            : {
+              name: selectedCaCertName,
+            },
+      clientAuth: tls && tlsClientAuthRequired,
+      clientCert: !tls
+        ? undefined
+        : typeof selectedTlsClientCertId === 'string'
+          && tlsClientAuthRequired
+          && selectedTlsClientCertId !== ADD_NEW
+          ? { id: selectedTlsClientCertId }
+          : selectedTlsClientCertId === ADD_NEW && tlsClientAuthRequired
+            ? {
+              new: {
+                name: newTlsCertPairName,
+                certificate: newTlsClientCert,
+                key: newTlsClientKey,
+              },
+            }
+            : undefined,
+    }
+
+    const database: any = {
+      name,
+      host,
+      port: +port,
+      db: +(db || 0),
+      username,
+      password,
+      timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
+    }
+
+    // add tls & ssh for database (modifies database object)
+    applyTlSDatabase(database, tlsSettings)
+    applySSHDatabase(database, values)
+
+    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
+      database.sentinelMaster = {
+        name: sentinelMasterName,
+        username: sentinelMasterUsername,
+        password: sentinelMasterPassword,
+      }
+    }
+
+    dispatch(testInstanceStandaloneAction(removeEmpty(database)))
+  }
+
   const autoFillFormDetails = (content: string): boolean => {
     try {
       const details = new ConnectionString(content)
@@ -184,6 +284,8 @@ const InstanceFormWrapper = (props: Props) => {
           username: details.user || '',
           password: details.password || '',
           tls: details.protocol === 'rediss',
+          ssh: false,
+          sshPassType: SshPassType.Password
         })
         /*
          * auto fill was successfull so return true
@@ -197,64 +299,96 @@ const InstanceFormWrapper = (props: Props) => {
     return false
   }
 
-  const editDatabase = (tlsSettings, values) => {
+  const applyTlSDatabase = (database: any, tlsSettings: any) => {
+    const { useTls, verifyServerCert, servername, caCert, clientAuth, clientCert } = tlsSettings
+    if (!useTls) return
+
+    database.tls = useTls
+    database.tlsServername = servername
+    database.verifyServerCert = !!verifyServerCert
+
+    if (!isUndefined(caCert?.new)) {
+      database.caCert = {
+        name: caCert?.new.name,
+        certificate: caCert?.new.certificate,
+      }
+    }
+
+    if (!isUndefined(caCert?.name)) {
+      database.caCert = { id: caCert?.name }
+    }
+
+    if (clientAuth) {
+      if (!isUndefined(clientCert.new)) {
+        database.clientCert = {
+          name: clientCert.new.name,
+          certificate: clientCert.new.certificate,
+          key: clientCert.new.key,
+        }
+      }
+
+      if (!isUndefined(clientCert.id)) {
+        database.clientCert = { id: clientCert.id }
+      }
+    }
+  }
+
+  const applySSHDatabase = (database: any, values: DbConnectionInfo) => {
+    const {
+      ssh,
+      sshPassType,
+      sshHost,
+      sshPort,
+      sshPassword,
+      sshUsername,
+      sshPassphrase,
+      sshPrivateKey,
+    } = values
+
+    if (ssh) {
+      database.ssh = true
+      database.sshOptions = {
+        host: sshHost,
+        port: +sshPort,
+        username: sshUsername,
+      }
+
+      if (sshPassType === SshPassType.Password) {
+        database.sshOptions.password = sshPassword
+      }
+
+      if (sshPassType === SshPassType.PrivateKey) {
+        database.sshOptions.passphrase = sshPassphrase
+        database.sshOptions.privateKey = sshPrivateKey
+      }
+    }
+  }
+
+  const editDatabase = (tlsSettings: any, values: DbConnectionInfo) => {
     const {
       name,
       host,
       port,
       username,
       password,
+      timeout,
       sentinelMasterUsername,
       sentinelMasterPassword,
     } = values
 
-    const database = {
+    const database: any = {
       id: editedInstance?.id,
       name,
       host,
       port: +port,
       username,
       password,
+      timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
     }
 
-    const {
-      useTls,
-      servername,
-      verifyServerCert,
-      caCert,
-      clientAuth,
-      clientCert,
-    } = tlsSettings
-
-    if (useTls) {
-      database.tls = useTls
-      database.tlsServername = servername
-      database.verifyServerCert = !!verifyServerCert
-
-      if (typeof caCert?.new !== 'undefined') {
-        database.caCert = {
-          name: caCert?.new.name,
-          certificate: caCert?.new.certificate,
-        }
-      }
-      if (typeof caCert?.name !== 'undefined') {
-        database.caCert = { id: caCert?.name }
-      }
-
-      if (clientAuth) {
-        if (typeof clientCert.new !== 'undefined') {
-          database.clientCert = {
-            name: clientCert.new.name,
-            certificate: clientCert.new.certificate,
-            key: clientCert.new.key,
-          }
-        }
-
-        if (typeof clientCert.id !== 'undefined') {
-          database.clientCert = { id: clientCert.id }
-        }
-      }
-    }
+    // add tls & ssh for database (modifies database object)
+    applyTlSDatabase(database, tlsSettings)
+    applySSHDatabase(database, values)
 
     if (connectionType === ConnectionType.Sentinel) {
       database.sentinelMaster = {}
@@ -266,57 +400,32 @@ const InstanceFormWrapper = (props: Props) => {
     handleEditDatabase(removeEmpty(database))
   }
 
-  const addDatabase = (tlsSettings, values) => {
+  const addDatabase = (tlsSettings: any, values: DbConnectionInfo) => {
     const {
       name,
       host,
       port,
       username,
       password,
+      timeout,
       db,
       sentinelMasterName,
       sentinelMasterUsername,
-      sentinelMasterPassword
+      sentinelMasterPassword,
     } = values
-    const database: any = { name, host, port: +port, db: +db, username, password }
-
-    const {
-      useTls,
-      servername,
-      verifyServerCert,
-      caCert,
-      clientAuth,
-      clientCert,
-    } = tlsSettings
-
-    if (useTls) {
-      database.tls = useTls
-      database.tlsServername = servername
-      database.verifyServerCert = !!verifyServerCert
-      if (typeof caCert?.new !== 'undefined') {
-        database.caCert = {
-          name: caCert?.new.name,
-          certificate: caCert?.new.certificate,
-        }
-      }
-      if (typeof caCert?.name !== 'undefined') {
-        database.caCert = { id: caCert?.name }
-      }
-
-      if (clientAuth) {
-        if (typeof clientCert.new !== 'undefined') {
-          database.clientCert = {
-            name: clientCert.new.name,
-            certificate: clientCert.new.certificate,
-            key: clientCert.new.key,
-          }
-        }
-
-        if (typeof clientCert.id !== 'undefined') {
-          database.clientCert = { id: clientCert.id }
-        }
-      }
+    const database: any = {
+      name,
+      host,
+      port: +port,
+      db: +(db || 0),
+      username,
+      password,
+      timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
     }
+
+    // add tls & ssh for database (modifies database object)
+    applyTlSDatabase(database, tlsSettings)
+    applySSHDatabase(database, values)
 
     if (isCloneMode && connectionType === ConnectionType.Sentinel) {
       database.sentinelMaster = {
@@ -335,10 +444,9 @@ const InstanceFormWrapper = (props: Props) => {
       BrowserStorageItem.instancesCount,
       databasesCount + 1
     )
-    onDbAdded()
   }
 
-  const handleConnectionFormSubmit = (values) => {
+  const handleConnectionFormSubmit = (values: DbConnectionInfo) => {
     const {
       newCaCert,
       tls,
@@ -416,6 +524,7 @@ const InstanceFormWrapper = (props: Props) => {
     tls,
     username,
     password,
+    timeout,
     connectionType,
     tlsClientAuthRequired,
     certificates,
@@ -425,6 +534,8 @@ const InstanceFormWrapper = (props: Props) => {
     selectedCaCertName,
     sentinelMasterUsername,
     sentinelMasterPassword,
+    ssh,
+    sshPassType
   }
 
   const getSubmitButtonText = () => {
@@ -448,6 +559,7 @@ const InstanceFormWrapper = (props: Props) => {
         formFields={connectionFormData}
         initialValues={initialValues}
         loading={loadingStandalone || loadingSentinel}
+        buildType={server?.buildType}
         instanceType={instanceType}
         loadingMsg={
           editMode
@@ -461,6 +573,7 @@ const InstanceFormWrapper = (props: Props) => {
             : TitleDatabaseText.AddDatabase
         }
         onSubmit={handleConnectionFormSubmit}
+        onTestConnection={handleTestConnectionDatabase}
         onClose={handleOnClose}
         onHostNamePaste={autoFillFormDetails}
         isEditMode={editMode}

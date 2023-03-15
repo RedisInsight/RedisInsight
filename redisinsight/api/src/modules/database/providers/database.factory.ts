@@ -3,13 +3,14 @@ import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { catchRedisConnectionError, getHostingProvider } from 'src/utils';
 import { Database } from 'src/modules/database/models/database';
 import * as IORedis from 'ioredis';
-import { ClientContext } from 'src/common/models';
+import { ClientContext, Session } from 'src/common/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { RedisErrorCodes } from 'src/constants';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
+import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 @Injectable()
 export class DatabaseFactory {
@@ -17,6 +18,7 @@ export class DatabaseFactory {
 
   constructor(
     private redisService: RedisService,
+    private redisConnectionFactory: RedisConnectionFactory,
     private databaseInfoProvider: DatabaseInfoProvider,
     private caCertificateService: CaCertificateService,
     private clientCertificateService: ClientCertificateService,
@@ -29,10 +31,14 @@ export class DatabaseFactory {
   async createDatabaseModel(database: Database): Promise<Database> {
     let model = await this.createStandaloneDatabaseModel(database);
 
-    const client = await this.redisService.createStandaloneClient(
+    const client = await this.redisConnectionFactory.createStandaloneConnection(
+      {
+        session: {} as Session,
+        databaseId: database.id,
+        context: ClientContext.Common,
+      },
       database,
-      ClientContext.Common,
-      false,
+      { useRetry: false },
     );
 
     if (await this.databaseInfoProvider.isSentinel(client)) {
@@ -46,6 +52,7 @@ export class DatabaseFactory {
 
     model.modules = await this.databaseInfoProvider.determineDatabaseModules(client);
     model.lastConnection = new Date();
+
     await client.disconnect();
 
     return model;
@@ -94,9 +101,14 @@ export class DatabaseFactory {
 
       model.nodes = await this.databaseInfoProvider.determineClusterNodes(client);
 
-      const clusterClient = await this.redisService.createClusterClient(
+      const clusterClient = await this.redisConnectionFactory.createClusterConnection(
+        {
+          session: {} as Session,
+          databaseId: model.id,
+          context: ClientContext.Common,
+        },
         model,
-        model.nodes,
+        { useRetry: false },
       );
 
       // todo: rethink
@@ -137,10 +149,14 @@ export class DatabaseFactory {
         );
       }
 
-      const sentinelClient = await this.redisService.createSentinelClient(
+      const sentinelClient = await this.redisConnectionFactory.createSentinelConnection(
+        {
+          session: {} as Session,
+          databaseId: model.id,
+          context: ClientContext.Common,
+        },
         model,
-        selectedMaster.nodes,
-        ClientContext.Common,
+        { useRetry: false },
       );
 
       model.connectionType = ConnectionType.SENTINEL;

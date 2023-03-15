@@ -1,11 +1,11 @@
 import { when } from 'jest-when';
-import { pick, omit } from 'lodash';
+import { pick } from 'lodash';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   mockCaCertificateRepository,
-  mockClientCertificateRepository, mockClusterDatabaseWithTlsAuth, mockClusterDatabaseWithTlsAuthEntity,
+  mockClientCertificateRepository,
   mockDatabase,
   mockDatabaseEntity,
   mockDatabaseId,
@@ -13,22 +13,20 @@ import {
   mockDatabasePasswordPlain,
   mockDatabaseSentinelMasterPasswordEncrypted,
   mockDatabaseSentinelMasterPasswordPlain,
-  mockDatabaseWithTls, mockDatabaseWithTlsAuth,
   mockDatabaseWithTlsAuthEntity,
-  mockDatabaseWithTlsEntity,
   mockEncryptionService,
-  mockRepository, mockSentinelDatabaseWithTlsAuth, mockSentinelDatabaseWithTlsAuthEntity,
+  mockRepository,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
-import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
 import { ConnectionType, DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
-import { cloneClassInstance } from 'src/utils';
 import { StackDatabasesRepository } from 'src/modules/database/repositories/stack.databases.repository';
 import config from 'src/utils/config';
 import { NotImplementedException } from '@nestjs/common';
+import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
+
 const REDIS_STACK_CONFIG = config.get('redisStack');
 
 const listFields = [
@@ -51,6 +49,10 @@ describe('StackDatabasesRepository', () => {
         StackDatabasesRepository,
         {
           provide: getRepositoryToken(DatabaseEntity),
+          useFactory: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(SshOptionsEntity),
           useFactory: mockRepository,
         },
         {
@@ -114,6 +116,7 @@ describe('StackDatabasesRepository', () => {
         port: 6379,
         connectionType: ConnectionType.STANDALONE,
         tls: false,
+        timeout: 30_000,
         verifyServerCert: false,
         lastConnection: null,
       });
@@ -135,7 +138,6 @@ describe('StackDatabasesRepository', () => {
 
   describe('exists', () => {
     it('should return true when receive database entity', async () => {
-
       expect(await service.exists()).toEqual(true);
       expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({ id: REDIS_STACK_CONFIG.id });
     });
@@ -173,10 +175,11 @@ describe('StackDatabasesRepository', () => {
 
   describe('update', () => {
     it('should update standalone database', async () => {
+      repository.merge.mockReturnValue(mockDatabase);
+
       const result = await service.update(mockDatabaseId, mockDatabase);
 
       expect(result).toEqual(mockDatabase);
-      expect(repository.update).toHaveBeenCalledWith(REDIS_STACK_CONFIG.id, jasmine.anything());
     });
   });
 });

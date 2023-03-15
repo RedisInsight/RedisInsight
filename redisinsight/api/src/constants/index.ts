@@ -9,3 +9,4 @@ export * from './redis-commands';
 export * from './telemetry-events';
 export * from './app-events';
 export * from './redis-connection';
+export * from './recommendations';

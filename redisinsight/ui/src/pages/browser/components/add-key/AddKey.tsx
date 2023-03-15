@@ -16,8 +16,9 @@ import AddKeyCommonFields from 'uiSrc/pages/browser/components/add-key/AddKeyCom
 import { addKeyStateSelector, resetAddKey, keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
-import { Maybe, stringToBuffer } from 'uiSrc/utils'
+import { isContainJSONModule, Maybe, stringToBuffer } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+
 import { ADD_KEY_TYPE_OPTIONS } from './constants/key-type-options'
 import AddKeyHash from './AddKeyHash/AddKeyHash'
 import AddKeyZset from './AddKeyZset/AddKeyZset'
@@ -38,7 +39,7 @@ const AddKey = (props: Props) => {
   const dispatch = useDispatch()
 
   const { loading } = useSelector(addKeyStateSelector)
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, modules = [] } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
 
   useEffect(() =>
@@ -161,9 +162,11 @@ const AddKey = (props: Props) => {
               )}
               {typeSelected === KeyTypes.ReJSON && (
                 <>
-                  <span className={styles.helpText}>
-                    {HelpTexts.REJSON_SHOULD_BE_LOADED}
-                  </span>
+                  {!isContainJSONModule(modules) && (
+                    <span className={styles.helpText} data-testid="json-not-loaded-text">
+                      {HelpTexts.REJSON_SHOULD_BE_LOADED}
+                    </span>
+                  )}
                   <AddKeyReJSON onCancel={closeAddKeyPanel} {...defaultFields} />
                 </>
               )}

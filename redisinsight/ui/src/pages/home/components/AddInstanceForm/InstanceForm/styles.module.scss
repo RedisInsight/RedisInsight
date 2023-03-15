@@ -7,6 +7,15 @@
   color: var(--euiColorDangerText) !important;
 }
 
+:global(body .footerAddDatabase .empty-btn) {
+  border-color: transparent;
+
+  &:hover,
+  &:active {
+    background-color: var(--euiTooltipBackgroundColor);
+  }
+}
+
 .errorForm {
   color: var(--euiColorDangerText) !important;
   padding-top: 25px;
@@ -151,14 +160,18 @@
 }
 
 .tlsContainer {
-  min-height: 90px;
-  padding: 12px 0 10px;
+  margin: 12px 0 10px;
   flex-wrap: wrap;
 
   :global(.euiCheckbox) {
     padding-bottom: 10px !important;
   }
+}
 
+.tslBoxSection {
+  @media screen and (min-width: 767px) {
+    margin-bottom: 20px;
+  }
 }
 
 .tlsSniOpened {
@@ -167,4 +180,19 @@
 
 .fullWidth {
   flex-basis: 100% !important;
+}
+
+.sshPassTypeWrapper {
+  .sshPassType {
+    display: flex;
+    flex-direction: column;
+    :global {
+      .euiRadioGroup__item {
+        margin-bottom: 8px !important;
+        &:last-child {
+          margin-bottom: 0 !important;
+        }
+      }
+    }
+  }
 }

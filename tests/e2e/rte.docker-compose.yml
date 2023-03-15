@@ -1,6 +1,25 @@
 version: "3.4"
 
 services:
+  # ssh
+  ssh:
+    image: lscr.io/linuxserver/openssh-server:latest
+    environment:
+      - PASSWORD_ACCESS=true
+      - USER_PASSWORD=pass
+      - USER_NAME=u
+      - DOCKER_MODS=linuxserver/mods:openssh-server-ssh-tunnel
+      - PUBLIC_KEY_DIR=/keys/pub
+    volumes:
+      - ./rte/ssh/keys:/keys
+    ports:
+      - 2222:2222
+    networks:
+      default:
+        ipv4_address: 172.31.100.245
+      ssh:
+        ipv4_address: 172.33.100.245
+
   # oss standalone
   oss-standalone:
     image: redislabs/redismod
@@ -14,12 +33,28 @@ services:
     ports:
       - 8100:6379
 
+  oss-standalone-empty:
+    image: redislabs/redismod
+    command: [
+      "--loadmodule", "/usr/lib/redis/modules/redisearch.so",
+      "--loadmodule", "/usr/lib/redis/modules/redisgraph.so",
+      "--loadmodule", "/usr/lib/redis/modules/redistimeseries.so",
+      "--loadmodule", "/usr/lib/redis/modules/rejson.so",
+      "--loadmodule", "/usr/lib/redis/modules/redisbloom.so"
+    ]
+    ports:
+      - 8105:6379
+
   # oss standalone v5
   oss-standalone-v5:
     image: redis:5
     ports:
       - 8101:6379
-
+    networks:
+      default:
+        ipv4_address: 172.31.100.111
+      ssh:
+        ipv4_address: 172.33.100.111
   # oss standalone redisearch
   oss-standalone-redisearch:
     image: redislabs/redismod
@@ -34,6 +69,14 @@ services:
         TEST_DB_DUMP: $TEST_BIG_DB_DUMP
     ports:
       - 8103:6379
+
+  # oss standalone еды
+  oss-standalone-tls:
+    build:
+      context: ./rte/oss-standalone-tls
+      dockerfile: Dockerfile
+    ports:
+      - 8104:6379
 
   # oss sentinel
   oss-sentinel:
@@ -77,6 +120,33 @@ services:
       default:
         ipv4_address: 172.31.100.213
 
+  # oss cluster (v7) with rediserch > 2.2
+  cluster-rs-creator-7:
+    build:
+      context: &cluster-rs-7-build ./rte/oss-cluster-7-rs
+      dockerfile: creator.Dockerfile
+    depends_on:
+      - master-rs-7-1
+      - master-rs-7-2
+      - master-rs-7-3
+  master-rs-7-1:
+    build: *cluster-rs-7-build
+    ports:
+      - 8221:6379
+    networks:
+      default:
+        ipv4_address: 172.31.100.221
+  master-rs-7-2:
+    build: *cluster-rs-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.222
+  master-rs-7-3:
+    build: *cluster-rs-7-build
+    networks:
+      default:
+        ipv4_address: 172.31.100.223
+
   # redis enterprise
   redis-enterprise:
     build: ./rte/redis-enterprise
@@ -93,3 +163,10 @@ networks:
       config:
         - subnet: 172.31.100.0/24
           gateway: 172.31.100.1
+  ssh:
+    name: "e2e-ssh-network"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.33.100.0/24
+          gateway: 172.33.100.1

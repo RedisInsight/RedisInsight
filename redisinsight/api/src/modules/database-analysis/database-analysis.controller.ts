@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
+  Controller, Get, Param, Post, Patch, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiTags } from '@nestjs/swagger';
@@ -8,7 +8,7 @@ import { DatabaseAnalysisService } from 'src/modules/database-analysis/database-
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 import { ApiQueryRedisStringEncoding, ClientMetadataParam } from 'src/common/decorators';
-import { CreateDatabaseAnalysisDto } from 'src/modules/database-analysis/dto';
+import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { ClientMetadata } from 'src/common/models';
 
 @UseInterceptors(BrowserSerializeInterceptor)
@@ -71,5 +71,31 @@ export class DatabaseAnalysisController {
     @Param('dbInstance') databaseId: string,
   ): Promise<ShortDatabaseAnalysis[]> {
     return this.service.list(databaseId);
+  }
+
+  @Patch(':id')
+  @ApiEndpoint({
+    description: 'Update database instance by id',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Updated database instance\' response',
+        type: DatabaseAnalysis,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  async modify(
+    @Param('id') id: string,
+      @Body() dto: RecommendationVoteDto,
+  ): Promise<DatabaseAnalysis> {
+    return await this.service.vote(id, dto);
   }
 }

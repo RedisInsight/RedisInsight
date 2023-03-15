@@ -7,7 +7,7 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 
 import {
   bufferToString,
@@ -117,8 +117,8 @@ const SetDetails = (props: Props) => {
     })
   }
 
-  const handleDeleteMember = (member = '') => {
-    dispatch(deleteSetMembers(key, [stringToBuffer(member, viewFormat)], onSuccessRemoved))
+  const handleDeleteMember = (member: string | RedisString = '') => {
+    dispatch(deleteSetMembers(key, [member], onSuccessRemoved))
     closePopover()
   }
 
@@ -234,6 +234,7 @@ const SetDetails = (props: Props) => {
               header={createDeleteFieldHeader(memberItem)}
               text={createDeleteFieldMessage(key ?? '')}
               item={member}
+              itemRaw={memberItem}
               suffix={suffix}
               deleting={deleting}
               closePopover={closePopover}

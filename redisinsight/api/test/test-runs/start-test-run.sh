@@ -39,7 +39,7 @@ ID=$RTE-$(tr -dc A-Za-z0-9 </dev/urandom | head -c 6)
 PRESTART="$BASEDIR/$RTE/prestart.sh"
 if test -f "$PRESTART"; then
     echo "Running prestart.sh script..."
-    ID=$ID ./$PRESTART
+    ID=$ID ./$PRESTART``
 fi
 
 echo "Pulling RTE... ${RTE}"
@@ -67,4 +67,4 @@ eval "ID=$ID RTE=$RTE docker-compose -p $ID \
   --env-file $BASEDIR/$BUILD.build.env stop"
 
 echo "Removing test run docker network..."
-eval "docker network rm $ID"
+eval "docker network rm $ID || true"

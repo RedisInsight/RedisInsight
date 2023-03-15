@@ -43,6 +43,18 @@
       "iconLight": "./dist/table_view_icon_light.svg",
       "description": "RediSearch default plugin",
       "default": true
+    },
+    {
+      "id": "redisearch-profile",
+      "name": "Table",
+      "activationMethod": "renderRediSearch",
+      "matchCommands": [
+        "FT.PROFILE"
+      ],
+      "iconDark": "./dist/table_view_icon_dark.svg",
+      "iconLight": "./dist/table_view_icon_light.svg",
+      "description": "RediSearch default plugin",
+      "default": false
     }
   ],
   "devDependencies": {

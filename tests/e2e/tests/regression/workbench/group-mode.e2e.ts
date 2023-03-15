@@ -31,7 +31,7 @@ test('Verify that user can run the commands from the Editor in the group mode', 
     // Verify that user can run a command with quantifier and see results in group(10 info)
     await workbenchPage.sendCommandInWorkbench(`${counter} ${command}`);
     // Verify that user can see number of total commands in group, success commands, number of failed commands in header summary in Workbench
-    await t.expect(workbenchPage.queryCardCommand.textContent).eql(`${counter} Command(s) - ${counter} success, 0 error(s)`, 'Not valid summary');
+    await t.expect(workbenchPage.queryCardCommand.textContent).contains(`${counter} Command(s) - ${counter} success, 0 error(s)`, 'Not valid summary');
     // Verify that if users execute commands in group mode, they see summary of the commands execution
     await t.expect(workbenchPage.executionCommandTime.exists).ok('Execution time is not displayed');
     await t.expect(workbenchPage.executionCommandIcon.exists).ok('Execution time icon is not displayed');

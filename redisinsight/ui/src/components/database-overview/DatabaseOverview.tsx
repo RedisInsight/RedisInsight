@@ -35,7 +35,7 @@ interface IState<T> {
 const DatabaseOverview = (props: Props) => {
   const { metrics: metricsProps = [], modules: modulesProps = [], windowDimensions, isRediStack } = props
   const [metrics, setMetrics] = useState<IState<IMetric>>({ visible: [], hidden: [] })
-  const [modules, setModules] = useState<IState<RedisModuleDto>>({ visible: [], hidden: [] })
+  const [modules, setModules] = useState<IState<AdditionalRedisModule>>({ visible: [], hidden: [] })
 
   const { theme } = useContext(ThemeContext)
 

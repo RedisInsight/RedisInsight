@@ -23,7 +23,7 @@ interface IProps {
 }
 
 const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
-  const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
+  const { id: instanceId = '', db } = useSelector(connectedInstanceSelector)
   const { isActionTriggered, isConnected } = useSelector(bulkActionsSelector)
   const { filter, search } = useSelector(keysSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
@@ -86,6 +86,7 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
       {
         id,
         databaseId: instanceId,
+        db: db || 0,
         type: BulkActionsType.Delete,
         filter: {
           type: filter,

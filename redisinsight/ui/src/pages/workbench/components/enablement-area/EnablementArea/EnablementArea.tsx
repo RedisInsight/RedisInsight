@@ -35,9 +35,15 @@ export interface Props {
   isCodeBtnDisabled?: boolean
 }
 
-const EnablementArea = ({
-  guides = {}, tutorials = {}, openScript, loading, onOpenInternalPage, isCodeBtnDisabled
-}: Props) => {
+const EnablementArea = (props: Props) => {
+  const {
+    guides = {},
+    tutorials = {},
+    openScript,
+    loading,
+    onOpenInternalPage,
+    isCodeBtnDisabled,
+  } = props
   const { search } = useLocation()
   const history = useHistory()
   const dispatch = useDispatch()

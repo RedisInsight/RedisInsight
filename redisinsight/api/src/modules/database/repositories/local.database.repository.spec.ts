@@ -5,7 +5,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   mockCaCertificateRepository,
-  mockClientCertificateRepository, mockClusterDatabaseWithTlsAuth, mockClusterDatabaseWithTlsAuthEntity,
+  mockClientCertificateRepository,
+  mockClusterDatabaseWithTlsAuth,
+  mockClusterDatabaseWithTlsAuthEntity,
   mockDatabase,
   mockDatabaseEntity,
   mockDatabaseId,
@@ -13,11 +15,27 @@ import {
   mockDatabasePasswordPlain,
   mockDatabaseSentinelMasterPasswordEncrypted,
   mockDatabaseSentinelMasterPasswordPlain,
-  mockDatabaseWithTls, mockDatabaseWithTlsAuth,
+  mockDatabaseWithSshBasic,
+  mockDatabaseWithSshBasicEntity,
+  mockDatabaseWithSshPrivateKey,
+  mockDatabaseWithSshPrivateKeyEntity,
+  mockDatabaseWithTls,
+  mockDatabaseWithTlsAuth,
   mockDatabaseWithTlsAuthEntity,
   mockDatabaseWithTlsEntity,
   mockEncryptionService,
-  mockRepository, mockSentinelDatabaseWithTlsAuth, mockSentinelDatabaseWithTlsAuthEntity,
+  mockRepository,
+  mockSentinelDatabaseWithTlsAuth,
+  mockSentinelDatabaseWithTlsAuthEntity,
+  mockSshOptionsBasicEntity,
+  mockSshOptionsPassphraseEncrypted,
+  mockSshOptionsPassphrasePlain,
+  mockSshOptionsPasswordEncrypted,
+  mockSshOptionsPasswordPlain,
+  mockSshOptionsPrivateKeyEncrypted, mockSshOptionsPrivateKeyEntity,
+  mockSshOptionsPrivateKeyPlain,
+  mockSshOptionsUsernameEncrypted,
+  mockSshOptionsUsernamePlain,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -26,9 +44,10 @@ import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { cloneClassInstance } from 'src/utils';
+import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 
 const listFields = [
-  'id', 'name', 'host', 'port', 'db',
+  'id', 'name', 'host', 'port', 'db', 'timeout',
   'connectionType', 'modules', 'lastConnection',
 ];
 
@@ -36,6 +55,7 @@ describe('LocalDatabaseRepository', () => {
   let service: LocalDatabaseRepository;
   let encryptionService: MockType<EncryptionService>;
   let repository: MockType<Repository<DatabaseEntity>>;
+  let sshOptionsRepository: MockType<Repository<SshOptionsEntity>>;
   let caCertRepository: MockType<CaCertificateRepository>;
   let clientCertRepository: MockType<ClientCertificateRepository>;
 
@@ -47,6 +67,10 @@ describe('LocalDatabaseRepository', () => {
         LocalDatabaseRepository,
         {
           provide: getRepositoryToken(DatabaseEntity),
+          useFactory: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(SshOptionsEntity),
           useFactory: mockRepository,
         },
         {
@@ -65,6 +89,7 @@ describe('LocalDatabaseRepository', () => {
     }).compile();
 
     repository = await module.get(getRepositoryToken(DatabaseEntity));
+    sshOptionsRepository = await module.get(getRepositoryToken(SshOptionsEntity));
     caCertRepository = await module.get(CaCertificateRepository);
     clientCertRepository = await module.get(ClientCertificateRepository);
     encryptionService = await module.get(EncryptionService);
@@ -83,7 +108,15 @@ describe('LocalDatabaseRepository', () => {
       .calledWith(mockDatabasePasswordEncrypted, jasmine.anything())
       .mockResolvedValue(mockDatabasePasswordPlain)
       .calledWith(mockDatabaseSentinelMasterPasswordEncrypted, jasmine.anything())
-      .mockResolvedValue(mockDatabaseSentinelMasterPasswordPlain);
+      .mockResolvedValue(mockDatabaseSentinelMasterPasswordPlain)
+      .calledWith(mockSshOptionsUsernameEncrypted, jasmine.anything())
+      .mockResolvedValue(mockSshOptionsUsernamePlain)
+      .calledWith(mockSshOptionsPasswordEncrypted, jasmine.anything())
+      .mockResolvedValue(mockSshOptionsPasswordPlain)
+      .calledWith(mockSshOptionsPrivateKeyEncrypted, jasmine.anything())
+      .mockResolvedValue(mockSshOptionsPrivateKeyPlain)
+      .calledWith(mockSshOptionsPassphraseEncrypted, jasmine.anything())
+      .mockResolvedValue(mockSshOptionsPassphrasePlain);
     when(encryptionService.encrypt)
       .calledWith(mockDatabasePasswordPlain)
       .mockResolvedValue({
@@ -94,6 +127,26 @@ describe('LocalDatabaseRepository', () => {
       .mockResolvedValue({
         data: mockDatabaseSentinelMasterPasswordEncrypted,
         encryption: mockDatabaseWithTlsAuthEntity.encryption,
+      })
+      .calledWith(mockSshOptionsUsernamePlain)
+      .mockResolvedValue({
+        data: mockSshOptionsUsernameEncrypted,
+        encryption: mockSshOptionsBasicEntity.encryption,
+      })
+      .calledWith(mockSshOptionsPasswordPlain)
+      .mockResolvedValue({
+        data: mockSshOptionsPasswordEncrypted,
+        encryption: mockSshOptionsBasicEntity.encryption,
+      })
+      .calledWith(mockSshOptionsPrivateKeyPlain)
+      .mockResolvedValue({
+        data: mockSshOptionsPrivateKeyEncrypted,
+        encryption: mockSshOptionsPrivateKeyEntity.encryption,
+      })
+      .calledWith(mockSshOptionsPassphrasePlain)
+      .mockResolvedValue({
+        data: mockSshOptionsPassphraseEncrypted,
+        encryption: mockSshOptionsPrivateKeyEntity.encryption,
       });
   });
 
@@ -113,6 +166,24 @@ describe('LocalDatabaseRepository', () => {
       const result = await service.get(mockDatabaseId);
 
       expect(result).toEqual(mockDatabase);
+      expect(caCertRepository.get).not.toHaveBeenCalled();
+      expect(clientCertRepository.get).not.toHaveBeenCalled();
+    });
+
+    it('should return standalone database model with ssh enabled (basic)', async () => {
+      repository.findOneBy.mockResolvedValue(mockDatabaseWithSshBasicEntity);
+      const result = await service.get(mockDatabaseWithSshBasic.id);
+
+      expect(result).toEqual(mockDatabaseWithSshBasic);
+      expect(caCertRepository.get).not.toHaveBeenCalled();
+      expect(clientCertRepository.get).not.toHaveBeenCalled();
+    });
+
+    it('should return standalone database model with ssh enabled (privateKey + passphrase)', async () => {
+      repository.findOneBy.mockResolvedValue(mockDatabaseWithSshPrivateKeyEntity);
+      const result = await service.get(mockDatabaseWithSshPrivateKey.id);
+
+      expect(result).toEqual(mockDatabaseWithSshPrivateKey);
       expect(caCertRepository.get).not.toHaveBeenCalled();
       expect(clientCertRepository.get).not.toHaveBeenCalled();
     });
@@ -201,14 +272,51 @@ describe('LocalDatabaseRepository', () => {
 
   describe('update', () => {
     it('should update standalone database', async () => {
-      const result = await service.update(mockDatabaseId, mockDatabase);
+      repository.merge.mockReturnValue(mockDatabaseEntity);
 
-      expect(result).toEqual(mockDatabase);
+      const result = await service.update(mockDatabaseId, {
+        ...mockDatabase,
+        caCert: null,
+        clientCert: null,
+        sshOptions: null,
+      });
+
+      expect(result).toEqual({
+        ...mockDatabase,
+        caCert: null,
+        clientCert: null,
+        sshOptions: null,
+      });
+      expect(caCertRepository.create).not.toHaveBeenCalled();
+      expect(clientCertRepository.create).not.toHaveBeenCalled();
+      expect(sshOptionsRepository.createQueryBuilder).toHaveBeenCalled();
+    });
+
+    it('should update standalone database with ssh enabled (basic)', async () => {
+      repository.findOneBy.mockResolvedValue(mockDatabaseWithSshBasicEntity);
+      repository.merge.mockReturnValue(mockDatabaseWithSshBasic);
+
+      const result = await service.update(mockDatabaseId, mockDatabaseWithSshBasic);
+
+      expect(result).toEqual(mockDatabaseWithSshBasic);
+      expect(caCertRepository.create).not.toHaveBeenCalled();
+      expect(clientCertRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should update standalone database with ssh enabled (privateKey)', async () => {
+      repository.findOneBy.mockResolvedValue(mockDatabaseWithSshPrivateKeyEntity);
+      repository.merge.mockReturnValue(mockDatabaseWithSshPrivateKey);
+
+      const result = await service.update(mockDatabaseId, mockDatabaseWithSshPrivateKey);
+
+      expect(result).toEqual(mockDatabaseWithSshPrivateKey);
       expect(caCertRepository.create).not.toHaveBeenCalled();
       expect(clientCertRepository.create).not.toHaveBeenCalled();
     });
 
     it('should update standalone database (with existing certificates)', async () => {
+      repository.merge.mockReturnValue(mockDatabaseWithTlsAuth);
+      repository.findOneBy.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
       repository.findOneBy.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
 
       const result = await service.update(mockDatabaseId, mockDatabaseWithTlsAuth);
@@ -219,6 +327,8 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should update standalone database (and certificates)', async () => {
+      repository.merge.mockReturnValue(mockDatabaseWithTlsAuth);
+      repository.findOneBy.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
       repository.findOneBy.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
 
       const result = await service.update(

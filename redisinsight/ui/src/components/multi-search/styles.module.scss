@@ -7,6 +7,7 @@
   min-height: 36px;
 
   .multiSearch {
+    position: relative;
     flex: 1;
     height: 100%;
     display: flex;
@@ -17,11 +18,18 @@
     background-color: var(--browserTableRowEven);
     background-repeat: no-repeat;
     background-size: 0 100%;
-    transition: box-shadow 150ms ease-in, background-image 150ms ease-in, background-size 150ms ease-in, background-color 150ms ease-in;
+    transition: box-shadow 150ms ease-in, background-image 150ms ease-in, background-size 150ms ease-in,
+      background-color 150ms ease-in;
 
     &.isFocused {
       background-size: 100% 100%;
-      background-image: linear-gradient(to top, var(--euiColorPrimary), var(--euiColorPrimary) 2px, transparent 2px, transparent 100%) !important;
+      background-image: linear-gradient(
+        to top,
+        var(--euiColorPrimary),
+        var(--euiColorPrimary) 2px,
+        transparent 2px,
+        transparent 100%
+      ) !important;
     }
   }
 
@@ -45,14 +53,91 @@
     height: 16px;
     background-color: var(--separatorColor);
     border-radius: 100%;
+    margin-left: 5px;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       background-color: var(--separatorColor) !important;
     }
 
     :global(.euiIcon) {
       width: 10px;
       height: 10px;
+    }
+  }
+
+  .autoSuggestions {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    width: 100%;
+    min-width: 180px;
+
+    background: var(--browserTableRowEven);
+    border: 1px solid var(--separatorColor);
+    border-radius: 4px;
+    z-index: 3;
+    padding: 4px 0;
+
+    font-size: 13px;
+
+    color: var(--euiTextSubduedColor);
+
+    .suggestion {
+      display: flex;
+      align-items: center;
+      text-align: left;
+
+      padding: 6px 10px;
+      cursor: default;
+
+      &:hover,
+      &.focused {
+        background: var(--comboBoxBadgeBgColor);
+        .suggestionRemoveBtn {
+          visibility: visible;
+          pointer-events: auto;
+        }
+      }
+    }
+
+    .suggestionText {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      flex-grow: 1;
+      line-height: 1.4;
+    }
+
+    .suggestionOption {
+      margin-right: 10px;
+    }
+
+    .suggestionRemoveBtn {
+      flex-shrink: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  .historyIcon {
+    margin-left: 8px;
+    margin-right: -4px;
+  }
+
+  .clearHistory {
+    border-top: 1px solid var(--separatorColor);
+    padding: 8px 10px;
+    text-align: left;
+
+    display: flex;
+    align-items: center;
+
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      background: var(--comboBoxBadgeBgColor);
     }
   }
 
@@ -63,7 +148,9 @@
     color: var(--euiColorPrimaryText) !important;
     border-radius: 0 4px 4px 0;
 
-    &:hover, &:focus, &:focus-within {
+    &:hover:not(:disabled),
+    &:focus,
+    &:focus-within {
       background-color: var(--buttonSecondaryHoverColor) !important;
       transform: none !important;
     }
@@ -71,5 +158,15 @@
     &:hover {
       transform: none;
     }
+
+    &:disabled {
+      border: 1px solid var(--separatorColor);
+      border-left: none;
+      background-color: var(--euiColorLightestShade);
+    }
+  }
+
+  .anchorSubmitBtn {
+    height: 100%;
   }
 }

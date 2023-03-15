@@ -79,8 +79,11 @@ describe('DatabaseAnalytics', () => {
   });
 
   describe('sendInstanceAddedEvent', () => {
-    it('should emit event with enabled tls and sni', () => {
-      service.sendInstanceAddedEvent(mockDatabaseWithTlsAuth, mockRedisGeneralInfo);
+    it('should emit event with enabled tls and sni, and ssh', () => {
+      service.sendInstanceAddedEvent({
+        ...mockDatabaseWithTlsAuth,
+        ssh: true,
+      }, mockRedisGeneralInfo);
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.RedisInstanceAdded,
@@ -92,12 +95,15 @@ describe('DatabaseAnalytics', () => {
           verifyTLSCertificate: 'enabled',
           useTLSAuthClients: 'enabled',
           useSNI: 'enabled',
+          useSSH: 'enabled',
           version: mockRedisGeneralInfo.version,
           numberOfKeys: mockRedisGeneralInfo.totalKeys,
           numberOfKeysRange: '0 - 500 000',
           totalMemory: mockRedisGeneralInfo.usedMemory,
           numberedDatabases: mockRedisGeneralInfo.databases,
           numberOfModules: 0,
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
+          databaseIndex: 0,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
@@ -119,12 +125,15 @@ describe('DatabaseAnalytics', () => {
           verifyTLSCertificate: 'disabled',
           useTLSAuthClients: 'disabled',
           useSNI: 'disabled',
+          useSSH: 'disabled',
           version: mockRedisGeneralInfo.version,
           numberOfKeys: mockRedisGeneralInfo.totalKeys,
           numberOfKeysRange: '0 - 500 000',
           totalMemory: mockRedisGeneralInfo.usedMemory,
           numberedDatabases: mockRedisGeneralInfo.databases,
           numberOfModules: 0,
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
+          databaseIndex: 0,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
@@ -148,12 +157,53 @@ describe('DatabaseAnalytics', () => {
           verifyTLSCertificate: 'enabled',
           useTLSAuthClients: 'enabled',
           useSNI: 'enabled',
+          useSSH: 'disabled',
           version: mockRedisGeneralInfo.version,
           numberOfKeys: undefined,
           numberOfKeysRange: undefined,
           totalMemory: undefined,
           numberedDatabases: undefined,
           numberOfModules: 2,
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
+          databaseIndex: 0,
+          ...DEFAULT_REDIS_MODULES_SUMMARY,
+          RediSearch: {
+            loaded: true,
+            version: 20000,
+          },
+          customModules: [{ name: 'rediSQL', version: 1 }],
+        },
+      );
+    });
+    it('should emit event without db index', () => {
+      const instance = {
+        ...mockDatabaseWithTlsAuth,
+        db: 2,
+        modules: [{ name: 'search', version: 20000 }, { name: 'rediSQL', version: 1 }],
+      };
+      service.sendInstanceAddedEvent(instance, {
+        version: mockRedisGeneralInfo.version,
+      });
+
+      expect(sendEventSpy).toHaveBeenCalledWith(
+        TelemetryEvents.RedisInstanceAdded,
+        {
+          databaseId: instance.id,
+          connectionType: instance.connectionType,
+          provider: instance.provider,
+          useTLS: 'enabled',
+          verifyTLSCertificate: 'enabled',
+          useTLSAuthClients: 'enabled',
+          useSNI: 'enabled',
+          useSSH: 'disabled',
+          version: mockRedisGeneralInfo.version,
+          numberOfKeys: undefined,
+          numberOfKeysRange: undefined,
+          totalMemory: undefined,
+          numberedDatabases: undefined,
+          numberOfModules: 2,
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
+          databaseIndex: 2,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
           RediSearch: {
             loaded: true,
@@ -187,12 +237,17 @@ describe('DatabaseAnalytics', () => {
           useTLS: 'disabled',
           verifyTLSCertificate: 'disabled',
           useTLSAuthClients: 'disabled',
+          useSNI: 'enabled',
+          useSSH: 'disabled',
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
             useTLS: 'enabled',
             verifyTLSCertificate: 'enabled',
             useTLSAuthClients: 'enabled',
+            useSNI: 'enabled',
+            useSSH: 'disabled',
           },
         },
       );
@@ -217,10 +272,15 @@ describe('DatabaseAnalytics', () => {
           useTLS: 'enabled',
           verifyTLSCertificate: 'enabled',
           useTLSAuthClients: 'enabled',
+          useSNI: 'enabled',
+          useSSH: 'disabled',
+          timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
             useTLS: 'disabled',
+            useSNI: 'disabled',
+            useSSH: 'disabled',
             verifyTLSCertificate: 'disabled',
             useTLSAuthClients: 'disabled',
           },

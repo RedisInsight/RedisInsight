@@ -43,7 +43,7 @@ async function verifyContext(): Promise<void> {
         .expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('Key details not opened');
 }
 
-fixture`Search capabilities in Browser`
+fixture `Search capabilities in Browser`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl);
 test
@@ -92,6 +92,12 @@ test
         await browserPage.searchByKeyName(searchPerValue);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[0])).ok(`The first valid key ${keyNames[0]} not found`);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[2])).ok(`The second valid key ${keyNames[2]} not found`);
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
+
+        // Verify that user can use filter history for RediSearch query
+        await t.click(browserPage.showFilterHistoryBtn);
+        await t.click(browserPage.filterHistoryOption.withText('Hall School'));
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[0])).ok(`The key ${keyNames[0]} not found`);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
 
         // Verify that user can clear the search

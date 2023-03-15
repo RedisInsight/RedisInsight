@@ -10,6 +10,10 @@ import {
 import { optimizeLSInstances, setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
 import { BrowserStorageItem } from 'uiSrc/constants'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
+import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
+import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
+import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { cloudSelector, resetSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { editedInstanceSelector, fetchEditedInstanceAction, fetchInstancesAction, instancesSelector, setEditedInstance } from 'uiSrc/slices/instances/instances'
@@ -54,6 +58,8 @@ const HomePage = () => {
   } = useSelector(editedInstanceSelector)
 
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
+
+  const { contextInstanceId } = useSelector(appContextSelector)
 
   !welcomeIsShow && setTitle('My Redis databases')
 
@@ -122,12 +128,20 @@ const HomePage = () => {
     if (editedInstance) {
       const found = instances.find((item: Instance) => item.id === editedInstance.id)
       if (found) {
-        dispatch(fetchEditedInstanceAction(found.id))
+        dispatch(fetchEditedInstanceAction(found))
       }
     }
   }, [instances])
 
-  const onInstanceChanged = () => ({})
+  const onDbEdited = () => {
+    if (contextInstanceId && contextInstanceId === editedInstance?.id) {
+      dispatch(resetKeys())
+      dispatch(resetRedisearchKeysData())
+      dispatch(resetCliSettingsAction())
+      dispatch(resetCliHelperSettings())
+      dispatch(setAppContextInitialState())
+    }
+  }
 
   const closeEditDialog = () => {
     dispatch(setEditedInstance(null))
@@ -160,12 +174,13 @@ const HomePage = () => {
     setEditDialogIsOpen(false)
   }
 
-  const handleEditInstance = ({ id }: Instance) => {
-    dispatch(fetchEditedInstanceAction(id))
-    setEditDialogIsOpen(true)
-    setAddDialogIsOpen(false)
+  const handleEditInstance = (editedInstance: Instance) => {
+    if (editedInstance) {
+      dispatch(fetchEditedInstanceAction(editedInstance))
+      setEditDialogIsOpen(true)
+      setAddDialogIsOpen(false)
+    }
   }
-
   const handleDeleteInstances = (instances: Instance[]) => {
     if (instances.find((instance) => instance.id === editedInstance?.id)) {
       dispatch(setEditedInstance(null))
@@ -233,7 +248,6 @@ const HomePage = () => {
                             [styles.contentActive]: editDialogIsOpen,
                           })}
                           id="form"
-                          minSize="538px"
                           paddingSize="none"
                           style={{ minWidth: '494px' }}
                         >
@@ -244,7 +258,7 @@ const HomePage = () => {
                               isResizablePanel
                               editedInstance={editedInstance}
                               onClose={closeEditDialog}
-                              onDbAdded={onInstanceChanged}
+                              onDbEdited={onDbEdited}
                             />
                           )}
 
@@ -255,7 +269,6 @@ const HomePage = () => {
                               isResizablePanel
                               editedInstance={sentinelInstance ?? null}
                               onClose={handleClose}
-                              onDbAdded={onInstanceChanged}
                               isFullWidth={!instances.length}
                             />
                           )}
@@ -284,7 +297,6 @@ const HomePage = () => {
                           isResizablePanel
                           editedInstance={sentinelInstance ?? null}
                           onClose={handleClose}
-                          onDbAdded={onInstanceChanged}
                           isFullWidth={!instances.length}
                         />
                       )}

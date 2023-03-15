@@ -1,39 +1,21 @@
 import {
   EuiButton,
-  EuiButtonIcon,
-  EuiCallOut,
-  EuiCheckbox,
   EuiCollapsibleNavGroup,
-  EuiFieldNumber,
-  EuiFieldPassword,
-  EuiFieldText,
+  EuiForm,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiForm,
-  EuiFormRow,
-  EuiIcon,
-  EuiLink,
-  EuiListGroup,
-  EuiListGroupItem,
   EuiSpacer,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiText,
-  EuiTextArea,
-  EuiTextColor,
   EuiToolTip,
-  htmlIdGenerator,
   keys,
 } from '@elastic/eui'
-import cx from 'classnames'
+
 import { FormikErrors, useFormik } from 'formik'
-import { capitalize, isEmpty, pick } from 'lodash'
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { isEmpty, pick, toString } from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
-import { DatabaseListModules } from 'uiSrc/components'
-import { APPLICATION_NAME, PageNames, Pages } from 'uiSrc/constants'
+import { PageNames, Pages } from 'uiSrc/constants'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
 import { useResizableFormField } from 'uiSrc/services'
@@ -46,45 +28,37 @@ import {
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
 
-import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
+import { ConnectionType, InstanceType, } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { handlePasteHostName, getDiffKeysOfObjectValues, checkRediStackModules } from 'uiSrc/utils'
+import { getDiffKeysOfObjectValues, checkRediStackModules } from 'uiSrc/utils'
+import { BuildType } from 'uiSrc/constants/env'
+
 import {
-  MAX_PORT_NUMBER,
-  validateCertName,
-  validateField,
-  validateNumber,
-  validatePortNumber,
-} from 'uiSrc/utils/validations'
+  ADD_NEW_CA_CERT,
+  NO_CA_CERT,
+  ADD_NEW,
+  fieldDisplayNames,
+  SshPassType,
+  DEFAULT_TIMEOUT,
+} from './constants'
+
+import { DbConnectionInfo, ISubmitButton } from './interfaces'
+import {
+  DbIndex,
+  DbInfo,
+  MessageSentinel,
+  MessageStandalone,
+  TlsDetails,
+  DatabaseForm
+} from './form-components'
+import {
+  DbInfoSentinel,
+  PrimaryGroupSentinel,
+  SentinelHostPort,
+  SentinelMasterDatabase,
+} from './form-components/sentinel'
+import SSHDetails from './form-components/SSHDetails'
 import { LoadingDatabaseText, SubmitBtnText, TitleDatabaseText, } from '../InstanceFormWrapper'
-import styles from './styles.module.scss'
-
-export const ADD_NEW_CA_CERT = 'ADD_NEW_CA_CERT'
-export const NO_CA_CERT = 'NO_CA_CERT'
-export const ADD_NEW = 'ADD_NEW'
-
-export interface DbConnectionInfo extends Instance {
-  port: string
-  tlsClientAuthRequired?: boolean
-  certificates?: { id: number; name: string }[]
-  selectedTlsClientCertId?: string | 'ADD_NEW' | undefined
-  newTlsCertPairName?: string
-  newTlsClientCert?: string
-  newTlsClientKey?: string
-  servername?: string
-  verifyServerTlsCert?: boolean
-  caCertificates?: { name: string; id: string }[]
-  selectedCaCertName: string | typeof ADD_NEW_CA_CERT | typeof NO_CA_CERT
-  newCaCertName?: string
-  newCaCert?: string
-  username?: string
-  password?: string
-  showDb?: boolean
-  sni?: boolean
-  sentinelMasterUsername?: string
-  sentinelMasterPassword?: string
-  sentinelMasterName?: string
-}
 
 export interface Props {
   width: number
@@ -93,6 +67,7 @@ export interface Props {
   submitButtonText?: SubmitBtnText
   titleText?: TitleDatabaseText
   loading: boolean
+  buildType?: BuildType
   instanceType: InstanceType
   loadingMsg: LoadingDatabaseText
   isEditMode: boolean
@@ -100,31 +75,12 @@ export interface Props {
   setIsCloneMode: (value: boolean) => void
   initialValues: DbConnectionInfo
   onSubmit: (values: DbConnectionInfo) => void
+  onTestConnection: (values: DbConnectionInfo) => void
   updateEditingName: (name: string) => void
   onHostNamePaste: (content: string) => boolean
   onClose?: () => void
   onAliasEdited?: (value: string) => void
   setErrorMsgRef?: (database: HTMLDivElement | null) => void
-}
-
-interface ISubmitButton {
-  onClick: () => void
-  text?: string
-  submitIsDisabled?: boolean
-}
-
-const fieldDisplayNames: DbConnectionInfo = {
-  port: 'Port',
-  host: 'Host',
-  name: 'Database alias',
-  selectedCaCertName: 'CA Certificate',
-  newCaCertName: 'CA Certificate Name',
-  newCaCert: 'CA certificate',
-  newTlsCertPairName: 'Client Certificate Name',
-  newTlsClientCert: 'Client Certificate',
-  newTlsClientKey: 'Private Key',
-  servername: 'Server Name',
-  sentinelMasterName: 'Primary Group Name'
 }
 
 const getInitFieldsDisplayNames = ({ host, port, name, instanceType }: any) => {
@@ -137,12 +93,15 @@ const getInitFieldsDisplayNames = ({ host, port, name, instanceType }: any) => {
   return {}
 }
 
+const getDefaultHost = () => '127.0.0.1'
+const getDefaultPort = (instanceType: InstanceType) => (instanceType === InstanceType.Sentinel ? '26379' : '6379')
+
 const AddStandaloneForm = (props: Props) => {
   const {
     formFields: {
       id,
       host,
-      name = '',
+      name,
       port,
       tls,
       db = null,
@@ -158,19 +117,25 @@ const AddStandaloneForm = (props: Props) => {
       selectedCaCertName,
       username,
       password,
+      timeout,
       modules,
       sentinelMasterPassword,
       sentinelMasterUsername,
       servername,
       provider,
+      ssh,
+      sshPassType = SshPassType.Password,
+      sshOptions
     },
     initialValues: initialValuesProp,
     width,
     onClose,
     onSubmit,
+    onTestConnection,
     onHostNamePaste,
     submitButtonText,
     instanceType,
+    buildType,
     loading,
     isEditMode,
     isCloneMode,
@@ -181,9 +146,10 @@ const AddStandaloneForm = (props: Props) => {
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
 
   const prepareInitialValues = () => ({
-    host,
-    port: port?.toString(),
-    name,
+    host: host ?? getDefaultHost(),
+    port: port ? port.toString() : getDefaultPort(instanceType),
+    timeout: timeout ? timeout.toString() : toString(DEFAULT_TIMEOUT / 1_000),
+    name: name ?? `${getDefaultHost()}:${getDefaultPort(instanceType)}`,
     username,
     password,
     tls,
@@ -203,6 +169,14 @@ const AddStandaloneForm = (props: Props) => {
     sentinelMasterName: sentinelMaster?.name || '',
     sentinelMasterUsername,
     sentinelMasterPassword,
+    ssh,
+    sshPassType,
+    sshHost: sshOptions?.host ?? '',
+    sshPort: sshOptions?.port ?? 22,
+    sshUsername: sshOptions?.username ?? '',
+    sshPassword: sshOptions?.password ?? '',
+    sshPrivateKey: sshOptions?.privateKey ?? '',
+    sshPassphrase: sshOptions?.passphrase ?? ''
   })
 
   const [initialValues, setInitialValues] = useState(prepareInitialValues())
@@ -291,6 +265,21 @@ const AddStandaloneForm = (props: Props) => {
       errs.sentinelMasterName = fieldDisplayNames.sentinelMasterName
     }
 
+    if (values.ssh) {
+      if (!values.sshHost) {
+        errs.sshHost = fieldDisplayNames.sshHost
+      }
+      if (!values.sshPort) {
+        errs.sshPort = fieldDisplayNames.sshPort
+      }
+      if (!values.sshUsername) {
+        errs.sshUsername = fieldDisplayNames.sshUsername
+      }
+      if (values.sshPassType === SshPassType.PrivateKey && !values.sshPrivateKey) {
+        errs.sshPrivateKey = fieldDisplayNames.sshPrivateKey
+      }
+    }
+
     setErrors(errs)
     return errs
   }
@@ -334,42 +323,6 @@ const AddStandaloneForm = (props: Props) => {
     },
   [])
 
-  const optionsCertsCA: EuiSuperSelectOption<string>[] = [
-    {
-      value: NO_CA_CERT,
-      inputDisplay: 'No CA Certificate',
-    },
-    {
-      value: ADD_NEW_CA_CERT,
-      inputDisplay: 'Add new CA certificate',
-    },
-  ]
-
-  caCertificates?.forEach((cert) => {
-    optionsCertsCA.push({
-      value: cert.id,
-      inputDisplay: cert.name,
-    })
-  })
-
-  const optionsCertsClient: EuiSuperSelectOption<string>[] = [
-    {
-      value: 'ADD_NEW',
-      inputDisplay: 'Add new certificate',
-    },
-  ]
-
-  certificates?.forEach((cert) => {
-    optionsCertsClient.push({
-      value: `${cert.id}`,
-      inputDisplay: cert.name,
-    })
-  })
-
-  const handleCopy = (text = '') => {
-    navigator.clipboard.writeText(text)
-  }
-
   const handleCheckConnectToInstance = () => {
     const modulesSummary = getRedisModulesSummary(modules)
     sendEventTelemetry({
@@ -403,6 +356,10 @@ const AddStandaloneForm = (props: Props) => {
     })
   }
 
+  const handleTestConnectionDatabase = () => {
+    onTestConnection(formik.values)
+  }
+
   const handleChangeDatabaseAlias = (
     value: string,
     onSuccess?: () => void,
@@ -419,15 +376,6 @@ const AddStandaloneForm = (props: Props) => {
     ))
   }
 
-  const handleChangeDbIndexCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {
-    const isChecked = e.target.checked
-    if (!isChecked) {
-      // Reset db field to initial value
-      formik.setFieldValue('db', null)
-    }
-    formik.handleChange(e)
-  }
-
   const connectToInstance = () => {
     if (contextInstanceId && contextInstanceId !== id) {
       dispatch(resetKeys())
@@ -441,714 +389,6 @@ const AddStandaloneForm = (props: Props) => {
     }
     history.push(Pages.browser(id))
   }
-
-  const DbInfo = () => (
-    <EuiListGroup className={styles.dbInfoGroup} flush>
-      <EuiListGroupItem
-        label={(
-          <EuiText color="subdued" size="s">
-            Connection Type:
-            <EuiTextColor color="default" className={styles.dbInfoListValue}>
-              {capitalize(connectionType)}
-            </EuiTextColor>
-          </EuiText>
-        )}
-      />
-
-      {nameFromProvider && (
-        <EuiListGroupItem
-          label={(
-            <EuiText color="subdued" size="s">
-              Database Name from Provider:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
-                {nameFromProvider}
-              </EuiTextColor>
-            </EuiText>
-          )}
-        />
-      )}
-
-      <EuiListGroupItem
-        label={(
-          <>
-            {!!nodes?.length && <AppendEndpoints />}
-            <EuiText color="subdued" size="s">
-              Host:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
-                {host}
-              </EuiTextColor>
-            </EuiText>
-          </>
-        )}
-      />
-
-      <EuiListGroupItem
-        label={(
-          <EuiText color="subdued" size="s">
-            Port:
-            <EuiTextColor color="default" className={styles.dbInfoListValue}>
-              {port}
-            </EuiTextColor>
-          </EuiText>
-        )}
-      />
-
-      {!!db && (
-        <EuiListGroupItem
-          label={(
-            <EuiText color="subdued" size="s">
-              Database Index:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
-                {db}
-              </EuiTextColor>
-            </EuiText>
-            )}
-        />
-      )}
-
-      {!!modules?.length && (
-        <>
-          <EuiListGroupItem
-            className={styles.dbInfoModulesLabel}
-            label={(
-              <EuiText color="subdued" size="s">
-                Modules:
-              </EuiText>
-            )}
-          />
-          <EuiTextColor color="default" className={cx(styles.dbInfoListValue, styles.dbInfoModules)}>
-            <DatabaseListModules modules={modules} />
-          </EuiTextColor>
-        </>
-      )}
-    </EuiListGroup>
-  )
-
-  const PrimaryGroupSentinel = () => (
-    <>
-      <EuiFlexGroup className={flexGroupClassName}>
-        <EuiFlexItem className={flexItemClassName}>
-          <EuiFormRow label="Database Alias*">
-            <EuiFieldText
-              fullWidth
-              name="name"
-              id="name"
-              data-testid="name"
-              placeholder="Enter Database Alias"
-              value={formik.values.name ?? ''}
-              maxLength={500}
-              onChange={formik.handleChange}
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiFlexGroup className={flexGroupClassName}>
-        <EuiFlexItem className={flexItemClassName}>
-          <EuiFormRow label="Primary Group Name*">
-            <EuiFieldText
-              fullWidth
-              name="sentinelMasterName"
-              id="sentinelMasterName"
-              data-testid="primary-group"
-              placeholder="Enter Primary Group Name"
-              value={formik.values.sentinelMasterName ?? ''}
-              maxLength={500}
-              onChange={formik.handleChange}
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </>
-  )
-
-  const DbInfoSentinel = () => (
-    <EuiListGroup className={styles.dbInfoGroup} flush>
-      <EuiListGroupItem
-        label={(
-          <EuiText color="subdued" size="s">
-            Connection Type:
-            <EuiTextColor color="default" className={styles.dbInfoListValue}>
-              {capitalize(connectionType)}
-            </EuiTextColor>
-          </EuiText>
-        )}
-      />
-
-      {sentinelMaster?.name && (
-        <EuiListGroupItem
-          label={(
-            <EuiText color="subdued" size="s">
-              Primary Group Name:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
-                {sentinelMaster?.name}
-              </EuiTextColor>
-            </EuiText>
-          )}
-        />
-      )}
-
-      {nameFromProvider && (
-        <EuiListGroupItem
-          label={(
-            <EuiText color="subdued" size="s">
-              Database Name from Provider:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
-                {nameFromProvider}
-              </EuiTextColor>
-            </EuiText>
-          )}
-        />
-      )}
-    </EuiListGroup>
-  )
-
-  const AppendHostName = () => (
-    <EuiToolTip
-      title={(
-        <div>
-          <p>
-            <b>Pasting a connection URL auto fills the database details.</b>
-          </p>
-          <p style={{ margin: 0, paddingTop: '10px' }}>
-            The following connection URLs are supported:
-          </p>
-        </div>
-      )}
-      className="homePage_tooltip"
-      anchorClassName="inputAppendIcon"
-      position="right"
-      content={(
-        <ul className="homePage_toolTipUl">
-          <li>
-            <span className="dot" />
-            redis://[[username]:[password]]@host:port
-          </li>
-          <li>
-            <span className="dot" />
-            rediss://[[username]:[password]]@host:port
-          </li>
-          <li>
-            <span className="dot" />
-            host:port
-          </li>
-        </ul>
-      )}
-    >
-      <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-    </EuiToolTip>
-  )
-
-  const AppendEndpoints = () => (
-    <EuiToolTip
-      title="Host:port"
-      position="left"
-      anchorClassName={styles.anchorEndpoints}
-      content={(
-        <ul className={styles.endpointsList}>
-          {nodes?.map(({ host: ephost, port: epport }) => (
-            <li key={ephost + epport}>
-              <EuiText>
-                {ephost}
-                :
-                {epport}
-                ;
-              </EuiText>
-            </li>
-          ))}
-        </ul>
-      )}
-    >
-      <EuiIcon
-        type="iInCircle"
-        color="subdued"
-        title=""
-        style={{ cursor: 'pointer' }}
-      />
-    </EuiToolTip>
-  )
-
-  const DatabaseForm = () => (
-    <>
-      {(!isEditMode || isCloneMode) && (
-        <EuiFlexGroup className={flexGroupClassName}>
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiFormRow label="Host*">
-              <EuiFieldText
-                autoFocus={!isCloneMode}
-                name="host"
-                id="host"
-                data-testid="host"
-                color="secondary"
-                maxLength={200}
-                placeholder="Enter Hostname / IP address / Connection URL"
-                value={formik.values.host ?? ''}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validateField(e.target.value.trim())
-                  )
-                }}
-                onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
-                  handlePasteHostName(onHostNamePaste, event)}
-                append={<AppendHostName />}
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
-              <EuiFieldNumber
-                name="port"
-                id="port"
-                data-testid="port"
-                style={{ width: '100%' }}
-                placeholder="Enter Port"
-                value={formik.values.port ?? ''}
-                maxLength={6}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validatePortNumber(e.target.value.trim())
-                  )
-                }}
-                type="text"
-                min={0}
-                max={MAX_PORT_NUMBER}
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      )}
-
-      {(
-        (!isEditMode || isCloneMode)
-        && instanceType !== InstanceType.Sentinel
-        && connectionType !== ConnectionType.Sentinel
-      ) && (
-        <EuiFlexGroup className={flexGroupClassName}>
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiFormRow label="Database Alias*">
-              <EuiFieldText
-                fullWidth
-                name="name"
-                id="name"
-                data-testid="name"
-                placeholder="Enter Database Alias"
-                value={formik.values.name ?? ''}
-                maxLength={500}
-                onChange={formik.handleChange}
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      )}
-
-      <EuiFlexGroup className={flexGroupClassName}>
-        <EuiFlexItem className={flexItemClassName}>
-          <EuiFormRow label="Username">
-            <EuiFieldText
-              name="username"
-              id="username"
-              data-testid="username"
-              fullWidth
-              maxLength={200}
-              placeholder="Enter Username"
-              value={formik.values.username ?? ''}
-              onChange={formik.handleChange}
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-
-        <EuiFlexItem className={flexItemClassName}>
-          <EuiFormRow label="Password">
-            <EuiFieldPassword
-              type="dual"
-              name="password"
-              id="password"
-              data-testid="password"
-              fullWidth
-              className="passwordField"
-              maxLength={200}
-              placeholder="Enter Password"
-              value={formik.values.password ?? ''}
-              onChange={formik.handleChange}
-              dualToggleProps={{ color: 'text' }}
-              autoComplete="new-password"
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </>
-  )
-
-  const DBIndex = () => (
-    <>
-      <EuiFlexGroup
-        className={flexGroupClassName}
-        responsive={false}
-      >
-        <EuiFlexItem
-          grow={false}
-          className={flexItemClassName}
-        >
-          <EuiFormRow>
-            <EuiCheckbox
-              id={`${htmlIdGenerator()()} over db`}
-              name="showDb"
-              label="Select Logical Database"
-              checked={!!formik.values.showDb}
-              onChange={handleChangeDbIndexCheckbox}
-              data-testid="showDb"
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-
-      {formik.values.showDb && (
-        <EuiFlexGroup
-          className={flexGroupClassName}
-        >
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiCallOut>
-              <EuiText size="s" data-testid="db-index-message">
-                When the database is added, you can select logical databases only in CLI.
-                To work with other logical databases in Browser and Workbench,
-                add another database with the same host and port,
-                but a different database index.
-              </EuiText>
-            </EuiCallOut>
-          </EuiFlexItem>
-          <EuiFlexItem
-            className={cx(
-              flexItemClassName,
-              styles.dbInput,
-              { [styles.dbInputBig]: !flexItemClassName }
-            )}
-          >
-            <EuiFormRow label="Database Index">
-              <EuiFieldNumber
-                name="db"
-                id="db"
-                data-testid="db"
-                style={{ width: 120 }}
-                placeholder="Enter Database Index"
-                value={formik.values.db ?? '0'}
-                maxLength={6}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validateNumber(e.target.value.trim())
-                  )
-                }}
-                type="text"
-                min={0}
-              />
-            </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      )}
-    </>
-  )
-
-  const TlsDetails = () => (
-    <>
-      <EuiFlexGroup
-        className={cx(flexGroupClassName, {
-          [styles.tlsContainer]: !flexGroupClassName,
-          [styles.tlsSniOpened]: formik.values.sni
-        })}
-        alignItems={!flexGroupClassName ? 'flexEnd' : undefined}
-      >
-        <EuiFlexItem
-          style={{ width: '230px' }}
-          grow={false}
-          className={flexItemClassName}
-        >
-          <EuiCheckbox
-            id={`${htmlIdGenerator()()} over ssl`}
-            name="tls"
-            label="Use TLS"
-            checked={!!formik.values.tls}
-            onChange={formik.handleChange}
-            data-testid="tls"
-          />
-        </EuiFlexItem>
-
-        {formik.values.tls && (
-          <>
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiCheckbox
-                id={`${htmlIdGenerator()()} sni`}
-                name="sni"
-                label="Use SNI"
-                checked={!!formik.values.sni}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    'servername',
-                    formik.values.servername ?? formik.values.host ?? ''
-                  )
-                  return formik.handleChange(e)
-                }}
-                data-testid="sni"
-              />
-            </EuiFlexItem>
-            {formik.values.sni && (
-              <EuiFlexItem className={flexItemClassName} style={{ flexBasis: '255px', marginTop: 0 }}>
-                <EuiFormRow label="Server Name*" style={{ paddingTop: 0 }}>
-                  <EuiFieldText
-                    name="servername"
-                    id="servername"
-                    fullWidth
-                    maxLength={200}
-                    placeholder="Enter Server Name"
-                    value={formik.values.servername ?? ''}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      formik.setFieldValue(
-                        e.target.name,
-                        validateField(e.target.value.trim())
-                      )}
-                    data-testid="sni-servername"
-                  />
-                </EuiFormRow>
-              </EuiFlexItem>
-            )}
-            <EuiFlexItem className={cx(flexItemClassName, { [styles.fullWidth]: formik.values.sni })}>
-              <EuiCheckbox
-                id={`${htmlIdGenerator()()} verifyServerTlsCert`}
-                name="verifyServerTlsCert"
-                label="Verify TLS Certificate"
-                checked={!!formik.values.verifyServerTlsCert}
-                onChange={formik.handleChange}
-                data-testid="verify-tls-cert"
-              />
-            </EuiFlexItem>
-          </>
-        )}
-      </EuiFlexGroup>
-      {formik.values.tls && (
-        <div className="boxSection">
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow
-                label={`CA Certificate${
-                  formik.values.verifyServerTlsCert ? '*' : ''
-                }`}
-              >
-                <EuiSuperSelect
-                  name="selectedCaCertName"
-                  placeholder="Select CA certificate"
-                  valueOfSelected={
-                    formik.values.selectedCaCertName ?? NO_CA_CERT
-                  }
-                  options={optionsCertsCA}
-                  onChange={(value) => {
-                    formik.setFieldValue(
-                      'selectedCaCertName',
-                      value || NO_CA_CERT
-                    )
-                  }}
-                  data-testid="select-ca-cert"
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-
-            {formik.values.tls
-              && formik.values.selectedCaCertName === ADD_NEW_CA_CERT && (
-                <EuiFlexItem className={flexItemClassName}>
-                  <EuiFormRow label="Name*">
-                    <EuiFieldText
-                      name="newCaCertName"
-                      id="newCaCertName"
-                      fullWidth
-                      maxLength={200}
-                      placeholder="Enter CA Certificate Name"
-                      value={formik.values.newCaCertName ?? ''}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        formik.setFieldValue(
-                          e.target.name,
-                          validateCertName(e.target.value)
-                        )}
-                      data-testid="qa-ca-cert"
-                    />
-                  </EuiFormRow>
-                </EuiFlexItem>
-            )}
-          </EuiFlexGroup>
-
-          {formik.values.tls
-            && formik.values.selectedCaCertName === ADD_NEW_CA_CERT && (
-              <EuiFlexGroup className={flexGroupClassName}>
-                <EuiFlexItem className={flexItemClassName}>
-                  <EuiFormRow label="Certificate*">
-                    <EuiTextArea
-                      name="newCaCert"
-                      id="newCaCert"
-                      className={styles.customScroll}
-                      value={formik.values.newCaCert ?? ''}
-                      onChange={formik.handleChange}
-                      fullWidth
-                      placeholder="Enter CA Certificate"
-                      data-testid="new-ca-cert"
-                    />
-                  </EuiFormRow>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-          )}
-        </div>
-      )}
-      {formik.values.tls && (
-        <EuiFlexGroup gutterSize="none" style={{ margin: '20px 0 0' }}>
-          <EuiFlexItem className={flexItemClassName}>
-            <EuiCheckbox
-              id={`${htmlIdGenerator()()} is_tls_client_auth_required`}
-              name="tlsClientAuthRequired"
-              label="Requires TLS Client Authentication"
-              checked={!!formik.values.tlsClientAuthRequired}
-              onChange={formik.handleChange}
-              data-testid="tls-required-checkbox"
-            />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      )}
-      {formik.values.tls && formik.values.tlsClientAuthRequired && (
-        <div className="boxSection" style={{ marginTop: 15 }}>
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow label="Client Certificate*">
-                <EuiSuperSelect
-                  placeholder="Select certificate"
-                  valueOfSelected={formik.values.selectedTlsClientCertId}
-                  options={optionsCertsClient}
-                  onChange={(value) => {
-                    formik.setFieldValue('selectedTlsClientCertId', value)
-                  }}
-                  data-testid="select-cert"
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-
-            {formik.values.tls
-              && formik.values.tlsClientAuthRequired
-              && formik.values.selectedTlsClientCertId === 'ADD_NEW' && (
-                <EuiFlexItem className={flexItemClassName}>
-                  <EuiFormRow label="Name*">
-                    <EuiFieldText
-                      name="newTlsCertPairName"
-                      id="newTlsCertPairName"
-                      fullWidth
-                      maxLength={200}
-                      placeholder="Enter Client Certificate Name"
-                      value={formik.values.newTlsCertPairName ?? ''}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        formik.setFieldValue(
-                          e.target.name,
-                          validateCertName(e.target.value)
-                        )}
-                      data-testid="new-tsl-cert-pair-name"
-                    />
-                  </EuiFormRow>
-                </EuiFlexItem>
-            )}
-          </EuiFlexGroup>
-
-          {formik.values.tls
-            && formik.values.tlsClientAuthRequired
-            && formik.values.selectedTlsClientCertId === 'ADD_NEW' && (
-              <>
-                <EuiFlexGroup className={flexGroupClassName}>
-                  <EuiFlexItem
-                    style={{ width: '100%' }}
-                    className={flexItemClassName}
-                  >
-                    <EuiFormRow label="Certificate*">
-                      <EuiTextArea
-                        name="newTlsClientCert"
-                        id="newTlsClientCert"
-                        className={styles.customScroll}
-                        value={formik.values.newTlsClientCert}
-                        onChange={formik.handleChange}
-                        draggable={false}
-                        fullWidth
-                        placeholder="Enter Client Certificate"
-                        data-testid="new-tls-client-cert"
-                      />
-                    </EuiFormRow>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-
-                <EuiFlexGroup className={flexGroupClassName}>
-                  <EuiFlexItem
-                    style={{ width: '100%' }}
-                    className={flexItemClassName}
-                  >
-                    <EuiFormRow label="Private Key*">
-                      <EuiTextArea
-                        placeholder="Enter Private Key"
-                        name="newTlsClientKey"
-                        id="newTlsClientKey"
-                        className={styles.customScroll}
-                        value={formik.values.newTlsClientKey}
-                        onChange={formik.handleChange}
-                        fullWidth
-                        data-testid="new-tls-client-cert-key"
-                      />
-                    </EuiFormRow>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-              </>
-          )}
-        </div>
-      )}
-    </>
-  )
-
-  const SentinelMasterDatabase = () => (
-    <>
-      {(!!db && !isCloneMode) && (
-        <EuiText color="subdued" className={styles.sentinelCollapsedField}>
-          Database Index:
-          <span style={{ paddingLeft: 5 }}>
-            <EuiTextColor>{db}</EuiTextColor>
-          </span>
-        </EuiText>
-      )}
-      <EuiFlexGroup className={flexGroupClassName}>
-        <EuiFlexItem className={flexItemClassName}>
-          <EuiFormRow label="Username">
-            <EuiFieldText
-              name="sentinelMasterUsername"
-              id="sentinelMasterUsername"
-              fullWidth
-              maxLength={200}
-              placeholder="Enter Username"
-              value={formik.values.sentinelMasterUsername ?? ''}
-              onChange={formik.handleChange}
-              data-testid="sentinel-mater-username"
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-
-        <EuiFlexItem className={flexItemClassName}>
-          <EuiFormRow label="Password">
-            <EuiFieldPassword
-              type="dual"
-              name="sentinelMasterPassword"
-              id="sentinelMasterPassword"
-              data-testid="sentinel-master-password"
-              fullWidth
-              className="passwordField"
-              maxLength={200}
-              placeholder="Enter Password"
-              value={formik.values.sentinelMasterPassword ?? ''}
-              onChange={formik.handleChange}
-              dualToggleProps={{ color: 'text' }}
-              autoComplete="new-password"
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </>
-  )
 
   const getSubmitButtonContent = (submitIsDisabled?: boolean) => {
     const maxErrorsCount = 5
@@ -1183,7 +423,6 @@ const AddStandaloneForm = (props: Props) => {
       <EuiButton
         fill
         color="secondary"
-        className="btn-add"
         type="submit"
         onClick={onClick}
         disabled={submitIsDisabled}
@@ -1201,88 +440,64 @@ const AddStandaloneForm = (props: Props) => {
 
     if (footerEl) {
       return ReactDOM.createPortal(
-        <div className="footerAddDatabase">
-          {onClose && (
-            <EuiButton
-              onClick={onClose}
-              color="secondary"
-              className="btn-cancel"
-              data-testid="btn-cancel"
-            >
-              Cancel
-            </EuiButton>
-          )}
-          <SubmitButton
-            onClick={formik.submitForm}
-            text={submitButtonText}
-            submitIsDisabled={submitIsDisable()}
-          />
-        </div>,
+        <EuiFlexGroup
+          justifyContent="spaceBetween"
+          alignItems="center"
+          className="footerAddDatabase"
+          gutterSize="none"
+          responsive={false}
+        >
+          <EuiFlexItem className="btn-back" grow={false}>
+            {instanceType !== InstanceType.Sentinel && (
+              <EuiToolTip
+                position="top"
+                anchorClassName="euiToolTip__btn-disabled"
+                title={
+                  submitIsDisable()
+                    ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
+                    : null
+                }
+                content={getSubmitButtonContent(submitIsDisable())}
+              >
+                <EuiButton
+                  className="empty-btn"
+                  onClick={handleTestConnectionDatabase}
+                  disabled={submitIsDisable()}
+                  isLoading={loading}
+                  iconType={submitIsDisable() ? 'iInCircle' : undefined}
+                  data-testid="btn-test-connection"
+                >
+                  Test Connection
+                </EuiButton>
+              </EuiToolTip>
+            )}
+          </EuiFlexItem>
+
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup responsive={false}>
+              {onClose && (
+                <EuiButton
+                  onClick={onClose}
+                  color="secondary"
+                  className="btn-cancel"
+                  data-testid="btn-cancel"
+                >
+                  Cancel
+                </EuiButton>
+              )}
+              <SubmitButton
+                onClick={formik.submitForm}
+                text={submitButtonText}
+                submitIsDisabled={submitIsDisable()}
+              />
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        </EuiFlexGroup>,
         footerEl
       )
     }
     return null
   }
-
-  const SentinelHostPort = () => (
-    <EuiText color="subdued" className={styles.sentinelCollapsedField}>
-      Host:Port:
-      <div className={styles.hostPort}>
-        <EuiTextColor>{`${host}:${port}`}</EuiTextColor>
-        <EuiToolTip
-          position="right"
-          content="Copy"
-          anchorClassName="copyHostPortTooltip"
-        >
-          <EuiButtonIcon
-            iconType="copy"
-            aria-label="Copy host:port"
-            className={styles.copyHostPortBtn}
-            onClick={() => handleCopy(`${host}:${port}`)}
-          />
-        </EuiToolTip>
-      </div>
-    </EuiText>
-  )
-
-  const MessageStandalone = () => (
-    <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
-      You can manually add your Redis databases. Enter Host and Port of your
-      Redis database to add it to
-      {' '}
-      {APPLICATION_NAME}
-      . &nbsp;
-      <EuiLink
-        color="text"
-        href="https://docs.redis.com/latest/ri/using-redisinsight/add-instance/"
-        className={styles.link}
-        external={false}
-        target="_blank"
-      >
-        Learn more here.
-      </EuiLink>
-    </EuiText>
-  )
-
-  const MessageSentinel = () => (
-    <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
-      You can automatically discover and add primary groups from your Redis
-      Sentinel. Enter Host and Port of your Redis Sentinel to automatically
-      discover your primary groups and add them to
-      {' '}
-      {APPLICATION_NAME}
-      . &nbsp;
-      <EuiLink
-        color="text"
-        href="https://redis.io/topics/sentinel"
-        className={styles.link}
-        external={false}
-        target="_blank"
-      >
-        Learn more here.
-      </EuiLink>
-    </EuiText>
-  )
 
   return (
     <div className="relative">
@@ -1321,23 +536,89 @@ const AddStandaloneForm = (props: Props) => {
             data-testid="form"
             onKeyDown={onKeyDown}
           >
-            {DatabaseForm()}
-            { instanceType !== InstanceType.Sentinel && DBIndex() }
-            {TlsDetails()}
+            <DatabaseForm
+              formik={formik}
+              flexItemClassName={flexItemClassName}
+              flexGroupClassName={flexGroupClassName}
+              isCloneMode={isCloneMode}
+              isEditMode={isEditMode}
+              connectionType={connectionType}
+              instanceType={instanceType}
+              onHostNamePaste={onHostNamePaste}
+            />
+            {instanceType !== InstanceType.Sentinel && (
+              <DbIndex
+                formik={formik}
+                flexItemClassName={flexItemClassName}
+                flexGroupClassName={flexGroupClassName}
+              />
+            )}
+            <TlsDetails
+              formik={formik}
+              flexItemClassName={flexItemClassName}
+              flexGroupClassName={flexGroupClassName}
+              certificates={certificates}
+              caCertificates={caCertificates}
+            />
+            {instanceType !== InstanceType.Sentinel && buildType !== BuildType.RedisStack && (
+              <SSHDetails
+                formik={formik}
+                flexItemClassName={flexItemClassName}
+                flexGroupClassName={flexGroupClassName}
+              />
+            )}
           </EuiForm>
         )}
         {(isEditMode || isCloneMode) && connectionType !== ConnectionType.Sentinel && (
           <>
-            {!isCloneMode && <DbInfo />}
+            {!isCloneMode && (
+              <DbInfo
+                host={host}
+                port={port}
+                connectionType={connectionType}
+                db={db}
+                modules={modules}
+                nameFromProvider={nameFromProvider}
+                nodes={nodes}
+              />
+            )}
             <EuiForm
               component="form"
               onSubmit={formik.handleSubmit}
               data-testid="form"
               onKeyDown={onKeyDown}
             >
-              {DatabaseForm()}
-              {isCloneMode && DBIndex()}
-              {TlsDetails()}
+              <DatabaseForm
+                formik={formik}
+                flexItemClassName={flexItemClassName}
+                flexGroupClassName={flexGroupClassName}
+                isCloneMode={isCloneMode}
+                isEditMode={isEditMode}
+                connectionType={connectionType}
+                instanceType={instanceType}
+                onHostNamePaste={onHostNamePaste}
+              />
+              {isCloneMode && (
+                <DbIndex
+                  formik={formik}
+                  flexItemClassName={flexItemClassName}
+                  flexGroupClassName={flexGroupClassName}
+                />
+              )}
+              <TlsDetails
+                formik={formik}
+                flexItemClassName={flexItemClassName}
+                flexGroupClassName={flexGroupClassName}
+                certificates={certificates}
+                caCertificates={caCertificates}
+              />
+              {buildType !== BuildType.RedisStack && (
+                <SSHDetails
+                  formik={formik}
+                  flexItemClassName={flexItemClassName}
+                  flexGroupClassName={flexGroupClassName}
+                />
+              )}
             </EuiForm>
           </>
         )}
@@ -1351,14 +632,24 @@ const AddStandaloneForm = (props: Props) => {
             >
               {!isCloneMode && (
                 <>
-                  <DbInfoSentinel />
+                  <DbInfoSentinel
+                    nameFromProvider={nameFromProvider}
+                    connectionType={connectionType}
+                    sentinelMaster={sentinelMaster}
+                  />
                   <EuiCollapsibleNavGroup
                     title="Database"
                     isCollapsible
                     initialIsOpen={false}
                     data-testid="database-nav-group"
                   >
-                    {SentinelMasterDatabase()}
+                    <SentinelMasterDatabase
+                      formik={formik}
+                      flexItemClassName={flexItemClassName}
+                      flexGroupClassName={flexGroupClassName}
+                      db={db}
+                      isCloneMode={isCloneMode}
+                    />
                   </EuiCollapsibleNavGroup>
                   <EuiCollapsibleNavGroup
                     title="Sentinel"
@@ -1366,8 +657,20 @@ const AddStandaloneForm = (props: Props) => {
                     initialIsOpen={false}
                     data-testid="sentinel-nav-group"
                   >
-                    {SentinelHostPort()}
-                    {DatabaseForm()}
+                    <SentinelHostPort
+                      host={host}
+                      port={port}
+                    />
+                    <DatabaseForm
+                      formik={formik}
+                      flexItemClassName={flexItemClassName}
+                      flexGroupClassName={flexGroupClassName}
+                      isCloneMode={isCloneMode}
+                      isEditMode={isEditMode}
+                      connectionType={connectionType}
+                      instanceType={instanceType}
+                      onHostNamePaste={onHostNamePaste}
+                    />
                   </EuiCollapsibleNavGroup>
 
                   <EuiCollapsibleNavGroup
@@ -1375,20 +678,36 @@ const AddStandaloneForm = (props: Props) => {
                     isCollapsible
                     initialIsOpen={false}
                   >
-                    {TlsDetails()}
+                    <TlsDetails
+                      formik={formik}
+                      flexItemClassName={flexItemClassName}
+                      flexGroupClassName={flexGroupClassName}
+                      certificates={certificates}
+                      caCertificates={caCertificates}
+                    />
                   </EuiCollapsibleNavGroup>
                 </>
               )}
               {isCloneMode && (
                 <>
-                  {PrimaryGroupSentinel()}
+                  <PrimaryGroupSentinel
+                    formik={formik}
+                    flexItemClassName={flexItemClassName}
+                    flexGroupClassName={flexGroupClassName}
+                  />
                   <EuiCollapsibleNavGroup
                     title="Database"
                     isCollapsible
                     initialIsOpen={false}
                     data-testid="database-nav-group-clone"
                   >
-                    {SentinelMasterDatabase()}
+                    <SentinelMasterDatabase
+                      formik={formik}
+                      flexItemClassName={flexItemClassName}
+                      flexGroupClassName={flexGroupClassName}
+                      db={db}
+                      isCloneMode={isCloneMode}
+                    />
                   </EuiCollapsibleNavGroup>
                   <EuiCollapsibleNavGroup
                     title="Sentinel"
@@ -1396,11 +715,30 @@ const AddStandaloneForm = (props: Props) => {
                     initialIsOpen={false}
                     data-testid="sentinel-nav-group-clone"
                   >
-                    {DatabaseForm()}
+                    <DatabaseForm
+                      formik={formik}
+                      flexItemClassName={flexItemClassName}
+                      flexGroupClassName={flexGroupClassName}
+                      isCloneMode={isCloneMode}
+                      isEditMode={isEditMode}
+                      connectionType={connectionType}
+                      instanceType={instanceType}
+                      onHostNamePaste={onHostNamePaste}
+                    />
                   </EuiCollapsibleNavGroup>
                   <EuiSpacer size="m" />
-                  {DBIndex()}
-                  {TlsDetails()}
+                  <DbIndex
+                    formik={formik}
+                    flexItemClassName={flexItemClassName}
+                    flexGroupClassName={flexGroupClassName}
+                  />
+                  <TlsDetails
+                    formik={formik}
+                    flexItemClassName={flexItemClassName}
+                    flexGroupClassName={flexGroupClassName}
+                    certificates={certificates}
+                    caCertificates={caCertificates}
+                  />
                 </>
               )}
             </EuiForm>
@@ -1410,14 +748,6 @@ const AddStandaloneForm = (props: Props) => {
       <Footer />
     </div>
   )
-}
-
-AddStandaloneForm.defaultProps = {
-  isResizablePanel: false,
-  submitButtonText: '',
-  titleText: '',
-  connectionTypeText: '',
-  setErrorMsgRef: () => {},
 }
 
 export default AddStandaloneForm

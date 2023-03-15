@@ -144,21 +144,37 @@ const KeyList = forwardRef((props: Props, ref) => {
     if (isNotRendered.current) {
       return ''
     }
-    if (searchMode === SearchMode.Redisearch && !selectedIndex) {
-      return NoSelectedIndexText
+
+    if (searchMode === SearchMode.Redisearch) {
+      if (!selectedIndex) {
+        return NoSelectedIndexText
+      }
+
+      if (total === 0) {
+        return NoResultsFoundText
+      }
+
+      if (isSearched) {
+        return keysState.scanned < total ? NoResultsFoundText : FullScanNoResultsFoundText
+      }
     }
+
     if (total === 0) {
       return NoKeysToDisplayText(Pages.workbench(instanceId), onNoKeysLinkClick)
     }
-    if (isSearched && searchMode === SearchMode.Redisearch) {
-      return keysState.scanned < total ? NoResultsFoundText : FullScanNoResultsFoundText
-    }
+
     if (isSearched) {
       return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
     }
+
     if (isFiltered && keysState.scanned < total) {
       return ScanNoResultsFoundText
     }
+
+    if (itemsRef.current.length < keysState.keys.length) {
+      return 'loading...'
+    }
+
     return NoResultsFoundText
   }
 

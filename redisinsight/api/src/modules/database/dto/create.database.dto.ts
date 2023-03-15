@@ -12,11 +12,18 @@ import { UseCaCertificateDto } from 'src/modules/certificate/dto/use.ca-certific
 import { UseClientCertificateDto } from 'src/modules/certificate/dto/use.client-certificate.dto';
 import { caCertTransformer } from 'src/modules/certificate/transformers/ca-cert.transformer';
 import { clientCertTransformer } from 'src/modules/certificate/transformers/client-cert.transformer';
+import { CreateBasicSshOptionsDto } from 'src/modules/ssh/dto/create.basic-ssh-options.dto';
+import { CreateCertSshOptionsDto } from 'src/modules/ssh/dto/create.cert-ssh-options.dto';
+import { sshOptionsTransformer } from 'src/modules/ssh/transformers/ssh-options.transformer';
 
-@ApiExtraModels(CreateCaCertificateDto, UseCaCertificateDto, CreateClientCertificateDto, UseClientCertificateDto)
+@ApiExtraModels(
+  CreateCaCertificateDto, UseCaCertificateDto,
+  CreateClientCertificateDto, UseClientCertificateDto,
+  CreateBasicSshOptionsDto, CreateCertSshOptionsDto,
+)
 export class CreateDatabaseDto extends PickType(Database, [
-  'host', 'port', 'name', 'db', 'username', 'password', 'nameFromProvider', 'provider',
-  'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster',
+  'host', 'port', 'name', 'db', 'username', 'password', 'timeout', 'nameFromProvider', 'provider',
+  'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster', 'ssh',
 ] as const) {
   @ApiPropertyOptional({
     description: 'CA Certificate',
@@ -45,4 +52,18 @@ export class CreateDatabaseDto extends PickType(Database, [
   @Type(clientCertTransformer)
   @ValidateNested()
   clientCert?: CreateClientCertificateDto | UseClientCertificateDto;
+
+  @ApiPropertyOptional({
+    description: 'SSH Options',
+    oneOf: [
+      { $ref: getSchemaPath(CreateBasicSshOptionsDto) },
+      { $ref: getSchemaPath(CreateCertSshOptionsDto) },
+    ],
+  })
+  @Expose()
+  @IsOptional()
+  @IsNotEmptyObject()
+  @Type(sshOptionsTransformer)
+  @ValidateNested()
+  sshOptions?: CreateBasicSshOptionsDto | CreateCertSshOptionsDto;
 }

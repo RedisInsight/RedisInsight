@@ -20,6 +20,7 @@ services:
       - redis
       - app
     environment:
+      CERTS_FOLDER: "/root/.redisinsight-v2.0"
       TEST_REDIS_HOST: "redis"
       DB_SYNC: "true"
       TEST_BE_SERVER: ${TEST_BE_SERVER}
@@ -34,6 +35,7 @@ services:
     volumes:
       - ${COV_FOLDER}:/root/.redisinsight-v2.0
     environment:
+      CERTS_FOLDER: "/root/.redisinsight-v2.0"
       DB_SYNC: "true"
       DB_MIGRATIONS: "false"
       APP_FOLDER_NAME: ".redisinsight-v2.0"

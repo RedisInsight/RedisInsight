@@ -14,9 +14,11 @@ services:
     tty: true
     volumes:
       - ${COV_FOLDER}:/usr/src/app/coverage
+      - ${COV_FOLDER}:/root/.redisinsight-v2.0
     depends_on:
       - redis
     environment:
+      CERTS_FOLDER: "/root/.redisinsight-v2.0"
       TEST_REDIS_HOST: "redis"
       NOTIFICATION_UPDATE_URL: "https://s3.amazonaws.com/redisinsight.test/public/tests/notifications.json"
 

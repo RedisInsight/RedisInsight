@@ -1,9 +1,11 @@
 import { t } from 'testcafe';
+import { Chance } from 'chance';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
 import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters, ClusterNodes } from '../../pageObjects/add-redis-database-page';
 import { Common } from '../common';
 
+const chance = new Chance();
 const common = new Common();
 const endpoint = common.getEndpoint();
 
@@ -12,17 +14,34 @@ const endpoint = common.getEndpoint();
  * @param databaseParameters The database parameters
  */
 export async function addNewStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
+    const uniqueId = chance.string({ length: 10 });
+    const requestBody = {
+        'name': databaseParameters.databaseName,
+        'host': databaseParameters.host,
+        'port': Number(databaseParameters.port),
+        'username': databaseParameters.databaseUsername,
+        'password': databaseParameters.databasePassword
+    };
+
+    if (databaseParameters.caCert) {
+        requestBody['tls'] = true;
+        requestBody['verifyServerCert'] = false;
+        requestBody['caCert'] = {
+            'name': `ca}-${uniqueId}`,
+            'certificate': databaseParameters.caCert.certificate
+        };
+        requestBody['clientCert'] = {
+            'name': `client}-${uniqueId}`,
+            'certificate': databaseParameters.clientCert!.certificate,
+            'key': databaseParameters.clientCert!.key
+        };
+    }
+
     const response = await request(endpoint).post('/databases')
-        .send({
-            'name': databaseParameters.databaseName,
-            'host': databaseParameters.host,
-            'port': Number(databaseParameters.port),
-            'username': databaseParameters.databaseUsername,
-            'password': databaseParameters.databasePassword
-        })
+        .send(requestBody)
         .set('Accept', 'application/json');
     await t
-        .expect(response.status).eql(201, 'The creation of new standalone database request failed')
+        .expect(response.status).eql(201, `The creation of ${databaseParameters.databaseName} standalone database request failed: ${await response.body.message}`)
         .expect(await response.body.name).eql(databaseParameters.databaseName, `Database Name is not equal to ${databaseParameters.databaseName} in response`);
 }
 
@@ -62,7 +81,7 @@ export async function addNewOSSClusterDatabaseApi(databaseParameters: OSSCluster
 export async function discoverSentinelDatabaseApi(databaseParameters: SentinelParameters, primaryGroupsNumber?: number): Promise<void> {
     let masters = databaseParameters.masters;
     if (primaryGroupsNumber) {
-        masters = databaseParameters.masters.slice(0, primaryGroupsNumber);
+        masters = databaseParameters.masters!.slice(0, primaryGroupsNumber);
     }
     const response = await request(endpoint).post('/redis-sentinel/databases')
         .send({
@@ -89,18 +108,21 @@ export async function getAllDatabases(): Promise<string[]> {
  * Get database through api using database name
  * @param databaseName The database name
  */
-export async function getDatabaseByName(databaseName?: string): Promise<string> {
+export async function getDatabaseIdByName(databaseName?: string): Promise<string> {
     if (!databaseName) {
         throw new Error('Error: Missing databaseName');
     }
+    let databaseId: any;
     const allDataBases = await getAllDatabases();
-    let response: object = {};
-    response = await asyncFilter(allDataBases, async(item: databaseParameters) => {
+    const response = await asyncFilter(allDataBases, async(item: databaseParameters) => {
         await doAsyncStuff();
-        return await item.name === databaseName;
+        return item.name === databaseName;
     });
 
-    return await response[0].id;
+    if (response.length !== 0) {
+        databaseId = await response[0].id;
+    }
+    return databaseId;
 }
 
 /**
@@ -126,7 +148,7 @@ export async function getDatabaseByConnectionType(connectionType?: string): Prom
 export async function deleteAllDatabasesApi(): Promise<void> {
     const allDatabases = await getAllDatabases();
     if (allDatabases.length > 0) {
-        const databaseIds = [];
+        const databaseIds: string[] = [];
         for (let i = 0; i < allDatabases.length; i++) {
             const dbData = JSON.parse(JSON.stringify(allDatabases[i]));
             databaseIds.push(dbData.id);
@@ -145,7 +167,7 @@ export async function deleteAllDatabasesApi(): Promise<void> {
  * @param databaseParameters The database parameters
  */
 export async function deleteStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
-    const databaseId = await getDatabaseByName(databaseParameters.databaseName);
+    const databaseId = await getDatabaseIdByName(databaseParameters.databaseName);
     await request(endpoint).delete('/databases')
         .send({ 'ids': [`${databaseId}`] })
         .set('Accept', 'application/json')
@@ -153,11 +175,27 @@ export async function deleteStandaloneDatabaseApi(databaseParameters: AddNewData
 }
 
 /**
+ * Delete Standalone databases using their names through api
+ * @param databaseNames Databases names
+ */
+export async function deleteStandaloneDatabasesByNamesApi(databaseNames: string[]): Promise<void> {
+    databaseNames.forEach(async databaseName => {
+        const databaseId = await getDatabaseIdByName(databaseName);
+        if (databaseId) {
+            await request(endpoint).delete('/databases')
+                .send({ 'ids': [`${databaseId}`] })
+                .set('Accept', 'application/json')
+                .expect(200);
+        }
+    });
+}
+
+/**
  * Delete database from OSS Cluster through api
  * @param databaseParameters The database parameters
  */
 export async function deleteOSSClusterDatabaseApi(databaseParameters: OSSClusterParameters): Promise<void> {
-    const databaseId = await getDatabaseByName(databaseParameters.ossClusterDatabaseName);
+    const databaseId = await getDatabaseIdByName(databaseParameters.ossClusterDatabaseName);
     const response = await request(endpoint).delete('/databases')
         .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
 
@@ -169,8 +207,8 @@ export async function deleteOSSClusterDatabaseApi(databaseParameters: OSSCluster
  * @param databaseParameters The database parameters
  */
 export async function deleteAllSentinelDatabasesApi(databaseParameters: SentinelParameters): Promise<void> {
-    for (let i = 0; i < databaseParameters.name.length; i++) {
-        const databaseId = await getDatabaseByName(databaseParameters.name[i]);
+    for (let i = 0; i < databaseParameters.name!.length; i++) {
+        const databaseId = await getDatabaseIdByName(databaseParameters.name![i]);
         const response = await request(endpoint).delete('/databases')
             .send({ 'ids': [`${databaseId}`] }).set('Accept', 'application/json');
         await t.expect(response.status).eql(200, 'Delete Sentinel database request failed');
@@ -204,7 +242,7 @@ export async function deleteStandaloneDatabasesApi(databasesParameters: AddNewDa
  * @param databaseParameters The database parameters
  */
 export async function getClusterNodesApi(databaseParameters: OSSClusterParameters): Promise<string[]> {
-    const databaseId = await getDatabaseByName(databaseParameters.ossClusterDatabaseName);
+    const databaseId = await getDatabaseIdByName(databaseParameters.ossClusterDatabaseName);
     const response = await request(endpoint)
         .get(`/databases/${databaseId}/cluster-details`)
         .set('Accept', 'application/json')

@@ -1,0 +1,67 @@
+{
+  "author": {
+    "name": "Redis Ltd.",
+    "email": "support@redis.com",
+    "url": "https://redis.com/redis-enterprise/redis-insight"
+  },
+  "bugs": {
+    "url": "https://github.com/"
+  },
+  "description": "Show client list as table",
+  "source": "./src/main.tsx",
+  "styles": "./dist/styles.css",
+  "main": "./dist/index.js",
+  "name": "client-list",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development parcel serve src/index.html",
+    "build": "rimraf dist && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\" \"yarn build:css\" \"yarn build:assets\"",
+    "build:js": "parcel build src/main.tsx --no-source-maps --no-cache --dist-dir dist",
+    "build:css": "parcel build src/styles/styles.scss --no-source-maps --no-cache --dist-dir dist",
+    "build:css:dark": "parcel build src/styles/dark_theme.scss --no-source-maps --no-cache --dist-dir dist",
+    "build:css:light": "parcel build src/styles/light_theme.scss --no-source-maps --no-cache --dist-dir dist",
+    "build:assets": "parcel build src/assets/**/* --dist-dir dist",
+    "minify:js": "terser --compress --mangle -- dist/main.js > dist/index.js && rimraf dist/main.js"
+  },
+  "targets": {
+    "main": false,
+    "module": {
+      "includeNodeModules": true
+    }
+  },
+  "visualizations": [
+    {
+      "id": "clients-list",
+      "name": "Table",
+      "activationMethod": "renderClientsList",
+      "matchCommands": [
+        "CLIENT LIST"
+      ],
+      "iconDark": "./dist/table_view_icon_dark.svg",
+      "iconLight": "./dist/table_view_icon_light.svg",
+      "description": "Example of client list plugin",
+      "default": true
+    }
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.12.0",
+    "@parcel/transformer-sass": "2.3.2",
+    "@types/node": "^17.0.21",
+    "@types/react": "^17.0.40",
+    "@types/react-dom": "^17.0.13",
+    "concurrently": "^6.3.0",
+    "cross-env": "^7.0.3",
+    "parcel": "2.3.2",
+    "rimraf": "^3.0.2",
+    "terser": "^5.9.0",
+    "typescript": ">=3.0.0"
+  },
+  "dependencies": {
+    "@elastic/datemath": "^5.0.3",
+    "@elastic/eui": "34.6.0",
+    "classnames": "^2.3.1",
+    "moment": "^2.29.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}

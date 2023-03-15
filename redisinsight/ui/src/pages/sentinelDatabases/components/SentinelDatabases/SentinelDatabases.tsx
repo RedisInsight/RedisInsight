@@ -177,7 +177,6 @@ const SentinelDatabases = ({
         <EuiButton
           fill
           color="secondary"
-          className="btn-add"
           type="submit"
           onClick={onClick}
           disabled={isSubmitDisabled()}

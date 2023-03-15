@@ -54,8 +54,8 @@ export default {
     tlsKey: process.env.SERVER_TLS_KEY,
     staticContent: !!process.env.SERVER_STATIC_CONTENT || false,
     buildType: process.env.BUILD_TYPE || 'ELECTRON',
-    appVersion: process.env.APP_VERSION || '2.0.0',
-    requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 10000,
+    appVersion: process.env.APP_VERSION || '2.20.0',
+    requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
   },
@@ -108,14 +108,14 @@ export default {
   },
   guides: {
     updateUrl: process.env.GUIDES_UPDATE_URL
-      || 'https://github.com/RedisInsight/Guides/releases/download/latest',
+      || 'https://github.com/RedisInsight/Guides/releases/download/release',
     zip: process.env.GUIDES_ZIP || dataZipFileName,
     buildInfo: process.env.GUIDES_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.GUIDES_DEV_PATH,
   },
   tutorials: {
     updateUrl: process.env.TUTORIALS_UPDATE_URL
-      || 'https://github.com/RedisInsight/Tutorials/releases/download/latest',
+      || 'https://github.com/RedisInsight/Tutorials/releases/download/release',
     zip: process.env.TUTORIALS_ZIP || dataZipFileName,
     buildInfo: process.env.TUTORIALS_CHECKSUM || buildInfoFileName,
     devMode: !!process.env.TUTORIALS_DEV_PATH,
@@ -143,6 +143,9 @@ export default {
   },
   database_analysis: {
     maxItemsPerDb: parseInt(process.env.DATABASE_ANALYSIS_MAX_ITEMS_PER_DB, 10) || 5,
+  },
+  browser_history: {
+    maxItemsPerModeInDb: parseInt(process.env.BROWSER_HISTORY_MAX_ITEMS_PER_MODE_IN_DB, 10) || 10,
   },
   commands: [
     {
@@ -186,6 +189,9 @@ export default {
         || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
   ],
+  connections: {
+    timeout: parseInt(process.env.CONNECTIONS_TIMEOUT_DEFAULT, 10) || 30 * 1_000 // 30 sec
+  },
   redisStack: {
     id: process.env.BUILD_TYPE === 'REDIS_STACK' ? process.env.REDIS_STACK_DATABASE_ID || 'redis-stack' : undefined,
     name: process.env.REDIS_STACK_DATABASE_NAME,

@@ -5,6 +5,7 @@ import { getFileInfo, parseParams } from 'uiSrc/pages/workbench/components/enabl
 import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { Maybe } from 'uiSrc/utils'
+import { CodeButtonAutoExecute } from 'uiSrc/constants'
 
 import CodeButton from '../CodeButton'
 
@@ -12,12 +13,16 @@ export interface Props {
   label: string
   children: string
   params?: string
-  mode?: ExecuteButtonMode
 }
 
-const Code = ({ children, params, mode, ...rest }: Props) => {
+const Code = ({ children, params = '', ...rest }: Props) => {
   const { search } = useLocation()
   const { setScript, isCodeBtnDisabled } = useContext(EnablementAreaContext)
+
+  const parsedParams = parseParams(params)
+  const mode = parsedParams?.auto === CodeButtonAutoExecute.true
+    ? ExecuteButtonMode.Auto
+    : ExecuteButtonMode.Manual
 
   const loadContent = (execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams }) => {
     const pagePath = new URLSearchParams(search).get('item')
@@ -38,7 +43,7 @@ const Code = ({ children, params, mode, ...rest }: Props) => {
     <CodeButton
       className="mb-s mt-s"
       onClick={loadContent}
-      params={parseParams(params)}
+      params={parsedParams}
       mode={mode}
       disabled={isCodeBtnDisabled}
       {...rest}

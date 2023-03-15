@@ -1,16 +1,18 @@
-import { first, map } from 'lodash'
+import { first, isNull, map } from 'lodash'
 import { createSlice } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
 import ApiErrors from 'uiSrc/constants/apiErrors'
-import { apiService, localStorageService } from 'uiSrc/services'
+import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
-import { fetchMastersSentinelAction } from './sentinel'
+import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
+import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
 
+import { fetchMastersSentinelAction } from './sentinel'
 import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
@@ -43,6 +45,15 @@ export const initialState: InitialStateInstances = {
   instanceOverview: {
     version: '',
   },
+  instanceInfo: {
+    version: '',
+    server: {}
+  },
+  importInstances: {
+    loading: false,
+    error: '',
+    data: null
+  },
 }
 
 // A slice for recipes
@@ -55,7 +66,7 @@ const instancesSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    loadInstancesSuccess: (state, { payload }: { payload: Instance[] }) => {
+    loadInstancesSuccess: (state, { payload }: { payload: DatabaseInstanceResponse[] }) => {
       state.data = checkRediStack(payload)
       state.loading = false
       if (state.connectedInstance.id) {
@@ -81,6 +92,19 @@ const instancesSlice = createSlice({
     defaultInstanceChangingFailure: (state, { payload = '' }) => {
       state.loadingChanging = false
       state.changedSuccessfully = false
+      state.errorChanging = payload.toString()
+    },
+
+    // test database connection
+    testConnection: (state) => {
+      state.loadingChanging = true
+      state.errorChanging = ''
+    },
+    testConnectionSuccess: (state) => {
+      state.loadingChanging = false
+    },
+    testConnectionFailure: (state, { payload = '' }) => {
+      state.loadingChanging = false
       state.errorChanging = payload.toString()
     },
 
@@ -154,11 +178,31 @@ const instancesSlice = createSlice({
       state.connectedInstance = payload
       state.connectedInstance.loading = false
       state.connectedInstance.isRediStack = isRediStack || false
+      state.connectedInstance.db = sessionStorageService.get(`${BrowserStorageItem.dbIndex}${payload.id}`) ?? payload.db
+    },
+
+    setConnectedInfoInstance: (state) => {
+      state.instanceInfo = initialState.instanceInfo
+    },
+
+    setConnectedInfoInstanceSuccess: (state, { payload }: { payload: RedisNodeInfoResponse }) => {
+      state.instanceInfo = payload
     },
 
     // set edited instance
-    setEditedInstance: (state, { payload }: { payload:Nullable<Instance> }) => {
+    setEditedInstance: (state, { payload }: { payload: Nullable<Instance> }) => {
       state.editedInstance.data = payload
+    },
+
+    updateEditedInstance: (state, { payload }: { payload: Nullable<Instance> }) => {
+      if (isNull(state.editedInstance.data)) {
+        state.editedInstance.data = payload
+      } else {
+        state.editedInstance.data = {
+          ...state.editedInstance.data,
+          ...payload,
+        }
+      }
     },
 
     setConnectedInstanceFailure: (state) => {
@@ -169,6 +213,38 @@ const instancesSlice = createSlice({
     resetConnectedInstance: (state) => {
       state.connectedInstance = initialState.connectedInstance
     },
+
+    importInstancesFromFile: (state) => {
+      state.importInstances.loading = true
+      state.importInstances.error = ''
+    },
+
+    importInstancesFromFileSuccess: (state, { payload }) => {
+      state.importInstances.loading = false
+      state.importInstances.data = payload
+    },
+
+    importInstancesFromFileFailure: (state, { payload }) => {
+      state.importInstances.loading = false
+      state.importInstances.error = payload
+    },
+
+    resetImportInstances: (state) => {
+      state.importInstances = initialState.importInstances
+    },
+
+    checkDatabaseIndex: (state) => {
+      state.connectedInstance.loading = true
+    },
+    checkDatabaseIndexSuccess: (state, { payload }) => {
+      state.connectedInstance.db = payload
+      state.connectedInstance.loading = false
+
+      sessionStorageService.set(`${BrowserStorageItem.dbIndex}${state.connectedInstance.id}`, payload)
+    },
+    checkDatabaseIndexFailure: (state) => {
+      state.connectedInstance.loading = false
+    }
   },
 })
 
@@ -180,6 +256,9 @@ export const {
   defaultInstanceChanging,
   defaultInstanceChangingSuccess,
   defaultInstanceChangingFailure,
+  testConnection,
+  testConnectionSuccess,
+  testConnectionFailure,
   setDefaultInstance,
   setDefaultInstanceSuccess,
   setDefaultInstanceFailure,
@@ -196,16 +275,30 @@ export const {
   changeInstanceAliasFailure,
   resetInstanceUpdate,
   setEditedInstance,
+  updateEditedInstance,
+  importInstancesFromFile,
+  importInstancesFromFileSuccess,
+  importInstancesFromFileFailure,
+  resetImportInstances,
+  checkDatabaseIndex,
+  checkDatabaseIndexSuccess,
+  checkDatabaseIndexFailure,
+  setConnectedInfoInstance,
+  setConnectedInfoInstanceSuccess,
 } = instancesSlice.actions
 
 // selectors
 export const instancesSelector = (state: RootState) => state.connections.instances
 export const connectedInstanceSelector = (state: RootState) =>
   state.connections.instances.connectedInstance
+export const connectedInstanceInfoSelector = (state: RootState) =>
+  state.connections.instances.instanceInfo
 export const editedInstanceSelector = (state: RootState) =>
   state.connections.instances.editedInstance
 export const connectedInstanceOverviewSelector = (state: RootState) =>
   state.connections.instances.instanceOverview
+export const importInstancesSelector = (state: RootState) =>
+  state.connections.instances.importInstances
 
 // The reducer
 export default instancesSlice.reducer
@@ -219,13 +312,7 @@ export function fetchInstancesAction(onSuccess?: (data?: DatabaseInstanceRespons
     dispatch(loadInstances())
 
     try {
-      const {
-        data,
-        status,
-      }: {
-        data: DatabaseInstanceResponse[];
-        status: number;
-      } = await apiService.get(`${ApiEndpoints.DATABASES}`)
+      const { data, status } = await apiService.get<DatabaseInstanceResponse[]>(`${ApiEndpoints.DATABASES}`)
 
       if (isStatusSuccessful(status)) {
         localStorageService.set(BrowserStorageItem.instancesCount, data?.length)
@@ -337,6 +424,39 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
 }
 
 // Asynchronous thunk action
+export function exportInstancesAction(
+  ids: string[],
+  withSecrets: boolean,
+  onSuccess?: (data: ExportDatabase) => void,
+  onFail?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setDefaultInstance())
+
+    try {
+      const { data, status } = await apiService.post<ExportDatabase>(
+        ApiEndpoints.DATABASES_EXPORT,
+        {
+          ids,
+          withSecrets
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setDefaultInstanceSuccess())
+
+        onSuccess?.(data)
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(setDefaultInstanceFailure(errorMessage))
+      dispatch(addErrorNotification(error))
+      onFail?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
 export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
@@ -359,20 +479,40 @@ export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void)
 }
 
 // Asynchronous thunk action
-export function fetchEditedInstanceAction(id: string, onSuccess?: () => void) {
+export function fetchConnectedInstanceInfoAction(id: string, onSuccess?: () => void, onFail?: () => void) {
   return async (dispatch: AppDispatch) => {
-    dispatch(setDefaultInstance())
+    dispatch(setConnectedInfoInstance())
 
     try {
-      const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.DATABASES}/${id}`)
+      const { data, status } = await apiService.get<RedisNodeInfoResponse>(`${ApiEndpoints.DATABASES}/${id}/info`)
 
       if (isStatusSuccessful(status)) {
-        dispatch(setEditedInstance(data))
+        dispatch(setConnectedInfoInstanceSuccess(data))
+        onSuccess?.()
+      }
+    } catch (error) {
+      onFail?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchEditedInstanceAction(instance: Instance, onSuccess?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setDefaultInstance())
+    dispatch(setEditedInstance(instance))
+
+    try {
+      const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.DATABASES}/${instance.id}`)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(updateEditedInstance(data))
         dispatch(setDefaultInstanceSuccess())
       }
       onSuccess?.()
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
+      dispatch(setEditedInstance(null))
       dispatch(setConnectedInstanceFailure())
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
@@ -434,7 +574,6 @@ export function getDatabaseConfigInfoAction(
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
       dispatch(getDatabaseConfigInfoFailure(errorMessage))
       onFailAction?.()
     }
@@ -456,7 +595,7 @@ export function changeInstanceAliasAction(
       const { CancelToken } = axios
       sourceInstance = CancelToken.source()
 
-      const { status } = await apiService.put(
+      const { status } = await apiService.patch(
         `${ApiEndpoints.DATABASES}/${id}`,
         { name },
         { cancelToken: sourceInstance.token }
@@ -479,9 +618,101 @@ export function changeInstanceAliasAction(
   }
 }
 
+export function checkDatabaseIndexAction(
+  id: string,
+  index: number,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(checkDatabaseIndex())
+
+    try {
+      const { status } = await apiService.get(
+        `${ApiEndpoints.DATABASES}/${id}/db/${index}`
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(checkDatabaseIndexSuccess(index))
+        onSuccessAction?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      dispatch(checkDatabaseIndexFailure())
+      dispatch(addErrorNotification(error))
+      onFailAction?.()
+    }
+  }
+}
+
 export function resetInstanceUpdateAction() {
   return async (dispatch: AppDispatch) => {
     dispatch(resetInstanceUpdate())
     sourceInstance?.cancel?.()
+  }
+}
+
+// Asynchronous thunk action
+export function uploadInstancesFile(
+  file: FormData,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(importInstancesFromFile())
+
+    try {
+      const { status, data } = await apiService.post(
+        ApiEndpoints.DATABASES_IMPORT,
+        file,
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(importInstancesFromFileSuccess(data))
+        onSuccessAction?.()
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(importInstancesFromFileFailure(errorMessage))
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function testInstanceStandaloneAction(
+  payload: Instance,
+  onRedirectToSentinel?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(testConnection())
+
+    try {
+      const { status } = await apiService.post(`${ApiEndpoints.DATABASES_TEST_CONNECTION}`, payload)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(testConnectionSuccess())
+
+        dispatch(addMessageNotification(successMessages.TEST_CONNECTION()))
+      }
+    } catch (_error) {
+      const error: AxiosError = _error
+      const errorMessage = getApiErrorMessage(error)
+
+      dispatch(testConnectionFailure(errorMessage))
+
+      if (error?.response?.data?.error === ApiErrors.SentinelParamsRequired) {
+        checkoutToSentinelFlow(payload, dispatch, onRedirectToSentinel)
+        return
+      }
+
+      dispatch(addErrorNotification(error))
+    }
   }
 }

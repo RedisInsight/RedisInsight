@@ -171,4 +171,18 @@ export class CliPage {
         await t.click(this.readMoreButton);
         await t.expect(getPageUrl()).eql(url, 'The opened page not correct');
     }
+
+    /**
+    *  Create random index name with CLI and return
+    */
+
+    async createIndexwithCLI(prefix: string): Promise<string> {
+        const word = common.generateWord(10);
+        const index = `idx:${word}`;
+        const commands = [
+            `FT.CREATE ${index} ON HASH PREFIX 1 ${prefix} SCHEMA "name" TEXT`,
+        ];
+        await this.sendCommandsInCli(commands);
+        return index;
+    }
 }

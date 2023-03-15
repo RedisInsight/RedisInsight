@@ -6,11 +6,22 @@ import cx from 'classnames'
 import MultiSearch from 'uiSrc/components/multi-search/MultiSearch'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { replaceSpaces } from 'uiSrc/utils'
-import { fetchKeys, keysSelector, setFilter, setSearchMatch } from 'uiSrc/slices/browser/keys'
-import { resetBrowserTree } from 'uiSrc/slices/app/context'
-import { SearchMode, KeyViewType } from 'uiSrc/slices/interfaces/keys'
-import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
+import {
+  deleteSearchHistoryAction,
+  fetchKeys,
+  fetchSearchHistoryAction,
+  keysSearchHistorySelector,
+  keysSelector,
+  setFilter,
+  setSearchMatch
+} from 'uiSrc/slices/browser/keys'
+import { SearchMode, KeyViewType, SearchHistoryItem } from 'uiSrc/slices/interfaces/keys'
+import {
+  redisearchHistorySelector,
+  redisearchSelector
+} from 'uiSrc/slices/browser/redisearch'
 
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import styles from './styles.module.scss'
 
 const placeholders = {
@@ -19,30 +30,55 @@ const placeholders = {
 }
 
 const SearchKeyList = () => {
-  const dispatch = useDispatch()
+  const { id } = useSelector(connectedInstanceSelector)
   const { search, viewType, filter, searchMode } = useSelector(keysSelector)
-  const { search: redisearchQuery } = useSelector(redisearchSelector)
-  const [options, setOptions] = useState<string[]>(filter ? [filter] : [])
+  const { search: redisearchQuery, selectedIndex } = useSelector(redisearchSelector)
+  const { data: rediSearchHistory, loading: rediSearchHistoryLoading } = useSelector(redisearchHistorySelector)
+  const { data: searchHistory, loading: searchHistoryLoading } = useSelector(keysSearchHistorySelector)
 
+  const [options, setOptions] = useState<string[]>(filter ? [filter] : [])
   const [value, setValue] = useState(search || '')
+  const [disableSubmit, setDisableSubmit] = useState(false)
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     setOptions(filter ? [filter] : [])
   }, [filter])
 
   useEffect(() => {
+    if (id) {
+      dispatch(fetchSearchHistoryAction(searchMode))
+    }
+  }, [id, searchMode])
+
+  useEffect(() => {
     setValue(searchMode === SearchMode.Pattern ? search : redisearchQuery)
   }, [searchMode, search, redisearchQuery])
 
-  const handleApply = (match = value) => {
+  useEffect(() => {
+    setDisableSubmit(searchMode === SearchMode.Redisearch && !selectedIndex)
+  }, [searchMode, selectedIndex])
+
+  const mapOptions = (data: null | Array<SearchHistoryItem>) => data?.map((item) => ({
+    id: item.id,
+    option: item.filter?.type,
+    value: item.filter?.match
+  })) || []
+
+  const handleApply = (match = value, telemetryProperties: {} = {}) => {
+    if (disableSubmit) return
+
     dispatch(setSearchMatch(match, searchMode))
-    // reset browser tree context
-    dispatch(resetBrowserTree())
 
     dispatch(fetchKeys(
-      searchMode,
-      '0',
-      viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT
+      {
+        searchMode,
+        cursor: '0',
+        count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+        telemetryProperties
+      },
+      () => { dispatch(fetchSearchHistoryAction(searchMode)) }
     ))
   }
 
@@ -54,6 +90,21 @@ const SearchKeyList = () => {
     // now only one filter, so we delete option
     dispatch(setFilter(null))
     handleApply()
+  }
+
+  const handleApplySuggestion = (suggestion?: { option: string, value: string }) => {
+    if (!suggestion) {
+      handleApply()
+      return
+    }
+
+    dispatch(setFilter(suggestion.option))
+    setValue(suggestion.value)
+    handleApply(suggestion.value, { source: 'history' })
+  }
+
+  const handleDeleteSuggestions = (ids: string[]) => {
+    dispatch(deleteSearchHistoryAction(searchMode, ids))
   }
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -78,6 +129,14 @@ const SearchKeyList = () => {
         onChangeOptions={handleChangeOptions}
         onClear={onClear}
         options={searchMode === SearchMode.Pattern ? options : []}
+        suggestions={{
+          options: mapOptions(searchMode === SearchMode.Pattern ? searchHistory : rediSearchHistory),
+          buttonTooltipTitle: 'Show History',
+          loading: searchMode === SearchMode.Pattern ? searchHistoryLoading : rediSearchHistoryLoading,
+          onApply: handleApplySuggestion,
+          onDelete: handleDeleteSuggestions,
+        }}
+        disableSubmit={disableSubmit}
         placeholder={placeholders[searchMode]}
         className={styles.input}
         data-testid="search-key"

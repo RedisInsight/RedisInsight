@@ -26,6 +26,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     port: Joi.number().required(),
     enableRedirection: Joi.boolean().required(),
   }).allow(null),
+  db: Joi.number().integer().allow(null),
   createdAt: Joi.date().required(),
 })).required().max(30);
 

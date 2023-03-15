@@ -9,15 +9,17 @@ import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 
 export const repositories = {
-  DAtABASE: 'DatabaseEntity',
+  DATABASE: 'DatabaseEntity',
   CA_CERT_REPOSITORY: 'CaCertificateEntity',
   CLIENT_CERT_REPOSITORY: 'ClientCertificateEntity',
+  SSH_OPTIONS_REPOSITORY: 'SshOptionsEntity',
   AGREEMENTS: 'AgreementsEntity',
   COMMAND_EXECUTION: 'CommandExecutionEntity',
   PLUGIN_STATE: 'PluginStateEntity',
   SETTINGS: 'SettingsEntity',
   NOTIFICATION: 'NotificationEntity',
   DATABASE_ANALYSIS: 'DatabaseAnalysisEntity',
+  BROWSER_HISTORY: 'BrowserHistoryEntity',
 }
 
 let localDbConnection;
@@ -144,6 +146,7 @@ export const generateNDatabaseAnalysis = async (
     result.push(await rep.save({
       id: uuidv4(),
       databaseId: uuidv4(),
+      db: constants.TEST_DATABASE_ANALYSIS_DB_1,
       delimiter: constants.TEST_DATABASE_ANALYSIS_DELIMITER_1,
       filter: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_FILTER_1)),
       progress: encryptData(JSON.stringify(constants.TEST_DATABASE_ANALYSIS_PROGRESS_1)),
@@ -176,6 +179,7 @@ export const generateNDatabaseAnalysis = async (
       expirationGroups: encryptData(JSON.stringify([
         constants.TEST_DATABASE_ANALYSIS_EXPIRATION_GROUP_1,
       ])),
+      recommendations: encryptData(JSON.stringify([constants.TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION])),
       createdAt: new Date(),
       encryption: constants.TEST_ENCRYPTION_STRATEGY,
       ...partial,
@@ -204,6 +208,50 @@ export const generatePluginState = async (
   })
 }
 
+export const generateBrowserHistory = async (
+  partial: Record<string, any>,
+  number: number,
+  truncate: boolean = false,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.BROWSER_HISTORY);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  result.push(await rep.save({
+    id: constants.TEST_BROWSER_HISTORY_ID_1,
+    databaseId: constants.TEST_BROWSER_HISTORY_DATABASE_ID,
+    filter: encryptData(JSON.stringify(constants.TEST_BROWSER_HISTORY_FILTER_1)),
+    createdAt: new Date(),
+    encryption: constants.TEST_ENCRYPTION_STRATEGY,
+    ...partial,
+  }));
+
+  result.push(await rep.save({
+    id: constants.TEST_BROWSER_HISTORY_ID_2,
+    databaseId: constants.TEST_BROWSER_HISTORY_DATABASE_ID,
+    filter: encryptData(JSON.stringify(constants.TEST_BROWSER_HISTORY_FILTER_2)),
+    createdAt: new Date(),
+    encryption: constants.TEST_ENCRYPTION_STRATEGY,
+    ...partial,
+  }));
+
+  for (let i = result.length; i < number; i++) {
+    result.push(await rep.save({
+      id: uuidv4(),
+      databaseId: uuidv4(),
+      filter: encryptData(JSON.stringify(constants.TEST_BROWSER_HISTORY_FILTER_1)),
+      createdAt: new Date(),
+      encryption: constants.TEST_ENCRYPTION_STRATEGY,
+      ...partial,
+    }));
+  }
+
+  return result;
+}
+
 const createCACertificate = async (certificate) => {
   const rep = await getRepository(repositories.CA_CERT_REPOSITORY);
   return rep.save(certificate);
@@ -215,7 +263,7 @@ const createClientCertificate = async (certificate) => {
 }
 
 const createTesDbInstance = async (rte, server): Promise<void> => {
-  const rep = await getRepository(repositories.DAtABASE);
+  const rep = await getRepository(repositories.DATABASE);
 
   const instance: any = {
     id: constants.TEST_INSTANCE_ID,
@@ -265,11 +313,22 @@ const createTesDbInstance = async (rte, server): Promise<void> => {
     }
   }
 
+  if (constants.TEST_SSH_USER) {
+    instance.ssh = true;
+    instance.sshOptions = {
+      host: constants.TEST_SSH_HOST,
+      port: constants.TEST_SSH_PORT,
+      encryption: constants.TEST_ENCRYPTION_STRATEGY,
+      username: encryptData(constants.TEST_SSH_USER),
+      privateKey: encryptData(constants.TEST_SSH_PRIVATE_KEY_P),
+      passphrase: encryptData(constants.TEST_SSH_PASSPHRASE),
+    };
+  }
   await rep.save(instance);
 }
 
 export const createDatabaseInstances = async () => {
-  const rep = await getRepository(repositories.DAtABASE);
+  const rep = await getRepository(repositories.DATABASE);
   const instances = [
     {
       id: constants.TEST_INSTANCE_ID_2,
@@ -281,6 +340,12 @@ export const createDatabaseInstances = async () => {
       id: constants.TEST_INSTANCE_ID_3,
       name: constants.TEST_INSTANCE_NAME_3,
       host: constants.TEST_INSTANCE_HOST_3,
+    },
+    {
+      id: constants.TEST_INSTANCE_ID_4,
+      name: constants.TEST_INSTANCE_NAME_4,
+      host: constants.TEST_INSTANCE_HOST_4,
+      port: constants.TEST_INSTANCE_PORT_4,
     }
   ];
 
@@ -292,13 +357,14 @@ export const createDatabaseInstances = async () => {
       host: 'localhost',
       port: 3679,
       connectionType: 'STANDALONE',
-      ...instance
+      ...instance,
+      modules: '[]',
     });
   }
 }
 
 export const createAclInstance = async (rte, server): Promise<void> => {
-  const rep = await getRepository(repositories.DAtABASE);
+  const rep = await getRepository(repositories.DATABASE);
   const instance: any = {
     id: constants.TEST_INSTANCE_ACL_ID,
     name: constants.TEST_INSTANCE_ACL_NAME,
@@ -350,16 +416,32 @@ export const createAclInstance = async (rte, server): Promise<void> => {
     }
   }
 
+  if (constants.TEST_SSH_USER) {
+    instance.ssh = true;
+    instance.sshOptions = {
+      host: constants.TEST_SSH_HOST,
+      port: constants.TEST_SSH_PORT,
+      encryption: constants.TEST_ENCRYPTION_STRATEGY,
+      username: encryptData(constants.TEST_SSH_USER),
+      privateKey: encryptData(constants.TEST_SSH_PRIVATE_KEY),
+    };
+  }
+
   await rep.save(instance);
 }
 
 export const getInstanceByName = async (name: string) => {
-  const rep = await getRepository(repositories.DAtABASE);
+  const rep = await getRepository(repositories.DATABASE);
   return rep.findOneBy({ name });
 }
 
 export const getInstanceById = async (id: string) => {
-  const rep = await getRepository(repositories.DAtABASE);
+  const rep = await getRepository(repositories.DATABASE);
+  return rep.findOneBy({ id });
+}
+
+export const getBrowserHistoryById = async (id: string) => {
+  const rep = await getRepository(repositories.BROWSER_HISTORY);
   return rep.findOneBy({ id });
 }
 
@@ -434,7 +516,7 @@ export const setAppSettings = async (data: object) => {
 }
 
 const truncateAll = async () => {
-  await (await getRepository(repositories.DAtABASE)).clear();
+  await (await getRepository(repositories.DATABASE)).clear();
   await (await getRepository(repositories.CA_CERT_REPOSITORY)).clear();
   await (await getRepository(repositories.CLIENT_CERT_REPOSITORY)).clear();
   await (await resetSettings());

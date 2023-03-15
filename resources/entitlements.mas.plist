@@ -4,19 +4,34 @@
   <dict>
     <key>com.apple.security.app-sandbox</key>
     <true/>
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.files.bookmarks.app-scope</key>
+    <true/>
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
+    <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+    <true/>
     <key>com.apple.security.network.client</key>
     <true/>
     <key>com.apple.security.network.server</key>
     <true/>
     <key>com.apple.security.files.user-selected.read-write</key>
     <true/>
-    <key>com.apple.security.inherit</key>
-    <true/>
     <key>com.apple.security.application-groups</key>
+    <array>
     <string>UUK47G4BAZ.org.RedisLabs.RedisInsight-V2</string>
+    </array>
     <key>com.apple.application-identifier</key>
     <string>UUK47G4BAZ.org.RedisLabs.RedisInsight-V2</string>
     <key>com.apple.developer.team-identifier</key>
     <string>UUK47G4BAZ</string>
+    <key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
+    <array>
+      <string>/.redisinsight-v2/</string>
+      <string>/.redisinsight-v2-stage/</string>
+    </array>
   </dict>
 </plist>

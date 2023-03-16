@@ -1,6 +1,6 @@
 import { join } from 'path';
 import * as os from 'os';
-import { getUsername } from 'src/utils/get-username';
+import { getUsername } from '../src/utils/get-username';
 
 const homedir = process.env.APP_FOLDER_ABSOLUTE_PATH
   || (join(

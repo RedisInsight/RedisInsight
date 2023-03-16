@@ -14,7 +14,11 @@
   "afterSign": "electron-builder-notarize",
   "artifactName": "${productName}-${os}-${arch}.${ext}",
   "compression": "normal",
-  "asarUnpack": ["node_modules/keytar","node_modules/sqlite3"],
+  "asarUnpack": [
+    "node_modules/keytar",
+    "node_modules/sqlite3",
+    "node_modules/cpu-features"
+  ],
   "mac": {
     "target": [
       {
@@ -29,7 +33,7 @@
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "bundleVersion": "0.0.48",
+    "bundleVersion": "0.0.53",
     "icon": "resources/icon.icns",
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",
@@ -90,20 +94,13 @@
     ]
   },
   "win": {
-    "target": ["nsis", "appx"],
+    "target": ["nsis"],
     "artifactName": "${productName}-${os}-installer.${ext}",
     "icon": "resources/icon.ico",
     "publisherName": [
       "Redis Inc.",
       "Redis Labs Inc."
     ]
-  },
-  "appx": {
-    "publisher": "CN=55A7089F-565A-48D4-9D43-E226C203F9BB",
-    "publisherDisplayName": "Redis Ltd.",
-    "artifactName": "${productName}-${os}-${arch}.${ext}",
-    "displayName": "redisinsight",
-    "identityName": "RedisLtd.RedisInsight"
   },
   "linux": {
     "icon": "./resources/icons",

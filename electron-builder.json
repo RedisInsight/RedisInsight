@@ -28,10 +28,6 @@
       {
         "target": "zip",
         "arch": ["x64", "arm64"]
-      },
-      {
-        "target": "mas",
-        "arch": ["universal"]
       }
     ],
     "type": "distribution",

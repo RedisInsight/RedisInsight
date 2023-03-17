@@ -473,19 +473,11 @@ jobs:
             mkdir electron
 
             CURRENT_VERSION=$(jq -r ".version" redisinsight/package.json)
-            echo "Version: ${CURRENT_VERSION}"
-
-            if [ << parameters.env >> == "prod" ]; then
-              echo "Build version: $CURRENT_VERSION"
-              cp ./redisinsight/package.json ./electron/package.json
-              echo "$VERSION" > electron/version
-              exit 0
-            fi
-
-            VERSION=$CURRENT_VERSION-<< parameters.env >>-$CIRCLE_BUILD_NUM
-            echo "Build version: $VERSION"
+            echo "Build version: $CURRENT_VERSION"
+            cp ./redisinsight/package.json ./electron/package.json
             echo "$VERSION" > electron/version
-            echo $(jq ".version=\"$VERSION\"" redisinsight/package.json) > electron/package.json
+            exit 0
+
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -605,17 +597,20 @@ jobs:
 
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
+              yarn build:mas
               rm -rf release/mac
               exit 0;
             fi
 
             if [ << parameters.env >> == 'stage' ]; then
               UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
+              yarn build:mas
               rm -rf release/mac
               exit 0;
             fi
 
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
+            yarn build:mas
             rm -rf release/mac
           no_output_timeout: 60m
 

@@ -42,7 +42,7 @@ test('Verify that user can see saved CLI size on Browser page when he returns ba
     await t.drag(cliResizeButton, 0, -offsetY, { speed: 0.01 });
     await t.click(myRedisDatabasePage.myRedisDBButton);
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await t.expect(await cliPage.cliArea.clientHeight > cliAreaHeightEnd).ok('Saved context for resizable cli is incorrect');
+    await t.expect(await cliPage.cliArea.clientHeight).gt(cliAreaHeightEnd, 'Saved context for resizable cli is incorrect');
 });
 test('Verify that user can see saved Key details and Keys tables size on Browser page when he returns back to Browser page', async t => {
     const offsetX = 200;

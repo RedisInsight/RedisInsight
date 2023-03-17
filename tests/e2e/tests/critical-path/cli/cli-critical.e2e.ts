@@ -94,7 +94,7 @@ test
         const commandHints = [
             'index [data_type] [prefix] [filter] [default_lang] [lang_attribute] [default_score] [score_attribute] [payload_attribute] [maxtextfields] [seconds] [nooffsets] [nohl] [nofields] [nofreqs] [stopwords] [skipinitialscan] schema field [field ...]',
             'index [delete docs]',
-            'key [indent] [newline] [space] [paths [paths ...]]',
+            'key [indent] [newline] [space] [path [path ...]]',
             'key [path]'
         ];
         const commands = [

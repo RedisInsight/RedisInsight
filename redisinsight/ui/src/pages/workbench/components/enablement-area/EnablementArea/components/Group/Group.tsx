@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
+import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import DeleteTutorialButton from '../DeleteTutorialButton'
 import { EAItemActions } from '../../constants'
 
@@ -25,6 +27,7 @@ export interface Props {
   onToggle?: (isOpen: boolean) => void
   triggerStyle?: any
   isCustomTutorialsLoading?: boolean
+  highlightGroup?: boolean
 }
 
 const Group = (props: Props) => {
@@ -42,6 +45,7 @@ const Group = (props: Props) => {
     onCreate,
     onDelete,
     triggerStyle,
+    highlightGroup
   } = props
   const { deleting: deletingCustomTutorials } = useSelector(workbenchCustomTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -86,9 +90,18 @@ const Group = (props: Props) => {
 
   const buttonContent = (
     <div className="group-header-wrapper">
-      <EuiText className="group-header" size="m">
-        {label}
-      </EuiText>
+      <HighlightedFeature
+        title={BUILD_FEATURES.myTutorials?.title}
+        content={BUILD_FEATURES.myTutorials?.content}
+        type={BUILD_FEATURES.myTutorials?.type}
+        isHighlight={highlightGroup}
+        dotClassName="dotHighlighting"
+        wrapperClassName="wrapperHighlighting"
+      >
+        <EuiText className="group-header" size="m">
+          {label}
+        </EuiText>
+      </HighlightedFeature>
       {isShowActions && actionsContent}
     </div>
   )

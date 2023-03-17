@@ -15,6 +15,8 @@ import {
   FormValues
 } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/components/UploadTutorialForm/UploadTutorialForm'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { appFeatureHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
+import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
 import {
   getMarkdownPathByManifest,
   getWBSourcePath
@@ -67,6 +69,9 @@ const EnablementArea = (props: Props) => {
   const history = useHistory()
   const dispatch = useDispatch()
   const { search: searchEAContext } = useSelector(appContextWorkbenchEA)
+  const { features } = useSelector(appFeatureHighlightingSelector)
+  const { myTutorials: myTutorialsHighlighting } = getHighlightingFeatures(features)
+
   const [isInternalPageVisible, setIsInternalPageVisible] = useState(false)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [internalPage, setInternalPage] = useState<IInternalPage>({ path: '' })
@@ -74,6 +79,18 @@ const EnablementArea = (props: Props) => {
 
   const searchRef = useRef<string>('')
   const { instanceId = '' } = useParams<{ instanceId: string }>()
+
+  useEffect(() => {
+    if (isCreateOpen && myTutorialsHighlighting) {
+      dispatch(removeFeatureFromHighlighting('myTutorials'))
+    }
+
+    return () => {
+      if (myTutorialsHighlighting) {
+        dispatch(removeFeatureFromHighlighting('myTutorials'))
+      }
+    }
+  }, [isCreateOpen, myTutorialsHighlighting])
 
   useEffect(() => {
     searchRef.current = search
@@ -216,6 +233,9 @@ const EnablementArea = (props: Props) => {
     const currentSourcePath = sourcePath + (uriPath ? `${uriPath}` : (args?.path ?? ''))
     const currentManifestPath = `${manifestPath}/${key}`
 
+    const isMyTutorialsGroup = level === 0 && currentSourcePath.startsWith(ApiEndpoints.CUSTOM_TUTORIALS_PATH)
+    const isHighlightGroup = isMyTutorialsGroup && myTutorialsHighlighting
+
     switch (type) {
       case EnablementAreaComponent.Group:
         return (
@@ -227,6 +247,7 @@ const EnablementArea = (props: Props) => {
             isShowActions={currentSourcePath.startsWith(ApiEndpoints.CUSTOM_TUTORIALS_PATH)}
             onCreate={() => setIsCreateOpen((v) => !v)}
             onDelete={onDeleteCustomTutorial}
+            highlightGroup={isHighlightGroup}
             {...args}
           >
             <>

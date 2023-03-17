@@ -47,20 +47,6 @@ describe('EnablementArea', () => {
     expect(treeViewEl).not.toBeInTheDocument()
   })
 
-  it('should correctly render tree view on first level', () => {
-    const { queryByTestId } = render(
-      <EnablementArea
-        {...instance(mockedProps)}
-        guides={MOCK_GUIDES_ITEMS}
-      />
-    )
-    const loaderEl = queryByTestId('enablementArea-loader')
-    const treeViewEl = queryByTestId('enablementArea-treeView')
-
-    expect(loaderEl).not.toBeInTheDocument()
-    expect(treeViewEl).toBeInTheDocument()
-    expect(treeViewEl?.childNodes.length).toEqual(MOCK_GUIDES_ITEMS.length)
-  })
   it('should render Group component', () => {
     const item: IEnablementAreaItem = {
       type: EnablementAreaComponent.Group,
@@ -136,6 +122,15 @@ describe('EnablementArea', () => {
     it('should render add button and open form', () => {
       render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
       fireEvent.click(screen.getByTestId('open-upload-tutorial-btn'))
+      expect(screen.getByTestId('upload-tutorial-form')).toBeInTheDocument()
+    })
+
+    it('should render welcome screen and open form', () => {
+      const customTutorials = [{ ...MOCK_CUSTOM_TUTORIALS_ITEMS[0], children: [] }]
+      render(<EnablementArea {...instance(mockedProps)} customTutorials={customTutorials} />)
+      expect(screen.getByTestId('welcome-my-tutorials')).toBeInTheDocument()
+
+      fireEvent.click(screen.getByTestId('upload-tutorial-btn'))
       expect(screen.getByTestId('upload-tutorial-form')).toBeInTheDocument()
     })
 

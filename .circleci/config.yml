@@ -612,7 +612,7 @@ jobs:
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
             # yarn build:mas
             rm -rf release/mac
-          no_output_timeout: 60m
+          no_output_timeout: 160m
 
       - run:
           name: Repack dmg to tar

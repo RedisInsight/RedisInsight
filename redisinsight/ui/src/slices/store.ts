@@ -37,6 +37,7 @@ import analyticsSettingsReducer from './analytics/settings'
 import clusterDetailsReducer from './analytics/clusterDetails'
 import databaseAnalysisReducer from './analytics/dbAnalysis'
 import redisearchReducer from './browser/redisearch'
+import recommendationsReducer from './recommendations/recommendations'
 
 export const history = createBrowserHistory()
 
@@ -93,6 +94,7 @@ export const rootReducer = combineReducers({
     databaseAnalysis: databaseAnalysisReducer,
   }),
   pubsub: pubSubReducer,
+  recommendations: recommendationsReducer,
 })
 
 const store = configureStore({

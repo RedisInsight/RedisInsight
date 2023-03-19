@@ -71,10 +71,7 @@ export function fetchRecommendationsAction(
   onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    const state = stateInit()
-    const { isContentVisible } = state?.recommendations
-
+  return async (dispatch: AppDispatch) => {
     try {
       dispatch(getRecommendations())
 

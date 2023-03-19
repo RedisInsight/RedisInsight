@@ -198,7 +198,6 @@ describe('recommendations slice', () => {
         const expectedActions = [
           getRecommendations(),
           getRecommendationsSuccess(data),
-          setHighlighting(true),
         ]
 
         expect(tempStore.getActions()).toEqual(expectedActions)

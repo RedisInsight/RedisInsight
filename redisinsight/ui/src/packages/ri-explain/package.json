@@ -47,14 +47,14 @@
     }
   ],
   "devDependencies": {
-    "@parcel/compressor-brotli": "^2.0.0",
-    "@parcel/compressor-gzip": "^2.0.0",
-    "@parcel/transformer-less": "^2.3.2",
-    "concurrently": "^6.3.0",
+    "@parcel/compressor-brotli": "^2.8.3",
+    "@parcel/compressor-gzip": "^2.8.3",
+    "@parcel/transformer-less": "^2.8.3",
+    "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
-    "parcel": "^2.0.0",
+    "parcel": "^2.8.3",
     "rimraf": "^3.0.2",
-    "terser": "^5.9.0"
+    "terser": "^5.16.6"
   },
   "dependencies": {
     "@antv/hierarchy": "^0.6.8",

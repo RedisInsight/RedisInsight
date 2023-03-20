@@ -42,7 +42,6 @@
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
-    "provisioningProfile": "embedded.provisionprofile",
     "gatekeeperAssess": false
   },
   "mas": {
@@ -52,6 +51,7 @@
     "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
     "hardenedRuntime": false,
     "asarUnpack": ["node_modules"],
+    "provisioningProfile": "embedded.provisionprofile",
     "binaries": [
       "Contents/Resources/app-x64.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-arm64/node_sqlite3.node",
       "Contents/Resources/app-x64.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-x64/node_sqlite3.node",
@@ -71,6 +71,7 @@
     "entitlementsLoginHelper": "resources/entitlements.mas.loginhelper.plist",
     "hardenedRuntime": false,
     "asarUnpack": ["node_modules"],
+    "provisioningProfile": "embedded.provisionprofile",
     "binaries": [
       "Contents/Resources/app-x64.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-arm64/node_sqlite3.node",
       "Contents/Resources/app-x64.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-x64/node_sqlite3.node",

@@ -564,7 +564,8 @@ jobs:
             - release/redisstack
   macosx:
     macos:
-      xcode: 13.2.1
+      xcode: 14.2.0
+    resource_class: macos.m1.large.gen1
     parameters:
       env:
         description: Build environment (stage || prod)
@@ -580,6 +581,8 @@ jobs:
       - run:
           command: |
             cp ./electron/package.json ./redisinsight/
+            pyenv install 3.9.16
+            pyenv global 3.9.16
       - run:
           name: install dependencies
           command: |

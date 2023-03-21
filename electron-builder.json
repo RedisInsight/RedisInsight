@@ -37,7 +37,7 @@
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "bundleVersion": "0.0.53",
+    "bundleVersion": "0.0.54",
     "icon": "resources/icon.icns",
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",

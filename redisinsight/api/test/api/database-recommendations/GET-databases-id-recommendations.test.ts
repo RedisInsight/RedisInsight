@@ -12,6 +12,7 @@ const responseSchema = Joi.object({
     read: Joi.boolean().required(),
     id: Joi.string().required(),
     name: Joi.string().required(),
+    disabled: Joi.boolean(),
   })),
   totalUnread: Joi.number().required(),
 });
@@ -21,7 +22,7 @@ const mainCheckFn = getMainCheckFn(endpoint);
 describe('GET /databases/:id/recommendations', () => {
   before(async () => await localDb.generateDatabaseRecommendations({
       databaseId: constants.TEST_INSTANCE_ID,
-    }, 3, true),
+    }, true),
   );
 
   [

@@ -147,11 +147,12 @@ export class CustomTutorialManifestProvider {
 
       return {
         ...manifest,
+        _actions: tutorial.actions,
+        _path: tutorial.path,
         type: CustomTutorialManifestType.Group,
         id: tutorial.id,
         label: tutorial.name || manifest.label,
-        _actions: tutorial.actions,
-        _path: tutorial.path,
+        children: manifest.children || [],
       };
     } catch (e) {
       this.logger.warn('Unable to generate manifest for tutorial', e);

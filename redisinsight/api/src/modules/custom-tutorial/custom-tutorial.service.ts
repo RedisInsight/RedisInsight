@@ -21,6 +21,7 @@ import { parse } from 'path';
 import { isPlainObject } from 'lodash';
 import * as URL from 'url';
 import { Validator } from 'class-validator';
+import { CustomTutorialAnalytics } from 'src/modules/custom-tutorial/custom-tutorial.analytics';
 
 @Injectable()
 export class CustomTutorialService {
@@ -34,6 +35,7 @@ export class CustomTutorialService {
     private readonly customTutorialRepository: CustomTutorialRepository,
     private readonly customTutorialFsProvider: CustomTutorialFsProvider,
     private readonly customTutorialManifestProvider: CustomTutorialManifestProvider,
+    private readonly analytics: CustomTutorialAnalytics,
   ) {}
 
   private async validateManifestJson(path: string): Promise<void> {
@@ -95,8 +97,13 @@ export class CustomTutorialService {
       model.name = await this.determineTutorialName(model.absolutePath, dto?.file?.originalName || dto.link);
       const tutorial = await this.customTutorialRepository.create(model);
 
+      this.analytics.sendImportSucceeded({
+        manifest: !!(await this.customTutorialManifestProvider.getOriginalManifestJson(tutorial.absolutePath)),
+      });
+
       return await this.customTutorialManifestProvider.generateTutorialManifest(tutorial);
     } catch (e) {
+      this.analytics.sendImportFailed(e);
       this.logger.error('Unable to create custom tutorials', e);
       throw wrapHttpError(e);
     }

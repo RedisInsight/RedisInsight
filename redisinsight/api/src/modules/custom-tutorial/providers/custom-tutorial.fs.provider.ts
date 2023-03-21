@@ -135,7 +135,7 @@ export class CustomTutorialFsProvider {
    */
   static async prepareTutorialFolder(path: string): Promise<string> {
     const entries = await fs.readdir(path);
-    const firstEntryPath = join(path, entries[0]);
+    const firstEntryPath = join(path, entries[0] || '');
 
     if (entries?.length === 1 && (await fs.lstat(firstEntryPath)).isDirectory()) {
       const newPath = await CustomTutorialFsProvider.prepareTmpFolder();

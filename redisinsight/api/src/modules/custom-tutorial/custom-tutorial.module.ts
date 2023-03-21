@@ -9,6 +9,7 @@ import { CustomTutorialRepository } from 'src/modules/custom-tutorial/repositori
 import {
   LocalCustomTutorialRepository,
 } from 'src/modules/custom-tutorial/repositories/local.custom-tutorial.repository';
+import { CustomTutorialAnalytics } from 'src/modules/custom-tutorial/custom-tutorial.analytics';
 
 @Module({})
 export class CustomTutorialModule {
@@ -22,6 +23,7 @@ export class CustomTutorialModule {
         CustomTutorialService,
         CustomTutorialFsProvider,
         CustomTutorialManifestProvider,
+        CustomTutorialAnalytics,
         {
           provide: CustomTutorialRepository,
           useClass: repository,

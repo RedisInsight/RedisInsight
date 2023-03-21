@@ -3,7 +3,7 @@ import * as MockedSocket from 'socket.io-mock';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockDatabaseConnectionService,
-  MockType
+  MockType,
 } from 'src/__mocks__';
 import { BulkActionsProvider } from 'src/modules/bulk-actions/providers/bulk-actions.provider';
 import { RedisService } from 'src/modules/redis/redis.service';

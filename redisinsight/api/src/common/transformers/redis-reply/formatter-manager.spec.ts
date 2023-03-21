@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UTF8FormatterStrategy} from './strategies/utf8-formatter.strategy';
+import { UTF8FormatterStrategy } from './strategies/utf8-formatter.strategy';
 import { FormatterTypes } from './formatter.interface';
 import { FormatterManager } from './formatter-manager';
 

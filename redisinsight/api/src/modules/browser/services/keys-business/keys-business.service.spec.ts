@@ -12,12 +12,15 @@ import {
   mockRedisConsumer,
   mockRedisNoPermError,
   mockSettingsService,
-  mockDatabase,
   mockClusterDatabaseWithTlsAuth,
   mockDatabaseService,
-  MockType, mockBrowserClientMetadata, mockBrowserHistoryService
+  MockType,
+  mockBrowserClientMetadata,
+  mockBrowserHistoryService,
+  mockDatabaseRecommendationService,
 } from 'src/__mocks__';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { RECOMMENDATION_NAMES } from 'src/constants';
 import {
   GetKeyInfoResponse,
   GetKeysDto,
@@ -31,6 +34,7 @@ import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
 import { SettingsService } from 'src/modules/settings/settings.service';
+import { DatabaseRecommendationsService } from 'src/modules/database-recommendation/database-recommendations.service';
 import IORedis from 'ioredis';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -63,6 +67,7 @@ describe('KeysBusinessService', () => {
   let clusterScanner;
   let stringTypeInfoManager;
   let browserHistory;
+  let recommendationsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -98,11 +103,16 @@ describe('KeysBusinessService', () => {
           provide: BrowserHistoryService,
           useFactory: mockBrowserHistoryService,
         },
+        {
+          provide: DatabaseRecommendationsService,
+          useFactory: mockDatabaseRecommendationService,
+        },
       ],
     }).compile();
 
     service = module.get<KeysBusinessService>(KeysBusinessService);
     databaseService = module.get(DatabaseService);
+    recommendationsService = module.get<DatabaseRecommendationsService>(DatabaseRecommendationsService);
     browserTool = module.get<BrowserToolService>(BrowserToolService);
     browserHistory = module.get<BrowserHistoryService>(BrowserHistoryService);
     const scannerManager = get(service, 'scanner');
@@ -179,6 +189,18 @@ describe('KeysBusinessService', () => {
 
       expect(result).toEqual([getKeyInfoResponse]);
     });
+    it('should call recommendationService', async () => {
+      const result = await service.getKeysInfo(
+        mockBrowserClientMetadata,
+        { keys: [getKeyInfoResponse.name] },
+      );
+
+      expect(recommendationsService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_STRING,
+        { keys: result, client: nodeClient, databaseId: mockBrowserClientMetadata.databaseId },
+      );
+    });
     it("user don't have required permissions for getKeyInfo", async () => {
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
@@ -254,7 +276,7 @@ describe('KeysBusinessService', () => {
         .fn()
         .mockResolvedValue([mockGetKeysWithDetailsResponse]);
 
-      await service.getKeys(mockBrowserClientMetadata, {...getKeysDto, match: '1'});
+      await service.getKeys(mockBrowserClientMetadata, { ...getKeysDto, match: '1' });
 
       expect(standaloneScanner.getKeys).toHaveBeenCalled();
       expect(browserHistory.create).toHaveBeenCalled();
@@ -264,7 +286,7 @@ describe('KeysBusinessService', () => {
         .fn()
         .mockResolvedValue([mockGetKeysWithDetailsResponse]);
 
-      await service.getKeys(mockBrowserClientMetadata, {...getKeysDto, match: '*'});
+      await service.getKeys(mockBrowserClientMetadata, { ...getKeysDto, match: '*' });
 
       expect(standaloneScanner.getKeys).toHaveBeenCalled();
       expect(browserHistory.create).not.toHaveBeenCalled();

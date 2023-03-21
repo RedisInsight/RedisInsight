@@ -24,21 +24,20 @@ export class ConnectionMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction): Promise<any> {
     let { timeout, instanceIdFromReq } = ConnectionMiddleware.getConnectionConfigFromReq(req);
 
-    if(instanceIdFromReq) {
-      timeout = plainToClass(Database, await this.databaseService.get(instanceIdFromReq))?.timeout
+    if (instanceIdFromReq) {
+      timeout = plainToClass(Database, await this.databaseService.get(instanceIdFromReq))?.timeout;
     }
 
     const cb = (err?: any) => {
       if (err?.code === RedisErrorCodes.Timeout
         || err?.message?.includes('timeout')) {
-
         next(
-          this.returnError(req, new BadGatewayException(ERROR_MESSAGES.CONNECTION_TIMEOUT))
+          this.returnError(req, new BadGatewayException(ERROR_MESSAGES.CONNECTION_TIMEOUT)),
         );
       } else {
-        next()
+        next();
       }
-    }
+    };
 
     connectTimeout?.(timeout)?.(req, res, cb);
   }
@@ -47,7 +46,7 @@ export class ConnectionMiddleware implements NestMiddleware {
     return {
       timeout: req.body?.timeout,
       instanceIdFromReq: req.params?.id,
-     };
+    };
   }
 
   private returnError(req: Request, err: Error) {

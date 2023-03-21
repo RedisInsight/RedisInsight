@@ -4,7 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
+import { DEFAULT_MATCH, RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
 import { catchAclError } from 'src/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
@@ -31,6 +31,7 @@ import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { DatabaseRecommendationsService } from 'src/modules/database-recommendation/database-recommendations.service';
 import { pick } from 'lodash';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
@@ -66,6 +67,7 @@ export class KeysBusinessService {
     private browserHistory: BrowserHistoryService,
     private browserToolCluster: BrowserToolClusterService,
     private settingsService: SettingsService,
+    private recommendationsService: DatabaseRecommendationsService,
   ) {
     this.scanner = new Scanner();
     this.keyInfoManager = new KeyInfoManager(
@@ -177,7 +179,11 @@ export class KeysBusinessService {
       const client = await this.browserTool.getRedisClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.isCluster ? ConnectionType.CLUSTER : ConnectionType.STANDALONE);
       const result = await scanner.getKeysInfo(client, dto.keys);
-
+      this.recommendationsService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_STRING,
+        { keys: result, client, databaseId: clientMetadata.databaseId },
+      );
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error(`Failed to get keys info: ${error.message}.`);

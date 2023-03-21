@@ -582,8 +582,8 @@ jobs:
       - run:
           command: |
             cp ./electron/package.json ./redisinsight/
-            pyenv install 3.9.16
-            pyenv global 3.9.16
+            # pyenv install 3.9.16
+            # pyenv global 3.9.16
       - run:
           name: install dependencies
           command: |

@@ -54,7 +54,7 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
-import { decompressingBuffer, getCompressor } from 'uiSrc/utils/decompressors'
+import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
 import {
   SetListElementDto,
@@ -87,7 +87,7 @@ const ListDetails = (props: Props) => {
     listDataSelector
   )
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
   const { [KeyTypes.List]: listSizes } = useSelector(appContextBrowserKeyDetails)
@@ -280,7 +280,7 @@ const ListDetails = (props: Props) => {
         expanded: boolean = false,
         rowIndex = 0
       ) {
-        const { value: decompressedElementItem } = decompressingBuffer(elementItem)
+        const { value: decompressedElementItem } = decompressingBuffer(elementItem, compressor)
         const element = bufferToString(elementItem)
         const tooltipContent = formatLongName(element)
         const { value, isValid } = formattingBuffer(decompressedElementItem, viewFormatProp, { expanded })
@@ -379,7 +379,6 @@ const ListDetails = (props: Props) => {
       maxWidth: 60,
       absoluteWidth: 60,
       render: function Actions(_element: any, { index, element }: IListElement) {
-        const compressor = getCompressor(element)
         const isEditable = !compressor && isFormatEditable(viewFormat)
         const tooltipContent = compressor ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
         return (

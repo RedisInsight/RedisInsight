@@ -34,7 +34,6 @@ import VirtualTable from 'uiSrc/components/virtual-table'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
 import styles from './styles.module.scss'
@@ -61,7 +60,7 @@ const SetDetails = (props: Props) => {
   const { loading } = useSelector(setSelector)
   const { members: loadedMembers, total, nextCursor } = useSelector(setDataSelector)
   const { length = 0, name: key } = useSelector(selectedKeyDataSelector) ?? {}
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
@@ -191,7 +190,7 @@ const SetDetails = (props: Props) => {
       initialSearchValue: '',
       truncateText: true,
       render: function Name(_name: string, memberItem: RedisResponseBuffer, expanded: boolean = false) {
-        const { value: decompressedMemberItem } = decompressingBuffer(memberItem)
+        const { value: decompressedMemberItem } = decompressingBuffer(memberItem, compressor)
         const member = bufferToString(memberItem)
         // Better to cut the long string, because it could affect virtual scroll performance
         const tooltipContent = formatLongName(member)

@@ -403,9 +403,6 @@ const keysSlice = createSlice({
     deleteSearchHistoryFailure: (state) => {
       state.searchHistory.loading = false
     },
-    setCompressor: (state, { payload }:PayloadAction<Nullable<KeyValueCompressor>>) => {
-      state.selectedKey.compressor = payload
-    },
   },
 })
 
@@ -453,7 +450,6 @@ export const {
   deleteSearchHistory,
   deleteSearchHistorySuccess,
   deleteSearchHistoryFailure,
-  setCompressor,
 } = keysSlice.actions
 
 // A selector

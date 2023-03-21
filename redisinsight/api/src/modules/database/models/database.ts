@@ -3,7 +3,7 @@ import { Expose, Type } from 'class-transformer';
 import config from 'src/utils/config';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
-import { ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
+import { Compressor, ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
 import {
   IsBoolean, IsEnum,
   IsInt,
@@ -255,4 +255,14 @@ export class Database {
   @Type(() => SshOptions)
   @ValidateNested()
   sshOptions?: SshOptions;
+
+  @ApiPropertyOptional({
+    description: 'Database compressor',
+    default: Compressor.NONE,
+    enum: Compressor,
+  })
+  @Expose()
+  @IsEnum(Compressor)
+  @IsOptional()
+  compressor?: Compressor = Compressor.NONE;
 }

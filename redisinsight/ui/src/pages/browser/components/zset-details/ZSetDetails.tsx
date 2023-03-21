@@ -72,7 +72,7 @@ const ZSetDetails = (props: Props) => {
   const [sortedColumnOrder, setSortedColumnOrder] = useState(SortOrder.ASC)
   const { name: key, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { total, nextCursor, members: loadedMembers } = useSelector(zsetDataSelector)
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
   const { [KeyTypes.ZSet]: ZSetSizes } = useSelector(appContextBrowserKeyDetails)
@@ -257,7 +257,7 @@ const ZSetDetails = (props: Props) => {
       className: 'value-table-separate-border',
       headerClassName: 'value-table-separate-border',
       render: function Name(_name: string, { name: nameItem }: IZsetMember, expanded?: boolean) {
-        const { value: decompressedNameItem } = decompressingBuffer(nameItem)
+        const { value: decompressedNameItem } = decompressingBuffer(nameItem, compressor)
         const name = bufferToString(nameItem)
         const tooltipContent = formatLongName(name)
         const { value, isValid } = formattingBuffer(decompressedNameItem, viewFormat, { expanded })

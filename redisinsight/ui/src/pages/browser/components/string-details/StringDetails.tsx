@@ -20,6 +20,7 @@ import {
   isFormatEditable,
   stringToBuffer,
   stringToSerializedBufferFormat,
+  Nullable,
 } from 'uiSrc/utils'
 import {
   resetStringValue,
@@ -29,10 +30,11 @@ import {
 } from 'uiSrc/slices/browser/string'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { selectedKeyDataSelector, selectedKeySelector, setCompressor } from 'uiSrc/slices/browser/keys'
+import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { TEXT_DISABLED_COMPRESSED_VALUE, TEXT_FAILED_CONVENT_FORMATTER, TEXT_INVALID_VALUE, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import styles from './styles.module.scss'
 
@@ -48,6 +50,7 @@ export interface Props {
 const StringDetails = (props: Props) => {
   const { isEditItem, setIsEdit } = props
 
+  const { compressor = null } = useSelector(connectedInstanceSelector)
   const { loading } = useSelector(stringSelector)
   const { value: initialValue } = useSelector(stringDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
@@ -74,7 +77,7 @@ const StringDetails = (props: Props) => {
   useEffect(() => {
     if (!initialValue) return
 
-    const { value: decompressedValue, compressor } = decompressingBuffer(initialValue)
+    const { value: decompressedValue } = decompressingBuffer(initialValue, compressor)
 
     const initialValueString = bufferToString(decompressedValue, viewFormat)
     const { value: formattedValue, isValid } = formattingBuffer(decompressedValue, viewFormatProp, { expanded: true })
@@ -89,12 +92,10 @@ const StringDetails = (props: Props) => {
     setIsEditable(!compressor && isFormatEditable(viewFormatProp))
     setNoEditableText(compressor ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormat))
 
-    dispatch(setCompressor(compressor))
-
     if (viewFormat !== viewFormatProp) {
       setViewFormat(viewFormatProp)
     }
-  }, [initialValue, viewFormatProp])
+  }, [initialValue, viewFormatProp, compressor])
 
   useEffect(() => {
     // Approximate calculation of textarea rows by initialValue

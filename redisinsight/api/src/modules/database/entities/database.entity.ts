@@ -25,6 +25,14 @@ export enum ConnectionType {
   NOT_CONNECTED = 'NOT CONNECTED',
 }
 
+export enum Compressor {
+  NONE = 'NONE',
+  GZIP = 'GZIP',
+  ZSTD = 'ZSTD',
+  LZ4 = 'LZ4',
+  SNAPPY = 'SNAPPY',
+}
+
 @Entity('database_instance')
 export class DatabaseEntity {
   @Expose()
@@ -184,4 +192,11 @@ export class DatabaseEntity {
   )
   @Type(() => SshOptionsEntity)
   sshOptions: SshOptionsEntity;
+
+  @Expose()
+  @Column({
+    nullable: false,
+    default: Compressor.NONE,
+  })
+  compressor: Compressor;
 }

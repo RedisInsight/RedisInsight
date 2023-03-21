@@ -1,5 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import {
   HasMimeType, IsFile, MaxFileSize, MemoryStoredFile,
@@ -25,12 +24,4 @@ export class UploadCustomTutorialDto {
   @IsString()
   @IsNotEmpty()
   link?: string;
-
-  @ApiProperty({
-    description: 'Name to show for custom tutorials',
-  })
-  @Expose()
-  @IsString()
-  @IsNotEmpty()
-  name: string;
 }

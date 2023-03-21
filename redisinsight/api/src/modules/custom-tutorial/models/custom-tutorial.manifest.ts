@@ -2,7 +2,7 @@ import { CustomTutorialActions } from 'src/modules/custom-tutorial/models/custom
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import {
-  IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested
+  IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested,
 } from 'class-validator';
 
 export enum CustomTutorialManifestType {
@@ -88,4 +88,41 @@ export class RootCustomTutorialManifest extends CustomTutorialManifest {
   @IsString()
   @IsNotEmpty()
   _path?: string;
+
+  @ApiPropertyOptional({ type: String, isArray: true })
+  @IsOptional()
+  @Expose()
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  keywords?: string[];
+
+  @ApiPropertyOptional({ type: String })
+  @IsOptional()
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  author?: string;
+
+  @ApiPropertyOptional({ type: String })
+  @IsOptional()
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  url?: string;
+
+  @ApiPropertyOptional({ type: String, isArray: true })
+  @IsOptional()
+  @Expose()
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  industry?: string[];
+
+  @ApiPropertyOptional({ type: String })
+  @IsOptional()
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  description?: string;
 }

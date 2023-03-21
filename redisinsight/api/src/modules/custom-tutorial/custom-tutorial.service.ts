@@ -1,6 +1,6 @@
 import {
   BadRequestException,
-  Injectable, Logger, NotFoundException,
+  Injectable, Logger, NotFoundException, ValidationPipe,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CustomTutorialRepository } from 'src/modules/custom-tutorial/repositories/custom-tutorial.repository';
@@ -17,16 +17,53 @@ import {
   RootCustomTutorialManifest,
 } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
 import { wrapHttpError } from 'src/common/utils';
+import { parse } from 'path';
+import { isPlainObject } from 'lodash';
+import * as URL from 'url';
+import { Validator } from 'class-validator';
 
 @Injectable()
 export class CustomTutorialService {
   private logger = new Logger('CustomTutorialService');
+
+  private validator = new Validator();
+
+  private exceptionFactory = (new ValidationPipe()).createExceptionFactory();
 
   constructor(
     private readonly customTutorialRepository: CustomTutorialRepository,
     private readonly customTutorialFsProvider: CustomTutorialFsProvider,
     private readonly customTutorialManifestProvider: CustomTutorialManifestProvider,
   ) {}
+
+  private async validateManifestJson(path: string): Promise<void> {
+    const manifest = await this.customTutorialManifestProvider.getOriginalManifestJson(path);
+
+    if (manifest) {
+      if (!isPlainObject(manifest)) {
+        throw new BadRequestException('Manifest json should be an object');
+      }
+
+      const errors = await this.validator.validate(
+        plainToClass(RootCustomTutorialManifest, manifest),
+        { whitelist: true },
+      );
+
+      if (errors?.length) {
+        throw this.exceptionFactory(errors);
+      }
+    }
+  }
+
+  private async determineTutorialName(path: string, link: string) {
+    const manifest = await this.customTutorialManifestProvider.getManifestJson(path);
+
+    if (!manifest?.label) {
+      return parse(URL.parse(link).pathname).name;
+    }
+
+    return manifest.label;
+  }
 
   /**
    * Create custom tutorial entity + static files based on input
@@ -45,7 +82,7 @@ export class CustomTutorialService {
         throw new BadRequestException('File or external link should be provided');
       }
 
-      // todo: validate
+      await this.validateManifestJson(tmpPath);
 
       // create tutorial model
       const model = plainToClass(CustomTutorial, {
@@ -55,6 +92,7 @@ export class CustomTutorialService {
 
       await this.customTutorialFsProvider.moveFolder(tmpPath, model.absolutePath);
 
+      model.name = await this.determineTutorialName(model.absolutePath, dto?.file?.originalName || dto.link);
       const tutorial = await this.customTutorialRepository.create(model);
 
       return await this.customTutorialManifestProvider.generateTutorialManifest(tutorial);
@@ -68,7 +106,7 @@ export class CustomTutorialService {
    * Get global manifest for all custom tutorials
    * In the future will be removed with some kind of partial load
    */
-  public async getGlobalManifest(): Promise<RootCustomTutorialManifest[]> {
+  public async getGlobalManifest(): Promise<RootCustomTutorialManifest> {
     const children = [];
 
     try {
@@ -89,19 +127,17 @@ export class CustomTutorialService {
       this.logger.warn('Unable to generate entire custom tutorials manifest', e);
     }
 
-    return [
-      {
-        type: CustomTutorialManifestType.Group,
-        id: 'custom-tutorials',
-        label: 'MY TUTORIALS',
-        _actions: [CustomTutorialActions.CREATE],
-        args: {
-          withBorder: true,
-          initialIsOpen: true,
-        },
-        children,
+    return {
+      type: CustomTutorialManifestType.Group,
+      id: 'custom-tutorials',
+      label: 'MY TUTORIALS',
+      _actions: [CustomTutorialActions.CREATE],
+      args: {
+        withBorder: true,
+        initialIsOpen: true,
       },
-    ];
+      children,
+    };
   }
 
   public async get(id: string): Promise<CustomTutorial> {

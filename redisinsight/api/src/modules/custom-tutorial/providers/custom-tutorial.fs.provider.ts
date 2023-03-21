@@ -29,7 +29,7 @@ export class CustomTutorialFsProvider {
    */
   private async extractAll(zip: AdmZip, targetPath, overwrite = true, keepOriginalPermission = false) {
     zip.getEntries().forEach((entry) => {
-      if (!entry.entryName.startsWith('__MACOSX')) {
+      if (!entry.entryName.includes('__MACOSX')) {
         zip.extractEntryTo(
           entry,
           targetPath,
@@ -51,9 +51,8 @@ export class CustomTutorialFsProvider {
 
       await fs.remove(path);
       await this.extractAll(zip, path, true);
-      // await zip.extractAllTo(path, true);
 
-      return path;
+      return CustomTutorialFsProvider.prepareTutorialFolder(path);
     } catch (e) {
       this.logger.error('Unable to unzip archive', e);
       throw new InternalServerErrorException(e.message);
@@ -80,7 +79,7 @@ export class CustomTutorialFsProvider {
 
       return this.unzipToTmpFolder(new AdmZip(data));
     } catch (e) {
-      this.logger.error('Unable fetch zip file from external source', e);
+      this.logger.error('Unable to fetch zip file from external source', e);
       throw wrapHttpError(e, ERROR_MESSAGES.CUSTOM_TUTORIAL_UNABLE_TO_FETCH_FROM_EXTERNAL);
     }
   }
@@ -124,6 +123,27 @@ export class CustomTutorialFsProvider {
   static async prepareTmpFolder(): Promise<string> {
     const path = join(TMP_FOLDER, uuidv4());
     await fs.ensureDir(path);
+
+    return path;
+  }
+
+  /**
+   * Check for data structure
+   * in case when and a single folder presented on the root level
+   * we will ignore it and work with everything inside it
+   * @private
+   */
+  static async prepareTutorialFolder(path: string): Promise<string> {
+    const entries = await fs.readdir(path);
+    const firstEntryPath = join(path, entries[0]);
+
+    if (entries?.length === 1 && (await fs.lstat(firstEntryPath)).isDirectory()) {
+      const newPath = await CustomTutorialFsProvider.prepareTmpFolder();
+
+      await fs.copy(firstEntryPath, newPath);
+
+      return newPath;
+    }
 
     return path;
   }

@@ -7,7 +7,7 @@ import {
   mockCustomTutorialManifestManifest, mockCustomTutorialManifestManifest2,
   mockCustomTutorialManifestProvider,
   mockCustomTutorialRepository,
-  MockType, mockUploadCustomTutorialDto, mockUploadCustomTutorialExternalLinkDto
+  MockType, mockUploadCustomTutorialDto, mockUploadCustomTutorialExternalLinkDto,
 } from 'src/__mocks__';
 import * as fs from 'fs-extra';
 import { CustomTutorialFsProvider } from 'src/modules/custom-tutorial/providers/custom-tutorial.fs.provider';
@@ -60,6 +60,36 @@ describe('CustomTutorialService', () => {
     customTutorialRepository = await module.get(CustomTutorialRepository);
     customTutorialFsProvider = await module.get(CustomTutorialFsProvider);
     customTutorialManifestProvider = await module.get(CustomTutorialManifestProvider);
+  });
+
+  describe('determineTutorialName', () => {
+    const entries = [
+      'name.zip',
+      'name',
+      'https://some.com/name',
+      'https://some.com/name?some=query&might=be&here',
+      'https://some.com/name.zip',
+      'https://some.com/name.zip?some=query&might=be&here',
+      'file://some/folder/name',
+      'file://some/folder/name.zip',
+      '/some/unix/path/name',
+      '/some/unix/path/name.zip',
+      'C:\\\\Windows\\name',
+      'C:\\\\Windows\\name.zip',
+    ];
+
+    it('Should generate proper tutorial name for all possible inputs', async () => {
+      customTutorialManifestProvider.getManifestJson.mockResolvedValue(null);
+      await Promise.all(entries.map(async (entry) => {
+        expect({
+          entry,
+          name: await service['determineTutorialName']('/na', entry),
+        }).toEqual({
+          entry,
+          name: 'name',
+        });
+      }));
+    });
   });
 
   describe('create', () => {

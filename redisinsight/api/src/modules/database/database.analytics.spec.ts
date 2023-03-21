@@ -104,6 +104,7 @@ describe('DatabaseAnalytics', () => {
           numberOfModules: 0,
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           databaseIndex: 0,
+          useDecompression: mockDatabaseWithTlsAuth.compressor,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
@@ -134,6 +135,7 @@ describe('DatabaseAnalytics', () => {
           numberOfModules: 0,
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           databaseIndex: 0,
+          useDecompression: mockDatabaseWithTlsAuth.compressor,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
         },
       );
@@ -166,6 +168,7 @@ describe('DatabaseAnalytics', () => {
           numberOfModules: 2,
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           databaseIndex: 0,
+          useDecompression: mockDatabaseWithTlsAuth.compressor,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
           RediSearch: {
             loaded: true,
@@ -204,6 +207,7 @@ describe('DatabaseAnalytics', () => {
           numberOfModules: 2,
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
           databaseIndex: 2,
+          useDecompression: mockDatabaseWithTlsAuth.compressor,
           ...DEFAULT_REDIS_MODULES_SUMMARY,
           RediSearch: {
             loaded: true,
@@ -240,6 +244,7 @@ describe('DatabaseAnalytics', () => {
           useSNI: 'enabled',
           useSSH: 'disabled',
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
+          useDecompression: mockDatabaseWithTlsAuth.compressor,
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
@@ -248,6 +253,7 @@ describe('DatabaseAnalytics', () => {
             useTLSAuthClients: 'enabled',
             useSNI: 'enabled',
             useSSH: 'disabled',
+            useDecompression: prev.compressor,
           },
         },
       );
@@ -275,6 +281,7 @@ describe('DatabaseAnalytics', () => {
           useSNI: 'enabled',
           useSSH: 'disabled',
           timeout: mockDatabaseWithTlsAuth.timeout / 1_000, // milliseconds to seconds
+          useDecompression: mockDatabaseWithTlsAuth.compressor,
           previousValues: {
             connectionType: prev.connectionType,
             provider: prev.provider,
@@ -283,6 +290,7 @@ describe('DatabaseAnalytics', () => {
             useSSH: 'disabled',
             verifyTLSCertificate: 'disabled',
             useTLSAuthClients: 'disabled',
+            useDecompression: prev.compressor,
           },
         },
       );

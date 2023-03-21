@@ -6,6 +6,7 @@ import { TelemetryEvents } from 'src/constants';
 import { getRedisModulesSummary } from 'src/utils/redis-modules-summary';
 import { getRangeForNumber, TOTAL_KEYS_BREAKPOINTS } from 'src/utils';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
+import { Compressor } from './entities/database.entity';
 
 @Injectable()
 export class DatabaseAnalytics extends TelemetryBaseService {
@@ -67,6 +68,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
           numberOfModules: instance.modules?.length || 0,
           timeout: instance.timeout / 1_000, // milliseconds to seconds
           databaseIndex: instance.db || 0,
+          useDecompression: instance.compressor || Compressor.NONE,
           ...modulesSummary,
         },
       );
@@ -100,6 +102,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
             useSNI: cur?.tlsServername ? 'enabled' : 'disabled',
             useSSH: cur?.ssh ? 'enabled' : 'disabled',
             timeout: cur?.timeout / 1_000, // milliseconds to seconds
+            useDecompression: cur.compressor || Compressor.NONE,
             previousValues: {
               connectionType: prev.connectionType,
               provider: prev.provider,
@@ -112,6 +115,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
               useTLSAuthClients: prev?.clientCert
                 ? 'enabled'
                 : 'disabled',
+              useDecompression: prev?.compressor || Compressor.NONE,
             },
           },
         );

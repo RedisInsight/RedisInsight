@@ -5,15 +5,13 @@ aliases:
     run:
       name: Add cert to the keychain
       command: |
-        sudo security create-keychain -p mysecretpassword $KEYCHAIN
-        sudo security default-keychain -s $KEYCHAIN
-        sudo security unlock-keychain -p mysecretpassword $KEYCHAIN
-        sudo security import certs/mac-developer.p12 -k $KEYCHAIN -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign
-        sudo security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
-        sudo security import certs/mas-distribution.p12 -k $KEYCHAIN -P "$CSC_MAS_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
-        sudo security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
-        sudo security import certs/mac-installer.p12 -k $KEYCHAIN -P "$CSC_MAC_INSTALLER_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
-        sudo security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
+        security create-keychain -p mysecretpassword $KEYCHAIN
+        security default-keychain -s $KEYCHAIN
+        security unlock-keychain -p mysecretpassword $KEYCHAIN
+        security import certs/mac-developer.p12 -k $KEYCHAIN -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+        security import certs/mas-distribution.p12 -k $KEYCHAIN -P "$CSC_MAS_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+        security import certs/mac-installer.p12 -k $KEYCHAIN -P "$CSC_MAC_INSTALLER_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+        security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
       environment:
         KEYCHAIN: redisinsight.keychain
   import: &import

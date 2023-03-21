@@ -303,5 +303,66 @@ describe('RedisearchService', () => {
         expect(e).toBeInstanceOf(ForbiddenException);
       }
     });
+    it('should call once "FT.CONFIG GET MAXSEARCHRESULTS" for all requests', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT.SEARCH' }))
+        .mockResolvedValue([100, keyName1, keyName2]);
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'FT.CONFIG' }))
+        .mockResolvedValue([['MAXSEARCHRESULTS', '10000']]);
+
+      const res = await service.search(mockBrowserClientMetadata, mockSearchRedisearchDto);
+      await service.search(mockBrowserClientMetadata, mockSearchRedisearchDto);
+      await service.search(mockBrowserClientMetadata, mockSearchRedisearchDto);
+
+      expect(res).toEqual({
+        cursor: mockSearchRedisearchDto.limit + mockSearchRedisearchDto.offset,
+        scanned: 2,
+        total: 100,
+        maxResults: 10_000,
+        keys: [{
+          name: keyName1,
+        }, {
+          name: keyName2,
+        }],
+      });
+
+      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(4);
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'FT.SEARCH',
+        args: [
+          mockSearchRedisearchDto.index,
+          mockSearchRedisearchDto.query,
+          'NOCONTENT',
+          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'FT.CONFIG',
+        args: [
+          'GET',
+          'MAXSEARCHRESULTS',
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'FT.SEARCH',
+        args: [
+          mockSearchRedisearchDto.index,
+          mockSearchRedisearchDto.query,
+          'NOCONTENT',
+          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'FT.SEARCH',
+        args: [
+          mockSearchRedisearchDto.index,
+          mockSearchRedisearchDto.query,
+          'NOCONTENT',
+          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(browserHistory.create).toHaveBeenCalled();
+    });
   });
 });

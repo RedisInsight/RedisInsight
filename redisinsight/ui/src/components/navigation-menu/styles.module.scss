@@ -134,69 +134,6 @@ $sideBarWidth: 60px;
   }
 }
 
-.popoverWrapper {
-  min-width: 354px !important;
-}
-
-.popover {
-  padding: 5px 15px 5px;
-}
-
-.helpMenuItem {
-  align-items: center;
-  cursor: pointer;
-
-  :global(.euiButtonIcon), :global(.euiIcon) {
-    color: var(--euiTooltipTextColor) !important;
-  }
-
-  .helpMenuItemLink {
-    text-decoration: none !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: translateY(-1px);
-    }
-
-    &:global(.euiLink) {
-      text-decoration: none !important;
-      &:focus {
-        animation: none !important;
-      }
-    }
-  }
-}
-
-.helpMenuItemDisabled {
-  cursor: auto;
-  :global(.euiIcon), div {
-    color: var(--buttonSecondaryDisabledTextColor) !important;
-  }
-}
-
-.helpMenuItemNotified {
-  position: relative;
-  &:before {
-    content: '';
-    position: absolute;
-    right: -2px;
-    top: -3px;
-    display: block;
-    width: 8px;
-    height: 8px;
-    background-color: var(--euiColorPrimary);
-    border-radius: 100%;
-  }
-}
-
-.helpMenuText {
-  font-size: 13px !important;
-  line-height: 1.35 !important;
-}
-
 .logo {
   &:hover {
     transform: translateY(-1px);

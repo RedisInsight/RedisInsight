@@ -20,6 +20,7 @@ export const defaultItems: IEnablementAreaItem[] = [
     children: []
   }
 ]
+
 export const initialState: StateWorkbenchEnablementArea = {
   loading: false,
   deleting: false,
@@ -35,9 +36,9 @@ const workbenchCustomTutorialsSlice = createSlice({
     getWBCustomTutorials: (state) => {
       state.loading = true
     },
-    getWBCustomTutorialsSuccess: (state, { payload }) => {
+    getWBCustomTutorialsSuccess: (state, { payload }: { payload: IEnablementAreaItem }) => {
       state.loading = false
-      state.items = payload
+      state.items = [payload]
     },
     getWBCustomTutorialsFailure: (state, { payload }) => {
       state.loading = false

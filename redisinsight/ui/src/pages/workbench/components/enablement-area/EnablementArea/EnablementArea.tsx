@@ -181,9 +181,8 @@ const EnablementArea = (props: Props) => {
     }))
   }
 
-  const submitCreate = ({ file, name, link }: FormValues) => {
+  const submitCreate = ({ file, link }: FormValues) => {
     const formData = new FormData()
-    formData.append('name', name)
 
     if (file) {
       formData.append('file', file)
@@ -201,24 +200,7 @@ const EnablementArea = (props: Props) => {
 
     dispatch(uploadCustomTutorial(
       formData,
-      () => {
-        setIsCreateOpen(false)
-        sendEventTelemetry({
-          event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_IMPORT_SUCCEEDED,
-          eventData: {
-            databaseId: instanceId,
-          }
-        })
-      },
-      (error) => {
-        sendEventTelemetry({
-          event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_IMPORT_FAILED,
-          eventData: {
-            databaseId: instanceId,
-            error
-          }
-        })
-      }
+      () => setIsCreateOpen(false),
     ))
   }
 

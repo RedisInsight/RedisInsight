@@ -1,21 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { ApiEndpoints, MONACO_MANUAL } from 'uiSrc/constants'
+import { ApiEndpoints } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
-import { EnablementAreaComponent, IEnablementAreaItem, StateWorkbenchEnablementArea } from 'uiSrc/slices/interfaces'
+import { IEnablementAreaItem, StateWorkbenchEnablementArea } from 'uiSrc/slices/interfaces'
 
 import { AppDispatch, RootState } from '../store'
 
-export const defaultItems: IEnablementAreaItem[] = [
-  {
-    type: EnablementAreaComponent.CodeButton,
-    id: 'manual',
-    label: 'Manual',
-    args: {
-      content: MONACO_MANUAL,
-    }
-  }
-]
+export const defaultItems: IEnablementAreaItem[] = []
 
 export const initialState: StateWorkbenchEnablementArea = {
   loading: false,
@@ -31,9 +22,9 @@ const workbenchGuidesSlice = createSlice({
     getWBGuides: (state) => {
       state.loading = true
     },
-    getWBGuidesSuccess: (state, { payload }) => {
+    getWBGuidesSuccess: (state, { payload }: { payload: IEnablementAreaItem }) => {
       state.loading = false
-      state.items = payload
+      state.items = [payload]
     },
     getWBGuidesFailure: (state, { payload }) => {
       state.loading = false

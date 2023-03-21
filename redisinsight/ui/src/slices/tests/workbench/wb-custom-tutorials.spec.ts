@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
-import { MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
+import { MOCK_CUSTOM_TUTORIALS, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -71,14 +71,14 @@ describe('slices', () => {
   describe('getWBCustomTutorialsSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
-      const items: IEnablementAreaItem[] = MOCK_TUTORIALS_ITEMS
+      const customTutorials: IEnablementAreaItem = MOCK_CUSTOM_TUTORIALS
       const state = {
         ...initialState,
-        items,
+        items: [customTutorials],
       }
 
       // Act
-      const nextState = reducer(initialState, getWBCustomTutorialsSuccess(items))
+      const nextState = reducer(initialState, getWBCustomTutorialsSuccess(customTutorials))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -281,7 +281,7 @@ describe('slices', () => {
   describe('fetchCustomTutorials', () => {
     it('succeed to fetch tutorials items', async () => {
       // Arrange
-      const data = MOCK_TUTORIALS_ITEMS
+      const data = MOCK_CUSTOM_TUTORIALS
       const responsePayload = { status: 200, data }
 
       apiService.get = jest.fn().mockResolvedValue(responsePayload)

@@ -35,3 +35,11 @@ export const MOCK_CUSTOM_TUTORIALS_ITEMS: IEnablementAreaItem[] = [
     ]
   }
 ]
+
+export const MOCK_CUSTOM_TUTORIALS = {
+  id: 'custom-tutorials',
+  label: 'MY TUTORIALS',
+  type: EnablementAreaComponent.Group,
+  _actions: ['create'],
+  children: MOCK_CUSTOM_TUTORIALS_ITEMS
+}

@@ -5,7 +5,7 @@ const { localDb, request, server, constants } = deps;
 const endpoint = (
   instanceId = constants.TEST_INSTANCE_ID,
 ) =>
-  request(server).get(`/${constants.API.DATABASES}/${instanceId}/recommendations/read`);
+  request(server).patch(`/${constants.API.DATABASES}/${instanceId}/recommendations/read`);
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {

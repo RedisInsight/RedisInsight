@@ -14,7 +14,7 @@ cp -R "./redisinsight/ui/src/assets/fonts/inconsolata/" "./vendor/fonts"
 mkdir -p "${PLUGINS_VENDOR_DIR}"
 cp -R "./vendor/." "${PLUGINS_VENDOR_DIR}"
 
-Build redisearch plugin
+# Build redisearch plugin
 REDISEARCH_DIR="./redisinsight/ui/src/packages/redisearch"
 yarn --cwd "${REDISEARCH_DIR}"
 yarn --cwd "${REDISEARCH_DIR}" build

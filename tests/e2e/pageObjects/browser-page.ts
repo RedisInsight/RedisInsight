@@ -365,9 +365,9 @@ export class BrowserPage {
     /**
      * Adding a new ZSet key
      * @param keyName The name of the key
+     * @param scores The score of the key member
      * @param TTL The Time to live value of the key
      * @param members The key members
-     * @param scores The score of the key member
      */
     async addZSetKey(keyName: string, scores = ' ', TTL = ' ', members = ' '): Promise<void> {
         await common.waitForElementNotVisible(this.progressLine);

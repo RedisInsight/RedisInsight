@@ -54,7 +54,6 @@ export const {
   getRecommendations,
   getRecommendationsSuccess,
   getRecommendationsFailure,
-  setHighlighting,
   setIsContentVisible,
   readRecommendations,
 } = recommendationsSlice.actions

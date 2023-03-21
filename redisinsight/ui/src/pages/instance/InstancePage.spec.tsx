@@ -50,6 +50,16 @@ describe('InstancePage', () => {
     expect(queryByTestId('expand-cli')).toBeInTheDocument()
   })
 
+  it('should render with LiveTimeRecommendations Component', () => {
+    const { queryByTestId } = render(
+      <BrowserRouter>
+        <InstancePage {...instance(mockedProps)} />
+      </BrowserRouter>
+    )
+
+    expect(queryByTestId('recommendations-trigger')).toBeInTheDocument()
+  })
+
   it('should be called LocalStorage after Component Will Unmount', () => {
     const defaultSizes = getDefaultSizes()
     localStorageService.set = jest.fn()

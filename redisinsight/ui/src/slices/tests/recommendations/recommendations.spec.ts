@@ -7,7 +7,7 @@ import reducer, {
   getRecommendations,
   getRecommendationsSuccess,
   getRecommendationsFailure,
-  setHighlighting,
+  setIsHighlighted,
   setIsContentVisible,
   readRecommendations,
   fetchRecommendationsAction,
@@ -85,12 +85,12 @@ describe('recommendations slice', () => {
 
     describe('getRecommendationsSuccess', () => {
       it('should properly set loading: true', () => {
-        const payload = [mockRecommendation]
+        const payload = mockRecommendation
         // Arrange
         const state = {
           ...initialState,
           loading: false,
-          data: [mockRecommendation]
+          data: mockRecommendation
         }
 
         // Act
@@ -197,6 +197,7 @@ describe('recommendations slice', () => {
         // Assert
         const expectedActions = [
           getRecommendations(),
+          setIsHighlighted(true),
           getRecommendationsSuccess(data),
         ]
 
@@ -248,6 +249,7 @@ describe('recommendations slice', () => {
         // Assert
         const expectedActions = [
           readRecommendations(data.totalUnread),
+          setIsHighlighted(false),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

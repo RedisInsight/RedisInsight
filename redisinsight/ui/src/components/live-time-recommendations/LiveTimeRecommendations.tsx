@@ -13,7 +13,7 @@ import {
 } from '@elastic/eui'
 import cx from 'classnames'
 
-import { BrowserStorageItem, Pages } from 'uiSrc/constants'
+import { Pages } from 'uiSrc/constants'
 import {
   recommendationsSelector,
   fetchRecommendationsAction,
@@ -21,7 +21,6 @@ import {
   setIsContentVisible
 } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { localStorageService } from 'uiSrc/services'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ReactComponent as AnalysisIcon } from 'uiSrc/assets/img/icons/analysis.svg'
 import { ReactComponent as DefaultIcon } from 'uiSrc/assets/img/icons/live-time-recommendations.svg'
@@ -38,20 +37,14 @@ const LiveTimeRecommendations = () => {
   const { id: connectedInstanceId = '', } = useSelector(connectedInstanceSelector)
   const {
     data: { recommendations, totalUnread },
-    isContentVisible
+    isContentVisible,
+    isHighlighted
   } = useSelector(recommendationsSelector)
-
-  const isHighlighted = (!localStorageService?.get(BrowserStorageItem.recommendationsViewed) || totalUnread > 0)
-    && !isContentVisible
 
   const dispatch = useDispatch()
   const history = useHistory()
 
   const toggleContent = () => {
-    if (!localStorageService?.get(BrowserStorageItem.recommendationsViewed)) {
-      localStorageService?.set(BrowserStorageItem.recommendationsViewed, true)
-    }
-
     sendEventTelemetry({
       event: isContentVisible
         ? TelemetryEvent.INSIGHTS_RECOMMENDATIONS_CLOSED

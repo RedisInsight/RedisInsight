@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 
-import { apiService } from 'uiSrc/services'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { apiService, localStorageService } from 'uiSrc/services'
+import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { StateRecommendations } from '../interfaces/recommendations'
+import { StateRecommendations, IRecommendations } from '../interfaces/recommendations'
 
 import { AppDispatch, RootState } from '../store'
 
@@ -17,6 +17,7 @@ export const initialState: StateRecommendations = {
   loading: false,
   error: '',
   isContentVisible: false,
+  isHighlighted: !localStorageService?.get(BrowserStorageItem.recommendationsViewed)
 }
 
 // A slice for recipes
@@ -28,7 +29,7 @@ const recommendationsSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    getRecommendationsSuccess: (state, { payload }: { payload: any }) => {
+    getRecommendationsSuccess: (state, { payload }: { payload: IRecommendations }) => {
       state.loading = false
       state.data = payload
       state.error = ''
@@ -38,7 +39,14 @@ const recommendationsSlice = createSlice({
       state.error = payload
     },
     setIsContentVisible: (state, { payload }) => {
+      if (!localStorageService?.get(BrowserStorageItem.recommendationsViewed)) {
+        localStorageService?.set(BrowserStorageItem.recommendationsViewed, true)
+        state.isHighlighted = false
+      }
       state.isContentVisible = payload
+    },
+    setIsHighlighted: (state, { payload }) => {
+      state.isHighlighted = payload
     },
     readRecommendations: (state, { payload }) => {
       state.data = {
@@ -55,6 +63,7 @@ export const {
   getRecommendationsSuccess,
   getRecommendationsFailure,
   setIsContentVisible,
+  setIsHighlighted,
   readRecommendations,
 } = recommendationsSlice.actions
 
@@ -70,11 +79,13 @@ export function fetchRecommendationsAction(
   onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
+      const state = stateInit()
+      const { isContentVisible } = state.recommendations
       dispatch(getRecommendations())
 
-      const { data, status } = await apiService.get<any>(
+      const { data, status } = await apiService.get<IRecommendations>(
         getUrl(
           instanceId,
           ApiEndpoints.RECOMMENDATIONS,
@@ -82,6 +93,9 @@ export function fetchRecommendationsAction(
       )
 
       if (isStatusSuccessful(status)) {
+        if (!isContentVisible && data.totalUnread) {
+          dispatch(setIsHighlighted(true))
+        }
         dispatch(getRecommendationsSuccess(data))
         onSuccessAction?.()
       }
@@ -107,9 +121,10 @@ export function readRecommendationsAction(instanceId: string) {
 
       if (isStatusSuccessful(status)) {
         dispatch(readRecommendations(data.totalUnread))
+        dispatch(setIsHighlighted(false))
       }
     } catch (error) {
-      //
+      // ignore
     }
   }
 }

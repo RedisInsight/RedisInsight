@@ -3,9 +3,8 @@ import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
 import { recommendationsSelector, setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
 import { fireEvent, screen, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { localStorageService } from 'uiSrc/services'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { BrowserStorageItem, Pages } from 'uiSrc/constants'
+import { Pages } from 'uiSrc/constants'
 import { RECOMMENDATIONS_DATA_MOCK } from 'uiSrc/mocks/handlers/recommendations/recommendationsHandler'
 
 import LiveTimeRecommendations from './LiveTimeRecommendations'
@@ -36,14 +35,6 @@ jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
-}))
-
-jest.mock('uiSrc/services', () => ({
-  ...jest.requireActual('uiSrc/services'),
-  localStorageService: {
-    set: jest.fn(),
-    get: jest.fn(),
-  },
 }))
 
 /**
@@ -119,20 +110,6 @@ describe('LiveTimeRecommendations', () => {
 
     const expectedActions = [setIsContentVisible(true)]
     expect(store.getActions()).toEqual(expectedActions)
-  })
-
-  it('should be called LocalStorage after click', () => {
-    render(<LiveTimeRecommendations />)
-
-    localStorageService.get = jest.fn().mockReturnValue(false)
-    localStorageService.set = jest.fn()
-
-    fireEvent.click(screen.getByTestId('recommendations-trigger'))
-
-    expect(localStorageService.set).toBeCalledWith(
-      BrowserStorageItem.recommendationsViewed,
-      true,
-    )
   })
 
   it('should properly push history on databaseAnalysis page', () => {

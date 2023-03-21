@@ -112,6 +112,11 @@ export class RecommendationService {
         RECOMMENDATION_NAMES.SET_PASSWORD,
         async () => await this.recommendationProvider.determineSetPasswordRecommendation(client),
       ],
+      // it is live time recommendation (will add later)
+      [
+        RECOMMENDATION_NAMES.SEARCH_STRING,
+        () => null,
+      ],
     ]);
 
     const recommendationsToDetermine = difference(Object.values(RECOMMENDATION_NAMES), exclude);

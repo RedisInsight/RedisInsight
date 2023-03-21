@@ -9,13 +9,13 @@ import {
 } from 'src/__mocks__';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { DatabaseRecommendationsProvider }
-  from 'src/modules/database-recommendation/providers/database-recommendations.provider';
+import { DatabaseRecommendationProvider }
+  from 'src/modules/database-recommendation/providers/database-recommendation.provider';
 import { Recommendation } from 'src/modules/database-recommendation/models';
-import { DatabaseRecommendationsEntity }
-  from 'src/modules/database-recommendation/entities/database-recommendations.entity';
+import { DatabaseRecommendationEntity }
+  from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 
-const mockDatabaseRecommendationEntity = new DatabaseRecommendationsEntity({
+const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
   id: uuidv4(),
   databaseId: mockDatabase.id,
   name: 'luaScript',
@@ -34,22 +34,22 @@ const mockDatabaseRecommendation = {
 };
 
 describe('DatabaseAnalysisProvider', () => {
-  let service: DatabaseRecommendationsProvider;
+  let service: DatabaseRecommendationProvider;
   let repository: MockType<Repository<Recommendation>>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        DatabaseRecommendationsProvider,
+        DatabaseRecommendationProvider,
         {
-          provide: getRepositoryToken(DatabaseRecommendationsEntity),
+          provide: getRepositoryToken(DatabaseRecommendationEntity),
           useFactory: mockRepository,
         },
       ],
     }).compile();
 
-    service = module.get<DatabaseRecommendationsProvider>(DatabaseRecommendationsProvider);
-    repository = module.get(getRepositoryToken(DatabaseRecommendationsEntity));
+    service = module.get<DatabaseRecommendationProvider>(DatabaseRecommendationProvider);
+    repository = module.get(getRepositoryToken(DatabaseRecommendationEntity));
   });
 
   describe('create', () => {

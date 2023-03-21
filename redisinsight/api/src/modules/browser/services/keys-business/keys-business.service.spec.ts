@@ -34,7 +34,7 @@ import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
 import { SettingsService } from 'src/modules/settings/settings.service';
-import { DatabaseRecommendationsService } from 'src/modules/database-recommendation/database-recommendations.service';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import IORedis from 'ioredis';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -67,7 +67,7 @@ describe('KeysBusinessService', () => {
   let clusterScanner;
   let stringTypeInfoManager;
   let browserHistory;
-  let recommendationsService;
+  let recommendationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -104,7 +104,7 @@ describe('KeysBusinessService', () => {
           useFactory: mockBrowserHistoryService,
         },
         {
-          provide: DatabaseRecommendationsService,
+          provide: DatabaseRecommendationService,
           useFactory: mockDatabaseRecommendationService,
         },
       ],
@@ -112,7 +112,7 @@ describe('KeysBusinessService', () => {
 
     service = module.get<KeysBusinessService>(KeysBusinessService);
     databaseService = module.get(DatabaseService);
-    recommendationsService = module.get<DatabaseRecommendationsService>(DatabaseRecommendationsService);
+    recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
     browserTool = module.get<BrowserToolService>(BrowserToolService);
     browserHistory = module.get<BrowserHistoryService>(BrowserHistoryService);
     const scannerManager = get(service, 'scanner');
@@ -195,7 +195,7 @@ describe('KeysBusinessService', () => {
         { keys: [getKeyInfoResponse.name] },
       );
 
-      expect(recommendationsService.check).toBeCalledWith(
+      expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
         RECOMMENDATION_NAMES.SEARCH_STRING,
         { keys: result, client: nodeClient, databaseId: mockBrowserClientMetadata.databaseId },

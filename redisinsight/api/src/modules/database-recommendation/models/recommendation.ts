@@ -19,30 +19,16 @@ export class Recommendation {
   name: string;
 
   @ApiPropertyOptional({
-    description: 'Additional recommendation params',
-    example: 'count: 5',
-  })
-  @Expose()
-  params?: any;
-
-  @ApiPropertyOptional({
-    description: 'User vote',
-    example: 'useful',
-  })
-  @Expose()
-  vote?: string;
-
-  @ApiProperty({
     description: 'Determines if recommendation was shown to user',
     type: Boolean,
     example: false,
   })
-  read: boolean;
+  read?: boolean;
 
   @ApiPropertyOptional({
-    description: 'flag',
+    description: 'Should this recommendation shown to user',
     type: Boolean,
-    example: 'luaScript',
+    example: false,
   })
   @Expose()
   disabled?: boolean;

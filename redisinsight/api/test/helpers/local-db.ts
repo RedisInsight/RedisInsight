@@ -19,7 +19,7 @@ export const repositories = {
   SETTINGS: 'SettingsEntity',
   NOTIFICATION: 'NotificationEntity',
   DATABASE_ANALYSIS: 'DatabaseAnalysisEntity',
-  DATABASE_RECOMMENDATIONS: 'DatabaseRecommendationsEntity',
+  DATABASE_RECOMMENDATION: 'DatabaseRecommendationEntity',
   BROWSER_HISTORY: 'BrowserHistoryEntity',
 }
 
@@ -253,12 +253,12 @@ export const generateBrowserHistory = async (
   return result;
 }
 
-export const generateNDatabaseRecommendations = async (
+export const generateDatabaseRecommendations = async (
   partial: Record<string, any>,
   truncate: boolean = false,
 ) => {
   const result = [];
-  const rep = await getRepository(repositories.DATABASE_RECOMMENDATIONS);
+  const rep = await getRepository(repositories.DATABASE_RECOMMENDATION);
 
   if (truncate) {
     await rep.clear();

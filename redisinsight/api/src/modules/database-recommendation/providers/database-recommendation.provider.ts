@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseRecommendationsEntity }
-  from 'src/modules/database-recommendation/entities/database-recommendations.entity';
+import { DatabaseRecommendationEntity }
+  from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
@@ -8,12 +8,12 @@ import { RecommendationDto, RecommendationsDto } from 'src/modules/database-reco
 import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
-export class DatabaseRecommendationsProvider {
-  private readonly logger = new Logger('DatabaseRecommendationsProvider');
+export class DatabaseRecommendationProvider {
+  private readonly logger = new Logger('DatabaseRecommendationProvider');
 
   constructor(
-    @InjectRepository(DatabaseRecommendationsEntity)
-    private readonly repository: Repository<DatabaseRecommendationsEntity>,
+    @InjectRepository(DatabaseRecommendationEntity)
+    private readonly repository: Repository<DatabaseRecommendationEntity>,
   ) {}
 
   /**
@@ -24,7 +24,7 @@ export class DatabaseRecommendationsProvider {
   async create(databaseId: string, recommendationName: string): Promise<RecommendationDto> {
     this.logger.log('Creating database recommendation');
     return await this.repository.save(
-      plainToClass(DatabaseRecommendationsEntity, { databaseId, name: recommendationName }),
+      plainToClass(DatabaseRecommendationEntity, { databaseId, name: recommendationName }),
     );
   }
 

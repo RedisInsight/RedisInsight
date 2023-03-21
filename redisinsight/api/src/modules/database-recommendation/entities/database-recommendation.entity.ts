@@ -5,7 +5,7 @@ import { Expose } from 'class-transformer';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Entity('database_recommendations')
-export class DatabaseRecommendationsEntity {
+export class DatabaseRecommendationEntity {
   @PrimaryGeneratedColumn('uuid')
   @Expose()
   id: string;
@@ -41,7 +41,7 @@ export class DatabaseRecommendationsEntity {
   @Expose()
   createdAt: Date;
 
-  constructor(entity: Partial<DatabaseRecommendationsEntity>) {
+  constructor(entity: Partial<DatabaseRecommendationEntity>) {
     Object.assign(this, entity);
   }
 }

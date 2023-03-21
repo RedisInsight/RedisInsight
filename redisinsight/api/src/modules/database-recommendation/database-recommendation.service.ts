@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseRecommendationsProvider }
-  from 'src/modules/database-recommendation/providers/database-recommendations.provider';
+import { DatabaseRecommendationProvider }
+  from 'src/modules/database-recommendation/providers/database-recommendation.provider';
 import {
   CreateRecommendationDto,
   RecommendationsDto,
@@ -10,11 +10,11 @@ import { RecommendationScanner } from 'src/modules/database-recommendation/scann
 import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
-export class DatabaseRecommendationsService {
-  private logger = new Logger('DatabaseRecommendationsService');
+export class DatabaseRecommendationService {
+  private logger = new Logger('DatabaseRecommendationService');
 
   constructor(
-    private readonly databaseRecommendationsProvider: DatabaseRecommendationsProvider,
+    private readonly databaseRecommendationsProvider: DatabaseRecommendationProvider,
     private readonly scanner: RecommendationScanner,
   ) {}
 

@@ -31,7 +31,7 @@ import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { DatabaseRecommendationsService } from 'src/modules/database-recommendation/database-recommendations.service';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { pick } from 'lodash';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
@@ -67,7 +67,7 @@ export class KeysBusinessService {
     private browserHistory: BrowserHistoryService,
     private browserToolCluster: BrowserToolClusterService,
     private settingsService: SettingsService,
-    private recommendationsService: DatabaseRecommendationsService,
+    private recommendationService: DatabaseRecommendationService,
   ) {
     this.scanner = new Scanner();
     this.keyInfoManager = new KeyInfoManager(
@@ -179,7 +179,7 @@ export class KeysBusinessService {
       const client = await this.browserTool.getRedisClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.isCluster ? ConnectionType.CLUSTER : ConnectionType.STANDALONE);
       const result = await scanner.getKeysInfo(client, dto.keys);
-      this.recommendationsService.check(
+      this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.SEARCH_STRING,
         { keys: result, client, databaseId: clientMetadata.databaseId },

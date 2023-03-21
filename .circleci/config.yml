@@ -566,7 +566,7 @@ jobs:
   macosx:
     macos:
       xcode: 14.2.0
-    resource_class: macos.m1.large.gen1
+    # resource_class: macos.m1.large.gen1
     parameters:
       env:
         description: Build environment (stage || prod)
@@ -579,7 +579,6 @@ jobs:
           node-version: '16.19.1'
       - attach_workspace:
           at: .
-      # - <<: *keychain
       - run:
           command: |
             cp ./electron/package.json ./redisinsight/

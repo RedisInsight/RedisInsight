@@ -109,7 +109,8 @@ describe('recommendations slice', () => {
         // Arrange
         const state = {
           ...initialState,
-          isContentVisible: true
+          isContentVisible: true,
+          isHighlighted: false,
         }
 
         // Act

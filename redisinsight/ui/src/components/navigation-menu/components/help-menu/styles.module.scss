@@ -1,0 +1,96 @@
+.popoverWrapper {
+  min-width: 312px !important;
+}
+
+.popover {
+  padding: 6px 15px 12px;
+}
+
+.helpMenuTitle {
+  font-size: 18px !important;
+}
+
+.helpMenuItem {
+  align-items: center;
+  cursor: pointer;
+
+  :global(.euiButtonIcon), :global(.euiIcon) {
+    color: var(--euiTooltipTextColor) !important;
+  }
+
+  .helpMenuItemLink {
+    text-decoration: none !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &:global(.euiLink) {
+      text-decoration: none !important;
+      &:focus {
+        animation: none !important;
+      }
+    }
+  }
+}
+
+.helpMenuItemRow {
+  .helpMenuItemLink {
+    display: flex;
+    flex-direction: row;
+
+    &:not(:last-child) {
+      margin-bottom: 16px;
+    }
+
+    :global(.euiButtonIcon), :global(.euiIcon) {
+      margin-right: 12px;
+      color: var(--euiTooltipTextColor) !important;
+      width: 16px !important;
+      height: 16px !important;
+    }
+
+    .helpMenuTextLink {
+      font-size: 13px !important;
+      line-height: 16px !important;
+      text-decoration: none !important;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--externalLinkColor) !important;
+        text-decoration: underline !important;
+      }
+    }
+  }
+}
+
+.helpMenuItemDisabled {
+  cursor: auto;
+  :global(.euiIcon), div {
+    color: var(--buttonSecondaryDisabledTextColor) !important;
+  }
+}
+
+.helpMenuItemNotified {
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    right: 6px;
+    top: -3px;
+    display: block;
+    width: 6px;
+    height: 6px;
+    background-color: var(--euiColorPrimary);
+    border-radius: 100%;
+  }
+}
+
+.helpMenuText {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}

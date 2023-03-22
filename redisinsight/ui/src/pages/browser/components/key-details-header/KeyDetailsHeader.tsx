@@ -45,6 +45,7 @@ import {
   stringToBuffer,
   validateTTLNumber
 } from 'uiSrc/utils'
+import { stringSelector } from 'uiSrc/slices/browser/string'
 import KeyValueFormatter from './components/Formatter'
 import AutoRefresh from '../auto-refresh'
 
@@ -94,7 +95,8 @@ const KeyDetailsHeader = ({
     nameString: keyProp,
     name: keyBuffer,
   } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
-  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { isCompressed: isStringCompressed } = useSelector(stringSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewType: streamViewType } = useSelector(streamSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
@@ -321,8 +323,8 @@ const KeyDetailsHeader = ({
   )
 
   const Actions = (width: number) => {
-    const isEditable = !compressor && isFormatEditable(viewFormatProp)
-    const noEditableText = compressor ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
+    const isEditable = !isStringCompressed && isFormatEditable(viewFormatProp)
+    const noEditableText = isStringCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
     return (
       <>
         {KEY_TYPES_ACTIONS[keyType] && 'addItems' in KEY_TYPES_ACTIONS[keyType] && (

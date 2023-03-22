@@ -20,10 +20,10 @@ import {
   isFormatEditable,
   stringToBuffer,
   stringToSerializedBufferFormat,
-  Nullable,
 } from 'uiSrc/utils'
 import {
   resetStringValue,
+  setIsStringCompressed,
   stringDataSelector,
   stringSelector,
   updateStringValueAction,
@@ -77,7 +77,7 @@ const StringDetails = (props: Props) => {
   useEffect(() => {
     if (!initialValue) return
 
-    const { value: decompressedValue } = decompressingBuffer(initialValue, compressor)
+    const { value: decompressedValue, isCompressed } = decompressingBuffer(initialValue, compressor)
 
     const initialValueString = bufferToString(decompressedValue, viewFormat)
     const { value: formattedValue, isValid } = formattingBuffer(decompressedValue, viewFormatProp, { expanded: true })
@@ -89,8 +89,10 @@ const StringDetails = (props: Props) => {
       !isNonUnicodeFormatter(viewFormatProp, isValid)
         && !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
     )
-    setIsEditable(!compressor && isFormatEditable(viewFormatProp))
-    setNoEditableText(compressor ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormat))
+    setIsEditable(!isCompressed && isFormatEditable(viewFormatProp))
+    setNoEditableText(isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormat))
+
+    dispatch(setIsStringCompressed(isCompressed))
 
     if (viewFormat !== viewFormatProp) {
       setViewFormat(viewFormatProp)

@@ -435,8 +435,9 @@ const HashDetails = (props: Props) => {
       maxWidth: 95,
       render: function Actions(_act: any, { field: fieldItem, value: valueItem }: HashFieldDto, _, rowIndex?: number) {
         const field = bufferToString(fieldItem, viewFormat)
-        const isEditable = !compressor && isFormatEditable(viewFormat)
-        const tooltipContent = compressor ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
+        const { isCompressed } = decompressingBuffer(valueItem, compressor)
+        const isEditable = !isCompressed && isFormatEditable(viewFormat)
+        const tooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
         return (
           <StopPropagation>
             <div className="value-table-actions">

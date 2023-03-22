@@ -48,116 +48,106 @@ export const mockCustomTutorialMacosxAdmZipEntry = {
 } as AdmZip.IZipEntry;
 
 export const mockUploadCustomTutorialDto = Object.assign(new UploadCustomTutorialDto(), {
-  name: mockCustomTutorial.name,
   file: mockCustomTutorialZipFile,
 });
 
 export const mockUploadCustomTutorialExternalLinkDto = Object.assign(new UploadCustomTutorialDto(), {
-  name: mockCustomTutorial.name,
   link: mockCustomTutorialsHttpLink,
 });
 
-export const mockCustomTutorialManifestManifestJson = [
-  {
-    type: 'group',
-    id: 'ct-folder-1',
-    label: 'ct-folder-1',
-    // args: {
-    //   withBorder: true,
-    //   initialIsOpen: true,
-    // },
-    children: [
-      {
-        type: CustomTutorialManifestType.Group,
-        id: 'ct-sub-folder-1',
-        label: 'ct-sub-folder-1',
-        // args: {
-        //   initialIsOpen: false,
-        // },
-        children: [
-          {
-            type: CustomTutorialManifestType.InternalLink,
-            id: 'introduction',
-            label: 'introduction',
-            args: {
-              path: '/ct-folder-1/ct-sub-folder-1/introduction.md',
+export const mockCustomTutorialManifestJson = {
+  type: CustomTutorialManifestType.Group,
+  id: mockCustomTutorialId,
+  label: mockCustomTutorial.name,
+  children: [
+    {
+      type: 'group',
+      id: 'ct-folder-1',
+      label: 'ct-folder-1',
+      children: [
+        {
+          type: CustomTutorialManifestType.Group,
+          id: 'ct-sub-folder-1',
+          label: 'ct-sub-folder-1',
+          children: [
+            {
+              type: CustomTutorialManifestType.InternalLink,
+              id: 'introduction',
+              label: 'introduction',
+              args: {
+                path: '/ct-folder-1/ct-sub-folder-1/introduction.md',
+              },
             },
-          },
-          {
-            type: CustomTutorialManifestType.InternalLink,
-            id: 'working-with-hashes',
-            label: 'working-with-hashes',
-            args: {
-              path: '/ct-folder-1/ct-sub-folder-1/working-with-hashes.md',
+            {
+              type: CustomTutorialManifestType.InternalLink,
+              id: 'working-with-hashes',
+              label: 'working-with-hashes',
+              args: {
+                path: '/ct-folder-1/ct-sub-folder-1/working-with-hashes.md',
+              },
             },
-          },
-        ],
-      },
-      {
-        type: CustomTutorialManifestType.Group,
-        id: 'ct-sub-folder-2',
-        label: 'ct-sub-folder-2',
-        // args: {
-        //   withBorder: true,
-        //   initialIsOpen: false,
-        // },
-        children: [
-          {
-            type: CustomTutorialManifestType.InternalLink,
-            id: 'introduction',
-            label: 'introduction',
-            args: {
-              path: '/ct-folder-1/ct-sub-folder-2/introduction.md',
+          ],
+        },
+        {
+          type: CustomTutorialManifestType.Group,
+          id: 'ct-sub-folder-2',
+          label: 'ct-sub-folder-2',
+          children: [
+            {
+              type: CustomTutorialManifestType.InternalLink,
+              id: 'introduction',
+              label: 'introduction',
+              args: {
+                path: '/ct-folder-1/ct-sub-folder-2/introduction.md',
+              },
             },
-          },
-          {
-            type: CustomTutorialManifestType.InternalLink,
-            id: 'working-with-graphs',
-            label: 'working-with-graphs',
-            args: {
-              path: '/ct-folder-1/ct-sub-folder-2/working-with-graphs.md',
+            {
+              type: CustomTutorialManifestType.InternalLink,
+              id: 'working-with-graphs',
+              label: 'working-with-graphs',
+              args: {
+                path: '/ct-folder-1/ct-sub-folder-2/working-with-graphs.md',
+              },
             },
-          },
-        ],
-      },
-    ],
-  },
-];
+          ],
+        },
+      ],
+    },
+  ],
+};
 
-export const mockCustomTutorialManifestManifest = {
+export const mockCustomTutorialManifest = {
+  ...mockCustomTutorialManifestJson,
   type: CustomTutorialManifestType.Group,
   id: mockCustomTutorialId,
   label: mockCustomTutorial.name,
   _actions: mockCustomTutorial.actions,
   _path: mockCustomTutorial.path,
-  children: mockCustomTutorialManifestManifestJson,
 };
 
-export const mockCustomTutorialManifestManifest2 = {
+export const mockCustomTutorialManifest2 = {
   type: CustomTutorialManifestType.Group,
   id: mockCustomTutorialId2,
   label: mockCustomTutorial2.name,
   _actions: mockCustomTutorial2.actions,
   _path: mockCustomTutorial2.path,
-  children: mockCustomTutorialManifestManifestJson,
+  children: [mockCustomTutorialManifestJson],
 };
 
-export const globalCustomTutorialManifest = [
-  {
-    type: CustomTutorialManifestType.Group,
-    id: 'custom-tutorials',
-    label: 'MY TUTORIALS',
-    _actions: [CustomTutorialActions.CREATE],
-    args: {
-      withBorder: true,
-      initialIsOpen: true,
-    },
-    children: [
-      mockCustomTutorialManifestManifest,
-      mockCustomTutorialManifestManifest2,
-    ],
+export const globalCustomTutorialManifest = {
+  type: CustomTutorialManifestType.Group,
+  id: 'custom-tutorials',
+  label: 'MY TUTORIALS',
+  _actions: [CustomTutorialActions.CREATE],
+  args: {
+    withBorder: true,
+    initialIsOpen: true,
   },
-];
+  children: [
+    mockCustomTutorialManifest,
+    mockCustomTutorialManifest2,
+  ],
+};
 
 export const mockCustomTutorialFsProvider = jest.fn(() => ({
   unzipFromMemoryStoredFile: jest.fn().mockResolvedValue(mockCustomTutorialTmpPath),
@@ -168,8 +158,9 @@ export const mockCustomTutorialFsProvider = jest.fn(() => ({
 }));
 
 export const mockCustomTutorialManifestProvider = jest.fn(() => ({
-  getManifestJson: jest.fn().mockResolvedValue(mockCustomTutorialManifestManifestJson),
-  generateTutorialManifest: jest.fn().mockResolvedValue(mockCustomTutorialManifestManifest),
+  getOriginalManifestJson: jest.fn().mockResolvedValue(mockCustomTutorialManifestJson),
+  getManifestJson: jest.fn().mockResolvedValue(mockCustomTutorialManifestJson),
+  generateTutorialManifest: jest.fn().mockResolvedValue(mockCustomTutorialManifest),
 }));
 
 export const mockCustomTutorialRepository = jest.fn(() => ({
@@ -180,4 +171,9 @@ export const mockCustomTutorialRepository = jest.fn(() => ({
     mockCustomTutorial,
     mockCustomTutorial2,
   ]),
+}));
+
+export const mockCustomTutorialAnalytics = jest.fn(() => ({
+  sendImportSucceeded: jest.fn(),
+  sendImportFailed: jest.fn(),
 }));

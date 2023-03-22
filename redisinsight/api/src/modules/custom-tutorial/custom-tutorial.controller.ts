@@ -60,8 +60,8 @@ export class CustomTutorialController {
       },
     ],
   })
-  async getGlobalManifest(): Promise<RootCustomTutorialManifest[]> {
-    return this.service.getGlobalManifest();
+  async getGlobalManifest(): Promise<RootCustomTutorialManifest> {
+    return await this.service.getGlobalManifest();
   }
 
   @Delete('/:id')

@@ -1,0 +1,31 @@
+.wrapper {
+  padding: 24px 20px;
+  background: var(--recommendationBgColor);
+  border: 1px solid #B37A1E;
+  border-radius: 8px;
+  margin-bottom: 10px;
+
+  .text {
+    margin-left: 5px;
+    max-width: 300px;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+
+  .btn {
+    height: 24px !important;
+    min-width: 77px !important;
+
+    :global(.euiButton__content) {
+      padding: 0 10px;
+    }
+
+    :global(.euiButton__text) {
+      font: normal normal 400 12px/14px Graphik, sans-serif !important;
+    }
+  }
+}

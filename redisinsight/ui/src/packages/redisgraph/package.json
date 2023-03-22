@@ -41,16 +41,16 @@
     }
   ],
   "devDependencies": {
-    "@parcel/compressor-brotli": "2.3.2",
-    "@parcel/compressor-gzip": "2.3.2",
-    "@parcel/transformer-less": "2.3.2",
+    "@parcel/compressor-brotli": "2.8.3",
+    "@parcel/compressor-gzip": "2.8.3",
+    "@parcel/transformer-less": "2.8.3",
     "@types/d3": "^7.1.0",
     "@types/react-json-tree": "^0.13.0",
-    "concurrently": "^6.3.0",
+    "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
-    "parcel": "2.3.2",
+    "parcel": "2.8.3",
     "rimraf": "^3.0.2",
-    "terser": "^5.9.0"
+    "terser": "^5.16.6"
   },
   "dependencies": {
     "@elastic/eui": "34.6.0",

@@ -1,1 +1,2 @@
-export * from './recommendation';
+export * from './database-recommendation';
+export * from './redisearch';

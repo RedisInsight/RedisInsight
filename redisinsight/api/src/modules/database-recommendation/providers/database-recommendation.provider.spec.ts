@@ -11,7 +11,6 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
-import { Recommendation } from 'src/modules/database-recommendation/models';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 
@@ -35,7 +34,7 @@ const mockDatabaseRecommendation = {
 
 describe('DatabaseAnalysisProvider', () => {
   let service: DatabaseRecommendationProvider;
-  let repository: MockType<Repository<Recommendation>>;
+  let repository: MockType<Repository<DatabaseRecommendationEntity>>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -74,6 +73,14 @@ describe('DatabaseAnalysisProvider', () => {
         }],
         totalUnread: 1,
       });
+    });
+  });
+
+  describe('read', () => {
+    it('should read all recommendations', async () => {
+      repository.createQueryBuilder().set.mockResolvedValueOnce('ok');
+
+      expect(await service.read(mockClientMetadata)).toEqual(undefined);
     });
   });
 });

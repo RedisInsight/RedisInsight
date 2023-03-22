@@ -1,11 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
-import {
-  CreateRecommendationDto,
-  RecommendationsDto,
-  RecommendationDto,
-} from 'src/modules/database-recommendation/dto';
+import { DatabaseRecommendationsResponse, DatabaseRecommendation } from 'src/modules/database-recommendation/models';
 import { RecommendationScanner } from 'src/modules/database-recommendation/scanner/recommendations.scanner';
 import { ClientMetadata } from 'src/common/models';
 
@@ -23,7 +19,7 @@ export class DatabaseRecommendationService {
    * @param databaseId
    * @param recommendationName
    */
-  public async create(databaseId: string, recommendationName: string): Promise<CreateRecommendationDto> {
+  public async create(databaseId: string, recommendationName: string): Promise<DatabaseRecommendation> {
     return this.databaseRecommendationsProvider.create(databaseId, recommendationName);
   }
 
@@ -31,7 +27,7 @@ export class DatabaseRecommendationService {
    * Get recommendations list for particular database
    * @param clientMetadata
    */
-  async list(clientMetadata: ClientMetadata): Promise<RecommendationsDto> {
+  async list(clientMetadata: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
     this.logger.log('Getting database recommendations');
     return this.databaseRecommendationsProvider.list(clientMetadata);
   }
@@ -46,13 +42,14 @@ export class DatabaseRecommendationService {
     clientMetadata: ClientMetadata,
     recommendationName: string,
     data: any,
-  ): Promise<RecommendationDto> {
+  ): Promise<DatabaseRecommendation> {
+    // todo: move it on db layer
     const result = await this.databaseRecommendationsProvider.list(clientMetadata);
     if (!result.recommendations.find((recommendation) => recommendation.name === recommendationName)) {
       const isRecommendationReached = await this.scanner.determineRecommendation(recommendationName, data);
 
       if (isRecommendationReached) {
-        return this.databaseRecommendationsProvider.create(clientMetadata.databaseId, recommendationName);
+        return await this.databaseRecommendationsProvider.create(clientMetadata.databaseId, recommendationName);
       }
     }
 
@@ -63,8 +60,8 @@ export class DatabaseRecommendationService {
    * Mark all recommendations as read for particular database
    * @param clientMetadata
    */
-  async read(clientMetadata: ClientMetadata): Promise<RecommendationsDto> {
+  async read(clientMetadata: ClientMetadata): Promise<void> {
     this.logger.log('Reading database recommendations');
-    return this.databaseRecommendationsProvider.read(clientMetadata.databaseId);
+    return this.databaseRecommendationsProvider.read(clientMetadata);
   }
 }

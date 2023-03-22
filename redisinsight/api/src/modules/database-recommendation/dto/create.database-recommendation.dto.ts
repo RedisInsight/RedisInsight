@@ -1,5 +1,5 @@
 import {
-  IsNotEmpty, IsOptional, IsString,
+  IsNotEmpty, IsString,
 } from 'class-validator';
 
 export class CreateRecommendationDto {
@@ -7,11 +7,7 @@ export class CreateRecommendationDto {
   @IsString()
   name: string;
 
-  @IsOptional()
-  @IsString()
-  disabled?: boolean;
-
-  constructor(dto: Partial<CreateRecommendationDto>) {
+  constructor(dto: CreateRecommendationDto) {
     Object.assign(this, dto);
   }
 }

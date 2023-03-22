@@ -4,8 +4,7 @@ import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
-import { Recommendation } from 'src/modules/database-recommendation/models';
-import { RecommendationsDto } from 'src/modules/database-recommendation/dto';
+import { DatabaseRecommendationsResponse } from 'src/modules/database-recommendation/models';
 import { ClientMetadata } from 'src/common/models';
 
 @ApiTags('Database Recommendations')
@@ -19,14 +18,14 @@ export class DatabaseRecommendationController {
     responses: [
       {
         status: 200,
-        type: Recommendation,
+        type: DatabaseRecommendationsResponse,
       },
     ],
   })
   @Get('')
   async list(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-  ): Promise<RecommendationsDto> {
+  ): Promise<DatabaseRecommendationsResponse> {
     return this.service.list(clientMetadata);
   }
 
@@ -38,13 +37,12 @@ export class DatabaseRecommendationController {
     responses: [
       {
         status: 200,
-        type: Recommendation,
       },
     ],
   })
   async read(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-  ): Promise<RecommendationsDto> {
+  ): Promise<void> {
     return this.service.read(clientMetadata);
   }
 }

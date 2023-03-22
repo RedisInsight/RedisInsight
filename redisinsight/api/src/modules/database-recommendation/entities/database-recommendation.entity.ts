@@ -26,7 +26,7 @@ export class DatabaseRecommendationEntity {
   database: DatabaseEntity;
 
   @Expose()
-  @Column({ nullable: false, default: 'luaScript' })
+  @Column({ nullable: false })
   name: string;
 
   @Column({ nullable: false, default: false })

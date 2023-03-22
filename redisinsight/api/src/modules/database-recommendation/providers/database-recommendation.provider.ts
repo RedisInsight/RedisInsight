@@ -4,7 +4,7 @@ import { DatabaseRecommendationEntity }
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
-import { RecommendationDto, RecommendationsDto } from 'src/modules/database-recommendation/dto';
+import { DatabaseRecommendation, DatabaseRecommendationsResponse } from 'src/modules/database-recommendation/models';
 import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
@@ -21,10 +21,10 @@ export class DatabaseRecommendationProvider {
    * @param databaseId
    * @param recommendationName
    */
-  async create(databaseId: string, recommendationName: string): Promise<RecommendationDto> {
+  async create(databaseId: string, recommendationName: string): Promise<DatabaseRecommendation> {
     this.logger.log('Creating database recommendation');
-    return await this.repository.save(
-      plainToClass(DatabaseRecommendationEntity, { databaseId, name: recommendationName }),
+    return this.repository.save(
+      plainToClass(DatabaseRecommendation, { databaseId, name: recommendationName }),
     );
   }
 
@@ -32,7 +32,7 @@ export class DatabaseRecommendationProvider {
    * Return list of database recommendations
    * @param clientMetadata
    */
-  async list(clientMetadata: ClientMetadata): Promise<RecommendationsDto> {
+  async list(clientMetadata: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
     this.logger.log('Getting database recommendations list');
     const recommendations = await this.repository
       .createQueryBuilder('r')
@@ -47,33 +47,23 @@ export class DatabaseRecommendationProvider {
       .getCount();
 
     this.logger.log('Succeed to get recommendations');
-    return plainToClass(RecommendationsDto, {
+    return plainToClass(DatabaseRecommendationsResponse, {
       recommendations,
       totalUnread,
     });
   }
 
   /**
-   * Return list of database recommendations
-   * @param databaseId
+   * Read all recommendations recommendations
+   * @param clientMetadata
    */
-  async read(databaseId: string): Promise<RecommendationsDto> {
-    this.logger.log('Getting database recommendations list');
+  async read(clientMetadata: ClientMetadata): Promise<void> {
+    this.logger.log('Marking all recommendations as read');
     await this.repository
       .createQueryBuilder('r')
       .update()
-      .where({ databaseId })
+      .where({ databaseId: clientMetadata.databaseId })
       .set({ read: true })
       .execute();
-
-    const totalUnread = await this.repository
-      .createQueryBuilder()
-      .where({ databaseId, read: false })
-      .getCount();
-
-    return new RecommendationsDto({
-      recommendations: [],
-      totalUnread,
-    });
   }
 }

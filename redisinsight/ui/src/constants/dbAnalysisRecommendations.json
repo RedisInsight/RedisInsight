@@ -687,5 +687,13 @@
       }
     ],
     "badges": ["upgrade"]
+  },
+  "searchString": {
+    "id": "compressHashFieldNames",
+    "title": "Compress Hash field names",
+    "liveTimeText": [
+      "Storing large strings (> 512 KB) could consume more resources and time to process, manipulate, update and retrieve them. Consider representing your data using hashes or use RedisJSON to store your JSON documents to improve performance.",
+      "Additionally, if working with hashes or JSONs, you can use RediSearch, which helps to address your query needs and supports a better development experience when dealing with complex data scenarios."
+    ]
   }
 }

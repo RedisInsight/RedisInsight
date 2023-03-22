@@ -1,0 +1,107 @@
+.content {
+  margin-top: 70px;
+  height: calc(100% - 70px) !important;
+  background-color: var(--recommendationsBgColor) !important;
+  border-left: none !important;
+  border-radius: 4px 0px 0px 4px;
+  box-shadow: -5px 0px 16px rgba(0, 0, 0, 0.16) !important;
+
+  :global(.euiFlyout__closeButton) {
+    background-color: transparent;
+    height: 10px;
+    width: 10px;
+    right: 20px;
+    top: 29px;
+  }
+}
+
+.trigger {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 84px;
+  background: var(--recommendationsBgColor);
+  position: fixed;
+  right: 0;
+  bottom: 90px;
+  cursor: pointer;
+  z-index: 9999;
+  border-radius: 10px 0 0 10px;
+
+  &.isOpen {
+    transition: all 0.25s ease;
+    right: 476px;
+  }
+
+  .triggerIcon :global(.live-time-recommendations_svg__bg) {
+    fill: transparent;
+  }
+
+  .triggerIcon :global(.live-time-recommendations_svg__main) {
+    fill: var(--triggerIconColor);
+  }
+
+  .triggerIcon :global(.live-time-recommendations_svg__element) {
+    stroke: var(--triggerIconColor);
+  }
+
+  .triggerIconActive.triggerIcon :global(.live-time-recommendations_svg__bg) {
+    fill: var(--triggerIconActiveColor);
+  }
+}
+
+.header {
+  padding: 24px 15px 0 !important;
+
+  .title {
+    font: normal normal 500 18px/22px Graphik, sans-serif;
+  }
+}
+
+.body {
+  padding: 24px 15px !important;
+}
+
+.footer {
+  height: 40px;
+  background: var(--tableRowSelectedColor);
+
+  & > :global(.euiFlexGroup) {
+    height: 100%;
+  }
+
+
+  .footerBtn {
+    height: 24px !important;
+    margin-left: 16px;
+    color: var(--recommendationColor) !important;
+    border-color: var(--recommendationColor);
+
+    &:hover {
+      border-color: var(--iconsDefaultHoverColor);
+      color: var(--iconsDefaultHoverColor);
+
+      :global(.euiIcon--medium) path {
+        fill: var(--iconsDefaultHoverColor);
+      }
+    }
+
+    &:global(.euiButton .euiButton__content) {
+      padding: 0 10px;
+    }
+
+    :global(.euiIcon--medium) {
+      width: 10px;
+      height: 10px;
+
+      path {
+        fill: var(--recommendationColor);
+      }
+    }
+
+    :global(.euiButton__text) {
+      font: normal normal 400 12px/14px Graphik, sans-serif !important;
+    }
+  }
+}

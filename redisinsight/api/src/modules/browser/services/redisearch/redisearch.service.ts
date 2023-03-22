@@ -1,5 +1,5 @@
 import { Cluster, Command, Redis } from 'ioredis';
-import { isNull, toNumber, uniq } from 'lodash';
+import { isUndefined, toNumber, uniq } from 'lodash';
 import {
   BadRequestException,
   ConflictException,
@@ -23,10 +23,11 @@ import { BrowserHistoryMode } from 'src/common/constants';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 import { BrowserHistoryService } from '../browser-history/browser-history.service';
 import { CreateBrowserHistoryDto } from '../../dto/browser-history/create.browser-history.dto';
+import { IMaxSearchResults } from '../../interfaces';
 
 @Injectable()
 export class RedisearchService {
-  private maxSearchResults: number | null = null;
+  private maxSearchResults: IMaxSearchResults = {};
 
   private logger = new Logger('RedisearchService');
 
@@ -153,24 +154,26 @@ export class RedisearchService {
 
       const client = await this.browserTool.getRedisClient(clientMetadata);
 
-      if (isNull(this.maxSearchResults)) {
+      if (isUndefined(this.maxSearchResults[clientMetadata.databaseId])) {
         try {
+          // response: [ [ 'MAXSEARCHRESULTS', '10000' ] ]
           const [[, maxSearchResults]] = await client.sendCommand(
-            // response: [ [ 'MAXSEARCHRESULTS', '10000' ] ]
             new Command('FT.CONFIG', ['GET', 'MAXSEARCHRESULTS'], {
               replyEncoding: 'utf8',
             }),
           ) as [[string, string]];
 
-          this.maxSearchResults = toNumber(maxSearchResults);
+          this.maxSearchResults[clientMetadata.databaseId] = toNumber(maxSearchResults);
         } catch (error) {
-          this.maxSearchResults = null;
+          this.maxSearchResults[clientMetadata.databaseId] = null;
         }
       }
       // Workaround: recalculate limit to not query more then MAXSEARCHRESULTS
       let safeLimit = limit;
-      if (this.maxSearchResults && offset + limit > this.maxSearchResults) {
-        safeLimit = offset <= this.maxSearchResults ? this.maxSearchResults - offset : limit;
+      const maxSearchResult = this.maxSearchResults[clientMetadata.databaseId]
+
+      if (maxSearchResult && offset + limit > maxSearchResult) {
+        safeLimit = offset <= maxSearchResult ? maxSearchResult - offset : limit;
       }
 
       const [total, ...keyNames] = await client.sendCommand(
@@ -193,7 +196,7 @@ export class RedisearchService {
         total,
         scanned: keyNames.length + offset,
         keys: keyNames.map((name) => ({ name })),
-        maxResults: this.maxSearchResults,
+        maxResults: maxSearchResult,
       });
     } catch (e) {
       this.logger.error('Failed to search keys using redisearch index', e);

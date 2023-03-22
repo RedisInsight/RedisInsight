@@ -124,6 +124,20 @@ describe('POST /databases/:id/redisearch/search', () => {
 
       [
         {
+          name: 'Should return response with maxResults = null if no permissions for "ft.config" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: validInputData,
+          responseSchema,
+          checkFn: async ({ body }) => {
+            expect(body.keys.length).to.eq(10);
+            expect(body.cursor).to.eq(10);
+            expect(body.scanned).to.eq(10);
+            expect(body.total).to.eq(2000);
+            expect(body.maxResults).to.eq(null);
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -ft.config')
+        },
+        {
           name: 'Should search',
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: validInputData,
@@ -142,20 +156,6 @@ describe('POST /databases/:id/redisearch/search', () => {
             error: 'Forbidden',
           },
           before: () => rte.data.setAclUserRules('~* +@all -ft.search')
-        },
-        {
-          name: 'Should return response with maxResults = null if no permissions for "ft.config" command',
-          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-          data: validInputData,
-          responseSchema,
-          checkFn: async ({ body }) => {
-            expect(body.keys.length).to.eq(10);
-            expect(body.cursor).to.eq(10);
-            expect(body.scanned).to.eq(10);
-            expect(body.total).to.eq(2000);
-            expect(body.maxResults).to.eq(null);
-          },
-          before: () => rte.data.setAclUserRules('~* +@all -ft.config')
         },
       ].map(mainCheckFn);
     });

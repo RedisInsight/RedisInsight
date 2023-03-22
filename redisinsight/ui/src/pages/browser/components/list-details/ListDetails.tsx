@@ -379,8 +379,9 @@ const ListDetails = (props: Props) => {
       maxWidth: 60,
       absoluteWidth: 60,
       render: function Actions(_element: any, { index, element }: IListElement) {
-        const isEditable = !compressor && isFormatEditable(viewFormat)
-        const tooltipContent = compressor ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
+        const { isCompressed } = decompressingBuffer(element, compressor)
+        const isEditable = !isCompressed && isFormatEditable(viewFormat)
+        const tooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
         return (
           <StopPropagation>
             <div className="value-table-actions">

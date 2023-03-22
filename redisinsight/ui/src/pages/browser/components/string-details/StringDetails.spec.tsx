@@ -1,6 +1,8 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { KeyValueCompressor } from 'uiSrc/constants'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { anyToBuffer, bufferToString } from 'uiSrc/utils'
 import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
@@ -18,6 +20,13 @@ jest.mock('uiSrc/slices/browser/string', () => ({
       type: 'Buffer',
       data: [49, 50, 51],
     }
+  }),
+}))
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    compressor: null,
   }),
 }))
 
@@ -109,6 +118,10 @@ describe('StringDetails', () => {
       })
       stringDataSelector.mockImplementation(stringDataSelectorMock)
 
+      connectedInstanceSelector.mockImplementation(() => ({
+        compressor: KeyValueCompressor.GZIP,
+      }))
+
       render(
         <StringDetails
           {...instance(mockedProps)}
@@ -126,6 +139,10 @@ describe('StringDetails', () => {
         value: anyToBuffer(GZIP_COMPRESSED_VALUE_2)
       })
       stringDataSelector.mockImplementation(stringDataSelectorMock)
+
+      connectedInstanceSelector.mockImplementation(() => ({
+        compressor: KeyValueCompressor.GZIP,
+      }))
 
       render(
         <StringDetails

@@ -10,8 +10,12 @@ import { anyToBuffer, Nullable } from 'uiSrc/utils'
 const decompressingBuffer = (
   reply: RedisResponseBuffer,
   compressorInit: Nullable<KeyValueCompressor> = null,
-): { value: RedisString, compressor: Nullable<KeyValueCompressor> } => {
-  const compressor = compressorInit
+): { value: RedisString, compressor: Nullable<KeyValueCompressor>, isCompressed: boolean } => {
+  const compressorByValue: Nullable<KeyValueCompressor> = getCompressor(reply)
+  const compressor = compressorInit === compressorByValue
+    || (!compressorByValue && compressorInit === KeyValueCompressor.SNAPPY)
+    ? compressorInit
+    : null
 
   try {
     switch (compressor) {
@@ -20,6 +24,7 @@ const decompressingBuffer = (
 
         return {
           compressor,
+          isCompressed: !!compressorByValue,
           value: anyToBuffer(value),
         }
       }
@@ -28,6 +33,7 @@ const decompressingBuffer = (
 
         return {
           compressor,
+          isCompressed: !!compressorByValue,
           value: anyToBuffer(value),
         }
       }
@@ -35,6 +41,7 @@ const decompressingBuffer = (
         const value = decompressLz4(Buffer.from(reply))
         return {
           compressor,
+          isCompressed: !!compressorByValue,
           value: anyToBuffer(value),
         }
       }
@@ -42,21 +49,21 @@ const decompressingBuffer = (
         const value = decompressSnappy(Buffer.from(reply))
         return {
           compressor,
+          isCompressed: !!compressorByValue,
           value: anyToBuffer(value),
         }
       }
       default: {
-        return { value: reply, compressor: null }
+        return { value: reply, compressor: null, isCompressed: !!compressorByValue }
       }
     }
   } catch (error) {
-    console.warn(`Error during decompressing data, compressor: ${compressor}`)
-    return { value: reply, compressor }
+    return { value: reply, compressor, isCompressed: false }
   }
 }
 
 const getCompressor = (reply: RedisResponseBuffer): Nullable<KeyValueCompressor> => {
-  const replyStart = reply.data?.slice?.(0, 10)?.join?.(',') ?? ''
+  const replyStart = reply?.data?.slice?.(0, 10)?.join?.(',') ?? ''
   let compressor: Nullable<KeyValueCompressor> = null
 
   forIn<ICompressorMagicSymbols>(

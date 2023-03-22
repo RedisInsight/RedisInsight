@@ -13,37 +13,9 @@ describe('UploadTutorialForm', () => {
     expect(screen.getByTestId('submit-upload-tutorial-btn')).toBeDisabled()
   })
 
-  it('should set name after upload file', async () => {
-    render(<UploadTutorialForm onSubmit={jest.fn()} />)
-
-    const jsonString = JSON.stringify({})
-    const blob = new Blob([jsonString])
-    const file = new File([blob], 'file.zip', {
-      type: 'application/JSON',
-    })
-
-    await act(() => {
-      fireEvent.change(
-        screen.getByTestId('import-tutorial'),
-        {
-          target: { files: [file] },
-        }
-      )
-    })
-
-    expect(screen.getByTestId('tutorial-name-field')).toHaveValue('file')
-  })
-
   it('should call onSubmit with proper data', async () => {
     const mockOnSubmit = jest.fn()
     render(<UploadTutorialForm onSubmit={mockOnSubmit} />)
-
-    await act(() => {
-      fireEvent.change(
-        screen.getByTestId('tutorial-name-field'),
-        { target: { value: 'name' } }
-      )
-    })
 
     const jsonString = JSON.stringify({})
     const blob = new Blob([jsonString])
@@ -64,19 +36,12 @@ describe('UploadTutorialForm', () => {
       fireEvent.click(screen.getByTestId('submit-upload-tutorial-btn'))
     })
 
-    expect(mockOnSubmit).toBeCalledWith({ file: expect.any(Object), link: '', name: 'name' })
+    expect(mockOnSubmit).toBeCalledWith({ file: expect.any(Object), link: '' })
   })
 
   it('should call onSubmit with proper data without file', async () => {
     const mockOnSubmit = jest.fn()
     render(<UploadTutorialForm onSubmit={mockOnSubmit} />)
-
-    await act(() => {
-      fireEvent.change(
-        screen.getByTestId('tutorial-name-field'),
-        { target: { value: 'name' } }
-      )
-    })
 
     await act(() => {
       fireEvent.change(
@@ -89,7 +54,7 @@ describe('UploadTutorialForm', () => {
       fireEvent.click(screen.getByTestId('submit-upload-tutorial-btn'))
     })
 
-    expect(mockOnSubmit).toBeCalledWith({ file: null, link: 'link', name: 'name' })
+    expect(mockOnSubmit).toBeCalledWith({ file: null, link: 'link' })
   })
 
   it('should call onCancel', () => {

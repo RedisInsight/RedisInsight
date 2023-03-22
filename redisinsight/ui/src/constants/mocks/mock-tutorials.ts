@@ -57,3 +57,10 @@ export const MOCK_TUTORIALS_ITEMS: IEnablementAreaItem[] = [
     },
   }
 ]
+
+export const MOCK_TUTORIALS = {
+  type: EnablementAreaComponent.Group,
+  id: 'quick-guides',
+  label: 'Quick Guides',
+  children: MOCK_TUTORIALS_ITEMS
+}

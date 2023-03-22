@@ -134,16 +134,9 @@ describe('EnablementArea', () => {
       expect(screen.getByTestId('upload-tutorial-form')).toBeInTheDocument()
     })
 
-    it('should render call proper actions after upload form submit', async () => {
+    it('should call proper actions after upload form submit', async () => {
       render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
       fireEvent.click(screen.getByTestId('open-upload-tutorial-btn'))
-
-      await act(() => {
-        fireEvent.change(
-          screen.getByTestId('tutorial-name-field'),
-          { target: { value: 'name' } }
-        )
-      })
 
       await act(() => {
         fireEvent.change(

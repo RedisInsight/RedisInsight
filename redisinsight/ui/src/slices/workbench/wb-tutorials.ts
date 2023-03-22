@@ -21,9 +21,9 @@ const workbenchTutorialsSlice = createSlice({
     getWBTutorials: (state) => {
       state.loading = true
     },
-    getWBTutorialsSuccess: (state, { payload }) => {
+    getWBTutorialsSuccess: (state, { payload }: { payload: IEnablementAreaItem }) => {
       state.loading = false
-      state.items = payload
+      state.items = [payload]
     },
     getWBTutorialsFailure: (state, { payload }) => {
       state.loading = false

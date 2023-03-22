@@ -26,7 +26,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
     // wait for populating default data (should take milliseconds)
     await this.initDefaults().catch((e) => this.logger.warn('Unable to populate default data', e));
     // async operation to not wait for it and not block user in case when no internet connection
-    this.autoUpdate.bind(this);
+    this.autoUpdate();
   }
 
   /**

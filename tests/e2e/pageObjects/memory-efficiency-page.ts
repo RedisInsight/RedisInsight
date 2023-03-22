@@ -11,6 +11,7 @@ export class MemoryEfficiencyPage {
     cssCodeChangesLabel = '[data-testid=code_changes]';
     cssConfigurationChangesLabel = '[data-testid=configuration_changes]';
     cssReadMoreLink = '[data-testid=read-more-link]';
+    cssToTutorialsBtn = '[data-testid=RTS-to-tutorial-btn]';
     // BUTTONS
     newReportBtn = Selector('[data-testid=start-database-analysis-btn]');
     expandArrowBtn = Selector('[data-testid^=expand-arrow-]');
@@ -69,4 +70,14 @@ export class MemoryEfficiencyPage {
     usefulVoteBtn = Selector('[data-testid=useful-vote-btn]').nth(0);
     notUsefulVoteBtn = Selector('[data-testid=not-useful-vote-btn]').nth(0);
     recommendationsFeedbackBtn = Selector('[data-testid=recommendation-feedback-btn]');
+    toTutorialsBtn = Selector('[data-testid=RTS-to-tutorial-btn]');
+    rtsAccordeon = Selector('[data-testid=RTS-accordion]');
+
+    /**
+     * Find recommendation selector by name
+     * @param name A recommendation name
+     */
+    async getRecommendationByName(name: string): Promise<Selector> {
+        return Selector('div').withExactText(name).parent('[data-testid=RTS-accordion]').parent();
+    }
 }

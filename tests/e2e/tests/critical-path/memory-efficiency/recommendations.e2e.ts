@@ -1,4 +1,5 @@
-import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { Selector } from 'testcafe';
+import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage, AddRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi, deleteCustomDatabase } from '../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
@@ -15,6 +16,7 @@ const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const memoryEfficiencyActions = new MemoryEfficiencyActions();
+const workbenchPage = new WorkbenchPage();
 
 const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
 let keyName = `recomKey-${common.generateWord(10)}`;
@@ -80,7 +82,7 @@ test
         // Close the window with external link to switch to the application window
         await t.closeWindow();
     });
-    // skipped due to inability to receive no recommendations for now
+// skipped due to inability to receive no recommendations for now
 test.skip('No recommendations message', async t => {
     keyName = `recomKey-${common.generateWord(10)}`;
     const noRecommendationsMessage = 'No recommendations at the moment, run a new report later to keep up the good work!';
@@ -145,4 +147,32 @@ test
         await memoryEfficiencyActions.voteForNotUsefulAndVerifyDisabled();
         // Verify that user can see the popup with link when he votes for “Not useful”
         await t.expect(memoryEfficiencyPage.recommendationsFeedbackBtn.visible).ok('popup did not appear after voting for not useful');
+    });
+test
+    .before(async t => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        keyName = `recomKey-${common.generateWord(10)}`;
+        await browserPage.addZSetKey(keyName, '151153320500121', '2147476121', '1511533205001:21');
+        // Go to Analysis Tools page
+        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        // Go to Recommendations tab
+        await t.click(memoryEfficiencyPage.recommendationsTab);
+    })
+    .after(async t => {
+    // Clear and delete database
+        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.deleteKeyByName(keyName);
+        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify that user can see the Tutorial opened when clicking on "To Tutorial" for recommendations', async t => {
+        const optimizeTsRecommendation = await memoryEfficiencyPage.getRecommendationByName('Optimize the use of time series');
+        const toTutorialBtn = optimizeTsRecommendation.find(memoryEfficiencyPage.cssToTutorialsBtn);
+
+        // Verify that Optimize the use of time series recommendation displayed
+        await t.expect(optimizeTsRecommendation.exists).ok('Optimize the use of time series recommendation not displayed');
+        // Verify that tutorial opened
+        await t.click(toTutorialBtn);
+        await t.expect(workbenchPage.preselectArea.visible).ok('Workbench Enablement area not opened');
+        // Verify that REDIS FOR TIME SERIES tutorial expanded
+        await t.expect((await workbenchPage.getTutorialByName('REDIS FOR TIME SERIES')).visible).ok('REDIS FOR TIME SERIES tutorial is not expanded');
     });

@@ -97,6 +97,7 @@ export default {
   },
   analytics: {
     writeKey: process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY',
+    flushInterval: parseInt(process.env.ANALYTICS_FLUSH_INTERVAL, 10) || 3000,
   },
   logger: {
     logLevel: process.env.LOG_LEVEL || 'info', // log level

@@ -34,19 +34,19 @@
     right: 476px;
   }
 
-  .triggerIcon > path:nth-last-child(3) {
+  .triggerIcon :global(.live-time-recommendations_svg__bg) {
     fill: transparent;
   }
 
-  .triggerIcon > path:nth-last-child(2) {
+  .triggerIcon :global(.live-time-recommendations_svg__main) {
     fill: var(--triggerIconColor);
   }
 
-  .triggerIcon > path:nth-last-child(1) {
+  .triggerIcon :global(.live-time-recommendations_svg__element) {
     stroke: var(--triggerIconColor);
   }
 
-  .triggerIconActive.triggerIcon path:nth-last-child(3) {
+  .triggerIconActive.triggerIcon :global(.live-time-recommendations_svg__bg) {
     fill: var(--triggerIconActiveColor);
   }
 }

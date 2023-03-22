@@ -34,8 +34,20 @@
     right: 476px;
   }
 
-  .triggerIcon path {
+  .triggerIcon > path:nth-last-child(3) {
+    fill: transparent;
+  }
+
+  .triggerIcon > path:nth-last-child(2) {
+    fill: var(--triggerIconColor);
+  }
+
+  .triggerIcon > path:nth-last-child(1) {
     stroke: var(--triggerIconColor);
+  }
+
+  .triggerIconActive.triggerIcon path:nth-last-child(3) {
+    fill: var(--triggerIconActiveColor);
   }
 }
 

@@ -23,8 +23,7 @@ import {
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ReactComponent as AnalysisIcon } from 'uiSrc/assets/img/icons/analysis.svg'
-import { ReactComponent as DefaultIcon } from 'uiSrc/assets/img/icons/live-time-recommendations.svg'
-import { ReactComponent as HighlightedIcon } from 'uiSrc/assets/img/icons/live-time-recommendations-active.svg'
+import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/icons/live-time-recommendations.svg'
 
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
@@ -52,7 +51,7 @@ const LiveTimeRecommendations = () => {
       eventData: {
         databaseId: connectedInstanceId,
         total: recommendations?.length,
-        list: recommendations.map(({ name }) => name),
+        list: recommendations?.map(({ name }) => name),
       }
     })
 
@@ -62,7 +61,7 @@ const LiveTimeRecommendations = () => {
     dispatch(setIsContentVisible(!isContentVisible))
   }
 
-  const handleClick = () => {
+  const handleClickDbAnalysisLink = () => {
     dispatch(setIsContentVisible(false))
     history.push(Pages.databaseAnalysis(connectedInstanceId))
   }
@@ -72,7 +71,7 @@ const LiveTimeRecommendations = () => {
   }
 
   const renderBody = () => {
-    if (!recommendations.length) {
+    if (!recommendations?.length) {
       return <WelcomeScreen />
     }
 
@@ -108,7 +107,9 @@ const LiveTimeRecommendations = () => {
         className={cx(styles.trigger, { [styles.isOpen]: isContentVisible })}
         data-testid="recommendations-trigger"
       >
-        {isHighlighted ? <HighlightedIcon /> : <DefaultIcon className={styles.triggerIcon} />}
+        {isHighlighted
+          ? <TriggerIcon className={cx(styles.triggerIconActive, styles.triggerIcon)} />
+          : <TriggerIcon className={styles.triggerIcon} />}
       </div>
       {isContentVisible && (
         <EuiFlyout
@@ -134,7 +135,7 @@ const LiveTimeRecommendations = () => {
               <EuiFlexItem grow={false}>
                 <EuiButton
                   iconType={AnalysisIcon}
-                  onClick={handleClick}
+                  onClick={handleClickDbAnalysisLink}
                   className={styles.footerBtn}
                   data-testid="database-analysis-link"
                 >

@@ -1,3 +1,6 @@
+import { getAnalytics } from '../helpers/analytics';
+export { createAnalytics } from '../helpers/analytics';
+
 export * from '../helpers/test';
 import * as request from 'supertest';
 import * as chai from 'chai';
@@ -16,6 +19,10 @@ export async function depsInit () {
   if(constants.TEST_CLOUD_RTE) {
     await initCloudDatabase();
   }
+
+  // initialize analytics module
+  deps.analytics = await getAnalytics();
+
   // initializing backend server
   deps.server = await getServer();
 
@@ -40,6 +47,7 @@ export const deps = {
   request,
   expect: chai.expect,
   server: null,
+  analytics: null,
   getSocket,
   rte: null,
   testEnv,

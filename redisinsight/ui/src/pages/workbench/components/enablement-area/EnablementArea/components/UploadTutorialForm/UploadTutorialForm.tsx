@@ -11,7 +11,6 @@ import styles from './styles.module.scss'
 
 export interface FormValues {
   file: Nullable<File>
-  name: string
   link: string
 }
 
@@ -26,7 +25,6 @@ const UploadTutorialForm = (props: Props) => {
 
   const initialValues: FormValues = {
     file: null,
-    name: '',
     link: ''
   }
 
@@ -34,8 +32,6 @@ const UploadTutorialForm = (props: Props) => {
 
   const validate = (values: FormValues) => {
     const errs: FormikErrors<FormValues> = {}
-
-    if (!values.name) errs.name = 'Tutorial Name'
     if (!values.file && !values.link) errs.file = 'Tutorial Archive or Link'
 
     setErrors(errs)
@@ -65,12 +61,8 @@ const UploadTutorialForm = (props: Props) => {
     return isSubmitDisabled ? (<span className="euiToolTip__content">{errorsArr}</span>) : null
   }
 
-  const handleFileChange = async (files: FileList | null) => {
-    await formik.setFieldValue('file', files?.[0] ?? null)
-
-    if (!formik.values.name) {
-      await formik.setFieldValue('name', files?.[0]?.name ? files[0].name.replace(/(\.zip)$/, '') : '')
-    }
+  const handleFileChange = (files: FileList | null) => {
+    formik.setFieldValue('file', files?.[0] ?? null)
   }
 
   return (
@@ -79,13 +71,6 @@ const UploadTutorialForm = (props: Props) => {
         <EuiText>Add new Tutorial</EuiText>
         <EuiSpacer size="m" />
         <div>
-          <EuiFieldText
-            placeholder="Tutorial Name*"
-            value={formik.values.name}
-            onChange={(e) => formik.setFieldValue('name', e.target.value)}
-            className={styles.input}
-            data-testid="tutorial-name-field"
-          />
           <div className={styles.uploadFileWrapper}>
             <EuiFilePicker
               id="import-tutorial"

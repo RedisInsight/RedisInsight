@@ -13,11 +13,12 @@ import { InternalServerErrorException } from '@nestjs/common';
 import AdmZip from 'adm-zip';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
+import { Dirent, Stats } from 'fs';
 
 const PATH_CONFIG = config.get('dir_path');
 
 jest.mock('fs-extra');
-const mockedFs = fs as jest.Mocked<typeof fs>;
+const mFs = fs as jest.Mocked<typeof fs>;
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -35,7 +36,7 @@ describe('CustomTutorialFsProvider', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    jest.mock('fs-extra', () => mockedFs);
+    jest.mock('fs-extra', () => mFs);
     jest.mock('adm-zip', () => jest.fn().mockImplementation(() => mockedAdmZip));
     jest.mock('axios', () => mockedAxios);
 
@@ -54,8 +55,9 @@ describe('CustomTutorialFsProvider', () => {
     beforeEach(() => {
       mockedAxios.get.mockResolvedValueOnce(mockCustomTutorialZipFileAxiosResponse);
       mockedAdmZip.getEntries.mockReturnValue([]);
-      mockedFs.ensureDir.mockImplementationOnce(() => Promise.resolve());
-      mockedFs.remove.mockImplementationOnce(() => Promise.resolve());
+      mFs.ensureDir.mockImplementationOnce(() => Promise.resolve());
+      mFs.remove.mockImplementationOnce(() => Promise.resolve());
+      mFs.readdir.mockResolvedValue([]);
       prepareTmpFolderSpy = jest.spyOn(CustomTutorialFsProvider, 'prepareTmpFolder');
       prepareTmpFolderSpy.mockResolvedValueOnce(mockCustomTutorialTmpPath);
     });
@@ -64,11 +66,16 @@ describe('CustomTutorialFsProvider', () => {
       it('should unzip data', async () => {
         const result = await service.unzipFromMemoryStoredFile(mockCustomTutorialZipFile);
         expect(result).toEqual(mockCustomTutorialTmpPath);
+        expect(mFs.copy).not.toHaveBeenCalled();
       });
       it('should unzip data into just generated tmp folder', async () => {
+        mFs.lstat.mockResolvedValueOnce(({ isDirectory: () => true }) as Stats);
+        mFs.readdir.mockResolvedValue(['singleFolder'] as unknown as Dirent[]);
+
         prepareTmpFolderSpy.mockRestore();
         const result = await service.unzipFromMemoryStoredFile(mockCustomTutorialZipFile);
         expect(result).toContain(`${PATH_CONFIG.tmpDir}/RedisInsight-v2/custom-tutorials`);
+        expect(mFs.copy).toHaveBeenCalled();
       });
     });
 
@@ -136,24 +143,24 @@ describe('CustomTutorialFsProvider', () => {
 
   describe('moveFolder', () => {
     it('should move folder', async () => {
-      mockedFs.move.mockImplementationOnce(() => Promise.resolve());
+      mFs.move.mockImplementationOnce(() => Promise.resolve());
 
       await service.moveFolder(
         mockCustomTutorialTmpPath,
         mockCustomTutorial.absolutePath,
       );
 
-      expect(mockedFs.pathExists).not.toHaveBeenCalled();
-      expect(mockedFs.remove).not.toHaveBeenCalled();
-      expect(mockedFs.move).toHaveBeenCalledWith(
+      expect(mFs.pathExists).not.toHaveBeenCalled();
+      expect(mFs.remove).not.toHaveBeenCalled();
+      expect(mFs.move).toHaveBeenCalledWith(
         mockCustomTutorialTmpPath,
         mockCustomTutorial.absolutePath,
       );
     });
 
     it('should move folder when there is no such folder in the dest path', async () => {
-      mockedFs.pathExists.mockImplementationOnce(() => Promise.resolve(false));
-      mockedFs.move.mockImplementationOnce(() => Promise.resolve());
+      mFs.pathExists.mockImplementationOnce(() => Promise.resolve(false));
+      mFs.move.mockImplementationOnce(() => Promise.resolve());
 
       await service.moveFolder(
         mockCustomTutorialTmpPath,
@@ -161,18 +168,18 @@ describe('CustomTutorialFsProvider', () => {
         true,
       );
 
-      expect(mockedFs.pathExists).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
-      expect(mockedFs.remove).not.toHaveBeenCalled();
-      expect(mockedFs.move).toHaveBeenCalledWith(
+      expect(mFs.pathExists).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
+      expect(mFs.remove).not.toHaveBeenCalled();
+      expect(mFs.move).toHaveBeenCalledWith(
         mockCustomTutorialTmpPath,
         mockCustomTutorial.absolutePath,
       );
     });
 
     it('should move folder when and remove existing one before', async () => {
-      mockedFs.pathExists.mockImplementationOnce(() => Promise.resolve(true));
-      mockedFs.remove.mockImplementationOnce(() => Promise.resolve());
-      mockedFs.move.mockImplementationOnce(() => Promise.resolve());
+      mFs.pathExists.mockImplementationOnce(() => Promise.resolve(true));
+      mFs.remove.mockImplementationOnce(() => Promise.resolve());
+      mFs.move.mockImplementationOnce(() => Promise.resolve());
 
       await service.moveFolder(
         mockCustomTutorialTmpPath,
@@ -180,18 +187,18 @@ describe('CustomTutorialFsProvider', () => {
         true,
       );
 
-      expect(mockedFs.pathExists).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
-      expect(mockedFs.remove).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
-      expect(mockedFs.move).toHaveBeenCalledWith(
+      expect(mFs.pathExists).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
+      expect(mFs.remove).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
+      expect(mFs.move).toHaveBeenCalledWith(
         mockCustomTutorialTmpPath,
         mockCustomTutorial.absolutePath,
       );
     });
 
     it('should throw InternalServerError', async () => {
-      mockedFs.pathExists.mockImplementationOnce(() => Promise.resolve(true));
-      mockedFs.remove.mockImplementationOnce(() => Promise.resolve());
-      mockedFs.move.mockImplementationOnce(() => Promise.reject(new Error('dest folder exists')));
+      mFs.pathExists.mockImplementationOnce(() => Promise.resolve(true));
+      mFs.remove.mockImplementationOnce(() => Promise.resolve());
+      mFs.move.mockImplementationOnce(() => Promise.reject(new Error('dest folder exists')));
 
       try {
         await service.moveFolder(
@@ -208,19 +215,19 @@ describe('CustomTutorialFsProvider', () => {
 
   describe('removeFolder', () => {
     it('should remove folder', async () => {
-      mockedFs.remove.mockResolvedValueOnce();
+      mFs.remove.mockResolvedValueOnce();
 
       await service.removeFolder(mockCustomTutorial.absolutePath);
 
-      expect(mockedFs.remove).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
+      expect(mFs.remove).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
     });
 
     it('should not fail in case of any error', async () => {
-      mockedFs.remove.mockReset().mockRejectedValueOnce(new Error('No file'));
+      mFs.remove.mockReset().mockRejectedValueOnce(new Error('No file'));
 
       await service.removeFolder(mockCustomTutorial.absolutePath);
 
-      expect(mockedFs.remove).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
+      expect(mFs.remove).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
     });
   });
 });

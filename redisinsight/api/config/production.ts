@@ -25,6 +25,7 @@ export default {
   },
   analytics: {
     writeKey: process.env.SEGMENT_WRITE_KEY || 'lK5MNZgHbxj6vQwFgqZxygA0BiDQb32n',
+    flushInterval: parseInt(process.env.ANALYTICS_FLUSH_INTERVAL, 10) || 10000,
   },
   db: {
     database: join(homedir, 'redisinsight.db'),

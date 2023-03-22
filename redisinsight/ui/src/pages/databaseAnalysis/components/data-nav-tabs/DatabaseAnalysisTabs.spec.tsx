@@ -125,6 +125,7 @@ describe('DatabaseAnalysisTabs', () => {
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
           recommendationsCount: 0,
+          list: [],
         }
       })
       sendEventTelemetry.mockRestore()
@@ -135,7 +136,7 @@ describe('DatabaseAnalysisTabs', () => {
       sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
 
       const mockData = {
-        recommendations: [{ name: 'luaScript' }, { name: 'luaScript' }]
+        recommendations: [{ name: 'luaScript' }, { name: 'bigHashes' }]
       }
       render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
 
@@ -146,6 +147,7 @@ describe('DatabaseAnalysisTabs', () => {
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
           recommendationsCount: 2,
+          list: ['luaScript', 'bigHashes'],
         }
       })
       sendEventTelemetry.mockRestore()

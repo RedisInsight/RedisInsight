@@ -698,7 +698,22 @@ jobs:
       - run:
           name: Build Docker image (API + UI)
           command: |
-            docker build --build-arg NODE_ENV=<< parameters.env >> --build-arg SERVER_TLS_CERT="$SERVER_TLS_CERT" --build-arg SERVER_TLS_KEY="$SERVER_TLS_KEY" -t riv2:latest .
+            TELEMETRY=$SEGMENT_WRITE_KEY_DEV
+
+            if [ << parameters.env >> == 'production' ]; then
+              TELEMETRY=$SEGMENT_WRITE_KEY
+            fi
+
+            if [ << parameters.env >> == 'staging' ]; then
+              TELEMETRY=$SEGMENT_WRITE_KEY_STAGE
+            fi
+
+            docker build --build-arg NODE_ENV=<< parameters.env >> \
+            --build-arg SERVER_TLS_CERT="$SERVER_TLS_CERT" \
+            --build-arg SERVER_TLS_KEY="$SERVER_TLS_KEY" \
+            --build-arg SEGMENT_WRITE_KEY="$TELEMETRY" \
+            -t riv2:latest .
+
             mkdir -p docker-release
             docker image save -o docker-release/docker.tar riv2
       - persist_to_workspace:

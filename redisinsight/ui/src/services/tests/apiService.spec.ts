@@ -1,6 +1,6 @@
+import { AxiosRequestConfig } from 'axios'
 import { sessionStorageService } from 'uiSrc/services'
 import { requestInterceptor } from 'uiSrc/services/apiService'
-import { AxiosRequestConfig } from 'axios'
 
 describe('requestInterceptor', () => {
   it('should properly set db-index to headers', () => {
@@ -8,7 +8,7 @@ describe('requestInterceptor', () => {
 
     const config: AxiosRequestConfig = {
       headers: {},
-      url: 'http://localhost:8080/databases/instanceId/endpoint'
+      url: 'http://localhost:8080/databases/123-215gg-23/endpoint'
     }
 
     requestInterceptor(config)
@@ -20,7 +20,7 @@ describe('requestInterceptor', () => {
 
     const config: AxiosRequestConfig = {
       headers: {},
-      url: 'http://localhost:8080/settings/instanceId/endpoint'
+      url: 'http://localhost:8080/settings/123-215gg-23/endpoint'
     }
 
     requestInterceptor(config)

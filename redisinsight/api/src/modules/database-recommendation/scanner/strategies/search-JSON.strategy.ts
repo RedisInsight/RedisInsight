@@ -4,6 +4,7 @@ import { AbstractRecommendationStrategy }
 import { DatabaseService } from 'src/modules/database/database.service';
 import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/dto';
 import { SearchJSON } from 'src/modules/database-recommendation/models';
+import { isRedisearchModule } from 'src/utils';
 
 export class SearchJSONStrategy extends AbstractRecommendationStrategy {
   private databaseService: DatabaseService;
@@ -27,7 +28,7 @@ export class SearchJSONStrategy extends AbstractRecommendationStrategy {
       // todo: refactor. no need entire entity here
       const { modules } = await this.databaseService.get(data.databaseId);
 
-      if (modules.find((({ name }) => name === 'search'))) {
+      if (isRedisearchModule(modules)) {
         const indexes = await data.client.sendCommand(
           new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
         ) as string[];

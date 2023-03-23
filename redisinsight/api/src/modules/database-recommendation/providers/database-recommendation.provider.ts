@@ -66,4 +66,25 @@ export class DatabaseRecommendationProvider {
       .set({ read: true })
       .execute();
   }
+
+  /**
+   * Check is recommendation exist in database
+   * @param clientMetadata
+   * @param name
+   */
+  async isExist(
+    clientMetadata: ClientMetadata,
+    name: string,
+  ): Promise<boolean> {
+    try {
+      this.logger.log(`Checking is recommendation ${name} exist`);
+      const recommendation = await this.repository.findOneBy({ databaseId: clientMetadata.databaseId, name });
+  
+      this.logger.log(`Succeed to check is recommendation ${name} exist'`);
+      return !!recommendation;
+    } catch (err) {
+      this.logger.error(`Failed to check is recommendation ${name} exist'`);
+      return false;
+    }
+  }
 }

@@ -43,9 +43,11 @@ export class DatabaseRecommendationService {
     recommendationName: string,
     data: any,
   ): Promise<DatabaseRecommendation> {
-    // todo: move it on db layer
-    const result = await this.databaseRecommendationsProvider.list(clientMetadata);
-    if (!result.recommendations.find((recommendation) => recommendation.name === recommendationName)) {
+    const isRecommendationExist = await this.databaseRecommendationsProvider.isExist(
+      clientMetadata,
+      recommendationName,
+    );
+    if (!isRecommendationExist) {
       const isRecommendationReached = await this.scanner.determineRecommendation(recommendationName, data);
 
       if (isRecommendationReached) {
@@ -60,7 +62,7 @@ export class DatabaseRecommendationService {
    * Mark all recommendations as read for particular database
    * @param clientMetadata
    */
-  async read(clientMetadata: ClientMetadata): Promise<void> {
+  public async read(clientMetadata: ClientMetadata): Promise<void> {
     this.logger.log('Reading database recommendations');
     return this.databaseRecommendationsProvider.read(clientMetadata);
   }

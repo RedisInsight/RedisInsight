@@ -83,4 +83,26 @@ describe('DatabaseAnalysisProvider', () => {
       expect(await service.read(mockClientMetadata)).toEqual(undefined);
     });
   });
+
+
+  describe('isExist', () => {
+    it('should return true when findOneBy recommendation', async () => {
+      repository.findOneBy.mockReturnValueOnce('some');
+
+      expect(await service.isExist(mockClientMetadata, mockDatabaseRecommendation.name)).toEqual(true);
+    });
+
+    it('should return false when not findOneBy recommendation', async () => {
+      repository.findOneBy.mockReturnValueOnce(null);
+
+      expect(await service.isExist(mockClientMetadata, mockDatabaseRecommendation.name)).toEqual(false);
+    });
+
+
+    it('should return false when findOneBy throw error', async () => {
+      repository.findOneBy.mockRejectedValue('some error');
+
+      expect(await service.isExist(mockClientMetadata, mockDatabaseRecommendation.name)).toEqual(false);
+    });
+  });
 });

@@ -52,7 +52,7 @@ const DbCompressor = (props: Props) => {
     const isChecked = e.target.checked
     if (!isChecked) {
       // Reset db field to initial value
-      formik.setFieldValue('compressor', null)
+      formik.setFieldValue('compressor', NONE)
     }
     formik.handleChange(e)
   }

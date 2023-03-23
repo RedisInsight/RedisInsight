@@ -1,7 +1,8 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { TEXT_DISABLED_COMPRESSED_VALUE } from 'uiSrc/constants'
+import { KeyValueCompressor, TEXT_DISABLED_COMPRESSED_VALUE } from 'uiSrc/constants'
 import { hashDataSelector } from 'uiSrc/slices/browser/hash'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBufferType } from 'uiSrc/slices/interfaces'
 import { anyToBuffer, bufferToString } from 'uiSrc/utils'
 import { act, fireEvent, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
@@ -30,6 +31,13 @@ jest.mock('uiSrc/slices/browser/hash', () => {
     fetchHashFields: () => jest.fn
   })
 })
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    compressor: null,
+  }),
+}))
 
 describe('HashDetails', () => {
   it('should render', () => {
@@ -106,6 +114,11 @@ describe('HashDetails', () => {
         ]
       })
       hashDataSelector.mockImplementation(hashDataSelectorMock)
+
+      connectedInstanceSelector.mockImplementation(() => ({
+        compressor: KeyValueCompressor.GZIP,
+      }))
+
       const { queryByTestId } = render(<HashDetails {...instance(mockedProps)} />)
       const editBtn = queryByTestId(/edit-hash-button/)
 

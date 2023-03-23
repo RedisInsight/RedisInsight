@@ -41,6 +41,10 @@ export class CustomTutorialService {
   private async validateManifestJson(path: string): Promise<void> {
     const manifest = await this.customTutorialManifestProvider.getOriginalManifestJson(path);
 
+    if (!manifest && await this.customTutorialManifestProvider.isOriginalManifestExists(path)) {
+      throw new BadRequestException('Unable to parse manifest.json file');
+    }
+
     if (manifest) {
       if (!isPlainObject(manifest)) {
         throw new BadRequestException('Manifest json should be an object');

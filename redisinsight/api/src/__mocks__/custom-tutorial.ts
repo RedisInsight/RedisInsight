@@ -161,6 +161,7 @@ export const mockCustomTutorialManifestProvider = jest.fn(() => ({
   getOriginalManifestJson: jest.fn().mockResolvedValue(mockCustomTutorialManifestJson),
   getManifestJson: jest.fn().mockResolvedValue(mockCustomTutorialManifestJson),
   generateTutorialManifest: jest.fn().mockResolvedValue(mockCustomTutorialManifest),
+  isOriginalManifestExists: jest.fn().mockResolvedValue(true),
 }));
 
 export const mockCustomTutorialRepository = jest.fn(() => ({

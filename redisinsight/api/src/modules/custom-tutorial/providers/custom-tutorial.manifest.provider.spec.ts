@@ -195,7 +195,10 @@ describe('CustomTutorialManifestProvider', () => {
 
       const result = await service.generateTutorialManifest(mockCustomTutorial);
 
-      expect(result).toEqual(null);
+      expect(result).toEqual({
+        ...mockCustomTutorialManifest,
+        children: [],
+      });
     });
 
     it('should return null in case of any error', async () => {

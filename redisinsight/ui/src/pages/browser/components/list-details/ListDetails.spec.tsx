@@ -1,7 +1,8 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
-import { TEXT_DISABLED_COMPRESSED_VALUE } from 'uiSrc/constants'
+import { KeyValueCompressor, TEXT_DISABLED_COMPRESSED_VALUE } from 'uiSrc/constants'
 import { listDataSelector } from 'uiSrc/slices/browser/list'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { anyToBuffer } from 'uiSrc/utils'
 import { act, fireEvent, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
@@ -34,6 +35,13 @@ jest.mock('uiSrc/slices/browser/list', () => {
     setListInitialState: jest.fn,
   }
 })
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    compressor: null,
+  }),
+}))
 
 describe('ListDetails', () => {
   it('should render', () => {
@@ -101,6 +109,10 @@ describe('ListDetails', () => {
         ]
       })
       listDataSelector.mockImplementation(listDataSelectorMock)
+
+      connectedInstanceSelector.mockImplementation(() => ({
+        compressor: KeyValueCompressor.GZIP,
+      }))
 
       const { queryByTestId } = render(<ListDetails {...(mockedProps)} />)
       const editBtn = queryByTestId(/edit-list-button-/)

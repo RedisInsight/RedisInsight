@@ -83,7 +83,7 @@ const defaultValues = [
     compressorInit: KeyValueCompressor.SNAPPY,
     output: DECOMPRESSED_VALUE_1,
     outputStr: DECOMPRESSED_VALUE_STR_1,
-    isCompressed: false,
+    isCompressed: true,
   },
   {
     input: SNAPPY_COMPRESSED_VALUE_2,
@@ -91,7 +91,7 @@ const defaultValues = [
     compressorInit: KeyValueCompressor.SNAPPY,
     output: DECOMPRESSED_VALUE_2,
     outputStr: DECOMPRESSED_VALUE_STR_2,
-    isCompressed: false,
+    isCompressed: true,
   },
   {
     input: GZIP_COMPRESSED_VALUE_1,
@@ -100,7 +100,7 @@ const defaultValues = [
     outputStr: DECOMPRESSED_VALUE_STR_1,
     compressorInit: KeyValueCompressor.LZ4,
     compressorByValue: KeyValueCompressor.GZIP,
-    isCompressed: true,
+    isCompressed: false,
   },
   {
     input: ZSTD_COMPRESSED_VALUE_1,
@@ -109,7 +109,7 @@ const defaultValues = [
     compressorByValue: KeyValueCompressor.ZSTD,
     output: ZSTD_COMPRESSED_VALUE_1,
     outputStr: DECOMPRESSED_VALUE_STR_1,
-    isCompressed: true,
+    isCompressed: false,
   },
 ].map((value) => ({
   ...value,

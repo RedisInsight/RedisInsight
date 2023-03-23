@@ -1,11 +1,11 @@
-import { forIn, isUndefined } from 'lodash'
+import { forIn } from 'lodash'
 import { unzip } from 'gzip-js'
 import { decompress as decompressFzstd } from 'fzstd'
 import { decompress as decompressLz4 } from 'lz4js'
 import { decompress as decompressSnappy } from '@stablelib/snappy'
 import { COMPRESSOR_MAGIC_SYMBOLS, ICompressorMagicSymbols, KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
-import { anyToBuffer, Nullable } from 'uiSrc/utils'
+import { anyToBuffer, isEqualBuffers, Nullable } from 'uiSrc/utils'
 
 const decompressingBuffer = (
   reply: RedisResponseBuffer,
@@ -24,7 +24,7 @@ const decompressingBuffer = (
 
         return {
           compressor,
-          isCompressed: !!compressorByValue,
+          isCompressed: compressor === compressorByValue,
           value: anyToBuffer(value),
         }
       }
@@ -33,7 +33,7 @@ const decompressingBuffer = (
 
         return {
           compressor,
-          isCompressed: !!compressorByValue,
+          isCompressed: compressor === compressorByValue,
           value: anyToBuffer(value),
         }
       }
@@ -41,20 +41,23 @@ const decompressingBuffer = (
         const value = decompressLz4(Buffer.from(reply))
         return {
           compressor,
-          isCompressed: !!compressorByValue,
+          isCompressed: compressor === compressorByValue,
           value: anyToBuffer(value),
         }
       }
       case KeyValueCompressor.SNAPPY: {
-        const value = decompressSnappy(Buffer.from(reply))
+        const value = anyToBuffer(decompressSnappy(Buffer.from(reply)))
+
         return {
+          value,
           compressor,
-          isCompressed: !!compressorByValue,
-          value: anyToBuffer(value),
+          // SNAPPY compressor don't have "magic numbers"
+          // for detect is value was compressed we should compare reply and decompressed value
+          isCompressed: !isEqualBuffers(value, reply),
         }
       }
       default: {
-        return { value: reply, compressor: null, isCompressed: !!compressorByValue }
+        return { value: reply, compressor: null, isCompressed: false }
       }
     }
   } catch (error) {

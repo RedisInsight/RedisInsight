@@ -1,12 +1,10 @@
 import { RTSStrategy } from 'src/modules/database-recommendation/scanner/strategies';
-import { ZSetMemberDto } from 'src/modules/browser/dto';
 
 const mockTimestampName = Buffer.from('1234567891');
 const mockDefaultName = Buffer.from('name');
 
 const mockTimestampScore = 1234567891;
 const mockDefaultScore = 1;
-
 
 const mockTimestampNameMembers = new Array(95).fill(
   {
@@ -48,7 +46,7 @@ describe('RTSStrategy', () => {
       const mockMembers = [].concat(
         mockTimestampNameMembers,
         mockDefaultMembers,
-        [{ name: mockTimestampName, score: mockDefaultScore }]
+        [{ name: mockTimestampName, score: mockDefaultScore }],
       );
       expect(await strategy.isRecommendationReached(mockMembers)).toEqual(true);
     });
@@ -57,7 +55,7 @@ describe('RTSStrategy', () => {
       const mockMembers = [].concat(
         mockTimestampScoreMembers,
         mockDefaultMembers,
-        [{ name: mockDefaultName, score: mockTimestampScore }]
+        [{ name: mockDefaultName, score: mockTimestampScore }],
       );
       expect(await strategy.isRecommendationReached(mockMembers)).toEqual(true);
     });

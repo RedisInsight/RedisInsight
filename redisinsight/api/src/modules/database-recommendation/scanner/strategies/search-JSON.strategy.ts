@@ -24,23 +24,19 @@ export class SearchJSONStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     data: SearchJSON,
   ): Promise<boolean> {
-    try {
-      // todo: refactor. no need entire entity here
-      const { modules } = await this.databaseService.get(data.databaseId);
+  // todo: refactor. no need entire entity here
+    const { modules } = await this.databaseService.get(data.databaseId);
 
-      if (isRedisearchModule(modules)) {
-        const indexes = await data.client.sendCommand(
-          new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
-        ) as string[];
+    if (isRedisearchModule(modules)) {
+      const indexes = await data.client.sendCommand(
+        new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
+      ) as string[];
 
-        if (indexes.length) {
-          return false;
-        }
+      if (indexes.length) {
+        return false;
       }
-      const isJSON = data.keys.some((key: GetKeyInfoResponse) => key.type === RedisDataType.JSON);
-      return !!isJSON;
-    } catch (err) {
-      return false;
     }
+    const isJSON = data.keys.some((key: GetKeyInfoResponse) => key.type === RedisDataType.JSON);
+    return !!isJSON;
   }
 }

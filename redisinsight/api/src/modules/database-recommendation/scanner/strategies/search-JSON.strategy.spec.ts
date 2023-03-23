@@ -83,18 +83,6 @@ describe('SearchJSONStrategy', () => {
           keys: [mockJSONInfo, mockHashInfo],
         })).toEqual(false);
       });
-
-      it('should return false when FT._LIST return error', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-          .mockRejectedValue('some error');
-
-        expect(await strategy.isRecommendationReached({
-          client: nodeClient,
-          databaseId: mockDatabaseId,
-          keys: [mockJSONInfo, mockHashInfo],
-        })).toEqual(false);
-      });
     });
 
     describe('without search module', () => {
@@ -109,7 +97,6 @@ describe('SearchJSONStrategy', () => {
           keys: [mockJSONInfo, mockHashInfo],
         })).toEqual(true);
       });
-
 
       it('should return false when there is not JSON key', async () => {
         expect(await strategy.isRecommendationReached({

@@ -94,18 +94,6 @@ describe('SearchStringStrategy', () => {
           keys: [mockBigStringInfo, mockHashInfo],
         })).toEqual(false);
       });
-
-      it('should return false when FT._LIST return error', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-          .mockRejectedValue('some error');
-
-        expect(await strategy.isRecommendationReached({
-          client: nodeClient,
-          databaseId: mockDatabaseId,
-          keys: [mockBigStringInfo, mockHashInfo],
-        })).toEqual(false);
-      });
     });
 
     describe('without search module', () => {

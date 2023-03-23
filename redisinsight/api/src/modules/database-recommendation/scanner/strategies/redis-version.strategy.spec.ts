@@ -32,14 +32,6 @@ describe('RedisVersionStrategy', () => {
 
         expect(await strategy.isRecommendationReached(nodeClient)).toEqual(true);
       });
-
-      it('should return false when INFO return error', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'info' }))
-          .mockRejectedValue('some error');
-
-        expect(await strategy.isRecommendationReached(nodeClient)).toEqual(false);
-      });
     });
   });
 });

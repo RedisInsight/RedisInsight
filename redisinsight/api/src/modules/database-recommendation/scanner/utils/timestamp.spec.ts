@@ -23,6 +23,6 @@ const checkTimestampTests = [
 
 describe('checkTimestamp', () => {
   test.each(checkTimestampTests)('%j', ({ input, expected }) => {
-    expect(checkTimestamp(input)).toEqual(expected)
-  })
-})
+    expect(checkTimestamp(input)).toEqual(expected);
+  });
+});

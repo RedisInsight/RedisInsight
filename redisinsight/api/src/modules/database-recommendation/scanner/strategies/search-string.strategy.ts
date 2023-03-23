@@ -26,25 +26,21 @@ export class SearchStringStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     data: SearchString,
   ): Promise<boolean> {
-    try {
-      // todo: refactor. no need entire entity here
-      const { modules } = await this.databaseService.get(data.databaseId);
+    // todo: refactor. no need entire entity here
+    const { modules } = await this.databaseService.get(data.databaseId);
 
-      if (isRedisearchModule(modules)) {
-        const indexes = await data.client.sendCommand(
-          new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
-        ) as any[];
+    if (isRedisearchModule(modules)) {
+      const indexes = await data.client.sendCommand(
+        new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
+      ) as any[];
 
-        if (indexes.length) {
-          return false;
-        }
+      if (indexes.length) {
+        return false;
       }
-      const isBigString = data.keys.some((key: GetKeyInfoResponse) => (
-        key.type === RedisDataType.String && key.size > maxRediSearchStringMemory
-      ));
-      return !!isBigString;
-    } catch (err) {
-      return false;
     }
+    const isBigString = data.keys.some((key: GetKeyInfoResponse) => (
+      key.type === RedisDataType.String && key.size > maxRediSearchStringMemory
+    ));
+    return !!isBigString;
   }
 }

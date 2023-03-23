@@ -4,25 +4,18 @@ import IORedis from 'ioredis';
 import { mockDatabaseService } from 'src/__mocks__';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { GetKeyInfoResponse } from 'src/modules/browser/dto';
-import { RediSearchStrategy } from 'src/modules/database-recommendation/scanner/strategies';
+import { SearchJSONStrategy } from 'src/modules/database-recommendation/scanner/strategies';
 
 const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
 
 const mockDatabaseId = 'id';
 
-const mockStringInfo: GetKeyInfoResponse = {
+const mockJSONInfo: GetKeyInfoResponse = {
   name: Buffer.from('testString_1'),
-  type: 'string',
+  type: 'ReJSON-RL',
   ttl: -1,
-  size: 50,
-};
-
-const mockBigStringInfo: GetKeyInfoResponse = {
-  name: Buffer.from('testString_2'),
-  type: 'string',
-  ttl: -1,
-  size: 512 * 1024 + 1,
+  size: 1,
 };
 
 const mockHashInfo: GetKeyInfoResponse = {
@@ -35,8 +28,8 @@ const mockHashInfo: GetKeyInfoResponse = {
 const mockEmptyIndexes = [];
 const mockIndexes = ['foo'];
 
-describe('RediSearchStrategy', () => {
-  let strategy: RediSearchStrategy;
+describe('SearchJSONStrategy', () => {
+  let strategy: SearchJSONStrategy;
   let databaseService;
 
   beforeEach(async () => {
@@ -50,7 +43,7 @@ describe('RediSearchStrategy', () => {
     }).compile();
 
     databaseService = module.get<DatabaseService>(DatabaseService);
-    strategy = new RediSearchStrategy(databaseService);
+    strategy = new SearchJSONStrategy(databaseService);
   });
 
   describe('isRecommendationReached', () => {
@@ -59,7 +52,7 @@ describe('RediSearchStrategy', () => {
         databaseService.get.mockResolvedValue({ modules: [{ name: 'search' }] });
       });
 
-      it('should return false when string size < 512 * 1024', async () => {
+      it('should return true when there is JSON key', async () => {
         when(nodeClient.sendCommand)
           .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
           .mockResolvedValue(mockEmptyIndexes);
@@ -67,20 +60,16 @@ describe('RediSearchStrategy', () => {
         expect(await strategy.isRecommendationReached({
           client: nodeClient,
           databaseId: mockDatabaseId,
-          keys: [mockStringInfo, mockHashInfo],
-        })).toEqual(false);
+          keys: [mockJSONInfo, mockHashInfo],
+        })).toEqual(true);
       });
 
-      it('should return true when string size > 512 * 1024', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-          .mockResolvedValue(mockEmptyIndexes);
-
+      it('should return false when there is not JSON key', async () => {
         expect(await strategy.isRecommendationReached({
           client: nodeClient,
           databaseId: mockDatabaseId,
-          keys: [mockBigStringInfo, mockHashInfo],
-        })).toEqual(true);
+          keys: [mockHashInfo],
+        })).toEqual(false);
       });
 
       it('should return false when FT._LIST return indexes', async () => {
@@ -91,19 +80,7 @@ describe('RediSearchStrategy', () => {
         expect(await strategy.isRecommendationReached({
           client: nodeClient,
           databaseId: mockDatabaseId,
-          keys: [mockBigStringInfo, mockHashInfo],
-        })).toEqual(false);
-      });
-
-      it('should return false when FT._LIST return error', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-          .mockRejectedValue('some error');
-
-        expect(await strategy.isRecommendationReached({
-          client: nodeClient,
-          databaseId: mockDatabaseId,
-          keys: [mockBigStringInfo, mockHashInfo],
+          keys: [mockJSONInfo, mockHashInfo],
         })).toEqual(false);
       });
     });
@@ -113,20 +90,20 @@ describe('RediSearchStrategy', () => {
         databaseService.get.mockResolvedValue({ modules: [] });
       });
 
-      it('should return false when string size < 512 * 1024', async () => {
+      it('should return true when there is JSON key', async () => {
         expect(await strategy.isRecommendationReached({
           client: nodeClient,
           databaseId: mockDatabaseId,
-          keys: [mockStringInfo, mockHashInfo],
-        })).toEqual(false);
+          keys: [mockJSONInfo, mockHashInfo],
+        })).toEqual(true);
       });
 
-      it('should return true when string size > 512 * 1024', async () => {
+      it('should return false when there is not JSON key', async () => {
         expect(await strategy.isRecommendationReached({
           client: nodeClient,
           databaseId: mockDatabaseId,
-          keys: [mockBigStringInfo, mockHashInfo],
-        })).toEqual(true);
+          keys: [mockHashInfo],
+        })).toEqual(false);
       });
     });
   });

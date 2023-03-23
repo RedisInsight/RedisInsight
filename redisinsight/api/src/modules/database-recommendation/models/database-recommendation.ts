@@ -37,6 +37,7 @@ export class DatabaseRecommendation {
 export class DatabaseRecommendationsResponse {
   @ApiProperty({
     type: () => DatabaseRecommendation,
+    example: [{ name: 'bigSet', read: false }],
     isArray: true,
     description: 'Ordered recommendations list',
   })

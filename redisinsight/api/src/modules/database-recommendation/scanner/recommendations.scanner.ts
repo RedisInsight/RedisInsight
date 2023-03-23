@@ -9,11 +9,17 @@ export class RecommendationScanner {
 
   async determineRecommendation(name: string, data: any) {
     const strategy = this.recommendationProvider.getStrategy(name);
-    const isRecommendationReached = await strategy.isRecommendationReached(data);
+    try {
+      const isRecommendationReached = await strategy.isRecommendationReached(data);
 
-    if (isRecommendationReached) {
-      return { name };
+      if (isRecommendationReached) {
+        return { name };
+      }
+    } catch (err) {
+      // ignore errors
+      return null;
     }
+
     return null;
   }
 }

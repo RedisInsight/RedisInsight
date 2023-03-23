@@ -5,7 +5,11 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { mockDatabaseService } from 'src/__mocks__';
 import {
   DefaultRecommendationStrategy,
-  RediSearchStrategy,
+  SearchStringStrategy,
+  RedisVersionStrategy,
+  SearchJSONStrategy,
+  BigSetStrategy,
+  RTSStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 describe('RecommendationProvider', () => {
@@ -28,7 +32,11 @@ describe('RecommendationProvider', () => {
 
   describe('getStrategy', () => {
     [
-      [RECOMMENDATION_NAMES.SEARCH_STRING, new RediSearchStrategy(databaseService)],
+      [RECOMMENDATION_NAMES.SEARCH_STRING, new SearchStringStrategy(databaseService)],
+      [RECOMMENDATION_NAMES.SEARCH_JSON, new SearchJSONStrategy(databaseService)],
+      [RECOMMENDATION_NAMES.REDIS_VERSION, new RedisVersionStrategy()],
+      [RECOMMENDATION_NAMES.BIG_SETS, new BigSetStrategy()],
+      [RECOMMENDATION_NAMES.RTS, new RTSStrategy()],
       ['default', new DefaultRecommendationStrategy()],
       ['unknown', new DefaultRecommendationStrategy()],
       [null, new DefaultRecommendationStrategy()],

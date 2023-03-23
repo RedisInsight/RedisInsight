@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { GetKeyInfoResponse } from 'src/modules/browser/dto';
 
-export class Redisearch {
+export class SearchString {
   @ApiProperty({
     description: 'Redis client',
   })

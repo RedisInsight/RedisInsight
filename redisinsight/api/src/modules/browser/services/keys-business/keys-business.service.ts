@@ -184,6 +184,11 @@ export class KeysBusinessService {
         RECOMMENDATION_NAMES.SEARCH_STRING,
         { keys: result, client, databaseId: clientMetadata.databaseId },
       );
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_JSON,
+        { keys: result, client, databaseId: clientMetadata.databaseId },
+      );
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error(`Failed to get keys info: ${error.message}.`);
@@ -212,6 +217,11 @@ export class KeysBusinessService {
       const infoManager = this.keyInfoManager.getStrategy(type);
       const result = await infoManager.getInfo(clientMetadata, key, type);
       this.logger.log('Succeed to get key info');
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.BIG_SETS,
+        result,
+      );
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error('Failed to get key info.', error);

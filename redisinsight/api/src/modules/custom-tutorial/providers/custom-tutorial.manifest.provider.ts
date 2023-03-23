@@ -84,6 +84,10 @@ export class CustomTutorialManifestProvider {
     return manifest;
   }
 
+  public async isOriginalManifestExists(path: string): Promise<boolean> {
+    return fs.existsSync(join(path, MANIFEST_FILE));
+  }
+
   public async getOriginalManifestJson(path: string): Promise<RootCustomTutorialManifest> {
     try {
       return JSON.parse(
@@ -143,7 +147,7 @@ export class CustomTutorialManifestProvider {
    */
   public async generateTutorialManifest(tutorial: CustomTutorial): Promise<RootCustomTutorialManifest> {
     try {
-      const manifest = await this.getManifestJson(tutorial.absolutePath);
+      const manifest = await this.getManifestJson(tutorial.absolutePath) || {} as RootCustomTutorialManifest;
 
       return {
         ...manifest,
@@ -151,8 +155,8 @@ export class CustomTutorialManifestProvider {
         _path: tutorial.path,
         type: CustomTutorialManifestType.Group,
         id: tutorial.id,
-        label: tutorial.name || manifest.label,
-        children: manifest.children || [],
+        label: tutorial.name || manifest?.label,
+        children: manifest?.children || [],
       };
     } catch (e) {
       this.logger.warn('Unable to generate manifest for tutorial', e);

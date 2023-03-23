@@ -108,6 +108,7 @@ describe('CustomTutorialService', () => {
 
     it('Should create custom tutorial from external url (w/o manifest)', async () => {
       customTutorialManifestProvider.getOriginalManifestJson.mockResolvedValue(null);
+      customTutorialManifestProvider.isOriginalManifestExists.mockResolvedValue(false);
 
       const result = await service.create(mockUploadCustomTutorialExternalLinkDto);
 
@@ -121,6 +122,18 @@ describe('CustomTutorialService', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
         expect(e.message).toEqual('File or external link should be provided');
+      }
+    });
+
+    it('Should throw BadRequestException in case when manifest exists but unable to parse it', async () => {
+      customTutorialManifestProvider.getOriginalManifestJson.mockResolvedValueOnce(null);
+      customTutorialManifestProvider.isOriginalManifestExists.mockResolvedValueOnce(true);
+
+      try {
+        await service.create(mockUploadCustomTutorialExternalLinkDto);
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual('Unable to parse manifest.json file');
       }
     });
 

@@ -149,7 +149,7 @@ jobs:
   # Test jobs
   unit-tests-ui:
     docker:
-      - image: cimg/node:16.19.1
+      - image: cimg/node:16.15.1
     steps:
       - checkout
       - restore_cache:
@@ -193,7 +193,7 @@ jobs:
             - ./node_modules
   unit-tests-api:
     docker:
-      - image: cimg/node:16.19.1
+      - image: cimg/node:16.15.1
     steps:
       - checkout
       - restore_cache:
@@ -351,7 +351,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: choco install nodejs --version=16.19.1
+      - run: choco install nodejs --version=16.15.1
       - run:
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
@@ -500,7 +500,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '16.19.1'
+          node-version: '16.15.1'
       - attach_workspace:
           at: .
       - run:
@@ -575,7 +575,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '16.19.1'
+          node-version: '16.15.1'
       - attach_workspace:
           at: .
       - run:
@@ -645,7 +645,7 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            choco install nodejs --version=16.19.1
+            choco install nodejs --version=16.15.1
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
             yarn --cwd redisinsight/api/ install

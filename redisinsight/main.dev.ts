@@ -141,7 +141,7 @@ const bootstrap = async () => {
 
   const upgradeUrl = process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK;
 
-  if (upgradeUrl && !process['mas']) {
+  if (upgradeUrl && !process.mas) {
     new AppUpdater(upgradeUrl);
   }
 

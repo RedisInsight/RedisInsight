@@ -1,11 +1,8 @@
 import { join } from 'path';
 import * as os from 'os';
-import { getUsername } from '../src/utils/get-username';
 
 const homedir = process.env.APP_FOLDER_ABSOLUTE_PATH
-  || (join(
-    process['mas'] ? `/Users/${getUsername()}` : os.homedir(),
-    process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
+  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
 
 const prevHomedir = join(os.homedir(), '.redisinsight-preview');
 

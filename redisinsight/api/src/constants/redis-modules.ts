@@ -8,6 +8,12 @@ export enum AdditionalRedisModuleName {
   RedisTimeSeries = 'timeseries',
 }
 
+export enum AdditionalSearchModuleName {
+  SearchLight = 'searchlight',
+  FT = 'ft',
+  FTL = 'ftl',
+}
+
 export const SUPPORTED_REDIS_MODULES = Object.freeze({
   ai: AdditionalRedisModuleName.RedisAI,
   graph: AdditionalRedisModuleName.RedisGraph,
@@ -47,3 +53,10 @@ export const REDIS_MODULES_COMMANDS = new Map([
   [AdditionalRedisModuleName.RediSearch, ['ft.info']],
   [AdditionalRedisModuleName.RedisTimeSeries, ['ts.mrange', 'ts.info']],
 ]);
+
+export const REDISEARCH_MODULES: string[] = [
+  AdditionalRedisModuleName.RediSearch,
+  AdditionalSearchModuleName.SearchLight,
+  AdditionalSearchModuleName.FT,
+  AdditionalSearchModuleName.FTL,
+]

@@ -75,7 +75,6 @@ export class DatabaseAnalysisService {
         jobsArray.push(foundedRecommendations);
         return flatten(jobsArray);
       }, Promise.resolve([]));
-
       const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
         databaseId: clientMetadata.databaseId,
         db: client?.options?.db || 0,

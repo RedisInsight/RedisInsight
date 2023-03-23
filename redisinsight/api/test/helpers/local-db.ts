@@ -19,6 +19,7 @@ export const repositories = {
   SETTINGS: 'SettingsEntity',
   NOTIFICATION: 'NotificationEntity',
   DATABASE_ANALYSIS: 'DatabaseAnalysisEntity',
+  DATABASE_RECOMMENDATION: 'DatabaseRecommendationEntity',
   BROWSER_HISTORY: 'BrowserHistoryEntity',
 }
 
@@ -248,6 +249,38 @@ export const generateBrowserHistory = async (
       ...partial,
     }));
   }
+
+  return result;
+}
+
+export const generateDatabaseRecommendations = async (
+  partial: Record<string, any>,
+  truncate: boolean = false,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.DATABASE_RECOMMENDATION);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  result.push(await rep.save({
+    id: constants.TEST_RECOMMENDATION_ID_1,
+    databaseId: constants.TEST_RECOMMENDATIONS_DATABASE_ID,
+    name: constants.TEST_BIG_SETS_RECOMMENDATION,
+    createdAt: new Date(),
+    read: false,
+    ...partial,
+  }));
+
+  result.push(await rep.save({
+    id: constants.TEST_RECOMMENDATION_ID_2,
+    databaseId: constants.TEST_RECOMMENDATIONS_DATABASE_ID,
+    name: constants.TEST_REDISEARCH_RECOMMENDATION,
+    createdAt: new Date(),
+    read: false,
+    ...partial,
+  }));
 
   return result;
 }

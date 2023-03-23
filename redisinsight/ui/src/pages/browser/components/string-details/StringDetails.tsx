@@ -19,10 +19,11 @@ import {
   isEqualBuffers,
   isFormatEditable,
   stringToBuffer,
-  stringToSerializedBufferFormat
+  stringToSerializedBufferFormat,
 } from 'uiSrc/utils'
 import {
   resetStringValue,
+  setIsStringCompressed,
   stringDataSelector,
   stringSelector,
   updateStringValueAction,
@@ -30,8 +31,10 @@ import {
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
-import { TEXT_INVALID_VALUE, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
+import { TEXT_DISABLED_COMPRESSED_VALUE, TEXT_FAILED_CONVENT_FORMATTER, TEXT_INVALID_VALUE, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
+import { decompressingBuffer } from 'uiSrc/utils/decompressors'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import styles from './styles.module.scss'
 
@@ -47,6 +50,7 @@ export interface Props {
 const StringDetails = (props: Props) => {
   const { isEditItem, setIsEdit } = props
 
+  const { compressor = null } = useSelector(connectedInstanceSelector)
   const { loading } = useSelector(stringSelector)
   const { value: initialValue } = useSelector(stringDataSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
@@ -59,6 +63,7 @@ const StringDetails = (props: Props) => {
   const [isValid, setIsValid] = useState(true)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isEditable, setIsEditable] = useState(true)
+  const [noEditableText, setNoEditableText] = useState<string>(TEXT_DISABLED_COMPRESSED_VALUE)
 
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
   const viewValueRef: Ref<HTMLPreElement> = useRef(null)
@@ -72,8 +77,10 @@ const StringDetails = (props: Props) => {
   useEffect(() => {
     if (!initialValue) return
 
-    const initialValueString = bufferToString(initialValue, viewFormat)
-    const { value: formattedValue, isValid } = formattingBuffer(initialValue, viewFormatProp, { expanded: true })
+    const { value: decompressedValue, isCompressed } = decompressingBuffer(initialValue, compressor)
+
+    const initialValueString = bufferToString(decompressedValue, viewFormat)
+    const { value: formattedValue, isValid } = formattingBuffer(decompressedValue, viewFormatProp, { expanded: true })
     setAreaValue(initialValueString)
 
     setValue(formattedValue)
@@ -82,12 +89,15 @@ const StringDetails = (props: Props) => {
       !isNonUnicodeFormatter(viewFormatProp, isValid)
         && !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
     )
-    setIsEditable(isFormatEditable(viewFormatProp))
+    setIsEditable(!isCompressed && isFormatEditable(viewFormatProp))
+    setNoEditableText(isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormat))
+
+    dispatch(setIsStringCompressed(isCompressed))
 
     if (viewFormat !== viewFormatProp) {
       setViewFormat(viewFormatProp)
     }
-  }, [initialValue, viewFormatProp])
+  }, [initialValue, viewFormatProp, compressor])
 
   useEffect(() => {
     // Approximate calculation of textarea rows by initialValue
@@ -153,7 +163,7 @@ const StringDetails = (props: Props) => {
               ? value
               : (
                 <EuiToolTip
-                  title={`Failed to convert to ${viewFormat}`}
+                  title={noEditableText}
                   className={styles.tooltip}
                   position="bottom"
                 >

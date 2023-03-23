@@ -16,7 +16,8 @@ import reducer, {
   updateValueSuccess,
   updateValueFailure,
   resetStringValue,
-  updateStringValueAction
+  updateStringValueAction,
+  setIsStringCompressed,
 } from '../../browser/string'
 
 let store: typeof mockedStore
@@ -258,6 +259,29 @@ describe('string slice', () => {
 
       // Act
       const nextState = reducer(initialState, resetStringValue())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: {
+          string: nextState,
+        },
+      })
+      expect(stringSelector(rootState)).toEqual(state)
+      expect(stringDataSelector(rootState)).toEqual(state.data)
+    })
+  })
+
+  describe('setIsStringCompressed', () => {
+    it('should properly set the state with isCompressed=true', () => {
+      // Arrange
+
+      const state = {
+        ...initialState,
+        isCompressed: true,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setIsStringCompressed(true))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

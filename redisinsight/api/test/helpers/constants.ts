@@ -3,6 +3,7 @@ import * as path from 'path';
 import { randomBytes } from 'crypto';
 import { getASCIISafeStringFromBuffer, getBufferFromSafeASCIIString } from "src/utils/cli-helper";
 import { RECOMMENDATION_NAMES } from 'src/constants';
+import { Compressor } from 'src/modules/database/entities/database.entity';
 
 const API = {
   DATABASES: 'databases',
@@ -66,6 +67,7 @@ export const constants = {
   TEST_REDIS_HOST: process.env.TEST_REDIS_HOST || 'localhost',
   TEST_REDIS_PORT: parseInt(process.env.TEST_REDIS_PORT) || 6379,
   TEST_REDIS_TIMEOUT: 30_000,
+  TEST_REDIS_COMPRESSOR: Compressor.NONE,
   TEST_REDIS_DB_INDEX: 7,
   TEST_REDIS_USER: process.env.TEST_REDIS_USER,
   TEST_REDIS_PASSWORD: process.env.TEST_REDIS_PASSWORD,

@@ -16,10 +16,11 @@ import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stre
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { getFormatTime } from 'uiSrc/utils/streamUtils'
-import { KeyTypes, TableCellTextAlignment } from 'uiSrc/constants'
+import { KeyTypes, TableCellTextAlignment, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
+import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
 import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import StreamDataView from './StreamDataView'
@@ -42,7 +43,7 @@ const StreamDataViewWrapper = (props: Props) => {
     keyNameString: keyString,
     lastRefreshTime,
   } = useSelector(streamDataSelector)
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType: browserViewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
@@ -96,8 +97,9 @@ const StreamDataViewWrapper = (props: Props) => {
             id: field,
             label: field,
             render: () => {
+              const { value: decompressedName } = decompressingBuffer(name, compressor)
               const value = name ? bufferToString(name) : ''
-              const { value: formattedValue, isValid } = formattingBuffer(name || stringToBuffer(''), viewFormatProp)
+              const { value: formattedValue, isValid } = formattingBuffer(decompressedName || stringToBuffer(''), viewFormatProp)
               const tooltipContent = formatLongName(value)
               return (
                 <>
@@ -107,7 +109,7 @@ const StreamDataViewWrapper = (props: Props) => {
                       data-testid={`stream-field-name-${field}`}
                     >
                       <EuiToolTip
-                        title={isValid ? 'Field' : `Failed to convert to ${viewFormatProp}`}
+                        title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                         anchorClassName="truncateText"
                         position="bottom"
                         content={tooltipContent}
@@ -209,8 +211,9 @@ const StreamDataViewWrapper = (props: Props) => {
       const values = fields.filter(({ name: fieldName }) => bufferToString(fieldName, viewFormat) === name)
       const value = values[index] ? bufferToString(values[index]?.value) : ''
 
-      const bufferValue = values[index]?.value || stringToBuffer('')
-      const { value: formattedValue, isValid } = formattingBuffer(bufferValue, viewFormatProp, { expanded })
+      const { value: decompressedBufferValue } = decompressingBuffer(values[index]?.value || stringToBuffer(''), compressor)
+      // const bufferValue = values[index]?.value || stringToBuffer('')
+      const { value: formattedValue, isValid } = formattingBuffer(decompressedBufferValue, viewFormatProp, { expanded })
       const cellContent = formattedValue?.substring?.(0, 650) ?? formattedValue
       const tooltipContent = formatLongName(value)
 
@@ -223,7 +226,7 @@ const StreamDataViewWrapper = (props: Props) => {
           >
             {!expanded && (
               <EuiToolTip
-                title={isValid ? 'Value' : `Failed to convert to ${viewFormatProp}`}
+                title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                 className={styles.tooltip}
                 anchorClassName="streamItem line-clamp-2"
                 position="bottom"

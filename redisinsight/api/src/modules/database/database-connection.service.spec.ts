@@ -10,10 +10,12 @@ import {
   mockIORedisClient, mockRedisConnectionFactory,
   mockRedisNoAuthError,
   mockRedisService,
+  mockDatabaseRecommendationService,
   MockType,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
@@ -26,6 +28,7 @@ describe('DatabaseConnectionService', () => {
   let redisService: MockType<RedisService>;
   let redisConnectionFactory: MockType<RedisConnectionFactory>;
   let analytics: MockType<DatabaseAnalytics>;
+  let recommendationService: MockType<DatabaseRecommendationService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -57,6 +60,10 @@ describe('DatabaseConnectionService', () => {
           provide: DatabaseAnalytics,
           useFactory: mockDatabaseAnalytics,
         },
+        {
+          provide: DatabaseRecommendationService,
+          useFactory: mockDatabaseRecommendationService,
+        },
       ],
     }).compile();
 
@@ -64,12 +71,19 @@ describe('DatabaseConnectionService', () => {
     redisService = await module.get(RedisService);
     redisConnectionFactory = await module.get(RedisConnectionFactory);
     analytics = await module.get(DatabaseAnalytics);
+    recommendationService = module.get(DatabaseRecommendationService);
   });
 
   describe('connect', () => {
     it('should connect to database', async () => {
       expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
       expect(redisConnectionFactory.createRedisConnection).not.toHaveBeenCalled();
+    });
+
+    it('should call recommendationService', async () => {
+      expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
+
+      expect(recommendationService.check).toHaveBeenCalled();
     });
   });
 

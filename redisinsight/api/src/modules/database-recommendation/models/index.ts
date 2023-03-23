@@ -1,2 +1,3 @@
 export * from './database-recommendation';
-export * from './redisearch';
+export * from './searchString';
+export * from './searchJSON';

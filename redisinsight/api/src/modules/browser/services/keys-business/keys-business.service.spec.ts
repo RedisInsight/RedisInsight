@@ -171,6 +171,25 @@ describe('KeysBusinessService', () => {
         service.getKeyInfo(mockBrowserClientMetadata, getKeyInfoResponse.name),
       ).rejects.toThrow(ForbiddenException);
     });
+
+    it('should call recommendationService', async () => {
+      const mockResult: GetKeyInfoResponse = {
+        ...getKeyInfoResponse,
+        length: 10,
+      };
+      stringTypeInfoManager.getInfo = jest.fn().mockResolvedValue(mockResult);
+
+      const result = await service.getKeyInfo(
+        mockBrowserClientMetadata,
+        getKeyInfoResponse.name,
+      );
+
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.BIG_SETS,
+        result,
+      );
+    });
   });
 
   describe('getKeysInfo', () => {
@@ -200,6 +219,13 @@ describe('KeysBusinessService', () => {
         RECOMMENDATION_NAMES.SEARCH_STRING,
         { keys: result, client: nodeClient, databaseId: mockBrowserClientMetadata.databaseId },
       );
+
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_JSON,
+        { keys: result, client: nodeClient, databaseId: mockBrowserClientMetadata.databaseId },
+      );
+      expect(recommendationService.check).toBeCalledTimes(2);
     });
     it("user don't have required permissions for getKeyInfo", async () => {
       const replyError: ReplyError = {

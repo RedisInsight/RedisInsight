@@ -3,11 +3,11 @@ import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/dto';
-import { Redisearch } from 'src/modules/database-recommendation/models/redisearch';
+import { SearchString } from 'src/modules/database-recommendation/models/searchString';
 
 const maxRediSearchStringMemory = 512 * 1024;
 
-export class RediSearchStrategy extends AbstractRecommendationStrategy {
+export class SearchStringStrategy extends AbstractRecommendationStrategy {
   private databaseService: DatabaseService;
 
   constructor(
@@ -23,7 +23,7 @@ export class RediSearchStrategy extends AbstractRecommendationStrategy {
    */
 
   async isRecommendationReached(
-    data: Redisearch,
+    data: SearchString,
   ): Promise<boolean> {
     try {
       // todo: refactor. no need entire entity here

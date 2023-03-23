@@ -4,7 +4,7 @@ import IORedis from 'ioredis';
 import { mockDatabaseService } from 'src/__mocks__';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { GetKeyInfoResponse } from 'src/modules/browser/dto';
-import { RediSearchStrategy } from 'src/modules/database-recommendation/scanner/strategies';
+import { SearchStringStrategy } from 'src/modules/database-recommendation/scanner/strategies';
 
 const nodeClient = Object.create(IORedis.prototype);
 nodeClient.sendCommand = jest.fn();
@@ -35,8 +35,8 @@ const mockHashInfo: GetKeyInfoResponse = {
 const mockEmptyIndexes = [];
 const mockIndexes = ['foo'];
 
-describe('RediSearchStrategy', () => {
-  let strategy: RediSearchStrategy;
+describe('SearchStringStrategy', () => {
+  let strategy: SearchStringStrategy;
   let databaseService;
 
   beforeEach(async () => {
@@ -50,7 +50,7 @@ describe('RediSearchStrategy', () => {
     }).compile();
 
     databaseService = module.get<DatabaseService>(DatabaseService);
-    strategy = new RediSearchStrategy(databaseService);
+    strategy = new SearchStringStrategy(databaseService);
   });
 
   describe('isRecommendationReached', () => {

@@ -1,9 +1,11 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { instance, mock } from 'ts-mockito'
-import store, { RootState } from 'uiSrc/slices/store'
-import { bufferToString } from 'uiSrc/utils'
+import { KeyValueCompressor } from 'uiSrc/constants'
+import { stringDataSelector } from 'uiSrc/slices/browser/string'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { anyToBuffer, bufferToString } from 'uiSrc/utils'
 import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
+import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
 import StringDetails, { Props } from './StringDetails'
 
 const STRING_VALUE = 'string-value'
@@ -21,31 +23,12 @@ jest.mock('uiSrc/slices/browser/string', () => ({
   }),
 }))
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn()
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    compressor: null,
+  }),
 }))
-
-beforeEach(() => {
-  const state: RootState = store.getState();
-
-  (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-    ...state,
-    browser: {
-      ...state.browser,
-      string: {
-        ...state.browser.string,
-        data: {
-          key: 'test',
-          value: {
-            type: 'Buffer',
-            data: [49, 34, 43],
-          }
-        }
-      }
-    }
-  }))
-})
 
 describe('StringDetails', () => {
   it('should render', () => {
@@ -126,5 +109,51 @@ describe('StringDetails', () => {
     const btnApply = screen.getByTestId('apply-btn')
     fireEvent.click(btnApply)
     expect(textArea).toHaveValue(STRING_VALUE_SPACE)
+  })
+
+  describe('decompressed  data', () => {
+    it('should render decompressed GZIP data = "1"', () => {
+      const stringDataSelectorMock = jest.fn().mockReturnValue({
+        value: anyToBuffer(GZIP_COMPRESSED_VALUE_1)
+      })
+      stringDataSelector.mockImplementation(stringDataSelectorMock)
+
+      connectedInstanceSelector.mockImplementation(() => ({
+        compressor: KeyValueCompressor.GZIP,
+      }))
+
+      render(
+        <StringDetails
+          {...instance(mockedProps)}
+          isEditItem
+          setIsEdit={jest.fn()}
+        />
+      )
+      const textArea = screen.getByTestId(STRING_VALUE)
+
+      expect(textArea).toHaveValue(DECOMPRESSED_VALUE_STR_1)
+    })
+
+    it('should render decompressed GZIP data = "2"', () => {
+      const stringDataSelectorMock = jest.fn().mockReturnValue({
+        value: anyToBuffer(GZIP_COMPRESSED_VALUE_2)
+      })
+      stringDataSelector.mockImplementation(stringDataSelectorMock)
+
+      connectedInstanceSelector.mockImplementation(() => ({
+        compressor: KeyValueCompressor.GZIP,
+      }))
+
+      render(
+        <StringDetails
+          {...instance(mockedProps)}
+          isEditItem
+          setIsEdit={jest.fn()}
+        />
+      )
+      const textArea = screen.getByTestId(STRING_VALUE)
+
+      expect(textArea).toHaveValue(DECOMPRESSED_VALUE_STR_2)
+    })
   })
 })

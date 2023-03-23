@@ -181,6 +181,26 @@ export enum KeyValueFormat {
   Pickle = 'Pickle',
 }
 
+export enum KeyValueCompressor {
+  GZIP = 'GZIP',
+  ZSTD = 'ZSTD',
+  LZ4 = 'LZ4',
+  SNAPPY = 'SNAPPY',
+  // Brotli = 'Brotli',
+  // PHPGZCompress = 'PHPGZCompress',
+}
+
+export const COMPRESSOR_MAGIC_SYMBOLS: ICompressorMagicSymbols = Object.freeze({
+  [KeyValueCompressor.GZIP]: '31,139', // 1f 8b hex
+  [KeyValueCompressor.ZSTD]: '40,181,47,253', // 28 b5 2f fd hex
+  [KeyValueCompressor.LZ4]: '4,34,77,24', // 04 22 4d 18 hex
+  [KeyValueCompressor.SNAPPY]: '', // no magic symbols
+})
+
+export type ICompressorMagicSymbols = {
+  [key in KeyValueCompressor]: string
+}
+
 export const ENDPOINT_BASED_ON_KEY_TYPE = Object.freeze({
   [KeyTypes.ZSet]: ApiEndpoints.ZSET,
   [KeyTypes.Set]: ApiEndpoints.SET,
@@ -192,6 +212,7 @@ export const ENDPOINT_BASED_ON_KEY_TYPE = Object.freeze({
 })
 
 export type EndpointBasedOnKeyType = keyof (typeof ENDPOINT_BASED_ON_KEY_TYPE)
+
 export enum SearchHistoryMode {
   Pattern = 'pattern',
   Redisearch = 'redisearch'

@@ -178,6 +178,7 @@ const InstanceFormWrapper = (props: Props) => {
       username,
       password,
       db,
+      compressor,
       timeout,
       sentinelMasterName,
       sentinelMasterUsername,
@@ -238,6 +239,7 @@ const InstanceFormWrapper = (props: Props) => {
       db: +(db || 0),
       username,
       password,
+      compressor,
       timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
     }
 
@@ -372,6 +374,7 @@ const InstanceFormWrapper = (props: Props) => {
       username,
       password,
       timeout,
+      compressor,
       sentinelMasterUsername,
       sentinelMasterPassword,
     } = values
@@ -383,6 +386,7 @@ const InstanceFormWrapper = (props: Props) => {
       port: +port,
       username,
       password,
+      compressor,
       timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
     }
 
@@ -409,6 +413,7 @@ const InstanceFormWrapper = (props: Props) => {
       password,
       timeout,
       db,
+      compressor,
       sentinelMasterName,
       sentinelMasterUsername,
       sentinelMasterPassword,
@@ -418,6 +423,7 @@ const InstanceFormWrapper = (props: Props) => {
       host,
       port: +port,
       db: +(db || 0),
+      compressor,
       username,
       password,
       timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),

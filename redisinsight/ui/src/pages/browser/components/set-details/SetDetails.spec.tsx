@@ -1,6 +1,9 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { setDataSelector } from 'uiSrc/slices/browser/set'
+import { anyToBuffer } from 'uiSrc/utils'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
 import SetDetails, { Props } from './SetDetails'
 
 const members = [
@@ -55,5 +58,24 @@ describe('SetDetails', () => {
     render(<SetDetails {...instance(mockedProps)} />)
     fireEvent.click(screen.getAllByTestId(/set-remove-btn/)[0])
     expect(screen.getByTestId(/set-remove-btn-1-icon/)).toBeInTheDocument()
+  })
+
+  describe('decompressed  data', () => {
+    it('should render decompressed GZIP data = "1"', () => {
+      const defaultState = jest.requireActual('uiSrc/slices/browser/set').initialState
+      const setDataSelectorMock = jest.fn().mockReturnValue({
+        ...defaultState,
+        key: '123zxczxczxc',
+        members: [
+          anyToBuffer(GZIP_COMPRESSED_VALUE_1),
+        ]
+      })
+      setDataSelector.mockImplementation(setDataSelectorMock)
+
+      const { queryByTestId } = render(<SetDetails {...instance(mockedProps)} />)
+      const memberEl = queryByTestId(/set-member-value-/)
+
+      expect(memberEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
+    })
   })
 })

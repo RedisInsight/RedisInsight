@@ -6,6 +6,7 @@ import {
   ApiEndpoints,
   BrowserStorageItem,
   KeyTypes,
+  KeyValueCompressor,
   KeyValueFormat,
   EndpointBasedOnKeyType,
   ENDPOINT_BASED_ON_KEY_TYPE,
@@ -95,6 +96,7 @@ export const initialState: KeysStore = {
     data: null,
     length: 0,
     viewFormat: localStorageService?.get(BrowserStorageItem.viewFormat) ?? defaultViewFormat,
+    compressor: null,
   },
   addKey: {
     loading: false,
@@ -447,7 +449,7 @@ export const {
   loadSearchHistoryFailure,
   deleteSearchHistory,
   deleteSearchHistorySuccess,
-  deleteSearchHistoryFailure
+  deleteSearchHistoryFailure,
 } = keysSlice.actions
 
 // A selector

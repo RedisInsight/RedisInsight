@@ -2,9 +2,9 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, mockedStore, render, fireEvent, act, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
-import QueryCardHeader, { Props } from './QueryCardHeader'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
+import QueryCardHeader, { Props } from './QueryCardHeader'
 
 const mockedProps = mock<Props>()
 

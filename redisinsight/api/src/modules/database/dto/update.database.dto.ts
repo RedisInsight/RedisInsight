@@ -1,6 +1,7 @@
 import { ApiPropertyOptional, getSchemaPath } from '@nestjs/swagger';
 import {
   IsBoolean,
+  IsEnum,
   IsInt, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString, MaxLength, Min, ValidateIf, ValidateNested,
 } from 'class-validator';
 import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
@@ -16,6 +17,7 @@ import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto'
 import { CreateBasicSshOptionsDto } from 'src/modules/ssh/dto/create.basic-ssh-options.dto';
 import { CreateCertSshOptionsDto } from 'src/modules/ssh/dto/create.cert-ssh-options.dto';
 import { sshOptionsTransformer } from 'src/modules/ssh/transformers/ssh-options.transformer';
+import { Compressor } from '../entities/database.entity';
 
 export class UpdateDatabaseDto extends CreateDatabaseDto {
   @ValidateIf((object, value) => value !== undefined)
@@ -157,4 +159,14 @@ export class UpdateDatabaseDto extends CreateDatabaseDto {
   @ValidateNested()
   @Default(null)
   sshOptions?: CreateBasicSshOptionsDto | CreateCertSshOptionsDto;
+
+  @ApiPropertyOptional({
+    description: 'Database compressor',
+    default: Compressor.NONE,
+    enum: Compressor,
+  })
+  @Expose()
+  @IsEnum(Compressor)
+  @IsOptional()
+  compressor?: Compressor = Compressor.NONE;
 }

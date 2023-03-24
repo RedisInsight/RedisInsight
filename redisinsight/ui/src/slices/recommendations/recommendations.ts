@@ -25,6 +25,9 @@ const recommendationsSlice = createSlice({
   name: 'recommendations',
   initialState,
   reducers: {
+    resetRecommendationsHighlighting: (state) => {
+      state.isHighlighted = !localStorageService?.get(BrowserStorageItem.recommendationsViewed)
+    },
     getRecommendations: (state) => {
       state.loading = true
       state.error = ''
@@ -59,6 +62,7 @@ const recommendationsSlice = createSlice({
 
 // Actions generated from the slice
 export const {
+  resetRecommendationsHighlighting,
   getRecommendations,
   getRecommendationsSuccess,
   getRecommendationsFailure,
@@ -79,10 +83,8 @@ export function fetchRecommendationsAction(
   onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+  return async (dispatch: AppDispatch) => {
     try {
-      const state = stateInit()
-      const { isContentVisible } = state.recommendations
       dispatch(getRecommendations())
 
       const { data, status } = await apiService.get<IRecommendations>(
@@ -93,7 +95,7 @@ export function fetchRecommendationsAction(
       )
 
       if (isStatusSuccessful(status)) {
-        if (!isContentVisible && data.totalUnread) {
+        if (data.totalUnread) {
           dispatch(setIsHighlighted(true))
         }
         dispatch(getRecommendationsSuccess(data))

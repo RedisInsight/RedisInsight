@@ -107,7 +107,7 @@ const LiveTimeRecommendations = () => {
         className={cx(styles.trigger, { [styles.isOpen]: isContentVisible })}
         data-testid="recommendations-trigger"
       >
-        {isHighlighted
+        {isHighlighted && !isContentVisible
           ? <TriggerIcon className={cx(styles.triggerIconActive, styles.triggerIcon)} />
           : <TriggerIcon className={styles.triggerIcon} />}
       </div>

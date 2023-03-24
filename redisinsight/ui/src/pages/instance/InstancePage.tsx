@@ -11,7 +11,7 @@ import {
   getDatabaseConfigInfoAction,
   instancesSelector,
 } from 'uiSrc/slices/instances/instances'
-import { fetchRecommendationsAction } from 'uiSrc/slices/recommendations/recommendations'
+import { fetchRecommendationsAction, resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
@@ -108,6 +108,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setDatabaseAnalysisInitialState())
     dispatch(setInitialAnalyticsSettings())
     dispatch(setRedisearchInitialState())
+    dispatch(resetRecommendationsHighlighting())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

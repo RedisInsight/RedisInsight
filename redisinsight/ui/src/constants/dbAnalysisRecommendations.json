@@ -283,6 +283,28 @@
     "id": "bigSets",
     "title": "Switch to Bloom filter, cuckoo filter, or HyperLogLog",
     "redisStack": true,
+    "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "If you are using sets for existence checks or to eliminate duplicates, and you are ready to trade accuracy with speed and memory usage, consider using Redis probabilistic data structures to increase performance and decrease memory usage."
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
+        "type": "span",
+        "value": "Learn more about how probabilistic data structures can help you via Tutorials in "
+      },
+      {
+        "id": "4",
+        "type": "workbenchLink",
+        "value": "Workbench"
+      }
+    ],
     "content": [
       {
         "id": "1",
@@ -496,6 +518,28 @@
     "id": "RTS",
     "title":"Optimize the use of time series",
     "redisStack": true,
+    "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "If you are using sorted sets to work with time series data, consider using RedisTimeSeries to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
+        "type": "span",
+        "value": "Learn more about how a Time Series data structure can help you via Tutorials in "
+      },
+      {
+        "id": "4",
+        "type": "workbenchLink",
+        "value": "Workbench"
+      }
+    ],
     "content": [
       {
         "id": "1",
@@ -545,6 +589,36 @@
     "id": "redisVersion",
     "title":"Update Redis database",
     "redisStack": true,
+    "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Newer versions of Redis (starting from 6.0) have performance and resource utilization improvements, as well as the improved active, expire cycle to evict the keys faster."
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
+        "type": "span",
+        "value": "Create a "
+      },
+      {
+        "id": "4",
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_extended_rec",
+          "name": "free Redis Stack"
+        }
+      },
+      {
+        "id": "5",
+        "type": "span",
+        "value": " which extends the core capabilities of Redis OSS and provides a complete developer experience for debugging and more."
+      }
+    ],
     "content": [
       {
         "id": "1",
@@ -689,11 +763,55 @@
     "badges": ["upgrade"]
   },
   "searchString": {
-    "id": "compressHashFieldNames",
+    "id": "searchString",
     "title": "Compress Hash field names",
     "liveTimeText": [
-      "Storing large strings (> 512 KB) could consume more resources and time to process, manipulate, update and retrieve them. Consider representing your data using hashes or use RedisJSON to store your JSON documents to improve performance.",
-      "Additionally, if working with hashes or JSONs, you can use RediSearch, which helps to address your query needs and supports a better development experience when dealing with complex data scenarios."
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Storing large strings (> 512 KB) could consume more resources and time to process, manipulate, update and retrieve them. Consider representing your data using hashes or use RedisJSON to store your JSON documents to improve performance."
+      },
+      {
+        "id": "2",
+        "type": "paragraph",
+        "value": "Additionally, if working with hashes or JSONs, you can use RediSearch, which helps to address your query needs and supports a better development experience when dealing with complex data scenarios."
+      }
+    ]
+  },
+  "searchJSON": {
+    "id": "searchJSON",
+    "title": "Query and search JSON documents",
+    "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "If working with JSONs, you can use RediSearch, designed to help address your query needs and support a better development experience."
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
+        "type": "paragraph",
+        "value": "RediSearch adds the capability to query, secondary index, and full-text search for Redis. These features enable multi-field queries, aggregation, exact phrase matching, numeric filtering, geo filtering, and vector similarity semantic search on top of text queries."
+      },
+      {
+        "id": "5",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "6",
+        "type": "span",
+        "value": "Learn more about how Search capability can help you via Tutorials in "
+      },
+      {
+        "id": "7",
+        "type": "workbenchLink",
+        "value": "Workbench"
+      }
     ]
   }
 }

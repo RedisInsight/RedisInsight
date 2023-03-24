@@ -23,11 +23,10 @@ import { BrowserHistoryMode } from 'src/common/constants';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 import { BrowserHistoryService } from '../browser-history/browser-history.service';
 import { CreateBrowserHistoryDto } from '../../dto/browser-history/create.browser-history.dto';
-import { IMaxSearchResults } from '../../interfaces';
 
 @Injectable()
 export class RedisearchService {
-  private maxSearchResults: IMaxSearchResults = {};
+  private maxSearchResults: Map<string, null | number> = new Map();
 
   private logger = new Logger('RedisearchService');
 
@@ -154,7 +153,7 @@ export class RedisearchService {
 
       const client = await this.browserTool.getRedisClient(clientMetadata);
 
-      if (isUndefined(this.maxSearchResults[clientMetadata.databaseId])) {
+      if (isUndefined(this.maxSearchResults.get(clientMetadata.databaseId))) {
         try {
           // response: [ [ 'MAXSEARCHRESULTS', '10000' ] ]
           const [[, maxSearchResults]] = await client.sendCommand(
@@ -163,14 +162,14 @@ export class RedisearchService {
             }),
           ) as [[string, string]];
 
-          this.maxSearchResults[clientMetadata.databaseId] = toNumber(maxSearchResults);
+          this.maxSearchResults.set(clientMetadata.databaseId, toNumber(maxSearchResults));
         } catch (error) {
-          this.maxSearchResults[clientMetadata.databaseId] = null;
+          this.maxSearchResults.set(clientMetadata.databaseId, null);
         }
       }
       // Workaround: recalculate limit to not query more then MAXSEARCHRESULTS
       let safeLimit = limit;
-      const maxSearchResult = this.maxSearchResults[clientMetadata.databaseId]
+      const maxSearchResult = this.maxSearchResults.get(clientMetadata.databaseId)
 
       if (maxSearchResult && offset + limit > maxSearchResult) {
         safeLimit = offset <= maxSearchResult ? maxSearchResult - offset : limit;

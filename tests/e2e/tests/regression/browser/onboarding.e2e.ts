@@ -167,7 +167,8 @@ test
     // Go to PubSub page
     await t.click(myRedisDatabasePage.pubSubButton);
     // Verify onboarding completed successfully
-    await onBoardActions.verifyOnboardingCompleted();
+    await t.expect(onboardingPage.showMeAroundButton.exists).notOk('Show me around button still visible');
+    await t.expect(onboardingPage.stepTitle.exists).notOk('Onboarding tooltip still visible');
     // Go to Browser Page
     await t.click(myRedisDatabasePage.browserButton);
     // Verify onboarding completed successfully

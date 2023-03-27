@@ -1,16 +1,18 @@
 import { EuiTitle } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import { SubscriptionType } from 'uiSrc/constants/pubSub'
-import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
+import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
+import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { MessagesListWrapper, PublishMessage, SubscriptionPanel } from './components'
 
 import styles from './styles.module.scss'
@@ -26,6 +28,25 @@ const PubSubPage = () => {
 
   const dbName = `${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)}`
   setTitle(`${dbName} - Pub/Sub`)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => () => {
+    // as here is the last step of onboarding, we set next step when move from the page
+    // remove it when pubSub won't be the last page
+    dispatch(incrementOnboardStepAction(
+      OnboardingSteps.Finish,
+      0,
+      () => {
+        sendEventTelemetry({
+          event: TelemetryEvent.ONBOARDING_TOUR_FINISHED,
+          eventData: {
+            databaseId: instanceId
+          }
+        })
+      }
+    ))
+  }, [])
 
   useEffect(() => {
     if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {

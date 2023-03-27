@@ -112,7 +112,7 @@ test('Verify onbarding new user steps', async t => {
     await onBoardActions.verifyOnboardingCompleted();
 });
 // https://redislabs.atlassian.net/browse/RI-4067, https://redislabs.atlassian.net/browse/RI-4278
-test('verify onboard new user skip tour', async(t) => {
+test('Verify onboard new user skip tour', async(t) => {
     await t.click(myRedisDatabasePage.helpCenterButton);
     await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
@@ -139,5 +139,24 @@ test('verify onboard new user skip tour', async(t) => {
     await onBoardActions.verifyOnboardingCompleted();
     await common.reloadPage();
     // verify onboarding step still not visible after refresh page
+    await onBoardActions.verifyOnboardingCompleted();
+});
+// https://redislabs.atlassian.net/browse/RI-4305
+test('Verify that the final onboarding step is closed when user opens another page', async(t) => {
+    await t.click(myRedisDatabasePage.helpCenterButton);
+    await t.click(onboardingPage.resetOnboardingBtn);
+    await onBoardActions.startOnboarding();
+    await onBoardActions.clickNextUntilLastStep();
+    // Verify last step of onboarding process is visible
+    await onBoardActions.verifyStepVisible('Great job!');
+    // Go to Workbench page
+    await t.click(myRedisDatabasePage.workbenchButton);
+    // Go to PubSub page
+    await t.click(myRedisDatabasePage.pubSubButton);
+    // Verify onboarding completed successfully
+    await onBoardActions.verifyOnboardingCompleted();
+    // Go to Browser Page
+    await t.click(myRedisDatabasePage.browserButton);
+    // Verify onboarding completed successfully
     await onBoardActions.verifyOnboardingCompleted();
 });

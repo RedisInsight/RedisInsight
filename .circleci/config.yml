@@ -8,7 +8,10 @@ aliases:
         security create-keychain -p mysecretpassword $KEYCHAIN
         security default-keychain -s $KEYCHAIN
         security unlock-keychain -p mysecretpassword $KEYCHAIN
-        security import certs/cert.p12 -k $KEYCHAIN -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign
+        security set-keychain-settings -u -t 10000000 $KEYCHAIN
+        security import certs/mac-developer.p12 -k $KEYCHAIN -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+        security import certs/mas-distribution.p12 -k $KEYCHAIN -P "$CSC_MAS_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+        security import certs/mac-installer.p12 -k $KEYCHAIN -P "$CSC_MAC_INSTALLER_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
         security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
       environment:
         KEYCHAIN: redisinsight.keychain
@@ -129,7 +132,7 @@ aliases:
     key: v1-ui-deps-{{ checksum "redisinsight/api/yarn.lock" }}
 
 orbs:
-  win: circleci/windows@2.4.0
+  win: circleci/windows@2.4.1
   node: circleci/node@5.0.2
   aws: circleci/aws-cli@2.0.3
 
@@ -447,7 +450,9 @@ jobs:
           name: Setup sign certificates
           command: |
             mkdir -p certs
-            echo "$CSC_P12_BASE64" | base64 -id > certs/cert.p12
+            echo "$CSC_P12_BASE64" | base64 -id > certs/mac-developer.p12
+            echo "$CSC_MAC_INSTALLER_P12_BASE64" | base64 -id > certs/mac-installer.p12
+            echo "$CSC_MAS_P12_BASE64" | base64 -id > certs/mas-distribution.p12
             echo "$WIN_CSC_PFX_BASE64" | base64 -id > certs/redislabs_win.pfx
       - persist_to_workspace:
           root: .
@@ -469,19 +474,11 @@ jobs:
             mkdir electron
 
             CURRENT_VERSION=$(jq -r ".version" redisinsight/package.json)
-            echo "Version: ${CURRENT_VERSION}"
-
-            if [ << parameters.env >> == "prod" ]; then
-              echo "Build version: $CURRENT_VERSION"
-              cp ./redisinsight/package.json ./electron/package.json
-              echo "$VERSION" > electron/version
-              exit 0
-            fi
-
-            VERSION=$CURRENT_VERSION-<< parameters.env >>-$CIRCLE_BUILD_NUM
-            echo "Build version: $VERSION"
+            echo "Build version: $CURRENT_VERSION"
+            cp ./redisinsight/package.json ./electron/package.json
             echo "$VERSION" > electron/version
-            echo $(jq ".version=\"$VERSION\"" redisinsight/package.json) > electron/package.json
+            exit 0
+
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -568,7 +565,7 @@ jobs:
             - release/redisstack
   macosx:
     macos:
-      xcode: 13.2.1
+      xcode: 14.2.0
     parameters:
       env:
         description: Build environment (stage || prod)
@@ -595,6 +592,10 @@ jobs:
       - run:
           name: Build macos dmg
           command: |
+            unset CSC_LINK
+            export CSC_IDENTITY_AUTO_DISCOVERY=true
+            export CSC_KEYCHAIN=redisinsight.keychain
+
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               rm -rf release/mac
@@ -609,7 +610,7 @@ jobs:
 
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
             rm -rf release/mac
-          no_output_timeout: 15m
+          no_output_timeout: 60m
 
       - run:
           name: Repack dmg to tar
@@ -622,6 +623,7 @@ jobs:
             - release/RedisInsight*.zip
             - release/RedisInsight*.dmg
             - release/RedisInsight*.dmg.blockmap
+            - release/**/*.pkg
             - release/*-mac.yml
             - release/redisstack
   windows:

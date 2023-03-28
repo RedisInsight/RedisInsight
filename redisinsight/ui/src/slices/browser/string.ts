@@ -58,6 +58,9 @@ const stringSlice = createSlice({
       state.data.key = ''
       state.data.value = null
     },
+    setIsStringCompressed: (state, { payload }: PayloadAction<boolean>) => {
+      state.isCompressed = payload
+    },
   },
 })
 
@@ -70,6 +73,7 @@ export const {
   updateValueSuccess,
   updateValueFailure,
   resetStringValue,
+  setIsStringCompressed,
 } = stringSlice.actions
 
 // A selector

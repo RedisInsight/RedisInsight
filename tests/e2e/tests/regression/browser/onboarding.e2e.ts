@@ -16,6 +16,7 @@ import {
     MonitorPage,
     OnboardingPage, MyRedisDatabasePage, HelpCenterPage, BrowserPage
 } from '../../../pageObjects';
+import { Telemetry } from '../../../helpers/telemetry';
 
 const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -29,7 +30,14 @@ const workBenchPage = new WorkbenchPage();
 const slowLogPage = new SlowLogPage();
 const pubSubPage = new PubSubPage();
 const monitorPage = new MonitorPage();
+const telemetry = new Telemetry();
+
+const logger = telemetry.createLogger();
 const indexName = common.generateWord(10);
+const telemetryEvent = 'ONBOARDING_TOUR_FINISHED';
+const expectedProperties = [
+    'databaseId'
+];
 
 fixture `Onboarding new user tests`
     .meta({type: 'regression', rte: rte.standalone })
@@ -112,7 +120,7 @@ test('Verify onbarding new user steps', async t => {
     await onBoardActions.verifyOnboardingCompleted();
 });
 // https://redislabs.atlassian.net/browse/RI-4067, https://redislabs.atlassian.net/browse/RI-4278
-test('verify onboard new user skip tour', async(t) => {
+test('Verify onboard new user skip tour', async(t) => {
     await t.click(myRedisDatabasePage.helpCenterButton);
     await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
@@ -139,5 +147,30 @@ test('verify onboard new user skip tour', async(t) => {
     await onBoardActions.verifyOnboardingCompleted();
     await common.reloadPage();
     // verify onboarding step still not visible after refresh page
+    await onBoardActions.verifyOnboardingCompleted();
+});
+// https://redislabs.atlassian.net/browse/RI-4305
+test
+.requestHooks(logger)('Verify that the final onboarding step is closed when user opens another page', async(t) => {
+    await t.click(myRedisDatabasePage.helpCenterButton);
+    await t.click(onboardingPage.resetOnboardingBtn);
+    await onBoardActions.startOnboarding();
+    await onBoardActions.clickNextUntilLastStep();
+    // Verify last step of onboarding process is visible
+    await onBoardActions.verifyStepVisible('Great job!');
+    // Go to Workbench page
+    await t.click(myRedisDatabasePage.workbenchButton);
+    
+    // Verify that “ONBOARDING_TOUR_FINISHED” event is sent when user opens another page (or close the app)
+    await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+
+    // Go to PubSub page
+    await t.click(myRedisDatabasePage.pubSubButton);
+    // Verify onboarding completed successfully
+    await t.expect(onboardingPage.showMeAroundButton.exists).notOk('Show me around button still visible');
+    await t.expect(onboardingPage.stepTitle.exists).notOk('Onboarding tooltip still visible');
+    // Go to Browser Page
+    await t.click(myRedisDatabasePage.browserButton);
+    // Verify onboarding completed successfully
     await onBoardActions.verifyOnboardingCompleted();
 });

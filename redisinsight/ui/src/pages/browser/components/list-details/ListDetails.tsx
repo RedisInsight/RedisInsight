@@ -31,7 +31,9 @@ import {
   TableCellAlignment,
   TEXT_INVALID_VALUE,
   TEXT_DISABLED_FORMATTER_EDITING,
-  TEXT_UNPRINTABLE_CHARACTERS
+  TEXT_UNPRINTABLE_CHARACTERS,
+  TEXT_DISABLED_COMPRESSED_VALUE,
+  TEXT_FAILED_CONVENT_FORMATTER,
 } from 'uiSrc/constants'
 import {
   bufferToSerializedFormat,
@@ -52,6 +54,8 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
+import { decompressingBuffer } from 'uiSrc/utils/decompressors'
+
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -83,7 +87,7 @@ const ListDetails = (props: Props) => {
     listDataSelector
   )
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
   const { [KeyTypes.List]: listSizes } = useSelector(appContextBrowserKeyDetails)
@@ -276,9 +280,10 @@ const ListDetails = (props: Props) => {
         expanded: boolean = false,
         rowIndex = 0
       ) {
+        const { value: decompressedElementItem } = decompressingBuffer(elementItem, compressor)
         const element = bufferToString(elementItem)
         const tooltipContent = formatLongName(element)
-        const { value, isValid } = formattingBuffer(elementItem, viewFormatProp, { expanded })
+        const { value, isValid } = formattingBuffer(decompressedElementItem, viewFormatProp, { expanded })
 
         if (index === editingIndex) {
           const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
@@ -350,7 +355,7 @@ const ListDetails = (props: Props) => {
             >
               {!expanded && (
                 <EuiToolTip
-                  title={isValid ? 'Element' : `Failed to convert to ${viewFormatProp}`}
+                  title={isValid ? 'Element' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                   className={styles.tooltip}
                   position="bottom"
                   content={tooltipContent}
@@ -374,11 +379,13 @@ const ListDetails = (props: Props) => {
       maxWidth: 60,
       absoluteWidth: 60,
       render: function Actions(_element: any, { index, element }: IListElement) {
-        const isEditable = isFormatEditable(viewFormat)
+        const { isCompressed } = decompressingBuffer(element, compressor)
+        const isEditable = !isCompressed && isFormatEditable(viewFormat)
+        const tooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiToolTip content={!isEditable ? TEXT_DISABLED_FORMATTER_EDITING : null}>
+              <EuiToolTip content={!isEditable ? tooltipContent : null} data-testid="list-edit-tooltip">
                 <EuiButtonIcon
                   iconType="pencil"
                   aria-label="Edit element"

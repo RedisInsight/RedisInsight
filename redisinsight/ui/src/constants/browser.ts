@@ -1,3 +1,5 @@
+import { KeyValueFormat } from "./keys"
+
 export const DEFAULT_DELIMITER = ':'
 
 export const TEXT_UNPRINTABLE_CHARACTERS = {
@@ -10,3 +12,7 @@ export const TEXT_INVALID_VALUE = {
   title: 'Value will be saved as Unicode',
   text: 'as it is not valid in the selected format.',
 }
+
+export const TEXT_DISABLED_COMPRESSED_VALUE: string = 'Cannot edit the decompressed value'
+
+export const TEXT_FAILED_CONVENT_FORMATTER = (format: KeyValueFormat) => `Failed to convert to ${format}`

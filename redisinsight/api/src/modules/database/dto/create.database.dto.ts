@@ -23,7 +23,7 @@ import { sshOptionsTransformer } from 'src/modules/ssh/transformers/ssh-options.
 )
 export class CreateDatabaseDto extends PickType(Database, [
   'host', 'port', 'name', 'db', 'username', 'password', 'timeout', 'nameFromProvider', 'provider',
-  'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster', 'ssh',
+  'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster', 'ssh', 'compressor',
 ] as const) {
   @ApiPropertyOptional({
     description: 'CA Certificate',

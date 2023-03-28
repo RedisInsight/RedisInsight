@@ -100,4 +100,10 @@ describe('CreateRedisearchIndexWrapper', () => {
     expect(screen.getByTestId('identifier-0')).toHaveValue('identifier')
     expect(screen.getByTestId('field-type-0')).toHaveTextContent('GEO')
   })
+
+  it('should render Identifier popover button ', () => {
+    render(<CreateRedisearchIndexWrapper onClosePanel={onClose} />)
+
+    expect(screen.getByTestId('identifier-info-icon')).toBeInTheDocument()
+  })
 })

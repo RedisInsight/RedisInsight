@@ -3,13 +3,22 @@ import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
+import { Telemetry } from '../../../helpers/telemetry';
 
 const browserPage = new BrowserPage();
 const common = new Common();
+const telemetry = new Telemetry();
 
 let keyNameBefore = common.generateWord(10);
 let keyNameAfter = common.generateWord(10);
 const keyTTL = '2147476121';
+const logger = telemetry.createLogger();
+const telemetryEvent = 'BROWSER_KEY_VALUE_VIEWED';
+const expectedProperties = [
+    'databaseId',
+    'keyType',
+    'length'
+];
 
 fixture `Edit Key names verification`
     .meta({ type: 'smoke', rte: rte.standalone })
@@ -22,17 +31,23 @@ fixture `Edit Key names verification`
         await browserPage.deleteKeyByName(keyNameAfter);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
-test('Verify that user can edit String Key name', async t => {
-    keyNameBefore = common.generateWord(10);
-    keyNameAfter = common.generateWord(10);
+test
+    .requestHooks(logger)('Verify that user can edit String Key name', async t => {
+        keyNameBefore = common.generateWord(10);
+        keyNameAfter = common.generateWord(10);
 
-    await browserPage.addStringKey(keyNameBefore, keyTTL);
-    let keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
-    await t.expect(keyNameFromDetails).contains(keyNameBefore, 'The String Key Name not correct before editing');
-    await browserPage.editKeyName(keyNameAfter);
-    keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
-    await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The String Key Name not correct after editing');
-});
+        await browserPage.addStringKey(keyNameBefore, keyTTL);
+        let keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
+        await t.expect(keyNameFromDetails).contains(keyNameBefore, 'The String Key Name not correct before editing');
+
+        // Verify that telemetry event 'BROWSER_KEY_VALUE_VIEWED' sent and has all expected properties
+        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+        await telemetry.verifyEventPropertyValue(telemetryEvent, 'keyType', 'string', logger);
+
+        await browserPage.editKeyName(keyNameAfter);
+        keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
+        await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The String Key Name not correct after editing');
+    });
 test('Verify that user can edit Set Key name', async t => {
     keyNameBefore = common.generateWord(10);
     keyNameAfter = common.generateWord(10);

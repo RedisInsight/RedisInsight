@@ -22,9 +22,11 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
   /**
    * Updates latest json on startup
    */
-  onModuleInit() {
+  async onModuleInit() {
+    // wait for populating default data (should take milliseconds)
+    await this.initDefaults().catch((e) => this.logger.warn('Unable to populate default data', e));
     // async operation to not wait for it and not block user in case when no internet connection
-    this.initDefaults().finally(this.autoUpdate.bind(this));
+    this.autoUpdate();
   }
 
   /**
@@ -65,7 +67,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
     const latestArchive = await this.getLatestArchive();
 
     if (latestArchive) {
-      const zip = new AdmZip(latestArchive);
+      const zip = new AdmZip(latestArchive as Buffer);
       await fs.remove(this.options.destinationPath);
       await zip.extractAllTo(this.options.destinationPath, true);
       await fs.writeFile(

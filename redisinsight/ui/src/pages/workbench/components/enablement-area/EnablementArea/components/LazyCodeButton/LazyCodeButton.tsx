@@ -10,10 +10,11 @@ import { ApiEndpoints } from 'uiSrc/constants'
 import CodeButton from '../CodeButton'
 
 export interface Props {
-  label: string;
-  path?: string;
+  label: string
+  path?: string
+  sourcePath?: string
 }
-const LazyCodeButton = ({ path = '', ...rest }: Props) => {
+const LazyCodeButton = ({ path = '', sourcePath, ...rest }: Props) => {
   const [isLoading, setLoading] = useState<boolean>(false)
   const [, setError] = useState<string>('')
   const { setScript } = useContext(EnablementAreaContext)
@@ -26,7 +27,7 @@ const LazyCodeButton = ({ path = '', ...rest }: Props) => {
         const { data, status } = await resourcesService.get<string>(`${ApiEndpoints.TUTORIALS_PATH}${path}`)
         if (isStatusSuccessful(status)) {
           setLoading(false)
-          const pageInfo = getFileInfo(path)
+          const pageInfo = getFileInfo({ path })
           setScript(data, {}, { path: pageInfo.location, name: startCase(pageInfo.name) })
         }
       } catch (error) {
@@ -35,6 +36,10 @@ const LazyCodeButton = ({ path = '', ...rest }: Props) => {
         setError(errorMessage)
       }
     }
+  }
+
+  if (!sourcePath?.startsWith(ApiEndpoints.TUTORIALS_PATH)) {
+    return null
   }
 
   return (

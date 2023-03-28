@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { isNull, sortBy } from 'lodash'
+import { isNull } from 'lodash'
 import {
   EuiAccordion,
   EuiPanel,
@@ -17,12 +17,14 @@ import { RecommendationVoting } from 'uiSrc/pages/databaseAnalysis/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { Theme } from 'uiSrc/constants'
+import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import NoRecommendationsDark from 'uiSrc/assets/img/icons/recommendations_dark.svg'
 import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light.svg'
-import { renderContent, renderBadges, renderBadgesLegend } from './utils'
+
+import { renderContent, renderBadges, renderBadgesLegend, sortRecommendations } from './utils'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -43,9 +45,6 @@ const Recommendations = () => {
   })
 
   const onRedisStackClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => event.stopPropagation()
-
-  const sortedRecommendations = sortBy(recommendations, ({ name }) =>
-    (recommendationsContent[name]?.redisStack ? -1 : 0))
 
   const renderButtonContent = (redisStack: boolean, title: string, badges: string[], id: string) => (
     <EuiFlexGroup className={styles.accordionButton} responsive={false} alignItems="center" justifyContent="spaceBetween">
@@ -112,14 +111,14 @@ const Recommendations = () => {
         {renderBadgesLegend()}
       </div>
       <div className={styles.recommendationsContainer}>
-        {sortedRecommendations.map(({ name, params, vote }) => {
+        {sortRecommendations(recommendations).map(({ name, params, vote }) => {
           const {
             id = '',
             title = '',
             content = '',
             badges = [],
             redisStack = false
-          } = recommendationsContent[name]
+          } = recommendationsContent[name as keyof typeof recommendationsContent]
 
           return (
             <div key={id} className={styles.recommendation}>
@@ -138,7 +137,7 @@ const Recommendations = () => {
                   {renderContent(content, params)}
                 </EuiPanel>
               </EuiAccordion>
-              <RecommendationVoting vote={vote} name={name} />
+              <RecommendationVoting vote={vote as Vote} name={name} />
             </div>
           )
         })}

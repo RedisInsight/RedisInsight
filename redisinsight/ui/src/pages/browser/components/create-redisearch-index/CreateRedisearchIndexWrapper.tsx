@@ -14,8 +14,8 @@ import CreateRedisearchIndex from './CreateRedisearchIndex'
 import styles from './styles.module.scss'
 
 export interface Props {
-  onClosePanel: () => void
-  onCreateIndex: () => void
+  onClosePanel?: () => void
+  onCreateIndex?: () => void
 }
 
 const CreateRedisearchIndexWrapper = ({ onClosePanel, onCreateIndex }: Props) => (

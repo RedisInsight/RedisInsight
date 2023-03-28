@@ -44,6 +44,9 @@ export enum TelemetryEvents {
   WorkbenchCommandExecuted = 'WORKBENCH_COMMAND_EXECUTED',
   WorkbenchCommandErrorReceived = 'WORKBENCH_COMMAND_ERROR_RECEIVED',
   WorkbenchCommandDeleted = 'WORKBENCH_COMMAND_DELETE_COMMAND',
+  // Custom tutorials
+  WorkbenchEnablementAreaImportSucceeded = 'WORKBENCH_ENABLEMENT_AREA_IMPORT_SUCCEEDED',
+  WorkbenchEnablementAreaImportFailed = 'WORKBENCH_ENABLEMENT_AREA_IMPORT_FAILED',
 
   // Profiler
   ProfilerLogDownloaded = 'PROFILER_LOG_DOWNLOADED',

@@ -26,7 +26,8 @@ import {
   ModulesKeyTypes,
   STREAM_ADD_ACTION,
   TEXT_DISABLED_FORMATTER_EDITING,
-  TEXT_UNPRINTABLE_CHARACTERS
+  TEXT_UNPRINTABLE_CHARACTERS,
+  TEXT_DISABLED_COMPRESSED_VALUE,
 } from 'uiSrc/constants'
 import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { initialKeyInfo, keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
@@ -44,6 +45,7 @@ import {
   stringToBuffer,
   validateTTLNumber
 } from 'uiSrc/utils'
+import { stringSelector } from 'uiSrc/slices/browser/string'
 import KeyValueFormatter from './components/Formatter'
 import AutoRefresh from '../auto-refresh'
 
@@ -94,6 +96,7 @@ const KeyDetailsHeader = ({
     name: keyBuffer,
   } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { isCompressed: isStringCompressed } = useSelector(stringSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewType: streamViewType } = useSelector(streamSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
@@ -320,7 +323,8 @@ const KeyDetailsHeader = ({
   )
 
   const Actions = (width: number) => {
-    const isEditable = isFormatEditable(viewFormatProp)
+    const isEditable = !isStringCompressed && isFormatEditable(viewFormatProp)
+    const noEditableText = isStringCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
     return (
       <>
         {KEY_TYPES_ACTIONS[keyType] && 'addItems' in KEY_TYPES_ACTIONS[keyType] && (
@@ -401,7 +405,8 @@ const KeyDetailsHeader = ({
         {KEY_TYPES_ACTIONS[keyType] && 'editItem' in KEY_TYPES_ACTIONS[keyType] && (
           <div className={styles.actionBtn}>
             <EuiToolTip
-              content={!isEditable ? TEXT_DISABLED_FORMATTER_EDITING : null}
+              content={!isEditable ? noEditableText : null}
+              data-testid="edit-key-value-tooltip"
             >
               <EuiButtonIcon
                 disabled={!isEditable}

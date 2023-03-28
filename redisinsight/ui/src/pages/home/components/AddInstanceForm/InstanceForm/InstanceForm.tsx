@@ -40,6 +40,7 @@ import {
   fieldDisplayNames,
   SshPassType,
   DEFAULT_TIMEOUT,
+  NONE,
 } from './constants'
 
 import { DbConnectionInfo, ISubmitButton } from './interfaces'
@@ -49,7 +50,8 @@ import {
   MessageSentinel,
   MessageStandalone,
   TlsDetails,
-  DatabaseForm
+  DatabaseForm,
+  DbCompressor
 } from './form-components'
 import {
   DbInfoSentinel,
@@ -105,6 +107,7 @@ const AddStandaloneForm = (props: Props) => {
       port,
       tls,
       db = null,
+      compressor = NONE,
       nameFromProvider,
       sentinelMaster,
       connectionType,
@@ -154,8 +157,10 @@ const AddStandaloneForm = (props: Props) => {
     password,
     tls,
     db,
+    compressor,
     modules,
     showDb: !!db,
+    showCompressor: compressor !== NONE,
     sni: !!servername,
     newCaCert: '',
     newCaCertName: '',
@@ -553,6 +558,13 @@ const AddStandaloneForm = (props: Props) => {
                 flexGroupClassName={flexGroupClassName}
               />
             )}
+            {instanceType !== InstanceType.Sentinel && (
+              <DbCompressor
+                formik={formik}
+                flexItemClassName={flexItemClassName}
+                flexGroupClassName={flexGroupClassName}
+              />
+            )}
             <TlsDetails
               formik={formik}
               flexItemClassName={flexItemClassName}
@@ -605,6 +617,11 @@ const AddStandaloneForm = (props: Props) => {
                   flexGroupClassName={flexGroupClassName}
                 />
               )}
+              <DbCompressor
+                formik={formik}
+                flexItemClassName={flexItemClassName}
+                flexGroupClassName={flexGroupClassName}
+              />
               <TlsDetails
                 formik={formik}
                 flexItemClassName={flexItemClassName}
@@ -728,6 +745,11 @@ const AddStandaloneForm = (props: Props) => {
                   </EuiCollapsibleNavGroup>
                   <EuiSpacer size="m" />
                   <DbIndex
+                    formik={formik}
+                    flexItemClassName={flexItemClassName}
+                    flexGroupClassName={flexGroupClassName}
+                  />
+                  <DbCompressor
                     formik={formik}
                     flexItemClassName={flexItemClassName}
                     flexGroupClassName={flexGroupClassName}

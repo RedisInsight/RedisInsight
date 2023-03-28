@@ -10,6 +10,7 @@ import {
   SearchJSONStrategy,
   BigSetStrategy,
   RTSStrategy,
+  IntegersInSetStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 @Injectable()
@@ -23,6 +24,7 @@ export class RecommendationProvider {
   ) {
     this.strategies.set('default', new DefaultRecommendationStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.SEARCH_STRING, new SearchStringStrategy(databaseService));
+    this.strategies.set(RECOMMENDATION_NAMES.INTEGERS_IN_SET, new IntegersInSetStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.REDIS_VERSION, new RedisVersionStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.SEARCH_JSON, new SearchJSONStrategy(databaseService));
     this.strategies.set(RECOMMENDATION_NAMES.BIG_SETS, new BigSetStrategy());

@@ -38,7 +38,7 @@ export class DatabaseRecommendationProvider {
       .createQueryBuilder('r')
       .where({ databaseId: clientMetadata.databaseId })
       .select(['r.id', 'r.name'])
-      .orderBy('r.createdAt', 'DESC')
+      .orderBy('r.createdAt', 'ASC')
       .getMany();
 
     const totalUnread = await this.repository
@@ -79,7 +79,7 @@ export class DatabaseRecommendationProvider {
     try {
       this.logger.log(`Checking is recommendation ${name} exist`);
       const recommendation = await this.repository.findOneBy({ databaseId: clientMetadata.databaseId, name });
-  
+
       this.logger.log(`Succeed to check is recommendation ${name} exist'`);
       return !!recommendation;
     } catch (err) {

@@ -175,6 +175,7 @@ const KeyDetailsHeader = ({
       ),
       eventData: {
         databaseId: instanceId,
+        source: 'keyValue',
         keyType: type
       }
     })

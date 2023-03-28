@@ -6,7 +6,6 @@ import {
   ApiEndpoints,
   BrowserStorageItem,
   KeyTypes,
-  KeyValueCompressor,
   KeyValueFormat,
   EndpointBasedOnKeyType,
   ENDPOINT_BASED_ON_KEY_TYPE,
@@ -434,7 +433,6 @@ export const {
   deletePatternKeyFromList,
   editPatternKeyFromList,
   editPatternKeyTTLFromList,
-  updateSelectedKeyLength,
   setPatternSearchMatch,
   setFilter,
   changeKeyViewType,
@@ -844,7 +842,11 @@ export function addStreamKey(
 }
 
 // Asynchronous thunk action
-export function deleteKeyAction(key: RedisResponseBuffer, onSuccessAction?: () => void) {
+export function deleteKeyAction(
+  key: RedisResponseBuffer,
+  telemetryData: Record<string, any> = {},
+  onSuccessAction?: () => void
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(deleteKey())
 
@@ -871,9 +873,11 @@ export function deleteKeyAction(key: RedisResponseBuffer, onSuccessAction?: () =
           ),
           eventData: {
             databaseId: state.connections.instances?.connectedInstance?.id,
-            numberOfDeletedKeys: 1
+            numberOfDeletedKeys: 1,
+            ...telemetryData
           }
         })
+        console.log(sendEventTelemetry)
         dispatch(deleteKeySuccess())
         dispatch<any>(deleteKeyFromList(key))
         onSuccessAction?.()
@@ -971,7 +975,7 @@ export function editKeyTTL(key: RedisResponseBuffer, ttl: number) {
 // Asynchronous thunk action
 export function fetchKeysMetadata(
   keys: RedisString[],
-  signal: AbortSignal,
+  signal?: AbortSignal,
   onSuccessAction?: (data: GetKeyInfoResponse[]) => void,
   onFailAction?: () => void
 ) {

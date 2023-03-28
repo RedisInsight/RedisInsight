@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { KeyTypes, KeyValueCompressor, KeyValueFormat } from 'uiSrc/constants'
+import { KeyTypes, KeyValueFormat } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { parseKeysListResponse, stringToBuffer, UTF8ToBuffer } from 'uiSrc/utils'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
@@ -1410,7 +1410,7 @@ describe('keys slice', () => {
       it('call both deleteKey, deleteKeySuccess and deletePatternKeyFromList when delete is successed', async () => {
         // Arrange
         const data = {
-          name: 'string',
+          name: stringToBuffer('string'),
           type: KeyTypes.String,
           ttl: -1,
           size: 10,

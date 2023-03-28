@@ -18,6 +18,8 @@ import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { redisearchDataSelector, redisearchListSelector, redisearchSelector } from 'uiSrc/slices/browser/redisearch'
+import { Nullable } from 'uiSrc/utils'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import KeyList from '../key-list'
 import KeyTree from '../key-tree'
@@ -27,6 +29,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   selectKey: ({ rowData }: { rowData: any }) => void
+  setSelectedKey: (keyName: Nullable<RedisResponseBuffer>) => void
   handleAddKeyPanel: (value: boolean) => void
   handleBulkActionsPanel: (value: boolean) => void
   handleCreateIndexPanel: (value: boolean) => void
@@ -35,6 +38,7 @@ export interface Props {
 const BrowserLeftPanel = (props: Props) => {
   const {
     selectKey,
+    setSelectedKey,
     handleAddKeyPanel,
     handleBulkActionsPanel,
     handleCreateIndexPanel,
@@ -99,6 +103,11 @@ const BrowserLeftPanel = (props: Props) => {
     keyListRef.current?.handleLoadMoreItems?.(config)
   }
 
+  const onDeleteKey = useCallback(
+    () => setSelectedKey(null),
+    [],
+  )
+
   return (
     <div className={styles.container}>
       <KeysHeader
@@ -121,6 +130,7 @@ const BrowserLeftPanel = (props: Props) => {
           scrollTopPosition={scrollTopPosition}
           loadMoreItems={loadMoreItems}
           selectKey={selectKey}
+          onDelete={onDeleteKey}
         />
       )}
       {viewType === KeyViewType.Tree && (

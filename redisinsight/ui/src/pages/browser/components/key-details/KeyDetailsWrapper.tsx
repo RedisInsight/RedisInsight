@@ -81,14 +81,16 @@ const KeyDetailsWrapper = (props: Props) => {
   }, [keyName])
 
   const handleDeleteKey = (key: RedisResponseBuffer, type: string) => {
-    if (type === KeyTypes.String) {
-      dispatch(deleteKeyAction(key, () => {
-        dispatch(resetStringValue())
+    dispatch(deleteKeyAction(key,
+      {
+        source: 'keyValue'
+      },
+      () => {
+        if (type === KeyTypes.String) {
+          dispatch(resetStringValue())
+        }
         onRemoveKey()
       }))
-      return
-    }
-    dispatch(deleteKeyAction(key, onRemoveKey))
   }
 
   const handleRefreshKey = (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => {

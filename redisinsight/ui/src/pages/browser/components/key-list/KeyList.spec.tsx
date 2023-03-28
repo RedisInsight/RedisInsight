@@ -1,8 +1,9 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { render, waitFor } from 'uiSrc/utils/test-utils'
+import { fireEvent } from '@testing-library/react'
+import { cleanup, mockedStore, render, waitFor, screen, clearStoreActions } from 'uiSrc/utils/test-utils'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { keysSelector, setLastBatchKeys } from 'uiSrc/slices/browser/keys'
+import { deleteKey, keysSelector, setLastBatchKeys } from 'uiSrc/slices/browser/keys'
 import { apiService } from 'uiSrc/services'
 import KeyList from './KeyList'
 
@@ -15,6 +16,7 @@ const propsMock = {
         ttl: -1,
         size: 100,
         length: 100,
+        nameString: 'key1'
       },
       {
         name: 'key2',
@@ -55,6 +57,13 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
     isFiltered: false,
   }),
 }))
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 // afterEach(() => {
 //   setLastBatchKeys.mockRestore()
@@ -174,5 +183,21 @@ describe('KeyList', () => {
     expect(queryAllByTestId(/ttl-loading/).length).toEqual(propsMock.keysState.keys.length)
     expect(queryAllByTestId(/type-loading/).length).toEqual(propsMock.keysState.keys.length)
     expect(queryAllByTestId(/size-loading/).length).toEqual(propsMock.keysState.keys.length)
+  })
+
+  it('should call proper action after click on delete', async () => {
+    const { container } = render(<KeyList {...propsMock} />)
+
+    fireEvent.mouseOver(container.querySelectorAll(
+      '.ReactVirtualized__Table__row[role="row"]'
+    )[0])
+
+    fireEvent.click(screen.getByTestId('delete-key-btn-key1'))
+    fireEvent.click(screen.getByTestId('submit-delete-key'))
+
+    const expectedActions = [
+      deleteKey()
+    ]
+    expect(clearStoreActions(store.getActions().slice(-1))).toEqual(clearStoreActions(expectedActions))
   })
 })

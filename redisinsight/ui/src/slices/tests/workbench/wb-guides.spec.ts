@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
-import { MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
+import { MOCK_GUIDES } from 'uiSrc/constants'
 import { resourcesService } from 'uiSrc/services'
 
 import reducer, {
@@ -61,14 +61,14 @@ describe('slices', () => {
   describe('getWBGuidesSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
-      const items: Record<string, IEnablementAreaItem> = MOCK_GUIDES_ITEMS
+      const guides: IEnablementAreaItem = MOCK_GUIDES
       const state = {
         ...initialState,
-        items,
+        items: [guides],
       }
 
       // Act
-      const nextState = reducer(initialState, getWBGuidesSuccess(items))
+      const nextState = reducer(initialState, getWBGuidesSuccess(guides))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -111,7 +111,7 @@ describe('slices', () => {
   describe('fetchGuides', () => {
     it('succeed to fetch guides items', async () => {
       // Arrange
-      const data = MOCK_GUIDES_ITEMS
+      const data = MOCK_GUIDES
       const responsePayload = { status: 200, data }
 
       resourcesService.get = jest.fn().mockResolvedValue(responsePayload)

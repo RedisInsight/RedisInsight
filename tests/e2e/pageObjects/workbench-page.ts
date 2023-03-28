@@ -29,6 +29,15 @@ export class WorkbenchPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
+    customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
+    tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
+    tutorialLinkField = Selector('[data-testid=tutorial-link-field]');
+    tutorialLatestDeleteIcon  = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);
+    tutorialDeleteButton  = Selector('[data-testid^=delete-tutorial-]').withText('Delete');
+    tutorialNameField = Selector('[data-testid=tutorial-name-field]');
+    tutorialSubmitButton = Selector('[data-testid=submit-upload-tutorial-btn]');
+    tutorialImport = Selector('[data-testid=import-tutorial]');
+    tutorialAccordionButton = Selector('[data-testid^=accordion-button-]');
     submitCommandButton = Selector('[data-testid=btn-submit]');
     resizeButtonForScriptingAndResults = Selector('[data-test-subj=resize-btn-scripting-area-and-results]');
     collapsePreselectAreaButton = Selector('[data-testid=collapse-enablement-area]');
@@ -221,5 +230,26 @@ export class WorkbenchPage {
         // Compare the command result with executed command
         const actualCommandResult = await this.queryCardContainer.nth(childNum).find(this.cssQueryTextResult).textContent;
         await t.expect(actualCommandResult).contains(result, 'Actual command result is not equal to executed');
+    }
+    /**
+     * get selector with tutorial name
+     * @param tutorialName name of the uploaded tutorial
+     */
+    async getAccordionButtonWithName(tutorialName: string): Promise<Selector> {
+        return Selector(`[data-testid=accordion-button-${tutorialName}]`);
+    }
+    /**
+     * get internal tutorial link with .md name
+     * @param internalLink name of the .md file
+     */
+    async getInternalLinkWithManifest(internalLink: string): Promise<Selector> {
+        return Selector(`[data-testid="internal-link-${internalLink}.md"]`);
+    }
+    /**
+     * get internal tutorial link without .md name
+     * @param internalLink name of the label
+     */
+    async getInternalLinkWithoutManifest(internalLink: string): Promise<Selector> {
+        return Selector(`[data-testid="internal-link-${internalLink}"]`);
     }
 }

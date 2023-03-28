@@ -11,6 +11,7 @@ export * from './analytics';
 export * from './profiler';
 export * from './user';
 export * from './databases';
+export * from './custom-tutorial';
 export * from './autodiscovery';
 export * from './redis';
 export * from './server';

@@ -9,9 +9,9 @@ import {
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
   validateApiCall,
-  requirements,
+  requirements, serverConfig
 } from '../deps';
-const { server, request, constants, rte } = deps;
+const { server, request, constants, rte, analytics } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID, uuid = constants.TEST_CLI_UUID_1) =>
@@ -87,6 +87,18 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
           },
           after: async () => {
             expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(constants.TEST_STRING_VALUE_1);
+            await analytics.waitForEvent({
+              event: 'CLI_COMMAND_EXECUTED',
+              properties: {
+                databaseId: constants.TEST_INSTANCE_ID,
+                commandType: 'core',
+                moduleName: 'n/a',
+                capability: 'string',
+                command: 'SET',
+                outputFormat: 'TEXT',
+                buildType: serverConfig.get('server').buildType,
+              },
+            });
           }
         },
         {

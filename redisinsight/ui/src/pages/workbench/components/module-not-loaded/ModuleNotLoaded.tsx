@@ -1,146 +1,123 @@
-import React, { useContext } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
-  EuiBasicTableColumn,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiInMemoryTable,
   EuiTextColor,
+  EuiText,
+  EuiTitle,
+  EuiLink,
+  EuiButton,
 } from '@elastic/eui'
-import parse from 'html-react-parser'
 
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
-import { Theme } from 'uiSrc/constants'
-import PromoLink from 'uiSrc/components/promo-link/PromoLink'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { getPathToResource } from 'uiSrc/services/resourcesService'
-import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
+import { ReactComponent as MobileIcon } from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg'
+import { ReactComponent as DesktopIcon } from 'uiSrc/assets/img/icons/module_not_loaded.svg'
+import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
+import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
+import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
-interface IContentColumn {
-  title: string
-  text: string
+export interface IProps {
+  moduleName: RedisDefaultModules
+  id: string
 }
 
-export interface IModuleNotLoadedContent {
-  output?: string
-  createCloudBtnText?: string
-  createCloudBtnHref?: string
-  summaryText?: string
-  summaryImgDark?: string
-  summaryImgLight?: string
-  summaryImgPath?: string
-  columns?: IContentColumn[]
-}
+const MIN_ELEMENT_WIDTH = 1210
+const MAX_ELEMENT_WIDTH = 1440
 
-export interface Props {
-  content: IModuleNotLoadedContent
-}
+const renderTitle = (width: number, moduleName?: string) => (
+  <EuiTitle size="m" className={styles.title} data-testid="welcome-page-title">
+    <h4>
+      {`Looks like ${moduleName} is not available `}
+      {width > MAX_ELEMENT_WIDTH && <br />}
+      for this database
+    </h4>
+  </EuiTitle>
+)
 
-const ModuleNotLoaded = ({ content = {} }: Props) => {
-  const {
-    output = '',
-    summaryText = '',
-    summaryImgDark = '',
-    summaryImgLight = '',
-    summaryImgPath = '',
-    columns = []
-  } = content
-  const { loading, data: createDbContent } = useSelector(contentSelector)
+const renderText = (moduleName?: string) => (
+  <EuiText className={cx(styles.text, styles.marginBottom)}>
+    {`Create a free Redis Stack database with ${moduleName} which extends the core capabilities of open-source Redis`}
+  </EuiText>
+)
 
-  const { theme } = useContext(ThemeContext)
+const ListItem = ({ item }: { item: string }) => (
+  <li className={styles.listItem}>
+    <div className={styles.iconWrapper}>
+      <CheerIcon className={styles.listIcon} />
+    </div>
+    <EuiTextColor className={styles.text}>{item}</EuiTextColor>
+  </li>
+)
 
-  const columnsSettings: EuiBasicTableColumn<any>[] = columns.map(({ title }, i) => ({
-    name: title,
-    field: `text${i}`,
-    dataType: 'string',
-    truncateText: false,
-    render: (text: any) => parse(text)
-  }))
+const ModuleNotLoaded = ({ moduleName, id }: IProps) => {
+  const [width, setWidth] = useState(0)
 
-  const item = columns.reduce((obj, { text }, i) => ({ ...obj, [`text${i}`]: text }), {})
+  const module = MODULE_TEXT_VIEW[moduleName]
 
-  const handleClickLink = (event: TelemetryEvent, eventData: any = {}) => {
-    sendEventTelemetry({
-      event,
-      eventData: {
-        ...eventData
-      }
-    })
-  }
-  const CreateCloudBtn = ({ content }: { content: ContentCreateRedis }) => {
-    const { title, description, styles, links } = content
-    // @ts-ignore
-    const linkStyles = styles ? styles[theme] : {}
-    return (
-      <PromoLink
-        title={title}
-        description={description}
-        url={links?.redisearch?.url}
-        testId="promo-btn"
-        icon="arrowRight"
-        onClick={() => handleClickLink(
-          links?.redisearch?.event as TelemetryEvent,
-          { source: 'RediSearch is not loaded' }
-        )}
-        styles={{
-          ...linkStyles,
-          backgroundImage: linkStyles?.backgroundImage
-            ? `url(${getPathToResource(linkStyles.backgroundImage)})`
-            : undefined
-        }}
-      />
-    )
-  }
+  useEffect(() => {
+    const parentEl = document?.getElementById(id)
+    if (parentEl) {
+      setWidth(parentEl.offsetWidth)
+    }
+  })
 
   return (
-    <div className={cx(styles.container)}>
-      <EuiFlexGroup direction="column" gutterSize="s">
-        {!!output && (
-        <EuiFlexItem className="query-card-output-response-fail">
-          <span data-testid="query-card-no-module-output">
-            <span className={styles.alertIconWrapper}>
-              <EuiIcon type="alert" color="danger" style={{ display: 'inline', marginRight: 10 }} />
-            </span>
-            <EuiTextColor color="danger">{parse(output)}</EuiTextColor>
-          </span>
-        </EuiFlexItem>
-        )}
-        {!!columns?.length && (
-          <EuiFlexItem>
-            <EuiInMemoryTable
-              className={cx('inMemoryTableDefault', 'imtd-multiLineCells', styles.table)}
-              columns={columnsSettings}
-              items={[item]}
-              data-test-subj="query-card-no-module-table"
-            />
-          </EuiFlexItem>
-        )}
-        { !loading && createDbContent?.cloud && (
-          <EuiFlexItem grow={false} data-testid="query-card-no-module-button" style={{ margin: '20px 0' }}>
-            <CreateCloudBtn content={createDbContent.cloud} />
-          </EuiFlexItem>
-        )}
-        {(!!summaryText || !!summaryImgPath || !!summaryImgDark || !!summaryImgLight) && (
-          <EuiFlexItem>
-            <div className={cx(styles.summary)}>
-              {(!!summaryImgPath || !!summaryImgDark || !!summaryImgLight) && (
-                <img
-                  src={theme === Theme.Dark ? summaryImgDark : summaryImgLight}
-                  className={cx(styles.summaryImg)}
-                  data-testid="query-card-no-module-summary-img"
-                  alt="redisearch table"
-                />
-              )}
-              {!!summaryText && <div data-testid="query-card-no-module-summary-text">{parse(summaryText)}</div>}
-            </div>
-          </EuiFlexItem>
-        )}
-      </EuiFlexGroup>
+    <div className={cx(styles.container, { [styles.fullScreen]: width > MAX_ELEMENT_WIDTH })}>
+      <div className={styles.flex}>
+        <div>
+          {width > MAX_ELEMENT_WIDTH
+            ? <DesktopIcon className={styles.bigIcon} />
+            : <MobileIcon className={styles.icon} />}
+        </div>
+        <div className={styles.contentWrapper}>
+          {renderTitle(width, module)}
+          <EuiText className={styles.bigText}>
+            {CONTENT[moduleName]?.text.map((item: string) => (
+              width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
+            ))}
+          </EuiText>
+          <ul className={cx(styles.list, { [styles.bloomList]: moduleName === RedisDefaultModules.Bloom })}>
+            {CONTENT[moduleName]?.improvements.map((item: string) => (
+              <ListItem key={item} item={item} />
+            ))}
+          </ul>
+          {!!CONTENT[moduleName]?.additionalText && (
+            <EuiText className={cx(styles.text, styles.additionalText, styles.marginBottom)}>
+              {CONTENT[moduleName]?.additionalText.map((item: string) => (
+                width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
+              ))}
+            </EuiText>
+          )}
+          {renderText(module)}
+        </div>
+      </div>
+      <div className={styles.linksWrapper}>
+        <EuiLink
+          className={cx(styles.text, styles.link)}
+          external={false}
+          target="_blank"
+          href={CONTENT[moduleName]?.link}
+          data-testid="learn-more-link"
+        >
+          Learn More
+        </EuiLink>
+        <EuiLink
+          className={styles.link}
+          external={false}
+          target="_blank"
+          href="https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_workbench"
+          data-testid="get-started-link"
+        >
+          <EuiButton
+            fill
+            size="s"
+            color="secondary"
+            className={styles.btnLink}
+          >
+            Get Started For Free
+          </EuiButton>
+        </EuiLink>
+      </div>
     </div>
   )
 }

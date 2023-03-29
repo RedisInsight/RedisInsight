@@ -8,6 +8,10 @@
   flex-grow: 1;
 }
 
+.tutorialWrapper {
+  margin-bottom: 6px;
+}
+
 .innerContainer {
   @include euiScrollBar;
   padding: 8px 0 !important;
@@ -19,7 +23,7 @@
 }
 
 .innerContainerLoader {
-  padding: 12px 18px !important;
+  padding: 12px 16px !important;
 }
 
 .internalPage {
@@ -28,7 +32,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  transform: translateX(calc(100% + 18px));
+  transform: translateX(calc(100% + 16px));
   backface-visibility: hidden;
   transition: transform 0.4s ease-in-out;
   box-shadow: -5px 1px 10px rgba(0, 0, 0, 0.2);
@@ -49,5 +53,5 @@
 }
 
 :export {
-  paddingHorizontal: 18
+  paddingHorizontal: 16
 }

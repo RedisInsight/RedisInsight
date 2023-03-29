@@ -16,7 +16,7 @@ import {
   formatLongName,
   formattingBuffer,
 } from 'uiSrc/utils'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
@@ -34,7 +34,7 @@ import VirtualTable from 'uiSrc/components/virtual-table'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
+import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
 import styles from './styles.module.scss'
 
@@ -60,7 +60,7 @@ const SetDetails = (props: Props) => {
   const { loading } = useSelector(setSelector)
   const { members: loadedMembers, total, nextCursor } = useSelector(setDataSelector)
   const { length = 0, name: key } = useSelector(selectedKeyDataSelector) ?? {}
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
@@ -190,10 +190,11 @@ const SetDetails = (props: Props) => {
       initialSearchValue: '',
       truncateText: true,
       render: function Name(_name: string, memberItem: RedisResponseBuffer, expanded: boolean = false) {
-        // Better to cut the long string, because it could affect virtual scroll performance
+        const { value: decompressedMemberItem } = decompressingBuffer(memberItem, compressor)
         const member = bufferToString(memberItem)
+        // Better to cut the long string, because it could affect virtual scroll performance
         const tooltipContent = formatLongName(member)
-        const { value, isValid } = formattingBuffer(memberItem, viewFormatProp, { expanded })
+        const { value, isValid } = formattingBuffer(decompressedMemberItem, viewFormatProp, { expanded })
         const cellContent = value?.substring?.(0, 200) ?? value
 
         return (
@@ -204,7 +205,7 @@ const SetDetails = (props: Props) => {
             >
               {!expanded && (
                 <EuiToolTip
-                  title={isValid ? 'Member' : `Failed to convert to ${viewFormatProp}`}
+                  title={isValid ? 'Member' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                   className={styles.tooltip}
                   anchorClassName="truncateText"
                   position="left"

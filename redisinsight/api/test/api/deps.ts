@@ -1,3 +1,6 @@
+import { getAnalytics } from '../helpers/analytics';
+export { createAnalytics } from '../helpers/analytics';
+
 export * from '../helpers/test';
 import * as request from 'supertest';
 import * as chai from 'chai';
@@ -16,12 +19,23 @@ export async function depsInit () {
   if(constants.TEST_CLOUD_RTE) {
     await initCloudDatabase();
   }
+
+  // initialize analytics module
+  deps.analytics = await getAnalytics();
+
   // initializing backend server
   deps.server = await getServer();
 
   // initializing Redis Test Environment
   deps.rte = await redis.initRTE();
-  testEnv.rte =  deps.rte.env;
+
+  testEnv.rte = deps.rte.env;
+
+  if (typeof deps.server === 'string') {
+    testEnv.rte.serverType = 'docker';
+  } else {
+    testEnv.rte.serverType = 'local';
+  }
 
   // initializing local database
   await localDb.initLocalDb(deps.rte, deps.server);
@@ -33,6 +47,7 @@ export const deps = {
   request,
   expect: chai.expect,
   server: null,
+  analytics: null,
   getSocket,
   rte: null,
   testEnv,

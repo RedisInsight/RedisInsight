@@ -9,7 +9,7 @@ import { setMonitorInitialState, showMonitor } from 'uiSrc/slices/cli/monitor'
 import { Pages } from 'uiSrc/constants/pages'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { dbAnalysisSelector, setDatabaseAnalysisViewTab } from 'uiSrc/slices/analytics/dbAnalysis'
-import { setOnboardNextStep, setOnboardPrevStep } from 'uiSrc/slices/app/features'
+import { incrementOnboardStepAction, setOnboardNextStep, setOnboardPrevStep } from 'uiSrc/slices/app/features'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
@@ -442,21 +442,58 @@ const ONBOARDING_FEATURES = {
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
       const history = useHistory()
+      const dispatch = useDispatch()
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.Finish]
+
+      useEffect(() => {
+        const closeLastStep = async () => {
+          await dispatch(incrementOnboardStepAction(
+            OnboardingSteps.Finish,
+            0,
+            async () => {
+              await sendEventTelemetry({
+                event: TelemetryEvent.ONBOARDING_TOUR_FINISHED,
+                eventData: {
+                  databaseId: connectedInstanceId
+                }
+              })
+            }
+          ))
+        }
+
+        window.addEventListener('beforeunload', closeLastStep)
+        return () => {
+          window.removeEventListener('beforeunload', closeLastStep)
+        }
+      }, [connectedInstanceId])
 
       return {
         content: (
           <>
             You are done!
             <EuiSpacer size="xs" />
-            Take me back.
+            Take me back to Browser.
           </>
         ),
-        onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
+        onSkip: () => {
+          sendClosedTelemetryEvent(...telemetryArgs)
+          sendEventTelemetry({
+            event: TelemetryEvent.ONBOARDING_TOUR_FINISHED,
+            eventData: {
+              databaseId: connectedInstanceId
+            }
+          })
+        },
         onBack: () => sendBackTelemetryEvent(...telemetryArgs),
         onNext: () => {
           history.push(Pages.browser(connectedInstanceId))
           sendNextTelemetryEvent(...telemetryArgs)
+          sendEventTelemetry({
+            event: TelemetryEvent.ONBOARDING_TOUR_FINISHED,
+            eventData: {
+              databaseId: connectedInstanceId
+            }
+          })
         },
       }
     }

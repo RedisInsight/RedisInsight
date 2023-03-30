@@ -7,10 +7,10 @@ import {
   requirements,
   validateApiCall,
   after,
-  generateInvalidDataTestCases, validateInvalidDataTestCase, getMainCheckFn
+  generateInvalidDataTestCases, validateInvalidDataTestCase, getMainCheckFn, serverConfig,
 } from '../deps';
 import { databaseSchema } from './constants';
-const { rte, request, server, localDb, constants } = deps;
+const { rte, request, server, localDb, constants, analytics } = deps;
 
 const endpoint = () => request(server).post(`/${constants.API.DATABASES}`);
 
@@ -23,6 +23,7 @@ const dataSchema = Joi.object({
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
   timeout: Joi.number().integer().allow(null),
+  compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').allow(null),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),
@@ -55,6 +56,7 @@ const baseDatabaseData = {
   host: constants.TEST_REDIS_HOST,
   port: constants.TEST_REDIS_PORT,
   timeout: constants.TEST_REDIS_TIMEOUT,
+  compressor: constants.TEST_REDIS_COMPRESSOR,
   username: constants.TEST_REDIS_USER || undefined,
   password: constants.TEST_REDIS_PASSWORD || undefined,
 }
@@ -133,6 +135,38 @@ describe('POST /databases', () => {
             password: null,
             connectionType: constants.STANDALONE,
             new: true,
+          },
+          checkFn: async ({ body }) => {
+            // todo: find a way to test rest of the fields
+            await analytics.waitForEvent({
+              event: 'CONFIG_DATABASES_DATABASE_ADDED',
+              properties: {
+                databaseId: body.id,
+                connectionType: body.connectionType,
+                provider: body.provider,
+                useTLS: 'disabled',
+                verifyTLSCertificate: 'disabled',
+                useTLSAuthClients: 'disabled',
+                useSNI: 'disabled',
+                useSSH: 'disabled',
+                version: rte.env.version,
+                // numberOfKeys: 8,
+                // numberOfKeysRange: '0 - 500 000',
+                // totalMemory: 881632,
+                // numberedDatabases: 16,
+                // numberOfModules: 0,
+                timeout: body.timeout / 1000,
+                // RediSearch: { loaded: false },
+                // RedisAI: { loaded: false },
+                // RedisGraph: { loaded: false },
+                // RedisGears: { loaded: false },
+                // RedisBloom: { loaded: false },
+                // RedisJSON: { loaded: false },
+                // RedisTimeSeries: { loaded: false },
+                // customModules: [],
+                buildType: serverConfig.get('server').buildType,
+              },
+            });
           },
         });
       });

@@ -15,10 +15,25 @@ import {
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { Telemetry } from '../../../helpers/telemetry';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
+const telemetry = new Telemetry();
+const logger = telemetry.createLogger();
+const telemetryEvent = 'CONFIG_DATABASES_OPEN_DATABASE';
+const expectedProperties = [
+    'databaseId',
+    'RediSearch',
+    'RedisAI',
+    'RedisGraph',
+    'RedisGears',
+    'RedisBloom',
+    'RedisJSON',
+    'RedisTimeSeries',
+    'customModules'
+];
 
 fixture `Add database`
     .meta({ type: 'smoke' })
@@ -28,6 +43,7 @@ fixture `Add database`
     });
 test
     .meta({ rte: rte.standalone })
+    .requestHooks(logger)
     .after(async() => {
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user can add Standalone Database', async() => {
@@ -54,6 +70,10 @@ test
         // Verify that user can see an indicator of databases that are added manually and not opened yet
         await myRedisDatabasePage.verifyDatabaseStatusIsVisible(ossStandaloneConfig.databaseName);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+
+        // Verify that telemetry event 'CONFIG_DATABASES_OPEN_DATABASE' sent and has all expected properties
+        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+
         await t.click(browserPage.myRedisDbIcon);
         // Verify that user can't see an indicator of databases that were opened
         await myRedisDatabasePage.verifyDatabaseStatusIsNotVisible(ossStandaloneConfig.databaseName);

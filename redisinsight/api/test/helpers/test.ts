@@ -1,14 +1,18 @@
 import { describe, it, before, after, beforeEach } from 'mocha';
 import * as util from 'util';
 import * as _ from 'lodash';
+import * as path from 'path';
 import * as fs from 'fs';
+import * as fsExtra from 'fs-extra';
 import * as chai from 'chai';
 import * as Joi from 'joi';
+import * as AdmZip from 'adm-zip';
 import * as diff from 'object-diff';
 import { cloneDeep, isMatch, isObject, set, isArray } from 'lodash';
 import { generateInvalidDataArray } from './test/dataGenerator';
+import serverConfig from 'src/utils/config';
 
-export { _, fs }
+export { _, path, fs, fsExtra, AdmZip, serverConfig }
 export const expect = chai.expect;
 export const testEnv: Record<any, any> = {};
 export { Joi, describe, it, before, after, beforeEach };
@@ -20,6 +24,7 @@ interface ITestCaseInput {
   endpoint: Function; // function that returns prepared supertest with url
   data?: any;
   attach?: any[];
+  fields?: [string, string][];
   query?: any;
   statusCode?: number;
   responseSchema?: Joi.AnySchema;
@@ -37,6 +42,7 @@ export const validateApiCall = async function ({
   endpoint,
   data,
   attach,
+  fields,
   query,
   statusCode = 200,
   responseSchema,
@@ -52,6 +58,12 @@ export const validateApiCall = async function ({
 
   if (attach) {
     request.attach(...attach);
+  }
+
+  if (fields?.length) {
+    fields.forEach((field) => {
+      request.field(...field);
+    })
   }
 
   // data to send with url query string

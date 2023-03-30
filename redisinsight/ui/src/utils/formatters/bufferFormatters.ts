@@ -1,7 +1,7 @@
 import { isString } from 'lodash'
 import { ObjectInputStream } from 'java-object-serialization'
-import { KeyValueFormat } from 'uiSrc/constants'
 import { Buffer } from 'buffer'
+import { KeyValueFormat } from 'uiSrc/constants'
 // eslint-disable-next-line import/order
 import {
   RedisResponseBuffer,
@@ -182,6 +182,8 @@ export {
 }
 
 window.ri = {
+  ...window.ri,
+  anyToBuffer,
   bufferToUTF8,
   bufferToASCII,
   UTF8ToBuffer,

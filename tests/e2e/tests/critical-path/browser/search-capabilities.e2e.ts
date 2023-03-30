@@ -264,6 +264,7 @@ test
         await myRedisDatabasePage.clickOnDBByName(simpleDbName); // click standalone database
         await cliPage.sendCommandInCli(`FT.DROPINDEX ${indexNameSimpleDb}`);
         await t.click(browserPage.patternModeBtn);
+        await t.click(browserPage.browserViewButton);
         await browserPage.deleteKeysByNames(keyNames);
 
         //delete database

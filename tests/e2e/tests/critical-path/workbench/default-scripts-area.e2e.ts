@@ -4,13 +4,22 @@ import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { Telemetry } from '../../../helpers/telemetry';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const chance = new Chance();
+const telemetry = new Telemetry();
 
 let indexName = chance.word({ length: 5 });
 let keyName = chance.word({ length: 5 });
+const logger = telemetry.createLogger();
+const telemetryEvent = 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED';
+const telemetryPath = 'static/guides/quick-guides/document/working-with-hashes.md';
+const expectedProperties = [
+    'databaseId',
+    'path'
+];
 
 fixture `Default scripts area at Workbench`
     .meta({type: 'critical_path', rte: rte.standalone})
@@ -26,33 +35,39 @@ fixture `Default scripts area at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
-    indexName = chance.word({ length: 5 });
-    keyName = chance.word({ length: 5 });
-    const commandsForSend = [
-        `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
-        `HMSET product:1 name "${keyName}"`,
-        `HMSET product:2 name "${keyName}"`
-    ];
+test
+    .requestHooks(logger)('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
+        indexName = chance.word({ length: 5 });
+        keyName = chance.word({ length: 5 });
+        const commandsForSend = [
+            `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
+            `HMSET product:1 name "${keyName}"`,
+            `HMSET product:2 name "${keyName}"`
+        ];
         // Send commands
-    await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
-    // Run automatically added "FT._LIST" and "FT.INFO {index}" scripts
-    await t.click(workbenchPage.documentButtonInQuickGuides);
-    await t.click(workbenchPage.internalLinkWorkingWithHashes);
-    await t.click(workbenchPage.preselectIndexInformation);
-    // Replace the {index} with indexName value in script and send
-    let addedScript = await workbenchPage.queryInputScriptArea.nth(2).textContent;
-    addedScript = addedScript.replace('"idx:schools"', indexName);
-    addedScript = addedScript.replace(/\s/g, ' ');
-    await t.click(workbenchPage.submitCommandButton);
-    await t.pressKey('ctrl+a delete');
-    await workbenchPage.sendCommandInWorkbench(addedScript);
-    // Check the FT._LIST result
-    await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command not found');
-    // Check the FT.INFO result
-    await t.switchToIframe(workbenchPage.iframe);
-    await t.expect(workbenchPage.queryColumns.textContent).contains('name', 'The result of the FT.INFO command not found');
-});
+        await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
+        // Run automatically added "FT._LIST" and "FT.INFO {index}" scripts
+        await t.click(workbenchPage.documentButtonInQuickGuides);
+        await t.click(workbenchPage.internalLinkWorkingWithHashes);
+
+        // Verify that telemetry event 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED' sent and has all expected properties
+        await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
+        await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
+
+        await t.click(workbenchPage.preselectIndexInformation);
+        // Replace the {index} with indexName value in script and send
+        let addedScript = await workbenchPage.queryInputScriptArea.nth(2).textContent;
+        addedScript = addedScript.replace('"idx:schools"', indexName);
+        addedScript = addedScript.replace(/\s/g, ' ');
+        await t.click(workbenchPage.submitCommandButton);
+        await t.pressKey('ctrl+a delete');
+        await workbenchPage.sendCommandInWorkbench(addedScript);
+        // Check the FT._LIST result
+        await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command not found');
+        // Check the FT.INFO result
+        await t.switchToIframe(workbenchPage.iframe);
+        await t.expect(workbenchPage.queryColumns.textContent).contains('name', 'The result of the FT.INFO command not found');
+    });
 test('Verify that user can edit and run automatically added "Search" script in Workbench and see the results', async t => {
     indexName = chance.word({ length: 5 });
     keyName = chance.word({ length: 5 });
@@ -99,7 +114,8 @@ test('Verify that user can edit and run automatically added "Aggregate" script i
     await t.expect(workbenchPage.queryTableResult.textContent).contains(aggregationResultField, 'The aggregation field name is not in the Search result');
     await t.expect(workbenchPage.queryTableResult.textContent).contains('100', 'The aggregation max value is in not the Search result');
 });
-test('Verify that when the “Manual” option clicked, user can see the Editor is automatically prepopulated with the information', async t => {
+// Outdated after https://redislabs.atlassian.net/browse/RI-4279
+test.skip('Verify that when the “Manual” option clicked, user can see the Editor is automatically prepopulated with the information', async t => {
     const information = [
         '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.',
         '// Enter multiple commands at different rows to run them at once.',

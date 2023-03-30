@@ -22,6 +22,7 @@ const dataSchema = Joi.object({
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
   timeout: Joi.number().integer().allow(null),
+  compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').allow(null),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),

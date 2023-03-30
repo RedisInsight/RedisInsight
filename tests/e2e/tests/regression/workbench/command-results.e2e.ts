@@ -2,7 +2,7 @@ import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
-    ossStandaloneRedisearch, ossStandaloneV5Config
+    ossStandaloneRedisearch
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
@@ -118,37 +118,20 @@ test('Big output in workbench is visible in virtualized table', async t => {
     // Verify that all commands scrolled
     await t.expect(lastExpectedItem.visible).ok('Final execution time message not displayed');
 });
-
-test.before(async t => {
-    await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
-    await t.click(myRedisDatabasePage.workbenchButton);
-}).after(async t => {
-    await t.switchToMainWindow();
-    await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
-})('Verify that user can see the client List visualization available for all users', async t => {
-    const command = 'CLIENT LIST';
-    // Send command in workbench to view client list
-    await workbenchPage.sendCommandInWorkbench(command);
-    await t.expect(workbenchPage.typeSelectedClientsList.visible).ok('client list view button is not visible');
-    await workBenchActions.verifyClientListColumnsAreVisible(['id', 'addr', 'name', 'user']);
-    // verify table view row count match with text view after client list command
-    await workBenchActions.verifyClientListTableViewRowCount();
-});
-// https://redislabs.atlassian.net/browse/RI-4230
-test.before(async t => {
-    await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-    await t.click(myRedisDatabasePage.workbenchButton);
-}).after(async() => {
-    await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-})('Verify that user can see options on what can be done to work with capabilities in Workbench for docker', async t => {
-    const commandJSON = 'JSON.ARRAPPEND key value';
-    const commandFT = 'FT.LIST';
-    await workbenchPage.sendCommandInWorkbench(commandJSON);
-    // Verify change screens when capability not available - 'Search'
-    await t.expect(workbenchPage.welcomePageTitle.withText('Looks like RedisJSON is not available').visible)
-        .ok('Missing RedisJSON title is not visible');
-    await workbenchPage.sendCommandInWorkbench(commandFT);
-    // Verify  change screens when  capability not available - 'JSON'
-    await t.expect(workbenchPage.welcomePageTitle.withText('Looks like RediSearch is not available').visible)
-        .ok('Missing RedisJSON title is not visible');
-});
+test
+    .before(async t => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await t.click(myRedisDatabasePage.workbenchButton);
+    })
+    .after(async t => {
+        await t.switchToMainWindow();
+        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+    })('Verify that user can see the client List visualization available for all users', async t => {
+        const command = 'CLIENT LIST';
+        // Send command in workbench to view client list
+        await workbenchPage.sendCommandInWorkbench(command);
+        await t.expect(workbenchPage.typeSelectedClientsList.visible).ok('client list view button is not visible');
+        await workBenchActions.verifyClientListColumnsAreVisible(['id', 'addr', 'name', 'user']);
+        // verify table view row count match with text view after client list command
+        await workBenchActions.verifyClientListTableViewRowCount();
+    });

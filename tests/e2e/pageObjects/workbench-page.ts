@@ -29,6 +29,7 @@ export class WorkbenchPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
+    welcomePageTitle = Selector('[data-testid=welcome-page-title]');
     customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
     tutorialLinkField = Selector('[data-testid=tutorial-link-field]');
@@ -190,6 +191,7 @@ export class WorkbenchPage {
      */
     async sendCommandInWorkbench(command: string, speed = 1, paste = true): Promise<void> {
         await t
+            .click(this.queryInput)
             .typeText(this.queryInput, command, { replace: true, speed, paste })
             .click(this.submitCommandButton);
     }

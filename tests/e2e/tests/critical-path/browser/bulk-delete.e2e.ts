@@ -4,7 +4,6 @@ import { BrowserPage, BulkActionsPage, MyRedisDatabasePage } from '../../../page
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
-import { addHashKeyApi, addSetKeyApi } from '../../../helpers/api/api-keys';
 import { deleteAllKeysFromDB, populateDBWithHashes } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
@@ -13,8 +12,6 @@ const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
 const keyNames = [common.generateWord(20), common.generateWord(20)];
-const hashKeyParameters = { keyName: keyNames[0], fields: [{ field: common.generateWord(20), value: common.generateWord(20) }] };
-const setKeyParameters = { keyName: keyNames[1], members: [common.generateWord(20)] };
 const dbParameters = { host: ossStandaloneRedisearch.host, port: ossStandaloneRedisearch.port };
 const keyToAddParameters = { keysCount: 10000, keyNameStartWith: 'hashKey'};
 const keyToAddParameters2 = { keysCount: 500000, keyNameStartWith: 'hashKey'};
@@ -24,8 +21,8 @@ fixture `Bulk Delete`
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
-        await addHashKeyApi(hashKeyParameters, ossStandaloneRedisearch);
-        await addSetKeyApi(setKeyParameters, ossStandaloneRedisearch);
+        await browserPage.addHashKey(keyNames[0], '100000', common.generateWord(20), common.generateWord(20));
+        await browserPage.addSetKey(keyNames[1], '100000', common.generateWord(20));
     })
     .afterEach(async() => {
         // Clear and delete database
@@ -134,7 +131,7 @@ test('Verify that when bulk deletion is completed, status Action completed is di
 test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
-        await addSetKeyApi(setKeyParameters, ossStandaloneRedisearch);
+        await browserPage.addSetKey(keyNames[1], '100000', common.generateWord(20));
         // Add 10000 Hash keys
         await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters);
         // Filter by Hash keys

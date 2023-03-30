@@ -28,16 +28,12 @@
       {
         "target": "zip",
         "arch": ["x64", "arm64"]
-      },
-      {
-        "target": "mas",
-        "arch": ["universal"]
       }
     ],
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "bundleVersion": "1",
+    "bundleVersion": "2",
     "icon": "resources/icon.icns",
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",

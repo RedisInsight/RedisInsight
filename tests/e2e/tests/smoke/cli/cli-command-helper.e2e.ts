@@ -58,7 +58,7 @@ test('Verify that user can click on any of searched commands in Command Helper a
     // Verify details of the command
     await t.expect(cliPage.cliHelperTitleArgs.textContent).eql('APPEND key value', 'Command name and syntax not correct');
     await t.expect(cliPage.cliHelperTitle.innerText).contains('STRING', 'Command Group badge not correct');
-    await t.expect(cliPage.cliHelperSummary.innerText).contains('Append a value to a key Read more', 'Command summary not correct');
+    await t.expect(cliPage.cliHelperSummary.innerText).contains(`Appends a string to the value of a key. Creates the key if it doesn't exist.`, 'Command summary not correct');
 });
 test('Verify that when user enters command, he can see Command Name, Complexity, Arguments, Summary, Group, Read more', async t => {
     const commandForSearch = 'pop';
@@ -73,7 +73,7 @@ test('Verify that when user enters command, he can see Command Name, Complexity,
     await t.expect(cliPage.cliHelperTitleArgs.innerText).eql('LPOP key [count]', 'Command Name not correct');
     await t.expect(cliPage.cliHelperComplexity.innerText).eql('Complexity:\nO(N) where N is the number of elements returned', 'Complexity not correct');
     await t.expect(cliPage.cliHelperArguments.innerText).eql('Arguments:\nRequired\nkey\nOptional\n[count]', 'Arguments not correct');
-    await t.expect(cliPage.cliHelperSummary.innerText).contains('Remove and get the first elements in a list', 'Command Summary not correct');
+    await t.expect(cliPage.cliHelperSummary.innerText).contains('Returns the first elements in a list after removing it. Deletes the list if the last element was popped.', 'Command Summary not correct');
     await t.expect(cliPage.cliHelperTitle.innerText).contains('LIST', 'Command Group not correct');
     await t.expect(cliPage.readMoreButton.exists).ok('Read more button not displayed');
 });

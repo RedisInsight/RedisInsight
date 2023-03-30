@@ -73,7 +73,7 @@ test('Verify Command Helper search and filter', async t => {
     // Verify that when user enters command in CLI, Helper displays additional info about the command
     await t.expect(cliPage.cliHelperTitleArgs.textContent).eql('APPEND key value', 'Command name and syntax not displayed');
     await t.expect(cliPage.cliHelperTitle.innerText).contains('STRING', 'Command Group badge not displayed');
-    await t.expect(cliPage.cliHelperSummary.innerText).contains('Append a value to a key', 'Command summary not displayed');
+    await t.expect(cliPage.cliHelperSummary.innerText).contains(`Appends a string to the value of a key. Creates the key if it doesn't exist.`, 'Command summary not displayed');
 });
 test
     .meta({ env: env.web })('Verify that user can type TS. in Command helper and see commands from RedisTimeSeries commands.json', async t => {

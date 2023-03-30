@@ -46,6 +46,10 @@ const DbCompressor = (props: Props) => {
       value: KeyValueCompressor.ZSTD,
       inputDisplay: 'ZSTD',
     },
+    {
+      value: KeyValueCompressor.Brotli,
+      inputDisplay: 'Brotli'
+    }
   ]
 
   const handleChangeDbCompressorCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {

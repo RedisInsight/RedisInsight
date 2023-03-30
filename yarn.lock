@@ -2659,6 +2659,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.43.tgz#555e5a743f76b6b897d47f945305b618525ddbe6"
   integrity sha512-GqWykok+3uocgfAJM8imbozrqLnPyTrpFlrryURQlw1EesPUCx5XxTiucWDSFF9/NUEXDuD4bnvHm8xfVGWTpQ==
 
+"@types/node@^17.0.40":
+  version "17.0.45"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.45.tgz#2c0fafd78705e7a18b7906b5201a522719dc5190"
+  integrity sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==
+
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz#d3357479a0fdfdd5907fe67e17e0a85c906e1301"
@@ -4169,6 +4174,13 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
+base-unicode@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/base-unicode/-/base-unicode-1.0.0.tgz#44b61fd4460b18f6d47ae6f5ea95a45b16a4885a"
+  integrity sha512-9y/0iVN7k3NyH0E4oYD/1qZceUVE180YcRRqhsQVNzazPcuRjr67SjUzl/wdhLaVmzjIMEjE5pDH7xb6X9kBFA==
+  dependencies:
+    buffer "^6.0.3"
+
 base64-arraybuffer@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/base64-arraybuffer/-/base64-arraybuffer-1.0.1.tgz#87bd13525626db4a9838e00a508c2b73efcf348c"
@@ -4342,6 +4354,27 @@ brorand@^1.0.1, brorand@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/brorand/-/brorand-1.1.0.tgz#12c25efe40a45e3c323eb8675a0a0ce57b22371f"
   integrity sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8=
+
+brotli-compress@^1.3.3:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/brotli-compress/-/brotli-compress-1.3.3.tgz#fe3b50b6234bfbc8e26a137bffff2a07e2a4efe9"
+  integrity sha512-cwKOmzEuKqUmRxXDdZimiNoXRRr7AQKMSubJSbYA9FXk+LTPT3fBGpHU8VZRZZctAJ5OCeXGK9PzPpZ1vD0pDA==
+  dependencies:
+    "@types/node" "^17.0.40"
+    brotli-wasm "1.2.0"
+
+brotli-unicode@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/brotli-unicode/-/brotli-unicode-1.0.2.tgz#25e53a7fdc543337768e90fd59a94b6eb55ea6cc"
+  integrity sha512-eqO2kauz48Raqi0I8c4WOhvfr5GAtpHhCvegHRTY00zyn6pEP8jo5nHrwtAJKO68j1ZFi4zel6JrwBz60Z5d3g==
+  dependencies:
+    base-unicode "^1.0.0"
+    brotli-compress "^1.3.3"
+
+brotli-wasm@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/brotli-wasm/-/brotli-wasm-1.2.0.tgz#0f99b97b0020c8152308c277388aecf2a06b6e32"
+  integrity sha512-PdDi7awF36zFujZyFJb9UNrP1l+If7iCgXhLKE1SpwqFQSK2yc7w2dysOmME7p325yQaZNvae7ruzypB3YhFxA==
 
 browser-process-hrtime@^1.0.0:
   version "1.0.0"
@@ -11495,7 +11528,7 @@ minimist@1.2.5:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
   integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
 
-minimist@^1.2.0, minimist@^1.2.5, minimist@^1.2.6:
+minimist@^1.2.0, minimist@^1.2.6:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==

@@ -3,9 +3,10 @@ import { unzip } from 'gzip-js'
 import { decompress as decompressFzstd } from 'fzstd'
 import { decompress as decompressLz4 } from 'lz4js'
 import { decompress as decompressSnappy } from '@stablelib/snappy'
+import { decompress as decompressBrotli } from 'brotli-unicode/js'
 import { COMPRESSOR_MAGIC_SYMBOLS, ICompressorMagicSymbols, KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
-import { anyToBuffer, isEqualBuffers, Nullable } from 'uiSrc/utils'
+import { anyToBuffer, bufferToString, isEqualBuffers, Nullable } from 'uiSrc/utils'
 
 const decompressingBuffer = (
   reply: RedisResponseBuffer,
@@ -13,7 +14,7 @@ const decompressingBuffer = (
 ): { value: RedisString, compressor: Nullable<KeyValueCompressor>, isCompressed: boolean } => {
   const compressorByValue: Nullable<KeyValueCompressor> = getCompressor(reply)
   const compressor = compressorInit === compressorByValue
-    || (!compressorByValue && compressorInit === KeyValueCompressor.SNAPPY)
+    || (!compressorByValue && compressorInit)
     ? compressorInit
     : null
 
@@ -56,6 +57,15 @@ const decompressingBuffer = (
           isCompressed: !isEqualBuffers(value, reply),
         }
       }
+      case KeyValueCompressor.Brotli: {
+        const value = anyToBuffer(decompressBrotli(bufferToString(reply)))
+
+        return {
+          value,
+          compressor,
+          isCompressed: !isEqualBuffers(value, reply),
+        }
+      }
       default: {
         return { value: reply, compressor: null, isCompressed: false }
       }
@@ -73,10 +83,9 @@ const getCompressor = (reply: RedisResponseBuffer): Nullable<KeyValueCompressor>
     COMPRESSOR_MAGIC_SYMBOLS,
     (magicSymbols: string, compressorName: string) => {
       if (
-        replyStart.startsWith(magicSymbols)
+        magicSymbols
+        && replyStart.startsWith(magicSymbols)
         && replyStart.length > magicSymbols.length
-        // no magic symbols for SNAPPY
-        && compressorName !== KeyValueCompressor.SNAPPY
       ) {
         compressor = compressorName as KeyValueCompressor
         return false // break loop

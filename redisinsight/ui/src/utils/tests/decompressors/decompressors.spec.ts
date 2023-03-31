@@ -18,6 +18,8 @@ import {
   SNAPPY_COMPRESSED_VALUE_1,
   BROTLI_COMPRESSED_VALUE_1,
   BROTLI_COMPRESSED_VALUE_2,
+  PHPGZCOMPRESS_COMPRESSED_VALUE_1,
+  PHPGZCOMPRESS_COMPRESSED_VALUE_2,
 } from './constants'
 
 const defaultValues = [
@@ -129,6 +131,22 @@ const defaultValues = [
     outputStr: DECOMPRESSED_VALUE_STR_2,
     isCompressed: true,
   },
+  {
+    input: PHPGZCOMPRESS_COMPRESSED_VALUE_1,
+    compressor: KeyValueCompressor.PHPGZCompress,
+    compressorInit: KeyValueCompressor.PHPGZCompress,
+    output: DECOMPRESSED_VALUE_1,
+    outputStr: DECOMPRESSED_VALUE_STR_1,
+    isCompressed: true,
+  },
+  {
+    input: PHPGZCOMPRESS_COMPRESSED_VALUE_2,
+    compressor: KeyValueCompressor.PHPGZCompress,
+    compressorInit: KeyValueCompressor.PHPGZCompress,
+    output: DECOMPRESSED_VALUE_2,
+    outputStr: DECOMPRESSED_VALUE_STR_2,
+    isCompressed: true,
+  },
 ].map((value) => ({
   ...value,
   input: anyToBuffer(value.input)
@@ -139,7 +157,10 @@ describe('getCompressor', () => {
     let expected = compressorByValue || compressor
 
     // SNAPPY doesn't have magic symbols
-    if (compressor === KeyValueCompressor.SNAPPY || compressor === KeyValueCompressor.Brotli) {
+    if (compressor === KeyValueCompressor.SNAPPY
+      || compressor === KeyValueCompressor.Brotli
+      || compressor === KeyValueCompressor.PHPGZCompress
+    ) {
       expected = null
     }
 

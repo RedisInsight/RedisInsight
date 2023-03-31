@@ -1,12 +1,15 @@
 import { forIn } from 'lodash'
 import { unzip } from 'gzip-js'
 import { decompress as decompressFzstd } from 'fzstd'
+// @ts-ignore
 import { decompress as decompressLz4 } from 'lz4js'
 import { decompress as decompressSnappy } from '@stablelib/snappy'
+// @ts-ignore
 import { decompress as decompressBrotli } from 'brotli-unicode/js'
+import { inflate } from 'pako'
 import { COMPRESSOR_MAGIC_SYMBOLS, ICompressorMagicSymbols, KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
-import { anyToBuffer, bufferToString, isEqualBuffers, Nullable } from 'uiSrc/utils'
+import { anyToBuffer, bufferToString, bufferToUint8Array, isEqualBuffers, Nullable } from 'uiSrc/utils'
 
 const decompressingBuffer = (
   reply: RedisResponseBuffer,
@@ -60,6 +63,17 @@ const decompressingBuffer = (
       case KeyValueCompressor.Brotli: {
         const value = anyToBuffer(decompressBrotli(bufferToString(reply)))
 
+        return {
+          value,
+          compressor,
+          isCompressed: !isEqualBuffers(value, reply),
+        }
+      }
+      case KeyValueCompressor.PHPGZCompress: {
+        const decompressedValue = inflate(bufferToUint8Array(reply))
+        if (!decompressedValue) return { value: reply, compressor: null, isCompressed: false }
+
+        const value = anyToBuffer(decompressedValue)
         return {
           value,
           compressor,

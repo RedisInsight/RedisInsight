@@ -32,6 +32,7 @@ export enum Compressor {
   LZ4 = 'LZ4',
   SNAPPY = 'SNAPPY',
   Brotli = 'Brotli',
+  PHPGZCompress = 'PHPGZCompress',
 }
 
 @Entity('database_instance')

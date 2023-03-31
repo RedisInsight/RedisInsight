@@ -16,6 +16,8 @@ import {
   LZ4_COMPRESSED_VALUE_2,
   SNAPPY_COMPRESSED_VALUE_2,
   SNAPPY_COMPRESSED_VALUE_1,
+  BROTLI_COMPRESSED_VALUE_1,
+  BROTLI_COMPRESSED_VALUE_2,
 } from './constants'
 
 const defaultValues = [
@@ -111,6 +113,22 @@ const defaultValues = [
     outputStr: DECOMPRESSED_VALUE_STR_1,
     isCompressed: false,
   },
+  {
+    input: BROTLI_COMPRESSED_VALUE_1,
+    compressor: KeyValueCompressor.Brotli,
+    compressorInit: KeyValueCompressor.Brotli,
+    output: DECOMPRESSED_VALUE_1,
+    outputStr: DECOMPRESSED_VALUE_STR_1,
+    isCompressed: true,
+  },
+  {
+    input: BROTLI_COMPRESSED_VALUE_2,
+    compressor: KeyValueCompressor.Brotli,
+    compressorInit: KeyValueCompressor.Brotli,
+    output: DECOMPRESSED_VALUE_2,
+    outputStr: DECOMPRESSED_VALUE_STR_2,
+    isCompressed: true,
+  },
 ].map((value) => ({
   ...value,
   input: anyToBuffer(value.input)
@@ -121,7 +139,7 @@ describe('getCompressor', () => {
     let expected = compressorByValue || compressor
 
     // SNAPPY doesn't have magic symbols
-    if (compressor === KeyValueCompressor.SNAPPY) {
+    if (compressor === KeyValueCompressor.SNAPPY || compressor === KeyValueCompressor.Brotli) {
       expected = null
     }
 

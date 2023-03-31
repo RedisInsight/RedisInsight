@@ -18,3 +18,6 @@ export const LZ4_COMPRESSED_VALUE_2 = [4, 34, 77, 24, 64, 112, 223, 1, 0, 0, 128
 
 export const SNAPPY_COMPRESSED_VALUE_1 = [1, 0, 49]
 export const SNAPPY_COMPRESSED_VALUE_2 = [1, 0, 50]
+
+export const BROTLI_COMPRESSED_VALUE_1 = [49, 65, 76, 231, 187, 141, 68]
+export const BROTLI_COMPRESSED_VALUE_2 = [49, 65, 76, 231, 191, 141, 68]

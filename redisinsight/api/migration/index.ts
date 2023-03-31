@@ -29,6 +29,7 @@ import { databaseAnalysisRecommendations1674660306971 } from './1674660306971-da
 import { databaseTimeout1675398140189 } from './1675398140189-database-timeout';
 import { liveTimeRecommendations1679378309458 } from './1679378309458-live-time-recommendations';
 import { databaseCompressor1678182722874 } from './1678182722874-database-compressor';
+import { customTutorials1677135091633 } from './1677135091633-custom-tutorials';
 
 export default [
   initialMigration1614164490968,
@@ -62,4 +63,5 @@ export default [
   databaseTimeout1675398140189,
   liveTimeRecommendations1679378309458,
   databaseCompressor1678182722874,
+  customTutorials1677135091633,
 ];

@@ -103,7 +103,7 @@ const AddKeyReJSON = (props: Props) => {
           />
           <EuiFlexGroup justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
-              <UploadFile onClick={onClick} onFileChange={onFileChange} />
+              <UploadFile onClick={onClick} onFileChange={onFileChange} accept="application/json, text/plain" />
             </EuiFlexItem>
           </EuiFlexGroup>
         </>

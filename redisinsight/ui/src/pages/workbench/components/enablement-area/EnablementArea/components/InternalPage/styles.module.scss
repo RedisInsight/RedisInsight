@@ -20,7 +20,7 @@
   background-color: var(--euiColorEmptyShade);
   & > div {
     width: 100%;
-    padding: 0 18px;
+    padding: 0 16px;
   }
 }
 
@@ -51,7 +51,7 @@
 }
 .content {
   @include euiScrollBar;
-  padding: 8px 12px 4px 18px !important;
+  padding: 8px 12px 4px 16px !important;
   overflow: auto;
   display: flex;
   flex-direction: column;

@@ -47,7 +47,7 @@ export const initialState: StateAppContext = {
     script: '',
     enablementArea: {
       isMinimized: localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? false,
-      itemPath: '',
+      search: '',
       itemScrollTop: 0,
     },
     panelSizes: {
@@ -161,9 +161,9 @@ const appContextSlice = createSlice({
     setLastPageContext: (state, { payload }: { payload: string }) => {
       state.lastPage = payload
     },
-    setWorkbenchEAItem: (state, { payload }: { payload: any }) => {
-      const prevValue = state.workbench.enablementArea.itemPath
-      state.workbench.enablementArea.itemPath = payload
+    setWorkbenchEASearch: (state, { payload }: { payload: any }) => {
+      const prevValue = state.workbench.enablementArea.search
+      state.workbench.enablementArea.search = payload
       if (prevValue !== payload) {
         state.workbench.enablementArea.itemScrollTop = 0
       }
@@ -171,8 +171,8 @@ const appContextSlice = createSlice({
     setWorkbenchEAItemScrollTop: (state, { payload }: { payload: any }) => {
       state.workbench.enablementArea.itemScrollTop = payload || 0
     },
-    resetWorkbenchEAItem: (state) => {
-      state.workbench.enablementArea.itemPath = ''
+    resetWorkbenchEASearch: (state) => {
+      state.workbench.enablementArea.search = ''
       state.workbench.enablementArea.itemScrollTop = 0
     },
     setWorkbenchEAMinimized: (state, { payload }) => {
@@ -229,8 +229,8 @@ export const {
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
   setLastPageContext,
-  setWorkbenchEAItem,
-  resetWorkbenchEAItem,
+  setWorkbenchEASearch,
+  resetWorkbenchEASearch,
   setWorkbenchEAMinimized,
   setWorkbenchEAItemScrollTop,
   setPubSubFieldsContext,

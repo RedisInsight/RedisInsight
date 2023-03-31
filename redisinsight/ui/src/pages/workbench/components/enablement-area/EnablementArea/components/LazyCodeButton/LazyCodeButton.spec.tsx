@@ -1,7 +1,7 @@
 import { act } from '@testing-library/react'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { MONACO_MANUAL } from 'uiSrc/constants'
+import { ApiEndpoints, MONACO_MANUAL } from 'uiSrc/constants'
 import { fireEvent, render } from 'uiSrc/utils/test-utils'
 import { resourcesService } from 'uiSrc/services'
 import { EnablementAreaProvider, defaultValue } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
@@ -13,7 +13,9 @@ const mockedProps = mock<Props>()
 describe('LazyCodeButton', () => {
   it('should render', () => {
     const label = 'Manual'
-    const component = render(<LazyCodeButton {...instance(mockedProps)} label={label} />)
+    const component = render(
+      <LazyCodeButton {...instance(mockedProps)} label={label} sourcePath={ApiEndpoints.TUTORIALS_PATH} />
+    )
     const { container } = component
 
     expect(component).toBeTruthy()
@@ -26,7 +28,7 @@ describe('LazyCodeButton', () => {
 
     const { queryByTestId } = render(
       <EnablementAreaProvider value={{ ...defaultValue, setScript }}>
-        <LazyCodeButton label="script" path="/static/script.txt" />
+        <LazyCodeButton label="script" path="/static/script.txt" sourcePath={ApiEndpoints.TUTORIALS_PATH} />
       </EnablementAreaProvider>
     )
 
@@ -49,7 +51,7 @@ describe('LazyCodeButton', () => {
 
     const { queryByTestId } = render(
       <EnablementAreaProvider value={{ ...defaultValue, setScript }}>
-        <LazyCodeButton label="script" path="/static/script.txt" />
+        <LazyCodeButton label="script" path="/static/script.txt" sourcePath={ApiEndpoints.TUTORIALS_PATH} />
       </EnablementAreaProvider>
     )
 

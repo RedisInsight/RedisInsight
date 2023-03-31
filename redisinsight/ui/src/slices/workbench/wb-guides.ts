@@ -1,25 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { ApiEndpoints, MONACO_MANUAL } from 'uiSrc/constants'
+import { ApiEndpoints } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
-import { EnablementAreaComponent, IEnablementAreaItem, StateWorkbenchEnablementArea } from 'uiSrc/slices/interfaces'
+import { IEnablementAreaItem, StateWorkbenchEnablementArea } from 'uiSrc/slices/interfaces'
 
 import { AppDispatch, RootState } from '../store'
 
-export const defaultItems: Record<string, IEnablementAreaItem> = {
-  manual: {
-    type: EnablementAreaComponent.CodeButton,
-    id: 'manual',
-    label: 'Manual',
-    args: {
-      content: MONACO_MANUAL,
-    }
-  }
-}
+export const defaultItems: IEnablementAreaItem[] = []
+
 export const initialState: StateWorkbenchEnablementArea = {
   loading: false,
   error: '',
-  items: {},
+  items: [],
 }
 
 // A slice for recipes
@@ -30,9 +22,9 @@ const workbenchGuidesSlice = createSlice({
     getWBGuides: (state) => {
       state.loading = true
     },
-    getWBGuidesSuccess: (state, { payload }) => {
+    getWBGuidesSuccess: (state, { payload }: { payload: IEnablementAreaItem }) => {
       state.loading = false
-      state.items = payload
+      state.items = [payload]
     },
     getWBGuidesFailure: (state, { payload }) => {
       state.loading = false
@@ -61,8 +53,7 @@ export function fetchGuides(onSuccessAction?: () => void, onFailAction?: () => v
     dispatch(getWBGuides())
 
     try {
-      const { data, status } = await resourcesService
-        .get<Record<string, IEnablementAreaItem>>(ApiEndpoints.GUIDES)
+      const { data, status } = await resourcesService.get(ApiEndpoints.GUIDES)
       if (isStatusSuccessful(status)) {
         dispatch(getWBGuidesSuccess(data))
         onSuccessAction?.()

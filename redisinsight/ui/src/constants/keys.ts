@@ -187,7 +187,7 @@ export enum KeyValueCompressor {
   LZ4 = 'LZ4',
   SNAPPY = 'SNAPPY',
   Brotli = 'Brotli',
-  // PHPGZCompress = 'PHPGZCompress',
+  PHPGZCompress = 'PHPGZCompress',
 }
 
 export const COMPRESSOR_MAGIC_SYMBOLS: ICompressorMagicSymbols = Object.freeze({
@@ -196,6 +196,7 @@ export const COMPRESSOR_MAGIC_SYMBOLS: ICompressorMagicSymbols = Object.freeze({
   [KeyValueCompressor.LZ4]: '4,34,77,24', // 04 22 4d 18 hex
   [KeyValueCompressor.SNAPPY]: '', // no magic symbols
   [KeyValueCompressor.Brotli]: '', // no magic symbols
+  [KeyValueCompressor.PHPGZCompress]: '', // no magic symbols
 })
 
 export type ICompressorMagicSymbols = {

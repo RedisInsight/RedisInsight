@@ -1,9 +1,13 @@
 .wrapper {
   padding: 24px 20px;
   background: var(--recommendationBgColor);
-  border: 1px solid #B37A1E;
+  border: 1px solid var(--recommendationLiveBorderColor);
   border-radius: 8px;
   margin-bottom: 10px;
+
+  &.read {
+    border: 1px solid var(--controlsBorderColor);
+  }
 
   .content {
     max-width: 300px;

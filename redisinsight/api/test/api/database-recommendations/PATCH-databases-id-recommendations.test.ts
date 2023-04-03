@@ -1,4 +1,4 @@
-import { describe, it, deps, expect, validateApiCall } from '../deps';
+import { describe, it, deps, expect, getMainCheckFn } from '../deps';
 import { getRepository, repositories } from '../../helpers/local-db';
 const { localDb, request, server, constants } = deps;
 
@@ -7,24 +7,7 @@ const endpoint = (
 ) =>
   request(server).patch(`/${constants.API.DATABASES}/${instanceId}/recommendations/read`);
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 let repo;
 describe('PATCH /recommendations/read', () => {

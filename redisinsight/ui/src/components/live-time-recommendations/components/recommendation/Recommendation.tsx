@@ -17,9 +17,10 @@ import styles from './styles.module.scss'
 export interface IProps {
   name: string
   instanceId: string
+  isRead: boolean
 }
 
-const Recommendation = ({ name, instanceId }: IProps) => {
+const Recommendation = ({ name, instanceId, isRead }: IProps) => {
   const history = useHistory()
   const dispatch = useDispatch()
 
@@ -65,14 +66,14 @@ const Recommendation = ({ name, instanceId }: IProps) => {
   }
 
   return (
-    <div className={styles.wrapper} data-testid={`${name}-recommendation`}>
+    <div className={cx(styles.wrapper, { [styles.read]: isRead })} data-testid={`${name}-recommendation`}>
       <EuiFlexGroup responsive={false} gutterSize="none">
         <EuiFlexItem grow={false}>
           <Icon className={styles.icon} />
         </EuiFlexItem>
         <EuiFlexItem>
           <div className={styles.content}>
-            {content[name]?.liveTimeText.map((item) => renderContentElement(item))}
+            {content[name]?.liveTimeText?.map((item) => renderContentElement(item))}
           </div>
         </EuiFlexItem>
       </EuiFlexGroup>

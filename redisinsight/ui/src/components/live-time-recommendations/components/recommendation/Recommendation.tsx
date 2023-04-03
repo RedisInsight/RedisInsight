@@ -42,9 +42,9 @@ const Recommendation = ({ name, instanceId, isRead }: IProps) => {
   const renderContentElement = ({ id, type, value }) => {
     switch (type) {
       case 'paragraph':
-        return <EuiText className={styles.text}>{value}</EuiText>
+        return <EuiText key={id} className={styles.text}>{value}</EuiText>
       case 'span':
-        return <EuiText className={cx(styles.text, styles.span)}>{value}</EuiText>
+        return <EuiText key={id} className={cx(styles.text, styles.span)}>{value}</EuiText>
       case 'link':
         return <EuiLink key={id} external={false} data-testid={`link-${id}`} target="_blank" href={value.href}>{value.name}</EuiLink>
       case 'spacer':
@@ -66,7 +66,7 @@ const Recommendation = ({ name, instanceId, isRead }: IProps) => {
   }
 
   return (
-    <div className={cx(styles.wrapper, { [styles.read]: isRead })} data-testid={`${name}-recommendation`}>
+    <div className={cx(styles.wrapper, { [styles.read]: isRead })} data-testid={`${name}-recommendation`} key={name}>
       <EuiFlexGroup responsive={false} gutterSize="none">
         <EuiFlexItem grow={false}>
           <Icon className={styles.icon} />

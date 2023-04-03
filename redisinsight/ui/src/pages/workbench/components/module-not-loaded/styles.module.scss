@@ -1,97 +1,144 @@
 .container {
-  font-family: 'Graphik', sans-serif !important;
+  padding: 41px 30px;
 
-  br {
-    display: block !important;
-    content: "";
-    margin: 2em;
-    font-size: 34%;
+  .title {
+    font-family: 'Graphik', sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    word-break: break-word;
+    margin-bottom: 20px;
   }
 
-  ul {
-    list-style: disc !important;
-    padding-left: 20px !important;
+  .linksWrapper .text,
+  .text {
+    font-family: 'Graphik', sans-serif;
+    font-size: 14px;
+    line-height: 17px;
+    word-break: break-word;
+    color: var(--wbTextColor) !important;
+    text-decoration: none !important;
   }
 
-  :global(.query-card-output-response-fail) {
-    padding: 6px 0;
-    color: var(--euiColorDanger) !important
-  }
-}
-
-.table {
-  margin: 0 -20px !important;
-
-  :global(.euiTableRowCell) {
-    background-color: var(--euiPageBackgroundColor) !important;
-  }
-
-  br {
-    font-size: 18%;
-  }
-
-  a {
+  .bigText {
+    font-family: 'Graphik', sans-serif;
+    font-size: 20px;
     line-height: 24px;
-    text-align: left;
-    text-decoration: underline;
-    color: var(--buttonSecondaryTextColor);
+    word-break: break-word;
+    color: var(--wbTextColor);
+    margin-bottom: 20px;
+  }
 
-    &:hover {
-      text-decoration: none;
+  .flex {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+  
+    .icon {
+      width: 173px;
+      margin-left: 15px;
+    }
+  
+    .bigIcon {
+      width: 317px;
+      margin-bottom: 42px;
     }
   }
-}
 
-.summary {
-  display: flex;
+  .list.bloomList {
+    display: flex;
+    flex-wrap: wrap;
 
-  > div {
-    padding-bottom: 10px;
-  }
-}
-
-.alertIconWrapper {
-  height: 19px;
-  display: inline-flex;
-  align-items: center;
-}
-
-.summaryImg {
-  width: 468px !important;
-  height: 174px !important;
-  margin-right: 22px;
-}
-
-@media only screen and (max-width: 700px) {
-  .summaryImg {
-    width: 312px !important;
-    height: 116px !important;
-  }
-}
-
-@media only screen and (max-width: 1200px) {
-  .summary {
-    display: block;
-  }
-}
-
-@media only screen and (max-width: 767px) {
-  .container :global(.euiFlexGroup--responsive .query-card-output-response-fail) {
-    margin: 10px 0 !important;
+    .listItem {
+      margin-right: 18px;
+    }
   }
 
-  .table {
-    :global(.euiTableRowCell) {
-      background-color: initial !important;
-      max-width: 100% !important;
-      width: 100%;
-      border-top: 1px solid var(--euiColorLightShade) !important;
+  .listItem {
+    display: flex;
+    margin-bottom: 20px;
+  
+    .iconWrapper {
+      display: flex;
+      flex: 0 0 16px;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      background: var(--wbActiveIconColor);
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+  
+    .listIcon {
+      width: 10px;
+      height: 10px;
+  
+      path {
+        fill: var(--euiPageBackgroundColor);
+      }
+    }
+  }
+  
+  .linksWrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+  
+    .link {
+      margin-right: 20px;
+      color: var(-wbTextColor);
+    }
+  }
+  
+  .marginBottom {
+    margin-bottom: 20px;
+  }
+
+  &.fullScreen {
+    padding: 89px 77px;
+
+    .flex {
+      flex-direction: column;
     }
 
-    :global(.euiTableRow) {
-      padding: 0 !important;
-      border-right: 0 !important;
-      background-color: var(--euiPageBackgroundColor) !important;
+    .contentWrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .title,
+    .text,
+    .bigText {
+      text-align: center;
+    }
+
+    .list {
+      display: flex;
+      justify-content: center;
+    }
+
+    .listItem {
+      margin-right: 15px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    .linksWrapper {
+      justify-content: center;
+      flex-direction: column-reverse;
+    }
+
+    .link {
+      margin-right: 0;
+  
+      &:first-child {
+        margin-top: 13px;
+      }
     }
   }
 }

@@ -282,6 +282,7 @@
   },
   "bigSets": {
     "id": "bigSets",
+    "liveTelemetryEvent": "optimizeExistenceChecks",
     "title": "Switch to Bloom filter, cuckoo filter, or HyperLogLog",
     "tutorial": "/redis_stack/probabilistic_data_structures.md",
     "redisStack": true,
@@ -518,6 +519,79 @@
   },
   "RTS": {
     "id": "RTS",
+    "liveTelemetryEvent": "optimizeTimeSeries",
+    "title":"Optimize the use of time series",
+    "redisStack": true,
+    "tutorial": "/redis_stack/redis_for_time_series.md",
+    "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "If you are using sorted sets to work with time series data, consider using RedisTimeSeries to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
+        "type": "span",
+        "value": "Learn more about how a Time Series data structure can help you via Tutorials in "
+      },
+      {
+        "id": "4",
+        "type": "workbenchLink",
+        "value": "Workbench"
+      }
+    ],
+    "content": [
+      {
+        "id": "1",
+        "type": "span",
+        "value": "If you are using sorted sets to work with time series data, consider using "
+      },
+      {
+        "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/timeseries/",
+          "name": "RedisTimeSeries"
+        }
+      },
+      {
+        "id": "3",
+        "type": "span",
+        "value": " to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
+      },
+      {
+        "id": "4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "5",
+        "type": "span",
+        "value": "Create a "
+      },
+      {
+        "id": "6",
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
+          "name": "free Redis Stack database"
+        }
+      },
+      {
+        "id": "7",
+        "type": "span",
+        "value": " to use modern data models and processing engines."
+      }
+    ],
+    "badges": ["configuration_changes"]
+  },
+  "optimizeTimeSeries": {
+    "id": "optimizeTimeSeries",
     "title":"Optimize the use of time series",
     "redisStack": true,
     "tutorial": "/redis_stack/redis_for_time_series.md",
@@ -613,7 +687,7 @@
         "type": "link",
         "value": {
           "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_extended_rec",
-          "name": "free Redis Stack"
+          "name": "free Redis Stack database"
         }
       },
       {
@@ -774,12 +848,27 @@
       {
         "id": "1",
         "type": "paragraph",
-        "value": "Storing large strings (> 512 KB) could consume more resources and time to process, manipulate, update and retrieve them. Consider representing your data using hashes or use RedisJSON to store your JSON documents to improve performance."
+        "value": "Storing large strings (> 512 KB) could consume more resources and time to process, manipulate, update, and retrieve them. Consider representing your data using hashes or use RedisJSON to store your JSON documents to improve performance."
       },
       {
         "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
         "type": "paragraph",
         "value": "Additionally, if working with hashes or JSONs, you can use RediSearch, which helps to address your query needs and supports a better development experience when dealing with complex data scenarios."
+      },
+      {
+        "id": "4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "5",
+        "type": "paragraph",
+        "value": "Learn more about how JSON support and Search capability can help you via Tutorials in Workbench."
       }
     ]
   },

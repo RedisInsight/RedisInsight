@@ -42,6 +42,7 @@
   "bigHashes": {
     "id": "bigHashes",
     "title": "Shard big hashes to small hashes",
+    "tutorial": "/quick-guides/document/working-with-hashes.md",
     "content": [
       {
         "id": "1",
@@ -126,7 +127,7 @@
       {
         "id": "1",
         "type": "paragraph",
-        "value": "Several set values with IntSet encoding exceed the set-max-intset-entries. Change the configuration in reds.conf to efficiently use the IntSet encoding." 
+        "value": "Several set values with IntSet encoding exceed the set-max-intset-entries. Change the configuration in reds.conf to efficiently use the IntSet encoding."
       },
       {
         "id": "2",
@@ -282,6 +283,7 @@
   "bigSets": {
     "id": "bigSets",
     "title": "Switch to Bloom filter, cuckoo filter, or HyperLogLog",
+    "tutorial": "/redis_stack/probabilistic_data_structures.md",
     "redisStack": true,
     "liveTimeText": [
       {
@@ -329,21 +331,21 @@
         "type": "list",
         "value": [
           [
-            { 
+            {
               "id": "1",
               "type": "span",
                "value": "Count the number of unique observations in a stream"
             }
           ],
           [
-            { 
+            {
               "id": "2",
               "type": "span",
               "value": "Check if an observation already appeared in the stream"
             }
           ],
           [
-            { 
+            {
               "id": "3",
               "type": "span",
               "value": "Find the fraction or the number of observations in the stream that are smaller or larger than a given value"
@@ -369,7 +371,7 @@
                 "name": "HyperLogLog"
               }
             },
-            { 
+            {
               "id": "2",
               "type": "span",
                "value": " can be used for estimating the number of unique observations in a set."
@@ -384,7 +386,7 @@
                 "name": "Bloom filter or cuckoo filter"
               }
             },
-            { 
+            {
               "id": "2",
               "type": "span",
                "value": " can be used for checking if an observation has already appeared in the stream (false positive matches are possible, but false negatives are not)."
@@ -399,7 +401,7 @@
                 "name": "t-digest"
               }
             },
-            { 
+            {
               "id": "2",
               "type": "span",
                "value": " can be used for estimating the fraction or the number of observations in the stream that are smaller or larger than a given value."
@@ -518,6 +520,7 @@
     "id": "RTS",
     "title":"Optimize the use of time series",
     "redisStack": true,
+    "tutorial": "/redis_stack/redis_for_time_series.md",
     "liveTimeText": [
       {
         "id": "1",
@@ -653,8 +656,9 @@
   },
   "redisSearch": {
     "id": "redisSearch",
-    "title":"Optimize your query and search experience",
+    "title": "Optimize your query and search experience",
     "redisStack": true,
+    "tutorial": "/redis_stack/working_with_json.md",
     "content": [
       {
         "id": "1",
@@ -712,6 +716,7 @@
     "id": "searchIndexes",
     "title":"Enhance your search indexes",
     "redisStack": true,
+    "tutorial": "/quick-guides/document/working-with-hashes.md",
     "content": [
       {
         "id": "1",

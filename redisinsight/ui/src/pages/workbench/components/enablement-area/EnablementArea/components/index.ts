@@ -9,6 +9,8 @@ import LazyCodeButton from './LazyCodeButton'
 import LazyInternalPage from './LazyInternalPage'
 import PlainText from './PlainText'
 import Pagination from './Pagination'
+import UploadTutorialForm from './UploadTutorialForm'
+import WelcomeMyTutorials from './WelcomeMyTutorials'
 
 export {
   Code,
@@ -22,4 +24,6 @@ export {
   LazyInternalPage,
   PlainText,
   Pagination,
+  UploadTutorialForm,
+  WelcomeMyTutorials,
 }

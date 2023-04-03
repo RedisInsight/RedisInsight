@@ -22,17 +22,22 @@ export enum EnablementAreaComponent {
 }
 
 export interface IEnablementAreaItem {
-  id: string,
-  type: EnablementAreaComponent,
-  label: string,
-  children?: Record<string, IEnablementAreaItem>,
-  args?: Record<string, any>,
+  id: string
+  type: EnablementAreaComponent
+  label: string
+  children?: IEnablementAreaItem[]
+  args?: Record<string, any>
+  _actions?: string[]
+  _path?: string
+  _key?: string
+  _groupPath?: string
 }
 
 export interface StateWorkbenchEnablementArea {
-  loading: boolean;
-  error: string;
-  items: Record<string, IEnablementAreaItem>;
+  loading: boolean
+  deleting?: boolean
+  error: string
+  items: IEnablementAreaItem[]
 }
 
 export interface CommandExecutionUI extends Partial<CommandExecution> {

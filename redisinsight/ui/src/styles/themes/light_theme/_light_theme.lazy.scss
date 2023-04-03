@@ -181,6 +181,7 @@
   --wbRunResultsBg: #{$wbRunResultsBg};
   --wbHoverIconColor: #{$wbHoverIconColor};
   --wbActiveIconColor: #{$wbActiveIconColor};
+  --wbTextColor: #{$wbTextColor};
 
   // Pub/Sub
   --pubSubClientsBadge: #{$pubSubClientsBadge};
@@ -193,6 +194,7 @@
   --recommendationsBgColor: #{$recommendationsBgColor};
   --recommendationColor: #{$recommendationColor};
   --recommendationBgColor: #{$recommendationBgColor};
+  --recommendationLiveBorderColor: #{$recommendationLiveBorderColor};
   --triggerIconColor: #{$triggerIconColor};
   --triggerIconActiveColor: #{$triggerIconActiveColor};
 }

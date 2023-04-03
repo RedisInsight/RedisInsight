@@ -7,8 +7,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
-import { fetchGuides, workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
-import { fetchTutorials, workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
+import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+import { fetchCustomTutorials, workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { Nullable, } from 'uiSrc/utils'
@@ -16,6 +17,7 @@ import { Nullable, } from 'uiSrc/utils'
 import { setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { getTutorialSection } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
 import EnablementArea from './EnablementArea'
 import EnablementAreaCollapse from './EnablementAreaCollapse/EnablementAreaCollapse'
 
@@ -33,15 +35,12 @@ const EnablementAreaWrapper = (props: Props) => {
   const { isMinimized, scriptEl, setScript, isCodeBtnDisabled, onSubmit } = props
   const { loading: loadingGuides, items: guides } = useSelector(workbenchGuidesSelector)
   const { loading: loadingTutorials, items: tutorials } = useSelector(workbenchTutorialsSelector)
+  const { loading: loadingCustomTutorials, items: customTutorials } = useSelector(workbenchCustomTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(fetchGuides())
-  }, [])
-
-  useEffect(() => {
-    dispatch(fetchTutorials())
+    dispatch(fetchCustomTutorials())
   }, [])
 
   const sendEventButtonClickedTelemetry = (data?: Record<string, any>) => {
@@ -57,7 +56,7 @@ const EnablementAreaWrapper = (props: Props) => {
   const openScript = (
     script: string,
     execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams } = { mode: ExecuteButtonMode.Manual },
-    file?: { path?: string, name?: string }
+    file?: { path?: string, name?: string, source?: string }
   ) => {
     sendEventButtonClickedTelemetry(file)
 
@@ -73,11 +72,12 @@ const EnablementAreaWrapper = (props: Props) => {
     }, 0)
   }
 
-  const onOpenInternalPage = ({ path }: IInternalPage) => {
+  const onOpenInternalPage = ({ path, manifestPath }: IInternalPage) => {
     sendEventTelemetry({
       event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED,
       eventData: {
         path,
+        section: getTutorialSection(manifestPath),
         databaseId: instanceId,
       }
     })
@@ -110,7 +110,8 @@ const EnablementAreaWrapper = (props: Props) => {
         <EnablementArea
           guides={guides}
           tutorials={tutorials}
-          loading={loadingGuides || loadingTutorials}
+          customTutorials={customTutorials}
+          loading={loadingGuides || loadingTutorials || loadingCustomTutorials}
           openScript={openScript}
           onOpenInternalPage={onOpenInternalPage}
           isCodeBtnDisabled={isCodeBtnDisabled}

@@ -63,7 +63,7 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   const appType = getAppType()
 
   if (isAnalyticsGranted || nonTracking) {
-    telemetryService?.event({
+    return telemetryService?.event({
       event,
       properties: {
         buildType: appType,
@@ -71,6 +71,7 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
       },
     })
   }
+  return null
 }
 
 const sendPageViewTelemetry = (payload: ITelemetrySendPageView) => {

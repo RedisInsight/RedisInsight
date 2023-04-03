@@ -20,7 +20,7 @@ const QueryCardCliGroupResult = (props: Props) => {
       <QueryCardCliDefaultResult
         isFullScreen={isFullScreen}
         items={flatten(result?.[0]?.response.map((item: any) => {
-          const commonError = CommonErrorResponse(item.command, item.response)
+          const commonError = CommonErrorResponse(item.id, item.command, item.response)
           if (React.isValidElement(commonError)) {
             return ([wbSummaryCommand(item.command), commonError])
           }

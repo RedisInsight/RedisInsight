@@ -7,6 +7,8 @@ export default {
   PROFILER_LOG_FILE_NOT_FOUND: 'Profiler log file was not found.',
   CONSUMER_GROUP_NOT_FOUND: 'Consumer Group with such name was not found.',
   PLUGIN_STATE_NOT_FOUND: 'Plugin state was not found.',
+  CUSTOM_TUTORIAL_NOT_FOUND: 'Custom Tutorial was not found.',
+  CUSTOM_TUTORIAL_UNABLE_TO_FETCH_FROM_EXTERNAL: 'Unable fetch zip file from external source.',
   UNDEFINED_INSTANCE_ID: 'Undefined redis database instance id.',
   NO_CONNECTION_TO_REDIS_DB: 'No connection to the Redis Database.',
   WRONG_DATABASE_TYPE: 'Wrong database type.',

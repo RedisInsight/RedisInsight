@@ -48,7 +48,7 @@ export class DatabaseRecommendationProvider {
     const recommendations = await this.repository
       .createQueryBuilder('r')
       .where({ databaseId: clientMetadata.databaseId })
-      .select(['r.id', 'r.name'])
+      .select(['r.id', 'r.name', 'r.read'])
       .orderBy('r.createdAt', 'DESC')
       .getMany();
 

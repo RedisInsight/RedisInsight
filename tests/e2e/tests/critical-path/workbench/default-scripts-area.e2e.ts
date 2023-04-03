@@ -114,7 +114,8 @@ test('Verify that user can edit and run automatically added "Aggregate" script i
     await t.expect(workbenchPage.queryTableResult.textContent).contains(aggregationResultField, 'The aggregation field name is not in the Search result');
     await t.expect(workbenchPage.queryTableResult.textContent).contains('100', 'The aggregation max value is in not the Search result');
 });
-test('Verify that when the “Manual” option clicked, user can see the Editor is automatically prepopulated with the information', async t => {
+// Outdated after https://redislabs.atlassian.net/browse/RI-4279
+test.skip('Verify that when the “Manual” option clicked, user can see the Editor is automatically prepopulated with the information', async t => {
     const information = [
         '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.',
         '// Enter multiple commands at different rows to run them at once.',

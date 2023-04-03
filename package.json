@@ -234,7 +234,6 @@
     "electron-log": "^4.2.4",
     "electron-store": "^8.0.0",
     "electron-updater": "^5.0.5",
-    "fflate": "^0.7.4",
     "file-saver": "^2.0.5",
     "formik": "^2.2.9",
     "fzstd": "^0.1.0",

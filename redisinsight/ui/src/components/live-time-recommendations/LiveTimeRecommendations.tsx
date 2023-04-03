@@ -46,7 +46,7 @@ const LiveTimeRecommendations = () => {
 
   useEffect(() => {
     interval = setInterval(() => {
-      if (document.hidden) return
+      if (document.hidden || isContentVisible) return
 
       dispatch(fetchRecommendationsAction(
         connectedInstanceId,
@@ -55,7 +55,7 @@ const LiveTimeRecommendations = () => {
       ))
     }, TIMEOUT_TO_GET_RECOMMENDATION)
     return () => clearInterval(interval)
-  }, [connectedInstanceId])
+  }, [connectedInstanceId, isContentVisible])
 
   const toggleContent = () => {
     sendEventTelemetry({

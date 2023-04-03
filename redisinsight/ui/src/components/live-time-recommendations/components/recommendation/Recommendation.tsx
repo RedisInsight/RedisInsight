@@ -66,7 +66,7 @@ const Recommendation = ({ name, instanceId, isRead }: IProps) => {
   }
 
   return (
-    <div className={cx(styles.wrapper, { [styles.read]: isRead })} data-testid={`${name}-recommendation`}>
+    <div className={cx(styles.wrapper, { [styles.read]: isRead })} data-testid={`${name}-recommendation`} key={name}>
       <EuiFlexGroup responsive={false} gutterSize="none">
         <EuiFlexItem grow={false}>
           <Icon className={styles.icon} />

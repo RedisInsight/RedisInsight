@@ -4,8 +4,13 @@ import { DatabaseRecommendationEntity }
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
-import { DatabaseRecommendation, DatabaseRecommendationsResponse } from 'src/modules/database-recommendation/models';
+import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
 import { ClientMetadata } from 'src/common/models';
+import {
+  DatabaseRecommendationsResponse,
+} from 'src/modules/database-recommendation/dto/database-recommendations.response';
+import { RecommendationEvents } from 'src/modules/database-recommendation/constants';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class DatabaseRecommendationProvider {
@@ -14,6 +19,7 @@ export class DatabaseRecommendationProvider {
   constructor(
     @InjectRepository(DatabaseRecommendationEntity)
     private readonly repository: Repository<DatabaseRecommendationEntity>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   /**
@@ -23,9 +29,14 @@ export class DatabaseRecommendationProvider {
    */
   async create(databaseId: string, recommendationName: string): Promise<DatabaseRecommendation> {
     this.logger.log('Creating database recommendation');
-    return this.repository.save(
-      plainToClass(DatabaseRecommendation, { databaseId, name: recommendationName }),
+    const recommendation = plainToClass(
+      DatabaseRecommendation,
+      await this.repository.save({ databaseId, name: recommendationName }),
     );
+
+    this.eventEmitter.emit(RecommendationEvents.NewRecommendation, [recommendation]);
+
+    return recommendation;
   }
 
   /**
@@ -79,7 +90,7 @@ export class DatabaseRecommendationProvider {
     try {
       this.logger.log(`Checking is recommendation ${name} exist`);
       const recommendation = await this.repository.findOneBy({ databaseId: clientMetadata.databaseId, name });
-  
+
       this.logger.log(`Succeed to check is recommendation ${name} exist'`);
       return !!recommendation;
     } catch (err) {

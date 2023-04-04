@@ -42,7 +42,7 @@ describe('PATCH /recommendations/:id', () => {
         },
         after: async () => {
           const recommendation = await repo.createQueryBuilder().where({ id: constants.TEST_RECOMMENDATION_ID_1 }).getOne();
-          expect(recommendation.vote).to.eq(localDb.encryptData(constants.TEST_RECOMMENDATION_VOTE));
+          expect(recommendation.vote).to.eq(constants.TEST_RECOMMENDATION_VOTE);
         },
       },
     ].map(mainCheckFn);

@@ -10,7 +10,6 @@ import {
 } from 'src/__mocks__';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { when } from 'jest-when';
 import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
 import { DatabaseRecommendationEntity }
@@ -26,7 +25,6 @@ const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
   read: false,
   disabled: false,
   vote: null,
-  encryption: 'KEYTAR',
 });
 
 const mockDatabaseRecommendation = {
@@ -37,18 +35,16 @@ const mockDatabaseRecommendation = {
   name: mockDatabaseRecommendationEntity.name,
   disabled: mockDatabaseRecommendationEntity.disabled,
   vote: mockDatabaseRecommendationEntity.vote,
-  encryption: mockDatabaseRecommendationEntity.encryption,
 };
 
 const mockDatabaseRecommendationVoted = {
   ...mockDatabaseRecommendationEntity,
-  vote: 'ENCRYPTED:useful',
+  vote: Vote.Like,
 };
 
 describe('DatabaseAnalysisProvider', () => {
   let service: DatabaseRecommendationProvider;
   let repository: MockType<Repository<DatabaseRecommendationEntity>>;
-  let encryptionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -67,13 +63,6 @@ describe('DatabaseAnalysisProvider', () => {
 
     service = module.get<DatabaseRecommendationProvider>(DatabaseRecommendationProvider);
     repository = module.get(getRepositoryToken(DatabaseRecommendationEntity));
-    encryptionService = module.get<EncryptionService>(EncryptionService);
-
-    when(encryptionService.encrypt).calledWith(mockDatabaseRecommendationVoted.vote)
-      .mockResolvedValue({
-        data: mockDatabaseRecommendationVoted.vote,
-        encryption: mockDatabaseRecommendationVoted.encryption,
-      });
   });
 
   describe('create', () => {

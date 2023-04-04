@@ -267,7 +267,6 @@ export const generateDatabaseRecommendations = async (
     createdAt: new Date(),
     read: false,
     vote: null,
-    encryption: constants.TEST_ENCRYPTION_STRATEGY,
     ...partial,
   }));
 
@@ -278,7 +277,6 @@ export const generateDatabaseRecommendations = async (
     createdAt: new Date(),
     read: false,
     vote: null,
-    encryption: constants.TEST_ENCRYPTION_STRATEGY,
     ...partial,
   }));
 

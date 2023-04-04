@@ -42,9 +42,6 @@ export class DatabaseRecommendationEntity {
   })
   vote?: string;
 
-  @Column({ nullable: true })
-  encryption: string;
-
   @CreateDateColumn()
   @Index()
   @Expose()

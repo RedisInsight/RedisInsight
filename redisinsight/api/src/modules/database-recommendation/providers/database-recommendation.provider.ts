@@ -12,14 +12,10 @@ import { EncryptionService } from 'src/modules/encryption/encryption.service';
 @Injectable()
 export class DatabaseRecommendationProvider {
   private readonly logger = new Logger('DatabaseRecommendationProvider');
-  private readonly encryptedFields = [
-    'vote',
-  ];
 
   constructor(
     @InjectRepository(DatabaseRecommendationEntity)
     private readonly repository: Repository<DatabaseRecommendationEntity>,
-    private readonly encryptionService: EncryptionService,
   ) {}
 
   /**
@@ -93,7 +89,7 @@ export class DatabaseRecommendationProvider {
 
     const entity = plainToClass(DatabaseRecommendation, { ...oldDatabaseRecommendation, vote });
 
-    await this.repository.update(id, await this.encryptEntity(plainToClass(DatabaseRecommendationEntity, entity)));
+    await this.repository.update(id, plainToClass(DatabaseRecommendationEntity, entity));
 
     return entity;
   }
@@ -117,29 +113,5 @@ export class DatabaseRecommendationProvider {
       this.logger.error(`Failed to check is recommendation ${name} exist'`);
       return false;
     }
-  }
-
-  /**
-   * Encrypt required database recommendation fields based on picked encryption strategy
-   * Should always throw an encryption error to determine that something wrong
-   * with encryption strategy
-   *
-   * @param entity
-   * @private
-   */
-  private async encryptEntity(entity: DatabaseRecommendationEntity): Promise<DatabaseRecommendationEntity> {
-    const encryptedEntity = {
-      ...entity,
-    };
-
-    await Promise.all(this.encryptedFields.map(async (field) => {
-      if (entity[field]) {
-        const { data, encryption } = await this.encryptionService.encrypt(entity[field]);
-        encryptedEntity[field] = data;
-        encryptedEntity['encryption'] = encryption;
-      }
-    }));
-
-    return encryptedEntity;
   }
 }

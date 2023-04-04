@@ -14,7 +14,6 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { RecommendationVoting } from 'uiSrc/pages/databaseAnalysis/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { Pages, Theme } from 'uiSrc/constants'
@@ -29,6 +28,7 @@ import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { findMarkdownPathByPath } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
 import { EAManifestFirstKey } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/constants'
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
+import { RecommendationVoting } from 'uiSrc/components'
 import { renderBadges, renderBadgesLegend, renderContent, sortRecommendations } from './utils'
 
 import styles from './styles.module.scss'

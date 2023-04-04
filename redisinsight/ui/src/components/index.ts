@@ -22,6 +22,7 @@ import BulkActionsConfig from './bulk-actions-config'
 import ImportDatabasesDialog from './import-databases-dialog'
 import OnboardingTour from './onboarding-tour'
 import CodeBlock from './code-block'
+import RecommendationVoting from './recommendation-voting'
 
 export {
   NavigationMenu,
@@ -51,4 +52,5 @@ export {
   ImportDatabasesDialog,
   OnboardingTour,
   CodeBlock,
+  RecommendationVoting,
 }

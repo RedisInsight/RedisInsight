@@ -16,23 +16,33 @@ import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
-
+import content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as LikeIcon } from 'uiSrc/assets/img/icons/like.svg'
 import { ReactComponent as DoubleLikeIcon } from 'uiSrc/assets/img/icons/double_like.svg'
 import { ReactComponent as DislikeIcon } from 'uiSrc/assets/img/icons/dislike.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
+import { putLiveRecommendationVote } from 'uiSrc/slices/recommendations/recommendations'
+import { Nullable } from 'uiSrc/utils'
+
 import styles from './styles.module.scss'
 
-export interface Props { vote?: Vote, name: string }
+export interface Props {
+  vote?: Nullable<Vote>
+  name: string
+  id?: string
+  live?: boolean
+}
 
-const RecommendationVoting = ({ vote, name }: Props) => {
+const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
   const config = useSelector(userSettingsConfigSelector)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const dispatch = useDispatch()
 
   const onSuccessVoted = (instanceId: string, name: string, vote: Vote) => {
     sendEventTelemetry({
-      event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_VOTED,
+      event: live
+        ? TelemetryEvent.INSIGHTS_RECOMMENDATIONS_VOTED
+        : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_VOTED,
       eventData: {
         databaseId: instanceId,
         name,
@@ -45,7 +55,13 @@ const RecommendationVoting = ({ vote, name }: Props) => {
     if (vote === Vote.Dislike) {
       setIsPopoverOpen(true)
     }
-    dispatch(putRecommendationVote(name, vote, onSuccessVoted))
+
+    if (live) {
+      const recommendationName = content[name]?.liveTelemetryEvent ?? name
+      dispatch(putLiveRecommendationVote(id, vote, recommendationName, onSuccessVoted))
+    } else {
+      dispatch(putRecommendationVote(name, vote, onSuccessVoted))
+    }
   }
 
   const getTooltipContent = (content: string) => (config?.agreements?.analytics
@@ -53,7 +69,7 @@ const RecommendationVoting = ({ vote, name }: Props) => {
     : 'Enable Analytics on the Settings page to vote for a recommendation')
 
   return (
-    <EuiFlexGroup alignItems="center" className={styles.votingContainer}>
+    <EuiFlexGroup alignItems="center" className={styles.votingContainer} gutterSize={live ? 'none' : 'l'}>
       <EuiText size="m">Rate Recommendation</EuiText>
       <div className={styles.vote}>
         <EuiToolTip

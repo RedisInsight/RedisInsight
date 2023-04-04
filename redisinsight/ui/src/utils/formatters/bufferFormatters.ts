@@ -106,7 +106,8 @@ const ASCIIToBuffer = (strInit: string) => {
   return anyToBuffer(Array.from(Buffer.from(result, 'hex')))
 }
 
-const bufferToUTF8 = (reply: RedisResponseBuffer): string => decoder.decode(new Uint8Array(reply.data))
+const bufferToUint8Array = (reply: RedisResponseBuffer): Uint8Array => new Uint8Array(reply.data)
+const bufferToUTF8 = (reply: RedisResponseBuffer): string => decoder.decode(bufferToUint8Array(reply))
 
 const UintArrayToString = (reply: UintArray): string => decoder.decode(new Uint8Array(reply))
 
@@ -138,7 +139,7 @@ const hexToBuffer = (data: string): RedisResponseBuffer => {
 }
 
 const bufferToJava = (reply: RedisResponseBuffer) => {
-  const stream = new ObjectInputStream(new Uint8Array(reply.data))
+  const stream = new ObjectInputStream(bufferToUint8Array(reply))
   const decoded = stream.readObject()
   const { fields } = decoded
   const fieldsArray = Array.from(fields, ([key, value]) => ({ [key]: value }))
@@ -172,6 +173,7 @@ export {
   ASCIIToBuffer,
   isEqualBuffers,
   stringToBuffer,
+  bufferToUint8Array,
   bufferToString,
   UintArrayToString,
   hexToBuffer,

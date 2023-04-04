@@ -6,7 +6,6 @@ import {
   mockRepository,
   mockDatabase,
   MockType,
-  mockEncryptionService,
 } from 'src/__mocks__';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -14,7 +13,6 @@ import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
-import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { Vote } from 'src/modules/database-recommendation/models';
 
 const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
@@ -53,10 +51,6 @@ describe('DatabaseAnalysisProvider', () => {
         {
           provide: getRepositoryToken(DatabaseRecommendationEntity),
           useFactory: mockRepository,
-        },
-        {
-          provide: EncryptionService,
-          useFactory: mockEncryptionService,
         },
       ],
     }).compile();

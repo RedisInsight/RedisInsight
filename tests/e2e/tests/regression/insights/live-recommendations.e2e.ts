@@ -1,7 +1,7 @@
 import { MyRedisDatabasePage, BrowserPage, InsightsPage, DatabaseOverviewPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
 import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
@@ -12,7 +12,7 @@ const insightsPage = new InsightsPage();
 const databaseOverviewPage = new DatabaseOverviewPage();
 
 const databasesForAdding = [
-    { host: ossStandaloneRedisearch.host, port: ossStandaloneRedisearch.port, databaseName: ossStandaloneRedisearch.databaseName },
+    { host: ossStandaloneV5Config.host, port: ossStandaloneV5Config.port, databaseName: ossStandaloneV5Config.databaseName },
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: ossStandaloneConfig.databaseName }
 ];
 const tenSecondsTimeout = 10000;

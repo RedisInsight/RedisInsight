@@ -6,7 +6,7 @@ import { ReactComponent as AnalysisIcon } from 'uiSrc/assets/img/icons/analysis.
 import styles from './styles.module.scss'
 
 const NoRecommendationsScreen = () => (
-  <div className={styles.container}>
+  <div className={styles.container} data-testid="no-recommendations-screen">
     <EuiText className={styles.bigText}>Welcome to recommendations</EuiText>
     <EuiText className={styles.mediumText}>Where we help you improve your database.</EuiText>
     <WelcomeIcon className={styles.icon} />

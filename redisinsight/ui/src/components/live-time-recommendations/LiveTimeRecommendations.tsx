@@ -118,6 +118,7 @@ const LiveTimeRecommendations = () => {
           ownFocus
           size="476px"
           onClose={handleClose}
+          data-testid="insights-panel"
         >
           <EuiFlyoutHeader className={styles.header}>
             <EuiTitle className={styles.title}>

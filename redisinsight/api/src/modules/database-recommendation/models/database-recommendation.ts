@@ -1,5 +1,12 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsOptional } from 'class-validator';
+
+export enum Vote {
+  DoubleLike = 'very useful',
+  Like = 'useful',
+  Dislike = 'not useful',
+}
 
 export class DatabaseRecommendation {
   @ApiProperty({
@@ -32,6 +39,15 @@ export class DatabaseRecommendation {
   })
   @Expose()
   disabled?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Recommendation vote',
+    default: Vote.Like,
+    enum: Vote,
+  })
+  @IsEnum(Vote)
+  @IsOptional()
+  vote?: Vote = null;
 }
 
 export class DatabaseRecommendationsResponse {

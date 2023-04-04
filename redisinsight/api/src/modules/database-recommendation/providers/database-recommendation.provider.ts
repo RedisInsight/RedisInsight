@@ -1,19 +1,25 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
-import { DatabaseRecommendation, DatabaseRecommendationsResponse } from 'src/modules/database-recommendation/models';
+import { DatabaseRecommendation, DatabaseRecommendationsResponse, Vote } from 'src/modules/database-recommendation/models';
 import { ClientMetadata } from 'src/common/models';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 
 @Injectable()
 export class DatabaseRecommendationProvider {
   private readonly logger = new Logger('DatabaseRecommendationProvider');
+  private readonly encryptedFields = [
+    'vote',
+  ];
 
   constructor(
     @InjectRepository(DatabaseRecommendationEntity)
     private readonly repository: Repository<DatabaseRecommendationEntity>,
+    private readonly encryptionService: EncryptionService,
   ) {}
 
   /**
@@ -37,7 +43,7 @@ export class DatabaseRecommendationProvider {
     const recommendations = await this.repository
       .createQueryBuilder('r')
       .where({ databaseId: clientMetadata.databaseId })
-      .select(['r.id', 'r.name', 'r.read'])
+      .select(['r.id', 'r.name', 'r.read', 'r.vote', 'disabled'])
       .orderBy('r.createdAt', 'DESC')
       .getMany();
 
@@ -68,6 +74,31 @@ export class DatabaseRecommendationProvider {
   }
 
   /**
+   * Fetches entity, decrypt, update and return updated DatabaseRecommendation model
+   * @param id
+   * @param dto
+   */
+  async recommendationVote(clientMetadata: ClientMetadata, id: string, vote: Vote): Promise<DatabaseRecommendation> {
+    const { databaseId } = clientMetadata
+    this.logger.log('Updating database recommendation with vote');
+    const oldDatabaseRecommendation = await this.repository.findOne({
+      where: { id, databaseId },
+      select: ['id', 'name', 'read', 'vote', 'disabled'],
+    });
+
+    if (!oldDatabaseRecommendation) {
+      this.logger.error(`Database recommendation with id:${id} was not Found`);
+      throw new NotFoundException(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND);
+    }
+
+    const entity = plainToClass(DatabaseRecommendation, { ...oldDatabaseRecommendation, vote });
+
+    await this.repository.update(id, await this.encryptEntity(plainToClass(DatabaseRecommendationEntity, entity)));
+
+    return entity;
+  }
+
+  /**
    * Check is recommendation exist in database
    * @param clientMetadata
    * @param name
@@ -86,5 +117,29 @@ export class DatabaseRecommendationProvider {
       this.logger.error(`Failed to check is recommendation ${name} exist'`);
       return false;
     }
+  }
+
+  /**
+   * Encrypt required database recommendation fields based on picked encryption strategy
+   * Should always throw an encryption error to determine that something wrong
+   * with encryption strategy
+   *
+   * @param entity
+   * @private
+   */
+  private async encryptEntity(entity: DatabaseRecommendationEntity): Promise<DatabaseRecommendationEntity> {
+    const encryptedEntity = {
+      ...entity,
+    };
+
+    await Promise.all(this.encryptedFields.map(async (field) => {
+      if (entity[field]) {
+        const { data, encryption } = await this.encryptionService.encrypt(entity[field]);
+        encryptedEntity[field] = data;
+        encryptedEntity['encryption'] = encryption;
+      }
+    }));
+
+    return encryptedEntity;
   }
 }

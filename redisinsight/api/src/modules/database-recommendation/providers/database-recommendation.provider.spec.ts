@@ -6,13 +6,17 @@ import {
   mockRepository,
   mockDatabase,
   MockType,
+  mockEncryptionService,
 } from 'src/__mocks__';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { when } from 'jest-when';
 import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
+import { Vote } from 'src/modules/database-recommendation/models';
 
 const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
   id: uuidv4(),
@@ -21,6 +25,8 @@ const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
   createdAt: new Date(),
   read: false,
   disabled: false,
+  vote: null,
+  encryption: 'KEYTAR',
 });
 
 const mockDatabaseRecommendation = {
@@ -30,11 +36,19 @@ const mockDatabaseRecommendation = {
   read: mockDatabaseRecommendationEntity.read,
   name: mockDatabaseRecommendationEntity.name,
   disabled: mockDatabaseRecommendationEntity.disabled,
+  vote: mockDatabaseRecommendationEntity.vote,
+  encryption: mockDatabaseRecommendationEntity.encryption,
+};
+
+const mockDatabaseRecommendationVoted = {
+  ...mockDatabaseRecommendationEntity,
+  vote: 'ENCRYPTED:useful',
 };
 
 describe('DatabaseAnalysisProvider', () => {
   let service: DatabaseRecommendationProvider;
   let repository: MockType<Repository<DatabaseRecommendationEntity>>;
+  let encryptionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -44,11 +58,22 @@ describe('DatabaseAnalysisProvider', () => {
           provide: getRepositoryToken(DatabaseRecommendationEntity),
           useFactory: mockRepository,
         },
+        {
+          provide: EncryptionService,
+          useFactory: mockEncryptionService,
+        },
       ],
     }).compile();
 
     service = module.get<DatabaseRecommendationProvider>(DatabaseRecommendationProvider);
     repository = module.get(getRepositoryToken(DatabaseRecommendationEntity));
+    encryptionService = module.get<EncryptionService>(EncryptionService);
+
+    when(encryptionService.encrypt).calledWith(mockDatabaseRecommendationVoted.vote)
+      .mockResolvedValue({
+        data: mockDatabaseRecommendationVoted.vote,
+        encryption: mockDatabaseRecommendationVoted.encryption,
+      });
   });
 
   describe('create', () => {
@@ -84,7 +109,6 @@ describe('DatabaseAnalysisProvider', () => {
     });
   });
 
-
   describe('isExist', () => {
     it('should return true when findOneBy recommendation', async () => {
       repository.findOneBy.mockReturnValueOnce('some');
@@ -103,6 +127,19 @@ describe('DatabaseAnalysisProvider', () => {
       repository.findOneBy.mockRejectedValue('some error');
 
       expect(await service.isExist(mockClientMetadata, mockDatabaseRecommendation.name)).toEqual(false);
+    });
+  });
+
+  describe('recommendationVote', () => {
+    it('should call "update" with the vote value', async () => {
+      const { vote } = mockDatabaseRecommendationVoted;
+      repository.findOne.mockReturnValueOnce(mockDatabaseRecommendationEntity);
+
+      await service.recommendationVote(mockClientMetadata, mockDatabaseRecommendation.id, vote as Vote);
+      expect(repository.update).toBeCalledWith(
+        mockDatabaseRecommendationEntity.id,
+        { ...mockDatabaseRecommendationEntity, vote },
+      );
     });
   });
 });

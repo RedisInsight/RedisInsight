@@ -16,7 +16,8 @@ import { OverviewPage } from './overview-page';
 import { PubSubPage } from './pub-sub-page';
 import { SlowLogPage } from './slow-log-page';
 import { NotificationPage } from './notification-page';
-import { OnboardingPage} from './onboarding-page';
+import { OnboardingPage } from './onboarding-page';
+import { InsightsPage } from './insights-page';
 
 export {
     AddRedisDatabasePage,
@@ -37,5 +38,6 @@ export {
     PubSubPage,
     SlowLogPage,
     NotificationPage,
-    OnboardingPage
+    OnboardingPage,
+    InsightsPage
 };

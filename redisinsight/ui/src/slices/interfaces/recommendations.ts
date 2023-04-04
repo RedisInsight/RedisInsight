@@ -1,6 +1,11 @@
+import { Vote } from 'uiSrc/constants/recommendations'
+import { Nullable } from 'uiSrc/utils'
+
 export interface IRecommendation {
+  id: string
   name: string
   read: boolean
+  vote: Nullable<Vote>
 }
 
 export interface IRecommendations {

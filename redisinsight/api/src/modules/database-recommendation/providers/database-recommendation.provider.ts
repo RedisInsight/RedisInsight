@@ -1,11 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
-import { DatabaseRecommendation, DatabaseRecommendationsResponse } from 'src/modules/database-recommendation/models';
+import { DatabaseRecommendation, DatabaseRecommendationsResponse, Vote } from 'src/modules/database-recommendation/models';
 import { ClientMetadata } from 'src/common/models';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 
 @Injectable()
 export class DatabaseRecommendationProvider {
@@ -37,7 +39,7 @@ export class DatabaseRecommendationProvider {
     const recommendations = await this.repository
       .createQueryBuilder('r')
       .where({ databaseId: clientMetadata.databaseId })
-      .select(['r.id', 'r.name', 'r.read'])
+      .select(['r.id', 'r.name', 'r.read', 'r.vote', 'disabled'])
       .orderBy('r.createdAt', 'DESC')
       .getMany();
 
@@ -65,6 +67,31 @@ export class DatabaseRecommendationProvider {
       .where({ databaseId: clientMetadata.databaseId })
       .set({ read: true })
       .execute();
+  }
+
+  /**
+   * Fetches entity, decrypt, update and return updated DatabaseRecommendation model
+   * @param id
+   * @param dto
+   */
+  async recommendationVote(clientMetadata: ClientMetadata, id: string, vote: Vote): Promise<DatabaseRecommendation> {
+    const { databaseId } = clientMetadata
+    this.logger.log('Updating database recommendation with vote');
+    const oldDatabaseRecommendation = await this.repository.findOne({
+      where: { id, databaseId },
+      select: ['id', 'name', 'read', 'vote', 'disabled'],
+    });
+
+    if (!oldDatabaseRecommendation) {
+      this.logger.error(`Database recommendation with id:${id} was not Found`);
+      throw new NotFoundException(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND);
+    }
+
+    const entity = plainToClass(DatabaseRecommendation, { ...oldDatabaseRecommendation, vote });
+
+    await this.repository.update(id, plainToClass(DatabaseRecommendationEntity, entity));
+
+    return entity;
   }
 
   /**

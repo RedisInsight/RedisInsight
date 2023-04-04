@@ -1,10 +1,5 @@
 import { Connection, createConnection, getConnectionManager } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
-import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
-import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
-import { CommandExecutionEntity } from "src/modules/workbench/entities/command-execution.entity";
-import { PluginStateEntity } from "src/modules/workbench/entities/plugin-state.entity";
 import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 
@@ -268,18 +263,20 @@ export const generateDatabaseRecommendations = async (
   result.push(await rep.save({
     id: constants.TEST_RECOMMENDATION_ID_1,
     databaseId: constants.TEST_RECOMMENDATIONS_DATABASE_ID,
-    name: constants.TEST_BIG_SETS_RECOMMENDATION,
+    name: constants.TEST_RECOMMENDATION_NAME_1,
     createdAt: new Date(),
     read: false,
+    vote: null,
     ...partial,
   }));
 
   result.push(await rep.save({
     id: constants.TEST_RECOMMENDATION_ID_2,
     databaseId: constants.TEST_RECOMMENDATIONS_DATABASE_ID,
-    name: constants.TEST_REDISEARCH_RECOMMENDATION,
+    name: constants.TEST_RECOMMENDATION_NAME_2,
     createdAt: new Date(),
     read: false,
+    vote: null,
     ...partial,
   }));
 

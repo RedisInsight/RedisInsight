@@ -18,18 +18,18 @@ const databasesForAdding = [
 const tenSecondsTimeout = 10000;
 let keyName = `recomKey-${common.generateWord(10)}`;
 
-fixture`Live Recommendations`
+fixture `Live Recommendations`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async t => {
+    .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async t => {
+    .afterEach(async() => {
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
-    .before(async t => {
+    .before(async() => {
         // Add new databases using API
         await acceptLicenseTerms();
         await addNewStandaloneDatabasesApi(databasesForAdding);
@@ -37,47 +37,44 @@ test
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
     })
-    .after(async () => {
+    .after(async() => {
         // Clear and delete database
+        await insightsPage.closeInsightsPanel();
         await databaseOverviewPage.changeDbIndex(0);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify Insights panel Recommendations displaying', async t => {
         keyName = common.generateWord(10);
 
+        await insightsPage.openInsightsPanel();
         // Verify that "Welcome to recommendations" panel displayed when there are no recommendations
         await t
             .expect(insightsPage.noRecommendationsScreen.exists).ok('No recommendations panel not displayed')
             .expect(insightsPage.noRecommendationsScreen.textContent).contains('Welcome to recommendations', 'Welcome to recommendations text not displayed');
 
-        // Close Insights panel
-        await t.click(insightsPage.insightsBtn);
+        await insightsPage.closeInsightsPanel();
         // Go to 2nd database
         await t.click(myRedisDatabasePage.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
-        // Open Insights panel
-        await t.click(insightsPage.insightsBtn);
+        await insightsPage.openInsightsPanel();
         // Verify that live recommendations displayed for each database separately
         // Verify that user can see the live recommendation "Update Redis database" when Redis database is less than 6.0 highlighted as RedisStack
         await t
             .expect(insightsPage.redisVersionRecommendation.exists).ok('Update Redis Version recommendation not displayed')
             .expect(insightsPage.optimizeTimeSeriesRecommendation.exists).notOk('Optimize Time Series recommendation displayed');
-        // Close Insights panel
-        await t.click(insightsPage.insightsBtn);
+        await insightsPage.closeInsightsPanel();
 
         // Create Sorted Set with TimeSeries value
         await browserPage.addZSetKey(keyName, '151153320500121', '231231251', '1511533205001:21');
         // Verify that the list of recommendations updated every 10 seconds
         await t.wait(tenSecondsTimeout);
-        await t.click(insightsPage.insightsBtn);
+        await insightsPage.openInsightsPanel();
         // Verify that user can see the live recommendation "Optimize the use of time series"
         await t.expect(insightsPage.optimizeTimeSeriesRecommendation.exists).ok('Optimize Time Series recommendation not displayed');
 
-        // Close Insights panel
-        await t.click(insightsPage.insightsBtn);
+        await insightsPage.closeInsightsPanel();
         await databaseOverviewPage.changeDbIndex(1);
-        // Open Insights panel
-        await t.click(insightsPage.insightsBtn);
+        await insightsPage.openInsightsPanel();
         // Verify that live recommendations displayed for each logical database separately
         await t
             .expect(insightsPage.redisVersionRecommendation.exists).ok('Update Redis Version recommendation not displayed')

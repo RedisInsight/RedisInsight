@@ -1,4 +1,4 @@
-import {Selector} from 'testcafe';
+import { Selector, t } from 'testcafe';
 
 export class InsightsPage {
     //-------------------------------------------------------------------------------------------
@@ -14,4 +14,22 @@ export class InsightsPage {
     noRecommendationsScreen = Selector('[data-testid=no-recommendations-screen]');
     redisVersionRecommendation = Selector('[data-testid=redisVersion-recommendation]');
     optimizeTimeSeriesRecommendation = Selector('[data-testid=RTS-recommendation]');
+
+    /**
+     * Open Insights Panel
+     */
+    async openInsightsPanel(): Promise<void> {
+        if (!(await this.insightsPanel.exists)) {
+            await t.click(this.insightsBtn);
+        }
+    }
+
+    /**
+     * Close Insights Panel
+     */
+    async closeInsightsPanel(): Promise<void> {
+        if (await this.insightsPanel.exists) {
+            await t.click(this.insightsBtn);
+        }
+    }
 }

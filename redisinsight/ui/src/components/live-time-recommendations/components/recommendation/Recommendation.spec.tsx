@@ -19,6 +19,11 @@ describe('Recommendation', () => {
     expect(render(<Recommendation {...instance(mockedProps)} />)).toBeTruthy()
   })
 
+  it('should render RecommendationVoting', () => {
+    render(<Recommendation {...instance(mockedProps)} />)
+    expect(screen.getByTestId('recommendation-voting')).toBeInTheDocument()
+  })
+
   it('should properly push history on workbench page', () => {
     // will be improved
     const pushMock = jest.fn()

@@ -69,7 +69,12 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
     : 'Enable Analytics on the Settings page to vote for a recommendation')
 
   return (
-    <EuiFlexGroup alignItems="center" className={styles.votingContainer} gutterSize={live ? 'none' : 'l'}>
+    <EuiFlexGroup
+      alignItems="center"
+      className={styles.votingContainer}
+      gutterSize={live ? 'none' : 'l'}
+      data-testid="recommendation-voting"
+    >
       <EuiText size="m">Rate Recommendation</EuiText>
       <div className={styles.vote}>
         <EuiToolTip

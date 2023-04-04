@@ -13,8 +13,33 @@
   background-color: var(--euiColorEmptyShade);
 }
 
+.deletePopover {
+  max-width: 400px !important;
+}
+
 .table {
   height: 100%;
+
+  :global {
+    .ReactVirtualized__Table__row {
+      .ReactVirtualized__Table__rowColumn {
+        .hideOnHover {
+          display: block;
+          &.hide { display: none !important; }
+        }
+        .showOnHover {
+          display: none;
+          &.show { display: block !important; }}
+      }
+
+      &:hover {
+        .ReactVirtualized__Table__rowColumn {
+          .hideOnHover { display: none; }
+          .showOnHover { display: block; }
+        }
+      }
+    }
+  }
 }
 
 :global(.show-cli) .table {

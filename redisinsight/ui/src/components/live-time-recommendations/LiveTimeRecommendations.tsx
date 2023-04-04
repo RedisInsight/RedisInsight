@@ -22,6 +22,7 @@ import {
 } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as AnalysisIcon } from 'uiSrc/assets/img/icons/analysis.svg'
 import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/icons/live-time-recommendations.svg'
 
@@ -43,16 +44,25 @@ const LiveTimeRecommendations = () => {
   const dispatch = useDispatch()
   const history = useHistory()
 
+  useEffect(() => {
+    interval = setInterval(() => {
+      if (document.hidden || isContentVisible) return
+
+      dispatch(fetchRecommendationsAction(
+        connectedInstanceId,
+        () => {},
+        () => clearInterval(interval),
+      ))
+    }, TIMEOUT_TO_GET_RECOMMENDATION)
+    return () => clearInterval(interval)
+  }, [connectedInstanceId, isContentVisible])
+
   const toggleContent = () => {
     sendEventTelemetry({
       event: isContentVisible
         ? TelemetryEvent.INSIGHTS_RECOMMENDATIONS_CLOSED
         : TelemetryEvent.INSIGHTS_RECOMMENDATIONS_OPENED,
-      eventData: {
-        databaseId: connectedInstanceId,
-        total: recommendations?.length,
-        list: recommendations?.map(({ name }) => name),
-      }
+      eventData: getTelemetryData(),
     })
 
     if (!isContentVisible && totalUnread) {
@@ -67,35 +77,34 @@ const LiveTimeRecommendations = () => {
   }
 
   const handleClose = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_CLOSED,
+      eventData: getTelemetryData(),
+    })
+
     dispatch(setIsContentVisible(false))
   }
+
+  const getTelemetryData = () => ({
+    databaseId: connectedInstanceId,
+    total: recommendations?.length,
+    list: recommendations?.map(({ name }) => content[name]?.liveTelemetryEvent ?? name),
+  })
 
   const renderBody = () => {
     if (!recommendations?.length) {
       return <WelcomeScreen />
     }
 
-    return recommendations?.map(({ name }) => (
+    return recommendations?.map(({ name, read }) => (
       <Recommendation
         key={name}
         name={name}
+        isRead={read}
         instanceId={connectedInstanceId}
       />
     ))
   }
-
-  useEffect(() => {
-    interval = setInterval(() => {
-      if (document.hidden) return
-
-      dispatch(fetchRecommendationsAction(
-        connectedInstanceId,
-        () => {},
-        () => clearInterval(interval),
-      ))
-    }, TIMEOUT_TO_GET_RECOMMENDATION)
-    return () => clearInterval(interval)
-  }, [connectedInstanceId])
 
   return (
     <div className={styles.wrapper}>

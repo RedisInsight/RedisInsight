@@ -19,8 +19,6 @@ const CommonAppSubscription = () => {
 
   const dispatch = useDispatch()
 
-  console.log('instanceId', instanceId)
-
   useEffect(() => {
     if (socketRef.current?.connected) {
       return
@@ -48,8 +46,6 @@ const CommonAppSubscription = () => {
 
   useEffect(() => {
     if (!instanceId) return
-
-    console.log(instanceId)
 
     unSubscribeFromAllRecommendations()
     setRecommendationsSubscriptions((ids) => [...ids, instanceId])

@@ -22,19 +22,19 @@ const scanArgs = [
     type: 'integer',
   },
   {
-    command: 'MATCH',
+    token: 'MATCH',
     name: 'pattern',
     type: 'pattern',
     optional: true,
   },
   {
-    command: 'COUNT',
+    token: 'COUNT',
     name: 'count',
     type: 'integer',
     optional: true,
   },
   {
-    command: 'TYPE',
+    token: 'TYPE',
     name: 'type',
     type: 'string',
     optional: true,

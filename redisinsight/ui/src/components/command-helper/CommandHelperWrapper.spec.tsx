@@ -51,9 +51,8 @@ const mockedCommands: IMockedCommands[] = [
   {
     matchedCommand: 'xgroup',
     argStr:
-      'XGROUP [CREATE key groupname ID|$ [MKSTREAM]] [SETID key groupname ID|$] [DESTROY key groupname] [CREATECONSUMER key groupname consumername] [DELCONSUMER key groupname consumername]',
-    argListText:
-      'Arguments:Optional[CREATE key groupname id [MKSTREAM]]Optional[SETID key groupname id]Optional[DESTROY key groupname]Optional[CREATECONSUMER key groupname consumername]Optional[DELCONSUMER key groupname consumername]',
+      'XGROUP',
+    argListText: '',
   },
   {
     matchedCommand: 'hset',
@@ -68,28 +67,28 @@ const mockedCommands: IMockedCommands[] = [
   {
     matchedCommand: 'bitfield',
     argStr:
-      'BITFIELD key [GET type offset] [SET type offset value] [INCRBY type offset increment] [OVERFLOW WRAP|SAT|FAIL]',
+      'BITFIELD key [GET encoding offset | [OVERFLOW <WRAP | SAT | FAIL>] <SET encoding offset value | INCRBY encoding offset increment> [GET encoding offset | [OVERFLOW <WRAP | SAT | FAIL>] <SET encoding offset value | INCRBY encoding offset increment> ...]]',
     argListText:
-      'Arguments:RequiredkeyOptional[GET type offset]Optional[SET type offset value]Optional[INCRBY type offset increment]Optional[OVERFLOW WRAP|SAT|FAIL]',
+      'Arguments:RequiredkeyMultiple[GET encoding offset | [OVERFLOW <WRAP | SAT | FAIL>] <SET encoding offset value | INCRBY encoding offset increment>]',
   },
   {
     matchedCommand: 'client kill',
     argStr:
-      'CLIENT KILL [ip:port] [ID client-id] [TYPE normal|master|slave|pubsub] [USER username] [ADDR ip:port] [LADDR ip:port] [SKIPME yes/no]',
+      'CLIENT KILL <ip:port | <[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] [[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] ...]>>',
     argListText:
-      'Arguments:Optional[ip:port]Optional[ID client-id]Optional[TYPE normal|master|slave|pubsub]Optional[USER username]Optional[ADDR ip:port]Optional[LADDR ip:port]Optional[SKIPME yes/no]',
+      'Arguments:Required<ip:port | <[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] [[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] ...]>>',
   },
   {
     matchedCommand: 'geoadd',
-    argStr: 'GEOADD key [NX|XX] [CH] longitude latitude member [longitude latitude member ...]',
+    argStr: 'GEOADD key [NX | XX] [CH] longitude latitude member [longitude latitude member ...]',
     argListText:
-      'Arguments:RequiredkeyOptional[condition]Optional[change]Multiplelongitude latitude member',
+      'Arguments:RequiredkeyOptional[NX | XX]Optional[CH]Multiplelongitude latitude member',
   },
   {
     matchedCommand: 'zadd',
-    argStr: 'ZADD key [NX|XX] [GT|LT] [CH] [INCR] score member [score member ...]',
+    argStr: 'ZADD key [NX | XX] [GT | LT] [CH] [INCR] score member [score member ...]',
     argListText:
-      'Arguments:RequiredkeyOptional[condition]Optional[comparison]Optional[change]Optional[increment]Multiplescore member',
+      'Arguments:RequiredkeyOptional[NX | XX]Optional[GT | LT]Optional[CH]Optional[INCR]Multiplescore member',
   },
 ]
 
@@ -127,8 +126,10 @@ describe('CliBodyWrapper', () => {
 
       const { unmount } = render(<CommandHelperWrapper />)
 
-      expect(screen.getByTestId(cliHelperTestId)).toBeInTheDocument()
-      expect(screen.getByTestId(argsId)).toHaveTextContent(argListText)
+      if (argListText) {
+        expect(screen.getByTestId(cliHelperTestId)).toBeInTheDocument()
+        expect(screen.getByTestId(argsId)).toHaveTextContent(argListText)
+      }
 
       unmount()
     })

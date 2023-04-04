@@ -51,6 +51,10 @@ const recommendationsSlice = createSlice({
     setIsHighlighted: (state, { payload }) => {
       state.isHighlighted = payload
     },
+    setTotalUnread: (state, { payload }) => {
+      state.data.totalUnread = payload
+      state.isHighlighted = !!payload
+    },
     readRecommendations: (state, { payload }) => {
       state.data = {
         ...state.data,
@@ -69,6 +73,7 @@ export const {
   setIsContentVisible,
   setIsHighlighted,
   readRecommendations,
+  setTotalUnread
 } = recommendationsSlice.actions
 
 // A selector

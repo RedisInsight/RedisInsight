@@ -30,10 +30,7 @@ import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import styles from './styles.module.scss'
 
-const TIMEOUT_TO_GET_RECOMMENDATION = 10_000
-
 const LiveTimeRecommendations = () => {
-  let interval: NodeJS.Timeout
   const { id: connectedInstanceId = '', } = useSelector(connectedInstanceSelector)
   const {
     data: { recommendations, totalUnread },
@@ -45,17 +42,17 @@ const LiveTimeRecommendations = () => {
   const history = useHistory()
 
   useEffect(() => {
-    interval = setInterval(() => {
-      if (document.hidden || isContentVisible) return
+    if (!connectedInstanceId) return
 
-      dispatch(fetchRecommendationsAction(
-        connectedInstanceId,
-        () => {},
-        () => clearInterval(interval),
-      ))
-    }, TIMEOUT_TO_GET_RECOMMENDATION)
-    return () => clearInterval(interval)
-  }, [connectedInstanceId, isContentVisible])
+    // initial loading
+    dispatch(fetchRecommendationsAction(connectedInstanceId))
+  }, [connectedInstanceId])
+
+  useEffect(() => {
+    if (isContentVisible && connectedInstanceId) {
+      dispatch(fetchRecommendationsAction(connectedInstanceId))
+    }
+  }, [isContentVisible, connectedInstanceId])
 
   const toggleContent = () => {
     sendEventTelemetry({

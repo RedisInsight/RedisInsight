@@ -13,6 +13,7 @@ import reducer, {
   fetchRecommendationsAction,
   readRecommendationsAction,
   recommendationsSelector,
+  setTotalUnread,
 } from 'uiSrc/slices/recommendations/recommendations'
 import { cleanup, initialStateDefault, mockStore, mockedStore } from 'uiSrc/utils/test-utils'
 
@@ -115,6 +116,30 @@ describe('recommendations slice', () => {
 
         // Act
         const nextState = reducer(initialState, setIsContentVisible(true))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          recommendations: nextState,
+        })
+        expect(recommendationsSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('setTotalUnread', () => {
+      it('should properly set total unread', () => {
+        // Arrange
+        const data = 10
+        const state = {
+          ...initialState,
+          isHighlighted: true,
+          data: {
+            ...initialState.data,
+            totalUnread: data
+          }
+        }
+
+        // Act
+        const nextState = reducer(initialState, setTotalUnread(data))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {

@@ -1,18 +1,42 @@
-.wrapper {
-  padding: 24px 20px;
-  background: var(--recommendationBgColor);
+.recommendationAccordion {
   border: 1px solid var(--recommendationLiveBorderColor);
-  border-radius: 8px;
   margin-bottom: 10px;
+  border-radius: 4px;
+  overflow: hidden;
 
   &.read {
     border: 1px solid var(--controlsBorderColor);
   }
 
-  .content {
-    max-width: 300px;
+  .redisStackLink {
+    margin-right: 12px;
   }
 
+  :global {
+    .euiAccordion__button {
+      padding: 12px 18px;
+      border-bottom: 1px solid transparent;
+      color: var(--htmlColor) !important;
+      background-color: var(--recommendationBgColor) !important;
+      font-size: 14px;
+      font-weight: 500;
+
+      transition: border-bottom-color ease .3s;
+    }
+
+    .euiAccordion.euiAccordion-isOpen {
+      .euiAccordion__button {
+        border-bottom-color: var(--controlsBorderColor);
+      }
+    }
+
+    .euiPanel {
+      background: var(--recommendationsBgColor) !important;
+    }
+  }
+}
+
+.wrapper, .recommendationAccordion {
   .text {
     font: normal normal normal 14px/19px Graphik !important;
   }
@@ -22,7 +46,14 @@
   }
 
   .icon {
-    margin-right: 5px;
+    float: left;
+    margin-right: 10px;
+  }
+
+  .floatContent {
+    :global(.euiText) {
+      display: inline;
+    }
   }
 
   .link {

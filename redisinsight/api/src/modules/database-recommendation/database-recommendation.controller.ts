@@ -1,13 +1,15 @@
-import { Controller, Get, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
+import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
 import { ClientMetadata } from 'src/common/models';
 import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
+import { DatabaseRecommendationVoteDto } from './dto';
 
 @ApiTags('Database Recommendations')
 @Controller('/recommendations')
@@ -46,5 +48,32 @@ export class DatabaseRecommendationController {
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
   ): Promise<void> {
     return this.service.read(clientMetadata);
+  }
+
+  @Patch(':id')
+  @ApiEndpoint({
+    description: 'Update database recommendation by id',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Updated database recommendation\' response',
+        type: DatabaseRecommendation,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  async modify(
+    @Param('id') id: string,
+      @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: DatabaseRecommendationVoteDto,
+  ): Promise<DatabaseRecommendation> {
+    return await this.service.vote(clientMetadata, id, dto.vote);
   }
 }

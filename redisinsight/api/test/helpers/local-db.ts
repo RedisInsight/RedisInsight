@@ -1,10 +1,5 @@
 import { Connection, createConnection, getConnectionManager } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
-import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
-import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
-import { CommandExecutionEntity } from "src/modules/workbench/entities/command-execution.entity";
-import { PluginStateEntity } from "src/modules/workbench/entities/plugin-state.entity";
 import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 
@@ -21,6 +16,7 @@ export const repositories = {
   DATABASE_ANALYSIS: 'DatabaseAnalysisEntity',
   DATABASE_RECOMMENDATION: 'DatabaseRecommendationEntity',
   BROWSER_HISTORY: 'BrowserHistoryEntity',
+  CUSTOM_TUTORIAL: 'CustomTutorialEntity',
 }
 
 let localDbConnection;
@@ -267,18 +263,20 @@ export const generateDatabaseRecommendations = async (
   result.push(await rep.save({
     id: constants.TEST_RECOMMENDATION_ID_1,
     databaseId: constants.TEST_RECOMMENDATIONS_DATABASE_ID,
-    name: constants.TEST_BIG_SETS_RECOMMENDATION,
+    name: constants.TEST_RECOMMENDATION_NAME_1,
     createdAt: new Date(),
     read: false,
+    vote: null,
     ...partial,
   }));
 
   result.push(await rep.save({
     id: constants.TEST_RECOMMENDATION_ID_2,
     databaseId: constants.TEST_RECOMMENDATIONS_DATABASE_ID,
-    name: constants.TEST_REDISEARCH_RECOMMENDATION,
+    name: constants.TEST_RECOMMENDATION_NAME_2,
     createdAt: new Date(),
     read: false,
+    vote: null,
     ...partial,
   }));
 
@@ -295,7 +293,7 @@ const createClientCertificate = async (certificate) => {
   return rep.save(certificate);
 }
 
-const createTesDbInstance = async (rte, server): Promise<void> => {
+export const createTestDbInstance = async (rte, server, data: any = {}): Promise<void> => {
   const rep = await getRepository(repositories.DATABASE);
 
   const instance: any = {
@@ -357,7 +355,7 @@ const createTesDbInstance = async (rte, server): Promise<void> => {
       passphrase: encryptData(constants.TEST_SSH_PASSPHRASE),
     };
   }
-  await rep.save(instance);
+  await rep.save({ ...instance, ...data});
 }
 
 export const createDatabaseInstances = async () => {
@@ -515,6 +513,7 @@ export const initAgreements = async () => {
   agreements.data = JSON.stringify({
     eula: true,
     encryption: constants.TEST_ENCRYPTION_STRATEGY === 'KEYTAR',
+    analytics: true,
   });
 
   await rep.save(agreements);
@@ -552,12 +551,13 @@ const truncateAll = async () => {
   await (await getRepository(repositories.DATABASE)).clear();
   await (await getRepository(repositories.CA_CERT_REPOSITORY)).clear();
   await (await getRepository(repositories.CLIENT_CERT_REPOSITORY)).clear();
+  await (await getRepository(repositories.CUSTOM_TUTORIAL)).clear();
   await (await resetSettings());
 }
 
 export const initLocalDb = async (rte, server) => {
   await truncateAll();
-  await createTesDbInstance(rte, server);
+  await createTestDbInstance(rte, server);
   await initAgreements();
   if (rte.env.acl) {
     await createAclInstance(rte, server);

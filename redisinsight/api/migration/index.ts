@@ -27,8 +27,9 @@ import { workbenchAndAnalysisDbIndex1673934231410 } from './1673934231410-workbe
 import { browserHistory1674539211397 } from './1674539211397-browser-history';
 import { databaseAnalysisRecommendations1674660306971 } from './1674660306971-database-analysis-recommendations';
 import { databaseTimeout1675398140189 } from './1675398140189-database-timeout';
-import { liveTimeRecommendations1679378309458 } from './1679378309458-live-time-recommendations';
 import { databaseCompressor1678182722874 } from './1678182722874-database-compressor';
+import { customTutorials1677135091633 } from './1677135091633-custom-tutorials';
+import { liveTimeRecommendations1680619653922 } from './1680619653922-live-time-recommendations';
 
 export default [
   initialMigration1614164490968,
@@ -60,6 +61,7 @@ export default [
   databaseAnalysisRecommendations1674660306971,
   browserHistory1674539211397,
   databaseTimeout1675398140189,
-  liveTimeRecommendations1679378309458,
   databaseCompressor1678182722874,
+  customTutorials1677135091633,
+  liveTimeRecommendations1680619653922,
 ];

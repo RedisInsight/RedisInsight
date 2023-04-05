@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
-import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
+import { DatabaseRecommendation, Vote } from 'src/modules/database-recommendation/models';
 import { RecommendationScanner } from 'src/modules/database-recommendation/scanner/recommendations.scanner';
 import { ClientMetadata } from 'src/common/models';
 import {
@@ -68,5 +68,16 @@ export class DatabaseRecommendationService {
   public async read(clientMetadata: ClientMetadata): Promise<void> {
     this.logger.log('Reading database recommendations');
     return this.databaseRecommendationsProvider.read(clientMetadata);
+  }
+
+  /**
+   * Set user vote for extended recommendation
+   * @param clientMetadata
+   * @param id
+   * @param vote
+   */
+  public async vote(clientMetadata: ClientMetadata, id: string, vote: Vote): Promise<DatabaseRecommendation> {
+    this.logger.log('Reading database extended recommendations');
+    return this.databaseRecommendationsProvider.recommendationVote(clientMetadata, id, vote);
   }
 }

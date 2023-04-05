@@ -700,7 +700,7 @@ describe('ONBOARDING_FEATURES', () => {
       expect(
         render(<OnboardingTour options={ONBOARDING_FEATURES.FINISH}><span /></OnboardingTour>)
       ).toBeTruthy()
-      expect(screen.getByTestId('step-content')).toHaveTextContent('Take me back.')
+      expect(screen.getByTestId('step-content')).toHaveTextContent('Take me back to Browser')
     })
 
     it('should call proper telemetry events', () => {
@@ -714,11 +714,23 @@ describe('ONBOARDING_FEATURES', () => {
       (sendEventTelemetry as jest.Mock).mockRestore()
 
       fireEvent.click(screen.getByTestId('close-tour-btn'))
-      expect(sendEventTelemetry).toBeCalledWith(getEventProperties('closed', OnboardingStepName.Finish));
+      expect(sendEventTelemetry).toBeCalledWith(getEventProperties('closed', OnboardingStepName.Finish))
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.ONBOARDING_TOUR_FINISHED,
+        eventData: {
+          databaseId: ''
+        }
+      });
       (sendEventTelemetry as jest.Mock).mockRestore()
 
       fireEvent.click(screen.getByTestId('next-btn'))
-      expect(sendEventTelemetry).toBeCalledWith(getEventProperties('next', OnboardingStepName.Finish));
+      expect(sendEventTelemetry).toBeCalledWith(getEventProperties('next', OnboardingStepName.Finish))
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.ONBOARDING_TOUR_FINISHED,
+        eventData: {
+          databaseId: ''
+        }
+      });
       (sendEventTelemetry as jest.Mock).mockRestore()
     })
 

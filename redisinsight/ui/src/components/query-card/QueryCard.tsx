@@ -153,13 +153,15 @@ const QueryCard = (props: Props) => {
     setSelectedViewValue(value)
   }
 
-  const commonError = CommonErrorResponse(command, result)
+  const commonError = CommonErrorResponse(id, command, result)
 
   return (
-    <div className={cx(styles.containerWrapper, {
-      fullscreen: isFullScreen,
-      [styles.isOpen]: isOpen
-    })}
+    <div
+      className={cx(styles.containerWrapper, {
+        fullscreen: isFullScreen,
+        [styles.isOpen]: isOpen
+      })}
+      id={id}
     >
       <div
         className={cx(styles.container)}

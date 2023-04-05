@@ -10,7 +10,7 @@ import {
   validateInvalidDataTestCase,
   getMainCheckFn, JoiRedisString
 } from '../deps';
-const { server, request, constants, rte } = deps;
+const { server, request, constants, rte, localDb } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
@@ -44,10 +44,13 @@ const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /databases/:id/redisearch/search', () => {
   requirements('!rte.bigData', 'rte.modules.search');
-  before(async () => rte.data.generateRedisearchIndexes(true));
-  beforeEach(() => rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '10000'));
+  before(async () => {
+    await rte.data.generateRedisearchIndexes(true)
+    await localDb.createTestDbInstance(rte, {}, { id: constants.TEST_INSTANCE_ID_2 })
+  });
 
   describe('Main', () => {
+    before(() => rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '10000'));
     describe('Validation', () => {
       generateInvalidDataTestCases(dataSchema, validInputData).map(
         validateInvalidDataTestCase(endpoint, dataSchema),
@@ -84,8 +87,14 @@ describe('POST /databases/:id/redisearch/search', () => {
             expect(body.maxResults).to.gte(10000);
           },
         },
+      ].map(mainCheckFn);
+    });
+
+    describe('maxSearchResults', () => {
+      [
         {
           name: 'Should modify limit to not exceed available search limitation',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
             ...validInputData,
             offset: 0,
@@ -98,10 +107,13 @@ describe('POST /databases/:id/redisearch/search', () => {
             expect(body.total).to.eq(2000);
             expect(body.maxResults).to.gte(1);
           },
-          before: () => rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1'),
+          before: async () => {
+            await rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1')
+          },
         },
         {
           name: 'Should return custom error message if MAXSEARCHRESULTS less than request.limit',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
             ...validInputData,
             offset: 10,
@@ -113,16 +125,35 @@ describe('POST /databases/:id/redisearch/search', () => {
             error: 'Bad Request',
             message: `Set MAXSEARCHRESULTS to at least ${numberWithSpaces(validInputData.limit)}.`,
           },
-          before: () => rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1'),
+          before: async () => {
+            await rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '1')
+          },
         },
       ].map(mainCheckFn);
     });
 
     describe('ACL', () => {
       requirements('rte.acl');
-      before(async () => rte.data.setAclUserRules('~* +@all'));
+      before(async () => {
+        await rte.data.setRedisearchConfig('MAXSEARCHRESULTS', '10000')
+        await rte.data.setAclUserRules('~* +@all')
+      });
 
       [
+        {
+          name: 'Should return response with maxResults = null if no permissions for "ft.config" command',
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
+          data: validInputData,
+          responseSchema,
+          checkFn: async ({ body }) => {
+            expect(body.keys.length).to.eq(10);
+            expect(body.cursor).to.eq(10);
+            expect(body.scanned).to.eq(10);
+            expect(body.total).to.eq(2000);
+            expect(body.maxResults).to.eq(null);
+          },
+          before: () => rte.data.setAclUserRules('~* +@all -ft.config')
+        },
         {
           name: 'Should search',
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
@@ -142,20 +173,6 @@ describe('POST /databases/:id/redisearch/search', () => {
             error: 'Forbidden',
           },
           before: () => rte.data.setAclUserRules('~* +@all -ft.search')
-        },
-        {
-          name: 'Should return response with maxResults = null if no permissions for "ft.config" command',
-          endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
-          data: validInputData,
-          responseSchema,
-          checkFn: async ({ body }) => {
-            expect(body.keys.length).to.eq(10);
-            expect(body.cursor).to.eq(10);
-            expect(body.scanned).to.eq(10);
-            expect(body.total).to.eq(2000);
-            expect(body.maxResults).to.eq(null);
-          },
-          before: () => rte.data.setAclUserRules('~* +@all -ft.config')
         },
       ].map(mainCheckFn);
     });

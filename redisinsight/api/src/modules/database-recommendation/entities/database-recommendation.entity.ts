@@ -36,6 +36,12 @@ export class DatabaseRecommendationEntity {
   @Column({ nullable: false, default: false })
   disabled?: boolean = false;
 
+  @Expose()
+  @Column({
+    nullable: true,
+  })
+  vote?: string;
+
   @CreateDateColumn()
   @Index()
   @Expose()

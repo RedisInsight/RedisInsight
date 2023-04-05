@@ -2,7 +2,7 @@
   "name": "redisinsight",
   "productName": "RedisInsight",
   "private": true,
-  "version": "2.20.0",
+  "version": "2.22.1",
   "description": "RedisInsight",
   "main": "./main.prod.js",
   "author": {

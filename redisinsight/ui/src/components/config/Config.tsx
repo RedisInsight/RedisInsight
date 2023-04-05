@@ -27,6 +27,8 @@ import { checkIsAnalyticsGranted } from 'uiSrc/telemetry/checkAnalytics'
 import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
 import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
+import { fetchGuides } from 'uiSrc/slices/workbench/wb-guides'
+import { fetchTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import favicon from 'uiSrc/assets/favicon.ico'
 
@@ -46,6 +48,10 @@ const Config = () => {
     dispatch(fetchUnsupportedCliCommandsAction())
     dispatch(fetchRedisCommandsInfo())
     dispatch(fetchNotificationsAction())
+
+    // get guides & tutorials
+    dispatch(fetchGuides())
+    dispatch(fetchTutorials())
 
     // fetch config settings, after that take spec
     if (pathname !== SETTINGS_PAGE_PATH) {

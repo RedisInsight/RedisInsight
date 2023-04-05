@@ -8,6 +8,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { RedisModule } from 'src/modules/redis/redis.module';
 import { AnalyticsModule } from 'src/modules/analytics/analytics.module';
 import { SshModule } from 'src/modules/ssh/ssh.module';
+import { NestjsFormDataModule } from 'nestjs-form-data';
 
 @Global()
 @Module({
@@ -21,6 +22,7 @@ import { SshModule } from 'src/modules/ssh/ssh.module';
     RedisModule,
     DatabaseRecommendationModule,
     SshModule,
+    NestjsFormDataModule,
   ],
   exports: [
     EncryptionModule,
@@ -30,6 +32,7 @@ import { SshModule } from 'src/modules/ssh/ssh.module';
     DatabaseRecommendationModule,
     RedisModule,
     SshModule,
+    NestjsFormDataModule,
   ],
 })
 export class CoreModule {}

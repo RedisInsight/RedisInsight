@@ -1,38 +1,48 @@
 import React, { useContext } from 'react'
-import { useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams, useHistory } from 'react-router-dom'
 import { isNull } from 'lodash'
 import {
   EuiAccordion,
-  EuiPanel,
-  EuiText,
-  EuiToolTip,
+  EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
   EuiLink,
+  EuiPanel,
+  EuiText,
+  EuiToolTip,
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { RecommendationVoting } from 'uiSrc/pages/databaseAnalysis/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
-import { Theme } from 'uiSrc/constants'
+import { Pages, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import NoRecommendationsDark from 'uiSrc/assets/img/icons/recommendations_dark.svg'
 import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light.svg'
+import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
+import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+import { findMarkdownPathByPath } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
+import { EAManifestFirstKey } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/constants'
+import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
+import { RecommendationVoting } from 'uiSrc/components'
+import { renderBadges, renderBadgesLegend, renderContent, sortRecommendations } from './utils'
 
-import { renderContent, renderBadges, renderBadgesLegend, sortRecommendations } from './utils'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
+  const { items: guides } = useSelector(workbenchGuidesSelector)
+  const { items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { recommendations = [] } = data ?? {}
 
   const { theme } = useContext(ThemeContext)
   const { instanceId } = useParams<{ instanceId: string }>()
+  const history = useHistory()
+  const dispatch = useDispatch()
 
   const handleToggle = (isOpen: boolean, id: string) => sendEventTelemetry({
     event: isOpen
@@ -43,6 +53,32 @@ const Recommendations = () => {
       recommendation: id,
     }
   })
+
+  const goToTutorial = (mdPath: string, id: string) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.DATABASE_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        recommendation: id,
+      }
+    })
+
+    dispatch(setWorkbenchEAMinimized(false))
+    const quickGuidesPath = findMarkdownPathByPath(guides, mdPath)
+    if (quickGuidesPath) {
+      history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.GUIDES}/${quickGuidesPath}`)
+      return
+    }
+
+    const tutorialsPath = findMarkdownPathByPath(tutorials, mdPath)
+    if (tutorialsPath) {
+      history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.TUTORIALS}/${tutorialsPath}`)
+      return
+    }
+
+    dispatch(resetWorkbenchEASearch())
+    history.push(Pages.workbench(instanceId))
+  }
 
   const onRedisStackClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => event.stopPropagation()
 
@@ -117,7 +153,8 @@ const Recommendations = () => {
             title = '',
             content = '',
             badges = [],
-            redisStack = false
+            redisStack = false,
+            tutorial,
           } = recommendationsContent[name as keyof typeof recommendationsContent]
 
           return (
@@ -137,7 +174,20 @@ const Recommendations = () => {
                   {renderContent(content, params)}
                 </EuiPanel>
               </EuiAccordion>
-              <RecommendationVoting vote={vote as Vote} name={name} />
+              <div className={styles.footer}>
+                <RecommendationVoting vote={vote as Vote} name={name} />
+                {tutorial && (
+                  <EuiButton
+                    fill
+                    color="secondary"
+                    size="s"
+                    onClick={() => goToTutorial(tutorial, id)}
+                    data-testid={`${id}-to-tutorial-btn`}
+                  >
+                    To Tutorial
+                  </EuiButton>
+                )}
+              </div>
             </div>
           )
         })}

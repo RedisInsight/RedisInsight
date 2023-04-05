@@ -23,7 +23,8 @@ test('Verify that user can open the "read more" about the command by clicking on
     const command = 'HSET';
     const commandDetails = [
         'HSET key data [data ...]',
-        'Set the string value of a hash field',
+        'Creates or modifies the value of a field in a hash.',
+        'Read more',
         'Arguments:',
         'required key',
         'multiple data'

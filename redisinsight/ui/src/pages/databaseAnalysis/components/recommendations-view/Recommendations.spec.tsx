@@ -1,4 +1,5 @@
 import React from 'react'
+import reactRouterDom from 'react-router-dom'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
@@ -11,6 +12,41 @@ const mockdbAnalysisSelector = jest.requireActual('uiSrc/slices/analytics/dbAnal
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: jest.fn,
+  }),
+}))
+
+jest.mock('uiSrc/slices/workbench/wb-guides', () => ({
+  ...jest.requireActual('uiSrc/slices/workbench/wb-guides'),
+  workbenchGuidesSelector: jest.fn().mockReturnValue({
+    loading: false,
+    error: '',
+    items: [{
+      label: 'Quick guides',
+      type: 'group',
+      children: [
+        {
+          label: 'Quick guides',
+          type: 'group',
+          children: [
+            {
+              type: 'internal-link',
+              id: 'document-capabilities',
+              label: 'Document Capabilities',
+              args: {
+                path: '/quick-guides/document/working-with-hashes.md',
+              },
+            },
+          ]
+        }
+      ]
+    }],
+  }),
 }))
 
 jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
@@ -52,6 +88,19 @@ describe('Recommendations', () => {
     render(<Recommendations />)
 
     expect(screen.queryByTestId('recommendations-loader')).not.toBeInTheDocument()
+  })
+
+  it('should render RecommendationVoting', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'luaScript' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.getByTestId('recommendation-voting')).toBeInTheDocument()
   })
 
   it('should render code changes badge in luaScript recommendation', () => {
@@ -388,5 +437,63 @@ describe('Recommendations', () => {
 
     expect(screen.queryByTestId('bigSets-redis-stack-link')).toBeInTheDocument()
     expect(screen.queryByTestId('bigSets-redis-stack-link')).toHaveAttribute('href', 'https://redis.io/docs/stack/')
+  })
+
+  it('should render go to tutorial button', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'bigHashes' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
+  })
+
+  it('should call proper history push after click go to tutorial button', () => {
+    const sendEventTelemetryMock = jest.fn()
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock);
+
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'bigHashes' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
+    fireEvent.click(screen.getByTestId('bigHashes-to-tutorial-btn'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.DATABASE_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      eventData: {
+        databaseId: INSTANCE_ID_MOCK,
+        recommendation: 'bigHashes',
+      }
+    })
+    sendEventTelemetry.mockRestore()
+  })
+
+  it('should call proper telemetry after click go to tutorial button', () => {
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'bigHashes' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
+    fireEvent.click(screen.getByTestId('bigHashes-to-tutorial-btn'))
+
+    expect(pushMock).toBeCalledWith('/instanceId/workbench?path=quick-guides/0/0/0')
   })
 })

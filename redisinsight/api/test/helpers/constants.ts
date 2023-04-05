@@ -4,6 +4,7 @@ import { randomBytes } from 'crypto';
 import { getASCIISafeStringFromBuffer, getBufferFromSafeASCIIString } from "src/utils/cli-helper";
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { Compressor } from 'src/modules/database/entities/database.entity';
+import { Vote } from 'src/modules/database-recommendation/models';
 
 const API = {
   DATABASES: 'databases',
@@ -484,7 +485,12 @@ export const constants = {
   TEST_RECOMMENDATION_ID_1: uuidv4(),
   TEST_RECOMMENDATION_ID_2: uuidv4(),
   TEST_RECOMMENDATION_ID_3: uuidv4(),
-  
+
+  TEST_RECOMMENDATION_VOTE: Vote.Like,
+
+  TEST_RECOMMENDATION_NAME_1: RECOMMENDATION_NAMES.BIG_SETS,
+  TEST_RECOMMENDATION_NAME_2: RECOMMENDATION_NAMES.REDIS_SEARCH,
+
   TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION: {
     name: RECOMMENDATION_NAMES.LUA_SCRIPT,
   },

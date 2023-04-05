@@ -12,6 +12,7 @@ export default {
     prevHomedir,
     logs: join(homedir, 'logs'),
     customPlugins: join(homedir, 'plugins'),
+    customTutorials: join(homedir, 'custom-tutorials'),
     commands: join(homedir, 'commands'),
     guides: process.env.GUIDES_DEV_PATH || join(homedir, 'guides'),
     tutorials: process.env.TUTORIALS_DEV_PATH || join(homedir, 'tutorials'),
@@ -24,6 +25,7 @@ export default {
   },
   analytics: {
     writeKey: process.env.SEGMENT_WRITE_KEY || 'lK5MNZgHbxj6vQwFgqZxygA0BiDQb32n',
+    flushInterval: parseInt(process.env.ANALYTICS_FLUSH_INTERVAL, 10) || 10000,
   },
   db: {
     database: join(homedir, 'redisinsight.db'),

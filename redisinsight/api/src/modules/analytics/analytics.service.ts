@@ -45,7 +45,9 @@ export class AnalyticsService {
     this.sessionId = sessionId;
     this.anonymousId = anonymousId;
     this.appType = appType;
-    this.analytics = new Analytics(ANALYTICS_CONFIG.writeKey);
+    this.analytics = new Analytics(ANALYTICS_CONFIG.writeKey, {
+      flushInterval: ANALYTICS_CONFIG.flushInterval,
+    });
   }
 
   @OnEvent(AppAnalyticsEvents.Track)

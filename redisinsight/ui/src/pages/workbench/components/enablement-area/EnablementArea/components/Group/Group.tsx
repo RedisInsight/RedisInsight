@@ -7,8 +7,8 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
+import { EAItemActions } from 'uiSrc/constants'
 import DeleteTutorialButton from '../DeleteTutorialButton'
-import { EAItemActions } from '../../constants'
 
 import './styles.scss'
 

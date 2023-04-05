@@ -22,9 +22,11 @@ import {
 } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as AnalysisIcon } from 'uiSrc/assets/img/icons/analysis.svg'
 import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/icons/live-time-recommendations.svg'
+import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
@@ -37,6 +39,8 @@ const LiveTimeRecommendations = () => {
     isContentVisible,
     isHighlighted
   } = useSelector(recommendationsSelector)
+  const { items: guides } = useSelector(workbenchGuidesSelector)
+  const { items: tutorials } = useSelector(workbenchTutorialsSelector)
 
   const dispatch = useDispatch()
   const history = useHistory()
@@ -101,6 +105,9 @@ const LiveTimeRecommendations = () => {
         isRead={read}
         vote={vote}
         instanceId={connectedInstanceId}
+        guides={guides}
+        tutorials={tutorials}
+        tutorial={content[name]?.tutorial ?? ''}
       />
     ))
   }

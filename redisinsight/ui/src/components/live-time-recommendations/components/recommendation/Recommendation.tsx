@@ -16,8 +16,8 @@ import {
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 
-import { Nullable } from 'uiSrc/utils'
-import { Pages, Theme } from 'uiSrc/constants'
+import { Nullable, findMarkdownPathByPath } from 'uiSrc/utils'
+import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { RecommendationVoting } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
@@ -25,6 +25,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as Icon } from 'uiSrc/assets/img/icons/recommendation.svg'
@@ -37,11 +38,23 @@ export interface IProps {
   id: string
   name: string
   instanceId: string
+  tutorial: string
   isRead: boolean
   vote: Nullable<Vote>
+  guides: IEnablementAreaItem[]
+  tutorials: IEnablementAreaItem[]
 }
 
-const Recommendation = ({ id, name, instanceId, isRead, vote }: IProps) => {
+const Recommendation = ({
+  id,
+  name,
+  instanceId,
+  isRead,
+  vote,
+  tutorial,
+  guides,
+  tutorials,
+}: IProps) => {
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
@@ -50,7 +63,6 @@ const Recommendation = ({ id, name, instanceId, isRead, vote }: IProps) => {
 
   const handleClick = () => {
     dispatch(setIsContentVisible(false))
-    history.push(Pages.workbench(instanceId))
 
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_TUTORIAL_CLICKED,
@@ -59,6 +71,22 @@ const Recommendation = ({ id, name, instanceId, isRead, vote }: IProps) => {
         name,
       }
     })
+
+    if (tutorial) {
+      const quickGuidesPath = findMarkdownPathByPath(guides, tutorial)
+      if (quickGuidesPath) {
+        history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.GUIDES}/${quickGuidesPath}`)
+        return
+      }
+
+      const tutorialsPath = findMarkdownPathByPath(tutorials, tutorial)
+      if (tutorialsPath) {
+        history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.TUTORIALS}/${tutorialsPath}`)
+        return
+      }
+    }
+
+    history.push(Pages.workbench(instanceId))
   }
 
   const renderContentElement = ({ id, type, value }) => {
@@ -155,7 +183,10 @@ const Recommendation = ({ id, name, instanceId, isRead, vote }: IProps) => {
   const { redisStack, title } = content[name]
 
   return (
-    <div className={cx(styles.recommendationAccordion, { [styles.read]: isRead })} data-testid={`${name}-recommendation`}>
+    <div
+      className={cx(styles.recommendationAccordion, { [styles.read]: isRead })}
+      data-testid={`${name}-recommendation`}
+    >
       <EuiAccordion
         id={name}
         initialIsOpen={!isRead}

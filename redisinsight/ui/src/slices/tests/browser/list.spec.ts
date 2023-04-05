@@ -13,7 +13,7 @@ import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
 import { DeleteListElementsDto, PushElementToListDto } from 'apiSrc/modules/browser/dto'
 import {
   defaultSelectedKeyAction,
-  deleteKeySuccess,
+  deleteSelectedKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
 } from '../../browser/keys'
@@ -873,7 +873,7 @@ describe('list slice', () => {
         const expectedActions = [
           deleteListElements(),
           deleteListElementsSuccess(),
-          deleteKeySuccess(),
+          deleteSelectedKeySuccess(),
           deleteRedisearchKeyFromList(data.keyName),
           addMessageNotification(successMessages.DELETED_KEY(data.keyName))
         ]

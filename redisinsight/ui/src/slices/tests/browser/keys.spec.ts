@@ -30,10 +30,14 @@ import reducer, {
   defaultSelectedKeyAction,
   defaultSelectedKeyActionFailure,
   defaultSelectedKeyActionSuccess,
+  deleteSelectedKey,
+  deleteSelectedKeyAction,
+  deleteSelectedKeyFailure,
+  deleteSelectedKeySuccess,
   deleteKey,
-  deleteKeyAction,
-  deleteKeyFailure,
   deleteKeySuccess,
+  deleteKeyFailure,
+  deleteKeyAction,
   deletePatternHistoryAction,
   deletePatternKeyFromList,
   deleteSearchHistory,
@@ -594,7 +598,7 @@ describe('keys slice', () => {
     })
   })
 
-  describe('deleteKey', () => {
+  describe('deleteSelectedKey', () => {
     it('should properly set the state before the delete key', () => {
       // Arrange
       const state = {
@@ -604,6 +608,72 @@ describe('keys slice', () => {
           loading: true,
           data: null,
         },
+      }
+
+      // Act
+      const nextState = reducer(initialState, deleteSelectedKey())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteSelectedKeySuccess', () => {
+    it('should properly set the state before the delete key', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        selectedKey: {
+          ...initialState.selectedKey,
+          loading: false,
+          data: null,
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialState, deleteSelectedKeySuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteSelectedKeyFailure', () => {
+    it('should properly set the state before the delete key', () => {
+      // Arrange
+      const data = 'some error'
+      const state = {
+        ...initialState,
+        selectedKey: {
+          ...initialState.selectedKey,
+          loading: false,
+          error: data,
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialState, deleteSelectedKeyFailure(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        browser: { keys: nextState },
+      })
+      expect(keysSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteKey', () => {
+    it('should properly set the state before the delete key', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        deleting: true
       }
 
       // Act
@@ -618,19 +688,19 @@ describe('keys slice', () => {
   })
 
   describe('deleteKeySuccess', () => {
-    it('should properly set the state before the delete key', () => {
+    it('should properly set the state after the delete key', () => {
       // Arrange
+      const currentState = {
+        ...initialState,
+        deleting: true
+      }
       const state = {
         ...initialState,
-        selectedKey: {
-          ...initialState.selectedKey,
-          loading: false,
-          data: null,
-        },
+        deleting: false
       }
 
       // Act
-      const nextState = reducer(initialState, deleteKeySuccess())
+      const nextState = reducer(currentState, deleteKeySuccess())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -641,20 +711,19 @@ describe('keys slice', () => {
   })
 
   describe('deleteKeyFailure', () => {
-    it('should properly set the state before the delete key', () => {
+    it('should properly set the state after the delete key', () => {
       // Arrange
-      const data = 'some error'
+      const currentState = {
+        ...initialState,
+        deleting: true
+      }
       const state = {
         ...initialState,
-        selectedKey: {
-          ...initialState.selectedKey,
-          loading: false,
-          error: data,
-        },
+        deleting: false
       }
 
       // Act
-      const nextState = reducer(initialState, deleteKeyFailure(data))
+      const nextState = reducer(currentState, deleteKeyFailure())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -1406,8 +1475,35 @@ describe('keys slice', () => {
       })
     })
 
+    describe('deleteSelectedKey', () => {
+      it('should call proper actions on success', async () => {
+        // Arrange
+        const data = {
+          name: stringToBuffer('string'),
+          type: KeyTypes.String,
+          ttl: -1,
+          size: 10,
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(deleteSelectedKeyAction(data.name))
+
+        // Assert
+        const expectedActions = [
+          deleteSelectedKey(),
+          deleteSelectedKeySuccess(),
+          deletePatternKeyFromList(data.name),
+          addMessageNotification(successMessages.DELETED_KEY(data.name)),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
     describe('deleteKey', () => {
-      it('call both deleteKey, deleteKeySuccess and deletePatternKeyFromList when delete is successed', async () => {
+      it('should call proper actions on success', async () => {
         // Arrange
         const data = {
           name: stringToBuffer('string'),
@@ -1488,7 +1584,7 @@ describe('keys slice', () => {
         // Assert
         const expectedActions = [
           defaultSelectedKeyAction(),
-          deleteKeySuccess(),
+          deleteSelectedKeySuccess(),
           deletePatternKeyFromList(key),
           defaultSelectedKeyActionSuccess(),
         ]

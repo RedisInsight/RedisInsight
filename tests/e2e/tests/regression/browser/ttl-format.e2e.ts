@@ -32,7 +32,7 @@ fixture `TTL values in Keys Table`
     .afterEach(async() => {
         // Clear and delete database
         for (let i = 0; i < keysData.length; i++) {
-            await browserPage.deleteKey();
+            await browserPage.deleteSelectedKey();
         }
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });

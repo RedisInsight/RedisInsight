@@ -90,7 +90,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const selectedKey = useSelector(selectedKeySelector)
   const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered, viewType, searchMode } = useSelector(keysSelector)
+  const { isSearched, isFiltered, viewType, searchMode, deleting } = useSelector(keysSelector)
   const { selectedIndex } = useSelector(redisearchSelector)
   const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
@@ -239,20 +239,11 @@ const KeyList = forwardRef((props: Props, ref) => {
     setDeletePopoverIndex(index !== deletePopoverIndex ? index : undefined)
   }
 
-  const handleRemoveKey = (key: RedisResponseBuffer, type: string) => {
-    dispatch(deleteKeyAction(
-      key,
-      {
-        source: 'keyList'
-      },
-      () => {
-        setDeletePopoverIndex(undefined)
-        onDelete()
-        if (type === KeyTypes.String) {
-          dispatch(resetStringValue())
-        }
-      }
-    ))
+  const handleRemoveKey = (key: RedisResponseBuffer) => {
+    dispatch(deleteKeyAction(key, () => {
+      setDeletePopoverIndex(undefined)
+      onDelete()
+    }))
   }
 
   const setScrollTopPosition = useCallback((position: number) => {
@@ -493,7 +484,8 @@ const KeyList = forwardRef((props: Props, ref) => {
                   size="s"
                   color="warning"
                   iconType="trash"
-                  onClick={() => handleRemoveKey(bufferName, type)}
+                  isDisabled={deleting}
+                  onClick={() => handleRemoveKey(bufferName)}
                   data-testid="submit-delete-key"
                 >
                   Delete

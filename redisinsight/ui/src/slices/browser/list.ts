@@ -26,7 +26,7 @@ import {
   refreshKeyInfoAction,
   fetchKeyInfo,
   deleteKeyFromList,
-  deleteKeySuccess,
+  deleteSelectedKeySuccess,
   updateSelectedKeyRefreshTime,
 } from './keys'
 import { StateList } from '../interfaces/list'
@@ -461,7 +461,7 @@ export function deleteListElementsAction(
             )
           ))
         } else {
-          dispatch(deleteKeySuccess())
+          dispatch(deleteSelectedKeySuccess())
           dispatch(deleteKeyFromList(data.keyName))
           dispatch(addMessageNotification(successMessages.DELETED_KEY(data.keyName)))
         }

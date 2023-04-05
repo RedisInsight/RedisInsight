@@ -66,7 +66,7 @@ test('Verify that when user deletes the key he can see the key is removed from t
     const keyFolder = await browserPage.treeViewDeviceFolder.nth(2).textContent;
     await t.click(browserPage.treeViewDeviceFolder.nth(2));
     await t.click(browserPage.treeViewDeviceFolder.nth(5));
-    await browserPage.deleteKey();
+    await browserPage.deleteSelectedKey();
     // Verify the results
     await t.expect(browserPage.treeViewDeviceFolder.nth(2).exists).notOk('The previous folder is not closed after removing key folder');
     await t.click(browserPage.treeViewDeviceFolder);

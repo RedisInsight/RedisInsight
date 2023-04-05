@@ -1,3 +1,4 @@
+import IORedis from 'ioredis';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   BadRequestException,
@@ -11,6 +12,7 @@ import {
   mockRedisNoPermError,
   mockRedisWrongTypeError,
   mockBrowserClientMetadata,
+  mockDatabaseRecommendationService,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import {
@@ -22,6 +24,8 @@ import {
   mockGetSetMembersDto, mockGetSetMembersResponse,
   mockSetMembers,
 } from 'src/modules/browser/__mocks__';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
+import { RECOMMENDATION_NAMES } from 'src/constants';
 import { SetBusinessService } from './set-business.service';
 import {
   CreateSetWithExpireDto,
@@ -29,9 +33,13 @@ import {
 } from '../../dto';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 
+const nodeClient = Object.create(IORedis.prototype);
+nodeClient.isCluster = false;
+
 describe('SetBusinessService', () => {
   let service: SetBusinessService;
   let browserTool;
+  let recommendationService;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -43,11 +51,16 @@ describe('SetBusinessService', () => {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
         },
+        {
+          provide: DatabaseRecommendationService,
+          useFactory: mockDatabaseRecommendationService,
+        },
       ],
     }).compile();
 
     service = module.get<SetBusinessService>(SetBusinessService);
     browserTool = module.get<BrowserToolService>(BrowserToolService);
+    recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
   });
 
   describe('createSet', () => {
@@ -171,6 +184,10 @@ describe('SetBusinessService', () => {
           mockGetSetMembersDto.keyName,
         ])
         .mockResolvedValue(mockSetMembers.length);
+
+      when(browserTool.getRedisClient)
+        .calledWith(mockBrowserClientMetadata)
+        .mockResolvedValue(nodeClient);
     });
     it('succeed to get members of the set', async () => {
       when(browserTool.execCommand)
@@ -308,6 +325,27 @@ describe('SetBusinessService', () => {
       await expect(
         service.getMembers(mockBrowserClientMetadata, mockGetSetMembersDto),
       ).rejects.toThrow(ForbiddenException);
+    });
+    it('should call recommendationService', async () => {
+      when(browserTool.execCommand)
+        .calledWith(
+          mockBrowserClientMetadata,
+          BrowserToolSetCommands.SScan,
+          expect.anything(),
+        )
+        .mockResolvedValue([Buffer.from('0'), mockSetMembers]);
+
+      const result = await service.getMembers(
+        mockBrowserClientMetadata,
+        mockGetSetMembersDto,
+      );
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.INTEGERS_IN_SET,
+        { members: result.members, client: nodeClient, databaseId: mockBrowserClientMetadata.databaseId },
+      );
+
+      expect(recommendationService.check).toBeCalledTimes(1);
     });
   });
 

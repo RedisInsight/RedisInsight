@@ -5,3 +5,7 @@ export * from './redis-version.strategy';
 export * from './search-JSON.strategy';
 export * from './big-set.strategy';
 export * from './rts.strategy';
+export * from './avoid-logical-databases.strategy';
+export * from './integer-in-set.strategy';
+export * from './shard-hash.strategy';
+export * from './string-to-json.strategy';

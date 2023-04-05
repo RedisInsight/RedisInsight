@@ -9,6 +9,7 @@ import { when } from 'jest-when';
 import { ReplyError } from 'src/models/redis-client';
 import {
   mockBrowserClientMetadata,
+  mockDatabaseRecommendationService,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
@@ -23,7 +24,9 @@ import {
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { KeytarUnavailableException } from 'src/modules/encryption/exceptions';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { StringBusinessService } from './string-business.service';
+import { RECOMMENDATION_NAMES } from 'src/constants';
 
 const mockSetStringDto: SetStringDto = {
   keyName: Buffer.from('foo'),
@@ -33,6 +36,7 @@ const mockSetStringDto: SetStringDto = {
 describe('StringBusinessService', () => {
   let service: StringBusinessService;
   let browserTool;
+  let recommendationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,11 +46,16 @@ describe('StringBusinessService', () => {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
         },
+        {
+          provide: DatabaseRecommendationService,
+          useFactory: mockDatabaseRecommendationService,
+        },
       ],
     }).compile();
 
     service = module.get<StringBusinessService>(StringBusinessService);
     browserTool = module.get<BrowserToolService>(BrowserToolService);
+    recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
   });
 
   describe('setString', () => {
@@ -150,6 +159,31 @@ describe('StringBusinessService', () => {
       await expect(
         service.getStringValue(mockBrowserClientMetadata, mockSetStringDto),
       ).rejects.toThrow(ForbiddenException);
+    });
+    it('should call recommendationService', async () => {
+      browserTool.execCommand.mockResolvedValue(mockSetStringDto.value);
+
+      const result = await service.getStringValue(
+        mockBrowserClientMetadata,
+        mockSetStringDto,
+      );
+
+      expect(browserTool.execCommand).toHaveBeenCalledWith(
+        mockBrowserClientMetadata,
+        BrowserToolStringCommands.Get,
+        [mockSetStringDto.keyName],
+      );
+      expect(result).toEqual({
+        value: mockSetStringDto.value,
+        keyName: mockSetStringDto.keyName,
+      });
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.STRING_TO_JSON,
+        result.value,
+      );
+
+      expect(recommendationService.check).toBeCalledTimes(1);
     });
   });
 

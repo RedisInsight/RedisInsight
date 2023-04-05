@@ -1,7 +1,11 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
-import { recommendationsSelector, setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
+import {
+  getRecommendations,
+  recommendationsSelector,
+  setIsContentVisible
+} from 'uiSrc/slices/recommendations/recommendations'
 import { fireEvent, screen, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
@@ -94,7 +98,7 @@ describe('LiveTimeRecommendations', () => {
     sendEventTelemetry.mockRestore()
   })
 
-  it('should call "setIsContentVisible" action be called after click', () => {
+  it('should call proper actions after render', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
@@ -106,10 +110,27 @@ describe('LiveTimeRecommendations', () => {
 
     render(<LiveTimeRecommendations />)
 
+    const expectedActions = [getRecommendations()]
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should call "setIsContentVisible" action be called after click', () => {
+    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockRecommendationsSelector,
+      data: {
+        recommendations: [{ name: 'name' }],
+        totalUnread: 1,
+      },
+      isContentVisible: false,
+    }))
+
+    render(<LiveTimeRecommendations />)
+    const afterRenderActions = [...store.getActions()]
+
     fireEvent.click(screen.getByTestId('recommendations-trigger'))
 
     const expectedActions = [setIsContentVisible(true)]
-    expect(store.getActions()).toEqual(expectedActions)
+    expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 
   it('should properly push history on databaseAnalysis page', () => {
@@ -138,11 +159,12 @@ describe('LiveTimeRecommendations', () => {
       isContentVisible: true
     }))
     render(<LiveTimeRecommendations />)
+    const afterRenderActions = [...store.getActions()]
 
     fireEvent.click(document.querySelector('.euiFlyout__closeButton')!)
 
     const expectedActions = [setIsContentVisible(false)]
-    expect(store.getActions()).toEqual([...expectedActions])
+    expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 
   it('should render recommendations', async () => {
@@ -153,6 +175,6 @@ describe('LiveTimeRecommendations', () => {
     }))
     render(<LiveTimeRecommendations />)
 
-    expect(screen.getByTestId('rediSearch-recommendation')).toBeInTheDocument()
+    expect(screen.getByTestId('redisSearch-recommendation')).toBeInTheDocument()
   })
 })

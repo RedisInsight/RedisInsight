@@ -19,8 +19,16 @@ describe('Recommendation', () => {
     expect(render(<Recommendation {...instance(mockedProps)} />)).toBeTruthy()
   })
 
+  it('should render content if recommendation is not read', () => {
+    render(<Recommendation {...instance(mockedProps)} name="searchJSON" isRead={false} />)
+
+    expect(screen.getByTestId('recommendation-voting')).toBeInTheDocument()
+    expect(screen.getByTestId('searchJSON-to-tutorial-btn')).toBeInTheDocument()
+  })
+
   it('should render RecommendationVoting', () => {
-    render(<Recommendation {...instance(mockedProps)} />)
+    const { container } = render(<Recommendation {...instance(mockedProps)} name="searchJSON" />)
+    fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     expect(screen.getByTestId('recommendation-voting')).toBeInTheDocument()
   })
 
@@ -29,15 +37,17 @@ describe('Recommendation', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
 
-    render(<Recommendation name="name" instanceId="id" />)
+    const { container } = render(<Recommendation {...instance(mockedProps)} isRead={false} name="searchJSON" instanceId="id" />)
 
-    fireEvent.click(screen.getByTestId('name-to-tutorial-btn'))
+    fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
+    fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
+
     expect(pushMock).toHaveBeenCalledWith(Pages.workbench('id'))
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: 'id',
-        name: 'name',
+        name: 'searchJSON',
       }
     })
     sendEventTelemetry.mockRestore()

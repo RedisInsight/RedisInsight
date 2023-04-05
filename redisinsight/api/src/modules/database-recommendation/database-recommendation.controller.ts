@@ -4,8 +4,11 @@ import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
-import { DatabaseRecommendation, DatabaseRecommendationsResponse } from 'src/modules/database-recommendation/models';
+import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
 import { ClientMetadata } from 'src/common/models';
+import {
+  DatabaseRecommendationsResponse,
+} from 'src/modules/database-recommendation/dto/database-recommendations.response';
 import { DatabaseRecommendationVoteDto } from './dto';
 
 @ApiTags('Database Recommendations')

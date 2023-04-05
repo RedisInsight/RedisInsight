@@ -3,3 +3,7 @@ export enum Vote {
   Like = 'useful',
   Dislike = 'not useful'
 }
+
+export enum RecommendationsSocketEvents {
+  Recommendation = 'recommendation'
+}

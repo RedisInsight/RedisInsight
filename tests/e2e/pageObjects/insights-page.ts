@@ -16,19 +16,13 @@ export class InsightsPage {
     optimizeTimeSeriesRecommendation = Selector('[data-testid=RTS-recommendation]');
 
     /**
-     * Open Insights Panel
+     * Open/Close Insights Panel
+     * @param state State of panel
      */
-    async openInsightsPanel(): Promise<void> {
-        if (!(await this.insightsPanel.exists)) {
-            await t.click(this.insightsBtn);
-        }
-    }
+    async toggleInsightsPanel(state: boolean): Promise<void> {
+        const isPanelExists = await this.insightsPanel.exists;
 
-    /**
-     * Close Insights Panel
-     */
-    async closeInsightsPanel(): Promise<void> {
-        if (await this.insightsPanel.exists) {
+        if (state !== isPanelExists) {
             await t.click(this.insightsBtn);
         }
     }

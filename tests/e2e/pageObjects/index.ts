@@ -39,5 +39,5 @@ export {
     SlowLogPage,
     NotificationPage,
     OnboardingPage,
-    InsightsPage
+    InsightsPage,
 };

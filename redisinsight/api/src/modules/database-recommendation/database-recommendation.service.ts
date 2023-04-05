@@ -1,9 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
-import { DatabaseRecommendationsResponse, DatabaseRecommendation, Vote } from 'src/modules/database-recommendation/models';
+import { DatabaseRecommendation, Vote } from 'src/modules/database-recommendation/models';
 import { RecommendationScanner } from 'src/modules/database-recommendation/scanner/recommendations.scanner';
 import { ClientMetadata } from 'src/common/models';
+import {
+  DatabaseRecommendationsResponse,
+} from 'src/modules/database-recommendation/dto/database-recommendations.response';
 
 @Injectable()
 export class DatabaseRecommendationService {

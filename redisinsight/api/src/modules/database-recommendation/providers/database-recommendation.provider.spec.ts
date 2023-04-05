@@ -13,6 +13,7 @@ import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Vote } from 'src/modules/database-recommendation/models';
 
 const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
@@ -48,6 +49,7 @@ describe('DatabaseAnalysisProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseRecommendationProvider,
+        EventEmitter2,
         {
           provide: getRepositoryToken(DatabaseRecommendationEntity),
           useFactory: mockRepository,
@@ -104,7 +106,6 @@ describe('DatabaseAnalysisProvider', () => {
 
       expect(await service.isExist(mockClientMetadata, mockDatabaseRecommendation.name)).toEqual(false);
     });
-
 
     it('should return false when findOneBy throw error', async () => {
       repository.findOneBy.mockRejectedValue('some error');

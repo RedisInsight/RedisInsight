@@ -25,6 +25,13 @@ export class DatabaseRecommendation {
   @Expose()
   name: string;
 
+  @ApiProperty({
+    description: 'Database ID to which recommendation belongs',
+    type: String,
+  })
+  @Expose()
+  databaseId: string;
+
   @ApiPropertyOptional({
     description: 'Determines if recommendation was shown to user',
     type: Boolean,
@@ -48,25 +55,4 @@ export class DatabaseRecommendation {
   @IsEnum(Vote)
   @IsOptional()
   vote?: Vote = null;
-}
-
-export class DatabaseRecommendationsResponse {
-  @ApiProperty({
-    type: () => DatabaseRecommendation,
-    example: [{ name: 'bigSet', read: false }],
-    isArray: true,
-    description: 'Ordered recommendations list',
-  })
-  recommendations: DatabaseRecommendation[];
-
-  @ApiProperty({
-    type: Number,
-    example: 2,
-    description: 'Number of unread recommendations',
-  })
-  totalUnread: number;
-
-  constructor(entity: Partial<DatabaseRecommendationsResponse>) {
-    Object.assign(this, entity);
-  }
 }

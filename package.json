@@ -39,7 +39,7 @@
     "start:web": "webpack serve --config ./configs/webpack.config.web.dev.babel.js",
     "start:web:public": "cross-env PUBLIC_DEV=true webpack serve --config ./configs/webpack.config.web.dev.babel.js",
     "test": "jest ./redisinsight/ui -w 1",
-    "test:watch": "jest ./redisinsight/ui/src/utils/tests/workbench.spec.ts --watch -w 1",
+    "test:watch": "jest ./redisinsight/ui --watch -w 1",
     "test:cov": "jest ./redisinsight/ui --coverage -w 1",
     "test:cov:unit": "jest ./redisinsight/ui --group=-component --coverage -w 1",
     "test:cov:component": "jest ./redisinsight/ui --group=component --coverage -w 1",

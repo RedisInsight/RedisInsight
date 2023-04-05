@@ -40,7 +40,7 @@ export class DatabaseRecommendationProvider {
       .createQueryBuilder('r')
       .where({ databaseId: clientMetadata.databaseId })
       .select(['r.id', 'r.name', 'r.read', 'r.vote', 'disabled'])
-      .orderBy('r.createdAt', 'DESC')
+      .orderBy('r.createdAt', 'ASC')
       .getMany();
 
     const totalUnread = await this.repository

@@ -835,5 +835,14 @@
         "value": "Workbench"
       }
     ]
+  },
+  "integersInSets": {
+    "id": "integersInSets",
+    "redisStack": true,
+    "title": "Use only integers in sets",
+    "liveTimeText": [
+      "Sets that contain only integers are extremely efficient memory-wise. Try to use integers by mapping string identifiers to integers. You can either use enums in your programming language or Redis hashes to map values to integers.",
+      " If you choose hashes, you can use RediSearch, designed to help address your query needs and supports a better development experience."
+    ]
   }
 }

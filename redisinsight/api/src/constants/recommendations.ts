@@ -16,6 +16,7 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   RTS: 'RTS',
   REDIS_VERSION: 'redisVersion',
   REDIS_SEARCH: 'redisSearch',
+  INTEGERS_IN_SET: 'integersInSets',
   SEARCH_STRING: 'searchString',
   SEARCH_INDEXES: 'searchIndexes',
   SEARCH_JSON: 'searchJSON',

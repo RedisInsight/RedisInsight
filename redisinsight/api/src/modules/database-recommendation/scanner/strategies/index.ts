@@ -5,3 +5,4 @@ export * from './redis-version.strategy';
 export * from './search-JSON.strategy';
 export * from './big-set.strategy';
 export * from './rts.strategy';
+export * from './integer-in-set.strategy';

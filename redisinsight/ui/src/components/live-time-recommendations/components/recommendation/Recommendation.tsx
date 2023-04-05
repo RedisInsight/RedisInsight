@@ -1,19 +1,35 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { EuiButton, EuiText, EuiFlexGroup, EuiFlexItem, EuiLink, EuiSpacer } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiLink,
+  EuiSpacer,
+  EuiPanel,
+  EuiAccordion,
+  EuiToolTip,
+  EuiIcon
+} from '@elastic/eui'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 
-import { Pages } from 'uiSrc/constants'
-import content from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import { Nullable } from 'uiSrc/utils'
+import { Pages, Theme } from 'uiSrc/constants'
 import { getRouterLinkProps } from 'uiSrc/services'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
-import { ReactComponent as Icon } from 'uiSrc/assets/img/icons/recommendation.svg'
 import { RecommendationVoting } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
-import { Nullable } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+
+import content from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import { ReactComponent as Icon } from 'uiSrc/assets/img/icons/recommendation.svg'
+import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
+import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 
 import styles from './styles.module.scss'
 
@@ -28,6 +44,7 @@ export interface IProps {
 const Recommendation = ({ id, name, instanceId, isRead, vote }: IProps) => {
   const history = useHistory()
   const dispatch = useDispatch()
+  const { theme } = useContext(ThemeContext)
 
   const handleClose = () => dispatch(setIsContentVisible(false))
 
@@ -70,18 +87,12 @@ const Recommendation = ({ id, name, instanceId, isRead, vote }: IProps) => {
     }
   }
 
-  return (
-    <div className={cx(styles.wrapper, { [styles.read]: isRead })} data-testid={`${name}-recommendation`} key={name}>
-      <EuiFlexGroup responsive={false} gutterSize="none">
-        <EuiFlexItem grow={false}>
-          <Icon className={styles.icon} />
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <div className={styles.content}>
-            {content[name]?.liveTimeText?.map((item) => renderContentElement(item))}
-          </div>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+  const recommendationContent = () => (
+    <EuiText className={styles.floatContent}>
+      <div className={styles.icon}>
+        <Icon />
+      </div>
+      {content[name]?.liveTimeText?.map((item) => renderContentElement(item))}
       <div className={styles.actions}>
         <RecommendationVoting live id={id} vote={vote} name={name} />
         <EuiButton
@@ -94,6 +105,71 @@ const Recommendation = ({ id, name, instanceId, isRead, vote }: IProps) => {
           To Tutorial
         </EuiButton>
       </div>
+    </EuiText>
+  )
+
+  const renderButtonContent = (redisStack: boolean, title: string, id: string) => (
+    <EuiFlexGroup
+      className={styles.accordionButton}
+      responsive={false}
+      alignItems="center"
+      justifyContent="spaceBetween"
+      gutterSize="none"
+    >
+      <EuiFlexGroup alignItems="center" gutterSize="none">
+        <EuiFlexItem grow={false}>
+          {redisStack && (
+            <EuiLink
+              external={false}
+              target="_blank"
+              href={EXTERNAL_LINKS.redisStack}
+              className={styles.redisStackLink}
+              data-testid={`${id}-redis-stack-link`}
+            >
+              <EuiToolTip
+                content="Redis Stack"
+                position="top"
+                display="inlineBlock"
+                anchorClassName="flex-row"
+              >
+                <EuiIcon
+                  type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+                  className={styles.redisStackIcon}
+                  data-testid={`${id}-redis-stack-icon`}
+                />
+              </EuiToolTip>
+            </EuiLink>
+          )}
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          {title}
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </EuiFlexGroup>
+  )
+
+  if (!(name in content)) {
+    return null
+  }
+
+  const { redisStack, title } = content[name]
+
+  return (
+    <div className={cx(styles.recommendationAccordion, { [styles.read]: isRead })}>
+      <EuiAccordion
+        id={name}
+        initialIsOpen={!isRead}
+        arrowDisplay="right"
+        buttonContent={renderButtonContent(redisStack, title, name)}
+        buttonClassName={styles.accordionBtn}
+        buttonProps={{ 'data-test-subj': `${name}-button` }}
+        className={styles.accordion}
+        data-testid={`${name}-accordion`}
+      >
+        <EuiPanel className={styles.accordionContent} color="subdued">
+          {recommendationContent()}
+        </EuiPanel>
+      </EuiAccordion>
     </div>
   )
 }

@@ -28,6 +28,7 @@ import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { findMarkdownPathByPath } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
 import { EAManifestFirstKey } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/constants'
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting } from 'uiSrc/components'
 import { renderBadges, renderBadgesLegend, renderContent, sortRecommendations } from './utils'
 
@@ -90,7 +91,7 @@ const Recommendations = () => {
             <EuiLink
               external={false}
               target="_blank"
-              href="https://redis.io/docs/stack/"
+              href={EXTERNAL_LINKS.redisStack}
               className={styles.redisStackLink}
               data-testid={`${id}-redis-stack-link`}
             >

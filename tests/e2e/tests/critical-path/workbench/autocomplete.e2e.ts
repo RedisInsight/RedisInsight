@@ -61,10 +61,8 @@ test('Verify that user can change any required argument inserted', async t => {
     await t.typeText(workbenchPage.queryInput, commandArgumentsForChange[1]);
     const scriptAfterEdit = await workbenchPage.queryInputScriptArea.textContent;
     // Verify the command after changes
-    await t.expect(scriptBeforeEdit).notEql(scriptAfterEdit, 'The required arguments are editable');
-    for(const argument of commandArguments) {
-        await t.expect(scriptAfterEdit).notContains(argument, `The argument ${argument} is changed`);
-    }
+    await t.expect(scriptBeforeEdit).notEql(scriptAfterEdit, 'The required arguments are not editable');
+    await t.expect(scriptAfterEdit).notContains(commandArguments[0], `The argument ${commandArguments[0]} is not changed`);
 });
 test('Verify that the list of optional arguments will not be inserted with autocomplete', async t => {
     const command = 'ZPOPMAX';

@@ -22,8 +22,8 @@ fixture `Autocomplete for entered commands`
 test('Verify that user can open the "read more" about the command by clicking on the ">" icon or "ctrl+space"', async t => {
     const command = 'HSET';
     const commandDetails = [
-        'HSET key data [data ...]',
-        'Set the string value of a hash field',
+        'HSET key field value [field value ...]',
+        'Creates or modifies the value of a field in a hash.',
         'Arguments:',
         'required key',
         'multiple data'
@@ -71,7 +71,7 @@ test('Verify that user can see the static list of arguments when he uses “Ctrl
     await t.pressKey('enter');
     // Check that the command is displayed in Editing area after selecting
     const script = await workbenchPage.queryInputScriptArea.textContent;
-    await t.expect(script.replace(/\s/g, ' ')).eql('JSON.ARRAPPEND key value ', 'Result of sent command not exists');
+    await t.expect(script.replace(/\s/g, ' ')).eql('JSON.ARRAPPEND key value [value ...] ', 'Result of sent command not exists');
     // Check that hint with arguments are displayed
     await t.expect(workbenchPage.monacoHintWithArguments.visible).ok('Hints with arguments are not displayed');
     // Remove hints with arguments

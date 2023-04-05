@@ -95,7 +95,7 @@ export class StringBusinessService {
       );
       throw new NotFoundException();
     } else {
-      await this.recommendationService.check(
+      this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.STRING_TO_JSON,
         result.value,

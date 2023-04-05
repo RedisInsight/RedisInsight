@@ -123,7 +123,7 @@ export class HashBusinessService {
         result = { ...result, ...scanResult };
       }
 
-      await this.recommendationService.check(
+      this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.SHARD_HASHES,
         result.total,

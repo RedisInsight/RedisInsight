@@ -68,7 +68,7 @@ export class DatabaseInfoService {
       });
       client?.disconnect?.();
 
-      await this.recommendationService.check(
+      this.recommendationService.check(
         { ...clientMetadata, db },
         RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES_LIVE,
         { db, prevDb },

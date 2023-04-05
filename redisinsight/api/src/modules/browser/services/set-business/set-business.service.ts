@@ -119,7 +119,7 @@ export class SetBusinessService {
         const scanResult = await this.scanSet(clientMetadata, dto);
         result = { ...result, ...scanResult };
       }
-      await this.recommendationService.check(
+      this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.INTEGERS_IN_SET,
         { members: result.members, client, databaseId: clientMetadata.databaseId },

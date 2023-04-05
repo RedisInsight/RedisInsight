@@ -137,10 +137,6 @@ export class RecommendationService {
         RECOMMENDATION_NAMES.SEARCH_JSON,
         () => null,
       ],
-      [
-        RECOMMENDATION_NAMES.INTEGERS_IN_SET,
-        () => null,
-      ],
     ]);
 
     const recommendationsToDetermine = difference(Object.values(RECOMMENDATION_NAMES), exclude);

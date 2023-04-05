@@ -90,6 +90,19 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('recommendations-loader')).not.toBeInTheDocument()
   })
 
+  it('should render RecommendationVoting', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'luaScript' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.getByTestId('recommendation-voting')).toBeInTheDocument()
+  })
+
   it('should render code changes badge in luaScript recommendation', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,

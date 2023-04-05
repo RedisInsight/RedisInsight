@@ -1,4 +1,4 @@
-import { describe, it, deps, expect, getMainCheckFn } from '../deps';
+import { describe, deps, expect, getMainCheckFn } from '../deps';
 import { getRepository, repositories } from '../../helpers/local-db';
 const { localDb, request, server, constants } = deps;
 

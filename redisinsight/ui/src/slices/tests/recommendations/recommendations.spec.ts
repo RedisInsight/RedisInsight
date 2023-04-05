@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, set } from 'lodash'
+import { Vote } from 'uiSrc/constants/recommendations'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import reducer, {
@@ -13,16 +14,25 @@ import reducer, {
   fetchRecommendationsAction,
   readRecommendationsAction,
   recommendationsSelector,
+  setRecommendationVoteSuccess,
+  setRecommendationVoteError,
+  putLiveRecommendationVote,
+  setRecommendationVote,
   setTotalUnread,
 } from 'uiSrc/slices/recommendations/recommendations'
 import { cleanup, initialStateDefault, mockStore, mockedStore } from 'uiSrc/utils/test-utils'
 
 let store: typeof mockedStore
 
-const mockRecommendation = {
-  recommendations: [{ name: 'name', read: false }],
+const mockId = 'id'
+const mockName = 'name'
+const mockVote = Vote.Like
+const mockRecommendations = {
+  recommendations: [{ id: mockId, name: mockName, read: false, vote: null }],
   totalUnread: 1,
 }
+const mockRecommendationVoted = cloneDeep(mockRecommendations)
+set(mockRecommendationVoted, 'recommendations[0].vote', mockVote)
 
 beforeEach(() => {
   cleanup()
@@ -86,12 +96,12 @@ describe('recommendations slice', () => {
 
     describe('getRecommendationsSuccess', () => {
       it('should properly set loading: true', () => {
-        const payload = mockRecommendation
+        const payload = mockRecommendations
         // Arrange
         const state = {
           ...initialState,
           loading: false,
-          data: mockRecommendation
+          data: mockRecommendations
         }
 
         // Act
@@ -169,6 +179,51 @@ describe('recommendations slice', () => {
         expect(recommendationsSelector(rootState)).toEqual(state)
       })
     })
+
+    describe('setRecommendationVoteSuccess', () => {
+      it('should properly set data', () => {
+        const payload = mockRecommendationVoted.recommendations[0]
+        // Arrange
+        const state = {
+          ...initialState,
+          loading: false,
+          data: mockRecommendationVoted
+        }
+
+        // Act
+        const initialStateWithRecs = {
+          ...initialState,
+          data: mockRecommendations
+        }
+        const nextState = reducer(initialStateWithRecs, setRecommendationVoteSuccess(payload))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          recommendations: nextState,
+        })
+        expect(recommendationsSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('setRecommendationVoteError', () => {
+      it('should properly set an error', () => {
+        const error = 'Some error'
+        const state = {
+          ...initialState,
+          error,
+          loading: false,
+        }
+
+        // Act
+        const nextState = reducer(initialState, setRecommendationVoteError(error))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          recommendations: nextState,
+        })
+        expect(recommendationsSelector(rootState)).toEqual(state)
+      })
+    })
   })
 
   // thunks
@@ -198,7 +253,7 @@ describe('recommendations slice', () => {
       })
 
       it('succeed to fetch recommendations data and set highlighting', async () => {
-        const data = mockRecommendation
+        const data = mockRecommendations
         const responsePayload = { data, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
@@ -298,6 +353,55 @@ describe('recommendations slice', () => {
         )
 
         expect(store.getActions()).toEqual([])
+      })
+    })
+
+    describe('putLiveRecommendationVote', () => {
+      it('succeed to put recommendation vote', async () => {
+        // const data = mockRecommendations
+        const data = mockRecommendationVoted.recommendations[0]
+        const responsePayload = { data, status: 200 }
+
+        apiService.patch = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          putLiveRecommendationVote(mockId,mockVote, mockName)
+        )
+
+        // Assert
+        const expectedActions = [
+          setRecommendationVote(),
+          setRecommendationVoteSuccess(data),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to put recommendation vote', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.patch = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          putLiveRecommendationVote(mockId, mockVote, mockName)
+        )
+
+        // Assert
+        const expectedActions = [
+          setRecommendationVote(),
+          addErrorNotification(responsePayload as AxiosError),
+          setRecommendationVoteError(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
       })
     })
   })

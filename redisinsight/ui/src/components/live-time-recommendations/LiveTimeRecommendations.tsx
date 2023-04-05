@@ -93,11 +93,13 @@ const LiveTimeRecommendations = () => {
       return <WelcomeScreen />
     }
 
-    return recommendations?.map(({ name, read }) => (
+    return recommendations?.map(({ id, name, read, vote }) => (
       <Recommendation
+        id={id}
         key={name}
         name={name}
         isRead={read}
+        vote={vote}
         instanceId={connectedInstanceId}
       />
     ))

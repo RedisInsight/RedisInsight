@@ -1,13 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { StateRecommendations, IRecommendations } from '../interfaces/recommendations'
+import { Vote } from 'uiSrc/constants/recommendations'
 
 import { AppDispatch, RootState } from '../store'
+import { StateRecommendations, IRecommendations, IRecommendation } from '../interfaces/recommendations'
 
 export const initialState: StateRecommendations = {
   data: {
@@ -61,6 +62,18 @@ const recommendationsSlice = createSlice({
         totalUnread: payload
       }
     },
+    setRecommendationVote: () => {
+      // we don't have any loading here
+    },
+    setRecommendationVoteSuccess: (state, { payload }: PayloadAction<IRecommendation>) => {
+      state.data.recommendations = [
+        ...state.data.recommendations.map((recommendation) =>
+          (payload.id === recommendation.id ? payload : recommendation))
+      ]
+    },
+    setRecommendationVoteError: (state, { payload }) => {
+      state.error = payload
+    },
   },
 })
 
@@ -73,7 +86,10 @@ export const {
   setIsContentVisible,
   setIsHighlighted,
   readRecommendations,
-  setTotalUnread
+  setRecommendationVote,
+  setRecommendationVoteSuccess,
+  setRecommendationVoteError,
+  setTotalUnread,
 } = recommendationsSlice.actions
 
 // A selector
@@ -132,6 +148,44 @@ export function readRecommendationsAction(instanceId: string) {
       }
     } catch (error) {
       // ignore
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function putLiveRecommendationVote(
+  id: string,
+  vote: Vote,
+  name: string,
+  onSuccessAction?: (instanceId: string, name: string, vote: Vote) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      dispatch(setRecommendationVote())
+      const state = stateInit()
+      const instanceId = state.connections.instances.connectedInstance?.id
+
+      const { data, status } = await apiService.patch<IRecommendation>(
+        getUrl(
+          instanceId,
+          ApiEndpoints.RECOMMENDATIONS,
+          id,
+        ),
+        { vote },
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setRecommendationVoteSuccess(data))
+
+        onSuccessAction?.(instanceId, name, vote)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(setRecommendationVoteError(errorMessage))
+      onFailAction?.()
     }
   }
 }

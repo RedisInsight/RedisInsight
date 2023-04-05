@@ -13,6 +13,8 @@ import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Vote } from 'src/modules/database-recommendation/models';
 
 const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
   id: uuidv4(),
@@ -21,6 +23,7 @@ const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
   createdAt: new Date(),
   read: false,
   disabled: false,
+  vote: null,
 });
 
 const mockDatabaseRecommendation = {
@@ -30,6 +33,12 @@ const mockDatabaseRecommendation = {
   read: mockDatabaseRecommendationEntity.read,
   name: mockDatabaseRecommendationEntity.name,
   disabled: mockDatabaseRecommendationEntity.disabled,
+  vote: mockDatabaseRecommendationEntity.vote,
+};
+
+const mockDatabaseRecommendationVoted = {
+  ...mockDatabaseRecommendationEntity,
+  vote: Vote.Like,
 };
 
 describe('DatabaseAnalysisProvider', () => {
@@ -40,6 +49,7 @@ describe('DatabaseAnalysisProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseRecommendationProvider,
+        EventEmitter2,
         {
           provide: getRepositoryToken(DatabaseRecommendationEntity),
           useFactory: mockRepository,
@@ -84,7 +94,6 @@ describe('DatabaseAnalysisProvider', () => {
     });
   });
 
-
   describe('isExist', () => {
     it('should return true when findOneBy recommendation', async () => {
       repository.findOneBy.mockReturnValueOnce('some');
@@ -98,11 +107,23 @@ describe('DatabaseAnalysisProvider', () => {
       expect(await service.isExist(mockClientMetadata, mockDatabaseRecommendation.name)).toEqual(false);
     });
 
-
     it('should return false when findOneBy throw error', async () => {
       repository.findOneBy.mockRejectedValue('some error');
 
       expect(await service.isExist(mockClientMetadata, mockDatabaseRecommendation.name)).toEqual(false);
+    });
+  });
+
+  describe('recommendationVote', () => {
+    it('should call "update" with the vote value', async () => {
+      const { vote } = mockDatabaseRecommendationVoted;
+      repository.findOne.mockReturnValueOnce(mockDatabaseRecommendationEntity);
+
+      await service.recommendationVote(mockClientMetadata, mockDatabaseRecommendation.id, vote as Vote);
+      expect(repository.update).toBeCalledWith(
+        mockDatabaseRecommendationEntity.id,
+        { ...mockDatabaseRecommendationEntity, vote },
+      );
     });
   });
 });

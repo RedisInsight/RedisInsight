@@ -1,5 +1,5 @@
 import { describe, deps, before, getMainCheckFn } from '../deps';
-import { Joi } from '../../helpers/test';
+import { recommendationsSchema } from './constants';
 const { localDb, request, server, constants } = deps;
 
 const endpoint = (
@@ -7,16 +7,7 @@ const endpoint = (
 ) =>
   request(server).get(`/${constants.API.DATABASES}/${instanceId}/recommendations`);
 
-const responseSchema = Joi.object({
-  recommendations: Joi.array().items(Joi.object({
-    read: Joi.boolean().required(),
-    id: Joi.string().required(),
-    name: Joi.string().required(),
-    disabled: Joi.boolean(),
-  })),
-  totalUnread: Joi.number().required(),
-});
-
+  const responseSchema = recommendationsSchema;
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('GET /databases/:id/recommendations', () => {

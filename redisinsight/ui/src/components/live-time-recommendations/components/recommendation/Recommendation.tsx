@@ -11,16 +11,21 @@ import { getRouterLinkProps } from 'uiSrc/services'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
 import { ReactComponent as Icon } from 'uiSrc/assets/img/icons/recommendation.svg'
+import { RecommendationVoting } from 'uiSrc/components'
+import { Vote } from 'uiSrc/constants/recommendations'
+import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
 export interface IProps {
+  id: string
   name: string
   instanceId: string
   isRead: boolean
+  vote: Nullable<Vote>
 }
 
-const Recommendation = ({ name, instanceId, isRead }: IProps) => {
+const Recommendation = ({ id, name, instanceId, isRead, vote }: IProps) => {
   const history = useHistory()
   const dispatch = useDispatch()
 
@@ -78,6 +83,7 @@ const Recommendation = ({ name, instanceId, isRead }: IProps) => {
         </EuiFlexItem>
       </EuiFlexGroup>
       <div className={styles.actions}>
+        <RecommendationVoting live id={id} vote={vote} name={name} />
         <EuiButton
           className={styles.btn}
           onClick={handleClick}

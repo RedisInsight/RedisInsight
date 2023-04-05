@@ -155,7 +155,7 @@ const Recommendation = ({ id, name, instanceId, isRead, vote }: IProps) => {
   const { redisStack, title } = content[name]
 
   return (
-    <div className={cx(styles.recommendationAccordion, { [styles.read]: isRead })}>
+    <div className={cx(styles.recommendationAccordion, { [styles.read]: isRead })} data-testid={`${name}-recommendation`}>
       <EuiAccordion
         id={name}
         initialIsOpen={!isRead}

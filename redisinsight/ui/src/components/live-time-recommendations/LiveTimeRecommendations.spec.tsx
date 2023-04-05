@@ -175,6 +175,6 @@ describe('LiveTimeRecommendations', () => {
     }))
     render(<LiveTimeRecommendations />)
 
-    expect(screen.getByTestId('rediSearch-recommendation')).toBeInTheDocument()
+    expect(screen.getByTestId('redisSearch-recommendation')).toBeInTheDocument()
   })
 })

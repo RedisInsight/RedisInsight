@@ -6,7 +6,7 @@ import { Recommendation as RecommendationResponse } from 'apiSrc/modules/databas
 import { INSTANCE_ID_MOCK } from '../instances/instancesHandlers'
 
 export const RECOMMENDATIONS_DATA_MOCK = {
-  recommendations: [{ name: 'rediSearch', id: 'id', read: false }],
+  recommendations: [{ name: 'redisSearch', id: 'id', read: false }],
   totalUnread: 1
 }
 

@@ -1,6 +1,7 @@
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { ExecuteQueryParams, ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
-import { getExecuteParams, getParsedParamsInQuery } from 'uiSrc/utils'
+import { getExecuteParams, getParsedParamsInQuery, findMarkdownPathByPath } from 'uiSrc/utils'
+import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 
 const paramsState: ExecuteQueryParams = {
   activeRunQueryMode: RunQueryMode.ASCII,
@@ -49,4 +50,24 @@ describe('getParsedParamsInQuery', () => {
       const result = getParsedParamsInQuery(input)
       expect(result).toEqual(expected)
     })
+})
+
+const findMarkdownPathByPathTests = [
+  { input: '/static/workbench/quick-guides/document/learn-more.md', expected: '0/0' },
+  { input: 'quick-guides/working-with-hash.html', expected: '0/2' },
+  { input: 'quick-guides/working-with-hash.html', expected: '0/2' },
+  { input: 'quick-guides/document-capabilities.html', expected: '1' },
+  { input: '/redis_stack/working_with_json.md', manifest: MOCK_TUTORIALS_ITEMS, expected: '4' },
+  { input: 'quick-guides', expected: null },
+]
+
+describe('findMarkdownPathByPath', () => {
+  test.each(findMarkdownPathByPathTests)(
+    '%j',
+    ({ input, manifest = MOCK_GUIDES_ITEMS, expected }) => {
+      // @ts-ignore
+      const result = findMarkdownPathByPath(manifest, input)
+      expect(result).toEqual(expected)
+    }
+  )
 })

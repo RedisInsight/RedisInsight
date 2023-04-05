@@ -3,7 +3,7 @@ import { mock, instance } from 'ts-mockito'
 import reactRouterDom from 'react-router-dom'
 import { fireEvent, screen, render } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { Pages } from 'uiSrc/constants'
+import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS, Pages } from 'uiSrc/constants'
 
 import Recommendation, { IProps } from './Recommendation'
 
@@ -43,6 +43,68 @@ describe('Recommendation', () => {
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 
     expect(pushMock).toHaveBeenCalledWith(Pages.workbench('id'))
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      eventData: {
+        databaseId: 'id',
+        name: 'searchJSON',
+      }
+    })
+    sendEventTelemetry.mockRestore()
+  })
+
+  it('should properly push history on workbench page to specific guide', () => {
+    // will be improved
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+    const { container } = render(
+      <Recommendation
+        {...instance(mockedProps)}
+        isRead={false}
+        name="searchJSON"
+        instanceId="id"
+        tutorial="quick-guides/working-with-hash.html"
+        guides={MOCK_GUIDES_ITEMS}
+        tutorials={MOCK_TUTORIALS_ITEMS}
+      />
+    )
+
+    fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
+    fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
+
+    expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench('id')}?path=quick-guides/0/2`)
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      eventData: {
+        databaseId: 'id',
+        name: 'searchJSON',
+      }
+    })
+    sendEventTelemetry.mockRestore()
+  })
+
+  it('should properly push history on workbench page to specific tutorial', () => {
+    // will be improved
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+    const { container } = render(
+      <Recommendation
+        {...instance(mockedProps)}
+        isRead={false}
+        name="searchJSON"
+        instanceId="id"
+        tutorial="/redis_stack/working_with_json.md"
+        guides={MOCK_GUIDES_ITEMS}
+        tutorials={MOCK_TUTORIALS_ITEMS}
+      />
+    )
+
+    fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
+    fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
+
+    expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench('id')}?path=tutorials/4`)
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_TUTORIAL_CLICKED,
       eventData: {

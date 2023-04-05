@@ -1,6 +1,5 @@
 import { ApiEndpoints, MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
 import {
-  findMarkdownPathByPath,
   getFileInfo,
   getGroupPath,
   getMarkdownPathByManifest,
@@ -204,24 +203,6 @@ describe('getParentByManifest', () => {
     ({ input, expected }) => {
       // @ts-ignore
       const result = getParentByManifest(...input)
-      expect(result).toEqual(expected)
-    }
-  )
-})
-
-const findMarkdownPathByPathTests = [
-  { input: [MOCK_GUIDES_ITEMS, '/static/workbench/quick-guides/document/learn-more.md'], expected: '0/0' },
-  { input: [MOCK_GUIDES_ITEMS, 'quick-guides/working-with-hash.html'], expected: '0/2' },
-  { input: [MOCK_GUIDES_ITEMS, 'quick-guides/document-capabilities.html'], expected: '1' },
-  { input: [MOCK_GUIDES_ITEMS, 'quick-guides'], expected: null },
-]
-
-describe('findMarkdownPathByPath', () => {
-  test.each(findMarkdownPathByPathTests)(
-    '%j',
-    ({ input, expected }) => {
-      // @ts-ignore
-      const result = findMarkdownPathByPath(...input)
       expect(result).toEqual(expected)
     }
   )

@@ -55,7 +55,15 @@ export const MOCK_TUTORIALS_ITEMS: IEnablementAreaItem[] = [
     args: {
       path: '_scripts/manual.txt'
     },
-  }
+  },
+  {
+    type: EnablementAreaComponent.InternalLink,
+    id: 'working_with_json',
+    label: 'Working with JSON',
+    args: {
+      path: '/redis_stack/working_with_json.md'
+    },
+  },
 ]
 
 export const MOCK_TUTORIALS = {

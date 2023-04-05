@@ -70,6 +70,7 @@ const defaultViewFormat = KeyValueFormat.Unicode
 
 export const initialState: KeysStore = {
   loading: false,
+  deleting: false,
   error: '',
   filter: null,
   search: '',
@@ -202,27 +203,37 @@ const keysSlice = createSlice({
     updateSelectedKeyRefreshTime: (state, { payload }) => {
       state.selectedKey.lastRefreshTime = payload
     },
-    // delete Key
-    deleteKey: (state) => {
+    // delete selected Key
+    deleteSelectedKey: (state) => {
       state.selectedKey = {
         ...state.selectedKey,
         loading: true,
         error: '',
       }
     },
-    deleteKeySuccess: (state) => {
+    deleteSelectedKeySuccess: (state) => {
       state.selectedKey = {
         ...state.selectedKey,
         loading: false,
         data: null,
       }
     },
-    deleteKeyFailure: (state, { payload }) => {
+    deleteSelectedKeyFailure: (state, { payload }) => {
       state.selectedKey = {
         ...state.selectedKey,
         loading: false,
         error: payload,
       }
+    },
+    // delete Key
+    deleteKey: (state) => {
+      state.deleting = true
+    },
+    deleteKeySuccess: (state) => {
+      state.deleting = false
+    },
+    deleteKeyFailure: (state) => {
+      state.deleting = false
     },
     deletePatternKeyFromList: (state, { payload }) => {
       remove(state.data?.keys, (key) => isEqualBuffers(key.name, payload))
@@ -427,10 +438,13 @@ export const {
   addKeyFailure,
   addKeySuccess,
   resetAddKey,
+  deleteSelectedKey,
+  deleteSelectedKeySuccess,
+  deleteSelectedKeyFailure,
+  deletePatternKeyFromList,
   deleteKey,
   deleteKeySuccess,
   deleteKeyFailure,
-  deletePatternKeyFromList,
   editPatternKeyFromList,
   editPatternKeyTTLFromList,
   setPatternSearchMatch,
@@ -842,13 +856,12 @@ export function addStreamKey(
 }
 
 // Asynchronous thunk action
-export function deleteKeyAction(
+export function deleteSelectedKeyAction(
   key: RedisResponseBuffer,
-  telemetryData: Record<string, any> = {},
   onSuccessAction?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    dispatch(deleteKey())
+    dispatch(deleteSelectedKey())
 
     try {
       const state = stateInit()
@@ -874,19 +887,64 @@ export function deleteKeyAction(
           eventData: {
             databaseId: state.connections.instances?.connectedInstance?.id,
             numberOfDeletedKeys: 1,
-            ...telemetryData
+            source: 'keyValue',
           }
         })
-        console.log(sendEventTelemetry)
+        dispatch(deleteSelectedKeySuccess())
+        dispatch<any>(deleteKeyFromList(key))
+        onSuccessAction?.()
+        dispatch(addMessageNotification(successMessages.DELETED_KEY(key)))
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error as AxiosError)
+      dispatch(addErrorNotification(error as AxiosError))
+      dispatch(deleteSelectedKeyFailure(errorMessage))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function deleteKeyAction(
+  key: RedisResponseBuffer,
+  onSuccessAction?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(deleteKey())
+    try {
+      const state = stateInit()
+      const { encoding } = state.app.info
+      const { status } = await apiService.delete(
+        getUrl(
+          state.connections.instances?.connectedInstance?.id ?? '',
+          ApiEndpoints.KEYS
+        ),
+        {
+          data: { keyNames: [key] },
+          params: { encoding },
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_KEYS_DELETED,
+            TelemetryEvent.TREE_VIEW_KEYS_DELETED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+            numberOfDeletedKeys: 1,
+            source: 'keyList',
+          }
+        })
         dispatch(deleteKeySuccess())
         dispatch<any>(deleteKeyFromList(key))
         onSuccessAction?.()
         dispatch(addMessageNotification(successMessages.DELETED_KEY(key)))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
-      dispatch(deleteKeyFailure(errorMessage))
+      dispatch(addErrorNotification(error as AxiosError))
+      dispatch(deleteKeyFailure())
     }
   }
 }
@@ -959,7 +1017,7 @@ export function editKeyTTL(key: RedisResponseBuffer, ttl: number) {
           dispatch<any>(editKeyTTLFromList([key, ttl]))
           dispatch<any>(fetchKeyInfo(key))
         } else {
-          dispatch(deleteKeySuccess())
+          dispatch(deleteSelectedKeySuccess())
           dispatch<any>(deleteKeyFromList(key))
         }
         dispatch(defaultSelectedKeyActionSuccess())

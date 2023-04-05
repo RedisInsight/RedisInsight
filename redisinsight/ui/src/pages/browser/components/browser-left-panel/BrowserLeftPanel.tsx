@@ -140,6 +140,7 @@ const BrowserLeftPanel = (props: Props) => {
           loading={loading}
           selectKey={selectKey}
           loadMoreItems={loadMoreItems}
+          onDelete={onDeleteKey}
         />
       )}
     </div>

@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { fireEvent } from '@testing-library/react'
 import { cleanup, mockedStore, render, waitFor, screen, clearStoreActions } from 'uiSrc/utils/test-utils'
 import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { deleteKey, keysSelector, setLastBatchKeys } from 'uiSrc/slices/browser/keys'
+import { deleteSelectedKey, keysSelector, setLastBatchKeys } from 'uiSrc/slices/browser/keys'
 import { apiService } from 'uiSrc/services'
 import KeyList from './KeyList'
 
@@ -196,7 +196,7 @@ describe('KeyList', () => {
     fireEvent.click(screen.getByTestId('submit-delete-key'))
 
     const expectedActions = [
-      deleteKey()
+      deleteSelectedKey()
     ]
     expect(clearStoreActions(store.getActions().slice(-1))).toEqual(clearStoreActions(expectedActions))
   })

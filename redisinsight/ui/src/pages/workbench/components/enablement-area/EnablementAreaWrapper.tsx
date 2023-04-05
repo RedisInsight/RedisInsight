@@ -7,8 +7,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
-import { fetchGuides, workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
-import { fetchTutorials, workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
+import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { fetchCustomTutorials, workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -40,8 +40,6 @@ const EnablementAreaWrapper = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(fetchGuides())
-    dispatch(fetchTutorials())
     dispatch(fetchCustomTutorials())
   }, [])
 

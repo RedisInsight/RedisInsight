@@ -479,6 +479,12 @@ export const constants = {
     threshold: 4 * 60 * 60 * 1000,
   },
 
+  // recommendations
+  TEST_RECOMMENDATIONS_DATABASE_ID: uuidv4(),
+  TEST_RECOMMENDATION_ID_1: uuidv4(),
+  TEST_RECOMMENDATION_ID_2: uuidv4(),
+  TEST_RECOMMENDATION_ID_3: uuidv4(),
+  
   TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION: {
     name: RECOMMENDATION_NAMES.LUA_SCRIPT,
   },

@@ -187,4 +187,12 @@
   // Database analysis
   --badgeIconColor: #{$badgeIconColor};
   --recommendationBorderColor: #{$recommendationBorderColor};
+
+  // Recommendations
+  --recommendationsBgColor: #{$recommendationsBgColor};
+  --recommendationBgColor: #{$recommendationBgColor};
+  --recommendationLiveBorderColor: #{$recommendationLiveBorderColor};
+  --recommendationColor: #{$recommendationColor};
+  --triggerIconColor: #{$triggerIconColor};
+  --triggerIconActiveColor: #{$triggerIconActiveColor};
 }

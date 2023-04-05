@@ -12,7 +12,7 @@
     .badgeWrapper {
       margin-right: 0;
     }
-  
+
     .badge {
       margin: 0 0 0 24px;
     }
@@ -21,11 +21,11 @@
       margin-right: 14px;
     }
   }
-  
+
   .badgeIcon {
     fill: var(--badgeIconColor);
   }
-  
+
   .badgeWrapper {
     display: flex;
     align-items: center;
@@ -46,7 +46,7 @@
       margin-right: 16px;
       animation: none !important;
     }
-  
+
     .redisStackIcon {
       width: 20px;
       height: 20px;
@@ -107,6 +107,16 @@
 
   .accordionContent {
     padding: 18px 0 0 !important;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding-top: 15px;
+    margin-top: 15px !important;
+    border-top: 1px solid var(--separatorColor);
   }
 
   :global(.euiAccordion__triggerWrapper) {

@@ -130,3 +130,29 @@ export const getParentByManifest = (
 
   return parent ?? null
 }
+
+export const findMarkdownPathByPath = (manifest: IEnablementAreaItem[], markdownPath: string) => {
+  const findPath = (data: IEnablementAreaItem[], mdPath: string, path: number[] = []): Nullable<number[]> => {
+    for (let i = 0; i < data.length; i++) {
+      const obj = data[i]
+      const currentPath = [...path, i]
+
+      if (obj.type === EnablementAreaComponent.InternalLink && obj.args?.path === mdPath) {
+        return currentPath
+      }
+
+      if (obj.type === EnablementAreaComponent.Group && obj.children) {
+        const result = findPath(obj.children, mdPath, currentPath)
+
+        if (result) {
+          return result
+        }
+      }
+    }
+
+    return null
+  }
+
+  const result = findPath(manifest, markdownPath)
+  return result ? result.join('/') : null
+}

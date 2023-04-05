@@ -234,24 +234,31 @@ export class WorkbenchPage {
         await t.expect(actualCommandResult).contains(result, 'Actual command result is not equal to executed');
     }
     /**
-     * get selector with tutorial name
+     * Get selector with tutorial name
      * @param tutorialName name of the uploaded tutorial
      */
     async getAccordionButtonWithName(tutorialName: string): Promise<Selector> {
         return Selector(`[data-testid=accordion-button-${tutorialName}]`);
     }
     /**
-     * get internal tutorial link with .md name
+     * Get internal tutorial link with .md name
      * @param internalLink name of the .md file
      */
     async getInternalLinkWithManifest(internalLink: string): Promise<Selector> {
         return Selector(`[data-testid="internal-link-${internalLink}.md"]`);
     }
     /**
-     * get internal tutorial link without .md name
+     * Get internal tutorial link without .md name
      * @param internalLink name of the label
      */
     async getInternalLinkWithoutManifest(internalLink: string): Promise<Selector> {
         return Selector(`[data-testid="internal-link-${internalLink}"]`);
+    }
+    /**
+     * Find tutorial selector by name
+     * @param name A tutorial name
+     */
+    async getTutorialByName(name: string): Promise<Selector> {
+        return Selector('div').withText(name);
     }
 }

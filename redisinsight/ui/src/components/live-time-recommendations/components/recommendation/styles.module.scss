@@ -1,0 +1,50 @@
+.wrapper {
+  padding: 24px 20px;
+  background: var(--recommendationBgColor);
+  border: 1px solid var(--recommendationLiveBorderColor);
+  border-radius: 8px;
+  margin-bottom: 10px;
+
+  &.read {
+    border: 1px solid var(--controlsBorderColor);
+  }
+
+  .content {
+    max-width: 300px;
+  }
+
+  .text {
+    font: normal normal normal 14px/19px Graphik !important;
+  }
+
+  .span {
+    display: inline;
+  }
+
+  .icon {
+    margin-right: 5px;
+  }
+
+  .link {
+    color: var(--externalLinkColor) !important;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+
+  .btn {
+    height: 24px !important;
+    min-width: 77px !important;
+
+    :global(.euiButton__content) {
+      padding: 0 10px;
+    }
+
+    :global(.euiButton__text) {
+      font: normal normal 400 12px/14px Graphik, sans-serif !important;
+    }
+  }
+}

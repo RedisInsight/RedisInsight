@@ -21,3 +21,4 @@ export * from './database-import';
 export * from './redis-client';
 export * from './ssh';
 export * from './browser-history';
+export * from './database-recommendation';

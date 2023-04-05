@@ -13,10 +13,11 @@ import {
 import QueryWrapper from 'uiSrc/components/query'
 import { Props as QueryProps } from 'uiSrc/components/query/QueryWrapper'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { sendWBCommandAction } from 'uiSrc/slices/workbench/wb-results'
+import { loadWBHistory, sendWBCommandAction } from 'uiSrc/slices/workbench/wb-results'
 import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 
+import { getWBCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import WBViewWrapper from './WBViewWrapper'
 
 let store: typeof mockedStore
@@ -104,7 +105,7 @@ describe('WBViewWrapper', () => {
   it('should render with SessionStorage', () => {
     render(<WBViewWrapper />)
 
-    const expectedActions = [getWBGuides(), getWBTutorials()]
+    const expectedActions = [getWBCustomTutorials(), loadWBHistory()]
     expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
       clearStoreActions(expectedActions)
     )

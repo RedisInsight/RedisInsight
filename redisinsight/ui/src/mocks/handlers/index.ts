@@ -4,6 +4,7 @@ import content from './content'
 import app from './app'
 import analytics from './analytics'
 import browser from './browser'
+import recommendations from './recommendations'
 
 // @ts-ignore
 export const handlers: RestHandler<MockedRequest>[] = [].concat(
@@ -12,4 +13,5 @@ export const handlers: RestHandler<MockedRequest>[] = [].concat(
   app,
   analytics,
   browser,
+  recommendations,
 )

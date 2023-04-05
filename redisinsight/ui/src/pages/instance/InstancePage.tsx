@@ -11,6 +11,7 @@ import {
   getDatabaseConfigInfoAction,
   instancesSelector,
 } from 'uiSrc/slices/instances/instances'
+import { fetchRecommendationsAction, resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
@@ -23,6 +24,7 @@ import { localStorageService } from 'uiSrc/services'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
+import LiveTimeRecommendations from 'uiSrc/components/live-time-recommendations'
 import { monitorSelector, setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
@@ -74,6 +76,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     }))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
     dispatch(fetchConnectedInstanceInfoAction(connectionInstanceId))
+    dispatch(fetchRecommendationsAction(connectionInstanceId))
 
     if (contextInstanceId && contextInstanceId !== connectionInstanceId) {
       resetContext()
@@ -105,6 +108,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setDatabaseAnalysisInitialState())
     dispatch(setInitialAnalyticsSettings())
     dispatch(setRedisearchInitialState())
+    dispatch(resetRecommendationsHighlighting())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)
@@ -118,43 +122,46 @@ const InstancePage = ({ routes = [] }: Props) => {
   }, [])
 
   return (
-    <EuiResizableContainer
-      direction="vertical"
-      style={{ height: '100%' }}
-      onPanelWidthChange={onPanelWidthChange}
-      className={cx({ 'show-cli': isShowBottomGroup })}
-    >
-      {(EuiResizablePanel, EuiResizableButton) => (
-        <>
-          <EuiResizablePanel
-            id={firstPanelId}
-            scrollable={false}
-            minSize="55px"
-            paddingSize="none"
-            size={isShowBottomGroup ? sizes[firstPanelId] : 100}
-            wrapperProps={{ className: cx(styles.panelTop, { [styles.mainComponent]: !isShowBottomGroup }) }}
-            data-testid={firstPanelId}
-          >
-            <InstancePageRouter routes={routes} />
-          </EuiResizablePanel>
+    <>
+      <LiveTimeRecommendations />
+      <EuiResizableContainer
+        direction="vertical"
+        style={{ height: '100%' }}
+        onPanelWidthChange={onPanelWidthChange}
+        className={cx({ 'show-cli': isShowBottomGroup })}
+      >
+        {(EuiResizablePanel, EuiResizableButton) => (
+          <>
+            <EuiResizablePanel
+              id={firstPanelId}
+              scrollable={false}
+              minSize="55px"
+              paddingSize="none"
+              size={isShowBottomGroup ? sizes[firstPanelId] : 100}
+              wrapperProps={{ className: cx(styles.panelTop, { [styles.mainComponent]: !isShowBottomGroup }) }}
+              data-testid={firstPanelId}
+            >
+              <InstancePageRouter routes={routes} />
+            </EuiResizablePanel>
 
-          <EuiResizableButton className={styles.resizableButton} data-test-subj="resize-btn-browser-cli" />
+            <EuiResizableButton className={styles.resizableButton} data-test-subj="resize-btn-browser-cli" />
 
-          <EuiResizablePanel
-            id={secondPanelId}
-            scrollable={false}
-            size={isShowBottomGroup ? sizes[secondPanelId] : 0}
-            style={{ zIndex: 9 }}
-            minSize="140px"
-            wrapperProps={{ className: cx(styles.panelBottom) }}
-            data-testid={secondPanelId}
-            paddingSize="none"
-          >
-            <BottomGroupComponents />
-          </EuiResizablePanel>
-        </>
-      )}
-    </EuiResizableContainer>
+            <EuiResizablePanel
+              id={secondPanelId}
+              scrollable={false}
+              size={isShowBottomGroup ? sizes[secondPanelId] : 0}
+              style={{ zIndex: 9 }}
+              minSize="140px"
+              wrapperProps={{ className: cx(styles.panelBottom) }}
+              data-testid={secondPanelId}
+              paddingSize="none"
+            >
+              <BottomGroupComponents />
+            </EuiResizablePanel>
+          </>
+        )}
+      </EuiResizableContainer>
+    </>
   )
 }
 

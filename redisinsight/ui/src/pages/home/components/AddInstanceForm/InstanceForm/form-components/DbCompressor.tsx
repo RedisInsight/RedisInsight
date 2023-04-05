@@ -46,6 +46,14 @@ const DbCompressor = (props: Props) => {
       value: KeyValueCompressor.ZSTD,
       inputDisplay: 'ZSTD',
     },
+    {
+      value: KeyValueCompressor.Brotli,
+      inputDisplay: 'Brotli'
+    },
+    {
+      value: KeyValueCompressor.PHPGZCompress,
+      inputDisplay: 'PHP GZCompress'
+    },
   ]
 
   const handleChangeDbCompressorCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {

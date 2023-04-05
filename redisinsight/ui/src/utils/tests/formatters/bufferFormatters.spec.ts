@@ -11,7 +11,8 @@ import {
   bufferToHex,
   bufferToBinary,
   binaryToBuffer,
-  bufferToJava
+  bufferToJava,
+  bufferToUint8Array,
 } from 'uiSrc/utils'
 
 const defaultValues = [
@@ -139,5 +140,11 @@ const getBufferToJavaTests = javaValues.map(({ uint8Array, value }) =>
 describe('bufferToJava', () => {
   test.each(getBufferToJavaTests)('%o', ({ input, expected }) => {
     expect(bufferToJava(input)).toEqual(expected)
+  })
+})
+
+describe('bufferToUint8Array', () => {
+  test.each(javaValues)('%o', ({ uint8Array }) => {
+    expect(bufferToUint8Array(anyToBuffer(uint8Array))).toEqual(new Uint8Array(uint8Array))
   })
 })

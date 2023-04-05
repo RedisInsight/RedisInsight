@@ -16,10 +16,13 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   RTS: 'RTS',
   REDIS_VERSION: 'redisVersion',
   REDIS_SEARCH: 'redisSearch',
-  INTEGERS_IN_SET: 'integersInSets',
   SEARCH_STRING: 'searchString',
   SEARCH_INDEXES: 'searchIndexes',
   SEARCH_JSON: 'searchJSON',
+  INTEGERS_IN_SET: 'integersInSets',
+  AVOID_LOGICAL_DATABASES_LIVE: 'avoidLogicalDatabasesLive',
+  SHARD_HASHES: 'shardHashes',
+  STRING_TO_JSON: 'stringToJson',
 });
 
 export const ONE_NODE_RECOMMENDATIONS = [

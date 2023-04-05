@@ -114,6 +114,22 @@ export class RecommendationService {
       ],
       // it is live time recommendation (will add later)
       [
+        RECOMMENDATION_NAMES.SHARD_HASHES,
+        () => null,
+      ],
+      [
+        RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES_LIVE,
+        () => null,
+      ],
+      [
+        RECOMMENDATION_NAMES.STRING_TO_JSON,
+        () => null,
+      ],
+      [
+        RECOMMENDATION_NAMES.INTEGERS_IN_SET,
+        () => null,
+      ],
+      [
         RECOMMENDATION_NAMES.SEARCH_STRING,
         () => null,
       ],

@@ -45,11 +45,11 @@ const mockedCommands: IMockedCommands[] = [
       'BITFIELD key [GET type offset] [SET type offset value] [INCRBY type offset increment] [OVERFLOW WRAP|SAT|FAIL]',
     argsNamesWithEnumsMock: [
       'key',
-      '[GET encoding offset | [OVERFLOW <WRAP | SAT | FAIL>] <SET encoding offset value | INCRBY encoding offset increment> [GET encoding offset | [OVERFLOW <WRAP | SAT | FAIL>] <SET encoding offset value | INCRBY encoding offset increment> ...]]',
+      '[GET encoding offset | [OVERFLOW WRAP | SAT | FAIL] SET encoding offset value | INCRBY encoding offset increment [GET encoding offset | [OVERFLOW WRAP | SAT | FAIL] SET encoding offset value | INCRBY encoding offset increment ...]]',
     ],
     argsNamesMock: [
       'key',
-      '[GET encoding offset | [OVERFLOW <WRAP | SAT | FAIL>] <SET encoding offset value | INCRBY encoding offset increment>]',
+      '[GET encoding offset | [OVERFLOW WRAP | SAT | FAIL] SET encoding offset value | INCRBY encoding offset increment]',
     ],
     complexityShortMock: 'O(1)',
   },
@@ -58,10 +58,10 @@ const mockedCommands: IMockedCommands[] = [
     argStr:
       'CLIENT KILL [ip:port] [ID client-id] [TYPE normal|master|slave|pubsub] [USER username] [ADDR ip:port] [LADDR ip:port] [SKIPME yes/no]',
     argsNamesWithEnumsMock: [
-      '<ip:port | <[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] [[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] ...]>>',
+      'ip:port | [ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] [[ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] ...]',
     ],
     argsNamesMock: [
-      '<ip:port | <[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] [[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] ...]>>',
+      'ip:port | [ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] [[ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] ...]',
     ],
     complexityShortMock: 'O(N)',
   },

@@ -26,4 +26,19 @@ export class InsightsPage {
             await t.click(this.insightsBtn);
         }
     }
+
+    /**
+     * Expand/Collapse Recommendation
+     * @param recommendationName Name of recommendation
+     * @param state State of recommendation
+     */
+    async toggleRecommendation(recommendationName: string, state: boolean): Promise<void> {
+        const recommendationAccordeon = Selector(`[data-testid=${recommendationName}-accordion]`);
+        const recommendationSelector = Selector(`[data-test-subj=${recommendationName}-button]`);
+        const isRecommendationExpanded = await recommendationAccordeon.withAttribute('class', /-isOpen/).exists;
+
+        if (state !== isRecommendationExpanded) {
+            await t.click(recommendationSelector);
+        }
+    }
 }

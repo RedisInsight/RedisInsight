@@ -158,7 +158,7 @@ const Recommendations = () => {
           } = recommendationsContent[name as keyof typeof recommendationsContent]
 
           return (
-            <div key={id} className={styles.recommendation}>
+            <div key={id} className={styles.recommendation} data-testid={`${id}-recommendation`}>
               <EuiAccordion
                 id={name}
                 arrowDisplay="right"

@@ -1,11 +1,10 @@
-import { Selector } from 'testcafe';
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage, AddRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi, deleteCustomDatabase } from '../../../helpers/database';
-import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { CliActions } from '../../../common-actions/cli-actions';
-import { MemoryEfficiencyActions } from '../../../common-actions/memory-efficiency-actions';
+import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
 import { Common } from '../../../helpers/common';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
@@ -15,7 +14,7 @@ const common = new Common();
 const browserPage = new BrowserPage();
 const cliPage = new CliPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
-const memoryEfficiencyActions = new MemoryEfficiencyActions();
+const recommendationsActions = new RecommendationsActions();
 const workbenchPage = new WorkbenchPage();
 
 const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
@@ -126,27 +125,32 @@ test
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
         // Go to Analysis Tools page and create new report and open recommendations
         await t.click(myRedisDatabasePage.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);
         await t.click(memoryEfficiencyPage.recommendationsTab);
     }).after(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can upvote recommendations', async t => {
-        await memoryEfficiencyActions.voteForVeryUsefulAndVerifyDisabled();
+        const recommendationName = 'redisVersion';
+        const recommendationVote = 'not-useful';
+
+        await recommendationsActions.voteForRecommendation(recommendationName, recommendationVote);
+        // Verify that user can rate recommendations with one of 3 existing types at the same time
+        await recommendationsActions.verifyVoteDisabled(recommendationName, recommendationVote);
+
+        // Verify that user can see the popup with link when he votes for “Not useful”
+        await t.expect(memoryEfficiencyPage.recommendationsFeedbackBtn.visible).ok('popup did not appear after voting for not useful');
+
         // Verify that user can see previous votes when reload the page
         await common.reloadPage();
         await t.click(memoryEfficiencyPage.recommendationsTab);
-        await memoryEfficiencyActions.verifyVoteDisabled();
+        await recommendationsActions.verifyVoteDisabled(recommendationName, recommendationVote);
 
         await t.click(memoryEfficiencyPage.newReportBtn);
-        await memoryEfficiencyActions.voteForUsefulAndVerifyDisabled();
-
-        await t.click(memoryEfficiencyPage.newReportBtn);
-        await memoryEfficiencyActions.voteForNotUsefulAndVerifyDisabled();
-        // Verify that user can see the popup with link when he votes for “Not useful”
-        await t.expect(memoryEfficiencyPage.recommendationsFeedbackBtn.visible).ok('popup did not appear after voting for not useful');
+        await recommendationsActions.voteForRecommendation(recommendationName, 'useful');
+        await recommendationsActions.verifyVoteDisabled(recommendationName, 'useful');
     });
 test
     .before(async t => {

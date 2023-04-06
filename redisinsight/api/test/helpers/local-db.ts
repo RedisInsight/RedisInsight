@@ -280,6 +280,17 @@ export const generateDatabaseRecommendations = async (
     ...partial,
   }));
 
+  result.push(await rep.save({
+    id: constants.TEST_RECOMMENDATION_ID_3,
+    databaseId: constants.TEST_RECOMMENDATIONS_DATABASE_ID,
+    name: constants.TEST_RECOMMENDATION_NAME_3,
+    createdAt: new Date(),
+    read: false,
+    db: 3,
+    vote: null,
+    ...partial,
+  }));
+
   return result;
 }
 

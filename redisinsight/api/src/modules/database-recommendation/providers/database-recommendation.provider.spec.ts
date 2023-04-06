@@ -41,7 +41,7 @@ const mockDatabaseRecommendationVoted = {
   vote: Vote.Like,
 };
 
-describe('DatabaseAnalysisProvider', () => {
+describe('DatabaseRecommendationProvider', () => {
   let service: DatabaseRecommendationProvider;
   let repository: MockType<Repository<DatabaseRecommendationEntity>>;
 
@@ -65,7 +65,7 @@ describe('DatabaseAnalysisProvider', () => {
     it('should process new entity', async () => {
       repository.save.mockReturnValueOnce(mockDatabaseRecommendationEntity);
       expect(await service.create(
-        mockDatabaseRecommendationEntity.databaseId,
+        mockClientMetadata,
         mockDatabaseRecommendationEntity.name,
       )).toEqual(mockDatabaseRecommendation);
     });

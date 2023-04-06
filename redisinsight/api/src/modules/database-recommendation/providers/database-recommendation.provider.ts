@@ -28,11 +28,11 @@ export class DatabaseRecommendationProvider {
    * @param databaseId
    * @param recommendationName
    */
-  async create(databaseId: string, recommendationName: string): Promise<DatabaseRecommendation> {
+  async create({ databaseId, db }: ClientMetadata, recommendationName: string): Promise<DatabaseRecommendation> {
     this.logger.log('Creating database recommendation');
     const recommendation = plainToClass(
       DatabaseRecommendation,
-      await this.repository.save({ databaseId, name: recommendationName }),
+      await this.repository.save({ db, databaseId, name: recommendationName }),
     );
 
     this.eventEmitter.emit(RecommendationEvents.NewRecommendation, [recommendation]);
@@ -44,18 +44,18 @@ export class DatabaseRecommendationProvider {
    * Return list of database recommendations
    * @param clientMetadata
    */
-  async list(clientMetadata: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
+  async list({ databaseId, db }: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
     this.logger.log('Getting database recommendations list');
     const recommendations = await this.repository
       .createQueryBuilder('r')
-      .where({ databaseId: clientMetadata.databaseId })
+      .where({ databaseId, db  })
       .select(['r.id', 'r.name', 'r.read', 'r.vote', 'disabled'])
       .orderBy('r.createdAt', 'DESC')
       .getMany();
 
     const totalUnread = await this.repository
       .createQueryBuilder()
-      .where({ databaseId: clientMetadata.databaseId, read: false })
+      .where({ databaseId, read: false })
       .getCount();
 
     this.logger.log('Succeed to get recommendations');
@@ -69,12 +69,12 @@ export class DatabaseRecommendationProvider {
    * Read all recommendations recommendations
    * @param clientMetadata
    */
-  async read(clientMetadata: ClientMetadata): Promise<void> {
+  async read({ databaseId }: ClientMetadata): Promise<void> {
     this.logger.log('Marking all recommendations as read');
     await this.repository
       .createQueryBuilder('r')
       .update()
-      .where({ databaseId: clientMetadata.databaseId })
+      .where({ databaseId })
       .set({ read: true })
       .execute();
   }
@@ -84,8 +84,7 @@ export class DatabaseRecommendationProvider {
    * @param id
    * @param dto
    */
-  async recommendationVote(clientMetadata: ClientMetadata, id: string, vote: Vote): Promise<DatabaseRecommendation> {
-    const { databaseId } = clientMetadata
+  async recommendationVote({ databaseId }: ClientMetadata, id: string, vote: Vote): Promise<DatabaseRecommendation> {
     this.logger.log('Updating database recommendation with vote');
     const oldDatabaseRecommendation = await this.repository.findOne({
       where: { id, databaseId },
@@ -110,12 +109,12 @@ export class DatabaseRecommendationProvider {
    * @param name
    */
   async isExist(
-    clientMetadata: ClientMetadata,
+    { databaseId, db }: ClientMetadata,
     name: string,
   ): Promise<boolean> {
     try {
       this.logger.log(`Checking is recommendation ${name} exist`);
-      const recommendation = await this.repository.findOneBy({ databaseId: clientMetadata.databaseId, name });
+      const recommendation = await this.repository.findOneBy({ databaseId, db, name });
 
       this.logger.log(`Succeed to check is recommendation ${name} exist'`);
       return !!recommendation;

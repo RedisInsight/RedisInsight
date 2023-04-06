@@ -42,6 +42,10 @@ export class DatabaseRecommendationEntity {
   })
   vote?: string;
 
+  @Expose()
+  @Column({ nullable: true })
+  db: number;
+
   @CreateDateColumn()
   @Index()
   @Expose()

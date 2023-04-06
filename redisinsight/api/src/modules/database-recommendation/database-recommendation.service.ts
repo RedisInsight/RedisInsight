@@ -7,6 +7,7 @@ import { ClientMetadata } from 'src/common/models';
 import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
+import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class DatabaseRecommendationService {
@@ -15,15 +16,16 @@ export class DatabaseRecommendationService {
   constructor(
     private readonly databaseRecommendationsProvider: DatabaseRecommendationProvider,
     private readonly scanner: RecommendationScanner,
+    private readonly databaseService: DatabaseService,
   ) {}
 
   /**
    * Create recommendation entity
-   * @param databaseId
+   * @param clientMetadata
    * @param recommendationName
    */
-  public async create(databaseId: string, recommendationName: string): Promise<DatabaseRecommendation> {
-    return this.databaseRecommendationsProvider.create(databaseId, recommendationName);
+  public async create(clientMetadata: ClientMetadata, recommendationName: string): Promise<DatabaseRecommendation> {
+    return this.databaseRecommendationsProvider.create(clientMetadata, recommendationName);
   }
 
   /**
@@ -32,7 +34,8 @@ export class DatabaseRecommendationService {
    */
   async list(clientMetadata: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
     this.logger.log('Getting database recommendations');
-    return this.databaseRecommendationsProvider.list(clientMetadata);
+    const db = clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0
+    return this.databaseRecommendationsProvider.list({ ...clientMetadata, db });
   }
 
   /**
@@ -46,15 +49,19 @@ export class DatabaseRecommendationService {
     recommendationName: string,
     data: any,
   ): Promise<DatabaseRecommendation> {
+    const newClientMetadata = {
+      ...clientMetadata,
+      db: clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0
+     }
     const isRecommendationExist = await this.databaseRecommendationsProvider.isExist(
-      clientMetadata,
+      newClientMetadata,
       recommendationName,
     );
     if (!isRecommendationExist) {
       const isRecommendationReached = await this.scanner.determineRecommendation(recommendationName, data);
 
       if (isRecommendationReached) {
-        return await this.databaseRecommendationsProvider.create(clientMetadata.databaseId, recommendationName);
+        return await this.databaseRecommendationsProvider.create(newClientMetadata, recommendationName);
       }
     }
 

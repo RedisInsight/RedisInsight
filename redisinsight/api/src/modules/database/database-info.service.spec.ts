@@ -82,6 +82,13 @@ describe('DatabaseConnectionService', () => {
       databaseConnectionService.createClient.mockRejectedValueOnce(new Error());
       await expect(service.getDatabaseIndex(mockCommonClientMetadata, 0)).rejects.toThrow(Error);
     });
+    it('getDatabaseIndex should call databaseService.get() if previous clientMetadata.db is Undefined', async () => {
+      const db = 2;
+      databaseConnectionService.createClient.mockResolvedValueOnce(nodeClient);
+      await service.getDatabaseIndex(mockCommonClientMetadata, db)
+
+      expect(databaseService.get).toBeCalledWith(mockCommonClientMetadata.databaseId);
+    });
     describe('recommendationService', () => {
       it('getDatabaseIndex should call recommendationService', async () => {
         const db = 2;

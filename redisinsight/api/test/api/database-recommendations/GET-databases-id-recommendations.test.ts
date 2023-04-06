@@ -7,7 +7,7 @@ const endpoint = (
 ) =>
   request(server).get(`/${constants.API.DATABASES}/${instanceId}/recommendations`);
 
-  const responseSchema = recommendationsSchema;
+const responseSchema = recommendationsSchema;
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('GET /databases/:id/recommendations', () => {

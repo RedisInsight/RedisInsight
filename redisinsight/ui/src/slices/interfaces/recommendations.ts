@@ -21,3 +21,22 @@ export interface StateRecommendations {
   isContentVisible: boolean,
   isHighlighted: boolean,
 }
+
+export interface IRecommendationContent {
+  id?: string
+  type?: string
+  value?: any
+}
+
+export interface IRecommendationsStatic {
+  [key: string]: {
+    id: string
+    title: string
+    liveTitle?: string
+    liveTelemetryEvent?: string
+    redisStack?: boolean
+    tutorial?: string
+    content?: IRecommendationContent[]
+    liveTimeText?: IRecommendationContent[]
+  }
+}

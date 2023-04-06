@@ -16,7 +16,7 @@ import {
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 
-import { Nullable, findMarkdownPathByPath } from 'uiSrc/utils'
+import { Nullable, findMarkdownPathByPath, Maybe } from 'uiSrc/utils'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { RecommendationVoting } from 'uiSrc/components'
@@ -26,8 +26,9 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
+import { IRecommendationContent, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 
-import content from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as Icon } from 'uiSrc/assets/img/icons/recommendation.svg'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
@@ -45,6 +46,8 @@ export interface IProps {
   tutorials: IEnablementAreaItem[]
 }
 
+const recommendationsContent = _content as IRecommendationsStatic
+
 const Recommendation = ({
   id,
   name,
@@ -58,6 +61,9 @@ const Recommendation = ({
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
+
+  const { redisStack, title, liveTitle } = recommendationsContent[name] || {}
+  const recommendationTitle = liveTitle || title
 
   const handleClose = () => dispatch(setIsContentVisible(false))
 
@@ -89,7 +95,7 @@ const Recommendation = ({
     history.push(Pages.workbench(instanceId))
   }
 
-  const renderContentElement = ({ id, type, value }) => {
+  const renderContentElement = ({ id, type, value }: IRecommendationContent) => {
     switch (type) {
       case 'paragraph':
         return <EuiText key={id} className={styles.text}>{value}</EuiText>
@@ -120,7 +126,7 @@ const Recommendation = ({
       <div className={styles.icon}>
         <Icon />
       </div>
-      {content[name]?.liveTimeText?.map((item) => renderContentElement(item))}
+      {recommendationsContent[name]?.liveTimeText?.map((item) => renderContentElement(item))}
       <div className={styles.actions}>
         <RecommendationVoting live id={id} vote={vote} name={name} />
         <EuiButton
@@ -136,7 +142,7 @@ const Recommendation = ({
     </EuiText>
   )
 
-  const renderButtonContent = (redisStack: boolean, title: string, id: string) => (
+  const renderButtonContent = (redisStack: Maybe<boolean>, title: string, id: string) => (
     <EuiFlexGroup
       className={styles.accordionButton}
       responsive={false}
@@ -176,11 +182,9 @@ const Recommendation = ({
     </EuiFlexGroup>
   )
 
-  if (!(name in content)) {
+  if (!(name in recommendationsContent)) {
     return null
   }
-
-  const { redisStack, title } = content[name]
 
   return (
     <div
@@ -191,7 +195,7 @@ const Recommendation = ({
         id={name}
         initialIsOpen={!isRead}
         arrowDisplay="right"
-        buttonContent={renderButtonContent(redisStack, title, name)}
+        buttonContent={renderButtonContent(redisStack, recommendationTitle, name)}
         buttonClassName={styles.accordionBtn}
         buttonProps={{ 'data-test-subj': `${name}-button` }}
         className={styles.accordion}

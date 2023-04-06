@@ -85,7 +85,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
           <EuiButtonIcon
             disabled={!!vote || !config?.agreements?.analytics}
             iconType={DoubleLikeIcon}
-            className={cx(styles.voteBtn, { [styles.selected]: vote === Vote.DoubleLike })}
+            className={cx('vote__btn', { selected: vote === Vote.DoubleLike })}
             aria-label="vote very useful"
             data-testid="very-useful-vote-btn"
             onClick={() => handleClick(name, Vote.DoubleLike)}
@@ -99,7 +99,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
           <EuiButtonIcon
             disabled={!!vote || !config?.agreements?.analytics}
             iconType={LikeIcon}
-            className={cx(styles.voteBtn, { [styles.selected]: vote === Vote.Like })}
+            className={cx('vote__btn', { selected: vote === Vote.Like })}
             aria-label="vote useful"
             data-testid="useful-vote-btn"
             onClick={() => handleClick(name, Vote.Like)}
@@ -121,7 +121,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
               <EuiButtonIcon
                 disabled={!!vote || !config?.agreements?.analytics}
                 iconType={DislikeIcon}
-                className={cx(styles.voteBtn, { [styles.selected]: vote === Vote.Dislike })}
+                className={cx('vote__btn', { selected: vote === Vote.Dislike })}
                 aria-label="vote not useful"
                 data-testid="not-useful-vote-btn"
                 onClick={() => handleClick(name, Vote.Dislike)}

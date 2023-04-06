@@ -11,12 +11,14 @@ import { Common } from '../../../helpers/common';
 const browserPage = new BrowserPage();
 const common = new Common();
 
-const keyName = common.generateWord(10);
+let keyName: string;
+
 fixture `Actions with Key List on Browser page`
     .meta({type: 'critical_path', rte: rte.standalone})
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        keyName = common.generateWord(10);
     })
     .afterEach(async() => {
         // Delete database
@@ -29,7 +31,7 @@ test('Verify that user can delete key in List mode', async t => {
     await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('The Key wasn\'t deleted');
 });
 
-test.only('Verify that user can delete key in Tree view', async t => {
+test('Verify that user can delete key in Tree view', async t => {
     // Add new key
     await browserPage.addStringKey(keyName);
     await t.click(browserPage.treeViewButton);

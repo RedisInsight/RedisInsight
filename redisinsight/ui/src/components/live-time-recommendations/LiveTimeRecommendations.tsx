@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import {
@@ -49,6 +49,10 @@ const LiveTimeRecommendations = () => {
   const { items: guides } = useSelector(workbenchGuidesSelector)
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
 
+  // To prevent duplication emit for FlyOut close event
+  // https://github.com/elastic/eui/issues/3437
+  const isCloseEventSent = useRef<boolean>(false)
+
   const dispatch = useDispatch()
   const history = useHistory()
 
@@ -76,6 +80,8 @@ const LiveTimeRecommendations = () => {
           }
         }
       ))
+
+      isCloseEventSent.current = false
     }
     dispatch(setIsContentVisible(!isContentVisible))
   }
@@ -86,12 +92,16 @@ const LiveTimeRecommendations = () => {
   }
 
   const handleClose = () => {
+    if (isCloseEventSent.current) {
+      return
+    }
+
+    dispatch(setIsContentVisible(false))
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_CLOSED,
       eventData: getTelemetryData(),
     })
-
-    dispatch(setIsContentVisible(false))
+    isCloseEventSent.current = true
   }
 
   const getTelemetryData = () => ({

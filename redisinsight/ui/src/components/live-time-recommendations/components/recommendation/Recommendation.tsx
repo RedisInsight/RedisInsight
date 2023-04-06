@@ -129,15 +129,17 @@ const Recommendation = ({
       {recommendationsContent[name]?.liveTimeText?.map((item) => renderContentElement(item))}
       <div className={styles.actions}>
         <RecommendationVoting live id={id} vote={vote} name={name} />
-        <EuiButton
-          className={styles.btn}
-          onClick={handleClick}
-          fill
-          color="secondary"
-          data-testid={`${name}-to-tutorial-btn`}
-        >
-          To Tutorial
-        </EuiButton>
+        {tutorial && (
+          <EuiButton
+            className={styles.btn}
+            onClick={handleClick}
+            fill
+            color="secondary"
+            data-testid={`${name}-to-tutorial-btn`}
+          >
+            To Tutorial
+          </EuiButton>
+        )}
       </div>
     </EuiText>
   )

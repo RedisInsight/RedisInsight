@@ -10,6 +10,7 @@ import {
   EuiFlexItem,
   EuiButton,
   EuiTitle,
+  EuiLoadingContent,
 } from '@elastic/eui'
 import cx from 'classnames'
 
@@ -23,18 +24,24 @@ import {
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
-import content from 'uiSrc/constants/dbAnalysisRecommendations.json'
+
+import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
+
+import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as AnalysisIcon } from 'uiSrc/assets/img/icons/analysis.svg'
 import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/icons/live-time-recommendations.svg'
-import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import styles from './styles.module.scss'
 
+const recommendationsContent = _content as IRecommendationsStatic
+
 const LiveTimeRecommendations = () => {
   const { id: connectedInstanceId = '', } = useSelector(connectedInstanceSelector)
   const {
+    loading,
     data: { recommendations, totalUnread },
     isContentVisible,
     isHighlighted
@@ -52,12 +59,6 @@ const LiveTimeRecommendations = () => {
     dispatch(fetchRecommendationsAction(connectedInstanceId))
   }, [connectedInstanceId])
 
-  useEffect(() => {
-    if (isContentVisible && connectedInstanceId) {
-      dispatch(fetchRecommendationsAction(connectedInstanceId))
-    }
-  }, [isContentVisible, connectedInstanceId])
-
   const toggleContent = () => {
     sendEventTelemetry({
       event: isContentVisible
@@ -66,8 +67,15 @@ const LiveTimeRecommendations = () => {
       eventData: getTelemetryData(),
     })
 
-    if (!isContentVisible && totalUnread) {
-      dispatch(readRecommendationsAction(connectedInstanceId))
+    if (!isContentVisible) {
+      dispatch(fetchRecommendationsAction(
+        connectedInstanceId,
+        () => {
+          if (totalUnread) {
+            dispatch(readRecommendationsAction(connectedInstanceId))
+          }
+        }
+      ))
     }
     dispatch(setIsContentVisible(!isContentVisible))
   }
@@ -89,7 +97,7 @@ const LiveTimeRecommendations = () => {
   const getTelemetryData = () => ({
     databaseId: connectedInstanceId,
     total: recommendations?.length,
-    list: recommendations?.map(({ name }) => content[name]?.liveTelemetryEvent ?? name),
+    list: recommendations?.map(({ name }) => recommendationsContent[name]?.liveTelemetryEvent ?? name),
   })
 
   const renderBody = () => {
@@ -107,7 +115,7 @@ const LiveTimeRecommendations = () => {
         instanceId={connectedInstanceId}
         guides={guides}
         tutorials={tutorials}
-        tutorial={content[name]?.tutorial ?? ''}
+        tutorial={recommendationsContent[name]?.tutorial ?? ''}
       />
     ))
   }
@@ -141,7 +149,7 @@ const LiveTimeRecommendations = () => {
             </EuiTitle>
           </EuiFlyoutHeader>
           <EuiFlyoutBody className={styles.body}>
-            {renderBody()}
+            {loading ? (<EuiLoadingContent className={styles.loading} lines={4} />) : renderBody()}
           </EuiFlyoutBody>
           <EuiFlyoutFooter className={styles.footer}>
             <EuiFlexGroup alignItems="center" gutterSize="none" justifyContent="center">

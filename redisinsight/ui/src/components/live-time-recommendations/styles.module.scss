@@ -15,6 +15,22 @@
   }
 }
 
+.loading {
+  display: block;
+  width: 100%;
+
+  :global {
+    .euiLoadingContent__singleLine {
+      height: 46px;
+      margin-bottom: 10px;
+    }
+
+    .euiLoadingContent__singleLine:last-child:not(:only-child) {
+      width: 100%;
+    }
+  }
+}
+
 .trigger {
   display: flex;
   justify-content: center;

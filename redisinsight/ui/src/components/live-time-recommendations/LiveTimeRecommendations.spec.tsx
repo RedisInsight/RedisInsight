@@ -114,7 +114,7 @@ describe('LiveTimeRecommendations', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should call "setIsContentVisible" action be called after click', () => {
+  it('should call proper actions after click open insights button', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
@@ -129,7 +129,7 @@ describe('LiveTimeRecommendations', () => {
 
     fireEvent.click(screen.getByTestId('recommendations-trigger'))
 
-    const expectedActions = [setIsContentVisible(true)]
+    const expectedActions = [getRecommendations(), setIsContentVisible(true)]
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 

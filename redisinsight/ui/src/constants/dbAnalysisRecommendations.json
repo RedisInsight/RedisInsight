@@ -156,25 +156,25 @@
     "badges": ["configuration_changes"]
   },
   "hashHashtableToZiplist": {
-  "id": "hashHashtableToZiplist",
-  "title": "Increase hash-max-ziplist-entries",
-  "content": [
-    {
-      "id": "1",
-      "type": "span",
-      "value": "If any value for a key exceeds hash-max-ziplist-entries, it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization. "
-    },
-    {
-      "id": "2",
-      "type": "link",
-      "value": {
-        "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-        "name": "Read more"
+    "id": "hashHashtableToZiplist",
+    "title": "Increase hash-max-ziplist-entries",
+    "content": [
+      {
+        "id": "1",
+        "type": "span",
+        "value": "If any value for a key exceeds hash-max-ziplist-entries, it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization. "
+      },
+      {
+        "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
+          "name": "Read more"
+        }
       }
-    }
-  ],
-  "badges": ["configuration_changes"]
-},
+    ],
+    "badges": ["configuration_changes"]
+  },
   "compressHashFieldNames": {
     "id": "compressHashFieldNames",
     "title": "Compress Hash field names",
@@ -284,6 +284,7 @@
     "id": "bigSets",
     "liveTelemetryEvent": "optimizeExistenceChecks",
     "title": "Switch to Bloom filter, cuckoo filter, or HyperLogLog",
+    "liveTitle": "Optimize existence checks",
     "tutorial": "/redis_stack/probabilistic_data_structures.md",
     "redisStack": true,
     "liveTimeText": [
@@ -761,7 +762,8 @@
   },
   "searchString": {
     "id": "searchString",
-    "title": "Compress Hash field names",
+    "title": "Optimize your query and search experience",
+    "redisStack": true,
     "liveTimeText": [
       {
         "id": "1",
@@ -804,6 +806,7 @@
   "searchJSON": {
     "id": "searchJSON",
     "title": "Query and search JSON documents",
+    "redisStack": true,
     "liveTimeText": [
       {
         "id": "1",

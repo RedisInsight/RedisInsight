@@ -13,16 +13,20 @@
     }
   }
 
-  .vote .voteBtn {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
+  .vote {
+    :global {
+      .vote__btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
 
-    &:hover,
-    &:focus,
-    &.selected {
-      transform: none;
-      background-color: var(--separatorColor);
+        &:hover,
+        &:focus,
+        &.selected {
+          transform: none;
+          background-color: var(--separatorColor);
+        }
+      }
     }
   }
 }

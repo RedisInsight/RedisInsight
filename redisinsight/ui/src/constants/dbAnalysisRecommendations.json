@@ -792,6 +792,7 @@
   },
   "avoidLogicalDatabasesLive": {
     "id": "avoidLogicalDatabases",
+    "liveTelemetryEvent": "avoidLogicalDatabases",
     "title": "Avoid using logical databases",
     "liveTimeText": [
       {

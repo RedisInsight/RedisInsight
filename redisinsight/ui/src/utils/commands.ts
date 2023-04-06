@@ -15,6 +15,7 @@ enum ArgumentType {
   BLOCK = 'block',
   PURE_TOKEN = 'pure-token',
   COMMAND = 'command',
+  ENUM = 'enum', // temporary for backward compatibility
 }
 
 export class Argument {
@@ -36,6 +37,8 @@ export class Argument {
 
   protected arguments: Argument[]
 
+  protected enum: string[]
+
   constructor(data: Record<string, any>) {
     this.stack = []
     this.name = data?.name
@@ -44,12 +47,13 @@ export class Argument {
     this.multiple = !!data?.multiple
     this.multipleToken = !!data?.multiple_token
     this.token = data?.token
-    this.display = data?.display_text || this.name
+    this.display = data?.display_text || data?.command || this.name
+    this.enum = data?.enum
     // todo: why we need this?
     if (this.token === '') {
       this.token = '""'
     }
-    this.arguments = ((data?.arguments || []) as Record<string, any>[])
+    this.arguments = ((data?.arguments || data?.block || []) as Record<string, any>[])
       .map((childArg) => new Argument(childArg))
   }
 
@@ -70,6 +74,9 @@ export class Argument {
         break
       case ArgumentType.ONEOF:
         args += this.arguments.map((arg) => arg.syntax()).join(' | ')
+        break
+      case ArgumentType.ENUM:
+        args += this.enum?.join(' | ')
         break
       case ArgumentType.PURE_TOKEN:
         break

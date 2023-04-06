@@ -107,9 +107,9 @@ export class Argument {
       multipleSyntax += args
     }
 
-    if (this.type === ArgumentType.ONEOF && (!this.optional || this.token)) {
-      multipleSyntax = `<${multipleSyntax}>`
-    }
+    // if (this.type === ArgumentType.ONEOF && (!this.optional || this.token)) {
+    //   multipleSyntax = `<${multipleSyntax}>`
+    // }
 
     syntax += multipleSyntax
 

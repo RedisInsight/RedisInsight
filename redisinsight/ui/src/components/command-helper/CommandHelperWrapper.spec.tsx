@@ -67,16 +67,16 @@ const mockedCommands: IMockedCommands[] = [
   {
     matchedCommand: 'bitfield',
     argStr:
-      'BITFIELD key [GET encoding offset | [OVERFLOW <WRAP | SAT | FAIL>] <SET encoding offset value | INCRBY encoding offset increment> [GET encoding offset | [OVERFLOW <WRAP | SAT | FAIL>] <SET encoding offset value | INCRBY encoding offset increment> ...]]',
+      'BITFIELD key [GET encoding offset | [OVERFLOW WRAP | SAT | FAIL] SET encoding offset value | INCRBY encoding offset increment [GET encoding offset | [OVERFLOW WRAP | SAT | FAIL] SET encoding offset value | INCRBY encoding offset increment ...]]',
     argListText:
-      'Arguments:RequiredkeyMultiple[GET encoding offset | [OVERFLOW <WRAP | SAT | FAIL>] <SET encoding offset value | INCRBY encoding offset increment>]',
+      'Arguments:RequiredkeyMultiple[GET encoding offset | [OVERFLOW WRAP | SAT | FAIL] SET encoding offset value | INCRBY encoding offset increment]',
   },
   {
     matchedCommand: 'client kill',
     argStr:
-      'CLIENT KILL <ip:port | <[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] [[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] ...]>>',
+      'CLIENT KILL ip:port | [ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] [[ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] ...]',
     argListText:
-      'Arguments:Required<ip:port | <[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] [[ID client-id] | [TYPE <NORMAL | MASTER | SLAVE | REPLICA | PUBSUB>] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME <YES | NO>] ...]>>',
+      'Arguments:Requiredip:port | [ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] [[ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] ...]',
   },
   {
     matchedCommand: 'geoadd',

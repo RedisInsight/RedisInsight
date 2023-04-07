@@ -325,7 +325,7 @@ const KeyList = forwardRef((props: Props, ref) => {
     {
       id: 'nameString',
       label: 'Key',
-      minWidth: 100,
+      minWidth: 94,
       truncateText: true,
       render: (cellData: string) => {
         if (isUndefined(cellData)) {
@@ -372,7 +372,7 @@ const KeyList = forwardRef((props: Props, ref) => {
         if (cellData === -1) {
           return (
             <EuiTextColor
-              className={cx('hideOnHover', { hide: deletePopoverIndex === rowIndex })}
+              className={cx('moveOnHover', { hide: deletePopoverIndex === rowIndex })}
               color="subdued"
               data-testid={`ttl-${name}`}
             >
@@ -382,7 +382,7 @@ const KeyList = forwardRef((props: Props, ref) => {
         }
         return (
           <EuiText
-            className={cx('hideOnHover', { hide: deletePopoverIndex === rowIndex })}
+            className={cx('moveOnHover', { hide: deletePopoverIndex === rowIndex })}
             color="subdued"
             size="s"
             style={{ maxWidth: '100%' }}
@@ -411,8 +411,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     {
       id: 'size',
       label: 'Size',
-      absoluteWidth: 84,
-      minWidth: 84,
+      absoluteWidth: 90,
+      minWidth: 90,
       alignment: TableCellAlignment.Right,
       textAlignment: TableCellTextAlignment.Right,
       render: (
@@ -437,7 +437,7 @@ const KeyList = forwardRef((props: Props, ref) => {
             <EuiText
               color="subdued"
               size="s"
-              className={cx('hideOnHover', { hide: deletePopoverIndex === rowIndex })}
+              className={cx('moveOnHover', { hide: deletePopoverIndex === rowIndex })}
               style={{ maxWidth: '100%' }}
             >
               <div style={{ display: 'flex' }} className="truncateText" data-testid={`size-${name}`}>
@@ -457,7 +457,7 @@ const KeyList = forwardRef((props: Props, ref) => {
               </div>
             </EuiText>
             <EuiPopover
-              anchorClassName={cx('showOnHover', { show: deletePopoverIndex === rowIndex })}
+              anchorClassName={cx(styles.deleteAnchor, 'showOnHover', { show: deletePopoverIndex === rowIndex })}
               anchorPosition="rightUp"
               isOpen={deletePopoverIndex === rowIndex}
               closePopover={() => setDeletePopoverIndex(undefined)}

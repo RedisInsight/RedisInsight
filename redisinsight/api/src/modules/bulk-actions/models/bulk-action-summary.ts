@@ -17,6 +17,10 @@ export class BulkActionSummary {
     this.succeed += count;
   }
 
+  addFailed(count: number) {
+    this.failed += count;
+  }
+
   addErrors(err: Array<Record<string, string>>) {
     if (err.length) {
       this.failed += err.length;

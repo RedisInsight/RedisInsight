@@ -137,6 +137,14 @@ export class RecommendationService {
         RECOMMENDATION_NAMES.SEARCH_JSON,
         () => null,
       ],
+      [
+        RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
+        () => null,
+      ],
+      [
+        RECOMMENDATION_NAMES.GRAPH_VISUALIZATION,
+        () => null,
+      ],
     ]);
 
     const recommendationsToDetermine = difference(Object.values(RECOMMENDATION_NAMES), exclude);

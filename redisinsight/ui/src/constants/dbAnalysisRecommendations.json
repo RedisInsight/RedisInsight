@@ -924,5 +924,29 @@
         "value": "Learn more about how JSON support and Search capability can help you via Tutorials in Workbench."
       }
     ]
+  },
+  "searchVisualization": {
+    "id": "searchVisualization",
+    "title": "Try data visualizations in Workbench",
+    "tutorial": "",
+    "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "When working with query and search capabilities, or if working with time series data, try running commands in Workbench - our advanced command-line interface that provides data visualizations to explore, analyze, and investigate command execution results."
+      }
+    ]
+  },
+  "graphVisualization": {
+    "id": "graphVisualization",
+    "title": "Try graph visualizations in Workbench",
+    "tutorial": "",
+    "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "When working with graph capabilities, try running commands in Workbench - our advanced command-line interface to leverage Cypher support and enjoy data visualizations to explore, analyze, and investigate command execution results."
+      }
+    ]
   }
 }

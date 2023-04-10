@@ -14,6 +14,8 @@ import {
   AvoidLogicalDatabasesStrategy,
   ShardHashStrategy,
   StringToJsonStrategy,
+  SearchVisualizationStrategy,
+  GraphVisualizationStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 @Injectable()
@@ -35,6 +37,8 @@ export class RecommendationProvider {
     this.strategies.set(RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES_LIVE, new AvoidLogicalDatabasesStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.SHARD_HASHES, new ShardHashStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.STRING_TO_JSON, new StringToJsonStrategy());
+    this.strategies.set(RECOMMENDATION_NAMES.SEARCH_VISUALIZATION, new SearchVisualizationStrategy());
+    this.strategies.set(RECOMMENDATION_NAMES.GRAPH_VISUALIZATION, new GraphVisualizationStrategy());
   }
 
   getStrategy(type: string): IRecommendationStrategy {

@@ -32,7 +32,7 @@ fixture `Database overview`
         // Create databases and keys
         await acceptLicenseTermsAndAddDatabase(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         await browserPage.addStringKey(keyName);
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneRedisearch, index);
         await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [db${index}]`);
         keys = await common.createArrayWithKeyValue(keysAmount);
@@ -40,7 +40,7 @@ fixture `Database overview`
     })
     .afterEach(async t => {
         // Clear and delete databases
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [db${index}]`);
         await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await deleteCustomDatabase(`${ossStandaloneRedisearch.databaseName} [db${index}]`);
@@ -59,7 +59,7 @@ test
         await browserActions.verifyTooltipContainsText(`db1:${keysAmount}Keys`, true);
 
         // Open Database
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
         await t.hover(workbenchPage.overviewTotalKeys);
         // Verify that user can see total number of keys and not it current logical database (if there are no any keys in other logical DBs)

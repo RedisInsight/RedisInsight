@@ -36,7 +36,7 @@ test('Verify that user can connect to DB and see breadcrumbs at the top of the a
 
     // Verify that user can see breadcrumbs in Browser and Workbench views
     await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can not see breadcrumbs in Browser page', { timeout: 10000 });
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can not see breadcrumbs in Workbench page', { timeout: 10000 });
 
     // Verify that user can see total memory and total number of keys updated in DB header in Workbench page

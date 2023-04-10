@@ -21,7 +21,7 @@ fixture `Scripting area at Workbench`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Clear and delete database
@@ -37,12 +37,12 @@ test('Verify that user can run multiple commands written in multiple lines in Wo
     ];
 
     // Go to Settings page
-    await t.click(myRedisDatabasePage.settingsButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Specify Commands in pipeline
     await t.click(settingsPage.accordionWorkbenchSettings);
     await settingsPage.changeCommandsInPipeline('1');
     // Go to Workbench page
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     // Send commands in multiple lines
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
     // Check the result
@@ -64,12 +64,12 @@ test
         ];
 
         // Go to Settings page
-        await t.click(myRedisDatabasePage.settingsButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         // Specify Commands in pipeline
         await t.click(settingsPage.accordionWorkbenchSettings);
         await settingsPage.changeCommandsInPipeline('1');
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         // Send commands in multiple lines with double slashes (//) wrapped in double quotes
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n"//"'), 0.5);
         // Check that all commands are executed

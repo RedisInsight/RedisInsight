@@ -27,7 +27,7 @@ fixture `Handle user permissions`
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
         await cliPage.sendCommandInCli(createUserCommand);
         ossStandaloneNoPermissionsConfig.host = process.env.OSS_STANDALONE_BIG_HOST || 'oss-standalone-big';
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
         await common.reloadPage();
     })

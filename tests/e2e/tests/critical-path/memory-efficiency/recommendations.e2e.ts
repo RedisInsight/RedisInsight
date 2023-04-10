@@ -29,11 +29,11 @@ fixture `Memory Efficiency Recommendations`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .afterEach(async t => {
         // Clear and delete database
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
@@ -41,7 +41,7 @@ test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Add cached scripts and generate new report
         await cliActions.addCachedScripts(11);
         await t.click(memoryEfficiencyPage.newReportBtn);
@@ -101,14 +101,14 @@ test
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         keyName = `recomKey-${common.generateWord(10)}`;
         await browserPage.addStringKey(stringKeyName, '2147476121', 'field');
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
         await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName} [db${index}]`);
         await browserPage.addHashKey(keyName, '2147476121', 'field', 'value');
     })
     .after(async t => {
         // Clear and delete database
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
         await deleteCustomDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -116,7 +116,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Avoid using logical databases recommendation', async t => {
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Go to Recommendations tab
         await t.click(memoryEfficiencyPage.recommendationsTab);
@@ -128,7 +128,7 @@ test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Go to Analysis Tools page and create new report and open recommendations
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);
         await t.click(memoryEfficiencyPage.recommendationsTab);
     }).after(async() => {
@@ -154,14 +154,14 @@ test
         keyName = `recomKey-${common.generateWord(10)}`;
         await browserPage.addZSetKey(keyName, '151153320500121', '2147476121', '1511533205001:21');
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Go to Recommendations tab
         await t.click(memoryEfficiencyPage.recommendationsTab);
     })
     .after(async t => {
     // Clear and delete database
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see the Tutorial opened when clicking on "To Tutorial" for recommendations', async t => {

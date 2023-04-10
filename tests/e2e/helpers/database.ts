@@ -228,7 +228,7 @@ export async function acceptLicenseAndConnectToRedisStack(): Promise<void> {
     await acceptLicenseTerms();
     //Connect to DB
     await t
-        .click(myRedisDatabasePage.myRedisDBButton)
+        .click(myRedisDatabasePage.NavigationPanel.myRedisDBButton)
         .click(addRedisDatabasePage.connectToRedisStackButton);
 }
 
@@ -247,7 +247,7 @@ export async function clearDatabaseInCli(): Promise<void> {
  * @param databaseName The database name
 */
 export async function deleteDatabase(databaseName: string): Promise<void> {
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     if (await addRedisDatabasePage.addDatabaseButton.exists) {
         await deleteDatabaseByNameApi(databaseName);
     }
@@ -258,7 +258,7 @@ export async function deleteDatabase(databaseName: string): Promise<void> {
  * @param databaseName The database name
 */
 export async function deleteCustomDatabase(databaseName: string): Promise<void> {
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     if (await addRedisDatabasePage.addDatabaseButton.exists) {
         await myRedisDatabasePage.deleteDatabaseByName(databaseName);
     }

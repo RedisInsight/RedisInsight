@@ -15,7 +15,7 @@ fixture `PubSub debug mode`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Go to PubSub page and subscribe to channel
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
         await t.click(pubSubPage.subscribeButton);
         // Publish different messages
         await cliPage.sendCommandInCli('10 publish channel first');
@@ -38,9 +38,9 @@ test
         await pubSubPage.publishMessage('test', 'new message with no scroll');
         await verifyMessageDisplayingInPubSub('new message with no scroll', false);
         // Go to Browser Page
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Go to PubSub page
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
         // Verify that the debug mode state is reset to default auto-scroll
         await verifyMessageDisplayingInPubSub('new message with no scroll', true);
     });

@@ -37,12 +37,12 @@ test('Verify that if user has saved context on Browser page and go to Settings p
     await t.click(cliPage.cliExpandButton);
     await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
     await t.pressKey('enter');
-    await t.click(myRedisDatabasePage.settingsButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Verify that Browser and Workbench icons are displayed
-    await t.expect(myRedisDatabasePage.browserButton.visible).ok('Browser icon is not displayed');
-    await t.expect(myRedisDatabasePage.workbenchButton.visible).ok('Workbench icon is not displayed');
+    await t.expect(myRedisDatabasePage.NavigationPanel.browserButton.visible).ok('Browser icon is not displayed');
+    await t.expect(myRedisDatabasePage.NavigationPanel.workbenchButton.visible).ok('Workbench icon is not displayed');
     // Open Browser page and verify context
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     await verifySearchFilterValue(keyName);
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is not selected');
     await t.expect(cliPage.cliCommandExecuted.withExactText(command).exists).ok(`Executed command '${command}' in CLI is not saved`);
@@ -53,16 +53,16 @@ test('Verify that when user reload the window with saved context(on any page), c
     // Create context modificaions and navigate to Workbench
     await browserPage.addStringKey(keyName);
     await browserPage.openKeyDetails(keyName);
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     // Open Browser page and verify context
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     await verifySearchFilterValue(keyName);
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is not selected');
     // Navigate to Workbench and reload the window
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     await common.reloadPage();
     // Return back to Browser and check context is not saved
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).notOk('Filter per key name is applied');
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).notOk('The key details is selected');
 });

@@ -111,13 +111,13 @@ test('Switching between indexed databases', async t => {
     await verifySearchFilterValue('Hall School');
 
     // Open Workbench page
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(command);
     // Verify that user can see the database index before the command name executed in Workbench
     await workbenchPage.checkWorkbenchCommandResult(`[db1] ${command}`, '8');
 
     // Open Browser page
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Clear filter
     await t.click(browserPage.clearFilterButton);
     // Verify that data changed for indexed db on Workbench page (on Search capability page)
@@ -131,7 +131,7 @@ test('Switching between indexed databases', async t => {
     await verifyKeysNotDisplayedInTheList([logicalDbKey]);
 
     // Go to Analysis Tools page and create new report
-    await t.click(myRedisDatabasePage.analysisPageButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     await t.click(memoryEfficiencyPage.newReportBtn);
 
     // Verify that data changed for indexed db on Database analysis page

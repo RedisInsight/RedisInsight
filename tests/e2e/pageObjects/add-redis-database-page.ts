@@ -1,4 +1,4 @@
-import {t, Selector} from 'testcafe';
+import { t, Selector } from 'testcafe';
 
 export class AddRedisDatabasePage {
     //-------------------------------------------------------------------------------------------
@@ -58,13 +58,13 @@ export class AddRedisDatabasePage {
     buildFromDocker = Selector('a').withExactText('Docker');
     buildFromHomebrew = Selector('a').withExactText('Homebrew');
     // DROPDOWNS
-    caCertField = Selector('[data-testid=select-ca-cert]', {timeout: 500});
-    clientCertField = Selector('[data-testid=select-cert]', {timeout: 500});
+    caCertField = Selector('[data-testid=select-ca-cert]', { timeout: 500 });
+    clientCertField = Selector('[data-testid=select-cert]', { timeout: 500 });
     // CHECKBOXES
-    useSSHCheckbox = Selector('[data-testid=use-ssh]~div', {timeout: 500});
+    useSSHCheckbox = Selector('[data-testid=use-ssh]~div', { timeout: 500 });
     // RADIO BUTTONS
-    sshPasswordRadioBtn = Selector('#password~div', {timeout: 500});
-    sshPrivateKeyRadioBtn = Selector('#privateKey~div', {timeout: 500});
+    sshPasswordRadioBtn = Selector('#password~div', { timeout: 500 });
+    sshPrivateKeyRadioBtn = Selector('#privateKey~div', { timeout: 500 });
 
     /**
      * Adding a new redis database
@@ -108,11 +108,11 @@ export class AddRedisDatabasePage {
         }
         // Enter logical index
         await t.click(this.databaseIndexCheckbox);
-        await t.typeText(this.databaseIndexInput, index, { replace: true, paste: true});
+        await t.typeText(this.databaseIndexInput, index, { replace: true, paste: true });
         // Click for saving
         await t.click(this.addRedisDatabaseButton);
     }
-    
+
     /**
      * Adding a new standalone database with SSH
      * @param databaseParameters the parameters of the database
@@ -140,18 +140,18 @@ export class AddRedisDatabasePage {
             .typeText(this.sshPortInput, sshParameters.sshPort, { replace: true, paste: true })
             .typeText(this.sshUsernameInput, sshParameters.sshUsername, { replace: true, paste: true });
         if (!!sshParameters.sshPassword) {
-                await t.typeText(this.sshPasswordInput, sshParameters.sshPassword, { replace: true, paste: true });
+            await t.typeText(this.sshPasswordInput, sshParameters.sshPassword, { replace: true, paste: true });
         }
         if (!!sshParameters.sshPrivateKey) {
             await t
-            .click(this.sshPrivateKeyRadioBtn)
-            .typeText(this.sshPrivateKeyInput, sshParameters.sshPrivateKey, { replace: true, paste: true });
+                .click(this.sshPrivateKeyRadioBtn)
+                .typeText(this.sshPrivateKeyInput, sshParameters.sshPrivateKey, { replace: true, paste: true });
         }
         if (!!sshParameters.sshPassphrase) {
             await t
-            .click(this.sshPrivateKeyRadioBtn)
-            .typeText(this.sshPrivateKeyInput, sshParameters.sshPrivateKey!, { replace: true, paste: true })
-            .typeText(this.sshPassphraseInput, sshParameters.sshPassphrase, { replace: true, paste: true });
+                .click(this.sshPrivateKeyRadioBtn)
+                .typeText(this.sshPrivateKeyInput, sshParameters.sshPrivateKey!, { replace: true, paste: true })
+                .typeText(this.sshPassphraseInput, sshParameters.sshPassphrase, { replace: true, paste: true });
         }
         // Click for saving
         await t.click(this.addRedisDatabaseButton);
@@ -249,7 +249,7 @@ export type AddNewDatabaseParameters = {
         name?: string,
         certificate?: string,
         key?: string
-    },
+    }
 };
 
 /**
@@ -265,7 +265,7 @@ export type SentinelParameters = {
         alias?: string,
         db?: string,
         name?: string,
-        password?: string,
+        password?: string
     }[],
     sentinelPassword?: string,
     name?: string[]

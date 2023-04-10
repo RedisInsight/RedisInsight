@@ -103,7 +103,7 @@ test('Connection import modal window', async t => {
     // Verify that Import dialogue is not closed when clicking any area outside the box
     await t.click(myRedisDatabasePage.importDatabasesBtn);
     await t.expect(myRedisDatabasePage.importDbDialog.exists).ok('Import Database Connections dialog not opened');
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     await t.expect(myRedisDatabasePage.importDbDialog.exists).ok('Import Database Connections dialog not displayed');
 
     // Verify that user see the message when parse error appears

@@ -44,12 +44,12 @@ fixture `Browser - Specify Keys to Scan`
 test('Verify that the user can see this number of keys applied to new filter requests and to "scan more" functionality in Browser page', async t => {
     const searchPattern = 'key[12]*';
     // Go to Settings page
-    await t.click(myRedisDatabasePage.settingsButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Specify keys to scan
     await t.click(settingsPage.accordionAdvancedSettings);
     await settingsPage.changeKeysToScanValue('1000');
     // Go to Browser Page
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     // Connect to DB
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     // Open CLI

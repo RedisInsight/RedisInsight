@@ -26,7 +26,7 @@ fixture `Overview`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .afterEach(async() => {
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
@@ -73,14 +73,14 @@ test
             await t.expect(overviewPage.tableRow.nth(nodes.indexOf(node)).textContent).contains(node, `Node ${node} is not displayed in table`);
         }
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         //Run Create hash index command to load network and memory
         await t.click(workbenchPage.documentButtonInQuickGuides);
         await t.click(workbenchPage.internalLinkWorkingWithHashes);
         await t.click(workbenchPage.preselectCreateHashIndex);
         await t.click(workbenchPage.submitCommandButton);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Verify that values in table are dynamic
         for (const column in columns) {
             await t.expect(await overviewPage.getTotalValueByColumnName(column)).notEql(initialValues[columns.indexOf(column)], `${column} not dynamic`);

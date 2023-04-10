@@ -35,7 +35,7 @@ test
         // Create keys
         await populateDBWithHashes(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port, keyToAddParameters);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async() => {
         await cliPage.sendCommandInCli('flushdb');
@@ -76,10 +76,10 @@ test
         // Create keys
         await populateHashWithFields(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port, keyToAddParameters2);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async t => {
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Big highlighted key tooltip', async t => {

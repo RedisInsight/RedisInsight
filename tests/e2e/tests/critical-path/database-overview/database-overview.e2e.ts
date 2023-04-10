@@ -60,12 +60,12 @@ test
             await t.expect(databaseOverviewPage.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
         }
         //Open the Workbench page and verify modules
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         for (const module of firstDatabaseModules) {
             await t.expect(databaseOverviewPage.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
         }
         //Add database with different modules
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
@@ -103,7 +103,7 @@ test
     .meta({ rte: rte.standalone })
     .after(async t => {
         //Clear and delete database
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await cliPage.sendCommandInCli(`DEL ${keys1.join(' ')}`);
         await cliPage.sendCommandInCli(`DEL ${keys2.join(' ')}`);
@@ -121,7 +121,7 @@ test
         //Verify that the info on DB header is updated after adds
         await t.expect(totalKeys).eql('1 K', 'Info in DB header after ADD 1000 keys');
         //Add database with more than 1M keys
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneBigConfig);
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneBigConfig.databaseName);
@@ -150,7 +150,7 @@ test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
         //Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .after(async() => {
         //Delete database and index

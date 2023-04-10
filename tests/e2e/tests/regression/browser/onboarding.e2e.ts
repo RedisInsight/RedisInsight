@@ -5,16 +5,18 @@ import {
     commonUrl, ossStandaloneConfigEmpty
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import {Common} from '../../../helpers/common';
-import {OnboardActions} from '../../../common-actions/onboard-actions';
+import { Common } from '../../../helpers/common';
+import { OnboardActions} from '../../../common-actions/onboard-actions';
 import {
     CliPage,
     MemoryEfficiencyPage,
     SlowLogPage,
     WorkbenchPage,
     PubSubPage,
-    MonitorPage,
-    OnboardingPage, MyRedisDatabasePage, HelpCenterPage, BrowserPage
+    OnboardingPage,
+    MyRedisDatabasePage,
+    HelpCenterPage,
+    BrowserPage
 } from '../../../pageObjects';
 import { Telemetry } from '../../../helpers/telemetry';
 
@@ -29,7 +31,6 @@ const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const workBenchPage = new WorkbenchPage();
 const slowLogPage = new SlowLogPage();
 const pubSubPage = new PubSubPage();
-const monitorPage = new MonitorPage();
 const telemetry = new Telemetry();
 
 const logger = telemetry.createLogger();
@@ -52,7 +53,7 @@ fixture `Onboarding new user tests`
 // https://redislabs.atlassian.net/browse/RI-4070, https://redislabs.atlassian.net/browse/RI-4067
 // https://redislabs.atlassian.net/browse/RI-4278
 test('Verify onbarding new user steps', async t => {
-    await t.click(myRedisDatabasePage.helpCenterButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
     await t.click(onboardingPage.resetOnboardingBtn);
@@ -76,7 +77,7 @@ test('Verify onbarding new user steps', async t => {
     await onBoardActions.verifyStepVisible('Command Helper');
     await onBoardActions.clickNextStep();
     // verify profiler is opened
-    await t.expect(monitorPage.monitorArea.visible).ok('profiler is not expanded');
+    await t.expect(browserPage.Profiler.monitorArea.visible).ok('profiler is not expanded');
     await onBoardActions.verifyStepVisible('Profiler');
     await onBoardActions.clickNextStep();
     // Verify that client list command visible when there is not any index created
@@ -90,7 +91,7 @@ test('Verify onbarding new user steps', async t => {
     // create index in order to see in FT.INFO {index} in onboarding step
     await cliPage.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
     // verify one step before is opened
-    await t.expect(monitorPage.monitorArea.visible).ok('profiler is not expanded');
+    await t.expect(browserPage.Profiler.monitorArea.visible).ok('profiler is not expanded');
     await onBoardActions.verifyStepVisible('Profiler');
     await onBoardActions.clickNextStep();
     // verify workbench page is opened
@@ -121,7 +122,7 @@ test('Verify onbarding new user steps', async t => {
 });
 // https://redislabs.atlassian.net/browse/RI-4067, https://redislabs.atlassian.net/browse/RI-4278
 test('Verify onboard new user skip tour', async(t) => {
-    await t.click(myRedisDatabasePage.helpCenterButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
     await t.click(onboardingPage.resetOnboardingBtn);
@@ -134,11 +135,11 @@ test('Verify onboard new user skip tour', async(t) => {
     await onBoardActions.clickNextStep();
     // verify tree view step is visible
     await onBoardActions.verifyStepVisible('Tree view');
-    await t.click(browserPage.workbenchLinkButton);
-    await t.click(myRedisDatabasePage.helpCenterButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
     await t.click(onboardingPage.resetOnboardingBtn);
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify that when user reset onboarding, user can see the onboarding triggered when user open the Browser page.
     await t.expect(onboardingPage.showMeAroundButton.visible).ok('onbarding starting is not visible');
     // click skip tour
@@ -150,27 +151,26 @@ test('Verify onboard new user skip tour', async(t) => {
     await onBoardActions.verifyOnboardingCompleted();
 });
 // https://redislabs.atlassian.net/browse/RI-4305
-test
-.requestHooks(logger)('Verify that the final onboarding step is closed when user opens another page', async(t) => {
-    await t.click(myRedisDatabasePage.helpCenterButton);
+test.requestHooks(logger)('Verify that the final onboarding step is closed when user opens another page', async(t) => {
+    await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.click(onboardingPage.resetOnboardingBtn);
     await onBoardActions.startOnboarding();
     await onBoardActions.clickNextUntilLastStep();
     // Verify last step of onboarding process is visible
     await onBoardActions.verifyStepVisible('Great job!');
     // Go to Workbench page
-    await t.click(myRedisDatabasePage.workbenchButton);
-    
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+
     // Verify that “ONBOARDING_TOUR_FINISHED” event is sent when user opens another page (or close the app)
     await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
 
     // Go to PubSub page
-    await t.click(myRedisDatabasePage.pubSubButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     // Verify onboarding completed successfully
     await t.expect(onboardingPage.showMeAroundButton.exists).notOk('Show me around button still visible');
     await t.expect(onboardingPage.stepTitle.exists).notOk('Onboarding tooltip still visible');
     // Go to Browser Page
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify onboarding completed successfully
     await onBoardActions.verifyOnboardingCompleted();
 });

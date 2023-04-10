@@ -40,7 +40,7 @@ test('Verify that user can see saved CLI size on Browser page when he returns ba
     await t.hover(cliResizeButton);
     // move resize 200px up
     await t.drag(cliResizeButton, 0, -offsetY, { speed: 0.01 });
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await t.expect(await cliPage.cliArea.clientHeight).gt(cliAreaHeightEnd, 'Saved context for resizable cli is incorrect');
 });
@@ -51,7 +51,7 @@ test('Verify that user can see saved Key details and Keys tables size on Browser
 
     // move resize 200px right
     await t.drag(cliResizeButton, offsetX, 0, { speed });
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await t.expect(await browserPage.keyListTable.clientWidth).gt(keyListWidth, 'Saved browser resizable context is proper');
 });
@@ -59,17 +59,17 @@ test('Verify that user can see saved filter per key type applied when he returns
     keyName = common.generateWord(10);
     // Filter per key type String and open Settings
     await browserPage.selectFilterGroupType(KeyTypesTexts.String);
-    await t.click(myRedisDatabasePage.settingsButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Return back to Browser and check filter applied
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     await t.expect(browserPage.selectedFilterTypeString.exists).ok('Filter per key type is still applied');
     // Clear filter
     await t.click(browserPage.clearFilterButton);
     // Filter per key name and open Settings
     await browserPage.searchByKeyName(keyName);
-    await t.click(myRedisDatabasePage.settingsButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Return back to Browser and check filter applied
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify that user can see saved input entered into the filter per Key name when he returns back to Browser page
     await verifySearchFilterValue(keyName);
 });
@@ -85,9 +85,9 @@ test('Verify that user can see saved executed commands in CLI on Browser page wh
         await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
         await t.pressKey('enter');
     }
-    await t.click(myRedisDatabasePage.settingsButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Return back to Browser and check executed command in CLI
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     for(const command of commands) {
         await t.expect(cliPage.cliCommandExecuted.withExactText(command).exists).ok(`Executed command '${command}' in CLI is saved`);
     }
@@ -111,9 +111,9 @@ test
         await t.click(targetKey);
         await t.expect(await targetKey.getAttribute('class')).contains('table-row-selected', 'Not correct key selected in key list');
 
-        await t.click(myRedisDatabasePage.settingsButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         // Return back to Browser and check key details selected
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         // Check Keys details saved
         await t.expect(browserPage.keyNameFormDetails.innerText).eql(targetKeyName, 'Key details is not saved as context');
         // Check Key selected in Key List
@@ -147,7 +147,7 @@ test
         const randomKey = renderedRows.nth(Math.floor((Math.random() * renderedRowsCount)));
         const randomKeyName = await randomKey.find(browserPage.cssSelectorKey).textContent;
 
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
 
         // Check that previous found key is still visible

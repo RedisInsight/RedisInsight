@@ -26,7 +26,7 @@ test
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossClusterConfig.ossClusterDatabaseName);
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
     .after(async() => {
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
@@ -48,7 +48,7 @@ test
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
     .after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);

@@ -237,8 +237,8 @@ test
 
         // Verify that Redisearch context (inputs, key selected, scroll, key details) saved after switching between pages
         await t
-            .click(myRedisDatabasePage.workbenchButton)
-            .click(myRedisDatabasePage.browserButton);
+            .click(myRedisDatabasePage.NavigationPanel.workbenchButton)
+            .click(myRedisDatabasePage.NavigationPanel.browserButton);
         await verifyContext();
 
         // Verify that Redisearch context saved when switching between browser/tree view
@@ -271,15 +271,15 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that indexed keys from previous DB are NOT displayed when user connects to another DB', async t => {
-        /* 
+        /*
             Link to ticket: https://redislabs.atlassian.net/browse/RI-3863
         */
 
         // key names to validate in the standalone database
         keyNames = [`${keyNameSimpleDb}:1`, `${keyNameSimpleDb}:2`, `${keyNameSimpleDb}:3`, `${keyNameSimpleDb}:4`, `${keyNameSimpleDb}:5`];
 
-        /* 
-            create index as name ${indexNameBigDb} 
+        /*
+            create index as name ${indexNameBigDb}
             in the big standalone database
             with the help of CLI
         */

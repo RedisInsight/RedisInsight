@@ -32,7 +32,7 @@ test
         // Delete database
         await deleteDatabase(newDatabaseName);
     })('Verify that user can edit DB alias of Standalone DB', async t => {
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Edit alias of added database
         await clickOnEditDatabaseByName(database.databaseName);
 
@@ -65,7 +65,7 @@ test
         await t.click(cliPage.cliExpandButton);
         await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
         await t.pressKey('enter');
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Edit port of added database
         await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
         await t.typeText(addRedisDatabasePage.portInput, ossStandaloneBigConfig.port, { replace: true, paste: true });

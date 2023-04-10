@@ -62,7 +62,7 @@ test
         await browserPage.openKeyDetailsByKeyName(keysData[1].keyName);
         await t.expect(browserPage.formatSwitcher.withExactText('JSON').visible).ok('Formatter value is not saved');
         // Go to another database
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
         await browserPage.openKeyDetailsByKeyName(keysData[2].keyName);
         // Verify that formatters selection is saved when user switches between databases

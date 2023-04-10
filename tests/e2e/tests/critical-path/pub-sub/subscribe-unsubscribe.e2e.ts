@@ -17,7 +17,7 @@ fixture `Subscribe/Unsubscribe from a channel`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to PubSub page
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
     .afterEach(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -52,9 +52,9 @@ test('Verify that the focus gets always shifted to a newest message (auto-scroll
     await t.expect(pubSubPage.clientBadge.textContent).eql('1', 'Client badge is not displayed', { timeout: 10000 });
 
     // Go to My Redis databases Page
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     // Go back to PubSub page
-    await t.click(myRedisDatabasePage.pubSubButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     // Verify that my subscription state is preserved when user navigate through the app while connected to current database and in current app session
     await t.expect(pubSubPage.subscribeStatus.textContent).eql('You are  subscribed', 'User is not subscribed', { timeout: 10000 });
 
@@ -72,7 +72,7 @@ test
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         // Go to PubSub page
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
     .after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
@@ -85,17 +85,17 @@ test
         // Verify that user can see total number of messages received
         await t.expect(pubSubPage.totalMessagesCount.textContent).contains('10', 'Total counter value is incorrect');
         // Connect to second database
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
         // Verify no subscription, messages and total messages
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
         await t.expect(pubSubPage.subscribeStatus.textContent).eql('You are not subscribed', 'User is not unsubscribed', { timeout: 10000 });
         await verifyMessageDisplayingInPubSub('message', false);
         await t.expect(pubSubPage.totalMessagesCount.exists).notOk('Total counter is still displayed');
     });
 test('Verify that user can see a internal link to pubsub window under word “Pub/Sub” when he try to run PSUBSCRIBE command in CLI or Workbench', async t => {
     // Go to Browser Page
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify that user can see a custom message when he try to run PSUBSCRIBE command in CLI or Workbench: “Use Pub/Sub to see the messages published to all channels in your database”
     await cliPage.sendCommandInCli('PSUBSCRIBE');
     await t.click(cliPage.cliExpandButton);
@@ -114,9 +114,9 @@ test('Verify that the Message field input is preserved until user Publish a mess
     await t.typeText(pubSubPage.messageInput, 'message', { replace: true });
     await t.expect(pubSubPage.messageInput.value).eql('message', 'Message input is empty', { timeout: 10000 });
     // Go to Browser Page
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     // Go to PubSub page
-    await t.click(myRedisDatabasePage.pubSubButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     // Verify that message is preserved until publishing
     await t.expect(pubSubPage.messageInput.value).eql('message', 'Message input is empty', { timeout: 10000 });
     await t.click(pubSubPage.publishButton);

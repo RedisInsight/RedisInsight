@@ -23,13 +23,13 @@ fixture `Promote workbench in CLI`
     });
 test('Verify that user can see saved workbench context after redirection from CLI to workbench', async t => {
     // Open Workbench
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     const command = 'INFO';
     await t.typeText(workbenchPage.queryInput, command, { replace: true, speed: 1, paste: true });
     await t.hover(workbenchPage.preselectArea);
     await t.click(workbenchPage.collapsePreselectAreaButton);
     // Turn to Browser page
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify that users can see workbench promotion message when they open CLI
     await t.click(cliPage.cliExpandButton);
     await t.expect(cliPage.workbenchLink.parent().textContent).eql('Try Workbench, our advanced CLI. Check out our Quick Guides to learn more about Redis capabilities.', 'Wrong promotion message');

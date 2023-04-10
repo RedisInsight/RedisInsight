@@ -64,7 +64,7 @@ test('Verify that user can see link to Workbench under word “Workbench” in t
         await t.click(browserPage.keyNameInTheList);
         await t.click(browserPage.internalLinkToWorkbench);
         await t.expect(workbenchPage.queryInput.visible).ok(`The message for ${dataTypes[i]} key is not displayed`);
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
     }
 });

@@ -9,3 +9,5 @@ export * from './avoid-logical-databases.strategy';
 export * from './integer-in-set.strategy';
 export * from './shard-hash.strategy';
 export * from './string-to-json.strategy';
+export * from './search-visualization.strategy';
+export * from './graph-visualization.strategy';

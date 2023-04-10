@@ -13,6 +13,7 @@ import {
   EuiToolTip,
   EuiIcon
 } from '@elastic/eui'
+import { isUndefined } from 'lodash'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 
@@ -129,7 +130,7 @@ const Recommendation = ({
       {recommendationsContent[name]?.liveTimeText?.map((item) => renderContentElement(item))}
       <div className={styles.actions}>
         <RecommendationVoting live id={id} vote={vote} name={name} />
-        {tutorial && (
+        {!isUndefined(tutorial) && (
           <EuiButton
             className={styles.btn}
             onClick={handleClick}

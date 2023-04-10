@@ -92,7 +92,7 @@ test
 test
     .meta({ rte: rte.standalone })('Verify that when user enters in CLI RediSearch/JSON commands (FT.CREATE, FT.DROPINDEX/JSON.GET, JSON.DEL), he can see hints with arguments', async t => {
         const commandHints = [
-            'index [ON <HASH | JSON>] [PREFIX count prefix [prefix ...]] [FILTER filter] [LANGUAGE default_lang] [LANGUAGE_FIELD lang_attribute] [SCORE default_score] [SCORE_FIELD score_attribute] [PAYLOAD_FIELD payload_attribute] [MAXTEXTFIELDS] [TEMPORARY seconds] [NOOFFSETS] [NOHL] [NOFIELDS] [NOFREQS] [STOPWORDS count [stopword [stopword ...]]] [SKIPINITIALSCAN] SCHEMA field_name [AS alias] <TEXT | TAG | NUMERIC | GEO | VECTOR> [WITHSUFFIXTRIE] [SORTABLE [UNF]] [NOINDEX] [field_name [AS alias] <TEXT | TAG | NUMERIC | GEO | VECTOR> [WITHSUFFIXTRIE] [SORTABLE [UNF]] [NOINDEX] ...]',
+            'index [ON HASH | JSON] [PREFIX count prefix [prefix ...]] [FILTER filter] [LANGUAGE default_lang] [LANGUAGE_FIELD lang_attribute] [SCORE default_score] [SCORE_FIELD score_attribute] [PAYLOAD_FIELD payload_attribute] [MAXTEXTFIELDS] [TEMPORARY seconds] [NOOFFSETS] [NOHL] [NOFIELDS] [NOFREQS] [STOPWORDS count [stopword [stopword ...]]] [SKIPINITIALSCAN] SCHEMA field_name [AS alias] TEXT | TAG | NUMERIC | GEO | VECTOR [WITHSUFFIXTRIE] [SORTABLE [UNF]] [NOINDEX] [field_name [AS alias] TEXT | TAG | NUMERIC | GEO | VECTOR [WITHSUFFIXTRIE] [SORTABLE [UNF]] [NOINDEX] ...]',
             'index [DD]',
             'key [INDENT indent] [NEWLINE newline] [SPACE space] [path [path ...]]',
             'key [path]'
@@ -103,7 +103,7 @@ test
             'JSON.GET',
             'JSON.DEL'
         ];
-        const commandHint = 'key [meta] [blob]';
+        const commandHint = 'key [META] [BLOB]';
         const command = 'ai.modelget';
 
         // Open CLI

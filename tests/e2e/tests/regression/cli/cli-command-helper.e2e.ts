@@ -151,9 +151,9 @@ test
         ];
         commandsArgumentsToCheck = [
             'AI.MODELDEL key',
-            'AI.SCRIPTSTORE key CPU|GPU [TAG tag] ENTRY_POINTS entry_point_count entry_point [entry_point ...]',
-            'AI.SCRIPTEXECUTE key function [KEYS key_count key [key ...]] [INPUTS input_count input [input ...]] [ARGS arg_count arg [arg ...]] [OUTPUTS output_count output [output ...]] [TIMEOUT timeout]',
-            'AI.TENSORSET key FLOAT|DOUBLE|INT8|INT16|INT32|INT64|UINT8|UINT16|STRING|BOOL shape [shape ...] [BLOB blob] [VALUES value [VALUES value ...]]'
+            'AI.SCRIPTSTORE key CPU | GPU [TAG] ENTRY_POINTS entry_point [entry_point ...]',
+            'AI.SCRIPTEXECUTE key function [KEYS key [key ...]] [INPUTS input [input ...]] [ARGS arg [arg ...]] [OUTPUTS output [output ...]] [TIMEOUT]',
+            'AI.TENSORSET key FLOAT | DOUBLE | INT8 | INT16 | INT32 | INT64 | UINT8 | UINT16 | STRING | BOOL shape [shape ...] [BLOB] [VALUES [VALUES ...]]'
         ];
         externalPageLinks = [
             'https://redis.io/commands/ai.modeldel',
@@ -185,7 +185,7 @@ test
     .meta({ env: env.web })('Verify that user can work with Gears group in Command Helper (RedisGears module)', async t => {
         filteringGroup = 'Gears';
         commandToCheck = 'RG.GETEXECUTION';
-        commandArgumentsToCheck = 'RG.GETEXECUTION id [SHARD|CLUSTER]';
+        commandArgumentsToCheck = 'RG.GETEXECUTION id [SHARD | CLUSTER]';
         externalPageLink = 'https://redis.io/commands/rg.getexecution';
 
         // Open Command Helper

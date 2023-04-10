@@ -27,7 +27,7 @@ test('Verify that user can open the "read more" about the command by clicking on
         'Read more',
         'Arguments:',
         'required key',
-        'multiple data'
+        'multiple field value'
     ];
 
     // Type command

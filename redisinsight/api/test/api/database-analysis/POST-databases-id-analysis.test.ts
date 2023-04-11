@@ -483,7 +483,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          const NUMBERS_OF_SET_MEMBERS = 5001;
+          const NUMBERS_OF_SET_MEMBERS = 100_001;
           await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
         },
         checkFn: async ({ body }) => {

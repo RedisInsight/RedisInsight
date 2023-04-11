@@ -297,19 +297,28 @@ export const getBufferFromSafeASCIIString = (str: string): Buffer => {
         }
       }
 
-      if (str[i + 1] === '\\') {
-        bytes.push(Buffer.from('\\'));
-        i += 1;
-        // eslint-disable-next-line no-continue
-        continue;
-      }
-    }
+      if (['a', '"', '\\', 'b', 't', 'n', 'r'].includes(str[i + 1])) {
+        switch (str[i + 1]) {
+          case 'a':
+            bytes.push(Buffer.from('\u0007'));
+            break;
+          case 'b':
+            bytes.push(Buffer.from('\b'));
+            break;
+          case 't':
+            bytes.push(Buffer.from('\t'));
+            break;
+          case 'n':
+            bytes.push(Buffer.from('\n'));
+            break;
+          case 'r':
+            bytes.push(Buffer.from('\r'));
+            break;
+          default:
+            bytes.push(Buffer.from(str[i + 1]));
+        }
 
-    if (str[i] === '\\' && str[i + 1] === 'x') {
-      const hexString = str.substr(i + 2, 2);
-      if (isHex(hexString)) {
-        bytes.push(Buffer.from(hexString, 'hex'));
-        i += 3;
+        i += 1;
         // eslint-disable-next-line no-continue
         continue;
       }

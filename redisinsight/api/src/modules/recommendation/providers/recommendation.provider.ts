@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Redis, Cluster, Command } from 'ioredis';
-import { get, isNull, isNumber } from 'lodash';
+import { get, isNumber } from 'lodash';
 import { isValid } from 'date-fns';
 import * as semverCompare from 'node-version-compare';
 import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/utils';
@@ -17,14 +17,12 @@ const maxStringMemory = 200;
 const maxDatabaseTotal = 1_000_000;
 const maxCompressHashLength = 1000;
 const maxListLength = 1000;
-const maxSetLength = 5000;
+const maxSetLength = 100_000;
 const maxConnectedClients = 100;
 const maxRediSearchStringMemory = 512 * 1024;
 const bigStringMemory = 5_000_000;
 const sortedSetCountForCheck = 100;
 const minRedisVersion = '6';
-
-const redisInsightCommands = ['info', 'monitor', 'slowlog', 'acl', 'config', 'module'];
 
 @Injectable()
 export class RecommendationProvider {
@@ -332,12 +330,11 @@ export class RecommendationProvider {
   }
 
   /**
-   * Check redis search recommendation
+   * Check search string recommendation
    * @param redisClient
    * @param keys
    */
-
-  async determineRediSearchRecommendation(
+  async determineSearchStringRecommendation(
     redisClient: Redis | Cluster,
     keys: Key[],
   ): Promise<Recommendation> {
@@ -353,14 +350,42 @@ export class RecommendationProvider {
         // Ignore errors
       }
 
-      const isBigStringOrJSON = keys.some((key) => (
-        key.type === RedisDataType.String && key.memory > maxRediSearchStringMemory
-      )
-        || key.type === RedisDataType.JSON);
+      const isBigString = keys
+        .some((key) => key.type === RedisDataType.String && key.memory > maxRediSearchStringMemory);
 
-      return isBigStringOrJSON ? { name: RECOMMENDATION_NAMES.REDIS_SEARCH } : null;
+      return isBigString ? { name: RECOMMENDATION_NAMES.SEARCH_STRING } : null;
     } catch (err) {
-      this.logger.error('Can not determine redis search recommendation', err);
+      this.logger.error('Can not determine search string recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check search JSON recommendation
+   * @param redisClient
+   * @param keys
+   */
+  async determineSearchJSONRecommendation(
+    redisClient: Redis | Cluster,
+    keys: Key[],
+  ): Promise<Recommendation> {
+    try {
+      try {
+        const indexes = await redisClient.sendCommand(
+          new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
+        ) as any[];
+        if (indexes.length) {
+          return null;
+        }
+      } catch (err) {
+        // Ignore errors
+      }
+
+      const isJSON = keys.some((key) => key.type === RedisDataType.JSON);
+
+      return isJSON ? { name: RECOMMENDATION_NAMES.SEARCH_JSON } : null;
+    } catch (err) {
+      this.logger.error('Can not determine search json recommendation', err);
       return null;
     }
   }

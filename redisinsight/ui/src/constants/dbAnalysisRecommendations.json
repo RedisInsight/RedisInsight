@@ -699,6 +699,7 @@
     "id": "searchJSON",
     "title": "Query and search JSON documents",
     "redisStack": true,
+    "tutorial": "/redis_stack/working_with_json.md",
     "liveTimeText": [
       {
         "id": "1",

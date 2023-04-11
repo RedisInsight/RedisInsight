@@ -457,7 +457,7 @@ describe('Recommendations', () => {
       event: TelemetryEvent.DATABASE_RECOMMENDATIONS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
-        recommendation: 'bigHashes',
+        recommendation: 'shardHashes',
       }
     })
     sendEventTelemetry.mockRestore()

@@ -7,9 +7,11 @@ import { EmptyMessage } from 'uiSrc/pages/databaseAnalysis/constants'
 import { EmptyAnalysisMessage } from 'uiSrc/pages/databaseAnalysis/components'
 import { setDatabaseAnalysisViewTab, dbAnalysisViewTabSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
+import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
+import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ShortDatabaseAnalysis, DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import { databaseAnalysisTabs } from './constants'
@@ -20,6 +22,8 @@ export interface Props {
   reports: ShortDatabaseAnalysis[]
   data: Nullable<DatabaseAnalysis>
 }
+
+const recommendationsContent = _content as IRecommendationsStatic
 
 const DatabaseAnalysisTabs = (props: Props) => {
   const { loading, reports, data } = props
@@ -47,7 +51,7 @@ const DatabaseAnalysisTabs = (props: Props) => {
         eventData: {
           databaseId: instanceId,
           recommendationsCount: data?.recommendations?.length,
-          list: data?.recommendations?.map(({ name }) => name),
+          list: data?.recommendations?.map(({ name }) => recommendationsContent[name]?.liveTelemetryEvent || name),
         }
       })
     }

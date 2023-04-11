@@ -10,7 +10,8 @@ import {
 } from '@elastic/eui'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
-import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
 import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
@@ -24,6 +25,8 @@ export interface IContentElement {
   value: any[] | any
   parameter: string[]
 }
+
+const recommendationsContent = _content as IRecommendationsStatic
 
 const badgesContent = [
   { id: 'code_changes', icon: <CodeIcon className={styles.badgeIcon} />, name: 'Code Changes' },

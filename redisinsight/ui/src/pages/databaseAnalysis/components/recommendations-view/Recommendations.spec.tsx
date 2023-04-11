@@ -208,21 +208,6 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
   })
 
-  it('should render configuration_changes badge in compressHashFieldNames recommendation', () => {
-    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
-      ...mockdbAnalysisSelector,
-      data: {
-        recommendations: [{ name: 'compressHashFieldNames' }]
-      }
-    }))
-
-    render(<Recommendations />)
-
-    expect(screen.queryByTestId('code_changes')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
-  })
-
   it('should render configuration_changes badge in compressionForList recommendation', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,

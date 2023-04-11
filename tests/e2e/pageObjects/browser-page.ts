@@ -28,6 +28,7 @@ export class BrowserPage {
     streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
     myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
+    submitDeleteKeyButton = Selector('[data-testid=submit-delete-key]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
     editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
     closeEditTTL = Selector('[data-testid=cancel-btn]');
@@ -580,6 +581,16 @@ export class BrowserPage {
         for (const name of keyNames) {
             await this.deleteKeyByName(name);
         }
+    }
+
+    /**
+     * Delete Key By name after Hovering
+     */
+    async deleteKeyByNameFromList(keyName: string): Promise<void> {
+        await this.searchByKeyName(keyName);
+        await t.hover(this.keyNameInTheList);
+        await t.click(Selector(`[data-testid="delete-key-btn-${keyName}"]`));
+        await t.click(this.submitDeleteKeyButton);
     }
 
     /**

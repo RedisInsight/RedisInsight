@@ -13,8 +13,37 @@
   background-color: var(--euiColorEmptyShade);
 }
 
+.deletePopover {
+  max-width: 400px !important;
+}
+
 .table {
   height: 100%;
+
+  .deleteAnchor {
+    margin-right: -10px;
+  }
+
+  :global {
+    .ReactVirtualized__Table__row {
+      .ReactVirtualized__Table__rowColumn {
+        .moveOnHover {
+          transition: transform ease 0.3s;
+          &.hide { transform: translateX(-8px) }
+        }
+        .showOnHover {
+          display: none;
+          &.show { display: block !important; }}
+      }
+
+      &:hover {
+        .ReactVirtualized__Table__rowColumn {
+          .moveOnHover { transform: translateX(-8px) }
+          .showOnHover { display: block; }
+        }
+      }
+    }
+  }
 }
 
 :global(.show-cli) .table {

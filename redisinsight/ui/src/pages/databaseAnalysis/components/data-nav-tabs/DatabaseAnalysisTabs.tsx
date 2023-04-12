@@ -51,7 +51,7 @@ const DatabaseAnalysisTabs = (props: Props) => {
         eventData: {
           databaseId: instanceId,
           recommendationsCount: data?.recommendations?.length,
-          list: data?.recommendations?.map(({ name }) => recommendationsContent[name]?.liveTelemetryEvent || name),
+          list: data?.recommendations?.map(({ name }) => recommendationsContent[name]?.telemetryEvent || name),
         }
       })
     }

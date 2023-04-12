@@ -33,7 +33,7 @@ export interface IRecommendationsStatic {
     id: string
     title: string
     liveTitle?: string
-    liveTelemetryEvent?: string
+    telemetryEvent?: string
     redisStack?: boolean
     tutorial?: string
     content?: IRecommendationContent[]

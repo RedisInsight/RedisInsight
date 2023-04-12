@@ -48,7 +48,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
         : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_VOTED,
       eventData: {
         databaseId: instanceId,
-        name: recommendationsContent[name]?.liveTelemetryEvent ?? name,
+        name: recommendationsContent[name]?.telemetryEvent ?? name,
         vote,
       }
     })
@@ -60,7 +60,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
     }
 
     if (live) {
-      const recommendationName = recommendationsContent[name]?.liveTelemetryEvent ?? name
+      const recommendationName = recommendationsContent[name]?.telemetryEvent ?? name
       dispatch(putLiveRecommendationVote(id, vote, recommendationName, onSuccessVoted))
     } else {
       dispatch(putRecommendationVote(name, vote, onSuccessVoted))

@@ -53,7 +53,7 @@ const Recommendations = () => {
       : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_COLLAPSED,
     eventData: {
       databaseId: instanceId,
-      recommendation: recommendationsContent[id]?.liveTelemetryEvent || id,
+      recommendation: recommendationsContent[id]?.telemetryEvent || id,
     }
   })
 
@@ -62,7 +62,7 @@ const Recommendations = () => {
       event: TelemetryEvent.DATABASE_RECOMMENDATIONS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: instanceId,
-        recommendation: recommendationsContent[id]?.liveTelemetryEvent || id,
+        recommendation: recommendationsContent[id]?.telemetryEvent || id,
       }
     })
 

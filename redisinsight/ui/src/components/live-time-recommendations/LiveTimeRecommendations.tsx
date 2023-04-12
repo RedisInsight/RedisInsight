@@ -107,7 +107,7 @@ const LiveTimeRecommendations = () => {
   const getTelemetryData = () => ({
     databaseId: connectedInstanceId,
     total: recommendations?.length,
-    list: recommendations?.map(({ name }) => recommendationsContent[name]?.liveTelemetryEvent ?? name),
+    list: recommendations?.map(({ name }) => recommendationsContent[name]?.telemetryEvent ?? name),
   })
 
   const renderBody = () => {

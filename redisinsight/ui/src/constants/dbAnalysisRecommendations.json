@@ -41,7 +41,7 @@
   },
   "bigHashes": {
     "id": "bigHashes",
-    "liveTelemetryEvent": "shardHashes",
+    "telemetryEvent": "shardHashes",
     "title": "Shard big hashes to small hashes",
     "redisStack": true,
     "tutorial": "/quick-guides/document/working-with-hashes.md",
@@ -318,7 +318,7 @@
   },
   "bigSets": {
     "id": "bigSets",
-    "liveTelemetryEvent": "optimizeExistenceChecks",
+    "telemetryEvent": "optimizeExistenceChecks",
     "title": "Switch to Bloom filter, cuckoo filter, or HyperLogLog",
     "liveTitle": "Optimize existence checks",
     "tutorial": "/redis_stack/probabilistic_data_structures.md",
@@ -416,7 +416,7 @@
   },
   "RTS": {
     "id": "RTS",
-    "liveTelemetryEvent": "optimizeTimeSeries",
+    "telemetryEvent": "optimizeTimeSeries",
     "title":"Optimize the use of time series",
     "redisStack": true,
     "tutorial": "/redis_stack/redis_for_time_series.md",
@@ -458,7 +458,7 @@
   },
   "redisVersion": {
     "id": "redisVersion",
-    "liveTelemetryEvent": "updateDatabase",
+    "telemetryEvent": "updateDatabase",
     "title":"Update Redis database",
     "redisStack": true,
     "liveTimeText": [

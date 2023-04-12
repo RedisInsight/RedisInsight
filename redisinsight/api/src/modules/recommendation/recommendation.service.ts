@@ -92,9 +92,10 @@ export class RecommendationService {
         RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
         async () => await this.recommendationProvider.determineConnectionClientsRecommendation(client),
       ],
+      // disable determine RTS recommendation for db analysis
       [
         RECOMMENDATION_NAMES.RTS,
-        async () => await this.recommendationProvider.determineRTSRecommendation(client, keys),
+        () => null,
       ],
       [
         RECOMMENDATION_NAMES.REDIS_SEARCH,

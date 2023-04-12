@@ -234,10 +234,10 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
-    describe('rediSearch recommendation', () => {
+    describe('searchString recommendation', () => {
       [
         {
-          name: 'Should create new database analysis with rediSearch recommendation',
+          name: 'Should create new database analysis with searchString recommendation',
           data: {
             delimiter: '-',
           },
@@ -248,7 +248,7 @@ describe('POST /databases/:instanceId/analysis', () => {
           responseSchema,
           checkFn: async ({ body }) => {
             expect(body.recommendations).to.include.deep.members([
-              constants.TEST_REDISEARCH_RECOMMENDATION,
+              constants.TEST_SEARCH_STRING_RECOMMENDATION,
             ]);
           },
           after: async () => {
@@ -262,7 +262,7 @@ describe('POST /databases/:instanceId/analysis', () => {
       requirements('rte.modules.rejson');
       [
         {
-          name: 'Should create new database analysis with rediSearch recommendation',
+          name: 'Should create new database analysis with searchJSON recommendation',
           data: {
             delimiter: '-',
           },
@@ -274,7 +274,7 @@ describe('POST /databases/:instanceId/analysis', () => {
           responseSchema,
           checkFn: async ({ body }) => {
             expect(body.recommendations).to.include.deep.members([
-              constants.TEST_REDISEARCH_RECOMMENDATION,
+              constants.TEST_SEARCH_JSON_RECOMMENDATION,
             ]);
           },
           after: async () => {
@@ -340,7 +340,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          const NUMBERS_OF_HASH_FIELDS = 5001;
+          const NUMBERS_OF_HASH_FIELDS = 100_001;
           await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
         },
         checkFn: async ({ body }) => {
@@ -407,27 +407,6 @@ describe('POST /databases/:instanceId/analysis', () => {
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.include.deep.members([
             constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
-          ]);
-        },
-        after: async () => {
-          expect(await repository.count()).to.eq(5);
-        }
-      },
-      {
-        name: 'Should create new database analysis with compressHashFieldNames recommendation',
-        data: {
-          delimiter: '-',
-        },
-        statusCode: 201,
-        responseSchema,
-        before: async () => {
-          const NUMBERS_OF_HASH_FIELDS = 1001;
-          await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
-        },
-        checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([
-            constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
-            constants.TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION,
           ]);
         },
         after: async () => {
@@ -504,7 +483,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          const NUMBERS_OF_SET_MEMBERS = 5001;
+          const NUMBERS_OF_SET_MEMBERS = 100_001;
           await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
         },
         checkFn: async ({ body }) => {

@@ -85,7 +85,7 @@ describe('DatabaseConnectionService', () => {
     it('getDatabaseIndex should call databaseService.get() if previous clientMetadata.db is Undefined', async () => {
       const db = 2;
       databaseConnectionService.createClient.mockResolvedValueOnce(nodeClient);
-      await service.getDatabaseIndex(mockCommonClientMetadata, db)
+      await service.getDatabaseIndex(mockCommonClientMetadata, db);
 
       expect(databaseService.get).toBeCalledWith(mockCommonClientMetadata.databaseId);
     });
@@ -93,11 +93,11 @@ describe('DatabaseConnectionService', () => {
       it('getDatabaseIndex should call recommendationService', async () => {
         const db = 2;
         databaseConnectionService.createClient.mockResolvedValueOnce(nodeClient);
-        await service.getDatabaseIndex(mockCommonClientMetadata, db)
+        await service.getDatabaseIndex(mockCommonClientMetadata, db);
 
         expect(recommendationService.check).toBeCalledWith(
           { ...mockCommonClientMetadata, db },
-          RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES_LIVE,
+          RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES,
           { db, prevDb: 0 },
         );
       });

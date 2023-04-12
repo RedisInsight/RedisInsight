@@ -1,4 +1,4 @@
-import { SlowLogPage, MyRedisDatabasePage, BrowserPage, CliPage, OverviewPage } from '../../../pageObjects';
+import { SlowLogPage, MyRedisDatabasePage, BrowserPage, OverviewPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
@@ -7,7 +7,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 const slowLogPage = new SlowLogPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const overviewPage = new OverviewPage();
 const slowerThanParameter = 1;
 let maxCommandLength = 50;
@@ -30,7 +29,7 @@ test('Verify that user can open new Slow Log page using new icon on left app pan
     await t.expect(overviewPage.overviewTab.withAttribute('aria-selected', 'true').exists).notOk('The Overview tab is displayed for non OSS Cluster db');
     // Verify that user can configure slowlog-max-len for Slow Log and see whole set of commands according to the setting
     await slowLogPage.changeSlowerThanParameter(slowerThanParameter);
-    await cliPage.sendCommandInCli(command);
+    await slowLogPage.Cli.sendCommandInCli(command);
     await t.click(slowLogPage.slowLogRefreshButton);
     const duration = await slowLogPage.slowLogCommandValue.withExactText(command).parent(3).find(slowLogPage.cssSelectorDurationValue).textContent;
     await t.expect(parseInt(duration)).gte(slowerThanParameter, 'Displayed command time execution is more than specified');
@@ -84,7 +83,7 @@ test('Verify that user can set slowlog-log-slower-than value in milliseconds and
     await slowLogPage.changeSlowerThanParameter(slowerThanParameter);
     // Send command in microseconds
     command = 'scan 0 MATCH * COUNT 5000';
-    await cliPage.sendCommandInCli(command);
+    await slowLogPage.Cli.sendCommandInCli(command);
     await t.click(slowLogPage.slowLogRefreshButton);
     // Get duration of this command in microseconds
     let microsecondsDuration = await slowLogPage.slowLogCommandValue.withExactText(command).parent(3).find(slowLogPage.cssSelectorDurationValue).textContent;
@@ -95,7 +94,7 @@ test('Verify that user can set slowlog-log-slower-than value in milliseconds and
     await t.expect(parseFloat(millisecondsDuration)).eql(parseFloat(microsecondsDuration.replace(' ', '')) / 1000);
     // Verify that user can set slowlog-log-slower-than value in microseconds and command duration will be re-calculated to microseconds
     command = 'scan 0 MATCH * COUNT 50000';
-    await cliPage.sendCommandInCli(command);
+    await slowLogPage.Cli.sendCommandInCli(command);
     await t.click(slowLogPage.slowLogRefreshButton);
     // Get duration of this command in milliseconds
     millisecondsDuration = await slowLogPage.slowLogCommandValue.withExactText(command).parent(3).find(slowLogPage.cssSelectorDurationValue).textContent;
@@ -110,7 +109,7 @@ test('Verify that user can reset settings to default on Slow Log page', async t 
     // Set slowlog-max-len=0
     command = 'info';
     await slowLogPage.changeSlowerThanParameter(slowerThanParameter);
-    await cliPage.sendCommandInCli('info');
+    await slowLogPage.Cli.sendCommandInCli('info');
     await t.click(slowLogPage.slowLogRefreshButton);
     await t.expect(slowLogPage.slowLogCommandValue.withExactText(command).exists).ok('Logged command not found');
     await t.click(slowLogPage.slowLogClearButton);

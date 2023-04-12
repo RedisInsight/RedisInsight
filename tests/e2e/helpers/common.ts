@@ -160,6 +160,13 @@ export class Common {
     }
 
     /**
+     * Get current page url
+     */
+    async getPageUrl(): Promise<string> {
+        return (await ClientFunction(() => window.location.href))();
+    }
+
+    /**
      * Check opened URL
      * @param expectedUrl Expected link that is compared with actual
      */

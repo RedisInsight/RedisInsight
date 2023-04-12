@@ -1,7 +1,6 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
-    CliPage,
     WorkbenchPage,
     BrowserPage
 } from '../../../pageObjects';
@@ -12,7 +11,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const cliPage = new CliPage();
 const common = new Common();
 const browserPage = new BrowserPage();
 
@@ -26,13 +24,13 @@ fixture `Database overview`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
+        await browserPage.Cli.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can connect to DB and see breadcrumbs at the top of the application', async t => {
     // Create new keys
     keys = await common.createArrayWithKeyValue(10);
-    await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
+    await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
 
     // Verify that user can see breadcrumbs in Browser and Workbench views
     await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can not see breadcrumbs in Browser page', { timeout: 10000 });

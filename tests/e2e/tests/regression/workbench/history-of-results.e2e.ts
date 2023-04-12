@@ -1,6 +1,6 @@
 import { getRandomParagraph } from '../../../helpers/keys';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
@@ -8,7 +8,6 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 const oneMinuteTimeout = 60000;
@@ -16,7 +15,7 @@ let keyName = common.generateWord(10);
 const command = `set ${keyName} test`;
 
 fixture `History of results at Workbench`
-    .meta({type: 'regression'})
+    .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -25,7 +24,7 @@ fixture `History of results at Workbench`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await cliPage.sendCommandInCli(`DEL ${keyName}`);
+        await workbenchPage.Cli.sendCommandInCli(`DEL ${keyName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test

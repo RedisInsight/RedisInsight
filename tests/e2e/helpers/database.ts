@@ -7,7 +7,6 @@ import {
     AutoDiscoverREDatabases,
     AddRedisDatabasePage,
     UserAgreementPage,
-    CliPage
 } from '../pageObjects';
 import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi, getDatabaseIdByName } from './api/api-database';
 import { Common } from './common';
@@ -18,7 +17,6 @@ const discoverMasterGroupsPage = new DiscoverMasterGroupsPage();
 const autoDiscoverREDatabases = new AutoDiscoverREDatabases();
 const browserPage = new BrowserPage();
 const userAgreementPage = new UserAgreementPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 /**
@@ -230,16 +228,6 @@ export async function acceptLicenseAndConnectToRedisStack(): Promise<void> {
     await t
         .click(myRedisDatabasePage.NavigationPanel.myRedisDBButton)
         .click(addRedisDatabasePage.connectToRedisStackButton);
-}
-
-// Clear database data
-export async function clearDatabaseInCli(): Promise<void> {
-    if (await cliPage.cliCollapseButton.exists === false) {
-        await t.click(cliPage.cliExpandButton);
-    }
-    await t
-        .typeText(cliPage.cliCommandInput, 'FLUSHDB')
-        .pressKey('enter');
 }
 
 /**

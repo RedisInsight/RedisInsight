@@ -1,5 +1,5 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { CliPage, WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -7,7 +7,7 @@ import {
 import { rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
-const cliPage = new CliPage();
+const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
@@ -31,13 +31,13 @@ test('Verify that user can see saved workbench context after redirection from CL
     // Turn to Browser page
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify that users can see workbench promotion message when they open CLI
-    await t.click(cliPage.cliExpandButton);
-    await t.expect(cliPage.workbenchLink.parent().textContent).eql('Try Workbench, our advanced CLI. Check out our Quick Guides to learn more about Redis capabilities.', 'Wrong promotion message');
+    await t.click(browserPage.Cli.cliExpandButton);
+    await t.expect(browserPage.Cli.workbenchLink.parent().textContent).eql('Try Workbench, our advanced CLI. Check out our Quick Guides to learn more about Redis capabilities.', 'Wrong promotion message');
     // Verify that user is redirected to Workbench page clicking on workbench link in CLI
-    await t.click(cliPage.workbenchLink);
+    await t.click(browserPage.Cli.workbenchLink);
     await t.expect(workbenchPage.expandArea.exists).ok('Workbench page is not opened');
     // Verify that CLI panel is minimized after redirection to workbench from CLI
-    await t.expect(cliPage.cliPanel.visible).notOk('Closed CLI');
+    await t.expect(workbenchPage.Cli.cliPanel.visible).notOk('Closed CLI');
 
     // Check content in Workbench area
     await t.expect(workbenchPage.expandPreselectAreaButton.visible).ok('Enablement area is not folded');

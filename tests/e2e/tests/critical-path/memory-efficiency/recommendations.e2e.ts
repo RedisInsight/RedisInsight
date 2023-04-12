@@ -1,19 +1,15 @@
-import { Selector } from 'testcafe';
-import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage, AddRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, AddRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi, deleteCustomDatabase } from '../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import { CliActions } from '../../../common-actions/cli-actions';
 import { MemoryEfficiencyActions } from '../../../common-actions/memory-efficiency-actions';
 import { Common } from '../../../helpers/common';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const cliActions = new CliActions();
 const common = new Common();
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const memoryEfficiencyActions = new MemoryEfficiencyActions();
 const workbenchPage = new WorkbenchPage();
@@ -43,13 +39,13 @@ test
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Add cached scripts and generate new report
-        await cliActions.addCachedScripts(11);
+        await memoryEfficiencyPage.Cli.addCachedScripts(11);
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Go to Recommendations tab
         await t.click(memoryEfficiencyPage.recommendationsTab);
     })
     .after(async() => {
-        await cliPage.sendCommandInCli('SCRIPT FLUSH');
+        await browserPage.Cli.sendCommandInCli('SCRIPT FLUSH');
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Recommendations displaying', async t => {
         const luaScriptCodeChangesLabel = memoryEfficiencyPage.luaScriptAccordion.parent(0).find(memoryEfficiencyPage.cssCodeChangesLabel);
@@ -89,7 +85,7 @@ test.skip('No recommendations message', async t => {
     const command = `HSET ${keyName} field value`;
 
     // Create Hash key and create report
-    await cliPage.sendCommandInCli(command);
+    await browserPage.Cli.sendCommandInCli(command);
     await t.click(memoryEfficiencyPage.newReportBtn);
     // Go to Recommendations tab
     await t.click(memoryEfficiencyPage.recommendationsTab);

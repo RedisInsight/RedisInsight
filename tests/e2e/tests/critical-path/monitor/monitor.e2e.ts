@@ -1,7 +1,6 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
-    CliPage,
     WorkbenchPage,
     BrowserPage
 } from '../../../pageObjects';
@@ -14,7 +13,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const cliPage = new CliPage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
 const common = new Common();
@@ -46,7 +44,7 @@ test
         await t.click(browserPage.Profiler.startMonitorButton);
         await t.expect(browserPage.Profiler.monitorIsStartedText.innerText).eql('Profiler is started.');
         //Verify that user can see run commands in monitor
-        await cliPage.getSuccessCommandResultFromCli(`${command} ${keyName} ${keyValue}`);
+        await browserPage.Cli.getSuccessCommandResultFromCli(`${command} ${keyName} ${keyValue}`);
         await browserPage.Profiler.checkCommandInMonitorResults(command, [keyName, keyValue]);
     });
 test
@@ -63,7 +61,7 @@ test
         //Start Monitor
         await browserPage.Profiler.startMonitor();
         //Send command in CLI
-        await cliPage.getSuccessCommandResultFromCli(cli_command);
+        await browserPage.Cli.getSuccessCommandResultFromCli(cli_command);
         //Check that command from CLI is displayed in monitor
         await browserPage.Profiler.checkCommandInMonitorResults(cli_command);
         //Refresh the page to send command from Browser client

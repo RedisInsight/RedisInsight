@@ -1,20 +1,19 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage, CliPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let indexName = common.generateWord(5);
 let keyName = common.generateWord(5);
 
 fixture `Scripting area at Workbench`
-    .meta({type: 'critical_path', rte: rte.standalone})
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -66,13 +65,13 @@ test('Verify that user when he have more than 10 results can request to view mor
     const commandToCreateSchema = `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`;
     const searchCommand = `FT.SEARCH ${indexName} * LIMIT 0 20`;
     //Open CLI
-    await t.click(cliPage.cliExpandButton);
+    await t.click(workbenchPage.Cli.cliExpandButton);
     //Create new keys for search
     for(const command of commandsForSendInCli) {
-        await t.typeText(cliPage.cliCommandInput, command, { replace: true });
+        await t.typeText(workbenchPage.Cli.cliCommandInput, command, { replace: true });
         await t.pressKey('enter');
     }
-    await t.click(cliPage.cliCollapseButton);
+    await t.click(workbenchPage.Cli.cliCollapseButton);
     //Send commands
     await workbenchPage.sendCommandInWorkbench(commandToCreateSchema);
     //Send search command

@@ -1,13 +1,12 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, CliPage, MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const common = new Common();
-const cliPage = new CliPage();
 const workbenchPage = new WorkbenchPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
@@ -41,7 +40,7 @@ test('Verify that user can see updated message in Browser for TimeSeries and Gra
         ];
 
         // Add key and verify message in Browser
-        await cliPage.sendCommandInCli(commands[i]);
+        await browserPage.Cli.sendCommandInCli(commands[i]);
         await browserPage.searchByKeyName(keyName);
         await t.click(browserPage.keyNameInTheList);
         for(const message of messages) {
@@ -59,7 +58,7 @@ test('Verify that user can see link to Workbench under word “Workbench” in t
         ];
 
         // Add key and verify Workbench link
-        await cliPage.sendCommandInCli(commands[i]);
+        await browserPage.Cli.sendCommandInCli(commands[i]);
         await browserPage.searchByKeyName(keyName);
         await t.click(browserPage.keyNameInTheList);
         await t.click(browserPage.internalLinkToWorkbench);

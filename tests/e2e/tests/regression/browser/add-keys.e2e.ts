@@ -1,15 +1,14 @@
-import {rte} from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
-import {commonUrl, ossStandaloneBigConfig, ossStandaloneConfig} from '../../../helpers/conf';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import {Common} from '../../../helpers/common';
-import {BrowserActions} from '../../../common-actions/browser-actions';
+import { Common } from '../../../helpers/common';
+import { BrowserActions } from '../../../common-actions/browser-actions';
 
 const browserPage = new BrowserPage();
 const browserActions = new BrowserActions();
 const common = new Common();
-const cliPage = new CliPage();
 const jsonKeys = [['JSON-string', '"test"'], ['JSON-number', '782364'], ['JSON-boolean', 'true'], ['JSON-null', 'null'], ['JSON-array', '[1, 2, 3]']];
 let keyNames: string[];
 let indexName: string;
@@ -28,7 +27,7 @@ fixture `Add keys`
         for (const key of jsonKeys) {
             commandString = commandString.concat(` ${key[0]}`);
         }
-        await cliPage.sendCommandInCli(commandString);
+        await browserPage.Cli.sendCommandInCli(commandString);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can create different types(string, number, null, array, boolean) of JSON', async t => {
@@ -61,7 +60,7 @@ test
             commandString = commandString.concat(` ${key}`);
         }
         const commands = [`FT.DROPINDEX ${indexName}`, commandString];
-        await cliPage.sendCommandsInCli(commands);
+        await browserPage.Cli.sendCommandsInCli(commands);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that the new key is displayed at the top of the list', async t => {
         const keyName = common.generateWord(12);
@@ -73,7 +72,7 @@ test
         keyNames = [keyName, keyName1, keyName2, keyName3, keyName4, keyName5];
         indexName = `idx:${keyName5}`;
         const command = `FT.CREATE ${indexName} ON HASH PREFIX 1 hash- SCHEMA name TEXT`;
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
 
         await browserPage.addStringKey(keyName);
         await browserActions.verifyKeyDisplayedTopAndOpened(keyName);

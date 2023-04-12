@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage, WorkbenchPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -10,7 +10,6 @@ import { verifySearchFilterValue } from '../../../helpers/keys';
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const workbenchPage = new WorkbenchPage();
 const common = new Common();
 const chance = new Chance();
@@ -63,13 +62,13 @@ test
         if (await browserPage.submitTooltipBtn.exists) {
             await t.click(browserPage.submitTooltipBtn);
         }
-        await cliPage.addKeysFromCliWithDelimiter('MSET', 15);
+        await browserPage.Cli.addKeysFromCliWithDelimiter('MSET', 15);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async t => {
-        await cliPage.deleteKeysFromCliWithDelimiter(15);
+        await browserPage.Cli.deleteKeysFromCliWithDelimiter(15);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
         await browserPage.deleteKeyByName(hashKeyName);
@@ -134,13 +133,13 @@ test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(keySpaces[4], keysTTL[2], hashValue);
-        await cliPage.addKeysFromCliWithDelimiter('MSET', 5);
+        await browserPage.Cli.addKeysFromCliWithDelimiter('MSET', 5);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async t => {
-        await cliPage.deleteKeysFromCliWithDelimiter(5);
+        await browserPage.Cli.deleteKeysFromCliWithDelimiter(5);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
         await browserPage.deleteKeyByName(keySpaces[4]);
@@ -230,7 +229,7 @@ test
         await t.expect(firstPointLocation).lt(yAxis, 'Point in <1 hr breakdown doesn\'t contain key');
         await t.expect(fourthPointLocation).lt(yAxis, 'Point in 12-25 Hrs breakdown doesn\'t contain key');
         await t.expect(thirdPointLocation).eql(`${yAxis}`, 'Point in 4-12 Hrs breakdown contains key');
-        await t.expect(noExpiryDefaultPointLocation.visible).notOk('No expiry breakdown displayed when toggle is off', {timeout: 1000});
+        await t.expect(noExpiryDefaultPointLocation.visible).notOk('No expiry breakdown displayed when toggle is off', { timeout: 1000 });
         // No Expiry toggle shows No expiry breakdown
         await t.click(memoryEfficiencyPage.showNoExpiryToggle);
         const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('y')).slice(0, 2));
@@ -242,14 +241,14 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async() => {
-        await cliPage.sendCommandInCli(`del ${keyNamesReport.join(' ')}`);
+        await browserPage.Cli.sendCommandInCli(`del ${keyNamesReport.join(' ')}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Analysis history', async t => {
         const numberOfKeys: string[] = [];
-        const dbSize = (await cliPage.getSuccessCommandResultFromCli('dbsize')).split(' ');
+        const dbSize = (await browserPage.Cli.getSuccessCommandResultFromCli('dbsize')).split(' ');
         const existedNumberOfKeys = parseInt(dbSize[dbSize.length - 1]);
         for (let i = 0; i < 6; i++) {
-            await cliPage.sendCommandInCli(`set ${keyNamesReport[i]} ${chance.word()}`);
+            await browserPage.Cli.sendCommandInCli(`set ${keyNamesReport[i]} ${chance.word()}`);
             await t.hover(memoryEfficiencyPage.newReportBtn);
             await t.click(memoryEfficiencyPage.newReportBtn);
             const compareValue = parseInt(await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent);

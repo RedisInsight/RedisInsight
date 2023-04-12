@@ -1,5 +1,5 @@
 import { Selector } from 'testcafe';
-import { MyRedisDatabasePage, CliPage, OverviewPage, WorkbenchPage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, OverviewPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddOSSClusterDatabase } from '../../../helpers/database';
 import { commonUrl, ossClusterConfig } from '../../../helpers/conf';
@@ -9,7 +9,7 @@ import { Common } from '../../../helpers/common';
 const overviewPage = new OverviewPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const common = new Common();
-const cliPage = new CliPage();
+const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 
 const headerColumns = {
@@ -17,6 +17,8 @@ const headerColumns = {
     'Version': '7.0.0',
     'User': 'Default'
 };
+type HeaderColumn = keyof typeof headerColumns;
+
 const keyName = common.generateWord(10);
 const commandToAddKey = `set ${keyName} test`;
 
@@ -39,7 +41,7 @@ test('Overview tab header for OSS Cluster', async t => {
     // Verify that user see "Overview" header with OSS Cluster info
     for (const key in headerColumns) {
         const columnSelector = Selector(`[data-testid=cluster-details-item-${key}]`);
-        await t.expect(columnSelector.textContent).contains(`${headerColumns[key]}`, `Cluster detail ${key} is incorrect`);
+        await t.expect(columnSelector.textContent).contains(`${headerColumns[key as HeaderColumn]}`, `Cluster detail ${key} is incorrect`);
     }
     // Verify that Uptime is displayed as time in seconds or minutes from start
     await t.expect(overviewPage.clusterDetailsUptime.textContent).match(uptime, 'Uptime value is not correct');
@@ -47,8 +49,8 @@ test('Overview tab header for OSS Cluster', async t => {
 test
     .after(async() => {
     //Clear database and delete
-        await cliPage.sendCommandInCli(`DEL ${keyName}`);
-        await cliPage.sendCommandInCli('FT.DROPINDEX idx:schools DD');
+        await browserPage.Cli.sendCommandInCli(`DEL ${keyName}`);
+        await browserPage.Cli.sendCommandInCli('FT.DROPINDEX idx:schools DD');
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Primary node statistics table displaying', async t => {
     // Remember initial table values
@@ -62,10 +64,10 @@ test
         const nodesNumberInHeader = parseInt((await overviewPage.tableHeaderCell.nth(0).textContent).match(/\d+/)![0]);
 
         // Add key from CLI
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, commandToAddKey);
+        await t.click(browserPage.Cli.cliExpandButton);
+        await t.typeText(browserPage.Cli.cliCommandInput, commandToAddKey);
         await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
+        await t.click(browserPage.Cli.cliCollapseButton);
         // Verify nodes in header column equal to rows
         await t.expect(await overviewPage.getPrimaryNodesCount()).eql(nodesNumberInHeader, 'Primary nodes in table are not displayed');
         // Verify that all nodes from BE response are displayed in table

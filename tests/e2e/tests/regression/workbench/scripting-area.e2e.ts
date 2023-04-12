@@ -1,14 +1,13 @@
 import { Selector } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage, CliPage, SettingsPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, WorkbenchPage, SettingsPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const cliPage = new CliPage();
 const settingsPage = new SettingsPage();
 const common = new Common();
 
@@ -54,7 +53,7 @@ test('Verify that user can run multiple commands written in multiple lines in Wo
 test
     .after(async() => {
         // Clear and delete database
-        await cliPage.sendCommandInCli(`DEL ${keyName}`);
+        await workbenchPage.Cli.sendCommandInCli(`DEL ${keyName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can use double slashes (//) wrapped in double quotes and these slashes will not comment out any characters', async t => {
         keyName = common.generateWord(10);
@@ -99,7 +98,7 @@ test
 test
     .after(async() => {
         // Clear and delete database
-        await cliPage.sendCommandInCli(`DEL ${keyName}`);
+        await workbenchPage.Cli.sendCommandInCli(`DEL ${keyName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
         keyName = common.generateWord(10);

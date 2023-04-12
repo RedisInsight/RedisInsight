@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import { join as joinPath } from 'path';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { CliPage, BrowserPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -11,7 +11,6 @@ import { rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const tempDir = os.tmpdir();
 let downloadedFilePath = '';
 
@@ -81,7 +80,7 @@ test('Verify that when user switch toggle to ON and started the Profiler, tempor
     // Start Monitor with Save logs
     await browserPage.Profiler.startMonitorWithSaveLog();
     // Send command in CLI
-    await cliPage.getSuccessCommandResultFromCli(cli_command);
+    await browserPage.Cli.getSuccessCommandResultFromCli(cli_command);
     await browserPage.Profiler.checkCommandInMonitorResults(cli_command);
     // Verify that temporary Log file Created
     await t.expect(numberOfTempFiles).lt(fs.readdirSync(tempDir).length, 'The temporary Log file is not created');

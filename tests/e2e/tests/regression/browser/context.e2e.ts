@@ -1,8 +1,7 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
-    BrowserPage,
-    CliPage
+    BrowserPage
 } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -12,13 +11,12 @@ import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let keyName = common.generateWord(10);
 
 fixture `Browser Context`
-    .meta({type: 'regression', rte: rte.standalone})
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -34,8 +32,8 @@ test('Verify that if user has saved context on Browser page and go to Settings p
     // Create context modificaions and navigate to Settings
     await browserPage.addStringKey(keyName);
     await browserPage.openKeyDetails(keyName);
-    await t.click(cliPage.cliExpandButton);
-    await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
+    await t.click(browserPage.Cli.cliExpandButton);
+    await t.typeText(browserPage.Cli.cliCommandInput, command, { replace: true, paste: true });
     await t.pressKey('enter');
     await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Verify that Browser and Workbench icons are displayed
@@ -45,8 +43,8 @@ test('Verify that if user has saved context on Browser page and go to Settings p
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     await verifySearchFilterValue(keyName);
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is not selected');
-    await t.expect(cliPage.cliCommandExecuted.withExactText(command).exists).ok(`Executed command '${command}' in CLI is not saved`);
-    await t.click(cliPage.cliCollapseButton);
+    await t.expect(browserPage.Cli.cliCommandExecuted.withExactText(command).exists).ok(`Executed command '${command}' in CLI is not saved`);
+    await t.click(browserPage.Cli.cliCollapseButton);
 });
 test('Verify that when user reload the window with saved context(on any page), context is not saved when he returns back to Browser page', async t => {
     keyName = common.generateWord(10);

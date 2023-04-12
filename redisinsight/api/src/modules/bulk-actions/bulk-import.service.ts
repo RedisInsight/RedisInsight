@@ -56,6 +56,7 @@ export class BulkImportService {
    * @param dto
    */
   public async import(clientMetadata: ClientMetadata, dto: UploadImportFileDto): Promise<IBulkActionOverview> {
+    const startTime = Date.now();
     const result: IBulkActionOverview = {
       id: 'empty',
       databaseId: clientMetadata.databaseId,
@@ -69,7 +70,7 @@ export class BulkImportService {
       progress: null,
       filter: null,
       status: BulkActionStatus.Completed,
-      duration: Date.now(),
+      duration: 0,
     };
 
     let parseErrors = 0;
@@ -114,7 +115,7 @@ export class BulkImportService {
         result.summary.failed += batchResult.getOverview().failed;
       });
 
-      result.duration = Date.now() - result.duration;
+      result.duration = Date.now() - startTime;
       result.summary.processed += parseErrors;
       result.summary.failed += parseErrors;
 

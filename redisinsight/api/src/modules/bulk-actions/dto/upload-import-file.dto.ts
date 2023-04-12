@@ -8,7 +8,7 @@ export class UploadImportFileDto {
   @ApiPropertyOptional({
     type: 'string',
     format: 'binary',
-    description: 'Import file (with list of commands to execute',
+    description: 'Import file (with list of commands to execute)',
   })
   @IsNotEmpty()
   @IsFile()

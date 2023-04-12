@@ -1,7 +1,7 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Post,
+  Controller, HttpCode, Post,
   UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import {
@@ -18,12 +18,13 @@ import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-ac
 @UsePipes(new ValidationPipe({ transform: true }))
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('Bulk Actions')
-@Controller('/bulk-actions/:id')
+@Controller('/bulk-actions')
 export class BulkImportController {
   constructor(private readonly service: BulkImportService) {}
 
   @Post('import')
   @ApiConsumes('multipart/form-data')
+  @HttpCode(200)
   @FormDataRequest()
   @ApiEndpoint({
     description: 'Import data from file',
@@ -35,9 +36,7 @@ export class BulkImportController {
   })
   async import(
     @Body() dto: UploadImportFileDto,
-      @ClientMetadataParam({
-        databaseIdParam: 'id',
-      }) clientMetadata: ClientMetadata,
+      @ClientMetadataParam() clientMetadata: ClientMetadata,
   ): Promise<IBulkActionOverview> {
     return this.service.import(clientMetadata, dto);
   }

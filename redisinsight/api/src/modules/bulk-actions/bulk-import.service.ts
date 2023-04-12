@@ -72,6 +72,8 @@ export class BulkImportService {
       duration: Date.now(),
     };
 
+    let parseErrors = 0;
+
     try {
       const client = await this.databaseConnectionService.createClient(clientMetadata);
 
@@ -83,12 +85,16 @@ export class BulkImportService {
       await new Promise((res) => {
         const rl = readline.createInterface(stream);
         rl.on('line', (line) => {
-          const [command, ...args] = splitCliCommandLine((line));
-          if (batch.length >= BATCH_LIMIT) {
-            batchResults.push(this.executeBatch(client, batch));
-            batch = [];
-          } else {
+          try {
+            const [command, ...args] = splitCliCommandLine((line));
+            if (batch.length >= BATCH_LIMIT) {
+              batchResults.push(this.executeBatch(client, batch));
+              batch = [];
+            }
+
             batch.push([command.toLowerCase(), args]);
+          } catch (e) {
+            parseErrors += 1;
           }
         });
         rl.on('error', (error) => {
@@ -109,6 +115,8 @@ export class BulkImportService {
       });
 
       result.duration = Date.now() - result.duration;
+      result.summary.processed += parseErrors;
+      result.summary.failed += parseErrors;
 
       return result;
     } catch (e) {

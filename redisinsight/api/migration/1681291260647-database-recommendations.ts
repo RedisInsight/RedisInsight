@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class liveTimeRecommendationsDb1680704816850 implements MigrationInterface {
-    name = 'liveTimeRecommendationsDb1680704816850'
+export class databaseRecommendations1681291260647 implements MigrationInterface {
+    name = 'databaseRecommendations1681291260647'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "database_recommendations" ("id" varchar PRIMARY KEY NOT NULL, "databaseId" varchar NOT NULL, "name" varchar NOT NULL, "read" boolean NOT NULL DEFAULT (0), "disabled" boolean NOT NULL DEFAULT (0), "vote" varchar, "db" integer, "createdAt" datetime NOT NULL DEFAULT (datetime('now')))`);

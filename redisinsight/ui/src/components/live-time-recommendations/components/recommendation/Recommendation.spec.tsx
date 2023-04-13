@@ -20,7 +20,12 @@ describe('Recommendation', () => {
   })
 
   it('should render content if recommendation is not read', () => {
-    render(<Recommendation {...instance(mockedProps)} name="searchJSON" isRead={false} />)
+    render(<Recommendation
+      {...instance(mockedProps)}
+      name="searchJSON"
+      tutorial=""
+      isRead={false}
+    />)
 
     expect(screen.getByTestId('recommendation-voting')).toBeInTheDocument()
     expect(screen.getByTestId('searchJSON-to-tutorial-btn')).toBeInTheDocument()
@@ -37,7 +42,15 @@ describe('Recommendation', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
 
-    const { container } = render(<Recommendation {...instance(mockedProps)} isRead={false} name="searchJSON" instanceId="id" />)
+    const { container } = render(
+      <Recommendation
+        {...instance(mockedProps)}
+        isRead={false}
+        name="searchJSON"
+        instanceId="id"
+        tutorial=""
+      />
+    )
 
     fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))

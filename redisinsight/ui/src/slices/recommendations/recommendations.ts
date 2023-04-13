@@ -101,7 +101,7 @@ export default recommendationsSlice.reducer
 // Asynchronous thunk action
 export function fetchRecommendationsAction(
   instanceId: string,
-  onSuccessAction?: () => void,
+  onSuccessAction?: (recommendations: IRecommendation[]) => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
@@ -120,7 +120,7 @@ export function fetchRecommendationsAction(
           dispatch(setIsHighlighted(true))
         }
         dispatch(getRecommendationsSuccess(data))
-        onSuccessAction?.()
+        onSuccessAction?.(data.recommendations)
       }
     } catch (_err) {
       const error = _err as AxiosError

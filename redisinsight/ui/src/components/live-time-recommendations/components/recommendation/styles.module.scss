@@ -80,7 +80,7 @@
 
   .btn {
     height: 24px !important;
-    width: 77px !important;
+    min-width: 77px !important;
     margin-top: 60px;
 
     :global(.euiButton__content) {

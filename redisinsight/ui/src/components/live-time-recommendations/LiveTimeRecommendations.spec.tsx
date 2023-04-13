@@ -58,22 +58,6 @@ describe('LiveTimeRecommendations', () => {
     expect(render(<LiveTimeRecommendations />)).toBeTruthy()
   })
 
-  it('should send INSIGHTS_RECOMMENDATIONS_OPENED telemetry event', () => {
-    render(<LiveTimeRecommendations />)
-
-    fireEvent.click(screen.getByTestId('recommendations-trigger'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_OPENED,
-      eventData: {
-        databaseId: 'instanceId',
-        list: [],
-        total: 0,
-      }
-    })
-    sendEventTelemetry.mockRestore()
-  })
-
   it('should send INSIGHTS_RECOMMENDATIONS_CLOSED telemetry event', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,

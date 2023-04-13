@@ -257,6 +257,7 @@ describe('recommendations slice', () => {
         const responsePayload = { data, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
+        const onSuccessActionMock = jest.fn()
 
         const state = {
           ...initialStateDefault.recommendations,
@@ -272,7 +273,7 @@ describe('recommendations slice', () => {
 
         // Act
         await tempStore.dispatch<any>(
-          fetchRecommendationsAction('instanceId')
+          fetchRecommendationsAction('instanceId', onSuccessActionMock)
         )
 
         // Assert
@@ -283,6 +284,8 @@ describe('recommendations slice', () => {
         ]
 
         expect(tempStore.getActions()).toEqual(expectedActions)
+        expect(onSuccessActionMock).toBeCalledWith(mockRecommendations.recommendations)
+        expect(onSuccessActionMock).toBeCalledTimes(1)
       })
 
       it('failed to fetch recommendations data', async () => {
@@ -366,7 +369,7 @@ describe('recommendations slice', () => {
 
         // Act
         await store.dispatch<any>(
-          putLiveRecommendationVote(mockId,mockVote, mockName)
+          putLiveRecommendationVote(mockId, mockVote, mockName)
         )
 
         // Assert

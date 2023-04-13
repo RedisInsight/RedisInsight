@@ -2,6 +2,7 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
 import {
+  fetchRecommendationsAction,
   getRecommendations,
   recommendationsSelector,
   setIsContentVisible
@@ -10,6 +11,7 @@ import { fireEvent, screen, cleanup, mockedStore, render } from 'uiSrc/utils/tes
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
 import { RECOMMENDATIONS_DATA_MOCK } from 'uiSrc/mocks/handlers/recommendations/recommendationsHandler'
+import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 
 import LiveTimeRecommendations from './LiveTimeRecommendations'
 
@@ -27,6 +29,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
 
 jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
   ...jest.requireActual('uiSrc/slices/recommendations/recommendations'),
+  fetchRecommendationsAction: jest.fn(),
   recommendationsSelector: jest.fn().mockReturnValue({
     data: {
       recommendations: [],
@@ -58,19 +61,21 @@ describe('LiveTimeRecommendations', () => {
     expect(render(<LiveTimeRecommendations />)).toBeTruthy()
   })
 
-  it('should send INSIGHTS_RECOMMENDATIONS_OPENED telemetry event', () => {
+  it('should call onSuccessAction after fetching recommendations after first render', () => {
+    const mockedFetchRecommendationsAction = jest.fn().mockImplementation(() => jest.fn());
+    (fetchRecommendationsAction as jest.Mock).mockImplementation(mockedFetchRecommendationsAction)
+
     render(<LiveTimeRecommendations />)
 
     fireEvent.click(screen.getByTestId('recommendations-trigger'))
 
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_OPENED,
-      eventData: {
-        databaseId: 'instanceId',
-        list: [],
-        total: 0,
-      }
-    })
+    expect(mockedFetchRecommendationsAction).toBeCalledWith(
+      INSTANCE_ID_MOCK,
+    )
+    expect(mockedFetchRecommendationsAction).toBeCalledWith(
+      INSTANCE_ID_MOCK, expect.any(Function)
+    )
+
     sendEventTelemetry.mockRestore()
   })
 

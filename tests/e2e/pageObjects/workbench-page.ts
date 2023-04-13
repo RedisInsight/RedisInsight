@@ -33,8 +33,8 @@ export class WorkbenchPage {
     customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
     tutorialLinkField = Selector('[data-testid=tutorial-link-field]');
-    tutorialLatestDeleteIcon  = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);
-    tutorialDeleteButton  = Selector('[data-testid^=delete-tutorial-]').withText('Delete');
+    tutorialLatestDeleteIcon = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);
+    tutorialDeleteButton = Selector('[data-testid^=delete-tutorial-]').withText('Delete');
     tutorialNameField = Selector('[data-testid=tutorial-name-field]');
     tutorialSubmitButton = Selector('[data-testid=submit-upload-tutorial-btn]');
     tutorialImport = Selector('[data-testid=import-tutorial]');
@@ -233,6 +233,7 @@ export class WorkbenchPage {
         const actualCommandResult = await this.queryCardContainer.nth(childNum).find(this.cssQueryTextResult).textContent;
         await t.expect(actualCommandResult).contains(result, 'Actual command result is not equal to executed');
     }
+
     /**
      * Get selector with tutorial name
      * @param tutorialName name of the uploaded tutorial
@@ -240,6 +241,7 @@ export class WorkbenchPage {
     async getAccordionButtonWithName(tutorialName: string): Promise<Selector> {
         return Selector(`[data-testid=accordion-button-${tutorialName}]`);
     }
+
     /**
      * Get internal tutorial link with .md name
      * @param internalLink name of the .md file
@@ -247,6 +249,7 @@ export class WorkbenchPage {
     async getInternalLinkWithManifest(internalLink: string): Promise<Selector> {
         return Selector(`[data-testid="internal-link-${internalLink}.md"]`);
     }
+
     /**
      * Get internal tutorial link without .md name
      * @param internalLink name of the label
@@ -254,11 +257,35 @@ export class WorkbenchPage {
     async getInternalLinkWithoutManifest(internalLink: string): Promise<Selector> {
         return Selector(`[data-testid="internal-link-${internalLink}"]`);
     }
+
     /**
      * Find tutorial selector by name
      * @param name A tutorial name
      */
     async getTutorialByName(name: string): Promise<Selector> {
         return Selector('div').withText(name);
+    }
+
+    /**
+     * Find image in tutorial by alt text
+     * @param alt Image alt text
+     */
+    async getTutorialImageByAlt(alt: string): Promise<Selector> {
+        return Selector('img').withAttribute('alt', alt);
+    }
+
+    /**
+     * Wait until image rendered
+     * @param selector Image selector
+     */
+    async waitUntilImageRendered(selector: Selector): Promise<void> {
+        const searchTimeout = 5 * 1000; // 5 sec maximum wait
+        const startTime = Date.now();
+        let imageHeight = await selector.getStyleProperty('height');
+
+        do {
+            imageHeight = await selector.getStyleProperty('height');
+        }
+        while ((imageHeight == '0px') && Date.now() - startTime < searchTimeout);
     }
 }

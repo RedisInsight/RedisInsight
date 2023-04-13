@@ -28,7 +28,7 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: ['dist', 'src/packages/redisearch/src/icons/*.js', 'src/packages/clients-list-example/src/icons/*.js'],
+  ignorePatterns: ['dist', 'src/packages/redisearch/src/icons/*.js', 'src/packages/common/src/icons/*.js'],
 
   rules: {
     radix: 'off',

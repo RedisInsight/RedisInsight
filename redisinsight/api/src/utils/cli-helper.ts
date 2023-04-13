@@ -280,6 +280,7 @@ export const getUTF8FromBuffer = (reply: Buffer): string => reply.toString('utf8
 /**
  * Generates a Buffer from escaped string representation
  * An opposite for getASCIISafeStringFromBuffer
+ * ANY CHANGES SHOULD BE TOO IN THE SAME FUNCTION IN THE CLIENTS-LIST PLUGIN
  * @param str
  */
 export const getBufferFromSafeASCIIString = (str: string): Buffer => {

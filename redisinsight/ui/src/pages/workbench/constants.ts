@@ -9,16 +9,18 @@ export enum WBQueryType {
   Plugin = 'Plugin'
 }
 
+export const DEFAULT_TEXT_VIEW_TYPE = {
+  id: 'default__Text',
+  text: 'Text',
+  name: 'default__Text',
+  value: WBQueryType.Text,
+  iconDark: TextViewIconDark,
+  iconLight: TextViewIconLight,
+  internal: true,
+}
+
 export const VIEW_TYPE_OPTIONS = [
-  {
-    id: 'default__Text',
-    text: 'Text',
-    name: 'default__Text',
-    value: WBQueryType.Text,
-    iconDark: TextViewIconDark,
-    iconLight: TextViewIconLight,
-    internal: true,
-  },
+  DEFAULT_TEXT_VIEW_TYPE,
 ]
 
 export const getViewTypeOptions = () =>

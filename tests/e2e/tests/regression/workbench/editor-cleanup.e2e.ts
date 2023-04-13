@@ -28,14 +28,14 @@ fixture `Workbench Editor Cleanup`
     });
 test('Disabled Editor Cleanup toggle behavior', async t => {
     // Go to Settings page
-    await t.click(myRedisDatabasePage.settingsButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     await t.click(settingsPage.accordionWorkbenchSettings);
     // Disable Editor Cleanup
     await t.click(settingsPage.switchEditorCleanupOption);
     // Verify that user can see text "Clear the Editor after running commands" for Editor Cleanup In Settings
     await t.expect(settingsPage.switchEditorCleanupOption.sibling(0).withExactText('Clear the Editor after running commands').visible).ok('Cleanup text is not correct');
     // Go to Workbench page
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     // Send commands
     await workbenchPage.sendCommandInWorkbench(commandToSend);
     await workbenchPage.sendCommandInWorkbench(commandToSend);
@@ -44,7 +44,7 @@ test('Disabled Editor Cleanup toggle behavior', async t => {
 });
 test('Enabled Editor Cleanup toggle behavior', async t => {
     // Go to Workbench page
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     // Send commands
     await workbenchPage.sendCommandInWorkbench(commandToSend);
     await workbenchPage.sendCommandInWorkbench(commandToSend);
@@ -65,7 +65,7 @@ test
         await deleteStandaloneDatabasesApi(databasesForAdding);
     })('Editor Cleanup settings', async t => {
         // Go to Settings page
-        await t.click(myRedisDatabasePage.settingsButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         await t.click(settingsPage.accordionWorkbenchSettings);
         // Disable Editor Cleanup
         await settingsPage.changeEditorCleanupSwitcher(false);
@@ -74,10 +74,10 @@ test
         // Verify that Editor Cleanup setting is saved when refreshing the page
         await t.expect(await settingsPage.getEditorCleanupSwitcherValue()).eql('false', 'Editor Cleanup switcher changed');
         // Go to another database
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
         // Go to Settings page
-        await t.click(myRedisDatabasePage.settingsButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         await t.click(settingsPage.accordionWorkbenchSettings);
         // Verify that Editor Cleanup setting is saved when switching between databases
         await t.expect(await settingsPage.getEditorCleanupSwitcherValue()).eql('false', 'Editor Cleanup switcher changed');

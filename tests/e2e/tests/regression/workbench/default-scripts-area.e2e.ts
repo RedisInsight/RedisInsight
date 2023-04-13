@@ -13,7 +13,7 @@ fixture `Default scripts area at Workbench`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Delete database
@@ -59,13 +59,13 @@ test('Verify that user can see saved article in Enablement area when he leaves W
         // Check the button from Hash page is visible
         await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is not visible');
         // Go to Browser page
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         // Go back to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         // Verify that the same article is opened in Enablement area
         await t.expect(workbenchPage.preselectHashCreate.visible).ok('The end of the page is not visible');
         // Go to list of DBs page
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Go back to active DB again
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         // Check that user is on Workbench page and "Working with Hashes" page is displayed
@@ -84,13 +84,13 @@ test.skip('Verify that user can see saved scroll position in Enablement area whe
         // Check the scroll position
         const scrollPosition = await workbenchPage.scrolledEnablementArea.scrollTop;
         // Go to Browser page
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         // Go back to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         // Check that scroll position is saved
         await t.expect(await workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'The scroll position status is incorrect');
         // Go to list of DBs page
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Go back to active DB again
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         // Check that scroll position is saved

@@ -1,9 +1,10 @@
 import { t, Selector } from 'testcafe';
 import { Common } from '../helpers/common';
+import { InstancePage } from './instance-page';
 
 const common = new Common();
 
-export class BrowserPage {
+export class BrowserPage extends InstancePage {
     //CSS Selectors
     cssSelectorGrid = '[aria-label="grid"]';
     cssSelectorRows = '[aria-label="row"]';
@@ -101,7 +102,6 @@ export class BrowserPage {
     editHashButton = Selector('[data-testid^=edit-hash-button-]');
     editZsetButton = Selector('[data-testid^=zset-edit-button-]');
     editListButton = Selector('[data-testid^=edit-list-button-]');
-    workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
     submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
     patternModeBtn = Selector('[data-testid=search-mode-pattern-btn]');

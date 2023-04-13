@@ -2,7 +2,7 @@ import { Chance } from 'chance';
 import { Selector } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -11,7 +11,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const chance = new Chance();
 const common = new Common();
 
@@ -44,7 +43,7 @@ test('Verify that user can create Stream key via Add New Key form', async t => {
 test('Verify that user can add several fields and values during Stream key creation', async t => {
     const keyName = common.generateWord(20);
     // Create an array with different data types for Stream fields
-    const streamData = {'string': common.generateWord(20), 'array': `[${common.generateWord(20)}, ${chance.integer()}]`, 'integer': `${chance.integer()}`, 'json': '{\'test\': \'test\'}', 'null': 'null', 'boolean': 'true'};
+    const streamData = { 'string': common.generateWord(20), 'array': `[${common.generateWord(20)}, ${chance.integer()}]`, 'integer': `${chance.integer()}`, 'json': '{\'test\': \'test\'}', 'null': 'null', 'boolean': 'true' };
     const scrollSelector = Selector('.eui-yScroll').nth(-1);
 
     // Open Add New Stream Key Form
@@ -53,11 +52,11 @@ test('Verify that user can add several fields and values during Stream key creat
     // Verify that user can see Entity ID filled by * by default on add Stream key form
     await t.expect(browserPage.streamEntryId.withAttribute('value', '*').exists).ok('Preselected Stream Entity ID field not correct');
     // Verify that user can specify valid custom value for Entry ID
-    await t.typeText(browserPage.streamEntryId, '0-1', { replace: true, paste: true});
+    await t.typeText(browserPage.streamEntryId, '0-1', { replace: true, paste: true });
     // Filled fields and value by different data types
     for (let i = 0; i < Object.keys(streamData).length; i++) {
-        await t.typeText(browserPage.streamField.nth(-1), Object.keys(streamData)[i], { replace: true, paste: true});
-        await t.typeText(browserPage.streamValue.nth(-1), Object.values(streamData)[i], { replace: true, paste: true});
+        await t.typeText(browserPage.streamField.nth(-1), Object.keys(streamData)[i], { replace: true, paste: true });
+        await t.typeText(browserPage.streamValue.nth(-1), Object.values(streamData)[i], { replace: true, paste: true });
         await t.scroll(scrollSelector, 'bottom');
         await t.expect(browserPage.streamField.count).eql(i + 1, 'Number of added fields not correct');
         if (i < Object.keys(streamData).length - 1) {
@@ -148,7 +147,7 @@ test('Verify that user can add several fields and values to the existing Stream 
 test('Verify that user can see the Stream range filter', async t => {
     keyName = common.generateWord(20);
     // Add new Stream key with 1 field
-    await cliPage.sendCommandInCli(`XADD ${keyName} * fields values`);
+    await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * fields values`);
     // Open key details and check filter
     await browserPage.openKeyDetails(keyName);
     await t.expect(browserPage.rangeLeftTimestamp.visible).ok('The stream range start timestamp not visible');

@@ -1,12 +1,11 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { rte } from '../../../helpers/constants';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let keyName = common.generateWord(10);
@@ -38,12 +37,12 @@ test('Verify that user can search by member in Zset', async t => {
 test('Verify that user can sort Zset members by score by DESC and ASC', async t => {
     keyName = common.generateWord(10);
     // Open CLI
-    await t.click(cliPage.cliExpandButton);
+    await t.click(browserPage.Cli.cliExpandButton);
     //Create new key with a lot of members
     const arr = await common.createArray(100);
-    await t.typeText(cliPage.cliCommandInput, `ZADD ${keyName} ${arr.join(' ')}`, { paste: true });
+    await t.typeText(browserPage.Cli.cliCommandInput, `ZADD ${keyName} ${arr.join(' ')}`, { paste: true });
     await t.pressKey('enter');
-    await t.click(cliPage.cliCollapseButton);
+    await t.click(browserPage.Cli.cliCollapseButton);
     // Open key details
     await browserPage.openKeyDetails(keyName);
     // Sort Zset members by score by DESC and verify result

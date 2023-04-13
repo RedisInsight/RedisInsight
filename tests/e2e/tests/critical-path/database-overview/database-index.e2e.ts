@@ -4,7 +4,6 @@ import { Common } from '../../../helpers/common';
 import {
     MyRedisDatabasePage,
     BrowserPage,
-    CliPage,
     DatabaseOverviewPage,
     WorkbenchPage,
     MemoryEfficiencyPage
@@ -18,7 +17,6 @@ import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList, verifySe
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const databaseOverviewPage = new DatabaseOverviewPage();
 const common = new Common();
 const workbenchPage = new WorkbenchPage();
@@ -41,15 +39,15 @@ fixture `Allow to change database index`
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Create 3 keys and index
-        await cliPage.sendCommandsInCli(commands);
+        await browserPage.Cli.sendCommandsInCli(commands);
     })
     .afterEach(async() => {
         // Delete keys in logical database
         await databaseOverviewPage.changeDbIndex(1);
-        await cliPage.sendCommandsInCli([`DEL ${keyNameForSearchInLogicalDb}`, `DEL ${logicalDbKey}`]);
+        await browserPage.Cli.sendCommandsInCli([`DEL ${keyNameForSearchInLogicalDb}`, `DEL ${logicalDbKey}`]);
         // Delete and clear database
         await databaseOverviewPage.changeDbIndex(0);
-        await cliPage.sendCommandsInCli([`DEL ${keyNames.join(' ')}`, `DEL ${keyName}`, `FT.DROPINDEX ${indexName}`]);
+        await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames.join(' ')}`, `DEL ${keyName}`, `FT.DROPINDEX ${indexName}`]);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Switching between indexed databases', async t => {
@@ -111,13 +109,13 @@ test('Switching between indexed databases', async t => {
     await verifySearchFilterValue('Hall School');
 
     // Open Workbench page
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(command);
     // Verify that user can see the database index before the command name executed in Workbench
     await workbenchPage.checkWorkbenchCommandResult(`[db1] ${command}`, '8');
 
     // Open Browser page
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Clear filter
     await t.click(browserPage.clearFilterButton);
     // Verify that data changed for indexed db on Workbench page (on Search capability page)
@@ -131,7 +129,7 @@ test('Switching between indexed databases', async t => {
     await verifyKeysNotDisplayedInTheList([logicalDbKey]);
 
     // Go to Analysis Tools page and create new report
-    await t.click(myRedisDatabasePage.analysisPageButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     await t.click(memoryEfficiencyPage.newReportBtn);
 
     // Verify that data changed for indexed db on Database analysis page

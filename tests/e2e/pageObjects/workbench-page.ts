@@ -1,6 +1,7 @@
 import { Selector, t } from 'testcafe';
+import { InstancePage } from './instance-page';
 
-export class WorkbenchPage {
+export class WorkbenchPage extends InstancePage {
     //CSS selectors
     cssSelectorPaginationButtonPrevious = '[data-test-subj=pagination-button-previous]';
     cssSelectorPaginationButtonNext = '[data-test-subj=pagination-button-next]';

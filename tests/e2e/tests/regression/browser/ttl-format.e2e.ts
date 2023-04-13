@@ -2,13 +2,12 @@ import { Selector } from 'testcafe';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { keyTypes } from '../../../helpers/keys';
 import { rte, COMMANDS_TO_CREATE_KEY, keyLength } from '../../../helpers/constants';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 const keyName = common.generateWord(20);
@@ -38,14 +37,14 @@ fixture `TTL values in Keys Table`
     });
 test('Verify that user can see TTL in the list of keys rounded down to the nearest unit', async t => {
     // Create new keys with TTL
-    await t.click(cliPage.cliExpandButton);
+    await t.click(browserPage.Cli.cliExpandButton);
     for (let i = 0; i < keysData.length; i++) {
-        await t.typeText(cliPage.cliCommandInput, COMMANDS_TO_CREATE_KEY[keysData[i].textType](keysData[i].keyName), { replace: true, paste: true })
+        await t.typeText(browserPage.Cli.cliCommandInput, COMMANDS_TO_CREATE_KEY[keysData[i].textType](keysData[i].keyName), { replace: true, paste: true })
             .pressKey('enter')
-            .typeText(cliPage.cliCommandInput, `EXPIRE ${keysData[i].keyName} ${ttlForSet[i]}`, { replace: true, paste: true })
+            .typeText(browserPage.Cli.cliCommandInput, `EXPIRE ${keysData[i].keyName} ${ttlForSet[i]}`, { replace: true, paste: true })
             .pressKey('enter');
     }
-    await t.click(cliPage.cliCollapseButton);
+    await t.click(browserPage.Cli.cliCollapseButton);
     // Refresh Keys in Browser
     await t.click(browserPage.refreshKeysButton);
     // Check that Keys has correct TTL value in keys table

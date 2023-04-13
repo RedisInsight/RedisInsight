@@ -1,6 +1,7 @@
 import { t, Selector } from 'testcafe';
+import { InstancePage } from './instance-page';
 
-export class PubSubPage {
+export class PubSubPage extends InstancePage {
     //CSS Selectors
     cssSelectorMessage = '[data-testid^=row]';
     //-------------------------------------------------------------------------------------------

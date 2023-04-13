@@ -7,7 +7,7 @@ import {
     acceptLicenseTermsAndAddSentinelDatabaseApi,
     deleteDatabase
 } from '../../../helpers/database';
-import { BrowserPage, CliPage, DatabaseOverviewPage } from '../../../pageObjects';
+import { BrowserPage, DatabaseOverviewPage } from '../../../pageObjects';
 import {
     cloudDatabaseConfig,
     commonUrl, ossClusterConfig,
@@ -18,7 +18,6 @@ import { Common } from '../../../helpers/common';
 import { deleteOSSClusterDatabaseApi, deleteAllDatabasesByConnectionTypeApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 const databaseOverviewPage = new DatabaseOverviewPage();
 
@@ -26,9 +25,9 @@ let keyName = common.generateWord(10);
 const verifyCommandsInCli = async(): Promise<void> => {
     keyName = common.generateWord(10);
     // Open CLI
-    await t.click(cliPage.cliExpandButton);
+    await t.click(browserPage.Cli.cliExpandButton);
     // Add key from CLI
-    await t.typeText(cliPage.cliCommandInput, `SADD ${keyName} "chinese" "japanese" "german"`, { replace: true, paste: true });
+    await t.typeText(browserPage.Cli.cliCommandInput, `SADD ${keyName} "chinese" "japanese" "german"`, { replace: true, paste: true });
     await t.pressKey('enter');
     // Check that the key is added
     await browserPage.searchByKeyName(keyName);

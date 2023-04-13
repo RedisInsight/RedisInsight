@@ -50,7 +50,7 @@ test('Verify that user can see Redis Stack icon and logo in Browser page in Over
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await t.expect(databaseOverviewPage.overviewRedisStackLogo.visible).ok('Redis Stack logo not found');
     // Open Workbench page
-    await t.click(myRedisDatabasePage.workbenchButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     await t.expect(databaseOverviewPage.overviewRedisStackLogo.visible).ok('Redis Stack logo not found');
     // Check modules inside of the tooltip
     await t.hover(databaseOverviewPage.overviewRedisStackLogo);

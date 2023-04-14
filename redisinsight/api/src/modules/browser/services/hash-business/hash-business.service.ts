@@ -125,7 +125,7 @@ export class HashBusinessService {
 
       this.recommendationService.check(
         clientMetadata,
-        RECOMMENDATION_NAMES.SHARD_HASHES,
+        RECOMMENDATION_NAMES.BIG_HASHES,
         result.total,
       );
       this.logger.log('Succeed to get fields of the Hash data type.');

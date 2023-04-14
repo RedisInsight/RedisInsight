@@ -92,13 +92,10 @@ export class RecommendationService {
         RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
         async () => await this.recommendationProvider.determineConnectionClientsRecommendation(client),
       ],
+      // disable determine RTS recommendation for db analysis
       [
         RECOMMENDATION_NAMES.RTS,
-        async () => await this.recommendationProvider.determineRTSRecommendation(client, keys),
-      ],
-      [
-        RECOMMENDATION_NAMES.REDIS_SEARCH,
-        async () => await this.recommendationProvider.determineRediSearchRecommendation(client, keys),
+        () => null,
       ],
       [
         RECOMMENDATION_NAMES.REDIS_VERSION,
@@ -114,14 +111,6 @@ export class RecommendationService {
       ],
       // it is live time recommendation (will add later)
       [
-        RECOMMENDATION_NAMES.SHARD_HASHES,
-        () => null,
-      ],
-      [
-        RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES_LIVE,
-        () => null,
-      ],
-      [
         RECOMMENDATION_NAMES.STRING_TO_JSON,
         () => null,
       ],
@@ -131,10 +120,18 @@ export class RecommendationService {
       ],
       [
         RECOMMENDATION_NAMES.SEARCH_STRING,
-        () => null,
+        async () => await this.recommendationProvider.determineSearchStringRecommendation(client, keys),
       ],
       [
         RECOMMENDATION_NAMES.SEARCH_JSON,
+        async () => await this.recommendationProvider.determineSearchJSONRecommendation(client, keys),
+      ],
+      [
+        RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
+        () => null,
+      ],
+      [
+        RECOMMENDATION_NAMES.GRAPH_VISUALIZATION,
         () => null,
       ],
     ]);

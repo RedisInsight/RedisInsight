@@ -26,7 +26,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
-import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
+import { IRecommendation, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as AnalysisIcon } from 'uiSrc/assets/img/icons/analysis.svg'
@@ -64,26 +64,29 @@ const LiveTimeRecommendations = () => {
   }, [connectedInstanceId])
 
   const toggleContent = () => {
-    sendEventTelemetry({
-      event: isContentVisible
-        ? TelemetryEvent.INSIGHTS_RECOMMENDATIONS_CLOSED
-        : TelemetryEvent.INSIGHTS_RECOMMENDATIONS_OPENED,
-      eventData: getTelemetryData(),
-    })
-
     if (!isContentVisible) {
       dispatch(fetchRecommendationsAction(
         connectedInstanceId,
-        () => {
-          if (totalUnread) {
-            dispatch(readRecommendationsAction(connectedInstanceId))
-          }
-        }
+        onSuccessAction,
       ))
-
       isCloseEventSent.current = false
+    } else {
+      sendEventTelemetry({
+        event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_CLOSED,
+        eventData: getTelemetryData(recommendations),
+      })
     }
     dispatch(setIsContentVisible(!isContentVisible))
+  }
+
+  const onSuccessAction = (recommendationsData: IRecommendation[]) => {
+    if (totalUnread) {
+      dispatch(readRecommendationsAction(connectedInstanceId))
+    }
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_OPENED,
+      eventData: getTelemetryData(recommendationsData),
+    })
   }
 
   const handleClickDbAnalysisLink = () => {
@@ -99,15 +102,15 @@ const LiveTimeRecommendations = () => {
     dispatch(setIsContentVisible(false))
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_CLOSED,
-      eventData: getTelemetryData(),
+      eventData: getTelemetryData(recommendations),
     })
     isCloseEventSent.current = true
   }
 
-  const getTelemetryData = () => ({
+  const getTelemetryData = (recommendationsData: IRecommendation[]) => ({
     databaseId: connectedInstanceId,
-    total: recommendations?.length,
-    list: recommendations?.map(({ name }) => recommendationsContent[name]?.telemetryEvent ?? name),
+    total: recommendationsData?.length,
+    list: recommendationsData?.map(({ name }) => recommendationsContent[name]?.telemetryEvent ?? name),
   })
 
   const renderBody = () => {

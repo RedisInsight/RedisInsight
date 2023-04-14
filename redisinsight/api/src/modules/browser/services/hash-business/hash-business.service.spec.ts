@@ -31,8 +31,8 @@ import {
   mockRedisHScanResponse,
 } from 'src/modules/browser/__mocks__';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
-import { HashBusinessService } from './hash-business.service';
 import { RECOMMENDATION_NAMES } from 'src/constants';
+import { HashBusinessService } from './hash-business.service';
 
 describe('HashBusinessService', () => {
   let service: HashBusinessService;
@@ -305,7 +305,7 @@ describe('HashBusinessService', () => {
 
       expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
-        RECOMMENDATION_NAMES.SHARD_HASHES,
+        RECOMMENDATION_NAMES.BIG_HASHES,
         result.total,
       );
 

@@ -59,7 +59,7 @@ export class DatabaseInfoService {
     this.logger.log(`Connection to database index: ${db}`);
 
     let client;
-    let prevDb = clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0
+    const prevDb = clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0;
 
     try {
       client = await this.databaseConnectionService.createClient({
@@ -70,7 +70,7 @@ export class DatabaseInfoService {
 
       this.recommendationService.check(
         { ...clientMetadata, db },
-        RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES_LIVE,
+        RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES,
         { db, prevDb },
       );
       return undefined;

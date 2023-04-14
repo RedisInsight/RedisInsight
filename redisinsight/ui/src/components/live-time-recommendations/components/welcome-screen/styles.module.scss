@@ -3,19 +3,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .bigMargin {
+    margin-bottom: 40px;
+  }
 }
 
 .bigText {
-  font: normal normal normal 36px/43px Graphik, sans-serif !important;
+  font: normal normal normal 22px/30px Graphik, sans-serif !important;
   text-align: center;
-  color: var(--euiColorPrimaryText);
+  color: var(--recommendationColor) !important;
+}
+
+.hugeText {
+  font: normal normal 500 28px/38px Graphik, sans-serif !important;
+  text-align: center;
+  color: var(--recommendationColor) !important;
   margin-bottom: 9px;
 }
 
 .mediumText {
   font: normal normal normal 16px/40px Graphik, sans-serif !important;
-  color: var(--euiColorPrimaryText);
-  margin-bottom: 40px;
+  color: var(--recommendationColor) !important;
+  margin-bottom: 10px;
 }
 
 .icon {
@@ -23,11 +33,8 @@
 }
 
 .text {
-  font: normal normal normal 12px/14px Graphik, sans-serif !important;
+  font: normal normal normal 12px/20px Graphik, sans-serif !important;
   margin-bottom: 12px;
-}
-
-.page {
-  font: normal normal normal 16px/19px Graphik, sans-serif !important;
-  margin-bottom: 12px;
+  max-width: 351px;
+  text-align: center;
 }

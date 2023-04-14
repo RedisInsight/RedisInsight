@@ -130,7 +130,7 @@ describe('LiveTimeRecommendations', () => {
 
     render(<LiveTimeRecommendations />)
 
-    fireEvent.click(screen.getByTestId('database-analysis-link'))
+    fireEvent.click(screen.getByTestId('footer-db-analysis-link'))
     expect(pushMock).toHaveBeenCalledWith(Pages.databaseAnalysis('instanceId'))
   })
 

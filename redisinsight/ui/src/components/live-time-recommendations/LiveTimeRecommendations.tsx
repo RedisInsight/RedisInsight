@@ -6,11 +6,12 @@ import {
   EuiFlyoutBody,
   EuiFlyoutHeader,
   EuiFlyoutFooter,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButton,
+  EuiLink,
   EuiTitle,
   EuiLoadingContent,
+  EuiText,
+  EuiIcon,
+  EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
 
@@ -29,8 +30,9 @@ import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { IRecommendation, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
-import { ReactComponent as AnalysisIcon } from 'uiSrc/assets/img/icons/analysis.svg'
-import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/icons/live-time-recommendations.svg'
+import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
+import { ReactComponent as TriggerActiveIcon } from 'uiSrc/assets/img/bulb-active.svg'
+import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
@@ -144,8 +146,15 @@ const LiveTimeRecommendations = () => {
         data-testid="recommendations-trigger"
       >
         {isHighlighted && !isContentVisible
-          ? <TriggerIcon className={cx(styles.triggerIconActive, styles.triggerIcon)} />
+          ? <TriggerActiveIcon className={styles.triggerIcon} />
           : <TriggerIcon className={styles.triggerIcon} />}
+        <EuiText className={cx(
+          styles.triggerText,
+          { [styles.triggerHighlighted]: isHighlighted && !isContentVisible }
+        )}
+        >
+          Insights
+        </EuiText>
       </div>
       {isContentVisible && (
         <EuiFlyout
@@ -158,28 +167,53 @@ const LiveTimeRecommendations = () => {
         >
           <EuiFlyoutHeader className={styles.header}>
             <EuiTitle className={styles.title}>
-              <span>Insights Panel</span>
+              <span>Insights</span>
             </EuiTitle>
+            {!!recommendations.length && (
+              <div className={styles.actions}>
+                <EuiText className={styles.boldText}>Our Recommendations</EuiText>
+                <EuiToolTip
+                  position="bottom"
+                  anchorClassName={styles.tooltipAnchor}
+                  className={styles.tooltip}
+                  content={(
+                    <>
+                      Recommendations will help you improve your database.
+                      <br />
+                      Work in the database to see new recommendations appeared on how to improve performance,
+                      optimize memory usage, and enhance the performance of your database.
+                      <br />
+                      Eager to see more recommendations right now?
+                      Go to Database Analysis and click on the new report in order to see the magic happens.
+                    </>
+                  )}
+                >
+                  <EuiIcon
+                    className={styles.infoIcon}
+                    type="iInCircle"
+                    size="s"
+                    data-testid="recommendations-info-icon"
+                  />
+                </EuiToolTip>
+              </div>
+            )}
           </EuiFlyoutHeader>
           <EuiFlyoutBody className={styles.body}>
             {loading ? (<EuiLoadingContent className={styles.loading} lines={4} />) : renderBody()}
           </EuiFlyoutBody>
           <EuiFlyoutFooter className={styles.footer}>
-            <EuiFlexGroup alignItems="center" gutterSize="none" justifyContent="center">
-              <EuiFlexItem grow={false}>
-                For latest report go to
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiButton
-                  iconType={AnalysisIcon}
-                  onClick={handleClickDbAnalysisLink}
-                  className={styles.footerBtn}
-                  data-testid="database-analysis-link"
-                >
-                  database analysis page
-                </EuiButton>
-              </EuiFlexItem>
-            </EuiFlexGroup>
+            <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
+            <EuiText className={styles.text}>
+              {'Run '}
+              <EuiLink
+                className={styles.text}
+                onClick={handleClickDbAnalysisLink}
+                data-testid="footer-db-analysis-link"
+              >
+                Database Analysis
+              </EuiLink>
+              {' to get more recommendations'}
+            </EuiText>
           </EuiFlyoutFooter>
         </EuiFlyout>
       )}

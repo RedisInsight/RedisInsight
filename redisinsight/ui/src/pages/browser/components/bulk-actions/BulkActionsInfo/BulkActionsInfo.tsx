@@ -2,28 +2,29 @@ import React from 'react'
 import { EuiText } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
-import { useSelector } from 'react-redux'
 
 import { getApproximatePercentage, Maybe, Nullable } from 'uiSrc/utils'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BulkActionsStatus, KeyTypes } from 'uiSrc/constants'
 import GroupBadge from 'uiSrc/components/group-badge/GroupBadge'
-import { overviewBulkActionsSelector } from 'uiSrc/slices/browser/bulkActions'
 import styles from './styles.module.scss'
 
 export interface Props {
-  title?: string
+  title?: string | React.ReactNode
   loading: boolean
-  filter: Nullable<KeyTypes>
+  filter?: Nullable<KeyTypes>
   status: Maybe<BulkActionsStatus>
-  search: string
+  search?: string
+  progress?: {
+    total: Maybe<number>
+    scanned: Maybe<number>
+  }
   children?: React.ReactElement
 }
 
 const BulkActionsInfo = (props: Props) => {
-  const { children, loading, filter, search, status, title = 'Delete Keys with' } = props
-
-  const { progress: { total = 0, scanned = 0 } = {} } = useSelector(overviewBulkActionsSelector) ?? {}
+  const { children, loading, filter, search, status, progress, title = 'Delete Keys with' } = props
+  const { total = 0, scanned = 0 } = progress || {}
 
   return (
     <div className={styles.container} data-testid="bulk-actions-info">
@@ -36,10 +37,12 @@ const BulkActionsInfo = (props: Props) => {
               <GroupBadge type={filter} className={styles.badge} />
             </div>
           )}
-          <div className={styles.search} data-testid="bulk-actions-info-search">
-            Pattern:
-            <span className={styles.match}>{` ${search}`}</span>
-          </div>
+          {search && (
+            <div className={styles.search} data-testid="bulk-actions-info-search">
+              Pattern:
+              <span className={styles.match}>{` ${search}`}</span>
+            </div>
+          )}
         </EuiText>
         {!isUndefined(status) && status !== BulkActionsStatus.Completed && status !== BulkActionsStatus.Aborted && (
           <EuiText color="subdued" className={styles.progress} data-testid="bulk-status-progress">

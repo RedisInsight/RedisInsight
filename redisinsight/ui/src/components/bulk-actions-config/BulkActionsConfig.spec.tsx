@@ -6,10 +6,11 @@ import socketIO from 'socket.io-client'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { BulkActionsServerEvent, BulkActionsType, SocketEvent } from 'uiSrc/constants'
 import {
+  bulkActionsDeleteSelector,
   bulkActionsSelector,
-  disconnectBulkAction,
+  disconnectBulkDeleteAction,
   setBulkActionConnected,
-  setLoading
+  setBulkDeleteLoading
 } from 'uiSrc/slices/browser/bulkActions'
 import BulkActionsConfig from './BulkActionsConfig'
 
@@ -29,6 +30,8 @@ jest.mock('uiSrc/slices/browser/bulkActions', () => ({
   ...jest.requireActual('uiSrc/slices/browser/bulkActions'),
   bulkActionsSelector: jest.fn().mockReturnValue({
     isConnected: false,
+  }),
+  bulkActionsDeleteSelector: jest.fn().mockReturnValue({
     isActionTriggered: false
   }),
 }))
@@ -57,10 +60,10 @@ describe('BulkActionsConfig', () => {
   })
 
   it('should connect socket', () => {
-    const bulkActionsSelectorMock = jest.fn().mockReturnValue({
+    const bulkActionsDeleteSelectorMock = jest.fn().mockReturnValue({
       isActionTriggered: true,
     })
-    bulkActionsSelector.mockImplementation(bulkActionsSelectorMock)
+    bulkActionsDeleteSelector.mockImplementation(bulkActionsDeleteSelectorMock)
 
     render(<BulkActionsConfig />)
 
@@ -68,16 +71,16 @@ describe('BulkActionsConfig', () => {
 
     const afterRenderActions = [
       setBulkActionConnected(true),
-      setLoading(true)
+      setBulkDeleteLoading(true)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
   })
 
   it('should emit Create a delete type', () => {
-    const bulkActionsSelectorMock = jest.fn().mockReturnValue({
+    const bulkActionsDeleteSelectorMock = jest.fn().mockReturnValue({
       isActionTriggered: true,
     })
-    bulkActionsSelector.mockImplementation(bulkActionsSelectorMock)
+    bulkActionsDeleteSelector.mockImplementation(bulkActionsDeleteSelectorMock)
 
     render(<BulkActionsConfig />)
 
@@ -91,10 +94,13 @@ describe('BulkActionsConfig', () => {
 
   it('should catch disconnect', () => {
     const bulkActionsSelectorMock = jest.fn().mockReturnValue({
-      isActionTriggered: true,
       isConnected: true,
     })
+    const bulkActionsDeleteSelectorMock = jest.fn().mockReturnValue({
+      isActionTriggered: true,
+    })
     bulkActionsSelector.mockImplementation(bulkActionsSelectorMock)
+    bulkActionsDeleteSelector.mockImplementation(bulkActionsDeleteSelectorMock)
 
     const { unmount } = render(<BulkActionsConfig retryDelay={0} />)
 
@@ -103,8 +109,8 @@ describe('BulkActionsConfig', () => {
 
     const afterRenderActions = [
       setBulkActionConnected(true),
-      setLoading(true),
-      disconnectBulkAction(),
+      setBulkDeleteLoading(true),
+      disconnectBulkDeleteAction(),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 

@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux'
 import { BulkActionsType } from 'uiSrc/constants'
 import { selectedBulkActionsSelector } from 'uiSrc/slices/browser/bulkActions'
 
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { bulkActionsTypeTabs } from '../constants/bulk-type-options'
 import styles from './styles.module.scss'
 
@@ -14,9 +16,18 @@ export interface Props {
 
 const BulkActionsTabs = (props: Props) => {
   const { onChangeType } = props
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { type } = useSelector(selectedBulkActionsSelector)
 
   const onSelectedTabChanged = (id: BulkActionsType) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.BULK_ACTIONS_SWITCHED,
+      eventData: {
+        databaseId: instanceId,
+        prevValue: type,
+        currentValue: id
+      }
+    })
     onChangeType(id)
   }
 

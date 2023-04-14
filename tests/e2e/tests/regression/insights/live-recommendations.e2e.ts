@@ -64,6 +64,10 @@ test
             .expect(insightsPage.noRecommendationsScreen.exists).ok('No recommendations panel not displayed')
             .expect(insightsPage.noRecommendationsScreen.textContent).contains('Welcome to recommendations', 'Welcome to recommendations text not displayed');
 
+        // Verify that user can redirect to Database Analysis page by clicking on button
+        await t.click(insightsPage.goToDbAnalysisButton);
+        await t.expect(memoryEfficiencyPage.noReportsText.visible).ok('Database analysis page not opened');
+
         await insightsPage.toggleInsightsPanel(false);
         // Go to 2nd database
         await t.click(myRedisDatabasePage.myRedisDBButton);

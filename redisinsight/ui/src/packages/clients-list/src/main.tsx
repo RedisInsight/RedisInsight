@@ -1,11 +1,11 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react'
 import { render } from 'react-dom'
-import App, { CommonPlugin } from './App'
+import App, { CommonPlugin, RawMode } from './App'
 
 interface Props {
   command?: string
-  mode: 'RAW' | 'ASCII'
+  mode: RawMode
   data?: { response: any, status: string }[]
 }
 
@@ -24,12 +24,13 @@ const renderJSON = (props:Props) => {
 
 if (process.env.NODE_ENV === 'development') {
   // renderClientsList({ command: '', data: result || [] })
-  const mode = 'ASCII'
+  const mode = RawMode.RAW
 
   const data = [
     {
       status: 'success',
-      response: ['{\\"test\\":\\"test\\"}', '{\\"foo\\":\\"bar\\"}']
+      // response: ['{\\"test\\":\\"test\\"}', '{\\"foo\\":\\"bar\\"}']
+      response: '[{"about":"test\\r\\n"}]',
     }]
 
   renderJSON({ command: '', data, mode })

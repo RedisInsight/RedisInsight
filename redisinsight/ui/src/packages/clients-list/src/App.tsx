@@ -15,7 +15,7 @@ export enum CommonPlugin {
 }
 
 export enum RawMode {
-  Raw = 'Raw',
+  RAW = 'RAW',
   ASCII = 'ASCII',
 }
 
@@ -31,7 +31,9 @@ interface Props {
 appendIconComponentCache(cachedIcons)
 
 const getJsonResultString = (result:any, mode: RawMode) =>
-  (mode !== RawMode.Raw ? parseJSONASCIIResponse(result) : result)
+  (mode !== RawMode.RAW && result !== null
+    ? parseJSONASCIIResponse(result)
+    : result)
 
 const getJsonResultStringFromArr = (response: any, mode: RawMode) =>
   `[${response.map((result: any) => getJsonResultString(result, mode)).join(',')}]`

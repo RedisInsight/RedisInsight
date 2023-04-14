@@ -8,16 +8,23 @@ interface Props {
   command: string
 }
 
+enum HighlightPrimitiveCommands {
+  JSON_GET = 'JSON.GET',
+  JSON_MGET = 'JSON.MGET',
+}
+
 const JSONView = (props: Props) => {
-  const { value, command } = props
+  const { value, command = '' } = props
 
   const [formattedValue, setFormattedValue] = useState('')
 
   useEffect(() => {
     try {
       JSON.parse(value)
+      const isHighlightPrimitive = Object.values(HighlightPrimitiveCommands)
+        .some((cmd) => command?.toUpperCase().startsWith(cmd))
 
-      if (!isJson(value)) {
+      if (!isJson(value) && !isHighlightPrimitive) {
         throw new Error('Not Object or Array type')
       }
     } catch (_err) {

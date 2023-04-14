@@ -208,7 +208,7 @@ const LiveTimeRecommendations = () => {
               <EuiLink
                 className={styles.text}
                 onClick={handleClickDbAnalysisLink}
-                data-test-subj="footer-db-analysis-link"
+                data-testid="footer-db-analysis-link"
               >
                 Database Analysis
               </EuiLink>

@@ -14,10 +14,10 @@ import reducer, {
   fetchRecommendationsAction,
   readRecommendationsAction,
   recommendationsSelector,
-  setRecommendationVoteSuccess,
-  setRecommendationVoteError,
-  putLiveRecommendationVote,
-  setRecommendationVote,
+  updateRecommendationSuccess,
+  updateRecommendationError,
+  updateLiveRecommendation,
+  updateRecommendation,
   setTotalUnread,
 } from 'uiSrc/slices/recommendations/recommendations'
 import { cleanup, initialStateDefault, mockStore, mockedStore } from 'uiSrc/utils/test-utils'
@@ -28,7 +28,7 @@ const mockId = 'id'
 const mockName = 'name'
 const mockVote = Vote.Like
 const mockRecommendations = {
-  recommendations: [{ id: mockId, name: mockName, read: false, vote: null }],
+  recommendations: [{ id: mockId, name: mockName, read: false, vote: null, hide: false }],
   totalUnread: 1,
 }
 const mockRecommendationVoted = cloneDeep(mockRecommendations)
@@ -180,7 +180,7 @@ describe('recommendations slice', () => {
       })
     })
 
-    describe('setRecommendationVoteSuccess', () => {
+    describe('updateRecommendationSuccess', () => {
       it('should properly set data', () => {
         const payload = mockRecommendationVoted.recommendations[0]
         // Arrange
@@ -195,7 +195,7 @@ describe('recommendations slice', () => {
           ...initialState,
           data: mockRecommendations
         }
-        const nextState = reducer(initialStateWithRecs, setRecommendationVoteSuccess(payload))
+        const nextState = reducer(initialStateWithRecs, updateRecommendationSuccess(payload))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -205,7 +205,7 @@ describe('recommendations slice', () => {
       })
     })
 
-    describe('setRecommendationVoteError', () => {
+    describe('updateRecommendationError', () => {
       it('should properly set an error', () => {
         const error = 'Some error'
         const state = {
@@ -215,7 +215,7 @@ describe('recommendations slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, setRecommendationVoteError(error))
+        const nextState = reducer(initialState, updateRecommendationError(error))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -360,25 +360,27 @@ describe('recommendations slice', () => {
     })
 
     describe('putLiveRecommendationVote', () => {
-      it('succeed to put recommendation vote', async () => {
+      it('succeed to update recommendation', async () => {
         // const data = mockRecommendations
         const data = mockRecommendationVoted.recommendations[0]
         const responsePayload = { data, status: 200 }
 
         apiService.patch = jest.fn().mockResolvedValue(responsePayload)
+        const onSuccessActionMock = jest.fn()
 
         // Act
         await store.dispatch<any>(
-          putLiveRecommendationVote(mockId, mockVote, mockName)
+          updateLiveRecommendation(mockId, { vote: mockVote }, onSuccessActionMock)
         )
 
         // Assert
         const expectedActions = [
-          setRecommendationVote(),
-          setRecommendationVoteSuccess(data),
+          updateRecommendation(),
+          updateRecommendationSuccess(data),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
+        expect(onSuccessActionMock).toBeCalledWith('', { ...data })
       })
 
       it('failed to put recommendation vote', async () => {
@@ -394,14 +396,14 @@ describe('recommendations slice', () => {
 
         // Act
         await store.dispatch<any>(
-          putLiveRecommendationVote(mockId, mockVote, mockName)
+          updateLiveRecommendation(mockId, mockVote, mockName)
         )
 
         // Assert
         const expectedActions = [
-          setRecommendationVote(),
+          updateRecommendation(),
           addErrorNotification(responsePayload as AxiosError),
-          setRecommendationVoteError(errorMessage)
+          updateRecommendationError(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

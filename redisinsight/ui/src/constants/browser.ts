@@ -1,6 +1,7 @@
-import { KeyValueFormat } from "./keys"
+import { KeyValueFormat } from './keys'
 
 export const DEFAULT_DELIMITER = ':'
+export const DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS = false
 
 export const TEXT_UNPRINTABLE_CHARACTERS = {
   title: 'Non-printable characters have been detected',

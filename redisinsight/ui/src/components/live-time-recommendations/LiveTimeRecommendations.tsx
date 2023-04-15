@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom'
 import {
   EuiFlyout,
   EuiFlyoutBody,
-  EuiFlyoutHeader,
   EuiFlyoutFooter,
   EuiLink,
   EuiTitle,
@@ -12,15 +11,20 @@ import {
   EuiText,
   EuiIcon,
   EuiToolTip,
+  EuiFlyoutHeader,
+  EuiCheckbox,
+  EuiTextColor,
+  EuiButtonIcon,
 } from '@elastic/eui'
 import cx from 'classnames'
+import { remove } from 'lodash'
 
 import { Pages } from 'uiSrc/constants'
 import {
   recommendationsSelector,
   fetchRecommendationsAction,
   readRecommendationsAction,
-  setIsContentVisible
+  setIsContentVisible,
 } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -28,6 +32,7 @@ import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { IRecommendation, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
+import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
 
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
@@ -46,10 +51,11 @@ const LiveTimeRecommendations = () => {
     loading,
     data: { recommendations, totalUnread },
     isContentVisible,
-    isHighlighted
+    isHighlighted,
   } = useSelector(recommendationsSelector)
   const { items: guides } = useSelector(workbenchGuidesSelector)
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
+  const { showHiddenRecommendations: isShowHidden } = useSelector(appContextDbConfig)
 
   // To prevent duplication emit for FlyOut close event
   // https://github.com/elastic/eui/issues/3437
@@ -74,7 +80,7 @@ const LiveTimeRecommendations = () => {
       isCloseEventSent.current = false
     } else {
       sendEventTelemetry({
-        event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_CLOSED,
+        event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
         eventData: getTelemetryData(recommendations),
       })
     }
@@ -86,7 +92,7 @@ const LiveTimeRecommendations = () => {
       dispatch(readRecommendationsAction(connectedInstanceId))
     }
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_OPENED,
+      event: TelemetryEvent.INSIGHTS_PANEL_OPENED,
       eventData: getTelemetryData(recommendationsData),
     })
   }
@@ -103,10 +109,22 @@ const LiveTimeRecommendations = () => {
 
     dispatch(setIsContentVisible(false))
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_CLOSED,
+      event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
       eventData: getTelemetryData(recommendations),
     })
     isCloseEventSent.current = true
+  }
+
+  const onChangeShowHidden = (value: boolean) => {
+    dispatch(setRecommendationsShowHidden(value))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_SHOW_HIDDEN,
+      eventData: {
+        action: !value ? 'hide' : 'unhide',
+        ...getTelemetryData(recommendations)
+      }
+    })
   }
 
   const getTelemetryData = (recommendationsData: IRecommendation[]) => ({
@@ -116,11 +134,16 @@ const LiveTimeRecommendations = () => {
   })
 
   const renderBody = () => {
-    if (!recommendations?.length) {
+    const recommendationsList = [...recommendations]
+    if (!isShowHidden) {
+      remove(recommendationsList, { hide: true })
+    }
+
+    if (!recommendationsList?.length) {
       return <WelcomeScreen />
     }
 
-    return recommendations?.map(({ id, name, read, vote }) => (
+    return recommendationsList?.map(({ id, name, read, vote, hide }) => (
       <Recommendation
         id={id}
         key={name}
@@ -129,11 +152,73 @@ const LiveTimeRecommendations = () => {
         vote={vote}
         instanceId={connectedInstanceId}
         guides={guides}
+        hide={hide}
         tutorials={tutorials}
         tutorial={recommendationsContent[name]?.tutorial ?? ''}
       />
     ))
   }
+
+  const renderHeader = () => (
+    <>
+      <EuiTitle className={styles.title}>
+        <span>Insights</span>
+      </EuiTitle>
+      {!!recommendations.length && (
+        <div className={styles.actions}>
+          <div>
+            <EuiTextColor className={styles.boldText}>Our Recommendations</EuiTextColor>
+            <EuiToolTip
+              position="bottom"
+              anchorClassName={styles.tooltipAnchor}
+              className={styles.tooltip}
+              content={(
+                <>
+                  Recommendations will help you improve your database.
+                  <br />
+                  Work in the database to see new recommendations appeared on how to improve performance,
+                  optimize memory usage, and enhance the performance of your database.
+                  <br />
+                  Eager to see more recommendations right now?
+                  Go to Database Analysis and click on the new report in order to see the magic happens.
+                </>
+            )}
+            >
+              <EuiIcon
+                className={styles.infoIcon}
+                type="iInCircle"
+                size="s"
+                data-testid="recommendations-info-icon"
+              />
+            </EuiToolTip>
+          </div>
+
+          <EuiCheckbox
+            id="showHidden"
+            name="showHidden"
+            label={(
+              <>
+                <EuiTextColor>
+                  Show
+                  <EuiButtonIcon
+                    iconType={isShowHidden ? 'eyeClosed' : 'eye'}
+                    className={styles.hideBtn}
+                    aria-label="show all/unhide recommendations"
+                    data-testid="show-all-recommendations-btn"
+                  />
+                </EuiTextColor>
+              </>
+            )}
+            checked={isShowHidden}
+            className={styles.hideCheckbox}
+            onChange={(e) => onChangeShowHidden(e.target.checked)}
+            data-testid="checkbox-show-hidden"
+            aria-label="checkbox show hidden"
+          />
+        </div>
+      )}
+    </>
+  )
 
   return (
     <div className={styles.wrapper}>
@@ -166,37 +251,7 @@ const LiveTimeRecommendations = () => {
           data-testid="insights-panel"
         >
           <EuiFlyoutHeader className={styles.header}>
-            <EuiTitle className={styles.title}>
-              <span>Insights</span>
-            </EuiTitle>
-            {!!recommendations.length && (
-              <div className={styles.actions}>
-                <EuiText className={styles.boldText}>Our Recommendations</EuiText>
-                <EuiToolTip
-                  position="bottom"
-                  anchorClassName={styles.tooltipAnchor}
-                  className={styles.tooltip}
-                  content={(
-                    <>
-                      Recommendations will help you improve your database.
-                      <br />
-                      Work in the database to see new recommendations appeared on how to improve performance,
-                      optimize memory usage, and enhance the performance of your database.
-                      <br />
-                      Eager to see more recommendations right now?
-                      Go to Database Analysis and click on the new report in order to see the magic happens.
-                    </>
-                  )}
-                >
-                  <EuiIcon
-                    className={styles.infoIcon}
-                    type="iInCircle"
-                    size="s"
-                    data-testid="recommendations-info-icon"
-                  />
-                </EuiToolTip>
-              </div>
-            )}
+            {renderHeader()}
           </EuiFlyoutHeader>
           <EuiFlyoutBody className={styles.body}>
             {loading ? (<EuiLoadingContent className={styles.loading} lines={4} />) : renderBody()}

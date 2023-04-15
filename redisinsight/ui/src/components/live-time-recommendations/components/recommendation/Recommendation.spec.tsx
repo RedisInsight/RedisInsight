@@ -1,10 +1,12 @@
 import React from 'react'
 import { mock, instance } from 'ts-mockito'
 import reactRouterDom from 'react-router-dom'
-import { fireEvent, screen, render } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { fireEvent, screen, render, mockedStore, cleanup, act } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS, Pages } from 'uiSrc/constants'
 
+import { updateRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import Recommendation, { IProps } from './Recommendation'
 
 const mockedProps = mock<IProps>()
@@ -13,6 +15,13 @@ jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
 }))
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('Recommendation', () => {
   it('should render', () => {
@@ -57,7 +66,7 @@ describe('Recommendation', () => {
 
     expect(pushMock).toHaveBeenCalledWith(Pages.workbench('id'))
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
       eventData: {
         databaseId: 'id',
         name: 'searchJSON',
@@ -88,7 +97,7 @@ describe('Recommendation', () => {
 
     expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench('id')}?path=quick-guides/0/2`)
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
       eventData: {
         databaseId: 'id',
         name: 'searchJSON',
@@ -119,12 +128,40 @@ describe('Recommendation', () => {
 
     expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench('id')}?path=tutorials/4`)
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
       eventData: {
         databaseId: 'id',
         name: 'searchJSON',
       }
     })
     sendEventTelemetry.mockRestore()
+  })
+
+  it('should hide/unhide button', () => {
+    const name = 'searchJSON'
+    render(<Recommendation {...instance(mockedProps)} name={name} />)
+
+    expect(screen.getByTestId('toggle-hide-searchJSON-btn')).toBeInTheDocument()
+  })
+
+  it('click on hide/unhide button should call updateLiveRecommendation', async () => {
+    const idMock = 'id'
+    const nameMock = 'searchJSON'
+    const { queryByTestId } = render(
+      <Recommendation
+        {...instance(mockedProps)}
+        id={idMock}
+        name={nameMock}
+      />
+    )
+
+    await act(() => {
+      fireEvent.click(queryByTestId('toggle-hide-searchJSON-btn') as HTMLButtonElement)
+    })
+
+    const expectedActions = [updateRecommendation()]
+
+    expect(store.getActions()).toEqual(expectedActions)
+    expect(screen.getByTestId('toggle-hide-searchJSON-btn')).toBeInTheDocument()
   })
 })

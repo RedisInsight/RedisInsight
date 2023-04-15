@@ -132,7 +132,7 @@
       "ts"
     ],
     "rootDir": "src",
-    "testRegex": "modules/database-recommendation/providers/database-recommendation.provider.spec.ts$",
+    "testRegex": ".spec.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },

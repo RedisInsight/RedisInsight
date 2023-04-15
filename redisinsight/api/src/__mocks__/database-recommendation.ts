@@ -9,6 +9,7 @@ export const mockDatabaseRecommendation = Object.assign(new DatabaseRecommendati
   databaseId: mockDatabaseId,
   read: false,
   disabled: false,
+  hide: false,
 });
 
 export const mockDatabaseRecommendationService = () => ({

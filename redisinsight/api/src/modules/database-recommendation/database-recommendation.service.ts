@@ -7,6 +7,7 @@ import { ClientMetadata } from 'src/common/models';
 import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
+import { ModifyDatabaseRecommendationDto } from './dto';
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
@@ -78,13 +79,13 @@ export class DatabaseRecommendationService {
   }
 
   /**
-   * Set user vote for extended recommendation
+   * Update extended recommendation
    * @param clientMetadata
    * @param id
-   * @param vote
+   * @param dto
    */
-  public async vote(clientMetadata: ClientMetadata, id: string, vote: Vote): Promise<DatabaseRecommendation> {
-    this.logger.log('Reading database extended recommendations');
-    return this.databaseRecommendationsProvider.recommendationVote(clientMetadata, id, vote);
+  public async update(clientMetadata: ClientMetadata, id: string, dto: ModifyDatabaseRecommendationDto): Promise<DatabaseRecommendation> {
+    this.logger.log(`Update database extended recommendations id:${id}`);
+    return this.databaseRecommendationsProvider.update(clientMetadata, id, dto);
   }
 }

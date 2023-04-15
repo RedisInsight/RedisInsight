@@ -55,4 +55,12 @@ export class DatabaseRecommendation {
   @IsEnum(Vote)
   @IsOptional()
   vote?: Vote = null;
+
+  @ApiPropertyOptional({
+    description: 'Should this recommendation hidden',
+    type: Boolean,
+    example: false,
+  })
+  @Expose()
+  hide?: boolean;
 }

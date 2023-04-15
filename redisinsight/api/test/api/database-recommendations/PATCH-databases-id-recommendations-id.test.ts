@@ -47,4 +47,31 @@ describe('PATCH /recommendations/:id', () => {
       },
     ].map(mainCheckFn);
   });
+
+  describe('Recommendation hide', () => {
+    [
+      {
+        name: 'Should put the is hide to the recommendation',
+        data: {
+          hide: constants.TEST_RECOMMENDATION_HIDE,
+        },
+        statusCode: 200,
+        responseSchema,
+        checkFn: async ({ body }) => {
+          expect(body.id).to.eq(constants.TEST_RECOMMENDATION_ID_1)
+          expect(body.hide).to.eq(constants.TEST_RECOMMENDATION_HIDE)
+          expect(body.read).to.eq(false)
+          expect(body.name).to.eq(constants.TEST_RECOMMENDATION_NAME_1)
+        },
+        before: async () => {
+          const recommendation = await repo.createQueryBuilder().where({ id: constants.TEST_RECOMMENDATION_ID_1 }).getOne();
+          expect(recommendation.hide).to.eq(false);
+        },
+        after: async () => {
+          const recommendation = await repo.createQueryBuilder().where({ id: constants.TEST_RECOMMENDATION_ID_1 }).getOne();
+          expect(recommendation.hide).to.eq(constants.TEST_RECOMMENDATION_HIDE);
+        },
+      },
+    ].map(mainCheckFn);
+  });
 });

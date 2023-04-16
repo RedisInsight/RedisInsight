@@ -6,8 +6,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { chunk, flatMap, isNull } from 'lodash';
-import * as isGlob from 'is-glob';
-import { catchAclError, catchTransactionError, unescapeGlob } from 'src/utils';
+import {
+  catchAclError, catchTransactionError, isRedisGlob, unescapeRedisGlob,
+} from 'src/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
 import config from 'src/utils/config';
@@ -105,8 +106,8 @@ export class HashBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      if (dto.match && !isGlob(dto.match, { strict: false })) {
-        const field = unescapeGlob(dto.match);
+      if (dto.match && !isRedisGlob(dto.match)) {
+        const field = unescapeRedisGlob(dto.match);
         result.nextCursor = 0;
         const value = await this.browserTool.execCommand(
           clientMetadata,

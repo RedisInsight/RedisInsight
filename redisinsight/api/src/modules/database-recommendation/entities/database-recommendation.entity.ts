@@ -46,6 +46,9 @@ export class DatabaseRecommendationEntity {
   @Column({ nullable: true })
   db: number;
 
+  @Column({ nullable: false, default: false })
+  hide?: boolean = false;
+
   @CreateDateColumn()
   @Index()
   @Expose()

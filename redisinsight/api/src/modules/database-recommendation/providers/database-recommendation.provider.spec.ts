@@ -23,6 +23,7 @@ const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
   createdAt: new Date(),
   read: false,
   disabled: false,
+  hide: false,
   vote: null,
 });
 
@@ -33,12 +34,18 @@ const mockDatabaseRecommendation = {
   read: mockDatabaseRecommendationEntity.read,
   name: mockDatabaseRecommendationEntity.name,
   disabled: mockDatabaseRecommendationEntity.disabled,
+  hide: mockDatabaseRecommendationEntity.hide,
   vote: mockDatabaseRecommendationEntity.vote,
 };
 
 const mockDatabaseRecommendationVoted = {
   ...mockDatabaseRecommendationEntity,
   vote: Vote.Like,
+};
+
+const mockDatabaseRecommendationHidden = {
+  ...mockDatabaseRecommendationEntity,
+  hide: true,
 };
 
 describe('DatabaseRecommendationProvider', () => {
@@ -114,15 +121,27 @@ describe('DatabaseRecommendationProvider', () => {
     });
   });
 
-  describe('recommendationVote', () => {
+  describe('update', () => {
     it('should call "update" with the vote value', async () => {
       const { vote } = mockDatabaseRecommendationVoted;
-      repository.findOne.mockReturnValueOnce(mockDatabaseRecommendationEntity);
+      repository.findOneBy.mockReturnValueOnce(mockDatabaseRecommendationEntity);
+      repository.merge.mockReturnValue(mockDatabaseRecommendationVoted);
 
-      await service.recommendationVote(mockClientMetadata, mockDatabaseRecommendation.id, vote as Vote);
+      await service.update(mockClientMetadata, mockDatabaseRecommendation.id, { vote });
       expect(repository.update).toBeCalledWith(
         mockDatabaseRecommendationEntity.id,
         { ...mockDatabaseRecommendationEntity, vote },
+      );
+    });
+    it('should call "update" with the hide value', async () => {
+      const { hide } = mockDatabaseRecommendationHidden;
+      repository.findOneBy.mockReturnValueOnce(mockDatabaseRecommendationEntity);
+      repository.merge.mockReturnValue(mockDatabaseRecommendationHidden);
+
+      await service.update(mockClientMetadata, mockDatabaseRecommendation.id, { hide });
+      expect(repository.update).toBeCalledWith(
+        mockDatabaseRecommendationEntity.id,
+        { ...mockDatabaseRecommendationEntity, hide },
       );
     });
   });

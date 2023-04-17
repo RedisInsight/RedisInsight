@@ -83,6 +83,13 @@
         }
       }
     ],
+    "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Redis supports multiple logical databases within an instance, though these logical databases are neither independent nor isolated in any other way and can freeze each other. Also, some modules do not support numbered databases as well."
+      }
+    ],
     "badges": ["code_changes"]
   },
   "combineSmallStringsToHashes": {
@@ -789,18 +796,6 @@
         "id": "5",
         "type": "paragraph",
         "value": "Learn more about how JSON support and Search capability can help you via Tutorials in Workbench."
-      }
-    ]
-  },
-  "avoidLogicalDatabasesLive": {
-    "id": "avoidLogicalDatabases",
-    "liveTelemetryEvent": "avoidLogicalDatabases",
-    "title": "Avoid using logical databases",
-    "liveTimeText": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "Redis supports multiple logical databases within an instance, though these logical databases are neither independent nor isolated in any other way and can freeze each other. Also, some modules do not support numbered databases as well."
       }
     ]
   },

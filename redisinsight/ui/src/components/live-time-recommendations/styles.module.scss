@@ -113,6 +113,7 @@
   align-items: center;
   background: var(--recommendationBgColor);
   padding: 8px 24px;
+  justify-content: space-between;
 
   .boldText {
     font: normal normal 600 14px/17px Graphik, sans-serif !important;
@@ -130,4 +131,14 @@
 
 .tooltip {
   max-width: 314px !important;
+}
+
+.hideCheckbox {
+  > :global(.euiCheckbox__square + .euiCheckbox__input:not(:checked)) {
+    background: var(--recommendationBgColor) !important;
+  }
+}
+
+.hideBtn {
+  margin-bottom: 3px;
 }

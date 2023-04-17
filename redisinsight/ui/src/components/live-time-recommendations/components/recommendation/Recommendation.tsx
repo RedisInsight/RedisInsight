@@ -11,7 +11,8 @@ import {
   EuiPanel,
   EuiAccordion,
   EuiToolTip,
-  EuiIcon
+  EuiIcon,
+  EuiButtonIcon
 } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
@@ -24,7 +25,7 @@ import { RecommendationVoting } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
+import { setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { IRecommendationContent, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
@@ -45,6 +46,7 @@ export interface IProps {
   vote: Nullable<Vote>
   guides: IEnablementAreaItem[]
   tutorials: IEnablementAreaItem[]
+  hide: boolean
 }
 
 const recommendationsContent = _content as IRecommendationsStatic
@@ -58,6 +60,7 @@ const Recommendation = ({
   tutorial,
   guides,
   tutorials,
+  hide,
 }: IProps) => {
   const history = useHistory()
   const dispatch = useDispatch()
@@ -72,7 +75,7 @@ const Recommendation = ({
     dispatch(setIsContentVisible(false))
 
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
       eventData: {
         databaseId: instanceId,
         name,
@@ -94,6 +97,24 @@ const Recommendation = ({
     }
 
     history.push(Pages.workbench(instanceId))
+  }
+
+  const toggleHide = (event: React.MouseEvent) => {
+    event.stopPropagation()
+    dispatch(
+      updateLiveRecommendation(
+        id,
+        { hide: !hide },
+        (_, { hide, name }) => sendEventTelemetry({
+          event: TelemetryEvent.INSIGHTS_RECOMMENDATION_HIDE,
+          eventData: {
+            databaseId: instanceId,
+            action: hide ? 'hide' : 'show',
+            name: recommendationsContent[name]?.liveTelemetryEvent ?? name,
+          }
+        })
+      )
+    )
   }
 
   const renderContentElement = ({ id, type, value }: IRecommendationContent) => {
@@ -178,8 +199,28 @@ const Recommendation = ({
             </EuiLink>
           )}
         </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        <EuiFlexItem grow>
           {title}
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiToolTip
+            title={`${hide ? 'Show' : 'Hide'} recommendation`}
+            content={`${hide
+              ? 'This recommendation will be shown in the list.'
+              : 'This recommendation will be removed from the list and not displayed again.'
+            }`}
+            position="top"
+            display="inlineBlock"
+            anchorClassName="flex-row"
+          >
+            <EuiButtonIcon
+              iconType={hide ? 'eyeClosed' : 'eye'}
+              className={styles.hideBtn}
+              onClick={toggleHide}
+              aria-label="hide/unhide recommendation"
+              data-testid={`toggle-hide-${name}-btn`}
+            />
+          </EuiToolTip>
         </EuiFlexItem>
       </EuiFlexGroup>
     </EuiFlexGroup>
@@ -203,6 +244,7 @@ const Recommendation = ({
         buttonProps={{ 'data-test-subj': `${name}-button` }}
         className={styles.accordion}
         data-testid={`${name}-accordion`}
+        aria-label={`${name}-accordion`}
       >
         <EuiPanel className={styles.accordionContent} color="subdued">
           {recommendationContent()}

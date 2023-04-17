@@ -24,7 +24,8 @@ enum BrowserStorageItem {
   featuresHighlighting = 'featuresHighlighting',
   dbIndex = 'dbIndex_',
   onboardingStep = 'onboardingStep',
-  recommendationsViewed = 'recommendationsViewed'
+  recommendationsViewed = 'recommendationsViewed',
+  showHiddenRecommendations = 'showHiddenRecommendations',
 }
 
 export default BrowserStorageItem

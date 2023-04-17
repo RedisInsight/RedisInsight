@@ -2,7 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { getTreeLeafField, Nullable } from 'uiSrc/utils'
-import { BrowserStorageItem, DEFAULT_DELIMITER, DEFAULT_SLOWLOG_DURATION_UNIT, KeyTypes } from 'uiSrc/constants'
+import {
+  BrowserStorageItem,
+  DEFAULT_DELIMITER,
+  DEFAULT_SLOWLOG_DURATION_UNIT,
+  KeyTypes,
+  DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS,
+} from 'uiSrc/constants'
 import { localStorageService, setDBConfigStorageField } from 'uiSrc/services'
 import { RootState } from '../store'
 import { RedisResponseBuffer, StateAppContext } from '../interfaces'
@@ -13,7 +19,8 @@ export const initialState: StateAppContext = {
   lastPage: '',
   dbConfig: {
     treeViewDelimiter: DEFAULT_DELIMITER,
-    slowLogDurationUnit: DEFAULT_SLOWLOG_DURATION_UNIT
+    slowLogDurationUnit: DEFAULT_SLOWLOG_DURATION_UNIT,
+    showHiddenRecommendations: DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS,
   },
   dbIndex: {
     disabled: false
@@ -84,6 +91,8 @@ const appContextSlice = createSlice({
     setDbConfig: (state, { payload }) => {
       state.dbConfig.treeViewDelimiter = payload?.treeViewDelimiter ?? DEFAULT_DELIMITER
       state.dbConfig.slowLogDurationUnit = payload?.slowLogDurationUnit ?? DEFAULT_SLOWLOG_DURATION_UNIT
+      state.dbConfig.showHiddenRecommendations = payload?.showHiddenRecommendations
+        ?? DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS
     },
     setSlowLogUnits: (state, { payload }) => {
       state.dbConfig.slowLogDurationUnit = payload
@@ -92,6 +101,10 @@ const appContextSlice = createSlice({
     setBrowserTreeDelimiter: (state, { payload }: { payload: string }) => {
       state.dbConfig.treeViewDelimiter = payload
       setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.treeViewDelimiter, payload)
+    },
+    setRecommendationsShowHidden: (state, { payload }: { payload: boolean }) => {
+      state.dbConfig.showHiddenRecommendations = payload
+      setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.showHiddenRecommendations, payload)
     },
     setBrowserSelectedKey: (state, { payload }: { payload: Nullable<RedisResponseBuffer> }) => {
       state.browser.keyList.selectedKey = payload
@@ -238,7 +251,8 @@ export const {
   setLastAnalyticsPage,
   updateKeyDetailsSizes,
   clearBrowserKeyListData,
-  setDbIndexState
+  setDbIndexState,
+  setRecommendationsShowHidden,
 } = appContextSlice.actions
 
 // Selectors

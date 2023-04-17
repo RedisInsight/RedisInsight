@@ -1,5 +1,6 @@
 import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger } from 'lodash'
 import {
+  CommandArgsType,
   ICommandArg,
   ICommandArgGenerated
 } from 'uiSrc/constants'
@@ -127,58 +128,61 @@ export const getComplexityShortNotation = (complexity: string[] | string): strin
 }
 
 const generateArgName = (
+  provider: string,
   arg: ICommandArg,
   pureName: boolean = false,
   onlyMandatory: boolean = false
 ): string | string[] => {
   try {
-    return (new Argument(arg)).syntax({
-      onlyMandatory,
-      pureName,
-    })
+    // todo: temporary workaround until all commands providers will be unified
+    if (['main'].includes(provider)) {
+      return (new Argument(arg)).syntax({
+        onlyMandatory,
+        pureName,
+      })
+    }
+
+    // We need this for backward compatibility now
+    const { name: propName = '', enum: enumArg, command, optional, multiple, type, block } = arg
+
+    if (onlyMandatory && optional) return ''
+
+    const name = isArray(propName) ? propName?.join(' ') : propName
+    const enumName = enumArg && (!pureName || !name) ? enumArg?.join('|') : name
+    const commandName = command ? command + (enumName ? ` ${enumName}` : '') : enumName
+    const optionalName = optional ? `[${commandName}]` : commandName
+
+    const multipleNameTemp = [...commandName?.split?.(' '), `[${commandName} ...]`]
+    const multipleName = optional ? `[${multipleNameTemp.join(' ')}]` : multipleNameTemp
+
+    if (type === CommandArgsType.Block && isArray(block)) {
+      const blocks = flatten(block?.map?.((block) => generateArgName(provider, block, pureName, onlyMandatory)))
+      return optional ? `[${blocks?.join?.(' ')}]` : blocks
+    }
+
+    return (multiple && !pureName && !onlyMandatory ? multipleName : optionalName) ?? ''
   } catch (e) {
     return ''
   }
-
-  // DO NOT DELETE.
-  // We need this for now to compare old behaviour when needed
-  //
-  // const { name: propName = '', enum: enumArg, command, optional, multiple, type, block } = arg
-  //
-  // if (onlyMandatory && optional) return ''
-  //
-  // const name = isArray(propName) ? propName?.join(' ') : propName
-  // const enumName = enumArg && (!pureName || !name) ? enumArg?.join('|') : name
-  // const commandName = command ? command + (enumName ? ` ${enumName}` : '') : enumName
-  // const optionalName = optional ? `[${commandName}]` : commandName
-  //
-  // const multipleNameTemp = [...commandName?.split?.(' '), `[${commandName} ...]`]
-  // const multipleName = optional ? `[${multipleNameTemp.join(' ')}]` : multipleNameTemp
-  //
-  // if (type === CommandArgsType.Block && isArray(block)) {
-  //   const blocks = flatten(block?.map?.((block) => generateArgName(block, pureName, onlyMandatory)))
-  //   return optional ? `[${blocks?.join?.(' ')}]` : blocks
-  // }
-  //
-  // return (multiple && !pureName && !onlyMandatory ? multipleName : optionalName) ?? ''
 }
 
-export const generateArgs = (args: ICommandArg[]): ICommandArgGenerated[] =>
+export const generateArgs = (provider = 'unknown', args: ICommandArg[]): ICommandArgGenerated[] =>
   flatten(
     args.map((arg) => ({
       ...arg,
-      generatedName: generateArgName(arg, true),
+      generatedName: generateArgName(provider, arg, true),
     }))
   )
 
 export const generateArgsNames = (
+  provider: string = 'unknown',
   args: ICommandArg[],
   pureName: boolean = false,
   onlyMandatory: boolean = false
 ): string[] =>
   reject(
     flatten(
-      args.map((arg) => generateArgName(arg, pureName, onlyMandatory))
+      args.map((arg) => generateArgName(provider, arg, pureName, onlyMandatory))
     ),
     isEmpty
   )

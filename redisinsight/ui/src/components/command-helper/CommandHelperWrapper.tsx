@@ -49,6 +49,7 @@ const CommandHelperWrapper = () => {
     group = CommandGroup.Generic,
     complexity = '',
     since = '',
+    provider,
   }: ICommand = ALL_REDIS_COMMANDS[lastMatchedCommand.toUpperCase()] ?? {}
 
   if (isSearching) {
@@ -61,9 +62,9 @@ const CommandHelperWrapper = () => {
       })
   }
 
-  const generatedArgs = generateArgs(args)
+  const generatedArgs = generateArgs(provider, args)
   const complexityShort = getComplexityShortNotation(complexity)
-  const argString = [lastMatchedCommand.toUpperCase(), ...generateArgsNames(args)].join(' ')
+  const argString = [lastMatchedCommand.toUpperCase(), ...generateArgsNames(provider, args)].join(' ')
 
   const generateArgData = (arg: ICommandArgGenerated, i: number): ReactElement => {
     const type = arg.multiple ? 'Multiple' : arg.optional ? 'Optional' : 'Required'

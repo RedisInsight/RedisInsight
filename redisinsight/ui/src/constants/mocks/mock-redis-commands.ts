@@ -1,5 +1,6 @@
 export const MOCK_COMMANDS_SPEC = {
   SET: {
+    provider: 'main',
     summary: 'Set the string value of a key',
     since: '1.0.0',
     group: 'string',
@@ -140,6 +141,7 @@ export const MOCK_COMMANDS_SPEC = {
     ]
   },
   GET: {
+    provider: 'main',
     summary: 'Get the value of a key',
     since: '1.0.0',
     group: 'string',
@@ -184,6 +186,7 @@ export const MOCK_COMMANDS_SPEC = {
     ]
   },
   HSET: {
+    provider: 'main',
     summary: 'Set the string value of a hash field',
     since: '2.0.0',
     group: 'hash',
@@ -252,6 +255,7 @@ export const MOCK_COMMANDS_SPEC = {
     ]
   },
   'CLIENT KILL': {
+    provider: 'main',
     summary: 'Kill the connection of a client',
     since: '2.4.0',
     group: 'connection',
@@ -405,6 +409,7 @@ export const MOCK_COMMANDS_SPEC = {
     ]
   },
   XGROUP: {
+    provider: 'main',
     summary: 'A container for consumer groups commands',
     since: '5.0.0',
     group: 'stream',
@@ -415,6 +420,7 @@ export const MOCK_COMMANDS_SPEC = {
     arity: -2
   },
   'ACL SETUSER': {
+    provider: 'main',
     summary: 'Modify or create the rules for a specific ACL user',
     since: '6.0.0',
     group: 'server',
@@ -457,6 +463,7 @@ export const MOCK_COMMANDS_SPEC = {
     ]
   },
   GEOADD: {
+    provider: 'main',
     summary: 'Add one or more geospatial items in the geospatial index represented using a sorted set',
     since: '3.2.0',
     group: 'geo',
@@ -557,6 +564,7 @@ export const MOCK_COMMANDS_SPEC = {
     ]
   },
   ZADD: {
+    provider: 'main',
     summary: 'Add one or more members to a sorted set, or update its score if it already exists',
     since: '1.2.0',
     group: 'sorted-set',
@@ -689,6 +697,7 @@ export const MOCK_COMMANDS_SPEC = {
     ]
   },
   RESET: {
+    provider: 'main',
     summary: 'Reset the connection',
     since: '6.2.0',
     group: 'connection',
@@ -708,6 +717,7 @@ export const MOCK_COMMANDS_SPEC = {
     ]
   },
   BITFIELD: {
+    provider: 'main',
     summary: 'Perform arbitrary bitfield integer operations on strings',
     since: '3.2.0',
     group: 'bitmap',
@@ -860,6 +870,260 @@ export const MOCK_COMMANDS_SPEC = {
       'write',
       'denyoom'
     ]
+  },
+  'AI.SCRIPTSTORE': {
+    provider: 'redisai',
+    summary: 'stores a TorchScript as the value of a key.',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'key',
+        type: 'key'
+      },
+      {
+        name: 'device',
+        type: 'enum',
+        enum: [
+          'CPU',
+          'GPU'
+        ]
+      },
+      {
+        name: 'tag',
+        command: 'TAG',
+        type: 'string',
+        optional: true
+      },
+      {
+        type: 'block',
+        block: [
+          {
+            name: 'entry_point_count',
+            type: 'integer',
+            command: 'ENTRY_POINTS'
+          },
+          {
+            name: 'entry_point',
+            type: 'string',
+            multiple: true
+          }
+        ]
+      }
+    ],
+    since: '1.2.5',
+    group: 'script',
+  },
+  'AI.SCRIPTEXECUTE': {
+    provider: 'redisai',
+    summary: "command runs a script stored as a key's value on its specified device.",
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'key',
+        type: 'key'
+      },
+      {
+        name: 'function',
+        type: 'string'
+      },
+      {
+        type: 'block',
+        optional: true,
+        block: [
+          {
+            name: 'key_count',
+            type: 'integer',
+            command: 'KEYS'
+          },
+          {
+            name: 'key',
+            type: 'string',
+            multiple: true
+          }
+        ]
+      },
+      {
+        type: 'block',
+        optional: true,
+        block: [
+          {
+            name: 'input_count',
+            type: 'integer',
+            command: 'INPUTS'
+          },
+          {
+            name: 'input',
+            type: 'string',
+            multiple: true
+          }
+        ]
+      },
+      {
+        type: 'block',
+        optional: true,
+        block: [
+          {
+            name: 'arg_count',
+            type: 'integer',
+            command: 'ARGS'
+          },
+          {
+            name: 'arg',
+            type: 'string',
+            multiple: true
+          }
+        ]
+      },
+      {
+        type: 'block',
+        optional: true,
+        block: [
+          {
+            name: 'output_count',
+            type: 'integer',
+            command: 'OUTPUTS'
+          },
+          {
+            name: 'output',
+            type: 'string',
+            multiple: true
+          }
+        ]
+      },
+      {
+        name: 'timeout',
+        command: 'TIMEOUT',
+        type: 'integer',
+        optional: true
+      }
+    ],
+    since: '1.2.5',
+    group: 'inference'
+  },
+  'RG.GETEXECUTION': {
+    provider: 'redisgears',
+    summary: "The RG.GETEXECUTION command returns the execution details of a function that's in the executions list.",
+    complexity: [
+      'O(1)'
+    ],
+    arguments: [
+      {
+        name: 'id',
+        type: 'string'
+      },
+      {
+        name: 'mode',
+        type: 'enum',
+        enum: [
+          'SHARD',
+          'CLUSTER'
+        ],
+        optional: true
+      }
+    ],
+    since: '1.0.0',
+    group: 'gears'
+  },
+  'RG.CONFIGSET': {
+    provider: 'redisgears',
+    summary: 'The RG.CONFIGGET command sets the value of one ore more built-in configuration or a user-defined options.',
+    complexity: [
+      'O(1)'
+    ],
+    arguments: [
+      {
+        name: 'key value pair',
+        type: 'block',
+        multiple: true,
+        block: [
+          {
+            name: 'requirement'
+          },
+          {
+            type: 'string'
+          }
+        ]
+      }
+    ],
+    since: '1.0.0',
+    group: 'gears'
+  },
+  'RG.PYEXECUTE': {
+    provider: 'redisgears',
+    summary: 'The RG.PYEXECUTE command executes a Python function.',
+    complexity: [
+      'Depends on what the python code does'
+    ],
+    arguments: [
+      {
+        name: 'function',
+        type: 'string'
+      },
+      {
+        name: 'UNBLOCKING',
+        type: 'enum',
+        enum: [
+          'UNBLOCKING'
+        ],
+        optional: true
+      },
+      {
+        name: 'REQUIREMENTS',
+        optional: true,
+        multiple: true,
+        type: 'block',
+        block: [
+          {
+            name: 'requirement'
+          },
+          {
+            type: 'string'
+          }
+        ]
+      }
+    ],
+    since: '1.0.0',
+    group: 'gears'
+  },
+  'TS.QUERYINDEX': {
+    provider: 'redistimeseries',
+    summary: 'Get all time series keys matching a filter list',
+    complexity: 'O(n) where n is the number of time-series that match the filters',
+    arguments: [
+      {
+        name: 'filterExpr',
+        type: 'oneof',
+        arguments: [
+          {
+            name: 'l=v',
+            type: 'string'
+          },
+          {
+            name: 'l!=v',
+            type: 'string'
+          },
+          {
+            name: 'l=',
+            type: 'string'
+          },
+          {
+            name: 'l!=',
+            type: 'string'
+          },
+          {
+            name: 'l=(v1,v2,...)',
+            type: 'string'
+          },
+          {
+            name: 'l!=(v1,v2,...)',
+            type: 'string'
+          }
+        ],
+        multiple: true
+      }
+    ],
+    since: '1.0.0',
+    group: 'timeseries'
   },
 }
 

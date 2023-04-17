@@ -79,8 +79,42 @@ describe('CliAutocomplete', () => {
     expect(store.getActions().slice(-2)).toEqual(expectedActions)
   })
 
-  it('Autocomplete should be only with optional args for "scan" command with filled in required args ', () => {
+  it('Autocomplete should be only with optional args for "scan" command with filled in required args (new realization)', () => {
     const autocompleteOptionalText = '[MATCH pattern] [COUNT count] [TYPE type]'
+    const { queryByTestId } = render(
+      <CliAutocomplete
+        {...instance(mockedProps)}
+        provider="main"
+        commandName={scanCommand}
+        arguments={scanArgs}
+        wordsTyped={2}
+      />
+    )
+
+    const autocompleteComponent = queryByTestId(CliAutocompleteTestId)
+
+    expect(autocompleteOptionalText).toEqual(autocompleteComponent?.textContent)
+  })
+
+  it('Autocomplete should be only with optional args for "scan" command with filled in required args (old realization)', () => {
+    const autocompleteOptionalText = '[pattern] [count] [type]'
+    const { queryByTestId } = render(
+      <CliAutocomplete
+        {...instance(mockedProps)}
+        provider="someprovider"
+        commandName={scanCommand}
+        arguments={scanArgs}
+        wordsTyped={2}
+      />
+    )
+
+    const autocompleteComponent = queryByTestId(CliAutocompleteTestId)
+
+    expect(autocompleteOptionalText).toEqual(autocompleteComponent?.textContent)
+  })
+
+  it('Autocomplete should be only with optional args for "scan" command with filled in required args (old realization)', () => {
+    const autocompleteOptionalText = '[pattern] [count] [type]'
     const { queryByTestId } = render(
       <CliAutocomplete
         {...instance(mockedProps)}
@@ -100,6 +134,7 @@ describe('CliAutocomplete', () => {
     const { queryByTestId } = render(
       <CliAutocomplete
         {...instance(mockedProps)}
+        provider="main"
         commandName={scanCommand}
         arguments={scanArgs}
         wordsTyped={10}

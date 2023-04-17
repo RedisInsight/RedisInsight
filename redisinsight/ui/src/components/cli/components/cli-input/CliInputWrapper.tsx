@@ -27,6 +27,7 @@ const CliInputWrapper = (props: Props) => {
   const secondCommandMatch = `${firstCommandMatch} ${secondCommand ? secondCommand.toUpperCase() : null}`
 
   const matchedCmd = ALL_REDIS_COMMANDS[secondCommandMatch] || ALL_REDIS_COMMANDS[firstCommandMatch]
+  const provider = matchedCmd?.provider || 'unknown'
   const commandName = !isUndefined(ALL_REDIS_COMMANDS[secondCommandMatch])
     ? `${firstCommand} ${secondCommand}`
     : firstCommand
@@ -42,6 +43,7 @@ const CliInputWrapper = (props: Props) => {
       />
       {matchedCmd && (
         <CliAutocomplete
+          provider={provider}
           commandName={commandName}
           wordsTyped={repeatCommand === 1 ? wordsTyped : wordsTyped - 1}
           {...matchedCmd}

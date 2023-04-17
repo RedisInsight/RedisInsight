@@ -9,6 +9,7 @@ export interface ICommand {
   arguments?: ICommandArg[];
   since: string;
   group: CommandGroup | string;
+  provider?: string;
 }
 
 export interface ICommandArg {

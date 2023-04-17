@@ -18,10 +18,6 @@
   background-color: var(--euiPageBackgroundColor);
 
   z-index: 10;
-
-  :global(.cli-output-response-success) {
-    color: var(--cliOutputResponseColor) !important;
-  }
 }
 
 .loading {

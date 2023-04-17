@@ -183,4 +183,14 @@ export class Common {
         const getPageUrl = ClientFunction(() => window.location.href);
         await t.expect(getPageUrl()).contains(expectedText, `Opened URL not contains text ${expectedText}`);
     }
+
+    /**
+     * Replace spaces and line breaks
+     * @param text text to be replaced
+     */
+    async removeEmptySpacesAndBreak(text: string): Promise<string> {
+        return text
+            .replace(/ /g, '')
+            .replace(/\n/g, '');
+    }
 }

@@ -7,12 +7,12 @@
   "bugs": {
     "url": "https://github.com/"
   },
-  "description": "Show client list as table",
+  "description": "Show client list as table and highlighted json",
   "source": "./src/main.tsx",
   "styles": "./dist/styles.css",
   "main": "./dist/index.js",
   "name": "client-list",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "start": "cross-env NODE_ENV=development parcel serve src/index.html",
     "build": "rimraf dist && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\" \"yarn build:css\" \"yarn build:assets\"",
@@ -41,6 +41,30 @@
       "iconLight": "./dist/table_view_icon_light.svg",
       "description": "Example of client list plugin",
       "default": true
+    },
+    {
+      "id": "json-view",
+      "name": "JSON",
+      "activationMethod": "renderJSON",
+      "matchCommands": [
+        "JSON.GET",
+        "JSON.MGET"
+      ],
+      "iconDark": "./dist/json_view_icon_dark.svg",
+      "iconLight": "./dist/json_view_icon_light.svg",
+      "description": "Show value as JSON",
+      "default": true
+    },
+    {
+      "id": "json-string-view",
+      "name": "JSON",
+      "activationMethod": "renderJSON",
+      "matchCommands": [
+        "GET"
+      ],
+      "iconDark": "./dist/json_view_icon_dark.svg",
+      "iconLight": "./dist/json_view_icon_light.svg",
+      "description": "Show value as JSON"
     }
   ],
   "devDependencies": {
@@ -59,9 +83,12 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "34.6.0",
+    "buffer": "^6.0.3",
     "classnames": "^2.3.1",
     "moment": "^2.29.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-json-pretty": "^2.2.0",
+    "redisinsight-plugin-sdk": "^1.1.0"
   }
 }

@@ -10,6 +10,8 @@ export class WorkbenchPage extends InstancePage {
     cssQueryCardOutputResponseSuccess = '[data-testid=query-card-output-response-success]';
     cssQueryCardOutputResponseFailed = '[data-testid=query-card-output-response-failed]';
     cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
+    cssClientListViewTypeOption = '[data-testid=view-type-selected-Plugin-client-list__clients-list]';
+    cssJsonViewTypeOption = '[data-testid=view-type-selected-Plugin-client-list__json-view]';
     cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
     cssQueryTextResult = '[data-testid=query-cli-result]';
     cssWorkbenchCommandInHistory = '[data-testid=wb-command]';
@@ -103,6 +105,7 @@ export class WorkbenchPage extends InstancePage {
     queryCardContainer = Selector('[data-testid^=query-card-container]');
     queryCardCommand = Selector('[data-testid=query-card-command]');
     queryTableResult = Selector('[data-testid^=query-table-result-]');
+    queryJsonResult = Selector('[data-testid=json-view]');
     mainEditorArea = Selector('[data-testid=main-input-container-area]');
     queryTextResult = Selector(this.cssQueryTextResult);
     queryColumns = Selector('[data-testid*=query-column-]');
@@ -150,6 +153,7 @@ export class WorkbenchPage extends InstancePage {
     //OPTIONS
     selectViewType = Selector('[data-testid=select-view-type]');
     textViewTypeOption = Selector('[data-test-subj^=view-type-option-Text]');
+    jsonStringViewTypeOption = Selector('[data-test-subj=view-type-option-Plugin-client-list__json-string-view]');
     tableViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin]');
     graphViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin-graph]');
     typeSelectedClientsList = Selector('[data-testid=view-type-selected-Plugin-client-list__clients-list]');
@@ -168,6 +172,13 @@ export class WorkbenchPage extends InstancePage {
         await t
             .click(this.selectViewType)
             .click(this.textViewTypeOption);
+    }
+
+    // Select Json view option in Workbench results
+    async selectViewTypeJson(): Promise<void> {
+        await t
+            .click(this.selectViewType)
+            .click(this.jsonStringViewTypeOption);
     }
 
     // Select Table view option in Workbench results

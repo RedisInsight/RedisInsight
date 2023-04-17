@@ -147,7 +147,7 @@ describe('DatabaseAnalysisTabs', () => {
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
           recommendationsCount: 2,
-          list: ['luaScript', 'bigHashes'],
+          list: ['luaScript', 'shardHashes'],
         }
       })
       sendEventTelemetry.mockRestore()

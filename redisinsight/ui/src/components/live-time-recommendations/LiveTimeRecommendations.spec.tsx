@@ -11,8 +11,12 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
 import { RECOMMENDATIONS_DATA_MOCK } from 'uiSrc/mocks/handlers/recommendations/recommendationsHandler'
 import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
+import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 
 import LiveTimeRecommendations from './LiveTimeRecommendations'
+
+const recommendationsContent = _content as IRecommendationsStatic
 
 let store: typeof mockedStore
 
@@ -71,7 +75,7 @@ describe('LiveTimeRecommendations', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
-        recommendations: [],
+        recommendations: [{ name: 'RTS' }, { name: 'setPassword' }],
       },
       isContentVisible: true
     }))
@@ -84,8 +88,8 @@ describe('LiveTimeRecommendations', () => {
       event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
       eventData: {
         databaseId: 'instanceId',
-        list: [],
-        total: 0,
+        list: ['optimizeTimeSeries', 'setPassword'],
+        total: 2,
       }
     })
     sendEventTelemetry.mockRestore()
@@ -130,7 +134,7 @@ describe('LiveTimeRecommendations', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
-        recommendations: [],
+        recommendations: [{ name: 'RTS' }],
       },
       isContentVisible: true
     }))
@@ -141,6 +145,14 @@ describe('LiveTimeRecommendations', () => {
 
     fireEvent.click(screen.getByTestId('footer-db-analysis-link'))
     expect(pushMock).toHaveBeenCalledWith(Pages.databaseAnalysis('instanceId'))
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
+      eventData: {
+        databaseId: 'instanceId',
+        total: 1,
+      }
+    })
+    sendEventTelemetry.mockRestore()
   })
 
   it('should call "setIsContentVisible" after click close btn', () => {
@@ -175,7 +187,8 @@ describe('LiveTimeRecommendations', () => {
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_SHOW_HIDDEN,
       eventData: {
         databaseId: 'instanceId',
-        list: RECOMMENDATIONS_DATA_MOCK.recommendations?.map(({ name }) => name),
+        list: RECOMMENDATIONS_DATA_MOCK.recommendations?.map(({ name }) =>
+          recommendationsContent[name].telemetryEvent || name),
         total: 2,
         action: 'show'
       }

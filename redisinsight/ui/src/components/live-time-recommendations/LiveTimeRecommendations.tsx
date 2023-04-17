@@ -100,6 +100,13 @@ const LiveTimeRecommendations = () => {
   const handleClickDbAnalysisLink = () => {
     dispatch(setIsContentVisible(false))
     history.push(Pages.databaseAnalysis(connectedInstanceId))
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
+      eventData: {
+        databaseId: connectedInstanceId,
+        total: recommendations?.length,
+      },
+    })
   }
 
   const handleClose = () => {
@@ -130,7 +137,7 @@ const LiveTimeRecommendations = () => {
   const getTelemetryData = (recommendationsData: IRecommendation[]) => ({
     databaseId: connectedInstanceId,
     total: recommendationsData?.length,
-    list: recommendationsData?.map(({ name }) => recommendationsContent[name]?.liveTelemetryEvent ?? name),
+    list: recommendationsData?.map(({ name }) => recommendationsContent[name]?.telemetryEvent ?? name),
   })
 
   const renderBody = () => {

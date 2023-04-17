@@ -13,10 +13,11 @@ import {
 } from '@elastic/eui'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
+import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
-import content from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as LikeIcon } from 'uiSrc/assets/img/icons/like.svg'
 import { ReactComponent as DoubleLikeIcon } from 'uiSrc/assets/img/icons/double_like.svg'
 import { ReactComponent as DislikeIcon } from 'uiSrc/assets/img/icons/dislike.svg'
@@ -33,6 +34,8 @@ export interface Props {
   live?: boolean
 }
 
+const recommendationsContent = _content as IRecommendationsStatic
+
 const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
   const config = useSelector(userSettingsConfigSelector)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
@@ -45,7 +48,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
         : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_VOTED,
       eventData: {
         databaseId: instanceId,
-        name,
+        name: recommendationsContent[name]?.telemetryEvent ?? name,
         vote,
       }
     })
@@ -59,14 +62,14 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
     if (live) {
       dispatch(updateLiveRecommendation(id, { vote },
         (instanceId, { vote }) =>
-          onSuccessVoted(instanceId, { vote, name: content[name]?.liveTelemetryEvent ?? name })))
+          onSuccessVoted(instanceId, { vote, name: recommendationsContent[name]?.telemetryEvent ?? name })))
     } else {
       dispatch(putRecommendationVote(name, vote, onSuccessVoted))
     }
   }
 
-  const getTooltipContent = (content: string) => (config?.agreements?.analytics
-    ? content
+  const getTooltipContent = (recommendationsContent: string) => (config?.agreements?.analytics
+    ? recommendationsContent
     : 'Enable Analytics on the Settings page to vote for a recommendation')
 
   return (

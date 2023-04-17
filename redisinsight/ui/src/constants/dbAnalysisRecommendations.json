@@ -41,21 +41,62 @@
   },
   "bigHashes": {
     "id": "bigHashes",
+    "telemetryEvent": "shardHashes",
     "title": "Shard big hashes to small hashes",
+    "redisStack": true,
     "tutorial": "/quick-guides/document/working-with-hashes.md",
-    "content": [
+    "liveTimeText": [
       {
         "id": "1",
-        "type": "span",
-        "value": "If you have a hash with a large number of key, value pairs, and if each key, value pair is small enough - break it into smaller hashes to save memory. To shard a HASH table, choose a method of partitioning the data. Hashes themselves have keys that can be used for partitioning the keys into different shards. The number of shards is determined by the total number of keys to be stored and the shard size. Using this and the hash value you can determine the shard ID in which the key resides. Though converting big hashes to small hashes will increase the complexity of your code. "
+        "type": "paragraph",
+        "value": "If you have a hash with a large number of field-value pairs (> 5,000), and if each pair is small enough - break it into smaller hashes to optimize memory usage. Additionally, try using smaller or shortened field names."
       },
       {
         "id": "2",
-        "type": "link",
-        "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
-        }
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
+        "type": "paragraph",
+        "value": "Additionally, you can use RediSearch, designed to help address your query needs and supports a better development experience."
+      },
+      {
+        "id": "4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "5",
+        "type": "paragraph",
+        "value": "Learn more about how Search capability can help you via Tutorials in Workbench."
+      }
+    ],
+    "content": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "If you have a hash with a large number of field-value pairs (> 5,000), and if each pair is small enough - break it into smaller hashes to optimize memory usage. Additionally, try using smaller or shortened field names."
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
+        "type": "paragraph",
+        "value": "Additionally, you can use RediSearch, designed to help address your query needs and supports a better development experience."
+      },
+      {
+        "id": "4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "5",
+        "type": "paragraph",
+        "value": "Learn more about how Search capability can help you via Tutorials in Workbench."
       }
     ],
     "badges": ["code_changes", "configuration_changes"]
@@ -63,24 +104,18 @@
   "avoidLogicalDatabases": {
     "id": "avoidLogicalDatabases",
     "title": "Avoid using logical databases",
+    "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Redis supports multiple logical databases within an instance, though these logical databases are neither independent nor isolated in any other way and can freeze each other. Also, some modules do not support numbered databases as well."
+      }
+    ],
     "content": [
       {
         "id": "1",
         "type": "paragraph",
-        "value": "Redis supports multiple logical databases within an instance, though these logical databases are neither independent nor isolated in any other way and can freeze each other."
-      },
-      {
-        "id": "2",
-        "type": "span",
-        "value": "Also, they are not supported by any clustering system (open source or Redis Enterprise clustering), and some modules do not support numbered databases as well. "
-      },
-      {
-        "id": "3",
-        "type": "link",
-        "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
-        }
+        "value": "Redis supports multiple logical databases within an instance, though these logical databases are neither independent nor isolated in any other way and can freeze each other. Also, some modules do not support numbered databases as well."
       }
     ],
     "liveTimeText": [
@@ -184,6 +219,7 @@
   },
   "compressHashFieldNames": {
     "id": "compressHashFieldNames",
+    "deprecated": true,
     "title": "Compress Hash field names",
     "content": [
       {
@@ -289,9 +325,8 @@
   },
   "bigSets": {
     "id": "bigSets",
-    "liveTelemetryEvent": "optimizeExistenceChecks",
-    "title": "Switch to Bloom filter, cuckoo filter, or HyperLogLog",
-    "liveTitle": "Optimize existence checks",
+    "telemetryEvent": "optimizeExistenceChecks",
+    "title": "Optimize existence checks",
     "tutorial": "/redis_stack/probabilistic_data_structures.md",
     "redisStack": true,
     "liveTimeText": [
@@ -314,153 +349,18 @@
     "content": [
       {
         "id": "1",
-        "type": "span",
-        "value": "If you are using large "
+        "type": "paragraph",
+        "value": "If you are using sets for existence checks or to eliminate duplicates, and you are ready to trade accuracy with speed and memory usage, consider using Redis probabilistic data structures to increase performance and decrease memory usage."
       },
       {
         "id": "2",
-        "type": "link",
-        "value": {
-          "href": "https://redis.io/docs/data-types/sets/",
-          "name": "sets"
-        }
-      },
-      {
-        "id": "3",
-        "type": "span",
-        "value": " to solve one of the following problems:"
-      },
-      {
-        "id": "4",
-        "type": "list",
-        "value": [
-          [
-            {
-              "id": "1",
-              "type": "span",
-               "value": "Count the number of unique observations in a stream"
-            }
-          ],
-          [
-            {
-              "id": "2",
-              "type": "span",
-              "value": "Check if an observation already appeared in the stream"
-            }
-          ],
-          [
-            {
-              "id": "3",
-              "type": "span",
-              "value": "Find the fraction or the number of observations in the stream that are smaller or larger than a given value"
-            }
-          ]
-        ]
-      },
-      {
-        "id": "5",
-        "type": "span",
-        "value": "and you are ready to trade accuracy with speed and memory usage, consider using one of the following probabilistic data structures:"
-      },
-      {
-        "id": "6",
-        "type": "list",
-        "value": [
-          [
-            {
-              "id": "1",
-              "type": "link",
-              "value": {
-                "href": "https://redis.io/docs/data-types/hyperloglogs/",
-                "name": "HyperLogLog"
-              }
-            },
-            {
-              "id": "2",
-              "type": "span",
-               "value": " can be used for estimating the number of unique observations in a set."
-            }
-          ],
-          [
-            {
-              "id": "1",
-              "type": "link",
-              "value": {
-                "href": "https://redis.io/docs/stack/bloom/",
-                "name": "Bloom filter or cuckoo filter"
-              }
-            },
-            {
-              "id": "2",
-              "type": "span",
-               "value": " can be used for checking if an observation has already appeared in the stream (false positive matches are possible, but false negatives are not)."
-            }
-          ],
-          [
-            {
-              "id": "1",
-              "type": "link",
-              "value": {
-                "href": "https://redis.io/docs/stack/bloom/",
-                "name": "t-digest"
-              }
-            },
-            {
-              "id": "2",
-              "type": "span",
-               "value": " can be used for estimating the fraction or the number of observations in the stream that are smaller or larger than a given value."
-            }
-          ]
-        ]
-      },
-      {
-        "id": "7",
-        "type": "span",
-        "value": "Bloom filter and cuckoo filter require "
-      },
-      {
-        "id": "8",
-        "type": "link",
-        "value": {
-          "href": "https://redis.com/modules/redis-bloom/",
-          "name": "RedisBloom"
-        }
-      },
-      {
-        "id": "9",
-        "type": "span",
-        "value": ". "
-      },
-      {
-        "id": "10",
-        "type": "link",
-        "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
-        }
-      },
-      {
-        "id": "11",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "12",
+        "id": "3",
         "type": "span",
-        "value": "Create a "
-      },
-      {
-        "id": "13",
-        "type": "link",
-        "value": {
-          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
-          "name": "free Redis Stack database"
-        }
-      },
-      {
-        "id": "14",
-        "type": "span",
-        "value": " to use modern data models and processing engines."
+        "value": "Learn more about how probabilistic data structures can help you via Tutorials in Workbench"
       }
     ],
     "badges": ["configuration_changes"]
@@ -522,7 +422,7 @@
   },
   "RTS": {
     "id": "RTS",
-    "liveTelemetryEvent": "optimizeTimeSeries",
+    "telemetryEvent": "optimizeTimeSeries",
     "title":"Optimize the use of time series",
     "redisStack": true,
     "tutorial": "/redis_stack/redis_for_time_series.md",
@@ -540,56 +440,31 @@
       {
         "id": "3",
         "type": "span",
-        "value": "Learn more about how a Time Series data structure can help you via Tutorials in Workbench"
+        "value": "Learn more about how a Time Series data structure can help you via Tutorials in Workbench."
       }
     ],
     "content": [
       {
         "id": "1",
-        "type": "span",
-        "value": "If you are using sorted sets to work with time series data, consider using "
+        "type": "paragraph",
+        "value": "If you are using sorted sets to work with time series data, consider using RedisTimeSeries to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
       },
       {
         "id": "2",
-        "type": "link",
-        "value": {
-          "href": "https://redis.io/docs/stack/timeseries/",
-          "name": "RedisTimeSeries"
-        }
-      },
-      {
-        "id": "3",
-        "type": "span",
-        "value": " to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
-      },
-      {
-        "id": "4",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "5",
+        "id": "3",
         "type": "span",
-        "value": "Create a "
-      },
-      {
-        "id": "6",
-        "type": "link",
-        "value": {
-          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
-          "name": "free Redis Stack database"
-        }
-      },
-      {
-        "id": "7",
-        "type": "span",
-        "value": " to use modern data models and processing engines."
+        "value": "Learn more about how a Time Series data structure can help you via Tutorials in Workbench."
       }
     ],
     "badges": ["configuration_changes"]
   },
   "redisVersion": {
     "id": "redisVersion",
+    "telemetryEvent": "updateDatabase",
     "title":"Update Redis database",
     "redisStack": true,
     "liveTimeText": [
@@ -657,6 +532,7 @@
   "redisSearch": {
     "id": "redisSearch",
     "title": "Optimize your query and search experience",
+    "deprecated": true,
     "redisStack": true,
     "tutorial": "/redis_stack/working_with_json.md",
     "content": [
@@ -720,49 +596,48 @@
     "content": [
       {
         "id": "1",
-        "type": "paragraph",
-        "value": "Creating your own index structure manually? Consider the out-of-box option of FT.CREATE on RediSearch."
+        "type": "span",
+        "value": "Creating your own index structure manually using sorted sets? Consider the out-of-box option of "
       },
       {
         "id": "2",
-        "type": "span",
-        "value": "RediSearch was designed to help meet your query needs and support a better development experience when dealing with complex data scenarios. Take a look at the powerful API options "
+        "type": "pre",
+        "value": "FT.CREATE"
       },
       {
         "id": "3",
-        "type": "link",
-        "value": {
-          "href": "https://redis.io/commands/?name=Ft",
-          "name": "here"
-        }
+        "type": "span",
+        "value": " on RediSearch."
       },
       {
         "id": "4",
-        "type": "span",
-        "value": " and try it."
-      },
-      {
-        "id": "5",
         "type": "spacer",
         "value": "l"
       },
       {
+        "id": "5",
+        "type": "paragraph",
+        "value": "RediSearch was designed to help meet your query needs and supports a better development experience when dealing with complex data scenarios."
+      },
+      {
         "id": "6",
-        "type": "span",
-        "value": "Create a "
+        "type": "spacer",
+        "value": "l"
       },
       {
         "id": "7",
-        "type": "link",
-        "value": {
-          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
-          "name": "free Redis Stack database"
-        }
+        "type": "paragraph",
+        "value": "It adds the capability to query, secondary index, and full-text search for Redis. These features enable multi-field queries, aggregation, exact phrase matching, numeric filtering, geo filtering, and vector similarity semantic search on top of text queries."
       },
       {
         "id": "8",
-        "type": "span",
-        "value": " to use modern data models and processing engines."
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "9",
+        "type": "paragraph",
+        "value": "Learn more about how Search capability can help you via Tutorials in Workbench."
       }
     ],
     "badges": ["upgrade"]
@@ -771,7 +646,35 @@
     "id": "searchString",
     "title": "Optimize your query and search experience",
     "redisStack": true,
+    "tutorial": "/redis_stack/working_with_json.md",
     "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Storing large strings (> 512 KB) could consume more resources and time to process, manipulate, update, and retrieve them. Consider representing your data using hashes or use RedisJSON to store your JSON documents to improve performance."
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
+        "type": "paragraph",
+        "value": "Additionally, if working with hashes or JSONs, you can use RediSearch, which helps to address your query needs and supports a better development experience when dealing with complex data scenarios."
+      },
+      {
+        "id": "4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "5",
+        "type": "paragraph",
+        "value": "Learn more about how JSON support and Search capability can help you via Tutorials in Workbench."
+      }
+    ],
+    "content": [
       {
         "id": "1",
         "type": "paragraph",
@@ -803,7 +706,35 @@
     "id": "searchJSON",
     "title": "Query and search JSON documents",
     "redisStack": true,
+    "tutorial": "/redis_stack/working_with_json.md",
     "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "If working with JSONs, you can use RediSearch, designed to help address your query needs and support a better development experience."
+      },
+      {
+        "id": "2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "3",
+        "type": "paragraph",
+        "value": "RediSearch adds the capability to query, secondary index, and full-text search for Redis. These features enable multi-field queries, aggregation, exact phrase matching, numeric filtering, geo filtering, and vector similarity semantic search on top of text queries."
+      },
+      {
+        "id": "5",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "6",
+        "type": "span",
+        "value": "Learn more about how Search capability can help you via Tutorials in Workbench"
+      }
+    ],
+    "content": [
       {
         "id": "1",
         "type": "paragraph",
@@ -851,39 +782,6 @@
         "id": "3",
         "type": "paragraph",
         "value": "If you choose hashes, you can use RediSearch, designed to help address your query needs and supports a better development experience."
-      }
-    ]
-  },
-  "shardHashes": {
-    "id": "shardHashes",
-    "title": "Shard big hashes to small hashes",
-    "redisStack": true,
-    "tutorial": "/quick-guides/document/working-with-hashes.md",
-    "liveTimeText": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "If you have a hash with a large number of field-value pairs (> 5,000), and if each pair is small enough - break it into smaller hashes to optimize memory usage. Additionally, try using smaller or shortened field names."
-      },
-      {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "3",
-        "type": "paragraph",
-        "value": "Additionally, you can use RediSearch, designed to help address your query needs and supports a better development experience."
-      },
-      {
-        "id": "4",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "5",
-        "type": "paragraph",
-        "value": "Learn more about how Search capability can help you via Tutorials in Workbench."
       }
     ]
   },

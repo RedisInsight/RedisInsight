@@ -1,5 +1,12 @@
 import { render, screen } from 'uiSrc/utils/test-utils'
-import { sortRecommendations, replaceVariables, renderBadgesLegend, renderBadges } from './utils'
+import {
+  sortRecommendations,
+  replaceVariables,
+  renderBadgesLegend,
+  renderBadges,
+  renderContent,
+  IContentElement,
+} from './utils'
 
 const sortRecommendationsTests = [
   {
@@ -11,10 +18,10 @@ const sortRecommendationsTests = [
       { name: 'luaScript' },
       { name: 'bigSets' },
       { name: 'searchIndexes' },
-      { name: 'redisSearch' },
+      { name: 'searchString' },
     ],
     expected: [
-      { name: 'redisSearch' },
+      { name: 'searchString' },
       { name: 'searchIndexes' },
       { name: 'bigSets' },
       { name: 'luaScript' },
@@ -24,10 +31,12 @@ const sortRecommendationsTests = [
     input: [
       { name: 'luaScript' },
       { name: 'bigSets' },
-      { name: 'redisSearch' },
+      { name: 'searchJSON' },
+      { name: 'searchString' },
     ],
     expected: [
-      { name: 'redisSearch' },
+      { name: 'searchString' },
+      { name: 'searchJSON' },
       { name: 'bigSets' },
       { name: 'luaScript' },
     ]
@@ -37,12 +46,12 @@ const sortRecommendationsTests = [
       { name: 'luaScript' },
       { name: 'bigSets' },
       { name: 'searchIndexes' },
-      { name: 'redisSearch' },
+      { name: 'searchJSON' },
       { name: 'useSmallerKeys' },
       { name: 'RTS' },
     ],
     expected: [
-      { name: 'redisSearch' },
+      { name: 'searchJSON' },
       { name: 'searchIndexes' },
       { name: 'bigSets' },
       { name: 'RTS' },
@@ -58,6 +67,44 @@ const replaceVariablesTests = [
   { input: ['some ${0} text ${1}', ['foo', 'bar'], { foo: '7', bar: 'bar' }], expected: 'some 7 text bar' },
   { input: ['value'], expected: 'value' },
   { input: ['value'], expected: 'value' },
+]
+
+const mockContent: IContentElement[] = [
+  {
+    id: '1',
+    type: 'paragraph',
+    value: 'paragraph',
+  },
+  {
+    id: '2',
+    type: 'span',
+    value: 'span',
+  },
+  {
+    id: '3',
+    type: 'pre',
+    value: 'pre',
+  },
+  {
+    id: '4',
+    type: 'spacer',
+    value: 'l',
+  },
+  {
+    id: '5',
+    type: 'list',
+    value: [[{ id: 'list-1', type: 'span', value: 'list-1' }]],
+  },
+  {
+    id: '6',
+    type: 'unknown',
+    value: 'unknown',
+  },
+  {
+    id: '7',
+    type: 'link',
+    value: 'link',
+  },
 ]
 
 describe('renderBadgesLegend', () => {
@@ -131,4 +178,19 @@ describe('replaceVariables', () => {
       expect(result).toEqual(expected)
     }
   )
+})
+
+describe('renderContent', () => {
+  it('should render content', () => {
+    const renderedContent = renderContent(mockContent, undefined)
+    render(renderedContent)
+
+    expect(screen.queryByTestId('paragraph-1')).toBeInTheDocument()
+    expect(screen.queryByTestId('span-2')).toBeInTheDocument()
+    expect(screen.queryByTestId('pre-3')).toBeInTheDocument()
+    expect(screen.queryByTestId('spacer-4')).toBeInTheDocument()
+    expect(screen.queryByTestId('list-5')).toBeInTheDocument()
+    expect(screen.queryByTestId('read-more-link')).toBeInTheDocument()
+    expect(screen.getByText('unknown')).toBeInTheDocument()
+  })
 })

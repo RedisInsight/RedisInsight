@@ -5,14 +5,16 @@ import cx from 'classnames'
 import { EuiText, EuiButton } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
-import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
+import { recommendationsSelector, setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ReactComponent as WelcomeIcon } from 'uiSrc/assets/img/icons/welcome.svg'
 
 import styles from './styles.module.scss'
 
 const NoRecommendationsScreen = () => {
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { data: { recommendations } } = useSelector(recommendationsSelector)
 
   const dispatch = useDispatch()
   const history = useHistory()
@@ -20,6 +22,13 @@ const NoRecommendationsScreen = () => {
   const handleClickDbAnalysisLink = () => {
     dispatch(setIsContentVisible(false))
     history.push(Pages.databaseAnalysis(instanceId))
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        total: recommendations?.length,
+      },
+    })
   }
 
   return (

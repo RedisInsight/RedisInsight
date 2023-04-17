@@ -15,7 +15,7 @@ import {
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
-import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -26,12 +26,15 @@ import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
+import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting } from 'uiSrc/components'
 import { findMarkdownPathByPath } from 'uiSrc/utils'
 import { renderBadges, renderBadgesLegend, renderContent, sortRecommendations } from './utils'
 
 import styles from './styles.module.scss'
+
+const recommendationsContent = _content as IRecommendationsStatic
 
 const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
@@ -50,7 +53,7 @@ const Recommendations = () => {
       : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_COLLAPSED,
     eventData: {
       databaseId: instanceId,
-      recommendation: id,
+      recommendation: recommendationsContent[id]?.telemetryEvent || id,
     }
   })
 
@@ -59,7 +62,7 @@ const Recommendations = () => {
       event: TelemetryEvent.DATABASE_RECOMMENDATIONS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: instanceId,
-        recommendation: id,
+        recommendation: recommendationsContent[id]?.telemetryEvent || id,
       }
     })
 
@@ -155,7 +158,7 @@ const Recommendations = () => {
             badges = [],
             redisStack = false,
             tutorial,
-          } = recommendationsContent[name as keyof typeof recommendationsContent]
+          } = recommendationsContent[name]
 
           return (
             <div key={id} className={styles.recommendation} data-testid={`${id}-recommendation`}>

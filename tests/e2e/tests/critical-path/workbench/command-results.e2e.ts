@@ -101,7 +101,7 @@ test('Verify that user can switches between Table and Text for Client List and s
         .ok('The result is not displayed in Text view');
 });
 
-test.only
+test
     .after(async() => {
         // remove all keys
         workbenchPage.sendCommandInWorkbench('flushdb');

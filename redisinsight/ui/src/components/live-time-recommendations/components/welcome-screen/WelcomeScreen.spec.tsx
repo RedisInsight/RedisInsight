@@ -86,5 +86,6 @@ describe('WelcomeScreen', () => {
         total: 1,
       }
     })
-    sendEventTelemetry.mockRestore()  })
+    sendEventTelemetry.mockRestore()
+  })
 })

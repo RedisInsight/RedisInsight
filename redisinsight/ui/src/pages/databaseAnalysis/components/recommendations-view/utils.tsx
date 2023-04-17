@@ -23,7 +23,7 @@ export interface IContentElement {
   id: string
   type: string
   value: any[] | any
-  parameter: string[]
+  parameter?: string[]
 }
 
 const recommendationsContent = _content as IRecommendationsStatic
@@ -66,7 +66,7 @@ export const renderBadgesLegend = () => (
   </EuiFlexGroup>
 )
 
-export const replaceVariables = (value: any[] | any, parameter: string[], params: any) => (
+export const replaceVariables = (value: any[] | any, parameter?: string[], params?: any) => (
   parameter && isString(value) ? value.replace(/\$\{\d}/g, (matched) => {
     const parameterIndex: string = matched.substring(
       matched.indexOf('{') + 1,
@@ -81,27 +81,27 @@ const renderContentElement = ({ id, type, value: jsonValue, parameter }: IConten
   switch (type) {
     case 'paragraph':
       return (
-        <EuiTextColor key={id} component="div" className={styles.text} color="subdued">
+        <EuiTextColor data-testid={`paragraph-${id}`} key={id} component="div" className={styles.text} color="subdued">
           {value}
         </EuiTextColor>
       )
     case 'pre':
       return (
-        <EuiTextColor key={id} color="subdued">
+        <EuiTextColor data-testid={`pre-${id}`} key={id} color="subdued">
           <pre className={cx(styles.span, styles.text)}>
             {value}
           </pre>
         </EuiTextColor>
       )
     case 'span':
-      return <EuiTextColor key={id} color="subdued" className={cx(styles.span, styles.text)}>{value}</EuiTextColor>
+      return <EuiTextColor data-testid={`span-${id}`} key={id} color="subdued" className={cx(styles.span, styles.text)}>{value}</EuiTextColor>
     case 'link':
       return <EuiLink key={id} external={false} data-testid="read-more-link" target="_blank" href={value.href}>{value.name}</EuiLink>
     case 'spacer':
-      return <EuiSpacer key={id} size={value as SpacerSize} />
+      return <EuiSpacer data-testid={`spacer-${id}`} key={id} size={value as SpacerSize} />
     case 'list':
       return (
-        <ul key={id}>
+        <ul data-testid={`list-${id}`} key={id}>
           {isArray(jsonValue) && jsonValue.map((listElement: IContentElement[]) => (
             <li>{renderContent(listElement, params)}</li>
           ))}
@@ -116,16 +116,16 @@ export const renderContent = (elements: IContentElement[], params: any) => (
   elements?.map((item) => renderContentElement(item, params)))
 
 export const sortRecommendations = (recommendations: Recommendation[]) => sortBy(recommendations, ({ name }) => {
-  if (name === 'searchJSON') {
+  if (name === 'searchString') {
     return -4
   }
-  if (name === 'searchString') {
+  if (name === 'searchJSON') {
     return -3
   }
   if (name === 'searchIndexes') {
     return -2
   }
-  if (recommendationsContent[name as keyof typeof recommendationsContent]?.redisStack) {
+  if (recommendationsContent[name]?.redisStack) {
     return -1
   }
   return 0

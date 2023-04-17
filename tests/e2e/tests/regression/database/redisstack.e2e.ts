@@ -1,17 +1,17 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTerms } from '../../../helpers/database';
-import { MyRedisDatabasePage, DatabaseOverviewPage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const databaseOverviewPage = new DatabaseOverviewPage();
+const browserPage = new BrowserPage();
 const common = new Common();
 const moduleNameList = ['RediSearch', 'RedisGraph', 'RedisBloom', 'RedisJSON', 'RedisTimeSeries'];
 
 fixture `Redis Stack`
-    .meta({type: 'regression', rte: rte.standalone})
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         // Add new databases using API
@@ -48,12 +48,12 @@ test('Verify that user can see Redis Stack icon in Edit mode near the DB name', 
 });
 test('Verify that user can see Redis Stack icon and logo in Browser page in Overview.', async t => {
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await t.expect(databaseOverviewPage.overviewRedisStackLogo.visible).ok('Redis Stack logo not found');
+    await t.expect(browserPage.OverviewPanel.overviewRedisStackLogo.visible).ok('Redis Stack logo not found');
     // Open Workbench page
     await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
-    await t.expect(databaseOverviewPage.overviewRedisStackLogo.visible).ok('Redis Stack logo not found');
+    await t.expect(browserPage.OverviewPanel.overviewRedisStackLogo.visible).ok('Redis Stack logo not found');
     // Check modules inside of the tooltip
-    await t.hover(databaseOverviewPage.overviewRedisStackLogo);
+    await t.hover(browserPage.OverviewPanel.overviewRedisStackLogo);
     await t.expect(myRedisDatabasePage.moduleTooltip.visible).ok('Tooltip with modules not found');
     await myRedisDatabasePage.checkModulesInTooltip(moduleNameList);
 });

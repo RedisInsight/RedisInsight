@@ -1,8 +1,7 @@
 import { acceptLicenseTerms } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
-    BrowserPage,
-    DatabaseOverviewPage
+    BrowserPage
 } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -12,7 +11,6 @@ import { Common } from '../../../helpers/common';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const common = new Common();
-const databaseOverviewPage = new DatabaseOverviewPage();
 
 const keyName = common.generateWord(10);
 const longFieldName = common.generateSentence(20);
@@ -47,7 +45,7 @@ const databasesForAdding = [
 ];
 
 fixture `Resize columns in Key details`
-    .meta({type: 'regression', rte: rte.standalone})
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         // Add new databases using API
@@ -62,7 +60,7 @@ fixture `Resize columns in Key details`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await databaseOverviewPage.changeDbIndex(0);
+        await browserPage.OverviewPanel.changeDbIndex(0);
         await browserPage.deleteKeysByNames(keyNames);
         await deleteStandaloneDatabasesApi(databasesForAdding);
     });
@@ -102,7 +100,7 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
     }
 
     // Change db index for 2nd database
-    await databaseOverviewPage.changeDbIndex(1);
+    await browserPage.OverviewPanel.changeDbIndex(1);
     await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     // Go back to 1st database
     await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
@@ -113,5 +111,5 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
     // Verify that logical db not changed after switching between databases
     await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
-    await databaseOverviewPage.verifyDbIndexSelected(1);
+    await browserPage.OverviewPanel.verifyDbIndexSelected(1);
 });

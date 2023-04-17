@@ -5,7 +5,6 @@ import { Common } from '../../../helpers/common';
 import {
     MyRedisDatabasePage,
     BrowserPage,
-    DatabaseOverviewPage,
     WorkbenchPage
 } from '../../../pageObjects';
 import {
@@ -18,7 +17,6 @@ import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const databaseOverviewPage = new DatabaseOverviewPage();
 const chance = new Chance();
 const common = new Common();
 const workbenchPage = new WorkbenchPage();
@@ -55,12 +53,12 @@ test
         }
         //Verify the list of modules in Browser page
         for (const module of firstDatabaseModules) {
-            await t.expect(databaseOverviewPage.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
+            await t.expect(browserPage.OverviewPanel.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
         }
         //Open the Workbench page and verify modules
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         for (const module of firstDatabaseModules) {
-            await t.expect(databaseOverviewPage.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
+            await t.expect(browserPage.OverviewPanel.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
         }
         //Add database with different modules
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
@@ -73,7 +71,7 @@ test
         }
         //Verify the list of modules
         for (const module of secondDatabaseModules) {
-            await t.expect(databaseOverviewPage.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
+            await t.expect(browserPage.OverviewPanel.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
         }
         await t.expect(firstDatabaseModules).notEql(secondDatabaseModules, 'The list of Modules updated');
     });
@@ -81,20 +79,20 @@ test
     .meta({ rte: rte.standalone })('Verify that when user adds or deletes a new key, info in DB header is updated in 5 seconds', async t => {
         keyName = chance.string({ length: 10 });
         //Remember the total keys number
-        const totalKeysBeforeAdd = await browserPage.overviewTotalKeys.innerText;
+        const totalKeysBeforeAdd = await browserPage.OverviewPanel.overviewTotalKeys.innerText;
         //Add new key
         await browserPage.addHashKey(keyName);
         //Wait 5 seconds
         await t.wait(fiveSecondsTimeout);
         //Verify that the info on DB header is updated after adds
-        const totalKeysAftreAdd = await browserPage.overviewTotalKeys.innerText;
+        const totalKeysAftreAdd = await browserPage.OverviewPanel.overviewTotalKeys.innerText;
         await t.expect(totalKeysAftreAdd).eql((Number(totalKeysBeforeAdd) + 1).toString(), 'Info in DB header after ADD');
         //Delete key
         await browserPage.deleteKeyByName(keyName);
         //Wait 5 seconds
         await t.wait(fiveSecondsTimeout);
         //Verify that the info on DB header is updated after deletion
-        const totalKeysAftreDelete = await browserPage.overviewTotalKeys.innerText;
+        const totalKeysAftreDelete = await browserPage.OverviewPanel.overviewTotalKeys.innerText;
         await t.expect(totalKeysAftreDelete).eql((Number(totalKeysAftreAdd) - 1).toString(), 'Info in DB header after DELETE');
     });
 test
@@ -111,13 +109,13 @@ test
         //Add 100 keys
         keys1 = await common.createArrayWithKeyValue(100);
         await browserPage.Cli.sendCliCommandAndWaitForTotalKeys(`MSET ${keys1.join(' ')}`);
-        let totalKeys = await browserPage.overviewTotalKeys.innerText;
+        let totalKeys = await browserPage.OverviewPanel.overviewTotalKeys.innerText;
         //Verify that the info on DB header is updated after adds
         await t.expect(totalKeys).eql('100', 'Info in DB header after ADD 100 keys');
         //Add 1000 keys
         keys2 = await common.createArrayWithKeyValue(1000);
         await browserPage.Cli.sendCliCommandAndWaitForTotalKeys(`MSET ${keys2.join(' ')}`);
-        totalKeys = await browserPage.overviewTotalKeys.innerText;
+        totalKeys = await browserPage.OverviewPanel.overviewTotalKeys.innerText;
         //Verify that the info on DB header is updated after adds
         await t.expect(totalKeys).eql('1 K', 'Info in DB header after ADD 1000 keys');
         //Add database with more than 1M keys
@@ -128,7 +126,7 @@ test
         //Wait 5 seconds
         await t.wait(fiveSecondsTimeout);
         //Verify that the info on DB header is rounded
-        totalKeys = await browserPage.overviewTotalKeys.innerText;
+        totalKeys = await browserPage.OverviewPanel.overviewTotalKeys.innerText;
         await t.expect(totalKeys).eql('18 M', 'Info in DB header is 18 M keys');
     });
 test
@@ -143,7 +141,7 @@ test
         await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
         //Verify total memory
         await t.wait(fiveSecondsTimeout);
-        await t.expect(browserPage.overviewTotalMemory.textContent).contains('MB', 'Total memory value is MB');
+        await t.expect(browserPage.OverviewPanel.overviewTotalMemory.textContent).contains('MB', 'Total memory value is MB');
     });
 test
     .meta({ rte: rte.standalone })

@@ -49,8 +49,8 @@ fixture `Database overview`
 test
     .meta({ rte: rte.standalone })('Verify that user can see total and current logical database number of keys (if there are any keys in other logical DBs)', async t => {
         // Wait for Total Keys number refreshed
-        await t.expect(browserPage.overviewTotalKeys.withText(`${keysAmount + 1}`).exists).ok('Total keys are not changed', { timeout: 10000 });
-        await t.hover(workbenchPage.overviewTotalKeys);
+        await t.expect(browserPage.OverviewPanel.overviewTotalKeys.withText(`${keysAmount + 1}`).exists).ok('Total keys are not changed', { timeout: 10000 });
+        await t.hover(workbenchPage.OverviewPanel.overviewTotalKeys);
         // Verify that user can see total number of keys and number of keys in current logical database
         await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
         await browserActions.verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
@@ -59,7 +59,7 @@ test
         // Open Database
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
-        await t.hover(workbenchPage.overviewTotalKeys);
+        await t.hover(workbenchPage.OverviewPanel.overviewTotalKeys);
         // Verify that user can see total number of keys and not it current logical database (if there are no any keys in other logical DBs)
         await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
         await browserActions.verifyTooltipContainsText(`${keysAmount + 1}Total Keys`, true);
@@ -74,7 +74,7 @@ test
         // Delete database
         await deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that when users hover over keys icon in Overview for Cloud DB, they see only total number of keys in tooltip', async t => {
-        await t.hover(workbenchPage.overviewTotalKeys);
+        await t.hover(workbenchPage.OverviewPanel.overviewTotalKeys);
         // Verify that user can see only total number of keys
         await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
         await browserActions.verifyTooltipContainsText('Total Keys', true);

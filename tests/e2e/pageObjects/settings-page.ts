@@ -8,7 +8,6 @@ export class SettingsPage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
-    applyButton = Selector('[data-testid=apply-btn]');
     accordionAppearance = Selector('[data-test-subj=accordion-appearance]');
     accordionPrivacySettings = Selector('[data-test-subj=accordion-privacy-settings]');
     accordionAdvancedSettings = Selector('[data-test-subj=accordion-advanced-settings]');
@@ -18,6 +17,7 @@ export class SettingsPage {
     submitConsentsPopupButton = Selector('[data-testid=consents-settings-popup] [data-testid=btn-submit]');
     switchNotificationsOption = Selector('[data-testid=switch-option-notifications]');
     switchEditorCleanupOption = Selector('[data-testid=switch-workbench-cleanup]');
+    applyButton = Selector('[data-testid=apply-btn]');
     //TEXT INPUTS (also referred to as 'Text fields')
     keysToScanValue = Selector('[data-testid=keys-to-scan-value]');
     keysToScanInput = Selector('[data-testid=keys-to-scan-input]');

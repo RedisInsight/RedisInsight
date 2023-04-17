@@ -2,14 +2,22 @@
   border-bottom: 1px solid var(--euiColorLightShade);
   flex-direction: column;
   display: flex;
-  height: 45px;
 
   .tabs {
-    padding: 2px 20px 12px;
+    padding: 2px 20px 0;
 
     .tab {
       background-color: inherit !important;
       color: var(--euiTextSubduedColor) !important;
+      border-bottom: 4px solid transparent;
+      margin-right: 8px;
+      border-radius: 0;
+      transition: border-bottom-color, color ease .25s;
+
+      &:global(.euiTab-isSelected) {
+        border-bottom-color: var(--euiColorPrimary);
+        color: var(--euiColorPrimary) !important;
+      }
 
       svg {
         margin-right: 6px;

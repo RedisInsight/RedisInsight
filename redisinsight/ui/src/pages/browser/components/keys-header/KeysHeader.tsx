@@ -10,7 +10,7 @@ import { ReactComponent as TreeViewIcon } from 'uiSrc/assets/img/icons/treeview.
 import { ReactComponent as VectorIcon } from 'uiSrc/assets/img/icons/vector.svg'
 import { ReactComponent as RediSearchIcon } from 'uiSrc/assets/img/modules/RedisSearchLight.svg'
 import KeysSummary from 'uiSrc/components/keys-summary'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem, BulkActionsType } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { localStorageService } from 'uiSrc/services'
 import { resetBrowserTree, setBrowserKeyListDataLoaded, } from 'uiSrc/slices/app/context'
@@ -26,6 +26,7 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { setBulkActionType } from 'uiSrc/slices/browser/bulkActions'
 import AutoRefresh from '../auto-refresh'
 import FilterKeyType from '../filter-key-type'
 import RediSearchIndexesList from '../redisearch-key-list'
@@ -238,6 +239,7 @@ const KeysHeader = (props: Props) => {
   }
 
   const openBulkActions = () => {
+    dispatch(setBulkActionType(BulkActionsType.Delete))
     handleBulkActionsPanel(true)
   }
 

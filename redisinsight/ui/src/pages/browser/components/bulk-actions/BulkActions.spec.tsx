@@ -3,14 +3,20 @@ import { useSelector } from 'react-redux'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 
-import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 import { RootState } from 'uiSrc/slices/store'
-import { KeyTypes } from 'uiSrc/constants'
+import { BulkActionsType, KeyTypes } from 'uiSrc/constants'
+import { setBulkActionType } from 'uiSrc/slices/browser/bulkActions'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import BulkActions, { Props } from './BulkActions'
 
 const mockedProps = {
   ...mock<Props>(),
 }
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -97,5 +103,60 @@ describe('BulkActions', () => {
 
     expect(screen.queryByTestId('bulk-actions-info')).toBeInTheDocument()
     expect(screen.queryByTestId('bulk-actions-placeholder')).not.toBeInTheDocument()
+  })
+
+  it('should call proper event after switch tab', async () => {
+    render(<BulkActions {...mockedProps} />)
+
+    act(() => {
+      fireEvent.click(screen.getByTestId('bulk-action-tab-upload'))
+    })
+
+    const expectedActions = [setBulkActionType(BulkActionsType.Upload)]
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  describe('Telemetry', () => {
+    it('should call proper telemetry events', async () => {
+      const state: any = store.getState();
+      (useSelector as jest.Mock).mockImplementation((callback: (arg0: any) => any) => callback({
+        ...state,
+        browser: {
+          ...state.browser,
+          keys: {
+            ...state.browser.keys,
+            filter: KeyTypes.Hash,
+            isFiltered: true,
+          }
+        }
+      }))
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+      render(<BulkActions {...mockedProps} onBulkActionsPanel={jest.fn()} onClosePanel={jest.fn()} />)
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.BULK_ACTIONS_OPENED,
+        eventData: {
+          databaseId: 'instanceId',
+          match: '*',
+          filterType: 'hash'
+        }
+      });
+
+      (sendEventTelemetry as jest.Mock).mockRestore()
+
+      fireEvent.click(screen.getByTestId('bulk-action-cancel-btn'))
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.BULK_ACTIONS_CANCELLED,
+        eventData: {
+          databaseId: 'instanceId',
+          action: BulkActionsType.Delete,
+          search: '',
+          filterType: 'hash'
+        }
+      })
+    })
   })
 })

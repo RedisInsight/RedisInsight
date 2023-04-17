@@ -38,6 +38,6 @@ test('Verify that user can connect to DB and see breadcrumbs at the top of the a
     await t.expect(browserPage.breadcrumbsContainer.visible).ok('User can not see breadcrumbs in Workbench page', { timeout: 10000 });
 
     // Verify that user can see total memory and total number of keys updated in DB header in Workbench page
-    await t.expect(workbenchPage.overviewTotalKeys.exists).ok('User can not see total keys');
-    await t.expect(workbenchPage.overviewTotalMemory.exists).ok('User can not see total memory');
+    await t.expect(workbenchPage.OverviewPanel.overviewTotalKeys.exists).ok('User can not see total keys');
+    await t.expect(workbenchPage.OverviewPanel.overviewTotalMemory.exists).ok('User can not see total memory');
 });

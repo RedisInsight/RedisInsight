@@ -1,7 +1,7 @@
 import { t } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, MyRedisDatabasePage, DatabaseOverviewPage, BulkActionsPage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, BulkActionsPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
@@ -12,7 +12,6 @@ import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const databaseOverviewPage = new DatabaseOverviewPage();
 const bulkActionsPage = new BulkActionsPage();
 const common = new Common();
 const createUserCommand = 'acl setuser noperm nopass on +@all ~* -dbsize';
@@ -42,7 +41,7 @@ test('Verify that user without dbsize permissions can connect to DB', async t =>
     // Connect to DB
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     // Check that user can see total number of key is overview
-    await t.expect(databaseOverviewPage.overviewTotalKeys.find('div').withExactText('18 M').exists).ok('Total keys are not displayed');
+    await t.expect(browserPage.OverviewPanel.overviewTotalKeys.find('div').withExactText('18 M').exists).ok('Total keys are not displayed');
     // Check that user can see total number of keys in browser
     await t.expect(browserPage.keysSummary.find('b').withText('18 00').exists).ok('Total number is not displayed');
     // Check that user can search per key

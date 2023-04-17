@@ -27,7 +27,7 @@ export class BrowserPage extends InstancePage {
     hashDeleteButton = Selector('[data-testid=hash-delete-btn]');
     setDeleteButton = Selector('[data-testid=set-delete-btn]');
     streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
-    myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
+    applyButton = Selector('[data-testid=apply-btn]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     submitDeleteKeyButton = Selector('[data-testid=submit-delete-key]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
@@ -36,7 +36,6 @@ export class BrowserPage extends InstancePage {
     saveTTLValue = Selector('[data-testid=apply-btn]');
     refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
     refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
-    applyButton = Selector('[data-testid=apply-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
     editKeyValueButton = Selector('[data-testid=edit-key-value-btn]');
     closeKeyButton = Selector('[data-testid=close-key-btn]');
@@ -217,8 +216,6 @@ export class BrowserPage extends InstancePage {
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
     keysTotalNumber = Selector('[data-testid=keys-total]');
-    overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
-    overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
     overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
     overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
     overviewCpu = Selector('[data-test-subj=overview-cpu]');
@@ -878,21 +875,6 @@ export class BrowserPage extends InstancePage {
         await t.typeText(this.jsonValueInput, jsonStructure, { replace: true, paste: true });
         await t.click(this.applyEditButton);
     }
-
-    /**
-     * Get Values list of the key
-     * @param element Selector of the element with list
-     */
-    async getValuesListByElement(element: any): Promise<string[]> {
-        const keyValues: string[] = [];
-        const count = await element.count;
-        for (let i = 0; i < count; i++) {
-            keyValues[i] = await element.nth(i).textContent;
-            i++;
-        }
-        return keyValues;
-    }
-
     /**
      * Check tree view structure
      * @folders name of folders for tree view build

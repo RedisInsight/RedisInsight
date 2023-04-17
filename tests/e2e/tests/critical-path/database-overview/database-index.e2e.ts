@@ -4,7 +4,6 @@ import { Common } from '../../../helpers/common';
 import {
     MyRedisDatabasePage,
     BrowserPage,
-    DatabaseOverviewPage,
     WorkbenchPage,
     MemoryEfficiencyPage
 } from '../../../pageObjects';
@@ -17,7 +16,6 @@ import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList, verifySe
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const databaseOverviewPage = new DatabaseOverviewPage();
 const common = new Common();
 const workbenchPage = new WorkbenchPage();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
@@ -43,10 +41,10 @@ fixture `Allow to change database index`
     })
     .afterEach(async() => {
         // Delete keys in logical database
-        await databaseOverviewPage.changeDbIndex(1);
+        await browserPage.OverviewPanel.changeDbIndex(1);
         await browserPage.Cli.sendCommandsInCli([`DEL ${keyNameForSearchInLogicalDb}`, `DEL ${logicalDbKey}`]);
         // Delete and clear database
-        await databaseOverviewPage.changeDbIndex(0);
+        await browserPage.OverviewPanel.changeDbIndex(0);
         await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames.join(' ')}`, `DEL ${keyName}`, `FT.DROPINDEX ${indexName}`]);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
@@ -56,7 +54,7 @@ test('Switching between indexed databases', async t => {
 
     // Change index to logical db
     // Verify that database index switcher displayed for Standalone db
-    await databaseOverviewPage.changeDbIndex(1);
+    await browserPage.OverviewPanel.changeDbIndex(1);
     // Verify that the same client connections are used after changing index
     const logicalDbConnectedClients = await browserPage.overviewConnectedClients.textContent;
     await t.expect(rememberedConnectedClients).eql(logicalDbConnectedClients);
@@ -66,7 +64,7 @@ test('Switching between indexed databases', async t => {
 
     // Verify that logical db not changed after reloading page
     await common.reloadPage();
-    await databaseOverviewPage.verifyDbIndexSelected(1);
+    await browserPage.OverviewPanel.verifyDbIndexSelected(1);
     await browserPage.verifyNoKeysInDatabase();
 
     // Add key to logical (index=1) database
@@ -80,31 +78,31 @@ test('Switching between indexed databases', async t => {
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
     await browserPage.searchByKeyName(keyNameForSearchInLogicalDb);
     // Return to default database
-    await databaseOverviewPage.changeDbIndex(0);
+    await browserPage.OverviewPanel.changeDbIndex(0);
 
     // Verify that search/filter saved after switching index in Browser
     await verifySearchFilterValue(keyNameForSearchInLogicalDb);
     await verifyKeysNotDisplayedInTheList([keyNameForSearchInLogicalDb]);
     await t.click(browserPage.browserViewButton);
     // Change index to logical db
-    await databaseOverviewPage.changeDbIndex(1);
+    await browserPage.OverviewPanel.changeDbIndex(1);
     await verifySearchFilterValue(keyNameForSearchInLogicalDb);
     await verifyKeysDisplayedInTheList([keyNameForSearchInLogicalDb]);
 
     // Return to default database and open search capability
-    await databaseOverviewPage.changeDbIndex(0);
+    await browserPage.OverviewPanel.changeDbIndex(0);
     await t.click(browserPage.redisearchModeBtn);
     await browserPage.selectIndexByName(indexName);
     await verifyKeysDisplayedInTheList(keyNames);
     // Change index to logical db
-    await databaseOverviewPage.changeDbIndex(1);
+    await browserPage.OverviewPanel.changeDbIndex(1);
     // Search by value and return to default database
     await browserPage.searchByKeyName('Hall School');
-    await databaseOverviewPage.changeDbIndex(0);
+    await browserPage.OverviewPanel.changeDbIndex(0);
     // Verify that data changed for indexed db on Search capability page
     await verifyKeysDisplayedInTheList([keyNames[0]]);
     // Change index to logical db
-    await databaseOverviewPage.changeDbIndex(1);
+    await browserPage.OverviewPanel.changeDbIndex(1);
     // Verify that search/filter saved after switching index in Search capability
     await verifySearchFilterValue('Hall School');
 
@@ -125,7 +123,7 @@ test('Switching between indexed databases', async t => {
     await t.click(browserPage.clearFilterButton);
     // Verify that data changed for indexed db on Workbench page
     await verifyKeysDisplayedInTheList([keyNameForSearchInLogicalDb, logicalDbKey]);
-    await databaseOverviewPage.changeDbIndex(0);
+    await browserPage.OverviewPanel.changeDbIndex(0);
     await verifyKeysNotDisplayedInTheList([logicalDbKey]);
 
     // Go to Analysis Tools page and create new report
@@ -137,7 +135,7 @@ test('Switching between indexed databases', async t => {
     await t.expect(memoryEfficiencyPage.topKeysKeyName.withExactText(logicalDbKey).exists).notOk('Keys from other db index displayed in report');
     await t.expect(memoryEfficiencyPage.selectedReport.textContent).notContains('[db', 'Index displayed for 0 index in report name');
     // Change index to logical db
-    await databaseOverviewPage.changeDbIndex(1);
+    await browserPage.OverviewPanel.changeDbIndex(1);
     await t.click(memoryEfficiencyPage.newReportBtn);
     await t.expect(memoryEfficiencyPage.selectedReport.textContent).contains('[db1]', 'Index not displayed in report name');
     await t.expect(memoryEfficiencyPage.topKeysKeyName.withExactText(logicalDbKey).exists).ok('Keys from current db index not displayed in report');

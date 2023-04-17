@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { ApiTags } from '@nestjs/swagger';
@@ -9,7 +9,7 @@ import { ClientMetadata } from 'src/common/models';
 import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
-import { DatabaseRecommendationVoteDto } from './dto';
+import { ModifyDatabaseRecommendationDto } from './dto';
 
 @ApiTags('Database Recommendations')
 @Controller('/recommendations')
@@ -72,8 +72,8 @@ export class DatabaseRecommendationController {
   async modify(
     @Param('id') id: string,
       @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DatabaseRecommendationVoteDto,
+      @Body() dto: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
-    return await this.service.vote(clientMetadata, id, dto.vote);
+    return await this.service.update(clientMetadata, id, dto);
   }
 }

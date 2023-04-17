@@ -5,6 +5,7 @@ export interface IRecommendation {
   id: string
   name: string
   read: boolean
+  hide: boolean
   tutorial: string
   vote: Nullable<Vote>
 }

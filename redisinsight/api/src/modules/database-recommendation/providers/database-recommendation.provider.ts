@@ -49,7 +49,7 @@ export class DatabaseRecommendationProvider {
     const recommendations = await this.repository
       .createQueryBuilder('r')
       .where({ databaseId, db  })
-      .select(['r.id', 'r.name', 'r.read', 'r.vote', 'disabled'])
+      .select(['r.id', 'r.name', 'r.read', 'r.vote', 'disabled', 'r.hide'])
       .orderBy('r.createdAt', 'DESC')
       .getMany();
 
@@ -80,27 +80,26 @@ export class DatabaseRecommendationProvider {
   }
 
   /**
-   * Fetches entity, decrypt, update and return updated DatabaseRecommendation model
+   * Update and return updated DatabaseRecommendation model
+   * @param clientMetadata
    * @param id
-   * @param dto
+   * @param recommendation
    */
-  async recommendationVote({ databaseId }: ClientMetadata, id: string, vote: Vote): Promise<DatabaseRecommendation> {
-    this.logger.log('Updating database recommendation with vote');
-    const oldDatabaseRecommendation = await this.repository.findOne({
-      where: { id, databaseId },
-      select: ['id', 'name', 'read', 'vote', 'disabled'],
-    });
+  async update(clientMetadata: ClientMetadata, id: string, recommendation: Partial<DatabaseRecommendation>): Promise<DatabaseRecommendation> {
+    this.logger.log(`Updating database recommendation with id:${id}`);
+    const oldEntity = await this.repository.findOneBy({ id });
 
-    if (!oldDatabaseRecommendation) {
+    if (!oldEntity) {
       this.logger.error(`Database recommendation with id:${id} was not Found`);
       throw new NotFoundException(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND);
     }
 
-    const entity = plainToClass(DatabaseRecommendation, { ...oldDatabaseRecommendation, vote });
+    const mergeResult = this.repository.merge(oldEntity, recommendation);
+    await this.repository.update(id, plainToClass(DatabaseRecommendationEntity, mergeResult));
 
-    await this.repository.update(id, plainToClass(DatabaseRecommendationEntity, entity));
+    this.logger.log(`Updated database recommendation with id:${id}`);
 
-    return entity;
+    return this.get(id);
   }
 
   /**
@@ -123,4 +122,22 @@ export class DatabaseRecommendationProvider {
       return false;
     }
   }
+
+  /**
+   * Get recommendation by id
+   * @param id
+   */
+    public async get(id: string): Promise<DatabaseRecommendation> {
+      this.logger.log(`Getting recommendation with id: ${id}`);
+      const entity = await this.repository.findOneBy({ id });
+      const model = plainToClass(DatabaseRecommendation, entity);
+
+      if (!model) {
+        this.logger.error(`Not found recommendation with id: ${id}'`);
+        return null;
+      }
+
+      this.logger.log(`Succeed to get recommendation with id: ${id}'`);
+      return model;
+    }
 }

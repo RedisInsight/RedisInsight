@@ -14,6 +14,7 @@ export class InsightsPage {
     noRecommendationsScreen = Selector('[data-testid=no-recommendations-screen]');
     redisVersionRecommendation = Selector('[data-testid=redisVersion-recommendation]');
     optimizeTimeSeriesRecommendation = Selector('[data-testid=RTS-recommendation]');
+    goToDbAnalysisButton = Selector('[data-testid=insights-db-analysis-link]');
 
     /**
      * Open/Close Insights Panel

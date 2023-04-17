@@ -22,7 +22,7 @@ import { ReactComponent as LikeIcon } from 'uiSrc/assets/img/icons/like.svg'
 import { ReactComponent as DoubleLikeIcon } from 'uiSrc/assets/img/icons/double_like.svg'
 import { ReactComponent as DislikeIcon } from 'uiSrc/assets/img/icons/dislike.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
-import { putLiveRecommendationVote } from 'uiSrc/slices/recommendations/recommendations'
+import { updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
@@ -41,10 +41,10 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const dispatch = useDispatch()
 
-  const onSuccessVoted = (instanceId: string, name: string, vote: Vote) => {
+  const onSuccessVoted = (instanceId: string, { vote, name }: { name: string, vote: Nullable<Vote> }) => {
     sendEventTelemetry({
       event: live
-        ? TelemetryEvent.INSIGHTS_RECOMMENDATIONS_VOTED
+        ? TelemetryEvent.INSIGHTS_RECOMMENDATION_VOTED
         : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_VOTED,
       eventData: {
         databaseId: instanceId,
@@ -60,8 +60,9 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
     }
 
     if (live) {
-      const recommendationName = recommendationsContent[name]?.telemetryEvent ?? name
-      dispatch(putLiveRecommendationVote(id, vote, recommendationName, onSuccessVoted))
+      dispatch(updateLiveRecommendation(id, { vote },
+        (instanceId, { vote }) =>
+          onSuccessVoted(instanceId, { vote, name: recommendationsContent[name]?.telemetryEvent ?? name })))
     } else {
       dispatch(putRecommendationVote(name, vote, onSuccessVoted))
     }

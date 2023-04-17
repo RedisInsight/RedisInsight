@@ -118,6 +118,13 @@
         "value": "Redis supports multiple logical databases within an instance, though these logical databases are neither independent nor isolated in any other way and can freeze each other. Also, some modules do not support numbered databases as well."
       }
     ],
+    "liveTimeText": [
+      {
+        "id": "1",
+        "type": "paragraph",
+        "value": "Redis supports multiple logical databases within an instance, though these logical databases are neither independent nor isolated in any other way and can freeze each other. Also, some modules do not support numbered databases as well."
+      }
+    ],
     "badges": ["code_changes"]
   },
   "combineSmallStringsToHashes": {

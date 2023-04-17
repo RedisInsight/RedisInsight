@@ -5,7 +5,7 @@ import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { Vote } from 'uiSrc/constants/recommendations'
+import { ModifyDatabaseRecommendationDto } from 'apiSrc/modules/database-recommendation/dto'
 
 import { AppDispatch, RootState } from '../store'
 import { StateRecommendations, IRecommendations, IRecommendation } from '../interfaces/recommendations'
@@ -62,16 +62,16 @@ const recommendationsSlice = createSlice({
         totalUnread: payload
       }
     },
-    setRecommendationVote: () => {
+    updateRecommendation: () => {
       // we don't have any loading here
     },
-    setRecommendationVoteSuccess: (state, { payload }: PayloadAction<IRecommendation>) => {
+    updateRecommendationSuccess: (state, { payload }: PayloadAction<IRecommendation>) => {
       state.data.recommendations = [
         ...state.data.recommendations.map((recommendation) =>
           (payload.id === recommendation.id ? payload : recommendation))
       ]
     },
-    setRecommendationVoteError: (state, { payload }) => {
+    updateRecommendationError: (state, { payload }) => {
       state.error = payload
     },
   },
@@ -86,9 +86,9 @@ export const {
   setIsContentVisible,
   setIsHighlighted,
   readRecommendations,
-  setRecommendationVote,
-  setRecommendationVoteSuccess,
-  setRecommendationVoteError,
+  updateRecommendation,
+  updateRecommendationSuccess,
+  updateRecommendationError,
   setTotalUnread,
 } = recommendationsSlice.actions
 
@@ -153,16 +153,15 @@ export function readRecommendationsAction(instanceId: string) {
 }
 
 // Asynchronous thunk action
-export function putLiveRecommendationVote(
+export function updateLiveRecommendation(
   id: string,
-  vote: Vote,
-  name: string,
-  onSuccessAction?: (instanceId: string, name: string, vote: Vote) => void,
+  dto: ModifyDatabaseRecommendationDto,
+  onSuccessAction?: (instanceId: string, recommendation: IRecommendation) => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
-      dispatch(setRecommendationVote())
+      dispatch(updateRecommendation())
       const state = stateInit()
       const instanceId = state.connections.instances.connectedInstance?.id
 
@@ -172,19 +171,19 @@ export function putLiveRecommendationVote(
           ApiEndpoints.RECOMMENDATIONS,
           id,
         ),
-        { vote },
+        dto,
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(setRecommendationVoteSuccess(data))
+        dispatch(updateRecommendationSuccess(data))
 
-        onSuccessAction?.(instanceId, name, vote)
+        onSuccessAction?.(instanceId, data)
       }
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      dispatch(setRecommendationVoteError(errorMessage))
+      dispatch(updateRecommendationError(errorMessage))
       onFailAction?.()
     }
   }

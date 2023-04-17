@@ -21,7 +21,12 @@
       font-size: 14px;
       font-weight: 500;
 
-      transition: border-bottom-color ease .3s;
+      transition: border-bottom-color ease 0.3s;
+
+      .euiIEFlexWrapFix {
+        display: inline-block;
+        width: 100%;
+      }
     }
 
     .euiAccordion.euiAccordion-isOpen {
@@ -36,7 +41,8 @@
   }
 }
 
-.wrapper, .recommendationAccordion {
+.wrapper,
+.recommendationAccordion {
   .text {
     font: normal normal normal 14px/19px Graphik !important;
   }
@@ -91,4 +97,8 @@
       font: normal normal 400 12px/14px Graphik, sans-serif !important;
     }
   }
+}
+
+.accordionButton {
+  width: 100%;
 }

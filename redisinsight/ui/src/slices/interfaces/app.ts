@@ -41,6 +41,7 @@ export interface StateAppContext {
   dbConfig: {
     treeViewDelimiter: string
     slowLogDurationUnit: DurationUnits
+    showHiddenRecommendations: boolean
   }
   dbIndex: {
     disabled: boolean

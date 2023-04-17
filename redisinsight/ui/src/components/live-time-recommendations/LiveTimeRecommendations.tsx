@@ -121,7 +121,7 @@ const LiveTimeRecommendations = () => {
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_SHOW_HIDDEN,
       eventData: {
-        action: !value ? 'hide' : 'unhide',
+        action: !value ? 'hide' : 'show',
         ...getTelemetryData(recommendations)
       }
     })

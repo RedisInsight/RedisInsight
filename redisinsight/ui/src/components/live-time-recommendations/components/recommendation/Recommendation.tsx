@@ -109,8 +109,8 @@ const Recommendation = ({
           event: TelemetryEvent.INSIGHTS_RECOMMENDATION_HIDE,
           eventData: {
             databaseId: instanceId,
-            action: hide ? 'hide' : 'unhide',
-            name,
+            action: hide ? 'hide' : 'show',
+            name: recommendationsContent[name]?.liveTelemetryEvent ?? name,
           }
         })
       )

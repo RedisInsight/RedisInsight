@@ -177,7 +177,7 @@ describe('LiveTimeRecommendations', () => {
         databaseId: 'instanceId',
         list: RECOMMENDATIONS_DATA_MOCK.recommendations?.map(({ name }) => name),
         total: 2,
-        action: 'unhide'
+        action: 'show'
       }
     })
     sendEventTelemetry.mockRestore()

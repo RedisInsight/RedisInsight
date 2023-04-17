@@ -1,12 +1,11 @@
 import { acceptLicenseTermsAndAddDatabaseApi, acceptLicenseTermsAndAddOSSClusterDatabase } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossClusterConfig, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { deleteOSSClusterDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let keys: string[];
@@ -19,14 +18,14 @@ fixture `Filtering iteratively in Browser page`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
+        await browserPage.Cli.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can see search results per 500 keys if number of results is 500', async t => {
         // Create new keys
         keys = await common.createArrayWithKeyValue(500);
-        await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
+        await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
         // Search all keys
         await browserPage.searchByKeyName('*');
         const keysNumberOfResults = await browserPage.keysNumberOfResults.textContent;
@@ -37,7 +36,7 @@ test
     .meta({ rte: rte.standalone })('Verify that user can search iteratively via Scan more for search pattern and selected data type', async t => {
         // Create new keys
         keys = await common.createArrayWithKeyValue(1000);
-        await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
+        await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
         // Search all string keys
         await browserPage.selectFilterGroupType(KeyTypesTexts.String);
         await browserPage.searchByKeyName('*');
@@ -55,12 +54,12 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await cliPage.sendCommandInCli(`DEL ${keys.join(' ')}`);
+        await browserPage.Cli.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can search via Scan more for search pattern and selected data type in OSS Cluster DB', async t => {
         // Create new keys
         keys = await common.createArrayWithKeyValueForOSSCluster(1000);
-        await cliPage.sendCommandInCli(`MSET ${keys.join(' ')}`);
+        await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
         // Search all string keys
         await browserPage.selectFilterGroupType(KeyTypesTexts.String);
         await browserPage.searchByKeyName('*');

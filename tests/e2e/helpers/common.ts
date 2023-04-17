@@ -160,6 +160,13 @@ export class Common {
     }
 
     /**
+     * Get current page url
+     */
+    async getPageUrl(): Promise<string> {
+        return (await ClientFunction(() => window.location.href))();
+    }
+
+    /**
      * Check opened URL
      * @param expectedUrl Expected link that is compared with actual
      */
@@ -175,5 +182,15 @@ export class Common {
     async checkURLContainsText(expectedText: string): Promise<void> {
         const getPageUrl = ClientFunction(() => window.location.href);
         await t.expect(getPageUrl()).contains(expectedText, `Opened URL not contains text ${expectedText}`);
+    }
+
+    /**
+     * Replace spaces and line breaks
+     * @param text text to be replaced
+     */
+    async removeEmptySpacesAndBreak(text: string): Promise<string> {
+        return text
+            .replace(/ /g, '')
+            .replace(/\n/g, '');
     }
 }

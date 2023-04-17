@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage, WorkbenchPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -10,7 +10,6 @@ import { verifySearchFilterValue } from '../../../helpers/keys';
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const workbenchPage = new WorkbenchPage();
 const common = new Common();
 const chance = new Chance();
@@ -30,7 +29,7 @@ fixture `Memory Efficiency`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .afterEach(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -46,10 +45,10 @@ test('No reports/keys message and report tooltip', async t => {
     await t.click(memoryEfficiencyPage.newReportBtn);
     await t.expect(memoryEfficiencyPage.noKeysText.textContent).eql(noKeysMessage, 'No keys message not displayed or text is invalid');
     // Verify that user can open workbench page from No keys to display message
-    await t.click(browserPage.workbenchLinkButton);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     await t.expect(workbenchPage.expandArea.visible).ok('Workbench page is not opened');
     // Turn back to Memory Efficiency page
-    await t.click(myRedisDatabasePage.analysisPageButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     // Verify that user can see a tooltip when hovering over the icon on the right of the “New analysis” button
     await t.hover(memoryEfficiencyPage.reportTooltipIcon);
     await t.expect(browserPage.tooltip.textContent).contains(tooltipText, 'Report tooltip is not displayed or text is invalid');
@@ -63,14 +62,14 @@ test
         if (await browserPage.submitTooltipBtn.exists) {
             await t.click(browserPage.submitTooltipBtn);
         }
-        await cliPage.addKeysFromCliWithDelimiter('MSET', 15);
+        await browserPage.Cli.addKeysFromCliWithDelimiter('MSET', 15);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async t => {
-        await cliPage.deleteKeysFromCliWithDelimiter(15);
-        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.Cli.deleteKeysFromCliWithDelimiter(15);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
         await browserPage.deleteKeyByName(hashKeyName);
         await browserPage.deleteKeyByName(streamKeyName);
@@ -108,7 +107,7 @@ test
         // Change delimiter
         await browserPage.changeDelimiterInTreeView('-');
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that delimiter can be changed in Tree View and applied
@@ -116,12 +115,12 @@ test
         await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[5], 'Keyspace not displayed');
 
         // No namespaces message with link
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         // Change delimiter to delimiter with no keys
         await browserPage.changeDelimiterInTreeView('+');
         // Go to Analysis Tools page and create report
         await t
-            .click(myRedisDatabasePage.analysisPageButton)
+            .click(myRedisDatabasePage.NavigationPanel.analysisPageButton)
             .click(memoryEfficiencyPage.newReportBtn);
         // Verify that user can see the message when he do not have any namespaces selected in delimiter
         await t.expect(memoryEfficiencyPage.topNamespacesEmptyContainer.exists).ok('No namespaces section not displayed');
@@ -134,14 +133,14 @@ test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(keySpaces[4], keysTTL[2], hashValue);
-        await cliPage.addKeysFromCliWithDelimiter('MSET', 5);
+        await browserPage.Cli.addKeysFromCliWithDelimiter('MSET', 5);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async t => {
-        await cliPage.deleteKeysFromCliWithDelimiter(5);
-        await t.click(myRedisDatabasePage.browserButton);
+        await browserPage.Cli.deleteKeysFromCliWithDelimiter(5);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
         await browserPage.deleteKeyByName(keySpaces[4]);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -181,10 +180,10 @@ test
         await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async t => {
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
         await browserPage.deleteKeyByName(hashKeyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -196,9 +195,9 @@ test
         // Verify that context saved after reloading page
         await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
         //Go to PubSub page
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Verify that context saved after switching between pages
         await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
     });
@@ -209,10 +208,10 @@ test
         await browserPage.addStreamKey(streamKeyName, 'field', 'value', keysTTL[1]);
         await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value');
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async t => {
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(hashKeyName);
         await browserPage.deleteKeyByName(streamKeyName);
         await browserPage.deleteKeyByName(streamKeyNameDelimiter);
@@ -230,7 +229,7 @@ test
         await t.expect(firstPointLocation).lt(yAxis, 'Point in <1 hr breakdown doesn\'t contain key');
         await t.expect(fourthPointLocation).lt(yAxis, 'Point in 12-25 Hrs breakdown doesn\'t contain key');
         await t.expect(thirdPointLocation).eql(`${yAxis}`, 'Point in 4-12 Hrs breakdown contains key');
-        await t.expect(noExpiryDefaultPointLocation.visible).notOk('No expiry breakdown displayed when toggle is off', {timeout: 1000});
+        await t.expect(noExpiryDefaultPointLocation.visible).notOk('No expiry breakdown displayed when toggle is off', { timeout: 1000 });
         // No Expiry toggle shows No expiry breakdown
         await t.click(memoryEfficiencyPage.showNoExpiryToggle);
         const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('y')).slice(0, 2));
@@ -239,17 +238,17 @@ test
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async() => {
-        await cliPage.sendCommandInCli(`del ${keyNamesReport.join(' ')}`);
+        await browserPage.Cli.sendCommandInCli(`del ${keyNamesReport.join(' ')}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Analysis history', async t => {
         const numberOfKeys: string[] = [];
-        const dbSize = (await cliPage.getSuccessCommandResultFromCli('dbsize')).split(' ');
+        const dbSize = (await browserPage.Cli.getSuccessCommandResultFromCli('dbsize')).split(' ');
         const existedNumberOfKeys = parseInt(dbSize[dbSize.length - 1]);
         for (let i = 0; i < 6; i++) {
-            await cliPage.sendCommandInCli(`set ${keyNamesReport[i]} ${chance.word()}`);
+            await browserPage.Cli.sendCommandInCli(`set ${keyNamesReport[i]} ${chance.word()}`);
             await t.hover(memoryEfficiencyPage.newReportBtn);
             await t.click(memoryEfficiencyPage.newReportBtn);
             const compareValue = parseInt(await memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent);
@@ -271,8 +270,8 @@ test
         }
         // Verify that specific report is saved as context
         await t.click(memoryEfficiencyPage.reportItem.nth(3));
-        await t.click(myRedisDatabasePage.workbenchButton);
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.expect(memoryEfficiencyPage.donutTotalKeys.sibling(1).textContent).eql(numberOfKeys[2], 'Context is not saved');
         // Verify that user can see top keys table saved as context
         await t.expect(memoryEfficiencyPage.topKeysKeyName.count).eql(parseInt(numberOfKeys[2]), 'Top Keys table is not saved as context');

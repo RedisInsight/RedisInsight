@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import {
-  deleteKeyAction,
+  deleteSelectedKeyAction,
   editKey,
   editKeyTTL,
   fetchKeyInfo,
@@ -81,14 +81,13 @@ const KeyDetailsWrapper = (props: Props) => {
   }, [keyName])
 
   const handleDeleteKey = (key: RedisResponseBuffer, type: string) => {
-    if (type === KeyTypes.String) {
-      dispatch(deleteKeyAction(key, () => {
-        dispatch(resetStringValue())
+    dispatch(deleteSelectedKeyAction(key,
+      () => {
+        if (type === KeyTypes.String) {
+          dispatch(resetStringValue())
+        }
         onRemoveKey()
       }))
-      return
-    }
-    dispatch(deleteKeyAction(key, onRemoveKey))
   }
 
   const handleRefreshKey = (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => {

@@ -1,12 +1,11 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { rte } from '../../../helpers/constants';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 const value = common.generateWord(5);
@@ -36,7 +35,7 @@ test('Verify that user can see a Stream in a table format', async t => {
 
     // Add new Stream key with 5 EntryIds
     for(let i = 0; i < 5; i++){
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open key details and check Steam format
     await browserPage.openKeyDetails(keyName);
@@ -52,7 +51,7 @@ test('Verify that user can sort ASC/DESC by Entry ID', async t => {
 
     // Add new Stream key with 5 EntryIds
     for(let i = 0; i < 5; i++){
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open key details and check Entry ID ASC sorting
     await browserPage.openKeyDetails(keyName);
@@ -85,7 +84,7 @@ test('Verify that user can see all the columns are displayed by default for Stre
 
     // Add new Stream key with 3 fields
     for(let i = 0; i < fields.length; i++){
-        await cliPage.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
+        await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
     }
     // Open key details and check fields
     await browserPage.openKeyDetails(keyName);
@@ -106,7 +105,7 @@ test('Verify that the multi-line cell value tooltip is available on hover as per
 
     // Add new Stream key with multi-line cell value
     for(let i = 0; i < fields.length; i++){
-        await cliPage.sendCommandInCli(`XADD ${keyName} * '${fields[i]}' '${entryValue}'`);
+        await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * '${fields[i]}' '${entryValue}'`);
     }
     // Open key details and check tooltip
     await browserPage.openKeyDetails(keyName);
@@ -119,7 +118,7 @@ test('Verify that user can see a confirmation message when request to delete an 
     const confirmationMessage = `will be removed from ${keyName}`;
 
     // Add new Stream key with 1 field
-    await cliPage.sendCommandInCli(`XADD ${keyName} * ${field} ${value}`);
+    await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * ${field} ${value}`);
     // Open key details and click on delete entry
     await browserPage.openKeyDetails(keyName);
     const entryId = await browserPage.streamEntryIdValue.textContent;
@@ -135,7 +134,7 @@ test('Verify that the Entry ID field, Delete button are always displayed while s
 
     // Add new Stream key with 3 fields
     for (let i = 0; i < fields.length; i++) {
-        await cliPage.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
+        await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
     }
     // Open key details
     await browserPage.openKeyDetails(keyName);

@@ -19,10 +19,6 @@
   background-color: var(--wbRunResultsBg);
 
   z-index: 10;
-
-  :global(.cli-output-response-success) {
-    color: var(--cliOutputResponseColor) !important;
-  }
 }
 
 .content {

@@ -158,9 +158,9 @@ const QueryCardHeader = (props: Props) => {
       {
         rawMode: isRawMode(activeMode),
         group: isGroupMode(activeResultsMode),
-        previousView: previousView.name,
+        previousView: previousView?.name,
         isPreviousViewInternal: !!previousView?.internal,
-        currentView: currentView.name,
+        currentView: currentView?.name,
         isCurrentViewInternal: !!currentView?.internal,
       }
     )

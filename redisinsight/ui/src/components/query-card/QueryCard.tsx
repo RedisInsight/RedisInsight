@@ -4,7 +4,7 @@ import cx from 'classnames'
 import { EuiLoadingContent, keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
-import { WBQueryType, ProfileQueryType } from 'uiSrc/pages/workbench/constants'
+import { WBQueryType, ProfileQueryType, DEFAULT_TEXT_VIEW_TYPE } from 'uiSrc/pages/workbench/constants'
 import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
 import {
   getWBQueryType,
@@ -48,7 +48,7 @@ export interface Props {
 }
 
 const getDefaultPlugin = (views: IPluginVisualization[], query: string) =>
-  getVisualizationsByCommand(query, views).find((view) => view.default)?.uniqId || ''
+  getVisualizationsByCommand(query, views).find((view) => view.default)?.uniqId || DEFAULT_TEXT_VIEW_TYPE.id
 
 export const getSummaryText = (summary?: ResultsSummary, mode?: ResultsMode) => {
   if (summary) {
@@ -219,6 +219,7 @@ const QueryCard = (props: Props) => {
                               id={selectedViewValue}
                               result={result}
                               query={command}
+                              mode={mode}
                               setMessage={setMessage}
                               commandId={id}
                             />

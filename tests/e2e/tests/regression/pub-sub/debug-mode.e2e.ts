@@ -1,5 +1,5 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { MyRedisDatabasePage, PubSubPage, CliPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, PubSubPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../helpers/pub-sub';
@@ -7,7 +7,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
-const cliPage = new CliPage();
 
 fixture `PubSub debug mode`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -15,12 +14,12 @@ fixture `PubSub debug mode`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Go to PubSub page and subscribe to channel
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
         await t.click(pubSubPage.subscribeButton);
         // Publish different messages
-        await cliPage.sendCommandInCli('10 publish channel first');
-        await cliPage.sendCommandInCli('10 publish channel second');
-        await cliPage.sendCommandInCli('10 publish channel third');
+        await pubSubPage.Cli.sendCommandInCli('10 publish channel first');
+        await pubSubPage.Cli.sendCommandInCli('10 publish channel second');
+        await pubSubPage.Cli.sendCommandInCli('10 publish channel third');
     })
     .afterEach(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -34,13 +33,13 @@ test
         await pubSubPage.publishMessage('test', 'message sent in the background');
         await t.expect(pubSubPage.totalMessagesCount.textContent).contains('31', 'Total counter value is incorrect');
         // Verify that when user scroll away from the newest message the auto-scroll is stopped
-        await cliPage.sendCommandInCli('30 publish channel additionalMessages');
+        await pubSubPage.Cli.sendCommandInCli('30 publish channel additionalMessages');
         await pubSubPage.publishMessage('test', 'new message with no scroll');
         await verifyMessageDisplayingInPubSub('new message with no scroll', false);
         // Go to Browser Page
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Go to PubSub page
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
         // Verify that the debug mode state is reset to default auto-scroll
         await verifyMessageDisplayingInPubSub('new message with no scroll', true);
     });
@@ -50,7 +49,7 @@ test
         await t.scrollIntoView(pubSubPage.pubSubPageContainer.find(pubSubPage.cssSelectorMessage).withText('first'));
         await pubSubPage.publishMessage('test', 'message to scroll');
         await t.scrollIntoView(pubSubPage.pubSubPageContainer.find(pubSubPage.cssSelectorMessage).withText('message to scroll'));
-        await cliPage.sendCommandInCli('20 publish channel fourth');
+        await pubSubPage.Cli.sendCommandInCli('20 publish channel fourth');
         // Verify auto-scroll resumes automatically
         await verifyMessageDisplayingInPubSub('fourth', true);
     });

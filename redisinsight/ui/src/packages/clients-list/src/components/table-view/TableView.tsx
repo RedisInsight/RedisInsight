@@ -13,9 +13,7 @@ export interface Props {
 
 const noResultMessage = 'No results'
 
-const TableResult = React.memo((props: Props) => {
-  const { result, query } = props
-
+const TableView = React.memo(({ result, query }: Props) => {
   const [columns, setColumns] = useState<EuiBasicTableColumn<any>[]>([])
 
   useEffect(() => {
@@ -54,4 +52,4 @@ const TableResult = React.memo((props: Props) => {
   )
 })
 
-export default TableResult
+export default TableView

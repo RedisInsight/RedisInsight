@@ -37,6 +37,7 @@ export class BulkActionsPage {
    * Open Bulk Actions and confirm deletion
    */
     async startBulkDelete(): Promise<void> {
+        // TODO remove dep from browser page
         await t
             .click(browserPage.bulkActionsButton)
             .click(this.deleteButton)

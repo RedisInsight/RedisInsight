@@ -1,6 +1,7 @@
 import { Selector, t } from 'testcafe';
+import { InstancePage } from './instance-page';
 
-export class WorkbenchPage {
+export class WorkbenchPage extends InstancePage {
     //CSS selectors
     cssSelectorPaginationButtonPrevious = '[data-test-subj=pagination-button-previous]';
     cssSelectorPaginationButtonNext = '[data-test-subj=pagination-button-next]';
@@ -9,6 +10,8 @@ export class WorkbenchPage {
     cssQueryCardOutputResponseSuccess = '[data-testid=query-card-output-response-success]';
     cssQueryCardOutputResponseFailed = '[data-testid=query-card-output-response-failed]';
     cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
+    cssClientListViewTypeOption = '[data-testid=view-type-selected-Plugin-client-list__clients-list]';
+    cssJsonViewTypeOption = '[data-testid=view-type-selected-Plugin-client-list__json-view]';
     cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
     cssQueryTextResult = '[data-testid=query-cli-result]';
     cssWorkbenchCommandInHistory = '[data-testid=wb-command]';
@@ -33,8 +36,8 @@ export class WorkbenchPage {
     customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
     tutorialLinkField = Selector('[data-testid=tutorial-link-field]');
-    tutorialLatestDeleteIcon  = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);
-    tutorialDeleteButton  = Selector('[data-testid^=delete-tutorial-]').withText('Delete');
+    tutorialLatestDeleteIcon = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);
+    tutorialDeleteButton = Selector('[data-testid^=delete-tutorial-]').withText('Delete');
     tutorialNameField = Selector('[data-testid=tutorial-name-field]');
     tutorialSubmitButton = Selector('[data-testid=submit-upload-tutorial-btn]');
     tutorialImport = Selector('[data-testid=import-tutorial]');
@@ -102,12 +105,11 @@ export class WorkbenchPage {
     queryCardContainer = Selector('[data-testid^=query-card-container]');
     queryCardCommand = Selector('[data-testid=query-card-command]');
     queryTableResult = Selector('[data-testid^=query-table-result-]');
+    queryJsonResult = Selector('[data-testid=json-view]');
     mainEditorArea = Selector('[data-testid=main-input-container-area]');
     queryTextResult = Selector(this.cssQueryTextResult);
     queryColumns = Selector('[data-testid*=query-column-]');
     queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
-    overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
-    overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
     queryCardNoModuleOutput = Selector('[data-testid=query-card-no-module-output]');
     noCommandHistorySection = Selector('[data-testid=wb_no-results]');
     preselectArea = Selector('[data-testid=enablementArea]');
@@ -149,6 +151,7 @@ export class WorkbenchPage {
     //OPTIONS
     selectViewType = Selector('[data-testid=select-view-type]');
     textViewTypeOption = Selector('[data-test-subj^=view-type-option-Text]');
+    jsonStringViewTypeOption = Selector('[data-test-subj=view-type-option-Plugin-client-list__json-string-view]');
     tableViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin]');
     graphViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin-graph]');
     typeSelectedClientsList = Selector('[data-testid=view-type-selected-Plugin-client-list__clients-list]');
@@ -167,6 +170,13 @@ export class WorkbenchPage {
         await t
             .click(this.selectViewType)
             .click(this.textViewTypeOption);
+    }
+
+    // Select Json view option in Workbench results
+    async selectViewTypeJson(): Promise<void> {
+        await t
+            .click(this.selectViewType)
+            .click(this.jsonStringViewTypeOption);
     }
 
     // Select Table view option in Workbench results
@@ -233,6 +243,7 @@ export class WorkbenchPage {
         const actualCommandResult = await this.queryCardContainer.nth(childNum).find(this.cssQueryTextResult).textContent;
         await t.expect(actualCommandResult).contains(result, 'Actual command result is not equal to executed');
     }
+
     /**
      * Get selector with tutorial name
      * @param tutorialName name of the uploaded tutorial
@@ -240,6 +251,7 @@ export class WorkbenchPage {
     async getAccordionButtonWithName(tutorialName: string): Promise<Selector> {
         return Selector(`[data-testid=accordion-button-${tutorialName}]`);
     }
+
     /**
      * Get internal tutorial link with .md name
      * @param internalLink name of the .md file
@@ -247,6 +259,7 @@ export class WorkbenchPage {
     async getInternalLinkWithManifest(internalLink: string): Promise<Selector> {
         return Selector(`[data-testid="internal-link-${internalLink}.md"]`);
     }
+
     /**
      * Get internal tutorial link without .md name
      * @param internalLink name of the label
@@ -254,11 +267,35 @@ export class WorkbenchPage {
     async getInternalLinkWithoutManifest(internalLink: string): Promise<Selector> {
         return Selector(`[data-testid="internal-link-${internalLink}"]`);
     }
+
     /**
      * Find tutorial selector by name
      * @param name A tutorial name
      */
     async getTutorialByName(name: string): Promise<Selector> {
         return Selector('div').withText(name);
+    }
+
+    /**
+     * Find image in tutorial by alt text
+     * @param alt Image alt text
+     */
+    async getTutorialImageByAlt(alt: string): Promise<Selector> {
+        return Selector('img').withAttribute('alt', alt);
+    }
+
+    /**
+     * Wait until image rendered
+     * @param selector Image selector
+     */
+    async waitUntilImageRendered(selector: Selector): Promise<void> {
+        const searchTimeout = 5 * 1000; // 5 sec maximum wait
+        const startTime = Date.now();
+        let imageHeight = await selector.getStyleProperty('height');
+
+        do {
+            imageHeight = await selector.getStyleProperty('height');
+        }
+        while ((imageHeight == '0px') && Date.now() - startTime < searchTimeout);
     }
 }

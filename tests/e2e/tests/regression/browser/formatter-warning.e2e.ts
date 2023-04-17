@@ -1,12 +1,11 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 const jsonInvalidStructure = '"{\"test\": 123"';
@@ -22,11 +21,10 @@ fixture `Warning for invalid formatter value`
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        // await cliPage.sendCommandInCli(jsonCommand);
     })
     .afterEach(async() => {
         // Clear keys and database
-        await cliPage.sendCommandInCli(`del ${keyName}`);
+        await browserPage.Cli.sendCommandInCli(`del ${keyName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see warning message when editing value', async t => {

@@ -322,6 +322,19 @@ describe('Cli helper', () => {
       });
     });
 
+    it('test json data structure', () => {
+      const json = { test: 'test' };
+      const jsonString = JSON.stringify(json);
+      const jsonBuffer = Buffer.from(jsonString);
+
+      const str = getASCIISafeStringFromBuffer(jsonBuffer);
+      const buf = getBufferFromSafeASCIIString(str);
+
+      expect(jsonBuffer).toEqual(buf);
+      // getASCIISafeStringFromBuffer is analogue of JSON.stringify without leading " for serialized json data
+      expect(JSON.stringify(jsonString)).toEqual(`"${str}"`);
+    });
+
     it('test huge string timings', () => {
       const buf = randomBytes(1024 * 1024);
 

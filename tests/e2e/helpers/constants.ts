@@ -36,3 +36,8 @@ export enum env {
     web = 'web',
     desktop = 'desktop'
 }
+
+export enum RecommendationIds {
+    redisVersion = 'redisVersion',
+    searchVisualization = 'searchVisualization',
+}

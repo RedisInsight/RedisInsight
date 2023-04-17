@@ -1,8 +1,12 @@
-import { MyRedisDatabasePage, BrowserPage, InsightsPage, DatabaseOverviewPage, MemoryEfficiencyPage } from '../../../pageObjects';
-import { rte } from '../../../helpers/constants';
+import { BrowserPage, InsightsPage, MemoryEfficiencyPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { RecommendationIds, rte } from '../../../helpers/constants';
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
-import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
+import {
+    addNewStandaloneDatabasesApi,
+    deleteStandaloneDatabaseApi,
+    deleteStandaloneDatabasesApi
+} from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { Telemetry } from '../../../helpers/telemetry';
 import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
@@ -11,10 +15,9 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const common = new Common();
 const browserPage = new BrowserPage();
 const insightsPage = new InsightsPage();
-const databaseOverviewPage = new DatabaseOverviewPage();
 const telemetry = new Telemetry();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
-const recommendationsActions = new RecommendationsActions()
+const recommendationsActions = new RecommendationsActions();
 
 const databasesForAdding = [
     { host: ossStandaloneV5Config.host, port: ossStandaloneV5Config.port, databaseName: ossStandaloneV5Config.databaseName },
@@ -52,7 +55,7 @@ test
     .after(async() => {
         // Clear and delete database
         await insightsPage.toggleInsightsPanel(false);
-        await databaseOverviewPage.changeDbIndex(0);
+        await browserPage.OverviewPanel.changeDbIndex(0);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify Insights panel Recommendations displaying', async t => {
@@ -70,7 +73,7 @@ test
 
         await insightsPage.toggleInsightsPanel(false);
         // Go to 2nd database
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(browserPage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
         await insightsPage.toggleInsightsPanel(true);
         // Verify that live recommendations displayed for each database separately
@@ -89,7 +92,7 @@ test
         await t.expect(insightsPage.optimizeTimeSeriesRecommendation.exists).ok('Optimize Time Series recommendation not displayed');
 
         await insightsPage.toggleInsightsPanel(false);
-        await databaseOverviewPage.changeDbIndex(1);
+        await browserPage.OverviewPanel.changeDbIndex(1);
         await insightsPage.toggleInsightsPanel(true);
         // Verify that live recommendations displayed for each logical database separately
         await t
@@ -103,7 +106,7 @@ test
     }).after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can upvote recommendations', async t => {
-        const recommendationName = 'redisVersion';
+        const recommendationName = RecommendationIds.redisVersion;
         const recommendationVote = 'not-useful';
 
         await insightsPage.toggleInsightsPanel(true);
@@ -125,3 +128,26 @@ test
         await insightsPage.toggleRecommendation(recommendationName, true);
         await recommendationsActions.verifyVoteDisabled(recommendationName, recommendationVote);
     });
+test('Verify that user can hide recommendations and checkbox value is saved', async t => {
+    const recommendation = RecommendationIds.searchVisualization;
+    const commandToGetRecommendation = 'FT.INFO';
+    await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
+
+    await insightsPage.toggleInsightsPanel(true);
+    await insightsPage.toggleShowHiddenRecommendations(false);
+    await insightsPage.hideRecommendation(recommendation);
+    await t.expect(await insightsPage.isRecommendationExists(recommendation)).notOk('recommendation is displayed when show hide recommendation is unchecked');
+
+    // check recommendation state is saved after reload
+    await common.reloadPage();
+    await insightsPage.toggleInsightsPanel(true);
+    await t.expect(await insightsPage.isRecommendationExists(recommendation)).notOk('recommendation is displayed when show hide recommendation is unchecked');
+
+    // check value saved to show hidden recommendations
+    await insightsPage.toggleShowHiddenRecommendations(true);
+    await t.expect(await insightsPage.isRecommendationExists(recommendation)).ok('recommendation is not displayed when show hide recommendation is checked');
+    await common.reloadPage();
+    await insightsPage.toggleInsightsPanel(true);
+    await t.expect(await insightsPage.isRecommendationExists(recommendation)).ok('recommendation is not displayed when show hide recommendation is checked');
+});
+

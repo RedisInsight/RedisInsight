@@ -8,7 +8,7 @@ interface IMockedCommands {
   matchedCommand: string;
   argStr?: string;
   argsNamesWithEnumsMock?: string[];
-  argsNamesMock?: string[];
+  argsNamesMock?: (string | string[])[];
   complexityShortMock?: string;
 }
 
@@ -133,7 +133,7 @@ describe('generateArgs', () => {
         generatedName: argsNamesMock[i] ?? '',
       }))
 
-      const args = generateArgs(argsInit)
+      const args = generateArgs(ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.provider, argsInit)
 
       expect(args).toEqual(argsMocked)
     })
@@ -145,7 +145,7 @@ describe('generateArgName', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesWithEnumsMock }) => {
       const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? []
 
-      const generatedArgNames = generateArgsNames(args)
+      const generatedArgNames = generateArgsNames(ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.provider, args)
       expect(generatedArgNames).toEqual(argsNamesWithEnumsMock)
     })
   })
@@ -153,7 +153,11 @@ describe('generateArgName', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesMock }) => {
       const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? []
 
-      const generatedArgNames = generateArgsNames(args, true)
+      const generatedArgNames = generateArgsNames(
+        ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.provider,
+        args,
+        true,
+      )
       expect(generatedArgNames).toEqual(argsNamesMock)
     })
   })

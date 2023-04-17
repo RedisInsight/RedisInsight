@@ -1,7 +1,8 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
-import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
+import { setIsContentVisible, recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fireEvent, mockedStore, screen, cleanup, render } from 'uiSrc/utils/test-utils'
 import { Pages } from 'uiSrc/constants'
 
@@ -9,11 +10,29 @@ import WelcomeScreen from './WelcomeScreen'
 
 let store: typeof mockedStore
 
+const mockRecommendationsSelector = jest.requireActual('uiSrc/slices/recommendations/recommendations')
+
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: 'instanceId',
   }),
+}))
+
+jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
+  ...jest.requireActual('uiSrc/slices/recommendations/recommendations'),
+  recommendationsSelector: jest.fn().mockReturnValue({
+    data: {
+      recommendations: [],
+      totalUnread: 0,
+    },
+    isContentVisible: false,
+  }),
+}))
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
 }))
 
 beforeEach(() => {
@@ -38,7 +57,7 @@ describe('WelcomeScreen', () => {
     expect(pushMock).toHaveBeenCalledWith(Pages.databaseAnalysis('instanceId'))
   })
 
-  it('should call "setIsContentVisible" after click close btn', () => {
+  it('should call "setIsContentVisible" after click link btn', () => {
     render(<WelcomeScreen />)
     const afterRenderActions = [...store.getActions()]
 
@@ -47,4 +66,25 @@ describe('WelcomeScreen', () => {
     const expectedActions = [setIsContentVisible(false)]
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
+
+  it('should call telemetry INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED after click link btn', () => {
+    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockRecommendationsSelector,
+      data: {
+        recommendations: [{ name: 'RTS' }],
+      },
+    }))
+
+    render(<WelcomeScreen />)
+
+    fireEvent.click(screen.getByTestId('insights-db-analysis-link'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
+      eventData: {
+        databaseId: 'instanceId',
+        total: 1,
+      }
+    })
+    sendEventTelemetry.mockRestore()  })
 })

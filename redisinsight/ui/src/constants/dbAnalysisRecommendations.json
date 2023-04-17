@@ -319,8 +319,7 @@
   "bigSets": {
     "id": "bigSets",
     "telemetryEvent": "optimizeExistenceChecks",
-    "title": "Switch to Bloom filter, cuckoo filter, or HyperLogLog",
-    "liveTitle": "Optimize existence checks",
+    "title": "Optimize existence checks",
     "tutorial": "/redis_stack/probabilistic_data_structures.md",
     "redisStack": true,
     "liveTimeText": [
@@ -640,6 +639,7 @@
     "id": "searchString",
     "title": "Optimize your query and search experience",
     "redisStack": true,
+    "tutorial": "/redis_stack/working_with_json.md",
     "liveTimeText": [
       {
         "id": "1",

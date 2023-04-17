@@ -62,7 +62,7 @@ describe('LiveTimeRecommendations', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
-        recommendations: [],
+        recommendations: [{ name: 'RTS' }, { name: 'setPassword' }],
       },
       isContentVisible: true
     }))
@@ -75,8 +75,8 @@ describe('LiveTimeRecommendations', () => {
       event: TelemetryEvent.INSIGHTS_RECOMMENDATIONS_CLOSED,
       eventData: {
         databaseId: 'instanceId',
-        list: [],
-        total: 0,
+        list: ['optimizeTimeSeries', 'setPassword'],
+        total: 2,
       }
     })
     sendEventTelemetry.mockRestore()
@@ -121,7 +121,7 @@ describe('LiveTimeRecommendations', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
-        recommendations: [],
+        recommendations: [{ name: 'RTS' }],
       },
       isContentVisible: true
     }))
@@ -132,6 +132,14 @@ describe('LiveTimeRecommendations', () => {
 
     fireEvent.click(screen.getByTestId('footer-db-analysis-link'))
     expect(pushMock).toHaveBeenCalledWith(Pages.databaseAnalysis('instanceId'))
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
+      eventData: {
+        databaseId: 'instanceId',
+        total: 1,
+      }
+    })
+    sendEventTelemetry.mockRestore()
   })
 
   it('should call "setIsContentVisible" after click close btn', () => {

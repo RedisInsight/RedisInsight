@@ -94,6 +94,13 @@ const LiveTimeRecommendations = () => {
   const handleClickDbAnalysisLink = () => {
     dispatch(setIsContentVisible(false))
     history.push(Pages.databaseAnalysis(connectedInstanceId))
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
+      eventData: {
+        databaseId: connectedInstanceId,
+        total: recommendations?.length,
+      },
+    })
   }
 
   const handleClose = () => {

@@ -9,6 +9,7 @@ import { splitCliCommandLine } from 'src/utils/cli-helper';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
+import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 
 const BATCH_LIMIT = 10_000;
 
@@ -18,6 +19,7 @@ export class BulkImportService {
 
   constructor(
     private readonly databaseConnectionService: DatabaseConnectionService,
+    private readonly analyticsService: BulkActionsAnalyticsService,
   ) {}
 
   private async executeBatch(client, batch: any[]): Promise<BulkActionSummary> {
@@ -73,6 +75,8 @@ export class BulkImportService {
       duration: 0,
     };
 
+    this.analyticsService.sendActionStarted(result);
+
     let parseErrors = 0;
 
     try {
@@ -118,6 +122,8 @@ export class BulkImportService {
       result.duration = Date.now() - startTime;
       result.summary.processed += parseErrors;
       result.summary.failed += parseErrors;
+
+      this.analyticsService.sendActionStopped(result);
 
       return result;
     } catch (e) {

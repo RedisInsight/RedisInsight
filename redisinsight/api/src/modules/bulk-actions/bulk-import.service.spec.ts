@@ -12,6 +12,7 @@ import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-s
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { NotFoundException } from '@nestjs/common';
+import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 
 const generateNCommandsBuffer = (n: number) => Buffer.from(
   (new Array(n)).fill(1).map(() => ['set', ['foo', 'bar']]).join('\n'),
@@ -57,6 +58,7 @@ const mockUploadImportFileDto = {
 describe('BulkImportService', () => {
   let service: BulkImportService;
   let databaseConnectionService: MockType<DatabaseConnectionService>;
+  let analytics: MockType<BulkActionsAnalyticsService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -68,11 +70,19 @@ describe('BulkImportService', () => {
           provide: DatabaseConnectionService,
           useFactory: mockDatabaseConnectionService,
         },
+        {
+          provide: BulkActionsAnalyticsService,
+          useFactory: () => ({
+            sendActionStarted: jest.fn(),
+            sendActionStopped: jest.fn(),
+          }),
+        },
       ],
     }).compile();
 
     service = module.get(BulkImportService);
     databaseConnectionService = module.get(DatabaseConnectionService);
+    analytics = module.get(BulkActionsAnalyticsService);
   });
 
   describe('executeBatch', () => {
@@ -109,6 +119,10 @@ describe('BulkImportService', () => {
     it('should import data', async () => {
       spy.mockResolvedValue(mockSummary);
       expect(await service.import(mockClientMetadata, mockUploadImportFileDto)).toEqual({
+        ...mockImportResult,
+        duration: jasmine.anything(),
+      });
+      expect(analytics.sendActionStopped).toHaveBeenCalledWith({
         ...mockImportResult,
         duration: jasmine.anything(),
       });

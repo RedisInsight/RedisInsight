@@ -61,7 +61,7 @@ const BulkUpload = (props: Props) => {
     })
   }
 
-  const onFileChange = (files: FileList | null) => {
+  const onFileChange = (files: Nullable<FileList>) => {
     setFiles(files)
   }
 

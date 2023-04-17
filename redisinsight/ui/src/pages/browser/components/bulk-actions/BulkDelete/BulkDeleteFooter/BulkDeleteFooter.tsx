@@ -14,6 +14,7 @@ import { keysDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BulkActionsType } from 'uiSrc/constants'
 
+import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import BulkDeleteContent from '../BulkDeleteContent'
 import { isProcessedBulkAction } from '../../utils'
 
@@ -43,8 +44,8 @@ const BulkDeleteFooter = (props: Props) => {
   const handleDeleteWarning = () => {
     setIsPopoverOpen(true)
 
-    let matchValue = '*'
-    if (search !== '*' && !!search) {
+    let matchValue = DEFAULT_SEARCH_MATCH
+    if (search !== DEFAULT_SEARCH_MATCH && !!search) {
       matchValue = getMatchType(search)
     }
 

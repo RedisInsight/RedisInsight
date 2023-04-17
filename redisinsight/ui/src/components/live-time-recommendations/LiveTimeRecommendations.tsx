@@ -14,7 +14,6 @@ import {
   EuiFlyoutHeader,
   EuiCheckbox,
   EuiTextColor,
-  EuiButtonIcon,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { remove } from 'lodash'
@@ -203,19 +202,7 @@ const LiveTimeRecommendations = () => {
           <EuiCheckbox
             id="showHidden"
             name="showHidden"
-            label={(
-              <>
-                <EuiTextColor>
-                  Show
-                  <EuiButtonIcon
-                    iconType={isShowHidden ? 'eyeClosed' : 'eye'}
-                    className={styles.hideBtn}
-                    aria-label="show all/unhide recommendations"
-                    data-testid="show-all-recommendations-btn"
-                  />
-                </EuiTextColor>
-              </>
-            )}
+            label="Show hidden"
             checked={isShowHidden}
             className={styles.hideCheckbox}
             onChange={(e) => onChangeShowHidden(e.target.checked)}

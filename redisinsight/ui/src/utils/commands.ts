@@ -1,6 +1,7 @@
 import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger } from 'lodash'
 import {
   CommandArgsType,
+  CommandProvider,
   ICommandArg,
   ICommandArgGenerated
 } from 'uiSrc/constants'
@@ -135,7 +136,7 @@ const generateArgName = (
 ): string | string[] => {
   try {
     // todo: temporary workaround until all commands providers will be unified
-    if (['main'].includes(provider)) {
+    if ([CommandProvider.Main].includes(<CommandProvider.Main>provider)) {
       return (new Argument(arg)).syntax({
         onlyMandatory,
         pureName,

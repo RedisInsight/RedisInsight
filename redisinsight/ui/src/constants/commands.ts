@@ -12,6 +12,11 @@ export interface ICommand {
   provider?: string;
 }
 
+export enum CommandProvider {
+  Main = 'main',
+  Unknown = 'unknown',
+}
+
 export interface ICommandArg {
   name?: string[] | string;
   type?: CommandArgsType[] | CommandArgsType | string | string[];

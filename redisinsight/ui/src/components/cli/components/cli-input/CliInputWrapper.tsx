@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { getCommandRepeat } from 'uiSrc/utils'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { outputSelector } from 'uiSrc/slices/cli/cli-output'
+import { CommandProvider } from 'uiSrc/constants'
 import CliAutocomplete from './CliAutocomplete'
 
 import CliInput from './CliInput'
@@ -27,7 +28,7 @@ const CliInputWrapper = (props: Props) => {
   const secondCommandMatch = `${firstCommandMatch} ${secondCommand ? secondCommand.toUpperCase() : null}`
 
   const matchedCmd = ALL_REDIS_COMMANDS[secondCommandMatch] || ALL_REDIS_COMMANDS[firstCommandMatch]
-  const provider = matchedCmd?.provider || 'unknown'
+  const provider = matchedCmd?.provider || CommandProvider.Unknown
   const commandName = !isUndefined(ALL_REDIS_COMMANDS[secondCommandMatch])
     ? `${firstCommand} ${secondCommand}`
     : firstCommand

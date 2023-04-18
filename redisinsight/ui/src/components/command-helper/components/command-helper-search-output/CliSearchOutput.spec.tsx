@@ -27,11 +27,11 @@ const mockedCommands: IMockedCommands[] = [
   },
   {
     matchedCommand: 'GEOADD',
-    argStr: 'key [NX|XX] [CH] longitude latitude member [longitude latitude member ...]',
+    argStr: 'key [NX | XX] [CH] longitude latitude member [longitude latitude member ...]',
   },
   {
     matchedCommand: 'ZADD',
-    argStr: 'key [NX|XX] [GT|LT] [CH] [INCR] score member [score member ...]',
+    argStr: 'key [NX | XX] [GT | LT] [CH] [INCR] score member [score member ...]',
   },
   {
     matchedCommand: 'RESET',

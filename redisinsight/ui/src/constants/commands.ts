@@ -9,6 +9,12 @@ export interface ICommand {
   arguments?: ICommandArg[];
   since: string;
   group: CommandGroup | string;
+  provider?: string;
+}
+
+export enum CommandProvider {
+  Main = 'main',
+  Unknown = 'unknown',
 }
 
 export interface ICommandArg {

@@ -82,7 +82,7 @@ test
     .meta({ env: env.web })('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'JSON';
         commandToCheck = 'JSON.SET';
-        commandArgumentsToCheck = 'JSON.SET key path value [condition]';
+        commandArgumentsToCheck = 'JSON.SET key path value [NX | XX]';
         externalPageLink = 'https://redis.io/commands/json.set/';
 
         // Open Command Helper
@@ -102,7 +102,7 @@ test
     .meta({ env: env.web })('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'Search';
         commandToCheck = 'FT.EXPLAIN';
-        commandArgumentsToCheck = 'FT.EXPLAIN index query [dialect]';
+        commandArgumentsToCheck = 'FT.EXPLAIN index query [DIALECT dialect]';
         externalPageLink = 'https://redis.io/commands/ft.explain/';
 
         // Open Command Helper
@@ -150,9 +150,9 @@ test
         ];
         commandsArgumentsToCheck = [
             'AI.MODELDEL key',
-            'AI.SCRIPTSTORE key CPU|GPU [TAG tag] ENTRY_POINTS entry_point_count entry_point [entry_point ...]',
-            'AI.SCRIPTEXECUTE key function [KEYS key_count key [key ...]] [INPUTS input_count input [input ...]] [ARGS arg_count arg [arg ...]] [OUTPUTS output_count output [output ...]] [TIMEOUT timeout]',
-            'AI.TENSORSET key FLOAT|DOUBLE|INT8|INT16|INT32|INT64|UINT8|UINT16|STRING|BOOL shape [shape ...] [BLOB blob] [VALUES value [VALUES value ...]]'
+            'AI.SCRIPTSTORE key CPU | GPU [TAG] ENTRY_POINTS entry_point [entry_point ...]',
+            'AI.SCRIPTEXECUTE key function [KEYS key [key ...]] [INPUTS input [input ...]] [ARGS arg [arg ...]] [OUTPUTS output [output ...]] [TIMEOUT]',
+            'AI.TENSORSET key FLOAT | DOUBLE | INT8 | INT16 | INT32 | INT64 | UINT8 | UINT16 | STRING | BOOL shape [shape ...] [BLOB] [VALUES [VALUES ...]]'
         ];
         externalPageLinks = [
             'https://redis.io/commands/ai.modeldel',
@@ -184,7 +184,7 @@ test
     .meta({ env: env.web })('Verify that user can work with Gears group in Command Helper (RedisGears module)', async t => {
         filteringGroup = 'Gears';
         commandToCheck = 'RG.GETEXECUTION';
-        commandArgumentsToCheck = 'RG.GETEXECUTION id [SHARD|CLUSTER]';
+        commandArgumentsToCheck = 'RG.GETEXECUTION id [SHARD | CLUSTER]';
         externalPageLink = 'https://redis.io/commands/rg.getexecution';
 
         // Open Command Helper
@@ -216,7 +216,7 @@ test
             'BF.MEXISTS key item [item ...]',
             'CMS.QUERY key item [item ...]',
             'TDIGEST.RESET key',
-            'TOPK.LIST key [withcount]',
+            'TOPK.LIST key [WITHCOUNT]',
             'CF.ADD key item'
         ];
         externalPageLinks = [

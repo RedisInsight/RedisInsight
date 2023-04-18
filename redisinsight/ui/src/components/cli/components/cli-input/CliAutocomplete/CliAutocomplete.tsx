@@ -9,13 +9,14 @@ import { setMatchedCommand, clearSearchingCommand } from 'uiSrc/slices/cli/cli-s
 import styles from './styles.module.scss'
 
 export interface Props {
+  provider: string;
   commandName: string;
   wordsTyped: number;
   arguments?: ICommandArg[];
 }
 
 const CliAutocomplete = (props: Props) => {
-  const { commandName = '', arguments: args = [], wordsTyped } = props
+  const { commandName = '', provider = '', arguments: args = [], wordsTyped } = props
 
   const dispatch = useDispatch()
 
@@ -47,7 +48,7 @@ const CliAutocomplete = (props: Props) => {
   }
 
   if (args.length) {
-    argsList = generateArgsNames(args)
+    argsList = generateArgsNames(provider, args)
 
     untypedArgs = argsList.slice(getUntypedArgs()).join(' ')
     argsList = argsList.join(' ')

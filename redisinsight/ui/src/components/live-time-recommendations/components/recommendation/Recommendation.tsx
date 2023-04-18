@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiButton,
   EuiText,
@@ -12,7 +12,7 @@ import {
   EuiAccordion,
   EuiToolTip,
   EuiIcon,
-  EuiButtonIcon
+  EuiButtonIcon,
 } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
@@ -25,7 +25,7 @@ import { RecommendationVoting } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
+import { deleteLiveRecommendations, fetchRecommendationsAction, setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { IRecommendationContent, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
@@ -40,13 +40,12 @@ import styles from './styles.module.scss'
 export interface IProps {
   id: string
   name: string
-  instanceId: string
-  tutorial: string
   isRead: boolean
   vote: Nullable<Vote>
   guides: IEnablementAreaItem[]
   tutorials: IEnablementAreaItem[]
   hide: boolean
+  tutorial?: string
 }
 
 const recommendationsContent = _content as IRecommendationsStatic
@@ -54,7 +53,6 @@ const recommendationsContent = _content as IRecommendationsStatic
 const Recommendation = ({
   id,
   name,
-  instanceId,
   isRead,
   vote,
   tutorial,
@@ -65,13 +63,14 @@ const Recommendation = ({
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { redisStack, title, liveTitle } = recommendationsContent[name] || {}
   const recommendationTitle = liveTitle || title
 
   const handleClose = () => dispatch(setIsContentVisible(false))
 
-  const handleClick = () => {
+  const handleRedirect = () => {
     dispatch(setIsContentVisible(false))
 
     sendEventTelemetry({
@@ -117,6 +116,22 @@ const Recommendation = ({
     )
   }
 
+  const handleDelete = () => {
+    dispatch(deleteLiveRecommendations([id], onSuccessActionDelete))
+  }
+
+  const onSuccessActionDelete = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_SNOOZED,
+      eventData: {
+        databaseId: instanceId,
+        name: recommendationsContent[name]?.telemetryEvent ?? name,
+      }
+    })
+
+    dispatch(fetchRecommendationsAction(instanceId))
+  }
+
   const renderContentElement = ({ id, type, value }: IRecommendationContent) => {
     switch (type) {
       case 'paragraph':
@@ -150,12 +165,20 @@ const Recommendation = ({
       </div>
       {recommendationsContent[name]?.liveTimeText?.map((item) => renderContentElement(item))}
       <div className={styles.actions}>
-        <RecommendationVoting live id={id} vote={vote} name={name} />
+        <RecommendationVoting live id={id} vote={vote} name={name} containerClass={styles.votingContainer} />
+        <EuiButton
+          className={styles.btn}
+          onClick={handleDelete}
+          color="secondary"
+          data-testid={`${name}-delete-btn`}
+        >
+          Snooze
+        </EuiButton>
         {!isUndefined(tutorial) && (
           <EuiButton
-            className={styles.btn}
-            onClick={handleClick}
             fill
+            className={styles.btn}
+            onClick={handleRedirect}
             color="secondary"
             data-testid={`${name}-to-tutorial-btn`}
           >

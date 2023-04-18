@@ -1,4 +1,5 @@
 import { Selector, t } from 'testcafe';
+import { RecommendationIds } from '../helpers/constants';
 
 export class InsightsPage {
     //-------------------------------------------------------------------------------------------
@@ -9,6 +10,8 @@ export class InsightsPage {
     //-------------------------------------------------------------------------------------------
     // BUTTONS
     insightsBtn = Selector('[data-testid=recommendations-trigger]');
+    showHiddenCheckBox = Selector('[data-testid=checkbox-show-hidden]');
+    showHiddenButton = Selector('[data-testid=checkbox-show-hidden ] ~ label');
     // CONTAINERS
     insightsPanel = Selector('[data-testid=insights-panel]');
     noRecommendationsScreen = Selector('[data-testid=no-recommendations-screen]');
@@ -29,17 +32,44 @@ export class InsightsPage {
     }
 
     /**
+     * check if the recommendation exist
+     * @param RecommendationIds name of the recommendation
+     */
+    async isRecommendationExists(recommendationName: RecommendationIds): Promise<boolean> {
+        return Selector(`[data-testid=${recommendationName}-accordion]`).exists;
+    }
+
+    /**
+     * check/uncheck recommendation
+     * @param state State of panel
+     */
+    async toggleShowHiddenRecommendations(state: boolean): Promise<void> {
+        if ((await this.showHiddenCheckBox.checked) !== state) {
+            await t.click(this.showHiddenButton);
+        }
+    }
+
+    /**
      * Expand/Collapse Recommendation
      * @param recommendationName Name of recommendation
      * @param state State of recommendation
      */
-    async toggleRecommendation(recommendationName: string, state: boolean): Promise<void> {
-        const recommendationAccordeon = Selector(`[data-testid=${recommendationName}-accordion]`);
+    async toggleRecommendation(recommendationName: RecommendationIds, state: boolean): Promise<void> {
+        const recommendationAccordion = Selector(`[data-testid=${recommendationName}-accordion]`);
         const recommendationSelector = Selector(`[data-test-subj=${recommendationName}-button]`);
-        const isRecommendationExpanded = await recommendationAccordeon.withAttribute('class', /-isOpen/).exists;
+        const isRecommendationExpanded = await recommendationAccordion.withAttribute('class', /-isOpen/).exists;
 
         if (state !== isRecommendationExpanded) {
             await t.click(recommendationSelector);
         }
+    }
+
+    /**
+     * Hide Recommendation
+     * @param recommendationName Name of recommendation
+     */
+    async hideRecommendation(recommendationName: RecommendationIds): Promise<void> {
+        const recommendationHideBtn = Selector(`[data-testid=toggle-hide-${recommendationName}-btn]`);
+        await t.click(recommendationHideBtn);
     }
 }

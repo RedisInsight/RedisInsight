@@ -149,6 +149,7 @@ describe('DatabaseRecommendationProvider', () => {
 
   describe('delete', () => {
     it('should delete database recommendation by id', async () => {
+      repository.delete.mockReturnValueOnce({ affected: 1 });
       expect(
         await service.delete(mockClientMetadata, mockDatabaseRecommendation.id)
         ).toEqual(undefined);

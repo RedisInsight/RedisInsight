@@ -70,7 +70,7 @@ export class RecommendationService {
       ],
       [
         RECOMMENDATION_NAMES.COMPRESS_HASH_FIELD_NAMES,
-        async () => await this.recommendationProvider.determineCompressHashFieldNamesRecommendation(keys),
+        () => null,
       ],
       [
         RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,

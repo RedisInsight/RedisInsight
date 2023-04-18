@@ -1,4 +1,6 @@
-$animation-duration: 0.2s;
+@import '@elastic/eui/src/global_styling/variables';
+
+$animation-duration: 300ms;
 
 .content {
   margin-top: 70px;
@@ -7,7 +9,7 @@ $animation-duration: 0.2s;
   border-left: none !important;
   border-radius: 4px 0 0 4px;
   box-shadow: -5px 0px 16px rgba(0, 0, 0, 0.16) !important;
-  animation-duration: $animation-duration !important;
+  min-width: 476px !important;
 
   :global(.euiFlyout__closeButton) {
     background-color: transparent;
@@ -57,8 +59,9 @@ $animation-duration: 0.2s;
   }
 
   &.isOpen {
-    transition: all $animation-duration ease;
+    animation: triggerInsights $animation-duration $euiAnimSlightResistance;
     right: 438px;
+    will-change: right;
   }
 
   .triggerIcon {
@@ -152,4 +155,18 @@ $animation-duration: 0.2s;
 
 .hideBtn {
   margin-bottom: 3px;
+}
+
+@keyframes triggerInsights {
+  0% {
+    opacity: 0;
+    right: -37px;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    right: 438px;
+  }
 }

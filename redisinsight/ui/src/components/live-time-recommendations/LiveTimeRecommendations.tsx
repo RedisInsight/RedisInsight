@@ -46,6 +46,8 @@ import styles from './styles.module.scss'
 
 const recommendationsContent = _content as IRecommendationsStatic
 
+const DELAY_TO_SHOW_ONBOARDING_MS = 500
+
 const LiveTimeRecommendations = () => {
   const { id: connectedInstanceId = '', } = useSelector(connectedInstanceSelector)
   const {
@@ -75,10 +77,7 @@ const LiveTimeRecommendations = () => {
   useEffect(() => {
     // this panel can be opened outside
     if (isContentVisible) {
-      dispatch(fetchRecommendationsAction(
-        connectedInstanceId,
-        onSuccessAction,
-      ))
+      dispatch(fetchRecommendationsAction(connectedInstanceId, onSuccessAction))
       isCloseEventSent.current = false
     }
 
@@ -225,20 +224,23 @@ const LiveTimeRecommendations = () => {
   return (
     <div className={styles.wrapper}>
       <div
-        role="button"
-        tabIndex={0}
-        onKeyDown={() => {}}
-        onClick={toggleContent}
         className={cx(styles.trigger, { [styles.isOpen]: isContentVisible })}
-        data-testid="recommendations-trigger"
       >
         <OnboardingTour
           options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}
           anchorPosition="leftDown"
           panelClassName={styles.insightsOnboardPanel}
-          preventPropagation
+          delay={isContentVisible ? DELAY_TO_SHOW_ONBOARDING_MS : 0}
+          rerenderWithDelay={isContentVisible}
         >
-          <div className={styles.inner}>
+          <div
+            className={styles.inner}
+            role="button"
+            tabIndex={0}
+            onKeyDown={() => {}}
+            onClick={toggleContent}
+            data-testid="recommendations-trigger"
+          >
             {isHighlighted && !isContentVisible
               ? <TriggerActiveIcon className={styles.triggerIcon} />
               : <TriggerIcon className={styles.triggerIcon} />}

@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash'
+import { AxiosError } from 'axios'
 import { SortOrder } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { AxiosError } from 'axios'
 import {
   cleanup,
   initialStateDefault,
@@ -15,7 +15,7 @@ import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
 import { AddMembersToZSetDto, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
 import {
   defaultSelectedKeyAction,
-  deleteKeySuccess,
+  deleteSelectedKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
 } from '../../browser/keys'
@@ -965,7 +965,7 @@ describe('zset slice', () => {
           removeZsetMembers(),
           removeZsetMembersSuccess(),
           removeMembersFromList(members),
-          deleteKeySuccess(),
+          deleteSelectedKeySuccess(),
           deleteRedisearchKeyFromList(key),
           addMessageNotification(successMessages.DELETED_KEY(key))
         ]

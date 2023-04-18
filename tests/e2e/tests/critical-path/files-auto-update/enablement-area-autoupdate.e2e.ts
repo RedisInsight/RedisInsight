@@ -55,7 +55,7 @@ if (fs.existsSync(workingDirectory)) {
             const tutorialsTimestampFileNew = editJsonFile(tutorialsTimestampPath);
 
             // Open Workbench page
-            await t.click(myRedisDatabasePage.workbenchButton);
+            await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
 
             // Check Enablement area and validate that removed file is existed in Guides
             await t.click(workbenchPage.guidesGraphAccordion);

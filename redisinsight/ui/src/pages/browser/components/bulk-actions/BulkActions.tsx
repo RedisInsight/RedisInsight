@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
@@ -7,26 +7,21 @@ import {
   EuiTitle,
   EuiToolTip,
   EuiButtonIcon,
-  EuiText,
 } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
-import { isUndefined } from 'lodash'
 
 import {
   setBulkActionType,
   selectedBulkActionsSelector,
-  overviewBulkActionsSelector,
-  bulkActionsSelector,
   setBulkActionsInitialState,
 } from 'uiSrc/slices/browser/bulkActions'
 import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import BulkUpload from './BulkUpload'
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
-import BulkActionsInfo from './BulkActionsInfo'
-import BulkDeleteSummary from './BulkDelete/BulkDeleteSummary'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -40,16 +35,11 @@ const BulkActions = (props: Props) => {
   const { isFullScreen, arePanelsCollapsed, onClosePanel, onBulkActionsPanel, onToggleFullScreen } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { filter, search, isSearched, isFiltered } = useSelector(keysSelector)
+  const { filter, search } = useSelector(keysSelector)
   const { type } = useSelector(selectedBulkActionsSelector)
-  const { loading } = useSelector(bulkActionsSelector)
-  const { status, filter: { match, type: filterType } = {} } = useSelector(overviewBulkActionsSelector) ?? {}
-
-  const [title, setTitle] = useState<string>('Bulk Actions')
-  const [typeSelected, setTypeSelected] = useState<BulkActionsType>(type)
-  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(!isSearched && !isFiltered)
 
   const dispatch = useDispatch()
+
   useEffect(() => {
     let matchValue = '*'
     if (search !== '*' && !!search) {
@@ -65,18 +55,7 @@ const BulkActions = (props: Props) => {
     })
   }, [])
 
-  useEffect(() => {
-    if (type === BulkActionsType.Delete) {
-      setTitle('Bulk Actions: Delete Keys')
-    }
-  }, [type])
-
-  useEffect(() => {
-    setShowPlaceholder(!status && !isSearched && !isFiltered)
-  }, [status, isSearched, isFiltered])
-
   const handleChangeType = (value: BulkActionsType) => {
-    setTypeSelected(value)
     dispatch(setBulkActionType(value))
   }
 
@@ -86,14 +65,19 @@ const BulkActions = (props: Props) => {
 
     onClosePanel()
 
+    const eventData: Record<string, any> = {
+      databaseId: instanceId,
+      action: type
+    }
+
+    if (type === BulkActionsType.Delete) {
+      eventData.search = search
+      eventData.filterType = filter
+    }
+
     sendEventTelemetry({
       event: TelemetryEvent.BULK_ACTIONS_CANCELLED,
-      eventData: {
-        databaseId: instanceId,
-        filterType: filter,
-        search,
-        action: type
-      }
+      eventData
     })
   }
 
@@ -104,10 +88,11 @@ const BulkActions = (props: Props) => {
         direction="column"
         className={cx(styles.container, 'relative')}
         gutterSize="none"
+        responsive={false}
       >
         <EuiFlexItem grow style={{ marginBottom: '16px' }}>
           <EuiTitle size="xs" className={styles.title}>
-            <h4>{title}</h4>
+            <h4>Bulk Actions</h4>
           </EuiTitle>
           {!arePanelsCollapsed && (
             <EuiToolTip
@@ -142,34 +127,8 @@ const BulkActions = (props: Props) => {
         <div className="eui-yScroll">
           <div className={styles.contentActions} data-testid="bulk-actions-content">
             <BulkActionsTabs onChangeType={handleChangeType} />
-            {!showPlaceholder && (
-              <>
-                <BulkActionsInfo
-                  search={match || search || '*'}
-                  loading={loading}
-                  filter={isUndefined(filterType) ? filter : filterType}
-                  status={status}
-                >
-                  <>
-                    {type === BulkActionsType.Delete && (
-                      <BulkDeleteSummary />
-                    )}
-                  </>
-                </BulkActionsInfo>
-
-                {typeSelected === BulkActionsType.Delete && (
-                  <BulkDelete onCancel={closePanel} />
-                )}
-              </>
-            )}
-            {showPlaceholder && (
-              <div className={styles.placeholder} data-testid="bulk-actions-placeholder">
-                <EuiText color="subdued" className={styles.placeholderTitle}>No pattern or key type set</EuiText>
-                <EuiText color="subdued" className={styles.placeholderSummary}>
-                  To perform a bulk action, set the pattern or select the key type
-                </EuiText>
-              </div>
-            )}
+            {type === BulkActionsType.Upload && (<BulkUpload onCancel={closePanel} />)}
+            {type === BulkActionsType.Delete && (<BulkDelete onCancel={closePanel} />)}
           </div>
         </div>
       </EuiFlexGroup>

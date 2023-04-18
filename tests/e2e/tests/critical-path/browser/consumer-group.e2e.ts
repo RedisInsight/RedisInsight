@@ -1,6 +1,6 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -9,7 +9,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let keyName = common.generateWord(20);
@@ -114,7 +113,7 @@ test('Verify that user can see the Consumer information columns (Consumer Name, 
     ];
     // Add New Stream Key with groups and consumers
     for(const command of cliCommands){
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open Stream consumer info view
     await browserPage.openKeyDetails(keyName);
@@ -140,7 +139,7 @@ test('Verify that user can delete the Consumer from the Consumer Group', async t
     ];
     // Add New Stream Key with groups and consumers
     for (const command of cliCommands) {
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open Stream consumer info view
     await browserPage.openKeyDetails(keyName);
@@ -163,7 +162,7 @@ test('Verify that user can delete a Consumer Group', async t => {
     ];
     // Add New Stream Key with groups and consumers
     for (const command of cliCommands) {
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open Stream consumer info view
     await browserPage.openKeyDetails(keyName);

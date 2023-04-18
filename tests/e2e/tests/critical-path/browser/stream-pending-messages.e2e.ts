@@ -1,6 +1,6 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -9,7 +9,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let keyName = common.generateWord(20);
@@ -40,7 +39,7 @@ test('Verify that user can acknowledge any message in the list of pending messag
 
     // Add New Stream Key with pending message
     for(const command of cliCommands){
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open Stream pending view
     await browserPage.openStreamPendingsView(keyName);
@@ -63,7 +62,7 @@ test('Verify that user can claim any message in the list of pending messages', a
 
     // Add New Stream Key with pending message
     for(const command of cliCommands){
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
@@ -89,7 +88,7 @@ test('Verify that claim with optional parameters, the message removed from this 
 
     // Add New Stream Key with pending message
     for(const command of cliCommands){
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);

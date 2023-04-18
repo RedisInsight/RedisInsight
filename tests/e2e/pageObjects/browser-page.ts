@@ -1,9 +1,10 @@
 import { t, Selector } from 'testcafe';
 import { Common } from '../helpers/common';
+import { InstancePage } from './instance-page';
 
 const common = new Common();
 
-export class BrowserPage {
+export class BrowserPage extends InstancePage {
     //CSS Selectors
     cssSelectorGrid = '[aria-label="grid"]';
     cssSelectorRows = '[aria-label="row"]';
@@ -26,15 +27,15 @@ export class BrowserPage {
     hashDeleteButton = Selector('[data-testid=hash-delete-btn]');
     setDeleteButton = Selector('[data-testid=set-delete-btn]');
     streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
-    myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
+    applyButton = Selector('[data-testid=apply-btn]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
+    submitDeleteKeyButton = Selector('[data-testid=submit-delete-key]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
     editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
     closeEditTTL = Selector('[data-testid=cancel-btn]');
     saveTTLValue = Selector('[data-testid=apply-btn]');
     refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
     refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
-    applyButton = Selector('[data-testid=apply-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
     editKeyValueButton = Selector('[data-testid=edit-key-value-btn]');
     closeKeyButton = Selector('[data-testid=close-key-btn]');
@@ -100,7 +101,6 @@ export class BrowserPage {
     editHashButton = Selector('[data-testid^=edit-hash-button-]');
     editZsetButton = Selector('[data-testid^=zset-edit-button-]');
     editListButton = Selector('[data-testid^=edit-list-button-]');
-    workbenchLinkButton = Selector('[data-test-subj=workbench-page-btn]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
     submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
     patternModeBtn = Selector('[data-testid=search-mode-pattern-btn]');
@@ -216,8 +216,6 @@ export class BrowserPage {
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
     keysTotalNumber = Selector('[data-testid=keys-total]');
-    overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
-    overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
     overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
     overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
     overviewCpu = Selector('[data-test-subj=overview-cpu]');
@@ -583,6 +581,16 @@ export class BrowserPage {
     }
 
     /**
+     * Delete Key By name after Hovering
+     */
+    async deleteKeyByNameFromList(keyName: string): Promise<void> {
+        await this.searchByKeyName(keyName);
+        await t.hover(this.keyNameInTheList);
+        await t.click(Selector(`[data-testid="delete-key-btn-${keyName}"]`));
+        await t.click(this.submitDeleteKeyButton);
+    }
+
+    /**
      * Edit key name from details
      * @param keyName The name of the key
      */
@@ -867,21 +875,6 @@ export class BrowserPage {
         await t.typeText(this.jsonValueInput, jsonStructure, { replace: true, paste: true });
         await t.click(this.applyEditButton);
     }
-
-    /**
-     * Get Values list of the key
-     * @param element Selector of the element with list
-     */
-    async getValuesListByElement(element: any): Promise<string[]> {
-        const keyValues: string[] = [];
-        const count = await element.count;
-        for (let i = 0; i < count; i++) {
-            keyValues[i] = await element.nth(i).textContent;
-            i++;
-        }
-        return keyValues;
-    }
-
     /**
      * Check tree view structure
      * @folders name of folders for tree view build

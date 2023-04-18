@@ -13,7 +13,7 @@ const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
 
 fixture `Database info tooltips`
-    .meta({type: 'regression', rte: rte.standalone})
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -39,6 +39,6 @@ test('Verify that user can see DB name, endpoint, connection type, Redis version
     // Verify that user can see an (i) icon next to the database name on Browser and Workbench pages
     await t.expect(browserPage.databaseInfoIcon.visible).ok('User can not see (i) icon on Browser page', { timeout: 10000 });
     // Move to the Workbench page and check icon
-    await t.click(myRedisDatabasePage.workbenchButton);
-    await t.expect(workbenchPage.overviewTotalMemory.visible).ok('User can not see (i) icon on Workbench page', { timeout: 10000 });
+    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await t.expect(workbenchPage.OverviewPanel.overviewTotalMemory.visible).ok('User can not see (i) icon on Workbench page', { timeout: 10000 });
 });

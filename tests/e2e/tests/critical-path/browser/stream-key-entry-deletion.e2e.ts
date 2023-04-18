@@ -1,12 +1,11 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { rte } from '../../../helpers/constants';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let keyName = common.generateWord(20);
@@ -36,7 +35,7 @@ test('Verify that the Stream information is refreshed and the deleted entry is r
     const fieldForDeletion = fields[2];
     // Add new Stream key with 3 fields
     for(let i = 0; i < fields.length; i++){
-        await cliPage.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
+        await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * ${fields[i]} ${values[i]}`);
     }
     // Open key details and remember the Stream information
     await browserPage.openKeyDetails(keyName);
@@ -57,7 +56,7 @@ test('Verify that when user delete the last Entry from the Stream the Stream key
     keyName = common.generateWord(20);
     const emptyStreamMessage = 'There are no Entries in the Stream.';
     // Add new Stream key with 1 field
-    await cliPage.sendCommandInCli(`XADD ${keyName} * ${fields[0]} ${values[0]}`);
+    await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * ${fields[0]} ${values[0]}`);
     // Open key details and delete entry from the Stream
     await browserPage.openKeyDetails(keyName);
     await browserPage.deleteStreamEntry();

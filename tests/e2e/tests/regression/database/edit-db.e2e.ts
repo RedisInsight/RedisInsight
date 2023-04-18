@@ -1,5 +1,5 @@
 import { acceptLicenseTermsAndAddDatabaseApi, clickOnEditDatabaseByName, deleteDatabase } from '../../../helpers/database';
-import { AddRedisDatabasePage, BrowserPage, CliPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
@@ -13,7 +13,6 @@ const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const database = Object.assign({}, ossStandaloneConfig);
 
 const previousDatabaseName = common.generateWord(20);
@@ -32,7 +31,7 @@ test
         // Delete database
         await deleteDatabase(newDatabaseName);
     })('Verify that user can edit DB alias of Standalone DB', async t => {
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Edit alias of added database
         await clickOnEditDatabaseByName(database.databaseName);
 
@@ -62,10 +61,10 @@ test
         // Create context modificaions and navigate to db list
         await browserPage.addStringKey(keyName);
         await browserPage.openKeyDetails(keyName);
-        await t.click(cliPage.cliExpandButton);
-        await t.typeText(cliPage.cliCommandInput, command, { replace: true, paste: true });
+        await t.click(browserPage.Cli.cliExpandButton);
+        await t.typeText(browserPage.Cli.cliCommandInput, command, { replace: true, paste: true });
         await t.pressKey('enter');
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Edit port of added database
         await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
         await t.typeText(addRedisDatabasePage.portInput, ossStandaloneBigConfig.port, { replace: true, paste: true });
@@ -75,5 +74,5 @@ test
         await t.expect(browserPage.keysSummary.find('b').withText('18 00').exists).ok('DB with new port not opened');
         // Verify that context not saved
         await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).notOk('The key details is still selected');
-        await t.expect(cliPage.cliCommandExecuted.withExactText(command).exists).notOk(`Executed command '${command}' in CLI is still displayed`);
+        await t.expect(browserPage.Cli.cliCommandExecuted.withExactText(command).exists).notOk(`Executed command '${command}' in CLI is still displayed`);
     });

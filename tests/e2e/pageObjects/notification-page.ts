@@ -55,7 +55,7 @@ export class NotificationPage {
      */
     async changeNotificationsSwitcher(toValue: boolean): Promise<void> {
         await t
-            .click(myRedisDatabasePage.settingsButton)
+            .click(myRedisDatabasePage.NavigationPanel.settingsButton)
             .click(settingsPage.accordionAppearance);
         if (toValue === true) {
             if (await settingsPage.getNotificationsSwitcherValue() === 'false') {

@@ -23,7 +23,7 @@ fixture `Browser - Specify Keys to Scan`
     });
 test('Verify that the user not enter the value less than 500 - the system automatically applies min value if user enters less than min', async t => {
     // Go to Settings page
-    await t.click(myRedisDatabasePage.settingsButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Specify keys to scan less than 500
     await t.click(settingsPage.accordionAdvancedSettings);
     await settingsPage.changeKeysToScanValue('100');

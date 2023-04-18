@@ -126,13 +126,13 @@ test
         await common.checkURLContainsText('browser');
 
         // Verify that user can add SSH tunnel with Private Key
-        await t.click(browserPage.myRedisDbIcon);
+        await t.click(browserPage.OverviewPanel.myRedisDbIcon);
         await addRedisDatabasePage.addStandaloneSSHDatabase(sshDbPrivateKey, sshWithPrivateKey);
         await myRedisDatabasePage.clickOnDBByName(sshDbPrivateKey.databaseName);
         await common.checkURLContainsText('browser');
 
         // Verify that user can edit SSH parameters for existing database connections
-        await t.click(browserPage.myRedisDbIcon);
+        await t.click(browserPage.OverviewPanel.myRedisDbIcon);
         await myRedisDatabasePage.clickOnEditDBByName(sshDbPrivateKey.databaseName);
         await t
             .typeText(addRedisDatabasePage.sshPrivateKeyInput, sshWithPassphrase.sshPrivateKey, { replace: true, paste: true })

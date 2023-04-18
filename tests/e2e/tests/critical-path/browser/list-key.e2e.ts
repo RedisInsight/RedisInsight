@@ -1,7 +1,7 @@
 import { toNumber } from 'lodash';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig,
@@ -11,7 +11,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let keyName = common.generateWord(10);
@@ -53,11 +52,11 @@ test
     })('Verify that user can remove only one element for List for Redis v. <6.2', async t => {
         keyName = common.generateWord(10);
         // Open CLI
-        await t.click(cliPage.cliExpandButton);
+        await t.click(browserPage.Cli.cliExpandButton);
         // Create new key
-        await t.typeText(cliPage.cliCommandInput, `LPUSH ${keyName} 1 2 3 4 5`);
+        await t.typeText(browserPage.Cli.cliCommandInput, `LPUSH ${keyName} 1 2 3 4 5`);
         await t.pressKey('enter');
-        await t.click(cliPage.cliCollapseButton);
+        await t.click(browserPage.Cli.cliCollapseButton);
         // Remove element from the key
         await browserPage.openKeyDetails(keyName);
         const lengthBeforeRemove = (await browserPage.keyLengthDetails.textContent).split(': ')[1];

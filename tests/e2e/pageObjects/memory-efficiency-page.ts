@@ -1,6 +1,7 @@
-import {Selector} from 'testcafe';
+import { Selector } from 'testcafe';
+import { InstancePage } from './instance-page';
 
-export class MemoryEfficiencyPage {
+export class MemoryEfficiencyPage extends InstancePage {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.

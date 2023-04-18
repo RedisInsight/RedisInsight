@@ -1,6 +1,6 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -9,7 +9,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let keyName = common.generateWord(20);
@@ -46,7 +45,7 @@ test('Verify that user can\'t select currently selected Consumer to Claim messag
 
     // Add New Stream Key with pending message
     for(const command of cliCommandsForStream){
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open Stream pending view
     await browserPage.openStreamPendingsView(keyName);
@@ -68,7 +67,7 @@ test('Verify that the message is claimed only if its idle time is greater than t
 
     // Add New Stream Key with pending message
     for(const command of cliCommands){
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
@@ -93,7 +92,7 @@ test('Verify that when user toggle optional parameters on, he can see optional f
 
     // Add New Stream Key with pending message
     for(const command of cliCommands){
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open Stream pendings view
     await browserPage.openStreamPendingsView(keyName);
@@ -124,7 +123,7 @@ test('Verify that user see the column names in the Pending messages table and na
 
     // Add New Stream Key with pending message
     for(const command of cliCommandsForStream){
-        await cliPage.sendCommandInCli(command);
+        await browserPage.Cli.sendCommandInCli(command);
     }
     // Open Stream pendings view and check columns
     await browserPage.openStreamPendingsView(keyName);

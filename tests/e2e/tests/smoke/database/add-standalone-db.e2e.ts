@@ -74,7 +74,7 @@ test
         // Verify that telemetry event 'CONFIG_DATABASES_OPEN_DATABASE' sent and has all expected properties
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
 
-        await t.click(browserPage.myRedisDbIcon);
+        await t.click(browserPage.OverviewPanel.myRedisDbIcon);
         // Verify that user can't see an indicator of databases that were opened
         await myRedisDatabasePage.verifyDatabaseStatusIsNotVisible(ossStandaloneConfig.databaseName);
 

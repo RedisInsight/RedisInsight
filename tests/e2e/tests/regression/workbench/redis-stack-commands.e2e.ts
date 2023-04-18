@@ -17,7 +17,7 @@ fixture `Redis Stack command in Workbench`
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Drop key and database
@@ -51,7 +51,7 @@ test
         // Check result
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.responseInfo.textContent).eql('No data to visualize. Raw information is presented below.', 'The info message is not displayed for Graph');
-        
+
         // Get result text content
         const graphModeText = await workbenchPage.parsedRedisReply.textContent;
         // Switch to Text view and check result

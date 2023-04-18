@@ -1,7 +1,8 @@
 import { t, Selector } from 'testcafe';
 import { getDatabaseIdByName } from '../helpers/api/api-database';
+import { BasePage } from './base-page';
 
-export class MyRedisDatabasePage {
+export class MyRedisDatabasePage extends BasePage {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -12,14 +13,6 @@ export class MyRedisDatabasePage {
     cssNumberOfDbs = '[data-testid=number-of-dbs]';
     cssRedisStackIcon = '[data-testid=redis-stack-icon]';
     //BUTTONS
-    settingsButton = Selector('[data-testid=settings-page-btn]');
-    workbenchButton = Selector('[data-testid=workbench-page-btn]');
-    analysisPageButton = Selector('[data-testid=analytics-page-btn]');
-    helpCenterButton = Selector('[data-testid=help-menu-button]');
-    githubButton = Selector('[data-testid=github-repo-icon]');
-    browserButton = Selector('[data-testid=browser-page-btn]');
-    pubSubButton = Selector('[data-testid=pub-sub-page-btn]');
-    myRedisDBButton = Selector('[data-test-subj=home-page-btn]', { timeout: 1000 });
     deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
     confirmDeleteButton = Selector('[data-testid^=delete-instance-]').withExactText('Remove');
     toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
@@ -93,7 +86,7 @@ export class MyRedisDatabasePage {
 
     //Delete all the databases from the list
     async deleteAllDatabases(): Promise<void> {
-        await t.click(this.myRedisDBButton);
+        await t.click(this.NavigationPanel.myRedisDBButton);
         const dbNames = this.tableRowContent;
         const count = await dbNames.count;
         if (count > 1) {

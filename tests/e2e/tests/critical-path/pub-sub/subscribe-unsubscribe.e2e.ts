@@ -1,5 +1,5 @@
 import { acceptLicenseTermsAndAddDatabaseApi, acceptLicenseTerms } from '../../../helpers/database';
-import { MyRedisDatabasePage, PubSubPage, CliPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, PubSubPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../helpers/pub-sub';
@@ -8,7 +8,6 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 fixture `Subscribe/Unsubscribe from a channel`
@@ -17,7 +16,7 @@ fixture `Subscribe/Unsubscribe from a channel`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         //Go to PubSub page
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
     .afterEach(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -52,14 +51,14 @@ test('Verify that the focus gets always shifted to a newest message (auto-scroll
     await t.expect(pubSubPage.clientBadge.textContent).eql('1', 'Client badge is not displayed', { timeout: 10000 });
 
     // Go to My Redis databases Page
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     // Go back to PubSub page
-    await t.click(myRedisDatabasePage.pubSubButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     // Verify that my subscription state is preserved when user navigate through the app while connected to current database and in current app session
     await t.expect(pubSubPage.subscribeStatus.textContent).eql('You are  subscribed', 'User is not subscribed', { timeout: 10000 });
 
     // Publish 100 messages
-    await cliPage.sendCommandInCli('100 publish channel test100Message');
+    await pubSubPage.Cli.sendCommandInCli('100 publish channel test100Message');
     // Verify that the first message is not visible in view port
     await verifyMessageDisplayingInPubSub('first message', false);
     await verifyMessageDisplayingInPubSub('test100Message', true);
@@ -72,7 +71,7 @@ test
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         // Go to PubSub page
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
     .after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
@@ -80,29 +79,29 @@ test
     })('Verify that user subscription state is changed to unsubscribed, all the messages are cleared and total message counter is reset when user connect to another database', async t => {
         await t.click(pubSubPage.subscribeButton);
         // Publish 10 messages
-        await cliPage.sendCommandInCli('10 publish channel message');
+        await pubSubPage.Cli.sendCommandInCli('10 publish channel message');
         await verifyMessageDisplayingInPubSub('message', true);
         // Verify that user can see total number of messages received
         await t.expect(pubSubPage.totalMessagesCount.textContent).contains('10', 'Total counter value is incorrect');
         // Connect to second database
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
         // Verify no subscription, messages and total messages
-        await t.click(myRedisDatabasePage.pubSubButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
         await t.expect(pubSubPage.subscribeStatus.textContent).eql('You are not subscribed', 'User is not unsubscribed', { timeout: 10000 });
         await verifyMessageDisplayingInPubSub('message', false);
         await t.expect(pubSubPage.totalMessagesCount.exists).notOk('Total counter is still displayed');
     });
 test('Verify that user can see a internal link to pubsub window under word “Pub/Sub” when he try to run PSUBSCRIBE command in CLI or Workbench', async t => {
     // Go to Browser Page
-    await t.click(myRedisDatabasePage.browserButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify that user can see a custom message when he try to run PSUBSCRIBE command in CLI or Workbench: “Use Pub/Sub to see the messages published to all channels in your database”
-    await cliPage.sendCommandInCli('PSUBSCRIBE');
-    await t.click(cliPage.cliExpandButton);
-    await t.expect(cliPage.cliWarningMessage.textContent).eql('Use Pub/Sub to see the messages published to all channels in your database.', 'Message is not displayed', { timeout: 10000 });
+    await pubSubPage.Cli.sendCommandInCli('PSUBSCRIBE');
+    await t.click(pubSubPage.Cli.cliExpandButton);
+    await t.expect(pubSubPage.Cli.cliWarningMessage.textContent).eql('Use Pub/Sub to see the messages published to all channels in your database.', 'Message is not displayed', { timeout: 10000 });
     // Verify internal link to pubsub page in CLI
-    await t.expect(cliPage.cliLinkToPubSub.exists).ok('Link to pubsub page is not displayed');
-    await t.click(cliPage.cliLinkToPubSub);
+    await t.expect(pubSubPage.Cli.cliLinkToPubSub.exists).ok('Link to pubsub page is not displayed');
+    await t.click(pubSubPage.Cli.cliLinkToPubSub);
     await t.expect(pubSubPage.pubSubPageContainer.exists).ok('Pubsub page is opened');
 });
 test('Verify that the Message field input is preserved until user Publish a message', async t => {
@@ -114,9 +113,9 @@ test('Verify that the Message field input is preserved until user Publish a mess
     await t.typeText(pubSubPage.messageInput, 'message', { replace: true });
     await t.expect(pubSubPage.messageInput.value).eql('message', 'Message input is empty', { timeout: 10000 });
     // Go to Browser Page
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     // Go to PubSub page
-    await t.click(myRedisDatabasePage.pubSubButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     // Verify that message is preserved until publishing
     await t.expect(pubSubPage.messageInput.value).eql('message', 'Message input is empty', { timeout: 10000 });
     await t.click(pubSubPage.publishButton);

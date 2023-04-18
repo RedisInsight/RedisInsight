@@ -13,7 +13,7 @@ import { stringToBuffer } from 'uiSrc/utils'
 import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
 import {
   defaultSelectedKeyAction,
-  deleteKeySuccess,
+  deleteSelectedKeySuccess,
   refreshKeyInfo,
   updateSelectedKeyRefreshTime,
 } from '../../browser/keys'
@@ -674,7 +674,7 @@ describe('set slice', () => {
         removeSetMembers(),
         removeSetMembersSuccess(),
         removeMembersFromList(members),
-        deleteKeySuccess(),
+        deleteSelectedKeySuccess(),
         deleteRedisearchKeyFromList(key),
         addMessageNotification(successMessages.DELETED_KEY(key))
       ]

@@ -1,12 +1,6 @@
-import {Selector, t} from 'testcafe';
+import { Selector, t } from 'testcafe';
 
-export class MonitorPage {
-    //-------------------------------------------------------------------------------------------
-    //DECLARATION OF SELECTORS
-    //*Declare all elements/components of the relevant page.
-    //*Target any element/component via data-id, if possible!
-    //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
-    //-------------------------------------------------------------------------------------------
+export class Profiler {
     //BUTTONS
     expandMonitor = Selector('[data-testid=expand-monitor]');
     runMonitorToggle = Selector('[data-testid=toggle-run-monitor]');
@@ -39,11 +33,11 @@ export class MonitorPage {
     async checkCommandInMonitorResults(command: string, parameters?: string[]): Promise<void> {
         const commandArray = command.split(' ');
         for (const value of commandArray) {
-            await t.expect(this.monitorCommandLinePart.withText(value).exists).ok({timeout: 6000});
+            await t.expect(this.monitorCommandLinePart.withText(value).exists).ok({ timeout: 6000 });
         }
         if (!!parameters) {
             for (const argument of parameters) {
-                await t.expect(this.monitorCommandLinePart.withText(argument).exists).ok({timeout: 6000});
+                await t.expect(this.monitorCommandLinePart.withText(argument).exists).ok({ timeout: 6000 });
             }
         }
     }

@@ -7,7 +7,7 @@ import {
     acceptLicenseTermsAndAddSentinelDatabaseApi,
     deleteDatabase
 } from '../../../helpers/database';
-import { BrowserPage, CliPage, DatabaseOverviewPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import {
     cloudDatabaseConfig,
     commonUrl, ossClusterConfig,
@@ -18,17 +18,15 @@ import { Common } from '../../../helpers/common';
 import { deleteOSSClusterDatabaseApi, deleteAllDatabasesByConnectionTypeApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
-const databaseOverviewPage = new DatabaseOverviewPage();
 
 let keyName = common.generateWord(10);
 const verifyCommandsInCli = async(): Promise<void> => {
     keyName = common.generateWord(10);
     // Open CLI
-    await t.click(cliPage.cliExpandButton);
+    await t.click(browserPage.Cli.cliExpandButton);
     // Add key from CLI
-    await t.typeText(cliPage.cliCommandInput, `SADD ${keyName} "chinese" "japanese" "german"`, { replace: true, paste: true });
+    await t.typeText(browserPage.Cli.cliCommandInput, `SADD ${keyName} "chinese" "japanese" "german"`, { replace: true, paste: true });
     await t.pressKey('enter');
     // Check that the key is added
     await browserPage.searchByKeyName(keyName);
@@ -51,7 +49,7 @@ test
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cluster DB', async() => {
         // Verify that database index switcher not displayed for RE Cluster
-        await t.expect(databaseOverviewPage.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cluster DB');
+        await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cluster DB');
 
         await verifyCommandsInCli();
     });
@@ -66,7 +64,7 @@ test
         await deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cloud DB', async() => {
         // Verify that database index switcher not displayed for RE Cloud
-        await t.expect(databaseOverviewPage.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cloud DB');
+        await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cloud DB');
 
         await verifyCommandsInCli();
     });
@@ -81,7 +79,7 @@ test
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can add data via CLI in OSS Cluster DB', async() => {
         // Verify that database index switcher not displayed for RE Cloud
-        await t.expect(databaseOverviewPage.changeIndexBtn.exists).notOk('Change Db index control displayed for OSS Cluster DB');
+        await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).notOk('Change Db index control displayed for OSS Cluster DB');
 
         await verifyCommandsInCli();
     });
@@ -96,7 +94,7 @@ test
         await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     })('Verify that user can add data via CLI in Sentinel Primary Group', async() => {
         // Verify that database index switcher displayed for Sentinel
-        await t.expect(databaseOverviewPage.changeIndexBtn.exists).ok('Change Db index control not displayed for Sentinel DB');
+        await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).ok('Change Db index control not displayed for Sentinel DB');
 
         await verifyCommandsInCli();
     });

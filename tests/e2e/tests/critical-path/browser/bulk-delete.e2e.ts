@@ -94,9 +94,9 @@ test
     })('Verify that bulk deletion is still run when user goes to any ather page in the application inside of this DB', async t => {
         await bulkActionsPage.startBulkDelete();
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         // Go to Browser Page
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.expect(bulkActionsPage.bulkStatusInProgress.exists).ok('Progress value not displayed', { timeout: 5000 });
     });
 test

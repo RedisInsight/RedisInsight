@@ -2,8 +2,6 @@ import cx from 'classnames'
 import React from 'react'
 import JSONPretty from 'react-json-pretty'
 
-import styles from './styles.module.scss'
-
 interface Props {
   value: string
   expanded?: boolean
@@ -18,7 +16,7 @@ const JSONViewer = (props: Props) => {
 
     return {
       value: (
-        <div className={cx(styles.jsonViewer, { [styles.collapsed]: !expanded })} data-testid="value-as-json">
+        <div className={cx('jsonViewer', { 'jsonViewer-collapsed': !expanded })} data-testid="value-as-json">
           <JSONPretty json={value} space={space} />
         </div>
       ),

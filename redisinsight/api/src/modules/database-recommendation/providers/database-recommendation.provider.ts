@@ -158,7 +158,7 @@ export class DatabaseRecommendationProvider {
       this.logger.log('Succeed to delete recommendation.');
     } catch (error) {
       this.logger.error(`Failed to delete recommendation: ${id}`, error);
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(error.message);
     }
   }
 }

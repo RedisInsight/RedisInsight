@@ -152,14 +152,14 @@ describe('DatabaseRecommendationProvider', () => {
       repository.delete.mockReturnValueOnce({ affected: 1 });
       expect(
         await service.delete(mockClientMetadata, mockDatabaseRecommendation.id)
-        ).toEqual(undefined);
+      ).toEqual(undefined);
     });
 
     it('should throw InternalServerErrorException? on any error during deletion', async () => {
       repository.delete.mockRejectedValueOnce(new NotFoundException());
       await expect(
         service.delete(mockClientMetadata, mockDatabaseRecommendation.id)
-        ).rejects.toThrow(InternalServerErrorException);
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 });

@@ -18,6 +18,7 @@ import {
     BrowserPage
 } from '../../../pageObjects';
 import { Telemetry } from '../../../helpers/telemetry';
+import { InsightsPage } from '../../../pageObjects/insights-page';
 
 const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -25,6 +26,7 @@ const browserPage = new BrowserPage();
 const helpCenterPage = new HelpCenterPage();
 const onBoardActions = new OnboardActions();
 const onboardingPage = new OnboardingPage();
+const insightsPage  = new InsightsPage();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const workBenchPage = new WorkbenchPage();
 const slowLogPage = new SlowLogPage();
@@ -50,7 +52,7 @@ fixture `Onboarding new user tests`
     });
 // https://redislabs.atlassian.net/browse/RI-4070, https://redislabs.atlassian.net/browse/RI-4067
 // https://redislabs.atlassian.net/browse/RI-4278
-test('Verify onbarding new user steps', async t => {
+test('Verify onbarding user steps', async t => {
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
@@ -78,19 +80,23 @@ test('Verify onbarding new user steps', async t => {
     await t.expect(browserPage.Profiler.monitorArea.visible).ok('profiler is not expanded');
     await onBoardActions.verifyStepVisible('Profiler');
     await onBoardActions.clickNextStep();
+    // verify Insights is opened
+    await t.expect(insightsPage.insightsPanel.visible).ok('Insights panel is not expanded');
+    await onBoardActions.verifyStepVisible('Insights');
+    await onBoardActions.clickNextStep();
     // Verify that client list command visible when there is not any index created
     await t.expect(onboardingPage.wbOnbardingCommand.withText('CLIENT LIST').visible).ok('CLIENT LIST command is not visible');
     await t.expect(onboardingPage.copyCodeButton.visible).ok('copy code button is not visible');
     // verify workbench page is opened
     await t.expect(workBenchPage.mainEditorArea.visible).ok('workbench is not opened');
     await onBoardActions.verifyStepVisible('Try Workbench!');
-    // click back step button
-    await onBoardActions.clickBackStep();
+
     // create index in order to see in FT.INFO {index} in onboarding step
-    await workBenchPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
+    await browserPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
+    await onBoardActions.clickBackStep();
     // verify one step before is opened
-    await t.expect(browserPage.Profiler.monitorArea.visible).ok('profiler is not expanded');
-    await onBoardActions.verifyStepVisible('Profiler');
+    await t.expect(insightsPage.insightsPanel.visible).ok('Insights panel is not expanded');
+    await onBoardActions.verifyStepVisible('Insights');
     await onBoardActions.clickNextStep();
     // verify workbench page is opened
     await t.expect(onboardingPage.wbOnbardingCommand.withText(`FT.INFO ${indexName}`).visible).ok(`FT.INFO ${indexName} command is not visible`);
@@ -99,6 +105,8 @@ test('Verify onbarding new user steps', async t => {
     await onBoardActions.verifyStepVisible('Try Workbench!');
     await onBoardActions.clickNextStep();
     await onBoardActions.verifyStepVisible('Explore and learn more');
+    await onBoardActions.clickNextStep();
+    await onBoardActions.verifyStepVisible('Upload your tutorials');
     await onBoardActions.clickNextStep();
     // verify analysis tools page is opened
     await t.expect(memoryEfficiencyPage.noReportsText.visible).ok('analysis tools is not opened');

@@ -38,6 +38,8 @@ import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 import { ReactComponent as TriggerActiveIcon } from 'uiSrc/assets/img/bulb-active.svg'
 import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { OnboardingTour } from 'uiSrc/components'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import styles from './styles.module.scss'
@@ -70,19 +72,25 @@ const LiveTimeRecommendations = () => {
     dispatch(fetchRecommendationsAction(connectedInstanceId))
   }, [connectedInstanceId])
 
-  const toggleContent = () => {
-    if (!isContentVisible) {
+  useEffect(() => {
+    // this panel can be opened outside
+    if (isContentVisible) {
       dispatch(fetchRecommendationsAction(
         connectedInstanceId,
         onSuccessAction,
       ))
       isCloseEventSent.current = false
-    } else {
+    }
+
+    if (!isContentVisible && !isCloseEventSent.current) {
       sendEventTelemetry({
         event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
         eventData: getTelemetryData(recommendations),
       })
     }
+  }, [isContentVisible])
+
+  const toggleContent = () => {
     dispatch(setIsContentVisible(!isContentVisible))
   }
 
@@ -224,16 +232,25 @@ const LiveTimeRecommendations = () => {
         className={cx(styles.trigger, { [styles.isOpen]: isContentVisible })}
         data-testid="recommendations-trigger"
       >
-        {isHighlighted && !isContentVisible
-          ? <TriggerActiveIcon className={styles.triggerIcon} />
-          : <TriggerIcon className={styles.triggerIcon} />}
-        <EuiText className={cx(
-          styles.triggerText,
-          { [styles.triggerHighlighted]: isHighlighted && !isContentVisible }
-        )}
+        <OnboardingTour
+          options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}
+          anchorPosition="leftDown"
+          panelClassName={styles.insightsOnboardPanel}
+          preventPropagation
         >
-          Insights
-        </EuiText>
+          <div className={styles.inner}>
+            {isHighlighted && !isContentVisible
+              ? <TriggerActiveIcon className={styles.triggerIcon} />
+              : <TriggerIcon className={styles.triggerIcon} />}
+            <EuiText className={cx(
+              styles.triggerText,
+              { [styles.triggerHighlighted]: isHighlighted && !isContentVisible }
+            )}
+            >
+              Insights
+            </EuiText>
+          </div>
+        </OnboardingTour>
       </div>
       {isContentVisible && (
         <EuiFlyout

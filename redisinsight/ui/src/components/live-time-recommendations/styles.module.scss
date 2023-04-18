@@ -1,10 +1,13 @@
+$animation-duration: 0.2s;
+
 .content {
   margin-top: 70px;
   height: calc(100% - 70px) !important;
   background-color: var(--recommendationsBgColor) !important;
   border-left: none !important;
-  border-radius: 4px 0px 0px 4px;
+  border-radius: 4px 0 0 4px;
   box-shadow: -5px 0px 16px rgba(0, 0, 0, 0.16) !important;
+  animation-duration: $animation-duration !important;
 
   :global(.euiFlyout__closeButton) {
     background-color: transparent;
@@ -32,23 +35,29 @@
 }
 
 .trigger {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: rotate(-90deg);
-  width: 105px;
-  height: 30px;
-  background: var(--recommendationsBgColor);
   position: fixed;
   right: -37px;
   bottom: 90px;
   z-index: 1100;
-  border-radius: 10px 10px 0 0;
-  box-shadow: 0 -5px 7px -2px rgba(0, 0, 0, 0.16);
-  padding: 9px 20px;
+  transform: rotate(-90deg);
+  width: 105px;
+  height: 30px;
+
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 105px;
+    height: 30px;
+
+    background: var(--recommendationsBgColor);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -5px 7px -2px rgba(0, 0, 0, 0.16);
+    padding: 9px 20px;
+  }
 
   &.isOpen {
-    transition: all 0.25s ease;
+    transition: all $animation-duration ease;
     right: 438px;
   }
 

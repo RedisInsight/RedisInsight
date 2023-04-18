@@ -73,7 +73,7 @@ describe(`DELETE /databases/:id/recommendations`, () => {
       {
         name: 'Should return affected 0 since no recommendations found',
         data: {
-          ids: ["123123123"]
+          ids: [constants.TEST_RECOMMENDATION_ID_1, constants.TEST_RECOMMENDATION_ID_3]
         },
         responseBody: {
           affected: 0,

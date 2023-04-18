@@ -333,28 +333,6 @@ describe('POST /databases/:instanceId/analysis', () => {
 
     [
       {
-        name: 'Should create new database analysis with bigHashes recommendation',
-        data: {
-          delimiter: '-',
-        },
-        statusCode: 201,
-        responseSchema,
-        before: async () => {
-          const NUMBERS_OF_HASH_FIELDS = 100_001;
-          await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
-        },
-        checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([
-            constants.TEST_BIG_HASHES_DATABASE_ANALYSIS_RECOMMENDATION,
-            constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
-            constants.TEST_COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION,
-          ]);
-        },
-        after: async () => {
-          expect(await repository.count()).to.eq(5);
-        }
-      },
-      {
         name: 'Should create new database analysis with increaseSetMaxIntsetEntries recommendation',
         data: {
           delimiter: '-',

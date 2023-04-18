@@ -19,6 +19,7 @@ import reducer, {
   updateLiveRecommendation,
   updateRecommendation,
   setTotalUnread,
+  deleteLiveRecommendations,
 } from 'uiSrc/slices/recommendations/recommendations'
 import { cleanup, initialStateDefault, mockStore, mockedStore } from 'uiSrc/utils/test-utils'
 
@@ -397,6 +398,49 @@ describe('recommendations slice', () => {
         // Act
         await store.dispatch<any>(
           updateLiveRecommendation(mockId, mockVote, mockName)
+        )
+
+        // Assert
+        const expectedActions = [
+          updateRecommendation(),
+          addErrorNotification(responsePayload as AxiosError),
+          updateRecommendationError(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('deleteLiveRecommendations', () => {
+      it('succeed to delete recommendation', async () => {
+        const responsePayload = { status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+        const onSuccessActionMock = jest.fn()
+
+        // Act
+        await store.dispatch<any>(
+          deleteLiveRecommendations([mockId], onSuccessActionMock)
+        )
+
+        // Assert
+        expect(onSuccessActionMock).toBeCalledWith('')
+      })
+
+      it('failed to delete recommendation', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          deleteLiveRecommendations([mockId])
         )
 
         // Assert

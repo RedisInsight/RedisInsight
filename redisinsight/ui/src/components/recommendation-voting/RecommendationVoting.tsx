@@ -32,11 +32,12 @@ export interface Props {
   name: string
   id?: string
   live?: boolean
+  containerClass?: string
 }
 
 const recommendationsContent = _content as IRecommendationsStatic
 
-const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
+const RecommendationVoting = ({ vote, name, id = '', live = false, containerClass = '' }: Props) => {
   const config = useSelector(userSettingsConfigSelector)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const dispatch = useDispatch()
@@ -75,12 +76,12 @@ const RecommendationVoting = ({ vote, name, id = '', live = false }: Props) => {
   return (
     <EuiFlexGroup
       alignItems="center"
-      className={styles.votingContainer}
+      className={cx(styles.votingContainer, containerClass)}
       gutterSize={live ? 'none' : 'l'}
       data-testid="recommendation-voting"
     >
       <EuiText size="m">Rate Recommendation</EuiText>
-      <div className={styles.vote}>
+      <div className="voteContent">
         <EuiToolTip
           content={getTooltipContent('Very Useful')}
           position="bottom"

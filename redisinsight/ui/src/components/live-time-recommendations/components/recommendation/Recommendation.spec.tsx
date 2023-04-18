@@ -137,7 +137,7 @@ describe('Recommendation', () => {
     sendEventTelemetry.mockRestore()
   })
 
-  it('should hide/unhide button', () => {
+  it('should render hide/unhide button', () => {
     const name = 'searchJSON'
     render(<Recommendation {...instance(mockedProps)} name={name} />)
 
@@ -163,5 +163,55 @@ describe('Recommendation', () => {
 
     expect(store.getActions()).toEqual(expectedActions)
     expect(screen.getByTestId('toggle-hide-searchJSON-btn')).toBeInTheDocument()
+  })
+
+  it('should not render "To Tutorial" btn if tutorial is Undefined', () => {
+    const name = 'searchJSON'
+    const { queryByTestId } = render(<Recommendation {...instance(mockedProps)} name={name} tutorial={undefined} />)
+
+    expect(queryByTestId(`${name}-to-tutorial-btn`)).not.toBeInTheDocument()
+  })
+
+  it('should render "To Tutorial" if tutorial="path"', () => {
+    const name = 'searchJSON'
+    const { queryByTestId } = render(<Recommendation {...instance(mockedProps)} name={name} tutorial="path" />)
+
+    expect(queryByTestId(`${name}-to-tutorial-btn`)).toHaveTextContent('To Tutorial')
+  })
+
+  it('should render "To Workbench" btn if tutorial=""', () => {
+    const name = 'searchJSON'
+    const { queryByTestId } = render(<Recommendation {...instance(mockedProps)} name={name} tutorial="" />)
+
+    expect(queryByTestId(`${name}-to-tutorial-btn`)).toHaveTextContent('To Workbench')
+  })
+
+  it('should render Snooze button', () => {
+    const name = 'searchJSON'
+    render(<Recommendation {...instance(mockedProps)} name={name} />)
+
+    expect(screen.getByTestId(`${name}-delete-btn`)).toBeInTheDocument()
+  })
+
+  it('click on Snooze button should call deleteLiveRecommendations', async () => {
+    const idMock = 'id'
+    const nameMock = 'searchJSON'
+    const { queryByTestId } = render(
+      <Recommendation
+        {...instance(mockedProps)}
+        id={idMock}
+        name={nameMock}
+      />
+    )
+
+    await act(() => {
+      fireEvent.click(queryByTestId(`${nameMock}-delete-btn`) as HTMLButtonElement)
+    })
+
+    const expectedActions = [
+      updateRecommendation(),
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
   })
 })

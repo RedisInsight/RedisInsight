@@ -82,12 +82,11 @@
   display: flex;
   margin-top: 22px;
   justify-content: space-around;
-  align-items: flex-start;
+  align-items: center;
 
   .btn {
     height: 24px !important;
-    min-width: 77px !important;
-    margin-top: 60px;
+    min-width: 60px !important;
 
     :global(.euiButton__content) {
       padding: 0 10px;
@@ -96,9 +95,29 @@
     :global(.euiButton__text) {
       font: normal normal 400 12px/14px Graphik, sans-serif !important;
     }
+
+    &:last-of-type {
+      margin-left: 8px !important;
+    }
   }
 }
 
 .accordionButton {
   width: 100%;
+}
+
+.votingContainer {
+  :global {
+    .voteContent {
+      margin-left: 6px !important;
+    }
+    .euiText {
+      font-size: 12px;
+    }
+
+    .vote__btn {
+      width: 28px !important;
+      height: 28px !important;
+    }
+  }
 }

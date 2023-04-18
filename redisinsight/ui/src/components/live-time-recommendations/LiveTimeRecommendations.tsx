@@ -160,7 +160,7 @@ const LiveTimeRecommendations = () => {
         guides={guides}
         hide={hide}
         tutorials={tutorials}
-        tutorial={recommendationsContent[name]?.tutorial ?? ''}
+        tutorial={recommendationsContent[name]?.tutorial}
       />
     ))
   }

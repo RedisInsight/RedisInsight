@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -127,17 +127,38 @@ export class DatabaseRecommendationProvider {
    * Get recommendation by id
    * @param id
    */
-    public async get(id: string): Promise<DatabaseRecommendation> {
-      this.logger.log(`Getting recommendation with id: ${id}`);
-      const entity = await this.repository.findOneBy({ id });
-      const model = plainToClass(DatabaseRecommendation, entity);
+  public async get(id: string): Promise<DatabaseRecommendation> {
+    this.logger.log(`Getting recommendation with id: ${id}`);
+    const entity = await this.repository.findOneBy({ id });
+    const model = plainToClass(DatabaseRecommendation, entity);
 
-      if (!model) {
-        this.logger.error(`Not found recommendation with id: ${id}'`);
-        return null;
+    if (!model) {
+      this.logger.error(`Not found recommendation with id: ${id}'`);
+      return null;
+    }
+
+    this.logger.log(`Succeed to get recommendation with id: ${id}'`);
+    return model;
+  }
+
+  /**
+   * Delete recommendation by id
+   * @param clientMetadata,
+   * @param id
+   */
+  public async delete({ databaseId }: ClientMetadata, id: string): Promise<void> {
+    try {
+      const { affected } = await this.repository.delete({ databaseId, id });
+
+      if (!affected) {
+        this.logger.error(`Recommendation with id:${id} was not Found`);
+        throw new NotFoundException(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND);
       }
 
-      this.logger.log(`Succeed to get recommendation with id: ${id}'`);
-      return model;
+      this.logger.log('Succeed to delete recommendation.');
+    } catch (error) {
+      this.logger.error(`Failed to delete recommendation: ${id}`, error);
+      throw new InternalServerErrorException();
     }
+  }
 }

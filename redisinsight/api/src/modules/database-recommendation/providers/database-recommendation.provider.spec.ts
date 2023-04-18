@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuidv4 } from 'uuid';
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import {
   mockClientMetadata,
   mockQueryBuilderGetMany,
@@ -143,6 +144,21 @@ describe('DatabaseRecommendationProvider', () => {
         mockDatabaseRecommendationEntity.id,
         { ...mockDatabaseRecommendationEntity, hide },
       );
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete database recommendation by id', async () => {
+      expect(
+        await service.delete(mockClientMetadata, mockDatabaseRecommendation.id)
+        ).toEqual(undefined);
+    });
+
+    it('should throw InternalServerErrorException? on any error during deletion', async () => {
+      repository.delete.mockRejectedValueOnce(new NotFoundException());
+      await expect(
+        service.delete(mockClientMetadata, mockDatabaseRecommendation.id)
+        ).rejects.toThrow(InternalServerErrorException);
     });
   });
 });

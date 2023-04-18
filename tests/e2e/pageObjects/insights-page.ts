@@ -64,8 +64,12 @@ export class InsightsPage {
         }
     }
 
+    /**
+     * Hide Recommendation
+     * @param recommendationName Name of recommendation
+     */
     async hideRecommendation(recommendationName: RecommendationIds): Promise<void> {
         const recommendationHideBtn = Selector(`[data-testid=toggle-hide-${recommendationName}-btn]`);
-        await t.click((recommendationHideBtn));
+        await t.click(recommendationHideBtn);
     }
 }

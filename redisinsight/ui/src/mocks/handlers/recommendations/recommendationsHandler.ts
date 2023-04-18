@@ -20,6 +20,11 @@ const handlers: RestHandler[] = [
   ), async (req, res, ctx) => res(
     ctx.status(200),
     ctx.json(RECOMMENDATIONS_DATA_MOCK),
+  )),
+  rest.delete(getMswURL(
+    getUrl(INSTANCE_ID_MOCK, ApiEndpoints.RECOMMENDATIONS)
+  ), async (req, res, ctx) => res(
+    ctx.status(200),
   ))
 ]
 

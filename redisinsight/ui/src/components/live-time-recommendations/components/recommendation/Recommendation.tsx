@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiButton,
   EuiText,
@@ -40,7 +40,6 @@ import styles from './styles.module.scss'
 export interface IProps {
   id: string
   name: string
-  instanceId: string
   isRead: boolean
   vote: Nullable<Vote>
   guides: IEnablementAreaItem[]
@@ -54,7 +53,6 @@ const recommendationsContent = _content as IRecommendationsStatic
 const Recommendation = ({
   id,
   name,
-  instanceId,
   isRead,
   vote,
   tutorial,
@@ -65,6 +63,7 @@ const Recommendation = ({
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { redisStack, title, liveTitle } = recommendationsContent[name] || {}
   const recommendationTitle = liveTitle || title

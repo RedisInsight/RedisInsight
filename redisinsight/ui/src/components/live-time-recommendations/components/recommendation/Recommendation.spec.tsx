@@ -7,6 +7,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS, Pages } from 'uiSrc/constants'
 
 import { updateRecommendation } from 'uiSrc/slices/recommendations/recommendations'
+import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import Recommendation, { IProps } from './Recommendation'
 
 const mockedProps = mock<IProps>()
@@ -56,7 +57,6 @@ describe('Recommendation', () => {
         {...instance(mockedProps)}
         isRead={false}
         name="searchJSON"
-        instanceId="id"
         tutorial=""
       />
     )
@@ -64,11 +64,11 @@ describe('Recommendation', () => {
     fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 
-    expect(pushMock).toHaveBeenCalledWith(Pages.workbench('id'))
+    expect(pushMock).toHaveBeenCalledWith(Pages.workbench(INSTANCE_ID_MOCK))
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
       eventData: {
-        databaseId: 'id',
+        databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',
       }
     })
@@ -85,7 +85,6 @@ describe('Recommendation', () => {
         {...instance(mockedProps)}
         isRead={false}
         name="searchJSON"
-        instanceId="id"
         tutorial="quick-guides/working-with-hash.html"
         guides={MOCK_GUIDES_ITEMS}
         tutorials={MOCK_TUTORIALS_ITEMS}
@@ -95,11 +94,11 @@ describe('Recommendation', () => {
     fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 
-    expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench('id')}?path=quick-guides/0/2`)
+    expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?path=quick-guides/0/2`)
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
       eventData: {
-        databaseId: 'id',
+        databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',
       }
     })
@@ -116,7 +115,6 @@ describe('Recommendation', () => {
         {...instance(mockedProps)}
         isRead={false}
         name="searchJSON"
-        instanceId="id"
         tutorial="/redis_stack/working_with_json.md"
         guides={MOCK_GUIDES_ITEMS}
         tutorials={MOCK_TUTORIALS_ITEMS}
@@ -126,11 +124,11 @@ describe('Recommendation', () => {
     fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 
-    expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench('id')}?path=tutorials/4`)
+    expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?path=tutorials/4`)
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
       eventData: {
-        databaseId: 'id',
+        databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',
       }
     })
@@ -204,9 +202,7 @@ describe('Recommendation', () => {
       />
     )
 
-    await act(() => {
-      fireEvent.click(queryByTestId(`${nameMock}-delete-btn`) as HTMLButtonElement)
-    })
+    fireEvent.click(queryByTestId(`${nameMock}-delete-btn`) as HTMLButtonElement)
 
     const expectedActions = [
       updateRecommendation(),

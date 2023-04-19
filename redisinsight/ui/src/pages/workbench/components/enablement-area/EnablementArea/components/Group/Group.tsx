@@ -8,6 +8,8 @@ import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-cust
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import { EAItemActions } from 'uiSrc/constants'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { OnboardingTour } from 'uiSrc/components'
 import DeleteTutorialButton from '../DeleteTutorialButton'
 
 import './styles.scss'
@@ -69,18 +71,25 @@ const Group = (props: Props) => {
   const actionsContent = (
     <>
       {actions?.includes(EAItemActions.Create) && (
-        <EuiToolTip
-          content="Upload Tutorial"
+        <OnboardingTour
+          options={ONBOARDING_FEATURES.WORKBENCH_CUSTOM_TUTORIALS}
+          anchorPosition="downLeft"
+          anchorWrapperClassName="onboardingPopoverAnchor"
+          preventPropagation
         >
-          <div
-            className="group-header__btn group-header__create-btn"
-            role="presentation"
-            onClick={handleCreate}
-            data-testid="open-upload-tutorial-btn"
+          <EuiToolTip
+            content="Upload Tutorial"
           >
-            <EuiIcon type="plus" />
-          </div>
-        </EuiToolTip>
+            <div
+              className="group-header__btn group-header__create-btn"
+              role="presentation"
+              onClick={handleCreate}
+              data-testid="open-upload-tutorial-btn"
+            >
+              <EuiIcon type="plus" />
+            </div>
+          </EuiToolTip>
+        </OnboardingTour>
       )}
       {actions?.includes(EAItemActions.Delete) && (
         <DeleteTutorialButton id={id} label={label} onDelete={handleDelete} isLoading={deletingCustomTutorials} />

@@ -497,4 +497,26 @@ describe('POST /databases/:instanceId/analysis', () => {
       },
     ].map(mainCheckFn);
   });
+
+  describe('searchString recommendation', () => {
+    [
+      {
+        name: 'Should create new database analysis with searchString recommendation',
+        data: {
+          delimiter: '-',
+        },
+        before: async () => {
+          await rte.data.sendCommand('SET', [constants.TEST_STRING_KEY_1, Buffer.alloc(513 * 1024, 'a').toString()]);
+        },
+        statusCode: 201,
+        responseSchema,
+        after: async () => {
+          const entity: any = await (await localDb.getRepository(localDb.repositories.DATABASE_RECOMMENDATION)).findOneBy({
+            name: constants.TEST_SEARCH_STRING_RECOMMENDATION.name
+          });
+          expect(entity).to.be.an('object');
+        }
+      },
+    ].map(mainCheckFn);
+  });
 });

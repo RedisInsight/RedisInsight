@@ -10,6 +10,7 @@ import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/provider
 import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
@@ -22,6 +23,7 @@ export class DatabaseAnalysisService {
     private readonly analyzer: DatabaseAnalyzer,
     private readonly databaseAnalysisProvider: DatabaseAnalysisProvider,
     private readonly scanner: KeysScanner,
+    private liveRecommendationService: DatabaseRecommendationService,
   ) {}
 
   /**
@@ -84,6 +86,10 @@ export class DatabaseAnalysisService {
       }, [].concat(...scanResults.map((nodeResult) => nodeResult.keys))));
 
       client.disconnect();
+      this.liveRecommendationService.sync(
+        clientMetadata,
+        recommendations,
+      );
       return this.databaseAnalysisProvider.create(analysis);
     } catch (e) {
       client?.disconnect();

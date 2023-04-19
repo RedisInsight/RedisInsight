@@ -1,5 +1,5 @@
 import { AdditionalSearchModuleName, AdditionalRedisModuleName } from 'src/constants';
-import { isRedisearchModule } from './recommendation-helper';
+import { isRedisearchModule, sortRecommendations } from './recommendation-helper';
 
 const nameToModule = (name: string) => ({ name });
 
@@ -12,10 +12,75 @@ const getOutputForRedisearchAvailable: any[] = [
   [['1', 'json', AdditionalSearchModuleName.FTL].map(nameToModule), true],
 ];
 
-describe('isRedisearchModule', () => {
-  it.each(getOutputForRedisearchAvailable)('for input: %s (reply), should be output: %s',
-    (reply, expected) => {
-      const result = isRedisearchModule(reply);
-      expect(result).toBe(expected);
-    });
+const sortRecommendationsTests = [
+  {
+    input: [],
+    expected: [],
+  },
+  {
+    input: [
+      { name: 'luaScript' },
+      { name: 'bigSets' },
+      { name: 'searchIndexes' },
+      { name: 'searchString' },
+    ],
+    expected: [
+      { name: 'searchString' },
+      { name: 'searchIndexes' },
+      { name: 'bigSets' },
+      { name: 'luaScript' },
+    ],
+  },
+  {
+    input: [
+      { name: 'luaScript' },
+      { name: 'bigSets' },
+      { name: 'searchJSON' },
+      { name: 'searchString' },
+    ],
+    expected: [
+      { name: 'searchString' },
+      { name: 'searchJSON' },
+      { name: 'bigSets' },
+      { name: 'luaScript' },
+    ],
+  },
+  {
+    input: [
+      { name: 'luaScript' },
+      { name: 'bigSets' },
+      { name: 'searchIndexes' },
+      { name: 'searchJSON' },
+      { name: 'useSmallerKeys' },
+      { name: 'RTS' },
+    ],
+    expected: [
+      { name: 'searchJSON' },
+      { name: 'searchIndexes' },
+      { name: 'RTS' },
+      { name: 'bigSets' },
+      { name: 'luaScript' },
+      { name: 'useSmallerKeys' },
+    ],
+  },
+];
+
+describe('Recommendation helper', () => {
+  describe('isRedisearchModule', () => {
+    it.each(getOutputForRedisearchAvailable)('for input: %s (reply), should be output: %s',
+      (reply, expected) => {
+        const result = isRedisearchModule(reply);
+        expect(result).toBe(expected);
+      });
+  });
+
+  describe('sortRecommendations', () => {
+    test.each(sortRecommendationsTests)(
+      '%j',
+      ({ input, expected }) => {
+        const result = sortRecommendations(input);
+        expect(result).toEqual(expected);
+      },
+    );
+  });
 });

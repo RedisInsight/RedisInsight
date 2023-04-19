@@ -1,12 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
-import { DatabaseRecommendation, Vote } from 'src/modules/database-recommendation/models';
+import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
 import { RecommendationScanner } from 'src/modules/database-recommendation/scanner/recommendations.scanner';
 import { ClientMetadata } from 'src/common/models';
 import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
+import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { ModifyDatabaseRecommendationDto } from './dto';
 import { DatabaseService } from '../database/database.service';
 
@@ -35,7 +36,7 @@ export class DatabaseRecommendationService {
    */
   async list(clientMetadata: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
     this.logger.log('Getting database recommendations');
-    const db = clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0
+    const db = clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0;
     return this.databaseRecommendationsProvider.list({ ...clientMetadata, db });
   }
 
@@ -52,8 +53,8 @@ export class DatabaseRecommendationService {
   ): Promise<DatabaseRecommendation> {
     const newClientMetadata = {
       ...clientMetadata,
-      db: clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0
-     }
+      db: clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0,
+    };
     const isRecommendationExist = await this.databaseRecommendationsProvider.isExist(
       newClientMetadata,
       recommendationName,
@@ -84,8 +85,28 @@ export class DatabaseRecommendationService {
    * @param id
    * @param dto
    */
-  public async update(clientMetadata: ClientMetadata, id: string, dto: ModifyDatabaseRecommendationDto): Promise<DatabaseRecommendation> {
+  public async update(
+    clientMetadata: ClientMetadata,
+    id: string, dto: ModifyDatabaseRecommendationDto,
+  ): Promise<DatabaseRecommendation> {
     this.logger.log(`Update database extended recommendations id:${id}`);
     return this.databaseRecommendationsProvider.update(clientMetadata, id, dto);
+  }
+
+  /**
+   * Sync db analysis recommendations and live recommendations
+   * @param clientMetadata
+   * @param recommendations
+   */
+  public async sync(clientMetadata: ClientMetadata, recommendations: Recommendation[]): Promise<void> {
+    const db = clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0;
+    const newClientMetadata = { ...clientMetadata, db };
+
+    const liveRecommendations = await this.databaseRecommendationsProvider.list(newClientMetadata);
+    return this.databaseRecommendationsProvider.sync(
+      newClientMetadata,
+      recommendations,
+      liveRecommendations?.recommendations,
+    );
   }
 }

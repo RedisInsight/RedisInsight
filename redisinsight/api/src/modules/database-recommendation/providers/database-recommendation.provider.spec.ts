@@ -48,6 +48,28 @@ const mockDatabaseRecommendationHidden = {
   hide: true,
 };
 
+const mockBigSetsDatabaseRecommendationHidden = {
+  ...mockDatabaseRecommendationEntity,
+  name: 'bigSets',
+};
+
+const mockDBAnalysisRecommendation1 = {
+  name: 'RTS',
+};
+
+const mockDBAnalysisRecommendation2 = {
+  name: 'bigSets',
+};
+
+const mockDBAnalysisRecommendation3 = {
+  name: 'setPassword',
+};
+
+const mockLiveRecommendations = [
+  mockDatabaseRecommendation,
+  mockBigSetsDatabaseRecommendationHidden,
+];
+
 describe('DatabaseRecommendationProvider', () => {
   let service: DatabaseRecommendationProvider;
   let repository: MockType<Repository<DatabaseRecommendationEntity>>;
@@ -143,6 +165,51 @@ describe('DatabaseRecommendationProvider', () => {
         mockDatabaseRecommendationEntity.id,
         { ...mockDatabaseRecommendationEntity, hide },
       );
+    });
+  });
+
+  describe('sync', () => {
+    it('should call "create" with new recommendations', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+
+      await service.sync(
+        mockClientMetadata,
+        [mockDBAnalysisRecommendation1, mockDBAnalysisRecommendation3],
+        mockLiveRecommendations,
+      );
+      expect(createSpy).toBeCalledTimes(2);
+      expect(createSpy).toBeCalledWith(
+        mockClientMetadata,
+        mockDBAnalysisRecommendation1.name,
+      );
+      expect(createSpy).toBeCalledWith(
+        mockClientMetadata,
+        mockDBAnalysisRecommendation3.name,
+      );
+    });
+    it('should not call "create" with exist recommendations', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+
+      await service.sync(
+        mockClientMetadata,
+        [mockDBAnalysisRecommendation1, mockDBAnalysisRecommendation2],
+        mockLiveRecommendations,
+      );
+      expect(createSpy).toBeCalledTimes(1);
+      expect(createSpy).toBeCalledWith(
+        mockClientMetadata,
+        mockDBAnalysisRecommendation1.name,
+      );
+      expect(createSpy).not.toBeCalledWith(
+        mockClientMetadata,
+        mockDBAnalysisRecommendation2.name,
+      );
+    });
+    it('should not call "create" if there are no new recommendations', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+
+      await service.sync(mockClientMetadata, [mockDBAnalysisRecommendation2], mockLiveRecommendations);
+      expect(createSpy).toBeCalledTimes(0);
     });
   });
 });

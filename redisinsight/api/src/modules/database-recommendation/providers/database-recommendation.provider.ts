@@ -1,11 +1,14 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { differenceBy } from 'lodash';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
-import { DatabaseRecommendation, Vote } from 'src/modules/database-recommendation/models';
+import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
+import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { ClientMetadata } from 'src/common/models';
+import { sortRecommendations } from 'src/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   DatabaseRecommendationsResponse,
@@ -48,7 +51,7 @@ export class DatabaseRecommendationProvider {
     this.logger.log('Getting database recommendations list');
     const recommendations = await this.repository
       .createQueryBuilder('r')
-      .where({ databaseId, db  })
+      .where({ databaseId, db })
       .select(['r.id', 'r.name', 'r.read', 'r.vote', 'disabled', 'r.hide'])
       .orderBy('r.createdAt', 'DESC')
       .getMany();
@@ -85,7 +88,11 @@ export class DatabaseRecommendationProvider {
    * @param id
    * @param recommendation
    */
-  async update(clientMetadata: ClientMetadata, id: string, recommendation: Partial<DatabaseRecommendation>): Promise<DatabaseRecommendation> {
+  async update(
+    clientMetadata: ClientMetadata,
+    id: string,
+    recommendation: Partial<DatabaseRecommendation>,
+  ): Promise<DatabaseRecommendation> {
     this.logger.log(`Updating database recommendation with id:${id}`);
     const oldEntity = await this.repository.findOneBy({ id });
 
@@ -127,17 +134,41 @@ export class DatabaseRecommendationProvider {
    * Get recommendation by id
    * @param id
    */
-    public async get(id: string): Promise<DatabaseRecommendation> {
-      this.logger.log(`Getting recommendation with id: ${id}`);
-      const entity = await this.repository.findOneBy({ id });
-      const model = plainToClass(DatabaseRecommendation, entity);
+  public async get(id: string): Promise<DatabaseRecommendation> {
+    this.logger.log(`Getting recommendation with id: ${id}`);
+    const entity = await this.repository.findOneBy({ id });
+    const model = plainToClass(DatabaseRecommendation, entity);
 
-      if (!model) {
-        this.logger.error(`Not found recommendation with id: ${id}'`);
-        return null;
-      }
-
-      this.logger.log(`Succeed to get recommendation with id: ${id}'`);
-      return model;
+    if (!model) {
+      this.logger.error(`Not found recommendation with id: ${id}'`);
+      return null;
     }
+
+    this.logger.log(`Succeed to get recommendation with id: ${id}'`);
+    return model;
+  }
+  /**
+   * Sync db analysis recommendations with live recommendations
+   * @param clientMetadata
+   * @param dbAnalysisRecommendations
+   * @param liveRecommendations
+   */
+
+  async sync(
+    clientMetadata: ClientMetadata,
+    dbAnalysisRecommendations: Recommendation[],
+    liveRecommendations: DatabaseRecommendation[],
+  ): Promise<void> {
+    this.logger.log('Synchronization of recommendations');
+    try {
+      const newRecommendations = differenceBy(dbAnalysisRecommendations, liveRecommendations, 'name');
+      const sortedRecommendations = sortRecommendations(newRecommendations);
+      for (let i = 0; i < sortedRecommendations.length; i += 1) {
+        await this.create(clientMetadata, sortedRecommendations[i].name);
+      }
+    } catch (e) {
+      // ignore errors
+      this.logger.error(e);
+    }
+  }
 }

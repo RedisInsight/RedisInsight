@@ -15,7 +15,7 @@ import { DatabaseRecommendationProvider }
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Vote } from 'src/modules/database-recommendation/models';
+import { DatabaseRecommendation, Vote } from 'src/modules/database-recommendation/models';
 
 const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
   id: uuidv4(),
@@ -67,8 +67,8 @@ const mockDBAnalysisRecommendation3 = {
 };
 
 const mockLiveRecommendations = [
-  mockDatabaseRecommendation,
-  mockBigSetsDatabaseRecommendationHidden,
+  mockDatabaseRecommendation as DatabaseRecommendation,
+  mockBigSetsDatabaseRecommendationHidden as DatabaseRecommendation,
 ];
 
 describe('DatabaseRecommendationProvider', () => {
@@ -218,14 +218,14 @@ describe('DatabaseRecommendationProvider', () => {
     it('should delete database recommendation by id', async () => {
       repository.delete.mockReturnValueOnce({ affected: 1 });
       expect(
-        await service.delete(mockClientMetadata, mockDatabaseRecommendation.id)
+        await service.delete(mockClientMetadata, mockDatabaseRecommendation.id),
       ).toEqual(undefined);
     });
 
     it('should throw InternalServerErrorException? on any error during deletion', async () => {
       repository.delete.mockRejectedValueOnce(new NotFoundException());
       await expect(
-        service.delete(mockClientMetadata, mockDatabaseRecommendation.id)
+        service.delete(mockClientMetadata, mockDatabaseRecommendation.id),
       ).rejects.toThrow(InternalServerErrorException);
     });
   });

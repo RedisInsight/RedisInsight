@@ -1,4 +1,6 @@
-import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable, InternalServerErrorException, Logger, NotFoundException,
+} from '@nestjs/common';
 import { differenceBy } from 'lodash';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';

@@ -10,6 +10,7 @@ const endpoint = (
 const responseSchema = analysisSchema;
 const mainCheckFn = getMainCheckFn(endpoint);
 let repository;
+let recommendationRepository;
 
 describe('POST /databases/:instanceId/analysis', () => {
   // todo: skip for RE for now since scan 0 count 10000 might return cursor and 0 keys multiple times
@@ -17,6 +18,7 @@ describe('POST /databases/:instanceId/analysis', () => {
 
   before(async () => {
     repository = await localDb.getRepository(localDb.repositories.DATABASE_ANALYSIS);
+    recommendationRepository = await localDb.getRepository(localDb.repositories.DATABASE_RECOMMENDATION);
 
     await localDb.generateNDatabaseAnalysis({
       databaseId: constants.TEST_INSTANCE_ID,
@@ -331,6 +333,59 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
+    describe('sync recommendations', () => {
+      [
+        {
+          name: 'Should create new recommendation in repository',
+          data: {
+            delimiter: '-',
+          },
+          before: async () => {
+            await recommendationRepository.clear();
+  
+            const entities: any = await recommendationRepository.findBy({
+              name: constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION.name
+            });
+            expect(entities.length).to.eq(0);
+  
+            const NUMBERS_OF_SET_MEMBERS = 513;
+            await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
+          },
+          statusCode: 201,
+          responseSchema,
+          after: async () => {
+            const entities: any = await recommendationRepository.findBy({
+              name: constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION.name
+            });
+            expect(entities.length).to.eq(1);
+          }
+        },
+        {
+          name: 'Should not create duplicate recommendation',
+          data: {
+            delimiter: '-',
+          },
+          before: async () => { 
+            const entities: any = await recommendationRepository.findBy({
+              name: constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION.name
+            });
+            expect(entities.length).to.eq(1);
+  
+            const NUMBERS_OF_SET_MEMBERS = 513;
+            await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
+          },
+          statusCode: 201,
+          responseSchema,
+          after: async () => {
+            const entities: any = await recommendationRepository.findBy({
+              name: constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION.name
+            });
+            expect(entities.length).to.eq(1);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+
     [
       {
         name: 'Should create new database analysis with increaseSetMaxIntsetEntries recommendation',
@@ -493,28 +548,6 @@ describe('POST /databases/:instanceId/analysis', () => {
         after: async () => {
           await rte.data.sendCommand('script', ['flush']);
           expect(await repository.count()).to.eq(5);
-        }
-      },
-    ].map(mainCheckFn);
-  });
-
-  describe('searchString recommendation', () => {
-    [
-      {
-        name: 'Should create new database analysis with searchString recommendation',
-        data: {
-          delimiter: '-',
-        },
-        before: async () => {
-          await rte.data.sendCommand('SET', [constants.TEST_STRING_KEY_1, Buffer.alloc(513 * 1024, 'a').toString()]);
-        },
-        statusCode: 201,
-        responseSchema,
-        after: async () => {
-          const entity: any = await (await localDb.getRepository(localDb.repositories.DATABASE_RECOMMENDATION)).findOneBy({
-            name: constants.TEST_SEARCH_STRING_RECOMMENDATION.name
-          });
-          expect(entity).to.be.an('object');
         }
       },
     ].map(mainCheckFn);

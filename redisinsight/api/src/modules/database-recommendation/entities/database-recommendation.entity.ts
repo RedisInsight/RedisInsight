@@ -3,7 +3,6 @@ import {
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
-import { Vote } from 'src/modules/database-recommendation/models/database-recommendation';
 
 @Entity('database_recommendations')
 export class DatabaseRecommendationEntity {
@@ -41,7 +40,7 @@ export class DatabaseRecommendationEntity {
   @Column({
     nullable: true,
   })
-  vote?: Vote;
+  vote?: string;
 
   @Expose()
   @Column({ nullable: true })

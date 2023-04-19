@@ -334,6 +334,8 @@ describe('POST /databases/:instanceId/analysis', () => {
     });
 
     describe('sync recommendations', () => {
+      requirements('!rte.tls');
+
       [
         {
           name: 'Should create new recommendation in repository',

@@ -12,6 +12,8 @@ export class UploadImportFileDto {
   })
   @IsNotEmpty()
   @IsFile()
-  @MaxFileSize(100 * 1024 * 1024)
+  @MaxFileSize(100 * 1024 * 1024, {
+    message: 'Maximum file size is 100MB',
+  })
   file?: MemoryStoredFile;
 }

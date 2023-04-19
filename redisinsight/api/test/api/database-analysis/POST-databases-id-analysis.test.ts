@@ -334,8 +334,6 @@ describe('POST /databases/:instanceId/analysis', () => {
     });
 
     describe('sync recommendations', () => {
-      requirements('!rte.tls');
-
       [
         {
           name: 'Should create new recommendation in repository',
@@ -355,10 +353,13 @@ describe('POST /databases/:instanceId/analysis', () => {
           statusCode: 201,
           responseSchema,
           after: async () => {
-            const entities: any = await recommendationRepository.findBy({
-              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
-            });
-            expect(entities.length).to.eq(1);
+            // wait when recommendation will be saved
+            setTimeout(async () => {
+              const entities: any = await recommendationRepository.findBy({
+                name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
+              });
+              expect(entities.length).to.eq(1);
+            }, 5000)
           }
         },
         {

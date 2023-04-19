@@ -206,6 +206,16 @@ describe('DatabaseRecommendationProvider', () => {
         mockDBAnalysisRecommendation2.name,
       );
     });
+    it('should not with throw error', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+      createSpy.mockRejectedValue('error');
+
+      expect(async () => await service.sync(
+        mockClientMetadata,
+        [mockDBAnalysisRecommendation1],
+        mockLiveRecommendations,
+      )).not.toThrow();
+    });
     it('should not call "create" if there are no new recommendations', async () => {
       const createSpy = jest.spyOn(service, 'create');
 

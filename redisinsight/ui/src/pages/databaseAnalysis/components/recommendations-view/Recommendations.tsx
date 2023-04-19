@@ -146,9 +146,7 @@ const Recommendations = () => {
 
   return (
     <div className={styles.wrapper}>
-      <div>
-        {renderBadgesLegend()}
-      </div>
+      {renderBadgesLegend()}
       <div className={styles.recommendationsContainer}>
         {sortRecommendations(recommendations).map(({ name, params, vote }) => {
           const {

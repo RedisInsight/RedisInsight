@@ -51,6 +51,10 @@
       width: 20px;
       height: 20px;
     }
+
+    :global(.euiScreenReaderOnly) {
+      display: none;
+    }
   }
 
   :global(.euiAccordion__buttonReverse .euiAccordion__iconWrapper) {

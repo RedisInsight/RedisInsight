@@ -322,7 +322,7 @@
         "value": "l"
       },
       {
-        "id": "2",
+        "id": "3",
         "type": "paragraph",
         "value": "To rectify this, consult your Redis client’s documentation and configure it to use persistent connections."
       }

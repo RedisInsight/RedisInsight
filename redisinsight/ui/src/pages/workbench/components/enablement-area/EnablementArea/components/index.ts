@@ -11,6 +11,7 @@ import PlainText from './PlainText'
 import Pagination from './Pagination'
 import UploadTutorialForm from './UploadTutorialForm'
 import WelcomeMyTutorials from './WelcomeMyTutorials'
+import RedisUploadButton from './RedisUploadButton'
 
 export {
   Code,
@@ -26,4 +27,5 @@ export {
   Pagination,
   UploadTutorialForm,
   WelcomeMyTutorials,
+  RedisUploadButton,
 }

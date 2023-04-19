@@ -49,6 +49,18 @@ const mockDatabaseRecommendationHidden = {
   hide: true,
 };
 
+const mockDBAnalysisRecommendation1 = {
+  name: 'RTS',
+};
+
+const mockDBAnalysisRecommendation2 = {
+  name: 'bigSets',
+};
+
+const mockDBAnalysisRecommendation3 = {
+  name: 'setPassword',
+};
+
 describe('DatabaseRecommendationProvider', () => {
   let service: DatabaseRecommendationProvider;
   let repository: MockType<Repository<DatabaseRecommendationEntity>>;
@@ -147,18 +159,95 @@ describe('DatabaseRecommendationProvider', () => {
     });
   });
 
+  describe('sync', () => {
+    it('should call "create" with new recommendations', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+      const isExistSpy = jest.spyOn(service, 'isExist');
+      isExistSpy.mockResolvedValue(false);
+
+      await service.sync(
+        mockClientMetadata,
+        [mockDBAnalysisRecommendation1, mockDBAnalysisRecommendation3],
+      );
+      expect(createSpy).toBeCalledTimes(2);
+      expect(createSpy).toBeCalledWith(
+        mockClientMetadata,
+        mockDBAnalysisRecommendation1.name,
+      );
+      expect(createSpy).toBeCalledWith(
+        mockClientMetadata,
+        mockDBAnalysisRecommendation3.name,
+      );
+    });
+
+    it('should not call "create" with exist recommendations', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+      const isExistSpy = jest.spyOn(service, 'isExist');
+      isExistSpy.mockResolvedValueOnce(false);
+      isExistSpy.mockResolvedValueOnce(true);
+
+      await service.sync(
+        mockClientMetadata,
+        [mockDBAnalysisRecommendation1, mockDBAnalysisRecommendation2],
+      );
+      expect(createSpy).toBeCalledTimes(1);
+      expect(createSpy).toBeCalledWith(
+        mockClientMetadata,
+        mockDBAnalysisRecommendation1.name,
+      );
+      expect(createSpy).not.toBeCalledWith(
+        mockClientMetadata,
+        mockDBAnalysisRecommendation2.name,
+      );
+    });
+
+    it('should not throw error when create service throw error', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+      createSpy.mockRejectedValue('error');
+      const isExistSpy = jest.spyOn(service, 'isExist');
+      isExistSpy.mockResolvedValueOnce(true);
+
+      expect(async () => await service.sync(
+        mockClientMetadata,
+        [mockDBAnalysisRecommendation1],
+      )).not.toThrow();
+    });
+
+    it('should not call "create" if there are no new recommendations', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+      const isExistSpy = jest.spyOn(service, 'isExist');
+      isExistSpy.mockResolvedValueOnce(true);
+
+      await service.sync(mockClientMetadata, [mockDBAnalysisRecommendation2]);
+      expect(createSpy).toBeCalledTimes(0);
+    });
+
+    it('should not throw error when isExist service throw error', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+
+      const isExistSpy = jest.spyOn(service, 'isExist');
+      isExistSpy.mockRejectedValue('error');
+
+      expect(async () => await service.sync(
+        mockClientMetadata,
+        [mockDBAnalysisRecommendation1],
+      )).not.toThrow();
+      expect(createSpy).not.toBeCalled();
+    });
+  });
+
   describe('delete', () => {
     it('should delete database recommendation by id', async () => {
       repository.delete.mockReturnValueOnce({ affected: 1 });
       expect(
-        await service.delete(mockClientMetadata, mockDatabaseRecommendation.id)
+        await service.delete(mockClientMetadata, mockDatabaseRecommendation.id),
       ).toEqual(undefined);
     });
 
     it('should throw InternalServerErrorException? on any error during deletion', async () => {
       repository.delete.mockRejectedValueOnce(new NotFoundException());
       await expect(
-        service.delete(mockClientMetadata, mockDatabaseRecommendation.id)
+        service.delete(mockClientMetadata, mockDatabaseRecommendation.id),
       ).rejects.toThrow(InternalServerErrorException);
     });
   });

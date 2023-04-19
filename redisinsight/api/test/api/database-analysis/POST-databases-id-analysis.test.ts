@@ -10,6 +10,7 @@ const endpoint = (
 const responseSchema = analysisSchema;
 const mainCheckFn = getMainCheckFn(endpoint);
 let repository;
+let recommendationRepository;
 
 describe('POST /databases/:instanceId/analysis', () => {
   // todo: skip for RE for now since scan 0 count 10000 might return cursor and 0 keys multiple times
@@ -17,6 +18,7 @@ describe('POST /databases/:instanceId/analysis', () => {
 
   before(async () => {
     repository = await localDb.getRepository(localDb.repositories.DATABASE_ANALYSIS);
+    recommendationRepository = await localDb.getRepository(localDb.repositories.DATABASE_RECOMMENDATION);
 
     await localDb.generateNDatabaseAnalysis({
       databaseId: constants.TEST_INSTANCE_ID,
@@ -326,6 +328,60 @@ describe('POST /databases/:instanceId/analysis', () => {
           },
           after: async () => {
             expect(await repository.count()).to.eq(5);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+
+    describe('sync recommendations', () => {
+      [
+        {
+          name: 'Should create new recommendation in repository',
+          data: {
+            delimiter: '-',
+          },
+          before: async () => {
+            await recommendationRepository.clear();
+  
+            const entities: any = await recommendationRepository.findBy({
+              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
+            });
+            expect(entities.length).to.eq(0);
+
+            await rte.data.generateStrings(true);
+          },
+          statusCode: 201,
+          responseSchema,
+          after: async () => {
+            // wait when recommendation will be saved
+            setTimeout(async () => {
+              const entities: any = await recommendationRepository.findBy({
+                name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
+              });
+              expect(entities.length).to.eq(1);
+            }, 5000)
+          }
+        },
+        {
+          name: 'Should not create duplicate recommendation',
+          data: {
+            delimiter: '-',
+          },
+          before: async () => { 
+            const entities: any = await recommendationRepository.findBy({
+              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
+            });
+            expect(entities.length).to.eq(1);
+  
+            await rte.data.generateStrings(true);
+          },
+          statusCode: 201,
+          responseSchema,
+          after: async () => {
+            const entities: any = await recommendationRepository.findBy({
+              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
+            });
+            expect(entities.length).to.eq(1);
           }
         },
       ].map(mainCheckFn);

@@ -44,7 +44,8 @@ export class BulkImportService {
           }
         }));
       } else {
-        (await client.pipeline(batch).exec()).forEach(([err]) => {
+        const commands = batch.map(([cmd, args]) => ['call', cmd, ...args]);
+        (await client.pipeline(commands).exec()).forEach(([err]) => {
           if (err) {
             result.addFailed(1);
           } else {

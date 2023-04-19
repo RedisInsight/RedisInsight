@@ -30,8 +30,9 @@ export const getFileInfo = (
     if (manifestPath && markdownParent?.children) {
       markdownInfo = get(
         markdownParent.children,
-        manifestPath.split('/')?.pop() as string || '-1'
-      ) || {}
+        manifestPath.split('/')?.pop() as string || '-1',
+        {}
+      )
     }
 
     return {

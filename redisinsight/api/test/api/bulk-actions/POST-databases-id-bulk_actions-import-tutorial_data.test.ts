@@ -4,7 +4,7 @@ import {
   it,
   deps,
   requirements,
-  validateApiCall, fsExtra, _
+  validateApiCall,
 } from '../deps';
 import { AdmZip, path } from '../../helpers/test';
 const { rte, request, server, constants } = deps;

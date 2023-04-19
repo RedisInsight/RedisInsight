@@ -344,18 +344,17 @@ describe('POST /databases/:instanceId/analysis', () => {
             await recommendationRepository.clear();
   
             const entities: any = await recommendationRepository.findBy({
-              name: constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION.name
+              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
             });
             expect(entities.length).to.eq(0);
-  
-            const NUMBERS_OF_SET_MEMBERS = 513;
-            await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
+
+            await rte.data.generateStrings(true);
           },
           statusCode: 201,
           responseSchema,
           after: async () => {
             const entities: any = await recommendationRepository.findBy({
-              name: constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION.name
+              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
             });
             expect(entities.length).to.eq(1);
           }
@@ -367,18 +366,17 @@ describe('POST /databases/:instanceId/analysis', () => {
           },
           before: async () => { 
             const entities: any = await recommendationRepository.findBy({
-              name: constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION.name
+              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
             });
             expect(entities.length).to.eq(1);
   
-            const NUMBERS_OF_SET_MEMBERS = 513;
-            await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
+            await rte.data.generateStrings(true);
           },
           statusCode: 201,
           responseSchema,
           after: async () => {
             const entities: any = await recommendationRepository.findBy({
-              name: constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION.name
+              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
             });
             expect(entities.length).to.eq(1);
           }

@@ -168,6 +168,10 @@ export class BulkImportService {
         throw new BadRequestException('Data file was not found');
       }
 
+      if ((await fs.stat(path))?.size > 100 * 1024 * 1024) {
+        throw new BadRequestException('Maximum file size is 100MB');
+      }
+
       const buffer = await fs.readFile(path);
 
       return this.import(clientMetadata, {

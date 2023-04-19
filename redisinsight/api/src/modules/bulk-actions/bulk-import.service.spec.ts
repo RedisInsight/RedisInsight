@@ -258,5 +258,20 @@ describe('BulkImportService', () => {
         expect(e.message).toEqual('Data file was not found');
       }
     });
+
+    it('should throw BadRequest when file size is greater then 100MB', async () => {
+      mockedFs.pathExists.mockImplementationOnce(async () => true);
+      mockedFs.stat.mockImplementationOnce(async () => ({ size: 100 * 1024 * 1024 + 1 } as fs.Stats));
+
+      try {
+        await service.uploadFromTutorial(mockClientMetadata, {
+          path: '../../../danger',
+        });
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual('Maximum file size is 100MB');
+      }
+    });
   });
 });

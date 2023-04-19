@@ -156,11 +156,10 @@ const LiveTimeRecommendations = () => {
         name={name}
         isRead={read}
         vote={vote}
-        instanceId={connectedInstanceId}
         guides={guides}
         hide={hide}
         tutorials={tutorials}
-        tutorial={recommendationsContent[name]?.tutorial ?? ''}
+        tutorial={recommendationsContent[name]?.tutorial}
       />
     ))
   }

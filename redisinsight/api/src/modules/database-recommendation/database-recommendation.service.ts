@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { sum } from 'lodash';
 import { DatabaseRecommendationProvider }
   from 'src/modules/database-recommendation/providers/database-recommendation.provider';
 import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
@@ -8,7 +9,7 @@ import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
-import { ModifyDatabaseRecommendationDto } from './dto';
+import { ModifyDatabaseRecommendationDto, DeleteDatabaseRecommendationResponse } from './dto';
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
@@ -108,5 +109,36 @@ export class DatabaseRecommendationService {
       recommendations,
       liveRecommendations?.recommendations,
     );
+  }
+
+  /**
+   * Delete database recommendation by id
+   * @param clientMetadata
+   * @param id
+   */
+  async delete(clientMetadata: ClientMetadata, id: string): Promise<void> {
+    this.logger.log(`Deleting recommendation: ${id}`);
+    await this.databaseRecommendationsProvider.delete(clientMetadata, id);
+  }
+
+  /**
+   * Bulk delete recommendations. Uses "delete" method and skipping error
+   * Returns successfully deleted recommendations number
+   * @param clientMetadata
+   * @param ids
+   */
+  async bulkDelete(clientMetadata: ClientMetadata, ids: string[]): Promise<DeleteDatabaseRecommendationResponse> {
+    this.logger.log(`Deleting many recommendations: ${ids}`);
+
+    return {
+      affected: sum(await Promise.all(ids.map(async (id) => {
+        try {
+          await this.delete(clientMetadata, id);
+          return 1;
+        } catch (e) {
+          return 0;
+        }
+      }))),
+    };
   }
 }

@@ -1,20 +1,8 @@
 .votingContainer {
-  .vote {
-    margin-left: 10px;
-  }
+  :global {
+    .voteContent {
+      margin-left: 10px;
 
-  .vote :global(.euiIcon) {
-    width: 34px;
-    height: 34px;
-    fill: none;
-
-    path {
-      stroke: var(--buttonSecondaryTextColor);
-    }
-  }
-
-  .vote {
-    :global {
       .vote__btn {
         width: 34px;
         height: 34px;
@@ -25,6 +13,16 @@
         &.selected {
           transform: none;
           background-color: var(--separatorColor);
+        }
+      }
+
+      .euiIcon {
+        width: 34px;
+        height: 34px;
+        fill: none;
+
+        path {
+          stroke: var(--buttonSecondaryTextColor);
         }
       }
     }

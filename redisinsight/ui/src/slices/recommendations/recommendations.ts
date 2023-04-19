@@ -5,7 +5,7 @@ import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { ModifyDatabaseRecommendationDto } from 'apiSrc/modules/database-recommendation/dto'
+import { DeleteDatabaseRecommendationResponse, ModifyDatabaseRecommendationDto } from 'apiSrc/modules/database-recommendation/dto'
 
 import { AppDispatch, RootState } from '../store'
 import { StateRecommendations, IRecommendations, IRecommendation } from '../interfaces/recommendations'
@@ -178,6 +178,39 @@ export function updateLiveRecommendation(
         dispatch(updateRecommendationSuccess(data))
 
         onSuccessAction?.(instanceId, data)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(updateRecommendationError(errorMessage))
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function deleteLiveRecommendations(
+  ids: string[],
+  onSuccessAction?: (instanceId: string) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      dispatch(updateRecommendation())
+      const state = stateInit()
+      const instanceId = state.connections.instances.connectedInstance?.id
+
+      const { status } = await apiService.delete<DeleteDatabaseRecommendationResponse>(
+        getUrl(
+          instanceId,
+          ApiEndpoints.RECOMMENDATIONS,
+        ),
+        { data: { ids } },
+      )
+
+      if (isStatusSuccessful(status)) {
+        onSuccessAction?.(instanceId)
       }
     } catch (_err) {
       const error = _err as AxiosError

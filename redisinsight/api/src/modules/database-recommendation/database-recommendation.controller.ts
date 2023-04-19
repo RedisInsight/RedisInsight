@@ -9,7 +9,11 @@ import { ClientMetadata } from 'src/common/models';
 import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
-import { ModifyDatabaseRecommendationDto } from './dto';
+import {
+  ModifyDatabaseRecommendationDto,
+  DeleteDatabaseRecommendationDto,
+  DeleteDatabaseRecommendationResponse,
+ } from './dto';
 
 @ApiTags('Database Recommendations')
 @Controller('/recommendations')
@@ -75,5 +79,31 @@ export class DatabaseRecommendationController {
       @Body() dto: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
     return await this.service.update(clientMetadata, id, dto);
+  }
+
+  @Delete('')
+  @ApiEndpoint({
+    statusCode: 200,
+    description: 'Delete many recommendations by ids',
+    responses: [
+      {
+        status: 200,
+        description: 'Delete many recommendations by ids response',
+        type: DeleteDatabaseRecommendationDto,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  async bulkDeleteDatabaseRecommendation(
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @Body() dto: DeleteDatabaseRecommendationDto,
+  ): Promise<DeleteDatabaseRecommendationResponse> {
+    return await this.service.bulkDelete(clientMetadata, dto.ids);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { differenceBy } from 'lodash';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
@@ -147,13 +147,13 @@ export class DatabaseRecommendationProvider {
     this.logger.log(`Succeed to get recommendation with id: ${id}'`);
     return model;
   }
+
   /**
    * Sync db analysis recommendations with live recommendations
    * @param clientMetadata
    * @param dbAnalysisRecommendations
    * @param liveRecommendations
    */
-
   async sync(
     clientMetadata: ClientMetadata,
     dbAnalysisRecommendations: Recommendation[],
@@ -169,6 +169,27 @@ export class DatabaseRecommendationProvider {
     } catch (e) {
       // ignore errors
       this.logger.error(e);
+    }
+  }
+
+  /**
+   * Delete recommendation by id
+   * @param clientMetadata,
+   * @param id
+   */
+  public async delete({ databaseId }: ClientMetadata, id: string): Promise<void> {
+    try {
+      const { affected } = await this.repository.delete({ databaseId, id });
+
+      if (!affected) {
+        this.logger.error(`Recommendation with id:${id} was not Found`);
+        throw new NotFoundException(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND);
+      }
+
+      this.logger.log('Succeed to delete recommendation.');
+    } catch (error) {
+      this.logger.error(`Failed to delete recommendation: ${id}`, error);
+      throw new InternalServerErrorException(error.message);
     }
   }
 }

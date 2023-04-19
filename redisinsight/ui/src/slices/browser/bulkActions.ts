@@ -5,6 +5,7 @@ import { ApiEndpoints, BulkActionsType, MAX_BULK_ACTION_ERRORS_LENGTH } from 'ui
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { AppDispatch, RootState } from '../store'
 import { StateBulkActions, IBulkActionOverview } from '../interfaces'
 
@@ -181,6 +182,7 @@ export function bulkUploadDataAction(
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error as AxiosError)
+      dispatch(addErrorNotification(error as AxiosError))
       dispatch(bulkUploadFailed(errorMessage))
       onFailAction?.()
     }

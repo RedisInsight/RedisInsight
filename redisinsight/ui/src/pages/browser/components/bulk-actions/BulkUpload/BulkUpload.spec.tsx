@@ -89,7 +89,7 @@ describe('BulkUpload', () => {
 
     render(<BulkUpload onCancel={jest.fn()} />)
 
-    expect(screen.getByTestId('bulk-upload-competed-summary')).toBeInTheDocument()
+    expect(screen.getByTestId('bulk-upload-completed-summary')).toBeInTheDocument()
   })
 
   it('should call start new button', () => {

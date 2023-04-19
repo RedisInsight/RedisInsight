@@ -24,6 +24,8 @@ beforeEach(() => {
   store.clearActions()
 })
 
+const PROVIDER = 'RE_CLOUD'
+
 describe('Recommendation', () => {
   it('should render', () => {
     expect(render(<Recommendation {...instance(mockedProps)} />)).toBeTruthy()
@@ -58,6 +60,7 @@ describe('Recommendation', () => {
         isRead={false}
         name="searchJSON"
         tutorial=""
+        provider={PROVIDER}
       />
     )
 
@@ -70,6 +73,7 @@ describe('Recommendation', () => {
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',
+        provider: PROVIDER
       }
     })
     sendEventTelemetry.mockRestore()
@@ -88,6 +92,7 @@ describe('Recommendation', () => {
         tutorial="quick-guides/working-with-hash.html"
         guides={MOCK_GUIDES_ITEMS}
         tutorials={MOCK_TUTORIALS_ITEMS}
+        provider={PROVIDER}
       />
     )
 
@@ -100,6 +105,7 @@ describe('Recommendation', () => {
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',
+        provider: PROVIDER
       }
     })
     sendEventTelemetry.mockRestore()
@@ -118,6 +124,7 @@ describe('Recommendation', () => {
         tutorial="/redis_stack/working_with_json.md"
         guides={MOCK_GUIDES_ITEMS}
         tutorials={MOCK_TUTORIALS_ITEMS}
+        provider={PROVIDER}
       />
     )
 
@@ -130,6 +137,7 @@ describe('Recommendation', () => {
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',
+        provider: PROVIDER
       }
     })
     sendEventTelemetry.mockRestore()

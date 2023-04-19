@@ -6,7 +6,7 @@ import {
   recommendationsSelector,
   setIsContentVisible
 } from 'uiSrc/slices/recommendations/recommendations'
-import { fireEvent, screen, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { fireEvent, screen, cleanup, mockedStore, render, act } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
 import { RECOMMENDATIONS_DATA_MOCK } from 'uiSrc/mocks/handlers/recommendations/recommendationsHandler'
@@ -28,6 +28,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: 'instanceId',
     connectionType: 'CLUSTER',
+    provider: 'RE_CLOUD'
   }),
 }))
 
@@ -71,18 +72,26 @@ describe('LiveTimeRecommendations', () => {
     expect(render(<LiveTimeRecommendations />)).toBeTruthy()
   })
 
-  it('should send INSIGHTS_PANEL_CLOSED telemetry event', () => {
+  it('should send INSIGHTS_PANEL_CLOSED telemetry event', async () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
+
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
         recommendations: [{ name: 'RTS' }, { name: 'setPassword' }],
       },
-      isContentVisible: true
+      isContentVisible: false
     }))
 
     render(<LiveTimeRecommendations />)
 
-    fireEvent.click(screen.getByTestId('recommendations-trigger'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('recommendations-trigger'))
+    })
+    await act(() => {
+      fireEvent.click(screen.getByTestId('recommendations-trigger'))
+    })
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
@@ -90,6 +99,7 @@ describe('LiveTimeRecommendations', () => {
         databaseId: 'instanceId',
         list: ['optimizeTimeSeries', 'setPassword'],
         total: 2,
+        provider: 'RE_CLOUD'
       }
     })
     sendEventTelemetry.mockRestore()
@@ -111,7 +121,7 @@ describe('LiveTimeRecommendations', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should call proper actions after click open insights button', () => {
+  it('should call proper actions after click open insights button', async () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
@@ -121,16 +131,24 @@ describe('LiveTimeRecommendations', () => {
       isContentVisible: false,
     }))
 
-    render(<LiveTimeRecommendations />)
+    await act(() => {
+      render(<LiveTimeRecommendations />)
+    })
+
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId('recommendations-trigger'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('recommendations-trigger'))
+    })
 
-    const expectedActions = [getRecommendations(), setIsContentVisible(true)]
+    const expectedActions = [setIsContentVisible(true)]
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 
   it('should properly push history on databaseAnalysis page', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
+
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
@@ -150,6 +168,7 @@ describe('LiveTimeRecommendations', () => {
       eventData: {
         databaseId: 'instanceId',
         total: 1,
+        provider: 'RE_CLOUD'
       }
     })
     sendEventTelemetry.mockRestore()
@@ -173,6 +192,9 @@ describe('LiveTimeRecommendations', () => {
   })
 
   it('should send INSIGHTS_RECOMMENDATION_SHOW_HIDDEN telemetry event', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
+
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       isContentVisible: true,
@@ -190,7 +212,8 @@ describe('LiveTimeRecommendations', () => {
         list: RECOMMENDATIONS_DATA_MOCK.recommendations?.map(({ name }) =>
           recommendationsContent[name].telemetryEvent || name),
         total: 2,
-        action: 'show'
+        action: 'show',
+        provider: 'RE_CLOUD'
       }
     })
     sendEventTelemetry.mockRestore()

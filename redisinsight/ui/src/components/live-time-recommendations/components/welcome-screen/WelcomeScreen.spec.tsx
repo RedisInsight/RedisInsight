@@ -16,6 +16,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: 'instanceId',
+    provider: 'RE_CLOUD'
   }),
 }))
 
@@ -84,6 +85,7 @@ describe('WelcomeScreen', () => {
       eventData: {
         databaseId: 'instanceId',
         total: 1,
+        provider: 'RE_CLOUD'
       }
     })
     sendEventTelemetry.mockRestore()

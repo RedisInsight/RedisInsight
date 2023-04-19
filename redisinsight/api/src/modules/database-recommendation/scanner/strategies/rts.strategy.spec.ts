@@ -6,19 +6,19 @@ const mockDefaultName = Buffer.from('name');
 const mockTimestampScore = 1234567891;
 const mockDefaultScore = 1;
 
-const mockTimestampNameMembers = new Array(95).fill(
+const mockTimestampNameMembers = new Array(99).fill(
   {
     name: mockTimestampName, score: mockDefaultScore,
   },
 );
 
-const mockTimestampScoreMembers = new Array(95).fill(
+const mockTimestampScoreMembers = new Array(99).fill(
   {
     name: mockDefaultName, score: mockTimestampScore,
   },
 );
 
-const mockDefaultMembers = new Array(5).fill(
+const mockDefaultMembers = new Array(1).fill(
   {
     name: mockDefaultName, score: mockDefaultScore,
   },
@@ -32,17 +32,17 @@ describe('RTSStrategy', () => {
   });
 
   describe('isRecommendationReached', () => {
-    it('should return false when members has less then 95% timestamp members', async () => {
+    it('should return false when members has less then 99% timestamp members', async () => {
       const mockMembers = [].concat(mockTimestampNameMembers, mockDefaultMembers);
       expect(await strategy.isRecommendationReached(mockMembers)).toEqual(false);
     });
 
-    it('should return false when members has less then 95% timestamp scores', async () => {
+    it('should return false when members has less then 99% timestamp scores', async () => {
       const mockMembers = [].concat(mockTimestampScoreMembers, mockDefaultMembers);
       expect(await strategy.isRecommendationReached(mockMembers)).toEqual(false);
     });
 
-    it('should return true when members has at least then 95% timestamp members', async () => {
+    it('should return true when members has at least then 99% timestamp members', async () => {
       const mockMembers = [].concat(
         mockTimestampNameMembers,
         mockDefaultMembers,
@@ -51,7 +51,7 @@ describe('RTSStrategy', () => {
       expect(await strategy.isRecommendationReached(mockMembers)).toEqual(true);
     });
 
-    it('should return true when members has at least then 95% timestamp score', async () => {
+    it('should return true when members has at least then 99% timestamp score', async () => {
       const mockMembers = [].concat(
         mockTimestampScoreMembers,
         mockDefaultMembers,

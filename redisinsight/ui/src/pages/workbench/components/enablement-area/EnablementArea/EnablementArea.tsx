@@ -292,7 +292,7 @@ const EnablementArea = (props: Props) => {
     level: number = 0,
   ) => (
     elements?.map((item) => (
-      <div className="fluid" key={`${item.id}_${Math.random()}`}>
+      <div className="fluid" key={`${item.id}_${item._key}`}>
         {renderSwitch(item, paths, level)}
       </div>
     )))

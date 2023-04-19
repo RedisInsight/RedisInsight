@@ -15,7 +15,7 @@ import { DatabaseRecommendationProvider }
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { DatabaseRecommendation, Vote } from 'src/modules/database-recommendation/models';
+import { Vote } from 'src/modules/database-recommendation/models';
 
 const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
   id: uuidv4(),
@@ -49,11 +49,6 @@ const mockDatabaseRecommendationHidden = {
   hide: true,
 };
 
-const mockBigSetsDatabaseRecommendationHidden = {
-  ...mockDatabaseRecommendationEntity,
-  name: 'bigSets',
-};
-
 const mockDBAnalysisRecommendation1 = {
   name: 'RTS',
 };
@@ -65,11 +60,6 @@ const mockDBAnalysisRecommendation2 = {
 const mockDBAnalysisRecommendation3 = {
   name: 'setPassword',
 };
-
-const mockLiveRecommendations = [
-  mockDatabaseRecommendation as DatabaseRecommendation,
-  mockBigSetsDatabaseRecommendationHidden as DatabaseRecommendation,
-];
 
 describe('DatabaseRecommendationProvider', () => {
   let service: DatabaseRecommendationProvider;
@@ -172,11 +162,12 @@ describe('DatabaseRecommendationProvider', () => {
   describe('sync', () => {
     it('should call "create" with new recommendations', async () => {
       const createSpy = jest.spyOn(service, 'create');
+      const isExistSpy = jest.spyOn(service, 'isExist');
+      isExistSpy.mockResolvedValue(false);
 
       await service.sync(
         mockClientMetadata,
         [mockDBAnalysisRecommendation1, mockDBAnalysisRecommendation3],
-        mockLiveRecommendations,
       );
       expect(createSpy).toBeCalledTimes(2);
       expect(createSpy).toBeCalledWith(
@@ -188,13 +179,16 @@ describe('DatabaseRecommendationProvider', () => {
         mockDBAnalysisRecommendation3.name,
       );
     });
+
     it('should not call "create" with exist recommendations', async () => {
       const createSpy = jest.spyOn(service, 'create');
+      const isExistSpy = jest.spyOn(service, 'isExist');
+      isExistSpy.mockResolvedValueOnce(false);
+      isExistSpy.mockResolvedValueOnce(true);
 
       await service.sync(
         mockClientMetadata,
         [mockDBAnalysisRecommendation1, mockDBAnalysisRecommendation2],
-        mockLiveRecommendations,
       );
       expect(createSpy).toBeCalledTimes(1);
       expect(createSpy).toBeCalledWith(
@@ -206,21 +200,39 @@ describe('DatabaseRecommendationProvider', () => {
         mockDBAnalysisRecommendation2.name,
       );
     });
-    it('should not with throw error', async () => {
+
+    it('should not throw error when create service throw error', async () => {
       const createSpy = jest.spyOn(service, 'create');
       createSpy.mockRejectedValue('error');
+      const isExistSpy = jest.spyOn(service, 'isExist');
+      isExistSpy.mockResolvedValueOnce(true);
 
       expect(async () => await service.sync(
         mockClientMetadata,
         [mockDBAnalysisRecommendation1],
-        mockLiveRecommendations,
       )).not.toThrow();
     });
+
     it('should not call "create" if there are no new recommendations', async () => {
       const createSpy = jest.spyOn(service, 'create');
+      const isExistSpy = jest.spyOn(service, 'isExist');
+      isExistSpy.mockResolvedValueOnce(true);
 
-      await service.sync(mockClientMetadata, [mockDBAnalysisRecommendation2], mockLiveRecommendations);
+      await service.sync(mockClientMetadata, [mockDBAnalysisRecommendation2]);
       expect(createSpy).toBeCalledTimes(0);
+    });
+
+    it('should not throw error when isExist service throw error', async () => {
+      const createSpy = jest.spyOn(service, 'create');
+
+      const isExistSpy = jest.spyOn(service, 'isExist');
+      isExistSpy.mockRejectedValue('error');
+
+      expect(async () => await service.sync(
+        mockClientMetadata,
+        [mockDBAnalysisRecommendation1],
+      )).not.toThrow();
+      expect(createSpy).not.toBeCalled();
     });
   });
 

@@ -23,7 +23,7 @@ export class DatabaseAnalysisService {
     private readonly analyzer: DatabaseAnalyzer,
     private readonly databaseAnalysisProvider: DatabaseAnalysisProvider,
     private readonly scanner: KeysScanner,
-    private liveRecommendationService: DatabaseRecommendationService,
+    private databaseRecommendationService: DatabaseRecommendationService,
   ) {}
 
   /**
@@ -86,7 +86,7 @@ export class DatabaseAnalysisService {
       }, [].concat(...scanResults.map((nodeResult) => nodeResult.keys))));
 
       client.disconnect();
-      this.liveRecommendationService.sync(
+      this.databaseRecommendationService.sync(
         clientMetadata,
         recommendations,
       );

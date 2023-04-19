@@ -100,15 +100,7 @@ export class DatabaseRecommendationService {
    * @param recommendations
    */
   public async sync(clientMetadata: ClientMetadata, recommendations: Recommendation[]): Promise<void> {
-    const db = clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0;
-    const newClientMetadata = { ...clientMetadata, db };
-
-    const liveRecommendations = await this.databaseRecommendationsProvider.list(newClientMetadata);
-    return this.databaseRecommendationsProvider.sync(
-      newClientMetadata,
-      recommendations,
-      liveRecommendations?.recommendations,
-    );
+    return this.databaseRecommendationsProvider.sync(clientMetadata, recommendations);
   }
 
   /**

@@ -42,10 +42,6 @@ export class DatabaseRecommendationEntity {
   })
   vote?: string;
 
-  @Expose()
-  @Column({ nullable: true })
-  db: number;
-
   @Column({ nullable: false, default: false })
   hide?: boolean = false;
 

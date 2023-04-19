@@ -9,7 +9,6 @@ export const recommendationSchema = Joi.object({
   hide: Joi.boolean(),
   vote: Joi.string().valid('very useful', 'useful', 'not useful').allow(null),
   createdAt: Joi.date().required(),
-  db: Joi.number().integer().allow(null),
 });
 
 export const recommendationsSchema = Joi.object({

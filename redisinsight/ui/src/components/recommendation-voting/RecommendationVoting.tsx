@@ -25,6 +25,7 @@ import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import { updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { Nullable } from 'uiSrc/utils'
 
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -39,10 +40,11 @@ const recommendationsContent = _content as IRecommendationsStatic
 
 const RecommendationVoting = ({ vote, name, id = '', live = false, containerClass = '' }: Props) => {
   const config = useSelector(userSettingsConfigSelector)
+  const { id: instanceId = '', provider } = useSelector(connectedInstanceSelector)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const dispatch = useDispatch()
 
-  const onSuccessVoted = (instanceId: string, { vote, name }: { name: string, vote: Nullable<Vote> }) => {
+  const onSuccessVoted = ({ vote, name }: { name: string, vote: Nullable<Vote> }) => {
     sendEventTelemetry({
       event: live
         ? TelemetryEvent.INSIGHTS_RECOMMENDATION_VOTED
@@ -51,6 +53,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false, containerClas
         databaseId: instanceId,
         name: recommendationsContent[name]?.telemetryEvent ?? name,
         vote,
+        provider
       }
     })
   }
@@ -61,9 +64,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false, containerClas
     }
 
     if (live) {
-      dispatch(updateLiveRecommendation(id, { vote },
-        (instanceId, { vote }) =>
-          onSuccessVoted(instanceId, { vote, name: recommendationsContent[name]?.telemetryEvent ?? name })))
+      dispatch(updateLiveRecommendation(id, { vote }, onSuccessVoted))
     } else {
       dispatch(putRecommendationVote(name, vote, onSuccessVoted))
     }

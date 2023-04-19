@@ -156,7 +156,7 @@ export function readRecommendationsAction(instanceId: string) {
 export function updateLiveRecommendation(
   id: string,
   dto: ModifyDatabaseRecommendationDto,
-  onSuccessAction?: (instanceId: string, recommendation: IRecommendation) => void,
+  onSuccessAction?: (recommendation: IRecommendation) => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -176,8 +176,7 @@ export function updateLiveRecommendation(
 
       if (isStatusSuccessful(status)) {
         dispatch(updateRecommendationSuccess(data))
-
-        onSuccessAction?.(instanceId, data)
+        onSuccessAction?.(data)
       }
     } catch (_err) {
       const error = _err as AxiosError

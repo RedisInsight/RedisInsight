@@ -32,11 +32,11 @@ export class DatabaseRecommendationProvider {
    * @param databaseId
    * @param recommendationName
    */
-  async create({ databaseId, db }: ClientMetadata, recommendationName: string): Promise<DatabaseRecommendation> {
+  async create({ databaseId }: ClientMetadata, recommendationName: string): Promise<DatabaseRecommendation> {
     this.logger.log('Creating database recommendation');
     const recommendation = plainToClass(
       DatabaseRecommendation,
-      await this.repository.save({ db, databaseId, name: recommendationName }),
+      await this.repository.save({ databaseId, name: recommendationName }),
     );
 
     this.eventEmitter.emit(RecommendationEvents.NewRecommendation, [recommendation]);
@@ -48,11 +48,11 @@ export class DatabaseRecommendationProvider {
    * Return list of database recommendations
    * @param clientMetadata
    */
-  async list({ databaseId, db }: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
+  async list({ databaseId }: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
     this.logger.log('Getting database recommendations list');
     const recommendations = await this.repository
       .createQueryBuilder('r')
-      .where({ databaseId, db })
+      .where({ databaseId })
       .select(['r.id', 'r.name', 'r.read', 'r.vote', 'disabled', 'r.hide'])
       .orderBy('r.createdAt', 'DESC')
       .getMany();
@@ -116,12 +116,12 @@ export class DatabaseRecommendationProvider {
    * @param name
    */
   async isExist(
-    { databaseId, db }: ClientMetadata,
+    { databaseId }: ClientMetadata,
     name: string,
   ): Promise<boolean> {
     try {
       this.logger.log(`Checking is recommendation ${name} exist`);
-      const recommendation = await this.repository.findOneBy({ databaseId, db, name });
+      const recommendation = await this.repository.findOneBy({ databaseId, name });
 
       this.logger.log(`Succeed to check is recommendation ${name} exist'`);
       return !!recommendation;

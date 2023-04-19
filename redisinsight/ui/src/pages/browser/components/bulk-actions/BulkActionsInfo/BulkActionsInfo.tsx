@@ -11,6 +11,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   title?: string | React.ReactNode
+  subTitle?: string | React.ReactNode
   loading: boolean
   filter?: Nullable<KeyTypes>
   status: Maybe<BulkActionsStatus>
@@ -23,7 +24,7 @@ export interface Props {
 }
 
 const BulkActionsInfo = (props: Props) => {
-  const { children, loading, filter, search, status, progress, title = 'Delete Keys with' } = props
+  const { children, loading, filter, search, status, progress, title = 'Delete Keys with', subTitle } = props
   const { total = 0, scanned = 0 } = progress || {}
 
   return (
@@ -31,6 +32,7 @@ const BulkActionsInfo = (props: Props) => {
       <div className={styles.header}>
         <EuiText color="subdued" className={styles.title}>{title}</EuiText>
         <EuiText color="subdued" className={styles.subTitle}>
+          {subTitle}
           {filter && (
             <div className={styles.filter} data-testid="bulk-actions-info-filter">
               <span style={{ paddingRight: 6 }}>Key type:</span>

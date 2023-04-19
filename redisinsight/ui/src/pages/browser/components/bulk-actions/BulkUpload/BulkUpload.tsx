@@ -26,6 +26,7 @@ import BulkActionsInfo from 'uiSrc/pages/browser/components/bulk-actions/BulkAct
 import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkActionSummary'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -48,6 +49,7 @@ const BulkUpload = (props: Props) => {
 
   const onStartAgain = () => {
     dispatch(setBulkUploadStartAgain())
+    setFiles(null)
   }
 
   const handleUploadWarning = () => {
@@ -120,13 +122,8 @@ const BulkUpload = (props: Props) => {
           loading={loading}
           status={status}
           progress={progress}
-          title={(
-            <>
-              Upload with file
-              <EuiSpacer size="m" />
-              <div className="truncateText">{fileName}</div>
-            </>
-          )}
+          title="Upload with file"
+          subTitle={(<div className="truncateText" style={{ paddingTop: 6 }}>{fileName}</div>)}
         >
           <BulkActionSummary
             succeed={succeed}
@@ -144,7 +141,7 @@ const BulkUpload = (props: Props) => {
           className={styles.cancelBtn}
           data-testid="bulk-action-cancel-btn"
         >
-          Cancel
+          {isProcessedBulkAction(status) ? 'Close' : 'Cancel'}
         </EuiButton>
         {!isCompleted ? (
           <EuiPopover
@@ -193,6 +190,7 @@ const BulkUpload = (props: Props) => {
         ) : (
           <EuiButton
             fill
+            iconType="refresh"
             color="secondary"
             onClick={onStartAgain}
             data-testid="bulk-action-start-new-btn"

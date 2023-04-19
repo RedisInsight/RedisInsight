@@ -133,7 +133,7 @@ export function fetchDBAnalysisAction(
 export function putRecommendationVote(
   name: string,
   vote: Vote,
-  onSuccessAction?: (instanceId: string, recommendation: { name: string, vote: Vote }) => void,
+  onSuccessAction?: (recommendation: { name: string, vote: Vote }) => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -154,7 +154,7 @@ export function putRecommendationVote(
       if (isStatusSuccessful(status)) {
         dispatch(setRecommendationVoteSuccess(data))
 
-        onSuccessAction?.(instanceId, { name, vote })
+        onSuccessAction?.({ name, vote })
       }
     } catch (_err) {
       const error = _err as AxiosError

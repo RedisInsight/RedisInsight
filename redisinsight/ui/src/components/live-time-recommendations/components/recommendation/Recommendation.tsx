@@ -46,6 +46,7 @@ export interface IProps {
   tutorials: IEnablementAreaItem[]
   hide: boolean
   tutorial?: string
+  provider?: string
 }
 
 const recommendationsContent = _content as IRecommendationsStatic
@@ -59,6 +60,7 @@ const Recommendation = ({
   guides,
   tutorials,
   hide,
+  provider,
 }: IProps) => {
   const history = useHistory()
   const dispatch = useDispatch()
@@ -78,6 +80,7 @@ const Recommendation = ({
       eventData: {
         databaseId: instanceId,
         name: recommendationsContent[name].telemetryEvent || name,
+        provider
       }
     })
 
@@ -104,12 +107,13 @@ const Recommendation = ({
       updateLiveRecommendation(
         id,
         { hide: !hide },
-        (_, { hide, name }) => sendEventTelemetry({
+        ({ hide, name }) => sendEventTelemetry({
           event: TelemetryEvent.INSIGHTS_RECOMMENDATION_HIDE,
           eventData: {
             databaseId: instanceId,
             action: hide ? 'hide' : 'show',
             name: recommendationsContent[name]?.telemetryEvent ?? name,
+            provider
           }
         })
       )
@@ -126,6 +130,7 @@ const Recommendation = ({
       eventData: {
         databaseId: instanceId,
         name: recommendationsContent[name]?.telemetryEvent ?? name,
+        provider
       }
     })
 

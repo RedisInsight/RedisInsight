@@ -1,7 +1,6 @@
 import {
   Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
-import { differenceBy } from 'lodash';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -159,14 +158,14 @@ export class DatabaseRecommendationProvider {
   async sync(
     clientMetadata: ClientMetadata,
     dbAnalysisRecommendations: Recommendation[],
-    liveRecommendations: DatabaseRecommendation[],
   ): Promise<void> {
     this.logger.log('Synchronization of recommendations');
     try {
-      const newRecommendations = differenceBy(dbAnalysisRecommendations, liveRecommendations, 'name');
-      const sortedRecommendations = sortRecommendations(newRecommendations);
+      const sortedRecommendations = sortRecommendations(dbAnalysisRecommendations);
       for (let i = 0; i < sortedRecommendations.length; i += 1) {
-        await this.create(clientMetadata, sortedRecommendations[i].name);
+        if (!await this.isExist(clientMetadata, sortedRecommendations[i].name)) {
+          await this.create(clientMetadata, sortedRecommendations[i].name);
+        }
       }
     } catch (e) {
       // ignore errors

@@ -13,7 +13,7 @@ import { ReactComponent as WelcomeIcon } from 'uiSrc/assets/img/icons/welcome.sv
 import styles from './styles.module.scss'
 
 const NoRecommendationsScreen = () => {
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, provider } = useSelector(connectedInstanceSelector)
   const { data: { recommendations } } = useSelector(recommendationsSelector)
 
   const dispatch = useDispatch()
@@ -27,6 +27,7 @@ const NoRecommendationsScreen = () => {
       eventData: {
         databaseId: instanceId,
         total: recommendations?.length,
+        provider
       },
     })
   }

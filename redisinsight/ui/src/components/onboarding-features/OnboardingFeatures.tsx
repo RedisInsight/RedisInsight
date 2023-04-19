@@ -20,6 +20,7 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
 import { bufferToString, Nullable } from 'uiSrc/utils'
 import { CodeBlock } from 'uiSrc/components'
+import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
 import styles from './styles.module.scss'
 
 const sendTelemetry = (databaseId: string, step: string, action: string) => sendEventTelemetry({
@@ -153,7 +154,6 @@ const ONBOARDING_FEATURES = {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
 
       const dispatch = useDispatch()
-      const history = useHistory()
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.BrowserProfiler]
 
       return {
@@ -177,6 +177,39 @@ const ONBOARDING_FEATURES = {
           dispatch(resetCliHelperSettings())
           dispatch(setMonitorInitialState())
 
+          dispatch(setIsContentVisible(true))
+          sendNextTelemetryEvent(...telemetryArgs)
+        }
+      }
+    }
+  },
+  BROWSER_INSIGHTS: {
+    step: OnboardingSteps.BrowserInsights,
+    title: 'Insights',
+    Inner: () => {
+      const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+
+      const dispatch = useDispatch()
+      const history = useHistory()
+      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.BrowserInsights]
+
+      return {
+        content: (
+          <>
+            Insights will help you optimize performance and memory usage,
+            enhance the security of your Redis or Redis Stack database.
+            <EuiSpacer size="xs" />
+            Check them from time to time to take your productivity to the next level!
+          </>
+        ),
+        onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
+        onBack: () => {
+          dispatch(setIsContentVisible(false))
+          dispatch(showMonitor())
+          sendBackTelemetryEvent(...telemetryArgs)
+        },
+        onNext: () => {
+          dispatch(setIsContentVisible(false))
           history.push(Pages.workbench(connectedInstanceId))
           sendNextTelemetryEvent(...telemetryArgs)
         }
@@ -250,7 +283,7 @@ const ONBOARDING_FEATURES = {
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => {
           history.push(Pages.browser(connectedInstanceId))
-          dispatch(showMonitor())
+          dispatch(setIsContentVisible(true))
           sendBackTelemetryEvent(...telemetryArgs)
         },
         onNext: () => sendNextTelemetryEvent(...telemetryArgs),
@@ -262,7 +295,6 @@ const ONBOARDING_FEATURES = {
     title: 'Explore and learn more',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
-      const history = useHistory()
       const dispatch = useDispatch()
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.WorkbenchGuides]
 
@@ -273,6 +305,36 @@ const ONBOARDING_FEATURES = {
 
       return {
         content: 'Learn more about how Redis can solve your use cases using Guides and Tutorials.',
+        onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
+        onBack: () => sendBackTelemetryEvent(...telemetryArgs),
+        onNext: () => sendNextTelemetryEvent(...telemetryArgs)
+      }
+    }
+  },
+  WORKBENCH_CUSTOM_TUTORIALS: {
+    step: OnboardingSteps.WorkbenchCustomTutorials,
+    title: 'Upload your tutorials',
+    Inner: () => {
+      const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+      const history = useHistory()
+      const dispatch = useDispatch()
+      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.WorkbenchCustomTutorials]
+
+      useEffect(() => {
+        // here we can use it on mount, because enablement area always rendered on workbench
+        dispatch(setWorkbenchEAMinimized(false))
+      }, [])
+
+      return {
+        content: (
+          <>
+            Share your Redis expertise with your team and the wider community by building custom RedisInsight tutorials.
+            <EuiSpacer size="xs" />
+            Use our <a href="https://github.com/RedisInsight/Tutorials" target="_blank" rel="noreferrer">instructions</a> to
+            describe your implementations of Redis for other users to follow and
+            interact with in the context of a connected Redis database
+          </>
+        ),
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => sendBackTelemetryEvent(...telemetryArgs),
         onNext: () => {

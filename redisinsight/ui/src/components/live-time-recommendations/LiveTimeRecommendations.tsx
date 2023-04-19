@@ -38,14 +38,18 @@ import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 import { ReactComponent as TriggerActiveIcon } from 'uiSrc/assets/img/bulb-active.svg'
 import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { OnboardingTour } from 'uiSrc/components'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import styles from './styles.module.scss'
 
 const recommendationsContent = _content as IRecommendationsStatic
 
+const DELAY_TO_SHOW_ONBOARDING_MS = 500
+
 const LiveTimeRecommendations = () => {
-  const { id: connectedInstanceId = '', } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '', provider } = useSelector(connectedInstanceSelector)
   const {
     loading,
     data: { recommendations, totalUnread },
@@ -70,19 +74,22 @@ const LiveTimeRecommendations = () => {
     dispatch(fetchRecommendationsAction(connectedInstanceId))
   }, [connectedInstanceId])
 
-  const toggleContent = () => {
-    if (!isContentVisible) {
-      dispatch(fetchRecommendationsAction(
-        connectedInstanceId,
-        onSuccessAction,
-      ))
+  useEffect(() => {
+    // this panel can be opened outside
+    if (isContentVisible) {
+      dispatch(fetchRecommendationsAction(connectedInstanceId, onSuccessAction))
       isCloseEventSent.current = false
-    } else {
+    }
+
+    if (!isContentVisible && !isCloseEventSent.current) {
       sendEventTelemetry({
         event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
         eventData: getTelemetryData(recommendations),
       })
     }
+  }, [isContentVisible])
+
+  const toggleContent = () => {
     dispatch(setIsContentVisible(!isContentVisible))
   }
 
@@ -104,6 +111,7 @@ const LiveTimeRecommendations = () => {
       eventData: {
         databaseId: connectedInstanceId,
         total: recommendations?.length,
+        provider
       },
     })
   }
@@ -137,6 +145,7 @@ const LiveTimeRecommendations = () => {
     databaseId: connectedInstanceId,
     total: recommendationsData?.length,
     list: recommendationsData?.map(({ name }) => recommendationsContent[name]?.telemetryEvent ?? name),
+    provider
   })
 
   const renderBody = () => {
@@ -160,6 +169,7 @@ const LiveTimeRecommendations = () => {
         hide={hide}
         tutorials={tutorials}
         tutorial={recommendationsContent[name]?.tutorial}
+        provider={provider}
       />
     ))
   }
@@ -216,23 +226,35 @@ const LiveTimeRecommendations = () => {
   return (
     <div className={styles.wrapper}>
       <div
-        role="button"
-        tabIndex={0}
-        onKeyDown={() => {}}
-        onClick={toggleContent}
         className={cx(styles.trigger, { [styles.isOpen]: isContentVisible })}
-        data-testid="recommendations-trigger"
       >
-        {isHighlighted && !isContentVisible
-          ? <TriggerActiveIcon className={styles.triggerIcon} />
-          : <TriggerIcon className={styles.triggerIcon} />}
-        <EuiText className={cx(
-          styles.triggerText,
-          { [styles.triggerHighlighted]: isHighlighted && !isContentVisible }
-        )}
+        <OnboardingTour
+          options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}
+          anchorPosition="leftDown"
+          panelClassName={styles.insightsOnboardPanel}
+          delay={isContentVisible ? DELAY_TO_SHOW_ONBOARDING_MS : 0}
+          rerenderWithDelay={isContentVisible}
         >
-          Insights
-        </EuiText>
+          <div
+            className={styles.inner}
+            role="button"
+            tabIndex={0}
+            onKeyDown={() => {}}
+            onClick={toggleContent}
+            data-testid="recommendations-trigger"
+          >
+            {isHighlighted && !isContentVisible
+              ? <TriggerActiveIcon className={styles.triggerIcon} />
+              : <TriggerIcon className={styles.triggerIcon} />}
+            <EuiText className={cx(
+              styles.triggerText,
+              { [styles.triggerHighlighted]: isHighlighted && !isContentVisible }
+            )}
+            >
+              Insights
+            </EuiText>
+          </div>
+        </OnboardingTour>
       </div>
       {isContentVisible && (
         <EuiFlyout

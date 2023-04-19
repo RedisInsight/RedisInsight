@@ -53,8 +53,8 @@ const sortRecommendationsTests = [
     expected: [
       { name: 'searchJSON' },
       { name: 'searchIndexes' },
-      { name: 'bigSets' },
       { name: 'RTS' },
+      { name: 'bigSets' },
       { name: 'luaScript' },
       { name: 'useSmallerKeys' },
     ]

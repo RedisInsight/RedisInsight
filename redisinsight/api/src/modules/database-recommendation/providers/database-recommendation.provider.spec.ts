@@ -15,7 +15,7 @@ import { DatabaseRecommendationProvider }
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Vote } from 'src/modules/database-recommendation/models';
+import { DatabaseRecommendation, Vote } from 'src/modules/database-recommendation/models';
 
 const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity({
   id: uuidv4(),

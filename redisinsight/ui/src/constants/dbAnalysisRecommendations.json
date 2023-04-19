@@ -45,33 +45,6 @@
     "title": "Shard big hashes to small hashes",
     "redisStack": true,
     "tutorial": "/quick-guides/document/working-with-hashes.md",
-    "liveTimeText": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "If you have a hash with a large number of field-value pairs (> 5,000), and if each pair is small enough - break it into smaller hashes to optimize memory usage. Additionally, try using smaller or shortened field names."
-      },
-      {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "3",
-        "type": "paragraph",
-        "value": "Additionally, you can use RediSearch, designed to help address your query needs and supports a better development experience."
-      },
-      {
-        "id": "4",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "5",
-        "type": "paragraph",
-        "value": "Learn more about how Search capability can help you via Tutorials in Workbench."
-      }
-    ],
     "content": [
       {
         "id": "1",
@@ -104,13 +77,6 @@
   "avoidLogicalDatabases": {
     "id": "avoidLogicalDatabases",
     "title": "Avoid using logical databases",
-    "liveTimeText": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "Redis supports multiple logical databases within an instance, though these logical databases are neither independent nor isolated in any other way and can freeze each other. Also, some modules do not support numbered databases as well."
-      }
-    ],
     "content": [
       {
         "id": "1",
@@ -322,23 +288,6 @@
     "title": "Optimize existence checks",
     "tutorial": "/redis_stack/probabilistic_data_structures.md",
     "redisStack": true,
-    "liveTimeText": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "If you are using sets for existence checks or to eliminate duplicates, and you are ready to trade accuracy with speed and memory usage, consider using Redis probabilistic data structures to increase performance and decrease memory usage."
-      },
-      {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "3",
-        "type": "span",
-        "value": "Learn more about how probabilistic data structures can help you via Tutorials in Workbench"
-      }
-    ],
     "content": [
       {
         "id": "1",
@@ -419,23 +368,6 @@
     "title":"Optimize the use of time series",
     "redisStack": true,
     "tutorial": "/redis_stack/redis_for_time_series.md",
-    "liveTimeText": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "If you are using sorted sets to work with time series data, consider using RedisTimeSeries to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
-      },
-      {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "3",
-        "type": "span",
-        "value": "Learn more about how a Time Series data structure can help you via Tutorials in Workbench."
-      }
-    ],
     "content": [
       {
         "id": "1",
@@ -460,36 +392,6 @@
     "telemetryEvent": "updateDatabase",
     "title":"Update Redis database",
     "redisStack": true,
-    "liveTimeText": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "Newer versions of Redis (starting from 6.0) have performance and resource utilization improvements, as well as the improved active, expire cycle to evict the keys faster."
-      },
-      {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "3",
-        "type": "span",
-        "value": "Create a "
-      },
-      {
-        "id": "4",
-        "type": "link",
-        "value": {
-          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_extended_rec",
-          "name": "free Redis Stack database"
-        }
-      },
-      {
-        "id": "5",
-        "type": "span",
-        "value": " which extends the core capabilities of Redis OSS and provides a complete developer experience for debugging and more."
-      }
-    ],
     "content": [
       {
         "id": "1",
@@ -640,33 +542,6 @@
     "title": "Optimize your query and search experience",
     "redisStack": true,
     "tutorial": "/redis_stack/working_with_json.md",
-    "liveTimeText": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "Storing large strings (> 512 KB) could consume more resources and time to process, manipulate, update, and retrieve them. Consider representing your data using hashes or use RedisJSON to store your JSON documents to improve performance."
-      },
-      {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "3",
-        "type": "paragraph",
-        "value": "Additionally, if working with hashes or JSONs, you can use RediSearch, which helps to address your query needs and supports a better development experience when dealing with complex data scenarios."
-      },
-      {
-        "id": "4",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "5",
-        "type": "paragraph",
-        "value": "Learn more about how JSON support and Search capability can help you via Tutorials in Workbench."
-      }
-    ],
     "content": [
       {
         "id": "1",
@@ -700,33 +575,6 @@
     "title": "Query and search JSON documents",
     "redisStack": true,
     "tutorial": "/redis_stack/working_with_json.md",
-    "liveTimeText": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "If working with JSONs, you can use RediSearch, designed to help address your query needs and support a better development experience."
-      },
-      {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "3",
-        "type": "paragraph",
-        "value": "RediSearch adds the capability to query, secondary index, and full-text search for Redis. These features enable multi-field queries, aggregation, exact phrase matching, numeric filtering, geo filtering, and vector similarity semantic search on top of text queries."
-      },
-      {
-        "id": "5",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "6",
-        "type": "span",
-        "value": "Learn more about how Search capability can help you via Tutorials in Workbench"
-      }
-    ],
     "content": [
       {
         "id": "1",
@@ -760,7 +608,7 @@
     "redisStack": true,
     "title": "Use only integers in sets",
     "tutorial": "/quick-guides/document/working-with-hashes.md",
-    "liveTimeText": [
+    "content": [
       {
         "id": "1",
         "type": "paragraph",
@@ -783,7 +631,7 @@
     "title": "Optimize the use of JSONs",
     "redisStack": true,
     "tutorial": "/redis_stack/working_with_json.md",
-    "liveTimeText": [
+    "content": [
       {
         "id": "1",
         "type": "paragraph",
@@ -815,7 +663,7 @@
     "id": "searchVisualization",
     "title": "Try data visualizations in Workbench",
     "tutorial": "",
-    "liveTimeText": [
+    "content": [
       {
         "id": "1",
         "type": "paragraph",
@@ -827,7 +675,7 @@
     "id": "graphVisualization",
     "title": "Try graph visualizations in Workbench",
     "tutorial": "",
-    "liveTimeText": [
+    "content": [
       {
         "id": "1",
         "type": "paragraph",

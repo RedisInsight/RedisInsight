@@ -381,7 +381,7 @@ describe('recommendations slice', () => {
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
-        expect(onSuccessActionMock).toBeCalledWith('', { ...data })
+        expect(onSuccessActionMock).toBeCalledWith(data)
       })
 
       it('failed to put recommendation vote', async () => {

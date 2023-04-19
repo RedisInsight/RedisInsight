@@ -45,7 +45,7 @@ import styles from './styles.module.scss'
 const recommendationsContent = _content as IRecommendationsStatic
 
 const LiveTimeRecommendations = () => {
-  const { id: connectedInstanceId = '', } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '', provider } = useSelector(connectedInstanceSelector)
   const {
     loading,
     data: { recommendations, totalUnread },
@@ -104,6 +104,7 @@ const LiveTimeRecommendations = () => {
       eventData: {
         databaseId: connectedInstanceId,
         total: recommendations?.length,
+        provider
       },
     })
   }
@@ -137,6 +138,7 @@ const LiveTimeRecommendations = () => {
     databaseId: connectedInstanceId,
     total: recommendationsData?.length,
     list: recommendationsData?.map(({ name }) => recommendationsContent[name]?.telemetryEvent ?? name),
+    provider
   })
 
   const renderBody = () => {
@@ -160,6 +162,7 @@ const LiveTimeRecommendations = () => {
         hide={hide}
         tutorials={tutorials}
         tutorial={recommendationsContent[name]?.tutorial}
+        provider={provider}
       />
     ))
   }

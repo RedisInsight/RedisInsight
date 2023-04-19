@@ -217,6 +217,14 @@ describe('BulkImportService', () => {
       expect(mockedFs.readFile).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, mockUploadImportFileByPathDto.path));
     });
 
+    it('should import file by path with static', async () => {
+      mockedFs.pathExists.mockImplementationOnce(async () => true);
+
+      await service.uploadFromTutorial(mockClientMetadata, { path: '/static/guides/_data.file' });
+
+      expect(mockedFs.readFile).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, '/guides/_data.file'));
+    });
+
     it('should normalize path before importing and not search for file outside home folder', async () => {
       mockedFs.pathExists.mockImplementationOnce(async () => true);
 

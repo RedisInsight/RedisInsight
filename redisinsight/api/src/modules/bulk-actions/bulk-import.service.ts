@@ -18,6 +18,7 @@ import { MemoryStoredFile } from 'nestjs-form-data';
 
 const BATCH_LIMIT = 10_000;
 const PATH_CONFIG = config.get('dir_path');
+const SERVER_CONFIG = config.get('server');
 
 @Injectable()
 export class BulkImportService {
@@ -148,7 +149,19 @@ export class BulkImportService {
     dto: UploadImportFileByPathDto,
   ): Promise<IBulkActionOverview> {
     try {
-      const path = join(PATH_CONFIG.homedir, resolve('/', dto.path));
+      const staticPath = join(SERVER_CONFIG.base, SERVER_CONFIG.staticUri);
+
+      let trimmedPath = dto.path;
+      if (dto.path.indexOf(staticPath) === 0) {
+        trimmedPath = dto.path.slice(staticPath.length);
+      }
+
+      const resolvedPath = resolve(
+        '/',
+        trimmedPath,
+      );
+
+      const path = join(PATH_CONFIG.homedir, resolvedPath);
 
       if (!await fs.pathExists(path)) {
         throw new BadRequestException('Data file was not found');

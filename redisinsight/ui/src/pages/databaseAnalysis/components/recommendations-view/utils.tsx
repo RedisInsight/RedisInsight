@@ -115,18 +115,10 @@ const renderContentElement = ({ id, type, value: jsonValue, parameter }: IConten
 export const renderContent = (elements: IContentElement[], params: any) => (
   elements?.map((item) => renderContentElement(item, params)))
 
-export const sortRecommendations = (recommendations: Recommendation[]) => sortBy(recommendations, ({ name }) => {
-  if (name === 'searchString') {
-    return -4
-  }
-  if (name === 'searchJSON') {
-    return -3
-  }
-  if (name === 'searchIndexes') {
-    return -2
-  }
-  if (recommendationsContent[name]?.redisStack) {
-    return -1
-  }
-  return 0
-})
+export const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [
+  ({ name }) => name !== 'searchString',
+  ({ name }) => name !== 'searchJSON',
+  ({ name }) => name !== 'searchIndexes',
+  ({ name }) => recommendationsContent[name]?.redisStack,
+  ({ name }) => name,
+])

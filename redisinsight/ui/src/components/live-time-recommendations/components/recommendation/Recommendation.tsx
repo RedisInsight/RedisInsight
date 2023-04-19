@@ -163,7 +163,7 @@ const Recommendation = ({
       <div className={styles.icon}>
         <Icon />
       </div>
-      {recommendationsContent[name]?.liveTimeText?.map((item) => renderContentElement(item))}
+      {recommendationsContent[name]?.content?.map((item) => renderContentElement(item))}
       <div className={styles.actions}>
         <RecommendationVoting live id={id} vote={vote} name={name} containerClass={styles.votingContainer} />
         <EuiButton

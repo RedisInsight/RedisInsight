@@ -161,5 +161,9 @@ test('Verify that user can snooze recommendation', async t => {
     await common.reloadPage();
     await insightsPage.toggleInsightsPanel(true);
     await t.expect(await insightsPage.isRecommendationExists(recommendation)).notOk('recommendation is displayed when after snoozing');
+    await insightsPage.toggleInsightsPanel(false);
+    await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
+    await insightsPage.toggleInsightsPanel(true);
+    await t.expect(await insightsPage.isRecommendationExists(recommendation)).ok('recommendation is not displayed again');
 });
 

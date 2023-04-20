@@ -80,8 +80,10 @@ export class BulkImportService {
 
     let parseErrors = 0;
 
+    let client;
+
     try {
-      const client = await this.databaseConnectionService.createClient(clientMetadata);
+      client = await this.databaseConnectionService.createClient(clientMetadata);
 
       const stream = Readable.from(dto.file.buffer);
       let batch = [];
@@ -126,9 +128,12 @@ export class BulkImportService {
 
       this.analyticsService.sendActionStopped(result);
 
+      client.disconnect();
+
       return result;
     } catch (e) {
       this.logger.error('Unable to process an import file', e);
+      client?.disconnect();
       throw wrapHttpError(e);
     }
   }

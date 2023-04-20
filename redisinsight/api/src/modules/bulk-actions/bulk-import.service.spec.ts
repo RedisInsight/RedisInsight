@@ -5,7 +5,7 @@ import {
   mockClientMetadata,
   mockDatabaseConnectionService,
   mockIORedisClient,
-  mockIORedisCluster, MockType
+  mockIORedisCluster, MockType,
 } from 'src/__mocks__';
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
@@ -195,6 +195,7 @@ describe('BulkImportService', () => {
         },
         duration: jasmine.anything(),
       });
+      expect(mockIORedisClient.disconnect).toHaveBeenCalled();
     });
 
     it('should throw an error in case of global error', async () => {
@@ -205,6 +206,7 @@ describe('BulkImportService', () => {
 
         fail();
       } catch (e) {
+        expect(mockIORedisClient.disconnect).not.toHaveBeenCalled();
         expect(e).toBeInstanceOf(NotFoundException);
       }
     });

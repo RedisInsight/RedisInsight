@@ -206,6 +206,7 @@ const EnablementArea = (props: Props) => {
             isShowActions={currentSourcePath.startsWith(ApiEndpoints.CUSTOM_TUTORIALS_PATH)}
             onCreate={() => setIsCreateOpen((v) => !v)}
             onDelete={onDeleteCustomTutorial}
+            isPageOpened={isInternalPageVisible}
             {...args}
           >
             <>

@@ -12,7 +12,7 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { openCli, openCliHelper, resetCliHelperSettings, resetCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { setMonitorInitialState, showMonitor } from 'uiSrc/slices/cli/monitor'
 import { Pages } from 'uiSrc/constants'
-import { setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
+import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import { dbAnalysisSelector, setDatabaseAnalysisViewTab } from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { fetchRedisearchListAction, loadList } from 'uiSrc/slices/browser/redisearch'
@@ -501,7 +501,7 @@ describe('ONBOARDING_FEATURES', () => {
     it('should call proper actions init', () => {
       render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_CUSTOM_TUTORIALS}><span /></OnboardingTour>)
 
-      const expectedActions = [setWorkbenchEAMinimized(false)]
+      const expectedActions = [setWorkbenchEAMinimized(false), resetWorkbenchEASearch()]
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
 

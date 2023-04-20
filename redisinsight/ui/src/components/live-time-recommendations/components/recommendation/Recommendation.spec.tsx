@@ -171,25 +171,25 @@ describe('Recommendation', () => {
     expect(screen.getByTestId('toggle-hide-searchJSON-btn')).toBeInTheDocument()
   })
 
-  it('should not render "To Tutorial" btn if tutorial is Undefined', () => {
+  it('should not render "Tutorial" btn if tutorial is Undefined', () => {
     const name = 'searchJSON'
     const { queryByTestId } = render(<Recommendation {...instance(mockedProps)} name={name} tutorial={undefined} />)
 
     expect(queryByTestId(`${name}-to-tutorial-btn`)).not.toBeInTheDocument()
   })
 
-  it('should render "To Tutorial" if tutorial="path"', () => {
+  it('should render "Tutorial" if tutorial="path"', () => {
     const name = 'searchJSON'
     const { queryByTestId } = render(<Recommendation {...instance(mockedProps)} name={name} tutorial="path" />)
 
-    expect(queryByTestId(`${name}-to-tutorial-btn`)).toHaveTextContent('To Tutorial')
+    expect(queryByTestId(`${name}-to-tutorial-btn`)).toHaveTextContent('Tutorial')
   })
 
-  it('should render "To Workbench" btn if tutorial=""', () => {
+  it('should render "Workbench" btn if tutorial=""', () => {
     const name = 'searchJSON'
     const { queryByTestId } = render(<Recommendation {...instance(mockedProps)} name={name} tutorial="" />)
 
-    expect(queryByTestId(`${name}-to-tutorial-btn`)).toHaveTextContent('To Workbench')
+    expect(queryByTestId(`${name}-to-tutorial-btn`)).toHaveTextContent('Workbench')
   })
 
   it('should render Snooze button', () => {

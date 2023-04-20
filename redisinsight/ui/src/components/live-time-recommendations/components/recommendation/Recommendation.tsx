@@ -187,7 +187,7 @@ const Recommendation = ({
             color="secondary"
             data-testid={`${name}-to-tutorial-btn`}
           >
-            { tutorial ? 'To Tutorial' : 'To Workbench' }
+            { tutorial ? 'Tutorial' : 'Workbench' }
           </EuiButton>
         )}
       </div>

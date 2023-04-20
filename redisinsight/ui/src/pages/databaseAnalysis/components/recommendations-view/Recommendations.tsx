@@ -187,7 +187,7 @@ const Recommendations = () => {
                     onClick={() => goToTutorial(tutorial, id)}
                     data-testid={`${id}-to-tutorial-btn`}
                   >
-                    To Tutorial
+                    Tutorial
                   </EuiButton>
                 )}
               </div>

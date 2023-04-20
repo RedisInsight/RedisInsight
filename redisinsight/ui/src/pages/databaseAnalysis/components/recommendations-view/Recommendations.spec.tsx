@@ -424,7 +424,7 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('bigSets-redis-stack-link')).toHaveAttribute('href', 'https://redis.io/docs/stack/')
   })
 
-  it('should render go to tutorial button', () => {
+  it('should render go tutorial button', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
@@ -437,7 +437,7 @@ describe('Recommendations', () => {
     expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
   })
 
-  it('should call proper history push after click go to tutorial button', () => {
+  it('should call proper history push after click go tutorial button', () => {
     const sendEventTelemetryMock = jest.fn()
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock);
 
@@ -463,7 +463,7 @@ describe('Recommendations', () => {
     sendEventTelemetry.mockRestore()
   })
 
-  it('should call proper telemetry after click go to tutorial button', () => {
+  it('should call proper telemetry after click go tutorial button', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
 

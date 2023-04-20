@@ -52,8 +52,8 @@
   width: 100%;
   justify-content: flex-end;
   position: absolute;
-  bottom: 12px;
-  right: 20px;
+  bottom: 24px;
+  right: 18px;
   padding-top: 8px;
   background-color: var(--euiColorEmptyShade);
 }
@@ -66,23 +66,4 @@
   position: absolute;
   right: 18px;
   bottom: 18px;
-}
-
-.placeholder {
-  max-width: 440px;
-  height: calc(100% - 45px);
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  white-space: pre-wrap;
-  margin: 0 auto;
-  justify-content: center;
-}
-
-.placeholderTitle {
-  color: var(--htmlColor) !important;
-  font-size: 16px !important;
-  line-height: 24px !important;
-  font-weight: 500 !important;
-  padding-bottom: 20px;
 }

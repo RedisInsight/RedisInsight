@@ -146,7 +146,7 @@ const BulkUpload = (props: Props) => {
             processed={processed}
             failed={failed}
             duration={duration}
-            data-testid="bulk-upload-competed-summary"
+            data-testid="bulk-upload-completed-summary"
           />
         </BulkActionsInfo>
       )}

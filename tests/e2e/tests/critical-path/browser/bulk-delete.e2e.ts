@@ -45,7 +45,7 @@ test('Verify that user can access the bulk actions screen in the Browser', async
     // Verify that user can see warning message clicking on Delete button for Bulk Deletion
     const warningTooltipTitle = 'Are you sure you want to perform this action?';
     const warningTooltipMessage = 'All keys with HASH key type and selected pattern will be deleted.';
-    await t.click(bulkActionsPage.deleteButton);
+    await t.click(bulkActionsPage.actionButton);
     await t.expect(bulkActionsPage.bulkActionWarningTooltip.textContent).contains(warningTooltipTitle, 'Warning Tooltip title is not displayed or text is invalid');
     await t.expect(bulkActionsPage.bulkActionWarningTooltip.textContent).contains(warningTooltipMessage, 'Warning Tooltip message is not displayed or text is invalid');
     await t.expect(bulkActionsPage.bulkApplyButton.exists).ok('Confirm deletion button not displayed');

@@ -16,11 +16,11 @@ export class RTSStrategy extends AbstractRecommendationStrategy {
     members: ZSetMemberDto[],
   ): Promise<boolean> {
     const timestampMemberNames = members.filter(({ name }) => checkTimestamp(getUTF8FromBuffer(name as Buffer)));
-    if ((timestampMemberNames.length / members.length) * 100 > maxPercentage) {
+    if ((timestampMemberNames.length / members.length) * 100 >= maxPercentage) {
       return true;
     }
     const timestampMemberScores = members.filter(({ score }) => checkTimestamp(String(score)));
-    if ((timestampMemberScores.length / members.length) * 100 > maxPercentage) {
+    if ((timestampMemberScores.length / members.length) * 100 >= maxPercentage) {
       return true;
     }
     return false;

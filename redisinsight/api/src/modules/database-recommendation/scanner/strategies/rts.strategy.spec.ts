@@ -6,13 +6,13 @@ const mockDefaultName = Buffer.from('name');
 const mockTimestampScore = 1234567891;
 const mockDefaultScore = 1;
 
-const mockTimestampNameMembers = new Array(99).fill(
+const mockTimestampNameMembers = new Array(98).fill(
   {
     name: mockTimestampName, score: mockDefaultScore,
   },
 );
 
-const mockTimestampScoreMembers = new Array(99).fill(
+const mockTimestampScoreMembers = new Array(98).fill(
   {
     name: mockDefaultName, score: mockTimestampScore,
   },

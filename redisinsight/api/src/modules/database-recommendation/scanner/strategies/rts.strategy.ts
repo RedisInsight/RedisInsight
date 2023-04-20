@@ -4,7 +4,7 @@ import { ZSetMemberDto } from 'src/modules/browser/dto';
 import { getUTF8FromBuffer } from 'src/utils/cli-helper';
 import { checkTimestamp } from '../utils';
 
-const maxPercentage = 95;
+const maxPercentage = 99;
 
 export class RTSStrategy extends AbstractRecommendationStrategy {
   /**

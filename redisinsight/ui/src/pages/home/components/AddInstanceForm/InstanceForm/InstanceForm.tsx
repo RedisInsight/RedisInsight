@@ -128,7 +128,7 @@ const AddStandaloneForm = (props: Props) => {
       provider,
       ssh,
       sshPassType = SshPassType.Password,
-      sshOptions
+      sshOptions,
     },
     initialValues: initialValuesProp,
     width,
@@ -162,6 +162,7 @@ const AddStandaloneForm = (props: Props) => {
     showDb: !!db,
     showCompressor: compressor !== NONE,
     sni: !!servername,
+    servername,
     newCaCert: '',
     newCaCertName: '',
     selectedCaCertName,

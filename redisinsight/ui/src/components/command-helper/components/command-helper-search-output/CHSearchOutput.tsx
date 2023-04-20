@@ -35,7 +35,7 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
   const renderDescription = (command: string) => {
     const args = ALL_REDIS_COMMANDS[command].arguments || []
     if (args.length) {
-      const argString = generateArgsNames(args).join(' ')
+      const argString = generateArgsNames(ALL_REDIS_COMMANDS[command]?.provider, args).join(' ')
       return (
         <EuiText
           size="s"

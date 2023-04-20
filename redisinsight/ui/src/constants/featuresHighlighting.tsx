@@ -1,5 +1,4 @@
 import React from 'react'
-import { PageNames } from 'uiSrc/constants/pages'
 
 export type FeaturesHighlightingType = 'plain' | 'tooltip' | 'popover'
 
@@ -9,11 +8,11 @@ interface BuildHighlightingFeature {
   content?: string | React.ReactElement
   page?: string
 }
-export const BUILD_FEATURES: { [key: string]: BuildHighlightingFeature } = {
-  myTutorials: {
+
+export const BUILD_FEATURES: Record<string, BuildHighlightingFeature> = {
+  bulkUpload: {
     type: 'tooltip',
-    title: 'Upload your own tutorials',
-    content: 'Upload tutorials to work in Workbench and share them with others.',
-    page: PageNames.workbench
+    title: (<span><i>New:</i> Bulk Upload</span>),
+    content: 'Upload your data in bulk from a file.',
   }
-}
+} as const

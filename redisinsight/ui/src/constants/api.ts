@@ -4,6 +4,8 @@ enum ApiEndpoints {
   DATABASES_TEST_CONNECTION = 'databases/test',
   DATABASES_EXPORT = 'databases/export',
 
+  BULK_ACTIONS_IMPORT = 'bulk-actions/import',
+
   CA_CERTIFICATES = 'certificates/ca',
   CLIENT_CERTIFICATES = 'certificates/client',
 

@@ -14,7 +14,7 @@ enum BrowserStorageItem {
   isEnablementAreaMinimized = 'isEnablementAreaMinimized',
   treeViewDelimiter = 'treeViewDelimiter',
   autoRefreshRate = 'autoRefreshRate',
-  bulkActionId = 'bulkActionId',
+  bulkActionDeleteId = 'bulkActionDeleteId',
   dbConfig = 'dbConfig_',
   RunQueryMode = 'RunQueryMode',
   wbCleanUp = 'wbCleanUp',

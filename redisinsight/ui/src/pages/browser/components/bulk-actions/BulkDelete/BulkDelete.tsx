@@ -1,20 +1,18 @@
-import React, { useState } from 'react'
-import { EuiButton, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
-import cx from 'classnames'
+import React, { useEffect, useState } from 'react'
+import { EuiText } from '@elastic/eui'
+import { useSelector } from 'react-redux'
 
+import { isUndefined } from 'lodash'
 import {
-  overviewBulkActionsSelector,
-  toggleBulkActionTriggered,
-  bulkActionsSelector,
-  setBulkActionsInitialState,
+  bulkActionsDeleteOverviewSelector,
+  bulkActionsDeleteSelector,
 } from 'uiSrc/slices/browser/bulkActions'
-import { keysDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
-import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { BulkActionsType } from 'uiSrc/constants'
-import BulkDeleteContent from './BulkDeleteContent'
-import { isProcessedBulkAction } from '../utils'
+import { keysSelector } from 'uiSrc/slices/browser/keys'
+
+import BulkDeleteFooter from './BulkDeleteFooter'
+import BulkDeleteSummary from './BulkDeleteSummary'
+import BulkActionsInfo from '../BulkActionsInfo'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -23,136 +21,44 @@ export interface Props {
 
 const BulkDelete = (props: Props) => {
   const { onCancel } = props
-  const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { filter, search } = useSelector(keysSelector)
-  const { scanned, total } = useSelector(keysDataSelector)
-  const { loading } = useSelector(bulkActionsSelector)
-  const { status } = useSelector(overviewBulkActionsSelector) ?? {}
+  const { filter, search, isSearched, isFiltered } = useSelector(keysSelector)
+  const { loading } = useSelector(bulkActionsDeleteSelector)
+  const {
+    status,
+    filter: { match, type: filterType },
+    progress
+  } = useSelector(bulkActionsDeleteOverviewSelector) ?? { filter: {} }
+  const [showPlaceholder, setShowPlaceholder] = useState<boolean>(!isSearched && !isFiltered)
 
-  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
-
-  const dispatch = useDispatch()
-
-  const handleDelete = () => {
-    setIsPopoverOpen(false)
-    dispatch(toggleBulkActionTriggered(null))
-  }
-
-  const handleDeleteWarning = () => {
-    setIsPopoverOpen(true)
-
-    let matchValue = '*'
-    if (search !== '*' && !!search) {
-      matchValue = getMatchType(search)
-    }
-
-    sendEventTelemetry({
-      event: TelemetryEvent.BULK_ACTIONS_WARNING,
-      eventData: {
-        filterType: filter,
-        match: matchValue,
-        scanned,
-        total,
-        databaseId: instanceId,
-        action: BulkActionsType.Delete
-      }
-    })
-  }
-
-  const handleStartNew = () => {
-    dispatch(setBulkActionsInitialState(null))
-  }
-
-  const handleStop = () => {
-    dispatch(toggleBulkActionTriggered(null))
-  }
-
-  const handleCancel = () => {
-    onCancel()
-  }
+  useEffect(() => {
+    setShowPlaceholder(!status && !isSearched && !isFiltered)
+  }, [status, isSearched, isFiltered])
 
   return (
-    <div className={styles.container} data-testid="bulk-actions-delete">
-      {status && <BulkDeleteContent />}
-      <div className={styles.footer}>
-        {!loading && (
-          <EuiButton
-            color="secondary"
-            onClick={handleCancel}
-            className={styles.cancelBtn}
-            data-testid="bulk-action-cancel-btn"
+    <>
+      {!showPlaceholder && (
+        <>
+          <BulkActionsInfo
+            search={match || search || '*'}
+            loading={loading}
+            filter={isUndefined(filterType) ? filter : filterType}
+            status={status}
+            progress={progress}
           >
-            {isProcessedBulkAction(status) ? 'Close' : 'Cancel'}
-          </EuiButton>
-        )}
-        {loading && (
-          <EuiButton
-            color="secondary"
-            onClick={handleStop}
-            className={styles.cancelBtn}
-            data-testid="bulk-action-stop-btn"
-          >
-            Stop
-          </EuiButton>
-        )}
-        {!isProcessedBulkAction(status) && (
-          <EuiPopover
-            id="bulk-delete-warning-popover"
-            anchorPosition="upCenter"
-            isOpen={isPopoverOpen}
-            closePopover={() => setIsPopoverOpen(false)}
-            panelClassName={styles.panelPopover}
-            panelPaddingSize="none"
-            button={(
-              <EuiButton
-                fill
-                color="secondary"
-                isLoading={loading}
-                disabled={loading}
-                onClick={handleDeleteWarning}
-                data-testid="bulk-action-warning-btn"
-              >
-                Delete
-              </EuiButton>
-            )}
-          >
-            <EuiText color="subdued" className={styles.containerPopover} data-testid="bulk-action-tooltip">
-              <EuiIcon
-                type="alert"
-                className={styles.popoverIcon}
-              />
-              <div className={cx(styles.popoverItem, styles.popoverItemTitle)}>
-                Are you sure you want to perform this action?
-              </div>
-              <div className={styles.popoverItem}>
-                {`All keys with ${filter ? filter?.toUpperCase() : 'all'} key type and selected pattern will be deleted.`}
-              </div>
-              <EuiButton
-                fill
-                size="s"
-                color="warning"
-                className={styles.deleteApproveBtn}
-                onClick={handleDelete}
-                data-testid="bulk-action-apply-btn"
-              >
-                Delete
-              </EuiButton>
-            </EuiText>
-          </EuiPopover>
-        )}
-        {isProcessedBulkAction(status) && (
-          <EuiButton
-            fill
-            iconType="refresh"
-            color="secondary"
-            onClick={handleStartNew}
-            data-testid="bulk-action-start-again-btn"
-          >
-            Start New
-          </EuiButton>
-        )}
-      </div>
-    </div>
+            <BulkDeleteSummary />
+          </BulkActionsInfo>
+          <BulkDeleteFooter onCancel={onCancel} />
+        </>
+      )}
+      {showPlaceholder && (
+        <div className={styles.placeholder} data-testid="bulk-actions-placeholder">
+          <EuiText color="subdued" className={styles.placeholderTitle}>No pattern or key type set</EuiText>
+          <EuiText color="subdued" className={styles.placeholderSummary}>
+            To perform a bulk action, set the pattern or select the key type
+          </EuiText>
+        </div>
+      )}
+    </>
   )
 }
 

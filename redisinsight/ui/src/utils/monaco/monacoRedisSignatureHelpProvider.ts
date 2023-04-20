@@ -25,7 +25,7 @@ export const getRedisSignatureHelpProvider = (
       }
 
       const commandArgs = command.info?.arguments ?? []
-      const label: string = `${command?.name} ${generateArgsNames(commandArgs).join(' ')}`
+      const label: string = `${command?.name} ${generateArgsNames(command.info?.provider, commandArgs).join(' ')}`
 
       return {
         dispose: () => {},

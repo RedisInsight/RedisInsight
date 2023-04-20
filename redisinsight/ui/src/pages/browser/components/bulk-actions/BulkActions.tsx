@@ -48,6 +48,7 @@ const BulkActions = (props: Props) => {
         databaseId: instanceId,
         filterType: filter,
         match: (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH,
+        action: type
       }
     })
   }, [])

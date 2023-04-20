@@ -65,6 +65,36 @@ describe('POST /databases/:id/bulk-actions/import', () => {
         },
       });
     });
+    it('Should import 10K strings', async () => {
+      await validateApiCall({
+        endpoint,
+        attach: [
+          'file',
+          Buffer.from(
+            (new Array(10_000)).fill(1).map(
+              (_v, idx) => `SET key${idx} value${idx}`,
+            ).join('\n'),
+          ),
+          'any_filename_and_ext',
+        ],
+        responseBody: {
+          id: 'empty',
+          databaseId: constants.TEST_INSTANCE_ID,
+          type: 'import',
+          summary: { processed: 10_000, succeed: 10_000, failed: 0, errors: [] },
+          progress: null,
+          filter: null,
+          status: 'completed',
+        },
+        checkFn: async ({ body }) => {
+          expect(body.duration).to.gt(0);
+
+          expect(await rte.client.get('key0')).to.eq('value0');
+          expect(await rte.client.get('key9999')).to.eq('value9999');
+          expect(await rte.client.get('key10000')).to.eq(null);
+        },
+      });
+    });
     it('Should import 50 out of 100 keys strings', async () => {
       await validateApiCall({
         endpoint,

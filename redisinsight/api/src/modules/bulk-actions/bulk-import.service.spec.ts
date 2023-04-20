@@ -151,6 +151,29 @@ describe('BulkImportService', () => {
       });
     });
 
+    it('should import data (10K) from file in batches 10K each', async () => {
+      spy.mockResolvedValue(Object.assign(new BulkActionSummary(), {
+        processed: 10_000,
+        succeed: 10_000,
+        failed: 0,
+      }));
+      expect(await service.import(mockClientMetadata, {
+        file: {
+          ...mockUploadImportFileDto.file,
+          buffer: generateNCommandsBuffer(10_000),
+        } as unknown as MemoryStoredFile,
+      })).toEqual({
+        ...mockImportResult,
+        summary: {
+          processed: 10_000,
+          succeed: 10_000,
+          failed: 0,
+          errors: [],
+        },
+        duration: jasmine.anything(),
+      });
+    });
+
     it('should not import any data due to parse error', async () => {
       spy.mockResolvedValue(Object.assign(new BulkActionSummary(), {
         processed: 0,

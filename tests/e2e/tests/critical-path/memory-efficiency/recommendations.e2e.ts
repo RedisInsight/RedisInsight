@@ -165,7 +165,7 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })('Verify that user can see the Tutorial opened when clicking on "To Tutorial" for recommendations', async t => {
+    })('Verify that user can see the Tutorial opened when clicking on "Tutorial" for recommendations', async t => {
         const optimizeTsRecommendation = await memoryEfficiencyPage.getRecommendationByName('Optimize the use of time series');
         const toTutorialBtn = optimizeTsRecommendation.find(memoryEfficiencyPage.cssToTutorialsBtn);
 

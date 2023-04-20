@@ -56,6 +56,7 @@ const BulkUpload = (props: Props) => {
   const onStartAgain = () => {
     dispatch(setBulkUploadStartAgain())
     setFiles(null)
+    setIsSubmitDisabled(true)
   }
 
   const handleUploadWarning = () => {

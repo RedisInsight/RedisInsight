@@ -39,7 +39,7 @@ export default {
   },
   server: {
     env: 'development',
-    listenInterface: process.env.RI_LISTEN_INTERFACE === '*' ? '' : (process.env.RI_LISTEN_INTERFACE || '127.0.0.1'),
+    listenInterface: process.env.RI_HOSTNAME ?? '0.0.0.0',
     port: 5000,
     docPrefix: 'api/docs',
     globalPrefix: 'api',

@@ -150,4 +150,16 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
     await insightsPage.toggleInsightsPanel(true);
     await t.expect(await insightsPage.isRecommendationExists(recommendation)).ok('recommendation is not displayed when show hide recommendation is checked');
 });
+test('Verify that user can snooze recommendation', async t => {
+    const recommendation = RecommendationIds.searchVisualization;
+    const commandToGetRecommendation = 'FT.INFO';
+    await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
+
+    await insightsPage.toggleInsightsPanel(true);
+    await insightsPage.snoozeRecommendation(recommendation);
+
+    await common.reloadPage();
+    await insightsPage.toggleInsightsPanel(true);
+    await t.expect(await insightsPage.isRecommendationExists(recommendation)).notOk('recommendation is displayed when after snoozing');
+});
 

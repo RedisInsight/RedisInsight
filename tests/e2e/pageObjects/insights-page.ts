@@ -72,4 +72,13 @@ export class InsightsPage {
         const recommendationHideBtn = Selector(`[data-testid=toggle-hide-${recommendationName}-btn]`);
         await t.click(recommendationHideBtn);
     }
+
+    /**
+     * Snooze Recommendation
+     * @param recommendationName Name of recommendation
+     */
+    async snoozeRecommendation(recommendationName: RecommendationIds): Promise<void> {
+        const recommendationSnoozeBtn = Selector(`[data-testid=${recommendationName}-delete-btn]`);
+        await t.click(recommendationSnoozeBtn);
+    }
 }

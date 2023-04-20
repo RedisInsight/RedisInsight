@@ -2,6 +2,7 @@ import React from 'react'
 import { EuiAccordion, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import cx from 'classnames'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
@@ -28,6 +29,7 @@ export interface Props {
   triggerStyle?: any
   isCustomTutorialsLoading?: boolean
   highlightGroup?: boolean
+  isPageOpened?: boolean
 }
 
 const Group = (props: Props) => {
@@ -45,6 +47,7 @@ const Group = (props: Props) => {
     onCreate,
     onDelete,
     triggerStyle,
+    isPageOpened,
   } = props
   const { deleting: deletingCustomTutorials } = useSelector(workbenchCustomTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -72,6 +75,7 @@ const Group = (props: Props) => {
           options={ONBOARDING_FEATURES.WORKBENCH_CUSTOM_TUTORIALS}
           anchorPosition="downLeft"
           anchorWrapperClassName="onboardingPopoverAnchor"
+          panelClassName={cx({ hide: isPageOpened })}
           preventPropagation
         >
           <EuiToolTip

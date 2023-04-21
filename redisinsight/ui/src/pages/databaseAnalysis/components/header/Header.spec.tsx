@@ -60,6 +60,7 @@ const connectType = (state: any, connectionType: any) => {
         connectedInstance: {
           ...state.connections.instances.connectedInstance,
           connectionType,
+          provider: 'RE_CLOUD',
         }
       }
     },
@@ -107,6 +108,7 @@ describe('DatabaseAnalysisHeader', () => {
       event: TelemetryEvent.DATABASE_ANALYSIS_STARTED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
+        provider: 'RE_CLOUD'
       }
     })
 

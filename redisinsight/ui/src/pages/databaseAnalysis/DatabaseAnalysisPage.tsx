@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useParams } from 'react-router-dom'
 
 import {
   dbAnalysisSelector,
@@ -21,12 +20,11 @@ import DatabaseAnalysisTabs from './components/data-nav-tabs'
 import styles from './styles.module.scss'
 
 const DatabaseAnalysisPage = () => {
-  const { instanceId } = useParams<{ instanceId: string }>()
   const { viewTab } = useSelector(analyticsSettingsSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { loading: analysisLoading, data } = useSelector(dbAnalysisSelector)
   const { data: reports, selectedAnalysis } = useSelector(dbAnalysisReportsSelector)
-  const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
+  const { id: instanceId = '', name: connectedInstanceName, db, provider } = useSelector(connectedInstanceSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState<boolean>(false)
 
@@ -57,6 +55,7 @@ const DatabaseAnalysisPage = () => {
       event: TelemetryEvent.DATABASE_ANALYSIS_HISTORY_VIEWED,
       eventData: {
         databaseId: instanceId,
+        provider,
       }
     })
     dispatch(setSelectedAnalysisId(reportId))

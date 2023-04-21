@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { isNull } from 'lodash'
 import {
   EuiAccordion,
@@ -15,6 +15,7 @@ import {
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
@@ -40,10 +41,10 @@ const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
   const { items: guides } = useSelector(workbenchGuidesSelector)
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
+  const { id: instanceId = '', provider } = useSelector(connectedInstanceSelector)
   const { recommendations = [] } = data ?? {}
 
   const { theme } = useContext(ThemeContext)
-  const { instanceId } = useParams<{ instanceId: string }>()
   const history = useHistory()
   const dispatch = useDispatch()
 
@@ -54,6 +55,7 @@ const Recommendations = () => {
     eventData: {
       databaseId: instanceId,
       recommendation: recommendationsContent[id]?.telemetryEvent || id,
+      provider,
     }
   })
 
@@ -63,6 +65,7 @@ const Recommendations = () => {
       eventData: {
         databaseId: instanceId,
         recommendation: recommendationsContent[id]?.telemetryEvent || id,
+        provider,
       }
     })
 

@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react'
-import { useParams } from 'react-router-dom'
 import { EuiTab, EuiTabs } from '@elastic/eui'
 import { isNull } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { EmptyMessage } from 'uiSrc/pages/databaseAnalysis/constants'
 import { EmptyAnalysisMessage } from 'uiSrc/pages/databaseAnalysis/components'
 import { setDatabaseAnalysisViewTab, dbAnalysisViewTabSelector } from 'uiSrc/slices/analytics/dbAnalysis'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { Nullable } from 'uiSrc/utils'
@@ -29,8 +29,7 @@ const DatabaseAnalysisTabs = (props: Props) => {
   const { loading, reports, data } = props
 
   const viewTab = useSelector(dbAnalysisViewTabSelector)
-
-  const { instanceId } = useParams<{ instanceId: string }>()
+  const { id: instanceId = '', provider } = useSelector(connectedInstanceSelector)
 
   const dispatch = useDispatch()
 
@@ -42,6 +41,7 @@ const DatabaseAnalysisTabs = (props: Props) => {
         event: TelemetryEvent.DATABASE_ANALYSIS_DATA_SUMMARY_CLICKED,
         eventData: {
           databaseId: instanceId,
+          provider,
         }
       })
     }
@@ -52,6 +52,7 @@ const DatabaseAnalysisTabs = (props: Props) => {
           databaseId: instanceId,
           recommendationsCount: data?.recommendations?.length,
           list: data?.recommendations?.map(({ name }) => recommendationsContent[name]?.telemetryEvent || name),
+          provider,
         }
       })
     }

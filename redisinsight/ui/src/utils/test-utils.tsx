@@ -241,6 +241,11 @@ jest.mock(
   })
 )
 
+jest.mock('uiSrc/constants/recommendations', () => ({
+  ...jest.requireActual('uiSrc/constants/recommendations'),
+  ANIMATION_INSIGHT_PANEL_MS: jest.fn().mockReturnValue(0),
+}))
+
 export const localStorageMock = {
   getItem: jest.fn(),
   setItem: jest.fn(),

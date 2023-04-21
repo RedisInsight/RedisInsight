@@ -40,4 +40,9 @@ export enum env {
 export enum RecommendationIds {
     redisVersion = 'redisVersion',
     searchVisualization = 'searchVisualization',
+    setPassword = 'setPassword',
+    optimizeTimeSeries = 'RTS',
+    luaScript = 'luaScript',
+    useSmallerKeys = 'useSmallerKeys',
+    avoidLogicalDatabases = 'avoidLogicalDatabases'
 }

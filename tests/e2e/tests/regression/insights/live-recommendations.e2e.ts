@@ -26,12 +26,17 @@ const databasesForAdding = [
 const tenSecondsTimeout = 10000;
 let keyName = `recomKey-${common.generateWord(10)}`;
 const logger = telemetry.createLogger();
-const telemetryEvent = 'INSIGHTS_RECOMMENDATIONS_VOTE';
+const telemetryEvent = 'INSIGHTS_RECOMMENDATION_VOTED';
 const expectedProperties = [
     'databaseId',
     'name',
+    'provider',
     'vote'
 ];
+const redisVersionRecom = RecommendationIds.redisVersion;
+const redisTimeSeriesRecom = RecommendationIds.optimizeTimeSeries;
+const searchVisualizationRecom = RecommendationIds.searchVisualization;
+const setPasswordRecom = RecommendationIds.setPassword;
 
 fixture `Live Recommendations`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -65,7 +70,7 @@ test
         // Verify that "Welcome to recommendations" panel displayed when there are no recommendations
         await t
             .expect(insightsPage.noRecommendationsScreen.exists).ok('No recommendations panel not displayed')
-            .expect(insightsPage.noRecommendationsScreen.textContent).contains('Welcome to recommendations', 'Welcome to recommendations text not displayed');
+            .expect(insightsPage.noRecommendationsScreen.textContent).contains('Welcome toInsights', 'Welcome to recommendations text not displayed');
 
         // Verify that user can redirect to Database Analysis page by clicking on button
         await t.click(insightsPage.goToDbAnalysisButton);
@@ -79,8 +84,8 @@ test
         // Verify that live recommendations displayed for each database separately
         // Verify that user can see the live recommendation "Update Redis database" when Redis database is less than 6.0 highlighted as RedisStack
         await t
-            .expect(insightsPage.redisVersionRecommendation.exists).ok('Update Redis Version recommendation not displayed')
-            .expect(insightsPage.optimizeTimeSeriesRecommendation.exists).notOk('Optimize Time Series recommendation displayed');
+            .expect(await insightsPage.getRecommendationByName(redisVersionRecom).exists).ok('Redis Version recommendation not displayed')
+            .expect(await insightsPage.getRecommendationByName(redisTimeSeriesRecom).exists).notOk('Optimize Time Series recommendation displayed');
         await insightsPage.toggleInsightsPanel(false);
 
         // Create Sorted Set with TimeSeries value
@@ -89,15 +94,7 @@ test
         await t.wait(tenSecondsTimeout);
         await insightsPage.toggleInsightsPanel(true);
         // Verify that user can see the live recommendation "Optimize the use of time series"
-        await t.expect(insightsPage.optimizeTimeSeriesRecommendation.exists).ok('Optimize Time Series recommendation not displayed');
-
-        await insightsPage.toggleInsightsPanel(false);
-        await browserPage.OverviewPanel.changeDbIndex(1);
-        await insightsPage.toggleInsightsPanel(true);
-        // Verify that live recommendations displayed for each logical database separately
-        await t
-            .expect(insightsPage.redisVersionRecommendation.exists).ok('Update Redis Version recommendation not displayed')
-            .expect(insightsPage.optimizeTimeSeriesRecommendation.exists).notOk('Optimize Time Series recommendation displayed in logical db without zSets');
+        await t.expect(await insightsPage.getRecommendationByName(redisTimeSeriesRecom).exists).ok('Optimize Time Series recommendation not displayed');
     });
 test
     .requestHooks(logger)
@@ -106,64 +103,86 @@ test
     }).after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can upvote recommendations', async t => {
-        const recommendationName = RecommendationIds.redisVersion;
-        const recommendationVote = 'not-useful';
-
         await insightsPage.toggleInsightsPanel(true);
-        await recommendationsActions.voteForRecommendation(recommendationName, recommendationVote);
+        await recommendationsActions.voteForRecommendation(redisVersionRecom, 'not-useful');
         // Verify that user can rate recommendations with one of 3 existing types at the same time
-        await recommendationsActions.verifyVoteDisabled(recommendationName, recommendationVote);
+        await recommendationsActions.verifyVoteDisabled(redisVersionRecom, 'not-useful');
 
         // Verify that user can see the popup with link when he votes for “Not useful”
         await t.expect(memoryEfficiencyPage.recommendationsFeedbackBtn.visible).ok('popup did not appear after voting for not useful');
 
         // Verify that the INSIGHTS_RECOMMENDATIONS_VOTED event sent with Database ID, Recommendation_name, Vote type parameters when user voted for recommendation
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
-        await telemetry.verifyEventPropertyValue(telemetryEvent, 'name', recommendationName, logger);
+        await telemetry.verifyEventPropertyValue(telemetryEvent, 'name', 'updateDatabase', logger);
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'vote', 'not useful', logger);
 
         // Verify that user can see previous votes when reload the page
         await common.reloadPage();
         await insightsPage.toggleInsightsPanel(true);
-        await insightsPage.toggleRecommendation(recommendationName, true);
-        await recommendationsActions.verifyVoteDisabled(recommendationName, recommendationVote);
+        await insightsPage.toggleRecommendation(redisVersionRecom, true);
+        await recommendationsActions.verifyVoteDisabled(redisVersionRecom, 'not-useful');
     });
 test('Verify that user can hide recommendations and checkbox value is saved', async t => {
-    const recommendation = RecommendationIds.searchVisualization;
     const commandToGetRecommendation = 'FT.INFO';
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
 
     await insightsPage.toggleInsightsPanel(true);
     await insightsPage.toggleShowHiddenRecommendations(false);
-    await insightsPage.hideRecommendation(recommendation);
-    await t.expect(await insightsPage.isRecommendationExists(recommendation)).notOk('recommendation is displayed when show hide recommendation is unchecked');
+    await insightsPage.hideRecommendation(searchVisualizationRecom);
+    await t.expect(await insightsPage.getRecommendationByName(searchVisualizationRecom).exists)
+        .notOk('recommendation is displayed when show hide recommendation is unchecked');
 
     // check recommendation state is saved after reload
     await common.reloadPage();
     await insightsPage.toggleInsightsPanel(true);
-    await t.expect(await insightsPage.isRecommendationExists(recommendation)).notOk('recommendation is displayed when show hide recommendation is unchecked');
+    await t.expect(await insightsPage.getRecommendationByName(searchVisualizationRecom).exists)
+        .notOk('recommendation is displayed when show hide recommendation is unchecked');
 
     // check value saved to show hidden recommendations
     await insightsPage.toggleShowHiddenRecommendations(true);
-    await t.expect(await insightsPage.isRecommendationExists(recommendation)).ok('recommendation is not displayed when show hide recommendation is checked');
+    await t.expect(await insightsPage.getRecommendationByName(searchVisualizationRecom).exists)
+        .ok('recommendation is not displayed when show hide recommendation is checked');
     await common.reloadPage();
     await insightsPage.toggleInsightsPanel(true);
-    await t.expect(await insightsPage.isRecommendationExists(recommendation)).ok('recommendation is not displayed when show hide recommendation is checked');
+    await t.expect(await insightsPage.getRecommendationByName(searchVisualizationRecom).exists)
+        .ok('recommendation is not displayed when show hide recommendation is checked');
 });
 test('Verify that user can snooze recommendation', async t => {
-    const recommendation = RecommendationIds.searchVisualization;
     const commandToGetRecommendation = 'FT.INFO';
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
 
     await insightsPage.toggleInsightsPanel(true);
-    await insightsPage.snoozeRecommendation(recommendation);
+    await insightsPage.snoozeRecommendation(searchVisualizationRecom);
 
     await common.reloadPage();
     await insightsPage.toggleInsightsPanel(true);
-    await t.expect(await insightsPage.isRecommendationExists(recommendation)).notOk('recommendation is displayed when after snoozing');
+    await t.expect(await insightsPage.getRecommendationByName(searchVisualizationRecom).exists)
+        .notOk('recommendation is displayed when after snoozing');
     await insightsPage.toggleInsightsPanel(false);
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
     await insightsPage.toggleInsightsPanel(true);
-    await t.expect(await insightsPage.isRecommendationExists(recommendation)).ok('recommendation is not displayed again');
+    await t.expect(await insightsPage.getRecommendationByName(searchVisualizationRecom).exists).ok('recommendation is not displayed again');
 });
+test
+    .before(async() => {
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+    }).after(async() => {
+        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+    })('Verify that recommendations from database analysis are displayed in Insight panel above live recommendations', async t => {
+        const redisVersionRecomSelector = insightsPage.getRecommendationByName(redisVersionRecom);
 
+        await insightsPage.toggleInsightsPanel(true);
+        // Verify that live recommendation displayed in Insights panel
+        await t.expect(await insightsPage.getRecommendationByName(redisVersionRecom).exists).ok(`${redisVersionRecom} recommendation not displayed`);
+        // Verify that recommendation from db analysis not displayed in Insights panel
+        await t.expect(await insightsPage.getRecommendationByName(setPasswordRecom).exists).notOk(`${setPasswordRecom} recommendation displayed`);
+        await insightsPage.toggleInsightsPanel(false);
+        // Go to Analysis Tools page
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        await insightsPage.toggleInsightsPanel(true);
+        // Verify that recommendations are synchronized
+        await t.expect(await insightsPage.getRecommendationByName(setPasswordRecom).exists).ok('Recommendations are not synchronized');
+        // Verify that duplicates are not displayed
+        await t.expect(redisVersionRecomSelector.count).eql(1, `${redisVersionRecom} recommendation duplicated`);
+    });

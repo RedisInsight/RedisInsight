@@ -32,15 +32,15 @@ export class InsightsPage {
     }
 
     /**
-     * check if the recommendation exist
-     * @param RecommendationIds name of the recommendation
+     * Get Insights panel recommendation selector by name
+     * @param recommendationName name of the recommendation
      */
-    async isRecommendationExists(recommendationName: RecommendationIds): Promise<boolean> {
-        return Selector(`[data-testid=${recommendationName}-accordion]`).exists;
+    getRecommendationByName(recommendationName: RecommendationIds): Selector {
+        return Selector(`[data-testid=${recommendationName}-accordion]`);
     }
 
     /**
-     * check/uncheck recommendation
+     * Check/uncheck recommendation
      * @param state State of panel
      */
     async toggleShowHiddenRecommendations(state: boolean): Promise<void> {
@@ -55,9 +55,8 @@ export class InsightsPage {
      * @param state State of recommendation
      */
     async toggleRecommendation(recommendationName: RecommendationIds, state: boolean): Promise<void> {
-        const recommendationAccordion = Selector(`[data-testid=${recommendationName}-accordion]`);
         const recommendationSelector = Selector(`[data-test-subj=${recommendationName}-button]`);
-        const isRecommendationExpanded = await recommendationAccordion.withAttribute('class', /-isOpen/).exists;
+        const isRecommendationExpanded = await this.getRecommendationByName(recommendationName).withAttribute('class', /-isOpen/).exists;
 
         if (state !== isRecommendationExpanded) {
             await t.click(recommendationSelector);

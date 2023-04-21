@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { isNull } from 'lodash'
 import {
   EuiAccordion,
@@ -41,12 +41,13 @@ const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
   const { items: guides } = useSelector(workbenchGuidesSelector)
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
-  const { id: instanceId = '', provider } = useSelector(connectedInstanceSelector)
+  const { provider } = useSelector(connectedInstanceSelector)
   const { recommendations = [] } = data ?? {}
 
   const { theme } = useContext(ThemeContext)
   const history = useHistory()
   const dispatch = useDispatch()
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   const handleToggle = (isOpen: boolean, id: string) => sendEventTelemetry({
     event: isOpen

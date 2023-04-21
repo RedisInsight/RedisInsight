@@ -17,7 +17,7 @@ import {
 import styles from './styles.module.scss'
 
 const AnalysisDataView = () => {
-  const { id: instanceId = '', provider } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, provider } = useSelector(connectedInstanceSelector)
   const { loading, data } = useSelector(dbAnalysisSelector)
   const { data: reports } = useSelector(dbAnalysisReportsSelector)
 

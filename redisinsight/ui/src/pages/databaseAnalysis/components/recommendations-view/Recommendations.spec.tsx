@@ -67,7 +67,6 @@ jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    id: 'instanceId',
     provider: 'RE_CLOUD'
   }),
 }))

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
 import {
   dbAnalysisSelector,
@@ -24,7 +25,9 @@ const DatabaseAnalysisPage = () => {
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { loading: analysisLoading, data } = useSelector(dbAnalysisSelector)
   const { data: reports, selectedAnalysis } = useSelector(dbAnalysisReportsSelector)
-  const { id: instanceId = '', name: connectedInstanceName, db, provider } = useSelector(connectedInstanceSelector)
+  const { name: connectedInstanceName, db, provider } = useSelector(connectedInstanceSelector)
+
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   const [isPageViewSent, setIsPageViewSent] = useState<boolean>(false)
 

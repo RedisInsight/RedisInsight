@@ -3,8 +3,9 @@ import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
 import { setIsContentVisible, recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { fireEvent, mockedStore, screen, cleanup, render } from 'uiSrc/utils/test-utils'
+import { fireEvent, mockedStore, screen, cleanup, render, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
 import { Pages } from 'uiSrc/constants'
+import { getDBAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 
 import WelcomeScreen from './WelcomeScreen'
 
@@ -47,7 +48,7 @@ describe('WelcomeScreen', () => {
     expect(render(<WelcomeScreen />)).toBeTruthy()
   })
 
-  it('should properly push history on workbench page', () => {
+  it('should properly push history on workbench page', async () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
 
@@ -55,20 +56,25 @@ describe('WelcomeScreen', () => {
 
     fireEvent.click(screen.getByTestId('insights-db-analysis-link'))
 
+    await waitForEuiPopoverVisible()
+    fireEvent.click(screen.getByTestId('approve-insights-db-analysis-btn'))
+
     expect(pushMock).toHaveBeenCalledWith(Pages.databaseAnalysis('instanceId'))
   })
 
-  it('should call "setIsContentVisible" after click link btn', () => {
+  it('should call "setIsContentVisible" after click link btn', async () => {
     render(<WelcomeScreen />)
     const afterRenderActions = [...store.getActions()]
 
     fireEvent.click(screen.getByTestId('insights-db-analysis-link'))
+    await waitForEuiPopoverVisible()
+    fireEvent.click(screen.getByTestId('approve-insights-db-analysis-btn'))
 
-    const expectedActions = [setIsContentVisible(false)]
+    const expectedActions = [setIsContentVisible(false), getDBAnalysis()]
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 
-  it('should call telemetry INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED after click link btn', () => {
+  it('should call telemetry INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED after click link btn', async () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
@@ -79,6 +85,8 @@ describe('WelcomeScreen', () => {
     render(<WelcomeScreen />)
 
     fireEvent.click(screen.getByTestId('insights-db-analysis-link'))
+    await waitForEuiPopoverVisible()
+    fireEvent.click(screen.getByTestId('approve-insights-db-analysis-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,

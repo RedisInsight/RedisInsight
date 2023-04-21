@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import {
@@ -19,6 +19,9 @@ import cx from 'classnames'
 import { remove } from 'lodash'
 
 import { Pages } from 'uiSrc/constants'
+import { ANIMATION_INSIGHT_PANEL_MS } from 'uiSrc/constants/recommendations'
+import { OnboardingTour } from 'uiSrc/components'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import {
   recommendationsSelector,
   fetchRecommendationsAction,
@@ -38,8 +41,6 @@ import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 import { ReactComponent as TriggerActiveIcon } from 'uiSrc/assets/img/bulb-active.svg'
 import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
-import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
-import { OnboardingTour } from 'uiSrc/components'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import styles from './styles.module.scss'
@@ -60,6 +61,8 @@ const LiveTimeRecommendations = () => {
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { showHiddenRecommendations: isShowHidden } = useSelector(appContextDbConfig)
 
+  const [isOpenInProgress, setIsOpenInProgress] = useState<boolean>(false)
+
   // To prevent duplication emit for FlyOut close event
   // https://github.com/elastic/eui/issues/3437
   const isCloseEventSent = useRef<boolean>(false)
@@ -77,6 +80,11 @@ const LiveTimeRecommendations = () => {
   useEffect(() => {
     // this panel can be opened outside
     if (isContentVisible) {
+      if (ANIMATION_INSIGHT_PANEL_MS > 0) {
+        setIsOpenInProgress(true)
+        setTimeout(() => setIsOpenInProgress(false), ANIMATION_INSIGHT_PANEL_MS)
+      }
+
       dispatch(fetchRecommendationsAction(connectedInstanceId, onSuccessAction))
       isCloseEventSent.current = false
     }
@@ -269,7 +277,9 @@ const LiveTimeRecommendations = () => {
             {renderHeader()}
           </EuiFlyoutHeader>
           <EuiFlyoutBody className={styles.body}>
-            {loading ? (<EuiLoadingContent className={styles.loading} lines={4} />) : renderBody()}
+            {(loading || isOpenInProgress)
+              ? (<EuiLoadingContent className={styles.loading} lines={4} />)
+              : renderBody()}
           </EuiFlyoutBody>
           <EuiFlyoutFooter className={styles.footer}>
             <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />

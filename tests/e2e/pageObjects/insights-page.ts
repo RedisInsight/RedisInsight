@@ -40,14 +40,6 @@ export class InsightsPage {
     }
 
     /**
-     * Check if the recommendation exist
-     * @param recommendationName name of the recommendation
-     */
-    async isRecommendationExists(recommendationName: RecommendationIds): Promise<boolean> {
-        return this.getRecommendationByName(recommendationName).exists;
-    }
-
-    /**
      * Check/uncheck recommendation
      * @param state State of panel
      */

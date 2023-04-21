@@ -77,14 +77,6 @@ export class MemoryEfficiencyPage extends InstancePage {
     }
 
     /**
-     * Check if the recommendation exist
-     * @param recommendationName Name of the recommendation
-     */
-    async isRecommendationExists(recommendationName: RecommendationIds): Promise<boolean> {
-        return this.getRecommendationByName(recommendationName).exists;
-    }
-
-    /**
      * Get recommendation expand/collapse button by recommendation name
      * @param recommendationName Name of the recommendation
      */

@@ -55,24 +55,31 @@ test
     })('Recommendations displaying', async t => {
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that user can see Avoid dynamic Lua script recommendation when number_of_cached_scripts> 10
-        await t.expect(await memoryEfficiencyPage.isRecommendationExists(luaScriptRecom)).ok('Avoid dynamic lua script recommendation not displayed');
+        await t.expect(await memoryEfficiencyPage.getRecommendationByName(luaScriptRecom).exists)
+            .ok('Avoid dynamic lua script recommendation not displayed');
         // Verify that user can see type of recommendation badge
-        await t.expect(memoryEfficiencyPage.getRecommendationLabelByName(luaScriptRecom, 'code').exists).ok('Avoid dynamic lua script recommendation not have Code Changes label');
-        await t.expect(memoryEfficiencyPage.getRecommendationLabelByName(luaScriptRecom, 'configuration').exists).notOk('Avoid dynamic lua script recommendation have Configuration Changes label');
+        await t.expect(memoryEfficiencyPage.getRecommendationLabelByName(luaScriptRecom, 'code').exists)
+            .ok('Avoid dynamic lua script recommendation not have Code Changes label');
+        await t.expect(memoryEfficiencyPage.getRecommendationLabelByName(luaScriptRecom, 'configuration').exists)
+            .notOk('Avoid dynamic lua script recommendation have Configuration Changes label');
 
         // Verify that user can see Use smaller keys recommendation when database has 1M+ keys
-        await t.expect(await memoryEfficiencyPage.isRecommendationExists(useSmallerKeysRecom)).ok('Use smaller keys recommendation not displayed');
+        await t.expect(await memoryEfficiencyPage.getRecommendationByName(useSmallerKeysRecom).exists).ok('Use smaller keys recommendation not displayed');
 
         // Verify that user can see all the recommendations expanded by default
-        await t.expect(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecom).getAttribute('aria-expanded')).eql('true', 'Avoid dynamic lua script recommendation not expanded');
-        await t.expect(memoryEfficiencyPage.getRecommendationButtonByName(useSmallerKeysRecom).getAttribute('aria-expanded')).eql('true', 'Use smaller keys recommendation not expanded');
+        await t.expect(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecom).getAttribute('aria-expanded'))
+            .eql('true', 'Avoid dynamic lua script recommendation not expanded');
+        await t.expect(memoryEfficiencyPage.getRecommendationButtonByName(useSmallerKeysRecom).getAttribute('aria-expanded'))
+            .eql('true', 'Use smaller keys recommendation not expanded');
 
         // Verify that user can expand/collapse recommendation
         const expandedTextContaiterSize = await memoryEfficiencyPage.getRecommendationByName(luaScriptRecom).offsetHeight;
         await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecom));
-        await t.expect(await memoryEfficiencyPage.getRecommendationByName(luaScriptRecom).offsetHeight).lt(expandedTextContaiterSize, 'Lua script recommendation not collapsed');
+        await t.expect(await memoryEfficiencyPage.getRecommendationByName(luaScriptRecom).offsetHeight)
+            .lt(expandedTextContaiterSize, 'Lua script recommendation not collapsed');
         await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecom));
-        await t.expect(await memoryEfficiencyPage.getRecommendationByName(luaScriptRecom).offsetHeight).eql(expandedTextContaiterSize, 'Lua script recommendation not expanded');
+        await t.expect(await memoryEfficiencyPage.getRecommendationByName(luaScriptRecom).offsetHeight)
+            .eql(expandedTextContaiterSize, 'Lua script recommendation not expanded');
 
         // Verify that user can navigate by link to see the recommendation
         await t.click(memoryEfficiencyPage.getRecommendationByName(luaScriptRecom).find(memoryEfficiencyPage.cssReadMoreLink));
@@ -119,8 +126,10 @@ test
         // Go to Recommendations tab
         await t.click(memoryEfficiencyPage.recommendationsTab);
         // Verify that user can see Avoid using logical databases recommendation when the database supports logical databases and there are keys in more than 1 logical database
-        await t.expect(await memoryEfficiencyPage.isRecommendationExists(avoidLogicalDbRecom)).ok('Avoid using logical databases recommendation not displayed');
-        await t.expect(memoryEfficiencyPage.getRecommendationLabelByName(avoidLogicalDbRecom, 'code').exists).ok('Avoid using logical databases recommendation not have Code Changes label');
+        await t.expect(await memoryEfficiencyPage.getRecommendationByName(avoidLogicalDbRecom).exists)
+            .ok('Avoid using logical databases recommendation not displayed');
+        await t.expect(memoryEfficiencyPage.getRecommendationLabelByName(avoidLogicalDbRecom, 'code').exists)
+            .ok('Avoid using logical databases recommendation not have Code Changes label');
     });
 test
     .before(async t => {
@@ -166,7 +175,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see the Tutorial opened when clicking on "Tutorial" for recommendations', async t => {
         // Verify that Optimize the use of time series recommendation displayed
-        await t.expect(await memoryEfficiencyPage.isRecommendationExists(redisTimeSeriesRecom)).ok('Optimize the use of time series recommendation not displayed');
+        await t.expect(await memoryEfficiencyPage.getRecommendationByName(redisTimeSeriesRecom).exists).ok('Optimize the use of time series recommendation not displayed');
         // Verify that tutorial opened
         await t.click(memoryEfficiencyPage.getToTutorialBtnByRecomName(redisTimeSeriesRecom));
         await t.expect(workbenchPage.preselectArea.visible).ok('Workbench Enablement area not opened');

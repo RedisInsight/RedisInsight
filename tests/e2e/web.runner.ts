@@ -32,6 +32,7 @@ import testcafe from 'testcafe';
                 ])
                 .run({
                     skipJsErrors: true,
+                    // skipUncaughtErrors: true,
                     browserInitTimeout: 60000,
                     selectorTimeout: 5000,
                     assertionTimeout: 5000,

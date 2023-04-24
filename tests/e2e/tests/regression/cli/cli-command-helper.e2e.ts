@@ -82,7 +82,7 @@ test
     .meta({ env: env.web })('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'JSON';
         commandToCheck = 'JSON.SET';
-        commandArgumentsToCheck = 'JSON.SET key path value [NX | XX]';
+        commandArgumentsToCheck = 'JSON.SET key path value [condition]';
         externalPageLink = 'https://redis.io/commands/json.set/';
 
         // Open Command Helper
@@ -102,7 +102,7 @@ test
     .meta({ env: env.web })('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'Search';
         commandToCheck = 'FT.EXPLAIN';
-        commandArgumentsToCheck = 'FT.EXPLAIN index query [DIALECT dialect]';
+        commandArgumentsToCheck = 'FT.EXPLAIN index query [dialect]';
         externalPageLink = 'https://redis.io/commands/ft.explain/';
 
         // Open Command Helper
@@ -216,7 +216,7 @@ test
             'BF.MEXISTS key item [item ...]',
             'CMS.QUERY key item [item ...]',
             'TDIGEST.RESET key',
-            'TOPK.LIST key [WITHCOUNT]',
+            'TOPK.LIST key [withcount]',
             'CF.ADD key item'
         ];
         externalPageLinks = [

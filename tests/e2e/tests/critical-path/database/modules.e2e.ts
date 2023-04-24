@@ -33,10 +33,10 @@ test
         // Verify that user can see the following sorting order: Search, JSON, Graph, TimeSeries, Bloom, Gears, AI for modules
         const databaseLine = myRedisDatabasePage.dbNameList.withExactText(ossStandaloneRedisearch.databaseName).parent('tr');
         const moduleIcons = databaseLine.find('[data-testid^=Redi]');
-        const numberOfIcons = await moduleIcons.count;
-        for (let i = 0; i < numberOfIcons; i++) {
+        const numberOfIcons = moduleIcons.count;
+        for (let i = 0; i < await numberOfIcons; i++) {
             const moduleName = moduleIcons.nth(i).getAttribute('data-testid');
-            await t.expect(await moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon not found');
+            await t.expect(moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon not found');
         }
         //Minimize the window to check quantifier
         await t.resizeWindow(1000, 700);

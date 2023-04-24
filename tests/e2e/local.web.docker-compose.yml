@@ -27,9 +27,9 @@ services:
         './upload-custom-plugins.sh',
     ]
     command: [
-        './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
+        './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '200',
         '--',
-        'npx', 'yarn', 'test:chrome:ci'
+        'npx', 'yarn', 'test:chrome:ci', '--app-init-delay', '5000'
     ]
 
   # Redisinsight API + UI build

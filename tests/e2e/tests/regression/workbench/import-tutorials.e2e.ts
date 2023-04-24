@@ -34,7 +34,7 @@ https://redislabs.atlassian.net/browse/RI-4302, https://redislabs.atlassian.net/
 test('Verify that user can upload tutorial with local zip file without manifest.json', async t => {
     // Verify that user can upload custom tutorials on docker version
     const imageExternalPath = 'RedisInsight screen external';
-    const imageRelativePath = 'RedisInsight screen relative';
+    // const imageRelativePath = 'RedisInsight screen relative';
     folder1 = 'folder-1';
     folder2 = 'folder-2';
     internalLinkName1 = 'probably-1';

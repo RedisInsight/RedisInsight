@@ -35,8 +35,8 @@ test
         const moduleIcons = databaseLine.find('[data-testid^=Redi]');
         const numberOfIcons = await moduleIcons.count;
         for (let i = 0; i < numberOfIcons; i++) {
-            const moduleName = await moduleIcons.nth(i).getAttribute('data-testid');
-            await t.expect(moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon not found');
+            const moduleName = moduleIcons.nth(i).getAttribute('data-testid');
+            await t.expect(await moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon not found');
         }
         //Minimize the window to check quantifier
         await t.resizeWindow(1000, 700);

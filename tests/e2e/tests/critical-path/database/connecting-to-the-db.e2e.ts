@@ -10,7 +10,6 @@ import { BrowserActions } from '../../../common-actions/browser-actions';
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const common = new Common();
 const browserActions = new BrowserActions();
 
 const sshParams = {
@@ -21,15 +20,15 @@ const sshParams = {
 const newClonedDatabaseAlias = 'Cloned ssh database';
 const sshDbPass = {
     ...ossStandaloneForSSHConfig,
-    databaseName: `SSH_${common.generateWord(5)}`
+    databaseName: `SSH_${Common.generateWord(5)}`
 };
 const sshDbPrivateKey = {
     ...ossStandaloneForSSHConfig,
-    databaseName: `SSH_${common.generateWord(5)}`
+    databaseName: `SSH_${Common.generateWord(5)}`
 };
 const sshDbPasscode = {
     ...ossStandaloneForSSHConfig,
-    databaseName: `SSH_${common.generateWord(5)}`
+    databaseName: `SSH_${Common.generateWord(5)}`
 };
 
 fixture `Connecting to the databases verifications`
@@ -123,13 +122,13 @@ test
         await t.click(addRedisDatabasePage.cancelButton);
         await addRedisDatabasePage.addStandaloneSSHDatabase(sshDbPass, sshWithPass);
         await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
-        await common.checkURLContainsText('browser');
+        await Common.checkURLContainsText('browser');
 
         // Verify that user can add SSH tunnel with Private Key
         await t.click(browserPage.OverviewPanel.myRedisDbIcon);
         await addRedisDatabasePage.addStandaloneSSHDatabase(sshDbPrivateKey, sshWithPrivateKey);
         await myRedisDatabasePage.clickOnDBByName(sshDbPrivateKey.databaseName);
-        await common.checkURLContainsText('browser');
+        await Common.checkURLContainsText('browser');
 
         // Verify that user can edit SSH parameters for existing database connections
         await t.click(browserPage.OverviewPanel.myRedisDbIcon);
@@ -155,5 +154,5 @@ test
         // Verify that user can add SSH tunnel with Passcode
         await addRedisDatabasePage.addStandaloneSSHDatabase(sshDbPasscode, sshWithPassphrase);
         await myRedisDatabasePage.clickOnDBByName(sshDbPasscode.databaseName);
-        await common.checkURLContainsText('browser');
+        await Common.checkURLContainsText('browser');
     });

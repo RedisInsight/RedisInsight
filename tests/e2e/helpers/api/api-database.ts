@@ -6,8 +6,7 @@ import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, Sen
 import { Common } from '../common';
 
 const chance = new Chance();
-const common = new Common();
-const endpoint = common.getEndpoint();
+const endpoint = Common.getEndpoint();
 
 /**
  * Add a new Standalone database through api using host and port

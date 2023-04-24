@@ -22,7 +22,7 @@ fixture `Notifications`
         await acceptLicenseTerms();
         await notificationPage.changeNotificationsSwitcher(true);
         await deleteAllNotificationsFromDB();
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     });
 test('Verify that when manager publishes new notification, it appears in the app', async t => {
     // Get number of notifications in the badge
@@ -111,7 +111,7 @@ test
         await acceptLicenseTerms();
         await notificationPage.changeNotificationsSwitcher(false);
         await deleteAllNotificationsFromDB();
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
         await t.expect(notificationPage.notificationBadge.exists).notOk('No badge');
     })('Verify that new popup message is not displayed when notifications are turned off', async t => {
         // Verify that user can see notification badge increased when new messages is sent and notifications are turned off

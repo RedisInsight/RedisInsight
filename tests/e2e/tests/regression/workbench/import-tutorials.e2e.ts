@@ -9,8 +9,8 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const filePath = path.join('..', '..', '..', 'test-data', 'upload-tutorials', 'testTutorials.zip');
-const tutorialName = 'testTutorials';
+const filePath = path.join('..', '..', '..', 'test-data', 'upload-tutorials', 'customTutorials.zip');
+const tutorialName = 'customTutorials';
 const tutorialName2 = 'tutorialTestByLink';
 const link = 'https://drive.google.com/uc?id=1puRUoT8HmyZCekkeWNxBzXe_48TzXcJc&export=download';
 let folder1 = 'folder-1';

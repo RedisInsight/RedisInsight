@@ -1,14 +1,13 @@
 import * as path from 'path';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import {BrowserPage, CliPage} from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import {Common} from '../../../helpers/common';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const common = new Common();
-const cliPage = new CliPage();
 
 const filePath = path.join('..', '..', '..', 'test-data', 'upload-json', 'sample.json');
 const jsonValues = ['Live JSON generator', '3.1', '"2014-06-25T00:00:00.000Z"', 'true'];
@@ -24,7 +23,7 @@ fixture `Upload json file`
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
-        await cliPage.sendCommandInCli(`DEL ${keyName}`);
+        await browserPage.Cli.sendCommandInCli(`DEL ${keyName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 // https://redislabs.atlassian.net/browse/RI-4061

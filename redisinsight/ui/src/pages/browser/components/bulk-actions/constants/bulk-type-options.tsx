@@ -1,6 +1,7 @@
 import { EuiIcon } from '@elastic/eui'
 import React from 'react'
 import { BulkActionsType } from 'uiSrc/constants'
+import { ReactComponent as BulkUpload } from 'uiSrc/assets/img/icons/bulk-upload.svg'
 
 interface BulkActionsTabs {
   id: BulkActionsType,
@@ -12,5 +13,9 @@ export const bulkActionsTypeTabs: BulkActionsTabs[] = [
   {
     id: BulkActionsType.Delete,
     label: <><EuiIcon type="trash" />Delete Keys</>,
+  },
+  {
+    id: BulkActionsType.Upload,
+    label: <><EuiIcon type={BulkUpload} />Upload Data</>,
   },
 ]

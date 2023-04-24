@@ -23,6 +23,7 @@ export enum SearchMode {
 
 export interface KeysStore {
   loading: boolean
+  deleting: boolean
   error: string
   search: string
   filter: Nullable<KeyTypes>

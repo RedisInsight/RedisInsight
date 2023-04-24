@@ -8,7 +8,7 @@ const ICON_PATH = app.isPackaged
 export default {
   applicationName: 'RedisInsight-v2',
   applicationVersion:
-  `${app.getVersion() || '2.24.0'}${process.env.NODE_ENV !== 'production' && `-dev-${process.getCreationTime()}`}`,
+  `${app.getVersion() || '2.24.0'}${process.env.NODE_ENV !== 'production' ? `-dev-${process.getCreationTime()}` : ''}`,
   copyright: `Copyright © ${new Date().getFullYear()} Redis Ltd.`,
   iconPath: ICON_PATH,
 };

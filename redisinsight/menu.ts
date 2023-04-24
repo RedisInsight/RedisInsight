@@ -175,7 +175,7 @@ export default class MenuBuilder {
           type: 'separator',
         },
         {
-          label: 'Display On System Tray',
+          label: 'Show in Menu Bar',
           type: 'checkbox',
           checked: getDisplayAppInTrayValue(),
           click: (menuItem: MenuItem) => {

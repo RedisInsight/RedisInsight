@@ -45,7 +45,7 @@ test('Verify that user can access the bulk actions screen in the Browser', async
     // Verify that user can see warning message clicking on Delete button for Bulk Deletion
     const warningTooltipTitle = 'Are you sure you want to perform this action?';
     const warningTooltipMessage = 'All keys with HASH key type and selected pattern will be deleted.';
-    await t.click(bulkActionsPage.deleteButton);
+    await t.click(bulkActionsPage.actionButton);
     await t.expect(bulkActionsPage.bulkActionWarningTooltip.textContent).contains(warningTooltipTitle, 'Warning Tooltip title is not displayed or text is invalid');
     await t.expect(bulkActionsPage.bulkActionWarningTooltip.textContent).contains(warningTooltipMessage, 'Warning Tooltip message is not displayed or text is invalid');
     await t.expect(bulkActionsPage.bulkApplyButton.exists).ok('Confirm deletion button not displayed');
@@ -94,9 +94,9 @@ test
     })('Verify that bulk deletion is still run when user goes to any ather page in the application inside of this DB', async t => {
         await bulkActionsPage.startBulkDelete();
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         // Go to Browser Page
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.expect(bulkActionsPage.bulkStatusInProgress.exists).ok('Progress value not displayed', { timeout: 5000 });
     });
 test

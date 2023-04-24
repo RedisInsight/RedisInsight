@@ -1,4 +1,4 @@
-import { assign } from 'lodash';
+import { assign, forEach } from 'lodash';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { CommandsJsonProvider } from 'src/modules/commands/commands-json.provider';
 
@@ -31,10 +31,15 @@ export class CommandsService implements OnModuleInit {
    * Get all commands merged into single object
    */
   async getAll(): Promise<any> {
-    return assign(
-      {},
-      ...Object.values(await this.getCommandsGroups()),
-    );
+    const commands = {};
+
+    Object.entries(await this.getCommandsGroups()).forEach(([provider, groupCommands]) => {
+      return forEach(groupCommands as {}, (value: {}, command) => {
+        commands[command] = { ...value, provider };
+      });
+    });
+
+    return commands;
   }
 
   async getCommandsGroups(): Promise<any> {

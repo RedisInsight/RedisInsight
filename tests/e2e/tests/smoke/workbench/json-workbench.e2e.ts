@@ -16,7 +16,7 @@ fixture `JSON verifications at Workbench`
     .beforeEach(async t => {
         await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async t => {
         // Clear and delete database

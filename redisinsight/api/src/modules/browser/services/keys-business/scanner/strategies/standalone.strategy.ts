@@ -1,7 +1,6 @@
-import * as isGlob from 'is-glob';
 import { isNull } from 'lodash';
 import config from 'src/utils/config';
-import { unescapeGlob } from 'src/utils';
+import { isRedisGlob, unescapeRedisGlob } from 'src/utils';
 import {
   GetKeyInfoResponse,
   GetKeysWithDetailsResponse,
@@ -47,8 +46,8 @@ export class StandaloneStrategy extends AbstractStrategy {
 
     node.total = await getTotal(client);
 
-    if (!isGlob(match, { strict: false })) {
-      const keyName = Buffer.from(unescapeGlob(match));
+    if (!isRedisGlob(match)) {
+      const keyName = Buffer.from(unescapeRedisGlob(match));
       node.cursor = 0;
       node.scanned = isNull(node.total) ? 1 : node.total;
       node.keys = await this.getKeysInfo(client, [keyName]);

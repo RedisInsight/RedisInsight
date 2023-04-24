@@ -11,13 +11,14 @@ import { remarkRedisCode } from '../transform/remarkRedisCode'
 import { remarkImage } from '../transform/remarkImage'
 
 class MarkdownToJsxString implements IFormatter {
-  format(data: any, config?: IFormatterConfig): Promise<string> {
+  format(input: any, config?: IFormatterConfig): Promise<string> {
+    const { data, path } = input
     return new Promise((resolve, reject) => {
       unified()
         .use(remarkParse)
         .use(remarkGfm) // support GitHub Flavored Markdown
         .use(remarkRedisCode) // Add custom component for Redis code block
-        .use(remarkImage, config ? { history: config.history } : undefined) // Add custom component for Redis code block
+        .use(remarkImage, path) // Add custom component for Redis code block
         .use(remarkRehype, { allowDangerousHtml: true }) // Pass raw HTML strings through.
         .use(rehypeLinks, config ? { history: config.history } : undefined) // Customise links
         .use(MarkdownToJsxString.rehypeWrapSymbols) // Wrap special symbols inside curly braces for JSX parse

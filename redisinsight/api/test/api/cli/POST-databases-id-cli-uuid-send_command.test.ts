@@ -73,6 +73,38 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
   });
 
   describe('Common', () => {
+    describe('Analytics', () => {
+      requirements('rte.serverType=local');
+      const key = constants.getRandomString();
+      [
+        {
+          name: 'Should create string and send analytics event for it',
+          data: {
+            command: `set ${key} ${constants.TEST_STRING_VALUE_1}`,
+            outputFormat: 'TEXT',
+          },
+          responseSchema,
+          before: async () => {
+            expect(await rte.client.exists(key)).to.eql(0);
+          },
+          after: async () => {
+            expect(await rte.client.get(key)).to.eql(constants.TEST_STRING_VALUE_1);
+            await analytics.waitForEvent({
+              event: 'CLI_COMMAND_EXECUTED',
+              properties: {
+                databaseId: constants.TEST_INSTANCE_ID,
+                commandType: 'core',
+                moduleName: 'n/a',
+                capability: 'string',
+                command: 'SET',
+                outputFormat: 'TEXT',
+                buildType: serverConfig.get('server').buildType,
+              },
+            });
+          }
+        },
+      ].map(mainCheckFn);
+    });
     describe('String', () => {
       [
         {
@@ -87,18 +119,6 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
           },
           after: async () => {
             expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(constants.TEST_STRING_VALUE_1);
-            await analytics.waitForEvent({
-              event: 'CLI_COMMAND_EXECUTED',
-              properties: {
-                databaseId: constants.TEST_INSTANCE_ID,
-                commandType: 'core',
-                moduleName: 'n/a',
-                capability: 'string',
-                command: 'SET',
-                outputFormat: 'TEXT',
-                buildType: serverConfig.get('server').buildType,
-              },
-            });
           }
         },
         {

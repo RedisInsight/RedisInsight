@@ -52,7 +52,7 @@
         // ******************** NOT README STANDARDS ********************
         //Limits the length of a row to 400
         "max-len": ["error", 400],
-        
+
         //Forcing that all of the comments are with spaces.
         "spaced-comment": "off",
         //Forcing not to have random spaces.
@@ -128,6 +128,7 @@
         ],
         //Enforce a convention in module import order
         "import/order": "error",
+        "object-curly-spacing": ["error", "always"],
         //Disallow duplicate imports
         "import/no-duplicates": "error",
         /* Below are extended rules regarding the recommended typescript rule package...*/

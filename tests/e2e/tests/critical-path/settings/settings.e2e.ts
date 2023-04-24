@@ -25,7 +25,7 @@ fixture `Settings`
     });
 test('Verify that user can customize a number of keys to scan in filters per key name or key type', async t => {
     // Go to Settings page
-    await t.click(myRedisDatabasePage.settingsButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Change keys to Scan
     await t.click(settingsPage.accordionAdvancedSettings);
     await settingsPage.changeKeysToScanValue('1500');
@@ -37,7 +37,7 @@ test('Verify that user can customize a number of keys to scan in filters per key
 });
 test('Verify that user can turn on/off Analytics in Settings in the application', async t => {
     // Go to Settings page
-    await t.click(myRedisDatabasePage.settingsButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     await t.click(settingsPage.accordionPrivacySettings);
 
     const currentValue = await settingsPage.getAnalyticsSwitcherValue();

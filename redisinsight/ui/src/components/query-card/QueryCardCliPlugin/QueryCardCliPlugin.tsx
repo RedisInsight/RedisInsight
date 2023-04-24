@@ -7,7 +7,7 @@ import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { getBaseApiUrl, Nullable, formatToText } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
-import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
+import { CommandExecutionResult, IPluginVisualization, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { PluginEvents } from 'uiSrc/plugins/pluginEvents'
 import { prepareIframeHtml } from 'uiSrc/plugins/pluginImport'
 import {
@@ -27,6 +27,7 @@ export interface Props {
   id: string
   setMessage: (text: string) => void
   commandId: string
+  mode?: RunQueryMode
 }
 
 enum StylesNamePostfix {
@@ -43,7 +44,7 @@ enum ActionTypes {
 const baseUrl = getBaseApiUrl()
 
 const QueryCardCliPlugin = (props: Props) => {
-  const { query, id, result, setMessage, commandId } = props
+  const { query, id, result, setMessage, commandId, mode = RunQueryMode.Raw } = props
   const { visualizations = [], staticPath } = useSelector(appPluginsSelector)
   const { modules = [] } = useSelector(connectedInstanceSelector)
   const serverInfo = useSelector(appServerInfoSelector)
@@ -71,7 +72,7 @@ const QueryCardCliPlugin = (props: Props) => {
     sendMessageToPlugin({
       event: 'executeCommand',
       method,
-      data: { command: query, data: result }
+      data: { command: query, data: result, mode }
     })
   }
 

@@ -8,6 +8,7 @@ import { EAManifestFirstKey } from 'uiSrc/pages/workbench/components/enablement-
 export interface IFileInfo {
   extension: string
   name: string
+  label: string
   parent: string
   location: string
   _key?: Nullable<string>
@@ -17,7 +18,7 @@ export const getFileInfo = (
   { manifestPath, path }: { manifestPath?: Nullable<string>, path: string },
   manifest?: Nullable<IEnablementAreaItem[]>
 ): IFileInfo => {
-  const defaultResult: IFileInfo = { extension: '', name: '', parent: '', location: '' }
+  const defaultResult: IFileInfo = { extension: '', name: '', parent: '', location: '', label: '' }
   try {
     const url = IS_ABSOLUTE_PATH.test(path) ? new URL(path) : new URL(path, API_URL)
     const pathNames = url.pathname.split('/')
@@ -25,9 +26,19 @@ export const getFileInfo = (
     const markdownParent = manifest ? getParentByManifest(manifest, manifestPath) : null
     const [fileName, extension] = file.split('.')
 
+    let markdownInfo: Record<string, any> = {}
+    if (manifestPath && markdownParent?.children) {
+      markdownInfo = get(
+        markdownParent.children,
+        manifestPath.split('/')?.pop() as string || '-1',
+        {}
+      )
+    }
+
     return {
       location: pathNames.join('/'),
       name: fileName || '',
+      label: markdownInfo?.label || fileName,
       extension: extension || '',
       parent: markdownParent ? markdownParent.label : (pathNames.pop() || '').replace(/[-_]+/g, ' '),
       _key: manifestPath?.split('/').pop() ?? null
@@ -129,4 +140,30 @@ export const getParentByManifest = (
   const parent = get(manifest, groupObjectPath)
 
   return parent ?? null
+}
+
+export const findMarkdownPathByPath = (manifest: IEnablementAreaItem[], markdownPath: string) => {
+  const findPath = (data: IEnablementAreaItem[], mdPath: string, path: number[] = []): Nullable<number[]> => {
+    for (let i = 0; i < data.length; i++) {
+      const obj = data[i]
+      const currentPath = [...path, i]
+
+      if (obj.type === EnablementAreaComponent.InternalLink && obj.args?.path === mdPath) {
+        return currentPath
+      }
+
+      if (obj.type === EnablementAreaComponent.Group && obj.children) {
+        const result = findPath(obj.children, mdPath, currentPath)
+
+        if (result) {
+          return result
+        }
+      }
+    }
+
+    return null
+  }
+
+  const result = findPath(manifest, markdownPath)
+  return result ? result.join('/') : null
 }

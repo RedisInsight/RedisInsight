@@ -9,8 +9,8 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const filePath = path.join('..', '..', '..', 'test-data', 'upload-tutorials', 'testTutorials.zip');
-const tutorialName = 'testTutorials';
+const filePath = path.join('..', '..', '..', 'test-data', 'upload-tutorials', 'customTutorials.zip');
+const tutorialName = 'customTutorials';
 const tutorialName2 = 'tutorialTestByLink';
 const link = 'https://drive.google.com/uc?id=1puRUoT8HmyZCekkeWNxBzXe_48TzXcJc&export=download';
 let folder1 = 'folder-1';
@@ -19,30 +19,37 @@ let internalLinkName1 = 'probably-1';
 let internalLinkName2 = 'vector-2';
 
 fixture `Upload custom tutorials`
-    .meta({type: 'regression', rte: rte.standalone})
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
-    .afterEach(async() => {
+    .afterEach(async () => {
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-// https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4198, https://redislabs.atlassian.net/browse/RI-4302
+/* https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4198,
+https://redislabs.atlassian.net/browse/RI-4302, https://redislabs.atlassian.net/browse/RI-4318
+*/
 test('Verify that user can upload tutorial with local zip file without manifest.json', async t => {
     // Verify that user can upload custom tutorials on docker version
+    const imageExternalPath = 'RedisInsight screen external';
+    // const imageRelativePath = 'RedisInsight screen relative';
     folder1 = 'folder-1';
     folder2 = 'folder-2';
     internalLinkName1 = 'probably-1';
     internalLinkName2 = 'vector-2';
+
     // Verify that user can see the “MY TUTORIALS” section in the Enablement area.
     await t.expect(workbenchPage.customTutorials.visible).ok('custom tutorials sections is not visible');
     await t.click(workbenchPage.tutorialOpenUploadButton);
     await t.expect(workbenchPage.tutorialSubmitButton.hasAttribute('disabled')).ok('submit button is not disabled');
+
     // Verify that User can request to add a new custom Tutorial by uploading a .zip archive from a local folder
     await t.setFilesToUpload(workbenchPage.tutorialImport, [filePath]);
     await t.click(workbenchPage.tutorialSubmitButton);
     await t.expect(workbenchPage.tutorialAccordionButton.withText(tutorialName).visible).ok(`${tutorialName} tutorial is not uploaded`);
+
     // Verify that when user upload a .zip archive without a .json manifest, all markdown files are inserted at the same hierarchy level
     await t.click(workbenchPage.tutorialAccordionButton.withText(tutorialName));
     await t.expect((await workbenchPage.getAccordionButtonWithName(folder1)).visible).ok(`${folder1} is not visible`);
@@ -52,16 +59,30 @@ test('Verify that user can upload tutorial with local zip file without manifest.
         .ok(`${internalLinkName1} is not visible`);
     await t.click(await workbenchPage.getAccordionButtonWithName(folder2));
     await t.expect((await workbenchPage.getInternalLinkWithManifest(internalLinkName2)).visible)
-        .ok(`${internalLinkName1} is not visible`);
+        .ok(`${internalLinkName2} is not visible`);
     await t.expect(workbenchPage.scrolledEnablementArea.exists).notOk('enablement area is visible before clicked');
     await t.click((await workbenchPage.getInternalLinkWithManifest(internalLinkName1)));
     await t.expect(workbenchPage.scrolledEnablementArea.visible).ok('enablement area is not visible after clicked');
+
+    // Verify that user can see image in custom tutorials by providing absolute external path in md file
+    const imageExternal = await workbenchPage.getTutorialImageByAlt(imageExternalPath);
+    await workbenchPage.waitUntilImageRendered(imageExternal);
+    const imageExternalHeight = await imageExternal.getStyleProperty('height');
+    await t.expect(parseInt(imageExternalHeight.replace(/[^\d]/g, ''))).gte(150);
+
+    // Verify that user can see image in custom tutorials by providing relative path in md file
+    // Error when github upload .zip with relative path in .md
+    // const imageRelative = await workbenchPage.getTutorialImageByAlt(imageRelativePath);
+    // await workbenchPage.waitUntilImageRendered(imageRelative);
+    // const imageRelativeHeight = await imageRelative.getStyleProperty('height');
+    // await t.expect(parseInt(imageRelativeHeight.replace(/[^\d]/g, ''))).gte(150);
+
+    // Verify that when User delete the tutorial, then User can see this tutorial and relevant markdown files are deleted from: the Enablement area in Workbench
     await t.click(workbenchPage.closeEnablementPage);
     await t.click(workbenchPage.tutorialLatestDeleteIcon);
     await t.expect(workbenchPage.tutorialDeleteButton.visible).ok('Delete popup is not visible');
     await t.click(workbenchPage.tutorialDeleteButton);
     await t.expect(workbenchPage.tutorialDeleteButton.exists).notOk('Delete popup is still visible');
-    // Verify that when User delete the tutorial, then User can see this tutorial and relevant markdown files are deleted from: the Enablement area in Workbench
     await t.expect((workbenchPage.tutorialAccordionButton.withText(tutorialName).exists))
         .notOk(`${tutorialName} tutorial is not uploaded`);
 });

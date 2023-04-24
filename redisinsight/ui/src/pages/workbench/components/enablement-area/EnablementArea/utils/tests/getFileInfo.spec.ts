@@ -1,5 +1,6 @@
 import { ApiEndpoints, MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
 import {
+  findMarkdownPathByPath,
   getFileInfo,
   getGroupPath,
   getMarkdownPathByManifest,
@@ -13,43 +14,43 @@ import {
 const getFileInfoTests = [
   {
     input: [{ path: 'static/workbench/quick-guides/file-name.txt' }],
-    expected: { name: 'file-name', parent: 'quick guides', extension: 'txt', location: '/static/workbench/quick-guides', _key: null }
+    expected: { name: 'file-name', parent: 'quick guides', extension: 'txt', location: '/static/workbench/quick-guides', label: 'file-name', _key: null }
   },
   {
     input: [{ path: 'parent_folder\\file_name.txt' }],
-    expected: { name: 'file_name', parent: 'parent folder', extension: 'txt', location: '/parent_folder', _key: null }
+    expected: { name: 'file_name', parent: 'parent folder', extension: 'txt', location: '/parent_folder', label: 'file_name', _key: null }
   },
   {
     input: [{ path: 'https://domen.com/workbench/enablement-area/introduction.html' }],
-    expected: { name: 'introduction', parent: 'enablement area', extension: 'html', location: '/workbench/enablement-area', _key: null }
+    expected: { name: 'introduction', parent: 'enablement area', extension: 'html', location: '/workbench/enablement-area', label: 'introduction', _key: null }
   },
   {
     input: [{ path: 'https://domen.com/introduction.html' }],
-    expected: { name: 'introduction', parent: '', extension: 'html', location: '', _key: null }
+    expected: { name: 'introduction', parent: '', extension: 'html', location: '', label: 'introduction', _key: null }
   },
   {
     input: [{ path: '/introduction.html' }],
-    expected: { name: 'introduction', parent: '', extension: 'html', location: '', _key: null }
+    expected: { name: 'introduction', parent: '', extension: 'html', location: '', label: 'introduction', _key: null }
   },
   {
     input: [{ path: '//parent/markdown.md' }],
-    expected: { name: '', parent: '', extension: '', location: '' }
+    expected: { name: '', parent: '', extension: '', location: '', label: '', }
   },
   {
     input: [{ path: '/file.txt' }],
-    expected: { name: 'file', parent: '', extension: 'txt', location: '', _key: null }
+    expected: { name: 'file', parent: '', extension: 'txt', location: '', label: 'file', _key: null }
   },
   {
     input: [{ path: '' }],
-    expected: { name: '', parent: '', extension: '', location: '', _key: null }
+    expected: { name: '', parent: '', extension: '', location: '', label: '', _key: null }
   },
   {
     input: [{ path: '/' }],
-    expected: { name: '', parent: '', extension: '', location: '', _key: null }
+    expected: { name: '', parent: '', extension: '', location: '', label: '', _key: null }
   },
   {
     input: [{ manifestPath: 'quick-guides/0/0', path: '/static/workbench/quick-guides/document/learn-more.md' }, MOCK_GUIDES_ITEMS],
-    expected: { name: 'learn-more', parent: MOCK_GUIDES_ITEMS[0].label, extension: 'md', location: '/static/workbench/quick-guides/document', _key: '0' }
+    expected: { name: 'learn-more', parent: MOCK_GUIDES_ITEMS[0].label, extension: 'md', location: '/static/workbench/quick-guides/document', label: MOCK_GUIDES_ITEMS[0].children[0].label, _key: '0' }
   }
 ]
 
@@ -203,6 +204,24 @@ describe('getParentByManifest', () => {
     ({ input, expected }) => {
       // @ts-ignore
       const result = getParentByManifest(...input)
+      expect(result).toEqual(expected)
+    }
+  )
+})
+
+const findMarkdownPathByPathTests = [
+  { input: [MOCK_GUIDES_ITEMS, '/static/workbench/quick-guides/document/learn-more.md'], expected: '0/0' },
+  { input: [MOCK_GUIDES_ITEMS, 'quick-guides/working-with-hash.html'], expected: '0/2' },
+  { input: [MOCK_GUIDES_ITEMS, 'quick-guides/document-capabilities.html'], expected: '1' },
+  { input: [MOCK_GUIDES_ITEMS, 'quick-guides'], expected: null },
+]
+
+describe('findMarkdownPathByPath', () => {
+  test.each(findMarkdownPathByPathTests)(
+    '%j',
+    ({ input, expected }) => {
+      // @ts-ignore
+      const result = findMarkdownPathByPath(...input)
       expect(result).toEqual(expected)
     }
   )

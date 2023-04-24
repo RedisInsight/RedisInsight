@@ -29,7 +29,7 @@ services:
     command: [
         './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '200',
         '--',
-        'npx', 'yarn', 'test:chrome:ci', '--app-init-delay', '5000'
+        'npx', 'yarn', 'test:chrome:ci', '--app-init-delay', '15000'
     ]
 
   # Redisinsight API + UI build

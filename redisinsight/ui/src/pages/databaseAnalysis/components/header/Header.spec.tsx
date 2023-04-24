@@ -148,7 +148,7 @@ describe('CLUSTER db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys per shard to get an overview of your data.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys per shard to get an overview of your data and recommendations on how to save memory and optimize the usage of your database.')
   })
 })
 
@@ -166,7 +166,7 @@ describe('STANDALONE db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Database AnalysisAnalyze up to 10 000 keys per Redis database to get an overview of your data.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys to get an overview of your data and recommendations on how to save memory and optimize the usage of your database.')
   })
 })
 
@@ -184,6 +184,6 @@ describe('SENTINEL db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Database AnalysisAnalyze up to 10 000 keys per Redis database to get an overview of your data.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys to get an overview of your data and recommendations on how to save memory and optimize the usage of your database.')
   })
 })

@@ -62,12 +62,16 @@ describe('WelcomeScreen', () => {
     expect(pushMock).toHaveBeenCalledWith(Pages.databaseAnalysis('instanceId'))
   })
 
-  it('should call "setIsContentVisible" after click link btn', async () => {
+  it('should call "setIsContentVisible" after click link btn', () => {
     render(<WelcomeScreen />)
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId('insights-db-analysis-link'))
-    await waitForEuiPopoverVisible()
+    fireEvent.click(screen.getByTestId('insights-db-analysis-link'));
+
+    (async () => {
+      await waitForEuiPopoverVisible()
+    })()
+
     fireEvent.click(screen.getByTestId('approve-insights-db-analysis-btn'))
 
     const expectedActions = [setIsContentVisible(false), getDBAnalysis()]

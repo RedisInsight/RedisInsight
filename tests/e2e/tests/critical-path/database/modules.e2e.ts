@@ -31,12 +31,12 @@ test
         // Check module column on DB list page
         await t.expect(myRedisDatabasePage.moduleColumn.exists).ok('Module column not found');
         // Verify that user can see the following sorting order: Search, JSON, Graph, TimeSeries, Bloom, Gears, AI for modules
-        const databaseLine = await myRedisDatabasePage.dbNameList.withExactText(ossStandaloneRedisearch.databaseName).parent('tr');
-        const moduleIcons = await databaseLine.find('[data-testid^=Redi]');
+        const databaseLine = myRedisDatabasePage.dbNameList.withExactText(ossStandaloneRedisearch.databaseName).parent('tr');
+        const moduleIcons = databaseLine.find('[data-testid^=Redi]');
         const numberOfIcons = await moduleIcons.count;
         for (let i = 0; i < numberOfIcons; i++) {
-            const moduleName = await moduleIcons.nth(i).getAttribute('data-testid');
-            await t.expect(moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon not found');
+            const moduleName = moduleIcons.nth(i).getAttribute('data-testid');
+            await t.expect(await moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon not found');
         }
         //Minimize the window to check quantifier
         await t.resizeWindow(1000, 700);

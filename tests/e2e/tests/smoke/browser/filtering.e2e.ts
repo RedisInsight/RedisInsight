@@ -12,7 +12,7 @@ let keyName2 = common.generateWord(10);
 let randomValue = common.generateWord(10);
 const valueWithEscapedSymbols = 'KeyFor[A-G]*(';
 const searchedKeyName = 'KeyForSearch\\*\\?\\[]789';
-const searchedValueWithEscapedSymbols = 'KeyFor\\[A-G\\]\\*\\(';
+const searchedValueWithEscapedSymbols = 'KeyFor\\[A-G\\]\*\(';
 
 fixture `Filtering per key name in Browser page`
     .meta({ type: 'smoke', rte: rte.standalone })

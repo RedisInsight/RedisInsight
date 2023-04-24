@@ -36,8 +36,8 @@ fixture `Bulk Upload`
     });
 test('Verify bulk upload of different text docs formats', async t => {
     // Verify bulk upload for docker app version
-    const allKeysResults = ['9Keys Processed', '9Success', '0Errors'];
-    const bigKeysResults = ['10 000Keys Processed', '10 000Success', '0Errors'];
+    const allKeysResults = ['9Commands Processed', '9Success', '0Errors'];
+    const bigKeysResults = ['10 000Commands Processed', '10 000Success', '0Errors'];
     const defaultText = 'Select or drag and drop a file';
 
     // Open bulk actions

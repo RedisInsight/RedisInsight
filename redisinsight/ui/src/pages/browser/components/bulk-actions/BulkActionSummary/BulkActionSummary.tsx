@@ -2,17 +2,28 @@ import { EuiFlexGroup, EuiFlexItem, EuiText } from '@elastic/eui'
 import React from 'react'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { millisecondsFormat } from 'uiSrc/utils'
+import { BulkActionsType } from 'uiSrc/constants'
 
 import styles from './styles.modules.scss'
 
 export interface Props {
+  type?: BulkActionsType
   processed?: number
   succeed?: number
   failed?: number
   duration?: number
   'data-testid': string
 }
-const BulkActionSummary = ({ processed = 0, succeed = 0, failed = 0, duration = 0, 'data-testid': testId }: Props) => (
+const BulkActionSummary = (
+  {
+    type = BulkActionsType.Delete,
+    processed = 0,
+    succeed = 0,
+    failed = 0,
+    duration = 0,
+    'data-testid': testId
+  }: Props
+) => (
   <EuiFlexGroup
     alignItems="flexStart"
     direction="row"
@@ -23,7 +34,9 @@ const BulkActionSummary = ({ processed = 0, succeed = 0, failed = 0, duration = 
   >
     <EuiFlexItem grow={false}>
       <EuiText className={styles.summaryValue}>{numberWithSpaces(processed)}</EuiText>
-      <EuiText color="subdued" className={styles.summaryLabel}>Keys Processed</EuiText>
+      <EuiText color="subdued" className={styles.summaryLabel}>
+        {type === BulkActionsType.Delete ? 'Keys' : 'Commands'} Processed
+      </EuiText>
     </EuiFlexItem>
     <EuiFlexItem grow={false}>
       <EuiText className={styles.summaryValue}>{numberWithSpaces(succeed)}</EuiText>

@@ -143,6 +143,7 @@ const BulkUpload = (props: Props) => {
           subTitle={(<div className="truncateText" style={{ paddingTop: 6 }}>{fileName}</div>)}
         >
           <BulkActionSummary
+            type={BulkActionsType.Upload}
             succeed={succeed}
             processed={processed}
             failed={failed}

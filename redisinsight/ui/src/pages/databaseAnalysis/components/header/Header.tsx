@@ -50,7 +50,7 @@ const Header = (props: Props) => {
     analysisLoading
   } = props
 
-  const { connectionType } = useSelector(connectedInstanceSelector)
+  const { connectionType, provider } = useSelector(connectedInstanceSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
@@ -74,6 +74,7 @@ const Header = (props: Props) => {
       event: TelemetryEvent.DATABASE_ANALYSIS_STARTED,
       eventData: {
         databaseId: instanceId,
+        provider,
       }
     })
     dispatch(createNewAnalysis(instanceId, delimiter))

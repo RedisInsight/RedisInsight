@@ -64,6 +64,13 @@ jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
   }),
 }))
 
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    provider: 'RE_CLOUD'
+  }),
+}))
+
 describe('Recommendations', () => {
   it('should render', () => {
     expect(render(<Recommendations />)).toBeTruthy()
@@ -367,6 +374,7 @@ describe('Recommendations', () => {
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         recommendation: 'luaScript',
+        provider: 'RE_CLOUD'
       }
     })
     sendEventTelemetry.mockRestore()
@@ -379,6 +387,7 @@ describe('Recommendations', () => {
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         recommendation: 'luaScript',
+        provider: 'RE_CLOUD',
       }
     })
     sendEventTelemetry.mockRestore()
@@ -458,6 +467,7 @@ describe('Recommendations', () => {
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         recommendation: 'shardHashes',
+        provider: 'RE_CLOUD',
       }
     })
     sendEventTelemetry.mockRestore()

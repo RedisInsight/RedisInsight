@@ -15,6 +15,7 @@ import {
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
@@ -40,12 +41,13 @@ const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
   const { items: guides } = useSelector(workbenchGuidesSelector)
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
+  const { provider } = useSelector(connectedInstanceSelector)
   const { recommendations = [] } = data ?? {}
 
   const { theme } = useContext(ThemeContext)
-  const { instanceId } = useParams<{ instanceId: string }>()
   const history = useHistory()
   const dispatch = useDispatch()
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   const handleToggle = (isOpen: boolean, id: string) => sendEventTelemetry({
     event: isOpen
@@ -54,6 +56,7 @@ const Recommendations = () => {
     eventData: {
       databaseId: instanceId,
       recommendation: recommendationsContent[id]?.telemetryEvent || id,
+      provider,
     }
   })
 
@@ -63,6 +66,7 @@ const Recommendations = () => {
       eventData: {
         databaseId: instanceId,
         recommendation: recommendationsContent[id]?.telemetryEvent || id,
+        provider,
       }
     })
 

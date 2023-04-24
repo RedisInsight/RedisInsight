@@ -22,10 +22,10 @@
     <true/>
     <key>com.apple.security.application-groups</key>
     <array>
-    <string>UUK47G4BAZ.org.RedisLabs.RedisInsight-V2</string>
+    <string>UUK47G4BAZ.com.redis.RedisInsight</string>
     </array>
     <key>com.apple.application-identifier</key>
-    <string>UUK47G4BAZ.org.RedisLabs.RedisInsight-V2</string>
+    <string>UUK47G4BAZ.com.redis.RedisInsight</string>
     <key>com.apple.developer.team-identifier</key>
     <string>UUK47G4BAZ</string>
     <key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>

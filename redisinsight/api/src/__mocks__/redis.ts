@@ -1,6 +1,7 @@
 import IORedis from 'ioredis';
 
-const getRedisCommanderMockFunctions = () => ({
+export const mockIORedisClientExec = jest.fn();
+const getRedisCommanderMockFunctions = jest.fn(() => ({
   sendCommand: jest.fn(),
   info: jest.fn(),
   monitor: jest.fn(),
@@ -12,9 +13,11 @@ const getRedisCommanderMockFunctions = () => ({
   unsubscribe: jest.fn(),
   punsubscribe: jest.fn(),
   publish: jest.fn(),
+  pipeline: jest.fn().mockReturnThis(),
+  exec: mockIORedisClientExec,
   cluster: jest.fn(),
   quit: jest.fn(),
-});
+}));
 
 export const mockIORedisClient = {
   ...Object.create(IORedis.prototype),

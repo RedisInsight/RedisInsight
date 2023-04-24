@@ -64,7 +64,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifest
       const { data, status } = await fetchService.get<string>(path)
       if (isStatusSuccessful(status)) {
         dispatch(setWorkbenchEASearch(search))
-        const contentData = await formatter.format(data, { history })
+        const contentData = await formatter.format({ data, path }, { history })
         setPageData((prevState) => ({ ...prevState, content: contentData }))
         setLoading(false)
       }
@@ -94,7 +94,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifest
       manifestPath={manifestPath}
       sourcePath={sourcePath}
       onClose={onClose}
-      title={startCase(title || pageData.name)}
+      title={startCase(title || pageData.label)}
       backTitle={startCase(pageData?.parent)}
       isLoading={isMarkdownLoading}
       content={pageData.content}

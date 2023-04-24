@@ -31,12 +31,12 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
           type: overview.type,
           duration: overview.duration,
           filter: {
-            match: overview.filter.match === '*' ? '*' : 'PATTERN',
-            type: overview.filter.type,
+            match: overview.filter?.match === '*' ? '*' : 'PATTERN',
+            type: overview.filter?.type,
           },
           progress: {
-            scanned: overview.progress.scanned,
-            total: overview.progress.total,
+            scanned: overview.progress?.scanned,
+            total: overview.progress?.total,
           },
         },
       );
@@ -54,16 +54,16 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
           type: overview.type,
           duration: overview.duration,
           filter: {
-            match: overview.filter.match === '*' ? '*' : 'PATTERN',
-            type: overview.filter.type,
+            match: overview.filter?.match === '*' ? '*' : 'PATTERN',
+            type: overview.filter?.type,
           },
           progress: {
-            scanned: overview.progress.scanned,
-            total: overview.progress.total,
+            scanned: overview.progress?.scanned,
+            total: overview.progress?.total,
           },
           summary: {
-            processed: overview.summary.processed,
-            succeed: overview.summary.succeed,
+            processed: overview.summary?.processed,
+            succeed: overview.summary?.succeed,
             failed: overview.summary.failed,
           },
         },

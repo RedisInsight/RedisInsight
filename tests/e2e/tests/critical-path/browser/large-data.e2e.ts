@@ -1,12 +1,11 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { Common } from '../../../helpers/common';
 import { rte } from '../../../helpers/constants';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let keyName = common.generateWord(10);
@@ -25,13 +24,13 @@ fixture `Cases with large data`
 test('Verify that user can see relevant information about key size', async t => {
     keyName = common.generateWord(10);
     // Open CLI
-    await t.click(cliPage.cliExpandButton);
+    await t.click(browserPage.Cli.cliExpandButton);
     // Create new key with a lot of members
     const length = 500;
     const arr = await common.createArrayWithKeyValue(length);
-    await t.typeText(cliPage.cliCommandInput, `HSET ${keyName} ${arr.join(' ')}`, { paste: true });
+    await t.typeText(browserPage.Cli.cliCommandInput, `HSET ${keyName} ${arr.join(' ')}`, { paste: true });
     await t.pressKey('enter');
-    await t.click(cliPage.cliCollapseButton);
+    await t.click(browserPage.Cli.cliCollapseButton);
     await browserPage.openKeyDetails(keyName);
     // Remember the values of the key size and length
     const keySizeText = await browserPage.keySizeDetails.textContent;

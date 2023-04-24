@@ -1,7 +1,7 @@
 import { Selector, t } from 'testcafe';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import {
-    BrowserPage, CliPage
+    BrowserPage
 } from '../../../pageObjects';
 import {
     commonUrl,
@@ -14,7 +14,6 @@ import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList } from '.
 
 const browserPage = new BrowserPage();
 const common = new Common();
-const cliPage = new CliPage();
 let keyNames: string[];
 let keyName1: string;
 let keyName2: string;
@@ -48,7 +47,7 @@ test
         ];
 
         // Create 5 keys
-        await cliPage.sendCommandsInCli(commands);
+        await browserPage.Cli.sendCommandsInCli(commands);
         await t.click(browserPage.treeViewButton);
         // The folder without any patterns selected and the list of keys is displayed when there is a folder without any patterns
         await verifyKeysDisplayedInTheList([keyNameSingle]);
@@ -80,7 +79,7 @@ test
             `HSET ${keyNames[4]} field value`
         ];
 
-        await cliPage.sendCommandsInCli(commands1);
+        await browserPage.Cli.sendCommandsInCli(commands1);
         await t.click(browserPage.refreshKeysButton);
         // Refreshed Tree view preselected folder
         await t.expect(firstTreeItemKeys.visible)
@@ -119,7 +118,7 @@ test
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
     .after(async() => {
-        await cliPage.sendCommandInCli(`FT.DROPINDEX ${index}`);
+        await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${index}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify tree view navigation for index based search', async t => {
         keyName1 = common.generateWord(10); // used to create index name
@@ -133,11 +132,11 @@ test
             `HSET ${keyNames[2]} field value`,
             `HSET ${keyNames[3]} field value`
         ];
-        await cliPage.sendCommandsInCli(commands);
+        await browserPage.Cli.sendCommandsInCli(commands);
 
         // generate index based on keyName
         const folders = [keyName1, subFolder1];
-        index = await cliPage.createIndexwithCLI(folders.join(':'));
+        index = await browserPage.Cli.createIndexwithCLI(folders.join(':'));
         await t.click(browserPage.redisearchModeBtn); // click redisearch button
         await browserPage.selectIndexByName(index);
         await t.click(browserPage.treeViewButton);
@@ -171,7 +170,7 @@ test
             `RPUSH ${keyNames[3]} field`,
             `SADD ${keyNames[4]} value`
         ];
-        await cliPage.sendCommandsInCli(commands);
+        await browserPage.Cli.sendCommandsInCli(commands);
         await t.click(browserPage.treeViewButton);
         // The folder without any patterns selected and the list of keys is displayed when there is a folder without any patterns
         await verifyKeysDisplayedInTheList([keyNameSingle]);
@@ -183,7 +182,7 @@ test
         await verifyKeysDisplayedInTheList([keyNames[0], keyNames[1]]);
 
         await t.click(browserPage.hashDeleteButton);
-        await cliPage.sendCommandsInCli([`DEL ${keyNames[0]}`]);
+        await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames[0]}`]);
         await t.click(browserPage.refreshKeysButton); // refresh keys
         // The previously selected folder is preselected when key does not exist after keys refresh
         await verifyKeysDisplayedInTheList([keyNames[1]]);

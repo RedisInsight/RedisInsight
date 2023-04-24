@@ -13,7 +13,7 @@ import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
 import {
   defaultSelectedKeyAction,
   refreshKeyInfo,
-  deleteKeySuccess,
+  deleteSelectedKeySuccess,
   updateSelectedKeyRefreshTime,
 } from '../../browser/keys'
 import reducer, {
@@ -641,7 +641,7 @@ describe('hash slice', () => {
             removeHashFields(),
             removeHashFieldsSuccess(),
             removeFieldsFromList(fields),
-            deleteKeySuccess(),
+            deleteSelectedKeySuccess(),
             deleteRedisearchKeyFromList(key),
             addMessageNotification(successMessages.DELETED_KEY(key))
           ]

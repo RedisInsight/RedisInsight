@@ -4,6 +4,7 @@ export const mockMainCommands = {
     complexity: 'O(N). Where N is the number of configured users.',
     since: '6.0.0',
     group: 'server',
+    provider: 'main',
   },
 };
 
@@ -19,6 +20,7 @@ export const mockRedisearchCommands = {
     ],
     since: '1.0.0',
     group: 'search',
+    provider: 'search',
   },
 };
 
@@ -39,6 +41,7 @@ export const mockRedijsonCommands = {
     ],
     since: '1.0.0',
     group: 'json',
+    provider: 'json',
   },
 };
 
@@ -102,6 +105,7 @@ export const mockRedistimeseriesCommands = {
     ],
     since: '1.0.0',
     group: 'timeseries',
+    provider: 'timeseries',
   },
 };
 
@@ -143,6 +147,7 @@ export const mockRedisaiCommands = {
     ],
     since: '1.2.5',
     group: 'tensor',
+    provider: 'sai',
   },
 };
 
@@ -161,6 +166,7 @@ export const mockRedisgraphCommands = {
     ],
     since: '1.0.0',
     group: 'graph',
+    provider: 'graph',
   },
 };
 

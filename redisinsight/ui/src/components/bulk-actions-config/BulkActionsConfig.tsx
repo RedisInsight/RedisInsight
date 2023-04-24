@@ -4,11 +4,13 @@ import { io, Socket } from 'socket.io-client'
 
 import {
   setLoading,
+  setBulkDeleteLoading,
   bulkActionsSelector,
-  disconnectBulkAction,
+  disconnectBulkDeleteAction,
   setBulkActionConnected,
-  setOverview,
+  setDeleteOverview,
   setBulkActionsInitialState,
+  bulkActionsDeleteSelector,
 } from 'uiSrc/slices/browser/bulkActions'
 import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
 import { sessionStorageService } from 'uiSrc/services'
@@ -19,19 +21,20 @@ import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActi
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 interface IProps {
-  retryDelay?: number;
+  retryDelay?: number
 }
 
 const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
   const { id: instanceId = '', db } = useSelector(connectedInstanceSelector)
-  const { isActionTriggered, isConnected } = useSelector(bulkActionsSelector)
+  const { isConnected } = useSelector(bulkActionsSelector)
+  const { isActionTriggered: isDeleteTriggered } = useSelector(bulkActionsDeleteSelector)
   const { filter, search } = useSelector(keysSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (!isActionTriggered || !instanceId || socketRef.current?.connected) {
+    if (!isDeleteTriggered || !instanceId || socketRef.current?.connected) {
       return
     }
 
@@ -61,25 +64,26 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
         handleDisconnect()
       }
     })
-  }, [instanceId, isActionTriggered])
+  }, [instanceId, isDeleteTriggered])
 
   useEffect(() => {
     if (!socketRef.current?.connected) {
       return
     }
-    const id = sessionStorageService.get(BrowserStorageItem.bulkActionId) ?? ''
+    const id = sessionStorageService.get(BrowserStorageItem.bulkActionDeleteId) ?? ''
+    if (!id) return
 
-    if (!isActionTriggered) {
+    if (!isDeleteTriggered) {
       abortBulkDelete(id)
       return
     }
 
     emitBulkDelete(id)
-  }, [isActionTriggered])
+  }, [isDeleteTriggered])
 
   const emitBulkDelete = (id: string) => {
-    dispatch(setLoading(true))
-    sessionStorageService.set(BrowserStorageItem.bulkActionId, id)
+    dispatch(setBulkDeleteLoading(true))
+    sessionStorageService.set(BrowserStorageItem.bulkActionDeleteId, id)
 
     socketRef.current?.emit(
       BulkActionsServerEvent.Create,
@@ -107,7 +111,7 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
   }
 
   const abortBulkDelete = (id: string) => {
-    dispatch(setLoading(true))
+    dispatch(setBulkDeleteLoading(true))
     socketRef.current?.emit(
       BulkActionsServerEvent.Abort,
       { id: `${id}` },
@@ -117,33 +121,33 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
 
   const fetchBulkAction = (data: any) => {
     if (data.status === BulkActionsServerEvent.Error) {
-      sessionStorageService.set(BrowserStorageItem.bulkActionId, '')
+      sessionStorageService.set(BrowserStorageItem.bulkActionDeleteId, '')
       dispatch(setBulkActionsInitialState())
     }
   }
 
   const onBulkDeleting = (data: any) => {
     if (data.status === BulkActionsServerEvent.Error) {
-      dispatch(disconnectBulkAction())
+      dispatch(disconnectBulkDeleteAction())
       dispatch(addErrorNotification({ response: { data: data.error } }))
     }
 
     socketRef.current?.on(BulkActionsServerEvent.Overview, (payload: any) => {
-      dispatch(setLoading(isProcessingBulkAction(payload.status)))
-      dispatch(setOverview(payload))
+      dispatch(setBulkDeleteLoading(isProcessingBulkAction(payload.status)))
+      dispatch(setDeleteOverview(payload))
 
       if (payload.status === BulkActionsStatus.Failed) {
-        dispatch(disconnectBulkAction())
+        dispatch(disconnectBulkDeleteAction())
       }
     })
   }
 
   const onBulkDeleteAborted = (data: any) => {
-    dispatch(setLoading(false))
-    sessionStorageService.set(BrowserStorageItem.bulkActionId, '')
+    dispatch(setBulkDeleteLoading(false))
+    sessionStorageService.set(BrowserStorageItem.bulkActionDeleteId, '')
 
     if (data.status === 'aborted') {
-      dispatch(setOverview(data))
+      dispatch(setDeleteOverview(data))
     }
   }
 
@@ -154,7 +158,7 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
   }, [isConnected])
 
   const handleDisconnect = () => {
-    dispatch(disconnectBulkAction())
+    dispatch(disconnectBulkDeleteAction())
     socketRef.current?.removeAllListeners()
     socketRef.current?.disconnect()
   }

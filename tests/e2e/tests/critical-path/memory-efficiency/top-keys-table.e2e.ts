@@ -1,6 +1,6 @@
 import { Chance } from 'chance';
 import { Selector } from 'testcafe';
-import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, CliPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
@@ -11,11 +11,10 @@ import { Common } from '../../../helpers/common';
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 const chance = new Chance();
 
-const keyToAddParameters = { keysCount: 13, keyNameStartWith: 'hashKey'};
+const keyToAddParameters = { keysCount: 13, keyNameStartWith: 'hashKey' };
 const keyName = `TestHashKey-${common.generateWord(10)}`;
 const keyToAddParameters2 = { fieldsCount: 80000, keyName, fieldStartWith: 'hashField', fieldValueStartWith: 'hashValue' };
 const members = [...Array(100).keys()].toString().replace(/,/g, ' '); // The smallest key
@@ -35,23 +34,23 @@ test
         // Create keys
         await populateDBWithHashes(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port, keyToAddParameters);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async() => {
-        await cliPage.sendCommandInCli('flushdb');
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await deleteAllKeysFromDB(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Top Keys displaying in Summary of big keys', async t => {
         // Verify that user can see “-” as length for all unsupported data types
-        await cliPage.sendCommandInCli(mbloomCommand);
+        await browserPage.Cli.sendCommandInCli(mbloomCommand);
         await t.click(memoryEfficiencyPage.newReportBtn);
         await t.expect(Selector('[data-testid=length-empty-bloom]').textContent).eql('-', 'Length is defined for unknown types');
         // Verify that user cannot see quantifier if keys are less than 15
         await t.expect(memoryEfficiencyPage.topKeysTitle.textContent).eql('TOP KEYS', 'Title is not correct');
         // Verify that top 15 keys are displayed per memory
-        await cliPage.sendCommandInCli(listCommand);
-        await cliPage.sendCommandInCli(stringCommand);
-        await cliPage.sendCommandInCli(setCommand);
+        await browserPage.Cli.sendCommandInCli(listCommand);
+        await browserPage.Cli.sendCommandInCli(stringCommand);
+        await browserPage.Cli.sendCommandInCli(setCommand);
         await t.click(memoryEfficiencyPage.newReportBtn);
         await t.expect(memoryEfficiencyPage.topKeysTitle.textContent).eql('TOP 15 KEYS', 'Title is not correct');
         await t.expect(memoryEfficiencyPage.topKeysKeyName.count).eql(15, 'Number of lines is not 15');
@@ -76,10 +75,10 @@ test
         // Create keys
         await populateHashWithFields(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port, keyToAddParameters2);
         // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.analysisPageButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async t => {
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Big highlighted key tooltip', async t => {

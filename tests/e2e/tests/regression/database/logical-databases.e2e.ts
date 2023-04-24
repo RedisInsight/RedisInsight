@@ -1,11 +1,11 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTerms } from '../../../helpers/database';
-import { MyRedisDatabasePage, CliPage, AddRedisDatabasePage } from '../../../pageObjects';
+import { MyRedisDatabasePage, AddRedisDatabasePage, BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
-const cliPage = new CliPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
+const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
 fixture `Logical databases`
@@ -28,9 +28,9 @@ test('Verify that if user enters any index of the logical database that does not
     await t.click(addRedisDatabasePage.addRedisDatabaseButton);
     // Open database and run command with non-existing index
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await t.click(cliPage.cliExpandButton);
-    await t.typeText(cliPage.cliCommandInput, 'Select 19', { paste: true });
+    await t.click(browserPage.Cli.cliExpandButton);
+    await t.typeText(browserPage.Cli.cliCommandInput, 'Select 19', { paste: true });
     await t.pressKey('enter');
     // Verify the error
-    await t.expect(cliPage.cliOutputResponseFail.textContent).eql('"ERR DB index is out of range"', 'Error is not dispalyed in CLI');
+    await t.expect(browserPage.Cli.cliOutputResponseFail.textContent).eql('"ERR DB index is out of range"', 'Error is not dispalyed in CLI');
 });

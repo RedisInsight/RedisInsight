@@ -1,5 +1,7 @@
-import TableResult from './TableResult'
+import TableView from './table-view'
+import JSONView from './json-view'
 
 export {
-  TableResult
+  TableView,
+  JSONView,
 }

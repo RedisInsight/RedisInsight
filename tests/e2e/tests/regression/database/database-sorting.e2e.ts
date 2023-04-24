@@ -64,7 +64,7 @@ test('Verify that sorting on the list of databases saved when database opened', 
     // Connect to DB and check sorting
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await t.expect(browserPage.refreshKeysButton.visible).ok('Browser page is not opened');
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
     await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedByConnectionType);
     // Sort by Host and Port

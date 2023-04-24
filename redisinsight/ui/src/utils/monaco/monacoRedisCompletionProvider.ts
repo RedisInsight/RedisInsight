@@ -14,7 +14,7 @@ export const getCommandMarkdown = (commandName = '', command: ICommand): string 
   if (command?.arguments?.length) {
     // TODO: use i18n file for texts
     lines.push('### Arguments:')
-    generateArgs(command.arguments).forEach((arg: ICommandArgGenerated): void => {
+    generateArgs(command?.provider, command.arguments).forEach((arg: ICommandArgGenerated): void => {
       const { multiple, optional } = arg
       const type: string = multiple ? 'multiple' : optional ? 'optional' : 'required'
       const argDescription: string = `_${type}_ \`${arg.generatedName}\``
@@ -31,8 +31,8 @@ export const createDependencyProposals = (commandsSpec: ICommands): DependencyPr
     const commandInfo: ICommand = commandsSpec[command]
     const range = { startLineNumber: 0, endLineNumber: 0, startColumn: 0, endColumn: 0 }
     const commandArgs = commandInfo?.arguments || []
-    const detail: string = `${command} ${generateArgsNames(commandArgs).join(' ')}`
-    const argsNames = generateArgsNames(commandArgs, false, true)
+    const detail: string = `${command} ${generateArgsNames(commandInfo?.provider, commandArgs).join(' ')}`
+    const argsNames = generateArgsNames(commandInfo?.provider, commandArgs, false, true)
     const insertText = `${command} ${
       !argsNames.length ? '' : argsNames.join(' ').split(' ')
         // eslint-disable-next-line sonarjs/no-nested-template-literals

@@ -20,7 +20,7 @@ test
         const link = 'https://github.com/RedisInsight/RedisInsight/releases';
 
         // Click on help center icon and verify panel
-        await t.click(myRedisDatabasePage.helpCenterButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
         await t.expect(helpCenterPage.helpCenterPanel.exists).ok('Help Center panel is not opened');
         // Click on Shortcuts option and verify panel
         await t.click(helpCenterPage.helpCenterShortcutButton);
@@ -35,7 +35,7 @@ test
         await t.expect(shortcutsPage.shortcutsPanel.exists).notOk('Shortcuts panel is not displayed');
 
         // Click on the Release Notes in Help Center
-        await t.click(myRedisDatabasePage.helpCenterButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
         await t.click(helpCenterPage.helpCenterReleaseNotesButton);
         // Verify redirected link opening Release Notes in Help Center
         await t.expect(getPageUrl()).eql(link, 'The Release Notes link not correct');
@@ -43,7 +43,7 @@ test
 test
     .meta({ env: env.desktop })('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shortcuts" button in Help Center for desktop', async t => {
         // Click on help center icon and verify panel
-        await t.click(myRedisDatabasePage.helpCenterButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
         await t.expect(helpCenterPage.helpCenterPanel.exists).ok('Help Center panel is not opened');
         // Click on Shortcuts option and verify panel
         await t.click(helpCenterPage.helpCenterShortcutButton);
@@ -69,7 +69,7 @@ test('Verify that user can see description of the “up” shortcut in the Help 
     ];
 
     // Open Shortcuts
-    await t.click(myRedisDatabasePage.helpCenterButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.click(helpCenterPage.helpCenterShortcutButton);
 
     // Verify that user can see the description of the “Shift+Space” keyboard shortcut in the Keyboard Shortcuts

@@ -27,7 +27,7 @@ fixture `Command results at Workbench`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         // Add index and data
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForIndex);
     })
     .afterEach(async t => {
@@ -121,7 +121,7 @@ test('Big output in workbench is visible in virtualized table', async t => {
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .after(async t => {
         await t.switchToMainWindow();

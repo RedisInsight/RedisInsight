@@ -2,8 +2,6 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, clearStoreActions, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
-import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { getWBCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import EnablementAreaWrapper, { Props } from './EnablementAreaWrapper'
 
@@ -38,8 +36,8 @@ jest.mock('uiSrc/slices/workbench/wb-tutorials', () => {
 })
 
 describe('EnablementAreaWrapper', () => {
-  it('should render and call getWBGuides and getWBTutorials actions', () => {
-    const expectedActions = [getWBGuides(), getWBTutorials(), getWBCustomTutorials()]
+  it('should render and call proper actions on mount', () => {
+    const expectedActions = [getWBCustomTutorials()]
 
     expect(render(<EnablementAreaWrapper {...instance(mockedProps)} />)).toBeTruthy()
     expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(

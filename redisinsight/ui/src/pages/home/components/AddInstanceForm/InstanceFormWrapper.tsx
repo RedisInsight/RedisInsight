@@ -68,6 +68,7 @@ const getInitialValues = (editedInstance: Nullable<Instance>) => ({
     : (editedInstance ? '' : undefined),
   tls: !!editedInstance?.tls ?? false,
   ssh: !!editedInstance?.ssh ?? false,
+  servername: editedInstance?.tlsServername,
   sshPassType: editedInstance?.sshOptions
     ? (editedInstance.sshOptions.privateKey ? SshPassType.PrivateKey : SshPassType.Password)
     : SshPassType.Password
@@ -87,7 +88,7 @@ const InstanceFormWrapper = (props: Props) => {
   const [initialValues, setInitialValues] = useState(getInitialValues(editedInstance))
   const [isCloneMode, setIsCloneMode] = useState<boolean>(false)
 
-  const { host, port, name, username, password, timeout, tls, ssh, sshPassType } = initialValues
+  const { host, port, name, username, password, timeout, tls, ssh, sshPassType, servername } = initialValues
 
   const { loadingChanging: loadingStandalone } = useSelector(instancesSelector)
   const { loading: loadingSentinel } = useSelector(sentinelSelector)
@@ -541,7 +542,8 @@ const InstanceFormWrapper = (props: Props) => {
     sentinelMasterUsername,
     sentinelMasterPassword,
     ssh,
-    sshPassType
+    sshPassType,
+    servername,
   }
 
   const getSubmitButtonText = () => {

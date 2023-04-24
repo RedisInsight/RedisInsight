@@ -21,11 +21,9 @@ import {
     discoverSentinelDatabaseApi
 } from '../../../helpers/api/api-database';
 import { DatabasesActions } from '../../../common-actions/databases-actions';
-import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databasesActions = new DatabasesActions();
-const common = new Common();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 
 let foundExportedFiles: string[];
@@ -40,7 +38,7 @@ test
         await addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
         await discoverSentinelDatabaseApi(ossSentinelConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete all databases
@@ -76,7 +74,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
         await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
 
         const exportedData = {
             path: joinPath(fileDownloadPath, foundExportedFiles[0]),
@@ -100,7 +98,7 @@ test
         await addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await addRECloudDatabase(cloudDatabaseConfig);
         await discoverSentinelDatabaseApi(ossSentinelConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete databases

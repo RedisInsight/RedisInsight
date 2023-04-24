@@ -9,10 +9,9 @@ import { Common } from '../../../helpers/common';
 import { formatters, phpData } from '../../../test-data/formatters-data';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
 const keysData = keyTypes.map(object => ({ ...object })).filter((v, i) => i <= 6 && i !== 5);
-keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${common.generateWord(keyLength)}`);
+keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${Common.generateWord(keyLength)}`);
 const binaryFormattersSet = [formatters[5], formatters[6], formatters[7]];
 const formattersHighlightedSet = [formatters[0], formatters[3]];
 const fromBinaryFormattersSet = [formatters[1], formatters[2], formatters[4], formatters[8]];

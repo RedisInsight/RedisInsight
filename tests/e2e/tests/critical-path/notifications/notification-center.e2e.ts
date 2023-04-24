@@ -4,13 +4,11 @@ import { commonUrl } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { NotificationPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { NotificationParameters } from '../../../pageObjects/notification-page';
-import { Common } from '../../../helpers/common';
 const description = require('./notifications.json');
 const jsonNotifications: NotificationParameters[] = description.notifications;
 
 const notificationPage = new NotificationPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const common = new Common();
 
 // Sort all notifications in json file
 const sortedNotifications = jsonNotifications.sort((a, b) => a.timestamp < b.timestamp ? 1 : -1);

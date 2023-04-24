@@ -13,13 +13,12 @@ import {
 } from '../../../helpers/conf';
 import { deleteOSSClusterDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
-const common = new Common();
 const browserPage = new BrowserPage();
 const chance = new Chance();
 
-const pairsToSet = common.createArrayPairsWithKeyValue(4);
+const pairsToSet = Common.createArrayPairsWithKeyValue(4);
 const MAX_AUTOCOMPLETE_EXECUTIONS = 100;
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 let value = chance.natural({ length: 5 });
 
 fixture `CLI critical`
@@ -42,7 +41,7 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user is redirected to another node when he works in CLI with OSS Cluster', async t => {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
         // Open CLI
         await t.click(browserPage.Cli.cliExpandButton);
         // Add key from CLI

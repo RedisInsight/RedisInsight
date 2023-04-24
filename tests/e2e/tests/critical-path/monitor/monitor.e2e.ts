@@ -15,10 +15,9 @@ import { Common } from '../../../helpers/common';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
-const common = new Common();
 
-const keyName = `${common.generateWord(20)}-key`;
-const keyValue = `${common.generateWord(10)}-value`;
+const keyName = `${Common.generateWord(20)}-key`;
+const keyValue = `${Common.generateWord(10)}-value`;
 
 fixture `Monitor`
     .meta({ type: 'critical_path', rte: rte.standalone })

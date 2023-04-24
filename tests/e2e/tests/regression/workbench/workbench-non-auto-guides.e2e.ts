@@ -7,12 +7,11 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 const browserPage = new BrowserPage();
 
 const counter = 7;
 const unicodeValue = '山女馬 / 马目 abc 123';
-const keyName = common.generateWord(10);
+const keyName = Common.generateWord(10);
 const keyValue = '\\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe9\\xa6\\xac / \\xe9\\xa9\\xac\\xe7\\x9b\\xae abc 123';
 const parameters = [
     '[results=group]',

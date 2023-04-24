@@ -19,7 +19,6 @@ import {
 } from '../../../pageObjects';
 import { Telemetry } from '../../../helpers/telemetry';
 
-const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const helpCenterPage = new HelpCenterPage();
@@ -32,7 +31,7 @@ const pubSubPage = new PubSubPage();
 const telemetry = new Telemetry();
 
 const logger = telemetry.createLogger();
-const indexName = common.generateWord(10);
+const indexName = Common.generateWord(10);
 const telemetryEvent = 'ONBOARDING_TOUR_FINISHED';
 const expectedProperties = [
     'databaseId'
@@ -144,7 +143,7 @@ test('Verify onboard new user skip tour', async(t) => {
     await onBoardActions.clickSkipTour();
     // verify onboarding step completed successfully
     await onBoardActions.verifyOnboardingCompleted();
-    await common.reloadPage();
+    await myRedisDatabasePage.reloadPage();
     // verify onboarding step still not visible after refresh page
     await onBoardActions.verifyOnboardingCompleted();
 });

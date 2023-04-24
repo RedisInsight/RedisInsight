@@ -11,7 +11,6 @@ const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databasesActions = new DatabasesActions();
 const addRedisDatabasePage = new AddRedisDatabasePage();
-const common = new Common();
 
 const fileNames = {
     racompassValidJson: 'racompass-valid.json',
@@ -194,14 +193,14 @@ test
         await clickOnEditDatabaseByName(dbData[1].dbNames[2]);
         await t.expect(addRedisDatabasePage.sentinelForm.textContent).contains('Sentinel', 'Sentinel connection type import incorrect');
         await myRedisDatabasePage.clickOnDBByName(dbData[1].dbNames[2]);
-        await common.checkURLContainsText('browser');
+        await Common.checkURLContainsText('browser');
     });
 test
     .after(async() => {
         // Delete databases
         await deleteStandaloneDatabasesByNamesApi(rdmCertsNames);
     })('Certificates import with/without path', async t => {
-        await databasesActions.importDatabase({path: rdmData.sshPath});
+        await databasesActions.importDatabase({ path: rdmData.sshPath });
         await t.click(myRedisDatabasePage.okDialogBtn);
 
         // Verify that when user imports a certificate and the same certificate body already exists, the existing certificate (with its name) is applied

@@ -9,10 +9,9 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(20);
-let consumerGroupName = common.generateWord(20);
+let keyName = Common.generateWord(20);
+let consumerGroupName = Common.generateWord(20);
 
 fixture `Pending messages`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -29,8 +28,8 @@ fixture `Pending messages`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can\'t select currently selected Consumer to Claim message in the drop-down', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     const consumerNames = [
         'Alice',
         'Bob'
@@ -55,8 +54,8 @@ test('Verify that user can\'t select currently selected Consumer to Claim messag
     await t.expect(browserPage.consumerOption.textContent).notContains(consumerNames[0], 'The currently selected Consumer is in the drop-down');
 });
 test('Verify that the message is claimed only if its idle time is greater than the Min Idle Time', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,
@@ -80,8 +79,8 @@ test('Verify that the message is claimed only if its idle time is greater than t
     await t.expect(browserPage.streamMessage.count).eql(streamMessageBefore, 'The number of pendings in the table not correct');
 });
 test('Verify that when user toggle optional parameters on, he can see optional fields', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,
@@ -108,8 +107,8 @@ test('Verify that when user toggle optional parameters on, he can see optional f
     await t.expect(browserPage.timestampOption.textContent).eql('Timestamp', 'The second option in the time format select list not displayed');
 });
 test('Verify that user see the column names in the Pending messages table and navigate by tabs', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     const columns = [
         'Entry ID',
         'Last Message Delivered',

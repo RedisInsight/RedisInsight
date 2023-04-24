@@ -6,9 +6,8 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(20);
+let keyName = Common.generateWord(20);
 const fields = [
     'Pressure',
     'Humidity',
@@ -31,7 +30,7 @@ fixture `Stream key entry deletion`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that the Stream information is refreshed and the deleted entry is removed when user confirm the deletion of an entry', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     const fieldForDeletion = fields[2];
     // Add new Stream key with 3 fields
     for(let i = 0; i < fields.length; i++){
@@ -53,7 +52,7 @@ test('Verify that the Stream information is refreshed and the deleted entry is r
     }
 });
 test('Verify that when user delete the last Entry from the Stream the Stream key is not deleted', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     const emptyStreamMessage = 'There are no Entries in the Stream.';
     // Add new Stream key with 1 field
     await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * ${fields[0]} ${values[0]}`);

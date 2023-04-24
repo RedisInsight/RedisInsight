@@ -7,11 +7,10 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
 const filePath = path.join('..', '..', '..', 'test-data', 'upload-json', 'sample.json');
 const jsonValues = ['Live JSON generator', '3.1', '"2014-06-25T00:00:00.000Z"', 'true'];
-const keyName = common.generateWord(10);
+const keyName = Common.generateWord(10);
 
 fixture `Upload json file`
     .meta({

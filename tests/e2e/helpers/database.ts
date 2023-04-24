@@ -9,7 +9,6 @@ import {
     UserAgreementPage,
 } from '../pageObjects';
 import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi, getDatabaseIdByName } from './api/api-database';
-import { Common } from './common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
@@ -17,7 +16,6 @@ const discoverMasterGroupsPage = new DiscoverMasterGroupsPage();
 const autoDiscoverREDatabases = new AutoDiscoverREDatabases();
 const browserPage = new BrowserPage();
 const userAgreementPage = new UserAgreementPage();
-const common = new Common();
 
 /**
  * Add a new database manually using host and port
@@ -129,7 +127,7 @@ export async function acceptLicenseTermsAndAddDatabaseApi(databaseParameters: Ad
     await acceptLicenseTerms();
     await addNewStandaloneDatabaseApi(databaseParameters);
     // Reload Page to see the new added database through api
-    await common.reloadPage();
+    await myRedisDatabasePage.reloadPage();
     // Connect to DB
     await myRedisDatabasePage.clickOnDBByName(databaseName);
 }
@@ -154,7 +152,7 @@ export async function acceptLicenseTermsAndAddSentinelDatabaseApi(databaseParame
     await acceptLicenseTerms();
     await discoverSentinelDatabaseApi(databaseParameters);
     // Reload Page to see the database added through api
-    await common.reloadPage();
+    await myRedisDatabasePage.reloadPage();
     // Connect to DB
     await myRedisDatabasePage.clickOnDBByName(databaseParameters.masters![1].alias ?? '');
 }
@@ -186,7 +184,7 @@ export async function acceptLicenseTermsAndAddRECloudDatabase(databaseParameters
     await t.wait(3000);
     // Reload page until db appears
     do {
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     }
     while (!(await dbSelector.exists) && Date.now() - startTime < searchTimeout);
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 5000 });
@@ -209,7 +207,7 @@ export async function addRECloudDatabase(databaseParameters: AddNewDatabaseParam
     await t.wait(3000);
     // Reload page until db appears
     do {
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     }
     while (!(await dbSelector.exists) && Date.now() - startTime < searchTimeout);
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 5000 });

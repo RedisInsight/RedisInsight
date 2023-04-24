@@ -9,10 +9,9 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(20);
-let consumerGroupName = common.generateWord(20);
+let keyName = Common.generateWord(20);
+let consumerGroupName = Common.generateWord(20);
 
 fixture `Acknowledge and Claim of Pending messages`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -29,8 +28,8 @@ fixture `Acknowledge and Claim of Pending messages`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can acknowledge any message in the list of pending messages', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,
@@ -50,8 +49,8 @@ test('Verify that user can acknowledge any message in the list of pending messag
     await t.expect(browserPage.streamMessagesContainer.textContent).contains('Your Consumer has no pending messages.', 'The messages is acknowledged from the table');
 });
 test('Verify that user can claim any message in the list of pending messages', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,
@@ -76,8 +75,8 @@ test('Verify that user can claim any message in the list of pending messages', a
     await t.expect(browserPage.streamMessage.count).eql(2, 'The claimed messages is in the selected Consumer');
 });
 test('Verify that claim with optional parameters, the message removed from this Consumer and appeared in the selected Consumer', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,
@@ -96,7 +95,7 @@ test('Verify that claim with optional parameters, the message removed from this 
     await t.click(browserPage.claimPendingMessageButton);
     await t.expect(browserPage.optionalParametersSwitcher.withAttribute('aria-checked', 'false').exists).ok('By default toggle for optional parameters is off');
     await t.click(browserPage.optionalParametersSwitcher);
-    await t.typeText(browserPage.claimIdleTimeInput, '100', { replace: true, paste: true});
+    await t.typeText(browserPage.claimIdleTimeInput, '100', { replace: true, paste: true });
     await t.click(browserPage.forceClaimCheckbox);
     await t.click(browserPage.submitButton);
     await t.expect(browserPage.streamMessagesContainer.textContent).contains('Your Consumer has no pending messages.', 'The messages is claimed and removed from the table');

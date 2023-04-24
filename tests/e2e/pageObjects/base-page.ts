@@ -1,4 +1,4 @@
-import { ClientFunction, t } from 'testcafe';
+import { t } from 'testcafe';
 import { NavigationPanel } from './components/navigation-panel';
 
 export class BasePage {
@@ -10,13 +10,4 @@ export class BasePage {
     async reloadPage(): Promise<void> {
         await t.eval(() => location.reload());
     }
-
-    /**
-     * Get current page url
-     */
-    async getPageUrl(): Promise<string> {
-        return (await ClientFunction(() => window.location.href))();
-    }
-
-
 }

@@ -8,7 +8,6 @@ import { env, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { BrowserPage } from '../../../pageObjects';
 
-const common = new Common();
 const browserPage = new BrowserPage();
 
 let filteringGroup = '';
@@ -54,12 +53,12 @@ test('Verify that user can open/close CLI separately from Command Helper', async
     await t.expect(browserPage.Cli.cliCollapseButton.visible).ok('CLI is not opended');
 });
 test('Verify that user can see that Command Helper is minimized when he clicks the "minimize" button', async t => {
-    const helperColourBefore = await common.getBackgroundColour(browserPage.CommandHelper.commandHelperBadge);
+    const helperColourBefore = await Common.getBackgroundColour(browserPage.CommandHelper.commandHelperBadge);
     // Open Command Helper and minimize
     await t.click(browserPage.CommandHelper.expandCommandHelperButton);
     await t.click(browserPage.CommandHelper.minimizeCommandHelperButton);
     // Verify Command helper is minimized
-    const helperColourAfter = await common.getBackgroundColour(browserPage.CommandHelper.commandHelperBadge);
+    const helperColourAfter = await Common.getBackgroundColour(browserPage.CommandHelper.commandHelperBadge);
     await t.expect(helperColourAfter).notEql(helperColourBefore, 'Command helper badge colour is not changed');
     await t.expect(browserPage.Cli.minimizeCliButton.visible).eql(false, 'Command helper is not mimized');
 });
@@ -95,7 +94,7 @@ test
         // Click on Read More link for selected command
         await t.click(browserPage.CommandHelper.readMoreButton);
         // Check new opened window page with the correct URL
-        await common.checkURL(externalPageLink);
+        await Common.checkURL(externalPageLink);
         await t.switchToParentWindow();
     });
 test
@@ -115,7 +114,7 @@ test
         // Click on Read More link for selected command
         await t.click(browserPage.CommandHelper.readMoreButton);
         // Check new opened window page with the correct URL
-        await common.checkURL(externalPageLink);
+        await Common.checkURL(externalPageLink);
         await t.switchToParentWindow();
     });
 test
@@ -135,7 +134,7 @@ test
         // Click on Read More link for selected command
         await t.click(browserPage.CommandHelper.readMoreButton);
         // Check new opened window page with the correct URL
-        await common.checkURL(externalPageLink);
+        await Common.checkURL(externalPageLink);
         // await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
         await t.switchToParentWindow();
     });
@@ -174,7 +173,7 @@ test
             // Click on Read More link for selected command
             await t.click(browserPage.CommandHelper.readMoreButton);
             // Check new opened window page with the correct URL
-            await common.checkURL(externalPageLinks[i]);
+            await Common.checkURL(externalPageLinks[i]);
             // Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;
@@ -198,7 +197,7 @@ test
         // Verify that user can use Read More link for Gears group in Command Helper (RedisGears module)
         await t.click(browserPage.CommandHelper.readMoreButton);
         // Check new opened window page with the correct URL
-        await common.checkURL(externalPageLink);
+        await Common.checkURL(externalPageLink);
         // Close the window with external link to switch to the application window
         await t.closeWindow();
     });
@@ -240,7 +239,7 @@ test
             // Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
             await t.click(browserPage.CommandHelper.readMoreButton);
             // Check new opened window page with the correct URL
-            await common.checkURL(externalPageLinks[i]);
+            await Common.checkURL(externalPageLinks[i]);
             // Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;

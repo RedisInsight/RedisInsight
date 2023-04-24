@@ -8,15 +8,14 @@ import { Common } from '../../../helpers/common';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const common = new Common();
 const browserPage = new BrowserPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const memoryEfficiencyActions = new MemoryEfficiencyActions();
 const workbenchPage = new WorkbenchPage();
 
 const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
-let keyName = `recomKey-${common.generateWord(10)}`;
-const stringKeyName = `smallStringKey-${common.generateWord(5)}`;
+let keyName = `recomKey-${Common.generateWord(10)}`;
+const stringKeyName = `smallStringKey-${Common.generateWord(5)}`;
 const index = '1';
 
 fixture `Memory Efficiency Recommendations`
@@ -74,13 +73,13 @@ test
 
         // Verify that user can navigate by link to see the recommendation
         await t.click(memoryEfficiencyPage.luaScriptTextContainer.find(memoryEfficiencyPage.cssReadMoreLink));
-        await common.checkURL(externalPageLink);
+        await Common.checkURL(externalPageLink);
         // Close the window with external link to switch to the application window
         await t.closeWindow();
     });
 // skipped due to inability to receive no recommendations for now
 test.skip('No recommendations message', async t => {
-    keyName = `recomKey-${common.generateWord(10)}`;
+    keyName = `recomKey-${Common.generateWord(10)}`;
     const noRecommendationsMessage = 'No recommendations at the moment, run a new report later to keep up the good work!';
     const command = `HSET ${keyName} field value`;
 
@@ -95,7 +94,7 @@ test.skip('No recommendations message', async t => {
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        keyName = `recomKey-${common.generateWord(10)}`;
+        keyName = `recomKey-${Common.generateWord(10)}`;
         await browserPage.addStringKey(stringKeyName, '2147476121', 'field');
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
@@ -132,7 +131,7 @@ test
     })('Verify that user can upvote recommendations', async t => {
         await memoryEfficiencyActions.voteForVeryUsefulAndVerifyDisabled();
         // Verify that user can see previous votes when reload the page
-        await common.reloadPage();
+        await memoryEfficiencyPage.reloadPage();
         await t.click(memoryEfficiencyPage.recommendationsTab);
         await memoryEfficiencyActions.verifyVoteDisabled();
 
@@ -147,7 +146,7 @@ test
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        keyName = `recomKey-${common.generateWord(10)}`;
+        keyName = `recomKey-${Common.generateWord(10)}`;
         await browserPage.addZSetKey(keyName, '151153320500121', '2147476121', '1511533205001:21');
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);

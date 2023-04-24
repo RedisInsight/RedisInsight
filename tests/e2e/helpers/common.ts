@@ -15,9 +15,11 @@ const mockedSettingsResponse = {
 };
 
 export class Common {
-    mock = RequestMock()
-        .onRequestTo(settingsApiUrl)
-        .respond(mockedSettingsResponse, 200);
+    static mockSettingsResponse(): RequestMock {
+        return RequestMock()
+            .onRequestTo(settingsApiUrl)
+            .respond(mockedSettingsResponse, 200);
+    }
 
     static async waitForElementNotVisible(elm: Selector): Promise<void> {
         await t.expect(elm.exists).notOk({ timeout: 10000 });
@@ -113,7 +115,7 @@ export class Common {
     * Create array of numbers
     * @param length The amount of array elements
     */
-    async createArray(length: number): Promise<string[]> {
+    static async createArray(length: number): Promise<string[]> {
         const arr: string[] = [];
         for (let i = 1; i <= length; i++) {
             arr[i] = `${i}`;
@@ -178,5 +180,12 @@ export class Common {
         return text
             .replace(/ /g, '')
             .replace(/\n/g, '');
+    }
+
+    /**
+     * Get current page url
+     */
+    static async getPageUrl(): Promise<string> {
+        return (await ClientFunction(() => window.location.href))();
     }
 }

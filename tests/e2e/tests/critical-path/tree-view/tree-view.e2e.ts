@@ -10,9 +10,7 @@ import { Common } from '../../../helpers/common';
 import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
-const common = new Common();
-
-const keyNameFilter = `keyName${common.generateWord(10)}`;
+const keyNameFilter = `keyName${Common.generateWord(10)}`;
 
 fixture `Tree view verifications`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -30,7 +28,7 @@ test('Verify that user can see that "Tree view" mode is enabled state is saved w
     await t.expect(browserPage.treeViewArea.exists).notOk('The tree view is displayed', { timeout: 10000 });
 
     await t.click(browserPage.treeViewButton);
-    await common.reloadPage();
+    await browserPage.reloadPage();
     // Verify that "Tree view" mode enabled state is saved
     await t.expect(browserPage.treeViewArea.exists).ok('The tree view is not displayed');
 

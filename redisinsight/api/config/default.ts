@@ -39,6 +39,7 @@ export default {
   },
   server: {
     env: 'development',
+    listenInterface: process.env.RI_HOSTNAME ?? '0.0.0.0',
     port: 5000,
     docPrefix: 'api/docs',
     globalPrefix: 'api',

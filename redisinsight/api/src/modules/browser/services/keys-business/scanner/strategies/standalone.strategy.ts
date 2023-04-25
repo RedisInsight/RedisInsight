@@ -50,7 +50,7 @@ export class StandaloneStrategy extends AbstractStrategy {
       const keyName = Buffer.from(unescapeRedisGlob(match));
       node.cursor = 0;
       node.scanned = isNull(node.total) ? 1 : node.total;
-      node.keys = await this.getKeysInfo(client, [keyName]);
+      node.keys = await this.getKeysInfo(client, [keyName], args.type);
       node.keys = node.keys.filter((key: GetKeyInfoResponse) => {
         if (key.ttl === -2) {
           return false;
@@ -68,7 +68,7 @@ export class StandaloneStrategy extends AbstractStrategy {
     if (node.keys.length && args.keysInfo) {
       node.keys = await this.getKeysInfo(client, node.keys, args.type);
     } else {
-      node.keys = node.keys.map((name) => ({ name }));
+      node.keys = node.keys.map((name) => ({ name, type: args.type || undefined }));
     }
 
     // workaround for "pika" databases

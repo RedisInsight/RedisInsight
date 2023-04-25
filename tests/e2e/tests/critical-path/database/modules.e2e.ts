@@ -26,7 +26,7 @@ fixture `Database modules`
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test
+test.only
     .meta({ rte: rte.standalone, env: env.web })('Verify that user can see DB modules on DB list page for Standalone DB', async t => {
         // Check module column on DB list page
         await t.expect(myRedisDatabasePage.moduleColumn.exists).ok('Module column not found');

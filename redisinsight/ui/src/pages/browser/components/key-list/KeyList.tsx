@@ -57,7 +57,6 @@ import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { resetStringValue } from 'uiSrc/slices/browser/string'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 
@@ -75,6 +74,7 @@ export interface Props {
     { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
   ) => void
   onDelete: () => void
+  commonFilterType: Nullable<KeyTypes>
 }
 
 const cellCache = new CellMeasurerCache({
@@ -84,7 +84,16 @@ const cellCache = new CellMeasurerCache({
 
 const KeyList = forwardRef((props: Props, ref) => {
   let wheelTimer = 0
-  const { selectKey, loadMoreItems, loading, keysState, scrollTopPosition, hideFooter, onDelete } = props
+  const {
+    selectKey,
+    loadMoreItems,
+    loading,
+    keysState,
+    scrollTopPosition,
+    hideFooter,
+    onDelete,
+    commonFilterType,
+  } = props
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
@@ -279,12 +288,12 @@ const KeyList = forwardRef((props: Props, ref) => {
     return newItems
   }
 
-  const getMetadata = (
+  const getMetadata = useCallback((
     startIndex: number,
     itemsInit: IKeyPropTypes[] = []
   ): void => {
     const isSomeNotUndefined = ({ type, size, length }: IKeyPropTypes) =>
-      !isUndefined(type) || !isUndefined(size) || !isUndefined(length)
+      (!commonFilterType && !isUndefined(type)) || !isUndefined(size) || !isUndefined(length)
 
     const firstEmptyItemIndex = findIndex(itemsInit, (item) => !isSomeNotUndefined(item))
     if (firstEmptyItemIndex === -1) return
@@ -293,12 +302,13 @@ const KeyList = forwardRef((props: Props, ref) => {
 
     dispatch(fetchKeysMetadata(
       emptyItems.map(({ name }) => name),
+      commonFilterType,
       controller.current?.signal,
       (loadedItems) =>
         onSuccessFetchedMetadata(startIndex + firstEmptyItemIndex, loadedItems),
       () => { rerender({}) }
     ))
-  }
+  }, [commonFilterType])
 
   const onSuccessFetchedMetadata = (
     startIndex: number,

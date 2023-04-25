@@ -27,7 +27,7 @@ services:
         './upload-custom-plugins.sh',
     ]
     command: [
-        './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '200',
+        './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
         '--',
         'npx', 'yarn', 'test:chrome:ci'
     ]

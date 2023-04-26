@@ -50,6 +50,7 @@ export default {
     contentUri: '/static/content',
     defaultPluginsUri: '/static/plugins',
     pluginsAssetsUri: '/static/resources/plugins',
+    base: process.env.RI_BASE || '/',
     secretStoragePassword: process.env.SECRET_STORAGE_PASSWORD,
     tls: process.env.SERVER_TLS ? process.env.SERVER_TLS === 'true' : true,
     tlsCert: process.env.SERVER_TLS_CERT,

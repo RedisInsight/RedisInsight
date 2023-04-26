@@ -37,3 +37,5 @@ export const prepareTutorialDataFileUrlFromMd = (nodeUrl: string, mdPath: string
   const pathUrl = new URL(mdPath, RESOURCES_BASE_URL)
   return new URL(nodeUrl, pathUrl).toString()
 }
+
+export const getFileNameFromPath = (path: string): string => path.split('/').pop() || ''

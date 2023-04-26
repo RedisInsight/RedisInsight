@@ -10,31 +10,32 @@ const TUTORIAL_PATH = 'static/custom-tutorials/tutorial-id'
 
 const testCases = [
   {
-    value: 'redis-upload:[../../../_data/strings.txt] Upload data',
+    lang: 'redis-upload:[../../../_data/strings.txt]',
     path: `${TUTORIAL_PATH}/lvl1/lvl2/lvl3/intro.md`,
-    label: 'Upload data',
+    meta: 'Upload data',
     resultPath: `/${TUTORIAL_PATH}/_data/strings.txt`
   },
   {
-    value: 'redis-upload:[/_data/strings.txt] Upload data',
+    lang: 'redis-upload:[/_data/s t rings.txt]',
     path: `${TUTORIAL_PATH}/lvl1/lvl2/lvl3/intro.md`,
-    label: 'Upload data',
-    resultPath: `/${TUTORIAL_PATH}/_data/strings.txt`
+    meta: 'Upload data',
+    resultPath: `/${TUTORIAL_PATH}/_data/s t rings.txt`
   },
   {
-    value: 'redis-upload:[https://somesite.test/image.png] Upload data',
+    lang: 'redis-upload:[https://somesite.test/image.png]',
     path: `${TUTORIAL_PATH}/lvl1/lvl2/lvl3/intro.md`,
-    label: 'Upload data',
+    meta: 'Upload data',
     resultPath: '/image.png',
   },
 ]
 
 describe('remarkRedisUpload', () => {
   testCases.forEach((tc) => {
-    it(`should return ${tc.resultPath} + ${tc.label} for url:${tc.value}, path: ${tc.path} `, () => {
+    it(`should return ${tc.resultPath} + ${tc.meta} for ${tc.lang} ${tc.meta}`, () => {
       const node = {
-        type: 'inlineCode',
-        value: tc.value,
+        type: 'code',
+        lang: tc.lang,
+        meta: tc.meta
       };
 
       // mock implementation
@@ -46,7 +47,7 @@ describe('remarkRedisUpload', () => {
       expect(node).toEqual({
         ...node,
         type: 'html',
-        value: getValue(tc.label, tc.resultPath),
+        value: getValue(tc.meta, tc.resultPath),
       })
     })
   })

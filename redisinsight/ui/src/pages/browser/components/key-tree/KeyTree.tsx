@@ -15,8 +15,9 @@ import { constructKeysToTree } from 'uiSrc/helpers'
 import VirtualTree from 'uiSrc/components/virtual-tree'
 import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
-import { bufferToString } from 'uiSrc/utils'
+import { Nullable, bufferToString } from 'uiSrc/utils'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { KeyTypes } from 'uiSrc/constants'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import KeyTreeDelimiter from './KeyTreeDelimiter'
 
@@ -26,6 +27,7 @@ import styles from './styles.module.scss'
 export interface Props {
   keysState: KeysStoreData
   loading: boolean
+  commonFilterType: Nullable<KeyTypes>
   selectKey: ({ rowData }: { rowData: any }) => void
   loadMoreItems: (
     oldKeys: IKeyPropTypes[],
@@ -42,7 +44,7 @@ const parseKeyNames = (keys: GetKeyInfoResponse[]) =>
     ({ ...item, nameString: item.nameString ?? bufferToString(item.name) }))
 
 const KeyTree = forwardRef((props: Props, ref) => {
-  const { selectKey, loadMoreItems, loading, keysState, onDelete } = props
+  const { selectKey, loadMoreItems, loading, keysState, onDelete, commonFilterType } = props
 
   const firstPanelId = 'tree'
   const secondPanelId = 'keys'
@@ -213,6 +215,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
                       hideFooter
                       keysState={keyListState}
                       loading={loading || constructingTree}
+                      commonFilterType={commonFilterType}
                       selectKey={selectKey}
                       onDelete={onDelete}
                     />

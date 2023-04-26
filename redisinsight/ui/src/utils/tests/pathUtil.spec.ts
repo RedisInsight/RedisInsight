@@ -23,7 +23,7 @@ const testCases = [
   {
     url: '/_images/relative.png',
     path: '/unknown-path/lvl1/lvl2/lvl3/intro.md',
-    result: `${RESOURCES_BASE_URL}/unknown-path/lvl1/lvl2/lvl3/intro.md/_images/relative.png`,
+    result: `${RESOURCES_BASE_URL}unknown-path/lvl1/lvl2/lvl3/intro.md/_images/relative.png`,
   },
   {
     url: 'https://somesite.test/image.png',

@@ -1,4 +1,4 @@
-@import '@elastic/eui/src/global_styling/variables';
+@import "@elastic/eui/src/global_styling/variables";
 
 $animation-duration: 300ms;
 
@@ -114,9 +114,15 @@ $animation-duration: 300ms;
     margin-right: 16px;
   }
 
-  .text {
+  .text,
+  .link {
     font: normal normal 400 12px/14px Graphik, sans-serif !important;
     color: var(--recommendationColor) !important;
+  }
+
+  .link {
+    vertical-align: super;
+    padding-top: 2px;
   }
 }
 

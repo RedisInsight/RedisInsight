@@ -6,7 +6,7 @@ import {
   recommendationsSelector,
   setIsContentVisible
 } from 'uiSrc/slices/recommendations/recommendations'
-import { fireEvent, screen, cleanup, mockedStore, render, act } from 'uiSrc/utils/test-utils'
+import { fireEvent, screen, cleanup, mockedStore, render, act, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
 import { RECOMMENDATIONS_DATA_MOCK } from 'uiSrc/mocks/handlers/recommendations/recommendationsHandler'
@@ -161,7 +161,14 @@ describe('LiveTimeRecommendations', () => {
 
     render(<LiveTimeRecommendations />)
 
-    fireEvent.click(screen.getByTestId('footer-db-analysis-link'))
+    fireEvent.click(screen.getByTestId('footer-db-analysis-link'));
+
+    (async () => {
+      await waitForEuiPopoverVisible()
+    })()
+
+    fireEvent.click(screen.getByTestId('approve-insights-db-analysis-btn'))
+
     expect(pushMock).toHaveBeenCalledWith(Pages.databaseAnalysis('instanceId'))
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,

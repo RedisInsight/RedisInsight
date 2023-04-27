@@ -19,7 +19,7 @@ import cx from 'classnames'
 import { remove } from 'lodash'
 
 import { Pages } from 'uiSrc/constants'
-import { ANIMATION_INSIGHT_PANEL_MS } from 'uiSrc/constants/recommendations'
+import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE, ANIMATION_INSIGHT_PANEL_MS } from 'uiSrc/constants/recommendations'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import {
@@ -35,6 +35,8 @@ import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { IRecommendation, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
+import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
@@ -43,6 +45,7 @@ import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
+import PopoverRunAnalyze from './components/popover-run-analyze'
 import styles from './styles.module.scss'
 
 const recommendationsContent = _content as IRecommendationsStatic
@@ -50,7 +53,7 @@ const recommendationsContent = _content as IRecommendationsStatic
 const DELAY_TO_SHOW_ONBOARDING_MS = 500
 
 const LiveTimeRecommendations = () => {
-  const { id: connectedInstanceId = '', provider } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '', provider, connectionType } = useSelector(connectedInstanceSelector)
   const {
     loading,
     data: { recommendations, totalUnread },
@@ -59,9 +62,13 @@ const LiveTimeRecommendations = () => {
   } = useSelector(recommendationsSelector)
   const { items: guides } = useSelector(workbenchGuidesSelector)
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
-  const { showHiddenRecommendations: isShowHidden } = useSelector(appContextDbConfig)
+  const {
+    showHiddenRecommendations: isShowHidden,
+    treeViewDelimiter: delimiter = '',
+  } = useSelector(appContextDbConfig)
 
   const [isOpenInProgress, setIsOpenInProgress] = useState<boolean>(false)
+  const [isShowApproveRun, setIsShowApproveRun] = useState<boolean>(false)
 
   // To prevent duplication emit for FlyOut close event
   // https://github.com/elastic/eui/issues/3437
@@ -113,6 +120,7 @@ const LiveTimeRecommendations = () => {
 
   const handleClickDbAnalysisLink = () => {
     dispatch(setIsContentVisible(false))
+    dispatch(createNewAnalysis(connectedInstanceId, delimiter))
     history.push(Pages.databaseAnalysis(connectedInstanceId))
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
@@ -122,6 +130,7 @@ const LiveTimeRecommendations = () => {
         provider
       },
     })
+    setIsShowApproveRun(false)
   }
 
   const handleClose = () => {
@@ -285,13 +294,24 @@ const LiveTimeRecommendations = () => {
             <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
             <EuiText className={styles.text}>
               {'Run '}
-              <EuiLink
-                className={styles.text}
-                onClick={handleClickDbAnalysisLink}
-                data-testid="footer-db-analysis-link"
+              <PopoverRunAnalyze
+                isShowPopover={isShowApproveRun}
+                setIsShowPopover={setIsShowApproveRun}
+                onApproveClick={handleClickDbAnalysisLink}
+                popoverContent={
+                  connectionType === ConnectionType.Cluster
+                    ? ANALYZE_CLUSTER_TOOLTIP_MESSAGE
+                    : ANALYZE_TOOLTIP_MESSAGE
+                }
               >
-                Database Analysis
-              </EuiLink>
+                <EuiLink
+                  className={styles.link}
+                  onClick={() => setIsShowApproveRun(true)}
+                  data-testid="footer-db-analysis-link"
+                >
+                  Database Analysis
+                </EuiLink>
+              </PopoverRunAnalyze>
               {' to get more recommendations'}
             </EuiText>
           </EuiFlyoutFooter>

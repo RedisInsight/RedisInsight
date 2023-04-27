@@ -13,6 +13,7 @@ import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE } from 'uiSrc/constants/recommendations'
+import PopoverRunAnalyze from '../popover-run-analyze'
 
 import styles from './styles.module.scss'
 
@@ -38,6 +39,7 @@ const NoRecommendationsScreen = () => {
         provider
       },
     })
+    setIsShowInfo(false)
   }
 
   return (
@@ -55,47 +57,26 @@ const NoRecommendationsScreen = () => {
         and click on the new report in order to see the magic happens.
       </EuiText>
 
-      <EuiPopover
-        ownFocus
-        anchorPosition="upCenter"
-        isOpen={isShowInfo}
-        closePopover={() => setIsShowInfo(false)}
-        panelPaddingSize="m"
-        panelClassName={styles.panelPopover}
-        button={(
-          <EuiButton
-            fill
-            color="secondary"
-            size="s"
-            onClick={() => setIsShowInfo(true)}
-            data-testid="insights-db-analysis-link"
-          >
-            Analyze Database
-          </EuiButton>
-        )}
-        onClick={(e) => e.stopPropagation()}
+      <PopoverRunAnalyze
+        isShowPopover={isShowInfo}
+        setIsShowPopover={setIsShowInfo}
+        onApproveClick={handleClickDbAnalysisLink}
+        popoverContent={
+          connectionType === ConnectionType.Cluster
+            ? ANALYZE_CLUSTER_TOOLTIP_MESSAGE
+            : ANALYZE_TOOLTIP_MESSAGE
+        }
       >
-        <div className={styles.popover} data-testid="insights-db-analysis-popover">
-          <EuiText className={styles.popoverTitle}>Run database analysis</EuiText>
-          <EuiSpacer size="xs" />
-          <EuiText className={styles.popoverContent} color="subdued">
-            {connectionType === ConnectionType.Cluster ? ANALYZE_CLUSTER_TOOLTIP_MESSAGE : ANALYZE_TOOLTIP_MESSAGE}
-          </EuiText>
-          <EuiSpacer size="m" />
-          <EuiButton
-            aria-label="Analyze"
-            fill
-            data-testid="approve-insights-db-analysis-btn"
-            color="secondary"
-            iconSide="left"
-            onClick={handleClickDbAnalysisLink}
-            size="s"
-            className={styles.popoverApproveBtn}
-          >
-            Analyze
-          </EuiButton>
-        </div>
-      </EuiPopover>
+        <EuiButton
+          fill
+          color="secondary"
+          size="s"
+          onClick={() => setIsShowInfo(true)}
+          data-testid="insights-db-analysis-link"
+        >
+          Analyze Database
+        </EuiButton>
+      </PopoverRunAnalyze>
     </div>
   )
 }

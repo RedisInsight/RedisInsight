@@ -565,7 +565,7 @@ jobs:
             - release/redisstack
   macosx:
     macos:
-      xcode: 14.2.0
+      xcode: 14.3.0
     parameters:
       env:
         description: Build environment (stage || prod)

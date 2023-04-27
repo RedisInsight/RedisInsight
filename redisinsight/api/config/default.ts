@@ -39,6 +39,7 @@ export default {
   },
   server: {
     env: 'development',
+    listenInterface: process.env.RI_HOSTNAME ?? '0.0.0.0',
     port: 5000,
     docPrefix: 'api/docs',
     globalPrefix: 'api',
@@ -56,7 +57,7 @@ export default {
     tlsKey: process.env.SERVER_TLS_KEY,
     staticContent: !!process.env.SERVER_STATIC_CONTENT || false,
     buildType: process.env.BUILD_TYPE || 'ELECTRON',
-    appVersion: process.env.APP_VERSION || '2.22.0',
+    appVersion: process.env.APP_VERSION || '2.24.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],

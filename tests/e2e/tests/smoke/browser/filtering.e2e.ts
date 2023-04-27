@@ -1,11 +1,10 @@
 import { rte } from '../../../helpers/constants';
 import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const cliPage = new CliPage();
 const common = new Common();
 
 let keyName = `KeyForSearch*?[]789${common.generateWord(10)}`;
@@ -13,10 +12,10 @@ let keyName2 = common.generateWord(10);
 let randomValue = common.generateWord(10);
 const valueWithEscapedSymbols = 'KeyFor[A-G]*(';
 const searchedKeyName = 'KeyForSearch\\*\\?\\[]789';
-const searchedValueWithEscapedSymbols = 'KeyFor\\[A-G\\]\\*\\(';
+const searchedValueWithEscapedSymbols = 'KeyFor\\[A-G\\]\*\(';
 
 fixture `Filtering per key name in Browser page`
-    .meta({type: 'smoke', rte: rte.standalone})
+    .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -43,11 +42,11 @@ test('Verify that user can filter per exact key without using any patterns', asy
     keyName = `KeyForSearch*?[]789${randomValue}`;
 
     // Open CLI
-    await t.click(cliPage.cliExpandButton);
+    await t.click(browserPage.Cli.cliExpandButton);
     // Create new key for search
-    await t.typeText(cliPage.cliCommandInput, `APPEND ${keyName} 1`, { replace: true, paste: true });
+    await t.typeText(browserPage.Cli.cliCommandInput, `APPEND ${keyName} 1`, { replace: true, paste: true });
     await t.pressKey('enter');
-    await t.click(cliPage.cliCollapseButton);
+    await t.click(browserPage.Cli.cliCollapseButton);
     // Filter per exact key without using any patterns
     await browserPage.searchByKeyName(`${searchedKeyName}${randomValue}`);
     // Verify that key was found

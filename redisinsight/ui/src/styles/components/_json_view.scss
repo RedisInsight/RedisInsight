@@ -1,0 +1,44 @@
+.jsonViewer {
+  .__json {
+    &-pretty__,
+    &-pretty-error__ {
+      font: normal normal normal 13px/18px Graphik, sans-serif;
+      letter-spacing: -0.13px;
+      padding: 0;
+      background: transparent;
+      color: var(--euiTextSubduedColor);
+      margin-bottom: 0;
+      white-space: pre-wrap;
+    }
+
+    &-pretty-error__ {
+      white-space: normal;
+    }
+
+    &-key__ {
+      color: var(--jsonKeyNameColor);
+    }
+
+    &-value__ {
+      color: var(--jsonNumberColor);
+    }
+
+    &-string__ {
+      color: var(--jsonStringColor);
+    }
+
+    &-boolean__ {
+      color: var(--jsonBooleanColor);
+    }
+  }
+
+  &-collapsed {
+    .__json-pretty__ {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 100%;
+      overflow: hidden;
+      line-height: inherit;
+    }
+  }
+}

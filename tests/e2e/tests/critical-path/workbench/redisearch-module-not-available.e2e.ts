@@ -15,7 +15,7 @@ fixture `Redisearch module not available`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Delete database
@@ -25,5 +25,5 @@ test('Verify that user can see the information message that the RediSearch modul
     // Send command with 'FT.'
     await workbenchPage.sendCommandInWorkbench(commandForSend);
     // Verify the information message
-    await t.expect(await workbenchPage.commandExecutionResult.textContent).eql('Looks like RediSearch is not available', 'The information message');
+    await t.expect(await workbenchPage.commandExecutionResult.textContent).contains('Looks like RediSearch is not available', 'The information message');
 });

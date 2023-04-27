@@ -15,6 +15,8 @@ import { appServerInfoSelector, getServerInfo } from 'uiSrc/slices/app/info'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { getRedisCommands } from 'uiSrc/slices/app/redis-commands'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
+import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import Config from './Config'
 
 let store: typeof mockedStore
@@ -59,7 +61,9 @@ describe('Config', () => {
       processCliClient(),
       getRedisCommands(),
       getNotifications(),
-      getUserConfigSettings()
+      getWBGuides(),
+      getWBTutorials(),
+      getUserConfigSettings(),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
   })
@@ -89,6 +93,8 @@ describe('Config', () => {
       processCliClient(),
       getRedisCommands(),
       getNotifications(),
+      getWBGuides(),
+      getWBTutorials(),
       getUserConfigSettings(),
       setSettingsPopupState(true),
     ]

@@ -42,7 +42,7 @@ yarn --cwd "${RI_EXPLIAIN_DIR}" build
 mkdir -p "${PLUGINS_DIR}/ri-explain"
 cp -R "${RI_EXPLIAIN_DIR}/dist" "${RI_EXPLIAIN_DIR}/package.json" "${PLUGINS_DIR}/ri-explain"
 
-# Build clients-list plugin
+# Build clients-list and json plugin
 CLIENTS_LIST_DIR="./redisinsight/ui/src/packages/clients-list"
 yarn --cwd "${CLIENTS_LIST_DIR}"
 yarn --cwd "${CLIENTS_LIST_DIR}" build

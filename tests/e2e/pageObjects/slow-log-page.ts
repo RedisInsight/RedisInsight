@@ -1,6 +1,7 @@
 import { Selector, t } from 'testcafe';
+import { InstancePage } from './instance-page';
 
-export class SlowLogPage {
+export class SlowLogPage extends InstancePage {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.

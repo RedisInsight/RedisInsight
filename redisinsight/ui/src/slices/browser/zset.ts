@@ -16,7 +16,7 @@ import {
 } from 'apiSrc/modules/browser/dto'
 import {
   deleteKeyFromList,
-  deleteKeySuccess,
+  deleteSelectedKeySuccess,
   fetchKeyInfo,
   refreshKeyInfoAction,
   updateSelectedKeyRefreshTime,
@@ -389,7 +389,7 @@ export function deleteZSetMembers(
             )
           )
         } else {
-          dispatch(deleteKeySuccess())
+          dispatch(deleteSelectedKeySuccess())
           dispatch(deleteKeyFromList(key))
           dispatch(addMessageNotification(successMessages.DELETED_KEY(key)))
         }

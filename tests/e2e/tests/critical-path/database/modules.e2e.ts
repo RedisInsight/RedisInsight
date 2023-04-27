@@ -1,13 +1,13 @@
 import { Selector } from 'testcafe';
 import { rte, env } from '../../../helpers/constants';
 import { acceptLicenseTerms } from '../../../helpers/database';
-import { MyRedisDatabasePage, DatabaseOverviewPage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const databaseOverviewPage = new DatabaseOverviewPage();
+const browserPage = new BrowserPage();
 const common = new Common();
 
 const moduleNameList = ['RediSearch', 'RedisJSON', 'RedisGraph', 'RedisTimeSeries', 'RedisBloom', 'RedisGears', 'RedisAI'];
@@ -31,12 +31,13 @@ test
         // Check module column on DB list page
         await t.expect(myRedisDatabasePage.moduleColumn.exists).ok('Module column not found');
         // Verify that user can see the following sorting order: Search, JSON, Graph, TimeSeries, Bloom, Gears, AI for modules
-        const databaseLine = await myRedisDatabasePage.dbNameList.withExactText(ossStandaloneRedisearch.databaseName).parent('tr');
-        const moduleIcons = await databaseLine.find('[data-testid^=Redi]');
-        const numberOfIcons = await moduleIcons.count;
-        for (let i = 0; i < numberOfIcons; i++) {
-            const moduleName = await moduleIcons.nth(i).getAttribute('data-testid');
-            await t.expect(moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon not found');
+        const databaseLine = myRedisDatabasePage.dbNameList.withExactText(ossStandaloneRedisearch.databaseName).parent('tr');
+        await t.expect(databaseLine.visible).ok('Database not found in db list');
+        const moduleIcons = databaseLine.find('[data-testid^=Redi]');
+        const numberOfIcons = moduleIcons.count;
+        for (let i = 0; i < await numberOfIcons; i++) {
+            const moduleName = moduleIcons.nth(i).getAttribute('data-testid');
+            await t.expect(moduleName).eql(await moduleList[i].getAttribute('data-testid'), `${moduleName} icon not found`);
         }
         //Minimize the window to check quantifier
         await t.resizeWindow(1000, 700);
@@ -72,8 +73,8 @@ test
             await t.expect(moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon not found');
         }
         // Verify that if DB has more than 6 modules loaded, user can click on three dots and see other modules in the tooltip
-        await t.click(databaseOverviewPage.overviewMoreInfo);
+        await t.click(browserPage.OverviewPanel.overviewMoreInfo);
         for (let j = numberOfIcons; j < moduleNameList.length; j++) {
-            await t.expect(databaseOverviewPage.overviewTooltip.withText(moduleNameList[j]).visible).ok('Tooltip module not found');
+            await t.expect(browserPage.OverviewPanel.overviewTooltip.withText(moduleNameList[j]).visible).ok('Tooltip module not found');
         }
     });

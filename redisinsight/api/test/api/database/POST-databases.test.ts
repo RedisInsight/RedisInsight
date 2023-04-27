@@ -115,6 +115,65 @@ describe('POST /databases', () => {
     requirements('rte.type=STANDALONE', '!rte.ssh');
     describe('NO AUTH', function () {
       requirements('!rte.tls', '!rte.pass');
+      describe('Analytics', () => {
+        requirements('rte.serverType=local');
+
+        it('Create standalone without pass and tls, and send analytics event for it', async () => {
+          const dbName = constants.getRandomString();
+
+          await validateApiCall({
+            endpoint,
+            statusCode: 201,
+            data: {
+              name: dbName,
+              host: constants.TEST_REDIS_HOST,
+              port: constants.TEST_REDIS_PORT,
+            },
+            responseSchema,
+            responseBody: {
+              name: dbName,
+              host: constants.TEST_REDIS_HOST,
+              port: constants.TEST_REDIS_PORT,
+              username: null,
+              password: null,
+              connectionType: constants.STANDALONE,
+              new: true,
+            },
+            checkFn: async ({ body }) => {
+              // todo: find a way to test rest of the fields
+              await analytics.waitForEvent({
+                event: 'CONFIG_DATABASES_DATABASE_ADDED',
+                properties: {
+                  databaseId: body.id,
+                  connectionType: body.connectionType,
+                  provider: body.provider,
+                  useTLS: 'disabled',
+                  verifyTLSCertificate: 'disabled',
+                  useTLSAuthClients: 'disabled',
+                  useSNI: 'disabled',
+                  useSSH: 'disabled',
+                  version: rte.env.version,
+                  // numberOfKeys: 8,
+                  // numberOfKeysRange: '0 - 500 000',
+                  // totalMemory: 881632,
+                  // numberedDatabases: 16,
+                  // numberOfModules: 0,
+                  timeout: body.timeout / 1000,
+                  // RediSearch: { loaded: false },
+                  // RedisAI: { loaded: false },
+                  // RedisGraph: { loaded: false },
+                  // RedisGears: { loaded: false },
+                  // RedisBloom: { loaded: false },
+                  // RedisJSON: { loaded: false },
+                  // RedisTimeSeries: { loaded: false },
+                  // customModules: [],
+                  buildType: serverConfig.get('server').buildType,
+                },
+              });
+            },
+          });
+        });
+      });
       it('Create standalone without pass and tls', async () => {
         const dbName = constants.getRandomString();
 
@@ -135,38 +194,6 @@ describe('POST /databases', () => {
             password: null,
             connectionType: constants.STANDALONE,
             new: true,
-          },
-          checkFn: async ({ body }) => {
-            // todo: find a way to test rest of the fields
-            await analytics.waitForEvent({
-              event: 'CONFIG_DATABASES_DATABASE_ADDED',
-              properties: {
-                databaseId: body.id,
-                connectionType: body.connectionType,
-                provider: body.provider,
-                useTLS: 'disabled',
-                verifyTLSCertificate: 'disabled',
-                useTLSAuthClients: 'disabled',
-                useSNI: 'disabled',
-                useSSH: 'disabled',
-                version: rte.env.version,
-                // numberOfKeys: 8,
-                // numberOfKeysRange: '0 - 500 000',
-                // totalMemory: 881632,
-                // numberedDatabases: 16,
-                // numberOfModules: 0,
-                timeout: body.timeout / 1000,
-                // RediSearch: { loaded: false },
-                // RedisAI: { loaded: false },
-                // RedisGraph: { loaded: false },
-                // RedisGears: { loaded: false },
-                // RedisBloom: { loaded: false },
-                // RedisJSON: { loaded: false },
-                // RedisTimeSeries: { loaded: false },
-                // customModules: [],
-                buildType: serverConfig.get('server').buildType,
-              },
-            });
           },
         });
       });

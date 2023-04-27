@@ -44,7 +44,7 @@ test
             // Check that browser page was opened
             await t.expect(getPageUrl()).contains('browser', 'Browser page not opened');
             // Go to databases list
-            await t.click(myRedisDatabasePage.myRedisDBButton);
+            await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         }
     });
 test

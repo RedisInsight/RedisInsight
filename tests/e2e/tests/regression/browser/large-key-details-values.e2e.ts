@@ -1,13 +1,12 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, CliPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const common = new Common();
-const cliPage = new CliPage();
 
 const field = common.generateWord(20);
 const value = common.generateSentence(200);
@@ -33,8 +32,8 @@ test('Verify that user can click on a row to expand it if any of its cells conta
     const entryFieldLong = browserPage.streamEntryFields.nth(1).parent(1);
     const entryFieldSmall = browserPage.streamEntryFields.nth(0).parent(1);
     // Create stream key
-    await cliPage.sendCommandInCli(`XADD ${keyName} * '${field}' '${value}'`);
-    await cliPage.sendCommandInCli(`XADD ${keyName} * '${field}' '${value1}'`);
+    await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * '${field}' '${value}'`);
+    await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * '${field}' '${value1}'`);
     // Open key details
     await browserPage.openKeyDetails(keyName);
     // Remember height of the cells

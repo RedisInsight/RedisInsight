@@ -12,12 +12,15 @@ export class BulkActionsPage {
     //-------------------------------------------------------------------------------------------
     //BUTTONS
     bulkDeleteTooltipIcon = Selector('[data-testid=bulk-delete-tooltip]');
-    deleteButton = Selector('[data-testid=bulk-action-warning-btn]');
+    actionButton = Selector('[data-testid=bulk-action-warning-btn]');
     bulkApplyButton = Selector('[data-testid=bulk-action-apply-btn]');
     bulkStopButton = Selector('[data-testid=bulk-action-stop-btn]');
     bulkStartAgainButton = Selector('[data-testid=bulk-action-start-again-btn]');
     bulkCancelButton = Selector('[data-testid=bulk-action-cancel-btn]');
     bulkClosePanelButton = Selector('[data-testid=bulk-close-panel]');
+    bulkUpdateTab = Selector('[data-testid=bulk-action-tab-upload]');
+    bulkActionStartNewButton = Selector('[data-testid=bulk-action-start-new-btn]');
+    removeFileBtn = Selector('[aria-label="Clear selected files"]');
     //TEXT
     infoFilter = Selector('[data-testid=bulk-actions-info-filter]');
     infoSearch = Selector('[data-testid=bulk-actions-info-search]');
@@ -28,18 +31,34 @@ export class BulkActionsPage {
     bulkStatusStopped = Selector('[data-testid=bulk-status-stopped]');
     bulkStatusCompleted = Selector('[data-testid=bulk-status-completed]');
     bulkDeleteCompletedSummary = Selector('[data-testid=bulk-delete-completed-summary]');
+    bulkUploadCompletedSummary = Selector('[data-testid=bulk-upload-completed-summary]');
     //CONTAINERS
     bulkActionsContainer = Selector('[data-testid=bulk-actions-content]');
     bulkActionsSummary = Selector('[data-testid=bulk-actions-info]');
     progressLine = Selector('[data-testid=progress-line]');
+    bulkUploadContainer = Selector('[data-testid=bulk-upload-container]');
+    // IMPORT
+    bulkUploadInput = Selector('[data-testid=bulk-upload-file-input]');
 
     /**
    * Open Bulk Actions and confirm deletion
    */
     async startBulkDelete(): Promise<void> {
+        // TODO remove dep from browser page
         await t
             .click(browserPage.bulkActionsButton)
-            .click(this.deleteButton)
+            .click(this.actionButton)
+            .click(this.bulkApplyButton);
+    }
+
+    /**
+     * Bulk Upload of file
+     * @param path Path to file to upload
+     */
+    async uploadFileInBulk(path: string): Promise<void> {
+        await t
+            .setFilesToUpload(this.bulkUploadInput, [path])
+            .click(this.actionButton)
             .click(this.bulkApplyButton);
     }
 }

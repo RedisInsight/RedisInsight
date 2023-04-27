@@ -1,13 +1,14 @@
-@import 'node_modules/@elastic/eui/src/global_styling/mixins/helpers';
-@import 'node_modules/@elastic/eui/src/global_styling/index';
+@charset "UTF-8";
+@import "../../node_modules/@elastic/eui/src/global_styling/mixins/helpers";
+@import "../../node_modules/@elastic/eui/src/global_styling/index";
 
 * div,
 * span {
-  font-family: 'Graphik', sans-serif !important;
+  font-family: "Graphik", sans-serif !important;
 }
 
 html {
-  background-color: var(--euiPageBackgroundColor) !important;
+  background-color: var(--wbRunResultsBg) !important;
 }
 
 .container {
@@ -24,23 +25,9 @@ html {
   letter-spacing: 0;
   color: var(--textColorShade);
 
-  background-color: var(--euiPageBackgroundColor);
+  background-color: var(--wbRunResultsBg);
 
   z-index: 10;
-
-}
-.responseFail {
-  display: inline-block;
-  padding: 16px 20px;
-  color: var(--euiColorColorDanger) !important;
-  font-size: 14px;
-  word-break: break-word;
-}
-
-.matched {
-  color: var(--euiColorFullShade);
-  padding-bottom: 12px;
-  font: normal normal 500 13px/19px;
 }
 
 .table,
@@ -50,7 +37,7 @@ html {
 
     // hide <PerPageComponent/>  option {hidePerPageOptions} doesn't work
     // with dynamic changing prop "pagination" for In-memory table
-    .euiFlexItem:first-child{
+    .euiFlexItem:first-child {
       display: none;
     }
   }
@@ -97,4 +84,14 @@ html {
   @media only screen and (max-width: 767px) {
     margin: 0;
   }
+}
+
+.cli-container {
+  padding-left: 20px;
+  border-top: none;
+}
+
+.cli-output-response-fail,
+.cli-output-response-success {
+  font-family: Inconsolata, serif !important;
 }

@@ -54,7 +54,7 @@ test('Verify that user can see message "No notifications to display." when no me
     await t.expect(notificationPage.notificationCenterPanel.child().withExactText('Notification Center').visible).ok('Panel is opened');
     await t.expect(notificationPage.emptyNotificationMessage.child().withExactText('No notifications to display.').visible).ok('Empty message is displayed');
     // Verify that user can close notification center by clicking on any other area of the application
-    await t.click(myRedisDatabasePage.myRedisDBButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     await t.expect(notificationPage.notificationCenterPanel.visible).notOk('Panel is not displayed');
     // Wait for new notification
     await t.expect(notificationPage.notificationPopup.exists).ok('New notifications appear', { timeout: 35000 });
@@ -85,7 +85,7 @@ test('Verify that user can open notification center by clicking on icon and see 
         }
     }
     // Verify that as soon as user closes notification center, unread messages become read
-    await t.click(myRedisDatabasePage.myRedisDBButton); // Close notification center
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton); // Close notification center
     await t.expect(notificationPage.notificationBadge.exists).notOk('No unread messages badge');
     // Verify that next time when users open notification center, highlighting is not displayed for those messages that were unread previous center opening
     await t.click(notificationPage.notificationCenterButton); // Open notification center again

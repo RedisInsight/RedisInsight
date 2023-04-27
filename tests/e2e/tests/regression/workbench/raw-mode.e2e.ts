@@ -29,11 +29,11 @@ fixture `Workbench Raw mode`
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async t => {
         // Clear and delete database
-        await t.click(myRedisDatabasePage.browserButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
@@ -62,7 +62,7 @@ test
         await common.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .after(async() => {
         // Clear and delete database
@@ -76,10 +76,10 @@ test
         await workbenchPage.sendCommandInWorkbench(commandsForSend[1]);
         await workbenchPage.checkWorkbenchCommandResult(commandsForSend[1], `"${unicodeValue}"`);
         // Go to another database
-        await t.click(myRedisDatabasePage.myRedisDBButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         // Verify that user can see saved Raw mode state after re-connection to another DB
         await workbenchPage.sendCommandInWorkbench(commandsForSend[1]);
         await workbenchPage.checkWorkbenchCommandResult(commandsForSend[1], `"${unicodeValue}"`);
@@ -91,7 +91,7 @@ test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         // Go to Workbench page
-        await t.click(myRedisDatabasePage.workbenchButton);
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .after(async t => {
         // Drop index, documents and database

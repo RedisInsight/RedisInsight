@@ -37,6 +37,10 @@ import { IRecommendation, IRecommendationsStatic } from 'uiSrc/slices/interfaces
 import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
+import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
+import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
+import { appFeatureHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
+import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
 
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
@@ -66,6 +70,8 @@ const LiveTimeRecommendations = () => {
     showHiddenRecommendations: isShowHidden,
     treeViewDelimiter: delimiter = '',
   } = useSelector(appContextDbConfig)
+  const { features } = useSelector(appFeatureHighlightingSelector)
+  const { liveRecommendations: liveRecommendationsHighlighting } = getHighlightingFeatures(features)
 
   const [isOpenInProgress, setIsOpenInProgress] = useState<boolean>(false)
   const [isShowApproveRun, setIsShowApproveRun] = useState<boolean>(false)
@@ -252,25 +258,34 @@ const LiveTimeRecommendations = () => {
           delay={isContentVisible ? DELAY_TO_SHOW_ONBOARDING_MS : 0}
           rerenderWithDelay={isContentVisible}
         >
-          <div
-            className={styles.inner}
-            role="button"
-            tabIndex={0}
-            onKeyDown={() => {}}
-            onClick={toggleContent}
-            data-testid="recommendations-trigger"
+          <HighlightedFeature
+            tooltipPosition="left"
+            onClick={() => dispatch(removeFeatureFromHighlighting('liveRecommendations'))}
+            isHighlight={liveRecommendationsHighlighting}
+            title={BUILD_FEATURES?.liveRecommendations?.title}
+            content={BUILD_FEATURES?.liveRecommendations?.content}
+            type={BUILD_FEATURES?.liveRecommendations?.type}
           >
-            {isHighlighted && !isContentVisible
-              ? <TriggerActiveIcon className={styles.triggerIcon} />
-              : <TriggerIcon className={styles.triggerIcon} />}
-            <EuiText className={cx(
-              styles.triggerText,
-              { [styles.triggerHighlighted]: isHighlighted && !isContentVisible }
-            )}
+            <div
+              className={styles.inner}
+              role="button"
+              tabIndex={0}
+              onKeyDown={() => {}}
+              onClick={toggleContent}
+              data-testid="recommendations-trigger"
             >
-              Insights
-            </EuiText>
-          </div>
+              {isHighlighted && !isContentVisible
+                ? <TriggerActiveIcon className={styles.triggerIcon} />
+                : <TriggerIcon className={styles.triggerIcon} />}
+              <EuiText className={cx(
+                styles.triggerText,
+                { [styles.triggerHighlighted]: isHighlighted && !isContentVisible }
+              )}
+              >
+                Insights
+              </EuiText>
+            </div>
+          </HighlightedFeature>
         </OnboardingTour>
       </div>
       {isContentVisible && (

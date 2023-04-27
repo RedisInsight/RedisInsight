@@ -10,9 +10,9 @@ interface BuildHighlightingFeature {
 }
 
 export const BUILD_FEATURES: Record<string, BuildHighlightingFeature> = {
-  bulkUpload: {
+  liveRecommendations: {
     type: 'tooltip',
-    title: (<span><i>New:</i> Bulk Upload</span>),
-    content: 'Upload your data in bulk from a file.',
+    title: 'Insights for your database',
+    content: 'Optimize performance and memory usage, enhance the security of your Redis or Redis Stack database with our Insights!',
   }
 } as const

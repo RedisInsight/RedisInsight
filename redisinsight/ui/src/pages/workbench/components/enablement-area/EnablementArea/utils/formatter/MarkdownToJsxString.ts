@@ -7,6 +7,7 @@ import { visit } from 'unist-util-visit'
 
 import { IFormatter, IFormatterConfig } from './formatter.interfaces'
 import { rehypeLinks } from '../transform/rehypeLinks'
+import { remarkRedisUpload } from '../transform/remarkRedisUpload'
 import { remarkRedisCode } from '../transform/remarkRedisCode'
 import { remarkImage } from '../transform/remarkImage'
 
@@ -17,6 +18,7 @@ class MarkdownToJsxString implements IFormatter {
       unified()
         .use(remarkParse)
         .use(remarkGfm) // support GitHub Flavored Markdown
+        .use(remarkRedisUpload, path) // Add custom component for redis-upload code block
         .use(remarkRedisCode) // Add custom component for Redis code block
         .use(remarkImage, path) // Add custom component for Redis code block
         .use(remarkRehype, { allowDangerousHtml: true }) // Pass raw HTML strings through.

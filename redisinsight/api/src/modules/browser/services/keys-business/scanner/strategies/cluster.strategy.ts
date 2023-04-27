@@ -1,7 +1,6 @@
 import { toNumber, omit, isNull } from 'lodash';
-import * as isGlob from 'is-glob';
 import config from 'src/utils/config';
-import { unescapeGlob } from 'src/utils';
+import { isRedisGlob, unescapeRedisGlob } from 'src/utils';
 import {
   BrowserToolClusterService,
 } from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
@@ -46,8 +45,8 @@ export class ClusterStrategy extends AbstractStrategy {
     const settings = await this.settingsService.getAppSettings('1');
     await this.calculateNodesTotalKeys(nodes);
 
-    if (!isGlob(match, { strict: false })) {
-      const keyName = Buffer.from(unescapeGlob(match));
+    if (!isRedisGlob(match)) {
+      const keyName = Buffer.from(unescapeRedisGlob(match));
       nodes.forEach((node) => {
         // eslint-disable-next-line no-param-reassign
         node.cursor = 0;

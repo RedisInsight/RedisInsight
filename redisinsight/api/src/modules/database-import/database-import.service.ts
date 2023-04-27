@@ -37,6 +37,7 @@ export class DatabaseImportService {
     ['host', ['host']],
     ['port', ['port']],
     ['db', ['db']],
+    ['provider', ['provider']],
     ['isCluster', ['cluster']],
     ['type', ['type']],
     ['connectionType', ['connectionType']],

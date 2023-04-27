@@ -6,9 +6,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { isNull, isNaN } from 'lodash';
-import * as isGlob from 'is-glob';
 import config from 'src/utils/config';
-import { catchAclError, catchTransactionError, unescapeGlob } from 'src/utils';
+import {
+  catchAclError, catchTransactionError, isRedisGlob, unescapeRedisGlob,
+} from 'src/utils';
 import {
   AddMembersToZSetDto,
   CreateZSetWithExpireDto,
@@ -269,8 +270,8 @@ export class ZSetBusinessService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      if (dto.match && !isGlob(dto.match, { strict: false })) {
-        const member = unescapeGlob(dto.match);
+      if (dto.match && !isRedisGlob(dto.match)) {
+        const member = unescapeRedisGlob(dto.match);
         result.nextCursor = 0;
         const score = await this.browserTool.execCommand(
           clientMetadata,

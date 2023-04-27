@@ -56,7 +56,7 @@ const BulkDeleteSummary = () => {
           processed={processed}
           failed={failed}
           duration={duration}
-          data-testid="bulk-delete-competed-summary"
+          data-testid="bulk-delete-completed-summary"
         />
       )}
     </div>

@@ -18,6 +18,7 @@ import {
 import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 
 import BulkUpload from './BulkUpload'
 import BulkDelete from './BulkDelete'
@@ -41,16 +42,13 @@ const BulkActions = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    let matchValue = '*'
-    if (search !== '*' && !!search) {
-      matchValue = getMatchType(search)
-    }
     sendEventTelemetry({
       event: TelemetryEvent.BULK_ACTIONS_OPENED,
       eventData: {
         databaseId: instanceId,
         filterType: filter,
-        match: matchValue,
+        match: (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH,
+        action: type
       }
     })
   }, [])
@@ -71,7 +69,7 @@ const BulkActions = (props: Props) => {
     }
 
     if (type === BulkActionsType.Delete) {
-      eventData.search = search
+      eventData.match = (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH
       eventData.filterType = filter
     }
 

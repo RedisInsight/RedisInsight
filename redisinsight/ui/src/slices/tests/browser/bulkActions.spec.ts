@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash'
+import { AxiosError } from 'axios'
 import { BulkActionsType } from 'uiSrc/constants'
 import reducer, {
   bulkActionsSelector,
@@ -22,6 +23,7 @@ import reducer, {
 } from 'uiSrc/slices/browser/bulkActions'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 let store: typeof mockedStore
 
@@ -433,6 +435,7 @@ describe('bulkActions slice', () => {
         // Assert
         const expectedActions = [
           bulkUpload(),
+          addErrorNotification(responsePayload as AxiosError),
           bulkUploadFailed(errorMessage),
         ]
         expect(store.getActions()).toEqual(expectedActions)

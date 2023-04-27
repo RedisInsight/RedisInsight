@@ -140,7 +140,8 @@ describe('BulkActions', () => {
         eventData: {
           databaseId: 'instanceId',
           match: '*',
-          filterType: 'hash'
+          filterType: 'hash',
+          action: 'delete'
         }
       });
 
@@ -153,7 +154,7 @@ describe('BulkActions', () => {
         eventData: {
           databaseId: 'instanceId',
           action: BulkActionsType.Delete,
-          search: '',
+          match: '*',
           filterType: 'hash'
         }
       })

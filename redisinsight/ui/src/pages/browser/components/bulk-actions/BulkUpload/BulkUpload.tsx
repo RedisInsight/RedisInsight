@@ -7,6 +7,7 @@ import {
   EuiPopover,
   EuiSpacer,
   EuiText,
+  EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
 
@@ -26,11 +27,15 @@ import BulkActionsInfo from 'uiSrc/pages/browser/components/bulk-actions/BulkAct
 import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkActionSummary'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
   onCancel: () => void
 }
+
+const MAX_MB_FILE = 100
+const MAX_FILE_SIZE = MAX_MB_FILE * 1024 * 1024
 
 const BulkUpload = (props: Props) => {
   const { onCancel } = props
@@ -40,6 +45,8 @@ const BulkUpload = (props: Props) => {
   const { succeed, processed, failed } = useSelector(bulkActionsUploadSummarySelector) ?? {}
 
   const [files, setFiles] = useState<Nullable<FileList>>(null)
+  const [isInvalid, setIsInvalid] = useState<boolean>(false)
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
 
   const isCompleted = status && status === BulkActionsStatus.Completed
@@ -48,6 +55,8 @@ const BulkUpload = (props: Props) => {
 
   const onStartAgain = () => {
     dispatch(setBulkUploadStartAgain())
+    setFiles(null)
+    setIsSubmitDisabled(true)
   }
 
   const handleUploadWarning = () => {
@@ -62,7 +71,11 @@ const BulkUpload = (props: Props) => {
   }
 
   const onFileChange = (files: Nullable<FileList>) => {
+    const isOutOfSize = (files?.[0]?.size || 0) > MAX_FILE_SIZE
+
     setFiles(files)
+    setIsInvalid(!!files?.length && isOutOfSize)
+    setIsSubmitDisabled(!files?.length || isOutOfSize)
   }
 
   const handleUpload = () => {
@@ -108,11 +121,17 @@ const BulkUpload = (props: Props) => {
             id="bulk-upload-file-input"
             initialPromptText="Select or drag and drop a file"
             className={styles.fileDrop}
+            isInvalid={isInvalid}
             onChange={onFileChange}
             display="large"
             data-testid="bulk-upload-file-input"
             aria-label="Select or drag and drop file"
           />
+          {isInvalid && (
+            <EuiTextColor color="danger" className={styles.errorFileMsg} data-testid="input-file-error-msg">
+              File should not exceed {MAX_MB_FILE} MB
+            </EuiTextColor>
+          )}
           <EuiSpacer size="l" />
         </div>
       ) : (
@@ -120,20 +139,16 @@ const BulkUpload = (props: Props) => {
           loading={loading}
           status={status}
           progress={progress}
-          title={(
-            <>
-              Upload with file
-              <EuiSpacer size="m" />
-              <div className="truncateText">{fileName}</div>
-            </>
-          )}
+          title="Upload with file"
+          subTitle={(<div className="truncateText" style={{ paddingTop: 6 }}>{fileName}</div>)}
         >
           <BulkActionSummary
+            type={BulkActionsType.Upload}
             succeed={succeed}
             processed={processed}
             failed={failed}
             duration={duration}
-            data-testid="bulk-upload-competed-summary"
+            data-testid="bulk-upload-completed-summary"
           />
         </BulkActionsInfo>
       )}
@@ -144,7 +159,7 @@ const BulkUpload = (props: Props) => {
           className={styles.cancelBtn}
           data-testid="bulk-action-cancel-btn"
         >
-          Cancel
+          {isProcessedBulkAction(status) ? 'Close' : 'Cancel'}
         </EuiButton>
         {!isCompleted ? (
           <EuiPopover
@@ -159,7 +174,7 @@ const BulkUpload = (props: Props) => {
                 fill
                 color="secondary"
                 onClick={handleUploadWarning}
-                disabled={!files?.length || loading}
+                disabled={isSubmitDisabled || loading}
                 isLoading={loading}
                 data-testid="bulk-action-warning-btn"
               >
@@ -193,6 +208,7 @@ const BulkUpload = (props: Props) => {
         ) : (
           <EuiButton
             fill
+            iconType="refresh"
             color="secondary"
             onClick={onStartAgain}
             data-testid="bulk-action-start-new-btn"

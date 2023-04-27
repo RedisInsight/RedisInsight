@@ -8,7 +8,7 @@ interface IMockedCommands {
   matchedCommand: string;
   argStr?: string;
   argsNamesWithEnumsMock?: string[];
-  argsNamesMock?: string[];
+  argsNamesMock?: (string | string[])[];
   complexityShortMock?: string;
 }
 
@@ -20,27 +20,15 @@ const mockedCommands: IMockedCommands[] = [
   {
     matchedCommand: 'xgroup',
     argStr:
-      'XGROUP [CREATE key groupname ID|$ [MKSTREAM]] [SETID key groupname ID|$] [DESTROY key groupname] [CREATECONSUMER key groupname consumername] [DELCONSUMER key groupname consumername]',
-    argsNamesWithEnumsMock: [
-      '[CREATE key groupname ID|$ [MKSTREAM]]',
-      '[SETID key groupname ID|$]',
-      '[DESTROY key groupname]',
-      '[CREATECONSUMER key groupname consumername]',
-      '[DELCONSUMER key groupname consumername]',
-    ],
-    argsNamesMock: [
-      '[CREATE key groupname id [MKSTREAM]]',
-      '[SETID key groupname id]',
-      '[DESTROY key groupname]',
-      '[CREATECONSUMER key groupname consumername]',
-      '[DELCONSUMER key groupname consumername]',
-    ],
+      'XGROUP',
+    argsNamesWithEnumsMock: [],
+    argsNamesMock: [],
     complexityShortMock: 'O(1)',
   },
   {
     matchedCommand: 'hset',
     argStr: 'HSET key field value [field value ...]',
-    argsNamesWithEnumsMock: ['key', 'field', 'value', '[field value ...]'],
+    argsNamesWithEnumsMock: ['key', 'field value [field value ...]'],
     argsNamesMock: ['key', 'field value'],
     complexityShortMock: 'O(1)',
   },
@@ -57,17 +45,11 @@ const mockedCommands: IMockedCommands[] = [
       'BITFIELD key [GET type offset] [SET type offset value] [INCRBY type offset increment] [OVERFLOW WRAP|SAT|FAIL]',
     argsNamesWithEnumsMock: [
       'key',
-      '[GET type offset]',
-      '[SET type offset value]',
-      '[INCRBY type offset increment]',
-      '[OVERFLOW WRAP|SAT|FAIL]',
+      '[GET encoding offset | [OVERFLOW WRAP | SAT | FAIL] SET encoding offset value | INCRBY encoding offset increment [GET encoding offset | [OVERFLOW WRAP | SAT | FAIL] SET encoding offset value | INCRBY encoding offset increment ...]]',
     ],
     argsNamesMock: [
       'key',
-      '[GET type offset]',
-      '[SET type offset value]',
-      '[INCRBY type offset increment]',
-      '[OVERFLOW WRAP|SAT|FAIL]',
+      '[GET encoding offset | [OVERFLOW WRAP | SAT | FAIL] SET encoding offset value | INCRBY encoding offset increment]',
     ],
     complexityShortMock: 'O(1)',
   },
@@ -76,22 +58,10 @@ const mockedCommands: IMockedCommands[] = [
     argStr:
       'CLIENT KILL [ip:port] [ID client-id] [TYPE normal|master|slave|pubsub] [USER username] [ADDR ip:port] [LADDR ip:port] [SKIPME yes/no]',
     argsNamesWithEnumsMock: [
-      '[ip:port]',
-      '[ID client-id]',
-      '[TYPE normal|master|slave|pubsub]',
-      '[USER username]',
-      '[ADDR ip:port]',
-      '[LADDR ip:port]',
-      '[SKIPME yes/no]',
+      'ip:port | [ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] [[ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] ...]',
     ],
     argsNamesMock: [
-      '[ip:port]',
-      '[ID client-id]',
-      '[TYPE normal|master|slave|pubsub]',
-      '[USER username]',
-      '[ADDR ip:port]',
-      '[LADDR ip:port]',
-      '[SKIPME yes/no]',
+      'ip:port | [ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] [[ID client-id] | [TYPE NORMAL | MASTER | SLAVE | REPLICA | PUBSUB] | [USER username] | [ADDR ip:port] | [LADDR ip:port] | [SKIPME YES | NO] ...]',
     ],
     complexityShortMock: 'O(N)',
   },
@@ -100,14 +70,11 @@ const mockedCommands: IMockedCommands[] = [
     argStr: 'GEOADD key [NX|XX] [CH] longitude latitude member [longitude latitude member ...]',
     argsNamesWithEnumsMock: [
       'key',
-      '[NX|XX]',
+      '[NX | XX]',
       '[CH]',
-      'longitude',
-      'latitude',
-      'member',
-      '[longitude latitude member ...]',
+      'longitude latitude member [longitude latitude member ...]',
     ],
-    argsNamesMock: ['key', '[condition]', '[change]', 'longitude latitude member'],
+    argsNamesMock: ['key', '[NX | XX]', '[CH]', 'longitude latitude member'],
     complexityShortMock: 'O(log(N))',
   },
   {
@@ -115,20 +82,18 @@ const mockedCommands: IMockedCommands[] = [
     argStr: 'ZADD key [NX|XX] [GT|LT] [CH] [INCR] score member [score member ...]',
     argsNamesWithEnumsMock: [
       'key',
-      '[NX|XX]',
-      '[GT|LT]',
+      '[NX | XX]',
+      '[GT | LT]',
       '[CH]',
       '[INCR]',
-      'score',
-      'member',
-      '[score member ...]',
+      'score member [score member ...]',
     ],
     argsNamesMock: [
       'key',
-      '[condition]',
-      '[comparison]',
-      '[change]',
-      '[increment]',
+      '[NX | XX]',
+      '[GT | LT]',
+      '[CH]',
+      '[INCR]',
       'score member',
     ],
     complexityShortMock: 'O(log(N))',
@@ -168,7 +133,7 @@ describe('generateArgs', () => {
         generatedName: argsNamesMock[i] ?? '',
       }))
 
-      const args = generateArgs(argsInit)
+      const args = generateArgs(ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.provider, argsInit)
 
       expect(args).toEqual(argsMocked)
     })
@@ -180,7 +145,7 @@ describe('generateArgName', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesWithEnumsMock }) => {
       const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? []
 
-      const generatedArgNames = generateArgsNames(args)
+      const generatedArgNames = generateArgsNames(ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.provider, args)
       expect(generatedArgNames).toEqual(argsNamesWithEnumsMock)
     })
   })
@@ -188,7 +153,11 @@ describe('generateArgName', () => {
     mockedCommands.forEach(({ matchedCommand = '', argsNamesMock }) => {
       const args = ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.arguments ?? []
 
-      const generatedArgNames = generateArgsNames(args, true)
+      const generatedArgNames = generateArgsNames(
+        ALL_REDIS_COMMANDS[matchedCommand?.toUpperCase()]?.provider,
+        args,
+        true,
+      )
       expect(generatedArgNames).toEqual(argsNamesMock)
     })
   })

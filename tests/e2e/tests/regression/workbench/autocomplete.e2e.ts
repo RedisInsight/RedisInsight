@@ -22,12 +22,12 @@ fixture `Autocomplete for entered commands`
 test('Verify that user can open the "read more" about the command by clicking on the ">" icon or "ctrl+space"', async t => {
     const command = 'HSET';
     const commandDetails = [
-        'HSET key data [data ...]',
+        'HSET key field value [field value ...]',
         'Creates or modifies the value of a field in a hash.',
         'Read more',
         'Arguments:',
         'required key',
-        'multiple data'
+        'multiple field value'
     ];
 
     // Type command

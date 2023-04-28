@@ -8,6 +8,7 @@ export interface IRecommendation {
   hide: boolean
   tutorial: string
   vote: Nullable<Vote>
+  params: IRecommendationParams
 }
 
 export interface IRecommendations {
@@ -39,4 +40,8 @@ export interface IRecommendationsStatic {
     tutorial?: string
     content?: IRecommendationContent[]
   }
+}
+
+export interface IRecommendationParams {
+  keys: string[]
 }

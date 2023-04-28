@@ -21,14 +21,14 @@ import cx from 'classnames'
 import { Nullable, findMarkdownPathByPath, Maybe } from 'uiSrc/utils'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { getRouterLinkProps } from 'uiSrc/services'
-import { RecommendationVoting } from 'uiSrc/components'
+import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { deleteLiveRecommendations, fetchRecommendationsAction, setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
-import { IRecommendationContent, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
+import { IRecommendationContent, IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
 
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as Icon } from 'uiSrc/assets/img/icons/recommendation.svg'
@@ -47,6 +47,7 @@ export interface IProps {
   hide: boolean
   tutorial?: string
   provider?: string
+  params: IRecommendationParams
 }
 
 const recommendationsContent = _content as IRecommendationsStatic
@@ -61,6 +62,7 @@ const Recommendation = ({
   tutorials,
   hide,
   provider,
+  params,
 }: IProps) => {
   const history = useHistory()
   const dispatch = useDispatch()
@@ -169,6 +171,14 @@ const Recommendation = ({
         <Icon />
       </div>
       {recommendationsContent[name]?.content?.map((item) => renderContentElement(item))}
+      {!!params?.keys && (
+        <RecommendationCopyComponent
+          keyName={params.keys[0]}
+          provider={provider}
+          telemetryEvent={recommendationsContent[name]?.telemetryEvent ?? name}
+          live
+        />
+      )}
       <div className={styles.actions}>
         <RecommendationVoting live id={id} vote={vote} name={name} containerClass={styles.votingContainer} />
         <EuiButton

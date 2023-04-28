@@ -8,10 +8,9 @@ import { keyTypes } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(20);
-let keyName2 = common.generateWord(20);
+let keyName = Common.generateWord(20);
+let keyName2 = Common.generateWord(20);
 const COMMAND_GROUP_SET = 'Set';
 
 fixture `Filtering per key name in Browser page`
@@ -26,7 +25,7 @@ fixture `Filtering per key name in Browser page`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
-    keyName = `KeyForSearch*${common.generateWord(10)}?[]789`;
+    keyName = `KeyForSearch*${Common.generateWord(10)}?[]789`;
     const searchedKeyName = 'key00000qwertyuiop[asdfghjkl';
     const searchedValue = 'KeyForSear*';
 
@@ -46,7 +45,7 @@ test('Verify that when user searches not existed key, he can see the standard sc
     await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was not found');
 });
 test('Verify that user can filter per pattern with ? (matches keys with any character (only one) instead of ?)', async t => {
-    const randomValue = common.generateWord(10);
+    const randomValue = Common.generateWord(10);
     const searchedValue = `?eyForSearch\\*\\?\\[]789${randomValue}`;
     keyName = `KeyForSearch*?[]789${randomValue}`;
 
@@ -64,8 +63,8 @@ test
         await browserPage.deleteKeyByName(keyName2);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter per pattern with [xy] (matches one symbol: either x or y))', async t => {
-        keyName = `KeyForSearch${common.generateWord(10)}`;
-        keyName2 = `KeyForFearch${common.generateWord(10)}`;
+        keyName = `KeyForSearch${Common.generateWord(10)}`;
+        keyName2 = `KeyForFearch${Common.generateWord(10)}`;
         const searchedValue1 = 'KeyFor[SF]*';
         const searchedValue2 = 'KeyFor[^F]*';
         const searchedValue3 = 'KeyFor[A-G]*';
@@ -94,7 +93,7 @@ test
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that when user clicks on “clear” control with no filter per key name applied all characters and filter per key type are removed, “clear” control is disappeared', async t => {
-        keyName = `KeyForSearch${common.generateWord(10)}`;
+        keyName = `KeyForSearch${Common.generateWord(10)}`;
 
         // Set filter by key type and filter per key name
         await browserPage.searchByKeyName(keyName);
@@ -143,7 +142,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can filter per exact key without using any patterns in DB with 10 millions of keys', async t => {
         // Create new key
-        keyName = `KeyForSearch-${common.generateWord(10)}`;
+        keyName = `KeyForSearch-${Common.generateWord(10)}`;
         await browserPage.addSetKey(keyName);
         // Search by key name
         await browserPage.searchByKeyName(keyName);

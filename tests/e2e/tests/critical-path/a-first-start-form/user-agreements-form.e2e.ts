@@ -6,12 +6,11 @@ import { env, rte } from '../../../helpers/constants';
 const userAgreementPage = new UserAgreementPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const settingsPage = new SettingsPage();
-const common = new Common();
 
 fixture `Agreements Verification`
     .meta({ type: 'critical_path', env: env.web, rte: rte.none })
     .page(commonUrl)
-    .requestHooks(common.mock)
+    .requestHooks(Common.mockSettingsResponse())
     .beforeEach(async t => {
         await t.maximizeWindow();
     });

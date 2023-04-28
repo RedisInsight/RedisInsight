@@ -13,13 +13,12 @@ import { BrowserActions } from '../../../common-actions/browser-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 const browserPage = new BrowserPage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const browserActions = new BrowserActions();
 
 let keys: string[];
-const keyName = common.generateWord(10);
+const keyName = Common.generateWord(10);
 const keysAmount = 5;
 const index = '1';
 
@@ -33,7 +32,7 @@ fixture `Database overview`
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneRedisearch, index);
         await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [db${index}]`);
-        keys = await common.createArrayWithKeyValue(keysAmount);
+        keys = await Common.createArrayWithKeyValue(keysAmount);
         await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
     })
     .afterEach(async t => {

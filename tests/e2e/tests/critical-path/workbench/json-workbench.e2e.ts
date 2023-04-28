@@ -7,9 +7,8 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 
-let indexName = common.generateWord(5);
+let indexName = Common.generateWord(5);
 
 fixture `JSON verifications at Workbench`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -27,7 +26,7 @@ fixture `JSON verifications at Workbench`
     });
 test
     .meta({ env: env.desktop })('Verify that user can see result in Table and Text view for JSON data types for FT.AGGREGATE command in Workbench', async t => {
-        indexName = common.generateWord(5);
+        indexName = Common.generateWord(5);
         const commandsForSend = [
             `FT.CREATE ${indexName} ON JSON SCHEMA $.user.name AS name TEXT $.user.tag AS country TAG`,
             'JSON.SET myDoc1 $ \'{"user":{"name":"John Smith","tag":"foo,bar","hp":1000, "dmg":150}}\'',

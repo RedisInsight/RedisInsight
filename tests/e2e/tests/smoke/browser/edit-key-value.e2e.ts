@@ -6,12 +6,11 @@ import { Common } from '../../../helpers/common';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
 const keyTTL = '2147476121';
 const keyValueBefore = 'ValueBeforeEdit!';
 const keyValueAfter = 'ValueAfterEdit!';
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 
 fixture `Edit Key values verification`
     .meta({ type: 'smoke', rte: rte.standalone })
@@ -25,7 +24,7 @@ fixture `Edit Key values verification`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can edit String value', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
 
     // Add string key
     await browserPage.addStringKey(keyName, keyValueBefore, keyTTL);
@@ -39,7 +38,7 @@ test('Verify that user can edit String value', async t => {
     await t.expect(keyValue).contains(keyValueAfter, 'Edited String value is incorrect');
 });
 test('Verify that user can edit Zset Key member', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     const scoreBefore = '5';
     const scoreAfter = '10';
 
@@ -56,7 +55,7 @@ test('Verify that user can edit Zset Key member', async t => {
 });
 test('Verify that user can edit Hash Key field', async t => {
     const fieldName = 'test';
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
 
     // Add Hash key
     await browserPage.addHashKey(keyName, keyTTL, fieldName, keyValueBefore);
@@ -70,7 +69,7 @@ test('Verify that user can edit Hash Key field', async t => {
     await t.expect(keyValue).contains(keyValueAfter, 'Edited Hash value is incorrect');
 });
 test('Verify that user can edit List Key element', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
 
     // Add List key
     await browserPage.addListKey(keyName, keyTTL, keyValueBefore);
@@ -87,7 +86,7 @@ test('Verify that user can edit JSON Key value', async t => {
     const jsonValueBefore = '{"name":"xyz"}';
     const jsonEditedValue = '"xyz test"';
     const jsonValueAfter = '{name:"xyz test"}';
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
 
     // Add JSON key with json object
     await browserPage.addJsonKey(keyName, jsonValueBefore, keyTTL);

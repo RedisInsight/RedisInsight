@@ -11,9 +11,8 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const keyTTL = '2147476121';
 const elements = ['1111listElement11111', '2222listElement22222', '33333listElement33333'];
 
@@ -29,7 +28,7 @@ fixture `List Key verification`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search List element by index', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     await browserPage.addListKey(keyName, keyTTL, elements[0]);
     // Add few elements to the List key
     await browserPage.addElementToList(elements[1]);
@@ -50,7 +49,7 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can remove only one element for List for Redis v. <6.2', async t => {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
         // Open CLI
         await t.click(browserPage.Cli.cliExpandButton);
         // Create new key

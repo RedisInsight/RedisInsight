@@ -9,12 +9,11 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(20);
-let consumerGroupName = common.generateWord(20);
-const keyField = common.generateWord(20);
-const keyValue = common.generateWord(20);
+let keyName = Common.generateWord(20);
+let consumerGroupName = Common.generateWord(20);
+const keyField = Common.generateWord(20);
+const keyValue = Common.generateWord(20);
 
 fixture `Consumer group`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -38,8 +37,8 @@ test('Verify that when user enter invalid Group Name the error message appears',
         'qwerty12344545',
         '16545941463181654594146318'
     ];
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
 
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
@@ -65,7 +64,7 @@ test('Verify that when user enter invalid Group Name the error message appears',
     await t.expect(browserPage.errorMessage.textContent).contains(error, 'The error message that the Group name already exists not displayed');
 });
 test('Verify that user can sort Consumer Group column: A>Z / Z>A(A>Z is default table sorting)', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     const consumerGroupNames = [
         'agroup',
         'bgroup',
@@ -91,8 +90,8 @@ test('Verify that user can sort Consumer Group column: A>Z / Z>A(A>Z is default 
     }
 });
 test('Verify that A>Z is default table sorting in Consumer column', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     const consumerNames = [
         'Alice',
         'Zalice'
@@ -120,8 +119,8 @@ test('Verify that A>Z is default table sorting in Consumer column', async t => {
     }
 });
 test('Verify that user can see error message if enter invalid last delivered ID', async t => {
-    keyName = common.generateWord(20);
-    const consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    const consumerGroupName = Common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,

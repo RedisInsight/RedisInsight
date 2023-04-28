@@ -1,14 +1,13 @@
 import { ClientFunction } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
 import { acceptLicenseTerms, addNewStandaloneDatabase, deleteDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage, AddRedisDatabasePage } from '../../../pageObjects';
+import { MyRedisDatabasePage, AddRedisDatabasePage, BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteAllDatabasesApi } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
-const common = new Common();
+const browsePage  = new BrowserPage();
 const getPageUrl = ClientFunction(() => window.location.href);
 const sourcePage = 'https://developer.redis.com/create/from-source/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
 const dockerPage = 'https://developer.redis.com/create/docker/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
@@ -22,7 +21,7 @@ fixture `Add database from welcome page`
         await acceptLicenseTerms();
         await deleteAllDatabasesApi();
         // Reload Page
-        await common.reloadPage();
+        await browsePage.reloadPage();
     });
 test
     .after(async() => {

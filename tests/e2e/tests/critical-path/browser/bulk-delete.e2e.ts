@@ -8,21 +8,20 @@ import { deleteAllKeysFromDB, populateDBWithHashes } from '../../../helpers/keys
 
 const browserPage = new BrowserPage();
 const bulkActionsPage = new BulkActionsPage();
-const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
-const keyNames = [common.generateWord(20), common.generateWord(20)];
+const keyNames = [Common.generateWord(20), Common.generateWord(20)];
 const dbParameters = { host: ossStandaloneRedisearch.host, port: ossStandaloneRedisearch.port };
-const keyToAddParameters = { keysCount: 10000, keyNameStartWith: 'hashKey'};
-const keyToAddParameters2 = { keysCount: 500000, keyNameStartWith: 'hashKey'};
+const keyToAddParameters = { keysCount: 10000, keyNameStartWith: 'hashKey' };
+const keyToAddParameters2 = { keysCount: 500000, keyNameStartWith: 'hashKey' };
 
 fixture `Bulk Delete`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
-        await browserPage.addHashKey(keyNames[0], '100000', common.generateWord(20), common.generateWord(20));
-        await browserPage.addSetKey(keyNames[1], '100000', common.generateWord(20));
+        await browserPage.addHashKey(keyNames[0], '100000', Common.generateWord(20), Common.generateWord(20));
+        await browserPage.addSetKey(keyNames[1], '100000', Common.generateWord(20));
     })
     .afterEach(async() => {
         // Clear and delete database
@@ -131,7 +130,7 @@ test('Verify that when bulk deletion is completed, status Action completed is di
 test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
-        await browserPage.addSetKey(keyNames[1], '100000', common.generateWord(20));
+        await browserPage.addSetKey(keyNames[1], '100000', Common.generateWord(20));
         // Add 10000 Hash keys
         await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters);
         // Filter by Hash keys

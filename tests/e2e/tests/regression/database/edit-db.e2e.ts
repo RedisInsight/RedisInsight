@@ -9,16 +9,15 @@ import { env, rte } from '../../../helpers/constants';
 import { Common } from '../../../helpers/common';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
-const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const browserPage = new BrowserPage();
 const database = Object.assign({}, ossStandaloneConfig);
 
-const previousDatabaseName = common.generateWord(20);
-const newDatabaseName = common.generateWord(20);
+const previousDatabaseName = Common.generateWord(20);
+const newDatabaseName = Common.generateWord(20);
 database.databaseName = previousDatabaseName;
-const keyName = common.generateWord(10);
+const keyName = Common.generateWord(10);
 
 fixture`List of Databases`
     .meta({ type: 'regression', rte: rte.standalone })

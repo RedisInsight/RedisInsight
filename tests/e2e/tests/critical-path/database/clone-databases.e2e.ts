@@ -10,11 +10,9 @@ import {
     deleteStandaloneDatabaseApi,
     discoverSentinelDatabaseApi
 } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 
 const addRedisDatabasePage = new AddRedisDatabasePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const common = new Common();
 const newOssDatabaseAlias = 'cloned oss cluster';
 
 fixture `Clone databases`
@@ -24,7 +22,7 @@ test
     .before(async() => {
         await acceptLicenseTerms();
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete databases
@@ -66,7 +64,7 @@ test
     .before(async() => {
         await acceptLicenseTerms();
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete database
@@ -99,12 +97,12 @@ test
         await acceptLicenseTerms();
         // Add Sentinel databases
         await discoverSentinelDatabaseApi(ossSentinelConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete all primary groups
         await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
         await clickOnEditDatabaseByName(ossSentinelConfig.masters[1].alias);

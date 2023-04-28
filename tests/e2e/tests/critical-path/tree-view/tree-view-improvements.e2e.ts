@@ -13,7 +13,6 @@ import { Common } from '../../../helpers/common';
 import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 let keyNames: string[];
 let keyName1: string;
 let keyName2: string;
@@ -32,9 +31,9 @@ test
         await browserPage.deleteKeysByNames(keyNames);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Tree view preselected folder', async t => {
-        keyName1 = common.generateWord(10); // used to create index name
-        keyName2 = common.generateWord(10); // used to create index name
-        keyNameSingle = common.generateWord(10);
+        keyName1 = Common.generateWord(10); // used to create index name
+        keyName2 = Common.generateWord(10); // used to create index name
+        keyNameSingle = Common.generateWord(10);
         keyNames = [`${keyName1}:1`, `${keyName1}:2`, `${keyName2}:1`, `${keyName2}:2`, keyNameSingle];
 
         const commands = [
@@ -121,9 +120,9 @@ test
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${index}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify tree view navigation for index based search', async t => {
-        keyName1 = common.generateWord(10); // used to create index name
-        keyName2 = common.generateWord(10); // used to create index name
-        const subFolder1 = common.generateWord(10); // used to create index name
+        keyName1 = Common.generateWord(10); // used to create index name
+        keyName2 = Common.generateWord(10); // used to create index name
+        const subFolder1 = Common.generateWord(10); // used to create index name
         keyNames = [`${keyName1}:${subFolder1}:1`, `${keyName1}:${subFolder1}:2`, `${keyName2}:1:1`, `${keyName2}:1:2`];
         const commands = [
             'flushdb',
@@ -158,9 +157,9 @@ test
         await browserPage.deleteKeysByNames(keyNames.slice(1));
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Search capability Refreshed Tree view preselected folder', async t => {
-        keyName1 = common.generateWord(10); // used to create index name
-        keyName2 = common.generateWord(10); // used to create index name
-        keyNameSingle = common.generateWord(10);
+        keyName1 = Common.generateWord(10); // used to create index name
+        keyName2 = Common.generateWord(10); // used to create index name
+        keyNameSingle = Common.generateWord(10);
         keyNames = [`${keyName1}:1`, `${keyName1}:2`, `${keyName2}:1`, `${keyName2}:2`, keyNameSingle];
         const commands = [
             'flushdb',

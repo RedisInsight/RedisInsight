@@ -13,10 +13,9 @@ import { Common } from '../../../helpers/common';
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const bulkActionsPage = new BulkActionsPage();
-const common = new Common();
 const createUserCommand = 'acl setuser noperm nopass on +@all ~* -dbsize';
-const keyName = common.generateWord(20);
-const createKeyCommand = `set ${keyName} ${common.generateWord(20)}`;
+const keyName = Common.generateWord(20);
+const createKeyCommand = `set ${keyName} ${Common.generateWord(20)}`;
 
 fixture `Handle user permissions`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -27,7 +26,7 @@ fixture `Handle user permissions`
         ossStandaloneNoPermissionsConfig.host = process.env.OSS_STANDALONE_BIG_HOST || 'oss-standalone-big';
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
-        await common.reloadPage();
+        await browserPage.reloadPage();
     })
     .afterEach(async() => {
         // Delete database

@@ -18,11 +18,10 @@ import { Common } from '../../../helpers/common';
 import { deleteOSSClusterDatabaseApi, deleteAllDatabasesByConnectionTypeApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const verifyCommandsInCli = async(): Promise<void> => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     // Open CLI
     await t.click(browserPage.Cli.cliExpandButton);
     // Add key from CLI
@@ -31,7 +30,7 @@ const verifyCommandsInCli = async(): Promise<void> => {
     // Check that the key is added
     await browserPage.searchByKeyName(keyName);
     const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
-    await common.waitForElementNotVisible(browserPage.loader);
+    await Common.waitForElementNotVisible(browserPage.loader);
     await t.expect(keyNameInTheList.exists).ok(`${keyName} key is not added`);
 };
 

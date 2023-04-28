@@ -72,10 +72,6 @@ test
             .expect(insightsPage.noRecommendationsScreen.exists).ok('No recommendations panel not displayed')
             .expect(insightsPage.noRecommendationsScreen.textContent).contains('Welcome toInsights', 'Welcome to recommendations text not displayed');
 
-        // Verify that user can redirect to Database Analysis page by clicking on button
-        await t.click(insightsPage.goToDbAnalysisButton);
-        await t.expect(memoryEfficiencyPage.noReportsText.visible).ok('Database analysis page not opened');
-
         await insightsPage.toggleInsightsPanel(false);
         // Go to 2nd database
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
@@ -186,3 +182,18 @@ test
         // Verify that duplicates are not displayed
         await t.expect(redisVersionRecomSelector.count).eql(1, `${redisVersionRecom} recommendation duplicated`);
     });
+test.only('Verify that if user clicks on the database analysis button, new message appears  all DB', async t => {
+    await insightsPage.toggleInsightsPanel(true);
+    await t.click(insightsPage.AnalyzeDatabaseButton);
+    await t.click(insightsPage.AnalyzeTooltipButton);
+    //Verify that user is navigated to DB Analysis page via Analyze button and new report is generated
+    await t.click(memoryEfficiencyPage.selectedReport);
+    await t.expect(memoryEfficiencyPage.reportItem.visible).ok('Database analysis page not opened');
+    await t.click(memoryEfficiencyPage.NavigationPanel.workbenchButton);
+    await insightsPage.toggleInsightsPanel(true);
+    await t.click(insightsPage.AnalyzeDatabaseLink);
+    await t.click(insightsPage.AnalyzeTooltipButton);
+    //Verify that user is navigated to DB Analysis page via Analyze link and new report is generated
+    await t.click(memoryEfficiencyPage.selectedReport);
+    await t.expect(memoryEfficiencyPage.reportItem.count).eql(2, 'report was not generated');
+});

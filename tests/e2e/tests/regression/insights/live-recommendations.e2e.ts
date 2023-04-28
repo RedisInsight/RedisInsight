@@ -182,17 +182,18 @@ test
         // Verify that duplicates are not displayed
         await t.expect(redisVersionRecomSelector.count).eql(1, `${redisVersionRecom} recommendation duplicated`);
     });
-test.only('Verify that if user clicks on the database analysis button, new message appears  all DB', async t => {
+//https://redislabs.atlassian.net/browse/RI-4413
+test('Verify that if user clicks on the Analyze button and link, the pop up with analyze button is displayed and new report is generated', async t => {
     await insightsPage.toggleInsightsPanel(true);
-    await t.click(insightsPage.AnalyzeDatabaseButton);
-    await t.click(insightsPage.AnalyzeTooltipButton);
+    await t.click(insightsPage.analyzeDatabaseButton);
+    await t.click(insightsPage.analyzeTooltipButton);
     //Verify that user is navigated to DB Analysis page via Analyze button and new report is generated
     await t.click(memoryEfficiencyPage.selectedReport);
     await t.expect(memoryEfficiencyPage.reportItem.visible).ok('Database analysis page not opened');
     await t.click(memoryEfficiencyPage.NavigationPanel.workbenchButton);
     await insightsPage.toggleInsightsPanel(true);
-    await t.click(insightsPage.AnalyzeDatabaseLink);
-    await t.click(insightsPage.AnalyzeTooltipButton);
+    await t.click(insightsPage.analyzeDatabaseLink);
+    await t.click(insightsPage.analyzeTooltipButton);
     //Verify that user is navigated to DB Analysis page via Analyze link and new report is generated
     await t.click(memoryEfficiencyPage.selectedReport);
     await t.expect(memoryEfficiencyPage.reportItem.count).eql(2, 'report was not generated');

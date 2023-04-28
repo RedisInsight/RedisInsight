@@ -12,15 +12,15 @@ export class InsightsPage {
     insightsBtn = Selector('[data-testid=recommendations-trigger]');
     showHiddenCheckBox = Selector('[data-testid=checkbox-show-hidden]');
     showHiddenButton = Selector('[data-testid=checkbox-show-hidden ] ~ label');
-    AnalyzeDatabaseButton = Selector('[data-testid=insights-db-analysis-link]');
-    AnalyzeTooltipButton = Selector('[data-testid=approve-insights-db-analysis-btn]');
+    analyzeDatabaseButton = Selector('[data-testid=insights-db-analysis-link]');
+    analyzeTooltipButton = Selector('[data-testid=approve-insights-db-analysis-btn]');
     // CONTAINERS
     insightsPanel = Selector('[data-testid=insights-panel]');
     noRecommendationsScreen = Selector('[data-testid=no-recommendations-screen]');
     redisVersionRecommendation = Selector('[data-testid=redisVersion-recommendation]');
     optimizeTimeSeriesRecommendation = Selector('[data-testid=RTS-recommendation]');
     //LINKS
-    AnalyzeDatabaseLink = Selector('[data-testid=footer-db-analysis-link]');
+    analyzeDatabaseLink = Selector('[data-testid=footer-db-analysis-link]');
     /**
      * Open/Close Insights Panel
      * @param state State of panel

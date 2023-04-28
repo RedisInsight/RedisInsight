@@ -86,7 +86,7 @@ describe('RedisClient', () => {
     });
     it('should emit message event (message source)', async () => {
       await redisClient['connect']();
-      const [id, message] = await new Promise((res) => {
+      const [id, message] = await new Promise((res: (value: any[]) => void) => {
         redisClient.on('message', (i, m) => res([i, m]));
         nodeClient.emit('message', 'channel-a', 'message-a');
       });
@@ -97,7 +97,7 @@ describe('RedisClient', () => {
     });
     it('should emit message event (pmessage source)', async () => {
       await redisClient['connect']();
-      const [id, message] = await new Promise((res) => {
+      const [id, message] = await new Promise((res: (value: any[]) => void) => {
         redisClient.on('message', (i, m) => res([i, m]));
         nodeClient.emit('pmessage', '*', 'channel-aa', 'message-aa');
       });

@@ -31,7 +31,6 @@ import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { IRecommendationContent, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
-import { ReactComponent as Icon } from 'uiSrc/assets/img/icons/recommendation.svg'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 
@@ -164,10 +163,7 @@ const Recommendation = ({
   }
 
   const recommendationContent = () => (
-    <EuiText className={styles.floatContent}>
-      <div className={styles.icon}>
-        <Icon />
-      </div>
+    <EuiText>
       {recommendationsContent[name]?.content?.map((item) => renderContentElement(item))}
       <div className={styles.actions}>
         <RecommendationVoting live id={id} vote={vote} name={name} containerClass={styles.votingContainer} />

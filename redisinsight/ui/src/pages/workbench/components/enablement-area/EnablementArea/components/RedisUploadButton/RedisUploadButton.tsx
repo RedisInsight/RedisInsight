@@ -30,13 +30,16 @@ const RedisUploadButton = ({ label, path }: Props) => {
   }, [pathsInProgress])
 
   const openPopover = () => {
-    setIsPopoverOpen(true)
-    sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_DATA_UPLOAD_CLICKED,
-      eventData: {
-        databaseId: instanceId
-      }
-    })
+    if (!isPopoverOpen) {
+      sendEventTelemetry({
+        event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_DATA_UPLOAD_CLICKED,
+        eventData: {
+          databaseId: instanceId
+        }
+      })
+    }
+
+    setIsPopoverOpen((v) => !v)
   }
 
   const uploadData = async () => {

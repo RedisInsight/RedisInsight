@@ -27,8 +27,12 @@
 
 .panelPopover {
   border-color: var(--euiColorPrimary) !important;
-  :global(.euiPopover__panelArrow:before) {
+  :global(.euiPopover__panelArrow--bottom:before) {
     border-bottom-color: var(--euiColorPrimary) !important;
+  }
+
+  :global(.euiPopover__panelArrow--top:before) {
+    border-top-color: var(--euiColorPrimary) !important;
   }
 }
 

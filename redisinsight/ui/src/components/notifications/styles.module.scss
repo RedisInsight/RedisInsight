@@ -24,8 +24,13 @@
   :global(.euiFlexItem:not(:last-child)) {
     margin-right: 14px !important;
   }
+
   .summaryValue {
     font-size: 14px;
     font-weight: 500;
+  }
+
+  .summaryLabel {
+    color: var(--euiToastLightColor) !important;
   }
 }

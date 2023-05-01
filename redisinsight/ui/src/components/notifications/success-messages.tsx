@@ -163,7 +163,7 @@ export default {
         <>
           Action completed
           <br />
-          <EuiText>Data uploaded with file: {formatLongName(fileName, 24, 5)}</EuiText>
+          <EuiText color="ghost">Data uploaded with file: {formatLongName(fileName, 24, 5)}</EuiText>
         </>
       ),
       message: (
@@ -175,20 +175,20 @@ export default {
           className={styles.summary}
         >
           <EuiFlexItem grow={false}>
-            <EuiText className={styles.summaryValue}>{numberWithSpaces(processed)}</EuiText>
-            <EuiText size="xs" color="subdued" className={styles.summaryLabel}>Commands Processed</EuiText>
+            <EuiText color="ghost" className={styles.summaryValue}>{numberWithSpaces(processed)}</EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>Commands Processed</EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiText className={styles.summaryValue}>{numberWithSpaces(succeed)}</EuiText>
-            <EuiText size="xs" color="subdued" className={styles.summaryLabel}>Success</EuiText>
+            <EuiText color="ghost" className={styles.summaryValue}>{numberWithSpaces(succeed)}</EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>Success</EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiText className={styles.summaryValue}>{numberWithSpaces(failed)}</EuiText>
-            <EuiText size="xs" color="subdued" className={styles.summaryLabel}>Errors</EuiText>
+            <EuiText color="ghost" className={styles.summaryValue}>{numberWithSpaces(failed)}</EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>Errors</EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiText className={styles.summaryValue}>{millisecondsFormat(data?.duration || 0, 'H:mm:ss.SSS')}</EuiText>
-            <EuiText size="xs" color="subdued" className={styles.summaryLabel}>Time Taken</EuiText>
+            <EuiText color="ghost" className={styles.summaryValue}>{millisecondsFormat(data?.duration || 0, 'H:mm:ss.SSS')}</EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>Time Taken</EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
       ),

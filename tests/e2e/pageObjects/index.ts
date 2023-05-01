@@ -12,7 +12,6 @@ import { MemoryEfficiencyPage } from './memory-efficiency-page';
 import { OverviewPage } from './overview-page';
 import { PubSubPage } from './pub-sub-page';
 import { SlowLogPage } from './slow-log-page';
-import { NotificationPage } from './notification-page';
 import { OnboardingPage } from './onboarding-page';
 import { BasePage } from './base-page';
 import { InstancePage } from './instance-page';
@@ -32,7 +31,6 @@ export {
     OverviewPage,
     PubSubPage,
     SlowLogPage,
-    NotificationPage,
     OnboardingPage,
     BasePage,
     InstancePage

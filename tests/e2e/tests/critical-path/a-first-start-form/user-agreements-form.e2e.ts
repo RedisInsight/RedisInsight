@@ -45,20 +45,20 @@ test('Verify that the Welcome page is opened after user agrees', async t => {
 });
 test('Verify that when user checks "Use recommended settings" option on EULA screen, all options (except Licence Terms) are checked', async t => {
     // Verify options unchecked before enabling Use recommended settings
-    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).eql('false', 'Enable Analytics switcher is checked');
-    await t.expect(await settingsPage.getNotificationsSwitcherValue()).eql('false', 'Enable Notifications switcher is checked');
+    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).notOk('Enable Analytics switcher is checked');
+    await t.expect(await settingsPage.getNotificationsSwitcherValue()).notOk('Enable Notifications switcher is checked');
     // Check Use recommended settings switcher
     await t.click(userAgreementPage.recommendedSwitcher);
     // Verify options checked after enabling Use recommended settings
-    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).eql('true', 'Enable Analytics switcher is unchecked');
-    await t.expect(await settingsPage.getNotificationsSwitcherValue()).eql('true', 'Enable Notifications switcher is unchecked');
-    await t.expect(await settingsPage.getEulaSwitcherValue()).eql('false', 'EULA switcher is checked');
+    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).ok('Enable Analytics switcher is unchecked');
+    await t.expect(await settingsPage.getNotificationsSwitcherValue()).ok('Enable Notifications switcher is unchecked');
+    await t.expect(await settingsPage.getEulaSwitcherValue()).notOk('EULA switcher is checked');
     // Uncheck Use recommended settings switcher
     await t.click(userAgreementPage.recommendedSwitcher);
     // Verify that when user unchecks "Use recommended settings" option on EULA screen, previous state of checkboxes for the options is applied
-    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).eql('false', 'Enable Analytics switcher is checked');
-    await t.expect(await settingsPage.getNotificationsSwitcherValue()).eql('false', 'Enable Notifications switcher is checked');
-    await t.expect(await settingsPage.getEulaSwitcherValue()).eql('false', 'EULA switcher is checked');
+    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).notOk('Enable Analytics switcher is checked');
+    await t.expect(await settingsPage.getNotificationsSwitcherValue()).notOk('Enable Notifications switcher is checked');
+    await t.expect(await settingsPage.getEulaSwitcherValue()).notOk('EULA switcher is checked');
 });
 test('Verify that if "Use recommended settings" is selected, and user unchecks any of the option, "Use recommended settings" is unchecked', async t => {
     // Check Use recommended settings switcher

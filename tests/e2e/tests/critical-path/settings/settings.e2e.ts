@@ -40,7 +40,7 @@ test('Verify that user can turn on/off Analytics in Settings in the application'
 
     const currentValue = await settingsPage.getAnalyticsSwitcherValue();
     // We sort the values so as not to be tied to the current setting
-    const equalValues = ['true', 'false'].sort((_, b) => b === currentValue ? -1 : 0);
+    const equalValues = [true, false].sort((_, b) => b === currentValue ? -1 : 0);
 
     for (const value of equalValues) {
         await t.click(settingsPage.switchAnalyticsOption);

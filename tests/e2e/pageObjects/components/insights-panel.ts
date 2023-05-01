@@ -1,13 +1,7 @@
 import { Selector, t } from 'testcafe';
-import { RecommendationIds } from '../helpers/constants';
+import { RecommendationIds } from '../../helpers/constants';
 
-export class InsightsPage {
-    //-------------------------------------------------------------------------------------------
-    //DECLARATION OF SELECTORS
-    //*Declare all elements/components of the relevant page.
-    //*Target any element/component via data-id, if possible!
-    //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
-    //-------------------------------------------------------------------------------------------
+export class InsightsPanel {
     // BUTTONS
     insightsBtn = Selector('[data-testid=recommendations-trigger]');
     showHiddenCheckBox = Selector('[data-testid=checkbox-show-hidden]');

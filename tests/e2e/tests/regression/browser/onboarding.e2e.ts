@@ -18,7 +18,6 @@ import {
     BrowserPage
 } from '../../../pageObjects';
 import { Telemetry } from '../../../helpers/telemetry';
-import { InsightsPage } from '../../../pageObjects/insights-page';
 
 const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -26,7 +25,6 @@ const browserPage = new BrowserPage();
 const helpCenterPage = new HelpCenterPage();
 const onBoardActions = new OnboardActions();
 const onboardingPage = new OnboardingPage();
-const insightsPage  = new InsightsPage();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const workBenchPage = new WorkbenchPage();
 const slowLogPage = new SlowLogPage();
@@ -81,7 +79,7 @@ test('Verify onbarding user steps', async t => {
     await onBoardActions.verifyStepVisible('Profiler');
     await onBoardActions.clickNextStep();
     // verify Insights is opened
-    await t.expect(insightsPage.insightsPanel.visible).ok('Insights panel is not expanded');
+    await t.expect(browserPage.InsightsPanel.insightsPanel.visible).ok('Insights panel is not expanded');
     await onBoardActions.verifyStepVisible('Insights');
     await onBoardActions.clickNextStep();
     // Verify that client list command visible when there is not any index created
@@ -95,7 +93,7 @@ test('Verify onbarding user steps', async t => {
     await browserPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
     await onBoardActions.clickBackStep();
     // verify one step before is opened
-    await t.expect(insightsPage.insightsPanel.visible).ok('Insights panel is not expanded');
+    await t.expect(browserPage.InsightsPanel.insightsPanel.visible).ok('Insights panel is not expanded');
     await onBoardActions.verifyStepVisible('Insights');
     await onBoardActions.clickNextStep();
     // verify workbench page is opened

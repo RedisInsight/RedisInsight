@@ -171,7 +171,7 @@ const Recommendation = ({
         <Icon />
       </div>
       {recommendationsContent[name]?.content?.map((item) => renderContentElement(item))}
-      {!!params?.keys && (
+      {!!params?.keys?.length && (
         <RecommendationCopyComponent
           keyName={params.keys[0]}
           provider={provider}

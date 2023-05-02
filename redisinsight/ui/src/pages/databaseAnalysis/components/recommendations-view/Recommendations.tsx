@@ -177,7 +177,7 @@ const Recommendations = () => {
               >
                 <EuiPanel className={styles.accordionContent} color="subdued">
                   {renderContent(content, params)}
-                  {!!params?.keys && params.keys.length && (
+                  {!!params?.keys?.length && (
                     <RecommendationCopyComponent
                       keyName={params.keys[0]}
                       provider={provider}

@@ -3,7 +3,6 @@ import {
     MyRedisDatabasePage,
     WorkbenchPage,
     BrowserPage,
-    AddRedisDatabasePage
 } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { cloudDatabaseConfig, commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
@@ -14,7 +13,6 @@ import { BrowserActions } from '../../../common-actions/browser-actions';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const browserActions = new BrowserActions();
 
 let keys: string[];
@@ -30,7 +28,7 @@ fixture `Database overview`
         await acceptLicenseTermsAndAddDatabase(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         await browserPage.addStringKey(keyName);
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneRedisearch, index);
+        await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneRedisearch, index);
         await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneRedisearch.databaseName} [db${index}]`);
         keys = await Common.createArrayWithKeyValue(keysAmount);
         await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);

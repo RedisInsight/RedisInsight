@@ -1,4 +1,4 @@
-import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, AddRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi, deleteCustomDatabase } from '../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
@@ -9,7 +9,6 @@ import { Common } from '../../../helpers/common';
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const memoryEfficiencyActions = new MemoryEfficiencyActions();
 const workbenchPage = new WorkbenchPage();
 
@@ -97,7 +96,7 @@ test
         keyName = `recomKey-${Common.generateWord(10)}`;
         await browserPage.addStringKey(stringKeyName, '2147476121', 'field');
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
+        await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneConfig, index);
         await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName} [db${index}]`);
         await browserPage.addHashKey(keyName, '2147476121', 'field', 'value');
     })

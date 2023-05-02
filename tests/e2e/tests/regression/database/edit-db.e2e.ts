@@ -1,5 +1,5 @@
 import { acceptLicenseTermsAndAddDatabaseApi, clickOnEditDatabaseByName, deleteDatabase } from '../../../helpers/database';
-import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
@@ -10,7 +10,6 @@ import { Common } from '../../../helpers/common';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const browserPage = new BrowserPage();
 const database = Object.assign({}, ossStandaloneConfig);
 
@@ -25,7 +24,7 @@ fixture`List of Databases`
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(database, database.databaseName);
     });
-test
+test.only
     .after(async() => {
         // Delete database
         await deleteDatabase(newDatabaseName);
@@ -35,7 +34,7 @@ test
         await clickOnEditDatabaseByName(database.databaseName);
 
         // Verify that timeout input is displayed for edit db window with default value when it wasn't specified
-        await t.expect(addRedisDatabasePage.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30');
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30');
 
         await t.click(myRedisDatabasePage.editAliasButton);
         await t.typeText(myRedisDatabasePage.aliasInput, newDatabaseName, { replace: true });
@@ -66,8 +65,8 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Edit port of added database
         await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
-        await t.typeText(addRedisDatabasePage.portInput, ossStandaloneBigConfig.port, { replace: true, paste: true });
-        await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+        await t.typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneBigConfig.port, { replace: true, paste: true });
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         // Verify that keys from the database with new port are displayed
         await t.expect(browserPage.keysSummary.find('b').withText('18 00').exists).ok('DB with new port not opened');

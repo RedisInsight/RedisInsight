@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { join as joinPath } from 'path';
 import { rte } from '../../../helpers/constants';
-import { AddRedisDatabasePage, MyRedisDatabasePage } from '../../../pageObjects';
+import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
     cloudDatabaseConfig,
     commonUrl,
@@ -24,7 +24,6 @@ import { DatabasesActions } from '../../../common-actions/databases-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databasesActions = new DatabasesActions();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 
 let foundExportedFiles: string[];
 
@@ -89,8 +88,8 @@ test
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
         await clickOnEditDatabaseByName(databaseNames[1]);
-        await t.expect(addRedisDatabasePage.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
-        await t.expect(addRedisDatabasePage.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
     });
 test
     .before(async() => {

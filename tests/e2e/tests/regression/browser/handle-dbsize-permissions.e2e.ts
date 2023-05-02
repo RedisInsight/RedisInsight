@@ -1,7 +1,7 @@
 import { t } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, MyRedisDatabasePage, BulkActionsPage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
@@ -12,7 +12,6 @@ import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const bulkActionsPage = new BulkActionsPage();
 const createUserCommand = 'acl setuser noperm nopass on +@all ~* -dbsize';
 const keyName = Common.generateWord(20);
 const createKeyCommand = `set ${keyName} ${Common.generateWord(20)}`;
@@ -52,6 +51,7 @@ test('Verify that user without dbsize permissions can connect to DB', async t =>
     // Check bulk delete
     await browserPage.Cli.sendCommandInCli(createKeyCommand);
     await browserPage.searchByKeyName(keyName);
-    await bulkActionsPage.startBulkDelete();
-    await t.expect(bulkActionsPage.bulkStatusCompleted.visible).ok('Bulk deletion is not completed', { timeout: 60000 });
+    await t.click(browserPage.bulkActionsButton);
+    await browserPage.BulkActions.startBulkDelete();
+    await t.expect(browserPage.BulkActions.bulkStatusCompleted.visible).ok('Bulk deletion is not completed', { timeout: 60000 });
 });

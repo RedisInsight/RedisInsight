@@ -16,7 +16,6 @@ import { NotificationPage } from './notification-page';
 import { OnboardingPage } from './onboarding-page';
 import { BasePage } from './base-page';
 import { InstancePage } from './instance-page';
-import { InsightsPage } from './insights-page';
 
 export {
     AddRedisDatabasePage,
@@ -37,5 +36,4 @@ export {
     OnboardingPage,
     BasePage,
     InstancePage,
-    InsightsPage
 };

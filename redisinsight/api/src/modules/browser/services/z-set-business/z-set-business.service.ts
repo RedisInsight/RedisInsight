@@ -121,7 +121,7 @@ export class ZSetBusinessService {
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.RTS,
-        members,
+        { members, keyName },
       );
     } catch (error) {
       this.logger.error('Failed to get members of the ZSet data type.', error);

@@ -306,7 +306,7 @@ describe('HashBusinessService', () => {
       expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
         RECOMMENDATION_NAMES.BIG_HASHES,
-        result.total,
+        { total: result.total, keyName: result.keyName },
       );
 
       expect(recommendationService.check).toBeCalledTimes(1);

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose, Type } from 'class-transformer';
 import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
 
 export class DatabaseRecommendationsResponse {
@@ -8,6 +9,8 @@ export class DatabaseRecommendationsResponse {
     isArray: true,
     description: 'Ordered recommendations list',
   })
+  @Type(() => DatabaseRecommendation)
+  @Expose()
   recommendations: DatabaseRecommendation[];
 
   @ApiProperty({
@@ -15,5 +18,6 @@ export class DatabaseRecommendationsResponse {
     example: 2,
     description: 'Number of unread recommendations',
   })
+  @Expose()
   totalUnread: number;
 }

@@ -3,7 +3,7 @@ import { RecommendationScanner } from 'src/modules/database-recommendation/scann
 import { RecommendationProvider } from 'src/modules/database-recommendation/scanner/recommendation.provider';
 
 const mockRecommendationStrategy = () => ({
-  isRecommendationReached: jest.fn(),
+  isReached: jest.fn(),
 });
 
 const mockRecommendationProvider = () => ({
@@ -30,7 +30,7 @@ describe('RecommendationScanner', () => {
     recommendationProvider = module.get<RecommendationProvider>(RecommendationProvider);
     recommendationStrategy = mockRecommendationStrategy();
     recommendationProvider.getStrategy.mockReturnValue(recommendationStrategy);
-    recommendationStrategy.isRecommendationReached.mockResolvedValue(true);
+    recommendationStrategy.isRecommendationReached.mockResolvedValue({ isReached: true });
   });
 
   describe('determineRecommendation', () => {

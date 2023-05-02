@@ -10,10 +10,10 @@ export class RecommendationScanner {
   async determineRecommendation(name: string, data: any) {
     const strategy = this.recommendationProvider.getStrategy(name);
     try {
-      const isRecommendationReached = await strategy.isRecommendationReached(data);
+      const recommendation = await strategy.isRecommendationReached(data);
 
-      if (isRecommendationReached) {
-        return { name };
+      if (recommendation.isReached) {
+        return { name, params: recommendation?.params };
       }
     } catch (err) {
       // ignore errors

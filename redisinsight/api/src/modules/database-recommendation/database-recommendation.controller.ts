@@ -1,4 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body, Controller, Delete, Get, Param, Patch, UsePipes, ValidationPipe,
+} from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { ApiTags } from '@nestjs/swagger';
@@ -13,7 +15,7 @@ import {
   ModifyDatabaseRecommendationDto,
   DeleteDatabaseRecommendationDto,
   DeleteDatabaseRecommendationResponse,
- } from './dto';
+} from './dto';
 
 @ApiTags('Database Recommendations')
 @Controller('/recommendations')
@@ -78,7 +80,7 @@ export class DatabaseRecommendationController {
       @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
-    return await this.service.update(clientMetadata, id, dto);
+    return await this.service.update(id, dto);
   }
 
   @Delete('')
@@ -102,7 +104,7 @@ export class DatabaseRecommendationController {
   )
   async bulkDeleteDatabaseRecommendation(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-    @Body() dto: DeleteDatabaseRecommendationDto,
+      @Body() dto: DeleteDatabaseRecommendationDto,
   ): Promise<DeleteDatabaseRecommendationResponse> {
     return await this.service.bulkDelete(clientMetadata, dto.ids);
   }

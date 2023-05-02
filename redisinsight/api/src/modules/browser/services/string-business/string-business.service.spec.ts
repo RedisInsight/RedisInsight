@@ -25,8 +25,8 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { KeytarUnavailableException } from 'src/modules/encryption/exceptions';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
-import { StringBusinessService } from './string-business.service';
 import { RECOMMENDATION_NAMES } from 'src/constants';
+import { StringBusinessService } from './string-business.service';
 
 const mockSetStringDto: SetStringDto = {
   keyName: Buffer.from('foo'),
@@ -180,7 +180,7 @@ describe('StringBusinessService', () => {
       expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
         RECOMMENDATION_NAMES.STRING_TO_JSON,
-        result.value,
+        { value: result.value, keyName: mockSetStringDto.keyName },
       );
 
       expect(recommendationService.check).toBeCalledTimes(1);

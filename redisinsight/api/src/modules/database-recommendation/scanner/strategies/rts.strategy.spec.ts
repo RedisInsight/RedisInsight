@@ -24,6 +24,8 @@ const mockDefaultMembers = new Array(1).fill(
   },
 );
 
+const mockKeyName = 'name';
+
 describe('RTSStrategy', () => {
   let strategy: RTSStrategy;
 
@@ -34,12 +36,14 @@ describe('RTSStrategy', () => {
   describe('isRecommendationReached', () => {
     it('should return false when members has less then 99% timestamp members', async () => {
       const mockMembers = [].concat(mockTimestampNameMembers, mockDefaultMembers);
-      expect(await strategy.isRecommendationReached(mockMembers)).toEqual(false);
+      const mockData = { members: mockMembers, keyName: mockKeyName };
+      expect(await strategy.isRecommendationReached(mockData)).toEqual({ isReached: false });
     });
 
     it('should return false when members has less then 99% timestamp scores', async () => {
       const mockMembers = [].concat(mockTimestampScoreMembers, mockDefaultMembers);
-      expect(await strategy.isRecommendationReached(mockMembers)).toEqual(false);
+      const mockData = { members: mockMembers, keyName: mockKeyName };
+      expect(await strategy.isRecommendationReached(mockData)).toEqual({ isReached: false });
     });
 
     it('should return true when members has at least then 99% timestamp members', async () => {
@@ -48,7 +52,8 @@ describe('RTSStrategy', () => {
         mockDefaultMembers,
         [{ name: mockTimestampName, score: mockDefaultScore }],
       );
-      expect(await strategy.isRecommendationReached(mockMembers)).toEqual(true);
+      const mockData = { members: mockMembers, keyName: mockKeyName };
+      expect(await strategy.isRecommendationReached(mockData)).toEqual({ isReached: true, params: { keys: [mockKeyName] } });
     });
 
     it('should return true when members has at least then 99% timestamp score', async () => {
@@ -57,7 +62,8 @@ describe('RTSStrategy', () => {
         mockDefaultMembers,
         [{ name: mockDefaultName, score: mockTimestampScore }],
       );
-      expect(await strategy.isRecommendationReached(mockMembers)).toEqual(true);
+      const mockData = { members: mockMembers, keyName: mockKeyName };
+      expect(await strategy.isRecommendationReached(mockData)).toEqual({ isReached: true, params: { keys: [mockKeyName] } });
     });
   });
 });

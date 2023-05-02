@@ -68,7 +68,7 @@ describe('SearchStringStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           keys: [mockStringInfo, mockHashInfo],
-        })).toEqual(false);
+        })).toEqual({ isReached: false });
       });
 
       it('should return true when string size > 512 * 1024', async () => {
@@ -80,7 +80,7 @@ describe('SearchStringStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           keys: [mockBigStringInfo, mockHashInfo],
-        })).toEqual(true);
+        })).toEqual({ isReached: true, params: { keys: [mockBigStringInfo.name] } });
       });
 
       it('should return false when FT._LIST return indexes', async () => {
@@ -92,7 +92,7 @@ describe('SearchStringStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           keys: [mockBigStringInfo, mockHashInfo],
-        })).toEqual(false);
+        })).toEqual({ isReached: false });
       });
     });
 
@@ -106,7 +106,7 @@ describe('SearchStringStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           keys: [mockStringInfo, mockHashInfo],
-        })).toEqual(false);
+        })).toEqual({ isReached: false });
       });
 
       it('should return true when string size > 512 * 1024', async () => {
@@ -114,7 +114,7 @@ describe('SearchStringStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           keys: [mockBigStringInfo, mockHashInfo],
-        })).toEqual(true);
+        })).toEqual({ isReached: true, params: { keys: [mockBigStringInfo.name] } });
       });
     });
   });

@@ -1,10 +1,9 @@
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTerms } from '../../../helpers/database';
-import { MyRedisDatabasePage, AddRedisDatabasePage, BrowserPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
@@ -22,10 +21,10 @@ test('Verify that if user enters any index of the logical database that does not
     const index = '0';
 
     // Add database with logical index
-    await addRedisDatabasePage.addRedisDataBase(ossStandaloneConfig);
-    await t.click(addRedisDatabasePage.databaseIndexCheckbox);
-    await t.typeText(addRedisDatabasePage.databaseIndexInput, index, { paste: true });
-    await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+    await myRedisDatabasePage.AddRedisDatabase.addRedisDataBase(ossStandaloneConfig);
+    await t.click(myRedisDatabasePage.AddRedisDatabase.databaseIndexCheckbox);
+    await t.typeText(myRedisDatabasePage.AddRedisDatabase.databaseIndexInput, index, { paste: true });
+    await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
     // Open database and run command with non-existing index
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await t.click(browserPage.Cli.cliExpandButton);

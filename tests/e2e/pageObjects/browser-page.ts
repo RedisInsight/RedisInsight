@@ -1,8 +1,11 @@
 import { t, Selector } from 'testcafe';
 import { Common } from '../helpers/common';
 import { InstancePage } from './instance-page';
+import { BulkActions } from './components/browser';
 
 export class BrowserPage extends InstancePage {
+    BulkActions = new BulkActions();
+
     //CSS Selectors
     cssSelectorGrid = '[aria-label="grid"]';
     cssSelectorRows = '[aria-label="row"]';

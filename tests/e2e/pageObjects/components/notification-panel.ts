@@ -1,11 +1,6 @@
-import { Selector, t } from 'testcafe';
-import { SettingsPage } from './settings-page';
-import { MyRedisDatabasePage } from './my-redis-databases-page';
+import { Selector } from 'testcafe';
 
-const settingsPage = new SettingsPage();
-const myRedisDatabasePage = new MyRedisDatabasePage();
-
-export class NotificationPage {
+class NotificationPanel {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -49,25 +44,6 @@ export class NotificationPage {
         const converted = epochTimeConversion.split(' ');
         return [converted[2], converted[1], converted[3]].join(' ');
     }
-
-    /**
-     * Turn on notifications in Settings
-     */
-    async changeNotificationsSwitcher(toValue: boolean): Promise<void> {
-        await t
-            .click(myRedisDatabasePage.NavigationPanel.settingsButton)
-            .click(settingsPage.accordionAppearance);
-        if (toValue === true) {
-            if (await settingsPage.getNotificationsSwitcherValue() === 'false') {
-                await t.click(settingsPage.switchNotificationsOption);
-            }
-        }
-        if (toValue === false) {
-            if (await settingsPage.getNotificationsSwitcherValue() === 'true') {
-                await t.click(settingsPage.switchNotificationsOption);
-            }
-        }
-    }
 }
 /**
  * Notification parameters
@@ -87,3 +63,5 @@ export type NotificationParameters = {
     colorCategory?: string,
     rbgColor?: string
 };
+
+export default NotificationPanel;

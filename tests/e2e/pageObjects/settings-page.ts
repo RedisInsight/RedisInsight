@@ -1,6 +1,7 @@
 import { Selector, t } from 'testcafe';
+import { BasePage } from './base-page';
 
-export class SettingsPage {
+export class SettingsPage extends BasePage {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -51,29 +52,29 @@ export class SettingsPage {
     /**
      * Get state of Analytics switcher
      */
-    async getAnalyticsSwitcherValue(): Promise<string> {
-        return await this.switchAnalyticsOption.getAttribute('aria-checked');
+    async getAnalyticsSwitcherValue(): Promise<boolean> {
+        return await this.switchAnalyticsOption.getAttribute('aria-checked') === 'true';
     }
 
     /**
      * Get state of Notifications switcher
      */
-    async getNotificationsSwitcherValue(): Promise<string> {
-        return await this.switchNotificationsOption.getAttribute('aria-checked');
+    async getNotificationsSwitcherValue(): Promise<boolean> {
+        return await this.switchNotificationsOption.getAttribute('aria-checked') === 'true';
     }
 
     /**
      * Get state of Eula switcher
      */
-    async getEulaSwitcherValue(): Promise<string> {
-        return await this.switchEulaOption.getAttribute('aria-checked');
+    async getEulaSwitcherValue(): Promise<boolean> {
+        return await this.switchEulaOption.getAttribute('aria-checked') === 'true';
     }
 
     /**
      * Get state of Editor Cleanup switcher
      */
-    async getEditorCleanupSwitcherValue(): Promise<string> {
-        return await this.switchEditorCleanupOption.getAttribute('aria-checked');
+    async getEditorCleanupSwitcherValue(): Promise<boolean> {
+        return await this.switchEditorCleanupOption.getAttribute('aria-checked')  === 'true';
     }
 
     /**
@@ -82,8 +83,18 @@ export class SettingsPage {
     */
     async changeEditorCleanupSwitcher(state: boolean): Promise<void> {
         const currentState = await this.getEditorCleanupSwitcherValue();
-        if (currentState !== `${state}`) {
+        if (currentState !== state) {
             await t.click(this.switchEditorCleanupOption);
+        }
+    }
+
+    /**
+     * Turn on notifications in Settings
+     */
+    async changeNotificationsSwitcher(toValue: boolean): Promise<void> {
+        await t.click(this.accordionAppearance);
+        if (toValue !== await this.getNotificationsSwitcherValue()) {
+            await t.click(this.switchNotificationsOption);
         }
     }
 }

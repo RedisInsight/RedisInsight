@@ -1,6 +1,6 @@
 import { join } from 'path';
 import * as os from 'os';
-import { NotificationParameters } from '../pageObjects/notification-page';
+import { NotificationParameters } from '../pageObjects/components/notification-panel';
 
 const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
     || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));

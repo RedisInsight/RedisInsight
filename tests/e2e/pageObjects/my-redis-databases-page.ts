@@ -1,8 +1,11 @@
 import { t, Selector } from 'testcafe';
 import { getDatabaseIdByName } from '../helpers/api/api-database';
 import { BasePage } from './base-page';
+import { AddRedisDatabase } from './components/myRedisDatabase/add-redis-database';
 
 export class MyRedisDatabasePage extends BasePage {
+    AddRedisDatabase = new AddRedisDatabase();
+
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.

@@ -51,17 +51,6 @@
     display: inline;
   }
 
-  .icon {
-    float: left;
-    margin-right: 10px;
-  }
-
-  .floatContent {
-    :global(.euiText) {
-      display: inline;
-    }
-  }
-
   .link {
     color: var(--externalLinkColor) !important;
   }

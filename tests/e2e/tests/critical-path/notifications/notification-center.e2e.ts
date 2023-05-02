@@ -16,7 +16,6 @@ const NotificationPanel = myRedisDatabasePage.NavigationPanel.NotificationPanel;
 const sortedNotifications = jsonNotifications.sort((a, b) => a.timestamp < b.timestamp ? 1 : -1);
 
 fixture `Notifications`
-    .only
     .meta({ rte: rte.none, type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async(t) => {

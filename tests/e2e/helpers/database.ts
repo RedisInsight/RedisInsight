@@ -1,5 +1,5 @@
 import { Selector, t } from 'testcafe';
-import { AddNewDatabaseParameters, SentinelParameters, OSSClusterParameters } from '../pageObjects/add-redis-database-page';
+import { AddNewDatabaseParameters, SentinelParameters, OSSClusterParameters } from '../pageObjects/components/myRedisDatabase/add-redis-database';
 import { DiscoverMasterGroupsPage } from '../pageObjects/sentinel/discovered-sentinel-master-groups-page';
 import {
     MyRedisDatabasePage,

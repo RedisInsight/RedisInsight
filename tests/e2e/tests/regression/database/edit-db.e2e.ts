@@ -24,7 +24,7 @@ fixture`List of Databases`
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(database, database.databaseName);
     });
-test.only
+test
     .after(async() => {
         // Delete database
         await deleteDatabase(newDatabaseName);

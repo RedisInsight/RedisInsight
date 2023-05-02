@@ -155,21 +155,18 @@ export class BulkImportService {
     dto: UploadImportFileByPathDto,
   ): Promise<IBulkActionOverview> {
     try {
+      const filePath = join(dto.path);
+
       const staticPath = join(SERVER_CONFIG.base, SERVER_CONFIG.staticUri);
 
-      let trimmedPath = dto.path;
-      if (dto.path.indexOf(staticPath) === 0) {
-        trimmedPath = dto.path.slice(staticPath.length);
+      let trimmedPath = filePath;
+      if (filePath.indexOf(staticPath) === 0) {
+        trimmedPath = filePath.slice(staticPath.length);
       }
 
-      const resolvedPath = resolve(
-        '/',
-        trimmedPath,
-      );
+      const path = join(PATH_CONFIG.homedir, trimmedPath);
 
-      const path = join(PATH_CONFIG.homedir, resolvedPath);
-
-      if (!await fs.pathExists(path)) {
+      if (!path.startsWith(PATH_CONFIG.homedir) || !await fs.pathExists(path)) {
         throw new BadRequestException('Data file was not found');
       }
 

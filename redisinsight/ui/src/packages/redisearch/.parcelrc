@@ -1,6 +1,8 @@
 {
   "extends": "@parcel/config-default",
   "transformers": {
-      "*.css": []
-    }
+      "global_styles.css": [],
+      "dark_theme.css": [],
+      "light_theme.css": []
+  }
 }

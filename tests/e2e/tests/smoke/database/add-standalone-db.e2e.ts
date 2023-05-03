@@ -81,7 +81,7 @@ test
         await myRedisDatabasePage.clickOnEditDBByName(ossStandaloneConfig.databaseName);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.timeoutInput.value).eql(connectionTimeout, 'Connection timeout is not customized');
     });
-test
+test.only
     .meta({ rte: rte.reCluster })
     .after(async() => {
         await deleteDatabase(redisEnterpriseClusterConfig.databaseName);

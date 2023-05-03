@@ -2,6 +2,7 @@ import {
   Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
+import { DataAsJsonString } from 'src/common/decorators';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Entity('database_recommendations')
@@ -29,6 +30,7 @@ export class DatabaseRecommendationEntity {
   @Column({ nullable: false })
   name: string;
 
+  @Expose()
   @Column({ nullable: false, default: false })
   read?: boolean = false;
 
@@ -42,6 +44,7 @@ export class DatabaseRecommendationEntity {
   })
   vote?: string;
 
+  @Expose()
   @Column({ nullable: false, default: false })
   hide?: boolean = false;
 
@@ -49,6 +52,14 @@ export class DatabaseRecommendationEntity {
   @Index()
   @Expose()
   createdAt: Date;
+
+  @Column({ nullable: true, type: 'blob' })
+  @DataAsJsonString()
+  @Expose()
+  params?: string;
+
+  @Column({ nullable: true })
+  encryption: string;
 
   constructor(entity: Partial<DatabaseRecommendationEntity>) {
     Object.assign(this, entity);

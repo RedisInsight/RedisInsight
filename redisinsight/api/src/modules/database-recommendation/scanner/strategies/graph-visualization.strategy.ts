@@ -1,6 +1,8 @@
 import { GraphVisualizationCommands } from 'src/common/constants';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
+import { IDatabaseRecommendationStrategyData }
+  from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 
 export class GraphVisualizationStrategy extends AbstractRecommendationStrategy {
   /**
@@ -10,8 +12,10 @@ export class GraphVisualizationStrategy extends AbstractRecommendationStrategy {
 
   async isRecommendationReached(
     commandInit: string = '',
-  ): Promise<boolean> {
-    const [ command ] = commandInit.split(' ')
-    return Object.values(GraphVisualizationCommands).includes(command.toUpperCase() as GraphVisualizationCommands);
+  ): Promise<IDatabaseRecommendationStrategyData> {
+    const [command] = commandInit.split(' ');
+    return {
+      isReached: Object.values(GraphVisualizationCommands).includes(command.toUpperCase() as GraphVisualizationCommands),
+    };
   }
 }

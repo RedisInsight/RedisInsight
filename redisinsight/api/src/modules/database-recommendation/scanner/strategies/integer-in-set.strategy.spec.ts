@@ -7,6 +7,8 @@ nodeClient.sendCommand = jest.fn();
 
 const mockDatabaseId = 'id';
 
+const mockKeyName = 'name';
+
 const mockNotIntegerMembers: RedisString[] = ['a'].map((val) => Buffer.from(val));
 const mockIntegerMembers: RedisString[] = [
   '0',
@@ -30,7 +32,8 @@ describe('IntegersInSetStrategy', () => {
         client: nodeClient,
         databaseId: mockDatabaseId,
         members: [...mockIntegerMembers],
-      })).toEqual(false);
+        keyName: mockKeyName,
+      })).toEqual({ isReached: false });
     });
 
     it('should return true when some member is not an integer in the first 50 members', async () => {
@@ -38,7 +41,8 @@ describe('IntegersInSetStrategy', () => {
         client: nodeClient,
         databaseId: mockDatabaseId,
         members: [...mockIntegerMembers, ...mockNotIntegerMembers] as RedisString[],
-      })).toEqual(true);
+        keyName: mockKeyName,
+      })).toEqual({ isReached: true, params: { keys: [mockKeyName] } });
     });
 
     it('should return false when 51th member is not an integer', async () => {
@@ -46,7 +50,8 @@ describe('IntegersInSetStrategy', () => {
         client: nodeClient,
         databaseId: mockDatabaseId,
         members: [...Array.from({ length: 50 }).fill(mockIntegerMembers[0]), ...mockNotIntegerMembers] as RedisString[],
-      })).toEqual(false);
+        keyName: mockKeyName,
+      })).toEqual({ isReached: false });
     });
   });
 });

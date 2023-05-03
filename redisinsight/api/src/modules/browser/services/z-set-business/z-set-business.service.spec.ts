@@ -228,7 +228,7 @@ describe('ZSetBusinessService', () => {
       expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
         RECOMMENDATION_NAMES.RTS,
-        result.members,
+        { members: result.members, keyName: result.keyName },
       );
     });
     it('key with this name does not exist for getMembers', async () => {

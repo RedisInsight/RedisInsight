@@ -3,42 +3,57 @@ import {
 } from '@nestjs/common';
 import { DatabaseRecommendationEntity }
   from 'src/modules/database-recommendation/entities/database-recommendation.entity';
+import { DatabaseRecommendationRepository }
+  from 'src/modules/database-recommendation/repositories/database-recommendation.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
+import { ModifyDatabaseRecommendationDto } from 'src/modules/database-recommendation/dto';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { ClientMetadata } from 'src/common/models';
-import { sortRecommendations } from 'src/utils';
+import { sortRecommendations, classToClass } from 'src/utils';
+
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
 import { RecommendationEvents } from 'src/modules/database-recommendation/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 
 @Injectable()
-export class DatabaseRecommendationProvider {
-  private readonly logger = new Logger('DatabaseRecommendationProvider');
+export class LocalDatabaseRecommendationRepository extends DatabaseRecommendationRepository {
+  private readonly logger = new Logger('DatabaseRecommendationRepository');
+
+  private readonly modelEncryptor: ModelEncryptor;
 
   constructor(
     @InjectRepository(DatabaseRecommendationEntity)
     private readonly repository: Repository<DatabaseRecommendationEntity>,
     private eventEmitter: EventEmitter2,
-  ) {}
+    private readonly encryptionService: EncryptionService,
+  ) {
+    super();
+    this.modelEncryptor = new ModelEncryptor(encryptionService, ['params']);
+  }
 
   /**
    * Save entire entity
-   * @param databaseId
-   * @param recommendationName
+   * @param entity
    */
-  async create({ databaseId }: ClientMetadata, recommendationName: string): Promise<DatabaseRecommendation> {
+  async create(entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
     this.logger.log('Creating database recommendation');
-    const recommendation = plainToClass(
-      DatabaseRecommendation,
-      await this.repository.save({ databaseId, name: recommendationName }),
+
+    const model = await this.repository.save(
+      await this.modelEncryptor.encryptEntity(plainToClass(DatabaseRecommendationEntity, entity)),
     );
 
+    const recommendation = classToClass(
+      DatabaseRecommendation,
+      await this.modelEncryptor.decryptEntity(model, true),
+    );
     this.eventEmitter.emit(RecommendationEvents.NewRecommendation, [recommendation]);
 
     return recommendation;
@@ -50,10 +65,10 @@ export class DatabaseRecommendationProvider {
    */
   async list({ databaseId }: ClientMetadata): Promise<DatabaseRecommendationsResponse> {
     this.logger.log('Getting database recommendations list');
-    const recommendations = await this.repository
+    const entities = await this.repository
       .createQueryBuilder('r')
       .where({ databaseId })
-      .select(['r.id', 'r.name', 'r.read', 'r.vote', 'disabled', 'r.hide'])
+      .select(['r.id', 'r.name', 'r.read', 'r.vote', 'r.hide', 'r.params', 'r.encryption'])
       .orderBy('r.createdAt', 'DESC')
       .getMany();
 
@@ -63,8 +78,17 @@ export class DatabaseRecommendationProvider {
       .getCount();
 
     this.logger.log('Succeed to get recommendations');
-    return plainToClass(DatabaseRecommendationsResponse, {
-      recommendations,
+    const decryptedEntities = await Promise.all(
+      entities.map(async (entity) => {
+        try {
+          return await this.modelEncryptor.decryptEntity(entity, true);
+        } catch (e) {
+          return null;
+        }
+      }),
+    );
+    return classToClass(DatabaseRecommendationsResponse, {
+      recommendations: decryptedEntities,
       totalUnread,
     });
   }
@@ -92,18 +116,19 @@ export class DatabaseRecommendationProvider {
   async update(
     clientMetadata: ClientMetadata,
     id: string,
-    recommendation: Partial<DatabaseRecommendation>,
+    recommendation: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
     this.logger.log(`Updating database recommendation with id:${id}`);
-    const oldEntity = await this.repository.findOneBy({ id });
+    const oldEntity = await this.modelEncryptor.decryptEntity(await this.repository.findOneBy({ id }));
+    const newEntity = plainToClass(DatabaseRecommendationEntity, recommendation);
 
     if (!oldEntity) {
       this.logger.error(`Database recommendation with id:${id} was not Found`);
       throw new NotFoundException(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND);
     }
 
-    const mergeResult = this.repository.merge(oldEntity, recommendation);
-    await this.repository.update(id, plainToClass(DatabaseRecommendationEntity, mergeResult));
+    const mergeResult = this.repository.merge(oldEntity, newEntity);
+    await this.repository.update(id, await this.modelEncryptor.encryptEntity(mergeResult));
 
     this.logger.log(`Updated database recommendation with id:${id}`);
 
@@ -137,8 +162,9 @@ export class DatabaseRecommendationProvider {
    */
   public async get(id: string): Promise<DatabaseRecommendation> {
     this.logger.log(`Getting recommendation with id: ${id}`);
+
     const entity = await this.repository.findOneBy({ id });
-    const model = plainToClass(DatabaseRecommendation, entity);
+    const model = classToClass(DatabaseRecommendation, await this.modelEncryptor.decryptEntity(entity, true));
 
     if (!model) {
       this.logger.error(`Not found recommendation with id: ${id}'`);
@@ -153,7 +179,6 @@ export class DatabaseRecommendationProvider {
    * Sync db analysis recommendations with live recommendations
    * @param clientMetadata
    * @param dbAnalysisRecommendations
-   * @param liveRecommendations
    */
   async sync(
     clientMetadata: ClientMetadata,
@@ -164,7 +189,15 @@ export class DatabaseRecommendationProvider {
       const sortedRecommendations = sortRecommendations(dbAnalysisRecommendations);
       for (let i = 0; i < sortedRecommendations.length; i += 1) {
         if (!await this.isExist(clientMetadata, sortedRecommendations[i].name)) {
-          await this.create(clientMetadata, sortedRecommendations[i].name);
+          const entity = plainToClass(
+            DatabaseRecommendation,
+            {
+              databaseId: clientMetadata?.databaseId,
+              name: sortedRecommendations[i].name,
+              params: sortedRecommendations[i].params,
+            },
+          );
+          await this.create(entity);
         }
       }
     } catch (e) {

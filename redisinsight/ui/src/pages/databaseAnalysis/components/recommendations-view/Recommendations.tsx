@@ -29,7 +29,7 @@ import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { RecommendationVoting } from 'uiSrc/components'
+import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { findMarkdownPathByPath } from 'uiSrc/utils'
 import { renderBadges, renderBadgesLegend, renderContent, sortRecommendations } from './utils'
 
@@ -177,6 +177,13 @@ const Recommendations = () => {
               >
                 <EuiPanel className={styles.accordionContent} color="subdued">
                   {renderContent(content, params)}
+                  {!!params?.keys?.length && (
+                    <RecommendationCopyComponent
+                      keyName={params.keys[0]}
+                      provider={provider}
+                      telemetryEvent={recommendationsContent[name]?.telemetryEvent ?? name}
+                    />
+                  )}
                 </EuiPanel>
               </EuiAccordion>
               <div className={styles.footer}>

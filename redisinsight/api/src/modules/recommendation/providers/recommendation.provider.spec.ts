@@ -39,22 +39,22 @@ const mockFTListResponse_2 = ['idx'];
 
 const generateRTSRecommendationTests = [
   { input: ['0', ['123', 123]], expected: null },
-  { input: ['0', ['1234567891', 3]], expected: { name: RECOMMENDATION_NAMES.RTS } },
-  { input: ['0', ['1234567891', 1234567891]], expected: { name: RECOMMENDATION_NAMES.RTS } },
-  { input: ['0', ['123', 1234567891]], expected: { name: RECOMMENDATION_NAMES.RTS } },
+  { input: ['0', ['1234567891', 3]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
+  { input: ['0', ['1234567891', 1234567891]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
+  { input: ['0', ['123', 1234567891]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
   { input: ['0', ['123', 12345678911]], expected: null },
-  { input: ['0', ['123', 1234567891234]], expected: { name: RECOMMENDATION_NAMES.RTS } },
+  { input: ['0', ['123', 1234567891234]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
   { input: ['0', ['123', 12345678912345]], expected: null },
-  { input: ['0', ['123', 1234567891234567]], expected: { name: RECOMMENDATION_NAMES.RTS } },
+  { input: ['0', ['123', 1234567891234567]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
   { input: ['0', ['12345678912345678', 1]], expected: null },
-  { input: ['0', ['1234567891234567891', 1]], expected: { name: RECOMMENDATION_NAMES.RTS } },
-  { input: ['0', ['1', 1234567891.2]], expected: { name: RECOMMENDATION_NAMES.RTS } },
-  { input: ['0', ['1234567891.2', 1]], expected: { name: RECOMMENDATION_NAMES.RTS } },
-  { input: ['0', ['1234567891:12', 1]], expected: { name: RECOMMENDATION_NAMES.RTS } },
-  { input: ['0', ['1234567891a12', 1]], expected: { name: RECOMMENDATION_NAMES.RTS } },
+  { input: ['0', ['1234567891234567891', 1]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
+  { input: ['0', ['1', 1234567891.2]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
+  { input: ['0', ['1234567891.2', 1]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
+  { input: ['0', ['1234567891:12', 1]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
+  { input: ['0', ['1234567891a12', 1]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
   { input: ['0', ['1234567891.2.2', 1]], expected: null },
   { input: ['0', ['1234567891asd', 1]], expected: null },
-  { input: ['0', ['10-10-2020', 1]], expected: { name: RECOMMENDATION_NAMES.RTS } },
+  { input: ['0', ['10-10-2020', 1]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
   { input: ['0', ['', 1]], expected: null },
   { input: ['0', ['1', -12]], expected: null },
   { input: ['0', ['1', -1234567891]], expected: null },
@@ -182,7 +182,8 @@ describe('RecommendationProvider', () => {
       const bigHashesRecommendation = await service.determineBigHashesRecommendation(
         [...mockKeys, mockBigHashKey],
       );
-      expect(bigHashesRecommendation).toEqual({ name: RECOMMENDATION_NAMES.BIG_HASHES });
+      expect(bigHashesRecommendation)
+        .toEqual({ name: RECOMMENDATION_NAMES.BIG_HASHES, params: { keys: [mockBigHashKey.name] } });
     });
   });
 
@@ -255,7 +256,11 @@ describe('RecommendationProvider', () => {
     });
     it('should return combineSmallStringsToHashes recommendation', async () => {
       const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(mockKeys);
-      expect(smallStringRecommendation).toEqual({ name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES });
+      expect(smallStringRecommendation)
+        .toEqual({
+          name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES,
+          params: { keys: [Buffer.from('name')] },
+        });
     });
   });
 
@@ -278,7 +283,10 @@ describe('RecommendationProvider', () => {
       const increaseSetMaxIntsetEntriesRecommendation = await service
         .determineIncreaseSetMaxIntsetEntriesRecommendation(nodeClient, [...mockKeys, mockBigSet]);
       expect(increaseSetMaxIntsetEntriesRecommendation)
-        .toEqual({ name: RECOMMENDATION_NAMES.INCREASE_SET_MAX_INTSET_ENTRIES });
+        .toEqual({
+          name: RECOMMENDATION_NAMES.INCREASE_SET_MAX_INTSET_ENTRIES,
+          params: { keys: [mockBigSet.name] },
+        });
     });
 
     it('should not return increaseSetMaxIntsetEntries recommendation when config command executed with error',
@@ -312,7 +320,12 @@ describe('RecommendationProvider', () => {
       const convertHashtableToZiplistRecommendation = await service
         .determineHashHashtableToZiplistRecommendation(nodeClient, [...mockKeys, mockBigHashKey_3]);
       expect(convertHashtableToZiplistRecommendation)
-        .toEqual({ name: RECOMMENDATION_NAMES.HASH_HASHTABLE_TO_ZIPLIST });
+        .toEqual(
+          {
+            name: RECOMMENDATION_NAMES.HASH_HASHTABLE_TO_ZIPLIST,
+            params: { keys: [mockBigHashKey_3.name] },
+          },
+        );
     });
 
     it('should not return hashHashtableToZiplist recommendation when config command executed with error',
@@ -336,7 +349,11 @@ describe('RecommendationProvider', () => {
     it('should return compressionForList recommendation', async () => {
       const compressHashFieldNamesRecommendation = await service
         .determineCompressionForListRecommendation([mockBigListKey]);
-      expect(compressHashFieldNamesRecommendation).toEqual({ name: RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST });
+      expect(compressHashFieldNamesRecommendation)
+        .toEqual({
+          name: RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
+          params: { keys: [mockBigListKey.name] },
+        });
     });
   });
 
@@ -349,7 +366,11 @@ describe('RecommendationProvider', () => {
     it('should return bigStrings recommendation', async () => {
       const bigStringsRecommendation = await service
         .determineBigStringsRecommendation([mockHugeStringKey]);
-      expect(bigStringsRecommendation).toEqual({ name: RECOMMENDATION_NAMES.BIG_STRINGS });
+      expect(bigStringsRecommendation)
+        .toEqual({
+          name: RECOMMENDATION_NAMES.BIG_STRINGS,
+          params: { keys: [mockHugeStringKey.name] },
+        });
     });
   });
 
@@ -372,7 +393,10 @@ describe('RecommendationProvider', () => {
       const zSetHashtableToZiplistRecommendation = await service
         .determineZSetHashtableToZiplistRecommendation(nodeClient, [...mockKeys, mockBigZSetKey]);
       expect(zSetHashtableToZiplistRecommendation)
-        .toEqual({ name: RECOMMENDATION_NAMES.ZSET_HASHTABLE_TO_ZIPLIST });
+        .toEqual({
+          name: RECOMMENDATION_NAMES.ZSET_HASHTABLE_TO_ZIPLIST,
+          params: { keys: [mockBigZSetKey.name] },
+        });
     });
 
     it('should not return zSetHashtableToZiplist recommendation when config command executed with error',
@@ -396,7 +420,11 @@ describe('RecommendationProvider', () => {
     it('should return bigSets recommendation', async () => {
       const bigSetsRecommendation = await service
         .determineBigSetsRecommendation([mockHugeSet]);
-      expect(bigSetsRecommendation).toEqual({ name: RECOMMENDATION_NAMES.BIG_SETS });
+      expect(bigSetsRecommendation)
+        .toEqual({
+          name: RECOMMENDATION_NAMES.BIG_SETS,
+          params: { keys: [mockHugeSet.name] },
+        });
     });
   });
 
@@ -584,7 +612,10 @@ describe('RecommendationProvider', () => {
       const searchJSONRecommendation = await service
         .determineSearchJSONRecommendation(nodeClient, mockKeys);
       expect(searchJSONRecommendation)
-        .toEqual({ name: RECOMMENDATION_NAMES.SEARCH_JSON });
+        .toEqual({
+          name: RECOMMENDATION_NAMES.SEARCH_JSON,
+          params: { keys: [Buffer.from('name')] },
+        });
     });
 
     it('should return not searchJSON recommendation when there is no JSON key', async () => {
@@ -606,7 +637,11 @@ describe('RecommendationProvider', () => {
 
         const searchJSONRecommendation = await service
           .determineSearchJSONRecommendation(nodeClient, mockKeys);
-        expect(searchJSONRecommendation).toEqual({ name: RECOMMENDATION_NAMES.SEARCH_JSON });
+        expect(searchJSONRecommendation)
+          .toEqual({
+            name: RECOMMENDATION_NAMES.SEARCH_JSON,
+            params: { keys: [Buffer.from('name')] },
+          });
       });
   });
 
@@ -629,7 +664,10 @@ describe('RecommendationProvider', () => {
       const searchStringRecommendation = await service
         .determineSearchStringRecommendation(nodeClient, [...mockKeys, mockHugeStringKey1]);
       expect(searchStringRecommendation)
-        .toEqual({ name: RECOMMENDATION_NAMES.SEARCH_STRING });
+        .toEqual({
+          name: RECOMMENDATION_NAMES.SEARCH_STRING,
+          params: { keys: [mockHugeStringKey1.name] },
+        });
     });
 
     it('should return not searchString recommendation when there is no big string key', async () => {
@@ -651,7 +689,11 @@ describe('RecommendationProvider', () => {
 
         const searchStringRecommendation = await service
           .determineSearchStringRecommendation(nodeClient, [mockHugeStringKey1]);
-        expect(searchStringRecommendation).toEqual({ name: RECOMMENDATION_NAMES.SEARCH_STRING });
+        expect(searchStringRecommendation)
+          .toEqual({
+            name: RECOMMENDATION_NAMES.SEARCH_STRING,
+            params: { keys: [mockHugeStringKey1.name] },
+          });
       });
   });
 });

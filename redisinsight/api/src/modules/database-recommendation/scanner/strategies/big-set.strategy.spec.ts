@@ -34,15 +34,16 @@ describe('BigSetStrategy', () => {
 
   describe('isRecommendationReached', () => {
     it('should return false when set length < 100 000', async () => {
-      expect(await strategy.isRecommendationReached(mockSetInfo)).toEqual(false);
+      expect(await strategy.isRecommendationReached(mockSetInfo)).toEqual({ isReached: false });
     });
 
     it('should return false when not set key', async () => {
-      expect(await strategy.isRecommendationReached(mockHashInfo)).toEqual(false);
+      expect(await strategy.isRecommendationReached(mockHashInfo)).toEqual({ isReached: false });
     });
 
     it('should return true when set length > 100 000', async () => {
-      expect(await strategy.isRecommendationReached(mockBigSetInfo)).toEqual(true);
+      expect(await strategy.isRecommendationReached(mockBigSetInfo))
+        .toEqual({ isReached: true, params: { keys: [mockBigSetInfo.name] } });
     });
   });
 });

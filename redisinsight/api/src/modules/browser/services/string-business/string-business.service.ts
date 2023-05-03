@@ -98,7 +98,7 @@ export class StringBusinessService {
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.STRING_TO_JSON,
-        result.value,
+        { value: result.value, keyName: result.keyName },
       );
       this.logger.log('Succeed to get string value.');
       return plainToClass(GetStringValueResponse, result);

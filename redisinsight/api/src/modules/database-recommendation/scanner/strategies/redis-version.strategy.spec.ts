@@ -22,7 +22,7 @@ describe('RedisVersionStrategy', () => {
           .calledWith(jasmine.objectContaining({ name: 'info' }))
           .mockResolvedValue(mockRedisServerResponse1);
 
-        expect(await strategy.isRecommendationReached(nodeClient)).toEqual(false);
+        expect(await strategy.isRecommendationReached(nodeClient)).toEqual({ isReached: false });
       });
 
       it('should return true when version less then 6', async () => {
@@ -30,7 +30,7 @@ describe('RedisVersionStrategy', () => {
           .calledWith(jasmine.objectContaining({ name: 'info' }))
           .mockResolvedValue(mockRedisServerResponse2);
 
-        expect(await strategy.isRecommendationReached(nodeClient)).toEqual(true);
+        expect(await strategy.isRecommendationReached(nodeClient)).toEqual({ isReached: true });
       });
     });
   });

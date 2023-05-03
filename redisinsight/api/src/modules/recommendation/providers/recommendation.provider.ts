@@ -10,6 +10,7 @@ import {
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
+import { RedisString } from 'src/common/constants';
 
 const minNumberOfCachedScripts = 10;
 const maxHashLength = 5000;
@@ -41,6 +42,7 @@ export class RecommendationProvider {
           new Command('info', ['memory'], { replyEncoding: 'utf8' }),
         ) as string,
       );
+
       const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
 
       return parseInt(nodesNumbersOfCachedScripts, 10) > minNumberOfCachedScripts
@@ -60,8 +62,8 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bigHashes = keys.some((key) => key.type === RedisDataType.Hash && key.length > maxHashLength);
-      return bigHashes ? { name: RECOMMENDATION_NAMES.BIG_HASHES } : null;
+      const bigHash = keys.find((key) => key.type === RedisDataType.Hash && key.length > maxHashLength);
+      return bigHash ? { name: RECOMMENDATION_NAMES.BIG_HASHES, params: { keys: [bigHash.name] } } : null;
     } catch (err) {
       this.logger.error('Can not determine Big Hashes recommendation', err);
       return null;
@@ -114,8 +116,10 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const smallString = keys.some((key) => key.type === RedisDataType.String && key.memory < maxStringMemory);
-      return smallString ? { name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES } : null;
+      const smallString = keys.find((key) => key.type === RedisDataType.String && key.memory < maxStringMemory);
+      return smallString
+        ? { name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES, params: { keys: [smallString.name] } }
+        : null;
     } catch (err) {
       this.logger.error('Can not determine Combine small strings to hashes recommendation', err);
       return null;
@@ -142,8 +146,10 @@ export class RecommendationProvider {
         return null;
       }
       const setMaxIntsetEntriesNumber = parseInt(setMaxIntsetEntries, 10);
-      const bigSet = keys.some((key) => key.type === RedisDataType.Set && key.length > setMaxIntsetEntriesNumber);
-      return bigSet ? { name: RECOMMENDATION_NAMES.INCREASE_SET_MAX_INTSET_ENTRIES } : null;
+      const bigSet = keys.find((key) => key.type === RedisDataType.Set && key.length > setMaxIntsetEntriesNumber);
+      return bigSet
+        ? { name: RECOMMENDATION_NAMES.INCREASE_SET_MAX_INTSET_ENTRIES, params: { keys: [bigSet.name] } }
+        : null;
     } catch (err) {
       this.logger.error('Can not determine Increase set max intset entries recommendation', err);
       return null;
@@ -166,8 +172,10 @@ export class RecommendationProvider {
         }),
       ) as string[];
       const hashMaxZiplistEntriesNumber = parseInt(hashMaxZiplistEntries, 10);
-      const bigHash = keys.some((key) => key.type === RedisDataType.Hash && key.length > hashMaxZiplistEntriesNumber);
-      return bigHash ? { name: RECOMMENDATION_NAMES.HASH_HASHTABLE_TO_ZIPLIST } : null;
+      const bigHash = keys.find((key) => key.type === RedisDataType.Hash && key.length > hashMaxZiplistEntriesNumber);
+      return bigHash
+        ? { name: RECOMMENDATION_NAMES.HASH_HASHTABLE_TO_ZIPLIST, params: { keys: [bigHash.name] } }
+        : null;
     } catch (err) {
       this.logger.error('Can not determine Convert hashtable to ziplist recommendation', err);
       return null;
@@ -182,8 +190,10 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bigHash = keys.some((key) => key.type === RedisDataType.Hash && key.length > maxCompressHashLength);
-      return bigHash ? { name: RECOMMENDATION_NAMES.COMPRESS_HASH_FIELD_NAMES } : null;
+      const bigHash = keys.find((key) => key.type === RedisDataType.Hash && key.length > maxCompressHashLength);
+      return bigHash
+        ? { name: RECOMMENDATION_NAMES.COMPRESS_HASH_FIELD_NAMES, params: { keys: [bigHash.name] } }
+        : null;
     } catch (err) {
       this.logger.error('Can not determine Compress hash field names recommendation', err);
       return null;
@@ -198,8 +208,8 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bigList = keys.some((key) => key.type === RedisDataType.List && key.length > maxListLength);
-      return bigList ? { name: RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST } : null;
+      const bigList = keys.find((key) => key.type === RedisDataType.List && key.length > maxListLength);
+      return bigList ? { name: RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST, params: { keys: [bigList.name] } } : null;
     } catch (err) {
       this.logger.error('Can not determine Compression for list recommendation', err);
       return null;
@@ -214,8 +224,10 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bigString = keys.some((key) => key.type === RedisDataType.String && key.memory > bigStringMemory);
-      return bigString ? { name: RECOMMENDATION_NAMES.BIG_STRINGS } : null;
+      const bigString = keys.find((key) => key.type === RedisDataType.String && key.memory > bigStringMemory);
+      return bigString
+        ? { name: RECOMMENDATION_NAMES.BIG_STRINGS, params: { keys: [bigString.name] } }
+        : null;
     } catch (err) {
       this.logger.error('Can not determine Big strings recommendation', err);
       return null;
@@ -239,8 +251,10 @@ export class RecommendationProvider {
         }),
       ) as string[];
       const zSetMaxZiplistEntriesNumber = parseInt(zSetMaxZiplistEntries, 10);
-      const bigHash = keys.some((key) => key.type === RedisDataType.ZSet && key.length > zSetMaxZiplistEntriesNumber);
-      return bigHash ? { name: RECOMMENDATION_NAMES.ZSET_HASHTABLE_TO_ZIPLIST } : null;
+      const bigHash = keys.find((key) => key.type === RedisDataType.ZSet && key.length > zSetMaxZiplistEntriesNumber);
+      return bigHash
+        ? { name: RECOMMENDATION_NAMES.ZSET_HASHTABLE_TO_ZIPLIST, params: { keys: [bigHash.name] } }
+        : null;
     } catch (err) {
       this.logger.error('Can not determine ZSet hashtable to ziplist recommendation', err);
       return null;
@@ -256,8 +270,8 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bigSet = keys.some((key) => key.type === RedisDataType.Set && key.length > maxSetLength);
-      return bigSet ? { name: RECOMMENDATION_NAMES.BIG_SETS } : null;
+      const bigSet = keys.find((key) => key.type === RedisDataType.Set && key.length > maxSetLength);
+      return bigSet ? { name: RECOMMENDATION_NAMES.BIG_SETS, params: { keys: [bigSet.name] } } : null;
     } catch (err) {
       this.logger.error('Can not determine Big sets recommendation', err);
       return null;
@@ -300,11 +314,11 @@ export class RecommendationProvider {
   ): Promise<Recommendation> {
     try {
       let processedKeysNumber = 0;
-      let isTimeSeries = false;
+      let timeSeriesKey = null;
       let sortedSetNumber = 0;
       while (
         processedKeysNumber < keys.length
-        && !isTimeSeries
+        && !timeSeriesKey
         && sortedSetNumber <= sortedSetCountForCheck
       ) {
         if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
@@ -315,14 +329,14 @@ export class RecommendationProvider {
             new Command('zscan', [keys[processedKeysNumber].name, '0', 'COUNT', 2], { replyEncoding: 'utf8' }),
           ) as string[];
           if (this.checkTimestamp(membersArray[0]) || this.checkTimestamp(membersArray[1])) {
-            isTimeSeries = true;
+            timeSeriesKey = keys[processedKeysNumber].name;
           }
           processedKeysNumber += 1;
           sortedSetNumber += 1;
         }
       }
 
-      return isTimeSeries ? { name: RECOMMENDATION_NAMES.RTS } : null;
+      return timeSeriesKey ? { name: RECOMMENDATION_NAMES.RTS, params: { keys: [timeSeriesKey] } } : null;
     } catch (err) {
       this.logger.error('Can not determine RTS recommendation', err);
       return null;
@@ -350,10 +364,10 @@ export class RecommendationProvider {
         // Ignore errors
       }
 
-      const isBigString = keys
-        .some((key) => key.type === RedisDataType.String && key.memory > maxRediSearchStringMemory);
+      const bigString = keys
+        .find((key) => key.type === RedisDataType.String && key.memory > maxRediSearchStringMemory);
 
-      return isBigString ? { name: RECOMMENDATION_NAMES.SEARCH_STRING } : null;
+      return bigString ? { name: RECOMMENDATION_NAMES.SEARCH_STRING, params: { keys: [bigString.name] } } : null;
     } catch (err) {
       this.logger.error('Can not determine search string recommendation', err);
       return null;
@@ -381,9 +395,9 @@ export class RecommendationProvider {
         // Ignore errors
       }
 
-      const isJSON = keys.some((key) => key.type === RedisDataType.JSON);
+      const jsonKey = keys.find((key) => key.type === RedisDataType.JSON);
 
-      return isJSON ? { name: RECOMMENDATION_NAMES.SEARCH_JSON } : null;
+      return jsonKey ? { name: RECOMMENDATION_NAMES.SEARCH_JSON, params: { keys: [jsonKey.name] } } : null;
     } catch (err) {
       this.logger.error('Can not determine search json recommendation', err);
       return null;
@@ -453,10 +467,10 @@ export class RecommendationProvider {
     try {
       if (client.isCluster) {
         const res = await this.determineSearchIndexesForCluster(keys, client);
-        return res ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
+        return res ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES, params: { keys: [res] } } : null;
       }
       const res = await this.determineSearchIndexesForStandalone(keys, redisClient);
-      return res ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES } : null;
+      return res ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES, params: { keys: [res] } } : null;
     } catch (err) {
       this.logger.error('Can not determine search indexes recommendation', err);
       return null;
@@ -497,13 +511,13 @@ export class RecommendationProvider {
     }
   }
 
-  private async determineSearchIndexesForCluster(keys: Key[], client: Redis | Cluster): Promise<boolean> {
+  private async determineSearchIndexesForCluster(keys: Key[], client: Redis | Cluster): Promise<RedisString> {
     let processedKeysNumber = 0;
-    let isJSONOrHash = false;
+    let keyName;
     let sortedSetNumber = 0;
     while (
       processedKeysNumber < keys.length
-      && !isJSONOrHash
+      && !keyName
       && sortedSetNumber <= sortedSetCountForCheck
     ) {
       if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
@@ -516,16 +530,16 @@ export class RecommendationProvider {
           new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
         ) as string;
         if (keyType === RedisDataType.JSON || keyType === RedisDataType.Hash) {
-          isJSONOrHash = true;
+          keyName = keys[processedKeysNumber].name;
         }
         processedKeysNumber += 1;
         sortedSetNumber += 1;
       }
     }
-    return isJSONOrHash;
+    return keyName;
   }
 
-  private async determineSearchIndexesForStandalone(keys: Key[], redisClient: Redis): Promise<boolean> {
+  private async determineSearchIndexesForStandalone(keys: Key[], redisClient: Redis): Promise<RedisString> {
     const sortedSets = keys
       .filter(({ type }) => type === RedisDataType.ZSet)
       .slice(0, 100);
@@ -541,6 +555,8 @@ export class RecommendationProvider {
       member,
     ]))).exec();
 
-    return types.some(([, type]) => type === RedisDataType.JSON || type === RedisDataType.Hash);
+    const keyIndex = types.findIndex(([, type]) => type === RedisDataType.JSON || type === RedisDataType.Hash);
+
+    return keyIndex === -1 ? undefined : sortedSets[keyIndex].name;
   }
 }

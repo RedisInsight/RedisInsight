@@ -20,7 +20,7 @@ import { NestjsFormDataModule } from 'nestjs-form-data';
     CertificateModule.register(),
     DatabaseModule.register(),
     RedisModule,
-    DatabaseRecommendationModule,
+    DatabaseRecommendationModule.register(),
     SshModule,
     NestjsFormDataModule,
   ],

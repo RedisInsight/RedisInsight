@@ -181,7 +181,6 @@ describe('POST /databases/:instanceId/analysis', () => {
           checkFn: async ({ body }) => {
             expect(body.recommendations).to.include.deep.members([
               constants.TEST_SMALLER_KEYS_DATABASE_ANALYSIS_RECOMMENDATION,
-              constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION,
             ]);
           },
           after: async () => {
@@ -249,9 +248,10 @@ describe('POST /databases/:instanceId/analysis', () => {
           statusCode: 201,
           responseSchema,
           checkFn: async ({ body }) => {
-            expect(body.recommendations).to.include.deep.members([
-              constants.TEST_SEARCH_STRING_RECOMMENDATION,
-            ]);
+            expect(body.recommendations).to.include.deep.members([{
+              ...constants.TEST_SEARCH_STRING_RECOMMENDATION,
+              params: { keys: [{ data: [...Buffer.from(constants.TEST_STRING_KEY_1)], type: "Buffer" }] },
+            }]);
           },
           after: async () => {
             expect(await repository.count()).to.eq(5);
@@ -275,9 +275,10 @@ describe('POST /databases/:instanceId/analysis', () => {
           statusCode: 201,
           responseSchema,
           checkFn: async ({ body }) => {
-            expect(body.recommendations).to.include.deep.members([
-              constants.TEST_SEARCH_JSON_RECOMMENDATION,
-            ]);
+            expect(body.recommendations).to.include.deep.members([{
+              ...constants.TEST_SEARCH_JSON_RECOMMENDATION,
+              params: { keys: [{ data: [...Buffer.from(`${constants.TEST_RUN_ID}_rejson_key_0`)], type: "Buffer" }] },
+            }]);
           },
           after: async () => {
             expect(await repository.count()).to.eq(5);
@@ -296,9 +297,10 @@ describe('POST /databases/:instanceId/analysis', () => {
             await rte.data.sendCommand('json.set', [constants.TEST_ZSET_MEMBER_1, '.', jsonValue]);
           },
           checkFn: async ({ body }) => {
-            expect(body.recommendations).to.include.deep.members([
-              constants.TEST_SEARCH_INDEXES_RECOMMENDATION,
-            ]);
+            expect(body.recommendations).to.include.deep.members([{
+              ...constants.TEST_SEARCH_INDEXES_RECOMMENDATION,
+              params: { keys: [{ data: [...Buffer.from(constants.TEST_ZSET_KEY_1)], type: "Buffer" }] },
+            }]);
           },
           after: async () => {
             expect(await repository.count()).to.eq(5);
@@ -322,9 +324,10 @@ describe('POST /databases/:instanceId/analysis', () => {
             await rte.data.sendCommand('HSET', [constants.TEST_ZSET_MEMBER_1, constants.TEST_HASH_FIELD_1_NAME, constants.TEST_HASH_FIELD_1_VALUE]);
           },
           checkFn: async ({ body }) => {
-            expect(body.recommendations).to.include.deep.members([
-              constants.TEST_SEARCH_INDEXES_RECOMMENDATION,
-            ]);
+            expect(body.recommendations).to.include.deep.members([{
+              ...constants.TEST_SEARCH_INDEXES_RECOMMENDATION,
+              params: { keys: [{ data: [...Buffer.from(constants.TEST_ZSET_KEY_1)], type: "Buffer" }] },
+            }]);
           },
           after: async () => {
             expect(await repository.count()).to.eq(5);
@@ -356,7 +359,8 @@ describe('POST /databases/:instanceId/analysis', () => {
             // wait when recommendation will be saved
             setTimeout(async () => {
               const entities: any = await recommendationRepository.findBy({
-                name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
+                name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name,
+                params: { keys: [{ data: [...Buffer.from(constants.TEST_STRING_KEY_1)], type: "Buffer" }]}
               });
               expect(entities.length).to.eq(1);
             }, 5000)
@@ -400,9 +404,10 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([
-            constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION,
-          ]);
+          expect(body.recommendations).to.include.deep.members([{
+            ...constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION,
+            params: { keys: [{ data: [...Buffer.from(constants.TEST_SET_KEY_1)], type: "Buffer" }] },
+          }]);
         },
         after: async () => {
           expect(await repository.count()).to.eq(5);
@@ -416,12 +421,13 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          await rte.data.generateStrings(true);
+          await rte.data.generateString(true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([
-            constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION,
-          ]);
+          expect(body.recommendations).to.include.deep.members([{
+            ...constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION,
+            params: { keys: [{ data: [...Buffer.from(constants.TEST_STRING_KEY_1)], type: "Buffer" }]}
+          }]);
         },
         after: async () => {
           expect(await repository.count()).to.eq(5);
@@ -439,9 +445,10 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeNumberOfFieldsForHashKey(NUMBERS_OF_HASH_FIELDS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([
-            constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
-          ]);
+          expect(body.recommendations).to.include.deep.members([{
+            ...constants.TEST_HASH_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
+            params: { keys: [{ data: [...Buffer.from(constants.TEST_HASH_KEY_1)], type: "Buffer" }]}
+          }]);
         },
         after: async () => {
           expect(await repository.count()).to.eq(5);
@@ -459,9 +466,10 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeElementsForListKey(NUMBERS_OF_LIST_ELEMENTS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([
-            constants.TEST_COMPRESSION_FOR_LIST_RECOMMENDATION,
-          ]);
+          expect(body.recommendations).to.include.deep.members([{
+            ...constants.TEST_COMPRESSION_FOR_LIST_RECOMMENDATION,
+            params: { keys: [{ data: [...Buffer.from(constants.TEST_LIST_KEY_1)], type: "Buffer" }]}
+          }]);
         },
         after: async () => {
           expect(await repository.count()).to.eq(5);
@@ -481,9 +489,10 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.sendCommand('set', [constants.TEST_STRING_KEY_1, bigStringValue]);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([
-            constants.TEST_BIG_STRINGS_RECOMMENDATION,
-          ]);
+          expect(body.recommendations).to.include.deep.members([{
+            ...constants.TEST_BIG_STRINGS_RECOMMENDATION,
+            params: { keys: [{ data: [...Buffer.from(constants.TEST_STRING_KEY_1)], type: "Buffer" }]}
+          }]);
         },
         after: async () => {
           expect(await repository.count()).to.eq(5);
@@ -501,9 +510,10 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeMembersForSortedListKey(NUMBERS_OF_ZSET_MEMBERS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([
-            constants.TEST_ZSET_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
-          ]);
+          expect(body.recommendations).to.include.deep.members([{
+            ...constants.TEST_ZSET_HASHTABLE_TO_ZIPLIST_RECOMMENDATION,
+            params: { keys: [{ data: [...Buffer.from(constants.TEST_ZSET_KEY_1)], type: "Buffer" }]}
+          }]);
         },
         after: async () => {
           expect(await repository.count()).to.eq(5);
@@ -521,11 +531,10 @@ describe('POST /databases/:instanceId/analysis', () => {
           await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
         },
         checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([
-            // by default max_intset_entries = 512
-            constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION,
-            constants.TEST_BIG_SETS_RECOMMENDATION,
-          ]);
+          expect(body.recommendations).to.include.deep.members([{
+            ...constants.TEST_BIG_SETS_RECOMMENDATION,
+            params: { keys: [{ data: [...Buffer.from(constants.TEST_SET_KEY_1)], type: "Buffer" }]}
+          }]);
         },
         after: async () => {
           expect(await repository.count()).to.eq(5);

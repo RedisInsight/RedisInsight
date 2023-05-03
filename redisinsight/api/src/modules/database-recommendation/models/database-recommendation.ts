@@ -1,6 +1,9 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional } from 'class-validator';
+import {
+  IsArray, IsEnum, IsOptional, IsBoolean,
+} from 'class-validator';
+import { DatabaseRecommendationParams } from 'src/modules/database-recommendation/models';
 
 export enum Vote {
   DoubleLike = 'very useful',
@@ -37,6 +40,9 @@ export class DatabaseRecommendation {
     type: Boolean,
     example: false,
   })
+  @Expose()
+  @IsOptional()
+  @IsBoolean({ always: true })
   read?: boolean;
 
   @ApiPropertyOptional({
@@ -44,7 +50,6 @@ export class DatabaseRecommendation {
     type: Boolean,
     example: false,
   })
-  @Expose()
   disabled?: boolean;
 
   @ApiPropertyOptional({
@@ -54,6 +59,7 @@ export class DatabaseRecommendation {
   })
   @IsEnum(Vote)
   @IsOptional()
+  @Expose()
   vote?: Vote = null;
 
   @ApiPropertyOptional({
@@ -61,6 +67,18 @@ export class DatabaseRecommendation {
     type: Boolean,
     example: false,
   })
+  @IsOptional()
+  @IsBoolean()
   @Expose()
   hide?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Additional recommendation params',
+    isArray: true,
+    type: () => String,
+  })
+  @IsArray()
+  @IsOptional()
+  @Expose()
+  params?: DatabaseRecommendationParams[];
 }

@@ -1,6 +1,8 @@
 import { SearchVisualizationCommands } from 'src/common/constants';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
+import { IDatabaseRecommendationStrategyData }
+  from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 
 export class SearchVisualizationStrategy extends AbstractRecommendationStrategy {
   /**
@@ -10,8 +12,11 @@ export class SearchVisualizationStrategy extends AbstractRecommendationStrategy 
 
   async isRecommendationReached(
     commandInit: string = '',
-  ): Promise<boolean> {
-    const [ command ] = commandInit.split(' ')
-    return Object.values(SearchVisualizationCommands).includes(command.toUpperCase() as SearchVisualizationCommands);
+  ): Promise<IDatabaseRecommendationStrategyData> {
+    const [command] = commandInit.split(' ');
+    return {
+      isReached: Object.values(SearchVisualizationCommands)
+        .includes(command.toUpperCase() as SearchVisualizationCommands),
+    };
   }
 }

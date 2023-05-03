@@ -1,6 +1,8 @@
 import { Command } from 'ioredis';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
+import { IDatabaseRecommendationStrategyData }
+  from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/dto';
 import { SearchString } from 'src/modules/database-recommendation/models/searchString';
@@ -25,7 +27,7 @@ export class SearchStringStrategy extends AbstractRecommendationStrategy {
 
   async isRecommendationReached(
     data: SearchString,
-  ): Promise<boolean> {
+  ): Promise<IDatabaseRecommendationStrategyData> {
     // todo: refactor. no need entire entity here
     const { modules } = await this.databaseService.get(data.databaseId);
 
@@ -35,12 +37,12 @@ export class SearchStringStrategy extends AbstractRecommendationStrategy {
       ) as any[];
 
       if (indexes.length) {
-        return false;
+        return { isReached: false };
       }
     }
-    const isBigString = data.keys.some((key: GetKeyInfoResponse) => (
+    const isBigString = data.keys.find((key: GetKeyInfoResponse) => (
       key.type === RedisDataType.String && key.size > maxRediSearchStringMemory
     ));
-    return !!isBigString;
+    return isBigString ? { isReached: true, params: { keys: [isBigString.name] } } : { isReached: false };
   }
 }

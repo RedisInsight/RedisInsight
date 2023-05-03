@@ -1,4 +1,4 @@
-import { Joi } from '../../helpers/test';
+import { Joi, JoiRedisString } from '../../helpers/test';
 
 export const recommendationSchema = Joi.object({
   read: Joi.boolean().required(),
@@ -9,6 +9,10 @@ export const recommendationSchema = Joi.object({
   vote: Joi.string().valid('very useful', 'useful', 'not useful').allow(null),
   createdAt: Joi.date(),
   databaseId: Joi.string(),
+  params: Joi.object({
+    keys: Joi.array().items(JoiRedisString),
+  }
+  ).allow(null),
 });
 
 export const recommendationsSchema = Joi.object({

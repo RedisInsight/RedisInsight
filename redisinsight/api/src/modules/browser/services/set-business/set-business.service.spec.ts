@@ -342,7 +342,12 @@ describe('SetBusinessService', () => {
       expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
         RECOMMENDATION_NAMES.INTEGERS_IN_SET,
-        { members: result.members, client: nodeClient, databaseId: mockBrowserClientMetadata.databaseId },
+        {
+          members: result.members,
+          keyName: result.keyName,
+          client: nodeClient,
+          databaseId: mockBrowserClientMetadata.databaseId,
+        },
       );
 
       expect(recommendationService.check).toBeCalledTimes(1);

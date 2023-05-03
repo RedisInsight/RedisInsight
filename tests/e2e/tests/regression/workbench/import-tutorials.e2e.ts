@@ -147,14 +147,19 @@ test
     })
     .after(async() => {
         await Common.deleteFileFromFolder(zipFilePath);
-        // Clear and delete database
         await deleteAllKeysFromDB(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port);
+        // Clear and delete database
+        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+        await workbenchPage.deleteTutorialByName(tutorialName);
+        await t.expect((workbenchPage.tutorialAccordionButton.withText(tutorialName).exists))
+        .notOk(`${tutorialName} tutorial is not deleted`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can bulk upload data from custom tutorial', async t => {
         const allKeysResults = ['9Commands Processed', '9Success', '0Errors'];
         const absolutePathResults = ['1Commands Processed', '1Success', '0Errors'];
         const invalidPathes = ['Invalid relative', 'Invalid absolute'];
         const keyNames = ['hashkey1', 'listkey1', 'setkey1', 'zsetkey1', 'stringkey1', 'jsonkey1', 'streamkey1', 'graphkey1', 'tskey1', 'stringkey1test'];
+        internalLinkName1 = 'probably-1';
 
         // Upload custom tutorial
         await t

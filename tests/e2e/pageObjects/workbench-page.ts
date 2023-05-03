@@ -25,6 +25,7 @@ export class WorkbenchPage extends InstancePage {
     cssCustomPluginTableResult = '[data-testid^=query-table-result-client]';
     cssCommandExecutionDateTime = '[data-testid=command-execution-date-time]';
     cssRowInVirtualizedTable = '[data-testid^=row-]';
+    cssTutorialDeleteIcon = '[data-testid^=delete-tutorial-icon-]';
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -276,6 +277,16 @@ export class WorkbenchPage extends InstancePage {
      */
     async getTutorialByName(name: string): Promise<Selector> {
         return Selector('div').withText(name);
+    }
+
+    /**
+     * Delete tutorial by name
+     * @param name A tutorial name
+     */
+    async deleteTutorialByName(name: string): Promise<void> {
+        const deleteTutorialBtn = this.tutorialAccordionButton.withText(name).find(this.cssTutorialDeleteIcon);
+        await t.click(deleteTutorialBtn);
+        await t.click(this.tutorialDeleteButton);
     }
 
     /**

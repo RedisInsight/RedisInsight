@@ -205,13 +205,9 @@ export class Common {
 
         // Add the contents of the directory to the zip archive
         archive.directory(sourceDir, false);
-
         // Finalize the archive and write it to disk
-        archive.finalize();
-        await new Promise((resolve) => {
-            output.on('close', resolve);
-            archive.pipe(output);
-        });
+        await archive.finalize();
+        archive.pipe(output);
     }
 
     /**

@@ -55,7 +55,6 @@ export async function addNewREClusterDatabase(databaseParameters: AddNewDatabase
     // Fill the add database form
     await myRedisDatabasePage.AddRedisDatabase.addAutodiscoverREClucterDatabase(databaseParameters);
     // Click on submit button
-    await t.debug();
     await t
         .click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton)
     // Wait for database to be exist in the list of Autodiscover databases and select it

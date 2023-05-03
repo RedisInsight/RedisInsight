@@ -2,11 +2,11 @@ In very broad terms probabilistic data structures (PDS) allow us to get to a "cl
 
 External:
 
-<!-- ![RedisInsight screen external](https://github.com/RedisInsight/RedisInsight/blob/main/.github/redisinsight_browser.png?raw=true) -->
+![RedisInsight screen external](https://github.com/RedisInsight/RedisInsight/blob/main/.github/redisinsight_browser.png?raw=true)
 
 Relative:
 
-![RedisInsight screen relative](../_images/image.png)
+<!-- ![RedisInsight screen relative](../_images/image.png) -->
 
 Relative path button:
 

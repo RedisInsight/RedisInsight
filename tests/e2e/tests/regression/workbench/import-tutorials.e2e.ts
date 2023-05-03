@@ -57,8 +57,8 @@ test
     })('Verify that user can upload tutorial with local zip file without manifest.json', async t => {
         // Verify that user can upload custom tutorials on docker version
         internalLinkName1 = 'probably-1';
-        // const imageExternalPath = 'RedisInsight screen external';
-        const imageRelativePath = 'RedisInsight screen relative';
+        const imageExternalPath = 'RedisInsight screen external';
+        // const imageRelativePath = 'RedisInsight screen relative';
 
         // Verify that user can see the “MY TUTORIALS” section in the Enablement area.
         await t.expect(workbenchPage.customTutorials.visible).ok('custom tutorials sections is not visible');
@@ -84,18 +84,18 @@ test
         await t.click((await workbenchPage.getInternalLinkWithManifest(internalLinkName1)));
         await t.expect(workbenchPage.scrolledEnablementArea.visible).ok('enablement area is not visible after clicked');
 
-        // Uncomment after fix for CI - error for tutorial with image
         // Verify that user can see image in custom tutorials by providing absolute external path in md file
-        // const imageExternal = await workbenchPage.getTutorialImageByAlt(imageExternalPath);
-        // await workbenchPage.waitUntilImageRendered(imageExternal);
-        // const imageExternalHeight = await imageExternal.getStyleProperty('height');
-        // await t.expect(parseInt(imageExternalHeight.replace(/[^\d]/g, ''))).gte(150);
+        const imageExternal = await workbenchPage.getTutorialImageByAlt(imageExternalPath);
+        await workbenchPage.waitUntilImageRendered(imageExternal);
+        const imageExternalHeight = await imageExternal.getStyleProperty('height');
+        await t.expect(parseInt(imageExternalHeight.replace(/[^\d]/g, ''))).gte(150);
 
+        // Uncomment after fix for CI - error for tutorial with image
         // Verify that user can see image in custom tutorials by providing relative path in md file
-        const imageRelative = await workbenchPage.getTutorialImageByAlt(imageRelativePath);
-        await workbenchPage.waitUntilImageRendered(imageRelative);
-        const imageRelativeHeight = await imageRelative.getStyleProperty('height');
-        await t.expect(parseInt(imageRelativeHeight.replace(/[^\d]/g, ''))).gte(150);
+        // const imageRelative = await workbenchPage.getTutorialImageByAlt(imageRelativePath);
+        // await workbenchPage.waitUntilImageRendered(imageRelative);
+        // const imageRelativeHeight = await imageRelative.getStyleProperty('height');
+        // await t.expect(parseInt(imageRelativeHeight.replace(/[^\d]/g, ''))).gte(150);
 
         // Verify that when User delete the tutorial, then User can see this tutorial and relevant markdown files are deleted from: the Enablement area in Workbench
         await t.click(workbenchPage.closeEnablementPage);

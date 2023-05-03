@@ -38,7 +38,7 @@ export class WorkbenchPage extends InstancePage {
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
     tutorialLinkField = Selector('[data-testid=tutorial-link-field]');
     tutorialLatestDeleteIcon = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);
-    tutorialDeleteButton = Selector('[data-testid^=delete-tutorial-]').withText('Delete');
+    tutorialDeleteButton = Selector('button[data-testid^=delete-tutorial-]');
     tutorialNameField = Selector('[data-testid=tutorial-name-field]');
     tutorialSubmitButton = Selector('[data-testid=submit-upload-tutorial-btn]');
     tutorialImport = Selector('[data-testid=import-tutorial]');

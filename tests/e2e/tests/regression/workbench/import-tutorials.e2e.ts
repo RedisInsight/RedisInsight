@@ -135,6 +135,7 @@ test('Verify that user can upload tutorial with URL with manifest.json', async t
     await t.expect((workbenchPage.tutorialAccordionButton.withText(tutorialName).exists))
         .notOk(`${tutorialName} tutorial is not uploaded`);
 });
+// https://redislabs.atlassian.net/browse/RI-4352
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);

@@ -90,7 +90,10 @@ test
         const imageExternalHeight = await imageExternal.getStyleProperty('height');
         await t.expect(parseInt(imageExternalHeight.replace(/[^\d]/g, ''))).gte(150);
 
-        // Uncomment after fix for CI - error for tutorial with image
+        /* Uncomment after fix https://redislabs.atlassian.net/browse/RI-4486
+        also need to add in probably-1.md file:
+        Relative:
+        ![RedisInsight screen relative](../_images/image.png) */
         // Verify that user can see image in custom tutorials by providing relative path in md file
         // const imageRelative = await workbenchPage.getTutorialImageByAlt(imageRelativePath);
         // await workbenchPage.waitUntilImageRendered(imageRelative);

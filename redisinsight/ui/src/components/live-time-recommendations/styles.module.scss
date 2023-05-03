@@ -64,6 +64,24 @@ $animation-duration: 300ms;
     will-change: right;
   }
 
+  .totalUnread {
+    font-weight: 500;
+    font-size: 12px;
+    background-color: var(--triggerIconActiveColor);
+    color: var(--triggerIconTextColor);
+
+    border-radius: 100%;
+
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    transform: rotate(90deg);
+  }
+
   .triggerIcon {
     width: 10px;
     height: 14px;

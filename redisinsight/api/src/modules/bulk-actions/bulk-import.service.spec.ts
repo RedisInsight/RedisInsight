@@ -260,14 +260,19 @@ describe('BulkImportService', () => {
       expect(mockedFs.readFile).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, 'danger'));
     });
 
-    it('should normalize path before importing and not search for file outside home folder (relative)', async () => {
+    it('should normalize path before importing and throw an error when search for file outside home folder (relative)', async () => {
       mockedFs.pathExists.mockImplementationOnce(async () => true);
 
-      await service.uploadFromTutorial(mockClientMetadata, {
-        path: '../../../danger',
-      });
+      try {
+        await service.uploadFromTutorial(mockClientMetadata, {
+          path: '../../../danger',
+        });
 
-      expect(mockedFs.readFile).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, 'danger'));
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual('Data file was not found');
+      }
     });
 
     it('should throw BadRequest when no file found', async () => {
@@ -289,9 +294,8 @@ describe('BulkImportService', () => {
       mockedFs.stat.mockImplementationOnce(async () => ({ size: 100 * 1024 * 1024 + 1 } as fs.Stats));
 
       try {
-        await service.uploadFromTutorial(mockClientMetadata, {
-          path: '../../../danger',
-        });
+        await service.uploadFromTutorial(mockClientMetadata, mockUploadImportFileByPathDto);
+
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);

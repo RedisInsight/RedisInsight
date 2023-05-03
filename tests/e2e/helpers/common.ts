@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as archiver from 'archiver';
+import archiver from 'archiver';
 import * as fs from 'fs';
 import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';

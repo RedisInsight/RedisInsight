@@ -114,6 +114,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
    * @param recommendation
    */
   async update(
+    clientMetadata: ClientMetadata,
     id: string,
     recommendation: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {

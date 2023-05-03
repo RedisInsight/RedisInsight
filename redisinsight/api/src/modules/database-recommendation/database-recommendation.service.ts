@@ -92,15 +92,17 @@ export class DatabaseRecommendationService {
 
   /**
    * Update extended recommendation
+   * @param clientMetadata
    * @param id
    * @param dto
    */
   public async update(
+    clientMetadata: ClientMetadata,
     id: string,
     dto: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
     this.logger.log(`Update database extended recommendations id:${id}`);
-    return this.databaseRecommendationRepository.update(id, dto);
+    return this.databaseRecommendationRepository.update(clientMetadata, id, dto);
   }
 
   /**

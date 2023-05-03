@@ -3,12 +3,14 @@ import { RecommendationScanner } from 'src/modules/database-recommendation/scann
 import { RecommendationProvider } from 'src/modules/database-recommendation/scanner/recommendation.provider';
 
 const mockRecommendationStrategy = () => ({
-  isReached: jest.fn(),
+  isRecommendationReached: jest.fn(),
 });
 
 const mockRecommendationProvider = () => ({
   getStrategy: jest.fn(),
 });
+
+const mockData = 'some data';
 
 describe('RecommendationScanner', () => {
   let service: RecommendationScanner;
@@ -30,14 +32,31 @@ describe('RecommendationScanner', () => {
     recommendationProvider = module.get<RecommendationProvider>(RecommendationProvider);
     recommendationStrategy = mockRecommendationStrategy();
     recommendationProvider.getStrategy.mockReturnValue(recommendationStrategy);
-    recommendationStrategy.isRecommendationReached.mockResolvedValue({ isReached: true });
   });
 
   describe('determineRecommendation', () => {
     it('should determine recommendation', async () => {
+      recommendationStrategy.isRecommendationReached.mockResolvedValue({ isReached: true });
+
       expect(await service.determineRecommendation('name', {
-        data: 'some value',
+        data: mockData,
       })).toEqual({ name: 'name' });
+    });
+
+    it('should return null when isRecommendationReached throw error', async () => {
+      recommendationStrategy.isRecommendationReached.mockRejectedValueOnce(new Error());
+
+      expect(await service.determineRecommendation('name', {
+        data: mockData,
+      })).toEqual(null);
+    });
+
+    it('should return null when isReached is false', async () => {
+      recommendationStrategy.isRecommendationReached.mockResolvedValue({ isReached: false });
+
+      expect(await service.determineRecommendation('name', {
+        data: mockData,
+      })).toEqual(null);
     });
   });
 });

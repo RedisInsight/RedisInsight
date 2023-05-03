@@ -80,7 +80,7 @@ export class DatabaseRecommendationController {
       @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: ModifyDatabaseRecommendationDto,
   ): Promise<DatabaseRecommendation> {
-    return await this.service.update(id, dto);
+    return await this.service.update(clientMetadata, id, dto);
   }
 
   @Delete('')

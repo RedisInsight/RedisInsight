@@ -6,9 +6,8 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const keyTTL = '2147476121';
 const keyFieldValue = 'hashField11111';
 const keyValue = 'hashValue11111!';
@@ -25,14 +24,14 @@ fixture `Hash Key fields verification`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search by full field name in Hash', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     await browserPage.addHashKey(keyName, keyTTL);
     // Add field to the hash key
     await browserPage.addFieldToHash(keyFieldValue, keyValue);
     // Search by full field name
     await browserPage.searchByTheValueInKeyDetails(keyFieldValue);
     // Check the search result
-    let result = browserPage.hashFieldsList.nth(0).textContent;
+    const result = browserPage.hashFieldsList.nth(0).textContent;
     await t.expect(result).contains(keyFieldValue, 'The hash field not found by full field name');
     // Verify that user can search by part field name in Hash with pattern * in Hash
     await browserPage.secondarySearchByTheValueInKeyDetails('hashField*');

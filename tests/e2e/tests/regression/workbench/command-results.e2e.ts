@@ -7,14 +7,13 @@ import {
 import { env, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
-import {WorkbenchActions} from '../../../common-actions/workbench-actions';
+import { WorkbenchActions } from '../../../common-actions/workbench-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const workBenchActions = new WorkbenchActions();
-const common = new Common();
 
-const indexName = common.generateWord(5);
+const indexName = Common.generateWord(5);
 const commandsForIndex = [
     `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE`,
     'HMSET product:1 price 20',
@@ -22,7 +21,7 @@ const commandsForIndex = [
 ];
 
 fixture `Command results at Workbench`
-    .meta({type: 'regression', rte: rte.standalone })
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);

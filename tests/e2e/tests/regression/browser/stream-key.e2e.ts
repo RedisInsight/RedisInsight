@@ -6,11 +6,10 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-const value = common.generateWord(5);
-let field = common.generateWord(5);
-let keyName = common.generateWord(20);
+const value = Common.generateWord(5);
+let field = Common.generateWord(5);
+let keyName = Common.generateWord(20);
 
 fixture `Stream key`
     .meta({
@@ -30,7 +29,7 @@ test('Verify that user can see a Stream in a table format', async t => {
         'Entry ID',
         field
     ];
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     const command = `XADD ${keyName} * '${field}' '${value}'`;
 
     // Add new Stream key with 5 EntryIds
@@ -46,7 +45,7 @@ test('Verify that user can see a Stream in a table format', async t => {
     await t.expect(browserPage.streamFieldsValues.textContent).contains(value, 'The Stream field value is not displayed in the table');
 });
 test('Verify that user can sort ASC/DESC by Entry ID', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     const command = `XADD ${keyName} * '${field}' '${value}'`;
 
     // Add new Stream key with 5 EntryIds
@@ -70,7 +69,7 @@ test('Verify that user can sort ASC/DESC by Entry ID', async t => {
     }
 });
 test('Verify that user can see all the columns are displayed by default for Stream', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     const fields = [
         'Pressure',
         'Humidity',
@@ -96,12 +95,12 @@ test('Verify that user can see all the columns are displayed by default for Stre
     await t.click(browserPage.fullScreenModeButton);
 });
 test('Verify that the multi-line cell value tooltip is available on hover as per standard key details behavior', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     const fields = [
         'Pressure',
         'Humidity'
     ];
-    const entryValue = common.generateSentence(5);
+    const entryValue = Common.generateSentence(5);
 
     // Add new Stream key with multi-line cell value
     for(let i = 0; i < fields.length; i++){
@@ -113,7 +112,7 @@ test('Verify that the multi-line cell value tooltip is available on hover as per
     await t.expect(browserPage.tooltip.textContent).contains(entryValue, 'The multi-line cell value tooltip is not available');
 });
 test('Verify that user can see a confirmation message when request to delete an entry in the Stream', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     field = 'fieldForRemoving';
     const confirmationMessage = `will be removed from ${keyName}`;
 
@@ -128,9 +127,9 @@ test('Verify that user can see a confirmation message when request to delete an 
     await t.expect(browserPage.confirmationMessagePopover.textContent).contains(entryId, 'The confirmation message for removing Entry not displayed');
 });
 test('Verify that the Entry ID field, Delete button are always displayed while scrolling for Stream data', async t => {
-    keyName = common.generateWord(20);
-    const fields = common.createArrayWithKeys(9);
-    const values = common.createArrayWithKeys(9);
+    keyName = Common.generateWord(20);
+    const fields = Common.createArrayWithKeys(9);
+    const values = Common.createArrayWithKeys(9);
 
     // Add new Stream key with 3 fields
     for (let i = 0; i < fields.length; i++) {

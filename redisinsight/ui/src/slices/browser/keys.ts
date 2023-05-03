@@ -1033,6 +1033,7 @@ export function editKeyTTL(key: RedisResponseBuffer, ttl: number) {
 // Asynchronous thunk action
 export function fetchKeysMetadata(
   keys: RedisString[],
+  filter: Nullable<KeyTypes>,
   signal?: AbortSignal,
   onSuccessAction?: (data: GetKeyInfoResponse[]) => void,
   onFailAction?: () => void
@@ -1045,7 +1046,7 @@ export function fetchKeysMetadata(
           state.connections.instances?.connectedInstance?.id,
           ApiEndpoints.KEYS_METADATA
         ),
-        { keys },
+        { keys, type: filter || undefined },
         { params: { encoding: state.app.info.encoding }, signal }
       )
 

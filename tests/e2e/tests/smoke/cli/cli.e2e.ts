@@ -6,9 +6,8 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 
 fixture `CLI`
     .meta({ type: 'smoke', rte: rte.standalone })
@@ -25,7 +24,7 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user can add data via CLI', async t => {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
         // Open CLI
         await t.click(browserPage.Cli.cliExpandButton);
         // Verify that user can expand CLI

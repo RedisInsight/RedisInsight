@@ -7,10 +7,9 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 
-let indexName = common.generateWord(5);
-let keyName = common.generateWord(5);
+let indexName = Common.generateWord(5);
+let keyName = Common.generateWord(5);
 
 fixture `Scripting area at Workbench`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -46,8 +45,8 @@ test('Verify that user can resize scripting area in Workbench', async t => {
     await t.expect(await workbenchPage.queryInput.clientHeight).gt(inputHeightEnd, 'Scripting area after resize has incorrect size');
 });
 test('Verify that user when he have more than 10 results can request to view more results in Workbench', async t => {
-    indexName = common.generateWord(5);
-    keyName = common.generateWord(5);
+    indexName = Common.generateWord(5);
+    keyName = Common.generateWord(5);
     const commandsForSendInCli = [
         `HMSET product:1 name "${keyName}"`,
         `HMSET product:2 name "${keyName}"`,
@@ -82,8 +81,8 @@ test('Verify that user when he have more than 10 results can request to view mor
     await t.expect(workbenchPage.paginationButtonNext.exists).ok('Pagination next button exists');
 });
 test('Verify that user can see result in Table and Text views for Hash data types for FT.SEARCH command in Workbench', async t => {
-    indexName = common.generateWord(5);
-    keyName = common.generateWord(5);
+    indexName = Common.generateWord(5);
+    keyName = Common.generateWord(5);
     const commandsForSend = [
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
         `HMSET product:1 name "${keyName}"`,
@@ -104,7 +103,7 @@ test('Verify that user can see result in Table and Text views for Hash data type
     await t.expect(workbenchPage.queryTextResult.exists).ok('The result is displayed in Text view');
 });
 test('Verify that user can run one command in multiple lines in Workbench page', async t => {
-    indexName = common.generateWord(5);
+    indexName = Common.generateWord(5);
     const multipleLinesCommand = [
         `FT.CREATE ${indexName}`,
         'ON HASH PREFIX 1 product:',
@@ -119,7 +118,7 @@ test('Verify that user can run one command in multiple lines in Workbench page',
     }
 });
 test('Verify that user can use one indent to indicate command in several lines in Workbench page', async t => {
-    indexName = common.generateWord(5);
+    indexName = Common.generateWord(5);
     const multipleLinesCommand = [
         `FT.CREATE ${indexName}`,
         'ON HASH PREFIX 1 product: SCHEMA price NUMERIC SORTABLE'

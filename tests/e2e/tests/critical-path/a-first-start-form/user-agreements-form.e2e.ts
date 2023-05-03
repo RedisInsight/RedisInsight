@@ -1,26 +1,25 @@
 import { commonUrl } from '../../../helpers/conf';
-import { UserAgreementPage, AddRedisDatabasePage, SettingsPage } from '../../../pageObjects';
+import { UserAgreementPage, SettingsPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { Common } from '../../../helpers/common';
 import { env, rte } from '../../../helpers/constants';
 
 const userAgreementPage = new UserAgreementPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
+const myRedisDatabasePage = new MyRedisDatabasePage();
 const settingsPage = new SettingsPage();
-const common = new Common();
 
 fixture `Agreements Verification`
     .meta({ type: 'critical_path', env: env.web, rte: rte.none })
     .page(commonUrl)
-    .requestHooks(common.mock)
+    .requestHooks(Common.mockSettingsResponse())
     .beforeEach(async t => {
         await t.maximizeWindow();
     });
 test('Verify that user should accept User Agreements to continue working with the application', async t => {
     await t.expect(userAgreementPage.userAgreementsPopup.exists).ok('User Agreements Popup is shown');
-    await t.click(addRedisDatabasePage.addDatabaseButton);
+    await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
     // Verify that I still has agreements popup & cannot add a database
     await t.expect(userAgreementPage.userAgreementsPopup.exists).ok('User Agreements Popup is shown');
-    await t.expect(addRedisDatabasePage.addDatabaseManually.exists).notOk('User can\'t add a database');
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually.exists).notOk('User can\'t add a database');
 });
 test('Verify that the encryption enabled by default and specific message', async t => {
     const expectedPluginText = 'To avoid automatic execution of malicious code, when adding new Workbench plugins, use files from trusted authors only.';
@@ -39,27 +38,27 @@ test('Verify that the Welcome page is opened after user agrees', async t => {
     // Verify that I dont have an popup
     await t.expect(userAgreementPage.userAgreementsPopup.exists).notOk('User Agreements Popup isn\'t shown after accept agreements');
     // Verify that Welcome page is displayed after user agrees
-    await t.expect(addRedisDatabasePage.welcomePageTitle.exists).ok('Welcome page is displayed');
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.welcomePageTitle.exists).ok('Welcome page is displayed');
     // Verify I can work with the application
-    await t.click(addRedisDatabasePage.addDatabaseButton);
-    await t.expect(addRedisDatabasePage.addDatabaseManually.exists).ok('User can add a database');
+    await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually.exists).ok('User can add a database');
 });
 test('Verify that when user checks "Use recommended settings" option on EULA screen, all options (except Licence Terms) are checked', async t => {
     // Verify options unchecked before enabling Use recommended settings
-    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).eql('false', 'Enable Analytics switcher is checked');
-    await t.expect(await settingsPage.getNotificationsSwitcherValue()).eql('false', 'Enable Notifications switcher is checked');
+    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).notOk('Enable Analytics switcher is checked');
+    await t.expect(await settingsPage.getNotificationsSwitcherValue()).notOk('Enable Notifications switcher is checked');
     // Check Use recommended settings switcher
     await t.click(userAgreementPage.recommendedSwitcher);
     // Verify options checked after enabling Use recommended settings
-    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).eql('true', 'Enable Analytics switcher is unchecked');
-    await t.expect(await settingsPage.getNotificationsSwitcherValue()).eql('true', 'Enable Notifications switcher is unchecked');
-    await t.expect(await settingsPage.getEulaSwitcherValue()).eql('false', 'EULA switcher is checked');
+    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).ok('Enable Analytics switcher is unchecked');
+    await t.expect(await settingsPage.getNotificationsSwitcherValue()).ok('Enable Notifications switcher is unchecked');
+    await t.expect(await settingsPage.getEulaSwitcherValue()).notOk('EULA switcher is checked');
     // Uncheck Use recommended settings switcher
     await t.click(userAgreementPage.recommendedSwitcher);
     // Verify that when user unchecks "Use recommended settings" option on EULA screen, previous state of checkboxes for the options is applied
-    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).eql('false', 'Enable Analytics switcher is checked');
-    await t.expect(await settingsPage.getNotificationsSwitcherValue()).eql('false', 'Enable Notifications switcher is checked');
-    await t.expect(await settingsPage.getEulaSwitcherValue()).eql('false', 'EULA switcher is checked');
+    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).notOk('Enable Analytics switcher is checked');
+    await t.expect(await settingsPage.getNotificationsSwitcherValue()).notOk('Enable Notifications switcher is checked');
+    await t.expect(await settingsPage.getEulaSwitcherValue()).notOk('EULA switcher is checked');
 });
 test('Verify that if "Use recommended settings" is selected, and user unchecks any of the option, "Use recommended settings" is unchecked', async t => {
     // Check Use recommended settings switcher

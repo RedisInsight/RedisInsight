@@ -7,7 +7,6 @@ import { KeyData, AddKeyArguments } from '../pageObjects/browser-page';
 import { COMMANDS_TO_CREATE_KEY, KeyTypesTexts } from './constants';
 import { Common } from './common';
 
-const common = new Common();
 const browserPage = new BrowserPage();
 
 export function getRandomKeyName(keyNameLength: number): string {
@@ -89,7 +88,7 @@ export async function populateDBWithHashes(host: string, port: string, keyArgume
     await client.on('connect', async function() {
         if (keyArguments.keysCount) {
             for (let i = 0; i < keyArguments.keysCount; i++) {
-                const keyName = `${keyArguments.keyNameStartWith}${common.generateWord(20)}`;
+                const keyName = `${keyArguments.keyNameStartWith}${Common.generateWord(20)}`;
                 await client.hset([keyName, 'field1', 'Hello'], async(error: string) => {
                     if (error) {
                         throw error;
@@ -118,8 +117,8 @@ export async function populateHashWithFields(host: string, port: string, keyArgu
     await client.on('connect', async function() {
         if (keyArguments.fieldsCount) {
             for (let i = 0; i < keyArguments.fieldsCount; i++) {
-                const field = `${keyArguments.fieldStartWith}${common.generateWord(10)}`;
-                const fieldValue = `${keyArguments.fieldValueStartWith}${common.generateWord(10)}`;
+                const field = `${keyArguments.fieldStartWith}${Common.generateWord(10)}`;
+                const fieldValue = `${keyArguments.fieldValueStartWith}${Common.generateWord(10)}`;
                 fields.push(field, fieldValue);
             }
         }
@@ -149,7 +148,7 @@ export async function populateListWithElements(host: string, port: string, keyAr
     await client.on('connect', async function() {
         if (keyArguments.elementsCount) {
             for (let i = 0; i < keyArguments.elementsCount; i++) {
-                const element = `${keyArguments.elementStartWith}${common.generateWord(10)}`;
+                const element = `${keyArguments.elementStartWith}${Common.generateWord(10)}`;
                 elements.push(element);
             }
         }
@@ -179,7 +178,7 @@ export async function populateSetWithMembers(host: string, port: string, keyArgu
     await client.on('connect', async function() {
         if (keyArguments.membersCount) {
             for (let i = 0; i < keyArguments.membersCount; i++) {
-                const member = `${keyArguments.memberStartWith}${common.generateWord(10)}`;
+                const member = `${keyArguments.memberStartWith}${Common.generateWord(10)}`;
                 members.push(member);
             }
         }
@@ -211,7 +210,7 @@ export async function populateZSetWithMembers(host: string, port: string, keyArg
     await client.on('connect', async function() {
         if (keyArguments.membersCount) {
             for (let i = 0; i < keyArguments.membersCount; i++) {
-                const memberName = `${keyArguments.memberStartWith}${common.generateWord(10)}`;
+                const memberName = `${keyArguments.memberStartWith}${Common.generateWord(10)}`;
                 const scoreValue = random(minScoreValue, maxScoreValue).toString(2);
                 members.push(scoreValue, memberName);
             }

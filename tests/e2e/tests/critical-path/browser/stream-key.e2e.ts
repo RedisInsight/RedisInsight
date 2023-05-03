@@ -12,11 +12,10 @@ import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const chance = new Chance();
-const common = new Common();
 
-let keyName = common.generateWord(20);
-const keyField = common.generateWord(20);
-const keyValue = common.generateWord(20);
+let keyName = Common.generateWord(20);
+const keyField = Common.generateWord(20);
+const keyValue = Common.generateWord(20);
 
 fixture `Stream Key`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -30,7 +29,7 @@ fixture `Stream Key`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can create Stream key via Add New Key form', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
     // Verify that user can see Stream details opened after key creation
@@ -41,9 +40,9 @@ test('Verify that user can create Stream key via Add New Key form', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('Stream is not added');
 });
 test('Verify that user can add several fields and values during Stream key creation', async t => {
-    const keyName = common.generateWord(20);
+    const keyName = Common.generateWord(20);
     // Create an array with different data types for Stream fields
-    const streamData = { 'string': common.generateWord(20), 'array': `[${common.generateWord(20)}, ${chance.integer()}]`, 'integer': `${chance.integer()}`, 'json': '{\'test\': \'test\'}', 'null': 'null', 'boolean': 'true' };
+    const streamData = { 'string': Common.generateWord(20), 'array': `[${Common.generateWord(20)}, ${chance.integer()}]`, 'integer': `${chance.integer()}`, 'json': '{\'test\': \'test\'}', 'null': 'null', 'boolean': 'true' };
     const scrollSelector = Selector('.eui-yScroll').nth(-1);
 
     // Open Add New Stream Key Form
@@ -68,8 +67,8 @@ test('Verify that user can add several fields and values during Stream key creat
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('Stream Key Name');
 });
 test('Verify that user can add new Stream Entry for Stream data type key which has an Entry ID, Field and Value', async t => {
-    keyName = common.generateWord(20);
-    const newField = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    const newField = Common.generateWord(20);
 
     // Add New Stream Key and check columns and rows
     await browserPage.addStreamKey(keyName, keyField, keyValue);
@@ -77,21 +76,21 @@ test('Verify that user can add new Stream Entry for Stream data type key which h
     await t.expect(browserPage.streamFields.count).eql(4, 'One field in table not displayed');
     await t.expect(browserPage.streamEntryFields.count).eql(1, 'One value in table not displayed');
     // Create new field and value and check that new column is added
-    await browserPage.addEntryToStream(newField, common.generateWord(20));
+    await browserPage.addEntryToStream(newField, Common.generateWord(20));
     await t.expect(browserPage.streamEntryIDDateValue.count).eql(2, 'Two Entries ID not displayed');
     await t.expect(browserPage.streamFields.count).eql(7, 'Two fields in table not displayed');
     await t.expect(browserPage.streamEntryFields.count).eql(4, 'Four values in table not displayed');
     // Create value to existed filed and check that new column was not added
-    await browserPage.addEntryToStream(newField, common.generateWord(20));
+    await browserPage.addEntryToStream(newField, Common.generateWord(20));
     await t.expect(browserPage.streamEntryIDDateValue.count).eql(3, 'Three Entries ID not displayed');
     await t.expect(browserPage.streamFields.count).eql(8, 'Still two fields in table not displayed');
     await t.expect(browserPage.streamEntryFields.count).eql(6, 'Six values in table not displayed');
 });
 test('Verify that during new entry adding to existing Stream, user can clear the value and the row itself', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     // Generate data for stream
-    const fields = [keyField, common.generateWord(20)];
-    const values = [keyValue, common.generateWord(20)];
+    const fields = [keyField, Common.generateWord(20)];
+    const values = [keyValue, Common.generateWord(20)];
 
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
@@ -116,7 +115,7 @@ test('Verify that during new entry adding to existing Stream, user can clear the
     await t.expect(browserPage.streamField.count).eql(fieldsNumberAfterDeletion, 'Number of fields after deletion not correct');
 });
 test('Verify that user can add several fields and values to the existing Stream Key', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     // Generate field value data
     const entryQuantity = 5;
     const fields: string[] = [];
@@ -145,7 +144,7 @@ test('Verify that user can add several fields and values to the existing Stream 
     await t.click(browserPage.fullScreenModeButton);
 });
 test('Verify that user can see the Stream range filter', async t => {
-    keyName = common.generateWord(20);
+    keyName = Common.generateWord(20);
     // Add new Stream key with 1 field
     await browserPage.Cli.sendCommandInCli(`XADD ${keyName} * fields values`);
     // Open key details and check filter

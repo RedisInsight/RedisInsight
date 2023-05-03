@@ -6,9 +6,8 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const keyTTL = '2147476121';
 const keyMember = '1111ZsetMember11111';
 
@@ -24,7 +23,7 @@ fixture `ZSet Key fields verification`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search by member in Zset', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     await browserPage.addZSetKey(keyName, '0', keyTTL, '12345qwerty');
     // Add member to the ZSet key
     await browserPage.addMemberToZSet(keyMember, '3');
@@ -35,11 +34,11 @@ test('Verify that user can search by member in Zset', async t => {
     await t.expect(result).eql(keyMember, 'The Zset member');
 });
 test('Verify that user can sort Zset members by score by DESC and ASC', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     // Open CLI
     await t.click(browserPage.Cli.cliExpandButton);
     //Create new key with a lot of members
-    const arr = await common.createArray(100);
+    const arr = await Common.createArray(100);
     await t.typeText(browserPage.Cli.cliCommandInput, `ZADD ${keyName} ${arr.join(' ')}`, { paste: true });
     await t.pressKey('enter');
     await t.click(browserPage.Cli.cliCollapseButton);

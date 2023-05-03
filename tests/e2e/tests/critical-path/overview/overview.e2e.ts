@@ -8,7 +8,6 @@ import { Common } from '../../../helpers/common';
 
 const overviewPage = new OverviewPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const common = new Common();
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 
@@ -19,7 +18,7 @@ const headerColumns = {
 };
 type HeaderColumn = keyof typeof headerColumns;
 
-const keyName = common.generateWord(10);
+const keyName = Common.generateWord(10);
 const commandToAddKey = `set ${keyName} test`;
 
 fixture `Overview`

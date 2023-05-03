@@ -1,7 +1,6 @@
 import { Selector, t } from 'testcafe';
 import { Common } from '../../../helpers/common';
 
-const common = new Common();
 export class CommandHelper {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
@@ -48,7 +47,7 @@ export class CommandHelper {
     async checkURLCommand(command: string, url: string): Promise<void> {
         await t.click(this.cliHelperOutputTitles.withExactText(command));
         await t.click(this.readMoreButton);
-        await t.expect(await common.getPageUrl()).eql(url, 'The opened page not correct');
+        await t.expect(Common.getPageUrl()).eql(url, 'The opened page not correct');
     }
 
     /**

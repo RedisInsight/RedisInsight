@@ -75,7 +75,7 @@ test('Verify that the message is claimed only if its idle time is greater than t
     await t.click(browserPage.claimPendingMessageButton);
     await t.typeText(browserPage.streamMinIdleTimeInput, '100000000', { replace: true, paste: true });
     await t.click(browserPage.submitButton);
-    await t.expect(browserPage.notificationMessage.textContent).contains('No messages claimed', 'The message is not claimed notification');
+    await t.expect(browserPage.Toast.toastHeader.textContent).contains('No messages claimed', 'The message is not claimed notification');
     await t.expect(browserPage.streamMessage.count).eql(streamMessageBefore, 'The number of pendings in the table not correct');
 });
 test('Verify that when user toggle optional parameters on, he can see optional fields', async t => {

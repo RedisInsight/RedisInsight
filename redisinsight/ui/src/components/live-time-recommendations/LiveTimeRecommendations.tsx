@@ -260,6 +260,9 @@ const LiveTimeRecommendations = () => {
             onClick={toggleContent}
             data-testid="recommendations-trigger"
           >
+            {totalUnread > 0 && (
+              <span className={styles.totalUnread} data-testid="recommendations-unread-count">{totalUnread}</span>
+            )}
             {isHighlighted && !isContentVisible
               ? <TriggerActiveIcon className={styles.triggerIcon} />
               : <TriggerIcon className={styles.triggerIcon} />}

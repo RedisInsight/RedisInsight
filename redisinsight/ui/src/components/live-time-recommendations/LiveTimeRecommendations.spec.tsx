@@ -294,4 +294,34 @@ describe('LiveTimeRecommendations', () => {
     expect(queryByTestId('bigHashes-recommendation')).not.toBeInTheDocument()
     expect(queryByTestId('no-recommendations-screen')).toBeInTheDocument()
   })
+
+  it('should not render recommendations count with totalUnread = 0', () => {
+    (recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
+      ...mockRecommendationsSelector,
+      data: {
+        recommendations: [],
+        totalUnread: 0,
+      },
+      isContentVisible: false,
+    }))
+
+    render(<LiveTimeRecommendations />)
+
+    expect(screen.queryByTestId('recommendations-unread-count')).not.toBeInTheDocument()
+  })
+
+  it('should render recommendations count with totalUnread > 0', () => {
+    (recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
+      ...mockRecommendationsSelector,
+      data: {
+        recommendations: [],
+        totalUnread: 7,
+      },
+      isContentVisible: false,
+    }))
+
+    render(<LiveTimeRecommendations />)
+
+    expect(screen.getByTestId('recommendations-unread-count')).toHaveTextContent('7')
+  })
 })

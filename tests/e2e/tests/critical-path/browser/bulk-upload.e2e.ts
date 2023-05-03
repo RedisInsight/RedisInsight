@@ -2,13 +2,12 @@ import * as path from 'path';
 import { t } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, BulkActionsPage } from '../../../pageObjects';
+import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { deleteAllKeysFromDB, verifyKeysDisplayedInTheList } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
-const bulkActionsPage = new BulkActionsPage();
 
 const dbParameters = { host: ossStandaloneRedisearch.host, port: ossStandaloneRedisearch.port };
 const filesToUpload = ['bulkUplAllKeyTypes.txt', 'bigKeysData.rtf'];
@@ -19,7 +18,7 @@ const filePathes = {
 const keyNames = ['hashkey1', 'listkey1', 'setkey1', 'zsetkey1', 'stringkey1', 'jsonkey1', 'streamkey1', 'graphkey1', 'tskey1'];
 const verifyCompletedResultText = async(resultsText: string[]): Promise<void> => {
     for (const result of resultsText) {
-        await t.expect(bulkActionsPage.bulkUploadCompletedSummary.textContent).contains(result, 'Bulk upload completed summary not correct');
+        await t.expect(browserPage.BulkActions.bulkUploadCompletedSummary.textContent).contains(result, 'Bulk upload completed summary not correct');
     }
 };
 
@@ -43,28 +42,28 @@ test('Verify bulk upload of different text docs formats', async t => {
     // Open bulk actions
     await t.click(browserPage.bulkActionsButton);
     // Open bulk upload tab
-    await t.click(bulkActionsPage.bulkUpdateTab);
+    await t.click(browserPage.BulkActions.bulkUpdateTab);
     // Verify that Upload button disabled by default
-    await t.expect(bulkActionsPage.actionButton.hasAttribute('disabled')).ok('Upload button enabled without added file');
+    await t.expect(browserPage.BulkActions.actionButton.hasAttribute('disabled')).ok('Upload button enabled without added file');
 
     // Verify that keys of all types can be uploaded
-    await bulkActionsPage.uploadFileInBulk(filePathes.allKeysFile);
+    await browserPage.BulkActions.uploadFileInBulk(filePathes.allKeysFile);
     await verifyCompletedResultText(allKeysResults);
-    await t.expect(bulkActionsPage.bulkUploadCompletedSummary.textContent).notContains('0:00:00.00', 'Bulk upload completed summary not correct');
+    await t.expect(browserPage.BulkActions.bulkUploadCompletedSummary.textContent).notContains('0:00:00.00', 'Bulk upload completed summary not correct');
     await browserPage.searchByKeyName('*key1');
     await verifyKeysDisplayedInTheList(keyNames);
 
     // Verify that Upload button disabled after starting new upload
-    await t.click(bulkActionsPage.bulkActionStartNewButton);
-    await t.expect(bulkActionsPage.actionButton.hasAttribute('disabled')).ok('Upload button enabled without added file');
+    await t.click(browserPage.BulkActions.bulkActionStartNewButton);
+    await t.expect(browserPage.BulkActions.actionButton.hasAttribute('disabled')).ok('Upload button enabled without added file');
 
     // Verify that user can remove uploaded file
-    await t.setFilesToUpload(bulkActionsPage.bulkUploadInput, [filePathes.bigDataFile]);
-    await t.expect(bulkActionsPage.bulkUploadContainer.textContent).contains(filesToUpload[1], 'Filename not displayed in upload input');
-    await t.click(bulkActionsPage.removeFileBtn);
-    await t.expect(bulkActionsPage.bulkUploadContainer.textContent).contains(defaultText, 'File not removed from upload input');
+    await t.setFilesToUpload(browserPage.BulkActions.bulkUploadInput, [filePathes.bigDataFile]);
+    await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(filesToUpload[1], 'Filename not displayed in upload input');
+    await t.click(browserPage.BulkActions.removeFileBtn);
+    await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(defaultText, 'File not removed from upload input');
 
     // Verify that user can upload 10000 keys
-    await bulkActionsPage.uploadFileInBulk(filePathes.bigDataFile);
+    await browserPage.BulkActions.uploadFileInBulk(filePathes.bigDataFile);
     await verifyCompletedResultText(bigKeysResults);
 });

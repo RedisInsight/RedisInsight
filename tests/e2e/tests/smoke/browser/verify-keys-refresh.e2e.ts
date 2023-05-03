@@ -5,10 +5,9 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
-let newKeyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
+let newKeyName = Common.generateWord(10);
 
 fixture `Keys refresh functionality`
     .meta({ type: 'smoke', rte: rte.standalone })
@@ -22,9 +21,9 @@ fixture `Keys refresh functionality`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can refresh Keys', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     const keyTTL = '2147476121';
-    newKeyName = common.generateWord(10);
+    newKeyName = Common.generateWord(10);
 
     // Add hash key
     await browserPage.addHashKey(keyName, keyTTL);

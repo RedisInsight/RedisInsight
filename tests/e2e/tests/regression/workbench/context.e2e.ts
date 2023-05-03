@@ -3,16 +3,14 @@ import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 
 const speed = 0.4;
 
 fixture `Workbench Context`
-    .meta({type: 'regression', rte: rte.standalone})
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -58,7 +56,7 @@ test('Verify that user can see all the information removed when reloads the page
     await t.expect(workbenchPage.Cli.cliCollapseButton.exists).ok('CLI is not expanded');
     await t.expect(workbenchPage.queryInputScriptArea.textContent).eql(command, 'Input in Editor is not saved');
     // Reload the window and chek context
-    await common.reloadPage();
+    await workbenchPage.reloadPage();
     await t.expect(workbenchPage.Cli.cliCollapseButton.exists).notOk('CLI is not collapsed');
     await t.expect(workbenchPage.queryInputScriptArea.textContent).eql('', 'Input in Editor is not removed');
 });

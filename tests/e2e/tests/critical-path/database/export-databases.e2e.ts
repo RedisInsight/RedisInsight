@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { join as joinPath } from 'path';
 import { rte } from '../../../helpers/constants';
-import { AddRedisDatabasePage, MyRedisDatabasePage } from '../../../pageObjects';
+import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
     cloudDatabaseConfig,
     commonUrl,
@@ -21,12 +21,9 @@ import {
     discoverSentinelDatabaseApi
 } from '../../../helpers/api/api-database';
 import { DatabasesActions } from '../../../common-actions/databases-actions';
-import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databasesActions = new DatabasesActions();
-const common = new Common();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 
 let foundExportedFiles: string[];
 
@@ -40,7 +37,7 @@ test
         await addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
         await discoverSentinelDatabaseApi(ossSentinelConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete all databases
@@ -76,7 +73,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
         await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
 
         const exportedData = {
             path: joinPath(fileDownloadPath, foundExportedFiles[0]),
@@ -91,8 +88,8 @@ test
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
         await clickOnEditDatabaseByName(databaseNames[1]);
-        await t.expect(addRedisDatabasePage.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
-        await t.expect(addRedisDatabasePage.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
     });
 test
     .before(async() => {
@@ -100,7 +97,7 @@ test
         await addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await addRECloudDatabase(cloudDatabaseConfig);
         await discoverSentinelDatabaseApi(ossSentinelConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete databases

@@ -1,5 +1,5 @@
 import { rte } from '../../../helpers/constants';
-import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, invalidOssStandaloneConfig, ossStandaloneForSSHConfig } from '../../../helpers/conf';
 import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/database';
 import { deleteStandaloneDatabasesByNamesApi } from '../../../helpers/api/api-database';
@@ -7,10 +7,8 @@ import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../test-data/ssh
 import { Common } from '../../../helpers/common';
 import { BrowserActions } from '../../../common-actions/browser-actions';
 
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const common = new Common();
 const browserActions = new BrowserActions();
 
 const sshParams = {
@@ -21,15 +19,15 @@ const sshParams = {
 const newClonedDatabaseAlias = 'Cloned ssh database';
 const sshDbPass = {
     ...ossStandaloneForSSHConfig,
-    databaseName: `SSH_${common.generateWord(5)}`
+    databaseName: `SSH_${Common.generateWord(5)}`
 };
 const sshDbPrivateKey = {
     ...ossStandaloneForSSHConfig,
-    databaseName: `SSH_${common.generateWord(5)}`
+    databaseName: `SSH_${Common.generateWord(5)}`
 };
 const sshDbPasscode = {
     ...ossStandaloneForSSHConfig,
-    databaseName: `SSH_${common.generateWord(5)}`
+    databaseName: `SSH_${Common.generateWord(5)}`
 };
 
 fixture `Connecting to the databases verifications`
@@ -43,17 +41,17 @@ test
         const errorMessage = `Could not connect to ${invalidOssStandaloneConfig.host}:${invalidOssStandaloneConfig.port}, please check the connection details.`;
 
         // Fill the add database form
-        await addRedisDatabasePage.addRedisDataBase(invalidOssStandaloneConfig);
+        await myRedisDatabasePage.AddRedisDatabase.addRedisDataBase(invalidOssStandaloneConfig);
 
         // Verify that when user request to test database connection is not successfull, can see standart connection error
-        await t.click(addRedisDatabasePage.testConnectionBtn);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
         await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Error', 'Invalid connection has no error on test');
 
         // Click for saving
-        await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         // Verify that the database is not in the list
-        await t.expect(addRedisDatabasePage.errorMessage.textContent).contains('Error', 'Error message not displayed', { timeout: 10000 });
-        await t.expect(addRedisDatabasePage.errorMessage.textContent).contains(errorMessage, 'Error message not displayed', { timeout: 10000 });
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.errorMessage.textContent).contains('Error', 'Error message not displayed', { timeout: 10000 });
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.errorMessage.textContent).contains(errorMessage, 'Error message not displayed', { timeout: 10000 });
     });
 test
     .meta({ rte: rte.none })('Fields to add database prepopulation', async t => {
@@ -62,20 +60,20 @@ test
         const defaultSentinelPort = '26379';
 
         await t
-            .click(addRedisDatabasePage.addDatabaseButton)
-            .click(addRedisDatabasePage.addDatabaseManually);
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
         // Verify that the Host, Port, Database Alias values pre-populated by default for the manual flow
         await t
-            .expect(addRedisDatabasePage.hostInput.value).eql(defaultHost, 'Default host not prepopulated')
-            .expect(addRedisDatabasePage.portInput.value).eql(defaultPort, 'Default port not prepopulated')
-            .expect(addRedisDatabasePage.databaseAliasInput.value).eql(`${defaultHost}:${defaultPort}`, 'Default db alias not prepopulated');
+            .expect(myRedisDatabasePage.AddRedisDatabase.hostInput.value).eql(defaultHost, 'Default host not prepopulated')
+            .expect(myRedisDatabasePage.AddRedisDatabase.portInput.value).eql(defaultPort, 'Default port not prepopulated')
+            .expect(myRedisDatabasePage.AddRedisDatabase.databaseAliasInput.value).eql(`${defaultHost}:${defaultPort}`, 'Default db alias not prepopulated');
         // Verify that the Host, Port, Database Alias values pre-populated by default for Sentinel
         await t
-            .click(addRedisDatabasePage.addAutoDiscoverDatabase)
-            .click(addRedisDatabasePage.redisSentinelType);
+            .click(myRedisDatabasePage.AddRedisDatabase.addAutoDiscoverDatabase)
+            .click(myRedisDatabasePage.AddRedisDatabase.redisSentinelType);
         await t
-            .expect(addRedisDatabasePage.hostInput.value).eql(defaultHost, 'Default sentinel host not prepopulated')
-            .expect(addRedisDatabasePage.portInput.value).eql(defaultSentinelPort, 'Default sentinel port not prepopulated');
+            .expect(myRedisDatabasePage.AddRedisDatabase.hostInput.value).eql(defaultHost, 'Default sentinel host not prepopulated')
+            .expect(myRedisDatabasePage.AddRedisDatabase.portInput.value).eql(defaultSentinelPort, 'Default sentinel port not prepopulated');
     });
 test
     .meta({ rte: rte.standalone })
@@ -105,55 +103,55 @@ test
 
         // Verify that if user have not entered any required value he can see that this field should be specified when hover over the button to add a database
         await t
-            .click(addRedisDatabasePage.addDatabaseButton)
-            .click(addRedisDatabasePage.addDatabaseManually)
-            .click(addRedisDatabasePage.useSSHCheckbox)
-            .click(addRedisDatabasePage.sshPrivateKeyRadioBtn)
-            .hover(addRedisDatabasePage.addRedisDatabaseButton);
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually)
+            .click(myRedisDatabasePage.AddRedisDatabase.useSSHCheckbox)
+            .click(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyRadioBtn)
+            .hover(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         for (const text of tooltipText) {
             await browserActions.verifyTooltipContainsText(text, true);
         }
         // Verify that user can see the Test Connection button enabled/disabled with the same rules as the button to add/apply the changes
-        await t.hover(addRedisDatabasePage.testConnectionBtn);
+        await t.hover(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
         for (const text of tooltipText) {
             await browserActions.verifyTooltipContainsText(text, true);
         }
 
         // Verify that user can add SSH tunnel with Password for Standalone database
-        await t.click(addRedisDatabasePage.cancelButton);
-        await addRedisDatabasePage.addStandaloneSSHDatabase(sshDbPass, sshWithPass);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
+        await myRedisDatabasePage.AddRedisDatabase.addStandaloneSSHDatabase(sshDbPass, sshWithPass);
         await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
-        await common.checkURLContainsText('browser');
+        await Common.checkURLContainsText('browser');
 
         // Verify that user can add SSH tunnel with Private Key
         await t.click(browserPage.OverviewPanel.myRedisDbIcon);
-        await addRedisDatabasePage.addStandaloneSSHDatabase(sshDbPrivateKey, sshWithPrivateKey);
+        await myRedisDatabasePage.AddRedisDatabase.addStandaloneSSHDatabase(sshDbPrivateKey, sshWithPrivateKey);
         await myRedisDatabasePage.clickOnDBByName(sshDbPrivateKey.databaseName);
-        await common.checkURLContainsText('browser');
+        await Common.checkURLContainsText('browser');
 
         // Verify that user can edit SSH parameters for existing database connections
         await t.click(browserPage.OverviewPanel.myRedisDbIcon);
         await myRedisDatabasePage.clickOnEditDBByName(sshDbPrivateKey.databaseName);
         await t
-            .typeText(addRedisDatabasePage.sshPrivateKeyInput, sshWithPassphrase.sshPrivateKey, { replace: true, paste: true })
-            .typeText(addRedisDatabasePage.sshPassphraseInput, sshWithPassphrase.sshPassphrase, { replace: true, paste: true });
-        await t.click(addRedisDatabasePage.addRedisDatabaseButton);
-        await t.expect(addRedisDatabasePage.addRedisDatabaseButton.exists).notOk('Edit database panel still displayed');
+            .typeText(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyInput, sshWithPassphrase.sshPrivateKey, { replace: true, paste: true })
+            .typeText(myRedisDatabasePage.AddRedisDatabase.sshPassphraseInput, sshWithPassphrase.sshPassphrase, { replace: true, paste: true });
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton.exists).notOk('Edit database panel still displayed');
         await clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);
         await t
-            .expect(addRedisDatabasePage.sshPrivateKeyInput.value).eql(sshWithPassphrase.sshPrivateKey, 'Edited Private key not saved')
-            .expect(addRedisDatabasePage.sshPassphraseInput.value).eql(sshWithPassphrase.sshPassphrase, 'Edited Passphrase not saved');
+            .expect(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyInput.value).eql(sshWithPassphrase.sshPrivateKey, 'Edited Private key not saved')
+            .expect(myRedisDatabasePage.AddRedisDatabase.sshPassphraseInput.value).eql(sshWithPassphrase.sshPassphrase, 'Edited Passphrase not saved');
 
         // Verify that user can clone database with SSH tunnel
         await clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);
-        await t.click(addRedisDatabasePage.cloneDatabaseButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
         // Edit Database alias before cloning
-        await t.typeText(addRedisDatabasePage.databaseAliasInput, newClonedDatabaseAlias, { replace: true });
-        await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+        await t.typeText(myRedisDatabasePage.AddRedisDatabase.databaseAliasInput, newClonedDatabaseAlias, { replace: true });
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(newClonedDatabaseAlias).exists).ok('DB with SSH was not cloned');
 
         // Verify that user can add SSH tunnel with Passcode
-        await addRedisDatabasePage.addStandaloneSSHDatabase(sshDbPasscode, sshWithPassphrase);
+        await myRedisDatabasePage.AddRedisDatabase.addStandaloneSSHDatabase(sshDbPasscode, sshWithPassphrase);
         await myRedisDatabasePage.clickOnDBByName(sshDbPasscode.databaseName);
-        await common.checkURLContainsText('browser');
+        await Common.checkURLContainsText('browser');
     });

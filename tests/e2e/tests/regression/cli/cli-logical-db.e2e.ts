@@ -1,5 +1,5 @@
 import { acceptLicenseTerms, deleteCustomDatabase } from '../../../helpers/database';
-import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig
@@ -7,7 +7,6 @@ import {
 import { rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 
@@ -35,7 +34,7 @@ test
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that working with logical DBs, user can not see 0 DB index in CLI', async t => {
-        await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
+        await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneConfig, index);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         // Open CLI
         await t.click(browserPage.Cli.cliExpandButton);
@@ -50,7 +49,7 @@ test('Verify that working with logical DBs, user can see N DB index in CLI', asy
     index = '1';
     databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}[db${index}]`;
 
-    await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
+    await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneConfig, index);
     await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName  } [db${index}]`);
     // Open CLI
     await t.click(browserPage.Cli.cliExpandButton);
@@ -68,7 +67,7 @@ test('Verify that user can see DB index in the endpoint in CLI header is automat
     databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}[db${index}]`;
     const databaseEndpointAfter = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}[db${indexAfter}]`;
 
-    await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
+    await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneConfig, index);
     await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName  } [db${index}]`);
 
     // Open CLI and verify that user can see DB index in CLI

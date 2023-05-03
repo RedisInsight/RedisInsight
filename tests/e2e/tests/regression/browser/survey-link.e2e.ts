@@ -7,7 +7,6 @@ import { deleteAllDatabasesApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const common = new Common();
 const externalPageLink = 'https://www.surveymonkey.com/r/redisinsight';
 
 fixture `User Survey`
@@ -25,7 +24,7 @@ test('Verify that user can use survey link', async t => {
     // Browser page
     await t.click(browserPage.userSurveyLink);
     // Verify that when users click on RI survey, they are redirected to https://www.surveymonkey.com/r/redisinsight
-    await common.checkURL(externalPageLink);
+    await Common.checkURL(externalPageLink);
     await t.switchToParentWindow();
     // Workbench page
     await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
@@ -41,6 +40,6 @@ test('Verify that user can use survey link', async t => {
     await t.expect(browserPage.userSurveyLink.visible).notOk('Survey Link is visible');
     // Verify that user cannot see survey link for welcome page
     await deleteAllDatabasesApi();
-    await common.reloadPage();
+    await browserPage.reloadPage();
     await t.expect(browserPage.userSurveyLink.visible).notOk('Survey Link is visible');
 });

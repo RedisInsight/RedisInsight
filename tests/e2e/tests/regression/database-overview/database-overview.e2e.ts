@@ -11,7 +11,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 const browserPage = new BrowserPage();
 
 let keys: string[];
@@ -29,7 +28,7 @@ fixture `Database overview`
     });
 test('Verify that user can connect to DB and see breadcrumbs at the top of the application', async t => {
     // Create new keys
-    keys = await common.createArrayWithKeyValue(10);
+    keys = await Common.createArrayWithKeyValue(10);
     await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
 
     // Verify that user can see breadcrumbs in Browser and Workbench views

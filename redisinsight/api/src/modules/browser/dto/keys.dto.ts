@@ -176,6 +176,20 @@ export class GetKeysInfoDto {
   @IsRedisString({ each: true })
   @RedisStringType({ each: true })
   keys: RedisString[];
+
+  @ApiPropertyOptional({
+    description:
+      'Iterate through the database looking for keys of a specific type.',
+    enum: RedisDataType,
+    example: RedisDataType.Hash,
+  })
+  @IsEnum(RedisDataType, {
+    message: `destination must be a valid enum value. Valid values: ${Object.values(
+      RedisDataType,
+    )}.`,
+  })
+  @IsOptional()
+  type?: RedisDataType;
 }
 
 export class GetKeyInfoDto extends KeyDto {}

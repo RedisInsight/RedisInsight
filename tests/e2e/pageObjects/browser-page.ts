@@ -1,10 +1,11 @@
 import { t, Selector } from 'testcafe';
 import { Common } from '../helpers/common';
 import { InstancePage } from './instance-page';
-
-const common = new Common();
+import { BulkActions } from './components/browser';
 
 export class BrowserPage extends InstancePage {
+    BulkActions = new BulkActions();
+
     //CSS Selectors
     cssSelectorGrid = '[aria-label="grid"]';
     cssSelectorRows = '[aria-label="row"]';
@@ -284,8 +285,8 @@ export class BrowserPage extends InstancePage {
      * @param TTL The Time to live value of the key
      */
     async commonAddNewKey(keyName: string, TTL?: string): Promise<void> {
-        await common.waitForElementNotVisible(this.progressLine);
-        await common.waitForElementNotVisible(this.loader);
+        await Common.waitForElementNotVisible(this.progressLine);
+        await Common.waitForElementNotVisible(this.loader);
         await t
             .click(this.plusAddKeyButton)
             .click(this.addKeyNameInput)
@@ -347,8 +348,8 @@ export class BrowserPage extends InstancePage {
      * @param members The key members
      */
     async addSetKey(keyName: string, TTL = ' ', members = ' '): Promise<void> {
-        await common.waitForElementNotVisible(this.progressLine);
-        await common.waitForElementNotVisible(this.loader);
+        await Common.waitForElementNotVisible(this.progressLine);
+        await Common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.setOption);
@@ -368,8 +369,8 @@ export class BrowserPage extends InstancePage {
      * @param members The key members
      */
     async addZSetKey(keyName: string, scores = ' ', TTL = ' ', members = ' '): Promise<void> {
-        await common.waitForElementNotVisible(this.progressLine);
-        await common.waitForElementNotVisible(this.loader);
+        await Common.waitForElementNotVisible(this.progressLine);
+        await Common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.zsetOption);
@@ -389,8 +390,8 @@ export class BrowserPage extends InstancePage {
      * @param element The key element
      */
     async addListKey(keyName: string, TTL = ' ', element = ' '): Promise<void> {
-        await common.waitForElementNotVisible(this.progressLine);
-        await common.waitForElementNotVisible(this.loader);
+        await Common.waitForElementNotVisible(this.progressLine);
+        await Common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.listOption);
@@ -411,8 +412,8 @@ export class BrowserPage extends InstancePage {
      * @param value The value of the key
      */
     async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' '): Promise<void> {
-        await common.waitForElementNotVisible(this.progressLine);
-        await common.waitForElementNotVisible(this.loader);
+        await Common.waitForElementNotVisible(this.progressLine);
+        await Common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
         await t.click(this.keyTypeDropDown);
         await t.click(this.hashOption);
@@ -540,7 +541,7 @@ export class BrowserPage extends InstancePage {
      */
     async isKeyIsDisplayedInTheList(keyName: string): Promise<boolean> {
         const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
-        await common.waitForElementNotVisible(this.loader);
+        await Common.waitForElementNotVisible(this.loader);
         return keyNameInTheList.exists;
     }
 

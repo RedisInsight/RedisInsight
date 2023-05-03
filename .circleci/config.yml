@@ -91,7 +91,7 @@ aliases:
     - mods-preview        # OSS Standalone and all preview modules
     - oss-st-6-tls        # OSS Standalone v6 with TLS enabled
     - oss-st-6-tls-auth   # OSS Standalone v6 with TLS auth required
-    - oss-st-6-tls-auth-ssh   # OSS Standalone v6 with TLS auth required through ssh
+#    - oss-st-6-tls-auth-ssh   # OSS Standalone v6 with TLS auth required through ssh
     - oss-clu             # OSS Cluster
     - oss-clu-tls         # OSS Cluster with TLS enabled
     - oss-sent            # OSS Sentinel
@@ -565,7 +565,8 @@ jobs:
             - release/redisstack
   macosx:
     macos:
-      xcode: 14.2.0
+      xcode: 14.3.0
+    resource_class: macos.x86.medium.gen2
     parameters:
       env:
         description: Build environment (stage || prod)

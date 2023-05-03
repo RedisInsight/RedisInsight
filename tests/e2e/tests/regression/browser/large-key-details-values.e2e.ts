@@ -6,12 +6,11 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-const field = common.generateWord(20);
-const value = common.generateSentence(200);
-const value1 = common.generateWord(20);
-const keyName = common.generateWord(20);
+const field = Common.generateWord(20);
+const value = Common.generateSentence(200);
+const value1 = Common.generateWord(20);
+const keyName = Common.generateWord(20);
 const keyTTL = '2147476121';
 
 fixture `Expand/Collapse large values in key details`

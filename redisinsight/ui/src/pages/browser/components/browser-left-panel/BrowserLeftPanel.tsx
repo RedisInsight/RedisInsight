@@ -20,6 +20,7 @@ import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api
 import { redisearchDataSelector, redisearchListSelector, redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { Nullable } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { KeyTypes } from 'uiSrc/constants'
 
 import KeyList from '../key-list'
 import KeyTree from '../key-tree'
@@ -49,7 +50,13 @@ const BrowserLeftPanel = (props: Props) => {
   const redisearchKeysState = useSelector(redisearchDataSelector)
   const { loading: redisearchLoading, isSearched: redisearchIsSearched } = useSelector(redisearchSelector)
   const { loading: redisearchListLoading } = useSelector(redisearchListSelector)
-  const { loading: patternLoading, viewType, searchMode, isSearched: patternIsSearched } = useSelector(keysSelector)
+  const {
+    loading: patternLoading,
+    viewType,
+    searchMode,
+    isSearched: patternIsSearched,
+    filter,
+  } = useSelector(keysSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
   const {
     keyList: { isDataPatternLoaded, isDataRedisearchLoaded, scrollPatternTopPosition, scrollRedisearchTopPosition }
@@ -64,6 +71,7 @@ const BrowserLeftPanel = (props: Props) => {
   const loading = searchMode === SearchMode.Pattern ? patternLoading : redisearchLoading || redisearchListLoading
   const isSearched = searchMode === SearchMode.Pattern ? patternIsSearched : redisearchIsSearched
   const scrollTopPosition = searchMode === SearchMode.Pattern ? scrollPatternTopPosition : scrollRedisearchTopPosition
+  const commonFilterType = searchMode === SearchMode.Pattern ? filter : keysState.keys?.[0]?.type
 
   useEffect(() => {
     if ((!isDataLoaded || contextInstanceId !== instanceId) && searchMode === SearchMode.Pattern) {
@@ -128,6 +136,7 @@ const BrowserLeftPanel = (props: Props) => {
           keysState={keysState}
           loading={loading}
           scrollTopPosition={scrollTopPosition}
+          commonFilterType={commonFilterType as Nullable<KeyTypes>}
           loadMoreItems={loadMoreItems}
           selectKey={selectKey}
           onDelete={onDeleteKey}
@@ -138,6 +147,7 @@ const BrowserLeftPanel = (props: Props) => {
           ref={keyListRef}
           keysState={keysState}
           loading={loading}
+          commonFilterType={commonFilterType as Nullable<KeyTypes>}
           selectKey={selectKey}
           loadMoreItems={loadMoreItems}
           onDelete={onDeleteKey}

@@ -24,7 +24,7 @@ test('Verify that user can add Hash Key', async t => {
     // Add Hash key
     await browserPage.addHashKey(keyName);
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not displayed');
     // Check that new key is displayed in the list
     await browserPage.searchByKeyName(keyName);
@@ -36,7 +36,7 @@ test('Verify that user can add Set Key', async t => {
     // Add Set key
     await browserPage.addSetKey(keyName);
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not displayed');
     // Check that new key is displayed in the list
     await browserPage.searchByKeyName(keyName);
@@ -48,7 +48,7 @@ test('Verify that user can add List Key', async t => {
     // Add List key
     await browserPage.addListKey(keyName);
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not displayed');
     // Check that new key is displayed in the list
     await browserPage.searchByKeyName(keyName);
@@ -60,7 +60,7 @@ test('Verify that user can add String Key', async t => {
     // Add String key
     await browserPage.addStringKey(keyName);
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not displayed');
     // Check that new key is displayed in the list
     await browserPage.searchByKeyName(keyName);
@@ -72,7 +72,7 @@ test('Verify that user can add ZSet Key', async t => {
     // Add ZSet key
     await browserPage.addZSetKey(keyName, '111');
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not displayed');
     // Check that new key is displayed in the list
     await browserPage.searchByKeyName(keyName);
@@ -87,7 +87,7 @@ test('Verify that user can add JSON Key', async t => {
     // Add JSON key
     await browserPage.addJsonKey(keyName, value, keyTTL);
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not displayed');
     // Check that new key is displayed in the list
     await browserPage.searchByKeyName(keyName);

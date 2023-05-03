@@ -33,8 +33,8 @@ test('Verify that user can create different types(string, number, null, array, b
     for (let i = 0; i < jsonKeys.length; i++) {
         const keySelector = await browserPage.getKeySelectorByName(jsonKeys[i][0]);
         await browserPage.addJsonKey(jsonKeys[i][0], jsonKeys[i][1]);
-        await t.hover(browserPage.toastCloseButton);
-        await t.click(browserPage.toastCloseButton);
+        await t.hover(browserPage.Toast.toastCloseButton);
+        await t.click(browserPage.Toast.toastCloseButton);
         await t.click(browserPage.refreshKeysButton);
         await t.expect(keySelector.exists).ok(`${jsonKeys[i][0]} key not displayed`);
         // Add additional check for array elements

@@ -80,6 +80,8 @@ export class WorkbenchPage extends InstancePage {
     copyCommand = Selector('[data-testid=copy-command]');
     redisStackTimeSeriesLoadMorePoints = Selector('[data-testid=preselect-Load more data points]');
     documentHashCreateButton = Selector('[data-testid=preselect-auto-Create]');
+    uploadDataBulkBtn = Selector('[data-testid=upload-data-bulk-btn]');
+    uploadDataBulkApplyBtn = Selector('[data-testid=upload-data-bulk-apply-btn]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
     parametersAnchor = Selector('[data-testid=parameters-anchor]');

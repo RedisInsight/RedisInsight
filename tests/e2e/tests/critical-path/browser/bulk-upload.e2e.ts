@@ -20,6 +20,7 @@ const verifyCompletedResultText = async(resultsText: string[]): Promise<void> =>
     for (const result of resultsText) {
         await t.expect(browserPage.BulkActions.bulkUploadCompletedSummary.textContent).contains(result, 'Bulk upload completed summary not correct');
     }
+    await t.expect(browserPage.BulkActions.bulkUploadCompletedSummary.textContent).notContains('0:00:00.00', 'Bulk upload Time taken not correct');
 };
 
 fixture `Bulk Upload`
@@ -49,7 +50,6 @@ test('Verify bulk upload of different text docs formats', async t => {
     // Verify that keys of all types can be uploaded
     await browserPage.BulkActions.uploadFileInBulk(filePathes.allKeysFile);
     await verifyCompletedResultText(allKeysResults);
-    await t.expect(browserPage.BulkActions.bulkUploadCompletedSummary.textContent).notContains('0:00:00.00', 'Bulk upload completed summary not correct');
     await browserPage.searchByKeyName('*key1');
     await verifyKeysDisplayedInTheList(keyNames);
 

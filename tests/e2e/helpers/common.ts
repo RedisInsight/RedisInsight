@@ -1,3 +1,6 @@
+import * as path from 'path';
+import * as archiver from 'archiver';
+import * as fs from 'fs';
 import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
 import { apiUrl, commonUrl } from './conf';
@@ -187,5 +190,37 @@ export class Common {
      */
     static async getPageUrl(): Promise<string> {
         return (await ClientFunction(() => window.location.href))();
+    }
+
+    /**
+      * Create Zip archive from folder
+      * @param folderPath Path to folder to archive
+      * @param zipName Zip archive name
+     */
+    static async createZipFromFolder(folderPath: string, zipName: string): Promise<void> {
+        const sourceDir = path.join(__dirname, folderPath);
+        const zipFilePath = path.join(__dirname, zipName);
+        console.log(sourceDir);
+        console.log(zipFilePath);
+        const output = fs.createWriteStream(zipFilePath);
+        const archive = archiver('zip', { zlib: { level: 9 } });
+
+        // Add the contents of the directory to the zip archive
+        archive.directory(sourceDir, false);
+
+        // Finalize the archive and write it to disk
+        archive.finalize();
+        await new Promise((resolve) => {
+            output.on('close', resolve);
+            archive.pipe(output);
+        });
+    }
+
+    /**
+      * Delete file from folder
+      * @param folderPath Path to file
+     */
+    static async deleteFileFromFolder(filePath: string): Promise<void> {
+        fs.unlinkSync(path.join(__dirname, filePath));
     }
 }

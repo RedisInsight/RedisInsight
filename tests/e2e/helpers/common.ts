@@ -200,8 +200,6 @@ export class Common {
     static async createZipFromFolder(folderPath: string, zipName: string): Promise<void> {
         const sourceDir = path.join(__dirname, folderPath);
         const zipFilePath = path.join(__dirname, zipName);
-        console.log(sourceDir);
-        console.log(zipFilePath);
         const output = fs.createWriteStream(zipFilePath);
         const archive = archiver('zip', { zlib: { level: 9 } });
 

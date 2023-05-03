@@ -28,7 +28,7 @@ const verifyCompletedResultText = async(resultsText: string[]): Promise<void> =>
     await t.expect(workbenchPage.Toast.toastBody.textContent).notContains('0:00:00.00', 'Bulk upload Time taken not correct');
 };
 
-fixture.only `Upload custom tutorials`
+fixture `Upload custom tutorials`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {

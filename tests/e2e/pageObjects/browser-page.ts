@@ -102,7 +102,6 @@ export class BrowserPage extends InstancePage {
     editZsetButton = Selector('[data-testid^=zset-edit-button-]');
     editListButton = Selector('[data-testid^=edit-list-button-]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
-    submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
     patternModeBtn = Selector('[data-testid=search-mode-pattern-btn]');
     redisearchModeBtn = Selector('[data-testid=search-mode-redisearch-btn]');
     showFilterHistoryBtn = Selector('[data-testid=show-suggestions-btn]');

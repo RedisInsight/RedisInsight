@@ -6,4 +6,6 @@ export class Toast {
     toastSuccess = Selector('[class*=euiToast--success]');
     toastError = Selector('[class*=euiToast--danger]');
     toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
+    toastSubmitBtn = Selector('[data-testid=submit-tooltip-btn]');
+    toastCancelBtn = Selector('[data-testid=toast-cancel-btn]');
 }

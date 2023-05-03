@@ -285,6 +285,9 @@ export class WorkbenchPage extends InstancePage {
      */
     async deleteTutorialByName(name: string): Promise<void> {
         const deleteTutorialBtn = this.tutorialAccordionButton.withText(name).find(this.cssTutorialDeleteIcon);
+        if (await this.closeEnablementPage.exists) {
+            await t.click(this.closeEnablementPage);
+        }
         await t.click(deleteTutorialBtn);
         await t.click(this.tutorialDeleteButton);
     }

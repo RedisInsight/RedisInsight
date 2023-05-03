@@ -6,7 +6,7 @@ External:
 
 Relative path button:
 
-```redis-upload:[../../_upload/bulkUplAllKeyTypes.txt] Upload relative
+```redis-upload:[../_upload/bulkUplAllKeyTypes.txt] Upload relative
 ```
 
 Relative path long name button:
@@ -26,7 +26,7 @@ Invalid absolute path button:
 
 Invalid relative path button:
 
-```redis-upload:[../_upload/bulkUplAllKeyTypes.txt] Invalid relative
+```redis-upload:[../../_upload/bulkUplAllKeyTypes.txt] Invalid relative
 ```
 
 Redis Stack supports 4 of the most famous PDS:

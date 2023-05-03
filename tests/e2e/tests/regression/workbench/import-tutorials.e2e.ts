@@ -26,6 +26,7 @@ const verifyCompletedResultText = async(resultsText: string[]): Promise<void> =>
         await t.expect(workbenchPage.Toast.toastBody.textContent).contains(result, 'Bulk upload completed summary not correct');
     }
     await t.expect(workbenchPage.Toast.toastBody.textContent).notContains('0:00:00.00', 'Bulk upload Time taken not correct');
+    await t.click(workbenchPage.Toast.toastSubmitBtn);
 };
 
 fixture `Upload custom tutorials`
@@ -190,16 +191,17 @@ test
 
         // Verify that user can't upload file by invalid relative path
         // Verify that user can't upload file by invalid absolute path
-        for (const path in invalidPathes) {
+        for (const path of invalidPathes) {
             await t.click((workbenchPage.uploadDataBulkBtn.withExactText(path)));
             await t.click(workbenchPage.uploadDataBulkApplyBtn);
             // Verify that user can see standard error messages when any error occurs while finding the file or parsing it
             await t.expect(workbenchPage.Toast.toastError.textContent).contains('Data file was not found', 'Bulk upload not failed');
+            await t.click(workbenchPage.Toast.toastCancelBtn);
         }
 
         // Open Browser page
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         // Verify that keys of all types can be uploaded
-        await browserPage.searchByKeyName('*key1');
+        await browserPage.searchByKeyName('*key1*');
         await verifyKeysDisplayedInTheList(keyNames);
     });

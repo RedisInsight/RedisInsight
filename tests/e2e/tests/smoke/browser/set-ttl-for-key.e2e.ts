@@ -5,9 +5,8 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 
 fixture `Set TTL for Key`
     .meta({ type: 'smoke', rte: rte.standalone })
@@ -21,7 +20,7 @@ fixture `Set TTL for Key`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can specify TTL for Key', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     const ttlValue = '2147476121';
 
     // Create new key without TTL

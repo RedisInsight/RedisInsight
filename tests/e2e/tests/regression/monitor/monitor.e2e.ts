@@ -14,14 +14,12 @@ import {
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 import { WorkbenchActions } from '../../../common-actions/workbench-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const settingsPage = new SettingsPage();
 const browserPage = new BrowserPage();
 const chance = new Chance();
-const common = new Common();
 const workbenchPage = new WorkbenchPage();
 const workbenchActions = new WorkbenchActions();
 
@@ -66,7 +64,7 @@ test('Verify Monitor refresh/stop', async t => {
     await t.click(browserPage.Profiler.startMonitorButton);
     await browserPage.Profiler.checkCommandInMonitorResults('info');
     // Refresh the page
-    await common.reloadPage();
+    await browserPage.reloadPage();
     // Check that monitor is closed
     await t.expect(browserPage.Profiler.monitorArea.exists).notOk('Monitor area not found');
     // Verify that when user refreshes the page the list of results in Monitor is not saved
@@ -126,7 +124,7 @@ test.skip
         await t.click(browserPage.Cli.cliCollapseButton);
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
-        await common.reloadPage();
+        await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     })
     .after(async t => {

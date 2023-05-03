@@ -1,18 +1,17 @@
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
-import {commonUrl, ossStandaloneConfig} from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-const keyName = common.generateWord(20);
-const keyValue = common.generateWord(20);
+const keyName = Common.generateWord(20);
+const keyValue = Common.generateWord(20);
 
 fixture `Full Screen`
-    .meta({type: 'regression', rte: rte.standalone})
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);

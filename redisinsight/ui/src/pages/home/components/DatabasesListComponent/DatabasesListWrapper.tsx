@@ -7,7 +7,7 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import { capitalize, map } from 'lodash'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
@@ -30,6 +30,7 @@ import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
 import { PageNames, Pages, Theme } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent, getRedisModulesSummary } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { ShowChildByCondition } from 'uiSrc/components'
 import { formatLongName, getDbIndex, lastConnectionFormat, Nullable, replaceSpaces } from 'uiSrc/utils'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
@@ -69,6 +70,7 @@ const DatabasesListWrapper = ({
   const instances = useSelector(instancesSelector)
   const [, forceRerender] = useState({})
   const deleting = { id: '' }
+  const isLoadingRef = useRef(false)
 
   const closePopover = () => {
     deleting.id = ''
@@ -91,6 +93,9 @@ const DatabasesListWrapper = ({
         history.replace(Pages.home)
       }, 1000)
     }
+
+    isLoadingRef.current = instances.loading
+    forceRerender({})
   }, [instances.loading, search])
 
   useEffect(() => {
@@ -209,41 +214,46 @@ const DatabasesListWrapper = ({
       render: function InstanceCell(name: string = '', instance: Instance) {
         const { id, db, new: newStatus = false } = instance
         const cellContent = replaceSpaces(name.substring(0, 200))
+
         return (
           <div
             role="presentation"
           >
             {newStatus && (
-              <EuiToolTip
-                content="New"
-                position="top"
-                anchorClassName={styles.newStatusAnchor}
-              >
-                <div className={styles.newStatus} data-testid={`database-status-new-${id}`} />
-              </EuiToolTip>
-            )}
-            <EuiToolTip
-              position="bottom"
-              title="Database Alias"
-              className={styles.tooltipColumnName}
-              content={`${formatLongName(name)} ${getDbIndex(db)}`}
-            >
-              <EuiText
-                className={styles.tooltipAnchorColumnName}
-                data-testid={`instance-name-${id}`}
-                onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, instance)}
-                onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, instance)}
-              >
-                <EuiTextColor
-                  className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}
+              <ShowChildByCondition isShow={!isLoadingRef.current} innerClassName={styles.newStatusAnchor}>
+                <EuiToolTip
+                  content="New"
+                  position="top"
+                  anchorClassName={styles.newStatusAnchor}
                 >
-                  {cellContent}
-                </EuiTextColor>
-                <EuiTextColor>
-                  {` ${getDbIndex(db)}`}
-                </EuiTextColor>
-              </EuiText>
-            </EuiToolTip>
+                  <div className={styles.newStatus} data-testid={`database-status-new-${id}`} />
+                </EuiToolTip>
+              </ShowChildByCondition>
+            )}
+            <ShowChildByCondition isShow={!isLoadingRef.current}>
+              <EuiToolTip
+                position="bottom"
+                title="Database Alias"
+                className={styles.tooltipColumnName}
+                content={`${formatLongName(name)} ${getDbIndex(db)}`}
+              >
+                <EuiText
+                  className={styles.tooltipAnchorColumnName}
+                  data-testid={`instance-name-${id}`}
+                  onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, instance)}
+                  onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, instance)}
+                >
+                  <EuiTextColor
+                    className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}
+                  >
+                    {cellContent}
+                  </EuiTextColor>
+                  <EuiTextColor>
+                    {` ${getDbIndex(db)}`}
+                  </EuiTextColor>
+                </EuiText>
+              </EuiToolTip>
+            </ShowChildByCondition>
           </div>
         )
       },

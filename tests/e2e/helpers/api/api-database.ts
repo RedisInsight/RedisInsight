@@ -2,12 +2,11 @@ import { t } from 'testcafe';
 import { Chance } from 'chance';
 import * as request from 'supertest';
 import { asyncFilter, doAsyncStuff } from '../async-helper';
-import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters, ClusterNodes } from '../../pageObjects/add-redis-database-page';
+import { AddNewDatabaseParameters, OSSClusterParameters, databaseParameters, SentinelParameters, ClusterNodes } from '../../pageObjects/components/myRedisDatabase/add-redis-database';
 import { Common } from '../common';
 
 const chance = new Chance();
-const common = new Common();
-const endpoint = common.getEndpoint();
+const endpoint = Common.getEndpoint();
 
 /**
  * Add a new Standalone database through api using host and port

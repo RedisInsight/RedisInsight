@@ -11,8 +11,7 @@ import {
 } from '../../pageObjects/browser-page';
 import { getDatabaseIdByName } from './api-database';
 
-const common = new Common();
-const endpoint = common.getEndpoint();
+const endpoint = Common.getEndpoint();
 
 /**
  * Add Hash key

@@ -94,7 +94,7 @@ export class ClusterStrategy extends AbstractStrategy {
           );
         } else {
           // eslint-disable-next-line no-param-reassign
-          node.keys = node.keys.map((name) => ({ name }));
+          node.keys = node.keys.map((name) => ({ name, type: args.type || undefined  }));
         }
       }),
     );

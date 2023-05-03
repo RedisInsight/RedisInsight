@@ -6,12 +6,11 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
 const jsonInvalidStructure = '"{\"test\": 123"';
 const title = 'Value will be saved as Unicode';
 const reason = 'as it is not valid in the selected format.';
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 
 fixture `Warning for invalid formatter value`
     .meta({
@@ -48,7 +47,7 @@ test('Verify that user can see warning message when editing value', async t => {
         .expect(browserPage.stringValueAsJson.exists).ok('Value is not converted to JSON object');
 });
 test('Verify that user can remove invalid format value warning the message by clicking on ESC button', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     const keyValue = 'a:1:{s:8:"glossary";a:2:{s:5:"title";s:7:"example";s:8:"GlossDiv";a:2:{s:5:"title";s:1:"S";s:9:"GlossList";a:1:{s:10:"GlossEntry";a:3:{s:2:"ID";s:4:"SGML";s:8:"GlossDef";a:2:{s:4:"para";s:8:"language";s:12:"GlossSeeAlso";a:1:{i:0;s:3:"XML";}}s:8:"GlossSee";s:6:"markup";}}}}}';
     await browserPage.addHashKey(keyName, '5000', 'PHP Serialized', keyValue);
     await browserPage.selectFormatter('PHP serialized');

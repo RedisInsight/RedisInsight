@@ -1629,6 +1629,7 @@ describe('keys slice', () => {
         await store.dispatch<any>(
           fetchKeysMetadata(
             data.map(({ name }) => ({ name })),
+            null,
             controller.signal,
             onSuccessMock
           )

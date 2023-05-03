@@ -3,11 +3,9 @@ import { WorkbenchPage, MyRedisDatabasePage, SettingsPage } from '../../../pageO
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 const settingsPage = new SettingsPage();
 
 const commandToSend = 'info server';
@@ -57,7 +55,7 @@ test
         await acceptLicenseTerms();
         await addNewStandaloneDatabasesApi(databasesForAdding);
         // Reload Page
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
     })
     .after(async() => {
@@ -69,10 +67,10 @@ test
         await t.click(settingsPage.accordionWorkbenchSettings);
         // Disable Editor Cleanup
         await settingsPage.changeEditorCleanupSwitcher(false);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
         await t.click(settingsPage.accordionWorkbenchSettings);
         // Verify that Editor Cleanup setting is saved when refreshing the page
-        await t.expect(await settingsPage.getEditorCleanupSwitcherValue()).eql('false', 'Editor Cleanup switcher changed');
+        await t.expect(await settingsPage.getEditorCleanupSwitcherValue()).notOk('Editor Cleanup switcher changed');
         // Go to another database
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
@@ -80,5 +78,5 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         await t.click(settingsPage.accordionWorkbenchSettings);
         // Verify that Editor Cleanup setting is saved when switching between databases
-        await t.expect(await settingsPage.getEditorCleanupSwitcherValue()).eql('false', 'Editor Cleanup switcher changed');
+        await t.expect(await settingsPage.getEditorCleanupSwitcherValue()).notOk('Editor Cleanup switcher changed');
     });

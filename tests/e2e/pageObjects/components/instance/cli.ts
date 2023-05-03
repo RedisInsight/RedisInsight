@@ -1,7 +1,6 @@
 import { Selector, t } from 'testcafe';
 import { Common } from '../../../helpers/common';
 
-const common = new Common();
 export class Cli {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
@@ -45,7 +44,7 @@ export class Cli {
      * @param keyName The name of the keys. The default value is keyName
      */
     async addKeysFromCli(keyCommand: string, amount: number, keyName = 'keyName'): Promise<void> {
-        const keyValueArray = await common.createArrayWithKeyValueAndKeyname(amount, keyName);
+        const keyValueArray = await Common.createArrayWithKeyValueAndKeyname(amount, keyName);
 
         // Open CLI
         await t.click(this.cliExpandButton);
@@ -64,7 +63,7 @@ export class Cli {
         //Open CLI
         await t.click(this.cliExpandButton);
         //Add keys
-        const keyValueArray = await common.createArrayWithKeyValueAndDelimiter(amount);
+        const keyValueArray = await Common.createArrayWithKeyValueAndDelimiter(amount);
         await t.typeText(this.cliCommandInput, `${keyCommand} ${keyValueArray.join(' ')}`, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.click(this.cliCollapseButton);
@@ -78,7 +77,7 @@ export class Cli {
         //Open CLI
         await t.click(this.cliExpandButton);
         //Add keys
-        const keyValueArray = await common.createArrayWithKeyAndDelimiter(amount);
+        const keyValueArray = await Common.createArrayWithKeyAndDelimiter(amount);
         await t.typeText(this.cliCommandInput, `DEL ${keyValueArray.join(' ')}`, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.click(this.cliCollapseButton);
@@ -139,7 +138,7 @@ export class Cli {
      */
 
     async createIndexwithCLI(prefix: string): Promise<string> {
-        const word = common.generateWord(10);
+        const word = Common.generateWord(10);
         const index = `idx:${word}`;
         const commands = [
             `FT.CREATE ${index} ON HASH PREFIX 1 ${prefix} SCHEMA "name" TEXT`
@@ -156,7 +155,7 @@ export class Cli {
         const scripts: string[] = [];
 
         for (let i = 0; i < numberOfScripts; i++) {
-            scripts.push(`EVAL "return '${common.generateWord(3)}'" 0`);
+            scripts.push(`EVAL "return '${Common.generateWord(3)}'" 0`);
         }
 
         await this.sendCommandsInCli(scripts);

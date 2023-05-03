@@ -6,9 +6,8 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 
-let indexName = common.generateWord(10);
+let indexName = Common.generateWord(10);
 
 fixture `JSON verifications at Workbench`
     .meta({ type: 'smoke', rte: rte.standalone })
@@ -25,7 +24,7 @@ fixture `JSON verifications at Workbench`
         await deleteDatabase(ossStandaloneRedisearch.databaseName);
     });
 test('Verify that user can execute redisearch command for JSON data type in Workbench', async t => {
-    indexName = common.generateWord(10);
+    indexName = Common.generateWord(10);
     const commandsForSend = [
         `FT.CREATE ${indexName} ON JSON SCHEMA $.title AS title TEXT`,
         'JSON.SET myDoc $ \'{"title": "foo", "content": "bar"}\''

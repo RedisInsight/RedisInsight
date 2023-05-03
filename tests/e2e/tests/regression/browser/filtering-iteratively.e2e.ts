@@ -6,7 +6,6 @@ import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { deleteOSSClusterDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
 let keys: string[];
 
@@ -24,7 +23,7 @@ fixture `Filtering iteratively in Browser page`
 test
     .meta({ rte: rte.standalone })('Verify that user can see search results per 500 keys if number of results is 500', async t => {
         // Create new keys
-        keys = await common.createArrayWithKeyValue(500);
+        keys = await Common.createArrayWithKeyValue(500);
         await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
         // Search all keys
         await browserPage.searchByKeyName('*');
@@ -35,7 +34,7 @@ test
 test
     .meta({ rte: rte.standalone })('Verify that user can search iteratively via Scan more for search pattern and selected data type', async t => {
         // Create new keys
-        keys = await common.createArrayWithKeyValue(1000);
+        keys = await Common.createArrayWithKeyValue(1000);
         await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
         // Search all string keys
         await browserPage.selectFilterGroupType(KeyTypesTexts.String);
@@ -58,7 +57,7 @@ test
         await deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can search via Scan more for search pattern and selected data type in OSS Cluster DB', async t => {
         // Create new keys
-        keys = await common.createArrayWithKeyValueForOSSCluster(1000);
+        keys = await Common.createArrayWithKeyValueForOSSCluster(1000);
         await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
         // Search all string keys
         await browserPage.selectFilterGroupType(KeyTypesTexts.String);

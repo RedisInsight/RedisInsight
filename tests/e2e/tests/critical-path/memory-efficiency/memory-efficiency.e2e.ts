@@ -4,14 +4,12 @@ import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 const chance = new Chance();
 
 const hashKeyName = 'test:Hash1';
@@ -191,7 +189,7 @@ test
         // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Reload page
-        await common.reloadPage();
+        await memoryEfficiencyPage.reloadPage();
         // Verify that context saved after reloading page
         await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
         //Go to PubSub page

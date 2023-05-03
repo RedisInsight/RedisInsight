@@ -234,7 +234,7 @@ describe('RedisearchService', () => {
         }],
       });
 
-      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(2);
+      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(3);
       expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
         name: 'FT.SEARCH',
         args: [
@@ -249,6 +249,12 @@ describe('RedisearchService', () => {
         args: [
           'GET',
           'MAXSEARCHRESULTS',
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'TYPE',
+        args: [
+          keyName1,
         ],
       }));
       expect(browserHistory.create).toHaveBeenCalled();
@@ -272,7 +278,7 @@ describe('RedisearchService', () => {
         ],
       });
 
-      expect(clusterClient.sendCommand).toHaveBeenCalledTimes(2);
+      expect(clusterClient.sendCommand).toHaveBeenCalledTimes(3);
       expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
         name: 'FT.SEARCH',
         args: [
@@ -289,6 +295,12 @@ describe('RedisearchService', () => {
           'MAXSEARCHRESULTS',
         ],
       }));
+      expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'TYPE',
+        args: [
+          keyName1,
+        ],
+      }));
       expect(browserHistory.create).toHaveBeenCalled();
     });
     it('should handle ACL error (ft.info command)', async () => {
@@ -303,7 +315,7 @@ describe('RedisearchService', () => {
         expect(e).toBeInstanceOf(ForbiddenException);
       }
     });
-    it('should call once "FT.CONFIG GET MAXSEARCHRESULTS" for all requests', async () => {
+    it('should call "TYPE" and once "FT.CONFIG GET MAXSEARCHRESULTS" for all requests', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'FT.SEARCH' }))
         .mockResolvedValue([100, keyName1, keyName2]);
@@ -327,7 +339,7 @@ describe('RedisearchService', () => {
         }],
       });
 
-      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(4);
+      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(7);
       expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
         name: 'FT.SEARCH',
         args: [
@@ -335,6 +347,12 @@ describe('RedisearchService', () => {
           mockSearchRedisearchDto.query,
           'NOCONTENT',
           'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'TYPE',
+        args: [
+          keyName1,
         ],
       }));
       expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
@@ -354,12 +372,24 @@ describe('RedisearchService', () => {
         ],
       }));
       expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'TYPE',
+        args: [
+          keyName1,
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
         name: 'FT.SEARCH',
         args: [
           mockSearchRedisearchDto.index,
           mockSearchRedisearchDto.query,
           'NOCONTENT',
           'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
+        ],
+      }));
+      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'TYPE',
+        args: [
+          keyName1,
         ],
       }));
       expect(browserHistory.create).toHaveBeenCalled();

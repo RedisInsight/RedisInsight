@@ -5,9 +5,8 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const keyTTL = '2147476121';
 const value = '{"name":"xyz"}';
 const jsonObjectValue = '{name:"xyz"}';
@@ -24,7 +23,7 @@ fixture `JSON Key verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can add key with value to any level of JSON structure', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     // Add Json key with json object
     await browserPage.addJsonKey(keyName, value, keyTTL);
     // Check the notification message

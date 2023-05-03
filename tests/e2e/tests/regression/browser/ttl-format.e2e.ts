@@ -8,12 +8,11 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-const keyName = common.generateWord(20);
+const keyName = Common.generateWord(20);
 const keysData = keyTypes.map(object => ({ ...object })).slice(0, 6);
 for (const key of keysData) {
-    key.keyName = `${key.keyName}` + '-' + `${common.generateWord(keyLength)}`;
+    key.keyName = `${key.keyName}` + '-' + `${Common.generateWord(keyLength)}`;
 }
 // Arrays with TTL in seconds, min, hours, days, months, years and their values in Browser Page
 const ttlForSet = [59, 800, 20000, 2000000, 31000000, 2147483647];

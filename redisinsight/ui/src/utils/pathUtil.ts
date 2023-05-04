@@ -15,7 +15,10 @@ export const prepareTutorialDataFileUrlFromMd = (nodeUrl: string, mdPath: string
 
   // process absolute path
   if (nodeUrl.startsWith('/') || nodeUrl.startsWith('\\')) {
-    const paths = mdPath?.split('/') || []
+    // todo: quick fix. find the root cause why path has both '/' and '\'
+    const normalizedMdPath = mdPath.replaceAll('\\', '/')
+
+    const paths = normalizedMdPath?.split('/') || []
     let tutorialRootPath
     switch (paths[1]) {
       case TutorialsPaths.CustomTutorials:
@@ -26,7 +29,7 @@ export const prepareTutorialDataFileUrlFromMd = (nodeUrl: string, mdPath: string
         tutorialRootPath = paths.slice(0, 2).join('/')
         break
       default:
-        tutorialRootPath = mdPath
+        tutorialRootPath = normalizedMdPath
         break
     }
 

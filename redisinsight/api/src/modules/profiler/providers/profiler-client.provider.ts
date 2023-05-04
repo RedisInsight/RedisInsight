@@ -28,7 +28,7 @@ export class ProfilerClientProvider {
 
         // set database alias as part of the log file name
         const alias = (await this.databaseService.get(
-          get(socket, 'handshake.query.instanceId'),
+          get(socket, 'handshake.query.instanceId') as string,
         )).name;
         profilerLogFile.setAlias(alias);
 

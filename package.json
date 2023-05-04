@@ -77,7 +77,8 @@
   ],
   "homepage": "https://github.com/RedisInsight/RedisInsight#readme",
   "resolutions": {
-    "**/node-sass": "^6.0.1"
+    "**/node-sass": "^6.0.1",
+    "**/trim": "0.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -103,10 +104,7 @@
     "@babel/preset-react": "^7.12.7",
     "@babel/preset-typescript": "^7.12.7",
     "@babel/register": "^7.12.1",
-    "@nestjs/cli": "^7.0.0",
-    "@nestjs/schematics": "^7.0.0",
-    "@nestjs/testing": "^7.0.0",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@svgr/webpack": "^6.2.1",
     "@teamsupercell/typings-for-css-modules-loader": "^2.4.0",
     "@testing-library/jest-dom": "^5.16.4",
@@ -153,7 +151,7 @@
     "core-js": "^3.6.5",
     "cross-env": "^7.0.2",
     "css-loader": "^5.0.1",
-    "css-minimizer-webpack-plugin": "^1.2.0",
+    "css-minimizer-webpack-plugin": "^2.0.0",
     "electron": "19.0.7",
     "electron-builder": "^23.6.0",
     "electron-builder-notarize": "^1.5.1",
@@ -211,7 +209,7 @@
     "webpack": "^5.5.1",
     "webpack-bundle-analyzer": "^4.1.0",
     "webpack-cli": "^4.3.0",
-    "webpack-dev-server": "^3.11.0",
+    "webpack-dev-server": "^4.13.3",
     "webpack-merge": "^5.4.0",
     "whatwg-fetch": "^3.6.2",
     "yarn-deduplicate": "^3.1.0"

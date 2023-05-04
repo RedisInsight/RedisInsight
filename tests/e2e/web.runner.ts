@@ -6,7 +6,7 @@ import testcafe from 'testcafe';
             return t
                 .createRunner()
                 .src((process.env.TEST_FILES || 'tests/**/*.e2e.ts').split('\n'))
-                .browsers(['chromium:headless -q attemptLimit=1 --cache --allow-insecure-localhost --ignore-certificate-errors'])
+                .browsers(['chromium:headless --cache --allow-insecure-localhost --ignore-certificate-errors'])
                 .filter((_testName, _fixtureName, _fixturePath, testMeta): boolean => {
                     return testMeta.env !== 'desktop'
                 })

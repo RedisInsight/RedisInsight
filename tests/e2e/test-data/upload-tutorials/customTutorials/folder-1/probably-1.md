@@ -1,9 +1,5 @@
 In very broad terms probabilistic data structures (PDS) allow us to get to a "close enough" result in a much shorter time and by using significantly less memory.
 
-External:
-
-![RedisInsight screen external](https://github.com/RedisInsight/RedisInsight/blob/main/.github/redisinsight_browser.png?raw=true)
-
 Relative path button:
 
 ```redis-upload:[../_upload/bulkUplAllKeyTypes.txt] Upload relative
@@ -18,6 +14,10 @@ Absolute path button:
 
 ```redis-upload:[/_upload/bulkUplString.txt] Upload absolute
 ```
+
+External:
+
+![RedisInsight screen external](https://github.com/RedisInsight/RedisInsight/blob/main/.github/redisinsight_browser.png?raw=true)
 
 Invalid absolute path button:
 

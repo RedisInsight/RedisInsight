@@ -177,6 +177,7 @@ test
             .click(workbenchPage.tutorialAccordionButton.withText(tutorialName))
             .click(await workbenchPage.getAccordionButtonWithName(folder1))
             .click((await workbenchPage.getInternalLinkWithManifest(internalLinkName1)));
+        await t.expect(workbenchPage.scrolledEnablementArea.visible).ok('Enablement area is not visible after clicked');
 
         // Verify that user can bulk upload data by relative path
         await t.click((workbenchPage.uploadDataBulkBtn.withExactText('Upload relative')));

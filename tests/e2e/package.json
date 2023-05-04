@@ -12,7 +12,7 @@
     "build:web": "yarn --cwd ../../ build:web",
     "redis:last": "docker run --name redis-last-version -p 7777:6379 -d redislabs/redismod",
     "start:app": "cross-env SERVER_STATIC_CONTENT=true yarn start:api",
-    "test:chrome": "testcafe --cache --concurrency 1 chrome tests/ -r html:./report/report.html,spec -e -s takeOnFails=true,path=report/screenshots,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png",
+    "test:chrome": "testcafe --compiler-options typescript.configPath=tsconfig.testcafe.json --cache --concurrency 1 chrome tests/ -r html:./report/report.html,spec -e -s takeOnFails=true,path=report/screenshots,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png",
     "test:chrome:ci": "ts-node ./web.runner.ts",
     "test": "yarn test:chrome",
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx",

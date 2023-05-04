@@ -1,4 +1,4 @@
-import { SlowLogPage, MyRedisDatabasePage, BrowserPage, OverviewPage } from '../../../pageObjects';
+import { SlowLogPage, MyRedisDatabasePage, BrowserPage, ClusterDetailsPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
@@ -7,7 +7,7 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 const slowLogPage = new SlowLogPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const overviewPage = new OverviewPage();
+const overviewPage = new ClusterDetailsPage();
 const slowerThanParameter = 1;
 let maxCommandLength = 50;
 let command = `slowlog get ${maxCommandLength}`;

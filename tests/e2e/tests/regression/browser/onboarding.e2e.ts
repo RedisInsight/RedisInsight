@@ -12,15 +12,13 @@ import {
     WorkbenchPage,
     PubSubPage,
     MyRedisDatabasePage,
-    HelpCenterPage,
     BrowserPage
 } from '../../../pageObjects';
 import { Telemetry } from '../../../helpers/telemetry';
-import { OnboardingCardsDialog } from '../../../pageObjects/dialogs/onboarding-cards-dialog';
+import { OnboardingCardsDialog } from '../../../pageObjects/dialogs';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const helpCenterPage = new HelpCenterPage();
 const onboardingCardsDialog = new OnboardingCardsDialog();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const workBenchPage = new WorkbenchPage();
@@ -49,7 +47,7 @@ fixture `Onboarding new user tests`
 // https://redislabs.atlassian.net/browse/RI-4278
 test('Verify onboarding new user steps', async t => {
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
-    await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
+    await t.expect(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
     await t.click(onboardingCardsDialog.resetOnboardingBtn);
     await t.expect(onboardingCardsDialog.showMeAroundButton.visible).ok('onboarding starting is not visible');
@@ -119,7 +117,7 @@ test('Verify onboarding new user steps', async t => {
 // https://redislabs.atlassian.net/browse/RI-4067, https://redislabs.atlassian.net/browse/RI-4278
 test('Verify onboard new user skip tour', async(t) => {
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
-    await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
+    await t.expect(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
     await t.click(onboardingCardsDialog.resetOnboardingBtn);
     await t.expect(onboardingCardsDialog.showMeAroundButton.visible).ok('onboarding starting is not visible');
@@ -133,7 +131,7 @@ test('Verify onboard new user skip tour', async(t) => {
     await onboardingCardsDialog.verifyStepVisible('Tree view');
     await t.click(browserPage.NavigationPanel.workbenchButton);
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
-    await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
+    await t.expect(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterPanel.visible).ok('help center panel is not opened');
     await t.click(onboardingCardsDialog.resetOnboardingBtn);
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify that when user reset onboarding, user can see the onboarding triggered when user open the Browser page.

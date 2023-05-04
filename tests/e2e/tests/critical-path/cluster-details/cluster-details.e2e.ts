@@ -1,12 +1,12 @@
 import { Selector } from 'testcafe';
-import { BrowserPage, MyRedisDatabasePage, OverviewPage, WorkbenchPage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, ClusterDetailsPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddOSSClusterDatabase } from '../../../helpers/database';
 import { commonUrl, ossClusterConfig } from '../../../helpers/conf';
 import { deleteOSSClusterDatabaseApi, getClusterNodesApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
-const overviewPage = new OverviewPage();
+const clusterDetailsPage = new ClusterDetailsPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
@@ -36,14 +36,14 @@ test('Overview tab header for OSS Cluster', async t => {
     const uptime = /[1-9][0-9]\s|[0-9]\smin|[1-9][0-9]\smin|[0-9]\sh/;
 
     // Verify that user see "Overview" tab by default for OSS Cluster
-    await t.expect(overviewPage.overviewTab.withAttribute('aria-selected', 'true').exists).ok('The Overview tab not opened');
+    await t.expect(clusterDetailsPage.overviewTab.withAttribute('aria-selected', 'true').exists).ok('The Overview tab not opened');
     // Verify that user see "Overview" header with OSS Cluster info
     for (const key in headerColumns) {
         const columnSelector = Selector(`[data-testid=cluster-details-item-${key}]`);
         await t.expect(columnSelector.textContent).contains(`${headerColumns[key as HeaderColumn]}`, `Cluster detail ${key} is incorrect`);
     }
     // Verify that Uptime is displayed as time in seconds or minutes from start
-    await t.expect(overviewPage.clusterDetailsUptime.textContent).match(uptime, 'Uptime value is not correct');
+    await t.expect(clusterDetailsPage.clusterDetailsUptime.textContent).match(uptime, 'Uptime value is not correct');
 });
 test
     .after(async() => {
@@ -58,9 +58,9 @@ test
         const columns = ['Commands/s', 'Clients', 'Total Keys', 'Network Input', 'Network Output', 'Total Memory'];
 
         for (const column in columns) {
-            initialValues.push(await overviewPage.getTotalValueByColumnName(column));
+            initialValues.push(await clusterDetailsPage.getTotalValueByColumnName(column));
         }
-        const nodesNumberInHeader = parseInt((await overviewPage.tableHeaderCell.nth(0).textContent).match(/\d+/)![0]);
+        const nodesNumberInHeader = parseInt((await clusterDetailsPage.tableHeaderCell.nth(0).textContent).match(/\d+/)![0]);
 
         // Add key from CLI
         await t.click(browserPage.Cli.cliExpandButton);
@@ -68,10 +68,10 @@ test
         await t.pressKey('enter');
         await t.click(browserPage.Cli.cliCollapseButton);
         // Verify nodes in header column equal to rows
-        await t.expect(await overviewPage.getPrimaryNodesCount()).eql(nodesNumberInHeader, 'Primary nodes in table are not displayed');
+        await t.expect(await clusterDetailsPage.getPrimaryNodesCount()).eql(nodesNumberInHeader, 'Primary nodes in table are not displayed');
         // Verify that all nodes from BE response are displayed in table
         for (const node of nodes) {
-            await t.expect(overviewPage.tableRow.nth(nodes.indexOf(node)).textContent).contains(node, `Node ${node} is not displayed in table`);
+            await t.expect(clusterDetailsPage.tableRow.nth(nodes.indexOf(node)).textContent).contains(node, `Node ${node} is not displayed in table`);
         }
         // Go to Workbench page
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
@@ -84,6 +84,6 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Verify that values in table are dynamic
         for (const column in columns) {
-            await t.expect(await overviewPage.getTotalValueByColumnName(column)).notEql(initialValues[columns.indexOf(column)], `${column} not dynamic`);
+            await t.expect(await clusterDetailsPage.getTotalValueByColumnName(column)).notEql(initialValues[columns.indexOf(column)], `${column} not dynamic`);
         }
     });

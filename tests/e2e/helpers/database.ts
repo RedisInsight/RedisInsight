@@ -5,15 +5,15 @@ import {
     MyRedisDatabasePage,
     BrowserPage,
     AutoDiscoverREDatabases,
-    UserAgreementPage
 } from '../pageObjects';
+import { UserAgreementDialog } from '../pageObjects/dialogs';
 import { addNewStandaloneDatabaseApi, discoverSentinelDatabaseApi, getDatabaseIdByName } from './api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const discoverMasterGroupsPage = new DiscoverMasterGroupsPage();
 const autoDiscoverREDatabases = new AutoDiscoverREDatabases();
 const browserPage = new BrowserPage();
-const userAgreementPage = new UserAgreementPage();
+const userAgreementDialog = new UserAgreementDialog();
 
 /**
  * Add a new database manually using host and port
@@ -214,7 +214,7 @@ export async function addRECloudDatabase(databaseParameters: AddNewDatabaseParam
 // Accept License terms
 export async function acceptLicenseTerms(): Promise<void> {
     await t.maximizeWindow();
-    await userAgreementPage.acceptLicenseTerms();
+    await userAgreementDialog.acceptLicenseTerms();
 }
 
 // Accept License terms and connect to the RedisStack database

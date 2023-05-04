@@ -251,7 +251,7 @@ export class WorkbenchPage extends InstancePage {
      * Get selector with tutorial name
      * @param tutorialName name of the uploaded tutorial
      */
-    async getAccordionButtonWithName(tutorialName: string): Promise<Selector> {
+    getAccordionButtonWithName(tutorialName: string): Selector {
         return Selector(`[data-testid=accordion-button-${tutorialName}]`);
     }
 
@@ -259,7 +259,7 @@ export class WorkbenchPage extends InstancePage {
      * Get internal tutorial link with .md name
      * @param internalLink name of the .md file
      */
-    async getInternalLinkWithManifest(internalLink: string): Promise<Selector> {
+    getInternalLinkWithManifest(internalLink: string): Selector {
         return Selector(`[data-testid="internal-link-${internalLink}.md"]`);
     }
 
@@ -267,7 +267,7 @@ export class WorkbenchPage extends InstancePage {
      * Get internal tutorial link without .md name
      * @param internalLink name of the label
      */
-    async getInternalLinkWithoutManifest(internalLink: string): Promise<Selector> {
+    getInternalLinkWithoutManifest(internalLink: string): Selector {
         return Selector(`[data-testid="internal-link-${internalLink}"]`);
     }
 
@@ -275,7 +275,7 @@ export class WorkbenchPage extends InstancePage {
      * Find tutorial selector by name
      * @param name A tutorial name
      */
-    async getTutorialByName(name: string): Promise<Selector> {
+    getTutorialByName(name: string): Selector {
         return Selector('div').withText(name);
     }
 
@@ -296,7 +296,7 @@ export class WorkbenchPage extends InstancePage {
      * Find image in tutorial by alt text
      * @param alt Image alt text
      */
-    async getTutorialImageByAlt(alt: string): Promise<Selector> {
+    getTutorialImageByAlt(alt: string): Selector {
         return Selector('img').withAttribute('alt', alt);
     }
 

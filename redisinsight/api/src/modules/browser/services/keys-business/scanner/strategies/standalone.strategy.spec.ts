@@ -101,7 +101,7 @@ describe('Standalone Scanner Strategy', () => {
         null,
       );
     });
-    it('should return keys names only', async () => {
+    it('should return keys names and type only', async () => {
       const args = {
         ...getKeysDto, type: 'string', match: 'pattern*', keysInfo: false,
       };
@@ -126,7 +126,7 @@ describe('Standalone Scanner Strategy', () => {
           ...mockNodeEmptyResult,
           total: 1,
           scanned: getKeysDto.count,
-          keys: [{ name: getKeyInfoResponse.name }],
+          keys: [{ name: getKeyInfoResponse.name, type: getKeyInfoResponse.type }],
         },
       ]);
     });
@@ -384,7 +384,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([getKeyInfoResponse]);
 
-        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto, dto.type);
 
         expect(result).toEqual([
           {
@@ -394,9 +394,11 @@ describe('Standalone Scanner Strategy', () => {
             keys: [getKeyInfoResponse],
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(nodeClient, [
-          Buffer.from(key),
-        ]);
+        expect(strategy.getKeysInfo).toHaveBeenCalledWith(
+          nodeClient,
+          [Buffer.from(key)],
+          dto.type,
+        );
         expect(strategy.scan).not.toHaveBeenCalled();
       });
       it('should find exact key when match is escaped glob patter', async () => {
@@ -406,7 +408,7 @@ describe('Standalone Scanner Strategy', () => {
           .fn()
           .mockResolvedValue([{ ...getKeyInfoResponse, name: mockSearchPattern }]);
 
-        const result = await strategy.getKeys(mockBrowserClientMetadata, dto);
+        const result = await strategy.getKeys(mockBrowserClientMetadata, dto, dto.type);
 
         expect(result).toEqual([
           {
@@ -416,7 +418,11 @@ describe('Standalone Scanner Strategy', () => {
             keys: [{ ...getKeyInfoResponse, name: mockSearchPattern }],
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(nodeClient, [Buffer.from(mockSearchPattern)]);
+        expect(strategy.getKeysInfo).toHaveBeenCalledWith(
+          nodeClient,
+          [Buffer.from(mockSearchPattern)],
+          dto.type,
+        );
         expect(strategy.scan).not.toHaveBeenCalled();
       });
       it('should find exact key with correct type', async () => {

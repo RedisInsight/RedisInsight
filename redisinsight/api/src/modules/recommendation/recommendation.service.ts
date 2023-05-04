@@ -39,7 +39,7 @@ export class RecommendationService {
       exclude,
     } = dto;
 
-    const recommendations = new Map([
+    const recommendations = new Map<string, () => Promise<Recommendation | null>>([
       [
         RECOMMENDATION_NAMES.LUA_SCRIPT,
         async () => await this.recommendationProvider.determineLuaScriptRecommendation(client),

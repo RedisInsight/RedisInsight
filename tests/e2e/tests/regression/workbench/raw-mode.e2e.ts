@@ -7,11 +7,10 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 const browserPage = new BrowserPage();
 
-const keyName = common.generateWord(10);
-const indexName = common.generateWord(5);
+const keyName = Common.generateWord(10);
+const indexName = Common.generateWord(5);
 const keyValue = '\\xe5\\xb1\\xb1\\xe5\\xa5\\xb3\\xe9\\xa6\\xac / \\xe9\\xa9\\xac\\xe7\\x9b\\xae abc 123';
 const unicodeValue = '山女馬 / 马目 abc 123';
 const commandsForSend = [
@@ -59,7 +58,7 @@ test
         await acceptLicenseTerms();
         await addNewStandaloneDatabasesApi(databasesForAdding);
         // Reload Page
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
         // Go to Workbench page
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
@@ -72,7 +71,7 @@ test
         await t.click(workbenchPage.rawModeBtn);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForSend);
         // Verify that user can see saved Raw mode state after page refresh
-        await common.reloadPage();
+        await workbenchPage.reloadPage();
         await workbenchPage.sendCommandInWorkbench(commandsForSend[1]);
         await workbenchPage.checkWorkbenchCommandResult(commandsForSend[1], `"${unicodeValue}"`);
         // Go to another database

@@ -12,10 +12,11 @@ import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
 
+const serverConfig = get('server');
+
 export default async function bootstrap(): Promise<Function> {
   await migrateHomeFolder();
 
-  const serverConfig = get('server');
   const port = process.env.API_PORT || serverConfig.port;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
 
@@ -47,7 +48,7 @@ export default async function bootstrap(): Promise<Function> {
 
   const logFileProvider = app.get(LogFileProvider);
 
-  await app.listen(port);
+  await app.listen(port, serverConfig.listenInterface);
   logger.log({
     message: `Server is running on http(s)://localhost:${port}`,
     context: 'bootstrap',

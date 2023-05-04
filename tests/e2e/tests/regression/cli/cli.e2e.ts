@@ -8,10 +8,9 @@ import {
 import { rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
-const common = new Common();
 const browserPage = new BrowserPage();
 
-let keyName = common.generateWord(20);
+let keyName = Common.generateWord(20);
 const keyTTL = '2147476121';
 const jsonValue = '{"name":"xyz"}';
 const cliCommands = ['get test', 'acl help', 'client list'];
@@ -27,13 +26,13 @@ fixture `CLI`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see CLI is minimized when he clicks the "minimize" button', async t => {
-    const cliColourBefore = await common.getBackgroundColour(browserPage.Cli.cliBadge);
+    const cliColourBefore = await Common.getBackgroundColour(browserPage.Cli.cliBadge);
 
     // Open CLI and minimize
     await t.click(browserPage.Cli.cliExpandButton);
     await t.click(browserPage.Cli.minimizeCliButton);
     // Verify cli is minimized
-    const cliColourAfter = await common.getBackgroundColour(browserPage.Cli.cliBadge);
+    const cliColourAfter = await Common.getBackgroundColour(browserPage.Cli.cliBadge);
     await t.expect(cliColourAfter).notEql(cliColourBefore, 'CLI badge colour is not changed');
     await t.expect(browserPage.Cli.minimizeCliButton.visible).eql(false, 'CLI is not mimized');
 });
@@ -56,7 +55,7 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can repeat commands by entering a number of repeats before the Redis command in CLI', async t => {
-        keyName = common.generateWord(20);
+        keyName = Common.generateWord(20);
         const command = `SET ${keyName} a`;
         const repeats = 10;
 
@@ -73,7 +72,7 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can run command json.get and see JSON object with escaped quotes (\" instead of ")', async t => {
-        keyName = common.generateWord(20);
+        keyName = Common.generateWord(20);
         const jsonValueCli = '"{\\"name\\":\\"xyz\\"}"';
 
         // Add Json key with json object

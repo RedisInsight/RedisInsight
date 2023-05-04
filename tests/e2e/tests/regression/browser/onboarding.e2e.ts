@@ -6,25 +6,22 @@ import {
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { Common } from '../../../helpers/common';
-import { OnboardActions } from '../../../common-actions/onboard-actions';
 import {
     MemoryEfficiencyPage,
     SlowLogPage,
     WorkbenchPage,
     PubSubPage,
-    OnboardingPage,
     MyRedisDatabasePage,
     HelpCenterPage,
     BrowserPage
 } from '../../../pageObjects';
 import { Telemetry } from '../../../helpers/telemetry';
+import { OnboardingCardsDialog } from '../../../pageObjects/dialogs/onboarding-cards-dialog';
 
-const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const helpCenterPage = new HelpCenterPage();
-const onBoardActions = new OnboardActions();
-const onboardingPage = new OnboardingPage();
+const onboardingCardsDialog = new OnboardingCardsDialog();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const workBenchPage = new WorkbenchPage();
 const slowLogPage = new SlowLogPage();
@@ -32,7 +29,7 @@ const pubSubPage = new PubSubPage();
 const telemetry = new Telemetry();
 
 const logger = telemetry.createLogger();
-const indexName = common.generateWord(10);
+const indexName = Common.generateWord(10);
 const telemetryEvent = 'ONBOARDING_TOUR_FINISHED';
 const expectedProperties = [
     'databaseId'
@@ -50,118 +47,121 @@ fixture `Onboarding new user tests`
     });
 // https://redislabs.atlassian.net/browse/RI-4070, https://redislabs.atlassian.net/browse/RI-4067
 // https://redislabs.atlassian.net/browse/RI-4278
-test('Verify onbarding user steps', async t => {
+test('Verify onboarding new user steps', async t => {
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
-    await t.click(onboardingPage.resetOnboardingBtn);
-    await t.expect(onboardingPage.showMeAroundButton.visible).ok('onbarding starting is not visible');
-    await onBoardActions.startOnboarding();
+    await t.click(onboardingCardsDialog.resetOnboardingBtn);
+    await t.expect(onboardingCardsDialog.showMeAroundButton.visible).ok('onboarding starting is not visible');
+    await onboardingCardsDialog.startOnboarding();
     // verify browser step is visible
-    await onBoardActions.verifyStepVisible('Browser');
+    await onboardingCardsDialog.verifyStepVisible('Browser');
     // move to next step
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.clickNextStep();
     // verify tree view step is visible
-    await onBoardActions.verifyStepVisible('Tree view');
-    await onBoardActions.clickNextStep();
-    await onBoardActions.verifyStepVisible('Filter and search');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Tree view');
+    await onboardingCardsDialog.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Filter and search');
+    await onboardingCardsDialog.clickNextStep();
     // verify cli is opened
     await t.expect(browserPage.Cli.cliPanel.visible).ok('cli is not expanded');
-    await onBoardActions.verifyStepVisible('CLI');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('CLI');
+    await onboardingCardsDialog.clickNextStep();
     // verify command helper area is opened
     await t.expect(browserPage.CommandHelper.commandHelperArea.visible).ok('command helper is not expanded');
-    await onBoardActions.verifyStepVisible('Command Helper');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Command Helper');
+    await onboardingCardsDialog.clickNextStep();
     // verify profiler is opened
     await t.expect(browserPage.Profiler.monitorArea.visible).ok('profiler is not expanded');
-    await onBoardActions.verifyStepVisible('Profiler');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Profiler');
+    await onboardingCardsDialog.clickNextStep();
     // verify Insights is opened
     await t.expect(browserPage.InsightsPanel.insightsPanel.visible).ok('Insights panel is not expanded');
-    await onBoardActions.verifyStepVisible('Insights');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Insights');
+    await onboardingCardsDialog.clickNextStep();
     // Verify that client list command visible when there is not any index created
-    await t.expect(onboardingPage.wbOnbardingCommand.withText('CLIENT LIST').visible).ok('CLIENT LIST command is not visible');
-    await t.expect(onboardingPage.copyCodeButton.visible).ok('copy code button is not visible');
+    await t.expect(onboardingCardsDialog.wbOnbardingCommand.withText('CLIENT LIST').visible).ok('CLIENT LIST command is not visible');
+    await t.expect(onboardingCardsDialog.copyCodeButton.visible).ok('copy code button is not visible');
     // verify workbench page is opened
     await t.expect(workBenchPage.mainEditorArea.visible).ok('workbench is not opened');
-    await onBoardActions.verifyStepVisible('Try Workbench!');
-
+    await onboardingCardsDialog.verifyStepVisible('Try Workbench!');
+    // click back step button
+    await onboardingCardsDialog.clickBackStep();
     // create index in order to see in FT.INFO {index} in onboarding step
-    await browserPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
-    await onBoardActions.clickBackStep();
+    await workBenchPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
     // verify one step before is opened
     await t.expect(browserPage.InsightsPanel.insightsPanel.visible).ok('Insights panel is not expanded');
-    await onBoardActions.verifyStepVisible('Insights');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Insights');
+    await onboardingCardsDialog.clickNextStep();
     // verify workbench page is opened
-    await t.expect(onboardingPage.wbOnbardingCommand.withText(`FT.INFO ${indexName}`).visible).ok(`FT.INFO ${indexName} command is not visible`);
-    await t.expect(onboardingPage.copyCodeButton.visible).ok('copy code button is not visible');
+    await t.expect(onboardingCardsDialog.wbOnbardingCommand.withText(`FT.INFO ${indexName}`).visible).ok(`FT.INFO ${indexName} command is not visible`);
+    await t.expect(onboardingCardsDialog.copyCodeButton.visible).ok('copy code button is not visible');
     await t.expect(workBenchPage.mainEditorArea.visible).ok('workbench is not opened');
-    await onBoardActions.verifyStepVisible('Try Workbench!');
-    await onBoardActions.clickNextStep();
-    await onBoardActions.verifyStepVisible('Explore and learn more');
-    await onBoardActions.clickNextStep();
-    await onBoardActions.verifyStepVisible('Upload your tutorials');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Try Workbench!');
+    await onboardingCardsDialog.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Explore and learn more');
+    await onboardingCardsDialog.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Upload your tutorials');
+    await onboardingCardsDialog.clickNextStep();
     // verify analysis tools page is opened
     await t.expect(memoryEfficiencyPage.noReportsText.visible).ok('analysis tools is not opened');
-    await onBoardActions.verifyStepVisible('Database Analysis');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Database Analysis');
+    await onboardingCardsDialog.clickNextStep();
     // verify slow log is opened
     await t.expect(slowLogPage.slowLogConfigureButton.visible).ok('slow log is not opened');
-    await onBoardActions.verifyStepVisible('Slow Log');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Slow Log');
+    await onboardingCardsDialog.clickNextStep();
     // verify pub/sub page is opened
     await t.expect(pubSubPage.subscribeButton.visible).ok('pub/sub page is not opened');
-    await onBoardActions.verifyStepVisible('Pub/Sub');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Pub/Sub');
+    await onboardingCardsDialog.clickNextStep();
     // verify last step of onboarding process is visible
-    await onBoardActions.verifyStepVisible('Great job!');
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.verifyStepVisible('Great job!');
+    await onboardingCardsDialog.clickNextStep();
     // verify onboarding step completed successfully
-    await onBoardActions.verifyOnboardingCompleted();
+    await onboardingCardsDialog.completeOnboarding();
+    await t.expect(browserPage.patternModeBtn.visible).ok('Browser page is not opened');
 });
 // https://redislabs.atlassian.net/browse/RI-4067, https://redislabs.atlassian.net/browse/RI-4278
 test('Verify onboard new user skip tour', async(t) => {
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
-    await t.click(onboardingPage.resetOnboardingBtn);
-    await t.expect(onboardingPage.showMeAroundButton.visible).ok('onbarding starting is not visible');
+    await t.click(onboardingCardsDialog.resetOnboardingBtn);
+    await t.expect(onboardingCardsDialog.showMeAroundButton.visible).ok('onboarding starting is not visible');
     // start onboarding process
-    await onBoardActions.startOnboarding();
+    await onboardingCardsDialog.startOnboarding();
     // verify browser step is visible
-    await onBoardActions.verifyStepVisible('Browser');
+    await onboardingCardsDialog.verifyStepVisible('Browser');
     // move to next step
-    await onBoardActions.clickNextStep();
+    await onboardingCardsDialog.clickNextStep();
     // verify tree view step is visible
-    await onBoardActions.verifyStepVisible('Tree view');
+    await onboardingCardsDialog.verifyStepVisible('Tree view');
     await t.click(browserPage.NavigationPanel.workbenchButton);
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
-    await t.click(onboardingPage.resetOnboardingBtn);
+    await t.click(onboardingCardsDialog.resetOnboardingBtn);
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify that when user reset onboarding, user can see the onboarding triggered when user open the Browser page.
-    await t.expect(onboardingPage.showMeAroundButton.visible).ok('onbarding starting is not visible');
+    await t.expect(onboardingCardsDialog.showMeAroundButton.visible).ok('onboarding starting is not visible');
     // click skip tour
-    await onBoardActions.clickSkipTour();
+    await onboardingCardsDialog.clickSkipTour();
     // verify onboarding step completed successfully
-    await onBoardActions.verifyOnboardingCompleted();
-    await common.reloadPage();
+    await onboardingCardsDialog.completeOnboarding();
+    await t.expect(browserPage.patternModeBtn.visible).ok('Browser page is not opened');
+    await myRedisDatabasePage.reloadPage();
     // verify onboarding step still not visible after refresh page
-    await onBoardActions.verifyOnboardingCompleted();
+    await onboardingCardsDialog.completeOnboarding();
+    await t.expect(browserPage.patternModeBtn.visible).ok('Browser page is not opened');
 });
 // https://redislabs.atlassian.net/browse/RI-4305
 test.requestHooks(logger)('Verify that the final onboarding step is closed when user opens another page', async(t) => {
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
-    await t.click(onboardingPage.resetOnboardingBtn);
-    await onBoardActions.startOnboarding();
-    await onBoardActions.clickNextUntilLastStep();
+    await t.click(onboardingCardsDialog.resetOnboardingBtn);
+    await onboardingCardsDialog.startOnboarding();
+    await onboardingCardsDialog.clickNextUntilLastStep();
     // Verify last step of onboarding process is visible
-    await onBoardActions.verifyStepVisible('Great job!');
+    await onboardingCardsDialog.verifyStepVisible('Great job!');
     // Go to Workbench page
     await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
 
@@ -171,10 +171,11 @@ test.requestHooks(logger)('Verify that the final onboarding step is closed when 
     // Go to PubSub page
     await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     // Verify onboarding completed successfully
-    await t.expect(onboardingPage.showMeAroundButton.exists).notOk('Show me around button still visible');
-    await t.expect(onboardingPage.stepTitle.exists).notOk('Onboarding tooltip still visible');
+    await t.expect(onboardingCardsDialog.showMeAroundButton.exists).notOk('Show me around button still visible');
+    await t.expect(onboardingCardsDialog.stepTitle.exists).notOk('Onboarding tooltip still visible');
     // Go to Browser Page
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify onboarding completed successfully
-    await onBoardActions.verifyOnboardingCompleted();
+    await onboardingCardsDialog.completeOnboarding();
+    await t.expect(browserPage.patternModeBtn.visible).ok('Browser page is not opened');
 });

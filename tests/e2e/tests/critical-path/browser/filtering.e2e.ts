@@ -11,14 +11,13 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const keysData = keyTypes.map(object => ({ ...object }));
-keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${common.generateWord(keyLength)}`);
+keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${Common.generateWord(keyLength)}`);
 
 fixture `Filtering per key name in Browser page`
-    .meta({type: 'critical_path', rte: rte.standalone})
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -33,7 +32,7 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can search a key with selected data type is filters', async t => {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
         // Add new key
         await browserPage.addStringKey(keyName);
         // Search by key with full name & specified type
@@ -50,7 +49,7 @@ test
         await t.pressKey('enter');
         await t.expect(browserPage.searchAdvices.exists).ok('The filtering is set');
         // Check the filtering starts by clicks the control
-        await common.reloadPage();
+        await browserPage.reloadPage();
         await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText', { replace: true, paste: true });
         await t.click(browserPage.searchButton);
         await t.expect(browserPage.searchAdvices.exists).ok('The filtering is set');
@@ -61,7 +60,7 @@ test
         await deleteKeysViaCli(keysData);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter keys per data type in Browser page', async t => {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
         // Create new keys
         await addKeysViaCli(keysData);
         for (const { textType, keyName } of keysData) {

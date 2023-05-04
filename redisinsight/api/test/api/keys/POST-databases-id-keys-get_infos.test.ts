@@ -110,6 +110,21 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
           expect(body[0].type).to.deep.eq('none');
         }
       },
+      {
+        name: 'Should return string info in Buffer and Type',
+        query: {
+          encoding: 'buffer',
+        },
+        data: {
+          keys: [constants.TEST_STRING_KEY_BIN_BUF_OBJ_1],
+          type: constants.TEST_LIST_TYPE,
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body[0].name).to.deep.eq(constants.TEST_STRING_KEY_BIN_BUF_OBJ_1);
+          expect(body[0].type).to.deep.eq(constants.TEST_LIST_TYPE);
+        }
+      },
     ].map(mainCheckFn);
   });
 

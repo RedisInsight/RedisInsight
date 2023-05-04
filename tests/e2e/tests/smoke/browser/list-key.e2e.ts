@@ -5,9 +5,8 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const keyTTL = '2147476121';
 const element = '1111listElement11111';
 const element2 = '2222listElement22222';
@@ -25,7 +24,7 @@ fixture `List Key verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can select remove List element position: from tail', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     await browserPage.addListKey(keyName, keyTTL);
     // Add few elements to the List key
     await browserPage.addElementToList(element);
@@ -43,7 +42,7 @@ test('Verify that user can select remove List element position: from tail', asyn
     await t.expect(browserPage.listElementsList.withExactText(element3).exists).notOk('The list element not removed', { timeout: 10000 });
 });
 test('Verify that user can select remove List element position: from head', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     await browserPage.addListKey(keyName, keyTTL, element);
     // Add few elements to the List key
     await browserPage.addElementToList(element2);

@@ -7,11 +7,10 @@ import { populateListWithElements } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
 const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port };
-const keyName = `TestListKey-${common.generateWord(10)}`;
-const elementForSearch = `SearchField-${common.generateWord(5)}`;
+const keyName = `TestListKey-${ Common.generateWord(10) }`;
+const elementForSearch = `SearchField-${ Common.generateWord(5) }`;
 const keyToAddParameters = { elementsCount: 500000, keyName, elementStartWith: 'listElement' };
 
 fixture `List Key verification`

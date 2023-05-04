@@ -1,4 +1,4 @@
-import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, AddRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, WorkbenchPage } from '../../../pageObjects';
 import { RecommendationIds, rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi, deleteCustomDatabase } from '../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
@@ -8,15 +8,13 @@ import { Common } from '../../../helpers/common';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const common = new Common();
 const browserPage = new BrowserPage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const recommendationsActions = new RecommendationsActions();
 const workbenchPage = new WorkbenchPage();
 
 const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
-let keyName = `recomKey-${common.generateWord(10)}`;
-const stringKeyName = `smallStringKey-${common.generateWord(5)}`;
+let keyName = `recomKey-${Common.generateWord(10)}`;
+const stringKeyName = `smallStringKey-${Common.generateWord(5)}`;
 const index = '1';
 const luaScriptRecom = RecommendationIds.luaScript;
 const useSmallerKeysRecom = RecommendationIds.useSmallerKeys;
@@ -83,13 +81,13 @@ test
 
         // Verify that user can navigate by link to see the recommendation
         await t.click(memoryEfficiencyPage.getRecommendationByName(luaScriptRecom).find(memoryEfficiencyPage.cssReadMoreLink));
-        await common.checkURL(externalPageLink);
+        await Common.checkURL(externalPageLink);
         // Close the window with external link to switch to the application window
         await t.closeWindow();
     });
 // skipped due to inability to receive no recommendations for now
 test.skip('No recommendations message', async t => {
-    keyName = `recomKey-${common.generateWord(10)}`;
+    keyName = `recomKey-${Common.generateWord(10)}`;
     const noRecommendationsMessage = 'No recommendations at the moment, run a new report later to keep up the good work!';
     const command = `HSET ${keyName} field value`;
 
@@ -104,10 +102,10 @@ test.skip('No recommendations message', async t => {
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        keyName = `recomKey-${common.generateWord(10)}`;
+        keyName = `recomKey-${Common.generateWord(10)}`;
         await browserPage.addStringKey(stringKeyName, '2147476121', 'field');
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await addRedisDatabasePage.addLogicalRedisDatabase(ossStandaloneConfig, index);
+        await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneConfig, index);
         await myRedisDatabasePage.clickOnDBByName(`${ossStandaloneConfig.databaseName} [db${index}]`);
         await browserPage.addHashKey(keyName, '2147476121', 'field', 'value');
     })
@@ -149,7 +147,7 @@ test
         await t.expect(memoryEfficiencyPage.recommendationsFeedbackBtn.visible).ok('popup did not appear after voting for not useful');
 
         // Verify that user can see previous votes when reload the page
-        await common.reloadPage();
+        await memoryEfficiencyPage.reloadPage();
         await t.click(memoryEfficiencyPage.recommendationsTab);
         await recommendationsActions.verifyVoteDisabled(redisVersionRecom, 'not-useful');
 
@@ -160,7 +158,7 @@ test
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        keyName = `recomKey-${common.generateWord(10)}`;
+        keyName = `recomKey-${Common.generateWord(10)}`;
         await browserPage.addZSetKey(keyName, '151153320500121', '2147476121', '1511533205001:21');
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);

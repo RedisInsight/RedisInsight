@@ -1,9 +1,6 @@
 import { Selector, t } from 'testcafe';
-import { BrowserPage } from './browser-page';
 
-const browserPage = new BrowserPage();
-
-export class BulkActionsPage {
+export class BulkActions {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -41,12 +38,10 @@ export class BulkActionsPage {
     bulkUploadInput = Selector('[data-testid=bulk-upload-file-input]');
 
     /**
-   * Open Bulk Actions and confirm deletion
-   */
+     * Open Bulk Actions and confirm deletion
+     */
     async startBulkDelete(): Promise<void> {
-        // TODO remove dep from browser page
         await t
-            .click(browserPage.bulkActionsButton)
             .click(this.actionButton)
             .click(this.bulkApplyButton);
     }

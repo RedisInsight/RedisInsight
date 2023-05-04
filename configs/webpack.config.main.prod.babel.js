@@ -66,6 +66,7 @@ export default merge(baseConfig, {
       SERVER_TLS_KEY: process.env.SERVER_TLS_KEY || '',
       APP_FOLDER_NAME: process.env.APP_FOLDER_NAME || '',
       UPGRADES_LINK: process.env.UPGRADES_LINK || '',
+      RI_HOSTNAME: '127.0.0.1',
       BUILD_TYPE: 'ELECTRON',
       APP_VERSION: version,
       AWS_BUCKET_NAME: 'AWS_BUCKET_NAME' in process.env ? process.env.AWS_BUCKET_NAME : '',

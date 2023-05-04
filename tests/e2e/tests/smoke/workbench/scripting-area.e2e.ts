@@ -8,14 +8,12 @@ import {
     ossStandaloneConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 
 fixture `Scripting area at Workbench`
-    .meta({type: 'smoke', rte: rte.standalone})
+    .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -64,7 +62,7 @@ test('Verify that user can run multiple commands in one query in Workbench', asy
     await t.expect(workbenchPage.executionCommandTime.exists).ok('Execution time icon is not displayed for single command');
     await workbenchPage.sendCommandInWorkbench(commandForSend2);
     // Check that all the previous run commands are saved and displayed
-    await common.reloadPage();
+    await workbenchPage.reloadPage();
     await t.expect(workbenchPage.queryCardCommand.withExactText(commandForSend1).exists).ok('The previous run commands are not saved');
     await t.expect(workbenchPage.queryCardCommand.withExactText(commandForSend2).exists).ok('The previous run commands are not saved');
     // Send multiple commands in one query
@@ -74,7 +72,7 @@ test('Verify that user can run multiple commands in one query in Workbench', asy
         await t.expect(workbenchPage.queryCardCommand.withExactText(command).exists).ok(`The command ${command} from multiple query is not displayed`);
     }
     // Reload page and validate that time executions are displayed for collapsed commands
-    await common.reloadPage();
+    await workbenchPage.reloadPage();
     const countCommandsInHistory = await workbenchPage.queryCardCommand.count;
     const countExecutionTime = await workbenchPage.executionCommandTime.count;
     const countExecutionIcon = await workbenchPage.executionCommandIcon.count;

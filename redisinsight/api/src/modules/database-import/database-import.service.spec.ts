@@ -161,10 +161,12 @@ describe('DatabaseImportService', () => {
     it('should create standalone database', async () => {
       await service['createDatabase']({
         ...mockDatabase,
+        provider: 'RE_CLOUD',
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
         ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout']),
+        provider: 'RE_CLOUD',
         new: true,
       });
     });

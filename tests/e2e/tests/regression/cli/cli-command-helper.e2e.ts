@@ -8,7 +8,6 @@ import { env, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { BrowserPage } from '../../../pageObjects';
 
-const common = new Common();
 const browserPage = new BrowserPage();
 
 let filteringGroup = '';
@@ -54,12 +53,12 @@ test('Verify that user can open/close CLI separately from Command Helper', async
     await t.expect(browserPage.Cli.cliCollapseButton.visible).ok('CLI is not opended');
 });
 test('Verify that user can see that Command Helper is minimized when he clicks the "minimize" button', async t => {
-    const helperColourBefore = await common.getBackgroundColour(browserPage.CommandHelper.commandHelperBadge);
+    const helperColourBefore = await Common.getBackgroundColour(browserPage.CommandHelper.commandHelperBadge);
     // Open Command Helper and minimize
     await t.click(browserPage.CommandHelper.expandCommandHelperButton);
     await t.click(browserPage.CommandHelper.minimizeCommandHelperButton);
     // Verify Command helper is minimized
-    const helperColourAfter = await common.getBackgroundColour(browserPage.CommandHelper.commandHelperBadge);
+    const helperColourAfter = await Common.getBackgroundColour(browserPage.CommandHelper.commandHelperBadge);
     await t.expect(helperColourAfter).notEql(helperColourBefore, 'Command helper badge colour is not changed');
     await t.expect(browserPage.Cli.minimizeCliButton.visible).eql(false, 'Command helper is not mimized');
 });
@@ -82,7 +81,7 @@ test
     .meta({ env: env.web })('Verify that user can see in Command helper and click on new group "JSON", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'JSON';
         commandToCheck = 'JSON.SET';
-        commandArgumentsToCheck = 'JSON.SET key path value [NX | XX]';
+        commandArgumentsToCheck = 'JSON.SET key path value [condition]';
         externalPageLink = 'https://redis.io/commands/json.set/';
 
         // Open Command Helper
@@ -95,14 +94,14 @@ test
         // Click on Read More link for selected command
         await t.click(browserPage.CommandHelper.readMoreButton);
         // Check new opened window page with the correct URL
-        await common.checkURL(externalPageLink);
+        await Common.checkURL(externalPageLink);
         await t.switchToParentWindow();
     });
 test
     .meta({ env: env.web })('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
         filteringGroup = 'Search';
         commandToCheck = 'FT.EXPLAIN';
-        commandArgumentsToCheck = 'FT.EXPLAIN index query [DIALECT dialect]';
+        commandArgumentsToCheck = 'FT.EXPLAIN index query [dialect]';
         externalPageLink = 'https://redis.io/commands/ft.explain/';
 
         // Open Command Helper
@@ -115,7 +114,7 @@ test
         // Click on Read More link for selected command
         await t.click(browserPage.CommandHelper.readMoreButton);
         // Check new opened window page with the correct URL
-        await common.checkURL(externalPageLink);
+        await Common.checkURL(externalPageLink);
         await t.switchToParentWindow();
     });
 test
@@ -135,7 +134,7 @@ test
         // Click on Read More link for selected command
         await t.click(browserPage.CommandHelper.readMoreButton);
         // Check new opened window page with the correct URL
-        await common.checkURL(externalPageLink);
+        await Common.checkURL(externalPageLink);
         // await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
         await t.switchToParentWindow();
     });
@@ -150,9 +149,9 @@ test
         ];
         commandsArgumentsToCheck = [
             'AI.MODELDEL key',
-            'AI.SCRIPTSTORE key CPU | GPU [TAG] ENTRY_POINTS entry_point [entry_point ...]',
-            'AI.SCRIPTEXECUTE key function [KEYS key [key ...]] [INPUTS input [input ...]] [ARGS arg [arg ...]] [OUTPUTS output [output ...]] [TIMEOUT]',
-            'AI.TENSORSET key FLOAT | DOUBLE | INT8 | INT16 | INT32 | INT64 | UINT8 | UINT16 | STRING | BOOL shape [shape ...] [BLOB] [VALUES [VALUES ...]]'
+            'AI.SCRIPTSTORE key CPU|GPU [TAG tag] ENTRY_POINTS entry_point_count entry_point [entry_point ...]',
+            'AI.SCRIPTEXECUTE key function [KEYS key_count key [key ...]] [INPUTS input_count input [input ...]] [ARGS arg_count arg [arg ...]] [OUTPUTS output_count output [output ...]] [TIMEOUT timeout]',
+            'AI.TENSORSET key FLOAT|DOUBLE|INT8|INT16|INT32|INT64|UINT8|UINT16|STRING|BOOL shape [shape ...] [BLOB blob] [VALUES value [VALUES value ...]]'
         ];
         externalPageLinks = [
             'https://redis.io/commands/ai.modeldel',
@@ -174,7 +173,7 @@ test
             // Click on Read More link for selected command
             await t.click(browserPage.CommandHelper.readMoreButton);
             // Check new opened window page with the correct URL
-            await common.checkURL(externalPageLinks[i]);
+            await Common.checkURL(externalPageLinks[i]);
             // Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;
@@ -184,7 +183,7 @@ test
     .meta({ env: env.web })('Verify that user can work with Gears group in Command Helper (RedisGears module)', async t => {
         filteringGroup = 'Gears';
         commandToCheck = 'RG.GETEXECUTION';
-        commandArgumentsToCheck = 'RG.GETEXECUTION id [SHARD | CLUSTER]';
+        commandArgumentsToCheck = 'RG.GETEXECUTION id [SHARD|CLUSTER]';
         externalPageLink = 'https://redis.io/commands/rg.getexecution';
 
         // Open Command Helper
@@ -198,7 +197,7 @@ test
         // Verify that user can use Read More link for Gears group in Command Helper (RedisGears module)
         await t.click(browserPage.CommandHelper.readMoreButton);
         // Check new opened window page with the correct URL
-        await common.checkURL(externalPageLink);
+        await Common.checkURL(externalPageLink);
         // Close the window with external link to switch to the application window
         await t.closeWindow();
     });
@@ -216,7 +215,7 @@ test
             'BF.MEXISTS key item [item ...]',
             'CMS.QUERY key item [item ...]',
             'TDIGEST.RESET key',
-            'TOPK.LIST key [WITHCOUNT]',
+            'TOPK.LIST key [withcount]',
             'CF.ADD key item'
         ];
         externalPageLinks = [
@@ -240,7 +239,7 @@ test
             // Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
             await t.click(browserPage.CommandHelper.readMoreButton);
             // Check new opened window page with the correct URL
-            await common.checkURL(externalPageLinks[i]);
+            await Common.checkURL(externalPageLinks[i]);
             // Close the window with external link to switch to the application window
             await t.closeWindow();
             i++;

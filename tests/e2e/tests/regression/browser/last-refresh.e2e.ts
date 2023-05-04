@@ -6,9 +6,8 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 
 fixture `Last refresh`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -22,7 +21,7 @@ fixture `Last refresh`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see my timer updated when I refresh the list of Keys of the list of values', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     // Hover on the refresh icon
     await t.hover(browserPage.refreshKeysButton);
     // Verify that user can see the date and time of the last update of my Keys in the tooltip

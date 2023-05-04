@@ -8,9 +8,8 @@ import { rte } from '../../../helpers/constants';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const keyTTL = '2147476121';
 const keyMember = '1111setMember11111';
 
@@ -26,7 +25,7 @@ fixture `Set Key fields verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can remove member from Set', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     await browserPage.addSetKey(keyName, keyTTL);
     // Add member to the Set key
     await browserPage.addMemberToSet(keyMember);

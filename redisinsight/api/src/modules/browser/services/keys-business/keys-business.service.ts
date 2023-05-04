@@ -178,7 +178,7 @@ export class KeysBusinessService {
     try {
       const client = await this.browserTool.getRedisClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.isCluster ? ConnectionType.CLUSTER : ConnectionType.STANDALONE);
-      const result = await scanner.getKeysInfo(client, dto.keys);
+      const result = await scanner.getKeysInfo(client, dto.keys, dto.type);
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.SEARCH_STRING,

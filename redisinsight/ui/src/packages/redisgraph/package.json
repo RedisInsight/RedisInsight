@@ -62,5 +62,8 @@
     "react-dom": "^17.0.2",
     "react-json-tree": "^0.16.1",
     "redisinsight-plugin-sdk": "^1.1.0"
+  },
+  "resolutions": {
+    "trim": "0.0.3"
   }
 }

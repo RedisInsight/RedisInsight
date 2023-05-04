@@ -4,11 +4,9 @@ import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../
 import { env, rte } from '../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../helpers/pub-sub';
 import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
-const common = new Common();
 
 fixture `Subscribe/Unsubscribe from a channel`
     .meta({ env: env.web, rte: rte.standalone, type: 'critical_path' })
@@ -68,7 +66,7 @@ test
         await acceptLicenseTerms();
         await addNewStandaloneDatabaseApi(ossStandaloneV5Config);
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         // Go to PubSub page
         await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);

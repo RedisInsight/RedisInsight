@@ -19,7 +19,7 @@ import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto';
 import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
 import { numberWithSpaces } from 'src/utils/base.helper';
-import { BrowserHistoryMode } from 'src/common/constants';
+import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
 import { BrowserHistoryService } from '../browser-history/browser-history.service';
 import { CreateBrowserHistoryDto } from '../../dto/browser-history/create.browser-history.dto';
@@ -175,9 +175,16 @@ export class RedisearchService {
         safeLimit = offset <= maxSearchResult ? maxSearchResult - offset : limit;
       }
 
-      const [total, ...keyNames] = await client.sendCommand(
+      const [total, ...keyNames]: [number, RedisString[]] = await client.sendCommand(
         new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, safeLimit]),
       );
+
+      let type;
+      if (keyNames.length) {
+        type = await client.sendCommand(
+          new Command('TYPE', [keyNames[0]], { replyEncoding: 'utf8' }),
+        );
+      }
 
       // Do not save default match "*"
       if (query !== DEFAULT_MATCH) {
@@ -194,7 +201,7 @@ export class RedisearchService {
         cursor: limit + offset,
         total,
         scanned: keyNames.length + offset,
-        keys: keyNames.map((name) => ({ name })),
+        keys: keyNames.map((name) => ({ name, type })),
         maxResults: maxSearchResult,
       });
     } catch (e) {

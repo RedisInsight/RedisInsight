@@ -5,14 +5,13 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = `KeyForSearch*?[]789${common.generateWord(10)}`;
-let keyName2 = common.generateWord(10);
-let randomValue = common.generateWord(10);
+let keyName = `KeyForSearch*?[]789${Common.generateWord(10)}`;
+let keyName2 = Common.generateWord(10);
+let randomValue = Common.generateWord(10);
 const valueWithEscapedSymbols = 'KeyFor[A-G]*(';
 const searchedKeyName = 'KeyForSearch\\*\\?\\[]789';
-const searchedValueWithEscapedSymbols = 'KeyFor\\[A-G\\]\\*\\(';
+const searchedValueWithEscapedSymbols = 'KeyFor\\[A-G\\]\*\(';
 
 fixture `Filtering per key name in Browser page`
     .meta({ type: 'smoke', rte: rte.standalone })
@@ -26,7 +25,7 @@ fixture `Filtering per key name in Browser page`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can search per full key name', async t => {
-    randomValue = common.generateWord(10);
+    randomValue = Common.generateWord(10);
     keyName = `KeyForSearch*?[]789${randomValue}`;
 
     // Add new key
@@ -38,7 +37,7 @@ test('Verify that user can search per full key name', async t => {
     await t.expect(isKeyIsDisplayedInTheList).ok('The key was not found');
 });
 test('Verify that user can filter per exact key without using any patterns', async t => {
-    randomValue = common.generateWord(10);
+    randomValue = Common.generateWord(10);
     keyName = `KeyForSearch*?[]789${randomValue}`;
 
     // Open CLI
@@ -60,8 +59,8 @@ test
         await browserPage.deleteKeyByName(searchedValueWithEscapedSymbols);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user can filter per combined pattern with ?, *, [xy], [^x], [a-z] and escaped special symbols', async t => {
-        keyName = `KeyForSearch${common.generateWord(10)}`;
-        keyName2 = `KeyForSomething${common.generateWord(10)}`;
+        keyName = `KeyForSearch${Common.generateWord(10)}`;
+        keyName2 = `KeyForSomething${Common.generateWord(10)}`;
 
         // Add keys
         await browserPage.addStringKey(keyName);

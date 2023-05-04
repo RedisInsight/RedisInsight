@@ -15,7 +15,6 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const settingsPage = new SettingsPage();
-const common = new Common();
 
 let keys: string[] = [];
 
@@ -28,7 +27,7 @@ const explicitErrorHandler = (): void => {
 };
 
 fixture `Browser - Specify Keys to Scan`
-    .meta({type: 'critical_path', rte: rte.standalone})
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
     .beforeEach(async() => {
@@ -53,8 +52,8 @@ test('Verify that the user can see this number of keys applied to new filter req
     // Open CLI
     await t.click(browserPage.Cli.cliExpandButton);
     // Create new keys
-    keys = await common.createArrayWithKeyValue(2500);
-    await t.typeText(browserPage.Cli.cliCommandInput, `MSET ${keys.join(' ')}`, {paste: true});
+    keys = await Common.createArrayWithKeyValue(2500);
+    await t.typeText(browserPage.Cli.cliCommandInput, `MSET ${keys.join(' ')}`, { paste: true });
     await t.pressKey('enter');
     await t.click(browserPage.Cli.cliCollapseButton);
     // Search keys

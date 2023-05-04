@@ -180,20 +180,20 @@ test
         await t.expect(workbenchPage.scrolledEnablementArea.visible).ok('Enablement area is not visible after clicked');
 
         // Verify that user can bulk upload data by relative path
-        await t.click(workbenchPage.uploadDataBulkBtn.withExactText('Upload relative'));
+        await t.click(workbenchPage.uploadDataBulkBtn.withText('Upload relative'));
         await t.click(workbenchPage.uploadDataBulkApplyBtn);
         // Verify that user can see the summary when the command execution is completed
         await verifyCompletedResultText(allKeysResults);
 
         // Verify that user can bulk upload data by absolute path
-        await t.click(workbenchPage.uploadDataBulkBtn.withExactText('Upload absolute'));
+        await t.click(workbenchPage.uploadDataBulkBtn.withText('Upload absolute'));
         await t.click(workbenchPage.uploadDataBulkApplyBtn);
         await verifyCompletedResultText(absolutePathResults);
 
         // Verify that user can't upload file by invalid relative path
         // Verify that user can't upload file by invalid absolute path
         for (const path of invalidPathes) {
-            await t.click(workbenchPage.uploadDataBulkBtn.withExactText(path));
+            await t.click(workbenchPage.uploadDataBulkBtn.withText(path));
             await t.click(workbenchPage.uploadDataBulkApplyBtn);
             // Verify that user can see standard error messages when any error occurs while finding the file or parsing it
             await t.expect(workbenchPage.Toast.toastError.textContent).contains('Data file was not found', 'Bulk upload not failed');

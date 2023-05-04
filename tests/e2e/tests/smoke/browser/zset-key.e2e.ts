@@ -35,6 +35,6 @@ test('Verify that user can remove member from ZSet', async t => {
     await t.click(browserPage.removeZserMemberButton);
     await t.click(browserPage.confirmRemovZSetMemberButton);
     // Check the notification message
-    const notofication = await browserPage.getMessageText();
-    await t.expect(notofication).contains('Member has been removed', 'The notification not found');
+    const notification = browserPage.Toast.toastHeader.textContent;
+    await t.expect(notification).contains('Member has been removed', 'The notification not found');
 });

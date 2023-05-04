@@ -35,7 +35,7 @@ test
 
         // Verify that user can test Standalone connection on edit and see the success message
         await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
-        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'Standalone connection is not successful');
+        await t.expect(myRedisDatabasePage.Toast.toastHeader.textContent).contains('Connection is successful', 'Standalone connection is not successful');
 
         // Verify that user can cancel the Clone by clicking the “Cancel” or the “x” button
         await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
@@ -75,7 +75,7 @@ test
 
         // Verify that user can test OSS Cluster connection on edit and see the success message
         await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
-        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'OSS Cluster connection is not successful');
+        await t.expect(myRedisDatabasePage.Toast.toastHeader.textContent).contains('Connection is successful', 'OSS Cluster connection is not successful');
 
         await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
         await t
@@ -109,7 +109,7 @@ test
 
         // Verify that user can test Sentinel connection on edit and see the success message
         await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
-        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'Sentinel connection is not successful');
+        await t.expect(myRedisDatabasePage.Toast.toastHeader.textContent).contains('Connection is successful', 'Sentinel connection is not successful');
 
         // Verify that for Sentinel Host and Port fields are replaced with editable Primary Group Name field
         await t

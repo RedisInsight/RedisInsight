@@ -34,7 +34,7 @@ test('Verify that user can insert a JSON from .json file on the form to add a JS
     await t.typeText(browserPage.addKeyNameInput, keyName, { replace: true, paste: true });
     await t.setFilesToUpload(browserPage.jsonUploadInput, [filePath]);
     await t.click(browserPage.addKeyButton);
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The key added notification not found');
     // Verify that user can see the JSON value populated from the file when the insert is successful.
     for (const el of jsonValues) {

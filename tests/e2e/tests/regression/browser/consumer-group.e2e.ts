@@ -61,7 +61,7 @@ test('Verify that when user enter invalid Group Name the error message appears',
     // Verify the error message
     await t.click(browserPage.streamTabGroups);
     await browserPage.createConsumerGroup(consumerGroupName);
-    await t.expect(browserPage.errorMessage.textContent).contains(error, 'The error message that the Group name already exists not displayed');
+    await t.expect(browserPage.Toast.toastError.textContent).contains(error, 'The error message that the Group name already exists not displayed');
 });
 test('Verify that user can sort Consumer Group column: A>Z / Z>A(A>Z is default table sorting)', async t => {
     keyName = Common.generateWord(20);

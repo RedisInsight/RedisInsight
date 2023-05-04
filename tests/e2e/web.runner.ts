@@ -5,11 +5,6 @@ import testcafe from 'testcafe';
         .then(t => {
             return t
                 .createRunner()
-                .compilerOptions({
-                    "typescript": {
-                        configPath: 'tsconfig.testcafe.json',
-                        experimentalDecorators: true
-                     }})
                 .src((process.env.TEST_FILES || 'tests/**/*.e2e.ts').split('\n'))
                 .browsers(['chromium:headless --cache --allow-insecure-localhost --ignore-certificate-errors'])
                 .filter((_testName, _fixtureName, _fixturePath, testMeta): boolean => {

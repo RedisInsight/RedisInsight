@@ -1,4 +1,4 @@
-FROM node:16.15.1-alpine as test
+FROM node:18.14.2-alpine as test
 
 RUN apk update && apk add bash libsecret dbus-x11 gnome-keyring
 RUN dbus-uuidgen > /var/lib/dbus/machine-id

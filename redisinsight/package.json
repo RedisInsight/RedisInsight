@@ -13,7 +13,7 @@
   "scripts": {},
   "dependencies": {
     "keytar": "^7.9.0",
-    "sqlite3": "^5.0.11",
-    "ssh2": "^1.11.0"
+    "sqlite3": "^5.1.6",
+    "ssh2": "^1.12.0"
   }
 }

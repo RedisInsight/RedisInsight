@@ -389,7 +389,7 @@ jobs:
         description: Number of threads to run tests
         type: integer
         default: 1
-    parallelism: 1
+    parallelism: << parameters.parallelism >>
     steps:
       - checkout
       - when:
@@ -1086,7 +1086,7 @@ workflows:
       - e2e-tests:
           name: E2ETest
           build: docker
-          parallelism: 1
+          parallelism: 4
           requires:
             - Build docker image
 

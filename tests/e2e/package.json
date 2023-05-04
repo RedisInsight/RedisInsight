@@ -12,7 +12,7 @@
     "build:web": "yarn --cwd ../../ build:web",
     "redis:last": "docker run --name redis-last-version -p 7777:6379 -d redislabs/redismod",
     "start:app": "cross-env SERVER_STATIC_CONTENT=true yarn start:api",
-    "test:chrome": "testcafe --cache --concurrency 1 chrome tests/ -r html:./report/report.html,spec -e -s takeOnFails=true,path=report/screenshots,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png",
+    "test:chrome": "testcafe --compiler-options typescript.configPath=tsconfig.testcafe.json --cache --concurrency 1 chrome tests/ -r html:./report/report.html,spec -e -s takeOnFails=true,path=report/screenshots,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png",
     "test:chrome:ci": "ts-node ./web.runner.ts",
     "test": "yarn test:chrome",
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx",
@@ -24,6 +24,10 @@
   "author": "",
   "dependencies": {
     "cli-argument-parser": "0.4.5"
+  },
+  "resolutions": {
+    "@types/lodash": "4.14.192",
+    "@types/node": "18.11.9"
   },
   "devDependencies": {
     "@types/chance": "1.1.3",
@@ -37,8 +41,8 @@
     "edit-json-file": "1.7.0",
     "eslint": "7.32.0",
     "eslint-plugin-import": "2.24.2",
+    "redis": "3.1.1",
     "sqlite3": "5.0.10",
-    "redis": "3.0.2",
     "supertest": "^4.0.2",
     "testcafe": "1.14.2",
     "testcafe-browser-provider-electron": "0.0.18",
@@ -46,6 +50,6 @@
     "testcafe-reporter-json": "2.2.0",
     "testcafe-reporter-spec": "2.1.1",
     "ts-node": "^10.5.0",
-    "typescript": "4.1.5"
+    "typescript": "5.0.4"
   }
 }

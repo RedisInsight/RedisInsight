@@ -180,6 +180,7 @@ test
         await t.expect(workbenchPage.scrolledEnablementArea.visible).ok('Enablement area is not visible after clicked');
 
         // Verify that user can bulk upload data by relative path
+        await t.expect(workbenchPage.uploadDataBulkBtn.withText('Upload relative').visible).ok('Upload button not visible');
         await t.click(workbenchPage.uploadDataBulkBtn.withText('Upload relative'));
         await t.click(workbenchPage.uploadDataBulkApplyBtn);
         // Verify that user can see the summary when the command execution is completed

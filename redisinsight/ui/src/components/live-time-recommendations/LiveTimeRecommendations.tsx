@@ -175,7 +175,7 @@ const LiveTimeRecommendations = () => {
       return <WelcomeScreen />
     }
 
-    return recommendationsList?.map(({ id, name, read, vote, hide }) => (
+    return recommendationsList?.map(({ id, name, read, vote, hide, params }) => (
       <Recommendation
         id={id}
         key={name}
@@ -187,6 +187,7 @@ const LiveTimeRecommendations = () => {
         tutorials={tutorials}
         tutorial={recommendationsContent[name]?.tutorial}
         provider={provider}
+        params={params}
       />
     ))
   }

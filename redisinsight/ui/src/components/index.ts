@@ -23,6 +23,7 @@ import ImportDatabasesDialog from './import-databases-dialog'
 import OnboardingTour from './onboarding-tour'
 import CodeBlock from './code-block'
 import RecommendationVoting from './recommendation-voting'
+import RecommendationCopyComponent from './recommendation-copy-component'
 
 export {
   NavigationMenu,
@@ -53,4 +54,5 @@ export {
   OnboardingTour,
   CodeBlock,
   RecommendationVoting,
+  RecommendationCopyComponent,
 }

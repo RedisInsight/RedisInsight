@@ -12,14 +12,14 @@ describe('AvoidLogicalDatabasesStrategy', () => {
       expect(await strategy.isRecommendationReached({
         db: 2,
         prevDb: 2,
-      })).toEqual(false);
+      })).toEqual({ isReached: false });
     });
 
     it('should return true when database index was changed', async () => {
       expect(await strategy.isRecommendationReached({
         db: 2,
         prevDb: 0,
-      })).toEqual(true);
+      })).toEqual({ isReached: true });
     });
   });
 });

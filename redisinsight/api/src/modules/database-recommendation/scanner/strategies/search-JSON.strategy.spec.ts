@@ -61,7 +61,7 @@ describe('SearchJSONStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           keys: [mockJSONInfo, mockHashInfo],
-        })).toEqual(true);
+        })).toEqual({ isReached: true, params: { keys: [mockJSONInfo.name] } });
       });
 
       it('should return false when there is not JSON key', async () => {
@@ -69,7 +69,7 @@ describe('SearchJSONStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           keys: [mockHashInfo],
-        })).toEqual(false);
+        })).toEqual({ isReached: false });
       });
 
       it('should return false when FT._LIST return indexes', async () => {
@@ -81,7 +81,7 @@ describe('SearchJSONStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           keys: [mockJSONInfo, mockHashInfo],
-        })).toEqual(false);
+        })).toEqual({ isReached: false });
       });
     });
 
@@ -95,7 +95,7 @@ describe('SearchJSONStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           keys: [mockJSONInfo, mockHashInfo],
-        })).toEqual(true);
+        })).toEqual({ isReached: true, params: { keys: [mockJSONInfo.name] } });
       });
 
       it('should return false when there is not JSON key', async () => {
@@ -103,7 +103,7 @@ describe('SearchJSONStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           keys: [mockHashInfo],
-        })).toEqual(false);
+        })).toEqual({ isReached: false });
       });
     });
   });

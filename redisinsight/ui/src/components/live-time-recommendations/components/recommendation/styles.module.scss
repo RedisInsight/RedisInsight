@@ -37,6 +37,7 @@
 
     .euiPanel {
       background: var(--recommendationsBgColor) !important;
+      padding-bottom: 0 !important;
     }
   }
 }
@@ -69,9 +70,11 @@
 
 .actions {
   display: flex;
-  margin-top: 22px;
+  margin-top: 15px;
   justify-content: space-around;
   align-items: center;
+  border-top: 1px solid var(--separatorColorLight);
+  height: 40px;
 
   .btn {
     height: 24px !important;
@@ -109,4 +112,8 @@
       height: 28px !important;
     }
   }
+}
+
+.keyNameContainer {
+  background-color: var(--recommendationBgColor);
 }

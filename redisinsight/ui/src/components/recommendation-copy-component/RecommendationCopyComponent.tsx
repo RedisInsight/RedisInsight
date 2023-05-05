@@ -38,7 +38,14 @@ const RecommendationCopyComponent = ({ live = false, keyName, telemetryEvent, pr
     <div className={styles.wrapper}>
       <EuiText className={styles.text}>Example of the key that may be relevant:</EuiText>
       <div className={styles.keyNameWrapper}>
-        <EuiTextColor color="subdued" className={cx(styles.keyName, 'truncateText', { [styles.dbAnalysis]: !live })} component="div">{formattedName}</EuiTextColor>
+        <EuiTextColor
+          color="subdued"
+          className={cx(styles.keyName, 'truncateText', { [styles.dbAnalysis]: !live })}
+          component="div"
+          data-testid="recommendation-key-name"
+        >
+          {formattedName}
+        </EuiTextColor>
         <EuiButtonIcon
           onClick={handleCopy}
           className={styles.btn}

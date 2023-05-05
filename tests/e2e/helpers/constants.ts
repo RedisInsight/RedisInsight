@@ -44,5 +44,6 @@ export enum RecommendationIds {
     optimizeTimeSeries = 'RTS',
     luaScript = 'luaScript',
     useSmallerKeys = 'useSmallerKeys',
-    avoidLogicalDatabases = 'avoidLogicalDatabases'
+    avoidLogicalDatabases = 'avoidLogicalDatabases',
+    searchJson = 'searchJSON',
 }

@@ -1,4 +1,4 @@
-import { rte } from '../../../helpers/constants';
+import { env, rte } from '../../../helpers/constants';
 import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
@@ -19,7 +19,8 @@ fixture `Add keys`
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
-test('Verify that user can add Hash Key', async t => {
+test.only
+.meta({ type: 'smoke', rte: rte.standalone, env: env.desktop })('Verify that user can add Hash Key', async t => {
     keyName = Common.generateWord(10);
     // Add Hash key
     await browserPage.addHashKey(keyName);

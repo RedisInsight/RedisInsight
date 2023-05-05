@@ -998,9 +998,15 @@ workflows:
       - e2e-tests:
           name: E2ETest
           build: docker
-          parallelism: 4
+          parallelism: 1
           requires:
             - Build docker image
+      - e2e-exe:
+          name: E2ETest (exe)
+          parallelism: 1
+          report: true
+          requires:
+            - Build app - Windows (stage)
       # Approve to build
       - approve:
           name: Build App
@@ -1230,10 +1236,10 @@ workflows:
           name: Build app - Linux (stage)
           requires:
             - Setup build (stage)
-#      - windows:
-#          name: Build app - Windows (stage)
-#          requires:
-#            - Setup build (stage)
+      #  - windows:
+      #      name: Build app - Windows (stage)
+      #      requires:
+      #        - Setup build (stage)
       # integration tests on docker image build
       - integration-tests-run:
           matrix:

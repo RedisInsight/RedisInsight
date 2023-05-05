@@ -957,7 +957,8 @@ workflows:
             - Build docker image
       - windows:
           name: Build app - Windows (stage)
-          requires: Start E2E Tests
+          requires:
+          - Start E2E Tests
       - e2e-exe:
           name: E2ETest (exe)
           parallelism: 1

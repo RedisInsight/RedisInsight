@@ -952,9 +952,15 @@ workflows:
       - e2e-tests:
           name: E2ETest
           build: docker
-          parallelism: 4
+          parallelism: 1
           requires:
             - Build docker image
+      - e2e-exe:
+          name: E2ETest (exe)
+          parallelism: 1
+          report: true
+          requires:
+            - Build app - Windows (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:
@@ -998,15 +1004,9 @@ workflows:
       - e2e-tests:
           name: E2ETest
           build: docker
-          parallelism: 1
+          parallelism: 4
           requires:
             - Build docker image
-      - e2e-exe:
-          name: E2ETest (exe)
-          parallelism: 1
-          report: true
-          requires:
-            - Build app - Windows (stage)
       # Approve to build
       - approve:
           name: Build App

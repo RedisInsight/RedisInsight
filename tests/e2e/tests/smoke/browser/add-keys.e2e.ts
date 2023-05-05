@@ -1,4 +1,4 @@
-import { env, rte } from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
 import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';

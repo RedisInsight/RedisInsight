@@ -27,7 +27,7 @@ test('Verify that user can refresh Keys', async t => {
 
     // Add hash key
     await browserPage.addHashKey(keyName, keyTTL);
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not found');
     await t.click(browserPage.closeKeyButton);
     // Search for the added key

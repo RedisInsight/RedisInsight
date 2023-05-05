@@ -28,7 +28,7 @@ export async function addNewStandaloneDatabase(databaseParameters: AddNewDatabas
     // Wait for database to be exist
         .expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 10000 })
     // Close message
-        .click(myRedisDatabasePage.toastCloseButton);
+        .click(myRedisDatabasePage.Toast.toastCloseButton);
 }
 
 /**
@@ -77,7 +77,7 @@ export async function addOSSClusterDatabase(databaseParameters: OSSClusterParame
     await t
         .click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton)
     // Check for info message that DB was added
-        .expect(myRedisDatabasePage.databaseInfoMessage.exists).ok('Info message not exists', { timeout: 10000 })
+        .expect(myRedisDatabasePage.Toast.toastHeader.exists).ok('Info message not exists', { timeout: 10000 })
     // Wait for database to be exist
         .expect(myRedisDatabasePage.dbNameList.withExactText(databaseParameters.ossClusterDatabaseName).exists).ok('The database not displayed', { timeout: 10000 });
 }

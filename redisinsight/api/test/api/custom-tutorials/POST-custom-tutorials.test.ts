@@ -12,7 +12,7 @@ import {
   _,
 } from '../deps';
 import { getBaseURL } from '../../helpers/server';
-const { server, request } = deps;
+const { server, request, localDb } = deps;
 
 // create endpoint
 const creatEndpoint = () => request(server).post(`/custom-tutorials`);
@@ -110,11 +110,12 @@ const globalManifest = {
 describe('POST /custom-tutorials', () => {
   requirements('rte.serverType=local');
 
-  describe('Common', () => {
-    before(async () => {
-      await fsExtra.remove(customTutorialsFolder);
-    });
+  before(async () => {
+    await fsExtra.remove(customTutorialsFolder);
+    await (await localDb.getRepository(localDb.repositories.CUSTOM_TUTORIAL)).clear();
+  });
 
+  describe('Common', () => {
     it('should import tutorial from file and generate _manifest.json', async () => {
       const zip = getZipArchive();
       zip.writeZip(path.join(staticsFolder, 'test_no_manifest.zip'));

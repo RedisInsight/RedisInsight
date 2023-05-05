@@ -3,7 +3,7 @@ import { deleteAllNotificationsFromDB } from '../../../helpers/notifications';
 import { commonUrl } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { MyRedisDatabasePage, SettingsPage } from '../../../pageObjects';
-import { NotificationParameters } from '../../../pageObjects/components/notification-panel';
+import { NotificationParameters } from '../../../pageObjects/components/navigation/notification-panel';
 
 const description = require('./notifications.json');
 const jsonNotifications: NotificationParameters[] = description.notifications;

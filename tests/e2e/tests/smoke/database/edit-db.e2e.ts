@@ -1,15 +1,16 @@
 import { ClientFunction } from 'testcafe';
 import { acceptLicenseTerms, deleteDatabase, addNewStandaloneDatabase, addNewREClusterDatabase, addNewRECloudDatabase } from '../../../helpers/database';
-import { MyRedisDatabasePage, UserAgreementPage } from '../../../pageObjects';
+import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneConfig,
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { UserAgreementDialog } from '../../../pageObjects/dialogs';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const userAgreementPage = new UserAgreementPage();
+const userAgreementDialog = new UserAgreementDialog();
 
 fixture `Edit Databases`
     .meta({ type: 'smoke' })
@@ -35,7 +36,7 @@ test
         // Delete database
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user open edit view of database', async t => {
-        await userAgreementPage.acceptLicenseTerms();
+        await userAgreementDialog.acceptLicenseTerms();
         await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton.exists).ok('The add redis database view not found', { timeout: 10000 });
         await addNewStandaloneDatabase(ossStandaloneConfig);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

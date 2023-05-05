@@ -18,7 +18,7 @@
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx",
     "test:desktop:ci": "ts-node ./desktop.runner.ts",
     "test:desktop:ci:win": "ts-node ./desktop.runner.win.ts",
-    "test:desktop": "testcafe electron tests/ --browser-init-timeout 180000 -e -r html:./report/desktop-report.html,spec -s takeOnFails=true,path=report/screenshots,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png"
+    "test:desktop": "testcafe electron tests/ --compiler-options typescript.configPath=tsconfig.testcafe.json --browser-init-timeout 180000 -e -r html:./report/desktop-report.html,spec -s takeOnFails=true,path=report/screenshots,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png"
   },
   "keywords": [],
   "author": "",
@@ -47,7 +47,7 @@
     "sqlite3": "5.0.10",
     "supertest": "^4.0.2",
     "testcafe": "1.14.2",
-    "testcafe-browser-provider-electron": "0.0.18",
+    "testcafe-browser-provider-electron": "0.0.19",
     "testcafe-reporter-html": "1.4.6",
     "testcafe-reporter-json": "2.2.0",
     "testcafe-reporter-spec": "2.1.1",

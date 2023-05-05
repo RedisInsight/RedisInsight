@@ -1,6 +1,7 @@
 import { Selector } from 'testcafe';
+import { InstancePage } from './instance-page';
 
-export class OverviewPage {
+export class ClusterDetailsPage extends InstancePage {
     //CSS Selectors
     cssTableRow = 'tr[class=euiTableRow]';
     //-------------------------------------------------------------------------------------------
@@ -17,10 +18,6 @@ export class OverviewPage {
     tableHeaderCell = Selector('[data-test-subj^=tableHeaderCell]');
     primaryNodesTable = Selector('[data-testid=primary-nodes-table]');
     tableRow = Selector('tr[class=euiTableRow]');
-    connectedClientsValue = Selector('[data-testid^=connectedClients-value]');
-    totalKeysValue = Selector('[data-testid^=totalKeys-value]');
-    networkInputValue = Selector('[data-testid^=networkInKbps-value]');
-    networkOutputValue = Selector('[data-testid^=networkOutKbps-value]');
 
     /**
      * Get Primary nodes count in table

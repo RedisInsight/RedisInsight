@@ -2010,13 +2010,13 @@ chrome-remote-interface@^0.25.3:
     commander "2.11.x"
     ws "3.3.x"
 
-chrome-remote-interface@^0.27.0:
-  version "0.27.2"
-  resolved "https://registry.yarnpkg.com/chrome-remote-interface/-/chrome-remote-interface-0.27.2.tgz#e5605605f092b7ef8575d95304e004039c9d0ab9"
-  integrity sha512-pVLljQ29SAx8KIv5tSa9sIf8GrEsAZdPJoeWOmY3/nrIzFmE+EryNNHvDkddGod0cmAFTv+GmPG0uvzxi2NWsA==
+chrome-remote-interface@^0.31.3:
+  version "0.31.3"
+  resolved "https://registry.yarnpkg.com/chrome-remote-interface/-/chrome-remote-interface-0.31.3.tgz#bd01b89f5f0e968f7eeb37b8b7c5ac20e6e1f4d0"
+  integrity sha512-NTwb1YNPHXLTus1RjqsLxJmdViKwKJg/lrFEcM6pbyQy04Ow2QKWHXyPpxzwE+dFsJghWuvSAdTy4W0trluz1g==
   dependencies:
     commander "2.11.x"
-    ws "^6.1.0"
+    ws "^7.2.0"
 
 chromium-pickle-js@^0.2.0:
   version "0.2.0"
@@ -5628,13 +5628,13 @@ tar@^6.0.2, tar@^6.1.11, tar@^6.1.2:
     mkdirp "^1.0.3"
     yallist "^4.0.0"
 
-testcafe-browser-provider-electron@0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/testcafe-browser-provider-electron/-/testcafe-browser-provider-electron-0.0.18.tgz#c4294a7fefe5006c5eb85c06db9ca620f2ba919b"
-  integrity sha512-s2Oz62uMi+FygttEm6Ab+cCgBFdbDhoZmA2Q02jQePYK/cVmn8vFL9MDxqppwIcZeknZCtg33hFNX4MgQndPlA==
+testcafe-browser-provider-electron@0.0.19:
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/testcafe-browser-provider-electron/-/testcafe-browser-provider-electron-0.0.19.tgz#739d0671630c4074e212ca4a23e71e58ef6cc677"
+  integrity sha512-ecSf71hRPpT7ezUWwG3eB7l+hn7t2yVXXdu4k+uTn/REa+naBzT0Koa4WiDRug7HsV8QPbA7G87A3fQ8+7PfMA==
   dependencies:
     babel-runtime "^6.25.0"
-    chrome-remote-interface "^0.27.0"
+    chrome-remote-interface "^0.31.3"
     debug "4.1.1"
     dedent "^0.7.0"
     endpoint-utils "^1.0.2"
@@ -6310,12 +6310,10 @@ ws@3.3.x:
     safe-buffer "~5.1.0"
     ultron "~1.1.0"
 
-ws@^6.1.0:
-  version "6.2.2"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-6.2.2.tgz#dd5cdbd57a9979916097652d78f1cc5faea0c32e"
-  integrity sha512-zmhltoSR8u1cnDsD43TX59mzoMZsLKqUweyYBAIvTngR3shc0W6aOZylZmq/7hqyVxPdi+5Ud2QInblgyE72fw==
-  dependencies:
-    async-limiter "~1.0.0"
+ws@^7.2.0:
+  version "7.5.9"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.9.tgz#54fa7db29f4c7cec68b1ddd3a89de099942bb591"
+  integrity sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==
 
 yallist@^3.0.2:
   version "3.1.1"

@@ -955,12 +955,15 @@ workflows:
           parallelism: 1
           requires:
             - Build docker image
+      - windows:
+          name: Build app - Windows (stage)
+          requires: *stageElectronBuildRequires
       - e2e-exe:
           name: E2ETest (exe)
           parallelism: 1
           report: true
           requires:
-            - Build windows exe
+            - Build app - Windows (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:

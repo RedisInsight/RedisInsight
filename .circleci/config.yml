@@ -950,28 +950,30 @@ workflows:
           requires:
             - Start E2E Tests
       # build desktop app
-      - setup-sign-certificates:
-          name: Setup sign certificates (stage)
-      - setup-build:
-          name: Setup build (stage)
-          requires:
-            - Setup sign certificates (stage)
-      - windows:
-          name: Build app - Windows (stage)
-          requires:
-            - Setup build (stage)
+      # - setup-sign-certificates:
+      #     name: Setup sign certificates (stage)
+      #     requires:
+      #       - Start E2E Tests
+      # - setup-build:
+      #     name: Setup build (stage)
+      #     requires:
+      #       - Setup sign certificates (stage)
+      # - windows:
+      #     name: Build app - Windows (stage)
+      #     requires:
+      #       - Setup build (stage)
       - e2e-tests:
           name: E2ETest
           build: docker
-          parallelism: 1
+          parallelism: 4
           requires:
             - Build docker image
-      - e2e-exe:
-          name: E2ETest (exe)
-          parallelism: 1
-          report: true
-          requires:
-            - Build app - Windows (stage)
+      # - e2e-exe:
+      #     name: E2ETest (exe)
+      #     parallelism: 1
+      #     report: true
+      #     requires:
+      #       - Build app - Windows (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:
@@ -1237,16 +1239,16 @@ workflows:
       - docker:
           name: Build docker image
       # build desktop app
-      - setup-sign-certificates:
-          name: Setup sign certificates (stage)
-      - setup-build:
-          name: Setup build (stage)
-          requires:
-            - Setup sign certificates (stage)
-      - linux:
-          name: Build app - Linux (stage)
-          requires:
-            - Setup build (stage)
+      # - setup-sign-certificates:
+      #     name: Setup sign certificates (stage)
+      # - setup-build:
+      #     name: Setup build (stage)
+      #     requires:
+      #       - Setup sign certificates (stage)
+      # - linux:
+      #     name: Build app - Linux (stage)
+      #     requires:
+      #       - Setup build (stage)
       #  - windows:
       #      name: Build app - Windows (stage)
       #      requires:

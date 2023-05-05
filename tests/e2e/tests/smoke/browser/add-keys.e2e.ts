@@ -19,8 +19,7 @@ fixture `Add keys`
         await browserPage.deleteKeyByName(keyName);
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
-test.only
-.meta({ type: 'smoke', rte: rte.standalone, env: env.desktop })('Verify that user can add Hash Key', async t => {
+test('Verify that user can add Hash Key', async t => {
     keyName = Common.generateWord(10);
     // Add Hash key
     await browserPage.addHashKey(keyName);

@@ -12,7 +12,6 @@ import { Telemetry } from '../../../helpers/telemetry';
 import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const common = new Common();
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const telemetry = new Telemetry();
@@ -24,7 +23,7 @@ const databasesForAdding = [
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: ossStandaloneConfig.databaseName }
 ];
 const tenSecondsTimeout = 10000;
-let keyName = `recomKey-${common.generateWord(10)}`;
+let keyName = `recomKey-${Common.generateWord(10)}`;
 const logger = telemetry.createLogger();
 const telemetryEvent = 'INSIGHTS_RECOMMENDATION_VOTED';
 const expectedProperties = [
@@ -54,7 +53,7 @@ test
         await acceptLicenseTerms();
         await addNewStandaloneDatabasesApi(databasesForAdding);
         // Reload Page
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
     })
     .after(async() => {
@@ -64,7 +63,7 @@ test
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify Insights panel Recommendations displaying', async t => {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
 
         await browserPage.InsightsPanel.toggleInsightsPanel(true);
         // Verify that "Welcome to recommendations" panel displayed when there are no recommendations
@@ -113,7 +112,7 @@ test
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'vote', 'not useful', logger);
 
         // Verify that user can see previous votes when reload the page
-        await common.reloadPage();
+        await browserPage.reloadPage();
         await browserPage.InsightsPanel.toggleInsightsPanel(true);
         await browserPage.InsightsPanel.toggleRecommendation(redisVersionRecom, true);
         await recommendationsActions.verifyVoteDisabled(redisVersionRecom, 'not-useful');
@@ -129,7 +128,7 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
         .notOk('recommendation is displayed when show hide recommendation is unchecked');
 
     // check recommendation state is saved after reload
-    await common.reloadPage();
+    await browserPage.reloadPage();
     await browserPage.InsightsPanel.toggleInsightsPanel(true);
     await t.expect(await browserPage.InsightsPanel.getRecommendationByName(searchVisualizationRecom).exists)
         .notOk('recommendation is displayed when show hide recommendation is unchecked');
@@ -138,7 +137,7 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
     await browserPage.InsightsPanel.toggleShowHiddenRecommendations(true);
     await t.expect(await browserPage.InsightsPanel.getRecommendationByName(searchVisualizationRecom).exists)
         .ok('recommendation is not displayed when show hide recommendation is checked');
-    await common.reloadPage();
+    await browserPage.reloadPage();
     await browserPage.InsightsPanel.toggleInsightsPanel(true);
     await t.expect(await browserPage.InsightsPanel.getRecommendationByName(searchVisualizationRecom).exists)
         .ok('recommendation is not displayed when show hide recommendation is checked');
@@ -150,7 +149,7 @@ test('Verify that user can snooze recommendation', async t => {
     await browserPage.InsightsPanel.toggleInsightsPanel(true);
     await browserPage.InsightsPanel.snoozeRecommendation(searchVisualizationRecom);
 
-    await common.reloadPage();
+    await browserPage.reloadPage();
     await browserPage.InsightsPanel.toggleInsightsPanel(true);
     await t.expect(await browserPage.InsightsPanel.getRecommendationByName(searchVisualizationRecom).exists)
         .notOk('recommendation is displayed when after snoozing');
@@ -197,4 +196,22 @@ test('Verify that if user clicks on the Analyze button and link, the pop up with
     //Verify that user is navigated to DB Analysis page via Analyze link and new report is generated
     await t.click(memoryEfficiencyPage.selectedReport);
     await t.expect(memoryEfficiencyPage.reportItem.count).eql(2, 'report was not generated');
+});
+//https://redislabs.atlassian.net/browse/RI-4493
+test('Verify that key name is displayed for Insights and DA recommendations', async t => {
+    const cliCommand = `JSON.SET ${keyName} $ '{ "model": "Hyperion", "brand": "Velorim"}'`;
+    await browserPage.Cli.sendCommandInCli(cliCommand);
+    await t.click(browserPage.refreshKeysButton);
+    await browserPage.InsightsPanel.toggleInsightsPanel(true);
+    let keyNameFromRecommendation = await browserPage.InsightsPanel.getRecommendationByName(RecommendationIds.searchJson)
+        .find(browserPage.InsightsPanel.cssKeyName)
+        .innerText;
+    await t.expect(keyNameFromRecommendation).eql(keyName);
+    await t.click(workbenchPage.InsightsPanel.analyzeDatabaseLink);
+    await t.click(workbenchPage.InsightsPanel.analyzeTooltipButton);
+    await t.click(memoryEfficiencyPage.recommendationsTab);
+    await memoryEfficiencyPage.getRecommendationButtonByName(RecommendationIds.searchJson);
+    keyNameFromRecommendation = await browserPage.InsightsPanel.getRecommendationByName(RecommendationIds.searchJson)
+        .find(browserPage.InsightsPanel.cssKeyName)
+        .innerText;
 });

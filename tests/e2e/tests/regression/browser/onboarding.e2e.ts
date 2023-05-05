@@ -85,10 +85,10 @@ test('Verify onboarding new user steps', async t => {
     // verify workbench page is opened
     await t.expect(workBenchPage.mainEditorArea.visible).ok('workbench is not opened');
     await onboardingCardsDialog.verifyStepVisible('Try Workbench!');
-    // click back step button
-    await onboardingCardsDialog.clickBackStep();
     // create index in order to see in FT.INFO {index} in onboarding step
     await workBenchPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
+    // click back step button
+    await onboardingCardsDialog.clickBackStep();
     // verify one step before is opened
     await t.expect(browserPage.InsightsPanel.insightsPanel.visible).ok('Insights panel is not expanded');
     await onboardingCardsDialog.verifyStepVisible('Insights');

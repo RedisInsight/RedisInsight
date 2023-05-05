@@ -198,20 +198,25 @@ test('Verify that if user clicks on the Analyze button and link, the pop up with
     await t.expect(memoryEfficiencyPage.reportItem.count).eql(2, 'report was not generated');
 });
 //https://redislabs.atlassian.net/browse/RI-4493
-test('Verify that key name is displayed for Insights and DA recommendations', async t => {
-    const cliCommand = `JSON.SET ${keyName} $ '{ "model": "Hyperion", "brand": "Velorim"}'`;
-    await browserPage.Cli.sendCommandInCli(cliCommand);
-    await t.click(browserPage.refreshKeysButton);
-    await browserPage.InsightsPanel.toggleInsightsPanel(true);
-    let keyNameFromRecommendation = await browserPage.InsightsPanel.getRecommendationByName(RecommendationIds.searchJson)
-        .find(browserPage.InsightsPanel.cssKeyName)
-        .innerText;
-    await t.expect(keyNameFromRecommendation).eql(keyName);
-    await t.click(workbenchPage.InsightsPanel.analyzeDatabaseLink);
-    await t.click(workbenchPage.InsightsPanel.analyzeTooltipButton);
-    await t.click(memoryEfficiencyPage.recommendationsTab);
-    await memoryEfficiencyPage.getRecommendationButtonByName(RecommendationIds.searchJson);
-    keyNameFromRecommendation = await browserPage.InsightsPanel.getRecommendationByName(RecommendationIds.searchJson)
-        .find(browserPage.InsightsPanel.cssKeyName)
-        .innerText;
-});
+test
+    .after(async() => {
+        await browserPage.deleteKeyByName(keyName);
+        await deleteStandaloneDatabasesApi(databasesForAdding);
+    })('Verify that key name is displayed for Insights and DA recommendations', async t => {
+        const cliCommand = `JSON.SET ${keyName} $ '{ "model": "Hyperion", "brand": "Velorim"}'`;
+        await browserPage.Cli.sendCommandInCli(cliCommand);
+        await t.click(browserPage.refreshKeysButton);
+        await browserPage.InsightsPanel.toggleInsightsPanel(true);
+        let keyNameFromRecommendation = await browserPage.InsightsPanel.getRecommendationByName(RecommendationIds.searchJson)
+            .find(browserPage.InsightsPanel.cssKeyName)
+            .innerText;
+        await t.expect(keyNameFromRecommendation).eql(keyName);
+        await t.click(workbenchPage.InsightsPanel.analyzeDatabaseLink);
+        await t.click(workbenchPage.InsightsPanel.analyzeTooltipButton);
+        await t.click(memoryEfficiencyPage.recommendationsTab);
+        await memoryEfficiencyPage.getRecommendationButtonByName(RecommendationIds.searchJson);
+        keyNameFromRecommendation = await browserPage.InsightsPanel.getRecommendationByName(RecommendationIds.searchJson)
+            .find(browserPage.InsightsPanel.cssKeyName)
+            .innerText;
+        await t.expect(keyNameFromRecommendation).eql(keyName);
+    });

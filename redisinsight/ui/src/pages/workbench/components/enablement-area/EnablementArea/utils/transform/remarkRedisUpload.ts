@@ -1,5 +1,5 @@
 import { visit } from 'unist-util-visit'
-import { prepareTutorialDataFileUrlFromMd } from 'uiSrc/utils/pathUtil'
+import { getFileUrlFromMd } from 'uiSrc/utils/pathUtil'
 
 export const remarkRedisUpload = (path: string): (tree: Node) => void => (tree: any) => {
   // Find code node in syntax tree
@@ -10,7 +10,7 @@ export const remarkRedisUpload = (path: string): (tree: Node) => void => (tree: 
       const value: string = `${lang} ${meta}`
       const [, filePath, label] = value.match(/^redis-upload:\[(.*)] (.*)/i) || []
 
-      const { pathname } = new URL(prepareTutorialDataFileUrlFromMd(filePath, path))
+      const { pathname } = new URL(getFileUrlFromMd(filePath, path))
       const decodedPath = decodeURI(pathname)
 
       if (path && label) {

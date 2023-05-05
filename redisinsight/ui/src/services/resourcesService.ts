@@ -13,6 +13,10 @@ const resourcesService = axios.create({
   baseURL: RESOURCES_BASE_URL,
 })
 
+export const getOriginUrl = () => (IS_ABSOLUTE_PATH.test(RESOURCES_BASE_URL)
+  ? RESOURCES_BASE_URL
+  : (window?.location?.origin || RESOURCES_BASE_URL))
+
 export const getPathToResource = (url: string = ''): string => (IS_ABSOLUTE_PATH.test(url)
   ? url
   : new URL(url, resourcesService.defaults.baseURL).toString())

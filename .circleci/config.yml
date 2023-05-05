@@ -960,7 +960,7 @@ workflows:
           parallelism: 1
           report: true
           requires:
-            - Build app - Windows (stage)
+            - Build windows exe
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:

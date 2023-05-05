@@ -1,5 +1,5 @@
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
-import { prepareTutorialDataFileUrlFromMd } from '../pathUtil'
+import { getFileUrlFromMd } from '../pathUtil'
 
 jest.mock('unist-util-visit')
 const TUTORIAL_PATH = 'static/custom-tutorials/tutorial-id'
@@ -31,10 +31,10 @@ const testCases = [
     result: 'https://somesite.test/image.png',
   }
 ]
-describe('prepareTutorialDataFileUrlFromMd', () => {
+describe('getFileUrlFromMd', () => {
   testCases.forEach((tc) => {
     it(`should return ${tc.result} for url:${tc.url}, path: ${tc.path} `, () => {
-      const url = prepareTutorialDataFileUrlFromMd(tc.url, tc.path)
+      const url = getFileUrlFromMd(tc.url, tc.path)
       expect(url).toEqual(tc.result)
     })
   })

@@ -25,7 +25,7 @@ const verifyCompletedResultText = async(resultsText: string[]): Promise<void> =>
     for (const result of resultsText) {
         await t.expect(workbenchPage.Toast.toastBody.textContent).contains(result, 'Bulk upload completed summary not correct');
     }
-    await t.expect(workbenchPage.Toast.toastBody.textContent).notContains('0:00:00.00', 'Bulk upload Time taken not correct');
+    await t.expect(workbenchPage.Toast.toastBody.textContent).notContains('0:00:00.000', 'Bulk upload Time taken not correct');
     await t.click(workbenchPage.Toast.toastSubmitBtn);
 };
 

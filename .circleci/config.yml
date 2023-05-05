@@ -949,16 +949,23 @@ workflows:
           name: Build docker image
           requires:
             - Start E2E Tests
+      # build desktop app
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+      - setup-build:
+          name: Setup build (stage)
+          requires:
+            - Setup sign certificates (stage)
+      - windows:
+          name: Build app - Windows (stage)
+          requires:
+            - Setup build (stage)
       - e2e-tests:
           name: E2ETest
           build: docker
           parallelism: 1
           requires:
             - Build docker image
-      - windows:
-          name: Build app - Windows (stage)
-          requires:
-          - Start E2E Tests
       - e2e-exe:
           name: E2ETest (exe)
           parallelism: 1

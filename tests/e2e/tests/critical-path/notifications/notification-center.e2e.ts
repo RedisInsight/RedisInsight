@@ -114,7 +114,10 @@ test('Verify that all messages in notification center are sorted by timestamp fr
 });
 test
     .before(async t => {
+        await acceptLicenseTerms();
         await settingsPage.changeNotificationsSwitcher(false);
+        await deleteAllNotificationsFromDB();
+        await myRedisDatabasePage.reloadPage();
         await t.expect(NotificationPanel.notificationBadge.exists).notOk('No badge');
     })('Verify that new popup message is not displayed when notifications are turned off', async t => {
         // Verify that user can see notification badge increased when new messages is sent and notifications are turned off

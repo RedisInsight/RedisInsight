@@ -31,7 +31,7 @@ fixture `Add keys`
     });
 test('Verify that user can create different types(string, number, null, array, boolean) of JSON', async t => {
     for (let i = 0; i < jsonKeys.length; i++) {
-        const keySelector = await browserPage.getKeySelectorByName(jsonKeys[i][0]);
+        const keySelector = browserPage.getKeySelectorByName(jsonKeys[i][0]);
         await browserPage.addJsonKey(jsonKeys[i][0], jsonKeys[i][1]);
         await t.hover(browserPage.Toast.toastCloseButton);
         await t.click(browserPage.Toast.toastCloseButton);

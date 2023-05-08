@@ -9,7 +9,11 @@ import reducer, {
   skipOnboarding,
   setOnboardPrevStep,
   setOnboardNextStep,
-  incrementOnboardStepAction
+  incrementOnboardStepAction,
+  getFeatureFlags,
+  getFeatureFlagsSuccess,
+  getFeatureFlagsFailure,
+  fetchFeatureFlags
 } from 'uiSrc/slices/app/features'
 import {
   cleanup,
@@ -18,6 +22,7 @@ import {
   mockedStore,
   mockStore
 } from 'uiSrc/utils/test-utils'
+import { apiService } from 'uiSrc/services'
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -366,6 +371,87 @@ describe('slices', () => {
     })
   })
 
+  describe('getFeatureFlags', () => {
+    it('should properly set state', () => {
+      const state = {
+        ...initialState,
+        featureFlags: {
+          ...initialState.featureFlags,
+          loading: true
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getFeatureFlags())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { features: nextState },
+      })
+
+      expect(appFeatureSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getFeatureFlagsSuccess', () => {
+    it('should properly set state', () => {
+      const payload = {
+        features: {
+          liveRecommendations: {
+            flag: true
+          }
+        }
+      }
+      const state = {
+        ...initialState,
+        featureFlags: {
+          ...initialState.featureFlags,
+          features: payload.features,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getFeatureFlagsSuccess(payload))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { features: nextState },
+      })
+
+      expect(appFeatureSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getFeatureFlagsFailure', () => {
+    it('should properly set state', () => {
+      const currentState = {
+        ...initialState,
+        featureFlags: {
+          ...initialState.featureFlags,
+          loading: true
+        }
+      }
+
+      const state = {
+        ...initialState,
+        featureFlags: {
+          ...initialState.featureFlags,
+          loading: false
+        }
+      }
+
+      // Act
+      const nextState = reducer(currentState, getFeatureFlagsFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { features: nextState },
+      })
+
+      expect(appFeatureSelector(rootState)).toEqual(state)
+    })
+  })
+
   // thunks
   describe('incrementOnboardStepAction', () => {
     it('should call setOnboardNextStep', async () => {
@@ -429,6 +515,50 @@ describe('slices', () => {
       await mockedStore.dispatch<any>(incrementOnboardStepAction(5))
 
       expect(mockedStore.getActions()).toEqual([])
+    })
+  })
+
+  describe('fetchFeatureFlags', () => {
+    it('succeed to fetch data', async () => {
+      // Arrange
+      const data = { features: { liveRecommendations: true } }
+      const responsePayload = { data, status: 200 }
+
+      apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(fetchFeatureFlags())
+
+      // Assert
+      const expectedActions = [
+        getFeatureFlags(),
+        getFeatureFlagsSuccess(data),
+      ]
+
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+
+    it('failed to fetch data', async () => {
+      const errorMessage = 'Something was wrong!'
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+
+      apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(fetchFeatureFlags())
+
+      // Assert
+      const expectedActions = [
+        getFeatureFlags(),
+        getFeatureFlagsFailure(),
+      ]
+
+      expect(store.getActions()).toEqual(expectedActions)
     })
   })
 })

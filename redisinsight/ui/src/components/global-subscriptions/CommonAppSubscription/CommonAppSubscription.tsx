@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 
 import { remove } from 'lodash'
-import { SocketEvent } from 'uiSrc/constants'
+import { SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
@@ -11,6 +11,7 @@ import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { setTotalUnread } from 'uiSrc/slices/recommendations/recommendations'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
+import { getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
 
 const CommonAppSubscription = () => {
   const { id: instanceId } = useSelector(connectedInstanceSelector)
@@ -36,6 +37,13 @@ const CommonAppSubscription = () => {
 
     socketRef.current.on(NotificationEvent.Notification, (data) => {
       dispatch(setNewNotificationAction(data))
+    })
+
+    socketRef.current.on(SocketFeaturesEvent.Features, (data) => {
+      dispatch(getFeatureFlagsSuccess(data))
+
+      // or
+      // dispatch(fetchFeatureFlags())
     })
 
     // Catch disconnect

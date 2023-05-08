@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { Nullable } from 'uiSrc/utils'
-import { DurationUnits, ICommands } from 'uiSrc/constants'
+import { DurationUnits, FeatureFlags, ICommands } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
@@ -146,6 +146,11 @@ export interface StateAppSocketConnection {
   isConnected: boolean
 }
 
+export interface FeatureFlagComponent {
+  flag: boolean
+  variant?: string
+}
+
 export interface StateAppFeatures {
   highlighting: {
     version: string
@@ -158,6 +163,12 @@ export interface StateAppFeatures {
     currentStep: number
     totalSteps: number
     isActive: boolean
+  },
+  featureFlags: {
+    loading: boolean
+    features: {
+      [key in FeatureFlags]?: FeatureFlagComponent
+    }
   }
 }
 export enum NotificationType {

@@ -950,11 +950,11 @@ workflows:
           requires:
             - Start E2E Tests
       # build desktop app
-        - setup-sign-certificates:
+      - setup-sign-certificates:
           name: Setup sign certificates (stage)
           requires:
             - Start E2E Tests
-        - setup-build:
+      - setup-build:
           name: Setup build (stage)
           requires:
             - Setup sign certificates (stage)
@@ -962,7 +962,7 @@ workflows:
       #     name: Build app - Windows (stage)
       #     requires:
       #       - Setup build (stage)
-        - linux:
+      - linux:
           name: Build app - Linux (stage)
           requires:
             - Setup build (stage)

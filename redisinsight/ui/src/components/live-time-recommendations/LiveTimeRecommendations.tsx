@@ -212,8 +212,7 @@ const LiveTimeRecommendations = () => {
                   Work in the database to see new recommendations appeared on how to improve performance,
                   optimize memory usage, and enhance the performance of your database.
                   <br />
-                  Eager to see more recommendations right now?
-                  Go to Database Analysis and click on the new report in order to see the magic happens.
+                  Eager to see more recommendations? Run Database Analysis in order to see the magic happens.
                 </>
             )}
             >

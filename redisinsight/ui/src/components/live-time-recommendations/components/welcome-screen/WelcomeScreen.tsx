@@ -53,8 +53,7 @@ const NoRecommendationsScreen = () => {
       </EuiText>
       <WelcomeIcon className={styles.icon} />
       <EuiText className={styles.text}>
-        Eager to see more recommendations right now? Go to Database Analysis
-        and click on the new report in order to see the magic happens.
+        Eager to see more recommendations? Run Database Analysis in order to see the magic happens.
       </EuiText>
 
       <PopoverRunAnalyze

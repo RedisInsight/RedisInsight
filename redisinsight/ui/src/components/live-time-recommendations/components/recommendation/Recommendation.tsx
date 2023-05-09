@@ -104,6 +104,7 @@ const Recommendation = ({
 
   const toggleHide = (event: React.MouseEvent) => {
     event.stopPropagation()
+    event.preventDefault()
     dispatch(
       updateLiveRecommendation(
         id,
@@ -248,6 +249,7 @@ const Recommendation = ({
             anchorClassName="flex-row"
           >
             <EuiButtonIcon
+              href="#"
               iconType={hide ? 'eyeClosed' : 'eye'}
               className={styles.hideBtn}
               onClick={toggleHide}

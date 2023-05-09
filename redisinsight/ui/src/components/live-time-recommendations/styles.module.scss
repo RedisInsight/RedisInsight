@@ -39,7 +39,7 @@ $animation-duration: 300ms;
 .trigger {
   position: fixed;
   right: -37px;
-  bottom: 90px;
+  bottom: 180px;
   z-index: 1100;
   transform: rotate(-90deg);
   width: 106px;
@@ -120,15 +120,15 @@ $animation-duration: 300ms;
 }
 
 .footer {
-  height: 40px;
-  background: var(--tableRowSelectedColor);
+  min-height: 26px;
+  background: var(--tableRowSelectedColor) !important;
   display: flex;
   justify-content: center;
   align-items: center;
 
   .footerIcon {
-    width: 41px;
-    height: 30px;
+    width: 32px;
+    height: 22px;
     margin-right: 16px;
   }
 

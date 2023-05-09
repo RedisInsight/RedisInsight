@@ -14,6 +14,7 @@ import {
   AvoidLogicalDatabasesStrategy,
   ShardHashStrategy,
   StringToJsonStrategy,
+  UseSmallerKeysStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 describe('RecommendationProvider', () => {
@@ -45,6 +46,7 @@ describe('RecommendationProvider', () => {
       [RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES, new AvoidLogicalDatabasesStrategy()],
       [RECOMMENDATION_NAMES.BIG_HASHES, new ShardHashStrategy()],
       [RECOMMENDATION_NAMES.STRING_TO_JSON, new StringToJsonStrategy()],
+      [RECOMMENDATION_NAMES.USE_SMALLER_KEYS, new UseSmallerKeysStrategy()],
       ['default', new DefaultRecommendationStrategy()],
       ['unknown', new DefaultRecommendationStrategy()],
       [null, new DefaultRecommendationStrategy()],

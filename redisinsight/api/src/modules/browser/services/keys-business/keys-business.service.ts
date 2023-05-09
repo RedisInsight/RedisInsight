@@ -146,6 +146,11 @@ export class KeysBusinessService {
           ),
         );
       }
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.USE_SMALLER_KEYS,
+        result[0]?.total,
+      );
 
       return result.map((nodeResult) => plainToClass(GetKeysWithDetailsResponse, nodeResult));
     } catch (error) {

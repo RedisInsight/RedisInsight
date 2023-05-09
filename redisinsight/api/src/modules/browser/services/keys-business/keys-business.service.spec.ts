@@ -317,6 +317,20 @@ describe('KeysBusinessService', () => {
       expect(standaloneScanner.getKeys).toHaveBeenCalled();
       expect(browserHistory.create).not.toHaveBeenCalled();
     });
+    it('should call recommendationService', async () => {
+      const response = [mockGetKeysWithDetailsResponse]
+      standaloneScanner.getKeys = jest
+        .fn()
+        .mockResolvedValue(response);
+
+      await service.getKeys(mockBrowserClientMetadata, { ...getKeysDto, match: '*' });
+
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.USE_SMALLER_KEYS,
+        response[0].total,
+      );
+    });
   });
 
   describe('deleteKeys', () => {

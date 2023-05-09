@@ -16,6 +16,7 @@ import {
   StringToJsonStrategy,
   SearchVisualizationStrategy,
   GraphVisualizationStrategy,
+  UseSmallerKeysStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 @Injectable()
@@ -39,6 +40,7 @@ export class RecommendationProvider {
     this.strategies.set(RECOMMENDATION_NAMES.STRING_TO_JSON, new StringToJsonStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.SEARCH_VISUALIZATION, new SearchVisualizationStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.GRAPH_VISUALIZATION, new GraphVisualizationStrategy());
+    this.strategies.set(RECOMMENDATION_NAMES.USE_SMALLER_KEYS, new UseSmallerKeysStrategy());
   }
 
   getStrategy(type: string): IRecommendationStrategy {

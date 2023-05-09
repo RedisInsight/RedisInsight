@@ -2,7 +2,7 @@
   "name": "redisinsight",
   "version": "1.0.0",
   "description": "End-to-end tests",
-  "license": "SSPL",
+  "license": "UNLICENSED",
   "main": "index.js",
   "scripts": {
     "test:live": "testcafe --live chrome ",
@@ -53,6 +53,6 @@
     "testcafe-reporter-json": "2.2.0",
     "testcafe-reporter-spec": "2.1.1",
     "ts-node": "^10.5.0",
-    "typescript": "5.0.4"
+    "typescript": "4.1.5"
   }
 }

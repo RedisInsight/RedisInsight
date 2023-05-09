@@ -5699,36 +5699,6 @@ testcafe-hammerhead@24.2.1:
     tunnel-agent "0.6.0"
     webauth "^1.1.0"
 
-testcafe-hammerhead@>=19.4.0:
-  version "31.3.0"
-  resolved "https://registry.yarnpkg.com/testcafe-hammerhead/-/testcafe-hammerhead-31.3.0.tgz#6ab36f861b6e90f4c884751623cd4cc95150d0ba"
-  integrity sha512-bTy9qL4jtmNr1+ATleWX+I2JC4BA83WV0X6SBXiFovCHg84RkSdqoj2n4LQp6WEzDm5RV3eV+P+kToH/XYywnw==
-  dependencies:
-    "@electron/asar" "^3.2.3"
-    acorn-hammerhead "0.6.1"
-    bowser "1.6.0"
-    crypto-md5 "^1.0.0"
-    css "2.2.3"
-    debug "4.3.1"
-    esotope-hammerhead "0.6.4"
-    http-cache-semantics "^4.1.0"
-    httpntlm "^1.8.10"
-    iconv-lite "0.5.1"
-    lodash "^4.17.20"
-    lru-cache "2.6.3"
-    match-url-wildcard "0.0.4"
-    merge-stream "^1.0.1"
-    mime "~1.4.1"
-    mustache "^2.1.1"
-    nanoid "^3.1.12"
-    os-family "^1.0.0"
-    parse5 "2.2.3"
-    pinkie "2.0.4"
-    read-file-relative "^1.2.0"
-    semver "5.5.0"
-    tough-cookie "4.0.0"
-    tunnel-agent "0.6.0"
-
 testcafe-legacy-api@5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/testcafe-legacy-api/-/testcafe-legacy-api-5.0.0.tgz#dde9dc2ee9e9490afed58b83df23cf2e01a6c303"
@@ -5747,7 +5717,7 @@ testcafe-legacy-api@5.0.0:
     pinkie "^2.0.1"
     read-file-relative "^1.2.0"
     strip-bom "^2.0.0"
-    testcafe-hammerhead ">=19.4.0"
+    testcafe-hammerhead "24.2.1"
 
 testcafe-reporter-html@1.4.6:
   version "1.4.6"

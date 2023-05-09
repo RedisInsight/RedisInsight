@@ -969,13 +969,13 @@ workflows:
       - e2e-tests:
           name: E2ETest
           build: docker
-          parallelism: 1
+          parallelism: 4
           requires:
             - Build docker image
       # e2e desktop tests on AppImage build
       - e2e-app-image:
           name: E2ETest (AppImage)
-          parallelism: 1
+          parallelism: 2
           report: true
           requires:
             - Build app - Linux (stage)

@@ -22,6 +22,7 @@ import { DatabaseInfoProvider } from 'src/modules/database/providers/database-in
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
+import { RECOMMENDATION_NAMES } from 'src/constants';
 
 describe('DatabaseConnectionService', () => {
   let service: DatabaseConnectionService;
@@ -83,7 +84,18 @@ describe('DatabaseConnectionService', () => {
     it('should call recommendationService', async () => {
       expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
 
-      expect(recommendationService.check).toHaveBeenCalled();
+      expect(recommendationService.check).toHaveBeenCalledTimes(2);
+
+      expect(recommendationService.check).toBeCalledWith(
+        mockCommonClientMetadata,
+        RECOMMENDATION_NAMES.REDIS_VERSION,
+        mockIORedisClient,
+      );
+      expect(recommendationService.check).toBeCalledWith(
+        mockCommonClientMetadata,
+        RECOMMENDATION_NAMES.LUA_SCRIPT,
+        mockIORedisClient,
+      );
     });
   });
 

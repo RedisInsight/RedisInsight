@@ -15,6 +15,7 @@ import {
   ShardHashStrategy,
   StringToJsonStrategy,
   UseSmallerKeysStrategy,
+  AvoidLuaScriptsStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 describe('RecommendationProvider', () => {
@@ -47,6 +48,7 @@ describe('RecommendationProvider', () => {
       [RECOMMENDATION_NAMES.BIG_HASHES, new ShardHashStrategy()],
       [RECOMMENDATION_NAMES.STRING_TO_JSON, new StringToJsonStrategy()],
       [RECOMMENDATION_NAMES.USE_SMALLER_KEYS, new UseSmallerKeysStrategy()],
+      [RECOMMENDATION_NAMES.LUA_SCRIPT, new AvoidLuaScriptsStrategy()],
       ['default', new DefaultRecommendationStrategy()],
       ['unknown', new DefaultRecommendationStrategy()],
       [null, new DefaultRecommendationStrategy()],

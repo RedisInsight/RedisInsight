@@ -65,6 +65,11 @@ export class DatabaseConnectionService {
       RECOMMENDATION_NAMES.REDIS_VERSION,
       client,
     );
+    this.recommendationService.check(
+      clientMetadata,
+      RECOMMENDATION_NAMES.LUA_SCRIPT,
+      client,
+    );
 
     this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
   }

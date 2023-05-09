@@ -51,7 +51,7 @@ test('No reports/keys message and report tooltip', async t => {
     await t.hover(memoryEfficiencyPage.reportTooltipIcon);
     await t.expect(browserPage.tooltip.textContent).contains(tooltipText, 'Report tooltip is not displayed or text is invalid');
 });
-test.only
+test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);

@@ -24,7 +24,7 @@ fixture `Index Schema at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test
+test.only
 .meta({ env: env.desktop })('Verify that user can open results in Text and Table views for FT.INFO for Hash in Workbench', async t => {
     indexName = Common.generateWord(5);
     const commandsForSend = [

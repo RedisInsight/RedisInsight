@@ -17,6 +17,7 @@ import {
   SearchVisualizationStrategy,
   GraphVisualizationStrategy,
   UseSmallerKeysStrategy,
+  AvoidLuaScriptsStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 @Injectable()
@@ -41,6 +42,7 @@ export class RecommendationProvider {
     this.strategies.set(RECOMMENDATION_NAMES.SEARCH_VISUALIZATION, new SearchVisualizationStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.GRAPH_VISUALIZATION, new GraphVisualizationStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.USE_SMALLER_KEYS, new UseSmallerKeysStrategy());
+    this.strategies.set(RECOMMENDATION_NAMES.LUA_SCRIPT, new AvoidLuaScriptsStrategy());
   }
 
   getStrategy(type: string): IRecommendationStrategy {

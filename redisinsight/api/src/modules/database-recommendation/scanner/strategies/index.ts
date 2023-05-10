@@ -12,3 +12,4 @@ export * from './string-to-json.strategy';
 export * from './search-visualization.strategy';
 export * from './graph-visualization.strategy';
 export * from './use-smaller-keys.strategy';
+export * from './avoid-lua-scripts.strategy';

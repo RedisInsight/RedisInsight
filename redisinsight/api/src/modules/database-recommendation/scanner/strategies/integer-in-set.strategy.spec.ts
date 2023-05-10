@@ -36,13 +36,13 @@ describe('IntegersInSetStrategy', () => {
       })).toEqual({ isReached: false });
     });
 
-    it('should return true when some member is not an integer in the first 50 members', async () => {
+    it('should return false when some member is not an integer in the first 50 members and not all members are uniq', async () => {
       expect(await strategy.isRecommendationReached({
         client: nodeClient,
         databaseId: mockDatabaseId,
-        members: [...mockIntegerMembers, ...mockNotIntegerMembers] as RedisString[],
+        members: [...mockIntegerMembers, ...mockNotIntegerMembers, ...mockNotIntegerMembers] as RedisString[],
         keyName: mockKeyName,
-      })).toEqual({ isReached: true, params: { keys: [mockKeyName] } });
+      })).toEqual({ isReached: false });
     });
 
     it('should return false when 51th member is not an integer', async () => {
@@ -52,6 +52,15 @@ describe('IntegersInSetStrategy', () => {
         members: [...Array.from({ length: 50 }).fill(mockIntegerMembers[0]), ...mockNotIntegerMembers] as RedisString[],
         keyName: mockKeyName,
       })).toEqual({ isReached: false });
+    });
+
+    it('should return true when some member is not an integer in the first 50 members and all members are uniq', async () => {
+      expect(await strategy.isRecommendationReached({
+        client: nodeClient,
+        databaseId: mockDatabaseId,
+        members: [...mockIntegerMembers, ...mockNotIntegerMembers] as RedisString[],
+        keyName: mockKeyName,
+      })).toEqual({ isReached: true, params: { keys: [mockKeyName] } });
     });
   });
 });

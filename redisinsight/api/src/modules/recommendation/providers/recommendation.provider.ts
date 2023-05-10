@@ -20,9 +20,10 @@ const maxCompressHashLength = 1000;
 const maxListLength = 1000;
 const maxSetLength = 100_000;
 const maxConnectedClients = 100;
-const bigStringMemory = 5_000_000;
+const bigStringMemory = 1_000_000;
 const sortedSetCountForCheck = 100;
 const minRedisVersion = '6';
+const numberOfSmallKeys = 50;
 
 @Injectable()
 export class RecommendationProvider {
@@ -115,9 +116,9 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const smallString = keys.find((key) => key.type === RedisDataType.String && key.memory < maxStringMemory);
-      return smallString
-        ? { name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES, params: { keys: [smallString.name] } }
+      const smallString = keys.filter((key) => key.type === RedisDataType.String && key.memory < maxStringMemory);
+      return smallString.length >= numberOfSmallKeys
+        ? { name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES, params: { keys: [smallString[0].name] } }
         : null;
     } catch (err) {
       this.logger.error('Can not determine Combine small strings to hashes recommendation', err);

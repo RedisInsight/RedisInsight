@@ -14,6 +14,7 @@ import {
   EuiFlyoutHeader,
   EuiCheckbox,
   EuiTextColor,
+  EuiBadge,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { remove } from 'lodash'
@@ -42,6 +43,8 @@ import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 import { ReactComponent as TriggerActiveIcon } from 'uiSrc/assets/img/bulb-active.svg'
 import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { ReactComponent as GithubSVG } from 'uiSrc/assets/img/github.svg'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
@@ -193,9 +196,17 @@ const LiveTimeRecommendations = () => {
 
   const renderHeader = () => (
     <>
-      <EuiTitle className={styles.title}>
-        <span>Insights</span>
-      </EuiTitle>
+      <div className={styles.headerTop}>
+        <EuiTitle className={styles.title}>
+          <span>Insights</span>
+        </EuiTitle>
+        <EuiToolTip
+          position="bottom"
+          content="This is the BETA version of recommendations that has limited availability. Let us know what you think about them in our GitHub repository."
+        >
+          <EuiBadge className={styles.betaBadge} title={undefined}>BETA</EuiBadge>
+        </EuiToolTip>
+      </div>
       {!!recommendations.length && (
         <div className={styles.actions}>
           <div>
@@ -222,6 +233,21 @@ const LiveTimeRecommendations = () => {
                 data-testid="recommendations-info-icon"
               />
             </EuiToolTip>
+            <EuiLink
+              external={false}
+              href={EXTERNAL_LINKS.githubRepo}
+              target="_blank"
+              style={{ marginLeft: 6 }}
+              data-test-subj="github-repo-btn"
+            >
+              <EuiIcon
+                className={styles.githubIcon}
+                aria-label="redis insight github repository"
+                type={GithubSVG}
+                size="s"
+                data-testid="github-repo-icon"
+              />
+            </EuiLink>
           </div>
 
           <EuiCheckbox

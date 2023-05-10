@@ -21,7 +21,6 @@ import { remove } from 'lodash'
 import { Pages } from 'uiSrc/constants'
 import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE, ANIMATION_INSIGHT_PANEL_MS } from 'uiSrc/constants/recommendations'
 import { OnboardingTour } from 'uiSrc/components'
-import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import {
   recommendationsSelector,
   fetchRecommendationsAction,
@@ -246,7 +245,7 @@ const LiveTimeRecommendations = () => {
         className={cx(styles.trigger, { [styles.isOpen]: isContentVisible })}
       >
         <OnboardingTour
-          options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}
+          options={{ step: -1 }}
           anchorPosition="leftDown"
           panelClassName={styles.insightsOnboardPanel}
           delay={isContentVisible ? DELAY_TO_SHOW_ONBOARDING_MS : 0}

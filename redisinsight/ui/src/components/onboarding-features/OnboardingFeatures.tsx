@@ -20,7 +20,7 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
 import { bufferToString, Nullable } from 'uiSrc/utils'
 import { CodeBlock } from 'uiSrc/components'
-import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
+
 import styles from './styles.module.scss'
 
 const sendTelemetry = (databaseId: string, step: string, action: string) => sendEventTelemetry({
@@ -154,6 +154,7 @@ const ONBOARDING_FEATURES = {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
 
       const dispatch = useDispatch()
+      const history = useHistory()
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.BrowserProfiler]
 
       return {
@@ -177,39 +178,6 @@ const ONBOARDING_FEATURES = {
           dispatch(resetCliHelperSettings())
           dispatch(setMonitorInitialState())
 
-          dispatch(setIsContentVisible(true))
-          sendNextTelemetryEvent(...telemetryArgs)
-        }
-      }
-    }
-  },
-  BROWSER_INSIGHTS: {
-    step: OnboardingSteps.BrowserInsights,
-    title: 'Insights',
-    Inner: () => {
-      const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
-
-      const dispatch = useDispatch()
-      const history = useHistory()
-      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.BrowserInsights]
-
-      return {
-        content: (
-          <>
-            Insights will help you optimize performance and memory usage,
-            enhance the security of your Redis or Redis Stack database.
-            <EuiSpacer size="xs" />
-            Check them from time to time to take your productivity to the next level!
-          </>
-        ),
-        onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
-        onBack: () => {
-          dispatch(setIsContentVisible(false))
-          dispatch(showMonitor())
-          sendBackTelemetryEvent(...telemetryArgs)
-        },
-        onNext: () => {
-          dispatch(setIsContentVisible(false))
           history.push(Pages.workbench(connectedInstanceId))
           sendNextTelemetryEvent(...telemetryArgs)
         }
@@ -283,7 +251,7 @@ const ONBOARDING_FEATURES = {
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => {
           history.push(Pages.browser(connectedInstanceId))
-          dispatch(setIsContentVisible(true))
+          dispatch(showMonitor())
           sendBackTelemetryEvent(...telemetryArgs)
         },
         onNext: () => sendNextTelemetryEvent(...telemetryArgs),

@@ -312,14 +312,22 @@ describe('ONBOARDING_FEATURES', () => {
         resetCliSettings(),
         resetCliHelperSettings(),
         setMonitorInitialState(),
-        setIsContentVisible(true),
         setOnboardNextStep()
       ]
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
+
+    it('should properly push history on next', () => {
+      const pushMock = jest.fn()
+      reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+      render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_PROFILER}><span /></OnboardingTour>)
+      fireEvent.click(screen.getByTestId('next-btn'))
+      expect(pushMock).toHaveBeenCalledWith(Pages.workbench(''))
+    })
   })
 
-  describe('BROWSER_INSIGHTS', () => {
+  describe.skip('BROWSER_INSIGHTS', () => {
     beforeEach(() => {
       (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
         currentStep: OnboardingSteps.BrowserInsights,
@@ -427,7 +435,7 @@ describe('ONBOARDING_FEATURES', () => {
       render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_PAGE}><span /></OnboardingTour>)
       fireEvent.click(screen.getByTestId('back-btn'))
 
-      const expectedActions = [setIsContentVisible(true), setOnboardPrevStep()]
+      const expectedActions = [showMonitor(), setOnboardPrevStep()]
       expect(clearStoreActions(store.getActions().slice(-2)))
         .toEqual(clearStoreActions(expectedActions))
     })

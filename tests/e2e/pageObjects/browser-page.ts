@@ -527,7 +527,7 @@ export class BrowserPage extends InstancePage {
      * Get selector by key name
      * @param keyName The name of the key
      */
-    async getKeySelectorByName(keyName: string): Promise<Selector> {
+    getKeySelectorByName(keyName: string): Selector {
         return Selector(`[data-testid="key-${keyName}"]`);
     }
 
@@ -536,7 +536,7 @@ export class BrowserPage extends InstancePage {
      * @param keyName The name of the key
      */
     async isKeyIsDisplayedInTheList(keyName: string): Promise<boolean> {
-        const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+        const keyNameInTheList = this.getKeySelectorByName(keyName);
         await Common.waitForElementNotVisible(this.loader);
         return keyNameInTheList.exists;
     }

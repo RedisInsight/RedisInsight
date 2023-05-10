@@ -252,7 +252,7 @@ export async function deleteAllKeysFromDB(host: string, port: string): Promise<v
 */
 export async function verifyKeysDisplayedInTheList(keyNames: string[]): Promise<void> {
     for (const keyName of keyNames) {
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key ${keyName} not found`);
+        await t.expect(browserPage.getKeySelectorByName(keyName).exists).ok(`The key ${keyName} not found`);
     }
 }
 

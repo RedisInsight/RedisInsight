@@ -16,6 +16,8 @@ import {
   StringToJsonStrategy,
   UseSmallerKeysStrategy,
   AvoidLuaScriptsStrategy,
+  BigStringStrategy,
+  CompressionForListStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 describe('RecommendationProvider', () => {
@@ -49,6 +51,8 @@ describe('RecommendationProvider', () => {
       [RECOMMENDATION_NAMES.STRING_TO_JSON, new StringToJsonStrategy()],
       [RECOMMENDATION_NAMES.USE_SMALLER_KEYS, new UseSmallerKeysStrategy()],
       [RECOMMENDATION_NAMES.LUA_SCRIPT, new AvoidLuaScriptsStrategy()],
+      [RECOMMENDATION_NAMES.BIG_STRINGS, new BigStringStrategy()],
+      [RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST, new CompressionForListStrategy()],
       ['default', new DefaultRecommendationStrategy()],
       ['unknown', new DefaultRecommendationStrategy()],
       [null, new DefaultRecommendationStrategy()],

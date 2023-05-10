@@ -189,6 +189,16 @@ describe('KeysBusinessService', () => {
         RECOMMENDATION_NAMES.BIG_SETS,
         result,
       );
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.BIG_STRINGS,
+        result,
+      );
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
+        result,
+      );
     });
   });
 

@@ -1203,50 +1203,42 @@ workflows:
           name: Virus check - AppImage (prod)
           ext: .AppImage
           requires:
-            - Build app - Linux (dev)
-            # - Build app - Linux (prod)
+            - Build app - Linux (prod)
       - virustotal:
           name: Virus check - deb (prod)
           ext: .deb
           requires:
-            - Build app - Linux (dev)
-            # - Build app - Linux (prod)
+            - Build app - Linux (prod)
       - virustotal:
           name: Virus check - rpm (prod)
           ext: .rpm
           requires:
-            - Build app - Linux (dev)
-            # - Build app - Linux (prod)
+            - Build app - Linux (prod)
       - virustotal:
           name: Virus check - snap (prod)
           ext: .snap
           requires:
-            - Build app - Linux (dev)
-            # - Build app - Linux (prod)
+            - Build app - Linux (prod)
       - virustotal:
           name: Virus check x64 - dmg (prod)
           ext: -x64.dmg
           requires:
-            - Build app - MacOS (dev)
-            # - Build app - MacOS (prod)
+            - Build app - MacOS (prod)
       - virustotal:
           name: Virus check arm64 - dmg (prod)
           ext: -arm64.dmg
           requires:
-            - Build app - MacOS (dev)
-            # - Build app - MacOS (prod)
+            - Build app - MacOS (prod)
       - virustotal:
           name: Virus check MAS - pkg (prod)
           ext: -mas.pkg
           requires:
-            - Build app - MacOS (dev)
-            # - Build app - MacOS (prod)
+            - Build app - MacOS (prod)
       - virustotal:
           name: Virus check - exe (prod)
           ext: .exe
           requires:
-            - Build app - Windows (dev)
-            # - Build app - Windows (prod)
+            - Build app - Windows (prod)
       # upload release to prerelease AWS folder
       - release-aws-private:
           name: Release AWS S3 Private (prod)

@@ -13,6 +13,7 @@ import { RECOMMENDATIONS_DATA_MOCK } from 'uiSrc/mocks/handlers/recommendations/
 import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import LiveTimeRecommendations from './LiveTimeRecommendations'
 
@@ -70,6 +71,19 @@ beforeEach(() => {
 describe('LiveTimeRecommendations', () => {
   it('should render', () => {
     expect(render(<LiveTimeRecommendations />)).toBeTruthy()
+  })
+
+  it('should render beta label and github icon', () => {
+    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockRecommendationsSelector,
+      data: { recommendations: [{ name: 'RTS' }] },
+      isContentVisible: true
+    }))
+
+    render(<LiveTimeRecommendations />)
+    expect(screen.getByTestId('beta-label')).toBeInTheDocument()
+    expect(screen.getByTestId('github-repo-btn')).toHaveAttribute('href', EXTERNAL_LINKS.githubRepo)
+    expect(screen.getByTestId('github-repo-icon')).toBeInTheDocument()
   })
 
   it('should send INSIGHTS_PANEL_CLOSED telemetry event', async () => {

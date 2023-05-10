@@ -106,6 +106,18 @@ $animation-duration: 300ms;
 .header {
   padding: 24px 15px 0 !important;
 
+  .headerTop {
+    display: flex;
+    align-items: center;
+  }
+
+  .betaBadge {
+    margin-left: 16px;
+    background-color: var(--recommendationLiveBorderColor) !important;
+    border: 1px solid var(--triggerIconActiveColor) !important;
+    color: #FFF7EA !important;
+  }
+
   .title {
     font: normal normal 500 18px/22px Graphik, sans-serif;
   }
@@ -155,9 +167,13 @@ $animation-duration: 300ms;
     font: normal normal 600 14px/17px Graphik, sans-serif !important;
   }
 
+  .githubIcon {
+    color: var(--htmlColor);
+  }
+
   .infoIcon {
-    width: 14px !important;
-    height: 14px !important;
+    width: 16px !important;
+    height: 16px !important;
     fill: var(--htmlColor);
     cursor: pointer;
   }

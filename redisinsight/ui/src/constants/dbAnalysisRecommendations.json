@@ -682,5 +682,98 @@
         "value": "When working with graph capabilities, try running commands in Workbench - our advanced command-line interface to leverage Cypher support and enjoy data visualizations to explore, analyze, and investigate command execution results."
       }
     ]
+  },
+  "searchHash": {
+    "id": "searchHash",
+    "title": "Try indexing your HASH documents for efficient data retrieval",
+    "tutorial": "/quick-guides/document/working-with-hashes.md",
+    "redisStack": true,
+    "content": [
+      {
+        "id": "1",
+        "type": "span",
+        "value": "If you are working with hashes and need fast and efficient data retrieval, consider using the "
+      },
+      {
+        "id": "2",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/search/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchHash",
+          "name": "query and search capabilities"
+        }
+      },
+      {
+        "id": "3",
+        "type": "span",
+        "value": ", natively developed in Redis."
+      },
+      {
+        "id": "4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "5",
+        "type": "span",
+        "value": "With it, you can perform complex structured aggregations transforming your data by grouping, sorting, and applying different functions ("
+      },
+      {
+        "id": "6",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/search/reference/aggregations/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchHash/#apply-expressions",
+          "name": "Apply Functions"
+        }
+      },
+      {
+        "id": "7",
+        "type": "span",
+        "value": "). Besides you can explore the full-text search, field matching, and complex filtering. It offers real-time searching through synchronous indexing, ensuring read-your-writes consistency, without compromising the database performance."
+      },
+      {
+        "id": "8",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "9",
+        "type": "span",
+        "value": "The capability is part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software. Also supported in an "
+      },
+      {
+        "id": "10",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "11",
+        "type": "span",
+        "value": "With it, you can perform complex structured aggregations transforming your data by grouping, sorting, and applying different functions ("
+      },
+      {
+        "id": "12",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchHash",
+          "name": "Active-Active"
+        }
+      },
+      {
+        "id": "13",
+        "type": "span",
+        "value": ") setup."
+      },
+      {
+        "id": "14",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "15",
+        "type": "span",
+        "value": "Try the interactive tutorial to learn how to work with index and query documents modeled with JSON."
+      }
+    ],
+    "badges": ["code_changes", "configuration_changes"]
   }
 }

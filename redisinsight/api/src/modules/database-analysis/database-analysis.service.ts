@@ -63,6 +63,7 @@ export class DatabaseAnalysisService {
         const nodeRecommendations = await this.recommendationService.getRecommendations({
           client: nodeResult.client,
           keys: nodeResult.keys,
+          indexes: nodeResult.indexes,
           total: progress.total,
           globalClient: client,
           exclude: recommendationToExclude,

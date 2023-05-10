@@ -141,6 +141,8 @@ const mockSortedSets = new Array(101).fill(
   },
 );
 
+const mockSearchHashes = new Array(51).fill(mockBigHashKey)
+
 describe('RecommendationProvider', () => {
   const service = new RecommendationProvider();
 
@@ -595,22 +597,14 @@ describe('RecommendationProvider', () => {
 
   describe('determineSearchJSONRecommendation', () => {
     it('should not return searchJSON', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_2);
-
       const searchJSONRecommendation = await service
-        .determineSearchJSONRecommendation(nodeClient, mockKeys);
+        .determineSearchJSONRecommendation(mockKeys, mockFTListResponse_2);
       expect(searchJSONRecommendation).toEqual(null);
     });
 
     it('should return searchJSON recommendation', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_1);
-
       const searchJSONRecommendation = await service
-        .determineSearchJSONRecommendation(nodeClient, mockKeys);
+        .determineSearchJSONRecommendation(mockKeys, mockFTListResponse_1);
       expect(searchJSONRecommendation)
         .toEqual({
           name: RECOMMENDATION_NAMES.SEARCH_JSON,
@@ -619,24 +613,16 @@ describe('RecommendationProvider', () => {
     });
 
     it('should return not searchJSON recommendation when there is no JSON key', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_1);
-
       const searchJSONRecommendation = await service
-        .determineSearchJSONRecommendation(nodeClient, [mockBigSet]);
+        .determineSearchJSONRecommendation( [mockBigSet], mockFTListResponse_1);
       expect(searchJSONRecommendation)
         .toEqual(null);
     });
 
-    it('should return searchJSON recommendation when command executed with error',
+    it('should return searchJSON recommendation when indexes is undefined',
       async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-          .mockRejectedValue('some error');
-
         const searchJSONRecommendation = await service
-          .determineSearchJSONRecommendation(nodeClient, mockKeys);
+          .determineSearchJSONRecommendation(mockKeys, undefined);
         expect(searchJSONRecommendation)
           .toEqual({
             name: RECOMMENDATION_NAMES.SEARCH_JSON,
@@ -647,22 +633,14 @@ describe('RecommendationProvider', () => {
 
   describe('determineSearchStringRecommendation', () => {
     it('should not return searchString', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_2);
-
       const searchStringRecommendation = await service
-        .determineSearchStringRecommendation(nodeClient, mockKeys);
+        .determineSearchStringRecommendation(mockKeys, mockFTListResponse_2);
       expect(searchStringRecommendation).toEqual(null);
     });
 
     it('should return searchString recommendation when there is big string key', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_1);
-
       const searchStringRecommendation = await service
-        .determineSearchStringRecommendation(nodeClient, [...mockKeys, mockHugeStringKey1]);
+        .determineSearchStringRecommendation([...mockKeys, mockHugeStringKey1], mockFTListResponse_1);
       expect(searchStringRecommendation)
         .toEqual({
           name: RECOMMENDATION_NAMES.SEARCH_STRING,
@@ -671,29 +649,45 @@ describe('RecommendationProvider', () => {
     });
 
     it('should return not searchString recommendation when there is no big string key', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_1);
-
       const searchStringRecommendation = await service
-        .determineSearchStringRecommendation(nodeClient, mockKeys);
+        .determineSearchStringRecommendation(mockKeys, mockFTListResponse_1);
       expect(searchStringRecommendation)
         .toEqual(null);
     });
 
-    it('should return searchJSON recommendation when command executed with error',
+    it('should return searchJSON recommendation when indexes is undefined',
       async () => {
         when(nodeClient.sendCommand)
           .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
           .mockRejectedValue('some error');
 
         const searchStringRecommendation = await service
-          .determineSearchStringRecommendation(nodeClient, [mockHugeStringKey1]);
+          .determineSearchStringRecommendation([mockHugeStringKey1], undefined);
         expect(searchStringRecommendation)
           .toEqual({
             name: RECOMMENDATION_NAMES.SEARCH_STRING,
             params: { keys: [mockHugeStringKey1.name] },
           });
       });
+  });
+
+  describe('determineSearchHashRecommendation', () => {
+    it('should return searchHash recommendation', async () => {
+      const bigHashesRecommendation = await service.determineSearchHashRecommendation(mockSearchHashes);
+      expect(bigHashesRecommendation)
+        .toEqual({ name: RECOMMENDATION_NAMES.SEARCH_HASH, params: { keys: [mockBigHashKey.name] } });
+    });
+
+    it('should not return searchHash recommendation', async () => {
+      const searchHashRecommendation = await service.determineSearchHashRecommendation(mockKeys);
+      expect(searchHashRecommendation).toEqual(null);
+    });
+
+    it('should not return searchHash recommendation if indexes exists', async () => {
+      const searchHashRecommendationWithIndex =
+        await service.determineSearchHashRecommendation(mockSearchHashes, ['idx']);
+      expect(searchHashRecommendationWithIndex).toEqual(null);
+    });
+
   });
 });

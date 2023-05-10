@@ -223,6 +223,7 @@ export class DatabaseInfoProvider {
       uptimeInSeconds:
         parseInt(get(serverInfo, 'uptime_in_seconds'), 10) || undefined,
       hitRatio: this.getRedisHitRatio(statsInfo),
+      cashedScripts: parseInt(get(memoryInfo, 'number_of_cached_scripts'), 10) || undefined,
       server: serverInfo,
     };
   }

@@ -12,6 +12,7 @@ import {
   mockRedisService,
   mockDatabaseRecommendationService,
   MockType,
+  mockRedisGeneralInfo,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -89,12 +90,12 @@ describe('DatabaseConnectionService', () => {
       expect(recommendationService.check).toBeCalledWith(
         mockCommonClientMetadata,
         RECOMMENDATION_NAMES.REDIS_VERSION,
-        mockIORedisClient,
+        mockRedisGeneralInfo,
       );
       expect(recommendationService.check).toBeCalledWith(
         mockCommonClientMetadata,
         RECOMMENDATION_NAMES.LUA_SCRIPT,
-        mockIORedisClient,
+        mockRedisGeneralInfo,
       );
     });
   });

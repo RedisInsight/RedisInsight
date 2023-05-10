@@ -3,27 +3,17 @@ import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
-import { get } from 'lodash';
-import { convertRedisInfoReplyToObject } from 'src/utils';
+import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 
 const minNumberOfCachedScripts = 10;
 
 export class AvoidLuaScriptsStrategy extends AbstractRecommendationStrategy {
   /**
    * Check lua script recommendation
-   * @param redisClient
+   * @param info
    */
 
-  async isRecommendationReached(redisClient: Redis): Promise<IDatabaseRecommendationStrategyData> {
-    const info = convertRedisInfoReplyToObject(
-      await redisClient.sendCommand(
-        new Command('info', ['memory'], { replyEncoding: 'utf8' }),
-      ) as string,
-    );
-
-    const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
-    const isReached = parseInt(nodesNumbersOfCachedScripts, 10) > minNumberOfCachedScripts;
-
-    return { isReached };
+  async isRecommendationReached(info: RedisDatabaseInfoResponse): Promise<IDatabaseRecommendationStrategyData> {
+    return { isReached: info.cashedScripts > minNumberOfCachedScripts };
   }
 }

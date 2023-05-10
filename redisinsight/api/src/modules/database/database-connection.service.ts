@@ -60,15 +60,17 @@ export class DatabaseConnectionService {
 
     await this.repository.update(clientMetadata.databaseId, toUpdate);
 
+    const generalInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client)
+
     this.recommendationService.check(
       clientMetadata,
       RECOMMENDATION_NAMES.REDIS_VERSION,
-      client,
+      generalInfo,
     );
     this.recommendationService.check(
       clientMetadata,
       RECOMMENDATION_NAMES.LUA_SCRIPT,
-      client,
+      generalInfo,
     );
 
     this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);

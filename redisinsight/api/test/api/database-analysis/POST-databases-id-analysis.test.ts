@@ -351,7 +351,7 @@ describe('POST /databases/:instanceId/analysis', () => {
             });
             expect(entities.length).to.eq(0);
 
-            await rte.data.generateStrings(true);
+            await rte.data.generateHugeNumberOfTinyStringKeys(50);
           },
           statusCode: 201,
           responseSchema,
@@ -360,7 +360,7 @@ describe('POST /databases/:instanceId/analysis', () => {
             setTimeout(async () => {
               const entities: any = await recommendationRepository.findBy({
                 name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name,
-                params: { keys: [{ data: [...Buffer.from(constants.TEST_STRING_KEY_1)], type: "Buffer" }]}
+                params: { keys: [{ data: [...Buffer.from(`${constants.TEST_RUN_ID}_0`)], type: "Buffer" }]}
               });
               expect(entities.length).to.eq(1);
             }, 5000)
@@ -377,7 +377,7 @@ describe('POST /databases/:instanceId/analysis', () => {
             });
             expect(entities.length).to.eq(1);
   
-            await rte.data.generateStrings(true);
+            await rte.data.generateHugeNumberOfTinyStringKeys(50);
           },
           statusCode: 201,
           responseSchema,
@@ -421,12 +421,12 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          await rte.data.generateString(true);
+          await rte.data.generateHugeNumberOfTinyStringKeys(50);
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.include.deep.members([{
             ...constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION,
-            params: { keys: [{ data: [...Buffer.from(constants.TEST_STRING_KEY_1)], type: "Buffer" }]}
+            params: { keys: [{ data: [...Buffer.from(`${constants.TEST_RUN_ID}_0`)], type: "Buffer" }]}
           }]);
         },
         after: async () => {

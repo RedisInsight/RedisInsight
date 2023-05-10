@@ -112,7 +112,7 @@ const mockBigStringKey = {
 };
 
 const mockHugeStringKey = {
-  name: Buffer.from('name'), type: 'string', length: 10, memory: 5_000_001, ttl: -1,
+  name: Buffer.from('name'), type: 'string', length: 10, memory: 1_000_001, ttl: -1,
 };
 
 const mockHugeStringKey1 = {
@@ -140,6 +140,10 @@ const mockSortedSets = new Array(101).fill(
     name: Buffer.from('name'), type: 'zset', length: 10, memory: 10, ttl: -1,
   },
 );
+
+const mockSmallStringKey = {
+  name: Buffer.from('name'), type: 'string', length: 10, memory: 199, ttl: -1,
+};
 
 describe('RecommendationProvider', () => {
   const service = new RecommendationProvider();
@@ -249,13 +253,19 @@ describe('RecommendationProvider', () => {
 
   describe('determineCombineSmallStringsToHashesRecommendation', () => {
     it('should not return combineSmallStringsToHashes recommendation', async () => {
-      const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation([
-        mockBigStringKey,
-      ]);
+      const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(
+        new Array(49).fill(mockSmallStringKey)
+        );
+      expect(smallStringRecommendation).toEqual(null);
+    });
+    it('should not return combineSmallStringsToHashes recommendation when strings are big', async () => {
+      const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(
+        new Array(50).fill(mockBigStringKey)
+        );
       expect(smallStringRecommendation).toEqual(null);
     });
     it('should return combineSmallStringsToHashes recommendation', async () => {
-      const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(mockKeys);
+      const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(new Array(50).fill(mockSmallStringKey));
       expect(smallStringRecommendation)
         .toEqual({
           name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES,

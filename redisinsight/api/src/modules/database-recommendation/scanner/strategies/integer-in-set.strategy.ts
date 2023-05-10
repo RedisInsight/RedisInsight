@@ -1,4 +1,4 @@
-import { isNaN, toNumber } from 'lodash';
+import { isNaN, toNumber, uniq } from 'lodash';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
@@ -17,11 +17,14 @@ export class IntegersInSetStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     data: IntegersInSets,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    const isNotIntegerInSet = data?.members?.slice(0, maxCountMembersForCheck).some(
+    const membersForCheck = data?.members?.slice(0, maxCountMembersForCheck);
+    const isNotIntegerInSet = membersForCheck.some(
       (member) => isNaN(toNumber(getUTF8FromRedisString(member))),
     );
 
-    return isNotIntegerInSet
+    const isAllMembersUniq = uniq(membersForCheck).length === membersForCheck.length;
+
+    return isNotIntegerInSet && isAllMembersUniq
       ? { isReached: true, params: { keys: [data?.keyName] } }
       : { isReached: false };
   }

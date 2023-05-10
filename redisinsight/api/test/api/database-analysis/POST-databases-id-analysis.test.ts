@@ -366,6 +366,45 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
+    describe('searchHash recommendation', () => {
+      requirements('!rte.pass');
+      [
+        {
+          name: 'Should create new database analysis with searchHash recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          before: async () => {
+            for (let index = 0; index <= 51; index++) {
+              await rte.data.sendCommand('HSET', [
+                constants.TEST_HASH_KEY_1 + index,
+                constants.TEST_HASH_FIELD_1_NAME,
+                constants.TEST_HASH_FIELD_1_VALUE,
+                constants.TEST_HASH_FIELD_2_NAME,
+                constants.TEST_HASH_FIELD_2_VALUE,
+                constants.TEST_HASH_FIELD_3_NAME,
+                constants.TEST_HASH_FIELD_3_VALUE,
+              ]);
+            }
+          },
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([{
+              ...constants.TEST_SEARCH_HASH_RECOMMENDATION,
+              params: {
+                keys: [{ data: [...Buffer.from(`${constants.TEST_HASH_KEY_1}0`)],
+                type: "Buffer",
+              }]},
+            }]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+
     describe('sync recommendations', () => {
       [
         {

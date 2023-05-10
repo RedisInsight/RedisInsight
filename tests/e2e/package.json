@@ -2,7 +2,7 @@
   "name": "redisinsight",
   "version": "1.0.0",
   "description": "End-to-end tests",
-  "license": "UNLICENSED",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "test:live": "testcafe --live chrome ",

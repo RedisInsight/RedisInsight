@@ -85,7 +85,7 @@ describe('DatabaseConnectionService', () => {
     it('should call recommendationService', async () => {
       expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
 
-      expect(recommendationService.check).toHaveBeenCalledTimes(2);
+      expect(recommendationService.check).toHaveBeenCalledTimes(3);
 
       expect(recommendationService.check).toBeCalledWith(
         mockCommonClientMetadata,
@@ -95,6 +95,11 @@ describe('DatabaseConnectionService', () => {
       expect(recommendationService.check).toBeCalledWith(
         mockCommonClientMetadata,
         RECOMMENDATION_NAMES.LUA_SCRIPT,
+        mockRedisGeneralInfo,
+      );
+      expect(recommendationService.check).toBeCalledWith(
+        mockCommonClientMetadata,
+        RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
         mockRedisGeneralInfo,
       );
     });

@@ -15,3 +15,4 @@ export * from './use-smaller-keys.strategy';
 export * from './avoid-lua-scripts.strategy';
 export * from './big-string.strategy';
 export * from './compression-for-list.strategy';
+export * from './big-amount-connected-clients.strategy';

@@ -18,6 +18,7 @@ import {
   AvoidLuaScriptsStrategy,
   BigStringStrategy,
   CompressionForListStrategy,
+  BigAmountConnectedClientsStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 describe('RecommendationProvider', () => {
@@ -53,6 +54,7 @@ describe('RecommendationProvider', () => {
       [RECOMMENDATION_NAMES.LUA_SCRIPT, new AvoidLuaScriptsStrategy()],
       [RECOMMENDATION_NAMES.BIG_STRINGS, new BigStringStrategy()],
       [RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST, new CompressionForListStrategy()],
+      [RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS, new BigAmountConnectedClientsStrategy()],
       ['default', new DefaultRecommendationStrategy()],
       ['unknown', new DefaultRecommendationStrategy()],
       [null, new DefaultRecommendationStrategy()],

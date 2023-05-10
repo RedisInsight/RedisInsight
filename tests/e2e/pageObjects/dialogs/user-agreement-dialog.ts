@@ -1,6 +1,6 @@
 import { t, Selector } from 'testcafe';
 
-export class UserAgreementPage {
+export class UserAgreementDialog {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.

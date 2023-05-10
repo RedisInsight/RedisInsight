@@ -36,6 +36,6 @@ test('Verify that user can remove member from Set', async t => {
     await t.click(browserPage.removeSetMemberButton);
     await t.click(browserPage.confirmRemoveSetMemberButton);
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Member has been removed', 'The notification not found');
 });

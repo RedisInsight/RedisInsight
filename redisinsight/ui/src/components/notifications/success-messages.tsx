@@ -1,7 +1,9 @@
 import React from 'react'
+import { EuiFlexGroup, EuiFlexItem, EuiText } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { bufferToString, formatNameShort, Maybe } from 'uiSrc/utils'
+import { IBulkActionOverview, RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { bufferToString, formatLongName, formatNameShort, Maybe, millisecondsFormat } from 'uiSrc/utils'
+import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import styles from './styles.module.scss'
 
 // TODO: use i18n file for texts
@@ -153,5 +155,44 @@ export default {
   }),
   TEST_CONNECTION: () => ({
     title: 'Connection is successful',
-  })
+  }),
+  UPLOAD_DATA_BULK: (data: IBulkActionOverview, fileName: string) => {
+    const { processed = 0, succeed = 0, failed = 0, } = data?.summary ?? {}
+    return ({
+      title: (
+        <>
+          Action completed
+          <br />
+          <EuiText color="ghost">Data uploaded with file: {formatLongName(fileName, 24, 5)}</EuiText>
+        </>
+      ),
+      message: (
+        <EuiFlexGroup
+          alignItems="flexStart"
+          direction="row"
+          gutterSize="none"
+          responsive={false}
+          className={styles.summary}
+        >
+          <EuiFlexItem grow={false}>
+            <EuiText color="ghost" className={styles.summaryValue}>{numberWithSpaces(processed)}</EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>Commands Processed</EuiText>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiText color="ghost" className={styles.summaryValue}>{numberWithSpaces(succeed)}</EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>Success</EuiText>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiText color="ghost" className={styles.summaryValue}>{numberWithSpaces(failed)}</EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>Errors</EuiText>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiText color="ghost" className={styles.summaryValue}>{millisecondsFormat(data?.duration || 0, 'H:mm:ss.SSS')}</EuiText>
+            <EuiText size="xs" className={styles.summaryLabel}>Time Taken</EuiText>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      ),
+      className: 'dynamic'
+    })
+  }
 }

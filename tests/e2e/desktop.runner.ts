@@ -5,15 +5,20 @@ import testcafe from 'testcafe';
         .then(t => {
             return t
                 .createRunner()
+                .compilerOptions({
+                    "typescript": {
+                        configPath: 'tsconfig.testcafe.json',
+                        experimentalDecorators: true
+                     }})
                 .src((process.env.TEST_FILES || 'tests/**/*.e2e.ts').split('\n'))
                 .browsers(['electron'])
                 .filter((_testName, _fixtureName, _fixturePath, testMeta): boolean => {
-                    return testMeta.env !== 'web'
+                    return testMeta.env == 'desktop'
                 })
                 .screenshots({
                     path: 'report/screenshots/',
                     takeOnFails: true,
-                    pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST_INDEX}.png',
+                    pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${FILE_INDEX}.png',
                 })
                 .reporter([
                     'spec',
@@ -24,11 +29,17 @@ import testcafe from 'testcafe';
                     {
                         name: 'json',
                         output: './results/e2e.results.json'
+                    },
+                    {
+                        name: 'html',
+                        output: './report/report.html'
                     }
                 ])
                 .run({
                     skipJsErrors: true,
                     browserInitTimeout: 60000,
+                    selectorTimeout: 5000,
+                    assertionTimeout: 5000,
                     speed: 1,
                 });
         })

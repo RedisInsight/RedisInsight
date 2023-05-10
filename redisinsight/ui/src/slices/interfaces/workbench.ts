@@ -39,6 +39,11 @@ export interface StateWorkbenchEnablementArea {
   error: string
   items: IEnablementAreaItem[]
 }
+export interface StateWorkbenchCustomTutorials extends StateWorkbenchEnablementArea {
+  bulkUpload: {
+    pathsInProgress: string[]
+  }
+}
 
 export interface CommandExecutionUI extends Partial<CommandExecution> {
   id?: string

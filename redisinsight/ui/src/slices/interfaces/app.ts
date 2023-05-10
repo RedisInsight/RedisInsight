@@ -16,6 +16,7 @@ export interface IMessage {
   title: string
   message: string
   group?: string
+  className?: string
 }
 
 export interface StateAppInfo {

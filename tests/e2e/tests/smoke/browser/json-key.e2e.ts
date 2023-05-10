@@ -27,7 +27,7 @@ test('Verify that user can add key with value to any level of JSON structure', a
     // Add Json key with json object
     await browserPage.addJsonKey(keyName, value, keyTTL);
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not found');
     // Verify that user can create JSON object
     await t.expect(browserPage.addJsonObjectButton.exists).ok('The add Json object button not found', { timeout: 10000 });

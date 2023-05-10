@@ -45,13 +45,13 @@ test
 
         // Verify that when user request to test database connection is not successfull, can see standart connection error
         await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
-        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Error', 'Invalid connection has no error on test');
+        await t.expect(myRedisDatabasePage.Toast.toastHeader.textContent).contains('Error', 'Invalid connection has no error on test');
 
         // Click for saving
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         // Verify that the database is not in the list
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.errorMessage.textContent).contains('Error', 'Error message not displayed', { timeout: 10000 });
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.errorMessage.textContent).contains(errorMessage, 'Error message not displayed', { timeout: 10000 });
+        await t.expect(myRedisDatabasePage.Toast.toastError.textContent).contains('Error', 'Error message not displayed', { timeout: 10000 });
+        await t.expect(myRedisDatabasePage.Toast.toastError.textContent).contains(errorMessage, 'Error message not displayed', { timeout: 10000 });
     });
 test
     .meta({ rte: rte.none })('Fields to add database prepopulation', async t => {

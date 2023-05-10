@@ -11,8 +11,13 @@ import { MemoryStoredFile } from 'nestjs-form-data';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
+import * as fs from 'fs-extra';
+import config from 'src/utils/config';
+import { join } from 'path';
+
+const PATH_CONFIG = config.get('dir_path');
 
 const generateNCommandsBuffer = (n: number) => Buffer.from(
   (new Array(n)).fill(1).map(() => ['set', ['foo', 'bar']]).join('\n'),
@@ -55,12 +60,20 @@ const mockUploadImportFileDto = {
   } as unknown as MemoryStoredFile,
 };
 
+const mockUploadImportFileByPathDto = {
+  path: '/some/path',
+};
+
+jest.mock('fs-extra');
+const mockedFs = fs as jest.Mocked<typeof fs>;
+
 describe('BulkImportService', () => {
   let service: BulkImportService;
   let databaseConnectionService: MockType<DatabaseConnectionService>;
   let analytics: MockType<BulkActionsAnalyticsService>;
 
   beforeEach(async () => {
+    jest.mock('fs-extra', () => mockedFs);
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
@@ -208,6 +221,85 @@ describe('BulkImportService', () => {
       } catch (e) {
         expect(mockIORedisClient.disconnect).not.toHaveBeenCalled();
         expect(e).toBeInstanceOf(NotFoundException);
+      }
+    });
+  });
+
+  describe('uploadFromTutorial', () => {
+    let spy;
+
+    beforeEach(() => {
+      spy = jest.spyOn(service as any, 'import');
+      spy.mockResolvedValue(mockSummary);
+      mockedFs.readFile.mockResolvedValue(Buffer.from('set foo bar'));
+    });
+
+    it('should import file by path', async () => {
+      mockedFs.pathExists.mockImplementationOnce(async () => true);
+
+      await service.uploadFromTutorial(mockClientMetadata, mockUploadImportFileByPathDto);
+
+      expect(mockedFs.readFile).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, mockUploadImportFileByPathDto.path));
+    });
+
+    it('should import file by path with static', async () => {
+      mockedFs.pathExists.mockImplementationOnce(async () => true);
+
+      await service.uploadFromTutorial(mockClientMetadata, { path: '/static/guides/_data.file' });
+
+      expect(mockedFs.readFile).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, '/guides/_data.file'));
+    });
+
+    it('should normalize path before importing and not search for file outside home folder', async () => {
+      mockedFs.pathExists.mockImplementationOnce(async () => true);
+
+      await service.uploadFromTutorial(mockClientMetadata, {
+        path: '/../../../danger',
+      });
+
+      expect(mockedFs.readFile).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, 'danger'));
+    });
+
+    it('should normalize path before importing and throw an error when search for file outside home folder (relative)', async () => {
+      mockedFs.pathExists.mockImplementationOnce(async () => true);
+
+      try {
+        await service.uploadFromTutorial(mockClientMetadata, {
+          path: '../../../danger',
+        });
+
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual('Data file was not found');
+      }
+    });
+
+    it('should throw BadRequest when no file found', async () => {
+      mockedFs.pathExists.mockImplementationOnce(async () => false);
+
+      try {
+        await service.uploadFromTutorial(mockClientMetadata, {
+          path: '../../../danger',
+        });
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual('Data file was not found');
+      }
+    });
+
+    it('should throw BadRequest when file size is greater then 100MB', async () => {
+      mockedFs.pathExists.mockImplementationOnce(async () => true);
+      mockedFs.stat.mockImplementationOnce(async () => ({ size: 100 * 1024 * 1024 + 1 } as fs.Stats));
+
+      try {
+        await service.uploadFromTutorial(mockClientMetadata, mockUploadImportFileByPathDto);
+
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toEqual('Maximum file size is 100MB');
       }
     });
   });

@@ -64,7 +64,7 @@ test
             // Wait for database to be exist
             .expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database not displayed', { timeout: 10000 })
             // Close message
-            .click(myRedisDatabasePage.toastCloseButton);
+            .click(myRedisDatabasePage.Toast.toastCloseButton);
 
         // Verify that user can see an indicator of databases that are added manually and not opened yet
         await myRedisDatabasePage.verifyDatabaseStatusIsVisible(ossStandaloneConfig.databaseName);

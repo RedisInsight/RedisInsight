@@ -1,15 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { remove } from 'lodash'
+import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
-import { getApiErrorMessage, isStatusSuccessful, } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, } from 'uiSrc/utils'
 import { apiService } from 'uiSrc/services'
 import {
   EnablementAreaComponent,
+  IBulkActionOverview,
   IEnablementAreaItem,
-  StateWorkbenchEnablementArea,
+  StateWorkbenchCustomTutorials,
 } from 'uiSrc/slices/interfaces'
 
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
+import { getFileNameFromPath } from 'uiSrc/utils/pathUtil'
 import { AppDispatch, RootState } from '../store'
 
 export const defaultItems: IEnablementAreaItem[] = [
@@ -21,11 +25,14 @@ export const defaultItems: IEnablementAreaItem[] = [
   }
 ]
 
-export const initialState: StateWorkbenchEnablementArea = {
+export const initialState: StateWorkbenchCustomTutorials = {
   loading: false,
   deleting: false,
   error: '',
   items: defaultItems,
+  bulkUpload: {
+    pathsInProgress: []
+  }
 }
 
 // A slice for recipes
@@ -71,11 +78,21 @@ const workbenchCustomTutorialsSlice = createSlice({
       state.deleting = false
       state.error = payload
     },
+    uploadDataBulk: (state, { payload }) => {
+      state.bulkUpload.pathsInProgress.push(payload)
+    },
+    uploadDataBulkSuccess: (state, { payload }) => {
+      remove(state.bulkUpload.pathsInProgress, (p) => p === payload)
+    },
+    uploadDataBulkFailed: (state, { payload }) => {
+      remove(state.bulkUpload.pathsInProgress, (p) => p === payload)
+    }
   }
 })
 
 // A selector
 export const workbenchCustomTutorialsSelector = (state: RootState) => state.workbench.customTutorials
+export const customTutorialsBulkUploadSelector = (state: RootState) => state.workbench.customTutorials.bulkUpload
 
 // Actions generated from the slice
 export const {
@@ -87,7 +104,10 @@ export const {
   uploadWBCustomTutorialFailure,
   deleteWbCustomTutorial,
   deleteWBCustomTutorialSuccess,
-  deleteWBCustomTutorialFailure
+  deleteWBCustomTutorialFailure,
+  uploadDataBulk,
+  uploadDataBulkSuccess,
+  uploadDataBulkFailed,
 } = workbenchCustomTutorialsSlice.actions
 
 // The reducer
@@ -105,7 +125,7 @@ export function fetchCustomTutorials(onSuccessAction?: () => void, onFailAction?
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
       dispatch(getWBCustomTutorialsFailure(errorMessage))
       onFailAction?.()
     }
@@ -134,7 +154,8 @@ export function uploadCustomTutorial(
         dispatch(uploadWBCustomTutorialSuccess(data))
         onSuccessAction?.()
       }
-    } catch (error) {
+    } catch (_error) {
+      const error = _error as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(uploadWBCustomTutorialFailure(errorMessage))
       dispatch(addErrorNotification(error))
@@ -153,9 +174,43 @@ export function deleteCustomTutorial(id: string, onSuccessAction?: () => void, o
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
       dispatch(deleteWBCustomTutorialFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as AxiosError))
+      onFailAction?.()
+    }
+  }
+}
+
+export function uploadDataBulkAction(
+  instanceId: string,
+  path: string,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(uploadDataBulk(path))
+    try {
+      const { status, data } = await apiService.post(
+        getUrl(
+          instanceId,
+          ApiEndpoints.BULK_ACTIONS_IMPORT_TUTORIAL_DATA
+        ),
+        { path },
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(uploadDataBulkSuccess(path))
+        dispatch(
+          addMessageNotification(
+            successMessages.UPLOAD_DATA_BULK(data as IBulkActionOverview, getFileNameFromPath(path))
+          )
+        )
+        onSuccessAction?.()
+      }
+    } catch (error) {
+      dispatch(uploadDataBulkFailed(path))
+      dispatch(addErrorNotification(error as AxiosError))
       onFailAction?.()
     }
   }

@@ -57,8 +57,8 @@ test
         await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);
         await browserPage.addStreamKey(streamKeyName, 'field', 'value', keysTTL[2]);
         await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value', keysTTL[2]);
-        if (await browserPage.submitTooltipBtn.exists) {
-            await t.click(browserPage.submitTooltipBtn);
+        if (await browserPage.Toast.toastSubmitBtn.exists) {
+            await t.click(browserPage.Toast.toastSubmitBtn);
         }
         await browserPage.Cli.addKeysFromCliWithDelimiter('MSET', 15);
         await t.click(browserPage.treeViewButton);

@@ -19,6 +19,7 @@ export interface ITelemetryInitEvent {
   anonymousId: string;
   sessionId: number;
   appType: string;
+  controlGroup: number;
 }
 
 @Injectable()
@@ -28,6 +29,8 @@ export class AnalyticsService {
   private sessionId: number = -1;
 
   private appType: string = 'unknown';
+
+  private controlGroup: number = -1;
 
   private analytics;
 
@@ -41,10 +44,11 @@ export class AnalyticsService {
 
   @OnEvent(AppAnalyticsEvents.Initialize)
   public initialize(payload: ITelemetryInitEvent) {
-    const { anonymousId, sessionId, appType } = payload;
+    const { anonymousId, sessionId, appType, controlGroup } = payload;
     this.sessionId = sessionId;
     this.anonymousId = anonymousId;
     this.appType = appType;
+    this.controlGroup = controlGroup;
     this.analytics = new Analytics(ANALYTICS_CONFIG.writeKey, {
       flushInterval: ANALYTICS_CONFIG.flushInterval,
     });
@@ -75,6 +79,7 @@ export class AnalyticsService {
           properties: {
             ...eventData,
             buildType: this.appType,
+            controlGroup: this.controlGroup,
           },
         });
       }

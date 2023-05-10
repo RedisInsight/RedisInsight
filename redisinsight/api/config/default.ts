@@ -202,4 +202,10 @@ export default {
     host: process.env.REDIS_STACK_DATABASE_HOST,
     port: process.env.REDIS_STACK_DATABASE_PORT,
   },
+  features_config: {
+    url: process.env.RI_FEATURES_CONFIG_URL
+      // eslint-disable-next-line max-len
+      || 'https://raw.githubusercontent.com/RedisInsight/RedisInsight/main/redisinsight/api/config/features-config.json',
+    syncInterval: parseInt(process.env.RI_FEATURES_CONFIG_SYNC_INTERVAL, 10) || 1_000 * 60 * 60 * 4, // 4h
+  },
 };

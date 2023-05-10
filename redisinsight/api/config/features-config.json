@@ -1,0 +1,17 @@
+{
+  "version": 12,
+  "features": {
+    "liveRecommendations": {
+      "version": 12,
+      "flag": true,
+      "perc": [[50, 60]],
+      "filter": [
+        {
+          "name": "eula.analytics",
+          "value": true,
+          "cond": "eq"
+        }
+      ]
+    }
+  }
+}

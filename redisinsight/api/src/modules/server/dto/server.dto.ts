@@ -54,4 +54,10 @@ export class GetServerInfoResponse {
     type: Number,
   })
   sessionId: number;
+
+  @ApiProperty({
+    description: 'Control group number for A/B testing',
+    type: Number,
+  })
+  controlGroup: number;
 }

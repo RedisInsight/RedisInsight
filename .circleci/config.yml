@@ -949,31 +949,12 @@ workflows:
           name: Build docker image
           requires:
             - Start E2E Tests
-      # build desktop app
-      # - setup-sign-certificates:
-      #     name: Setup sign certificates (stage)
-      #     requires:
-      #       - Start E2E Tests
-      # - setup-build:
-      #     name: Setup build (stage)
-      #     requires:
-      #       - Setup sign certificates (stage)
-      # - windows:
-      #     name: Build app - Windows (stage)
-      #     requires:
-      #       - Setup build (stage)
       - e2e-tests:
           name: E2ETest
           build: docker
           parallelism: 4
           requires:
             - Build docker image
-      # - e2e-exe:
-      #     name: E2ETest (exe)
-      #     parallelism: 1
-      #     report: true
-      #     requires:
-      #       - Build app - Windows (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:
@@ -1239,16 +1220,16 @@ workflows:
       - docker:
           name: Build docker image
       # build desktop app
-      # - setup-sign-certificates:
-      #     name: Setup sign certificates (stage)
-      # - setup-build:
-      #     name: Setup build (stage)
-      #     requires:
-      #       - Setup sign certificates (stage)
-      # - linux:
-      #     name: Build app - Linux (stage)
-      #     requires:
-      #       - Setup build (stage)
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+      - setup-build:
+          name: Setup build (stage)
+          requires:
+            - Setup sign certificates (stage)
+      - linux:
+          name: Build app - Linux (stage)
+          requires:
+            - Setup build (stage)
       #  - windows:
       #      name: Build app - Windows (stage)
       #      requires:
@@ -1273,12 +1254,12 @@ workflows:
           requires:
             - Build docker image
       # e2e desktop tests on AppImage build
-      # - e2e-app-image:
-      #     name: E2ETest (AppImage) - Nightly
-      #     parallelism: 4
-      #     report: true
-      #     requires:
-      #       - Build app - Linux (stage)
+      - e2e-app-image:
+          name: E2ETest (AppImage) - Nightly
+          parallelism: 2
+          report: true
+          requires:
+            - Build app - Linux (stage)
       # # e2e desktop tests on exe build
       # - e2e-exe:
       #     name: E2ETest (exe) - Nightly

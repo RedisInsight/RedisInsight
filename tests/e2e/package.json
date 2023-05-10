@@ -2,6 +2,7 @@
   "name": "redisinsight",
   "version": "1.0.0",
   "description": "End-to-end tests",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "test:live": "testcafe --live chrome ",
@@ -12,13 +13,13 @@
     "build:web": "yarn --cwd ../../ build:web",
     "redis:last": "docker run --name redis-last-version -p 7777:6379 -d redislabs/redismod",
     "start:app": "cross-env SERVER_STATIC_CONTENT=true yarn start:api",
-    "test:chrome": "testcafe --compiler-options typescript.configPath=tsconfig.testcafe.json --cache --concurrency 1 chrome tests/ -r html:./report/report.html,spec -e -s takeOnFails=true,path=report/screenshots,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png",
+    "test:chrome": "testcafe --compiler-options typescript.configPath=tsconfig.testcafe.json --cache --concurrency 1 chrome tests/ -r html:./report/report.html,spec -e -s takeOnFails=true,path=report/screenshots/,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png",
     "test:chrome:ci": "ts-node ./web.runner.ts",
     "test": "yarn test:chrome",
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx",
     "test:desktop:ci": "ts-node ./desktop.runner.ts",
     "test:desktop:ci:win": "ts-node ./desktop.runner.win.ts",
-    "test:desktop": "testcafe electron tests/ --compiler-options typescript.configPath=tsconfig.testcafe.json --browser-init-timeout 180000 -e -r html:./report/desktop-report.html,spec -s takeOnFails=true,path=report/screenshots,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png"
+    "test:desktop": "testcafe electron tests/ --compiler-options typescript.configPath=tsconfig.testcafe.json --browser-init-timeout 180000 -e -r html:./report/desktop-report.html,spec -s takeOnFails=true,path=report/screenshots/,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png"
   },
   "keywords": [],
   "author": "",
@@ -52,6 +53,6 @@
     "testcafe-reporter-json": "2.2.0",
     "testcafe-reporter-spec": "2.1.1",
     "ts-node": "^10.5.0",
-    "typescript": "5.0.4"
+    "typescript": "4.1.5"
   }
 }

@@ -58,8 +58,8 @@ test
         await t.switchToMainWindow();
         await workbenchPage.selectViewTypeText();
         await t.expect(workbenchPage.queryTextResult.exists).ok('The result in text view is not displayed');
-        // Verify that when there is nothing to visualize in RedisGraph, user can see: No data to visualize.{results from the text view}
-        await t.expect(workbenchPage.queryTextResult.textContent).eql(graphModeText, 'Text of command in Graph mode is not the same as in Text mode');
+        // Verify that when there is nothing to visualize in RedisGraph, user can see just text result
+        await t.expect(workbenchPage.queryTextResult.textContent).notEql(graphModeText, 'Text of command in Graph mode is the same as in Text mode');
     });
 test('Verify that user can switches between Chart and Text for TimeSeries command and see results corresponding to their views', async t => {
     // Send TimeSeries command

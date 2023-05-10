@@ -23,7 +23,7 @@ export class FeatureService {
   async list() {
     this.logger.log('Getting features list');
 
-    const result = {};
+    const features = {};
 
     const featuresFromDatabase = await this.repository.list();
 
@@ -32,12 +32,12 @@ export class FeatureService {
       if (feature.storage === FeatureStorage.Database) {
         const dbFeature = find(featuresFromDatabase, { name: feature.name });
         if (dbFeature) {
-          result[feature.name] = { flag: dbFeature.flag };
+          features[feature.name] = { flag: dbFeature.flag };
         }
       }
     });
 
-    return result;
+    return { features };
   }
 
   /**

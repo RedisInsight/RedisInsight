@@ -18,6 +18,8 @@ import {
   GraphVisualizationStrategy,
   UseSmallerKeysStrategy,
   AvoidLuaScriptsStrategy,
+  BigStringStrategy,
+  CompressionForListStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 @Injectable()
@@ -43,6 +45,8 @@ export class RecommendationProvider {
     this.strategies.set(RECOMMENDATION_NAMES.GRAPH_VISUALIZATION, new GraphVisualizationStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.USE_SMALLER_KEYS, new UseSmallerKeysStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.LUA_SCRIPT, new AvoidLuaScriptsStrategy());
+    this.strategies.set(RECOMMENDATION_NAMES.BIG_STRINGS, new BigStringStrategy());
+    this.strategies.set(RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST, new CompressionForListStrategy());
   }
 
   getStrategy(type: string): IRecommendationStrategy {

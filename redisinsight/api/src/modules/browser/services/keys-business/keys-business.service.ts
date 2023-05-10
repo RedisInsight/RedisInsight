@@ -227,6 +227,16 @@ export class KeysBusinessService {
         RECOMMENDATION_NAMES.BIG_SETS,
         result,
       );
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.BIG_STRINGS,
+        result,
+      );
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
+        result,
+      );
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error('Failed to get key info.', error);

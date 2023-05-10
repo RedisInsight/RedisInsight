@@ -4,15 +4,16 @@ import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 
-const minNumberOfCachedScripts = 10;
+const maxConnectedClients = 100;
 
-export class AvoidLuaScriptsStrategy extends AbstractRecommendationStrategy {
+export class BigAmountConnectedClientsStrategy extends AbstractRecommendationStrategy {
   /**
-   * Check lua script recommendation
+   * Check big amount of connected clients recommendation
    * @param info
    */
 
   async isRecommendationReached(info: RedisDatabaseInfoResponse): Promise<IDatabaseRecommendationStrategyData> {
-    return { isReached: info.cashedScripts > minNumberOfCachedScripts };
+    const nodeInfo = info.nodes?.length ? info.nodes[0] : info;
+    return { isReached: nodeInfo.connectedClients > maxConnectedClients };
   }
 }

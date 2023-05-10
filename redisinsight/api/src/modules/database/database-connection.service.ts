@@ -72,6 +72,11 @@ export class DatabaseConnectionService {
       RECOMMENDATION_NAMES.LUA_SCRIPT,
       generalInfo,
     );
+    this.recommendationService.check(
+      clientMetadata,
+      RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+      generalInfo,
+    );
 
     this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
   }

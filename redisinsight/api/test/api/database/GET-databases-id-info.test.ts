@@ -25,7 +25,7 @@ const responseSchema = Joi.object().keys({
     connectedClients: Joi.number().integer().required(),
     uptimeInSeconds: Joi.number().integer().required(),
     hitRatio: Joi.number().required(),
-    cashedScripts: Joi.number().required(),
+    cashedScripts: Joi.number(),
     server: Joi.object().required(),
   })),
 }).required().strict();

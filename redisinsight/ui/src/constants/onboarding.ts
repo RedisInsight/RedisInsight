@@ -6,7 +6,7 @@ enum OnboardingSteps {
   BrowserCLI,
   BrowserCommandHelper,
   BrowserProfiler,
-  BrowserInsights,
+  // BrowserInsights,
   WorkbenchPage,
   WorkbenchEnablementGuide,
   WorkbenchCustomTutorials,

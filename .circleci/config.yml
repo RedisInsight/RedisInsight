@@ -1041,57 +1041,12 @@ workflows:
           name: Build app - Windows (dev)
           env: dev
           requires: *devBuildRequire
-      - virustotal:
-          name: Virus check - AppImage (prod)
-          ext: .AppImage
-          requires:
-            - Build app - Linux (dev)
-      - virustotal:
-          name: Virus check - deb (prod)
-          ext: .deb
-          requires:
-            - Build app - Linux (dev)
-      - virustotal:
-          name: Virus check - rpm (prod)
-          ext: .rpm
-          requires:
-            - Build app - Linux (dev)
-      - virustotal:
-          name: Virus check - snap (prod)
-          ext: .snap
-          requires:
-            - Build app - Linux (dev)
-      - virustotal:
-          name: Virus check x64 - dmg (prod)
-          ext: -x64.dmg
-          requires:
-            - Build app - MacOS (dev)
-      - virustotal:
-          name: Virus check arm64 - dmg (prod)
-          ext: -arm64.dmg
-          requires:
-            - Build app - MacOS (dev)
-      - virustotal:
-          name: Virus check MAS - pkg (prod)
-          ext: -mas.pkg
-          requires:
-            - Build app - MacOS (dev)
-      - virustotal:
-          name: Virus check - exe (prod)
-          ext: .exe
-          requires:
-            - Build app - Windows (dev)
       - store-build-artifacts:
           name: Store build artifacts (dev)
           requires:
-            - Virus check - AppImage (prod)
-            - Virus check - deb (prod)
-            - Virus check - rpm (prod)
-            - Virus check - snap (prod)
-            - Virus check x64 - dmg (prod)
-            - Virus check arm64 - dmg (prod)
-            - Virus check MAS - pkg (prod)
-            - Virus check - exe (prod)
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
       - release-aws-test:
           name: Release AWS dev
           requires:

@@ -53,6 +53,7 @@ aliases:
         #! https://developers.virustotal.com/reference/url
         urlBytes=$(echo -n "$URL" | base64)
         urlId=$(echo -n "$urlBytes" | tr -d '=')
+        echo "UrlId: ${urlId}"
 
         analysedId=$(curl -sq -XPOST "https://www.virustotal.com/api/v3/urls/${urlId}/analyse" -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data.id')
         if [ $analysedId == "null" ]; then

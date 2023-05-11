@@ -91,7 +91,7 @@ aliases:
         echo "Results:"
         echo "analazedHarmless: ${analazedHarmless}, analazedMalicious:  ${analazedMalicious}, analazedSuspicious: ${analazedSuspicious}"
 
-        if [ [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
+        if [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
           echo 'Found dangers'; exit 1;
         fi
 

@@ -1349,6 +1349,32 @@ workflows:
           report: true
           requires:
             - Build app - Linux (stage)
+
+      # - virustotal-url:
+      #     name: Virus check - AppImage (prod)
+      #     fileName: RedisInsight-v2-linux-x86_64.AppImage
+      # - virustotal-url:
+      #     name: Virus check - deb (prod)
+      #     fileName: RedisInsight-v2-linux-amd64.deb
+      # - virustotal-url:
+      #     name: Virus check - rpm (prod)
+      #     fileName: RedisInsight-v2-linux-x86_64.rpm
+      # - virustotal-url:
+      #     name: Virus check - snap (prod)
+      #     fileName: RedisInsight-v2-linux-amd64.snap
+      # - virustotal-url:
+      #     name: Virus check x64 - dmg (prod)
+      #     fileName: RedisInsight-v2-mac-x64.dmg
+      # - virustotal-url:
+      #     name: Virus check arm64 - dmg (prod)
+      #     fileName: RedisInsight-v2-mac-arm64.dmg
+      # - virustotal-url:
+      #     name: Virus check MAS - pkg (prod)
+      #     fileName: RedisInsight-mac-universal-mas.pkg
+      # - virustotal-url:
+      #     name: Virus check - exe (prod)
+      #     fileName: RedisInsight-v2-win-installer.exe
+
       # # e2e desktop tests on exe build
       # - e2e-exe:
       #     name: E2ETest (exe) - Nightly

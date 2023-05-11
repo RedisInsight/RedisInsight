@@ -15,7 +15,6 @@ import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
 import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
-import { Recommendation } from 'apiSrc/modules/database-analysis/models/recommendation'
 
 import styles from './styles.module.scss'
 
@@ -87,10 +86,10 @@ const renderContentElement = ({ id, type, value: jsonValue, parameter }: IConten
       )
     case 'pre':
       return (
-        <EuiTextColor data-testid={`pre-${id}`} key={id} color="subdued">
-          <pre className={cx(styles.span, styles.text)}>
+        <EuiTextColor data-testid={`pre-${id}`} key={id} color="subdued" className={cx(styles.span, styles.text, styles.code)}>
+          <code>
             {value}
-          </pre>
+          </code>
         </EuiTextColor>
       )
     case 'span':
@@ -116,6 +115,7 @@ export const renderContent = (elements: IContentElement[], params: any) => (
   elements?.map((item) => renderContentElement(item, params)))
 
 export const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [
+  ({ name }) => name !== 'searchString',
   ({ name }) => name !== 'searchJSON',
   ({ name }) => name !== 'searchIndexes',
   ({ name }) => recommendationsContent[name]?.redisStack,

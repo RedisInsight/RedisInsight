@@ -8,9 +8,3 @@ export enum SearchVisualizationCommands {
   TS_MRANGE = "TS.MRANGE",
 }
 
-export enum GraphVisualizationCommands {
-  GRAPH_QUERY = "GRAPH.QUERY",
-  GRAPH_RO_QUERY = "GRAPH.RO_QUERY",
-  GRAPH_EXPLAIN = "GRAPH.EXPLAIN",
-  GRAPH_PROFILE = "GRAPH.PROFILE",
-}

@@ -5,7 +5,6 @@ import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseService } from 'src/modules/database/database.service';
 import {
   DefaultRecommendationStrategy,
-  SearchStringStrategy,
   RedisVersionStrategy,
   SearchJSONStrategy,
   BigSetStrategy,
@@ -15,7 +14,6 @@ import {
   ShardHashStrategy,
   StringToJsonStrategy,
   SearchVisualizationStrategy,
-  GraphVisualizationStrategy,
   UseSmallerKeysStrategy,
   AvoidLuaScriptsStrategy,
   BigStringStrategy,
@@ -33,7 +31,6 @@ export class RecommendationProvider {
     databaseService: DatabaseService,
   ) {
     this.strategies.set('default', new DefaultRecommendationStrategy());
-    this.strategies.set(RECOMMENDATION_NAMES.SEARCH_STRING, new SearchStringStrategy(databaseService));
     this.strategies.set(RECOMMENDATION_NAMES.REDIS_VERSION, new RedisVersionStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.SEARCH_JSON, new SearchJSONStrategy(databaseService));
     this.strategies.set(RECOMMENDATION_NAMES.BIG_SETS, new BigSetStrategy());
@@ -43,7 +40,6 @@ export class RecommendationProvider {
     this.strategies.set(RECOMMENDATION_NAMES.BIG_HASHES, new ShardHashStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.STRING_TO_JSON, new StringToJsonStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.SEARCH_VISUALIZATION, new SearchVisualizationStrategy());
-    this.strategies.set(RECOMMENDATION_NAMES.GRAPH_VISUALIZATION, new GraphVisualizationStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.USE_SMALLER_KEYS, new UseSmallerKeysStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.LUA_SCRIPT, new AvoidLuaScriptsStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.BIG_STRINGS, new BigStringStrategy());

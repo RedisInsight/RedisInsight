@@ -148,11 +148,6 @@ export class CliBusinessService {
         RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
         command,
       );
-      this.recommendationService.check(
-        clientMetadata,
-        RECOMMENDATION_NAMES.GRAPH_VISUALIZATION,
-        command,
-      );
 
       const reply = await this.cliTool.execCommand(clientMetadata, command, args, replyEncoding);
 
@@ -244,11 +239,6 @@ export class CliBusinessService {
         RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
         command,
       );
-      this.recommendationService.check(
-        clientMetadata,
-        RECOMMENDATION_NAMES.GRAPH_VISUALIZATION,
-        command,
-      );
 
       const result = await this.cliTool.execCommandForNodes(
         clientMetadata,
@@ -322,11 +312,6 @@ export class CliBusinessService {
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
-        command,
-      );
-      this.recommendationService.check(
-        clientMetadata,
-        RECOMMENDATION_NAMES.GRAPH_VISUALIZATION,
         command,
       );
       let result = await this.cliTool.execCommandForNode(

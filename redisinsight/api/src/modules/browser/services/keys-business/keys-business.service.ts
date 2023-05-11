@@ -186,11 +186,6 @@ export class KeysBusinessService {
       const result = await scanner.getKeysInfo(client, dto.keys, dto.type);
       this.recommendationService.check(
         clientMetadata,
-        RECOMMENDATION_NAMES.SEARCH_STRING,
-        { keys: result, client, databaseId: clientMetadata.databaseId },
-      );
-      this.recommendationService.check(
-        clientMetadata,
         RECOMMENDATION_NAMES.SEARCH_JSON,
         { keys: result, client, databaseId: clientMetadata.databaseId },
       );

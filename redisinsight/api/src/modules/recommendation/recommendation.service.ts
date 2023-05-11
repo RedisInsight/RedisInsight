@@ -119,19 +119,11 @@ export class RecommendationService {
         () => null,
       ],
       [
-        RECOMMENDATION_NAMES.SEARCH_STRING,
-        async () => await this.recommendationProvider.determineSearchStringRecommendation(client, keys),
-      ],
-      [
         RECOMMENDATION_NAMES.SEARCH_JSON,
         async () => await this.recommendationProvider.determineSearchJSONRecommendation(client, keys),
       ],
       [
         RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
-        () => null,
-      ],
-      [
-        RECOMMENDATION_NAMES.GRAPH_VISUALIZATION,
         () => null,
       ],
     ]);

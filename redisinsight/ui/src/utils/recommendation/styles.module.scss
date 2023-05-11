@@ -1,0 +1,17 @@
+.text {
+  font: normal normal normal 14px/24px Graphik, sans-serif;
+}
+
+.span {
+  display: inline;
+}
+
+.code {
+  background-color: var(--euiColorLightestShade);
+  border-radius: 4px;
+  padding: 3px 6px;
+
+  code {
+    font-size: inherit !important;
+  }
+}

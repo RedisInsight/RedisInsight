@@ -228,14 +228,14 @@ describe('RecommendationProvider', () => {
   describe('determineCombineSmallStringsToHashesRecommendation', () => {
     it('should not return combineSmallStringsToHashes recommendation', async () => {
       const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(
-        new Array(49).fill(mockSmallStringKey)
-        );
+        new Array(49).fill(mockSmallStringKey),
+      );
       expect(smallStringRecommendation).toEqual(null);
     });
     it('should not return combineSmallStringsToHashes recommendation when strings are big', async () => {
       const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(
-        new Array(50).fill(mockBigStringKey)
-        );
+        new Array(50).fill(mockBigStringKey),
+      );
       expect(smallStringRecommendation).toEqual(null);
     });
     it('should return combineSmallStringsToHashes recommendation', async () => {

@@ -13,11 +13,13 @@ import { Key } from 'src/modules/database-analysis/models';
 import { RedisString } from 'src/common/constants';
 
 const minNumberOfCachedScripts = 10;
-const maxHashLength = 5000;
+const maxHashLength = 5_000;
 const maxStringMemory = 200;
 const maxDatabaseTotal = 1_000_000;
-const maxCompressHashLength = 1000;
-const maxListLength = 1000;
+const maxCompressHashLength = 1_000;
+const maxListLength = 1_000;
+const maxHashCount = 50;
+const minHashLength = 2;
 const maxSetLength = 100_000;
 const maxConnectedClients = 100;
 const maxRediSearchStringMemory = 512 * 1024;
@@ -345,25 +347,17 @@ export class RecommendationProvider {
 
   /**
    * Check search string recommendation
-   * @param redisClient
    * @param keys
+   * @param indexes
    */
   async determineSearchStringRecommendation(
-    redisClient: Redis | Cluster,
     keys: Key[],
+    indexes?: string[],
   ): Promise<Recommendation> {
     try {
-      try {
-        const indexes = await redisClient.sendCommand(
-          new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
-        ) as any[];
-        if (indexes.length) {
-          return null;
-        }
-      } catch (err) {
-        // Ignore errors
+      if (indexes?.length) {
+        return null;
       }
-
       const bigString = keys
         .find((key) => key.type === RedisDataType.String && key.memory > maxRediSearchStringMemory);
 
@@ -376,25 +370,17 @@ export class RecommendationProvider {
 
   /**
    * Check search JSON recommendation
-   * @param redisClient
    * @param keys
+   * @param indexes
    */
   async determineSearchJSONRecommendation(
-    redisClient: Redis | Cluster,
     keys: Key[],
+    indexes?: string[],
   ): Promise<Recommendation> {
     try {
-      try {
-        const indexes = await redisClient.sendCommand(
-          new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
-        ) as any[];
-        if (indexes.length) {
-          return null;
-        }
-      } catch (err) {
-        // Ignore errors
+      if (indexes?.length) {
+        return null;
       }
-
       const jsonKey = keys.find((key) => key.type === RedisDataType.JSON);
 
       return jsonKey ? { name: RECOMMENDATION_NAMES.SEARCH_JSON, params: { keys: [jsonKey.name] } } : null;
@@ -448,6 +434,33 @@ export class RecommendationProvider {
       return nopassUser ? { name: RECOMMENDATION_NAMES.SET_PASSWORD } : null;
     } catch (err) {
       this.logger.error('Can not determine set password recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check search hash recommendation
+   * @param keys
+   * @param indexes
+   */
+
+  async determineSearchHashRecommendation(
+    keys: Key[],
+    indexes?: string[],
+  ): Promise<Recommendation> {
+    try {
+      if (indexes?.length) {
+        return null;
+      }
+      const hashKeys = keys.filter(({ type, length }) =>
+        type === RedisDataType.Hash && length > minHashLength
+      );
+
+      return hashKeys.length > maxHashCount
+        ? { name: RECOMMENDATION_NAMES.SEARCH_HASH }
+        : null;
+    } catch (err) {
+      this.logger.error('Can not determine search hash recommendation', err);
       return null;
     }
   }

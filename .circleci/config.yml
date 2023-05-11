@@ -49,13 +49,8 @@ aliases:
       command: &virusurlscan |
         echo "Url to check: ${URL}"
 
-        #! urlId generator
-        #! https://developers.virustotal.com/reference/url
-        urlBytes=$(echo -n "$URL" | base64)
-        urlId=$(echo -n "$urlBytes" | tr -d '=' | tr -d '\n')
-        echo "UrlId: ${urlId}"
+        analysedId=$(curl -sq -XPOST https://www.virustotal.com/api/v3/urls -H "x-apikey: $VIRUSTOTAL_API_KEY" --form url=${URL} | jq -r '.data.id')
 
-        analysedId=$(curl -sq -XPOST "https://www.virustotal.com/api/v3/urls/${urlId}/analyse" -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data.id')
         if [ $analysedId == "null" ]; then
           echo 'Status is null, something went wrong'; exit 1;
         fi

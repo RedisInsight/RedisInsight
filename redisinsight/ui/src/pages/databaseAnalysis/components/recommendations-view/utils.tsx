@@ -116,7 +116,6 @@ export const renderContent = (elements: IContentElement[], params: any) => (
   elements?.map((item) => renderContentElement(item, params)))
 
 export const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [
-  ({ name }) => name !== 'searchString',
   ({ name }) => name !== 'searchJSON',
   ({ name }) => name !== 'searchIndexes',
   ({ name }) => recommendationsContent[name]?.redisStack,

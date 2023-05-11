@@ -5,7 +5,6 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { mockDatabaseService } from 'src/__mocks__';
 import {
   DefaultRecommendationStrategy,
-  SearchStringStrategy,
   RedisVersionStrategy,
   SearchJSONStrategy,
   BigSetStrategy,
@@ -41,7 +40,6 @@ describe('RecommendationProvider', () => {
 
   describe('getStrategy', () => {
     [
-      [RECOMMENDATION_NAMES.SEARCH_STRING, new SearchStringStrategy(databaseService)],
       [RECOMMENDATION_NAMES.SEARCH_JSON, new SearchJSONStrategy(databaseService)],
       [RECOMMENDATION_NAMES.REDIS_VERSION, new RedisVersionStrategy()],
       [RECOMMENDATION_NAMES.BIG_SETS, new BigSetStrategy()],

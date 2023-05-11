@@ -22,7 +22,6 @@ const maxHashCount = 50;
 const minHashLength = 2;
 const maxSetLength = 100_000;
 const maxConnectedClients = 100;
-const maxRediSearchStringMemory = 512 * 1024;
 const bigStringMemory = 5_000_000;
 const sortedSetCountForCheck = 100;
 const minRedisVersion = '6';
@@ -341,29 +340,6 @@ export class RecommendationProvider {
       return timeSeriesKey ? { name: RECOMMENDATION_NAMES.RTS, params: { keys: [timeSeriesKey] } } : null;
     } catch (err) {
       this.logger.error('Can not determine RTS recommendation', err);
-      return null;
-    }
-  }
-
-  /**
-   * Check search string recommendation
-   * @param keys
-   * @param indexes
-   */
-  async determineSearchStringRecommendation(
-    keys: Key[],
-    indexes?: string[],
-  ): Promise<Recommendation> {
-    try {
-      if (indexes?.length) {
-        return null;
-      }
-      const bigString = keys
-        .find((key) => key.type === RedisDataType.String && key.memory > maxRediSearchStringMemory);
-
-      return bigString ? { name: RECOMMENDATION_NAMES.SEARCH_STRING, params: { keys: [bigString.name] } } : null;
-    } catch (err) {
-      this.logger.error('Can not determine search string recommendation', err);
       return null;
     }
   }

@@ -631,46 +631,6 @@ describe('RecommendationProvider', () => {
       });
   });
 
-  describe('determineSearchStringRecommendation', () => {
-    it('should not return searchString', async () => {
-      const searchStringRecommendation = await service
-        .determineSearchStringRecommendation(mockKeys, mockFTListResponse_2);
-      expect(searchStringRecommendation).toEqual(null);
-    });
-
-    it('should return searchString recommendation when there is big string key', async () => {
-      const searchStringRecommendation = await service
-        .determineSearchStringRecommendation([...mockKeys, mockHugeStringKey1], mockFTListResponse_1);
-      expect(searchStringRecommendation)
-        .toEqual({
-          name: RECOMMENDATION_NAMES.SEARCH_STRING,
-          params: { keys: [mockHugeStringKey1.name] },
-        });
-    });
-
-    it('should return not searchString recommendation when there is no big string key', async () => {
-      const searchStringRecommendation = await service
-        .determineSearchStringRecommendation(mockKeys, mockFTListResponse_1);
-      expect(searchStringRecommendation)
-        .toEqual(null);
-    });
-
-    it('should return searchJSON recommendation when indexes is undefined',
-      async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-          .mockRejectedValue('some error');
-
-        const searchStringRecommendation = await service
-          .determineSearchStringRecommendation([mockHugeStringKey1], undefined);
-        expect(searchStringRecommendation)
-          .toEqual({
-            name: RECOMMENDATION_NAMES.SEARCH_STRING,
-            params: { keys: [mockHugeStringKey1.name] },
-          });
-      });
-  });
-
   describe('determineSearchHashRecommendation', () => {
     it('should return searchHash recommendation', async () => {
       const bigHashesRecommendation = await service.determineSearchHashRecommendation(mockSearchHashes);

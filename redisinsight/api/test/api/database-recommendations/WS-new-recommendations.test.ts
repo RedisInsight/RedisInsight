@@ -25,9 +25,10 @@ describe('WS new recommendations', () => {
     rte.data.truncate();
   });
 
-  it('Should notify about new string recommendations', async () => {
-    // generate big key
-    await rte.data.executeCommand('set', constants.TEST_STRING_KEY_1, randomBytes(512 * 1024).toString('hex'))
+  it('Should notify about new big set recommendations', async () => {
+    // generate big set
+    const NUMBERS_OF_SET_MEMBERS = 100_001;
+    await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
 
     // Initialize sync by connecting
     const client = await getClient();
@@ -36,16 +37,16 @@ describe('WS new recommendations', () => {
       client.on(`recommendation:${constants.TEST_INSTANCE_ID}`, res);
 
       validateApiCall({
-        endpoint: () => request(server).post(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/keys/get-metadata`),
+        endpoint: () => request(server).post(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/keys/get-info`),
         data: {
-          keys: [constants.TEST_STRING_KEY_1],
+          keys: [constants.TEST_SET_KEY_1],
         },
       });
     })
 
 
     expect(recommendationsResponse.recommendations.length).to.eq(1);
-    expect(recommendationsResponse.recommendations[0].name).to.eq('searchString');
+    expect(recommendationsResponse.recommendations[0].name).to.eq('bigSets');
     expect(recommendationsResponse.recommendations[0].databaseId).to.eq(constants.TEST_INSTANCE_ID);
     expect(recommendationsResponse.recommendations[0].read).to.eq(false);
     expect(recommendationsResponse.recommendations[0].disabled).to.eq(false);

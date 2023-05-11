@@ -537,39 +537,6 @@
     ],
     "badges": ["upgrade"]
   },
-  "searchString": {
-    "id": "searchString",
-    "title": "Optimize your query and search experience",
-    "redisStack": true,
-    "tutorial": "/redis_stack/working_with_json.md",
-    "content": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "Storing large strings (> 512 KB) could consume more resources and time to process, manipulate, update, and retrieve them. Consider representing your data using hashes or use RedisJSON to store your JSON documents to improve performance."
-      },
-      {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "3",
-        "type": "paragraph",
-        "value": "Additionally, if working with hashes or JSONs, you can use RediSearch, which helps to address your query needs and supports a better development experience when dealing with complex data scenarios."
-      },
-      {
-        "id": "4",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "5",
-        "type": "paragraph",
-        "value": "Learn more about how JSON support and Search capability can help you via Tutorials in Workbench."
-      }
-    ]
-  },
   "searchJSON": {
     "id": "searchJSON",
     "title": "Query and search JSON documents",
@@ -668,18 +635,6 @@
         "id": "1",
         "type": "paragraph",
         "value": "When working with query and search capabilities, or if working with time series data, try running commands in Workbench - our advanced command-line interface that provides data visualizations to explore, analyze, and investigate command execution results."
-      }
-    ]
-  },
-  "graphVisualization": {
-    "id": "graphVisualization",
-    "title": "Try graph visualizations in Workbench",
-    "tutorial": "",
-    "content": [
-      {
-        "id": "1",
-        "type": "paragraph",
-        "value": "When working with graph capabilities, try running commands in Workbench - our advanced command-line interface to leverage Cypher support and enjoy data visualizations to explore, analyze, and investigate command execution results."
       }
     ]
   },

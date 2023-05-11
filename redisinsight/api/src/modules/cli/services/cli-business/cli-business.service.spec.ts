@@ -423,12 +423,7 @@ describe('CliBusinessService', () => {
         RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
         command,
       );
-      expect(recommendationService.check).toBeCalledWith(
-        mockCliClientMetadata,
-        RECOMMENDATION_NAMES.GRAPH_VISUALIZATION,
-        command,
-      );
-      expect(recommendationService.check).toBeCalledTimes(2);
+      expect(recommendationService.check).toBeCalledTimes(1);
     });
   });
 
@@ -697,13 +692,8 @@ describe('CliBusinessService', () => {
         RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
         command,
       );
-      expect(recommendationService.check).toBeCalledWith(
-        mockCliClientMetadata,
-        RECOMMENDATION_NAMES.GRAPH_VISUALIZATION,
-        command,
-      );
 
-      expect(recommendationService.check).toBeCalledTimes(2);
+      expect(recommendationService.check).toBeCalledTimes(1);
     });
   });
 
@@ -1090,13 +1080,8 @@ describe('CliBusinessService', () => {
         RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
         command,
       );
-      expect(recommendationService.check).toBeCalledWith(
-        mockCliClientMetadata,
-        RECOMMENDATION_NAMES.GRAPH_VISUALIZATION,
-        command,
-      );
 
-      expect(recommendationService.check).toBeCalledTimes(2);
+      expect(recommendationService.check).toBeCalledTimes(1);
     });
   });
 });

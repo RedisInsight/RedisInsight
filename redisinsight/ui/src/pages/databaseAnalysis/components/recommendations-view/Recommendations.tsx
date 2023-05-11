@@ -160,7 +160,11 @@ const Recommendations = () => {
             badges = [],
             redisStack = false,
             tutorial,
-          } = recommendationsContent[name]
+          } = recommendationsContent[name] || {}
+
+          if (!(name in recommendationsContent)) {
+            return null
+          }
 
           return (
             <div key={id} className={styles.recommendation} data-testid={`${id}-recommendation`}>

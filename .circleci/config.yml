@@ -52,7 +52,8 @@ aliases:
         #! urlId generator
         #! https://developers.virustotal.com/reference/url
         urlBytes=$(echo -n "$URL" | base64)
-        urlId=$(echo -n "$urlBytes" | tr -d '=')
+        urlId=$(echo -n "$urlBytes" | tr -d '=' | tr -d '\n')
+        echo "UrlId: ${urlId}"
 
         analysedId=$(curl -sq -XPOST "https://www.virustotal.com/api/v3/urls/${urlId}/analyse" -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data.id')
         if [ $analysedId == "null" ]; then
@@ -95,7 +96,7 @@ aliases:
         echo "Results:"
         echo "analazedHarmless: ${analazedHarmless}, analazedMalicious:  ${analazedMalicious}, analazedSuspicious: ${analazedSuspicious}"
 
-        if [ "$analazedHarmless" != "0" ] || [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
+        if [ [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
           echo 'Found dangers'; exit 1;
         fi
 
@@ -1062,19 +1063,19 @@ workflows:
           env: dev
           requires:
             - Setup sign certificates (dev)
-      - linux:
-          name: Build app - Linux (dev)
-          env: dev
-          requires: &devBuildRequire
-            - Setup build (dev)
-      - macosx:
-          name: Build app - MacOS (dev)
-          env: dev
-          requires: *devBuildRequire
-      - windows:
-          name: Build app - Windows (dev)
-          env: dev
-          requires: *devBuildRequire
+      # - linux:
+      #     name: Build app - Linux (dev)
+      #     env: dev
+      #     requires: &devBuildRequire
+      #       - Setup build (dev)
+      # - macosx:
+      #     name: Build app - MacOS (dev)
+      #     env: dev
+      #     requires: *devBuildRequire
+      # - windows:
+      #     name: Build app - Windows (dev)
+      #     env: dev
+      #     requires: *devBuildRequire
 
       - virustotal-url:
           name: Virus check - AppImage (prod)

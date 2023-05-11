@@ -37,32 +37,6 @@ const mockRedisAclListResponse_2: string[] = [
 const mockFTListResponse_1 = [];
 const mockFTListResponse_2 = ['idx'];
 
-const generateRTSRecommendationTests = [
-  { input: ['0', ['123', 123]], expected: null },
-  { input: ['0', ['1234567891', 3]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['1234567891', 1234567891]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['123', 1234567891]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['123', 12345678911]], expected: null },
-  { input: ['0', ['123', 1234567891234]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['123', 12345678912345]], expected: null },
-  { input: ['0', ['123', 1234567891234567]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['12345678912345678', 1]], expected: null },
-  { input: ['0', ['1234567891234567891', 1]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['1', 1234567891.2]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['1234567891.2', 1]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['1234567891:12', 1]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['1234567891a12', 1]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['1234567891.2.2', 1]], expected: null },
-  { input: ['0', ['1234567891asd', 1]], expected: null },
-  { input: ['0', ['10-10-2020', 1]], expected: { name: RECOMMENDATION_NAMES.RTS, params: { keys: [Buffer.from('name')] } } },
-  { input: ['0', ['', 1]], expected: null },
-  { input: ['0', ['1', -12]], expected: null },
-  { input: ['0', ['1', -1234567891]], expected: null },
-  { input: ['0', ['1', -1234567891.123]], expected: null },
-  { input: ['0', ['1', -1234567891.123]], expected: null },
-  { input: ['0', ['1234567891.-123', 1]], expected: null },
-];
-
 const mockZScanResponse_1 = [
   '0',
   ['1', 1, '12345678910', 12345678910],
@@ -524,48 +498,6 @@ describe('RecommendationProvider', () => {
         const setPasswordRecommendation = await service
           .determineSetPasswordRecommendation(nodeClient);
         expect(setPasswordRecommendation).toEqual({ name: RECOMMENDATION_NAMES.SET_PASSWORD });
-      });
-  });
-
-  describe('determineRTSRecommendation', () => {
-    test.each(generateRTSRecommendationTests)('%j', async ({ input, expected }) => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'zscan' }))
-        .mockResolvedValue(input);
-
-      const RTSRecommendation = await service
-        .determineRTSRecommendation(nodeClient, mockKeys);
-      expect(RTSRecommendation).toEqual(expected);
-    });
-
-    it('should not return RTS recommendation when only 101 sorted set contain timestamp', async () => {
-      let counter = 0;
-      while (counter <= 100) {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'zscan' }))
-          .mockResolvedValueOnce(mockZScanResponse_1);
-        counter += 1;
-      }
-
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'zscan' }))
-        .mockResolvedValueOnce(mockZScanResponse_2);
-
-      const RTSRecommendation = await service
-        .determineRTSRecommendation(nodeClient, mockSortedSets);
-      expect(RTSRecommendation).toEqual(null);
-    });
-
-    it('should not return RTS recommendation when zscan command executed with error',
-      async () => {
-        resetAllWhenMocks();
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'zscan' }))
-          .mockRejectedValue('some error');
-
-        const RTSRecommendation = await service
-          .determineRTSRecommendation(nodeClient, mockKeys);
-        expect(RTSRecommendation).toEqual(null);
       });
   });
 

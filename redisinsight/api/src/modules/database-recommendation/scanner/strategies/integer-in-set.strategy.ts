@@ -5,8 +5,7 @@ import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { IntegersInSets } from 'src/modules/database-recommendation/models';
 import { getUTF8FromRedisString } from 'src/utils/cli-helper';
-
-const maxCountMembersForCheck = 50;
+import { INTEGERS_IN_SET_RECOMMENDATION_MEMBERS_FOR_CHECK } from 'src/common/constants';
 
 export class IntegersInSetStrategy extends AbstractRecommendationStrategy {
   /**
@@ -17,7 +16,7 @@ export class IntegersInSetStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     data: IntegersInSets,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    const membersForCheck = data?.members?.slice(0, maxCountMembersForCheck);
+    const membersForCheck = data?.members?.slice(0, INTEGERS_IN_SET_RECOMMENDATION_MEMBERS_FOR_CHECK);
     const isNotIntegerInSet = membersForCheck.some(
       (member) => isNaN(toNumber(getUTF8FromRedisString(member))),
     );

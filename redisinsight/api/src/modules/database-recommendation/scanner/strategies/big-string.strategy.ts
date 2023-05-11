@@ -3,8 +3,7 @@ import { AbstractRecommendationStrategy }
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/dto';
-
-const bigStringSize = 5_000_000;
+import { BIG_STRINGS_RECOMMENDATION_MEMORY } from 'src/common/constants';
 
 export class BigStringStrategy extends AbstractRecommendationStrategy {
   /**
@@ -15,7 +14,7 @@ export class BigStringStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     key: GetKeyInfoResponse,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    const isBigString = key.type === RedisDataType.String && key.size > bigStringSize;
+    const isBigString = key.type === RedisDataType.String && key.size > BIG_STRINGS_RECOMMENDATION_MEMORY;
 
     return isBigString
       ? { isReached: true, params: { keys: [key?.name] } }

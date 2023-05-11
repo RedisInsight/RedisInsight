@@ -2,8 +2,7 @@ import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
-
-const maxHashLength = 5_000;
+import { BIG_HASHES_RECOMMENDATION_LENGTH } from 'src/common/constants';
 
 export class ShardHashStrategy extends AbstractRecommendationStrategy {
   /**
@@ -14,7 +13,7 @@ export class ShardHashStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     data,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    return data.total > maxHashLength
+    return data.total > BIG_HASHES_RECOMMENDATION_LENGTH
       ? { isReached: true, params: { keys: [data.keyName] } }
       : { isReached: false };
   }

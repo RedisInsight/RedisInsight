@@ -86,6 +86,28 @@ describe('LiveTimeRecommendations', () => {
     expect(screen.getByTestId('github-repo-icon')).toBeInTheDocument()
   })
 
+  it('should render show hidden checkbox when there are some hidden', () => {
+    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockRecommendationsSelector,
+      data: { recommendations: [{ name: 'RTS', hide: true }, { name: 'setPassword' }] },
+      isContentVisible: true
+    }))
+
+    render(<LiveTimeRecommendations />)
+    expect(screen.getByTestId('checkbox-show-hidden')).toBeInTheDocument()
+  })
+
+  it('should not render show hidden checkbox when there are no any hidden', () => {
+    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockRecommendationsSelector,
+      data: { recommendations: [{ name: 'RTS', hide: false }, { name: 'setPassword' }] },
+      isContentVisible: true
+    }))
+
+    render(<LiveTimeRecommendations />)
+    expect(screen.queryByTestId('checkbox-show-hidden')).not.toBeInTheDocument()
+  })
+
   it('should send INSIGHTS_PANEL_CLOSED telemetry event', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);

@@ -19,7 +19,7 @@ import reducer, {
   updateLiveRecommendation,
   updateRecommendation,
   setTotalUnread,
-  deleteLiveRecommendations,
+  deleteLiveRecommendations, deleteRecommendations,
 } from 'uiSrc/slices/recommendations/recommendations'
 import { cleanup, initialStateDefault, mockStore, mockedStore } from 'uiSrc/utils/test-utils'
 
@@ -227,6 +227,42 @@ describe('recommendations slice', () => {
     })
   })
 
+  describe('deleteRecommendations', () => {
+    it('should properly delete recommendations', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          recommendations: [{ id: '1' }, { id: '2' }, { id: '3' }],
+          totalUnread: 0
+        },
+        loading: false,
+        error: '',
+      }
+
+      const state = {
+        ...initialState,
+        data: {
+          ...initialState.data,
+          recommendations: [{ id: '1' }, { id: '3' }],
+          totalUnread: 0
+        },
+        loading: false,
+        error: '',
+      }
+
+      // Act
+      const nextState = reducer(currentState, deleteRecommendations(['2']))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        recommendations: nextState,
+      })
+      expect(recommendationsSelector(rootState)).toEqual(state)
+    })
+  })
+
   // thunks
   describe('thunks', () => {
     describe('fetchRecommendationsAction', () => {
@@ -425,6 +461,12 @@ describe('recommendations slice', () => {
 
         // Assert
         expect(onSuccessActionMock).toBeCalledWith('')
+        const expectedActions = [
+          updateRecommendation(),
+          deleteRecommendations([mockId])
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
       })
 
       it('failed to delete recommendation', async () => {

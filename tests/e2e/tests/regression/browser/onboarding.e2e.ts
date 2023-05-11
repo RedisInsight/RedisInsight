@@ -73,10 +73,6 @@ test('Verify onboarding new user steps', async t => {
     await t.expect(browserPage.Profiler.monitorArea.visible).ok('profiler is not expanded');
     await onboardingCardsDialog.verifyStepVisible('Profiler');
     await onboardingCardsDialog.clickNextStep();
-    // verify Insights is opened
-    await t.expect(browserPage.InsightsPanel.insightsPanel.visible).ok('Insights panel is not expanded');
-    await onboardingCardsDialog.verifyStepVisible('Insights');
-    await onboardingCardsDialog.clickNextStep();
     // Verify that client list command visible when there is not any index created
     await t.expect(onboardingCardsDialog.wbOnbardingCommand.withText('CLIENT LIST').visible).ok('CLIENT LIST command is not visible');
     await t.expect(onboardingCardsDialog.copyCodeButton.visible).ok('copy code button is not visible');
@@ -87,9 +83,11 @@ test('Verify onboarding new user steps', async t => {
     await browserPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
     // click back step button
     await onboardingCardsDialog.clickBackStep();
+    // create index in order to see in FT.INFO {index} in onboarding step
+    await workBenchPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
     // verify one step before is opened
-    await t.expect(browserPage.InsightsPanel.insightsPanel.visible).ok('Insights panel is not expanded');
-    await onboardingCardsDialog.verifyStepVisible('Insights');
+    await t.expect(browserPage.Profiler.monitorArea.visible).ok('profiler is not expanded');
+    await onboardingCardsDialog.verifyStepVisible('Profiler');
     await onboardingCardsDialog.clickNextStep();
     // verify workbench page is opened
     await t.expect(onboardingCardsDialog.wbOnbardingCommand.withText(`FT.INFO ${indexName}`).visible).ok(`FT.INFO ${indexName} command is not visible`);

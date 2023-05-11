@@ -28,14 +28,33 @@ aliases:
         $filePathWithQuotes = '"{0}"' -f $filePath
         & "C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x86\signtool.exe" sign /a /sm /n "Redis Labs Inc." /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /v $FilePathWithQuotes
       shell: powershell.exe
-  scan: &scan
+  fileScan: &fileScan
     run:
-      name: Virustotal scan
-      command: &virusscan |
+      name: Virustotal file scan
+      command: &virusfilescan |
         uploadUrl=$(curl -sq -XGET https://www.virustotal.com/api/v3/files/upload_url -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data')
         uploadFile=$("/usr/bin/find" /tmp/release -name ${FILE_NAME})
         echo "File to upload: ${uploadFile}"
         analysedId=$(curl -sq -XPOST "${uploadUrl}" -H "x-apikey: $VIRUSTOTAL_API_KEY" --form file=@"${uploadFile}" | jq -r '.data.id')
+        if [ $analysedId == "null" ]; then
+          echo 'Status is null, something went wrong'; exit 1;
+        fi
+        echo "export ANALYZED_ID=${analysedId}" >> $BASH_ENV
+        echo "Virustotal Analyzed id: ${analysedId}"
+        sleep 10
+      shell: /bin/bash
+  urlScan: &urlScan
+    run:
+      name: Virustotal url scan
+      command: &virusurlscan |
+        echo "Url to check: ${URL}"
+
+        #! urlId generator
+        #! https://developers.virustotal.com/reference/url
+        urlBytes=$(echo -n "$URL" | base64)
+        urlId=$(echo -n "$urlBytes" | tr -d '=')
+
+        analysedId=$(curl -sq -XPOST "https://www.virustotal.com/api/v3/urls/${urlId}/analyse" -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data.id')
         if [ $analysedId == "null" ]; then
           echo 'Status is null, something went wrong'; exit 1;
         fi
@@ -612,6 +631,7 @@ jobs:
 
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage && yarn package:mas
             rm -rf release/mac
+            mv release/mas-universal/RedisInsight-mac-universal-mas.pkg release/RedisInsight-mac-universal-mas.pkg
           no_output_timeout: 60m
 
       - run:
@@ -625,7 +645,7 @@ jobs:
             - release/RedisInsight*.zip
             - release/RedisInsight*.dmg
             - release/RedisInsight*.dmg.blockmap
-            - release/**/*.pkg
+            - release/RedisInsight*.pkg
             - release/*-mac.yml
             - release/redisstack
   windows:
@@ -674,7 +694,7 @@ jobs:
             - release/RedisInsight*.exe
             - release/RedisInsight*.exe.blockmap
             - release/*.yml
-  virustotal:
+  virustotal-file:
     executor: linux-executor
     parameters:
       ext:
@@ -688,7 +708,21 @@ jobs:
           name: export FILE_NAME environment variable
           command: |
             echo 'export FILE_NAME="RedisInsight*<< parameters.ext >>"' >> $BASH_ENV
-      - <<: *scan
+      - <<: *fileScan
+      - <<: *validate
+  virustotal-url:
+    executor: linux-executor
+    parameters:
+      fileName:
+        description: File name
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: export URL environment variable
+          command: |
+            echo 'export URL="https://download.redisinsight.redis.com/latest/<< parameters.fileName >>"' >> $BASH_ENV
+      - <<: *urlScan
       - <<: *validate
   docker:
     executor: linux-executor
@@ -1041,6 +1075,47 @@ workflows:
           name: Build app - Windows (dev)
           env: dev
           requires: *devBuildRequire
+
+      - virustotal-url:
+          name: Virus check - AppImage (prod)
+          fileName: RedisInsight-v2-linux-x86_64.AppImage
+          # requires:
+            # - Build app - Linux (dev)
+      - virustotal-url:
+          name: Virus check - deb (prod)
+          fileName: RedisInsight-v2-linux-amd64.deb
+          # requires:
+            # - Build app - Linux (dev)
+      - virustotal-url:
+          name: Virus check - rpm (prod)
+          fileName: RedisInsight-v2-linux-x86_64.rpm
+          # requires:
+            # - Build app - Linux (dev)
+      - virustotal-url:
+          name: Virus check - snap (prod)
+          fileName: RedisInsight-v2-linux-amd64.snap
+          # requires:
+            # - Build app - Linux (dev)
+      - virustotal-url:
+          name: Virus check x64 - dmg (prod)
+          fileName: RedisInsight-v2-mac-x64.dmg
+          # requires:
+            # - Build app - MacOS (dev)
+      - virustotal-url:
+          name: Virus check arm64 - dmg (prod)
+          fileName: RedisInsight-v2-mac-arm64.dmg
+          # requires:
+            # - Build app - MacOS (dev)
+      - virustotal-url:
+          name: Virus check MAS - pkg (prod)
+          fileName: RedisInsight-mac-universal-mas.pkg
+          # requires:
+            # - Build app - MacOS (dev)
+      - virustotal-url:
+          name: Virus check - exe (prod)
+          fileName: RedisInsight-v2-win-installer.exe
+          # requires:
+            # - Build app - Windows (dev)
       - store-build-artifacts:
           name: Store build artifacts (dev)
           requires:
@@ -1159,42 +1234,42 @@ workflows:
           env: prod
           requires: *prodElectronBuildRequires
       # virus check all electron apps (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check - AppImage (prod)
           ext: .AppImage
           requires:
             - Build app - Linux (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check - deb (prod)
           ext: .deb
           requires:
             - Build app - Linux (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check - rpm (prod)
           ext: .rpm
           requires:
             - Build app - Linux (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check - snap (prod)
           ext: .snap
           requires:
             - Build app - Linux (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check x64 - dmg (prod)
           ext: -x64.dmg
           requires:
             - Build app - MacOS (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check arm64 - dmg (prod)
           ext: -arm64.dmg
           requires:
             - Build app - MacOS (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check MAS - pkg (prod)
           ext: -mas.pkg
           requires:
             - Build app - MacOS (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check - exe (prod)
           ext: .exe
           requires:

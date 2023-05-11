@@ -36,8 +36,11 @@ const mockKey = {
   length: 2,
 };
 
+const mockIndex = 'idx';
+
 const mockScanResult = {
   keys: [mockKey],
+  indexes: [mockIndex],
   progress: {
     processed: 1,
     scanned: 15,
@@ -83,6 +86,9 @@ describe('KeysScanner', () => {
       .calledWith(jasmine.arrayContaining([
         jasmine.arrayContaining(['type']),
       ])).mockReturnValue({ exec: jest.fn().mockResolvedValue([[null, 'string']]) });
+    when(nodeClient.sendCommand)
+      .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
+      .mockResolvedValue([mockIndex]);
   });
 
   describe('scan', () => {

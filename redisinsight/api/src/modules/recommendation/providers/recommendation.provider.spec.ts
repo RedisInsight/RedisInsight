@@ -37,15 +37,6 @@ const mockRedisAclListResponse_2: string[] = [
 const mockFTListResponse_1 = [];
 const mockFTListResponse_2 = ['idx'];
 
-const mockZScanResponse_1 = [
-  '0',
-  ['1', 1, '12345678910', 12345678910],
-];
-const mockZScanResponse_2 = [
-  '0',
-  ['12345678910', 12345678910, 1, 1],
-];
-
 const mockKeys = [
   {
     name: Buffer.from('name'), type: 'string', length: 10, memory: 10, ttl: -1,
@@ -109,15 +100,10 @@ const mockBigListKey = {
   name: Buffer.from('name'), type: 'list', length: 1001, memory: 10, ttl: -1,
 };
 
-const mockSortedSets = new Array(101).fill(
-  {
-    name: Buffer.from('name'), type: 'zset', length: 10, memory: 10, ttl: -1,
-  },
-);
-
 const mockSmallStringKey = {
   name: Buffer.from('name'), type: 'string', length: 10, memory: 199, ttl: -1,
 };
+const mockSearchHashes = new Array(51).fill(mockBigHashKey)
 
 describe('RecommendationProvider', () => {
   const service = new RecommendationProvider();
@@ -537,22 +523,14 @@ describe('RecommendationProvider', () => {
 
   describe('determineSearchJSONRecommendation', () => {
     it('should not return searchJSON', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_2);
-
       const searchJSONRecommendation = await service
-        .determineSearchJSONRecommendation(nodeClient, mockKeys);
+        .determineSearchJSONRecommendation(mockKeys, mockFTListResponse_2);
       expect(searchJSONRecommendation).toEqual(null);
     });
 
     it('should return searchJSON recommendation', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_1);
-
       const searchJSONRecommendation = await service
-        .determineSearchJSONRecommendation(nodeClient, mockKeys);
+        .determineSearchJSONRecommendation(mockKeys, mockFTListResponse_1);
       expect(searchJSONRecommendation)
         .toEqual({
           name: RECOMMENDATION_NAMES.SEARCH_JSON,
@@ -561,29 +539,41 @@ describe('RecommendationProvider', () => {
     });
 
     it('should return not searchJSON recommendation when there is no JSON key', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-        .mockResolvedValue(mockFTListResponse_1);
-
       const searchJSONRecommendation = await service
-        .determineSearchJSONRecommendation(nodeClient, [mockBigSet]);
+        .determineSearchJSONRecommendation( [mockBigSet], mockFTListResponse_1);
       expect(searchJSONRecommendation)
         .toEqual(null);
     });
 
-    it('should return searchJSON recommendation when command executed with error',
+    it('should return searchJSON recommendation when indexes is undefined',
       async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
-          .mockRejectedValue('some error');
-
         const searchJSONRecommendation = await service
-          .determineSearchJSONRecommendation(nodeClient, mockKeys);
+          .determineSearchJSONRecommendation(mockKeys, undefined);
         expect(searchJSONRecommendation)
           .toEqual({
             name: RECOMMENDATION_NAMES.SEARCH_JSON,
             params: { keys: [Buffer.from('name')] },
           });
       });
+  });
+
+  describe('determineSearchHashRecommendation', () => {
+    it('should return searchHash recommendation', async () => {
+      const bigHashesRecommendation = await service.determineSearchHashRecommendation(mockSearchHashes);
+      expect(bigHashesRecommendation)
+        .toEqual({ name: RECOMMENDATION_NAMES.SEARCH_HASH });
+    });
+
+    it('should not return searchHash recommendation', async () => {
+      const searchHashRecommendation = await service.determineSearchHashRecommendation(mockKeys);
+      expect(searchHashRecommendation).toEqual(null);
+    });
+
+    it('should not return searchHash recommendation if indexes exists', async () => {
+      const searchHashRecommendationWithIndex =
+        await service.determineSearchHashRecommendation(mockSearchHashes, ['idx']);
+      expect(searchHashRecommendationWithIndex).toEqual(null);
+    });
+
   });
 });

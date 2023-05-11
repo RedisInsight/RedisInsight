@@ -21,6 +21,8 @@ import {
   BIG_STRINGS_RECOMMENDATION_MEMORY,
   REDIS_VERSION_RECOMMENDATION_VERSION,
   SEARCH_INDEXES_RECOMMENDATION_KEYS_FOR_CHECK,
+  SEARCH_HASH_RECOMMENDATION_KEYS_FOR_CHECK,
+  SEARCH_HASH_RECOMMENDATION_KEYS_LENGTH,
 } from 'src/common/constants';
 
 @Injectable()
@@ -308,25 +310,17 @@ export class RecommendationProvider {
 
   /**
    * Check search JSON recommendation
-   * @param redisClient
    * @param keys
+   * @param indexes
    */
   async determineSearchJSONRecommendation(
-    redisClient: Redis | Cluster,
     keys: Key[],
+    indexes?: string[],
   ): Promise<Recommendation> {
     try {
-      try {
-        const indexes = await redisClient.sendCommand(
-          new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
-        ) as any[];
-        if (indexes.length) {
-          return null;
-        }
-      } catch (err) {
-        // Ignore errors
+      if (indexes?.length) {
+        return null;
       }
-
       const jsonKey = keys.find((key) => key.type === RedisDataType.JSON);
 
       return jsonKey ? { name: RECOMMENDATION_NAMES.SEARCH_JSON, params: { keys: [jsonKey.name] } } : null;
@@ -382,6 +376,33 @@ export class RecommendationProvider {
       return nopassUser ? { name: RECOMMENDATION_NAMES.SET_PASSWORD } : null;
     } catch (err) {
       this.logger.error('Can not determine set password recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check search hash recommendation
+   * @param keys
+   * @param indexes
+   */
+
+  async determineSearchHashRecommendation(
+    keys: Key[],
+    indexes?: string[],
+  ): Promise<Recommendation> {
+    try {
+      if (indexes?.length) {
+        return null;
+      }
+      const hashKeys = keys.filter(({ type, length }) =>
+        type === RedisDataType.Hash && length > SEARCH_HASH_RECOMMENDATION_KEYS_LENGTH
+      );
+
+      return hashKeys.length > SEARCH_HASH_RECOMMENDATION_KEYS_FOR_CHECK
+        ? { name: RECOMMENDATION_NAMES.SEARCH_HASH }
+        : null;
+    } catch (err) {
+      this.logger.error('Can not determine search hash recommendation', err);
       return null;
     }
   }

@@ -79,6 +79,8 @@ const LiveTimeRecommendations = () => {
   const dispatch = useDispatch()
   const history = useHistory()
 
+  const isShowHiddenDisplayed = recommendations.filter((r) => r.hide).length > 0
+
   useEffect(() => {
     if (!connectedInstanceId) return
 
@@ -204,7 +206,7 @@ const LiveTimeRecommendations = () => {
           position="bottom"
           content="This is the BETA version of recommendations that has limited availability. Let us know what you think about them in our GitHub repository."
         >
-          <EuiBadge className={styles.betaBadge} title={undefined}>BETA</EuiBadge>
+          <EuiBadge className={styles.betaBadge} title={undefined} data-testid="beta-label">BETA</EuiBadge>
         </EuiToolTip>
       </div>
       {!!recommendations.length && (
@@ -238,7 +240,7 @@ const LiveTimeRecommendations = () => {
               href={EXTERNAL_LINKS.githubRepo}
               target="_blank"
               style={{ marginLeft: 6 }}
-              data-test-subj="github-repo-btn"
+              data-testid="github-repo-btn"
             >
               <EuiIcon
                 className={styles.githubIcon}
@@ -250,16 +252,18 @@ const LiveTimeRecommendations = () => {
             </EuiLink>
           </div>
 
-          <EuiCheckbox
-            id="showHidden"
-            name="showHidden"
-            label="Show hidden"
-            checked={isShowHidden}
-            className={styles.hideCheckbox}
-            onChange={(e) => onChangeShowHidden(e.target.checked)}
-            data-testid="checkbox-show-hidden"
-            aria-label="checkbox show hidden"
-          />
+          {isShowHiddenDisplayed && (
+            <EuiCheckbox
+              id="showHidden"
+              name="showHidden"
+              label="Show hidden"
+              checked={isShowHidden}
+              className={styles.hideCheckbox}
+              onChange={(e) => onChangeShowHidden(e.target.checked)}
+              data-testid="checkbox-show-hidden"
+              aria-label="checkbox show hidden"
+            />
+          )}
         </div>
       )}
     </>

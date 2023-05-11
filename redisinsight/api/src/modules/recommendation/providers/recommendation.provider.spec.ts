@@ -675,7 +675,7 @@ describe('RecommendationProvider', () => {
     it('should return searchHash recommendation', async () => {
       const bigHashesRecommendation = await service.determineSearchHashRecommendation(mockSearchHashes);
       expect(bigHashesRecommendation)
-        .toEqual({ name: RECOMMENDATION_NAMES.SEARCH_HASH, params: { keys: [mockBigHashKey.name] } });
+        .toEqual({ name: RECOMMENDATION_NAMES.SEARCH_HASH });
     });
 
     it('should not return searchHash recommendation', async () => {

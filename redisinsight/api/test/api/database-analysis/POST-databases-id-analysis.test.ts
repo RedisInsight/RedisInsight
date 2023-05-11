@@ -328,8 +328,7 @@ describe('POST /databases/:instanceId/analysis', () => {
           },
           checkFn: async ({ body }) => {
             expect(body.recommendations).to.include.deep.members([{
-              ...constants.TEST_SEARCH_HASH_RECOMMENDATION,
-              params: { keys: [{ data: [...Buffer.from(`${constants.TEST_HASH_KEY_1}0`)], type: "Buffer" }] },
+              ...constants.TEST_SEARCH_HASH_RECOMMENDATION
             }]);
           },
           after: async () => {
@@ -391,11 +390,7 @@ describe('POST /databases/:instanceId/analysis', () => {
           },
           checkFn: async ({ body }) => {
             expect(body.recommendations).to.include.deep.members([{
-              ...constants.TEST_SEARCH_HASH_RECOMMENDATION,
-              params: {
-                keys: [{ data: [...Buffer.from(`${constants.TEST_HASH_KEY_1}0`)],
-                type: "Buffer",
-              }]},
+              ...constants.TEST_SEARCH_HASH_RECOMMENDATION
             }]);
           },
           after: async () => {

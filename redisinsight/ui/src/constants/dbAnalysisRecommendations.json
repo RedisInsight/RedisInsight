@@ -685,7 +685,7 @@
   },
   "searchHash": {
     "id": "searchHash",
-    "title": "Try indexing your HASH documents for efficient data retrieval",
+    "title": "Try indexing your hash documents for efficient data retrieval",
     "tutorial": "/quick-guides/document/working-with-hashes.md",
     "redisStack": true,
     "content": [

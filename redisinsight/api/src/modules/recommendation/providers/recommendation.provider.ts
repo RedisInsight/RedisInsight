@@ -457,7 +457,7 @@ export class RecommendationProvider {
       );
 
       return hashKeys.length > maxHashCount
-        ? { name: RECOMMENDATION_NAMES.SEARCH_HASH, params: { keys: [hashKeys[0].name] } }
+        ? { name: RECOMMENDATION_NAMES.SEARCH_HASH }
         : null;
     } catch (err) {
       this.logger.error('Can not determine search hash recommendation', err);

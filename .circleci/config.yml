@@ -1117,18 +1117,18 @@ workflows:
           fileName: RedisInsight-v2-win-installer.exe
           # requires:
             # - Build app - Windows (dev)
-      - store-build-artifacts:
-          name: Store build artifacts (dev)
-          requires:
-            - Build app - Linux (dev)
-            - Build app - MacOS (dev)
-            - Build app - Windows (dev)
-      - release-aws-test:
-          name: Release AWS dev
-          requires:
-            - Build app - Linux (dev)
-            - Build app - MacOS (dev)
-            - Build app - Windows (dev)
+      # - store-build-artifacts:
+      #     name: Store build artifacts (dev)
+      #     requires:
+      #       - Build app - Linux (dev)
+      #       - Build app - MacOS (dev)
+      #       - Build app - Windows (dev)
+      # - release-aws-test:
+      #     name: Release AWS dev
+      #     requires:
+      #       - Build app - Linux (dev)
+      #       - Build app - MacOS (dev)
+      #       - Build app - Windows (dev)
   # Main workflow for release/* and latest branches only
   release:
     jobs:

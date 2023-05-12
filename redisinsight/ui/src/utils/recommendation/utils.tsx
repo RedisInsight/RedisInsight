@@ -11,20 +11,12 @@ import {
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
-import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
+import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
 import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
-import { Recommendation } from 'apiSrc/modules/database-analysis/models/recommendation'
 
 import styles from './styles.module.scss'
-
-export interface IContentElement {
-  id: string
-  type: string
-  value: any[] | any
-  parameter?: string[]
-}
 
 const recommendationsContent = _content as IRecommendationsStatic
 
@@ -34,7 +26,7 @@ const badgesContent = [
   { id: 'upgrade', icon: <UpgradeIcon className={styles.badgeIcon} />, name: 'Upgrade' },
 ]
 
-export const renderBadges = (badges: string[]) => (
+const renderRecommendationBadges = (badges: string[]) => (
   <EuiFlexGroup className={styles.badgesContainer} responsive={false} alignItems="center" justifyContent="spaceBetween">
     {badgesContent.map(({ id, name, icon }) => (badges.indexOf(id) > -1 && (
       <EuiFlexItem key={id} className={styles.badge} grow={false}>
@@ -53,7 +45,7 @@ export const renderBadges = (badges: string[]) => (
   </EuiFlexGroup>
 )
 
-export const renderBadgesLegend = () => (
+const renderRecommendationBadgesLegend = () => (
   <EuiFlexGroup data-testid="badges-legend" className={styles.badgesLegend} responsive={false} justifyContent="flexEnd">
     {badgesContent.map(({ id, icon, name }) => (
       <EuiFlexItem key={id} className={styles.badge} grow={false}>
@@ -66,7 +58,7 @@ export const renderBadgesLegend = () => (
   </EuiFlexGroup>
 )
 
-export const replaceVariables = (value: any[] | any, parameter?: string[], params?: any) => (
+const replaceVariables = (value: any[] | any, parameter?: string[], params?: any) => (
   parameter && isString(value) ? value.replace(/\$\{\d}/g, (matched) => {
     const parameterIndex: string = matched.substring(
       matched.indexOf('{') + 1,
@@ -76,34 +68,58 @@ export const replaceVariables = (value: any[] | any, parameter?: string[], param
   }) : value
 )
 
-const renderContentElement = ({ id, type, value: jsonValue, parameter }: IContentElement, params: any) => {
+const renderContentElement = (
+  { id, type, value: jsonValue, parameter }: IRecommendationContent,
+  params: any,
+  insights: boolean = false
+) => {
   const value = replaceVariables(jsonValue, parameter, params)
   switch (type) {
     case 'paragraph':
       return (
-        <EuiTextColor data-testid={`paragraph-${id}`} key={id} component="div" className={styles.text} color="subdued">
+        <EuiTextColor
+          data-testid={`paragraph-${id}`}
+          key={id}
+          component="div"
+          className={cx(styles.text, { [styles.insights]: insights })}
+          color="subdued"
+        >
           {value}
         </EuiTextColor>
       )
-    case 'pre':
+    case 'code':
       return (
-        <EuiTextColor data-testid={`pre-${id}`} key={id} color="subdued">
-          <pre className={cx(styles.span, styles.text)}>
+        <EuiTextColor
+          data-testid={`code-${id}`}
+          className={cx(styles.code, { [styles.insights]: insights })}
+          key={id}
+          color="subdued"
+        >
+          <code className={cx(styles.span, styles.text)}>
             {value}
-          </pre>
+          </code>
         </EuiTextColor>
       )
     case 'span':
-      return <EuiTextColor data-testid={`span-${id}`} key={id} color="subdued" className={cx(styles.span, styles.text)}>{value}</EuiTextColor>
+      return (
+        <EuiTextColor
+          data-testid={`span-${id}`}
+          key={id}
+          color="subdued"
+          className={cx(styles.span, styles.text, { [styles.insights]: !!insights })}
+        >
+          {value}
+        </EuiTextColor>
+      )
     case 'link':
-      return <EuiLink key={id} external={false} data-testid="read-more-link" target="_blank" href={value.href}>{value.name}</EuiLink>
+      return <EuiLink key={id} external={false} data-testid={`link-${id}`} target="_blank" href={value.href}>{value.name}</EuiLink>
     case 'spacer':
       return <EuiSpacer data-testid={`spacer-${id}`} key={id} size={value as SpacerSize} />
     case 'list':
       return (
         <ul data-testid={`list-${id}`} key={id}>
-          {isArray(jsonValue) && jsonValue.map((listElement: IContentElement[]) => (
-            <li>{renderContent(listElement, params)}</li>
+          {isArray(jsonValue) && jsonValue.map((listElement: IRecommendationContent[]) => (
+            <li key={`list-item-${listElement[0].id}`}>{renderRecommendationContent(listElement, params, insights)}</li>
           ))}
         </ul>
       )
@@ -112,12 +128,24 @@ const renderContentElement = ({ id, type, value: jsonValue, parameter }: IConten
   }
 }
 
-export const renderContent = (elements: IContentElement[], params: any) => (
-  elements?.map((item) => renderContentElement(item, params)))
+const renderRecommendationContent = (
+  elements: IRecommendationContent[] = [],
+  params: any,
+  insights: boolean = false
+) => (
+  elements?.map((item) => renderContentElement(item, params, insights)))
 
-export const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [
+const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [
   ({ name }) => name !== 'searchJSON',
   ({ name }) => name !== 'searchIndexes',
   ({ name }) => recommendationsContent[name]?.redisStack,
   ({ name }) => name,
 ])
+
+export {
+  sortRecommendations,
+  renderRecommendationContent,
+  replaceVariables,
+  renderRecommendationBadgesLegend,
+  renderRecommendationBadges,
+}

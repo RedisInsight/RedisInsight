@@ -2,11 +2,11 @@ import { render, screen } from 'uiSrc/utils/test-utils'
 import {
   sortRecommendations,
   replaceVariables,
-  renderBadgesLegend,
-  renderBadges,
-  renderContent,
-  IContentElement,
-} from './utils'
+  renderRecommendationBadgesLegend,
+  renderRecommendationBadges,
+  renderRecommendationContent,
+} from 'uiSrc/utils'
+import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 
 const sortRecommendationsTests = [
   {
@@ -65,7 +65,7 @@ const replaceVariablesTests = [
   { input: ['value'], expected: 'value' },
 ]
 
-const mockContent: IContentElement[] = [
+const mockContent: IRecommendationContent[] = [
   {
     id: '1',
     type: 'paragraph',
@@ -78,8 +78,8 @@ const mockContent: IContentElement[] = [
   },
   {
     id: '3',
-    type: 'pre',
-    value: 'pre',
+    type: 'code',
+    value: 'code',
   },
   {
     id: '4',
@@ -103,8 +103,8 @@ const mockContent: IContentElement[] = [
   },
 ]
 
-describe('renderBadgesLegend', () => {
-  const renderedBadgesLegend = renderBadgesLegend()
+describe('renderRecommendationBadgesLegend', () => {
+  const renderedBadgesLegend = renderRecommendationBadgesLegend()
   render(renderedBadgesLegend)
 
   expect(screen.queryByTestId('badges-legend')).toBeInTheDocument()
@@ -120,16 +120,16 @@ describe('sortRecommendations', () => {
   )
 })
 
-describe('renderBadges', () => {
+describe('renderRecommendationBadges', () => {
   it('should render "code_changes" badge', () => {
-    const renderedBadges = renderBadges(['code_changes'])
+    const renderedBadges = renderRecommendationBadges(['code_changes'])
     render(renderedBadges)
 
     expect(screen.queryByTestId('code_changes')).toBeInTheDocument()
   })
 
   it('should render "configuration_changes" badge', () => {
-    const renderedBadges = renderBadges(['configuration_changes'])
+    const renderedBadges = renderRecommendationBadges(['configuration_changes'])
     render(renderedBadges)
 
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
@@ -138,7 +138,7 @@ describe('renderBadges', () => {
   })
 
   it('should render "code_changes" badge', () => {
-    const renderedBadges = renderBadges(['code_changes'])
+    const renderedBadges = renderRecommendationBadges(['code_changes'])
     render(renderedBadges)
 
     expect(screen.queryByTestId('code_changes')).toBeInTheDocument()
@@ -147,7 +147,7 @@ describe('renderBadges', () => {
   })
 
   it('should render "upgrade" badge', () => {
-    const renderedBadges = renderBadges(['upgrade'])
+    const renderedBadges = renderRecommendationBadges(['upgrade'])
     render(renderedBadges)
 
     expect(screen.queryByTestId('upgrade')).toBeInTheDocument()
@@ -156,7 +156,7 @@ describe('renderBadges', () => {
   })
 
   it('should render all badges', () => {
-    const renderedBadges = renderBadges(['upgrade', 'configuration_changes', 'code_changes'])
+    const renderedBadges = renderRecommendationBadges(['upgrade', 'configuration_changes', 'code_changes'])
     render(renderedBadges)
 
     expect(screen.queryByTestId('upgrade')).toBeInTheDocument()
@@ -176,17 +176,17 @@ describe('replaceVariables', () => {
   )
 })
 
-describe('renderContent', () => {
+describe('renderRecommendationContent', () => {
   it('should render content', () => {
-    const renderedContent = renderContent(mockContent, undefined)
+    const renderedContent = renderRecommendationContent(mockContent, undefined)
     render(renderedContent)
 
     expect(screen.queryByTestId('paragraph-1')).toBeInTheDocument()
     expect(screen.queryByTestId('span-2')).toBeInTheDocument()
-    expect(screen.queryByTestId('pre-3')).toBeInTheDocument()
+    expect(screen.queryByTestId('code-3')).toBeInTheDocument()
     expect(screen.queryByTestId('spacer-4')).toBeInTheDocument()
     expect(screen.queryByTestId('list-5')).toBeInTheDocument()
-    expect(screen.queryByTestId('read-more-link')).toBeInTheDocument()
+    expect(screen.queryByTestId('link-7')).toBeInTheDocument()
     expect(screen.getByText('unknown')).toBeInTheDocument()
   })
 })

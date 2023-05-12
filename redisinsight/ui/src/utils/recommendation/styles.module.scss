@@ -1,0 +1,26 @@
+.text {
+  font: normal normal normal 14px/24px Graphik, sans-serif !important;
+
+  &.insights {
+    color: var(--htmlColor) !important;
+    line-height: 19px !important;
+  }
+}
+
+.span {
+  display: inline !important;
+}
+
+.code {
+  background-color: var(--separatorColor);
+  border-radius: 4px;
+  padding: 3px 6px;
+
+  &.insights {
+    background-color: var(--euiColorLightestShade) !important;
+  }
+
+  code {
+    font-family: "Roboto Mono", Consolas, Menlo, Courier, monospace !important;
+  }
+}

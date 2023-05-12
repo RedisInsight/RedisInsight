@@ -4,17 +4,45 @@
     "title":"Avoid dynamic Lua script",
     "content": [
       {
-        "id": "1",
+        "id": "luaScript-1",
         "type": "span",
-        "value": "Refrain from generating dynamic scripts, which can cause your Lua cache to grow and get out of control. Memory is consumed as scripts are loaded. If you have to use dynamic Lua scripts, then remember to track your Lua memory consumption and flush the cache periodically with a SCRIPT FLUSH, also do not hardcode and/or programmatically generate key names in your Lua scripts because it makes them useless in a clustered Redis setup. "
+        "value": "Refrain from generating dynamic scripts, which can cause your Lua cache to grow and get out of control. Memory is consumed as scripts are loaded. If you have to use dynamic Lua scripts, then remember to track your Lua memory consumption and flush the cache periodically with a "
       },
       {
-        "id": "2",
+        "id": "luaScript-2",
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
+          "href": "https://redis.io/commands/script-flush/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=luaScript/",
+          "name": "SCRIPT FLUSH"
         }
+      },
+      {
+        "id": "luaScript-3",
+        "type": "span",
+        "value": ". Also do not hardcode and/or programmatically generate key names in your Lua scripts because they do not work in a clustered Redis setup."
+      },
+      {
+        "id": "luaScript-4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "luaScript-5",
+        "type": "span",
+        "value": "See the "
+      },
+      {
+        "id": "luaScript-6",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/manual/programmability/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=luaScript/",
+          "name": "documentation"
+        }
+      },
+      {
+        "id": "luaScript-7",
+        "type": "span",
+        "value": " to learn more about programmability in Redis."
       }
     ],
     "badges": ["code_changes"]
@@ -24,17 +52,32 @@
     "title":"Use smaller keys",
     "content": [
       {
-        "id": "1",
-        "type": "span",
-        "value": "Shorten key names to optimize memory usage. Though, in general, descriptive key names are always preferred, these large key names can eat a lot of the memory. "
+        "id": "useSmallerKeys-1",
+        "type": "paragraph",
+        "value": "Shorten key names to optimize memory usage. Though, in general, descriptive key names are always preferred, these large key names can eat a lot of the memory."
       },
       {
-        "id": "2",
+        "id": "useSmallerKeys-2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "useSmallerKeys-3",
+        "type": "span",
+        "value": "See the "
+      },
+      {
+        "id": "useSmallerKeys-4",
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
+          "href": "https://redis.io/docs/management/optimization/memory-optimization/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=useSmallerKeys/",
+          "name": "documentation"
         }
+      },
+      {
+        "id": "useSmallerKeys-5",
+        "type": "span",
+        "value": " for more memory optimization strategies."
       }
     ],
     "badges": ["code_changes"]
@@ -47,29 +90,19 @@
     "tutorial": "/quick-guides/document/working-with-hashes.md",
     "content": [
       {
-        "id": "1",
+        "id": "bigHashes-1",
         "type": "paragraph",
-        "value": "If you have a hash with a large number of field-value pairs (> 5,000), and if each pair is small enough - break it into smaller hashes to optimize memory usage. Additionally, try using smaller or shortened field names."
+        "value": "If you have a hash with a large number of field-value pairs (> 5,000), and each pair is small enough - break it into smaller hashes to optimize memory usage. Additionally, try using smaller or shortened field names."
       },
       {
-        "id": "2",
+        "id": "bigHashes-2",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "3",
+        "id": "bigHashes-3",
         "type": "paragraph",
-        "value": "Additionally, you can use RediSearch, designed to help address your query needs and supports a better development experience."
-      },
-      {
-        "id": "4",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "5",
-        "type": "paragraph",
-        "value": "Learn more about how Search capability can help you via Tutorials in Workbench."
+        "value": "Try the interactive tutorial to learn how to work with index and query documents modeled with hashes."
       }
     ],
     "badges": ["code_changes", "configuration_changes"]
@@ -79,9 +112,42 @@
     "title": "Avoid using logical databases",
     "content": [
       {
-        "id": "1",
+        "id": "avoidLogicalDatabases-1",
         "type": "paragraph",
-        "value": "Redis supports multiple logical databases within an instance, though these logical databases are neither independent nor isolated in any other way and can freeze each other. Also, some modules do not support numbered databases as well."
+        "value": "Using logical databases is an anti-pattern that Salvatore Sanfilippo, the creator of Redis, once called the worst design mistake he ever made in Redis."
+      },
+      {
+        "id": "avoidLogicalDatabases-2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "avoidLogicalDatabases-3",
+        "type": "paragraph",
+        "value": "Although supported in Redis, logical databases are neither independent nor isolated in any other way and can freeze each other. Also, they are not supported by any clustering system (open source or Redis Enterprise clustering)."
+      },
+      {
+        "id": "avoidLogicalDatabases-4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "avoidLogicalDatabases-5",
+        "type": "span",
+        "value": "If you need a multi-tenant environment, try "
+      },
+      {
+        "id": "avoidLogicalDatabases-6",
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/try-free/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=avoidLogicalDatabases",
+          "name": "Redis Cloud"
+        }
+      },
+      {
+        "id": "avoidLogicalDatabases-7",
+        "type": "span",
+        "value": ", where each tenant has its own Redis database endpoint which is completely isolated from the other Redis databases."
       }
     ],
     "badges": ["code_changes"]
@@ -91,32 +157,62 @@
     "title": "Combine small strings to hashes",
     "content": [
       {
-        "id": "1",
-        "type": "paragraph",
-        "value": "Strings data type has an overhead of about 90 bytes on a 64-bit machine, so if there is no need for different expiration values for these keys, combine small strings into a larger hash to optimize the memory usage."
+        "id": "combineSmallStringsToHashes-1",
+        "type": "span",
+        "value": "The strings data type has an overhead of about 90 bytes on a 64-bit machine, so if there is no need for different expiration values for these keys, combine small strings into a larger hash to optimize the memory usage. Also, ensure that the hash has less than "
       },
       {
-        "id": "2",
-        "type": "paragraph",
-        "value": "Also, ensure that the hash has less than hash-max-ziplist-entries elements and the size of each element is within hash-max-ziplist-values bytes."
+        "id": "combineSmallStringsToHashes-2",
+        "type": "code",
+        "value": "hash-max-ziplist-entries"
       },
       {
-        "id": "3",
+        "id": "combineSmallStringsToHashes-3",
+        "type": "span",
+        "value": " elements and that the size of each element is within "
+      },
+      {
+        "id": "combineSmallStringsToHashes-4",
+        "type": "code",
+        "value": "hash-max-ziplist-values"
+      },
+      {
+        "id": "combineSmallStringsToHashes-5",
+        "type": "span",
+        "value": " bytes."
+      },
+      {
+        "id": "combineSmallStringsToHashes-6",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "4",
-        "type": "span",
-        "value": "Though this approach should not be used if you need different expiration values for String keys. "
+        "id": "combineSmallStringsToHashes-7",
+        "type": "paragraph",
+        "value": "Though this approach should not be used if you need different expiration values for string keys."
       },
       {
-        "id": "5",
+        "id": "combineSmallStringsToHashes-8",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "combineSmallStringsToHashes-9",
+        "type": "span",
+        "value": "See the "
+      },
+      {
+        "id": "combineSmallStringsToHashes-10",
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
+          "href": "https://redis.io/docs/management/optimization/memory-optimization/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=combineSmallStringsToHashes",
+          "name": "documentation"
         }
+      },
+      {
+        "id": "combineSmallStringsToHashes-11",
+        "type": "span",
+        "value": " for more memory optimization strategies."
       }
     ],
     "badges": ["code_changes"]
@@ -126,52 +222,127 @@
     "title": "Increase the set-max-intset-entries",
     "content": [
       {
-        "id": "1",
+        "id": "increaseSetMaxIntsetEntries-1",
         "type": "paragraph",
-        "value": "Several set values with IntSet encoding exceed the set-max-intset-entries. Change the configuration in reds.conf to efficiently use the IntSet encoding."
+        "value": "Several set values with IntSet encoding exceed the set-max-intset-entries. Change the configuration in redis.conf to efficiently use the IntSet encoding. Though increasing this value will lead to an increase in the latency of set operations and CPU utilization."
       },
       {
-        "id": "2",
-        "type": "paragraph",
-        "value": "Though increasing this value will lead to an increase in latency of set operations and CPU utilization."
+        "id": "increaseSetMaxIntsetEntries-2",
+        "type": "span",
+        "value": "Run "
       },
       {
-        "id": "3",
+        "id": "increaseSetMaxIntsetEntries-3",
+        "type": "code",
+        "value": "INFO COMMANDSTATS"
+      },
+      {
+        "id": "increaseSetMaxIntsetEntries-4",
+        "type": "span",
+        "value": " before and after making this change to verify the latency numbers."
+      },
+      {
+        "id": "increaseSetMaxIntsetEntries-5",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "4",
+        "id": "increaseSetMaxIntsetEntries-6",
         "type": "span",
-        "value": "Run `INFO COMMANDSTATS` before and after making this change to verify the latency numbers. "
+        "value": "See the "
       },
       {
-        "id": "5",
+        "id": "increaseSetMaxIntsetEntries-7",
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
+          "href": "https://redis.io/docs/management/optimization/memory-optimization/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=increaseSetMaxIntsetEntries/",
+          "name": "documentation"
         }
+      },
+      {
+        "id": "increaseSetMaxIntsetEntries-8",
+        "type": "span",
+        "value": " for more memory optimization strategies."
       }
     ],
     "badges": ["configuration_changes"]
   },
   "hashHashtableToZiplist": {
     "id": "hashHashtableToZiplist",
-    "title": "Increase hash-max-ziplist-entries",
+    "title": "Convert hashtable to ziplist for hashes",
     "content": [
       {
-        "id": "1",
+        "id": "hashHashtableToZiplist-1",
         "type": "span",
-        "value": "If any value for a key exceeds hash-max-ziplist-entries, it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization. "
+        "value": "Increase "
       },
       {
-        "id": "2",
+        "id": "hashHashtableToZiplist-2",
+        "type": "code",
+        "value": "hash-max-ziplist-entries"
+      },
+      {
+        "id": "hashHashtableToZiplist-3",
+        "type": "span",
+        "value": " and/or "
+      },
+      {
+        "id": "hashHashtableToZiplist-4",
+        "type": "code",
+        "value": "hash-max-ziplist-values"
+      },
+      {
+        "id": "hashHashtableToZiplist-5",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "hashHashtableToZiplist-6",
+        "type": "span",
+        "value": "If any value for a key exceeds "
+      },
+      {
+        "id": "hashHashtableToZiplist-7",
+        "type": "code",
+        "value": "hash-max-ziplist-entries"
+      },
+      {
+        "id": "hashHashtableToZiplist-8",
+        "type": "span",
+        "value": " or "
+      },
+      {
+        "id": "hashHashtableToZiplist-9",
+        "type": "code",
+        "value": "hash-max-ziplist-values"
+      },
+      {
+        "id": "hashHashtableToZiplist-10",
+        "type": "span",
+        "value": ", it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save the memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization."
+      },
+      {
+        "id": "hashHashtableToZiplist-11",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "hashHashtableToZiplist-12",
+        "type": "span",
+        "value": "See the "
+      },
+      {
+        "id": "hashHashtableToZiplist-13",
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
+          "href": "https://redis.io/docs/management/optimization/memory-optimization/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=hashHashtableToZiplist/",
+          "name": "documentation"
         }
+      },
+      {
+        "id": "hashHashtableToZiplist-14",
+        "type": "span",
+        "value": " for more memory optimization strategies."
       }
     ],
     "badges": ["configuration_changes"]
@@ -182,12 +353,12 @@
     "title": "Compress Hash field names",
     "content": [
       {
-        "id": "1",
+        "id": "compressHashFieldNames-1",
         "type": "span",
         "value": "Hash field name also consumes memory, so use smaller or shortened field names to reduce memory usage. "
       },
       {
-        "id": "2",
+        "id": "compressHashFieldNames-2",
         "type": "link",
         "value": {
           "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
@@ -202,52 +373,108 @@
     "title": "Enable compression for the list",
     "content": [
       {
-        "id": "1",
+        "id": "compressionForList-1",
         "type": "paragraph",
         "value": "If you use long lists, and mostly access elements from the head and tail only, then you can enable compression."
       },
       {
-        "id": "2",
-        "type": "paragraph",
-        "value": "Set list-compression-depth=1 in redis.conf to compress every list node except the head and tail of the list. Though list operations that involve elements in the center of the list will get slower, the compression can increase CPU utilization."
-      },
-      {
-        "id": "3",
+        "id": "compressionForList-2",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "4",
+        "id": "compressionForList-3",
         "type": "span",
-        "value": "Run `INFO COMMANDSTATS` before and after making this change to verify the latency numbers. "
+        "value": "Set "
       },
       {
-        "id": "5",
+        "id": "compressionForList-4",
+        "type": "code",
+        "value": "list-compression-depth=1"
+      },
+      {
+        "id": "compressionForList-5",
+        "type": "span",
+        "value": " in redis.conf to compress every list node except the head and tail of the list. Though list operations that involve elements in the center of the list will get slower, the compression can increase CPU utilization."
+      },
+      {
+        "id": "compressionForList-6",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "compressionForList-7",
+        "type": "span",
+        "value": "Run "
+      },
+      {
+        "id": "compressionForList-8",
+        "type": "code",
+        "value": "INFO COMMANDSTATS"
+      },
+      {
+        "id": "compressionForList-9",
+        "type": "span",
+        "value": " before and after making this change to verify the latency numbers."
+      },
+      {
+        "id": "compressionForList-10",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "compressionForList-11",
+        "type": "span",
+        "value": "See the "
+      },
+      {
+        "id": "compressionForList-12",
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
+          "href": "https://redis.io/docs/management/optimization/memory-optimization/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=compressionForList/",
+          "name": "documentation"
         }
+      },
+      {
+        "id": "compressionForList-13",
+        "type": "span",
+        "value": " for more memory optimization strategies."
       }
     ],
     "badges": ["configuration_changes"]
   },
   "bigStrings": {
     "id": "bigStrings",
-    "title": "Do not store large strings",
+    "title": "Avoid large strings",
+    "tutorial": "/quick-guides/document/introduction.md",
     "content": [
       {
-        "id": "1",
+        "id": "bigStrings-1",
         "type": "span",
-        "value": "Avoid storing large strings, since transferring them takes time and consumes the network bandwidth. Large keys are acceptable only to read/write portions of the string. "
+        "value": "If you are working with long strings you may need to retrieve parts or split them to handle in your application. Consider modeling your data using hashes or JSON. Both data structures provide fast and efficient data retrieval via the "
       },
       {
-        "id": "2",
+        "id": "bigStrings-2",
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
+          "href": "https://redis.io/docs/stack/search/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=bigStrings/",
+          "name": "query and search capabilities"
         }
+      },
+      {
+        "id": "bigStrings-3",
+        "type": "span",
+        "value": ", natively developed in Redis, and available as part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software."
+      },
+      {
+        "id": "bigStrings-4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "bigStrings-5",
+        "type": "paragraph",
+        "value": "Try the interactive tutorial to learn how to work with, index, and query documents modeled with JSON or hashes."
       }
     ],
     "badges": ["configuration_changes"]
@@ -257,27 +484,82 @@
     "title": "Convert hashtable to ziplist for sorted sets",
     "content": [
       {
-        "id": "1",
-        "type": "paragraph",
-        "value": "Increase zset-max-ziplist-entries"
+        "id": "zSetHashtableToZiplist-1",
+        "type": "span",
+        "value": "Increase"
       },
       {
-        "id": "2",
+        "id": "zSetHashtableToZiplist-2",
+        "type": "code",
+        "value": "zset-max-ziplist-entries"
+      },
+      {
+        "id": "zSetHashtableToZiplist-3",
+        "type": "span",
+        "value": " and/or "
+      },
+      {
+        "id": "zSetHashtableToZiplist-4",
+        "type": "code",
+        "value": "zset-max-ziplist-values"
+      },
+      {
+        "id": "zSetHashtableToZiplist-5",
+        "type": "span",
+        "value": "."
+      },
+      {
+        "id": "zSetHashtableToZiplist-6",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "3",
+        "id": "zSetHashtableToZiplist-7",
         "type": "span",
-        "value": "If any value for a key exceeds zset-max-ziplist-entries, it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization. "
+        "value": "If any value for a key exceeds "
       },
       {
-        "id": "4",
+        "id": "zSetHashtableToZiplist-8",
+        "type": "code",
+        "value": "zset-max-ziplist-entries"
+      },
+      {
+        "id": "zSetHashtableToZiplist-9",
+        "type": "span",
+        "value": " or "
+      },
+      {
+        "id": "zSetHashtableToZiplist-10",
+        "type": "code",
+        "value": "zset-max-ziplist-values"
+      },
+      {
+        "id": "zSetHashtableToZiplist-11",
+        "type": "span",
+        "value": ", it is stored automatically as a Hashtable instead of a Ziplist, which consumes almost double the memory. So to save the memory, increase the configurations and convert your hashtables to ziplist. The trade-off can be an increase in latency and possibly an increase in CPU utilization."
+      },
+      {
+        "id": "zSetHashtableToZiplist-12",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "zSetHashtableToZiplist-13",
+        "type": "span",
+        "value": "See the "
+      },
+      {
+        "id": "zSetHashtableToZiplist-14",
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/ri/memory-optimizations/",
-          "name": "Read more"
+          "href": "https://redis.io/docs/management/optimization/memory-optimization/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=zSetHashtableToZiplist/",
+          "name": "documentation"
         }
+      },
+      {
+        "id": "zSetHashtableToZiplist-15",
+        "type": "span",
+        "value": " for more memory optimization strategies."
       }
     ],
     "badges": ["configuration_changes"]
@@ -285,24 +567,47 @@
   "bigSets": {
     "id": "bigSets",
     "telemetryEvent": "optimizeExistenceChecks",
-    "title": "Optimize existence checks",
+    "title": "Consider using probabilistic data structures such as Bloom Filter or HyperLogLog",
     "tutorial": "/redis_stack/probabilistic_data_structures.md",
     "redisStack": true,
     "content": [
       {
-        "id": "1",
-        "type": "paragraph",
-        "value": "If you are using sets for existence checks or to eliminate duplicates, and you are ready to trade accuracy with speed and memory usage, consider using Redis probabilistic data structures to increase performance and decrease memory usage."
+        "id": "bigSets-1",
+        "type": "span",
+        "value": "If you are using sets for existence checks or duplicate elimination and can trade perfect accuracy for speed and memory efficiency, consider using the "
       },
       {
-        "id": "2",
+        "id": "bigSets-2",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/bloom/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=optimizeExistenceChecks/",
+          "name": "probabilistic data structures"
+        }
+      },
+      {
+        "id": "bigSets-3",
+        "type": "span",
+        "value": ", especially useful for big data and streaming use cases."
+      },
+      {
+        "id": "bigSets-4",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "3",
-        "type": "span",
-        "value": "Learn more about how probabilistic data structures can help you via Tutorials in Workbench"
+        "id": "bigSets-5",
+        "type": "paragraph",
+        "value": "These capabilities are part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software."
+      },
+      {
+        "id": "bigSets-6",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "bigSets-7",
+        "type": "paragraph",
+        "value": "Try the interactive tutorial to learn more about the probabilistic data structures."
       }
     ],
     "badges": ["configuration_changes"]
@@ -312,52 +617,80 @@
     "title": "Don't open a new connection for every request / every command",
     "content": [
       {
-        "id": "1",
-        "type": "paragraph",
-        "value": "When the value of your connected_clients is high, it usually means that your application is opening and closing a connection for every request it makes. Opening a connection is an expensive operation that adds to both client and server latency."
+        "id": "bigAmountOfConnectedClients-1",
+        "type": "span",
+        "value": "When the value of your "
       },
       {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
+        "id": "bigAmountOfConnectedClients-2",
+        "type": "code",
+        "value": "total_connections_received"
       },
       {
-        "id": "3",
-        "type": "paragraph",
-        "value": "To rectify this, consult your Redis client’s documentation and configure it to use persistent connections."
+        "id": "bigAmountOfConnectedClients-3",
+        "type": "span",
+        "value": " in the stats section is high, it usually means that your application is opening and closing a connection for every request it makes. Opening a connection is an expensive operation that adds to both client and server latency. To rectify this, consult your "
+      },
+      {
+        "id": "bigAmountOfConnectedClients-4",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/resources/clients/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=bigAmountOfConnectedClients/",
+          "name": "Redis client’s"
+        }
+      },
+      {
+        "id": "bigAmountOfConnectedClients-5",
+        "type": "span",
+        "value": " documentation and configure it to use persistent connections."
       }
     ],
     "badges": ["code_changes"]
   },
   "setPassword": {
     "id": "setPassword",
-    "title": "Set the password",
+    "title": "Set a password",
     "content": [
       {
-        "id": "1",
+        "id": "setPassword-1",
         "type": "span",
         "value": "Protect your database by setting a password and using the "
       },
       {
-        "id": "2",
+        "id": "setPassword-2",
         "type": "link",
         "value": {
-          "href": "https://redis.io/commands/auth/",
+          "href": "https://redis.io/commands/auth/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=setPassword/",
           "name": "AUTH"
         }
       },
       {
-        "id": "3",
+        "id": "setPassword-3",
         "type": "span",
-        "value": " command to authenticate the connection. "
+        "value": " command to authenticate the connection."
       },
       {
-        "id": "4",
+        "id": "setPassword-4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "setPassword-5",
+        "type": "span",
+        "value": "See the "
+      },
+      {
+        "id": "setPassword-6",
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/management/security/",
-          "name": "Read more"
+          "href": "https://redis.io/docs/management/security/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=setPassword/",
+          "name": "documentation"
         }
+      },
+      {
+        "id": "setPassword-7",
+        "type": "span",
+        "value": " to learn more about Redis security."
       }
     ],
     "badges": ["configuration_changes"]
@@ -365,24 +698,67 @@
   "RTS": {
     "id": "RTS",
     "telemetryEvent": "optimizeTimeSeries",
-    "title":"Optimize the use of time series",
+    "title":"Try using the Redis native time series data structure and querying capabilities",
     "redisStack": true,
     "tutorial": "/redis_stack/redis_for_time_series.md",
     "content": [
       {
-        "id": "1",
-        "type": "paragraph",
-        "value": "If you are using sorted sets to work with time series data, consider using RedisTimeSeries to optimize the memory usage while having extraordinary query performance and small overhead during ingestion."
+        "id": "RTS-1",
+        "type": "span",
+        "value": "If you are using sorted sets to store time series data, consider using the "
       },
       {
-        "id": "2",
+        "id": "RTS-2",
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/try-free/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=optimizeTimeSeries/",
+          "name": "time series capabilities"
+        }
+      },
+      {
+        "id": "RTS-3",
+        "type": "span",
+        "value": "."
+      },
+      {
+        "id": "RTS-4",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "3",
-        "type": "span",
-        "value": "Learn more about how a Time Series data structure can help you via Tutorials in Workbench."
+        "id": "RTS-5",
+        "type": "paragraph",
+        "value": "Take advantage of advanced toolings such as downsampling and aggregation to ensure a small memory footprint without impacting performance."
+      },
+      {
+        "id": "RTS-6",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "RTS-7",
+        "type": "paragraph",
+        "value": "It also supports a variety of queries for visualization and monitoring with built-in connectors to popular tools."
+      },
+      {
+        "id": "RTS-8",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "RTS-9",
+        "type": "paragraph",
+        "value": "The capabilities are part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software."
+      },
+      {
+        "id": "RTS-10",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "RTS-11",
+        "type": "paragraph",
+        "value": "Try the interactive tutorial to learn about the time series data structure and capabilities."
       }
     ],
     "badges": ["configuration_changes"]
@@ -390,36 +766,133 @@
   "redisVersion": {
     "id": "redisVersion",
     "telemetryEvent": "updateDatabase",
-    "title":"Update Redis database",
+    "title":"Upgrade your Redis database to version 6 or above",
     "redisStack": true,
     "content": [
       {
-        "id": "1",
+        "id": "redisVersion-1",
         "type": "paragraph",
-        "value": "Newer versions of Redis (starting from 6.0) have performance and resource utilization improvements, as well as the improved active, expire cycle to evict the keys faster."
+        "value": "Upgrade your database to version 6 or above to take advantage of the following:"
       },
       {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
+        "id": "redisVersion-2",
+        "type": "list",
+        "value": [
+          [
+            {
+              "id": "redisVersion-2.1",
+              "type": "link",
+              "value": {
+                "href": "https://redis.io/docs/management/security/acl/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=updateDatabase/",
+                "name": "access control lists (ACLs)"
+              }
+            },
+            {
+              "id": "redisVersion-2.2",
+              "type": "span",
+              "value": " that let you create users with permissions for specific actions"
+            }
+          ],
+          [
+            {
+              "id": "redisVersion-2.3",
+              "type": "link",
+              "value": {
+                "href": "https://redis.io/docs/manual/client-side-caching/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=updateDatabase/",
+                "name": "client-side caching"
+              }
+            },
+            {
+              "id": "redisVersion-2.4",
+              "type": "span",
+              "value": " for high-performance services"
+            }
+          ],
+          [
+            {
+              "id": "redisVersion-2.5",
+              "type": "span",
+              "value": "SSL support"
+            }
+          ],
+          [
+            {
+              "id": "redisVersion-2.6",
+              "type": "span",
+              "value": "optimized memory utilization through faster eviction of expired keys"
+            }
+          ]
+        ]
       },
       {
-        "id": "3",
+        "id": "redisVersion-3",
         "type": "span",
-        "value": "Create a "
+        "value": "For a quick trial of the features, spin up a free developer database with "
       },
       {
-        "id": "4",
+        "id": "redisVersion-4",
         "type": "link",
         "value": {
-          "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
-          "name": "free Redis Stack database"
+          "href": "https://redis.com/try-free/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=updateDatabase/",
+          "name": "Redis Cloud"
         }
       },
       {
-        "id": "5",
+        "id": "redisVersion-5",
         "type": "span",
-        "value": " which extends the core capabilities of Redis OSS and provides a complete developer experience for debugging and more."
+        "value": " that also provides support for Redis Stack "
+      },
+      {
+        "id": "redisVersion-6",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/search/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=updateDatabase/",
+          "name": "query and search"
+        }
+      },
+      {
+        "id": "redisVersion-7",
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "id": "redisVersion-8",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/json/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=updateDatabase/",
+          "name": "JSON"
+        }
+      },
+      {
+        "id": "redisVersion-9",
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "id": "redisVersion-10",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/bloom/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=updateDatabase/",
+          "name": "probabilistic data structures"
+        }
+      },
+      {
+        "id": "redisVersion-11",
+        "type": "span",
+        "value": ", and "
+      },
+      {
+        "id": "redisVersion-12",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/timeseries/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=updateDatabase/",
+          "name": "Time Series"
+        }
+      },
+      {
+        "id": "redisVersion-13",
+        "type": "span",
+        "value": " capabilities."
       }
     ],
     "badges": ["upgrade"]
@@ -432,7 +905,7 @@
     "tutorial": "/redis_stack/working_with_json.md",
     "content": [
       {
-        "id": "1",
+        "id": "redisSearch-1",
         "type": "link",
         "value": {
           "href": "https://redis.io/docs/stack/search/",
@@ -440,12 +913,12 @@
         }
       },
       {
-        "id": "2",
+        "id": "redisSearch-2",
         "type": "span",
         "value": " was designed to help address your query needs and support a better development experience when dealing with complex data scenarios. Take a look at the "
       },
       {
-        "id": "3",
+        "id": "redisSearch-3",
         "type": "link",
         "value": {
           "href": "https://redis.io/commands/?name=Ft",
@@ -453,22 +926,22 @@
         }
       },
       {
-        "id": "4",
+        "id": "redisSearch-4",
         "type": "span",
         "value": " and try them. Supports full-text search, wildcards, fuzzy logic, and more."
       },
       {
-        "id": "5",
+        "id": "redisSearch-5",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "6",
+        "id": "redisSearch-6",
         "type": "span",
         "value": "Create a "
       },
       {
-        "id": "7",
+        "id": "redisSearch-7",
         "type": "link",
         "value": {
           "href": "https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_recommendations/",
@@ -476,7 +949,7 @@
         }
       },
       {
-        "id": "8",
+        "id": "redisSearch-8",
         "type": "span",
         "value": " which extends the core capabilities of Redis OSS and uses modern data models and processing engines."
       }
@@ -485,156 +958,416 @@
   },
   "searchIndexes": {
     "id": "searchIndexes",
-    "title":"Enhance your search indexes",
+    "title":"Try using the indexing, querying, and full-text search, natively developed in Redis",
     "redisStack": true,
-    "tutorial": "/quick-guides/document/working-with-hashes.md",
+    "tutorial": "/quick-guides/document/introduction.md",
     "content": [
       {
-        "id": "1",
+        "id": "searchIndexes-1",
+        "type": "paragraph",
+        "value": "If you are using sorted sets for indexing comes with downsides:"
+      },
+      {
+        "id": "searchIndexes-2",
+        "type": "list",
+        "value": [
+          [
+            {
+              "id": "searchIndexes-2.1",
+              "type": "span",
+              "value": "limited query flexibility such as filtering, sorting, or aggregations;"
+            }
+          ],
+          [
+            {
+              "id": "searchIndexes-2.2",
+              "type": "span",
+              "value": "the risk of outdated or incorrect entries when other applications do not properly update or maintain the index;"
+            }
+          ],
+          [
+            {
+              "id": "searchIndexes-2.3",
+              "type": "span",
+              "value": "difficulty in handling updates and deletions;"
+            }
+          ],
+          [
+            {
+              "id": "searchIndexes-2.4",
+              "type": "span",
+              "value": "lack of horizontal scaling;"
+            }
+          ],
+          [
+            {
+              "id": "searchIndexes-2.5",
+              "type": "span",
+              "value": "increased storage requirements to store both scores and members."
+            }
+          ]
+        ]
+      },
+      {
+        "id": "searchIndexes-3",
         "type": "span",
-        "value": "Creating your own index structure manually using sorted sets? Consider the out-of-box option of "
+        "value": "Consider using the "
       },
       {
-        "id": "2",
-        "type": "pre",
-        "value": "FT.CREATE"
+        "id": "searchIndexes-4",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/search/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchIndexes/",
+          "name": "query and search capabilities"
+        }
       },
       {
-        "id": "3",
+        "id": "searchIndexes-5",
         "type": "span",
-        "value": " on RediSearch."
+        "value": ", natively developed in Redis, for performing text searches and complex structured queries. It offers real-time searching through synchronous indexing, ensuring read-your-writes consistency, without compromising the database performance."
       },
       {
-        "id": "4",
+        "id": "searchIndexes-6",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "5",
-        "type": "paragraph",
-        "value": "RediSearch was designed to help meet your query needs and supports a better development experience when dealing with complex data scenarios."
+        "id": "searchIndexes-7",
+        "type": "span",
+        "value": "The capability is part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software. Also supported in an "
       },
       {
-        "id": "6",
+        "id": "searchIndexes-8",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchIndexes/",
+          "name": "Active-Active setup"
+        }
+      },
+      {
+        "id": "searchIndexes-9",
+        "type": "span",
+        "value": "."
+      },
+      {
+        "id": "searchIndexes-10",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "7",
+        "id": "searchIndexes-11",
         "type": "paragraph",
-        "value": "It adds the capability to query, secondary index, and full-text search for Redis. These features enable multi-field queries, aggregation, exact phrase matching, numeric filtering, geo filtering, and vector similarity semantic search on top of text queries."
-      },
-      {
-        "id": "8",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "9",
-        "type": "paragraph",
-        "value": "Learn more about how Search capability can help you via Tutorials in Workbench."
+        "value": "Try the interactive tutorial to learn how to index and query documents modeled with JSON or hashes."
       }
     ],
     "badges": ["upgrade"]
   },
   "searchJSON": {
     "id": "searchJSON",
-    "title": "Query and search JSON documents",
+    "title": "Try indexing your JSON documents for efficient data retrieval",
     "redisStack": true,
     "tutorial": "/redis_stack/working_with_json.md",
     "content": [
       {
-        "id": "1",
-        "type": "paragraph",
-        "value": "If working with JSONs, you can use RediSearch, designed to help address your query needs and support a better development experience."
-      },
-      {
-        "id": "2",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "3",
-        "type": "paragraph",
-        "value": "RediSearch adds the capability to query, secondary index, and full-text search for Redis. These features enable multi-field queries, aggregation, exact phrase matching, numeric filtering, geo filtering, and vector similarity semantic search on top of text queries."
-      },
-      {
-        "id": "5",
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "id": "6",
+        "id": "searchJSON-1",
         "type": "span",
-        "value": "Learn more about how Search capability can help you via Tutorials in Workbench"
+        "value": "If you are working with JSON and need fast and efficient data retrieval, consider leveraging the "
+      },
+      {
+        "id": "searchJSON-2",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/search/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchJSON/",
+          "name": "query and search capabilities"
+        }
+      },
+      {
+        "id": "searchJSON-3",
+        "type": "span",
+        "value": ", natively developed in Redis."
+      },
+      {
+        "id": "searchJSON-4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "searchJSON-5",
+        "type": "paragraph",
+        "value": "With it, you can perform complex structured queries, full-text searches, aggregations, geo-filtering, and much more. It offers real-time searching through synchronous indexing, ensuring read-your-writes consistency, without compromising the database performance."
+      },
+      {
+        "id": "searchJSON-6",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "searchJSON-7",
+        "type": "span",
+        "value": "The capabilities are part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software. Also supported in an "
+      },
+      {
+        "id": "searchJSON-8",
+        "type": "link",
+        "value": {
+          "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchJSON/",
+          "name": "Active-Active"
+        }
+      },
+      {
+        "id": "searchJSON-9",
+        "type": "span",
+        "value": " setup."
+      },
+      {
+        "id": "searchJSON-10",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "searchJSON-11",
+        "type": "paragraph",
+        "value": "Try the interactive tutorial to learn how to index and query documents modeled with JSON."
       }
     ]
   },
   "integersInSets": {
     "id": "integersInSets",
     "redisStack": true,
-    "title": "Use only integers in sets",
+    "title": "Use only integers in sets to improve memory efficiency",
     "tutorial": "/quick-guides/document/working-with-hashes.md",
     "content": [
       {
-        "id": "1",
+        "id": "integersInSets-1",
         "type": "paragraph",
-        "value": "Sets that contain only integers are extremely efficient memory-wise. Try to use integers by mapping string identifiers to integers. You can either use enums in your programming language or Redis hashes to map values to integers."
+        "value": "Sets that contain only integers are extremely efficient memory-wise. Try to use integers by mapping string identifiers to integers by either using enums in your programming language or using a Redis hash data structure to map values to integers."
       },
       {
-        "id": "2",
+        "id": "integersInSets-2",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "3",
+        "id": "integersInSets-3",
         "type": "paragraph",
-        "value": "If you choose hashes, you can use RediSearch, designed to help address your query needs and supports a better development experience."
+        "value": "Once you switch to integers, Redis uses the IntSet encoding internally."
+      },
+      {
+        "id": "integersInSets-4",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "integersInSets-5",
+        "type": "paragraph",
+        "value": "The IntSet encoding is extremely memory efficient. By default, the value of `set-max-intset-entries` is 512 and is configurable in redis.conf. However, increasing this value will lead to an increase in the latency of set operations and CPU utilization."
+      },
+      {
+        "id": "integersInSets-6",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "integersInSets-7",
+        "type": "span",
+        "value": "Run "
+      },
+      {
+        "id": "integersInSets-8",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/commands/info/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=integersInSets/",
+          "name": "INFO COMMANDSTATS"
+        }
+      },
+      {
+        "id": "integersInSets-9",
+        "type": "span",
+        "value": " before and after making this change to verify the latency numbers."
+      },
+      {
+        "id": "integersInSets-10",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "integersInSets-11",
+        "type": "span",
+        "value": "See the "
+      },
+      {
+        "id": "integersInSets-12",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/management/optimization/memory-optimization/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=integersInSets/",
+          "name": "documentation"
+        }
+      },
+      {
+        "id": "integersInSets-13",
+        "type": "span",
+        "value": " for more memory optimization strategies."
       }
     ]
   },
   "stringToJson": {
     "id": "stringToJson",
-    "title": "Optimize the use of JSONs",
+    "title": "Try using our JSON native document store",
     "redisStack": true,
     "tutorial": "/redis_stack/working_with_json.md",
     "content": [
       {
-        "id": "1",
+        "id": "stringToJson-1",
         "type": "paragraph",
-        "value": "If you usually update sub-elements of your JSON document instead of retrieving and writing the entire document, use RedisJSON to store your JSON documents instead of strings to improve the performance and decrease the code complexity."
+        "value": "If you are using strings to store JSON documents, consider using the JSON capabilities."
       },
       {
-        "id": "2",
+        "id": "stringToJson-2",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "3",
+        "id": "stringToJson-3",
         "type": "paragraph",
-        "value": "With RedisJSON you also can use RediSearch with support for indexing and querying the content of JSON documents."
+        "value": "Primary features include:"
       },
       {
-        "id": "4",
+        "id": "stringToJson-4",
+        "type": "list",
+        "value": [
+          [
+            {
+              "id": "stringToJson-4.1",
+              "type": "span",
+              "value": "full support for the JSON standard"
+            }
+          ],
+          [
+            {
+              "id": "stringToJson-4.2",
+              "type": "span",
+              "value": "a "
+            },
+            {
+              "id": "stringToJson-4.3",
+              "type": "link",
+              "value": {
+                "href": "https://redis.io/docs/stack/json/path/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=stringToJson#jsonpath-syntax/",
+                "name": "JSONPath"
+              }
+            },
+            {
+              "id": "stringToJson-4.4",
+              "type": "span",
+              "value": " syntax for selecting/updating elements inside documents"
+            }
+          ],
+          [
+            {
+              "id": "stringToJson-4.5",
+              "type": "span",
+              "value": "documents are stored as binary data in a tree structure, allowing fast access to sub-elements"
+            }
+          ],
+          [
+            {
+              "id": "stringToJson-4.6",
+              "type": "span",
+              "value": "typed atomic operations for all JSON value types"
+            }
+          ],
+          [
+            {
+              "id": "stringToJson-4.7",
+              "type": "span",
+              "value": "secondary indexing via the "
+            },
+            {
+              "id": "stringToJson-4.8",
+              "type": "link",
+              "value": {
+                "href": "https://redis.io/docs/stack/search/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=stringToJson/",
+                "name": "query and search capabilities"
+              }
+            }
+          ]
+        ]
+      },
+      {
+        "id": "stringToJson-5",
+        "type": "paragraph",
+        "value": "All these capabilities are natively part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software."
+      },
+      {
+        "id": "stringToJson-6",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "5",
+        "id": "stringToJson-7",
         "type": "paragraph",
-        "value": "Learn more about how JSON support and Search capability can help you via Tutorials in Workbench."
+        "value": "Try the interactive tutorial to learn how to work with index and query documents modeled with JSON."
       }
     ]
   },
   "searchVisualization": {
     "id": "searchVisualization",
-    "title": "Try data visualizations in Workbench",
+    "title": "Try Workbench, the advanced command-line interface",
     "tutorial": "",
     "content": [
       {
-        "id": "1",
+        "id": "searchVisualization-1",
         "type": "paragraph",
-        "value": "When working with query and search capabilities, or if working with time series data, try running commands in Workbench - our advanced command-line interface that provides data visualizations to explore, analyze, and investigate command execution results."
+        "value": "Try RedisInsight Workbench, our advanced command-line interface with syntax highlighting, intelligent auto-complete, and the ability to work with commands in an editor mode."
+      },
+      {
+        "id": "searchVisualization-2",
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "id": "searchVisualization-3",
+        "type": "span",
+        "value": "It also provides user-friendly data visualizations and support for Redis Stack capabilities such as "
+      },
+      {
+        "id": "searchVisualization-4",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/json/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchVisualization/",
+          "name": "JSON"
+        }
+      },
+      {
+        "id": "searchVisualization-5",
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "id": "searchVisualization-6",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/search/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchVisualization/",
+          "name": "query and search"
+        }
+      },
+      {
+        "id": "searchVisualization-7",
+        "type": "span",
+        "value": ", and "
+      },
+      {
+        "id": "searchVisualization-8",
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/timeseries/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchVisualization/",
+          "name": "Time Series"
+        }
+      },
+      {
+        "id": "searchVisualization-9",
+        "type": "span",
+        "value": "."
       }
     ]
   },
@@ -645,12 +1378,12 @@
     "redisStack": true,
     "content": [
       {
-        "id": "1",
+        "id": "searchHash-1",
         "type": "span",
         "value": "If you are working with hashes and need fast and efficient data retrieval, consider using the "
       },
       {
-        "id": "2",
+        "id": "searchHash-2",
         "type": "link",
         "value": {
           "href": "https://redis.io/docs/stack/search/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchHash",
@@ -658,22 +1391,22 @@
         }
       },
       {
-        "id": "3",
+        "id": "searchHash-3",
         "type": "span",
         "value": ", natively developed in Redis."
       },
       {
-        "id": "4",
+        "id": "searchHash-4",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "5",
+        "id": "searchHash-5",
         "type": "span",
         "value": "With it, you can perform complex structured aggregations transforming your data by grouping, sorting, and applying different functions ("
       },
       {
-        "id": "6",
+        "id": "searchHash-6",
         "type": "link",
         "value": {
           "href": "https://redis.io/docs/stack/search/reference/aggregations/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchHash/#apply-expressions",
@@ -681,32 +1414,32 @@
         }
       },
       {
-        "id": "7",
+        "id": "searchHash-7",
         "type": "span",
         "value": "). Besides you can explore the full-text search, field matching, and complex filtering. It offers real-time searching through synchronous indexing, ensuring read-your-writes consistency, without compromising the database performance."
       },
       {
-        "id": "8",
+        "id": "searchHash-8",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "9",
+        "id": "searchHash-9",
         "type": "span",
         "value": "The capability is part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software. Also supported in an "
       },
       {
-        "id": "10",
+        "id": "searchHash-10",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "11",
+        "id": "searchHash-11",
         "type": "span",
         "value": "With it, you can perform complex structured aggregations transforming your data by grouping, sorting, and applying different functions ("
       },
       {
-        "id": "12",
+        "id": "searchHash-12",
         "type": "link",
         "value": {
           "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=searchHash",
@@ -714,17 +1447,17 @@
         }
       },
       {
-        "id": "13",
+        "id": "searchHash-13",
         "type": "span",
         "value": ") setup."
       },
       {
-        "id": "14",
+        "id": "searchHash-14",
         "type": "spacer",
         "value": "l"
       },
       {
-        "id": "15",
+        "id": "searchHash-15",
         "type": "span",
         "value": "Try the interactive tutorial to learn how to work with index and query documents modeled with JSON."
       }

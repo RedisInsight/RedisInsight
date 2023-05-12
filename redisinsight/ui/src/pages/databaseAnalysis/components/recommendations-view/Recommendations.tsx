@@ -30,8 +30,13 @@ import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/ap
 import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
-import { findMarkdownPathByPath } from 'uiSrc/utils'
-import { renderBadges, renderBadgesLegend, renderContent, sortRecommendations } from './utils'
+import {
+  findMarkdownPathByPath,
+  sortRecommendations,
+  renderRecommendationBadgesLegend,
+  renderRecommendationBadges,
+  renderRecommendationContent,
+} from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -121,7 +126,7 @@ const Recommendations = () => {
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiFlexItem grow={false}>
-        {renderBadges(badges)}
+        {renderRecommendationBadges(badges)}
       </EuiFlexItem>
     </EuiFlexGroup>
   )
@@ -150,13 +155,13 @@ const Recommendations = () => {
 
   return (
     <div className={styles.wrapper}>
-      {renderBadgesLegend()}
+      {renderRecommendationBadgesLegend()}
       <div className={styles.recommendationsContainer}>
         {sortRecommendations(recommendations).map(({ name, params, vote }) => {
           const {
             id = '',
             title = '',
-            content = '',
+            content = [],
             badges = [],
             redisStack = false,
             tutorial,
@@ -170,6 +175,7 @@ const Recommendations = () => {
             <div key={id} className={styles.recommendation} data-testid={`${id}-recommendation`}>
               <EuiAccordion
                 id={name}
+                key={`${name}-accordion`}
                 arrowDisplay="right"
                 buttonContent={renderButtonContent(redisStack, title, badges, id)}
                 buttonClassName={styles.accordionBtn}
@@ -180,7 +186,7 @@ const Recommendations = () => {
                 data-testid={`${id}-accordion`}
               >
                 <EuiPanel className={styles.accordionContent} color="subdued">
-                  {renderContent(content, params)}
+                  {renderRecommendationContent(content, params)}
                   {!!params?.keys?.length && (
                     <RecommendationCopyComponent
                       keyName={params.keys[0]}

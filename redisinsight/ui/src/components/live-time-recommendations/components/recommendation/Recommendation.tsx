@@ -7,7 +7,6 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiLink,
-  EuiSpacer,
   EuiPanel,
   EuiAccordion,
   EuiToolTip,
@@ -15,12 +14,10 @@ import {
   EuiButtonIcon,
 } from '@elastic/eui'
 import { isUndefined } from 'lodash'
-import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 
-import { Nullable, findMarkdownPathByPath, Maybe } from 'uiSrc/utils'
+import { Nullable, findMarkdownPathByPath, Maybe, renderRecommendationContent } from 'uiSrc/utils'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
-import { getRouterLinkProps } from 'uiSrc/services'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -28,7 +25,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { deleteLiveRecommendations, setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
-import { IRecommendationContent, IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
+import { IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
 
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
@@ -71,8 +68,6 @@ const Recommendation = ({
 
   const { redisStack, title, liveTitle } = recommendationsContent[name] || {}
   const recommendationTitle = liveTitle || title
-
-  const handleClose = () => dispatch(setIsContentVisible(false))
 
   const handleRedirect = () => {
     dispatch(setIsContentVisible(false))
@@ -140,35 +135,14 @@ const Recommendation = ({
     setIsLoading(false)
   }
 
-  const renderContentElement = ({ id, type, value }: IRecommendationContent) => {
-    switch (type) {
-      case 'paragraph':
-        return <EuiText key={id} className={styles.text}>{value}</EuiText>
-      case 'span':
-        return <EuiText key={id} className={cx(styles.text, styles.span)}>{value}</EuiText>
-      case 'link':
-        return <EuiLink key={id} external={false} data-testid={`link-${id}`} target="_blank" href={value.href}>{value.name}</EuiLink>
-      case 'spacer':
-        return <EuiSpacer key={id} size={value as SpacerSize} />
-      case 'workbenchLink':
-        return (
-          <EuiLink
-            key={id}
-            className={styles.link}
-            {...getRouterLinkProps(Pages.workbench(instanceId), handleClose)}
-            data-test-subj={`workbench-link-${id}`}
-          >
-            {value}
-          </EuiLink>
-        )
-      default:
-        return value
-    }
-  }
-
   const recommendationContent = () => (
     <EuiText>
-      {recommendationsContent[name]?.content?.map((item) => renderContentElement(item))}
+      {renderRecommendationContent(
+        recommendationsContent[name]?.content,
+        params,
+        recommendationsContent[name]?.telemetryEvent ?? name,
+        true
+      )}
       {!!params?.keys?.length && (
         <RecommendationCopyComponent
           keyName={params.keys[0]}

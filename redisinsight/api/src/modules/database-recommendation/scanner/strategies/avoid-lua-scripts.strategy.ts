@@ -3,8 +3,7 @@ import { AbstractRecommendationStrategy }
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
-
-const minNumberOfCachedScripts = 10;
+import { LUA_SCRIPT_RECOMMENDATION_COUNT } from 'src/common/constants';
 
 export class AvoidLuaScriptsStrategy extends AbstractRecommendationStrategy {
   /**
@@ -13,6 +12,6 @@ export class AvoidLuaScriptsStrategy extends AbstractRecommendationStrategy {
    */
 
   async isRecommendationReached(info: RedisDatabaseInfoResponse): Promise<IDatabaseRecommendationStrategyData> {
-    return { isReached: info.cashedScripts > minNumberOfCachedScripts };
+    return { isReached: info.cashedScripts > LUA_SCRIPT_RECOMMENDATION_COUNT };
   }
 }

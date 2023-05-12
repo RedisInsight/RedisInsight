@@ -190,6 +190,35 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
+    describe('combineSmallStringsToHashes recommendation', () => {
+      // can not generate strings only in one node
+      requirements('!rte.type=CLUSTER');
+
+      [
+        {
+          name: 'Should create new database analysis with combineSmallStringsToHashes recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          before: async () => {
+            await rte.data.generateHugeNumberOfTinyStringKeys(50);
+          },
+          checkFn: async ({ body }) => {
+            // can not predict keys order, params.keys is random
+            const recommendationNames = body.recommendations.map((rec) => rec.name)
+            expect(recommendationNames).to.include.deep.members([
+              constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name,
+            ]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+
     describe('redisVersion recommendation', () => {
       // todo find solution for redis pass
       requirements('rte.version <= 6', '!rte.pass');
@@ -227,10 +256,10 @@ describe('POST /databases/:instanceId/analysis', () => {
             expect(body.recommendations).to.include.deep.members([
               constants.TEST_SET_PASSWORD_RECOMMENDATION,
             ]);
+            after: async () => {
+              expect(await repository.count()).to.eq(5);
+            }
           },
-          after: async () => {
-            expect(await repository.count()).to.eq(5);
-          }
         },
       ].map(mainCheckFn);
     });
@@ -386,20 +415,21 @@ describe('POST /databases/:instanceId/analysis', () => {
             await recommendationRepository.clear();
 
             const entities: any = await recommendationRepository.findBy({
-              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
+              name: constants.TEST_COMPRESSION_FOR_LIST_RECOMMENDATION.name
             });
             expect(entities.length).to.eq(0);
 
-            await rte.data.generateStrings(true);
-          },
+            const NUMBERS_OF_LIST_ELEMENTS = 1001;
+            await rte.data.generateHugeElementsForListKey(NUMBERS_OF_LIST_ELEMENTS, true);
+            },
           statusCode: 201,
           responseSchema,
           after: async () => {
             // wait when recommendation will be saved
             setTimeout(async () => {
               const entities: any = await recommendationRepository.findBy({
-                name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name,
-                params: { keys: [{ data: [...Buffer.from(constants.TEST_STRING_KEY_1)], type: "Buffer" }]}
+                name: constants.TEST_COMPRESSION_FOR_LIST_RECOMMENDATION.name,
+                params: { keys: [{ data: [...Buffer.from(constants.TEST_LIST_KEY_1)], type: "Buffer" }]}
               });
               expect(entities.length).to.eq(1);
             }, 5000)
@@ -412,17 +442,18 @@ describe('POST /databases/:instanceId/analysis', () => {
           },
           before: async () => {
             const entities: any = await recommendationRepository.findBy({
-              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
+              name: constants.TEST_COMPRESSION_FOR_LIST_RECOMMENDATION.name
             });
             expect(entities.length).to.eq(1);
-
-            await rte.data.generateStrings(true);
+  
+            const NUMBERS_OF_LIST_ELEMENTS = 1001;
+            await rte.data.generateHugeElementsForListKey(NUMBERS_OF_LIST_ELEMENTS, true);
           },
           statusCode: 201,
           responseSchema,
           after: async () => {
             const entities: any = await recommendationRepository.findBy({
-              name: constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION.name
+              name: constants.TEST_COMPRESSION_FOR_LIST_RECOMMENDATION.name
             });
             expect(entities.length).to.eq(1);
           }
@@ -446,26 +477,6 @@ describe('POST /databases/:instanceId/analysis', () => {
           expect(body.recommendations).to.include.deep.members([{
             ...constants.TEST_INCREASE_SET_MAX_INTSET_ENTRIES_RECOMMENDATION,
             params: { keys: [{ data: [...Buffer.from(constants.TEST_SET_KEY_1)], type: "Buffer" }] },
-          }]);
-        },
-        after: async () => {
-          expect(await repository.count()).to.eq(5);
-        }
-      },
-      {
-        name: 'Should create new database analysis with combineSmallStringsToHashes recommendation',
-        data: {
-          delimiter: '-',
-        },
-        statusCode: 201,
-        responseSchema,
-        before: async () => {
-          await rte.data.generateString(true);
-        },
-        checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([{
-            ...constants.TEST_COMBINE_SMALL_STRING_TO_HASHES_RECOMMENDATION,
-            params: { keys: [{ data: [...Buffer.from(constants.TEST_STRING_KEY_1)], type: "Buffer" }]}
           }]);
         },
         after: async () => {

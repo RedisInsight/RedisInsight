@@ -1,30 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Redis, Cluster, Command } from 'ioredis';
-import { get, isNumber } from 'lodash';
-import { isValid } from 'date-fns';
+import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
 import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/utils';
-import {
-  RECOMMENDATION_NAMES, IS_TIMESTAMP, IS_INTEGER_NUMBER_REGEX, IS_NUMBER_REGEX,
-} from 'src/constants';
+import { RECOMMENDATION_NAMES } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
-import { RedisString } from 'src/common/constants';
-
-const minNumberOfCachedScripts = 10;
-const maxHashLength = 5_000;
-const maxStringMemory = 200;
-const maxDatabaseTotal = 1_000_000;
-const maxCompressHashLength = 1_000;
-const maxListLength = 1_000;
-const maxHashCount = 50;
-const minHashLength = 2;
-const maxSetLength = 100_000;
-const maxConnectedClients = 100;
-const bigStringMemory = 5_000_000;
-const sortedSetCountForCheck = 100;
-const minRedisVersion = '6';
+import {
+  RedisString,
+  LUA_SCRIPT_RECOMMENDATION_COUNT,
+  BIG_HASHES_RECOMMENDATION_LENGTH,
+  USE_SMALLER_KEYS_RECOMMENDATION_TOTAL,
+  COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION_LENGTH,
+  COMBINE_SMALL_STRINGS_TO_HASHES_RECOMMENDATION_MEMORY,
+  COMBINE_SMALL_STRINGS_TO_HASHES_RECOMMENDATION_KEYS_COUNT,
+  COMPRESSION_FOR_LIST_RECOMMENDATION_LENGTH,
+  BIG_SETS_RECOMMENDATION_LENGTH,
+  BIG_AMOUNT_OF_CONNECTED_CLIENTS_RECOMMENDATION_CLIENTS,
+  BIG_STRINGS_RECOMMENDATION_MEMORY,
+  REDIS_VERSION_RECOMMENDATION_VERSION,
+  SEARCH_INDEXES_RECOMMENDATION_KEYS_FOR_CHECK,
+  SEARCH_HASH_RECOMMENDATION_KEYS_FOR_CHECK,
+  SEARCH_HASH_RECOMMENDATION_KEYS_LENGTH,
+} from 'src/common/constants';
 
 @Injectable()
 export class RecommendationProvider {
@@ -46,7 +45,7 @@ export class RecommendationProvider {
 
       const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
 
-      return parseInt(nodesNumbersOfCachedScripts, 10) > minNumberOfCachedScripts
+      return parseInt(nodesNumbersOfCachedScripts, 10) > LUA_SCRIPT_RECOMMENDATION_COUNT
         ? { name: RECOMMENDATION_NAMES.LUA_SCRIPT }
         : null;
     } catch (err) {
@@ -63,7 +62,9 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bigHash = keys.find((key) => key.type === RedisDataType.Hash && key.length > maxHashLength);
+      const bigHash = keys.find(
+        (key) => key.type === RedisDataType.Hash && key.length > BIG_HASHES_RECOMMENDATION_LENGTH,
+      );
       return bigHash ? { name: RECOMMENDATION_NAMES.BIG_HASHES, params: { keys: [bigHash.name] } } : null;
     } catch (err) {
       this.logger.error('Can not determine Big Hashes recommendation', err);
@@ -78,7 +79,7 @@ export class RecommendationProvider {
   async determineBigTotalRecommendation(
     total: number,
   ): Promise<Recommendation> {
-    return total > maxDatabaseTotal ? { name: RECOMMENDATION_NAMES.USE_SMALLER_KEYS } : null;
+    return total > USE_SMALLER_KEYS_RECOMMENDATION_TOTAL ? { name: RECOMMENDATION_NAMES.USE_SMALLER_KEYS } : null;
   }
 
   /**
@@ -117,9 +118,10 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const smallString = keys.find((key) => key.type === RedisDataType.String && key.memory < maxStringMemory);
-      return smallString
-        ? { name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES, params: { keys: [smallString.name] } }
+      const smallString = keys.filter((key) => key.type === RedisDataType.String
+        && key.memory < COMBINE_SMALL_STRINGS_TO_HASHES_RECOMMENDATION_MEMORY);
+      return smallString.length >= COMBINE_SMALL_STRINGS_TO_HASHES_RECOMMENDATION_KEYS_COUNT
+        ? { name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES, params: { keys: [smallString[0].name] } }
         : null;
     } catch (err) {
       this.logger.error('Can not determine Combine small strings to hashes recommendation', err);
@@ -191,7 +193,8 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bigHash = keys.find((key) => key.type === RedisDataType.Hash && key.length > maxCompressHashLength);
+      const bigHash = keys.find((key) => key.type === RedisDataType.Hash
+        && key.length > COMPRESS_HASH_FIELD_NAMES_RECOMMENDATION_LENGTH);
       return bigHash
         ? { name: RECOMMENDATION_NAMES.COMPRESS_HASH_FIELD_NAMES, params: { keys: [bigHash.name] } }
         : null;
@@ -209,7 +212,8 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bigList = keys.find((key) => key.type === RedisDataType.List && key.length > maxListLength);
+      const bigList = keys.find((key) => key.type === RedisDataType.List
+        && key.length > COMPRESSION_FOR_LIST_RECOMMENDATION_LENGTH);
       return bigList ? { name: RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST, params: { keys: [bigList.name] } } : null;
     } catch (err) {
       this.logger.error('Can not determine Compression for list recommendation', err);
@@ -225,7 +229,8 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bigString = keys.find((key) => key.type === RedisDataType.String && key.memory > bigStringMemory);
+      const bigString = keys.find((key) => key.type === RedisDataType.String
+        && key.memory > BIG_STRINGS_RECOMMENDATION_MEMORY);
       return bigString
         ? { name: RECOMMENDATION_NAMES.BIG_STRINGS, params: { keys: [bigString.name] } }
         : null;
@@ -271,7 +276,7 @@ export class RecommendationProvider {
     keys: Key[],
   ): Promise<Recommendation> {
     try {
-      const bigSet = keys.find((key) => key.type === RedisDataType.Set && key.length > maxSetLength);
+      const bigSet = keys.find((key) => key.type === RedisDataType.Set && key.length > BIG_SETS_RECOMMENDATION_LENGTH);
       return bigSet ? { name: RECOMMENDATION_NAMES.BIG_SETS, params: { keys: [bigSet.name] } } : null;
     } catch (err) {
       this.logger.error('Can not determine Big sets recommendation', err);
@@ -295,51 +300,10 @@ export class RecommendationProvider {
       );
       const connectedClients = parseInt(get(info, 'clients.connected_clients'), 10);
 
-      return connectedClients > maxConnectedClients
+      return connectedClients > BIG_AMOUNT_OF_CONNECTED_CLIENTS_RECOMMENDATION_CLIENTS
         ? { name: RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS } : null;
     } catch (err) {
       this.logger.error('Can not determine Connection clients recommendation', err);
-      return null;
-    }
-  }
-
-  /**
-   * Check RTS recommendation
-   * @param redisClient
-   * @param keys
-   */
-
-  async determineRTSRecommendation(
-    redisClient: Redis | Cluster,
-    keys: Key[],
-  ): Promise<Recommendation> {
-    try {
-      let processedKeysNumber = 0;
-      let timeSeriesKey = null;
-      let sortedSetNumber = 0;
-      while (
-        processedKeysNumber < keys.length
-        && !timeSeriesKey
-        && sortedSetNumber <= sortedSetCountForCheck
-      ) {
-        if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
-          processedKeysNumber += 1;
-        } else {
-          const [, membersArray] = await redisClient.sendCommand(
-            // get first member-score pair
-            new Command('zscan', [keys[processedKeysNumber].name, '0', 'COUNT', 2], { replyEncoding: 'utf8' }),
-          ) as string[];
-          if (this.checkTimestamp(membersArray[0]) || this.checkTimestamp(membersArray[1])) {
-            timeSeriesKey = keys[processedKeysNumber].name;
-          }
-          processedKeysNumber += 1;
-          sortedSetNumber += 1;
-        }
-      }
-
-      return timeSeriesKey ? { name: RECOMMENDATION_NAMES.RTS, params: { keys: [timeSeriesKey] } } : null;
-    } catch (err) {
-      this.logger.error('Can not determine RTS recommendation', err);
       return null;
     }
   }
@@ -381,7 +345,9 @@ export class RecommendationProvider {
         ) as string,
       );
       const version = get(info, 'server.redis_version');
-      return semverCompare(version, minRedisVersion) >= 0 ? null : { name: RECOMMENDATION_NAMES.REDIS_VERSION };
+      return semverCompare(version, REDIS_VERSION_RECOMMENDATION_VERSION) >= 0
+        ? null
+        : { name: RECOMMENDATION_NAMES.REDIS_VERSION };
     } catch (err) {
       this.logger.error('Can not determine redis version recommendation', err);
       return null;
@@ -429,10 +395,10 @@ export class RecommendationProvider {
         return null;
       }
       const hashKeys = keys.filter(({ type, length }) =>
-        type === RedisDataType.Hash && length > minHashLength
+        type === RedisDataType.Hash && length > SEARCH_HASH_RECOMMENDATION_KEYS_LENGTH
       );
 
-      return hashKeys.length > maxHashCount
+      return hashKeys.length > SEARCH_HASH_RECOMMENDATION_KEYS_FOR_CHECK
         ? { name: RECOMMENDATION_NAMES.SEARCH_HASH }
         : null;
     } catch (err) {
@@ -479,27 +445,6 @@ export class RecommendationProvider {
     return false;
   }
 
-  private checkTimestamp(value: string): boolean {
-    try {
-      if (!IS_NUMBER_REGEX.test(value) && isValid(new Date(value))) {
-        return true;
-      }
-      const integerPart = parseInt(value, 10);
-      if (!IS_TIMESTAMP.test(integerPart.toString())) {
-        return false;
-      }
-      if (isNumber(value) || integerPart.toString().length === value.length) {
-        return true;
-      }
-      // check part after separator
-      const subPart = value.replace(integerPart.toString(), '');
-      return IS_INTEGER_NUMBER_REGEX.test(subPart.substring(1, subPart.length));
-    } catch (err) {
-      // ignore errors
-      return false;
-    }
-  }
-
   private async determineSearchIndexesForCluster(keys: Key[], client: Redis | Cluster): Promise<RedisString> {
     let processedKeysNumber = 0;
     let keyName;
@@ -507,7 +452,7 @@ export class RecommendationProvider {
     while (
       processedKeysNumber < keys.length
       && !keyName
-      && sortedSetNumber <= sortedSetCountForCheck
+      && sortedSetNumber <= SEARCH_INDEXES_RECOMMENDATION_KEYS_FOR_CHECK
     ) {
       if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
         processedKeysNumber += 1;

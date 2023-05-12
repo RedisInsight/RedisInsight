@@ -3,8 +3,7 @@ import { AbstractRecommendationStrategy }
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/dto';
-
-const maxSetLength = 100_000;
+import { BIG_SETS_RECOMMENDATION_LENGTH } from 'src/common/constants';
 
 export class BigSetStrategy extends AbstractRecommendationStrategy {
   /**
@@ -15,7 +14,7 @@ export class BigSetStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     key: GetKeyInfoResponse,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    return key?.type === RedisDataType.Set && key?.length > maxSetLength
+    return key?.type === RedisDataType.Set && key?.length > BIG_SETS_RECOMMENDATION_LENGTH
       ? { isReached: true, params: { keys: [key?.name] } }
       : { isReached: false };
   }

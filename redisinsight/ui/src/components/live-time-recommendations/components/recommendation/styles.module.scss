@@ -52,6 +52,16 @@
     display: inline;
   }
 
+  .code {
+    background-color: var(--euiColorLightestShade);
+    border-radius: 4px;
+    padding: 3px 6px;
+  
+    code {
+      font-size: inherit !important;
+    }
+  }
+
   .link {
     color: var(--externalLinkColor) !important;
   }

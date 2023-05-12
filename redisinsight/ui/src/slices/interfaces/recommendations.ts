@@ -25,7 +25,6 @@ export interface StateRecommendations {
 }
 
 export interface IRecommendationContent {
-  id?: string
   type?: string
   value?: any
   parameter?: any

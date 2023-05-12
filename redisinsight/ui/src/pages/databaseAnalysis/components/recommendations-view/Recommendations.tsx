@@ -186,7 +186,7 @@ const Recommendations = () => {
                 data-testid={`${id}-accordion`}
               >
                 <EuiPanel className={styles.accordionContent} color="subdued">
-                  {renderRecommendationContent(content, params)}
+                  {renderRecommendationContent(content, params, recommendationsContent[name]?.telemetryEvent ?? name)}
                   {!!params?.keys?.length && (
                     <RecommendationCopyComponent
                       keyName={params.keys[0]}

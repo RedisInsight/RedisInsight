@@ -136,7 +136,12 @@ const Recommendation = ({
 
   const recommendationContent = () => (
     <EuiText>
-      {renderRecommendationContent(recommendationsContent[name]?.content, params, true)}
+      {renderRecommendationContent(
+        recommendationsContent[name]?.content,
+        params,
+        recommendationsContent[name]?.telemetryEvent ?? name,
+        true
+      )}
       {!!params?.keys?.length && (
         <RecommendationCopyComponent
           keyName={params.keys[0]}

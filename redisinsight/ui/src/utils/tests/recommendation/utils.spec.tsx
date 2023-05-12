@@ -1,5 +1,6 @@
 import { render, screen } from 'uiSrc/utils/test-utils'
 import {
+  addUtmToLink,
   sortRecommendations,
   replaceVariables,
   renderRecommendationBadgesLegend,
@@ -7,6 +8,18 @@ import {
   renderRecommendationContent,
 } from 'uiSrc/utils'
 import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
+
+const mockTelemetryName = 'name'
+
+const addUtmToLinkTests = [
+  { input: 'http://www.google.com', expected: 'http://www.google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
+  { input: 'http://google.com', expected: 'http://google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
+  { input: 'https://docs.google.com/', expected: 'https://docs.google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
+  { input: 'http://google.com/?param=3', expected: 'http://google.com/?param=3&utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
+  { input: 'https://www.google.com/#anchor', expected: 'https://www.google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name#anchor' },
+  { input: 'https://www.google.com/?param=foo#anchor', expected: 'https://www.google.com/?param=foo&utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name#anchor' },
+  { input: 'wrong_url', expected: 'wrong_url' },
+]
 
 const sortRecommendationsTests = [
   {
@@ -67,38 +80,35 @@ const replaceVariablesTests = [
 
 const mockContent: IRecommendationContent[] = [
   {
-    id: '1',
     type: 'paragraph',
     value: 'paragraph',
   },
   {
-    id: '2',
     type: 'span',
     value: 'span',
   },
   {
-    id: '3',
     type: 'code',
     value: 'code',
   },
   {
-    id: '4',
     type: 'spacer',
     value: 'l',
   },
   {
-    id: '5',
     type: 'list',
     value: [[{ id: 'list-1', type: 'span', value: 'list-1' }]],
   },
   {
-    id: '6',
     type: 'unknown',
     value: 'unknown',
   },
   {
-    id: '7',
     type: 'link',
+    value: 'link',
+  },
+  {
+    type: 'code-link',
     value: 'link',
   },
 ]
@@ -115,6 +125,16 @@ describe('sortRecommendations', () => {
     '%j',
     ({ input, expected }) => {
       const result = sortRecommendations(input)
+      expect(result).toEqual(expected)
+    }
+  )
+})
+
+describe('addUtmToLink', () => {
+  test.each(addUtmToLinkTests)(
+    '%j',
+    ({ input, expected }) => {
+      const result = addUtmToLink(input, mockTelemetryName)
       expect(result).toEqual(expected)
     }
   )
@@ -178,15 +198,16 @@ describe('replaceVariables', () => {
 
 describe('renderRecommendationContent', () => {
   it('should render content', () => {
-    const renderedContent = renderRecommendationContent(mockContent, undefined)
+    const renderedContent = renderRecommendationContent(mockContent, undefined, mockTelemetryName)
     render(renderedContent)
 
-    expect(screen.queryByTestId('paragraph-1')).toBeInTheDocument()
-    expect(screen.queryByTestId('span-2')).toBeInTheDocument()
-    expect(screen.queryByTestId('code-3')).toBeInTheDocument()
-    expect(screen.queryByTestId('spacer-4')).toBeInTheDocument()
-    expect(screen.queryByTestId('list-5')).toBeInTheDocument()
-    expect(screen.queryByTestId('link-7')).toBeInTheDocument()
+    expect(screen.queryByTestId(`paragraph-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`span-${mockTelemetryName}-1`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`code-${mockTelemetryName}-2`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`spacer-${mockTelemetryName}-3`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`list-${mockTelemetryName}-4`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`link-${mockTelemetryName}-6`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`code-link-${mockTelemetryName}-7`)).toBeInTheDocument()
     expect(screen.getByText('unknown')).toBeInTheDocument()
   })
 })

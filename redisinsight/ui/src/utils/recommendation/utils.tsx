@@ -20,6 +20,9 @@ import styles from './styles.module.scss'
 
 const recommendationsContent = _content as IRecommendationsStatic
 
+const utmSource = 'redisinsight'
+const utmMedium = 'recommendation'
+
 const badgesContent = [
   { id: 'code_changes', icon: <CodeIcon className={styles.badgeIcon} />, name: 'Code Changes' },
   { id: 'configuration_changes', icon: <ConfigurationIcon className={styles.badgeIcon} />, name: 'Configuration Changes' },
@@ -68,18 +71,33 @@ const replaceVariables = (value: any[] | any, parameter?: string[], params?: any
   }) : value
 )
 
+const addUtmToLink = (href: string, telemetryName: string): string => {
+  try {
+    const url = new URL(href)
+    url.searchParams.append('utm_source', utmSource)
+    url.searchParams.append('utm_medium', utmMedium)
+    url.searchParams.append('utm_campaign', telemetryName)
+    return url.toString()
+  } catch (e) {
+    // ignore errors
+    return href
+  }
+}
+
 const renderContentElement = (
-  { id, type, value: jsonValue, parameter }: IRecommendationContent,
+  { type, value: jsonValue, parameter }: IRecommendationContent,
   params: any,
-  insights: boolean = false
+  telemetryName: string,
+  insights: boolean,
+  idx: number
 ) => {
   const value = replaceVariables(jsonValue, parameter, params)
   switch (type) {
     case 'paragraph':
       return (
         <EuiTextColor
-          data-testid={`paragraph-${id}`}
-          key={id}
+          data-testid={`paragraph-${telemetryName}-${idx}`}
+          key={`${telemetryName}-${idx}`}
           component="div"
           className={cx(styles.text, { [styles.insights]: insights })}
           color="subdued"
@@ -90,9 +108,9 @@ const renderContentElement = (
     case 'code':
       return (
         <EuiTextColor
-          data-testid={`code-${id}`}
+          data-testid={`code-${telemetryName}-${idx}`}
           className={cx(styles.code, { [styles.insights]: insights })}
-          key={id}
+          key={`${telemetryName}-${idx}`}
           color="subdued"
         >
           <code className={cx(styles.span, styles.text)}>
@@ -103,8 +121,8 @@ const renderContentElement = (
     case 'span':
       return (
         <EuiTextColor
-          data-testid={`span-${id}`}
-          key={id}
+          data-testid={`span-${telemetryName}-${idx}`}
+          key={`${telemetryName}-${idx}`}
           color="subdued"
           className={cx(styles.span, styles.text, { [styles.insights]: !!insights })}
         >
@@ -112,10 +130,26 @@ const renderContentElement = (
         </EuiTextColor>
       )
     case 'link':
-      return <EuiLink key={id} external={false} data-testid={`link-${id}`} target="_blank" href={value.href}>{value.name}</EuiLink>
+      return (
+        <EuiLink
+          key={`${telemetryName}-${idx}`}
+          external={false}
+          data-testid={`link-${telemetryName}-${idx}`}
+          target="_blank"
+          href={addUtmToLink(value.href, telemetryName)}
+        >
+          {value.name}
+        </EuiLink>
+      )
     case 'code-link':
       return (
-        <EuiLink key={id} external={false} data-testid={`link-${id}`} target="_blank" href={value.href}>
+        <EuiLink
+          key={`${telemetryName}-${idx}`}
+          external={false}
+          data-testid={`code-link-${telemetryName}-${idx}`}
+          target="_blank"
+          href={addUtmToLink(value.href, telemetryName)}
+        >
           <EuiTextColor
             className={cx(styles.code, { [styles.insights]: insights })}
             color="subdued"
@@ -127,12 +161,21 @@ const renderContentElement = (
         </EuiLink>
       )
     case 'spacer':
-      return <EuiSpacer data-testid={`spacer-${id}`} key={id} size={value as SpacerSize} />
+      return (
+        <EuiSpacer
+          data-testid={`spacer-${telemetryName}-${idx}`}
+          key={`${telemetryName}-${idx}`}
+          size={value as SpacerSize}
+        />
+      )
     case 'list':
       return (
-        <ul data-testid={`list-${id}`} key={id}>
-          {isArray(jsonValue) && jsonValue.map((listElement: IRecommendationContent[]) => (
-            <li key={`list-item-${listElement[0].id}`}>{renderRecommendationContent(listElement, params, insights)}</li>
+        <ul data-testid={`list-${telemetryName}-${idx}`} key={`${telemetryName}-${idx}`}>
+          {isArray(jsonValue) && jsonValue.map((listElement: IRecommendationContent[], idx) => (
+          // eslint-disable-next-line react/no-array-index-key
+            <li key={`list-item-${listElement[0]}-${idx}`}>
+              {renderRecommendationContent(listElement, params, telemetryName, insights)}
+            </li>
           ))}
         </ul>
       )
@@ -144,9 +187,10 @@ const renderContentElement = (
 const renderRecommendationContent = (
   elements: IRecommendationContent[] = [],
   params: any,
+  telemetryName: string,
   insights: boolean = false
 ) => (
-  elements?.map((item) => renderContentElement(item, params, insights)))
+  elements?.map((item, idx) => renderContentElement(item, params, telemetryName, insights, idx)))
 
 const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [
   ({ name }) => name !== 'searchJSON',
@@ -156,6 +200,7 @@ const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, 
 ])
 
 export {
+  addUtmToLink,
   sortRecommendations,
   renderRecommendationContent,
   replaceVariables,

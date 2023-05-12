@@ -123,7 +123,7 @@
           "name": "Redis Cloud"
         }
       },
-      {        "id": "avoidLogicalDatabases-7",
+      {
         "type": "span",
         "value": ", where each tenant has its own Redis database endpoint which is completely isolated from the other Redis databases."
       }
@@ -580,7 +580,6 @@
         }
       },
       {
-        "id": "setPassword-7",
         "type": "span",
         "value": " to learn more about Redis security."
       }

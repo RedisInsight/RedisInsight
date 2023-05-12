@@ -42,8 +42,10 @@ export class InsightsPanel {
      * @param state State of panel
      */
     async toggleShowHiddenRecommendations(state: boolean): Promise<void> {
-        if ((await this.showHiddenCheckBox.checked) !== state) {
-            await t.click(this.showHiddenButton);
+        if(await this.showHiddenCheckBox.exists) {
+            if ((await this.showHiddenCheckBox.checked) !== state) {
+                await t.click(this.showHiddenButton);
+            }
         }
     }
 

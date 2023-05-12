@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
@@ -25,7 +25,7 @@ import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/compone
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { deleteLiveRecommendations, fetchRecommendationsAction, setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
+import { deleteLiveRecommendations, setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { IRecommendationContent, IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
@@ -63,6 +63,7 @@ const Recommendation = ({
   provider,
   params,
 }: IProps) => {
+  const [isLoading, setIsLoading] = useState(false)
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
@@ -123,7 +124,8 @@ const Recommendation = ({
   }
 
   const handleDelete = () => {
-    dispatch(deleteLiveRecommendations([id], onSuccessActionDelete))
+    setIsLoading(true)
+    dispatch(deleteLiveRecommendations([id], onSuccessActionDelete, () => setIsLoading(false)))
   }
 
   const onSuccessActionDelete = () => {
@@ -135,8 +137,7 @@ const Recommendation = ({
         provider
       }
     })
-
-    dispatch(fetchRecommendationsAction(instanceId))
+    setIsLoading(false)
   }
 
   const renderContentElement = ({ id, type, value }: IRecommendationContent) => {
@@ -179,6 +180,7 @@ const Recommendation = ({
       <div className={styles.actions}>
         <RecommendationVoting live id={id} vote={vote} name={name} containerClass={styles.votingContainer} />
         <EuiButton
+          isDisabled={isLoading}
           className={styles.btn}
           onClick={handleDelete}
           color="secondary"

@@ -10,7 +10,7 @@
       },
       {
         "id": "luaScript-2",
-        "type": "link",
+        "type": "code-link",
         "value": {
           "href": "https://redis.io/commands/script-flush/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=luaScript/",
           "name": "SCRIPT FLUSH"
@@ -658,7 +658,7 @@
       },
       {
         "id": "setPassword-2",
-        "type": "link",
+        "type": "code-link",
         "value": {
           "href": "https://redis.io/commands/auth/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=setPassword/",
           "name": "AUTH"
@@ -1174,7 +1174,7 @@
       },
       {
         "id": "integersInSets-8",
-        "type": "link",
+        "type": "code-link",
         "value": {
           "href": "https://redis.io/commands/info/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=integersInSets/",
           "name": "INFO COMMANDSTATS"

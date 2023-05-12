@@ -113,6 +113,19 @@ const renderContentElement = (
       )
     case 'link':
       return <EuiLink key={id} external={false} data-testid={`link-${id}`} target="_blank" href={value.href}>{value.name}</EuiLink>
+    case 'code-link':
+      return (
+        <EuiLink key={id} external={false} data-testid={`link-${id}`} target="_blank" href={value.href}>
+          <EuiTextColor
+            className={cx(styles.code, { [styles.insights]: insights })}
+            color="subdued"
+          >
+            <code className={cx(styles.span, styles.text)}>
+              {value.name}
+            </code>
+          </EuiTextColor>
+        </EuiLink>
+      )
     case 'spacer':
       return <EuiSpacer data-testid={`spacer-${id}`} key={id} size={value as SpacerSize} />
     case 'list':

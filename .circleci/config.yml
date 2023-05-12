@@ -1170,6 +1170,16 @@ workflows:
           requires:
             - Build app - Linux (prod)
       - virustotal:
+          name: Virus check - rpm (prod)
+          ext: .rpm
+          requires:
+            - Build app - Linux (prod)
+      - virustotal:
+          name: Virus check - snap (prod)
+          ext: .snap
+          requires:
+            - Build app - Linux (prod)
+      - virustotal:
           name: Virus check x64 - dmg (prod)
           ext: -x64.dmg
           requires:
@@ -1177,6 +1187,11 @@ workflows:
       - virustotal:
           name: Virus check arm64 - dmg (prod)
           ext: -arm64.dmg
+          requires:
+            - Build app - MacOS (prod)
+      - virustotal:
+          name: Virus check MAS - pkg (prod)
+          ext: -mas.pkg
           requires:
             - Build app - MacOS (prod)
       - virustotal:
@@ -1190,8 +1205,11 @@ workflows:
           requires:
             - Virus check - AppImage (prod)
             - Virus check - deb (prod)
+            - Virus check - rpm (prod)
+            - Virus check - snap (prod)
             - Virus check x64 - dmg (prod)
             - Virus check arm64 - dmg (prod)
+            - Virus check MAS - pkg (prod)
             - Virus check - exe (prod)
       # Manual approve for publish release
       - approve-publish:

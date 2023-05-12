@@ -3,14 +3,14 @@
  * This module abstracts the exact service/framework used for tracking usage.
  */
 import isGlob from 'is-glob'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isNumber } from 'lodash'
 import * as jsonpath from 'jsonpath'
 import { isRedisearchAvailable, Nullable } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
-import { checkIsAnalyticsGranted, getAppType } from 'uiSrc/telemetry/checkAnalytics'
+import { checkIsAnalyticsGranted, getAppType, getControlGroup } from 'uiSrc/telemetry/checkAnalytics'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import {
   ITelemetrySendEvent,
@@ -60,13 +60,17 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
 
-  const appType = getAppType()
+  const buildType = getAppType()
+  const controlGroup = getControlGroup()
+  const controlBucket = isNumber(controlGroup) ? Math.floor(controlGroup).toString() : undefined
 
   if (isAnalyticsGranted || nonTracking) {
     return telemetryService?.event({
       event,
       properties: {
-        buildType: appType,
+        buildType,
+        controlBucket,
+        controlGroup,
         ...eventData,
       },
     })
@@ -86,10 +90,20 @@ const sendPageViewTelemetry = (payload: ITelemetrySendPageView) => {
 
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
-  const appType = getAppType()
+  const buildType = getAppType()
+  const controlGroup = getControlGroup()
+  const controlBucket = isNumber(controlGroup) ? Math.floor(controlGroup).toString() : undefined
 
   if (isAnalyticsGranted || nonTracking) {
-    telemetryService?.pageView(name, appType, databaseId)
+    telemetryService?.pageView(
+      name,
+      {
+        buildType,
+        controlBucket,
+        controlGroup,
+        databaseId
+      }
+    )
   }
 }
 

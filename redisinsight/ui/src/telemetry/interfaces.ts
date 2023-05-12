@@ -8,7 +8,15 @@ export interface ITelemetryIdentify {
 
 export interface ITelemetryService {
   initialize(): Promise<void>
-  pageView(name: string, appType: string, databaseId?: string): Promise<void>
+  pageView(
+    name: string,
+    params: {
+      buildType?: string
+      controlBucket?: string
+      controlGroup?: number
+      databaseId?: string
+    }
+  ): Promise<void>
   identify(opts: ITelemetryIdentify): Promise<void>
   event(opts: ITelemetryEvent): Promise<void>
   anonymousId: string

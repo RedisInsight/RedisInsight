@@ -165,6 +165,7 @@ const Recommendations = () => {
             badges = [],
             redisStack = false,
             tutorial,
+            telemetryEvent = ''
           } = recommendationsContent[name] || {}
 
           if (!(name in recommendationsContent)) {
@@ -186,7 +187,7 @@ const Recommendations = () => {
                 data-testid={`${id}-accordion`}
               >
                 <EuiPanel className={styles.accordionContent} color="subdued">
-                  {renderRecommendationContent(content, params, recommendationsContent[name]?.telemetryEvent ?? name)}
+                  {renderRecommendationContent(content, params, telemetryEvent ?? name)}
                   {!!params?.keys?.length && (
                     <RecommendationCopyComponent
                       keyName={params.keys[0]}

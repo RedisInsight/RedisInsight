@@ -1209,14 +1209,6 @@
         "value": "The capability is part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software. Also supported in an "
       },
       {
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "type": "span",
-        "value": "With it, you can perform complex structured aggregations transforming your data by grouping, sorting, and applying different functions ("
-      },
-      {
         "type": "link",
         "value": {
           "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/",
@@ -1225,7 +1217,7 @@
       },
       {
         "type": "span",
-        "value": ") setup."
+        "value": " setup."
       },
       {
         "type": "spacer",

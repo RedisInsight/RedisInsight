@@ -1,6 +1,7 @@
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import { FeaturesConfig, FeaturesConfigData } from 'src/modules/feature/model/features-config';
 import { plainToClass } from 'class-transformer';
+import { classToClass } from 'src/utils';
 
 export const mockFeaturesConfigId = '1';
 export const mockControlNumber = 7.68;
@@ -45,8 +46,8 @@ export const mockFeaturesConfig = Object.assign(new FeaturesConfig(), {
 });
 
 export const mockFeaturesConfigEntity = Object.assign(new FeaturesConfigEntity(), {
+  ...classToClass(FeaturesConfigEntity, mockFeaturesConfig),
   id: mockFeaturesConfigId,
-  data: JSON.stringify(mockFeaturesConfig),
 });
 
 export const mockFeaturesConfigRepository = jest.fn(() => ({

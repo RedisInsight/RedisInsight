@@ -18,11 +18,11 @@ export function ObjectAsMap<T>(targetClass: ClassType<T>) {
         return result;
       }
     }, { toClassOnly: true }),
-    Transform((object): object => {
+    Transform((map): object => {
       try {
         const result = {};
 
-        forEach(object, (value, key) => {
+        forEach(Array.from(map), ([key, value]) => {
           result[key] = classToPlain(value);
         });
 

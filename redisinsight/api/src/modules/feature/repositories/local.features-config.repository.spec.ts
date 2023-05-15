@@ -3,13 +3,15 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   mockAgreements,
-  mockAgreementsEntity, mockFeaturesConfig, mockFeaturesConfigEntity, mockFeaturesConfigId,
+  mockAgreementsEntity, mockFeaturesConfig, mockFeaturesConfigEntity, mockFeaturesConfigId, mockFeaturesConfigJson,
   mockRepository,
   MockType, mockUserId
 } from 'src/__mocks__';
 import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
 import { LocalFeaturesConfigRepository } from 'src/modules/feature/repositories/local.features-config.repository';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
+import { classToPlain, plainToClass } from 'class-transformer';
+import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
 
 describe('LocalFeaturesConfigRepository', () => {
   let service: LocalFeaturesConfigRepository;
@@ -38,8 +40,9 @@ describe('LocalFeaturesConfigRepository', () => {
 
   describe('getOrCreate', () => {
     it('ttt', async () => {
-      console.log('___ m entity', require('util').inspect(mockFeaturesConfigEntity, { depth: null }))
-      console.log('___ m model', require('util').inspect(mockFeaturesConfig, { depth: null }))
+      console.log('___ mockFeaturesConfigJson', require('util').inspect(mockFeaturesConfigJson, { depth: null }))
+      console.log('___ mockFeaturesConfig', require('util').inspect(mockFeaturesConfig, { depth: null }))
+      console.log('___ mockFeaturesConfigEntity', require('util').inspect(mockFeaturesConfigEntity, { depth: null }))
     });
     // it('should return existing config', async () => {
     //   const result = await service.getOrCreate();

@@ -1,3 +1,4 @@
+import { maxBy } from 'lodash';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
@@ -12,7 +13,7 @@ export class BigAmountConnectedClientsStrategy extends AbstractRecommendationStr
    */
 
   async isRecommendationReached(info: RedisDatabaseInfoResponse): Promise<IDatabaseRecommendationStrategyData> {
-    const nodeInfo = info.nodes?.length ? info.nodes[0] : info;
-    return { isReached: nodeInfo.connectedClients > BIG_AMOUNT_OF_CONNECTED_CLIENTS_RECOMMENDATION_CLIENTS };
+    const nodeInfo = info.nodes?.length ? maxBy(info.nodes, 'connectedClients') : info;
+    return { isReached: nodeInfo?.connectedClients > BIG_AMOUNT_OF_CONNECTED_CLIENTS_RECOMMENDATION_CLIENTS };
   }
 }

@@ -103,7 +103,7 @@ export class SettingsPage extends BasePage {
      */
     async changeAnalyticsSwitcher(toValue: boolean): Promise<void> {
         await t.click(this.accordionPrivacySettings);
-        if (toValue !== await this.getEulaSwitcherValue()) {
+        if (toValue !== await this.getAnalyticsSwitcherValue()) {
             await t.click(this.switchAnalyticsOption);
         }
     }

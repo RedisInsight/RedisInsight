@@ -3,7 +3,6 @@ import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import { setRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
-import { Vote } from 'uiSrc/constants/recommendations'
 
 import {
   act,
@@ -47,15 +46,6 @@ describe('RecommendationVoting', () => {
     expect(render(<RecommendationVoting {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  it('should call "setRecommendationVote" action be called after click "very-useful-vote-btn"', () => {
-    render(<RecommendationVoting {...instance(mockedProps)} />)
-    expect(screen.queryByTestId('very-useful-vote-btn')).toBeInTheDocument()
-    fireEvent.click(screen.getByTestId('very-useful-vote-btn'))
-
-    const expectedActions = [setRecommendationVote()]
-    expect(store.getActions()).toEqual(expectedActions)
-  })
-
   it('should call "setRecommendationVote" action be called after click "useful-vote-btn"', () => {
     render(<RecommendationVoting {...instance(mockedProps)} />)
     fireEvent.click(screen.getByTestId('useful-vote-btn'))
@@ -83,14 +73,6 @@ describe('RecommendationVoting', () => {
     expect(document.querySelector('[data-test-subj="github-repo-link"]')).toHaveAttribute('href', 'https://github.com/RedisInsight/RedisInsight/issues/new/choose')
   })
 
-  it('should render component where all buttons are disabled"', async () => {
-    render(<RecommendationVoting {...instance(mockedProps)} vote={Vote.Like} />)
-
-    expect(screen.getByTestId('very-useful-vote-btn')).toBeDisabled()
-    expect(screen.getByTestId('useful-vote-btn')).toBeDisabled()
-    expect(screen.getByTestId('not-useful-vote-btn')).toBeDisabled()
-  })
-
   it('should render popover after click "not-useful-vote-btn"', async () => {
     userSettingsConfigSelector.mockImplementation(() => ({
       agreements: {
@@ -105,5 +87,7 @@ describe('RecommendationVoting', () => {
     await waitForEuiToolTipVisible()
 
     expect(screen.getByTestId('not-useful-vote-tooltip')).toHaveTextContent('Enable Analytics on the Settings page to vote for a recommendation')
+    expect(screen.getByTestId('useful-vote-btn')).toBeDisabled()
+    expect(screen.getByTestId('not-useful-vote-btn')).toBeDisabled()
   })
 })

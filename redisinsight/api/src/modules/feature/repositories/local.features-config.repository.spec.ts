@@ -3,15 +3,23 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   mockAgreements,
-  mockAgreementsEntity, mockFeaturesConfig, mockFeaturesConfigEntity, mockFeaturesConfigId, mockFeaturesConfigJson,
+  mockAgreementsEntity,
+  mockFeaturesConfig,
+  mockFeaturesConfigData,
+  mockFeaturesConfigEntity,
+  mockFeaturesConfigId,
+  mockFeaturesConfigJson,
   mockRepository,
-  MockType, mockUserId
+  MockType,
+  mockUserId
 } from 'src/__mocks__';
 import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
 import { LocalFeaturesConfigRepository } from 'src/modules/feature/repositories/local.features-config.repository';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import { classToPlain, plainToClass } from 'class-transformer';
 import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
+import * as defaultConfig from '../../../../config/features-config.json';
+
 describe('LocalFeaturesConfigRepository', () => {
   let service: LocalFeaturesConfigRepository;
   let repository: MockType<Repository<FeaturesConfigEntity>>;
@@ -33,7 +41,7 @@ describe('LocalFeaturesConfigRepository', () => {
     service = await module.get(LocalFeaturesConfigRepository);
 
     repository.findOneBy.mockResolvedValue(mockFeaturesConfigEntity);
-    repository.update.mockResolvedValue(true); // no meter of response
+    repository.update.mockResolvedValue(mockFeaturesConfigEntity);
     repository.save.mockResolvedValue(mockFeaturesConfigEntity);
   });
 
@@ -73,34 +81,34 @@ describe('LocalFeaturesConfigRepository', () => {
   });
 
   describe('getOrCreate', () => {
-    it('ttt', async () => {
-    });
-    // it('should return existing config', async () => {
-    //   const result = await service.getOrCreate();
-    //
-    //   expect(result).toEqual(mockFeaturesConfig);
-    // });
-    // it('should create new config', async () => {
-    //   repository.findOneBy.mockResolvedValueOnce(null);
-    //
-    //   const result = await service.getOrCreate();
-    //
-    //   expect(result).toEqual({
-    //     ...mockAgreements,
-    //     version: undefined,
-    //     data: undefined,
-    //   });
-    // });
-  });
+    it('should return existing config', async () => {
+      const result = await service.getOrCreate();
 
-  // describe('update', () => {
-  //   it('should update agreements', async () => {
-  //     const result = await service.update(mockUserId, mockAgreements);
-  //
-  //     expect(result).toEqual(mockAgreements);
-  //     expect(repository.update).toHaveBeenCalledWith({}, {
-  //       ...mockAgreementsEntity,
-  //     });
-  //   });
-  // });
+      expect(result).toEqual(mockFeaturesConfig);
+    });
+    it('should update existing config with newest default', async () => {
+      repository.findOneBy.mockResolvedValueOnce(plainToClass(FeaturesConfigEntity, {
+        ...mockFeaturesConfig,
+        data: {
+          ...mockFeaturesConfigData,
+          version: defaultConfig.version - 0.1,
+        },
+      }));
+
+      const result = await service.getOrCreate();
+
+      expect(result).toEqual(mockFeaturesConfig);
+      expect(repository.update).toHaveBeenCalledWith(
+        { id: service['id'] },
+        plainToClass(FeaturesConfigEntity, { data: defaultConfig }),
+      );
+    });
+    it('should create new config', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
+
+      const result = await service.getOrCreate();
+
+      expect(result).toEqual(mockFeaturesConfig);
+    });
+  });
 });

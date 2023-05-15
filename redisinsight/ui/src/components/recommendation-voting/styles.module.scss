@@ -29,15 +29,3 @@
   }
 }
 
-:global(.euiPanel).popover {
-  max-width: none !important;
-  box-shadow: none !important;
-  padding: 16px !important;
-  color: var(--buttonSecondaryTextColor) !important;
-
-  .feedbackBtn {
-    padding: 4px 8px 4px 4px;
-    margin: 0 10px;
-    height: 22px !important;
-  }
-}

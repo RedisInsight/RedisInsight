@@ -1,4 +1,4 @@
-.wrapper {
+.popoverWrapper {
   .petardIcon {
     width: 20px;
     height: 18px;
@@ -38,4 +38,11 @@
       margin-right: 2px;
     }
   }
+}
+
+:global(.euiPanel).popover {
+  max-width: none !important;
+  box-shadow: none !important;
+  padding: 16px !important;
+  color: var(--buttonSecondaryTextColor) !important;
 }

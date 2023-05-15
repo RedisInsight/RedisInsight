@@ -20,10 +20,7 @@ export const getRootStaticPath = (mdPath: string) => {
 }
 
 const processAbsolutePath = (nodeUrl: string, mdPath: string) => {
-  // todo: quick fix. find the root cause why path has both '/' and '\'
-  const normalizedMdPath = mdPath.replaceAll('\\', '/')
-  const tutorialRootPath = getRootStaticPath(normalizedMdPath)
-
+  const tutorialRootPath = getRootStaticPath(mdPath)
   return new URL(tutorialRootPath + nodeUrl, getOriginUrl()).toString()
 }
 

@@ -147,9 +147,13 @@ const getMarkdownPathByManifestTests = [
     input: [MOCK_GUIDES_ITEMS, '/quick-guides/0/1'],
     expected: `/123123-123123${MOCK_GUIDES_ITEMS[0]?.children?.[1]?.args?.path}`
   },
+  {
+    input: [MOCK_GUIDES_ITEMS, '/quick-guides/0/3'],
+    expected: '/quick-guides/working-with-hash.html'
+  },
 ]
 
-describe('getWBSourcePath', () => {
+describe('getMarkdownPathByManifest', () => {
   test.each(getMarkdownPathByManifestTests)(
     '%j',
     ({ input, expected }) => {

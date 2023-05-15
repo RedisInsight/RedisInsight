@@ -97,7 +97,7 @@ export const getMarkdownPathByManifest = (
   if (!manifestPath || !manifest) return pathPrefix
   const path = removeManifestPrefix(manifestPath)
   const pathToMarkDown = path.replaceAll('/', '.children.')
-  const markDownPath = get(manifest, pathToMarkDown)?.args?.path
+  const markDownPath = get(manifest, pathToMarkDown)?.args?.path?.replaceAll('\\', '/')
 
   if (!markDownPath) return ''
 
@@ -116,7 +116,7 @@ export const getMarkdownPathByManifest = (
     return undefined
   })
 
-  return pathPrefix + folderPath + (markDownPath.match(/^(\/|\\)/) ? markDownPath : '/'.concat(markDownPath))
+  return pathPrefix + folderPath + (markDownPath.match(/^(\/)/) ? markDownPath : '/'.concat(markDownPath))
 }
 
 export const removeManifestPrefix = (path?: string): string => path

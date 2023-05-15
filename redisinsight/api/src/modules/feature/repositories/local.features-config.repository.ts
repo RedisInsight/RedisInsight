@@ -24,17 +24,14 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
   }
 
   /**
-   * Generate control group which should never be updated
+   * Generate control number which should never be updated
    * @private
    */
-  private generateControlGroup(): number {
-    this.logger.log('Getting control group');
+  private generateControlNumber(): number {
+    const controlNumber = Number((parseInt((Math.random() * 10_000).toString(), 10) / 100).toFixed(2));
+    this.logger.log('Control number is generated', controlNumber);
 
-    const controlGroup = Number((Math.random() * 100).toFixed(2));
-
-    this.logger.log('Control group generated', controlGroup);
-
-    return controlGroup;
+    return controlNumber;
   }
 
   /**
@@ -51,7 +48,7 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
       entity = await this.repository.save(plainToClass(FeaturesConfigEntity, {
         id: this.id,
         data: defaultConfig,
-        controlNumber: this.generateControlGroup(),
+        controlNumber: this.generateControlNumber(),
       }));
     }
 

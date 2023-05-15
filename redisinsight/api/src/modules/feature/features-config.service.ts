@@ -8,6 +8,8 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { Validator } from 'class-validator';
+import { plainToClass } from 'class-transformer';
+import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
 
 const FEATURES_CONFIG = config.get('features_config');
 
@@ -41,9 +43,8 @@ export class FeaturesConfigService {
       return JSON.parse(data);
     } catch (error) {
       this.logger.error('Unable to fetch remote config', error);
+      throw error;
     }
-
-    return null;
   }
 
   /**
@@ -54,7 +55,8 @@ export class FeaturesConfigService {
       this.logger.log('Trying to sync features config...');
 
       const featuresConfig = await this.repository.getOrCreate();
-      const newConfig = await this.fetchRemoteConfig();
+      // todo: update from default config with version > than current
+      const newConfig = plainToClass(FeaturesConfigData, await this.fetchRemoteConfig());
 
       await this.validator.validateOrReject(newConfig);
 

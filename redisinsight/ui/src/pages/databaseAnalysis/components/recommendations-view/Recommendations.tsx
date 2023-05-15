@@ -165,7 +165,7 @@ const Recommendations = () => {
             badges = [],
             redisStack = false,
             tutorial,
-            telemetryEvent = ''
+            telemetryEvent
           } = recommendationsContent[name] || {}
 
           if (!(name in recommendationsContent)) {

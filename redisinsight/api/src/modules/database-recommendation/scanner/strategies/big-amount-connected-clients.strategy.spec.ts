@@ -21,10 +21,13 @@ describe('BigAmountConnectedClientsStrategy', () => {
     });
 
     describe('cluster', () => {
-      it('should return true when connectedClients more then 100 in the first node', async () => {
+      it('should return true when connectedClients more then 100 in one of the nodes', async () => {
         expect(await strategy.isRecommendationReached({
           version: '1',
-          nodes: [{ version: '1', connectedClients: 101 }],
+          nodes: [
+            { version: '1', connectedClients: 1 },
+            { version: '2', connectedClients: 101 },
+          ],
         })).toEqual({ isReached: true });
       });
     });

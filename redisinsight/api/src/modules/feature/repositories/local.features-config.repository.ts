@@ -50,14 +50,14 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
 
       entity = await this.repository.save(plainToClass(FeaturesConfigEntity, {
         id: this.id,
-        config: defaultConfig,
-        controlGroup: this.generateControlGroup(),
+        data: defaultConfig,
+        controlNumber: this.generateControlGroup(),
       }));
     }
 
     const model = classToClass(FeaturesConfig, entity);
 
-    if (model?.config?.version < defaultConfig?.version) {
+    if (model?.data?.version < defaultConfig?.version) {
       return this.update(defaultConfig);
     }
 

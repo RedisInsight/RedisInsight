@@ -58,20 +58,15 @@ export class FeatureService {
 
       this.logger.debug('Recalculating features flags for new config', featuresConfig);
 
-      await Promise.all(map(featuresConfig?.config?.features || {}, async (feature, name) => {
-        const dbFeature = find(featuresFromDatabase, { name });
-
-        if (!dbFeature || feature?.version > dbFeature?.version) {
-          actions.toUpsert.push({
-            name,
-            version: feature.version,
-            flag: await this.featureFlagProvider.calculate(name, feature),
-          });
-        }
+      await Promise.all(Array.from(featuresConfig?.data?.features || new Map(), async ([name, feature]) => {
+        actions.toUpsert.push({
+          name,
+          flag: await this.featureFlagProvider.calculate(name, feature),
+        });
       }));
 
       // calculate to delete features
-      actions.toDelete = featuresFromDatabase.filter((feature) => !featuresConfig?.config?.features?.[feature.name]);
+      actions.toDelete = featuresFromDatabase.filter((feature) => !featuresConfig?.data?.features?.[feature.name]);
 
       // delete features
       await Promise.all(actions.toDelete.map(this.repository.delete.bind(this)));

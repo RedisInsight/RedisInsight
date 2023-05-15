@@ -52,7 +52,7 @@ export class ServerService implements OnApplicationBootstrap {
       anonymousId: server.id,
       sessionId: this.sessionId,
       appType: this.getAppType(SERVER_CONFIG.buildType),
-      controlGroup: await this.featuresConfigService.getControlGroup(),
+      ...(await this.featuresConfigService.getControlInfo()),
     });
 
     // do not track start events for non-electron builds
@@ -88,7 +88,7 @@ export class ServerService implements OnApplicationBootstrap {
         appType: this.getAppType(SERVER_CONFIG.buildType),
         encryptionStrategies: await this.encryptionService.getAvailableEncryptionStrategies(),
         fixedDatabaseId: REDIS_STACK_CONFIG?.id,
-        controlGroup: await this.featuresConfigService.getControlGroup(),
+        ...(await this.featuresConfigService.getControlInfo()),
       };
       this.logger.log('Succeed to get server info.');
       return result;

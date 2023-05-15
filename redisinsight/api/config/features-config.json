@@ -1,13 +1,12 @@
 {
-  "version": 12,
+  "version": 1,
   "features": {
     "liveRecommendations": {
-      "version": 12,
       "flag": true,
-      "perc": [[50, 60]],
-      "filter": [
+      "perc": [[0, 100]],
+      "filters": [
         {
-          "name": "eula.analytics",
+          "name": "agreements.analytics",
           "value": true,
           "cond": "eq"
         }

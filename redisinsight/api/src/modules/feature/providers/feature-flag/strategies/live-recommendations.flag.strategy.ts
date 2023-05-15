@@ -1,10 +1,9 @@
 import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/feature.flag.strategy';
 
 export class LiveRecommendationsFlagStrategy extends FeatureFlagStrategy {
-  async calculate(conditions: any): Promise<boolean> {
-    const isInRange = await this.isInTargetRange(conditions?.perc);
+  async calculate(featureConfig: any): Promise<boolean> {
+    const isInRange = await this.isInTargetRange(featureConfig?.perc);
 
-    // todo: add filters
-    return isInRange ? !!conditions?.flag : !conditions?.flag;
+    return isInRange && await this.isInFilter(featureConfig?.filters) ? !!featureConfig?.flag : !featureConfig?.flag;
   }
 }

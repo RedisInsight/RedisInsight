@@ -7,12 +7,15 @@ import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { FeatureServerEvents } from 'src/modules/feature/constants';
+import { Validator } from 'class-validator';
 
 const FEATURES_CONFIG = config.get('features_config');
 
 @Injectable()
 export class FeaturesConfigService {
   private logger = new Logger('FeaturesConfigService');
+
+  private validator = new Validator();
 
   constructor(
     private repository: FeaturesConfigRepository,
@@ -53,7 +56,9 @@ export class FeaturesConfigService {
       const featuresConfig = await this.repository.getOrCreate();
       const newConfig = await this.fetchRemoteConfig();
 
-      if (newConfig?.version > featuresConfig?.config?.version) {
+      await this.validator.validateOrReject(newConfig);
+
+      if (newConfig?.version > featuresConfig?.data?.version) {
         await this.repository.update(newConfig);
       }
 
@@ -68,12 +73,15 @@ export class FeaturesConfigService {
   /**
    * Get control group field
    */
-  public async getControlGroup(): Promise<number> {
+  public async getControlInfo(): Promise<{ controlNumber: number, controlGroup: string }> {
     try {
       this.logger.debug('Trying to get controlGroup field');
 
       const entity = await (this.repository.getOrCreate());
-      return entity.controlGroup;
+      return {
+        controlNumber: entity.controlNumber,
+        controlGroup: entity.controlNumber.toFixed(0),
+      };
     } catch (error) {
       this.logger.error('Unable to get controlGroup field', error);
       throw new NotFoundException(ERROR_MESSAGES.CONTROL_GROUP_NOT_EXIST);

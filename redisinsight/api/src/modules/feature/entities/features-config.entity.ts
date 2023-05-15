@@ -12,12 +12,12 @@ export class FeaturesConfigEntity {
 
   @Column({ nullable: true })
   @Expose()
-  controlGroup: number;
+  controlNumber: number;
 
   @Column({ nullable: false })
   @Expose()
   @DataAsJsonString()
-  config: string;
+  data: string;
 
   @UpdateDateColumn()
   @Expose()

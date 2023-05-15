@@ -12,8 +12,4 @@ export class FeatureEntity {
   @Expose()
   @Column()
   flag: boolean;
-
-  @Expose()
-  @Column()
-  version: number;
 }

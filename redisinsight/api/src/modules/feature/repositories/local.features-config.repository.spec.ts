@@ -12,7 +12,6 @@ import { LocalFeaturesConfigRepository } from 'src/modules/feature/repositories/
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import { classToPlain, plainToClass } from 'class-transformer';
 import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
-
 describe('LocalFeaturesConfigRepository', () => {
   let service: LocalFeaturesConfigRepository;
   let repository: MockType<Repository<FeaturesConfigEntity>>;
@@ -38,11 +37,43 @@ describe('LocalFeaturesConfigRepository', () => {
     repository.save.mockResolvedValue(mockFeaturesConfigEntity);
   });
 
+  describe('generateControlNumber', () => {
+    const step = 10;
+    const iterations = 10_000;
+    const delta = 100;
+
+    it('check controlNumber generation', async () => {
+      const result = {};
+
+      for (let i = 0; i < 100; i += step) {
+        result[`${i} - ${i + step}`] = 0;
+      }
+
+      (new Array(iterations)).fill(1).forEach(() => {
+        const controlNumber = service['generateControlNumber']();
+
+        expect(controlNumber).toBeGreaterThanOrEqual(0);
+        expect(controlNumber).toBeLessThan(100);
+
+        for (let j = 0; j < 100; j += step) {
+          if (controlNumber <= (j + step)) {
+            result[`${j} - ${j + step}`] += 1;
+            break;
+          }
+        }
+      });
+
+      const amountPerGroup = iterations / step;
+
+      Object.entries(result).forEach(([, value]) => {
+        expect(value).toBeGreaterThan(amountPerGroup - delta);
+        expect(value).toBeLessThan(amountPerGroup + delta);
+      });
+    });
+  });
+
   describe('getOrCreate', () => {
     it('ttt', async () => {
-      console.log('___ mockFeaturesConfigJson', require('util').inspect(mockFeaturesConfigJson, { depth: null }))
-      console.log('___ mockFeaturesConfig', require('util').inspect(mockFeaturesConfig, { depth: null }))
-      console.log('___ mockFeaturesConfigEntity', require('util').inspect(mockFeaturesConfigEntity, { depth: null }))
     });
     // it('should return existing config', async () => {
     //   const result = await service.getOrCreate();

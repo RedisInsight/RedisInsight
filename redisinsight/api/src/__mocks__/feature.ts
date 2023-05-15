@@ -1,13 +1,18 @@
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
-import { FeaturesConfig, FeaturesConfigData } from 'src/modules/feature/model/features-config';
-import { plainToClass } from 'class-transformer';
+import {
+  FeatureConfig,
+  FeatureConfigFilter,
+  FeaturesConfig,
+  FeaturesConfigData,
+} from 'src/modules/feature/model/features-config';
 import { classToClass } from 'src/utils';
 
 export const mockFeaturesConfigId = '1';
+export const mockFeaturesConfigVersion = 1.111;
 export const mockControlNumber = 7.68;
 
 export const mockFeaturesConfigJson = {
-  version: 1,
+  version: mockFeaturesConfigVersion,
   features: {
     liveRecommendations: {
       perc: [[0, 10]],
@@ -23,21 +28,16 @@ export const mockFeaturesConfigJson = {
   },
 };
 
-export const mockFeaturesConfigData = plainToClass(FeaturesConfigData, {
-  version: mockFeaturesConfigJson.version,
-  features: {
-    liveRecommendations: {
-      perc: [[0, 10]],
-      flag: true,
+export const mockFeaturesConfigData = Object.assign(new FeaturesConfigData(), {
+  ...mockFeaturesConfigJson,
+  features: new Map(Object.entries({
+    liveRecommendations: Object.assign(new FeatureConfig(), {
+      ...mockFeaturesConfigJson.features.liveRecommendations,
       filters: [
-        {
-          name: 'agreements.analytics',
-          value: true,
-          cond: 'eq',
-        },
+        Object.assign(new FeatureConfigFilter(), { ...mockFeaturesConfigJson.features.liveRecommendations.filters[0] }),
       ],
-    },
-  },
+    }),
+  })),
 });
 
 export const mockFeaturesConfig = Object.assign(new FeaturesConfig(), {
@@ -51,8 +51,8 @@ export const mockFeaturesConfigEntity = Object.assign(new FeaturesConfigEntity()
 });
 
 export const mockFeaturesConfigRepository = jest.fn(() => ({
-  getOrCreate: jest.fn(),
-  update: jest.fn(),
+  getOrCreate: jest.fn().mockResolvedValue(mockFeaturesConfig),
+  update: jest.fn().mockResolvedValue(mockFeaturesConfig),
 }));
 
 export const mockFeaturesConfigService = () => ({

@@ -12,8 +12,8 @@ export interface ITelemetryService {
     name: string,
     params: {
       buildType?: string
-      controlBucket?: string
-      controlGroup?: number
+      controlNumber?: number
+      controlGroup?: string
       databaseId?: string
     }
   ): Promise<void>

@@ -18,15 +18,13 @@ import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
 import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
-import { ReactComponent as LikeIcon } from 'uiSrc/assets/img/icons/like.svg'
-import { ReactComponent as DislikeIcon } from 'uiSrc/assets/img/icons/dislike.svg'
 import { updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { Nullable } from 'uiSrc/utils'
 import PetardIcon from 'uiSrc/assets/img/icons/petard.svg'
 import GithubSVG from 'uiSrc/assets/img/icons/github-white.svg'
 
-import { getVotedText, voteTooltip } from './utils'
+import { getVotedText, voteTooltip, iconType } from './utils'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -71,17 +69,6 @@ const VoteOption = (props: Props) => {
     })
   }
 
-  const getIconType = (voteOption: Vote) => {
-    if (voteOption === Vote.Like) {
-      return LikeIcon
-    }
-
-    if (voteOption === Vote.Dislike) {
-      return DislikeIcon
-    }
-    return 'default'
-  }
-
   const handleClick = (name: string) => {
     setPopover(voteOption)
 
@@ -112,7 +99,7 @@ const VoteOption = (props: Props) => {
         button={(
           <EuiButtonIcon
             disabled={!isAnalyticsEnable}
-            iconType={getIconType(voteOption)}
+            iconType={iconType[voteOption] ?? 'default'}
             className={cx('vote__btn', { selected: vote === voteOption })}
             aria-label="vote useful"
             data-testid={`${voteOption}-vote-btn`}

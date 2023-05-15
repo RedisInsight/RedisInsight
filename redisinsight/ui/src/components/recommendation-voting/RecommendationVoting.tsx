@@ -35,6 +35,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false, containerClas
       <div className="voteContent">
         {Object.values(Vote).map((option) => (
           <VoteOption
+            key={option}
             voteOption={option}
             vote={vote}
             popover={popover}

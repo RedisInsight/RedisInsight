@@ -1,8 +1,9 @@
-import { BrowserPage, MemoryEfficiencyPage, MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { BrowserPage, MemoryEfficiencyPage, MyRedisDatabasePage, SettingsPage, WorkbenchPage } from '../../../pageObjects';
 import { RecommendationIds, rte } from '../../../helpers/constants';
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
 import {
+    // addNewStandaloneDatabaseApi,
     addNewStandaloneDatabasesApi,
     deleteStandaloneDatabaseApi,
     deleteStandaloneDatabasesApi
@@ -10,6 +11,7 @@ import {
 import { Common } from '../../../helpers/common';
 import { Telemetry } from '../../../helpers/telemetry';
 import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
+import { updateControlNumberInDB } from '../../../helpers/insights';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -17,6 +19,7 @@ const workbenchPage = new WorkbenchPage();
 const telemetry = new Telemetry();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const recommendationsActions = new RecommendationsActions();
+const settingsPage = new SettingsPage();
 
 const databasesForAdding = [
     { host: ossStandaloneV5Config.host, port: ossStandaloneV5Config.port, databaseName: ossStandaloneV5Config.databaseName },
@@ -46,6 +49,36 @@ fixture `Live Recommendations`
     .afterEach(async() => {
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    });
+test.only
+    .before(async t => {
+        // await acceptLicenseTerms();
+        // await addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await updateControlNumberInDB(19.2);
+        await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
+        await settingsPage.changeAnalyticsSwitcher(false);
+        await settingsPage.changeAnalyticsSwitcher(true);
+    }).after(async() => {
+        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+    })('Verify that Insights panel displayed if the local config file has it enabled for new user', async t => {
+        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed for user with control number according to config');
+        await browserPage.InsightsPanel.toggleInsightsPanel(true);
+        await t.expect(await browserPage.InsightsPanel.getRecommendationByName(redisVersionRecom).exists).ok('Redis Version recommendation not displayed');
+    });
+test.only
+    .before(async t => {
+        // await acceptLicenseTerms();
+        // await addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await updateControlNumberInDB(30.1);
+        await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
+        await settingsPage.changeAnalyticsSwitcher(false);
+        await settingsPage.changeAnalyticsSwitcher(true);
+    }).after(async() => {
+        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+    })('Verify that Insights panel not displayed if the local config file has it disabled', async t => {
+        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed for user with control number out of config');
     });
 test
     .before(async() => {

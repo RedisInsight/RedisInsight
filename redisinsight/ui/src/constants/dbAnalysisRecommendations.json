@@ -193,6 +193,10 @@
         "value": "Several set values with IntSet encoding exceed the set-max-intset-entries. Change the configuration in redis.conf to efficiently use the IntSet encoding. Though increasing this value will lead to an increase in the latency of set operations and CPU utilization."
       },
       {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
         "type": "span",
         "value": "Run "
       },
@@ -410,7 +414,7 @@
     "content": [
       {
         "type": "span",
-        "value": "Increase"
+        "value": "Increase "
       },
       {
         "type": "code",
@@ -478,7 +482,7 @@
     "id": "bigSets",
     "telemetryEvent": "optimizeExistenceChecks",
     "title": "Consider using probabilistic data structures such as Bloom Filter or HyperLogLog",
-    "tutorial": "/redis_stack/probabilistic_data_structures.md",
+    "tutorial": "/quick-guides/probabilistic-data-structures/introduction.md",
     "redisStack": true,
     "content": [
       {
@@ -591,7 +595,7 @@
     "telemetryEvent": "optimizeTimeSeries",
     "title":"Try using the Redis native time series data structure and querying capabilities",
     "redisStack": true,
-    "tutorial": "/redis_stack/redis_for_time_series.md",
+    "tutorial": "/quick-guides/time-series/introduction.md",
     "content": [
       {
         "type": "span",
@@ -903,7 +907,7 @@
     "id": "searchJSON",
     "title": "Try indexing your JSON documents for efficient data retrieval",
     "redisStack": true,
-    "tutorial": "/redis_stack/working_with_json.md",
+    "tutorial": "/quick-guides/document/working-with-json.md",
     "content": [
       {
         "type": "span",
@@ -980,8 +984,16 @@
         "value": "l"
       },
       {
-        "type": "paragraph",
-        "value": "The IntSet encoding is extremely memory efficient. By default, the value of `set-max-intset-entries` is 512 and is configurable in redis.conf. However, increasing this value will lead to an increase in the latency of set operations and CPU utilization."
+        "type": "span",
+        "value": "The IntSet encoding is extremely memory efficient. By default, the value of "
+      },
+      {
+        "type": "code",
+        "value": "set-max-intset-entries"
+      },
+      {
+        "type": "span",
+        "value": " is 512 and is configurable in redis.conf. However, increasing this value will lead to an increase in the latency of set operations and CPU utilization."
       },
       {
         "type": "spacer",
@@ -1027,7 +1039,7 @@
     "id": "stringToJson",
     "title": "Try using our JSON native document store",
     "redisStack": true,
-    "tutorial": "/redis_stack/working_with_json.md",
+    "tutorial": "/quick-guides/document/working-with-json.md",
     "content": [
       {
         "type": "paragraph",

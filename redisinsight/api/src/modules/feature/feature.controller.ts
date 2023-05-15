@@ -1,12 +1,13 @@
 import {
   Controller,
-  Get,
+  Get, HttpCode, Post,
   UsePipes,
-  ValidationPipe,
+  ValidationPipe
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { FeatureService } from 'src/modules/feature/feature.service';
+import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 
 @ApiTags('Info')
 @Controller('features')
@@ -14,6 +15,7 @@ import { FeatureService } from 'src/modules/feature/feature.service';
 export class FeatureController {
   constructor(
     private featureService: FeatureService,
+    private featuresConfigService: FeaturesConfigService,
   ) {}
 
   @Get('')
@@ -29,5 +31,11 @@ export class FeatureController {
   })
   async list(): Promise<any> {
     return this.featureService.list();
+  }
+
+  @Post('/sync')
+  @HttpCode(200)
+  async sync(): Promise<void> {
+    return this.featuresConfigService.sync();
   }
 }

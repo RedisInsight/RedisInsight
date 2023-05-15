@@ -50,7 +50,7 @@ export class FeaturesConfigService {
   /**
    * Get latest config from remote and save it in the local database
    */
-  private async sync() {
+  public async sync() {
     try {
       this.logger.log('Trying to sync features config...');
 

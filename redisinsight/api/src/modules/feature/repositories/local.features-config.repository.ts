@@ -67,10 +67,10 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
   /**
    * @inheritDoc
    */
-  async update(config: any): Promise<FeaturesConfig> {
+  async update(data: any): Promise<FeaturesConfig> {
     const entity = await this.repository.update(
       { id: this.id },
-      plainToClass(FeaturesConfigEntity, { config }),
+      plainToClass(FeaturesConfigEntity, { data }),
     );
 
     return classToClass(FeaturesConfig, entity);

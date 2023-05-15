@@ -5,7 +5,7 @@ import {
 } from 'src/modules/feature/providers/feature-flag/strategies/live-recommendations.flag.strategy';
 import { DefaultFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/default.flag.strategy';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
--import { SettingsService } from 'src/modules/settings/settings.service';
+import { SettingsService } from 'src/modules/settings/settings.service';
 
 @Injectable()
 export class FeatureFlagProvider {

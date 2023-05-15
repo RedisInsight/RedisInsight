@@ -62,6 +62,8 @@ test.only
     }).after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that Insights panel displayed if the local config file has it enabled for new user', async t => {
+        // Open Browser page
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed for user with control number according to config');
         await browserPage.InsightsPanel.toggleInsightsPanel(true);
         await t.expect(await browserPage.InsightsPanel.getRecommendationByName(redisVersionRecom).exists).ok('Redis Version recommendation not displayed');
@@ -78,6 +80,8 @@ test.only
     }).after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that Insights panel not displayed if the local config file has it disabled', async t => {
+        // Open Browser page
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed for user with control number out of config');
     });
 test

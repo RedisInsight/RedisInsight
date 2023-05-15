@@ -31,7 +31,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false, containerClas
       gutterSize={live ? 'none' : 'l'}
       data-testid="recommendation-voting"
     >
-      <EuiText size="m">Was this useful?</EuiText>
+      <EuiText size="m">Is this useful?</EuiText>
       <div className="voteContent">
         {Object.values(Vote).map((option) => (
           <VoteOption

@@ -24,16 +24,12 @@ import { isRedisearchAvailable } from 'uiSrc/utils'
 
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import {
-  appFeatureHighlightingSelector,
   incrementOnboardStepAction,
   removeFeatureFromHighlighting
 } from 'uiSrc/slices/app/features'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { setBulkActionType } from 'uiSrc/slices/browser/bulkActions'
-import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
-import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
 import AutoRefresh from '../auto-refresh'
 import FilterKeyType from '../filter-key-type'
 import RediSearchIndexesList from '../redisearch-key-list'
@@ -84,8 +80,6 @@ const KeysHeader = (props: Props) => {
   const { id: instanceId, modules } = useSelector(connectedInstanceSelector)
   const { viewType, searchMode, isFiltered } = useSelector(keysSelector)
   const { selectedIndex } = useSelector(redisearchSelector)
-  const { features } = useSelector(appFeatureHighlightingSelector)
-  const { bulkUpload: bulkUploadHighlighting } = getHighlightingFeatures(features)
 
   const rootDivRef: Ref<HTMLDivElement> = useRef(null)
 
@@ -311,27 +305,18 @@ const KeysHeader = (props: Props) => {
   )
 
   const BulkActionsBtn = (
-    <HighlightedFeature
-      isHighlight={bulkUploadHighlighting}
-      title={BUILD_FEATURES?.bulkUpload?.title}
-      content={BUILD_FEATURES?.bulkUpload?.content}
-      type={BUILD_FEATURES?.bulkUpload?.type}
-      wrapperClassName={styles.bulkActionsHighlighting}
-      hideFirstChild
-    >
-      <EuiToolTip content="Bulk Actions" position="top">
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
-          onClick={openBulkActions}
-          className={styles.bulkActions}
-          data-testid="btn-bulk-actions"
-        >
-          <EuiIcon type={BulkActionsIcon} />
-        </EuiButton>
-      </EuiToolTip>
-    </HighlightedFeature>
+    <EuiToolTip content="Bulk Actions" position="top">
+      <EuiButton
+        fill
+        size="s"
+        color="secondary"
+        onClick={openBulkActions}
+        className={styles.bulkActions}
+        data-testid="btn-bulk-actions"
+      >
+        <EuiIcon type={BulkActionsIcon} />
+      </EuiButton>
+    </EuiToolTip>
   )
 
   const ViewSwitch = (width: number) => (

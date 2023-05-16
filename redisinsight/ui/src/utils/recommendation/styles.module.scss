@@ -11,6 +11,19 @@
   display: inline !important;
 }
 
+.list {
+  list-style: initial;
+  padding-left: 21px;
+
+  .listItem::marker {
+    color: var(--euiTextSubduedColor);
+  }
+
+  .listItem.insights::marker {
+    color: var(--htmlColor) !important;
+  }
+}
+
 .code {
   background-color: var(--separatorColor);
   border-radius: 4px;
@@ -23,4 +36,31 @@
   code {
     font-family: "Roboto Mono", Consolas, Menlo, Courier, monospace !important;
   }
+}
+
+.badgesLegend {
+  margin: 0 22px 14px 0 !important;
+  padding-top: 20px;
+
+  .badgeWrapper {
+    margin-right: 0;
+  }
+
+  .badge {
+    margin: 0 0 0 24px;
+  }
+
+  .badgeIcon {
+    margin-right: 14px;
+  }
+}
+
+.badgeIcon {
+  fill: var(--badgeIconColor);
+}
+
+.badgeWrapper {
+  display: flex;
+  align-items: center;
+  margin-right: 24px;
 }

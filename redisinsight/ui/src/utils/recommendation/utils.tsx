@@ -170,10 +170,13 @@ const renderContentElement = (
       )
     case 'list':
       return (
-        <ul data-testid={`list-${telemetryName}-${idx}`} key={`${telemetryName}-${idx}`}>
+        <ul className={styles.list} data-testid={`list-${telemetryName}-${idx}`} key={`${telemetryName}-${idx}`}>
           {isArray(jsonValue) && jsonValue.map((listElement: IRecommendationContent[], idx) => (
-          // eslint-disable-next-line react/no-array-index-key
-            <li key={`list-item-${listElement[0]}-${idx}`}>
+            <li
+              className={cx(styles.listItem, { [styles.insights]: insights })}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`list-item-${listElement[0]}-${idx}`}
+            >
               {renderRecommendationContent(listElement, params, telemetryName, insights)}
             </li>
           ))}

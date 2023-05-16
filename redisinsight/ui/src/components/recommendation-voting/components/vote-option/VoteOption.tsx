@@ -84,19 +84,19 @@ const VoteOption = (props: Props) => {
     : 'Enable Analytics on the Settings page to vote for a recommendation')
 
   return (
-    <EuiToolTip
-      content={getTooltipContent(voteOption)}
-      position="bottom"
-      data-testid={`${voteOption}-vote-tooltip`}
-    >
-      <EuiPopover
-        initialFocus={false}
-        anchorPosition="rightCenter"
-        isOpen={popover === voteOption}
-        closePopover={() => setPopover('')}
-        anchorClassName={styles.popoverAnchor}
-        panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
-        button={(
+    <EuiPopover
+      initialFocus={false}
+      anchorPosition="rightCenter"
+      isOpen={popover === voteOption}
+      closePopover={() => setPopover('')}
+      anchorClassName={styles.popoverAnchor}
+      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+      button={(
+        <EuiToolTip
+          content={getTooltipContent(voteOption)}
+          position="bottom"
+          data-testid={`${voteOption}-vote-tooltip`}
+        >
           <EuiButtonIcon
             disabled={!isAnalyticsEnable}
             iconType={iconType[voteOption] ?? 'default'}
@@ -105,64 +105,64 @@ const VoteOption = (props: Props) => {
             data-testid={`${voteOption}-vote-btn`}
             onClick={() => handleClick(name)}
           />
+        </EuiToolTip>
         )}
-      >
-        <div className={styles.popoverWrapper}>
-          <EuiFlexGroup gutterSize="none" direction="column" alignItems="flexEnd">
-            <EuiFlexItem grow={false}>
-              <EuiFlexGroup gutterSize="none">
-                <EuiFlexItem grow={false}>
-                  <EuiIcon type={PetardIcon} className={styles.petardIcon} />
-                </EuiFlexItem>
-                <EuiFlexItem>
-                  <div>
-                    <EuiText className={styles.text} data-testid="common-text">Thank you for the feedback.</EuiText>
-                    <EuiText className={styles.text} data-testid="custom-text">{getVotedText(voteOption)}</EuiText>
-                  </div>
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <EuiButtonIcon
-                    iconType="cross"
-                    color="primary"
-                    id="close-voting-popover"
-                    aria-label="close popover"
-                    data-testid="close-popover"
-                    className={styles.closeBtn}
-                    onClick={() => setPopover('')}
-                  />
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiButton
-                aria-label="recommendation feedback"
-                fill
-                data-testid="recommendation-feedback-btn"
-                className={styles.feedbackBtn}
-                color="secondary"
-                size="s"
+    >
+      <div className={styles.popoverWrapper} data-testid={`${name}-${voteOption}-popover`}>
+        <EuiFlexGroup gutterSize="none" direction="column" alignItems="flexEnd">
+          <EuiFlexItem grow={false}>
+            <EuiFlexGroup gutterSize="none">
+              <EuiFlexItem grow={false}>
+                <EuiIcon type={PetardIcon} className={styles.petardIcon} />
+              </EuiFlexItem>
+              <EuiFlexItem>
+                <div>
+                  <EuiText className={styles.text} data-testid="common-text">Thank you for the feedback.</EuiText>
+                  <EuiText className={styles.text} data-testid="custom-text">{getVotedText(voteOption)}</EuiText>
+                </div>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButtonIcon
+                  iconType="cross"
+                  color="primary"
+                  id="close-voting-popover"
+                  aria-label="close popover"
+                  data-testid="close-popover"
+                  className={styles.closeBtn}
+                  onClick={() => setPopover('')}
+                />
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <EuiButton
+              aria-label="recommendation feedback"
+              fill
+              data-testid="recommendation-feedback-btn"
+              className={styles.feedbackBtn}
+              color="secondary"
+              size="s"
+            >
+              <EuiLink
+                external={false}
+                className={styles.link}
+                href={EXTERNAL_LINKS.recommendationFeedback}
+                target="_blank"
+                data-test-subj="github-repo-link"
               >
-                <EuiLink
-                  external={false}
-                  className={styles.link}
-                  href={EXTERNAL_LINKS.recommendationFeedback}
-                  target="_blank"
-                  data-test-subj="github-repo-link"
-                >
-                  <EuiIcon
-                    className={styles.githubIcon}
-                    aria-label="redis insight github issues"
-                    type={GithubSVG}
-                    data-testid="github-repo-icon"
-                  />
-                  To Github
-                </EuiLink>
-              </EuiButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </div>
-      </EuiPopover>
-    </EuiToolTip>
+                <EuiIcon
+                  className={styles.githubIcon}
+                  aria-label="redis insight github issues"
+                  type={GithubSVG}
+                  data-testid="github-repo-icon"
+                />
+                To Github
+              </EuiLink>
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
+    </EuiPopover>
   )
 }
 

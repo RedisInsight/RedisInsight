@@ -104,8 +104,8 @@ aliases:
       name: Virustotal slack report
       command: &virusreport |
         FILE_NAME=virustotal.report.json
-        BUILD_NAME=$BUILD_NAME $FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$VIRUS_CHECK_FAILED node .circleci/virustotal-report.js
-        # BUILD_NAME=$BUILD_NAME $FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$VIRUS_CHECK_FAILED node .circleci/virustotal-report.js &&
+        BUILD_NAME=$BUILD_NAME FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$VIRUS_CHECK_FAILED node .circleci/virustotal-report.js
+        # BUILD_NAME=$BUILD_NAME FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$VIRUS_CHECK_FAILED node .circleci/virustotal-report.js &&
         # curl -H "Content-type: application/json" --data @$FILE_NAME -H "Authorization: Bearer ${SLACK_TEST_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
       shell: /bin/bash
   iTestsNames: &iTestsNames
@@ -1135,7 +1135,7 @@ workflows:
           # requires:
             # - Build app - Windows (dev)
       - virustotal-report:
-          name: Virus report (prod)
+          name: Virus check report (prod)
           requires:
             - Virus check - AppImage (nightly)
             - Virus check - deb (nightly)

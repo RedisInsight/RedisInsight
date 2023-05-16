@@ -92,12 +92,22 @@ aliases:
         echo "analazedHarmless: ${analazedHarmless}, analazedMalicious:  ${analazedMalicious}, analazedSuspicious: ${analazedSuspicious}"
 
         if [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
+          echo "export VIRUS_CHECK_FAILED=1" >> $BASH_ENV
           echo 'Found dangers'; exit 1;
         fi
 
         echo 'Passed';
       shell: /bin/bash
       no_output_timeout: 15m
+  virustotalReport: &virustotalReport
+    run:
+      name: Virustotal slack report
+      command: &virusreport |
+        FILE_NAME=virustotal.report.json
+        BUILD_NAME=$BUILD_NAME $FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$VIRUS_CHECK_FAILED node .circleci/virustotal-report.js
+        # BUILD_NAME=$BUILD_NAME $FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$VIRUS_CHECK_FAILED node .circleci/virustotal-report.js &&
+        # curl -H "Content-type: application/json" --data @$FILE_NAME -H "Authorization: Bearer ${SLACK_TEST_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
+      shell: /bin/bash
   iTestsNames: &iTestsNames
     - oss-st-5            # OSS Standalone v5
     - oss-st-5-pass       # OSS Standalone v5 with admin pass required
@@ -718,8 +728,20 @@ jobs:
           name: export URL environment variable
           command: |
             echo 'export URL="https://download.redisinsight.redis.com/latest/<< parameters.fileName >>"' >> $BASH_ENV
+            echo 'export BUILD_NAME="<< parameters.fileName >>"' >> $BASH_ENV
       - <<: *urlScan
       - <<: *validate
+      - <<: *virustotalReport
+
+  virustotal-report:
+    executor: linux-executor
+    steps:
+      - checkout
+      - run:
+          name: Send virustotal passed report
+          command: |
+            echo 'export VIRUS_CHECK_FAILED=0' >> $BASH_ENV
+      - <<: *virustotalReport
   docker:
     executor: linux-executor
     parameters:
@@ -1073,45 +1095,56 @@ workflows:
       #     requires: *devBuildRequire
 
       - virustotal-url:
-          name: Virus check - AppImage (prod)
+          name: Virus check - AppImage (nightly)
           fileName: RedisInsight-v2-linux-x86_64.AppImage
           # requires:
             # - Build app - Linux (dev)
       - virustotal-url:
-          name: Virus check - deb (prod)
+          name: Virus check - deb (nightly)
           fileName: RedisInsight-v2-linux-amd64.deb
           # requires:
             # - Build app - Linux (dev)
       - virustotal-url:
-          name: Virus check - rpm (prod)
+          name: Virus check - rpm (nightly)
           fileName: RedisInsight-v2-linux-x86_64.rpm
           # requires:
             # - Build app - Linux (dev)
       - virustotal-url:
-          name: Virus check - snap (prod)
+          name: Virus check - snap (nightly)
           fileName: RedisInsight-v2-linux-amd64.snap
           # requires:
             # - Build app - Linux (dev)
       - virustotal-url:
-          name: Virus check x64 - dmg (prod)
+          name: Virus check x64 - dmg (nightly)
           fileName: RedisInsight-v2-mac-x64.dmg
           # requires:
             # - Build app - MacOS (dev)
       - virustotal-url:
-          name: Virus check arm64 - dmg (prod)
+          name: Virus check arm64 - dmg (nightly)
           fileName: RedisInsight-v2-mac-arm64.dmg
           # requires:
             # - Build app - MacOS (dev)
       - virustotal-url:
-          name: Virus check MAS - pkg (prod)
+          name: Virus check MAS - pkg (nightly)
           fileName: RedisInsight-mac-universal-mas.pkg
           # requires:
             # - Build app - MacOS (dev)
       - virustotal-url:
-          name: Virus check - exe (prod)
+          name: Virus check - exe (nightly)
           fileName: RedisInsight-v2-win-installer.exe
           # requires:
             # - Build app - Windows (dev)
+      - virustotal-report:
+          name: Virus report (prod)
+          requires:
+            - Virus check - AppImage (nightly)
+            - Virus check - deb (nightly)
+            - Virus check - rpm (nightly)
+            - Virus check - snap (nightly)
+            - Virus check x64 - dmg (nightly)
+            - Virus check arm64 - dmg (nightly)
+            - Virus check MAS - pkg (nightly)
+            - Virus check - exe (nightly)
       # - store-build-artifacts:
       #     name: Store build artifacts (dev)
       #     requires:

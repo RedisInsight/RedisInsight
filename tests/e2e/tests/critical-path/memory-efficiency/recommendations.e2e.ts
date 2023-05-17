@@ -139,21 +139,23 @@ test
     }).after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can upvote recommendations', async t => {
-        await recommendationsActions.voteForRecommendation(redisVersionRecommendation, 'not-useful');
-        // Verify that user can rate recommendations with one of 3 existing types at the same time
-        await recommendationsActions.verifyVoteDisabled(redisVersionRecommendation, 'not-useful');
+        const notUsefulVoteOption = 'not useful';
+        const usefulVoteOption = 'useful';
+        await recommendationsActions.voteForRecommendation(redisVersionRecommendation, notUsefulVoteOption);
+        // Verify that user can rate recommendations with one of 2 existing types at the same time
+        await recommendationsActions.verifyVoteIsSelected(redisVersionRecommendation, notUsefulVoteOption);
 
         // Verify that user can see the popup with link when he votes for “Not useful”
-        await t.expect(memoryEfficiencyPage.recommendationsFeedbackBtn.visible).ok('popup did not appear after voting for not useful');
+        await recommendationsActions.verifyVotePopUpIsDisplayed(redisVersionRecommendation, notUsefulVoteOption);
 
         // Verify that user can see previous votes when reload the page
         await memoryEfficiencyPage.reloadPage();
         await t.click(memoryEfficiencyPage.recommendationsTab);
-        await recommendationsActions.verifyVoteDisabled(redisVersionRecommendation, 'not-useful');
+        await recommendationsActions.verifyVoteIsSelected(redisVersionRecommendation, notUsefulVoteOption);
 
         await t.click(memoryEfficiencyPage.newReportBtn);
-        await recommendationsActions.voteForRecommendation(redisVersionRecommendation, 'useful');
-        await recommendationsActions.verifyVoteDisabled(redisVersionRecommendation, 'useful');
+        await recommendationsActions.voteForRecommendation(redisVersionRecommendation, usefulVoteOption);
+        await recommendationsActions.verifyVoteIsSelected(redisVersionRecommendation, usefulVoteOption);
     });
 test
     .before(async t => {

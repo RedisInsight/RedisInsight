@@ -27,6 +27,7 @@ const keyName = `recomKey-${Common.generateWord(10)}`;
 const logger = telemetry.createLogger();
 const telemetryEvent = 'INSIGHTS_RECOMMENDATION_VOTED';
 const expectedProperties = [
+    'buildType',
     'databaseId',
     'name',
     'provider',
@@ -95,25 +96,32 @@ test
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
     }).after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-    })('Verify that user can upvote recommendations', async t => {
+    })('Verify that user can upvote recommendations', async() => {
+        const notUsefulVoteOption = 'not useful';
+        const usefulVoteOption = 'useful';
         await browserPage.InsightsPanel.toggleInsightsPanel(true);
-        await recommendationsActions.voteForRecommendation(redisVersionRecom, 'not-useful');
-        // Verify that user can rate recommendations with one of 3 existing types at the same time
-        await recommendationsActions.verifyVoteDisabled(redisVersionRecom, 'not-useful');
+        await recommendationsActions.voteForRecommendation(redisVersionRecom, notUsefulVoteOption);
+        // Verify that user can rate recommendations with one of 2 existing types at the same time
+        await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, notUsefulVoteOption);
 
         // Verify that user can see the popup with link when he votes for “Not useful”
-        await t.expect(memoryEfficiencyPage.recommendationsFeedbackBtn.visible).ok('popup did not appear after voting for not useful');
+        await recommendationsActions.verifyVotePopUpIsDisplayed(redisVersionRecom, notUsefulVoteOption);
 
         // Verify that the INSIGHTS_RECOMMENDATIONS_VOTED event sent with Database ID, Recommendation_name, Vote type parameters when user voted for recommendation
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'name', 'updateDatabase', logger);
-        await telemetry.verifyEventPropertyValue(telemetryEvent, 'vote', 'not useful', logger);
+        await telemetry.verifyEventPropertyValue(telemetryEvent, 'vote', notUsefulVoteOption, logger);
 
         // Verify that user can see previous votes when reload the page
         await browserPage.reloadPage();
         await browserPage.InsightsPanel.toggleInsightsPanel(true);
         await browserPage.InsightsPanel.toggleRecommendation(redisVersionRecom, true);
-        await recommendationsActions.verifyVoteDisabled(redisVersionRecom, 'not-useful');
+        await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, notUsefulVoteOption);
+
+        // Verify that user can change previous votes
+        await recommendationsActions.voteForRecommendation(redisVersionRecom, usefulVoteOption);
+        // Verify that user can rate recommendations with one of 2 existing types at the same time
+        await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, usefulVoteOption);
     });
 test('Verify that user can hide recommendations and checkbox value is saved', async t => {
     const commandToGetRecommendation = 'FT.INFO';

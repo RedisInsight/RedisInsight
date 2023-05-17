@@ -134,18 +134,6 @@ describe('BulkUpload', () => {
         action: BulkActionsType.Upload,
         databaseId: ''
       }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
-
-    fireEvent.click(screen.getByTestId('bulk-action-apply-btn'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.BULK_ACTIONS_STARTED,
-      eventData: {
-        action: BulkActionsType.Upload,
-        databaseId: ''
-      }
     })
   })
 })

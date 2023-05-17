@@ -1,9 +1,9 @@
 import IORedis from 'ioredis';
 import * as MockedSocket from 'socket.io-mock';
 import { Test, TestingModule } from '@nestjs/testing';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   MockType,
+  mockBulActionsAnalyticsService,
 } from 'src/__mocks__';
 import { BulkActionsProvider } from 'src/modules/bulk-actions/providers/bulk-actions.provider';
 import { RedisDataType } from 'src/modules/browser/dto';
@@ -38,21 +38,13 @@ const mockCreateBulkActionDto = Object.assign(new CreateBulkActionDto(), {
   filter: mockBulkActionFilter,
 });
 
-const mockEmitter = new EventEmitter2()
-
-class AnalyticsService extends BulkActionsAnalyticsService {  
-  constructor(protected eventEmitter: EventEmitter2) {
-    super(eventEmitter);
-  }
-}
-
 const mockBulkAction = new BulkAction(
   mockCreateBulkActionDto.id,
   mockCreateBulkActionDto.databaseId,
   mockCreateBulkActionDto.type,
   mockBulkActionFilter,
   mockSocket1,
-  new AnalyticsService(mockEmitter),
+  mockBulActionsAnalyticsService,
 );
 const mockOverview = 'mocked overview...';
 

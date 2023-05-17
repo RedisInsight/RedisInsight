@@ -13,6 +13,7 @@ import {
 import { keysDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BulkActionsType } from 'uiSrc/constants'
+import { getRangeForNumber, BULK_THRESHOLD_BREAKPOINTS } from 'uiSrc/utils'
 
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import BulkDeleteContent from '../BulkDeleteContent'
@@ -55,7 +56,9 @@ const BulkDeleteFooter = (props: Props) => {
         filterType: filter,
         match: matchValue,
         scanned,
+        scannedRange: getRangeForNumber(scanned, BULK_THRESHOLD_BREAKPOINTS),
         total,
+        totalRange: getRangeForNumber(total, BULK_THRESHOLD_BREAKPOINTS),
         databaseId: instanceId,
         action: BulkActionsType.Delete
       }

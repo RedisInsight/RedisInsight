@@ -57,7 +57,7 @@ fixture `Live Recommendations`
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test
+test.only
     .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
@@ -98,9 +98,9 @@ test
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-        // Update local config file to version highter than remote config
-        updateFeaturesConfigVersion(featuresConfigPath, 5);
-        await t.wait(5000);
+        // // Update local config file to version highter than remote config
+        // updateFeaturesConfigVersion(featuresConfigPath, 5);
+        // await t.wait(5000);
         // Update Control Number to be out of range from remote file
         await updateControlNumber(45.92);
     })

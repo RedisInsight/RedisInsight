@@ -1,5 +1,5 @@
-import * as express from 'express';
-import * as fs from 'fs-extra';
+const express = require('express');
+const fs = require('fs-extra');
 
 fs.ensureDir('./remote');
 

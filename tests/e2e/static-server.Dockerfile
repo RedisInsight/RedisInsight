@@ -1,3 +1,10 @@
-FROM nginx:latest
+FROM node:latest
 
-COPY ./rte/remote /remote
+WORKDIR /app
+
+COPY package.json .
+RUN npm install
+
+COPY . .
+
+CMD ["node", "static.ts"]

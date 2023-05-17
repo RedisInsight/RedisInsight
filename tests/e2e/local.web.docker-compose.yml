@@ -6,9 +6,10 @@ services:
       context: .
       dockerfile: static-server.Dockerfile
     volumes:
-      - static-server-data:/remote
+      - ./static.ts:/app/static.ts
+      - static-server-data:/app/remote
     ports:
-      - 3000:3000
+      - 5551:5551
 
   e2e:
     build:

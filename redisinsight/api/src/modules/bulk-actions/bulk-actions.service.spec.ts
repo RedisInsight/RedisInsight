@@ -3,6 +3,7 @@ import * as MockedSocket from 'socket.io-mock';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   MockType,
+  mockBulActionsAnalyticsService,
 } from 'src/__mocks__';
 import { BulkActionsProvider } from 'src/modules/bulk-actions/providers/bulk-actions.provider';
 import { RedisDataType } from 'src/modules/browser/dto';
@@ -43,6 +44,7 @@ const mockBulkAction = new BulkAction(
   mockCreateBulkActionDto.type,
   mockBulkActionFilter,
   mockSocket1,
+  mockBulActionsAnalyticsService,
 );
 const mockOverview = 'mocked overview...';
 
@@ -72,6 +74,8 @@ describe('BulkActionsService', () => {
           useFactory: () => ({
             sendActionStarted: jest.fn(),
             sendActionStopped: jest.fn(),
+            sendActionSucceed: jest.fn(),
+            sendActionFailed: jest.fn(),
           }),
         },
       ],

@@ -16,6 +16,7 @@ import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actio
 import * as fs from 'fs-extra';
 import config from 'src/utils/config';
 import { join } from 'path';
+import { wrapHttpError } from 'src/common/utils';
 
 const PATH_CONFIG = config.get('dir_path');
 
@@ -30,6 +31,13 @@ const mockBatchCommandsResultWithErrors = [...(new Array(99)).fill(1).map(() => 
 const mockSummary: BulkActionSummary = Object.assign(new BulkActionSummary(), {
   processed: 100,
   succeed: 100,
+  failed: 0,
+  errors: [],
+});
+
+const mockEmptySummary: BulkActionSummary = Object.assign(new BulkActionSummary(), {
+  processed: 0,
+  succeed: 0,
   failed: 0,
   errors: [],
 });
@@ -50,6 +58,17 @@ const mockImportResult: IBulkActionOverview = {
   filter: null,
   status: BulkActionStatus.Completed,
   duration: 100,
+};
+
+const mockEmptyImportResult: IBulkActionOverview = {
+  id: 'empty',
+  databaseId: mockClientMetadata.databaseId,
+  type: BulkActionType.Import,
+  summary: mockEmptySummary.getOverview(),
+  progress: null,
+  filter: null,
+  status: BulkActionStatus.Completed,
+  duration: 0,
 };
 
 const mockUploadImportFileDto = {
@@ -88,6 +107,8 @@ describe('BulkImportService', () => {
           useFactory: () => ({
             sendActionStarted: jest.fn(),
             sendActionStopped: jest.fn(),
+            sendActionSucceed: jest.fn(),
+            sendActionFailed: jest.fn(),
           }),
         },
       ],
@@ -135,7 +156,7 @@ describe('BulkImportService', () => {
         ...mockImportResult,
         duration: jasmine.anything(),
       });
-      expect(analytics.sendActionStopped).toHaveBeenCalledWith({
+      expect(analytics.sendActionSucceed).toHaveBeenCalledWith({
         ...mockImportResult,
         duration: jasmine.anything(),
       });
@@ -220,6 +241,10 @@ describe('BulkImportService', () => {
         fail();
       } catch (e) {
         expect(mockIORedisClient.disconnect).not.toHaveBeenCalled();
+        expect(analytics.sendActionFailed).toHaveBeenCalledWith(
+          { ...mockEmptyImportResult },
+          wrapHttpError(e),
+        );
         expect(e).toBeInstanceOf(NotFoundException);
       }
     });

@@ -92,11 +92,6 @@ aliases:
         echo "analazedHarmless: ${analazedHarmless}, analazedMalicious:  ${analazedMalicious}, analazedSuspicious: ${analazedSuspicious}"
 
         if [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
-          echo "export VIRUS_CHECK_FAILED=1" >> $BASH_ENV
-          echo 'Found dangers'; exit 1;
-        fi
-
-        if [ "$URL" == "https://download.redisinsight.redis.com/latest/RedisInsight-v2-linux-amd64.deb" ]; then
           echo "export VIRUS_CHECK_FAILED=true" >> $BASH_ENV
           echo 'Found dangers'; exit 0;
         fi

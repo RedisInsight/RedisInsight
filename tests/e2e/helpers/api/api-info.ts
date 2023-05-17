@@ -19,7 +19,7 @@ export async function syncFeaturesApi(): Promise<void> {
  * Initiate remote server to fetch various static data like notificaitons or features configs
  */
 export const initRemoteServer = async () => {
-    const path = './test-data/remote';
+    const path = '../../test-data/remote';
     await fs.ensureDir(path);
 
     const app = express();

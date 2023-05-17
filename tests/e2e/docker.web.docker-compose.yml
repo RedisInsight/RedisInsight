@@ -1,6 +1,15 @@
 version: "3.4"
 
 services:
+  static-server:
+    build:
+      context: .
+      dockerfile: static-server.Dockerfile
+    volumes:
+      - static-server-data:/remote
+    ports:
+      - 3000:3000
+
   e2e:
     build:
       context: .
@@ -45,3 +54,5 @@ services:
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
 
+volumes:
+  static-server-data:

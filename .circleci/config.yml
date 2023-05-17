@@ -952,7 +952,7 @@ workflows:
       - e2e-tests:
           name: E2ETest
           build: docker
-          parallelism: 4
+          parallelism: 1
           requires:
             - Build docker image
   # Workflow for feature, bugfix, main branches

@@ -22,6 +22,7 @@ const result = {
 if (failed) {
   results.passed = false;
   result.color = '#cc0000';
+  result.text = 'Build had failed virustotal checks';
   result.fields.push({
     title: 'Failed build',
     value: buildName,

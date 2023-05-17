@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { workingDirectory} from '../helpers/conf';
 
 const dbPath = `${workingDirectory}/redisinsight.db`;
@@ -18,4 +19,15 @@ export function updateControlNumberInDB(controlNumber: Number): void {
         }
     });
     db.close();
+}
+
+/**
+ * Update version into local features-config file
+ * @param filePath Path to config file
+ * @param version New version for features-config
+ */
+export function updateFeaturesConfigVersion(filePath: string, newVersion: Number): void {
+    const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    jsonData.version = newVersion;
+    fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
 }

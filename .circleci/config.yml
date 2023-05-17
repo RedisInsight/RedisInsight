@@ -1103,58 +1103,6 @@ workflows:
       #     name: Build app - Windows (dev)
       #     env: dev
       #     requires: *devBuildRequire
-
-      - virustotal-url:
-          name: Virus check - AppImage (nightly)
-          fileName: RedisInsight-v2-linux-x86_64.AppImage
-          # requires:
-            # - Build app - Linux (dev)
-      - virustotal-url:
-          name: Virus check - deb (nightly)
-          fileName: RedisInsight-v2-linux-amd64.deb
-          # requires:
-            # - Build app - Linux (dev)
-      - virustotal-url:
-          name: Virus check - rpm (nightly)
-          fileName: RedisInsight-v2-linux-x86_64.rpm
-          # requires:
-            # - Build app - Linux (dev)
-      - virustotal-url:
-          name: Virus check - snap (nightly)
-          fileName: RedisInsight-v2-linux-amd64.snap
-          # requires:
-            # - Build app - Linux (dev)
-      - virustotal-url:
-          name: Virus check x64 - dmg (nightly)
-          fileName: RedisInsight-v2-mac-x64.dmg
-          # requires:
-            # - Build app - MacOS (dev)
-      - virustotal-url:
-          name: Virus check arm64 - dmg (nightly)
-          fileName: RedisInsight-v2-mac-arm64.dmg
-          # requires:
-            # - Build app - MacOS (dev)
-      - virustotal-url:
-          name: Virus check MAS - pkg (nightly)
-          fileName: RedisInsight-mac-universal-mas.pkg
-          # requires:
-            # - Build app - MacOS (dev)
-      - virustotal-url:
-          name: Virus check - exe (nightly)
-          fileName: RedisInsight-v2-win-installer.exe
-          # requires:
-            # - Build app - Windows (dev)
-      - virustotal-report:
-          name: Virus check report (prod)
-          requires:
-            - Virus check - AppImage (nightly)
-            - Virus check - deb (nightly)
-            - Virus check - rpm (nightly)
-            - Virus check - snap (nightly)
-            - Virus check x64 - dmg (nightly)
-            - Virus check arm64 - dmg (nightly)
-            - Virus check MAS - pkg (nightly)
-            - Virus check - exe (nightly)
       # - store-build-artifacts:
       #     name: Store build artifacts (dev)
       #     requires:
@@ -1393,30 +1341,41 @@ workflows:
           requires:
             - Build app - Linux (stage)
 
-      # - virustotal-url:
-      #     name: Virus check - AppImage (prod)
-      #     fileName: RedisInsight-v2-linux-x86_64.AppImage
-      # - virustotal-url:
-      #     name: Virus check - deb (prod)
-      #     fileName: RedisInsight-v2-linux-amd64.deb
-      # - virustotal-url:
-      #     name: Virus check - rpm (prod)
-      #     fileName: RedisInsight-v2-linux-x86_64.rpm
-      # - virustotal-url:
-      #     name: Virus check - snap (prod)
-      #     fileName: RedisInsight-v2-linux-amd64.snap
-      # - virustotal-url:
-      #     name: Virus check x64 - dmg (prod)
-      #     fileName: RedisInsight-v2-mac-x64.dmg
-      # - virustotal-url:
-      #     name: Virus check arm64 - dmg (prod)
-      #     fileName: RedisInsight-v2-mac-arm64.dmg
-      # - virustotal-url:
-      #     name: Virus check MAS - pkg (prod)
-      #     fileName: RedisInsight-mac-universal-mas.pkg
-      # - virustotal-url:
-      #     name: Virus check - exe (prod)
-      #     fileName: RedisInsight-v2-win-installer.exe
+      - virustotal-url:
+          name: Virus check - AppImage (nightly)
+          fileName: RedisInsight-v2-linux-x86_64.AppImage
+      - virustotal-url:
+          name: Virus check - deb (nightly)
+          fileName: RedisInsight-v2-linux-amd64.deb
+      - virustotal-url:
+          name: Virus check - rpm (nightly)
+          fileName: RedisInsight-v2-linux-x86_64.rpm
+      - virustotal-url:
+          name: Virus check - snap (nightly)
+          fileName: RedisInsight-v2-linux-amd64.snap
+      - virustotal-url:
+          name: Virus check x64 - dmg (nightly)
+          fileName: RedisInsight-v2-mac-x64.dmg
+      - virustotal-url:
+          name: Virus check arm64 - dmg (nightly)
+          fileName: RedisInsight-v2-mac-arm64.dmg
+      - virustotal-url:
+          name: Virus check MAS - pkg (nightly)
+          fileName: RedisInsight-mac-universal-mas.pkg
+      - virustotal-url:
+          name: Virus check - exe (nightly)
+          fileName: RedisInsight-v2-win-installer.exe
+      - virustotal-report:
+          name: Virus check report (prod)
+          requires:
+            - Virus check - AppImage (nightly)
+            - Virus check - deb (nightly)
+            - Virus check - rpm (nightly)
+            - Virus check - snap (nightly)
+            - Virus check x64 - dmg (nightly)
+            - Virus check arm64 - dmg (nightly)
+            - Virus check MAS - pkg (nightly)
+            - Virus check - exe (nightly)
 
       # # e2e desktop tests on exe build
       # - e2e-exe:

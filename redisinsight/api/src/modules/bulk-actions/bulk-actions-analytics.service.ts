@@ -74,7 +74,7 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
             succeed: overview.summary?.succeed,
             succeedRange: getRangeForNumber(overview.summary?.succeed, BULK_ACTIONS_BREAKPOINTS),
             failed: overview.summary.failed,
-            failedFRange: getRangeForNumber(overview.summary.failed, BULK_ACTIONS_BREAKPOINTS),
+            failedRange: getRangeForNumber(overview.summary.failed, BULK_ACTIONS_BREAKPOINTS),
           },
         },
       );
@@ -107,7 +107,7 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
             succeed: overview.summary?.succeed,
             succeedRange: getRangeForNumber(overview.summary?.succeed, BULK_ACTIONS_BREAKPOINTS),
             failed: overview.summary.failed,
-            failedFRange: getRangeForNumber(overview.summary.failed, BULK_ACTIONS_BREAKPOINTS),
+            failedRange: getRangeForNumber(overview.summary.failed, BULK_ACTIONS_BREAKPOINTS),
           },
         },
       );

@@ -7,6 +7,7 @@ import { Socket } from 'socket.io';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { DeleteBulkActionSimpleRunner } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 import { ClientContext } from 'src/common/models';
 
 @Injectable()
@@ -17,6 +18,7 @@ export class BulkActionsProvider {
 
   constructor(
     private readonly databaseConnectionService: DatabaseConnectionService,
+    private readonly analyticsService: BulkActionsAnalyticsService,
   ) {}
 
   /**
@@ -29,7 +31,7 @@ export class BulkActionsProvider {
       throw new Error('You already have bulk action with such id');
     }
 
-    const bulkAction = new BulkAction(dto.id, dto.databaseId, dto.type, dto.filter, socket);
+    const bulkAction = new BulkAction(dto.id, dto.databaseId, dto.type, dto.filter, socket, this.analyticsService);
 
     this.bulkActions.set(dto.id, bulkAction);
 

@@ -1,6 +1,7 @@
 import IORedis from 'ioredis';
 import * as MockedSocket from 'socket.io-mock';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   MockType,
 } from 'src/__mocks__';
@@ -37,12 +38,21 @@ const mockCreateBulkActionDto = Object.assign(new CreateBulkActionDto(), {
   filter: mockBulkActionFilter,
 });
 
+const mockEmitter = new EventEmitter2()
+
+class AnalyticsService extends BulkActionsAnalyticsService {  
+  constructor(protected eventEmitter: EventEmitter2) {
+    super(eventEmitter);
+  }
+}
+
 const mockBulkAction = new BulkAction(
   mockCreateBulkActionDto.id,
   mockCreateBulkActionDto.databaseId,
   mockCreateBulkActionDto.type,
   mockBulkActionFilter,
   mockSocket1,
+  new AnalyticsService(mockEmitter),
 );
 const mockOverview = 'mocked overview...';
 
@@ -72,6 +82,8 @@ describe('BulkActionsService', () => {
           useFactory: () => ({
             sendActionStarted: jest.fn(),
             sendActionStopped: jest.fn(),
+            sendActionSucceed: jest.fn(),
+            sendActionFailed: jest.fn(),
           }),
         },
       ],

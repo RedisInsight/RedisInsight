@@ -96,6 +96,7 @@ aliases:
           echo 'Found dangers'; exit 1;
         fi
 
+        echo "export SKIP_VIRUSTOTAL_REPORT=true" >> $BASH_ENV
         echo 'Passed';
       shell: /bin/bash
       no_output_timeout: 15m
@@ -103,6 +104,10 @@ aliases:
     run:
       name: Virustotal slack report
       command: &virusreport |
+        if [ "$SKIP_VIRUSTOTAL_REPORT" == "true" ]; then
+          exit 0;
+        fi
+
         FILE_NAME=virustotal.report.json
         BUILD_NAME=$BUILD_NAME FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$VIRUS_CHECK_FAILED node .circleci/virustotal-report.js &&
         curl -H "Content-type: application/json" --data @$FILE_NAME -H "Authorization: Bearer ${SLACK_TEST_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
@@ -740,6 +745,7 @@ jobs:
           name: Send virustotal passed report
           command: |
             echo 'export VIRUS_CHECK_FAILED=0' >> $BASH_ENV
+            echo 'export SKIP_VIRUSTOTAL_REPORT=false' >> $BASH_ENV
       - <<: *virustotalReport
   docker:
     executor: linux-executor

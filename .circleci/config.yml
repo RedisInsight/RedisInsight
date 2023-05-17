@@ -97,10 +97,11 @@ aliases:
         fi
 
         if [ "$URL" == "https://download.redisinsight.redis.com/latest/RedisInsight-v2-linux-amd64.deb" ]; then
-          echo "export VIRUS_CHECK_FAILED=1" >> $BASH_ENV
-          echo 'Found dangers'; exit 1;
+          echo "export VIRUS_CHECK_FAILED=true" >> $BASH_ENV
+          echo 'Found dangers'; exit 0;
         fi
 
+        echo "export VIRUS_CHECK_FAILED=false" >> $BASH_ENV
         echo "export SKIP_VIRUSTOTAL_REPORT=true" >> $BASH_ENV
         echo 'Passed';
       shell: /bin/bash
@@ -116,6 +117,10 @@ aliases:
         FILE_NAME=virustotal.report.json
         BUILD_NAME=$BUILD_NAME FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$VIRUS_CHECK_FAILED node .circleci/virustotal-report.js &&
         curl -H "Content-type: application/json" --data @$FILE_NAME -H "Authorization: Bearer ${SLACK_TEST_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
+
+        if [ "$VIRUS_CHECK_FAILED" == "true" ]; then
+          echo 'Found dangers'; exit 1;
+        fi
       shell: /bin/bash
   iTestsNames: &iTestsNames
     - oss-st-5            # OSS Standalone v5

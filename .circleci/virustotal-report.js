@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const fileName = process.env.FILE_NAME;
 const buildName = process.env.BUILD_NAME;
-const failed = !!parseInt(process.env.VIRUS_CHECK_FAILED, 10);
+const failed = process.env.VIRUS_CHECK_FAILED === 'true';
 
 const results = {
   message: {

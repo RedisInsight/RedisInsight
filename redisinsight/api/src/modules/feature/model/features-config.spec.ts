@@ -1,6 +1,6 @@
 import {
-  mockFeaturesConfig, mockFeaturesConfigEntity,
-  mockFeaturesConfigJson,
+  mockFeaturesConfig, mockFeaturesConfigComplex, mockFeaturesConfigEntity, mockFeaturesConfigEntityComplex,
+  mockFeaturesConfigJson, mockFeaturesConfigJsonComplex,
 } from 'src/__mocks__';
 import { classToPlain, plainToClass } from 'class-transformer';
 import { FeaturesConfig } from 'src/modules/feature/model/features-config';
@@ -15,6 +15,14 @@ const testCases = [
     },
     model: mockFeaturesConfig,
     entity: Object.assign(new FeaturesConfigEntity(), { ...mockFeaturesConfigEntity, id: undefined }),
+  },
+  {
+    plain: {
+      ...mockFeaturesConfigComplex,
+      data: { ...mockFeaturesConfigJsonComplex },
+    },
+    model: mockFeaturesConfigComplex,
+    entity: Object.assign(new FeaturesConfigEntity(), { ...mockFeaturesConfigEntityComplex, id: undefined }),
   },
   {
     plain: {},

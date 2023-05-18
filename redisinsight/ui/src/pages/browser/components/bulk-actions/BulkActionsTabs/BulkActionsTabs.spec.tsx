@@ -47,7 +47,7 @@ describe('BulkActionsTabs', () => {
       event: TelemetryEvent.BULK_ACTIONS_OPENED,
       eventData: {
         databaseId: '',
-        action: BulkActionsType.Import,
+        action: BulkActionsType.Upload,
       }
     });
 
@@ -60,8 +60,10 @@ describe('BulkActionsTabs', () => {
       eventData: {
         databaseId: '',
         action: BulkActionsType.Delete,
-        match: 'PATTERN',
-        filterType: 'set'
+        filter: {
+          match: 'PATTERN',
+          filter: 'set'
+        }
       }
     });
 

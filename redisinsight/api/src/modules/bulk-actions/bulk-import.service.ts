@@ -70,7 +70,7 @@ export class BulkImportService {
     const result: IBulkActionOverview = {
       id: 'empty',
       databaseId: clientMetadata.databaseId,
-      type: BulkActionType.Import,
+      type: BulkActionType.Upload,
       summary: {
         processed: 0,
         succeed: 0,

@@ -131,7 +131,7 @@ describe('BulkUpload', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.BULK_ACTIONS_WARNING,
       eventData: {
-        action: BulkActionsType.Import,
+        action: BulkActionsType.Upload,
         databaseId: ''
       }
     })

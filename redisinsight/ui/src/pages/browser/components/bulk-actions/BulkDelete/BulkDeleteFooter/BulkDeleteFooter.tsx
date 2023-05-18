@@ -53,12 +53,16 @@ const BulkDeleteFooter = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.BULK_ACTIONS_WARNING,
       eventData: {
-        filterType: filter,
-        match: matchValue,
-        scanned,
-        scannedRange: getRangeForNumber(scanned, BULK_THRESHOLD_BREAKPOINTS),
-        total,
-        totalRange: getRangeForNumber(total, BULK_THRESHOLD_BREAKPOINTS),
+        filter: {
+          match: matchValue,
+          type: filter,
+        },
+        progress: {
+          scanned,
+          scannedRange: getRangeForNumber(scanned, BULK_THRESHOLD_BREAKPOINTS),
+          total,
+          totalRange: getRangeForNumber(total, BULK_THRESHOLD_BREAKPOINTS),
+        },
         databaseId: instanceId,
         action: BulkActionsType.Delete
       }

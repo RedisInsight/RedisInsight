@@ -43,9 +43,9 @@ export const mockFeaturesConfigJsonComplex = {
         {
           or: [
             {
-              name: 'env.FORCE_ENABLE_LIVE_RECOMMENDATIONS',
-              value: 'true',
-              type: 'eq',
+              name: 'settings.testValue',
+              value: 'test',
+              cond: 'eq',
             },
             {
               and: [
@@ -98,9 +98,9 @@ export const mockFeaturesConfigDataComplex = Object.assign(new FeaturesConfigDat
         Object.assign(new FeatureConfigFilterOr(), {
           or: [
             Object.assign(new FeatureConfigFilter(), {
-              name: 'env.FORCE_ENABLE_LIVE_RECOMMENDATIONS',
-              value: 'true',
-              type: 'eq',
+              name: 'settings.testValue',
+              value: 'test',
+              cond: 'eq',
             }),
             Object.assign(new FeatureConfigFilterAnd(), {
               and: [

@@ -212,9 +212,31 @@ describe('FeatureFlagStrategy', () => {
   });
 
   describe('filter (complex)', () => {
-    it('should return true for single filter by agreements (eq)', async () => {
+    it('should return true since 2nd or is true', async () => {
       settingsService.getAppSettings.mockResolvedValueOnce({
+        ...mockAppSettings,
         agreements: { analytics: true },
+      });
+
+      expect(
+        await service['filter'](mockFeaturesConfigDataComplex.features.get('liveRecommendations').filters),
+      ).toEqual(true);
+    });
+    it('should return false since all 2 or conditions are false', async () => {
+      settingsService.getAppSettings.mockResolvedValueOnce({
+        ...mockAppSettings,
+        agreements: { analytics: false },
+      });
+
+      expect(
+        await service['filter'](mockFeaturesConfigDataComplex.features.get('liveRecommendations').filters),
+      ).toEqual(false);
+    });
+    it('should return true since all 1st or is true', async () => {
+      settingsService.getAppSettings.mockResolvedValueOnce({
+        ...mockAppSettings,
+        testValue: 'test',
+        agreements: { analytics: false },
       });
 
       expect(

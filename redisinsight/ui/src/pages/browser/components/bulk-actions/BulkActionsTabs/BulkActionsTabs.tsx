@@ -30,8 +30,10 @@ const BulkActionsTabs = (props: Props) => {
     }
 
     if (id === BulkActionsType.Delete) {
-      eventData.match = (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH
-      eventData.filterType = filter
+      eventData.filter = {
+        match: (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH,
+        type: filter,
+      }
     }
 
     sendEventTelemetry({

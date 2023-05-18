@@ -28,14 +28,29 @@ aliases:
         $filePathWithQuotes = '"{0}"' -f $filePath
         & "C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x86\signtool.exe" sign /a /sm /n "Redis Labs Inc." /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /v $FilePathWithQuotes
       shell: powershell.exe
-  scan: &scan
+  fileScan: &fileScan
     run:
-      name: Virustotal scan
-      command: &virusscan |
+      name: Virustotal file scan
+      command: &virusfilescan |
         uploadUrl=$(curl -sq -XGET https://www.virustotal.com/api/v3/files/upload_url -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data')
         uploadFile=$("/usr/bin/find" /tmp/release -name ${FILE_NAME})
         echo "File to upload: ${uploadFile}"
         analysedId=$(curl -sq -XPOST "${uploadUrl}" -H "x-apikey: $VIRUSTOTAL_API_KEY" --form file=@"${uploadFile}" | jq -r '.data.id')
+        if [ $analysedId == "null" ]; then
+          echo 'Status is null, something went wrong'; exit 1;
+        fi
+        echo "export ANALYZED_ID=${analysedId}" >> $BASH_ENV
+        echo "Virustotal Analyzed id: ${analysedId}"
+        sleep 10
+      shell: /bin/bash
+  urlScan: &urlScan
+    run:
+      name: Virustotal url scan
+      command: &virusurlscan |
+        echo "Url to check: ${URL}"
+
+        analysedId=$(curl -sq -XPOST https://www.virustotal.com/api/v3/urls -H "x-apikey: $VIRUSTOTAL_API_KEY" --form url=${URL} | jq -r '.data.id')
+
         if [ $analysedId == "null" ]; then
           echo 'Status is null, something went wrong'; exit 1;
         fi
@@ -76,13 +91,32 @@ aliases:
         echo "Results:"
         echo "analazedHarmless: ${analazedHarmless}, analazedMalicious:  ${analazedMalicious}, analazedSuspicious: ${analazedSuspicious}"
 
-        if [ "$analazedHarmless" != "0" ] || [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
-          echo 'Found dangers'; exit 1;
+        if [ "$analazedMalicious" != "0" ] || [ "$analazedSuspicious" != "0" ]; then
+          echo "export VIRUS_CHECK_FAILED=true" >> $BASH_ENV
+          echo 'Found dangers'; exit 0;
         fi
 
+        echo "export VIRUS_CHECK_FAILED=false" >> $BASH_ENV
+        echo "export SKIP_VIRUSTOTAL_REPORT=true" >> $BASH_ENV
         echo 'Passed';
       shell: /bin/bash
       no_output_timeout: 15m
+  virustotalReport: &virustotalReport
+    run:
+      name: Virustotal slack report
+      command: &virusreport |
+        if [ "$SKIP_VIRUSTOTAL_REPORT" == "true" ]; then
+          exit 0;
+        fi
+
+        FILE_NAME=virustotal.report.json
+        BUILD_NAME=$BUILD_NAME FILE_NAME=$FILE_NAME VIRUS_CHECK_FAILED=$VIRUS_CHECK_FAILED node .circleci/virustotal-report.js &&
+        curl -H "Content-type: application/json" --data @$FILE_NAME -H "Authorization: Bearer ${SLACK_TEST_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
+
+        if [ "$VIRUS_CHECK_FAILED" == "true" ]; then
+          echo 'Found dangers'; exit 1;
+        fi
+      shell: /bin/bash
   iTestsNames: &iTestsNames
     - oss-st-5            # OSS Standalone v5
     - oss-st-5-pass       # OSS Standalone v5 with admin pass required
@@ -612,6 +646,7 @@ jobs:
 
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage && yarn package:mas
             rm -rf release/mac
+            mv release/mas-universal/RedisInsight-mac-universal-mas.pkg release/RedisInsight-mac-universal-mas.pkg
           no_output_timeout: 60m
 
       - run:
@@ -625,7 +660,7 @@ jobs:
             - release/RedisInsight*.zip
             - release/RedisInsight*.dmg
             - release/RedisInsight*.dmg.blockmap
-            - release/**/*.pkg
+            - release/RedisInsight*.pkg
             - release/*-mac.yml
             - release/redisstack
   windows:
@@ -674,7 +709,7 @@ jobs:
             - release/RedisInsight*.exe
             - release/RedisInsight*.exe.blockmap
             - release/*.yml
-  virustotal:
+  virustotal-file:
     executor: linux-executor
     parameters:
       ext:
@@ -688,8 +723,35 @@ jobs:
           name: export FILE_NAME environment variable
           command: |
             echo 'export FILE_NAME="RedisInsight*<< parameters.ext >>"' >> $BASH_ENV
-      - <<: *scan
+      - <<: *fileScan
       - <<: *validate
+  virustotal-url:
+    executor: linux-executor
+    parameters:
+      fileName:
+        description: File name
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: export URL environment variable
+          command: |
+            echo 'export URL="https://download.redisinsight.redis.com/latest/<< parameters.fileName >>"' >> $BASH_ENV
+            echo 'export BUILD_NAME="<< parameters.fileName >>"' >> $BASH_ENV
+      - <<: *urlScan
+      - <<: *validate
+      - <<: *virustotalReport
+
+  virustotal-report:
+    executor: linux-executor
+    steps:
+      - checkout
+      - run:
+          name: Send virustotal passed report
+          command: |
+            echo 'export VIRUS_CHECK_FAILED=0' >> $BASH_ENV
+            echo 'export SKIP_VIRUSTOTAL_REPORT=false' >> $BASH_ENV
+      - <<: *virustotalReport
   docker:
     executor: linux-executor
     parameters:
@@ -949,31 +1011,12 @@ workflows:
           name: Build docker image
           requires:
             - Start E2E Tests
-      # build desktop app
-      # - setup-sign-certificates:
-      #     name: Setup sign certificates (stage)
-      #     requires:
-      #       - Start E2E Tests
-      # - setup-build:
-      #     name: Setup build (stage)
-      #     requires:
-      #       - Setup sign certificates (stage)
-      # - windows:
-      #     name: Build app - Windows (stage)
-      #     requires:
-      #       - Setup build (stage)
       - e2e-tests:
           name: E2ETest
           build: docker
           parallelism: 4
           requires:
             - Build docker image
-      # - e2e-exe:
-      #     name: E2ETest (exe)
-      #     parallelism: 1
-      #     report: true
-      #     requires:
-      #       - Build app - Windows (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:
@@ -1178,27 +1221,42 @@ workflows:
           env: prod
           requires: *prodElectronBuildRequires
       # virus check all electron apps (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check - AppImage (prod)
           ext: .AppImage
           requires:
             - Build app - Linux (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check - deb (prod)
           ext: .deb
           requires:
             - Build app - Linux (prod)
-      - virustotal:
+      - virustotal-file:
+          name: Virus check - rpm (prod)
+          ext: .rpm
+          requires:
+            - Build app - Linux (prod)
+      - virustotal-file:
+          name: Virus check - snap (prod)
+          ext: .snap
+          requires:
+            - Build app - Linux (prod)
+      - virustotal-file:
           name: Virus check x64 - dmg (prod)
           ext: -x64.dmg
           requires:
             - Build app - MacOS (prod)
-      - virustotal:
+      - virustotal-file:
           name: Virus check arm64 - dmg (prod)
           ext: -arm64.dmg
           requires:
             - Build app - MacOS (prod)
-      - virustotal:
+      - virustotal-file:
+          name: Virus check MAS - pkg (prod)
+          ext: -mas.pkg
+          requires:
+            - Build app - MacOS (prod)
+      - virustotal-file:
           name: Virus check - exe (prod)
           ext: .exe
           requires:
@@ -1209,8 +1267,11 @@ workflows:
           requires:
             - Virus check - AppImage (prod)
             - Virus check - deb (prod)
+            - Virus check - rpm (prod)
+            - Virus check - snap (prod)
             - Virus check x64 - dmg (prod)
             - Virus check arm64 - dmg (prod)
+            - Virus check MAS - pkg (prod)
             - Virus check - exe (prod)
       # Manual approve for publish release
       - approve-publish:
@@ -1239,16 +1300,16 @@ workflows:
       - docker:
           name: Build docker image
       # build desktop app
-      # - setup-sign-certificates:
-      #     name: Setup sign certificates (stage)
-      # - setup-build:
-      #     name: Setup build (stage)
-      #     requires:
-      #       - Setup sign certificates (stage)
-      # - linux:
-      #     name: Build app - Linux (stage)
-      #     requires:
-      #       - Setup build (stage)
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+      - setup-build:
+          name: Setup build (stage)
+          requires:
+            - Setup sign certificates (stage)
+      - linux:
+          name: Build app - Linux (stage)
+          requires:
+            - Setup build (stage)
       #  - windows:
       #      name: Build app - Windows (stage)
       #      requires:
@@ -1273,12 +1334,49 @@ workflows:
           requires:
             - Build docker image
       # e2e desktop tests on AppImage build
-      # - e2e-app-image:
-      #     name: E2ETest (AppImage) - Nightly
-      #     parallelism: 4
-      #     report: true
-      #     requires:
-      #       - Build app - Linux (stage)
+      - e2e-app-image:
+          name: E2ETest (AppImage) - Nightly
+          parallelism: 2
+          report: true
+          requires:
+            - Build app - Linux (stage)
+
+      - virustotal-url:
+          name: Virus check - AppImage (nightly)
+          fileName: RedisInsight-v2-linux-x86_64.AppImage
+      - virustotal-url:
+          name: Virus check - deb (nightly)
+          fileName: RedisInsight-v2-linux-amd64.deb
+      - virustotal-url:
+          name: Virus check - rpm (nightly)
+          fileName: RedisInsight-v2-linux-x86_64.rpm
+      - virustotal-url:
+          name: Virus check - snap (nightly)
+          fileName: RedisInsight-v2-linux-amd64.snap
+      - virustotal-url:
+          name: Virus check x64 - dmg (nightly)
+          fileName: RedisInsight-v2-mac-x64.dmg
+      - virustotal-url:
+          name: Virus check arm64 - dmg (nightly)
+          fileName: RedisInsight-v2-mac-arm64.dmg
+      - virustotal-url:
+          name: Virus check MAS - pkg (nightly)
+          fileName: RedisInsight-mac-universal-mas.pkg
+      - virustotal-url:
+          name: Virus check - exe (nightly)
+          fileName: RedisInsight-v2-win-installer.exe
+      - virustotal-report:
+          name: Virus check report (prod)
+          requires:
+            - Virus check - AppImage (nightly)
+            - Virus check - deb (nightly)
+            - Virus check - rpm (nightly)
+            - Virus check - snap (nightly)
+            - Virus check x64 - dmg (nightly)
+            - Virus check arm64 - dmg (nightly)
+            - Virus check MAS - pkg (nightly)
+            - Virus check - exe (nightly)
+
       # # e2e desktop tests on exe build
       # - e2e-exe:
       #     name: E2ETest (exe) - Nightly

@@ -1,4 +1,4 @@
-import { join, resolve } from 'path';
+import { join } from 'path';
 import * as fs from 'fs-extra';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Readable } from 'stream';
@@ -70,7 +70,7 @@ export class BulkImportService {
     const result: IBulkActionOverview = {
       id: 'empty',
       databaseId: clientMetadata.databaseId,
-      type: BulkActionType.Import,
+      type: BulkActionType.Upload,
       summary: {
         processed: 0,
         succeed: 0,
@@ -115,6 +115,7 @@ export class BulkImportService {
         rl.on('error', (error) => {
           result.summary.errors.push(error);
           result.status = BulkActionStatus.Failed;
+          this.analyticsService.sendActionFailed(result, error);
           res(null);
         });
         rl.on('close', () => {
@@ -133,15 +134,19 @@ export class BulkImportService {
       result.summary.processed += parseErrors;
       result.summary.failed += parseErrors;
 
-      this.analyticsService.sendActionStopped(result);
+      if (result.status === BulkActionStatus.Completed) {
+        this.analyticsService.sendActionSucceed(result);
+      }
 
       client.disconnect();
 
       return result;
     } catch (e) {
       this.logger.error('Unable to process an import file', e);
+      const exception = wrapHttpError(e);
+      this.analyticsService.sendActionFailed(result, exception);
       client?.disconnect();
-      throw wrapHttpError(e);
+      throw exception;
     }
   }
 

@@ -26,6 +26,7 @@ export * from './groupTypes'
 export * from './modules'
 export * from './optimizations'
 export * from './events'
+export * from './telemetry'
 
 export {
   Maybe,

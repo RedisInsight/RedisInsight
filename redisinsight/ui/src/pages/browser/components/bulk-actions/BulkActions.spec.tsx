@@ -112,7 +112,7 @@ describe('BulkActions', () => {
       fireEvent.click(screen.getByTestId('bulk-action-tab-upload'))
     })
 
-    const expectedActions = [setBulkActionType(BulkActionsType.Import)]
+    const expectedActions = [setBulkActionType(BulkActionsType.Upload)]
     expect(store.getActions()).toEqual(expectedActions)
   })
 
@@ -139,8 +139,10 @@ describe('BulkActions', () => {
         event: TelemetryEvent.BULK_ACTIONS_OPENED,
         eventData: {
           databaseId: 'instanceId',
-          match: '*',
-          filterType: 'hash',
+          filter: {
+            match: '*',
+            filter: 'hash',
+          },
           action: 'delete'
         }
       });
@@ -154,8 +156,10 @@ describe('BulkActions', () => {
         eventData: {
           databaseId: 'instanceId',
           action: BulkActionsType.Delete,
-          match: '*',
-          filterType: 'hash'
+          filter: {
+            match: '*',
+            filterType: 'hash'
+          }
         }
       })
     })

@@ -52,7 +52,7 @@ const mockSummaryWithErrors = Object.assign(new BulkActionSummary(), {
 const mockImportResult: IBulkActionOverview = {
   id: 'empty',
   databaseId: mockClientMetadata.databaseId,
-  type: BulkActionType.Import,
+  type: BulkActionType.Upload,
   summary: mockSummary.getOverview(),
   progress: null,
   filter: null,
@@ -63,7 +63,7 @@ const mockImportResult: IBulkActionOverview = {
 const mockEmptyImportResult: IBulkActionOverview = {
   id: 'empty',
   databaseId: mockClientMetadata.databaseId,
-  type: BulkActionType.Import,
+  type: BulkActionType.Upload,
   summary: mockEmptySummary.getOverview(),
   progress: null,
   filter: null,

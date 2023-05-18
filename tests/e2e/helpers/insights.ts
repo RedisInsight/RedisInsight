@@ -17,6 +17,12 @@ export function updateControlNumberInDB(controlNumber: Number): void {
         if (err) {
             return console.log(`error during changing controlNumber: ${err.message}`);
         }
+        db.get('SELECT controlName FROM features_config', (err: { message: string }, row: { controlName: string }) => {
+            if (err) {
+                return console.log(`error during retrieving controlName: ${err.message}`);
+            }
+            console.log('Updated controlName:', row.controlName);
+        });
     });
     db.close();
 }

@@ -17,11 +17,11 @@ export function updateControlNumberInDB(controlNumber: Number): void {
         if (err) {
             return console.log(`error during changing controlNumber: ${err.message}`);
         }
-        db.get('SELECT controlName FROM features_config', (err: { message: string }, row: { controlName: string }) => {
+        db.get('SELECT controlNumber FROM features_config', (err: { message: string }, row: { controlNumber: string }) => {
             if (err) {
-                return console.log(`error during retrieving controlName: ${err.message}`);
+                return console.log(`error during retrieving controlNumber: ${err.message}`);
             }
-            console.log('Updated controlName:', row.controlName);
+            console.log('Updated controlNumber:', row.controlNumber);
         });
     });
     db.close();

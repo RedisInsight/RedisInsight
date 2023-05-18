@@ -52,24 +52,18 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
       }));
     }
 
-    const model = classToClass(FeaturesConfig, entity);
-
-    if (model?.data?.version < defaultConfig?.version) {
-      return this.update(defaultConfig);
-    }
-
-    return model;
+    return classToClass(FeaturesConfig, entity);
   }
 
   /**
    * @inheritDoc
    */
   async update(data: any): Promise<FeaturesConfig> {
-    const entity = await this.repository.update(
+    await this.repository.update(
       { id: this.id },
-      plainToClass(FeaturesConfigEntity, { data }),
+      plainToClass(FeaturesConfigEntity, { data, id: this.id }),
     );
 
-    return classToClass(FeaturesConfig, entity);
+    return this.getOrCreate();
   }
 }

@@ -4,6 +4,6 @@ export class LiveRecommendationsFlagStrategy extends FeatureFlagStrategy {
   async calculate(featureConfig: any): Promise<boolean> {
     const isInRange = await this.isInTargetRange(featureConfig?.perc);
 
-    return isInRange && await this.isInFilter(featureConfig?.filters) ? !!featureConfig?.flag : !featureConfig?.flag;
+    return isInRange && await this.filter(featureConfig?.filters) ? !!featureConfig?.flag : !featureConfig?.flag;
   }
 }

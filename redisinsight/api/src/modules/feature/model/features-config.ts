@@ -1,8 +1,9 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import {
   IsArray, IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, ValidateNested,
 } from 'class-validator';
 import { IsMultiNumber, ObjectAsMap } from 'src/common/decorators';
+import { featureConfigFilterTransformer } from 'src/modules/feature/transformers';
 
 export enum FeatureConfigFilterCondition {
   Eq = 'eq',
@@ -12,6 +13,8 @@ export enum FeatureConfigFilterCondition {
   Lt = 'lt',
   Lte = 'lte',
 }
+
+export type FeatureConfigFilterType = FeatureConfigFilter | FeatureConfigFilterOr | FeatureConfigFilterAnd;
 
 export class FeatureConfigFilter {
   @Expose()
@@ -27,6 +30,22 @@ export class FeatureConfigFilter {
   value: any;
 }
 
+export class FeatureConfigFilterOr {
+  @Expose()
+  @IsArray()
+  @Transform(featureConfigFilterTransformer)
+  @ValidateNested({ each: true })
+  or: FeatureConfigFilterType[];
+}
+
+export class FeatureConfigFilterAnd {
+  @Expose()
+  @IsArray()
+  @Transform(featureConfigFilterTransformer)
+  @ValidateNested({ each: true })
+  and: FeatureConfigFilterType[];
+}
+
 export class FeatureConfig {
   @Expose()
   @IsNotEmpty()
@@ -39,9 +58,10 @@ export class FeatureConfig {
   perc: number[][];
 
   @Expose()
-  @Type(() => FeatureConfigFilter)
+  @IsArray()
+  @Transform(featureConfigFilterTransformer)
   @ValidateNested({ each: true })
-  filters: FeatureConfigFilter[];
+  filters: FeatureConfigFilterType[];
 }
 
 export class FeaturesConfigData {

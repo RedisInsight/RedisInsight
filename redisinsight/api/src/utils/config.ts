@@ -37,7 +37,7 @@ switch (process.env.BUILD_TYPE) {
 
 merge(config, envConfig, buildTypeConfig);
 
-export const get = (key: string) => config[key];
+export const get = (key?: string) => (key ? config[key] : config);
 
 export default {
   get,

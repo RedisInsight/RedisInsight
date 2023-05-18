@@ -324,10 +324,12 @@ describe('AbstractBulkActionSimpleRunner', () => {
     let sendOverviewSpy;
     let sendActionSucceedSpy;
     let sendActionFailedSpy;
+    let sendActionStoppedSpy;
 
     beforeEach(() => {
       sendActionSucceedSpy = jest.spyOn(bulkAction['analyticsService'], 'sendActionSucceed');
       sendActionFailedSpy = jest.spyOn(bulkAction['analyticsService'], 'sendActionFailed');
+      sendActionStoppedSpy = jest.spyOn(bulkAction['analyticsService'], 'sendActionStopped');
       sendOverviewSpy = jest.spyOn(bulkAction, 'sendOverview');
     });
 
@@ -353,6 +355,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
       expect(sendActionFailedSpy).not.toHaveBeenCalled();
+      expect(sendActionStoppedSpy).not.toHaveBeenCalled();
       expect(sendActionSucceedSpy).toHaveBeenCalledWith(mockOverview);
     });
 
@@ -366,12 +369,31 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
       expect(sendActionSucceedSpy).not.toHaveBeenCalled();
+      expect(sendActionStoppedSpy).not.toHaveBeenCalled();
       expect(sendActionFailedSpy).toHaveBeenCalledWith(
         {
           ...mockOverview,
           status: 'failed',
         },
         'some error',
+      );
+    });
+
+    it('Should call sendActionStopped', () => {
+      mockSocket.emit.mockReturnValue();
+
+      bulkAction['status'] = BulkActionStatus.Aborted;
+
+      bulkAction.sendOverview();
+
+      expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
+      expect(sendActionSucceedSpy).not.toHaveBeenCalled();
+      expect(sendActionStoppedSpy).not.toHaveBeenCalled();
+      expect(sendActionStoppedSpy).toHaveBeenCalledWith(
+        {
+          ...mockOverview,
+          status: 'aborted',
+        },
       );
     });
   });

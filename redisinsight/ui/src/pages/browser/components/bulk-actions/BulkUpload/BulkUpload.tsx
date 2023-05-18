@@ -65,7 +65,7 @@ const BulkUpload = (props: Props) => {
       event: TelemetryEvent.BULK_ACTIONS_WARNING,
       eventData: {
         databaseId: instanceId,
-        action: BulkActionsType.Upload
+        action: BulkActionsType.Import
       }
     })
   }
@@ -135,7 +135,7 @@ const BulkUpload = (props: Props) => {
           subTitle={(<div className="truncateText" style={{ paddingTop: 6 }}>{fileName}</div>)}
         >
           <BulkActionSummary
-            type={BulkActionsType.Upload}
+            type={BulkActionsType.Import}
             succeed={succeed}
             processed={processed}
             failed={failed}

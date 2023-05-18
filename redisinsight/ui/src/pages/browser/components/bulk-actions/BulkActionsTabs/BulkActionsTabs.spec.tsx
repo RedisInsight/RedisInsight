@@ -47,7 +47,7 @@ describe('BulkActionsTabs', () => {
       event: TelemetryEvent.BULK_ACTIONS_OPENED,
       eventData: {
         databaseId: '',
-        action: BulkActionsType.Upload,
+        action: BulkActionsType.Import,
       }
     });
 

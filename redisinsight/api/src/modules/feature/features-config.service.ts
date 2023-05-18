@@ -1,15 +1,15 @@
 import axios from 'axios';
 import {
-  Injectable, Logger, NotFoundException,
+  Injectable, Logger,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import config from 'src/utils/config';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { Validator } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
+import * as defaultConfig from '../../../config/features-config.json';
 
 const FEATURES_CONFIG = config.get('features_config');
 
@@ -25,68 +25,82 @@ export class FeaturesConfigService {
   ) {}
 
   async onApplicationBootstrap() {
-    await this.sync();
+    this.sync().catch();
     if (FEATURES_CONFIG.syncInterval > 0) {
       setInterval(this.sync.bind(this), FEATURES_CONFIG.syncInterval);
     }
   }
 
-  private async fetchRemoteConfig() {
+  /**
+   * Fetch remote new config from remote server
+   * @private
+   */
+  private async fetchRemoteConfig(): Promise<any> {
     try {
-      this.logger.log('Trying to fetch remote features config...');
+      this.logger.log('Fetching remote config...');
 
-      const { data } = await axios.get(FEATURES_CONFIG.url, {
-        responseType: 'text',
-        transformResponse: [(raw) => raw],
-      });
+      const { data } = await axios.get(FEATURES_CONFIG.url);
 
-      return JSON.parse(data);
+      return data;
     } catch (error) {
       this.logger.error('Unable to fetch remote config', error);
       throw error;
     }
   }
 
+  private async getNewConfig(): Promise<any> {
+    let newConfig: any = defaultConfig;
+
+    try {
+      this.logger.log('Fetching remote config...');
+
+      const remoteConfig = await this.fetchRemoteConfig();
+
+      // we should use default config in case when remote is invalid
+      await this.validator.validateOrReject(plainToClass(FeaturesConfigData, remoteConfig));
+
+      if (remoteConfig?.version > defaultConfig?.version) {
+        newConfig = remoteConfig;
+      }
+    } catch (error) {
+      this.logger.error('Something wrong with remote config', error);
+    }
+
+    return newConfig;
+  }
+
   /**
    * Get latest config from remote and save it in the local database
    */
-  public async sync() {
+  public async sync(): Promise<void> {
     try {
       this.logger.log('Trying to sync features config...');
 
-      const featuresConfig = await this.repository.getOrCreate();
-      // todo: update from default config with version > than current
-      const newConfig = plainToClass(FeaturesConfigData, await this.fetchRemoteConfig());
+      const currentConfig = await this.repository.getOrCreate();
+      const newConfig = await this.getNewConfig();
 
-      await this.validator.validateOrReject(newConfig);
-
-      if (newConfig?.version > featuresConfig?.data?.version) {
+      if (newConfig?.version > currentConfig?.data?.version) {
         await this.repository.update(newConfig);
       }
 
       this.logger.log('Successfully updated stored remote config');
+      this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
     } catch (error) {
       this.logger.error('Unable to update features config', error);
     }
-
-    this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
   }
 
   /**
    * Get control group field
    */
   public async getControlInfo(): Promise<{ controlNumber: number, controlGroup: string }> {
-    try {
-      this.logger.debug('Trying to get controlGroup field');
+    this.logger.debug('Trying to get controlGroup field');
 
-      const entity = await (this.repository.getOrCreate());
-      return {
-        controlNumber: entity.controlNumber,
-        controlGroup: entity.controlNumber.toFixed(0),
-      };
-    } catch (error) {
-      this.logger.error('Unable to get controlGroup field', error);
-      throw new NotFoundException(ERROR_MESSAGES.CONTROL_GROUP_NOT_EXIST);
-    }
+    const model = await (this.repository.getOrCreate());
+
+    return {
+      controlNumber: model.controlNumber,
+      controlGroup: parseInt(model.controlNumber.toString(), 10).toFixed(0),
+    };
   }
 }

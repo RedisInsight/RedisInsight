@@ -1,4 +1,4 @@
-import { find, map } from 'lodash';
+import { find } from 'lodash';
 import { Injectable, Logger } from '@nestjs/common';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
 import { FeatureServerEvents, FeatureStorage, knownFeatures } from 'src/modules/feature/constants';
@@ -17,6 +17,7 @@ export class FeatureService {
     private eventEmitter: EventEmitter2,
   ) {}
 
+  // todo: disable recommendations
   /**
    *
    */
@@ -40,6 +41,7 @@ export class FeatureService {
     return { features };
   }
 
+  // todo: add api doc + models
   /**
    * Recalculate flags for database features based on controlGroup and new conditions
    */

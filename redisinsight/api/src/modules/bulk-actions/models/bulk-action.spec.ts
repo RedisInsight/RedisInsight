@@ -388,7 +388,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
       expect(sendActionSucceedSpy).not.toHaveBeenCalled();
-      expect(sendActionStoppedSpy).not.toHaveBeenCalled();
+      expect(sendActionFailedSpy).not.toHaveBeenCalled();
       expect(sendActionStoppedSpy).toHaveBeenCalledWith(
         {
           ...mockOverview,

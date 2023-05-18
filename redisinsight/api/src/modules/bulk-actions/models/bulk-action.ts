@@ -214,6 +214,9 @@ export class BulkAction implements IBulkAction {
     if (overview.status === BulkActionStatus.Failed) {
       this.analyticsService.sendActionFailed(overview, this.error);
     }
+    if (overview.status === BulkActionStatus.Aborted) {
+      this.analyticsService.sendActionStopped(overview);
+    }
     try {
       this.socket.emit('overview', overview);
     } catch (e) {

@@ -112,7 +112,7 @@ describe('BulkActions', () => {
       fireEvent.click(screen.getByTestId('bulk-action-tab-upload'))
     })
 
-    const expectedActions = [setBulkActionType(BulkActionsType.Upload)]
+    const expectedActions = [setBulkActionType(BulkActionsType.Import)]
     expect(store.getActions()).toEqual(expectedActions)
   })
 

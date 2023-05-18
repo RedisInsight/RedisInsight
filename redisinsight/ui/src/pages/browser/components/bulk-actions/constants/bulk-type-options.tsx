@@ -15,7 +15,7 @@ export const bulkActionsTypeTabs: BulkActionsTabs[] = [
     label: <><EuiIcon type="trash" />Delete Keys</>,
   },
   {
-    id: BulkActionsType.Upload,
+    id: BulkActionsType.Import,
     label: <><EuiIcon type={BulkUpload} />Upload Data</>,
   },
 ]

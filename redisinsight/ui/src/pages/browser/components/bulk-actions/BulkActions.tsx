@@ -125,7 +125,7 @@ const BulkActions = (props: Props) => {
         <div className="eui-yScroll">
           <div className={styles.contentActions} data-testid="bulk-actions-content">
             <BulkActionsTabs onChangeType={handleChangeType} />
-            {type === BulkActionsType.Upload && (<BulkUpload onCancel={closePanel} />)}
+            {type === BulkActionsType.Import && (<BulkUpload onCancel={closePanel} />)}
             {type === BulkActionsType.Delete && (<BulkDelete onCancel={closePanel} />)}
           </div>
         </div>

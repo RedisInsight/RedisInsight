@@ -31,7 +31,7 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
         TelemetryEvents.BulkActionsStarted,
         {
           databaseId: overview.databaseId,
-          type: overview.type,
+          action: overview.type,
           duration: overview.duration,
           filter: {
             match: overview.filter?.match === '*' ? '*' : 'PATTERN',
@@ -56,7 +56,7 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
         TelemetryEvents.BulkActionsStopped,
         {
           databaseId: overview.databaseId,
-          type: overview.type,
+          action: overview.type,
           duration: overview.duration,
           filter: {
             match: overview.filter?.match === '*' ? '*' : 'PATTERN',
@@ -89,17 +89,11 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
         TelemetryEvents.BulkActionsSucceed,
         {
           databaseId: overview.databaseId,
-          type: overview.type,
+          action: overview.type,
           duration: overview.duration,
           filter: {
             match: overview.filter?.match === '*' ? '*' : 'PATTERN',
             type: overview.filter?.type,
-          },
-          progress: {
-            scanned: overview.progress?.scanned,
-            scannedRange: getRangeForNumber(overview.progress?.scanned, BULK_ACTIONS_BREAKPOINTS),
-            total: overview.progress?.total,
-            totalRange: getRangeForNumber(overview.progress?.total, BULK_ACTIONS_BREAKPOINTS),
           },
           summary: {
             processed: overview.summary?.processed,
@@ -122,7 +116,7 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
         TelemetryEvents.BulkActionsFailed,
         {
           databaseId: overview.databaseId,
-          type: overview.type,
+          action: overview.type,
           error,
         },
       );

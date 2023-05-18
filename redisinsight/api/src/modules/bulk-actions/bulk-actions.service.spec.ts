@@ -53,6 +53,7 @@ mockBulkAction['getOverview'] = jest.fn().mockReturnValue(mockOverview);
 describe('BulkActionsService', () => {
   let service: BulkActionsService;
   let bulkActionProvider: MockType<BulkActionsProvider>;
+  let analyticsService: MockType<BulkActionsAnalyticsService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -83,12 +84,14 @@ describe('BulkActionsService', () => {
 
     service = module.get(BulkActionsService);
     bulkActionProvider = module.get(BulkActionsProvider);
+    analyticsService = module.get(BulkActionsAnalyticsService);
   });
 
   describe('create', () => {
     it('should create and return overview', async () => {
       expect(await service.create(mockCreateBulkActionDto, mockSocket1)).toEqual(mockOverview);
       expect(bulkActionProvider.create).toHaveBeenCalledTimes(1);
+      expect(analyticsService.sendActionStarted).toHaveBeenCalledTimes(1);
     });
   });
   describe('get', () => {

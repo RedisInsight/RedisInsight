@@ -75,7 +75,7 @@ export class CustomTutorialManifestProvider {
           label: name,
           type: CustomTutorialManifestType.InternalLink,
           args: {
-            path: join(relativePath, entry),
+            path: join(relativePath, entry).replace(/\\/, '/'),
           },
         });
       }

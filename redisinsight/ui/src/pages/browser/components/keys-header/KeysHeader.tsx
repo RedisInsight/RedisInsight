@@ -24,8 +24,7 @@ import { isRedisearchAvailable } from 'uiSrc/utils'
 
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import {
-  incrementOnboardStepAction,
-  removeFeatureFromHighlighting
+  incrementOnboardStepAction
 } from 'uiSrc/slices/app/features'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
@@ -244,7 +243,6 @@ const KeysHeader = (props: Props) => {
   const openBulkActions = () => {
     dispatch(setBulkActionType(BulkActionsType.Delete))
     handleBulkActionsPanel(true)
-    dispatch(removeFeatureFromHighlighting('bulkUpload'))
   }
 
   const handleSwitchView = (type: KeyViewType) => {

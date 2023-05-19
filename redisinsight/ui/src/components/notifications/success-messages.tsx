@@ -163,7 +163,8 @@ export default {
         <>
           Action completed
           <br />
-          <EuiText color="ghost">Data uploaded with file: {formatLongName(fileName, 24, 5)}</EuiText>
+          <EuiText color="ghost">Commands executed from file:</EuiText>
+          <EuiText color="ghost">{formatLongName(fileName, 34, 5)}</EuiText>
         </>
       ),
       message: (

@@ -9,6 +9,7 @@ import { FeatureRepository } from 'src/modules/feature/repositories/feature.repo
 import { LocalFeatureRepository } from 'src/modules/feature/repositories/local.feature.repository';
 import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/feature-flag.provider';
 import { FeatureGateway } from 'src/modules/feature/feature.gateway';
+import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 
 @Module({})
 export class FeatureModule {
@@ -24,6 +25,7 @@ export class FeatureModule {
         FeaturesConfigService,
         FeatureFlagProvider,
         FeatureGateway,
+        FeatureAnalytics,
         {
           provide: FeatureRepository,
           useClass: featureRepository,

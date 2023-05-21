@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockAppSettings,
   mockFeaturesConfig,
-  mockFeaturesConfigDataComplex,
+  mockFeaturesConfigDataComplex, mockFeaturesConfigJson,
   mockFeaturesConfigService,
   mockServerState,
   mockSettingsService,
@@ -12,9 +12,15 @@ import { SettingsService } from 'src/modules/settings/settings.service';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/feature.flag.strategy';
 import {
-  LiveRecommendationsFlagStrategy,
-} from 'src/modules/feature/providers/feature-flag/strategies/live-recommendations.flag.strategy';
-import { FeatureConfigFilter, FeatureConfigFilterCondition } from 'src/modules/feature/model/features-config';
+  InsightsRecommendationsFlagStrategy,
+} from 'src/modules/feature/providers/feature-flag/strategies/insights-recommendations.flag.strategy';
+import {
+  FeatureConfigFilter,
+  FeatureConfigFilterAnd,
+  FeatureConfigFilterCondition,
+} from 'src/modules/feature/model/features-config';
+import { KnownFeatures } from 'src/modules/feature/constants';
+import { DefaultFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/default.flag.strategy';
 
 describe('FeatureFlagStrategy', () => {
   let service: FeatureFlagStrategy;
@@ -38,7 +44,7 @@ describe('FeatureFlagStrategy', () => {
 
     settingsService = module.get(SettingsService);
     featuresConfigService = module.get(FeaturesConfigService);
-    service = new LiveRecommendationsFlagStrategy(
+    service = new InsightsRecommendationsFlagStrategy(
       featuresConfigService as unknown as FeaturesConfigService,
       settingsService as unknown as SettingsService,
     );
@@ -89,6 +95,9 @@ describe('FeatureFlagStrategy', () => {
   });
 
   describe('filter', () => {
+    it('should return when no filters defined', async () => {
+      expect(await service['filter']([])).toEqual(true);
+    });
     it('should return true for single filter by agreements (eq)', async () => {
       expect(await service['filter']([
         Object.assign(new FeatureConfigFilter(), {
@@ -212,15 +221,38 @@ describe('FeatureFlagStrategy', () => {
   });
 
   describe('filter (complex)', () => {
-    it('should return true since 2nd or is true', async () => {
+    it('should return true since 2nd "or" condition is true', async () => {
       settingsService.getAppSettings.mockResolvedValueOnce({
         ...mockAppSettings,
         agreements: { analytics: true },
       });
 
-      expect(
-        await service['filter'](mockFeaturesConfigDataComplex.features.get('liveRecommendations').filters),
-      ).toEqual(true);
+      expect(await service['filter'](
+        mockFeaturesConfigDataComplex.features.get(KnownFeatures.InsightsRecommendations).filters,
+      )).toEqual(true);
+    });
+    it('should return false since 2nd "or" condition is false due to "and" inside is false', async () => {
+      settingsService.getAppSettings.mockResolvedValueOnce({
+        ...mockAppSettings,
+        agreements: { analytics: true },
+        scanThreshold: mockAppSettings.scanThreshold + 1,
+        batchSize: mockAppSettings.batchSize + 1,
+      });
+
+      expect(await service['filter'](
+        mockFeaturesConfigDataComplex.features.get(KnownFeatures.InsightsRecommendations).filters,
+      )).toEqual(false);
+    });
+    it('should return true since 2nd "or" condition is true due to "or" inside is true', async () => {
+      settingsService.getAppSettings.mockResolvedValueOnce({
+        ...mockAppSettings,
+        agreements: { analytics: true },
+        scanThreshold: mockAppSettings.scanThreshold + 1,
+      });
+
+      expect(await service['filter'](
+        mockFeaturesConfigDataComplex.features.get(KnownFeatures.InsightsRecommendations).filters,
+      )).toEqual(true);
     });
     it('should return false since all 2 or conditions are false', async () => {
       settingsService.getAppSettings.mockResolvedValueOnce({
@@ -228,20 +260,160 @@ describe('FeatureFlagStrategy', () => {
         agreements: { analytics: false },
       });
 
-      expect(
-        await service['filter'](mockFeaturesConfigDataComplex.features.get('liveRecommendations').filters),
-      ).toEqual(false);
+      expect(await service['filter'](
+        mockFeaturesConfigDataComplex.features.get(KnownFeatures.InsightsRecommendations).filters,
+      )).toEqual(false);
     });
-    it('should return true since all 1st or is true', async () => {
+    it('should return true since 1st "or" condition is true', async () => {
       settingsService.getAppSettings.mockResolvedValueOnce({
         ...mockAppSettings,
         testValue: 'test',
         agreements: { analytics: false },
       });
 
-      expect(
-        await service['filter'](mockFeaturesConfigDataComplex.features.get('liveRecommendations').filters),
-      ).toEqual(true);
+      expect(await service['filter'](
+        mockFeaturesConfigDataComplex.features.get(KnownFeatures.InsightsRecommendations).filters,
+      )).toEqual(true);
+    });
+  });
+
+  describe('checkFilter', () => {
+    it('should return false in case of any error', async () => {
+      const spy = jest.spyOn(service as any, 'checkAndFilters');
+      spy.mockImplementationOnce(() => { throw new Error('some error on "and" filters'); });
+      expect(await service['checkFilter'](Object.assign(new FeatureConfigFilterAnd(), {}), {})).toEqual(false);
+    });
+  });
+
+  describe('checkAndFilters', () => {
+    let checkFilterSpy;
+    beforeEach(() => {
+      checkFilterSpy = jest.spyOn(service as any, 'checkFilter');
+    });
+
+    it('should return true since all filters returned true', async () => {
+      checkFilterSpy.mockReturnValueOnce(true);
+      checkFilterSpy.mockReturnValueOnce(true);
+      checkFilterSpy.mockReturnValueOnce(true);
+
+      expect(await service['checkAndFilters'](new Array(3).fill(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].filters[0],
+      ), {})).toEqual(true);
+    });
+
+    it('should return false since at least one filter returned false', async () => {
+      checkFilterSpy.mockReturnValueOnce(true);
+      checkFilterSpy.mockReturnValueOnce(false);
+      checkFilterSpy.mockReturnValueOnce(true);
+
+      expect(await service['checkAndFilters'](new Array(3).fill(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].filters[0],
+      ), {})).toEqual(false);
+    });
+
+    it('should return false due to error', async () => {
+      checkFilterSpy.mockImplementation(() => { throw new Error('error when check filters'); });
+
+      expect(await service['checkAndFilters'](new Array(3).fill(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].filters[0],
+      ), {})).toEqual(false);
+    });
+  });
+
+  describe('checkOrFilters', () => {
+    let checkFilterSpy;
+    beforeEach(() => {
+      checkFilterSpy = jest.spyOn(service as any, 'checkFilter');
+    });
+
+    it('should return true since at least one filter returned true', async () => {
+      checkFilterSpy.mockReturnValueOnce(false);
+      checkFilterSpy.mockReturnValueOnce(true);
+      checkFilterSpy.mockReturnValueOnce(false);
+
+      expect(await service['checkOrFilters'](new Array(3).fill(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].filters[0],
+      ), {})).toEqual(true);
+    });
+
+    it('should return false since all filters returned false', async () => {
+      checkFilterSpy.mockReturnValueOnce(false);
+      checkFilterSpy.mockReturnValueOnce(false);
+      checkFilterSpy.mockReturnValueOnce(false);
+
+      expect(await service['checkOrFilters'](new Array(3).fill(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].filters[0],
+      ), {})).toEqual(false);
+    });
+
+    it('should return false due to error', async () => {
+      checkFilterSpy.mockImplementation(() => { throw new Error('error when check filters'); });
+
+      expect(await service['checkOrFilters'](new Array(3).fill(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].filters[0],
+      ), {})).toEqual(false);
+    });
+  });
+
+  describe('calculate', () => {
+    let isInTargetRangeSpy;
+    let filterSpy;
+
+    beforeEach(() => {
+      isInTargetRangeSpy = jest.spyOn(service as any, 'isInTargetRange');
+      filterSpy = jest.spyOn(service as any, 'filter');
+    });
+
+    it('should return false since feature control number is out of range', async () => {
+      isInTargetRangeSpy.mockReturnValueOnce(false);
+
+      expect(await service.calculate(mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations]))
+        .toEqual(false);
+
+      expect(isInTargetRangeSpy).toHaveBeenCalledWith(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].perc,
+      );
+      expect(filterSpy).not.toHaveBeenCalled();
+    });
+
+    it('should return false since feature filters does not match', async () => {
+      isInTargetRangeSpy.mockReturnValueOnce(true);
+      filterSpy.mockReturnValueOnce(false);
+
+      expect(await service.calculate(mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations]))
+        .toEqual(false);
+
+      expect(isInTargetRangeSpy).toHaveBeenCalledWith(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].perc,
+      );
+      expect(filterSpy).toHaveBeenCalledWith(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].filters,
+      );
+    });
+    it('should return true since all checks passes', async () => {
+      isInTargetRangeSpy.mockReturnValueOnce(true);
+      filterSpy.mockReturnValueOnce(true);
+
+      expect(await service.calculate(mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations]))
+        .toEqual(true);
+
+      expect(isInTargetRangeSpy).toHaveBeenCalledWith(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].perc,
+      );
+      expect(filterSpy).toHaveBeenCalledWith(
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].filters,
+      );
+    });
+  });
+
+  describe('DefaultFlagStrategy', () => {
+    it('should always return false', async () => {
+      const strategy = new DefaultFlagStrategy(
+        featuresConfigService as unknown as FeaturesConfigService,
+        settingsService as unknown as SettingsService,
+      );
+
+      expect(await strategy.calculate()).toEqual(false);
     });
   });
 });

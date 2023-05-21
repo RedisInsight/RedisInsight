@@ -1,13 +1,18 @@
 {
   "version": 1,
   "features": {
-    "liveRecommendations": {
+    "insightsRecommendations": {
       "flag": true,
-      "perc": [[0, 100]],
+      "perc": [],
       "filters": [
         {
           "name": "agreements.analytics",
           "value": true,
+          "cond": "eq"
+        },
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
           "cond": "eq"
         }
       ]

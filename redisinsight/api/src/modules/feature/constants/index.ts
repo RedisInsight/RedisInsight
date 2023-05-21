@@ -11,14 +11,18 @@ export enum FeatureStorage {
   Env = 'env',
   Database = 'database',
 }
+export enum FeatureConfigConfigDestination {
+  Default = 'default',
+  Remote = 'remote',
+}
 
-export enum FeatureRecalculationStrategy {
-  LiveRecommendation = 'liveRecommendation',
+export enum KnownFeatures {
+  InsightsRecommendations = 'insightsRecommendations',
 }
 
 export const knownFeatures = [
   {
-    name: 'liveRecommendations',
+    name: KnownFeatures.InsightsRecommendations,
     storage: FeatureStorage.Database,
   },
 ];

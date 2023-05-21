@@ -5,10 +5,12 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import config from 'src/utils/config';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
-import { FeatureServerEvents } from 'src/modules/feature/constants';
+import { FeatureConfigConfigDestination, FeatureServerEvents } from 'src/modules/feature/constants';
 import { Validator } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
+import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
+import { UnableToFetchRemoteConfigException } from 'src/modules/feature/exceptions';
 import * as defaultConfig from '../../../config/features-config.json';
 
 const FEATURES_CONFIG = config.get('features_config');
@@ -20,8 +22,9 @@ export class FeaturesConfigService {
   private validator = new Validator();
 
   constructor(
-    private repository: FeaturesConfigRepository,
-    private eventEmitter: EventEmitter2,
+    private readonly repository: FeaturesConfigRepository,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly analytics: FeatureAnalytics,
   ) {}
 
   async onApplicationBootstrap() {
@@ -44,25 +47,37 @@ export class FeaturesConfigService {
       return data;
     } catch (error) {
       this.logger.error('Unable to fetch remote config', error);
-      throw error;
+      throw new UnableToFetchRemoteConfigException();
     }
   }
 
-  private async getNewConfig(): Promise<any> {
-    let newConfig: any = defaultConfig;
+  private async getNewConfig(): Promise<{ data: any, type: FeatureConfigConfigDestination }> {
+    let remoteConfig: any;
+    let newConfig: any = {
+      data: defaultConfig,
+      type: FeatureConfigConfigDestination.Default,
+    };
 
     try {
       this.logger.log('Fetching remote config...');
 
-      const remoteConfig = await this.fetchRemoteConfig();
+      remoteConfig = await this.fetchRemoteConfig();
 
       // we should use default config in case when remote is invalid
       await this.validator.validateOrReject(plainToClass(FeaturesConfigData, remoteConfig));
 
       if (remoteConfig?.version > defaultConfig?.version) {
-        newConfig = remoteConfig;
+        newConfig = {
+          data: remoteConfig,
+          type: FeatureConfigConfigDestination.Remote,
+        };
       }
     } catch (error) {
+      this.analytics.sendFeatureFlagInvalidRemoteConfig({
+        configVersion: remoteConfig?.version,
+        error,
+      });
+
       this.logger.error('Something wrong with remote config', error);
     }
 
@@ -73,19 +88,31 @@ export class FeaturesConfigService {
    * Get latest config from remote and save it in the local database
    */
   public async sync(): Promise<void> {
+    let newConfig;
+
     try {
       this.logger.log('Trying to sync features config...');
 
       const currentConfig = await this.repository.getOrCreate();
-      const newConfig = await this.getNewConfig();
+      newConfig = await this.getNewConfig();
 
-      if (newConfig?.version > currentConfig?.data?.version) {
-        await this.repository.update(newConfig);
+      if (newConfig?.data?.version > currentConfig?.data?.version) {
+        await this.repository.update(newConfig.data);
+        this.analytics.sendFeatureFlagConfigUpdated({
+          oldVersion: currentConfig?.data?.version,
+          configVersion: newConfig.data.version,
+          type: newConfig.type,
+        });
       }
 
       this.logger.log('Successfully updated stored remote config');
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
     } catch (error) {
+      this.analytics.sendFeatureFlagConfigUpdateError({
+        configVersion: newConfig?.version,
+        error,
+      });
+
       this.logger.error('Unable to update features config', error);
     }
   }

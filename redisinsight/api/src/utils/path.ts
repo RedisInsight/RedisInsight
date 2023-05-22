@@ -1,1 +1,1 @@
-export const winPathToNormalPath = (path: string) => path.replace(/\\\\/g, '/')
+export const winPathToNormalPath = (path: string) => path.replace(/\\/g, '/');

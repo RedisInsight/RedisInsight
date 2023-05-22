@@ -17,6 +17,8 @@ export const repositories = {
   DATABASE_RECOMMENDATION: 'DatabaseRecommendationEntity',
   BROWSER_HISTORY: 'BrowserHistoryEntity',
   CUSTOM_TUTORIAL: 'CustomTutorialEntity',
+  FEATURES_CONFIG: 'FeaturesConfigEntity',
+  FEATURE: 'FeatureEntity',
 }
 
 let localDbConnection;
@@ -525,6 +527,7 @@ export const initAgreements = async () => {
     eula: true,
     encryption: constants.TEST_ENCRYPTION_STRATEGY === 'KEYTAR',
     analytics: true,
+    notifications: true,
   });
 
   await rep.save(agreements);

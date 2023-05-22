@@ -397,7 +397,7 @@ describe('slices', () => {
     it('should properly set state', () => {
       const payload = {
         features: {
-          liveRecommendations: {
+          insightsRecommendations: {
             flag: true
           }
         }
@@ -521,7 +521,7 @@ describe('slices', () => {
   describe('fetchFeatureFlags', () => {
     it('succeed to fetch data', async () => {
       // Arrange
-      const data = { features: { liveRecommendations: true } }
+      const data = { features: { insightsRecommendations: true } }
       const responsePayload = { data, status: 200 }
 
       apiService.get = jest.fn().mockResolvedValue(responsePayload)

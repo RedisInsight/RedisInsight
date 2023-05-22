@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { classToClass } from 'src/utils';
-
 import { FeatureRepository } from './feature.repository';
 import { FeatureEntity } from '../entities/feature.entity';
 import { Feature } from '../model/feature';

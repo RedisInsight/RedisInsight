@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockAppSettings,
-  mockAppSettingsWithoutPermissions,
+  mockAppSettingsWithoutPermissions, mockControlGroup, mockControlNumber,
   mockSettingsService,
   MockType,
 } from 'src/__mocks__';
@@ -53,7 +53,13 @@ describe('AnalyticsService', () => {
 
   describe('initialize', () => {
     it('should set anonymousId', () => {
-      service.initialize({ anonymousId: mockAnonymousId, sessionId, appType: AppType.Electron });
+      service.initialize({
+        anonymousId: mockAnonymousId,
+        sessionId,
+        appType: AppType.Electron,
+        controlNumber: mockControlNumber,
+        controlGroup: mockControlGroup,
+      });
 
       const anonymousId = service.getAnonymousId();
 
@@ -64,7 +70,13 @@ describe('AnalyticsService', () => {
   describe('sendEvent', () => {
     beforeEach(() => {
       mockAnalyticsTrack = jest.fn();
-      service.initialize({ anonymousId: mockAnonymousId, sessionId, appType: AppType.Electron });
+      service.initialize({
+        anonymousId: mockAnonymousId,
+        sessionId,
+        appType: AppType.Electron,
+        controlNumber: mockControlNumber,
+        controlGroup: mockControlGroup,
+      });
     });
     it('should send event with anonymousId if permission are granted', async () => {
       settingsService.getAppSettings.mockResolvedValue(mockAppSettings);
@@ -81,6 +93,8 @@ describe('AnalyticsService', () => {
         event: TelemetryEvents.ApplicationStarted,
         properties: {
           buildType: AppType.Electron,
+          controlNumber: mockControlNumber,
+          controlGroup: mockControlGroup,
         },
       });
     });
@@ -110,6 +124,8 @@ describe('AnalyticsService', () => {
         event: TelemetryEvents.ApplicationStarted,
         properties: {
           buildType: AppType.Electron,
+          controlNumber: mockControlNumber,
+          controlGroup: mockControlGroup,
         },
       });
     });

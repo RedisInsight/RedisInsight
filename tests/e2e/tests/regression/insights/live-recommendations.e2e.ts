@@ -36,7 +36,6 @@ const expectedProperties = [
     'provider',
     'vote'
 ];
-const featuresConfigPath = 'C:/Projects/redisinsight-redis/RedisInsight/redisinsight/api/dist/config/features-config.json';
 const updateControlNumber = async(number: Number): Promise<void> => {
     updateControlNumberInDB(number);
     await syncFeaturesApi();

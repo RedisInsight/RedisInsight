@@ -10,6 +10,7 @@ import { Feature } from 'src/modules/feature/model/feature';
 import { FeatureEntity } from 'src/modules/feature/entities/feature.entity';
 import { mockAppSettings } from 'src/__mocks__/app-settings';
 import config from 'src/utils/config';
+import { KnownFeatures } from 'src/modules/feature/constants';
 import * as defaultConfig from '../../config/features-config.json';
 
 export const mockFeaturesConfigId = '1';
@@ -20,7 +21,7 @@ export const mockControlGroup = '7';
 export const mockFeaturesConfigJson = {
   version: mockFeaturesConfigVersion,
   features: {
-    liveRecommendations: {
+    [KnownFeatures.InsightsRecommendations]: {
       perc: [[1.25, 8.45]],
       flag: true,
       filters: [
@@ -37,15 +38,15 @@ export const mockFeaturesConfigJson = {
 export const mockFeaturesConfigJsonComplex = {
   ...mockFeaturesConfigJson,
   features: {
-    liveRecommendations: {
-      ...mockFeaturesConfigJson.features.liveRecommendations,
+    [KnownFeatures.InsightsRecommendations]: {
+      ...mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
       filters: [
         {
           or: [
             {
-              name: 'env.FORCE_ENABLE_LIVE_RECOMMENDATIONS',
-              value: 'true',
-              type: 'eq',
+              name: 'settings.testValue',
+              value: 'test',
+              cond: 'eq',
             },
             {
               and: [
@@ -80,10 +81,12 @@ export const mockFeaturesConfigJsonComplex = {
 export const mockFeaturesConfigData = Object.assign(new FeaturesConfigData(), {
   ...mockFeaturesConfigJson,
   features: new Map(Object.entries({
-    liveRecommendations: Object.assign(new FeatureConfig(), {
-      ...mockFeaturesConfigJson.features.liveRecommendations,
+    [KnownFeatures.InsightsRecommendations]: Object.assign(new FeatureConfig(), {
+      ...mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
       filters: [
-        Object.assign(new FeatureConfigFilter(), { ...mockFeaturesConfigJson.features.liveRecommendations.filters[0] }),
+        Object.assign(new FeatureConfigFilter(), {
+          ...mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].filters[0],
+        }),
       ],
     }),
   })),
@@ -92,15 +95,15 @@ export const mockFeaturesConfigData = Object.assign(new FeaturesConfigData(), {
 export const mockFeaturesConfigDataComplex = Object.assign(new FeaturesConfigData(), {
   ...mockFeaturesConfigJson,
   features: new Map(Object.entries({
-    liveRecommendations: Object.assign(new FeatureConfig(), {
-      ...mockFeaturesConfigJson.features.liveRecommendations,
+    [KnownFeatures.InsightsRecommendations]: Object.assign(new FeatureConfig(), {
+      ...mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
       filters: [
         Object.assign(new FeatureConfigFilterOr(), {
           or: [
             Object.assign(new FeatureConfigFilter(), {
-              name: 'env.FORCE_ENABLE_LIVE_RECOMMENDATIONS',
-              value: 'true',
-              type: 'eq',
+              name: 'settings.testValue',
+              value: 'test',
+              cond: 'eq',
             }),
             Object.assign(new FeatureConfigFilterAnd(), {
               and: [
@@ -153,13 +156,18 @@ export const mockFeaturesConfigEntityComplex = Object.assign(new FeaturesConfigE
 });
 
 export const mockFeature = Object.assign(new Feature(), {
-  name: 'liveRecommendations',
+  name: KnownFeatures.InsightsRecommendations,
+  flag: true,
+});
+
+export const mockUnknownFeature = Object.assign(new Feature(), {
+  name: 'unknown',
   flag: true,
 });
 
 export const mockFeatureEntity = Object.assign(new FeatureEntity(), {
   id: 'lr-1',
-  name: 'liveRecommendations',
+  name: KnownFeatures.InsightsRecommendations,
   flag: true,
 });
 
@@ -175,10 +183,37 @@ export const mockFeaturesConfigRepository = jest.fn(() => ({
   update: jest.fn().mockResolvedValue(mockFeaturesConfig),
 }));
 
-export const mockFeaturesConfigService = () => ({
+export const mockFeatureRepository = jest.fn(() => ({
+  get: jest.fn().mockResolvedValue(mockFeature),
+  upsert: jest.fn().mockResolvedValue({ updated: 1 }),
+  list: jest.fn().mockResolvedValue([mockFeature]),
+  delete: jest.fn().mockResolvedValue({ deleted: 1 }),
+}));
+
+export const mockFeaturesConfigService = jest.fn(() => ({
   sync: jest.fn(),
   getControlInfo: jest.fn().mockResolvedValue({
     controlNumber: mockControlNumber,
     controlGroup: mockControlGroup,
   }),
-});
+}));
+
+export const mockFeatureService = jest.fn(() => ({
+  isFeatureEnabled: jest.fn().mockResolvedValue(true),
+}));
+
+export const mockFeatureAnalytics = jest.fn(() => ({
+  sendFeatureFlagConfigUpdated: jest.fn(),
+  sendFeatureFlagConfigUpdateError: jest.fn(),
+  sendFeatureFlagInvalidRemoteConfig: jest.fn(),
+  sendFeatureFlagRecalculated: jest.fn(),
+}));
+
+export const mockInsightsRecommendationsFlagStrategy = {
+  calculate: jest.fn().mockResolvedValue(true),
+};
+
+export const mockFeatureFlagProvider = jest.fn(() => ({
+  getStrategy: jest.fn().mockResolvedValue(mockInsightsRecommendationsFlagStrategy),
+  calculate: jest.fn().mockResolvedValue(true),
+}));

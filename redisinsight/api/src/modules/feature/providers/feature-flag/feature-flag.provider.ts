@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/feature.flag.strategy';
 import {
-  LiveRecommendationsFlagStrategy,
-} from 'src/modules/feature/providers/feature-flag/strategies/live-recommendations.flag.strategy';
+  InsightsRecommendationsFlagStrategy,
+} from 'src/modules/feature/providers/feature-flag/strategies/insights-recommendations.flag.strategy';
 import { DefaultFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/default.flag.strategy';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { SettingsService } from 'src/modules/settings/settings.service';
+import { KnownFeatures } from 'src/modules/feature/constants';
 
 @Injectable()
 export class FeatureFlagProvider {
@@ -19,7 +20,7 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
-    this.strategies.set('liveRecommendations', new LiveRecommendationsFlagStrategy(
+    this.strategies.set(KnownFeatures.InsightsRecommendations, new InsightsRecommendationsFlagStrategy(
       this.featuresConfigService,
       this.settingsService,
     ));

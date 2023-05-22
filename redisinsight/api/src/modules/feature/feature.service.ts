@@ -5,21 +5,37 @@ import { FeatureServerEvents, FeatureStorage, knownFeatures } from 'src/modules/
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/feature-flag.provider';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 
 @Injectable()
 export class FeatureService {
   private logger = new Logger('FeaturesConfigService');
 
   constructor(
-    private repository: FeatureRepository,
-    private featuresConfigRepository: FeaturesConfigRepository,
-    private featureFlagProvider: FeatureFlagProvider,
-    private eventEmitter: EventEmitter2,
+    private readonly repository: FeatureRepository,
+    private readonly featuresConfigRepository: FeaturesConfigRepository,
+    private readonly featureFlagProvider: FeatureFlagProvider,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly analytics: FeatureAnalytics,
   ) {}
 
-  // todo: disable recommendations
   /**
-   *
+   * Check if feature enabled
+   * @param name
+   */
+  async isFeatureEnabled(name: string): Promise<boolean> {
+    try {
+      // todo: add non-database features if needed
+      const model = await this.repository.get(name);
+
+      return model?.flag === true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /**
+   * Returns list of features flags
    */
   async list() {
     this.logger.log('Getting features list');
@@ -38,6 +54,14 @@ export class FeatureService {
       }
     });
 
+    try {
+      this.analytics.sendFeatureFlagRecalculated({
+        configVersion: (await this.featuresConfigRepository.getOrCreate())?.data?.version,
+        features,
+      });
+    } catch (e) {
+      // ignore telemetry error
+    }
     return { features };
   }
 
@@ -68,12 +92,12 @@ export class FeatureService {
       }));
 
       // calculate to delete features
-      actions.toDelete = featuresFromDatabase.filter((feature) => !featuresConfig?.data?.features?.[feature.name]);
+      actions.toDelete = featuresFromDatabase.filter((feature) => !featuresConfig?.data?.features?.has?.(feature.name));
 
       // delete features
-      await Promise.all(actions.toDelete.map(this.repository.delete.bind(this.repository)));
+      await Promise.all(actions.toDelete.map((feature) => this.repository.delete(feature)));
       // upsert modified features
-      await Promise.all(actions.toUpsert.map(this.repository.upsert.bind(this.repository)));
+      await Promise.all(actions.toUpsert.map((feature) => this.repository.upsert(feature)));
 
       this.logger.log(
         `Features flags recalculated. Updated: ${actions.toUpsert.length} deleted: ${actions.toDelete.length}`,

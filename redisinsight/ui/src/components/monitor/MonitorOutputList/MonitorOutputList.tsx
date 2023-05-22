@@ -1,12 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import cx from 'classnames'
 import { EuiTextColor } from '@elastic/eui'
-import { CellMeasurer, List, CellMeasurerCache, ListRowProps } from 'react-virtualized'
+import { ListChildComponentProps, ListOnScrollProps, VariableSizeList as List } from 'react-window'
 
 import { DEFAULT_ERROR_MESSAGE, getFormatTime } from 'uiSrc/utils'
 
 import styles from 'uiSrc/components/monitor/Monitor/styles.module.scss'
-import 'react-virtualized/styles.css'
 
 export interface Props {
   compressed: boolean
@@ -18,28 +17,67 @@ export interface Props {
 const PROTRUDING_OFFSET = 2
 const MIDDLE_SCREEN_RESOLUTION = 460
 const SMALL_SCREEN_RESOLUTION = 360
+const MIN_ROW_HEIGHT = 17
 
 const MonitorOutputList = (props: Props) => {
   const { compressed, items = [], width = 0, height = 0 } = props
 
-  const cache = new CellMeasurerCache({
-    defaultHeight: 17,
-    fixedWidth: true,
-    fixedHeight: false
-  })
-
+  const autoScrollRef = useRef<boolean>(true)
+  const rowHeights = useRef<{ [key: number]: number }>({})
+  const outerRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<List>(null)
+  const hasMountedRef = useRef<boolean>(false)
 
-  const clearCacheAndUpdate = () => {
-    listRef?.current?.scrollToRow(items.length - 1)
+  useEffect(() => {
+    if (autoScrollRef.current) {
+      setTimeout(() => {
+        scrollToBottom()
+      }, 0)
+    }
+  }, [items])
+
+  const getRowHeight = (index: number) => (
+    rowHeights.current[index] > MIN_ROW_HEIGHT ? (rowHeights.current[index] + 2) : MIN_ROW_HEIGHT
+  )
+
+  const setRowHeight = (index: number, size: number) => {
+    listRef.current?.resetAfterIndex(0)
+    if (size > MIN_ROW_HEIGHT) {
+      rowHeights.current[index] = size
+      return
+    }
+
+    if (rowHeights.current[index]) {
+      delete rowHeights.current[index]
+    }
+  }
+
+  const scrollToBottom = () => {
+    listRef.current?.scrollToItem(items.length - 1, 'end')
     requestAnimationFrame(() => {
-      listRef?.current?.scrollToRow(items.length - 1)
+      listRef.current?.scrollToItem(items.length - 1, 'end')
     })
   }
 
-  useEffect(() => {
-    clearCacheAndUpdate()
-  }, [items])
+  const handleScroll = useCallback((e: ListOnScrollProps) => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
+
+    if (!outerRef.current) {
+      return
+    }
+
+    if (e.scrollOffset + outerRef.current.offsetHeight === outerRef.current.scrollHeight) {
+      autoScrollRef.current = true
+      return
+    }
+
+    if (!e.scrollUpdateWasRequested) {
+      autoScrollRef.current = false
+    }
+  }, [])
 
   const getArgs = (args: string[]): JSX.Element => (
     <span className={cx(styles.itemArgs, { [styles.itemArgs__compressed]: compressed })}>
@@ -54,51 +92,47 @@ const MonitorOutputList = (props: Props) => {
     </span>
   )
 
-  const rowRenderer = ({ parent, index, key, style }: ListRowProps) => {
+  const Row = ({ index, style }: ListChildComponentProps) => {
     const { time = '', args = [], database = '', source = '', isError, message = '' } = items[index]
+    const rowRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+      if (!rowRef.current) return
+      setRowHeight(index, rowRef.current?.clientHeight)
+    }, [rowRef])
+
     return (
-      <CellMeasurer
-        cache={cache}
-        columnIndex={0}
-        key={key}
-        parent={parent}
-        rowIndex={index}
-      >
-        {({ registerChild, measure }) => (
-          <div onLoad={measure} className={styles.item} ref={registerChild} style={style}>
-            {!isError && (
-              <>
-                {width > MIDDLE_SCREEN_RESOLUTION && (
-                  <span className={cx(styles.time)}>
-                    {getFormatTime(time)}
-                    &nbsp;
-                  </span>
-                )}
-                {width > SMALL_SCREEN_RESOLUTION && (<span>{`[${database} ${source}] `}</span>)}
-                <span>{getArgs(args)}</span>
-              </>
+      <div style={style} className={styles.item} data-testid={`row-${index}`}>
+        {!isError && (
+          <div ref={rowRef}>
+            {width > MIDDLE_SCREEN_RESOLUTION && (
+              <span className={cx(styles.time)}>{getFormatTime(time)}&nbsp;</span>
             )}
-            {isError && (
-              <EuiTextColor color="danger">{message ?? DEFAULT_ERROR_MESSAGE}</EuiTextColor>
-            )}
+            {width > SMALL_SCREEN_RESOLUTION && (<span>{`[${database} ${source}] `}</span>)}
+            <span>{getArgs(args)}</span>
           </div>
         )}
-      </CellMeasurer>
+        {isError && (
+          <EuiTextColor color="danger">{message ?? DEFAULT_ERROR_MESSAGE}</EuiTextColor>
+        )}
+      </div>
     )
   }
 
   return (
     <List
+      height={height}
+      itemCount={items.length}
+      itemSize={getRowHeight}
       ref={listRef}
       width={width - PROTRUDING_OFFSET}
-      height={height - PROTRUDING_OFFSET}
-      rowCount={items.length}
-      rowHeight={cache.rowHeight}
-      rowRenderer={rowRenderer}
-      overscanRowCount={30}
       className={styles.listWrapper}
-      deferredMeasurementCache={cache}
-    />
+      outerRef={outerRef}
+      onScroll={handleScroll}
+      overscanCount={30}
+    >
+      {Row}
+    </List>
   )
 }
 

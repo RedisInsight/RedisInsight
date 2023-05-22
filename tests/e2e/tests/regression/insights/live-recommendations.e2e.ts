@@ -12,7 +12,7 @@ import { syncFeaturesApi } from '../../../helpers/api/api-info';
 import { Common } from '../../../helpers/common';
 import { Telemetry } from '../../../helpers/telemetry';
 import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
-import { updateControlNumberInDB, updateFeaturesConfigVersion } from '../../../helpers/insights';
+import { modifyFeaturesConfigJson, updateControlNumberInDB } from '../../../helpers/insights';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -36,7 +36,7 @@ const expectedProperties = [
     'provider',
     'vote'
 ];
-const updateControlNumber = async(number: Number): Promise<void> => {
+const updateControlNumber = async (number: Number): Promise<void> => {
     updateControlNumberInDB(number);
     await syncFeaturesApi();
     await browserPage.reloadPage();
@@ -46,17 +46,17 @@ const redisTimeSeriesRecom = RecommendationIds.optimizeTimeSeries;
 const searchVisualizationRecom = RecommendationIds.searchVisualization;
 const setPasswordRecom = RecommendationIds.setPassword;
 
-fixture `Live Recommendations`
+fixture`Live Recommendations`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async() => {
+    .beforeEach(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .afterEach(async() => {
+    .afterEach(async () => {
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test.only
+test
     .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
@@ -94,18 +94,19 @@ test.only
         await updateControlNumber(30.1);
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed for user with control number out of the config');
     });
-test
-    .before(async t => {
+test.only
+    .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-        // // Update local config file to version highter than remote config
-        // updateFeaturesConfigVersion(featuresConfigPath, 5);
-        // await t.wait(5000);
-        // Update Control Number to be out of range from remote file
-        await updateControlNumber(45.92);
+        await updateControlNumber(19.2);
     })
     .after(async () => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that config info is taken from file with higher version', async t => {
+        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed after enabling analytics');
+        // Update local config file to version highter than remote config
+        await modifyFeaturesConfigJson('../../../test-data/insights-recommendations/features-config.json');
+        // Update Control Number to be out of range from remote file
+        await updateControlNumber(35.2);
         // Verify that Insights panel displayed because range was taken from a local file with larger version than the remote file
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed for user with control number within the config');
     });
@@ -131,7 +132,7 @@ test
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed for Electron app when control number out of the config');
     });
 test
-    .before(async() => {
+    .before(async () => {
         // Add new databases using API
         await acceptLicenseTerms();
         await addNewStandaloneDatabasesApi(databasesForAdding);
@@ -139,7 +140,7 @@ test
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
     })
-    .after(async() => {
+    .after(async () => {
         // Clear and delete database
         await browserPage.InsightsPanel.toggleInsightsPanel(false);
         await browserPage.OverviewPanel.changeDbIndex(0);
@@ -176,9 +177,9 @@ test
     });
 test
     .requestHooks(logger)
-    .before(async() => {
+    .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-    }).after(async() => {
+    }).after(async () => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can upvote recommendations', async t => {
         await browserPage.InsightsPanel.toggleInsightsPanel(true);
@@ -242,9 +243,9 @@ test('Verify that user can snooze recommendation', async t => {
     await t.expect(await browserPage.InsightsPanel.getRecommendationByName(searchVisualizationRecom).exists).ok('recommendation is not displayed again');
 });
 test
-    .before(async() => {
+    .before(async () => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-    }).after(async() => {
+    }).after(async () => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that recommendations from database analysis are displayed in Insight panel above live recommendations', async t => {
         const redisVersionRecomSelector = browserPage.InsightsPanel.getRecommendationByName(redisVersionRecom);
@@ -282,7 +283,7 @@ test('Verify that if user clicks on the Analyze button and link, the pop up with
 });
 //https://redislabs.atlassian.net/browse/RI-4493
 test
-    .after(async() => {
+    .after(async () => {
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify that key name is displayed for Insights and DA recommendations', async t => {

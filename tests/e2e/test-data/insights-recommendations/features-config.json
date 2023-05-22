@@ -1,0 +1,17 @@
+{
+    "version": 5,
+    "features": {
+      "liveRecommendations": {
+        "flag": true,
+        "perc": [[30, 50]],
+        "filters": [
+          {
+            "name": "agreements.analytics",
+            "value": true,
+            "cond": "eq"
+          }
+        ]
+      }
+    }
+  }
+  

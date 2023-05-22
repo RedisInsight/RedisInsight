@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { workingDirectory} from '../helpers/conf';
+import axios from 'axios';
 
 const dbPath = `${workingDirectory}/redisinsight.db`;
 
@@ -35,12 +36,17 @@ export function updateControlNumberInDB(controlNumber: Number): void {
 }
 
 /**
- * Update version into local features-config file
- * @param filePath Path to config file
- * @param version New version for features-config
+ * Update features-config file in static server
+ * @param filePath Path to feature config json
  */
-export function updateFeaturesConfigVersion(filePath: string, newVersion: Number): void {
-    const jsonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    jsonData.version = newVersion;
-    fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
+export async function modifyFeaturesConfigJson(filePath: string): Promise<void> {
+  const url = 'http://static-server:5551/remote/features-config.json';
+
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    await axios.put(url, data);
+    console.log('Features config file updated successfully.');
+  } catch (error) {
+    console.error('Error updating features config file:', error.message);
+  }
 }

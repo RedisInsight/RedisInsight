@@ -12,15 +12,13 @@ import {
     WorkbenchPage,
     PubSubPage,
     MyRedisDatabasePage,
-    HelpCenterPage,
     BrowserPage
 } from '../../../pageObjects';
 import { Telemetry } from '../../../helpers/telemetry';
-import { OnboardingCardsDialog } from '../../../pageObjects/dialogs/onboarding-cards-dialog';
+import { OnboardingCardsDialog } from '../../../pageObjects/dialogs';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const helpCenterPage = new HelpCenterPage();
 const onboardingCardsDialog = new OnboardingCardsDialog();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const workBenchPage = new WorkbenchPage();
@@ -49,7 +47,7 @@ fixture `Onboarding new user tests`
 // https://redislabs.atlassian.net/browse/RI-4278
 test('Verify onboarding new user steps', async t => {
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
-    await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
+    await t.expect(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
     await t.click(onboardingCardsDialog.resetOnboardingBtn);
     await t.expect(onboardingCardsDialog.showMeAroundButton.visible).ok('onboarding starting is not visible');
@@ -75,10 +73,6 @@ test('Verify onboarding new user steps', async t => {
     await t.expect(browserPage.Profiler.monitorArea.visible).ok('profiler is not expanded');
     await onboardingCardsDialog.verifyStepVisible('Profiler');
     await onboardingCardsDialog.clickNextStep();
-    // verify Insights is opened
-    await t.expect(browserPage.InsightsPanel.insightsPanel.visible).ok('Insights panel is not expanded');
-    await onboardingCardsDialog.verifyStepVisible('Insights');
-    await onboardingCardsDialog.clickNextStep();
     // Verify that client list command visible when there is not any index created
     await t.expect(onboardingCardsDialog.wbOnbardingCommand.withText('CLIENT LIST').visible).ok('CLIENT LIST command is not visible');
     await t.expect(onboardingCardsDialog.copyCodeButton.visible).ok('copy code button is not visible');
@@ -86,12 +80,14 @@ test('Verify onboarding new user steps', async t => {
     await t.expect(workBenchPage.mainEditorArea.visible).ok('workbench is not opened');
     await onboardingCardsDialog.verifyStepVisible('Try Workbench!');
     // create index in order to see in FT.INFO {index} in onboarding step
-    await workBenchPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
+    await browserPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
     // click back step button
     await onboardingCardsDialog.clickBackStep();
+    // create index in order to see in FT.INFO {index} in onboarding step
+    await workBenchPage.Cli.sendCommandInCli(`FT.CREATE ${indexName} ON HASH PREFIX 1 test SCHEMA "name" TEXT`);
     // verify one step before is opened
-    await t.expect(browserPage.InsightsPanel.insightsPanel.visible).ok('Insights panel is not expanded');
-    await onboardingCardsDialog.verifyStepVisible('Insights');
+    await t.expect(browserPage.Profiler.monitorArea.visible).ok('profiler is not expanded');
+    await onboardingCardsDialog.verifyStepVisible('Profiler');
     await onboardingCardsDialog.clickNextStep();
     // verify workbench page is opened
     await t.expect(onboardingCardsDialog.wbOnbardingCommand.withText(`FT.INFO ${indexName}`).visible).ok(`FT.INFO ${indexName} command is not visible`);
@@ -125,7 +121,7 @@ test('Verify onboarding new user steps', async t => {
 // https://redislabs.atlassian.net/browse/RI-4067, https://redislabs.atlassian.net/browse/RI-4278
 test('Verify onboard new user skip tour', async(t) => {
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
-    await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
+    await t.expect(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding
     await t.click(onboardingCardsDialog.resetOnboardingBtn);
     await t.expect(onboardingCardsDialog.showMeAroundButton.visible).ok('onboarding starting is not visible');
@@ -139,7 +135,7 @@ test('Verify onboard new user skip tour', async(t) => {
     await onboardingCardsDialog.verifyStepVisible('Tree view');
     await t.click(browserPage.NavigationPanel.workbenchButton);
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
-    await t.expect(helpCenterPage.helpCenterPanel.visible).ok('help center panel is not opened');
+    await t.expect(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterPanel.visible).ok('help center panel is not opened');
     await t.click(onboardingCardsDialog.resetOnboardingBtn);
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Verify that when user reset onboarding, user can see the onboarding triggered when user open the Browser page.

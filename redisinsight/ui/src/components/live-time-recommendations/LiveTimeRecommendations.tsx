@@ -14,6 +14,7 @@ import {
   EuiFlyoutHeader,
   EuiCheckbox,
   EuiTextColor,
+  EuiBadge,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { remove } from 'lodash'
@@ -21,7 +22,6 @@ import { remove } from 'lodash'
 import { Pages } from 'uiSrc/constants'
 import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE, ANIMATION_INSIGHT_PANEL_MS } from 'uiSrc/constants/recommendations'
 import { OnboardingTour } from 'uiSrc/components'
-import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import {
   recommendationsSelector,
   fetchRecommendationsAction,
@@ -43,6 +43,8 @@ import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 import { ReactComponent as TriggerActiveIcon } from 'uiSrc/assets/img/bulb-active.svg'
 import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { ReactComponent as GithubSVG } from 'uiSrc/assets/img/github.svg'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
@@ -76,6 +78,8 @@ const LiveTimeRecommendations = () => {
 
   const dispatch = useDispatch()
   const history = useHistory()
+
+  const isShowHiddenDisplayed = recommendations.filter((r) => r.hide).length > 0
 
   useEffect(() => {
     if (!connectedInstanceId) return
@@ -194,9 +198,17 @@ const LiveTimeRecommendations = () => {
 
   const renderHeader = () => (
     <>
-      <EuiTitle className={styles.title}>
-        <span>Insights</span>
-      </EuiTitle>
+      <div className={styles.headerTop}>
+        <EuiTitle className={styles.title}>
+          <span>Insights</span>
+        </EuiTitle>
+        <EuiToolTip
+          position="bottom"
+          content="This is the BETA version of recommendations that has limited availability. Let us know what you think about them in our GitHub repository."
+        >
+          <EuiBadge className={styles.betaBadge} title={undefined} data-testid="beta-label">BETA</EuiBadge>
+        </EuiToolTip>
+      </div>
       {!!recommendations.length && (
         <div className={styles.actions}>
           <div>
@@ -212,8 +224,7 @@ const LiveTimeRecommendations = () => {
                   Work in the database to see new recommendations appeared on how to improve performance,
                   optimize memory usage, and enhance the performance of your database.
                   <br />
-                  Eager to see more recommendations right now?
-                  Go to Database Analysis and click on the new report in order to see the magic happens.
+                  Eager to see more recommendations? Run Database Analysis in order to see the magic happens.
                 </>
             )}
             >
@@ -224,18 +235,35 @@ const LiveTimeRecommendations = () => {
                 data-testid="recommendations-info-icon"
               />
             </EuiToolTip>
+            <EuiLink
+              external={false}
+              href={EXTERNAL_LINKS.githubRepo}
+              target="_blank"
+              style={{ marginLeft: 6 }}
+              data-testid="github-repo-btn"
+            >
+              <EuiIcon
+                className={styles.githubIcon}
+                aria-label="redis insight github repository"
+                type={GithubSVG}
+                size="s"
+                data-testid="github-repo-icon"
+              />
+            </EuiLink>
           </div>
 
-          <EuiCheckbox
-            id="showHidden"
-            name="showHidden"
-            label="Show hidden"
-            checked={isShowHidden}
-            className={styles.hideCheckbox}
-            onChange={(e) => onChangeShowHidden(e.target.checked)}
-            data-testid="checkbox-show-hidden"
-            aria-label="checkbox show hidden"
-          />
+          {isShowHiddenDisplayed && (
+            <EuiCheckbox
+              id="showHidden"
+              name="showHidden"
+              label="Show hidden"
+              checked={isShowHidden}
+              className={styles.hideCheckbox}
+              onChange={(e) => onChangeShowHidden(e.target.checked)}
+              data-testid="checkbox-show-hidden"
+              aria-label="checkbox show hidden"
+            />
+          )}
         </div>
       )}
     </>
@@ -247,7 +275,7 @@ const LiveTimeRecommendations = () => {
         className={cx(styles.trigger, { [styles.isOpen]: isContentVisible })}
       >
         <OnboardingTour
-          options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}
+          options={{ step: -1 }}
           anchorPosition="leftDown"
           panelClassName={styles.insightsOnboardPanel}
           delay={isContentVisible ? DELAY_TO_SHOW_ONBOARDING_MS : 0}

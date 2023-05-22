@@ -189,6 +189,16 @@ describe('KeysBusinessService', () => {
         RECOMMENDATION_NAMES.BIG_SETS,
         result,
       );
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.BIG_STRINGS,
+        result,
+      );
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
+        result,
+      );
     });
   });
 
@@ -216,16 +226,10 @@ describe('KeysBusinessService', () => {
 
       expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
-        RECOMMENDATION_NAMES.SEARCH_STRING,
-        { keys: result, client: nodeClient, databaseId: mockBrowserClientMetadata.databaseId },
-      );
-
-      expect(recommendationService.check).toBeCalledWith(
-        mockBrowserClientMetadata,
         RECOMMENDATION_NAMES.SEARCH_JSON,
         { keys: result, client: nodeClient, databaseId: mockBrowserClientMetadata.databaseId },
       );
-      expect(recommendationService.check).toBeCalledTimes(2);
+      expect(recommendationService.check).toBeCalledTimes(1);
     });
     it("user don't have required permissions for getKeyInfo", async () => {
       const replyError: ReplyError = {
@@ -316,6 +320,20 @@ describe('KeysBusinessService', () => {
 
       expect(standaloneScanner.getKeys).toHaveBeenCalled();
       expect(browserHistory.create).not.toHaveBeenCalled();
+    });
+    it('should call recommendationService', async () => {
+      const response = [mockGetKeysWithDetailsResponse]
+      standaloneScanner.getKeys = jest
+        .fn()
+        .mockResolvedValue(response);
+
+      await service.getKeys(mockBrowserClientMetadata, { ...getKeysDto, match: '*' });
+
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.USE_SMALLER_KEYS,
+        response[0].total,
+      );
     });
   });
 

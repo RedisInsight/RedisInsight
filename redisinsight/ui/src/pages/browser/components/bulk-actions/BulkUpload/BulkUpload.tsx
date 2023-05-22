@@ -85,14 +85,6 @@ const BulkUpload = (props: Props) => {
       const formData = new FormData()
       formData.append('file', files[0])
       dispatch(bulkUploadDataAction(instanceId, { file: formData, fileName: files[0].name }))
-
-      sendEventTelemetry({
-        event: TelemetryEvent.BULK_ACTIONS_STARTED,
-        eventData: {
-          databaseId: instanceId,
-          action: BulkActionsType.Upload
-        }
-      })
     }
   }
 

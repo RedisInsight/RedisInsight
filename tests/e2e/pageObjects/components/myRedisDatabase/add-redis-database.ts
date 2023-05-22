@@ -40,7 +40,6 @@ export class AddRedisDatabase {
     secretKeyInput = Selector('[data-testid=secret-key]');
     welcomePageTitle = Selector('[data-testid=welcome-page-title]');
     databaseIndexInput = Selector('[data-testid=db]');
-    errorMessage = Selector('[data-test-subj=toast-error]');
     databaseIndexMessage = Selector('[data-testid=db-index-message]');
     primaryGroupNameInput = Selector('[data-testid=primary-group]');
     masterGroupPassword = Selector('[data-testid=sentinel-master-password]');

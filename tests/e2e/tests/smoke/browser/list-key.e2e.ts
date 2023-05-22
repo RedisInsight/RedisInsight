@@ -36,7 +36,7 @@ test('Verify that user can select remove List element position: from tail', asyn
     // Remove element from the key
     await browserPage.removeListElementFromTail('1');
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Elements have been removed', 'The notification not found');
     // Check the removed element is not in the list
     await t.expect(browserPage.listElementsList.withExactText(element3).exists).notOk('The list element not removed', { timeout: 10000 });
@@ -50,7 +50,7 @@ test('Verify that user can select remove List element position: from head', asyn
     // Remove element from the key
     await browserPage.removeListElementFromHead('1');
     // Check the notification message
-    const notofication = await browserPage.getMessageText();
+    const notofication = browserPage.Toast.toastHeader.textContent;
     await t.expect(notofication).contains('Elements have been removed', 'The notification not found');
     // Check the removed element is not in the list
     await t.expect(browserPage.listElementsList.withExactText(element).exists).notOk('The list element not removed', { timeout: 10000 });

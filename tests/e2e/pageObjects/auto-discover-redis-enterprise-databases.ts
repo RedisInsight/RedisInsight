@@ -1,6 +1,7 @@
 import { Selector } from 'testcafe';
+import { BasePage } from './base-page';
 
-export class AutoDiscoverREDatabases {
+export class AutoDiscoverREDatabases extends BasePage {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.

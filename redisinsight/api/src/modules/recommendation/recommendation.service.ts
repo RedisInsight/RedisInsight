@@ -14,6 +14,7 @@ interface RecommendationInput {
   total?: number,
   globalClient?: Redis | Cluster,
   exclude?: string[],
+  indexes?: string[],
 }
 
 @Injectable()
@@ -37,6 +38,7 @@ export class RecommendationService {
       total,
       globalClient,
       exclude,
+      indexes,
     } = dto;
 
     const recommendations = new Map<string, () => Promise<Recommendation | null>>([
@@ -109,6 +111,10 @@ export class RecommendationService {
         RECOMMENDATION_NAMES.SET_PASSWORD,
         async () => await this.recommendationProvider.determineSetPasswordRecommendation(client),
       ],
+      [
+        RECOMMENDATION_NAMES.SEARCH_HASH,
+        async () => await this.recommendationProvider.determineSearchHashRecommendation(keys, indexes),
+      ],
       // it is live time recommendation (will add later)
       [
         RECOMMENDATION_NAMES.STRING_TO_JSON,
@@ -119,19 +125,11 @@ export class RecommendationService {
         () => null,
       ],
       [
-        RECOMMENDATION_NAMES.SEARCH_STRING,
-        async () => await this.recommendationProvider.determineSearchStringRecommendation(client, keys),
-      ],
-      [
         RECOMMENDATION_NAMES.SEARCH_JSON,
-        async () => await this.recommendationProvider.determineSearchJSONRecommendation(client, keys),
+        async () => await this.recommendationProvider.determineSearchJSONRecommendation(keys, indexes),
       ],
       [
         RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
-        () => null,
-      ],
-      [
-        RECOMMENDATION_NAMES.GRAPH_VISUALIZATION,
         () => null,
       ],
     ]);

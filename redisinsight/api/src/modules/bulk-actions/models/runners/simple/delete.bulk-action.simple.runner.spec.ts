@@ -1,6 +1,7 @@
 import IORedis from 'ioredis';
 import {
   mockSocket,
+  mockBulActionsAnalyticsService,
 } from 'src/__mocks__';
 import {
   DeleteBulkActionSimpleRunner,
@@ -29,6 +30,7 @@ const bulkAction = new BulkAction(
   mockCreateBulkActionDto.type,
   mockBulkActionFilter,
   mockSocket,
+  mockBulActionsAnalyticsService,
 );
 
 const mockKey = 'mockedKey';

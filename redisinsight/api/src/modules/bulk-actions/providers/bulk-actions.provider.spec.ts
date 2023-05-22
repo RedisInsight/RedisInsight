@@ -14,6 +14,7 @@ import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-fi
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { NotFoundException } from '@nestjs/common';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 
 export const mockSocket1 = new MockedSocket();
 mockSocket1.id = '1';
@@ -58,6 +59,15 @@ describe('BulkActionsProvider', () => {
         {
           provide: DatabaseConnectionService,
           useFactory: mockDatabaseConnectionService,
+        },
+        {
+          provide: BulkActionsAnalyticsService,
+          useFactory: () => ({
+            sendActionStarted: jest.fn(),
+            sendActionStopped: jest.fn(),
+            sendActionSucceed: jest.fn(),
+            sendActionFailed: jest.fn(),
+          }),
         },
       ],
     }).compile();

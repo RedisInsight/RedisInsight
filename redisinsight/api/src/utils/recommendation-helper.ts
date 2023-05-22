@@ -7,7 +7,6 @@ export const isRedisearchModule = (modules: AdditionalRedisModule[]): boolean =>
 );
 
 export const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [
-  ({ name }) => name !== RECOMMENDATION_NAMES.SEARCH_STRING,
   ({ name }) => name !== RECOMMENDATION_NAMES.SEARCH_JSON,
   ({ name }) => name !== RECOMMENDATION_NAMES.SEARCH_INDEXES,
   ({ name }) => !REDIS_STACK.includes(name),

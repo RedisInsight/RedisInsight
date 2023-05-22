@@ -22,7 +22,7 @@ test('Verify that user can add DB with logical index via host and port from Add 
 
     // Verify that user can test database connection and see success message
     await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
-    await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'Standalone connection is not successful');
+    await t.expect(myRedisDatabasePage.Toast.toastHeader.textContent).contains('Connection is successful', 'Standalone connection is not successful');
 
     // Enter logical index
     await t.click(myRedisDatabasePage.AddRedisDatabase.databaseIndexCheckbox);

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "features": {
+    "insightsRecommendations": {
+      "flag": true,
+      "perc": [],
+      "filters": [
+        {
+          "name": "agreements.analytics",
+          "value": true,
+          "cond": "eq"
+        },
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        }
+      ]
+    }
+  }
+}

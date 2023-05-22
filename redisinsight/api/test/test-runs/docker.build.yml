@@ -41,6 +41,7 @@ services:
       APP_FOLDER_NAME: ".redisinsight-v2.0"
       SECRET_STORAGE_PASSWORD: "somepassword"
       NOTIFICATION_UPDATE_URL: "https://s3.amazonaws.com/redisinsight.test/public/tests/notifications.json"
+      RI_FEATURES_CONFIG_URL: "http://test:5551/remote/features-config.json"
 
 networks:
   default:

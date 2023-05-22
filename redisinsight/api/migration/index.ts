@@ -31,6 +31,7 @@ import { databaseCompressor1678182722874 } from './1678182722874-database-compre
 import { customTutorials1677135091633 } from './1677135091633-custom-tutorials';
 import { databaseRecommendations1681900503586 } from './1681900503586-database-recommendations';
 import { databaseRecommendationParams1683006064293 } from './1683006064293-database-recommendation-params';
+import { feature1684175820824 } from './1684175820824-feature';
 
 export default [
   initialMigration1614164490968,
@@ -66,4 +67,5 @@ export default [
   customTutorials1677135091633,
   databaseRecommendations1681900503586,
   databaseRecommendationParams1683006064293,
+  feature1684175820824,
 ];

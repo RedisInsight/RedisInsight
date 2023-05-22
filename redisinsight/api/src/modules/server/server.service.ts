@@ -10,6 +10,7 @@ import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { ServerRepository } from 'src/modules/server/repositories/server.repository';
 import { AppType, BuildType } from 'src/modules/server/models/server';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
+import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 
 const SERVER_CONFIG = config.get('server');
 const REDIS_STACK_CONFIG = config.get('redisStack');
@@ -22,6 +23,7 @@ export class ServerService implements OnApplicationBootstrap {
 
   constructor(
     private readonly repository: ServerRepository,
+    private readonly featuresConfigService: FeaturesConfigService,
     private readonly eventEmitter: EventEmitter2,
     private readonly encryptionService: EncryptionService,
   ) {}
@@ -50,6 +52,7 @@ export class ServerService implements OnApplicationBootstrap {
       anonymousId: server.id,
       sessionId: this.sessionId,
       appType: this.getAppType(SERVER_CONFIG.buildType),
+      ...(await this.featuresConfigService.getControlInfo()),
     });
 
     // do not track start events for non-electron builds
@@ -85,6 +88,7 @@ export class ServerService implements OnApplicationBootstrap {
         appType: this.getAppType(SERVER_CONFIG.buildType),
         encryptionStrategies: await this.encryptionService.getAvailableEncryptionStrategies(),
         fixedDatabaseId: REDIS_STACK_CONFIG?.id,
+        ...(await this.featuresConfigService.getControlInfo()),
       };
       this.logger.log('Succeed to get server info.');
       return result;

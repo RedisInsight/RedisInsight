@@ -41,6 +41,9 @@ export const constants = {
   TEST_KEYTAR_PASSWORD: process.env.SECRET_STORAGE_PASSWORD || 'somepassword',
   TEST_ENCRYPTION_STRATEGY: 'KEYTAR',
   TEST_AGREEMENTS_VERSION: '1.0.3',
+  TEST_REMOTE_STATIC_PATH: './remote',
+  TEST_REMOTE_STATIC_URI: '/remote',
+  TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH: './remote/features-config.json',
 
   // local database
   TEST_LOCAL_DB_FILE_PATH: process.env.TEST_LOCAL_DB_FILE_PATH || './redisinsight.db',

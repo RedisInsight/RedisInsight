@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { remove } from 'lodash'
-import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { StateAppFeatures } from 'uiSrc/slices/interfaces'
@@ -23,7 +23,7 @@ export const initialState: StateAppFeatures = {
   featureFlags: {
     loading: false,
     features: {
-      liveRecommendations: {
+      [FeatureFlags.insightsRecommendations]: {
         flag: false
       }
     }

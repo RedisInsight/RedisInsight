@@ -21,7 +21,7 @@ jest.mock('uiSrc/services', () => ({
 jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    liveRecommendations: {
+    insightsRecommendations: {
       flag: false
     }
   }),
@@ -72,7 +72,7 @@ describe('InstancePage', () => {
 
   it('should render LiveTimeRecommendations Component with feature flag', () => {
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      liveRecommendations: {
+      insightsRecommendations: {
         flag: true
       }
     })

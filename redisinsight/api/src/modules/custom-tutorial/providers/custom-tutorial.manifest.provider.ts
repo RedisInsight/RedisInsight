@@ -9,6 +9,7 @@ import {
   RootCustomTutorialManifest,
 } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
 import { plainToClass } from 'class-transformer';
+import { winPathToNormalPath } from 'src/utils';
 
 const MANIFEST_FILE = 'manifest.json';
 const SYS_MANIFEST_FILE = '_manifest.json';
@@ -75,7 +76,7 @@ export class CustomTutorialManifestProvider {
           label: name,
           type: CustomTutorialManifestType.InternalLink,
           args: {
-            path: join(relativePath, entry),
+            path: winPathToNormalPath(join(relativePath, entry)),
           },
         });
       }

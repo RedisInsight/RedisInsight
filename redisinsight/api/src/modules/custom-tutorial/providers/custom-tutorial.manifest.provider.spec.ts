@@ -7,6 +7,7 @@ import {
   mockCustomTutorial,
   mockCustomTutorialManifest, mockCustomTutorialManifestJson,
 } from 'src/__mocks__';
+import * as Utils from 'src/utils/path';
 
 jest.mock('fs-extra');
 const mFs = fs as jest.Mocked<typeof fs>;
@@ -61,6 +62,8 @@ describe('CustomTutorialManifestProvider', () => {
       expect(result).toEqual([]);
     });
     it('should return empty array for empty folder', async () => {
+      const spy = jest.spyOn(Utils as any, 'winPathToNormalPath');
+
       // root level entries
       const mockRootLevelEntries = [
         'intro.md',
@@ -160,6 +163,7 @@ describe('CustomTutorialManifestProvider', () => {
           type: 'group',
         },
       ]);
+      expect(spy).toBeCalledTimes(5); // Should call util to fix win path
     });
   });
 

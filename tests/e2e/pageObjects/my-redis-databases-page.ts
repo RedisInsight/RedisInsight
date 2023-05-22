@@ -18,7 +18,7 @@ export class MyRedisDatabasePage extends BasePage {
     //BUTTONS
     deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
     confirmDeleteButton = Selector('[data-testid^=delete-instance-]').withExactText('Remove');
-    toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
+    
     deleteButtonInPopover = Selector('#deletePopover button');
     confirmDeleteAllDbButton = Selector('[data-testid=delete-selected-dbs]');
     editDatabaseButton = Selector('[data-testid^=edit-instance]');
@@ -60,7 +60,6 @@ export class MyRedisDatabasePage extends BasePage {
     moduleQuantifier = Selector('[data-testid=_module]');
     dbNameList = Selector('[data-testid^=instance-name]', { timeout: 3000 });
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
-    databaseInfoMessage = Selector('[data-test-subj=euiToastHeader]');
     hostPort = Selector('[data-testid=host-port]');
     noResultsFoundMessage = Selector('div').withExactText('No results found');
     noResultsFoundText = Selector('div').withExactText('No databases matched your search. Try reducing the criteria.');
@@ -79,8 +78,8 @@ export class MyRedisDatabasePage extends BasePage {
      * @param dbName The name of the database to be opened
      */
     async clickOnDBByName(dbName: string): Promise<void> {
-        if (await this.toastCloseButton.exists) {
-            await t.click(this.toastCloseButton);
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
         }
         const db = this.dbNameList.withExactText(dbName.trim());
         await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, {timeout: 10000});
@@ -103,8 +102,8 @@ export class MyRedisDatabasePage extends BasePage {
                 .click(this.deleteDatabaseButton)
                 .click(this.confirmDeleteButton);
         }
-        if (await this.toastCloseButton.exists) {
-            await t.click(this.toastCloseButton);
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
         }
     }
 

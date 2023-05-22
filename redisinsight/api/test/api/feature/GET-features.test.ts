@@ -2,7 +2,7 @@ import {
   expect,
   describe,
   deps,
-  getMainCheckFn, fsExtra, before
+  getMainCheckFn, fsExtra, before, after,
 } from '../deps';
 import { constants } from '../../helpers/constants';
 import * as defaultConfig from '../../../config/features-config.json';
@@ -34,6 +34,8 @@ const waitForFlags = async (flags: any) => {
 let featureConfigRepository;
 let featureRepository;
 describe('GET /features', () => {
+  after(initSettings);
+
   before(async () => {
     await initSettings();
     featureConfigRepository = await getRepository(repositories.FEATURES_CONFIG);

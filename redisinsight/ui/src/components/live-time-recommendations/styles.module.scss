@@ -39,7 +39,7 @@ $animation-duration: 300ms;
 .trigger {
   position: fixed;
   right: -37px;
-  bottom: 90px;
+  bottom: 180px;
   z-index: 1100;
   transform: rotate(-90deg);
   width: 106px;
@@ -106,11 +106,24 @@ $animation-duration: 300ms;
 .header {
   padding: 24px 15px 0 !important;
 
+  .headerTop {
+    display: flex;
+    align-items: center;
+  }
+
+  .betaBadge {
+    margin-left: 16px;
+    background-color: var(--recommendationLiveBorderColor) !important;
+    border: 1px solid var(--triggerIconActiveColor) !important;
+    color: #FFF7EA !important;
+  }
+
   .title {
     font: normal normal 500 18px/22px Graphik, sans-serif;
   }
 
   .actions {
+    min-height: 40px;
     margin: 8px -15px 0;
   }
 }
@@ -120,15 +133,15 @@ $animation-duration: 300ms;
 }
 
 .footer {
-  height: 40px;
-  background: var(--tableRowSelectedColor);
+  min-height: 26px;
+  background: var(--tableRowSelectedColor) !important;
   display: flex;
   justify-content: center;
   align-items: center;
 
   .footerIcon {
-    width: 41px;
-    height: 30px;
+    width: 32px;
+    height: 22px;
     margin-right: 16px;
   }
 
@@ -155,9 +168,13 @@ $animation-duration: 300ms;
     font: normal normal 600 14px/17px Graphik, sans-serif !important;
   }
 
+  .githubIcon {
+    color: var(--htmlColor);
+  }
+
   .infoIcon {
-    width: 14px !important;
-    height: 14px !important;
+    width: 16px !important;
+    height: 16px !important;
     fill: var(--htmlColor);
     cursor: pointer;
   }

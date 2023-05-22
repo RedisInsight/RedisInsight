@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 
+import { remove } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -74,6 +75,9 @@ const recommendationsSlice = createSlice({
     updateRecommendationError: (state, { payload }) => {
       state.error = payload
     },
+    deleteRecommendations: (state, { payload }: PayloadAction<string[]>) => {
+      remove(state.data.recommendations, (r) => payload.includes(r.id))
+    },
   },
 })
 
@@ -90,6 +94,7 @@ export const {
   updateRecommendationSuccess,
   updateRecommendationError,
   setTotalUnread,
+  deleteRecommendations,
 } = recommendationsSlice.actions
 
 // A selector
@@ -209,6 +214,7 @@ export function deleteLiveRecommendations(
       )
 
       if (isStatusSuccessful(status)) {
+        dispatch(deleteRecommendations(ids))
         onSuccessAction?.(instanceId)
       }
     } catch (_err) {

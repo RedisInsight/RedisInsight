@@ -1,6 +1,5 @@
 export * from './abstract.recommendation.strategy';
 export * from './default.recommendation.strategy';
-export * from './search-string.strategy';
 export * from './redis-version.strategy';
 export * from './search-JSON.strategy';
 export * from './big-set.strategy';
@@ -10,4 +9,8 @@ export * from './integer-in-set.strategy';
 export * from './shard-hash.strategy';
 export * from './string-to-json.strategy';
 export * from './search-visualization.strategy';
-export * from './graph-visualization.strategy';
+export * from './use-smaller-keys.strategy';
+export * from './avoid-lua-scripts.strategy';
+export * from './big-string.strategy';
+export * from './compression-for-list.strategy';
+export * from './big-amount-connected-clients.strategy';

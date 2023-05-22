@@ -92,6 +92,7 @@ export class SettingsPage extends BasePage {
      * Turn on/off notifications in Settings
      */
     async changeNotificationsSwitcher(toValue: boolean): Promise<void> {
+        await t.click(this.NavigationPanel.settingsButton);
         await t.click(this.accordionAppearance);
         if (toValue !== await this.getNotificationsSwitcherValue()) {
             await t.click(this.switchNotificationsOption);

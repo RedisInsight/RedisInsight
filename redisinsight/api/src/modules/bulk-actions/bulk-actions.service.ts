@@ -28,11 +28,8 @@ export class BulkActionsService {
 
   async abort(dto: BulkActionIdDto) {
     const bulkAction = await this.bulkActionsProvider.abort(dto.id);
-    const overview = bulkAction.getOverview();
 
-    this.analyticsService.sendActionStopped(overview);
-
-    return overview;
+    return bulkAction.getOverview();
   }
 
   disconnect(socketId: string) {

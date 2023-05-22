@@ -61,7 +61,6 @@ export class BrowserPage extends InstancePage {
     addJsonObjectButton = Selector('[data-testid=add-object-btn]');
     addJsonFieldButton = Selector('[data-testid=add-field-btn]');
     expandJsonObject = Selector('[data-testid=expand-object]');
-    toastCloseButton = Selector('[data-test-subj=toastCloseButton]');
     scoreButton = Selector('[data-testid=score-button]');
     sortingButton = Selector('[data-testid=header-sorting-button]');
     editJsonObjectButton = Selector('[data-testid=edit-object-btn]');
@@ -103,7 +102,6 @@ export class BrowserPage extends InstancePage {
     editZsetButton = Selector('[data-testid^=zset-edit-button-]');
     editListButton = Selector('[data-testid^=edit-list-button-]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
-    submitTooltipBtn = Selector('[data-testid=submit-tooltip-btn]');
     patternModeBtn = Selector('[data-testid=search-mode-pattern-btn]');
     redisearchModeBtn = Selector('[data-testid=search-mode-redisearch-btn]');
     showFilterHistoryBtn = Selector('[data-testid=show-suggestions-btn]');
@@ -198,7 +196,6 @@ export class BrowserPage extends InstancePage {
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
-    notificationMessage = Selector('[data-test-subj=euiToastHeader]');
     keyNameInTheList = Selector(this.cssSelectorKey);
     databaseNames = Selector('[data-testid^=db_name_]');
     hashFieldsList = Selector('[data-testid^=hash-field-] span');
@@ -265,7 +262,6 @@ export class BrowserPage extends InstancePage {
     streamConsumerName = Selector('[data-testid^=stream-consumer-]');
     consumerGroup = Selector('[data-testid^=stream-group-]');
     entryIdInfoIcon = Selector('[data-testid=entry-id-info-icon]');
-    errorMessage = Selector('[data-test-subj=toast-error]');
     entryIdError = Selector('[data-testid=id-error]');
     pendingCount = Selector('[data-testid=pending-count]');
     lastRefreshMessage = Selector('[data-testid=refresh-message]');
@@ -442,7 +438,7 @@ export class BrowserPage extends InstancePage {
         await t.typeText(this.streamValue, value, { replace: true, paste: true });
         await t.expect(this.addKeyButton.withAttribute('disabled').exists).notOk('Add Key button not clickable');
         await t.click(this.addKeyButton);
-        await t.click(this.toastCloseButton);
+        await t.click(this.Toast.toastCloseButton);
     }
 
     /**
@@ -531,7 +527,7 @@ export class BrowserPage extends InstancePage {
      * Get selector by key name
      * @param keyName The name of the key
      */
-    async getKeySelectorByName(keyName: string): Promise<Selector> {
+    getKeySelectorByName(keyName: string): Selector {
         return Selector(`[data-testid="key-${keyName}"]`);
     }
 
@@ -540,20 +536,15 @@ export class BrowserPage extends InstancePage {
      * @param keyName The name of the key
      */
     async isKeyIsDisplayedInTheList(keyName: string): Promise<boolean> {
-        const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
+        const keyNameInTheList = this.getKeySelectorByName(keyName);
         await Common.waitForElementNotVisible(this.loader);
         return keyNameInTheList.exists;
     }
 
-    //Getting the text of the Notification message
-    async getMessageText(): Promise<string> {
-        return this.notificationMessage.textContent;
-    }
-
     //Delete key from details
     async deleteKey(): Promise<void> {
-        if (await this.toastCloseButton.exists) {
-            await t.click(this.toastCloseButton);
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
         }
         await t.click(this.keyNameInTheList);
         await t.click(this.deleteKeyButton);
@@ -640,8 +631,8 @@ export class BrowserPage extends InstancePage {
      * @param keyValue The hash value
      */
     async addFieldToHash(keyFieldValue: string, keyValue: string): Promise<void> {
-        if (await this.toastCloseButton.exists) {
-            await t.click(this.toastCloseButton);
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
         }
         await t.click(this.addKeyValueItemsButton);
         await t.typeText(this.hashFieldInput, keyFieldValue, { replace: true, paste: true });
@@ -734,8 +725,8 @@ export class BrowserPage extends InstancePage {
      * @param keyMember The value of the set member
      */
     async addMemberToSet(keyMember: string): Promise<void> {
-        if (await this.toastCloseButton.exists) {
-            await t.click(this.toastCloseButton);
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
         }
         await t
             .click(this.addKeyValueItemsButton)
@@ -749,8 +740,8 @@ export class BrowserPage extends InstancePage {
      * @param score The value of the score
      */
     async addMemberToZSet(keyMember: string, score: string): Promise<void> {
-        if (await this.toastCloseButton.exists) {
-            await t.click(this.toastCloseButton);
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
         }
         await t
             .click(this.addKeyValueItemsButton)
@@ -784,8 +775,8 @@ export class BrowserPage extends InstancePage {
      * @param element The value of the list element
      */
     async addElementToList(element: string): Promise<void> {
-        if (await this.toastCloseButton.exists) {
-            await t.click(this.toastCloseButton);
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
         }
         await t
             .click(this.addKeyValueItemsButton)

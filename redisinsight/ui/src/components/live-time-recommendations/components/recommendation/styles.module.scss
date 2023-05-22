@@ -14,30 +14,55 @@
 
   :global {
     .euiAccordion__button {
-      padding: 12px 18px;
+      padding: 4px 18px;
       border-bottom: 1px solid transparent;
-      color: var(--htmlColor) !important;
-      background-color: var(--recommendationBgColor) !important;
+      color: var(--euiTextSubduedColor) !important;
+      background-color: var(--recommendationsBgColor) !important;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 400;
 
       transition: border-bottom-color ease 0.3s;
 
       .euiIEFlexWrapFix {
         display: inline-block;
-        width: 100%;
+        width: calc(100% - 28px);
+      }
+
+      .truncateText {
+        display: block;
       }
     }
 
     .euiAccordion.euiAccordion-isOpen {
       .euiAccordion__button {
         border-bottom-color: var(--controlsBorderColor);
+        background-color: var(--recommendationBgColor) !important;
+        color: var(--htmlColor) !important;
+        font-weight: 500;
+      }
+
+      .truncateText {
+        display: flex;
+        overflow: visible;
+        white-space: normal;
       }
     }
 
     .euiPanel {
       background: var(--recommendationsBgColor) !important;
       padding-bottom: 0 !important;
+    }
+
+    .euiAccordion__iconWrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+     }
+
+    .euiAccordion__buttonReverse .euiAccordion__icon {
+      width: 12px;
+      height: 12px;
+      vertical-align: middle;
     }
   }
 }
@@ -50,6 +75,16 @@
 
   .span {
     display: inline;
+  }
+
+  .code {
+    background-color: var(--euiColorLightestShade);
+    border-radius: 4px;
+    padding: 3px 6px;
+  
+    code {
+      font-size: inherit !important;
+    }
   }
 
   .link {
@@ -94,7 +129,7 @@
   }
 }
 
-.accordionButton {
+.fullWidth {
   width: 100%;
 }
 

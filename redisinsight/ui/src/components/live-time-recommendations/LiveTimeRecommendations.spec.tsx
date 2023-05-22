@@ -13,6 +13,7 @@ import { RECOMMENDATIONS_DATA_MOCK } from 'uiSrc/mocks/handlers/recommendations/
 import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import LiveTimeRecommendations from './LiveTimeRecommendations'
 
@@ -70,6 +71,41 @@ beforeEach(() => {
 describe('LiveTimeRecommendations', () => {
   it('should render', () => {
     expect(render(<LiveTimeRecommendations />)).toBeTruthy()
+  })
+
+  it('should render beta label and github icon', () => {
+    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockRecommendationsSelector,
+      data: { recommendations: [{ name: 'RTS' }] },
+      isContentVisible: true
+    }))
+
+    render(<LiveTimeRecommendations />)
+    expect(screen.getByTestId('beta-label')).toBeInTheDocument()
+    expect(screen.getByTestId('github-repo-btn')).toHaveAttribute('href', EXTERNAL_LINKS.githubRepo)
+    expect(screen.getByTestId('github-repo-icon')).toBeInTheDocument()
+  })
+
+  it('should render show hidden checkbox when there are some hidden', () => {
+    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockRecommendationsSelector,
+      data: { recommendations: [{ name: 'RTS', hide: true }, { name: 'setPassword' }] },
+      isContentVisible: true
+    }))
+
+    render(<LiveTimeRecommendations />)
+    expect(screen.getByTestId('checkbox-show-hidden')).toBeInTheDocument()
+  })
+
+  it('should not render show hidden checkbox when there are no any hidden', () => {
+    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+      ...mockRecommendationsSelector,
+      data: { recommendations: [{ name: 'RTS', hide: false }, { name: 'setPassword' }] },
+      isContentVisible: true
+    }))
+
+    render(<LiveTimeRecommendations />)
+    expect(screen.queryByTestId('checkbox-show-hidden')).not.toBeInTheDocument()
   })
 
   it('should send INSIGHTS_PANEL_CLOSED telemetry event', async () => {

@@ -1,5 +1,7 @@
-import { ClientFunction, RequestMock, t } from 'testcafe';
+import * as path from 'path';
+import * as archiver from 'archiver';
 import * as fs from 'fs';
+import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
 import { apiUrl, commonUrl } from './conf';
 
@@ -194,8 +196,33 @@ export class Common {
      * Get json property value by property name and path
      * @param expectedText Expected link that is compared with actual
      */
-        static async getJsonPropertyValue(property: string, path: string): Promise<string | number> {
-            const parsedJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
-            return parsedJson[property];
-        }
+    static async getJsonPropertyValue(property: string, path: string): Promise<string | number> {
+        const parsedJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
+        return parsedJson[property];
+    }
+    /**
+     * Create Zip archive from folder
+     * @param folderPath Path to folder to archive
+     * @param zipName Zip archive name
+     */
+    static async createZipFromFolder(folderPath: string, zipName: string): Promise<void> {
+        const sourceDir = path.join(__dirname, folderPath);
+        const zipFilePath = path.join(__dirname, zipName);
+        const output = fs.createWriteStream(zipFilePath);
+        const archive = archiver('zip', { zlib: { level: 9 } });
+
+        // Add the contents of the directory to the zip archive
+        archive.directory(sourceDir, false);
+        // Finalize the archive and write it to disk
+        await archive.finalize();
+        archive.pipe(output);
+    }
+
+    /**
+      * Delete file from folder
+      * @param folderPath Path to file
+     */
+    static async deleteFileFromFolder(filePath: string): Promise<void> {
+        fs.unlinkSync(path.join(__dirname, filePath));
+    }
 }

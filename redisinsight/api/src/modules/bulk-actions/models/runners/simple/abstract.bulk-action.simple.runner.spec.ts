@@ -1,6 +1,7 @@
 import IORedis from 'ioredis';
 import {
   mockSocket,
+  mockBulActionsAnalyticsService,
 } from 'src/__mocks__';
 import {
   DeleteBulkActionSimpleRunner,
@@ -48,6 +49,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
       mockCreateBulkActionDto.type,
       mockBulkActionFilter,
       mockSocket,
+      mockBulActionsAnalyticsService,
     );
 
     deleteRunner = new DeleteBulkActionSimpleRunner(bulkAction, nodeClient);

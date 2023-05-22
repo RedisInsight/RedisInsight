@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
 
-export class ShortcutsPage {
+export class ShortcutsPanel {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.

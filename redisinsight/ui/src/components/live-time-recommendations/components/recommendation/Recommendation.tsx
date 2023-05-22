@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
@@ -7,7 +7,6 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiLink,
-  EuiSpacer,
   EuiPanel,
   EuiAccordion,
   EuiToolTip,
@@ -15,20 +14,18 @@ import {
   EuiButtonIcon,
 } from '@elastic/eui'
 import { isUndefined } from 'lodash'
-import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 
-import { Nullable, findMarkdownPathByPath, Maybe } from 'uiSrc/utils'
+import { Nullable, findMarkdownPathByPath, Maybe, renderRecommendationContent } from 'uiSrc/utils'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
-import { getRouterLinkProps } from 'uiSrc/services'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { deleteLiveRecommendations, fetchRecommendationsAction, setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
+import { deleteLiveRecommendations, setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
-import { IRecommendationContent, IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
+import { IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
 
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
@@ -63,6 +60,7 @@ const Recommendation = ({
   provider,
   params,
 }: IProps) => {
+  const [isLoading, setIsLoading] = useState(false)
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
@@ -70,8 +68,6 @@ const Recommendation = ({
 
   const { redisStack, title, liveTitle } = recommendationsContent[name] || {}
   const recommendationTitle = liveTitle || title
-
-  const handleClose = () => dispatch(setIsContentVisible(false))
 
   const handleRedirect = () => {
     dispatch(setIsContentVisible(false))
@@ -104,6 +100,7 @@ const Recommendation = ({
 
   const toggleHide = (event: React.MouseEvent) => {
     event.stopPropagation()
+    event.preventDefault()
     dispatch(
       updateLiveRecommendation(
         id,
@@ -122,7 +119,8 @@ const Recommendation = ({
   }
 
   const handleDelete = () => {
-    dispatch(deleteLiveRecommendations([id], onSuccessActionDelete))
+    setIsLoading(true)
+    dispatch(deleteLiveRecommendations([id], onSuccessActionDelete, () => setIsLoading(false)))
   }
 
   const onSuccessActionDelete = () => {
@@ -134,39 +132,17 @@ const Recommendation = ({
         provider
       }
     })
-
-    dispatch(fetchRecommendationsAction(instanceId))
-  }
-
-  const renderContentElement = ({ id, type, value }: IRecommendationContent) => {
-    switch (type) {
-      case 'paragraph':
-        return <EuiText key={id} className={styles.text}>{value}</EuiText>
-      case 'span':
-        return <EuiText key={id} className={cx(styles.text, styles.span)}>{value}</EuiText>
-      case 'link':
-        return <EuiLink key={id} external={false} data-testid={`link-${id}`} target="_blank" href={value.href}>{value.name}</EuiLink>
-      case 'spacer':
-        return <EuiSpacer key={id} size={value as SpacerSize} />
-      case 'workbenchLink':
-        return (
-          <EuiLink
-            key={id}
-            className={styles.link}
-            {...getRouterLinkProps(Pages.workbench(instanceId), handleClose)}
-            data-test-subj={`workbench-link-${id}`}
-          >
-            {value}
-          </EuiLink>
-        )
-      default:
-        return value
-    }
+    setIsLoading(false)
   }
 
   const recommendationContent = () => (
     <EuiText>
-      {recommendationsContent[name]?.content?.map((item) => renderContentElement(item))}
+      {renderRecommendationContent(
+        recommendationsContent[name]?.content,
+        params,
+        recommendationsContent[name]?.telemetryEvent ?? name,
+        true
+      )}
       {!!params?.keys?.length && (
         <RecommendationCopyComponent
           keyName={params.keys[0]}
@@ -178,6 +154,7 @@ const Recommendation = ({
       <div className={styles.actions}>
         <RecommendationVoting live id={id} vote={vote} name={name} containerClass={styles.votingContainer} />
         <EuiButton
+          isDisabled={isLoading}
           className={styles.btn}
           onClick={handleDelete}
           color="secondary"
@@ -202,13 +179,13 @@ const Recommendation = ({
 
   const renderButtonContent = (redisStack: Maybe<boolean>, title: string, id: string) => (
     <EuiFlexGroup
-      className={styles.accordionButton}
+      className={styles.fullWidth}
       responsive={false}
       alignItems="center"
       justifyContent="spaceBetween"
       gutterSize="none"
     >
-      <EuiFlexGroup alignItems="center" gutterSize="none">
+      <EuiFlexGroup className={styles.fullWidth} alignItems="center" gutterSize="none">
         <EuiFlexItem grow={false}>
           {redisStack && (
             <EuiLink
@@ -233,7 +210,7 @@ const Recommendation = ({
             </EuiLink>
           )}
         </EuiFlexItem>
-        <EuiFlexItem grow>
+        <EuiFlexItem grow className="truncateText">
           {title}
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
@@ -248,6 +225,7 @@ const Recommendation = ({
             anchorClassName="flex-row"
           >
             <EuiButtonIcon
+              href="#"
               iconType={hide ? 'eyeClosed' : 'eye'}
               className={styles.hideBtn}
               onClick={toggleHide}

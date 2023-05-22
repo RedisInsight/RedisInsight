@@ -3,7 +3,7 @@ import { deleteAllNotificationsFromDB } from '../../../helpers/notifications';
 import { commonUrl } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { MyRedisDatabasePage, SettingsPage } from '../../../pageObjects';
-import { NotificationParameters } from '../../../pageObjects/components/notification-panel';
+import { NotificationParameters } from '../../../pageObjects/components/navigation/notification-panel';
 
 const description = require('./notifications.json');
 const jsonNotifications: NotificationParameters[] = description.notifications;
@@ -114,7 +114,10 @@ test('Verify that all messages in notification center are sorted by timestamp fr
 });
 test
     .before(async t => {
+        await acceptLicenseTerms();
         await settingsPage.changeNotificationsSwitcher(false);
+        await deleteAllNotificationsFromDB();
+        await myRedisDatabasePage.reloadPage();
         await t.expect(NotificationPanel.notificationBadge.exists).notOk('No badge');
     })('Verify that new popup message is not displayed when notifications are turned off', async t => {
         // Verify that user can see notification badge increased when new messages is sent and notifications are turned off

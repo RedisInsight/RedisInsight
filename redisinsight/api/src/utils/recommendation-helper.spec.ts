@@ -22,10 +22,8 @@ const sortRecommendationsTests = [
       { name: 'luaScript' },
       { name: 'bigSets' },
       { name: 'searchIndexes' },
-      { name: 'searchString' },
     ],
     expected: [
-      { name: 'searchString' },
       { name: 'searchIndexes' },
       { name: 'bigSets' },
       { name: 'luaScript' },
@@ -36,10 +34,8 @@ const sortRecommendationsTests = [
       { name: 'luaScript' },
       { name: 'bigSets' },
       { name: 'searchJSON' },
-      { name: 'searchString' },
     ],
     expected: [
-      { name: 'searchString' },
       { name: 'searchJSON' },
       { name: 'bigSets' },
       { name: 'luaScript' },

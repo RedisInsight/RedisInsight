@@ -146,6 +146,11 @@ export class KeysBusinessService {
           ),
         );
       }
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.USE_SMALLER_KEYS,
+        result[0]?.total,
+      );
 
       return result.map((nodeResult) => plainToClass(GetKeysWithDetailsResponse, nodeResult));
     } catch (error) {
@@ -179,11 +184,6 @@ export class KeysBusinessService {
       const client = await this.browserTool.getRedisClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.isCluster ? ConnectionType.CLUSTER : ConnectionType.STANDALONE);
       const result = await scanner.getKeysInfo(client, dto.keys, dto.type);
-      this.recommendationService.check(
-        clientMetadata,
-        RECOMMENDATION_NAMES.SEARCH_STRING,
-        { keys: result, client, databaseId: clientMetadata.databaseId },
-      );
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.SEARCH_JSON,
@@ -220,6 +220,16 @@ export class KeysBusinessService {
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.BIG_SETS,
+        result,
+      );
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.BIG_STRINGS,
+        result,
+      );
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
         result,
       );
       return plainToClass(GetKeyInfoResponse, result);

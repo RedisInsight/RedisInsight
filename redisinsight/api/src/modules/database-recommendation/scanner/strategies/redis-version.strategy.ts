@@ -1,30 +1,21 @@
-import { Command } from 'ioredis';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
-import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
-import { convertRedisInfoReplyToObject } from 'src/utils';
-
-const minRedisVersion = '6';
+import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
+import { REDIS_VERSION_RECOMMENDATION_VERSION } from 'src/common/constants';
 
 export class RedisVersionStrategy extends AbstractRecommendationStrategy {
   /**
    * Check redis version recommendation
-   * @param client
+   * @param info
    */
   async isRecommendationReached(
-    client,
+    info: RedisDatabaseInfoResponse,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    const info = convertRedisInfoReplyToObject(
-      await client.sendCommand(
-        new Command('info', ['server'], { replyEncoding: 'utf8' }),
-      ) as string,
-    );
-    const version = get(info, 'server.redis_version');
     return {
-      isReached: semverCompare(version, minRedisVersion) < 0,
+      isReached: semverCompare(info.version, REDIS_VERSION_RECOMMENDATION_VERSION) < 0,
     };
   }
 }

@@ -49,8 +49,13 @@ test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .after(async() => {
+    .after(async t => {
         // Clear and delete database
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
+        await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await t.typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneConfig.port, { replace: true, paste: true });
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that context for previous database not saved after editing port/username/password/certificates/SSH', async t => {

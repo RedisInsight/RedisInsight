@@ -37,6 +37,6 @@ test('Verify that user can add field to Hash', async t => {
     await t.click(browserPage.removeHashFieldButton);
     await t.click(browserPage.confirmRemoveHashFieldButton);
     // Check the notification message
-    const notofication = await browserPage.getMessageText();
-    await t.expect(notofication).contains('Field has been removed', 'The notification is not displayed');
+    const notification = browserPage.Toast.toastHeader.textContent;
+    await t.expect(notification).contains('Field has been removed', 'The notification is not displayed');
 });

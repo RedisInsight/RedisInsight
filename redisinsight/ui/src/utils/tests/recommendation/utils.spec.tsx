@@ -1,12 +1,25 @@
 import { render, screen } from 'uiSrc/utils/test-utils'
 import {
+  addUtmToLink,
   sortRecommendations,
   replaceVariables,
-  renderBadgesLegend,
-  renderBadges,
-  renderContent,
-  IContentElement,
-} from './utils'
+  renderRecommendationBadgesLegend,
+  renderRecommendationBadges,
+  renderRecommendationContent,
+} from 'uiSrc/utils'
+import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
+
+const mockTelemetryName = 'name'
+
+const addUtmToLinkTests = [
+  { input: 'http://www.google.com', expected: 'http://www.google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
+  { input: 'http://google.com', expected: 'http://google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
+  { input: 'https://docs.google.com/', expected: 'https://docs.google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
+  { input: 'http://google.com/?param=3', expected: 'http://google.com/?param=3&utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
+  { input: 'https://www.google.com/#anchor', expected: 'https://www.google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name#anchor' },
+  { input: 'https://www.google.com/?param=foo#anchor', expected: 'https://www.google.com/?param=foo&utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name#anchor' },
+  { input: 'wrong_url', expected: 'wrong_url' },
+]
 
 const sortRecommendationsTests = [
   {
@@ -18,10 +31,8 @@ const sortRecommendationsTests = [
       { name: 'luaScript' },
       { name: 'bigSets' },
       { name: 'searchIndexes' },
-      { name: 'searchString' },
     ],
     expected: [
-      { name: 'searchString' },
       { name: 'searchIndexes' },
       { name: 'bigSets' },
       { name: 'luaScript' },
@@ -32,10 +43,8 @@ const sortRecommendationsTests = [
       { name: 'luaScript' },
       { name: 'bigSets' },
       { name: 'searchJSON' },
-      { name: 'searchString' },
     ],
     expected: [
-      { name: 'searchString' },
       { name: 'searchJSON' },
       { name: 'bigSets' },
       { name: 'luaScript' },
@@ -69,46 +78,43 @@ const replaceVariablesTests = [
   { input: ['value'], expected: 'value' },
 ]
 
-const mockContent: IContentElement[] = [
+const mockContent: IRecommendationContent[] = [
   {
-    id: '1',
     type: 'paragraph',
     value: 'paragraph',
   },
   {
-    id: '2',
     type: 'span',
     value: 'span',
   },
   {
-    id: '3',
-    type: 'pre',
-    value: 'pre',
+    type: 'code',
+    value: 'code',
   },
   {
-    id: '4',
     type: 'spacer',
     value: 'l',
   },
   {
-    id: '5',
     type: 'list',
     value: [[{ id: 'list-1', type: 'span', value: 'list-1' }]],
   },
   {
-    id: '6',
     type: 'unknown',
     value: 'unknown',
   },
   {
-    id: '7',
     type: 'link',
+    value: 'link',
+  },
+  {
+    type: 'code-link',
     value: 'link',
   },
 ]
 
-describe('renderBadgesLegend', () => {
-  const renderedBadgesLegend = renderBadgesLegend()
+describe('renderRecommendationBadgesLegend', () => {
+  const renderedBadgesLegend = renderRecommendationBadgesLegend()
   render(renderedBadgesLegend)
 
   expect(screen.queryByTestId('badges-legend')).toBeInTheDocument()
@@ -124,16 +130,26 @@ describe('sortRecommendations', () => {
   )
 })
 
-describe('renderBadges', () => {
+describe('addUtmToLink', () => {
+  test.each(addUtmToLinkTests)(
+    '%j',
+    ({ input, expected }) => {
+      const result = addUtmToLink(input, mockTelemetryName)
+      expect(result).toEqual(expected)
+    }
+  )
+})
+
+describe('renderRecommendationBadges', () => {
   it('should render "code_changes" badge', () => {
-    const renderedBadges = renderBadges(['code_changes'])
+    const renderedBadges = renderRecommendationBadges(['code_changes'])
     render(renderedBadges)
 
     expect(screen.queryByTestId('code_changes')).toBeInTheDocument()
   })
 
   it('should render "configuration_changes" badge', () => {
-    const renderedBadges = renderBadges(['configuration_changes'])
+    const renderedBadges = renderRecommendationBadges(['configuration_changes'])
     render(renderedBadges)
 
     expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
@@ -142,7 +158,7 @@ describe('renderBadges', () => {
   })
 
   it('should render "code_changes" badge', () => {
-    const renderedBadges = renderBadges(['code_changes'])
+    const renderedBadges = renderRecommendationBadges(['code_changes'])
     render(renderedBadges)
 
     expect(screen.queryByTestId('code_changes')).toBeInTheDocument()
@@ -151,7 +167,7 @@ describe('renderBadges', () => {
   })
 
   it('should render "upgrade" badge', () => {
-    const renderedBadges = renderBadges(['upgrade'])
+    const renderedBadges = renderRecommendationBadges(['upgrade'])
     render(renderedBadges)
 
     expect(screen.queryByTestId('upgrade')).toBeInTheDocument()
@@ -160,7 +176,7 @@ describe('renderBadges', () => {
   })
 
   it('should render all badges', () => {
-    const renderedBadges = renderBadges(['upgrade', 'configuration_changes', 'code_changes'])
+    const renderedBadges = renderRecommendationBadges(['upgrade', 'configuration_changes', 'code_changes'])
     render(renderedBadges)
 
     expect(screen.queryByTestId('upgrade')).toBeInTheDocument()
@@ -180,17 +196,18 @@ describe('replaceVariables', () => {
   )
 })
 
-describe('renderContent', () => {
+describe('renderRecommendationContent', () => {
   it('should render content', () => {
-    const renderedContent = renderContent(mockContent, undefined)
+    const renderedContent = renderRecommendationContent(mockContent, undefined, mockTelemetryName)
     render(renderedContent)
 
-    expect(screen.queryByTestId('paragraph-1')).toBeInTheDocument()
-    expect(screen.queryByTestId('span-2')).toBeInTheDocument()
-    expect(screen.queryByTestId('pre-3')).toBeInTheDocument()
-    expect(screen.queryByTestId('spacer-4')).toBeInTheDocument()
-    expect(screen.queryByTestId('list-5')).toBeInTheDocument()
-    expect(screen.queryByTestId('read-more-link')).toBeInTheDocument()
+    expect(screen.queryByTestId(`paragraph-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`span-${mockTelemetryName}-1`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`code-${mockTelemetryName}-2`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`spacer-${mockTelemetryName}-3`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`list-${mockTelemetryName}-4`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`link-${mockTelemetryName}-6`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`code-link-${mockTelemetryName}-7`)).toBeInTheDocument()
     expect(screen.getByText('unknown')).toBeInTheDocument()
   })
 })

@@ -27,9 +27,9 @@ test('Verify that user can not add invalid JSON structure inside of created JSON
     // Add Json key with json object
     await browserPage.addJsonKey(keyName, value, keyTTL);
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification');
-    await t.click(browserPage.toastCloseButton);
+    await t.click(browserPage.Toast.toastCloseButton);
     // Add key with value on the same level
     await browserPage.addJsonKeyOnTheSameLevel('"key1"', '{}');
     // Add invalid JSON structure

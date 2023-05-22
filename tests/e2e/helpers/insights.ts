@@ -10,6 +10,7 @@ const sqlite3 = require('sqlite3').verbose();
  * @param controlNumber Control Number of user
  */
 export function updateControlNumberInDB(controlNumber: Number): void {
+    console.log(dbPath);
     const db = new sqlite3.Database(dbPath);
     const query = `UPDATE features_config SET controlNumber = ${controlNumber}`;
 
@@ -17,6 +18,12 @@ export function updateControlNumberInDB(controlNumber: Number): void {
         if (err) {
             return console.log(`error during changing controlNumber: ${err.message}`);
         }
+        db.get('SELECT controlNumber FROM features_config', (err: { message: string }, row: { controlNumber: number }) => {
+            if (err) {
+                return console.log(`error during retrieving controlNumber: ${err.message}`);
+            }
+            console.log('Updated controlNumber:', row.controlNumber);
+        });
     });
     db.close();
 }

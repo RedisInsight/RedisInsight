@@ -179,13 +179,13 @@ const Recommendation = ({
 
   const renderButtonContent = (redisStack: Maybe<boolean>, title: string, id: string) => (
     <EuiFlexGroup
-      className={styles.accordionButton}
+      className={styles.fullWidth}
       responsive={false}
       alignItems="center"
       justifyContent="spaceBetween"
       gutterSize="none"
     >
-      <EuiFlexGroup alignItems="center" gutterSize="none">
+      <EuiFlexGroup className={styles.fullWidth} alignItems="center" gutterSize="none">
         <EuiFlexItem grow={false}>
           {redisStack && (
             <EuiLink
@@ -210,7 +210,7 @@ const Recommendation = ({
             </EuiLink>
           )}
         </EuiFlexItem>
-        <EuiFlexItem grow>
+        <EuiFlexItem grow className="truncateText">
           {title}
         </EuiFlexItem>
         <EuiFlexItem grow={false}>

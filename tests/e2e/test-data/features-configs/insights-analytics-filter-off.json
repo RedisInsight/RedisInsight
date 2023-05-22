@@ -1,13 +1,13 @@
 {
-  "version": 0.9,
+  "version": 9,
   "features": {
     "insightsRecommendations": {
+      "perc": [[44,50]],
       "flag": true,
-      "perc": [[0,20]],
       "filters": [
         {
           "name": "agreements.analytics",
-          "value": true,
+          "value": false,
           "cond": "eq"
         },
         {

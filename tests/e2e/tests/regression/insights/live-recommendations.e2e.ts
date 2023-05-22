@@ -3,16 +3,13 @@ import { RecommendationIds, rte, env } from '../../../helpers/constants';
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
 import {
-    addNewStandaloneDatabaseApi,
     addNewStandaloneDatabasesApi,
     deleteStandaloneDatabaseApi,
     deleteStandaloneDatabasesApi
 } from '../../../helpers/api/api-database';
-import { syncFeaturesApi } from '../../../helpers/api/api-info';
 import { Common } from '../../../helpers/common';
 import { Telemetry } from '../../../helpers/telemetry';
 import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
-import { modifyFeaturesConfigJson, updateControlNumberInDB } from '../../../helpers/insights';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -20,7 +17,6 @@ const workbenchPage = new WorkbenchPage();
 const telemetry = new Telemetry();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const recommendationsActions = new RecommendationsActions();
-const settingsPage = new SettingsPage();
 
 const databasesForAdding = [
     { host: ossStandaloneV5Config.host, port: ossStandaloneV5Config.port, databaseName: ossStandaloneV5Config.databaseName },
@@ -36,11 +32,6 @@ const expectedProperties = [
     'provider',
     'vote'
 ];
-const updateControlNumber = async (number: Number): Promise<void> => {
-    updateControlNumberInDB(number);
-    await syncFeaturesApi();
-    await browserPage.reloadPage();
-};
 const redisVersionRecom = RecommendationIds.redisVersion;
 const redisTimeSeriesRecom = RecommendationIds.optimizeTimeSeries;
 const searchVisualizationRecom = RecommendationIds.searchVisualization;
@@ -55,81 +46,6 @@ fixture`Live Recommendations`
     .afterEach(async () => {
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    });
-test
-    .before(async () => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await updateControlNumber(19.2);
-    })
-    .after(async () => {
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })('Verify that Insights panel displayed if the local config file has it enabled', async t => {
-        // Verify that config file updated from the GitHub repository if the GitHub file has the latest timestamp
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed for user with control number within the config');
-        await browserPage.InsightsPanel.toggleInsightsPanel(true);
-        // Verify that Insights panel displayed if user's controlNumber is in range from config file
-        await t.expect(browserPage.InsightsPanel.getRecommendationByName(redisVersionRecom).exists).ok('Redis Version recommendation not displayed');
-
-        await browserPage.InsightsPanel.toggleInsightsPanel(false);
-        // Verify that recommendations displayed for all databases if option enabled
-        await t.click(browserPage.OverviewPanel.myRedisDbIcon);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed for the other db connection');
-
-        // Verify that Insights panel can be displayed for Telemetry enabled/disabled according to filters
-        await t.click(browserPage.NavigationPanel.settingsButton);
-        await settingsPage.changeAnalyticsSwitcher(false);
-        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed without analytics when its filter is on');
-
-        // Turn on telemetry
-        await t.click(browserPage.NavigationPanel.settingsButton);
-        await settingsPage.changeAnalyticsSwitcher(true);
-        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed after enabling analytics');
-
-        // Verify that Insights panel not displayed if the local config file has it disabled
-        await updateControlNumber(30.1);
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed for user with control number out of the config');
-    });
-test.only
-    .before(async () => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-        await updateControlNumber(19.2);
-    })
-    .after(async () => {
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-    })('Verify that config info is taken from file with higher version', async t => {
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed after enabling analytics');
-        // Update local config file to version highter than remote config
-        await modifyFeaturesConfigJson('../../../test-data/insights-recommendations/features-config.json');
-        // Update Control Number to be out of range from remote file
-        await updateControlNumber(35.2);
-        // Verify that Insights panel displayed because range was taken from a local file with larger version than the remote file
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed for user with control number within the config');
-    });
-test
-    .meta({ env: env.desktop })
-    .before(async () => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-        await updateControlNumber(60.0);
-    })
-    .after(async () => {
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-    })('Verify that Insights panel can be displayed for Electron/WebStack app according to filters', async t => {
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed for user with control number within the config');
-
-        // Verify that Insights panel can be displayed for Telemetry enabled/disabled according to filters
-        await t.click(browserPage.NavigationPanel.settingsButton);
-        await settingsPage.changeAnalyticsSwitcher(false);
-        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed without analytics when its filter is off');
-
-        // Verify that Insights panel not displayed if the local config file has it disabled
-        await updateControlNumber(83.1);
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed for Electron app when control number out of the config');
     });
 test
     .before(async () => {

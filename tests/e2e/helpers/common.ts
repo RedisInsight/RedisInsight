@@ -1,4 +1,5 @@
 import { ClientFunction, RequestMock, t } from 'testcafe';
+import * as fs from 'fs';
 import { Chance } from 'chance';
 import { apiUrl, commonUrl } from './conf';
 
@@ -188,4 +189,13 @@ export class Common {
     static async getPageUrl(): Promise<string> {
         return (await ClientFunction(() => window.location.href))();
     }
+
+    /**
+     * Get json property value by property name and path
+     * @param expectedText Expected link that is compared with actual
+     */
+        static async getJsonPropertyValue(property: string, path: string): Promise<string | number> {
+            const parsedJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
+            return parsedJson[property];
+        }
 }

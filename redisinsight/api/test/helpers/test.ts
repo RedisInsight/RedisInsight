@@ -8,11 +8,12 @@ import * as chai from 'chai';
 import * as Joi from 'joi';
 import * as AdmZip from 'adm-zip';
 import * as diff from 'object-diff';
+import axios from 'axios';
 import { cloneDeep, isMatch, isObject, set, isArray } from 'lodash';
 import { generateInvalidDataArray } from './test/dataGenerator';
 import serverConfig from 'src/utils/config';
 
-export { _, path, fs, fsExtra, AdmZip, serverConfig }
+export { _, path, fs, fsExtra, AdmZip, serverConfig, axios }
 export const expect = chai.expect;
 export const testEnv: Record<any, any> = {};
 export { Joi, describe, it, before, after, beforeEach };

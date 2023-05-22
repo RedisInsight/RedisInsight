@@ -7,6 +7,7 @@ import * as chai from 'chai';
 import * as localDb from '../helpers/local-db';
 import { constants } from '../helpers/constants';
 import { getServer, getSocket } from '../helpers/server';
+import { initRemoteServer } from '../helpers/remote-server';
 import { testEnv } from '../helpers/test';
 import * as redis from '../helpers/redis';
 import { initCloudDatabase } from '../helpers/cloud';
@@ -22,6 +23,8 @@ export async function depsInit () {
 
   // initialize analytics module
   deps.analytics = await getAnalytics();
+
+  await initRemoteServer();
 
   // initializing backend server
   deps.server = await getServer();

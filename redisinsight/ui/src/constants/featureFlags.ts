@@ -1,3 +1,3 @@
 export enum FeatureFlags {
-  liveRecommendations = 'liveRecommendations'
+  insightsRecommendations = 'insightsRecommendations'
 }

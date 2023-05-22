@@ -128,7 +128,7 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   return (
     <>
-      <FeatureFlagComponent name={FeatureFlags.liveRecommendations}>
+      <FeatureFlagComponent name={FeatureFlags.insightsRecommendations}>
         <LiveTimeRecommendations />
       </FeatureFlagComponent>
       <EuiResizableContainer

@@ -19,6 +19,7 @@ export async function modifyFeaturesConfigJson(filePath: string): Promise<void> 
         try {
             fs.ensureFileSync(targetFilePath);
             fs.writeFileSync(targetFilePath, fs.readFileSync(filePath));
+            console.log(`Features config modified: ${fs.readFileSync(targetFilePath)}`);
             resolve();
         }
         catch (err) {

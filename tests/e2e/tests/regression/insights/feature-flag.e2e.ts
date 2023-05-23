@@ -77,6 +77,8 @@ test
         // Update remote config .json to valid
         await modifyFeaturesConfigJson(pathes.validConfig);
         await updateControlNumber(48.2);
+        await console.log(await getColumnValueFromTableInDB(featuresConfigTable, 'data'));
+        await console.log(await getColumnValueFromTableInDB(featuresConfigTable, 'controlNumber'));
         let featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
         let versionFromConfig = await Common.getJsonPropertyValue('version', pathes.validConfig);
 

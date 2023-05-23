@@ -1,5 +1,5 @@
 import { workingDirectory } from '../helpers/conf';
-const sqlite3 = require('sqlite3').verbose();
+import * as sqlite3 from 'sqlite3';
 
 const dbPath = `${workingDirectory}/redisinsight.db`;
 
@@ -10,16 +10,17 @@ const dbPath = `${workingDirectory}/redisinsight.db`;
  * @param value Value to update in table
  */
 export async function updateColumnValueInDBTable(tableName: string, columnName: string, value: number | string): Promise<void> {
-    return new Promise((resolve, reject) => {
-        const db = new sqlite3.Database(dbPath);
-        const query = `UPDATE ${tableName} SET ${columnName} = ${value}`;
+    const db = new sqlite3.Database(dbPath);
+    const query = `UPDATE ${tableName} SET ${columnName} = ${value}`;
 
+    return new Promise<void>((resolve, reject) => {
         db.run(query, (err: { message: string }) => {
             if (err) {
                 reject(new Error(`Error during changing ${columnName} column value: ${err.message}`));
+            } else {
+                db.close();
+                resolve();
             }
-            db.close();
-            resolve();
         });
     });
 }
@@ -30,17 +31,18 @@ export async function updateColumnValueInDBTable(tableName: string, columnName: 
  * @param columnName The name of column in table
  */
 export async function getColumnValueFromTableInDB(tableName: string, columnName: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-        const db = new sqlite3.Database(dbPath);
-        const query = `SELECT ${columnName} FROM ${tableName}`;
+    const db = new sqlite3.Database(dbPath);
+    const query = `SELECT ${columnName} FROM ${tableName}`;
 
+    return new Promise<void>((resolve, reject) => {
         db.get(query, (err: { message: string }, row: any) => {
             if (err) {
                 reject(new Error(`Error during getting ${columnName} column value: ${err.message}`));
+            } else {
+                const columnValue = row[columnName];
+                db.close();
+                resolve(columnValue);
             }
-            const columnValue = row[columnName];
-            db.close();
-            resolve(columnValue);
         });
     });
 }
@@ -50,13 +52,19 @@ export async function getColumnValueFromTableInDB(tableName: string, columnName:
  * @param tableName The name of table in DB
  */
 export async function deleteRowsFromTableInDB(tableName: string): Promise<void> {
-    const db = await new sqlite3.Database(dbPath);
+    const db = new sqlite3.Database(dbPath);
     const query = `DELETE FROM ${tableName}`;
 
-    await db.run(query, function(err: { message: string }) {
-        if (err) {
-            return console.error(`error during ${tableName} table rows deletion:`, err.message);
-        }
+    return new Promise<void>((resolve, reject) => {
+
+
+        db.run(query, (err: { message: string }) => {
+            if (err) {
+                reject(new Error(`Error during ${tableName} table rows deletion: ${err.message}`));
+            } else {
+                db.close();
+                resolve();
+            }
+        });
     });
-    await db.close();
 }

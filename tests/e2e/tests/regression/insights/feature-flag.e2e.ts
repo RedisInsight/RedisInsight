@@ -8,7 +8,7 @@ import {
     deleteStandaloneDatabaseApi
 } from '../../../helpers/api/api-database';
 import { deleteRowsFromTableInDB, getColumnValueFromTableInDB } from '../../../helpers/database-scripts';
-import { modifyFeaturesConfigJson, updateControlNumber } from '../../../helpers/insights';
+import { modifyFeaturesConfigJson, refreshFeaturesTestData, updateControlNumber } from '../../../helpers/insights';
 import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -23,6 +23,7 @@ const pathes = {
     validConfig: path.join('.', 'test-data', 'features-configs', 'insights-valid.json'),
     analyticsConfig: path.join('.', 'test-data', 'features-configs', 'insights-analytics-filter-off.json'),
     buildTypeConfig: path.join('.', 'test-data', 'features-configs', 'insights-build-type-filter.json'),
+    flagOffConfig: path.join('.', 'test-data', 'features-configs', 'insights-flag-off.json'),
     dockerConfig: path.join('.', 'test-data', 'features-configs', 'insights-docker-build.json'),
     electronConfig: path.join('.', 'test-data', 'features-configs', 'insights-electron-build.json')
 };
@@ -41,31 +42,26 @@ test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
         // Update remote config .json to default
-        await modifyFeaturesConfigJson(pathes.defaultRemote);
-        // Clear features config table
-        await deleteRowsFromTableInDB(featuresConfigTable);
-        await updateControlNumber(19.2);
+        await refreshFeaturesTestData();
     })
     .after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-        // Clear features config table
-        await deleteRowsFromTableInDB(featuresConfigTable);
+        await refreshFeaturesTestData();
     })('Verify that default config applied when remote config version is lower', async t => {
         const featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
 
+        await updateControlNumber(19.2);
         await t.expect(featureVersion).eql(1, 'Config with lowest version applied');
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when disabled in default config');
     });
 test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await refreshFeaturesTestData();
     })
     .after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-        // Update remote config .json to default
-        await modifyFeaturesConfigJson(pathes.defaultRemote);
-        // Clear features config table
-        await deleteRowsFromTableInDB(featuresConfigTable);
+        await refreshFeaturesTestData();
     })('Verify that invaid remote config not applied even if its version is higher than in the default config', async t => {
         // Update remote config .json to invalid
         await modifyFeaturesConfigJson(pathes.invalidConfig);
@@ -73,13 +69,14 @@ test
 
         const featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
 
-        await t.expect(featureVersion).eql(1, 'Config with lowest version applied');
+        await t.expect(featureVersion).eql(1, 'Config highest version not applied');
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when disabled in default config');
     });
 test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         await addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await refreshFeaturesTestData();
     })
     .after(async t => {
         // Turn on telemetry
@@ -89,9 +86,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
         // Update remote config .json to default
-        await modifyFeaturesConfigJson(pathes.defaultRemote);
-        // Clear features config table
-        await deleteRowsFromTableInDB(featuresConfigTable);
+        await refreshFeaturesTestData();
     })('Verify that valid remote config applied with version higher than in the default config', async t => {
         // Update remote config .json to valid
         await modifyFeaturesConfigJson(pathes.validConfig);
@@ -99,8 +94,9 @@ test
         let featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
         let versionFromConfig = await Common.getJsonPropertyValue('version', pathes.validConfig);
 
-        await t.expect(featureVersion).eql(versionFromConfig, 'Config with invalid data applied');
         // Verify that config file updated from the GitHub repository if the GitHub file has the latest timestamp
+        await t.expect(featureVersion).eql(versionFromConfig, 'Config with invalid data applied');
+        // Verify that Insights panel displayed if user's controlNumber is in range from config file
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed when enabled from remote config');
 
         // Verify that recommendations displayed for all databases if option enabled
@@ -125,16 +121,25 @@ test
 
         // Verify that Insights panel not displayed if the local config file has it disabled
         await updateControlNumber(30.1);
+        // Verify that Insights panel can be displayed for Electron/WebStack app according to filters
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed for user with control number out of the config');
 
         // Update remote config .json to config with buildType filter excluding current app build
         await modifyFeaturesConfigJson(pathes.buildTypeConfig);
         await updateControlNumber(48.2);
-
         // Verify that buildType filter applied
         featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
         versionFromConfig = await Common.getJsonPropertyValue('version', pathes.buildTypeConfig);
-        await t.expect(featureVersion).eql(versionFromConfig, 'Config with lowest version applied');
+        await t.expect(featureVersion).eql(versionFromConfig, 'Config highest version not applied');
+        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when filter excludes this buildType');
+
+        // Update remote config .json to config with insights feature disabled
+        await modifyFeaturesConfigJson(pathes.flagOffConfig);
+        await updateControlNumber(48.2);
+        // Verify that Insights panel not displayed if the remote config file has it disabled
+        featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
+        versionFromConfig = await Common.getJsonPropertyValue('version', pathes.flagOffConfig);
+        await t.expect(featureVersion).eql(versionFromConfig, 'Config highest version not applied');
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when filter excludes this buildType');
     });
 test
@@ -157,5 +162,6 @@ test
         // Update remote config .json to config with buildType filter including current app build
         await modifyFeaturesConfigJson(pathes.electronConfig);
         await updateControlNumber(48.2);
+        // Verify that Insights panel can be displayed for Electron/WebStack app according to filters
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed when filter includes this buildType');
     });

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { BasePage } from '../pageObjects';
-import { updateColumnValueInDBTable } from './database-scripts';
+import { deleteRowsFromTableInDB, updateColumnValueInDBTable } from './database-scripts';
 import { syncFeaturesApi } from './api/api-info';
 
 const basePage = new BasePage();
@@ -32,7 +32,20 @@ export async function modifyFeaturesConfigJson(filePath: string): Promise<void> 
 export async function updateControlNumber(controlNumber: number): Promise<void> {
     const featuresConfigTable = 'features_config';
 
-    updateColumnValueInDBTable(featuresConfigTable, 'controlNumber', controlNumber);
+    await syncFeaturesApi();
+    await updateColumnValueInDBTable(featuresConfigTable, 'controlNumber', controlNumber);
     await syncFeaturesApi();
     await basePage.reloadPage();
+}
+
+/**
+ * Refresh test data for features sync
+ */
+export async function refreshFeaturesTestData(): Promise<void> {
+    const featuresConfigTable = 'features_config';
+    const defaultConfigPath = path.join('.', 'test-data', 'features-configs', 'insights-default-remote.json');
+
+    await modifyFeaturesConfigJson(defaultConfigPath);
+    await deleteRowsFromTableInDB(featuresConfigTable);
+    await syncFeaturesApi();
 }

@@ -46,8 +46,10 @@ const BulkActions = (props: Props) => {
       event: TelemetryEvent.BULK_ACTIONS_OPENED,
       eventData: {
         databaseId: instanceId,
-        filterType: filter,
-        match: (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH,
+        filter: {
+          filter,
+          match: (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH,
+        },
         action: type
       }
     })
@@ -69,8 +71,10 @@ const BulkActions = (props: Props) => {
     }
 
     if (type === BulkActionsType.Delete) {
-      eventData.match = (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH
-      eventData.filterType = filter
+      eventData.filter = {
+        match: (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH,
+        type: filter,
+      }
     }
 
     sendEventTelemetry({

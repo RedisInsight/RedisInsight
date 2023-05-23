@@ -25,6 +25,7 @@ export class WorkbenchPage extends InstancePage {
     cssCustomPluginTableResult = '[data-testid^=query-table-result-client]';
     cssCommandExecutionDateTime = '[data-testid=command-execution-date-time]';
     cssRowInVirtualizedTable = '[data-testid^=row-]';
+    cssTutorialDeleteIcon = '[data-testid^=delete-tutorial-icon-]';
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -37,7 +38,7 @@ export class WorkbenchPage extends InstancePage {
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
     tutorialLinkField = Selector('[data-testid=tutorial-link-field]');
     tutorialLatestDeleteIcon = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);
-    tutorialDeleteButton = Selector('[data-testid^=delete-tutorial-]').withText('Delete');
+    tutorialDeleteButton = Selector('button[data-testid^=delete-tutorial-]');
     tutorialNameField = Selector('[data-testid=tutorial-name-field]');
     tutorialSubmitButton = Selector('[data-testid=submit-upload-tutorial-btn]');
     tutorialImport = Selector('[data-testid=import-tutorial]');
@@ -80,6 +81,8 @@ export class WorkbenchPage extends InstancePage {
     copyCommand = Selector('[data-testid=copy-command]');
     redisStackTimeSeriesLoadMorePoints = Selector('[data-testid=preselect-Load more data points]');
     documentHashCreateButton = Selector('[data-testid=preselect-auto-Create]');
+    uploadDataBulkBtn = Selector('[data-testid=upload-data-bulk-btn]');
+    uploadDataBulkApplyBtn = Selector('[data-testid=upload-data-bulk-apply-btn]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
     parametersAnchor = Selector('[data-testid=parameters-anchor]');
@@ -248,7 +251,7 @@ export class WorkbenchPage extends InstancePage {
      * Get selector with tutorial name
      * @param tutorialName name of the uploaded tutorial
      */
-    async getAccordionButtonWithName(tutorialName: string): Promise<Selector> {
+    getAccordionButtonWithName(tutorialName: string): Selector {
         return Selector(`[data-testid=accordion-button-${tutorialName}]`);
     }
 
@@ -256,7 +259,7 @@ export class WorkbenchPage extends InstancePage {
      * Get internal tutorial link with .md name
      * @param internalLink name of the .md file
      */
-    async getInternalLinkWithManifest(internalLink: string): Promise<Selector> {
+    getInternalLinkWithManifest(internalLink: string): Selector {
         return Selector(`[data-testid="internal-link-${internalLink}.md"]`);
     }
 
@@ -264,7 +267,7 @@ export class WorkbenchPage extends InstancePage {
      * Get internal tutorial link without .md name
      * @param internalLink name of the label
      */
-    async getInternalLinkWithoutManifest(internalLink: string): Promise<Selector> {
+    getInternalLinkWithoutManifest(internalLink: string): Selector {
         return Selector(`[data-testid="internal-link-${internalLink}"]`);
     }
 
@@ -272,15 +275,28 @@ export class WorkbenchPage extends InstancePage {
      * Find tutorial selector by name
      * @param name A tutorial name
      */
-    async getTutorialByName(name: string): Promise<Selector> {
+    getTutorialByName(name: string): Selector {
         return Selector('div').withText(name);
+    }
+
+    /**
+     * Delete tutorial by name
+     * @param name A tutorial name
+     */
+    async deleteTutorialByName(name: string): Promise<void> {
+        const deleteTutorialBtn = this.tutorialAccordionButton.withText(name).find(this.cssTutorialDeleteIcon);
+        if (await this.closeEnablementPage.exists) {
+            await t.click(this.closeEnablementPage);
+        }
+        await t.click(deleteTutorialBtn);
+        await t.click(this.tutorialDeleteButton);
     }
 
     /**
      * Find image in tutorial by alt text
      * @param alt Image alt text
      */
-    async getTutorialImageByAlt(alt: string): Promise<Selector> {
+    getTutorialImageByAlt(alt: string): Selector {
         return Selector('img').withAttribute('alt', alt);
     }
 

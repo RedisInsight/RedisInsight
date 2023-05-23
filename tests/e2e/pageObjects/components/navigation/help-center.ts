@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
 
-export class HelpCenterPage {
+export class HelpCenter {
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.

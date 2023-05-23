@@ -78,27 +78,27 @@ test
         // Verify that user can search by index in Browser view
         await browserPage.selectIndexByName(indexName);
         await verifyKeysDisplayedInTheList(keyNames);
-        await t.expect((await browserPage.getKeySelectorByName(keyName)).exists).notOk('Key without index displayed after search');
+        await t.expect(browserPage.getKeySelectorByName(keyName).exists).notOk('Key without index displayed after search');
         // Verify that user can search by index plus key value
         await browserPage.searchByKeyName('Hall School');
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[0])).ok(`The key ${keyNames[0]} not found`);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
+        await t.expect(browserPage.getKeySelectorByName(keyNames[0]).exists).ok(`The key ${keyNames[0]} not found`);
+        await t.expect(browserPage.getKeySelectorByName(keyNames[1]).exists).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
         // Verify that user can search by index plus multiple key values
         await browserPage.searchByKeyName(searchPerValue);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[0])).ok(`The first valid key ${keyNames[0]} not found`);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[2])).ok(`The second valid key ${keyNames[2]} not found`);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
+        await t.expect(browserPage.getKeySelectorByName(keyNames[0]).exists).ok(`The first valid key ${keyNames[0]} not found`);
+        await t.expect(browserPage.getKeySelectorByName(keyNames[2]).exists).ok(`The second valid key ${keyNames[2]} not found`);
+        await t.expect(browserPage.getKeySelectorByName(keyNames[1]).exists).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
 
         // Verify that user can use filter history for RediSearch query
         await t.click(browserPage.showFilterHistoryBtn);
         await t.click(browserPage.filterHistoryOption.withText('Hall School'));
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[0])).ok(`The key ${keyNames[0]} not found`);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
+        await t.expect(browserPage.getKeySelectorByName(keyNames[0]).exists).ok(`The key ${keyNames[0]} not found`);
+        await t.expect(browserPage.getKeySelectorByName(keyNames[1]).exists).notOk(`Invalid key ${keyNames[1]} is displayed after search`);
 
         // Verify that user can clear the search
         await t.click(browserPage.clearFilterButton);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyNames[1])).ok(`The key ${keyNames[1]} not found`);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('Search not cleared');
+        await t.expect(browserPage.getKeySelectorByName(keyNames[1]).exists).ok(`The key ${keyNames[1]} not found`);
+        await t.expect(browserPage.getKeySelectorByName(keyName).exists).notOk('Search not cleared');
 
         // Verify that user can search by index in Tree view
         await t.click(browserPage.treeViewButton);
@@ -106,13 +106,13 @@ test
         await browserPage.changeDelimiterInTreeView('-');
         await browserPage.selectIndexByName(indexName);
         await verifyKeysDisplayedInTheList(keyNames);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('Key without index displayed after search');
+        await t.expect(browserPage.getKeySelectorByName(keyName).exists).notOk('Key without index displayed after search');
 
         // Verify that user see the database scanned when he switch to Pattern search mode
         await t.click(browserPage.patternModeBtn);
         await t.click(browserPage.browserViewButton);
         await verifyKeysDisplayedInTheList(keyNames);
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Database not scanned after returning to Pattern search mode');
+        await t.expect(browserPage.getKeySelectorByName(keyName).exists).ok('Database not scanned after returning to Pattern search mode');
     });
 test
     .before(async() => {
@@ -228,7 +228,7 @@ test
         await browserPage.selectIndexByName(indexName);
         await browserPage.searchByKeyName(searchPerValue);
         // Select key
-        await t.click(await browserPage.getKeySelectorByName(keyName));
+        await t.click(browserPage.getKeySelectorByName(keyName));
 
         // Verify that Redisearch context (inputs, key selected, scroll, key details) saved after switching between pages
         await t

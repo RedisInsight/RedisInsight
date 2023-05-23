@@ -54,8 +54,8 @@ test('Verify that user can refresh Keys', async t => {
 
     // Add hash key
     await browserPage.addHashKey(keyName, keyTTL);
-    const notofication = await browserPage.getMessageText();
-    await t.expect(notofication).contains('Key has been added', 'The notification is not displayed');
+    const notification = browserPage.Toast.toastHeader.textContent;
+    await t.expect(notification).contains('Key has been added', 'The notification is not displayed');
     await t.click(browserPage.closeKeyButton);
     // Search for the added key
     await browserPage.searchByKeyName(keyName);
@@ -76,8 +76,8 @@ test('Verify that user can open key details', async t => {
 
     // Add String key
     await browserPage.addStringKey(keyName, keyTTL, keyValue);
-    const notofication = await browserPage.getMessageText();
-    await t.expect(notofication).contains('Key has been added', 'The notification is not displayed');
+    const notification = browserPage.Toast.toastHeader.textContent;
+    await t.expect(notification).contains('Key has been added', 'The notification is not displayed');
     await t.click(browserPage.closeKeyButton);
     // Search for the added key
     await browserPage.searchByKeyName(keyName);

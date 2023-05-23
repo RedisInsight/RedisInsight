@@ -11,9 +11,9 @@ const testCases = [
     result: `${RESOURCES_BASE_URL}${TUTORIAL_PATH}/_images/relative.png`,
   },
   {
-    url: '/../../../_images/relative.png', // NOTE: will not work in real. There is no sense to even support absolute paths
+    url: '/_images/relative.png',
     path: `${TUTORIAL_PATH}/lvl1/lvl2/lvl3/intro.md`,
-    result: `${RESOURCES_BASE_URL}_images/relative.png`,
+    result: `${RESOURCES_BASE_URL}${TUTORIAL_PATH}/_images/relative.png`,
   },
   {
     url: 'https://somesite.test/image.png',

@@ -35,7 +35,7 @@ const verifyKeysAdded = async(): Promise<void> => {
     // Add Hash key
     await browserPage.addHashKey(keyName);
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not correct');
     // Check that new key is displayed in the list
     await browserPage.searchByKeyName(keyName);

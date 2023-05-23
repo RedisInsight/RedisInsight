@@ -1,0 +1,1 @@
+In very broad terms probabilistic data structures (PDS) allow us to get to a "close enough" result in a much shorter time and by using significantly less memory.

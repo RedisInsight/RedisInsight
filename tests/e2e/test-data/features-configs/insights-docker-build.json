@@ -1,5 +1,5 @@
 {
-  "version": 15,
+  "version": 8,
   "features": {
     "insightsRecommendations": {
       "perc": [
@@ -12,12 +12,12 @@
       "filters": [
         {
           "name": "agreements.analytics",
-          "value": false,
+          "value": true,
           "cond": "eq"
         },
         {
           "name": "config.server.buildType",
-          "value": "REDIS_STACK",
+          "value": "DOCKER_ON_PREMISE",
           "cond": "eq"
         }
       ]

@@ -10,9 +10,18 @@
           "cond": "eq"
         },
         {
-          "name": "config.server.buildType",
-          "value": "DOCKER_ON_PREMISE",
-          "cond": "eq"
+          "or": [
+            {
+              "name": "config.server.buildType",
+              "value": "DOCKER_ON_PREMISE",
+              "cond": "eq"
+            },
+            {
+              "name": "config.server.buildType",
+              "value": "ELECTRON",
+              "cond": "eq"
+            }
+          ]
         }
       ]
     }

@@ -1,17 +1,38 @@
-import { execSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
+import { BasePage } from '../pageObjects';
+import { updateColumnValueInDBTable } from './database-scripts';
+import { syncFeaturesApi } from './api/api-info';
+
+const basePage = new BasePage();
 
 /**
- * Update features-config file in static server
+ * Update features-config file for static server
  * @param filePath Path to feature config json
  */
 export async function modifyFeaturesConfigJson(filePath: string): Promise<void> {
-    const containerName = 'e2e-static-server-1';
+    const configFileName = 'features-config.json';
+    const remoteConfigPath = process.env.REMOTE_FOLDER_PATH || './remote';
 
-    const command = `docker cp ${filePath} ${containerName}:/app/remote/features-config.json`;
-    try {
-        execSync(command);
-    }
-    catch (err) {
-        console.error('Error copying file to the static server container:', err.message);
-    }
+    return new Promise((resolve, reject) => {
+        try {
+            fs.writeFileSync(path.join(remoteConfigPath, configFileName), fs.readFileSync(filePath));
+            resolve();
+        }
+        catch (err) {
+            reject(new Error(`Error updating remote config file: ${err.message}`));
+        }
+    });
+}
+
+/**
+ * Update Control Number of current user and sync
+ * @param controlNumber Control number to update
+ */
+export async function updateControlNumber(controlNumber: number): Promise<void> {
+    const featuresConfigTable = 'features_config';
+
+    updateColumnValueInDBTable(featuresConfigTable, 'controlNumber', controlNumber);
+    await syncFeaturesApi();
+    await basePage.reloadPage();
 }

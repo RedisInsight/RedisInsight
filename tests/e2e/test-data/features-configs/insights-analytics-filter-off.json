@@ -2,7 +2,12 @@
   "version": 9,
   "features": {
     "insightsRecommendations": {
-      "perc": [[44,50]],
+      "perc": [
+        [
+          44,
+          50
+        ]
+      ],
       "flag": true,
       "filters": [
         {
@@ -11,9 +16,18 @@
           "cond": "eq"
         },
         {
-          "name": "config.server.buildType",
-          "value": "DOCKER_ON_PREMISE",
-          "cond": "eq"
+          "or": [
+            {
+              "name": "config.server.buildType",
+              "value": "DOCKER_ON_PREMISE",
+              "cond": "eq"
+            },
+            {
+              "name": "config.server.buildType",
+              "value": "ELECTRON",
+              "cond": "eq"
+            }
+          ]
         }
       ]
     }

@@ -1,8 +1,7 @@
 import { workingDirectory } from '../helpers/conf';
+const sqlite3 = require('sqlite3').verbose();
 
 const dbPath = `${workingDirectory}/redisinsight.db`;
-
-const sqlite3 = require('sqlite3').verbose();
 
 /**
  * Update table column value into local DB
@@ -11,15 +10,18 @@ const sqlite3 = require('sqlite3').verbose();
  * @param value Value to update in table
  */
 export async function updateColumnValueInDBTable(tableName: string, columnName: string, value: number | string): Promise<void> {
-    const db = await new sqlite3.Database(dbPath);
-    const query = `UPDATE ${tableName} SET ${columnName} = ${value}`;
+    return new Promise((resolve, reject) => {
+        const db = new sqlite3.Database(dbPath);
+        const query = `UPDATE ${tableName} SET ${columnName} = ${value}`;
 
-    await db.run(query, (err: { message: string }) => {
-        if (err) {
-            return console.error(`error during changing ${columnName} column value:`, err.message);
-        }
+        db.run(query, (err: { message: string }) => {
+            if (err) {
+                reject(new Error(`Error during changing ${columnName} column value: ${err.message}`));
+            }
+            db.close();
+            resolve();
+        });
     });
-    await db.close();
 }
 
 /**
@@ -34,10 +36,8 @@ export async function getColumnValueFromTableInDB(tableName: string, columnName:
 
         db.get(query, (err: { message: string }, row: any) => {
             if (err) {
-                reject(err);
-                return console.error(`error during getting ${columnName} column value:`, err.message);
+                reject(new Error(`Error during getting ${columnName} column value: ${err.message}`));
             }
-
             const columnValue = row[columnName];
             db.close();
             resolve(columnValue);

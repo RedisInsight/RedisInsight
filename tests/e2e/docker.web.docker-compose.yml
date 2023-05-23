@@ -6,8 +6,7 @@ services:
       context: .
       dockerfile: static-server.Dockerfile
     volumes:
-      - ./static.ts:/app/static.ts
-      - static-server-data:/app/remote
+      - ./remote:/app/remote
     ports:
       - 5551:5551
 
@@ -24,6 +23,7 @@ services:
       - .ritmp:/tmp
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
+      - ./remote:/root/remote
     env_file:
       - ./.env
     entrypoint: [
@@ -54,6 +54,3 @@ services:
       - .ritmp:/tmp
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
-
-volumes:
-  static-server-data:

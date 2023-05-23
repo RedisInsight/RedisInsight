@@ -2,7 +2,12 @@
   "version": 20,
   "features": {
     "insightsRecommendations": {
-      "perc": [[44,50]],
+      "perc": [
+        [
+          44,
+          50
+        ]
+      ],
       "flag": true,
       "filters": [
         {

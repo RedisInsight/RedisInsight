@@ -36,6 +36,7 @@ services:
       E2E_CLOUD_DATABASE_PASSWORD: $E2E_CLOUD_DATABASE_PASSWORD
       E2E_CLOUD_DATABASE_USERNAME: $E2E_CLOUD_DATABASE_USERNAME
       E2E_CLOUD_DATABASE_NAME: $E2E_CLOUD_DATABASE_NAME
+      REMOTE_FOLDER_PATH: "/root/remote"
     command: [
         './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
         '--',

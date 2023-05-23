@@ -94,7 +94,6 @@ test
         let featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
         let versionFromConfig = await Common.getJsonPropertyValue('version', pathes.validConfig);
 
-        // Verify that config file updated from the GitHub repository if the GitHub file has the latest timestamp
         await t.expect(featureVersion).eql(versionFromConfig, 'Config with invalid data applied');
         // Verify that Insights panel displayed if user's controlNumber is in range from config file
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed when enabled from remote config');
@@ -104,7 +103,6 @@ test
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed for the other db connection');
         await browserPage.InsightsPanel.toggleInsightsPanel(true);
-        // Verify that Insights panel displayed if user's controlNumber is in range from config file
         await t.expect(browserPage.InsightsPanel.getRecommendationByName(redisVersionRecom).exists).ok('Redis Version recommendation not displayed');
 
         await browserPage.InsightsPanel.toggleInsightsPanel(false);
@@ -117,11 +115,11 @@ test
         // Update remote config .json to config without analytics filter
         await modifyFeaturesConfigJson(pathes.analyticsConfig);
         await updateControlNumber(48.2);
+        // Verify that Insights panel can be displayed for WebStack app according to filters
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed without analytics when its filter is off');
 
-        // Verify that Insights panel not displayed if the local config file has it disabled
+        // Verify that Insights panel displayed if user's controlNumber is out of range from config file
         await updateControlNumber(30.1);
-        // Verify that Insights panel can be displayed for Electron/WebStack app according to filters
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed for user with control number out of the config');
 
         // Update remote config .json to config with buildType filter excluding current app build
@@ -162,6 +160,5 @@ test
         // Update remote config .json to config with buildType filter including current app build
         await modifyFeaturesConfigJson(pathes.electronConfig);
         await updateControlNumber(48.2);
-        // Verify that Insights panel can be displayed for Electron/WebStack app according to filters
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed when filter includes this buildType');
     });

@@ -32,46 +32,32 @@ fixture.only `Feature flag`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await refreshFeaturesTestData();
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    });
-test
-    .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-        // Update remote config .json to default
-        await refreshFeaturesTestData();
-    })
-    .after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
         await refreshFeaturesTestData();
-    })('Verify that default config applied when remote config version is lower', async t => {
-        const featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
-
-        await updateControlNumber(19.2);
-        await t.expect(featureVersion).eql(1, 'Config with lowest version applied');
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when disabled in default config');
     });
-test
-    .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
-        await refreshFeaturesTestData();
-    })
-    .after(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-        await refreshFeaturesTestData();
-    })('Verify that invaid remote config not applied even if its version is higher than in the default config', async t => {
-        // Update remote config .json to invalid
-        await modifyFeaturesConfigJson(pathes.invalidConfig);
-        await updateControlNumber(19.2);
+test('Verify that default config applied when remote config version is lower', async t => {
+    await updateControlNumber(19.2);
 
-        const featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
+    const featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
 
-        await t.expect(featureVersion).eql(1, 'Config highest version not applied');
-        await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when disabled in default config');
-    });
+    await t.expect(featureVersion).eql(1, 'Config with lowest version applied');
+    await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when disabled in default config');
+});
+test('Verify that invaid remote config not applied even if its version is higher than in the default config', async t => {
+    // Update remote config .json to invalid
+    await modifyFeaturesConfigJson(pathes.invalidConfig);
+    await updateControlNumber(19.2);
+
+    const featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
+
+    await t.expect(featureVersion).eql(1, 'Config highest version not applied');
+    await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when disabled in default config');
+});
 test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);

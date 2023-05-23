@@ -28,7 +28,7 @@ const pathes = {
     electronConfig: path.join('.', 'test-data', 'features-configs', 'insights-electron-build.json')
 };
 
-fixture.only `Feature flag`
+fixture `Feature flag`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
@@ -77,8 +77,6 @@ test
         // Update remote config .json to valid
         await modifyFeaturesConfigJson(pathes.validConfig);
         await updateControlNumber(48.2);
-        await console.log(await getColumnValueFromTableInDB(featuresConfigTable, 'data'));
-        await console.log(await getColumnValueFromTableInDB(featuresConfigTable, 'controlNumber'));
         let featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
         let versionFromConfig = await Common.getJsonPropertyValue('version', pathes.validConfig);
 

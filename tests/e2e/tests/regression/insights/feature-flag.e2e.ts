@@ -104,7 +104,7 @@ test
         // Verify that Insights panel can be displayed for WebStack app according to filters
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed without analytics when its filter is off');
 
-        // Verify that Insights panel displayed if user's controlNumber is out of range from config file
+        // Verify that Insights panel not displayed if user's controlNumber is out of range from config file
         await updateControlNumber(30.1);
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed for user with control number out of the config');
 

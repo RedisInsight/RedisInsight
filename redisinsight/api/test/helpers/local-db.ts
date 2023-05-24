@@ -542,6 +542,14 @@ export const resetSettings = async () => {
   await rep.save(settings);
 }
 
+export const enableAllDbFeatures = async () => {
+  const rep = await getRepository(repositories.FEATURE);
+  await rep.delete({});
+  await rep.insert([
+    { name: 'insightsRecommendations', flag: true },
+  ]);
+}
+
 export const initSettings = async () => {
   await initAgreements();
   const rep = await getRepository(repositories.SETTINGS);

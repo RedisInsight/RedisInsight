@@ -6,12 +6,16 @@ import cx from 'classnames'
 
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import {
-  fetchConnectedInstanceAction, fetchConnectedInstanceInfoAction,
+  fetchConnectedInstanceAction,
+  fetchConnectedInstanceInfoAction,
   fetchInstancesAction,
   getDatabaseConfigInfoAction,
   instancesSelector,
 } from 'uiSrc/slices/instances/instances'
-import { fetchRecommendationsAction, resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
+import {
+  fetchRecommendationsAction,
+  resetRecommendationsHighlighting
+} from 'uiSrc/slices/recommendations/recommendations'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
@@ -19,8 +23,9 @@ import {
   setDbConfig,
 } from 'uiSrc/slices/app/context'
 import { resetPatternKeysData } from 'uiSrc/slices/browser/keys'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
+import { FeatureFlagComponent } from 'uiSrc/components'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
@@ -123,7 +128,9 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   return (
     <>
-      <LiveTimeRecommendations />
+      <FeatureFlagComponent name={FeatureFlags.insightsRecommendations}>
+        <LiveTimeRecommendations />
+      </FeatureFlagComponent>
       <EuiResizableContainer
         direction="vertical"
         style={{ height: '100%' }}

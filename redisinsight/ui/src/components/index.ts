@@ -25,6 +25,7 @@ import CodeBlock from './code-block'
 import ShowChildByCondition from './show-child-by-condition'
 import RecommendationVoting from './recommendation-voting'
 import RecommendationCopyComponent from './recommendation-copy-component'
+import FeatureFlagComponent from './feature-flag-component'
 
 export {
   NavigationMenu,
@@ -57,4 +58,5 @@ export {
   ShowChildByCondition,
   RecommendationVoting,
   RecommendationCopyComponent,
+  FeatureFlagComponent,
 }

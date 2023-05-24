@@ -42,8 +42,8 @@ export class OnboardingCardsDialog {
      Complete onboarding process
      */
     async completeOnboarding(): Promise<void> {
-        await t.expect(await this.showMeAroundButton.exists).notOk('Show me around button still visible');
-        await t.expect(await this.stepTitle.exists).notOk('Onboarding tooltip still visible');
+        await t.expect(this.showMeAroundButton.exists).notOk('Show me around button still visible');
+        await t.expect(this.stepTitle.exists).notOk('Onboarding tooltip still visible');
     }
     /**
      Click back step

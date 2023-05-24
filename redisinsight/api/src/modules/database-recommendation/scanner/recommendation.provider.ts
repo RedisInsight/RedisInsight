@@ -9,7 +9,6 @@ import {
   SearchJSONStrategy,
   BigSetStrategy,
   RTSStrategy,
-  IntegersInSetStrategy,
   AvoidLogicalDatabasesStrategy,
   ShardHashStrategy,
   StringToJsonStrategy,

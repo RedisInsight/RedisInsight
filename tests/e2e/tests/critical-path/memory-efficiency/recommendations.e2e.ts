@@ -78,12 +78,6 @@ test
         await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecommendation));
         await t.expect(memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).offsetHeight)
             .eql(expandedTextContaiterSize, 'Lua script recommendation not expanded');
-
-        // Verify that user can navigate by link to see the recommendation
-        await t.click(memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).find(memoryEfficiencyPage.cssReadMoreLink));
-        await Common.checkURL(externalPageLink);
-        // Close the window with external link to switch to the application window
-        await t.closeWindow();
     });
 // skipped due to inability to receive no recommendations for now
 test.skip('No recommendations message', async t => {

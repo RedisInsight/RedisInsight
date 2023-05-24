@@ -979,23 +979,23 @@ workflows:
                 - /^fe/feature.*/
                 - /^fe/bugfix.*/
   # BE Unit + Integration (limited RTEs) tests for "be/feature" or "be/bugfix" branches only
-#  backend-tests:
-#    jobs:
-#      - unit-tests-api:
-#          name: UTest - API
-#          filters:
-#            branches:
-#              only:
-#                - /^be/feature.*/
-#                - /^be/bugfix.*/
-#      - integration-tests-run:
-#          matrix:
-#            alias: itest-code
-#            parameters:
-#              rte: *iTestsNamesShort
-#          name: ITest - << matrix.rte >> (code)
-#          requires:
-#            - UTest - API
+  backend-tests:
+    jobs:
+      - unit-tests-api:
+          name: UTest - API
+          filters:
+            branches:
+              only:
+                - /^be/feature.*/
+                - /^be/bugfix.*/
+      - integration-tests-run:
+          matrix:
+            alias: itest-code
+            parameters:
+              rte: *iTestsNamesShort
+          name: ITest - << matrix.rte >> (code)
+          requires:
+            - UTest - API
   # E2E tests for "e2e/feature" or "e2e/bugfix" branches only
   e2e-tests:
     jobs:
@@ -1024,12 +1024,12 @@ workflows:
       - approve:
           name: Start All Tests
           type: approval
-#          filters:
-#            branches:
-#              only:
-#                - /^feature.*/
-#                - /^bugfix.*/
-#                - main
+          filters:
+            branches:
+              only:
+                - /^feature.*/
+                - /^bugfix.*/
+                - main
       # FE tests
       - unit-tests-ui:
           name: UTest - UI
@@ -1288,28 +1288,28 @@ workflows:
           <<: *prodFilter # double check for "latest"
   # Nightly tests
   nightly:
-#    triggers:
-#      - schedule:
-#          cron: '0 0 * * *'
-#          filters:
-#            branches:
-#              only:
-#                - main
+    triggers:
+      - schedule:
+          cron: '0 0 * * *'
+          filters:
+            branches:
+              only:
+                - main
     jobs:
       # build docker image
       - docker:
           name: Build docker image
       # build desktop app
-#      - setup-sign-certificates:
-#          name: Setup sign certificates (stage)
-#      - setup-build:
-#          name: Setup build (stage)
-#          requires:
-#            - Setup sign certificates (stage)
-#      - linux:
-#          name: Build app - Linux (stage)
-#          requires:
-#            - Setup build (stage)
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+      - setup-build:
+          name: Setup build (stage)
+          requires:
+            - Setup sign certificates (stage)
+      - linux:
+          name: Build app - Linux (stage)
+          requires:
+            - Setup build (stage)
       #  - windows:
       #      name: Build app - Windows (stage)
       #      requires:
@@ -1326,56 +1326,56 @@ workflows:
           requires:
             - Build docker image
       # e2e web tests on docker image build
-#      - e2e-tests:
-#          name: E2ETest - Nightly
-#          parallelism: 4
-#          build: docker
-#          report: true
-#          requires:
-#            - Build docker image
-#      # e2e desktop tests on AppImage build
-#      - e2e-app-image:
-#          name: E2ETest (AppImage) - Nightly
-#          parallelism: 2
-#          report: true
-#          requires:
-#            - Build app - Linux (stage)
-#
-#      - virustotal-url:
-#          name: Virus check - AppImage (nightly)
-#          fileName: RedisInsight-v2-linux-x86_64.AppImage
-#      - virustotal-url:
-#          name: Virus check - deb (nightly)
-#          fileName: RedisInsight-v2-linux-amd64.deb
-#      - virustotal-url:
-#          name: Virus check - rpm (nightly)
-#          fileName: RedisInsight-v2-linux-x86_64.rpm
-#      - virustotal-url:
-#          name: Virus check - snap (nightly)
-#          fileName: RedisInsight-v2-linux-amd64.snap
-#      - virustotal-url:
-#          name: Virus check x64 - dmg (nightly)
-#          fileName: RedisInsight-v2-mac-x64.dmg
-#      - virustotal-url:
-#          name: Virus check arm64 - dmg (nightly)
-#          fileName: RedisInsight-v2-mac-arm64.dmg
-#      - virustotal-url:
-#          name: Virus check MAS - pkg (nightly)
-#          fileName: RedisInsight-mac-universal-mas.pkg
-#      - virustotal-url:
-#          name: Virus check - exe (nightly)
-#          fileName: RedisInsight-v2-win-installer.exe
-#      - virustotal-report:
-#          name: Virus check report (prod)
-#          requires:
-#            - Virus check - AppImage (nightly)
-#            - Virus check - deb (nightly)
-#            - Virus check - rpm (nightly)
-#            - Virus check - snap (nightly)
-#            - Virus check x64 - dmg (nightly)
-#            - Virus check arm64 - dmg (nightly)
-#            - Virus check MAS - pkg (nightly)
-#            - Virus check - exe (nightly)
+      - e2e-tests:
+          name: E2ETest - Nightly
+          parallelism: 4
+          build: docker
+          report: true
+          requires:
+            - Build docker image
+      # e2e desktop tests on AppImage build
+      - e2e-app-image:
+          name: E2ETest (AppImage) - Nightly
+          parallelism: 2
+          report: true
+          requires:
+            - Build app - Linux (stage)
+
+      - virustotal-url:
+          name: Virus check - AppImage (nightly)
+          fileName: RedisInsight-v2-linux-x86_64.AppImage
+      - virustotal-url:
+          name: Virus check - deb (nightly)
+          fileName: RedisInsight-v2-linux-amd64.deb
+      - virustotal-url:
+          name: Virus check - rpm (nightly)
+          fileName: RedisInsight-v2-linux-x86_64.rpm
+      - virustotal-url:
+          name: Virus check - snap (nightly)
+          fileName: RedisInsight-v2-linux-amd64.snap
+      - virustotal-url:
+          name: Virus check x64 - dmg (nightly)
+          fileName: RedisInsight-v2-mac-x64.dmg
+      - virustotal-url:
+          name: Virus check arm64 - dmg (nightly)
+          fileName: RedisInsight-v2-mac-arm64.dmg
+      - virustotal-url:
+          name: Virus check MAS - pkg (nightly)
+          fileName: RedisInsight-mac-universal-mas.pkg
+      - virustotal-url:
+          name: Virus check - exe (nightly)
+          fileName: RedisInsight-v2-win-installer.exe
+      - virustotal-report:
+          name: Virus check report (prod)
+          requires:
+            - Virus check - AppImage (nightly)
+            - Virus check - deb (nightly)
+            - Virus check - rpm (nightly)
+            - Virus check - snap (nightly)
+            - Virus check x64 - dmg (nightly)
+            - Virus check arm64 - dmg (nightly)
+            - Virus check MAS - pkg (nightly)
+            - Virus check - exe (nightly)
 
       # # e2e desktop tests on exe build
       # - e2e-exe:

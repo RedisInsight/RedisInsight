@@ -15,6 +15,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { ReleaseNotesSource } from 'uiSrc/constants/telemetry'
 import { appElectronInfoSelector, setReleaseNotesViewed, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { setOnboarding } from 'uiSrc/slices/app/features'
@@ -24,6 +25,8 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ReactComponent as GithubHelpCenterSVG } from 'uiSrc/assets/img/github.svg'
 import { ReactComponent as BulbSVG } from 'uiSrc/assets/img/bulb.svg'
 
+import { addMessageNotification } from 'uiSrc/slices/app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
@@ -40,6 +43,15 @@ const HelpMenu = () => {
   }
 
   const onClickReleaseNotes = async () => {
+    dispatch(addMessageNotification(
+      successMessages.INSTALLED_NEW_UPDATE('2.2.1', () => dispatch(setReleaseNotesViewed(true)))
+    ))
+    sendEventTelemetry({
+      event: TelemetryEvent.RELEASE_NOTES_LINK_CLICKED,
+      eventData: {
+        source: ReleaseNotesSource.helpCenter
+      }
+    })
     if (isReleaseNotesViewed === false) {
       dispatch(setReleaseNotesViewed(true))
     }

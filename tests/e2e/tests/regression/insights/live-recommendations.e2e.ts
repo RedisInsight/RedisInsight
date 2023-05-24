@@ -35,7 +35,7 @@ const expectedProperties = [
     'provider',
     'vote'
 ];
-const featuresConfig = path.join('.', 'test-data', 'features-configs', 'insights-analytics-filter-off.json');
+const featuresConfig = path.join('.', 'test-data', 'features-configs', 'insights-valid.json');
 const redisVersionRecom = RecommendationIds.redisVersion;
 const redisTimeSeriesRecom = RecommendationIds.optimizeTimeSeries;
 const searchVisualizationRecom = RecommendationIds.searchVisualization;

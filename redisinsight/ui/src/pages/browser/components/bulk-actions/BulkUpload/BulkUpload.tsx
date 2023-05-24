@@ -131,7 +131,7 @@ const BulkUpload = (props: Props) => {
           loading={loading}
           status={status}
           progress={progress}
-          title="Upload with file"
+          title="Commands executed from file"
           subTitle={(<div className="truncateText" style={{ paddingTop: 6 }}>{fileName}</div>)}
         >
           <BulkActionSummary

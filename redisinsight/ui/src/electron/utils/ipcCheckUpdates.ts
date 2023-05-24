@@ -2,6 +2,7 @@ import { ipcRenderer } from 'electron'
 import { Dispatch } from 'react'
 import { omit } from 'lodash'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { ReleaseNotesSource } from 'uiSrc/constants/telemetry'
 import { setElectronInfo, setReleaseNotesViewed } from 'uiSrc/slices/app/info'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
@@ -23,7 +24,15 @@ export const ipcCheckUpdates = async (serverInfo: GetServerInfoResponse, dispatc
   if (isUpdateDownloaded && !isUpdateAvailable) {
     if (serverInfo.appVersion === updateDownloadedVersion) {
       dispatch(addMessageNotification(
-        successMessages.INSTALLED_NEW_UPDATE(updateDownloadedVersion, () => dispatch(setReleaseNotesViewed(true)))
+        successMessages.INSTALLED_NEW_UPDATE(updateDownloadedVersion, () => {
+          dispatch(setReleaseNotesViewed(true))
+          sendEventTelemetry({
+            event: TelemetryEvent.RELEASE_NOTES_LINK_CLICKED,
+            eventData: {
+              source: ReleaseNotesSource.updateNotification
+            }
+          })
+        })
       ))
     }
 

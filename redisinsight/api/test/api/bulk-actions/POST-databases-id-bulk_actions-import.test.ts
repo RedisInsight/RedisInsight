@@ -24,7 +24,7 @@ describe('POST /databases/:id/bulk-actions/import', () => {
         responseBody: {
           id: 'empty',
           databaseId: constants.TEST_INSTANCE_ID,
-          type: 'import',
+          type: 'upload',
           summary: { processed: 1, succeed: 0, failed: 1, errors: [] },
           progress: null,
           filter: null,
@@ -50,7 +50,7 @@ describe('POST /databases/:id/bulk-actions/import', () => {
         responseBody: {
           id: 'empty',
           databaseId: constants.TEST_INSTANCE_ID,
-          type: 'import',
+          type: 'upload',
           summary: { processed: 100, succeed: 100, failed: 0, errors: [] },
           progress: null,
           filter: null,
@@ -80,7 +80,7 @@ describe('POST /databases/:id/bulk-actions/import', () => {
         responseBody: {
           id: 'empty',
           databaseId: constants.TEST_INSTANCE_ID,
-          type: 'import',
+          type: 'upload',
           summary: { processed: 10_000, succeed: 10_000, failed: 0, errors: [] },
           progress: null,
           filter: null,
@@ -115,7 +115,7 @@ describe('POST /databases/:id/bulk-actions/import', () => {
         responseBody: {
           id: 'empty',
           databaseId: constants.TEST_INSTANCE_ID,
-          type: 'import',
+          type: 'upload',
           summary: { processed: 100, succeed: 50, failed: 50, errors: [] },
           progress: null,
           filter: null,
@@ -156,7 +156,7 @@ describe('POST /databases/:id/bulk-actions/import', () => {
         responseBody: {
           id: 'empty',
           databaseId: constants.TEST_INSTANCE_ID,
-          type: 'import',
+          type: 'upload',
           summary: { processed: 100_000, succeed: 100_000, failed: 0, errors: [] },
           progress: null,
           filter: null,

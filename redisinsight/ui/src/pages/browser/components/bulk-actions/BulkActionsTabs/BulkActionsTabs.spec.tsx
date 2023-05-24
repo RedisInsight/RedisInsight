@@ -62,7 +62,7 @@ describe('BulkActionsTabs', () => {
         action: BulkActionsType.Delete,
         filter: {
           match: 'PATTERN',
-          filter: 'set'
+          type: 'set'
         }
       }
     });

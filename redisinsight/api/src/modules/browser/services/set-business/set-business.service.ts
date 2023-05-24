@@ -120,16 +120,6 @@ export class SetBusinessService {
         const scanResult = await this.scanSet(clientMetadata, dto);
         result = { ...result, ...scanResult };
       }
-      this.recommendationService.check(
-        clientMetadata,
-        RECOMMENDATION_NAMES.INTEGERS_IN_SET,
-        {
-          members: result.members,
-          keyName,
-          client,
-          databaseId: clientMetadata.databaseId,
-        },
-      );
       this.logger.log('Succeed to get members of the Set data type.');
       return plainToClass(GetSetMembersResponse, result);
     } catch (error) {

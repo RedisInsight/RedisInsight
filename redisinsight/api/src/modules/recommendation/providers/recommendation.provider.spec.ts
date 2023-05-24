@@ -77,7 +77,7 @@ const mockBigStringKey = {
 };
 
 const mockHugeStringKey = {
-  name: Buffer.from('name'), type: 'string', length: 10, memory: 1_000_001, ttl: -1,
+  name: Buffer.from('name'), type: 'string', length: 10, memory: 100_001, ttl: -1,
 };
 
 const mockHugeStringKey1 = {
@@ -89,7 +89,7 @@ const mockBigSet = {
 };
 
 const mockHugeSet = {
-  name: Buffer.from('name'), type: 'set', length: 100_001, memory: 10, ttl: -1,
+  name: Buffer.from('name'), type: 'set', length: 1_001, memory: 10, ttl: -1,
 };
 
 const mockBigZSetKey = {
@@ -214,18 +214,18 @@ describe('RecommendationProvider', () => {
   describe('determineCombineSmallStringsToHashesRecommendation', () => {
     it('should not return combineSmallStringsToHashes recommendation', async () => {
       const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(
-        new Array(49).fill(mockSmallStringKey),
+        new Array(9).fill(mockSmallStringKey),
       );
       expect(smallStringRecommendation).toEqual(null);
     });
     it('should not return combineSmallStringsToHashes recommendation when strings are big', async () => {
       const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(
-        new Array(50).fill(mockBigStringKey),
+        new Array(10).fill(mockBigStringKey),
       );
       expect(smallStringRecommendation).toEqual(null);
     });
     it('should return combineSmallStringsToHashes recommendation', async () => {
-      const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(new Array(50).fill(mockSmallStringKey));
+      const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(new Array(10).fill(mockSmallStringKey));
       expect(smallStringRecommendation)
         .toEqual({
           name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES,

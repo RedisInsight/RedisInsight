@@ -196,7 +196,7 @@ const WBView = (props: Props) => {
                   scrollable={false}
                   className={styles.queryPanel}
                   initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
-                  style={{ minHeight: '140px', overflow: 'hidden' }}
+                  style={{ minHeight: '140px' }}
                 >
                   <QueryWrapper
                     query={script}

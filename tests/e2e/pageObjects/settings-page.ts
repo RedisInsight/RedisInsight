@@ -89,13 +89,23 @@ export class SettingsPage extends BasePage {
     }
 
     /**
-     * Turn on notifications in Settings
+     * Turn on/off notifications in Settings
      */
     async changeNotificationsSwitcher(toValue: boolean): Promise<void> {
         await t.click(this.NavigationPanel.settingsButton);
         await t.click(this.accordionAppearance);
         if (toValue !== await this.getNotificationsSwitcherValue()) {
             await t.click(this.switchNotificationsOption);
+        }
+    }
+
+    /**
+     * Turn on/off Analytics in Settings
+     */
+    async changeAnalyticsSwitcher(toValue: boolean): Promise<void> {
+        await t.click(this.accordionPrivacySettings);
+        if (toValue !== await this.getAnalyticsSwitcherValue()) {
+            await t.click(this.switchAnalyticsOption);
         }
     }
 }

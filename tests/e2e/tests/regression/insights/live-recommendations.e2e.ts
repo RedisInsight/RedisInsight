@@ -1,8 +1,10 @@
+import * as path from 'path';
 import { BrowserPage, MemoryEfficiencyPage, MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { RecommendationIds, rte } from '../../../helpers/constants';
 import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
 import {
+    addNewStandaloneDatabaseApi,
     addNewStandaloneDatabasesApi,
     deleteStandaloneDatabaseApi,
     deleteStandaloneDatabasesApi
@@ -10,6 +12,7 @@ import {
 import { Common } from '../../../helpers/common';
 import { Telemetry } from '../../../helpers/telemetry';
 import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
+import { modifyFeaturesConfigJson, refreshFeaturesTestData, updateControlNumber } from '../../../helpers/insights';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -33,6 +36,7 @@ const expectedProperties = [
     'provider',
     'vote'
 ];
+const featuresConfig = path.join('.', 'test-data', 'features-configs', 'insights-valid.json');
 const redisVersionRecom = RecommendationIds.redisVersion;
 const redisTimeSeriesRecom = RecommendationIds.optimizeTimeSeries;
 const searchVisualizationRecom = RecommendationIds.searchVisualization;
@@ -42,9 +46,16 @@ fixture `Live Recommendations`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTerms();
+        await refreshFeaturesTestData();
+        await modifyFeaturesConfigJson(featuresConfig);
+        await updateControlNumber(47.2);
+        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await myRedisDatabasePage.reloadPage();
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
+        await refreshFeaturesTestData();
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
@@ -52,6 +63,9 @@ test
     .before(async() => {
         // Add new databases using API
         await acceptLicenseTerms();
+        await refreshFeaturesTestData();
+        await modifyFeaturesConfigJson(featuresConfig);
+        await updateControlNumber(47.2);
         await addNewStandaloneDatabasesApi(databasesForAdding);
         // Reload Page
         await myRedisDatabasePage.reloadPage();
@@ -60,6 +74,7 @@ test
     .after(async() => {
         // Clear and delete database
         await browserPage.InsightsPanel.toggleInsightsPanel(false);
+        await refreshFeaturesTestData();
         await browserPage.OverviewPanel.changeDbIndex(0);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabasesApi(databasesForAdding);
@@ -93,8 +108,15 @@ test
 test
     .requestHooks(logger)
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await acceptLicenseTerms();
+        await refreshFeaturesTestData();
+        await modifyFeaturesConfigJson(featuresConfig);
+        await updateControlNumber(47.2);
+        await addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await myRedisDatabasePage.reloadPage();
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
     }).after(async() => {
+        await refreshFeaturesTestData();
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can upvote recommendations', async() => {
         const notUsefulVoteOption = 'not useful';
@@ -166,9 +188,16 @@ test('Verify that user can snooze recommendation', async t => {
 });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await acceptLicenseTerms();
+        await refreshFeaturesTestData();
+        await modifyFeaturesConfigJson(featuresConfig);
+        await updateControlNumber(47.2);
+        await addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await myRedisDatabasePage.reloadPage();
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
     }).after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await refreshFeaturesTestData();
     })('Verify that recommendations from database analysis are displayed in Insight panel above live recommendations', async t => {
         const redisVersionRecomSelector = browserPage.InsightsPanel.getRecommendationByName(redisVersionRecom);
 
@@ -206,6 +235,7 @@ test('Verify that if user clicks on the Analyze button and link, the pop up with
 //https://redislabs.atlassian.net/browse/RI-4493
 test
     .after(async() => {
+        await refreshFeaturesTestData();
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify that key name is displayed for Insights and DA recommendations', async t => {

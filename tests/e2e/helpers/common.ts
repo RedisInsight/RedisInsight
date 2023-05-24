@@ -193,9 +193,17 @@ export class Common {
     }
 
     /**
-      * Create Zip archive from folder
-      * @param folderPath Path to folder to archive
-      * @param zipName Zip archive name
+     * Get json property value by property name and path
+     * @param expectedText Expected link that is compared with actual
+     */
+    static async getJsonPropertyValue(property: string, path: string): Promise<string | number> {
+        const parsedJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
+        return parsedJson[property];
+    }
+    /**
+     * Create Zip archive from folder
+     * @param folderPath Path to folder to archive
+     * @param zipName Zip archive name
      */
     static async createZipFromFolder(folderPath: string, zipName: string): Promise<void> {
         const sourceDir = path.join(__dirname, folderPath);

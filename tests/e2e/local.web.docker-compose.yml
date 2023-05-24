@@ -1,6 +1,15 @@
 version: "3.4"
 
 services:
+  static-server:
+    build:
+      context: .
+      dockerfile: static-server.Dockerfile
+    volumes:
+      - ./remote:/app/remote
+    ports:
+      - 5551:5551
+
   e2e:
     build:
       context: .
@@ -12,6 +21,7 @@ services:
       - .redisinsight-v2:/root/.redisinsight-v2
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
+      - ./remote:/root/remote
     env_file:
       - ./.env
     environment:
@@ -23,6 +33,7 @@ services:
       E2E_CLOUD_DATABASE_PASSWORD: $E2E_CLOUD_DATABASE_PASSWORD
       E2E_CLOUD_DATABASE_USERNAME: $E2E_CLOUD_DATABASE_USERNAME
       E2E_CLOUD_DATABASE_NAME: $E2E_CLOUD_DATABASE_NAME
+      REMOTE_FOLDER_PATH: "/root/remote"
     entrypoint: [
         './upload-custom-plugins.sh',
     ]

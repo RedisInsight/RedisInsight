@@ -4,15 +4,13 @@ import * as fs from 'fs';
 import * as editJsonFile from 'edit-json-file';
 import { acceptLicenseTermsAndAddDatabaseApi} from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, workingDirectory } from '../../../helpers/conf';
 import { rte, env } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 
-const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
-    || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
 if (fs.existsSync(workingDirectory)) {
     // Guides content
     const guidesTimestampPath = `${workingDirectory}/guides/build.json`;

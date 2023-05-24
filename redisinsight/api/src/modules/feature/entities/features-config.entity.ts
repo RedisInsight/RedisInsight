@@ -10,7 +10,7 @@ export class FeaturesConfigEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'float' })
   @Expose()
   controlNumber: number;
 

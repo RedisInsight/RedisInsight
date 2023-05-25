@@ -6,7 +6,7 @@ const mockSetInfo: GetKeyInfoResponse = {
   type: 'set',
   ttl: -1,
   size: 1,
-  length: 100_000,
+  length: 1_000,
 };
 
 const mockBigSetInfo: GetKeyInfoResponse = {
@@ -14,7 +14,7 @@ const mockBigSetInfo: GetKeyInfoResponse = {
   type: 'set',
   ttl: -1,
   size: 1,
-  length: 100_001,
+  length: 1_001,
 };
 
 const mockHashInfo: GetKeyInfoResponse = {
@@ -33,7 +33,7 @@ describe('BigSetStrategy', () => {
   });
 
   describe('isRecommendationReached', () => {
-    it('should return false when set length < 100 000', async () => {
+    it('should return false when set length < 1 000', async () => {
       expect(await strategy.isRecommendationReached(mockSetInfo)).toEqual({ isReached: false });
     });
 
@@ -41,7 +41,7 @@ describe('BigSetStrategy', () => {
       expect(await strategy.isRecommendationReached(mockHashInfo)).toEqual({ isReached: false });
     });
 
-    it('should return true when set length > 100 000', async () => {
+    it('should return true when set length > 1 000', async () => {
       expect(await strategy.isRecommendationReached(mockBigSetInfo))
         .toEqual({ isReached: true, params: { keys: [mockBigSetInfo.name] } });
     });

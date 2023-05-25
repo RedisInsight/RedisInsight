@@ -4,6 +4,7 @@ import { randomBytes } from 'crypto';
 import { getASCIISafeStringFromBuffer, getBufferFromSafeASCIIString } from "src/utils/cli-helper";
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { Compressor } from 'src/modules/database/entities/database.entity';
+import { Vote } from 'src/modules/database-recommendation/models';
 
 const API = {
   DATABASES: 'databases',
@@ -40,6 +41,9 @@ export const constants = {
   TEST_KEYTAR_PASSWORD: process.env.SECRET_STORAGE_PASSWORD || 'somepassword',
   TEST_ENCRYPTION_STRATEGY: 'KEYTAR',
   TEST_AGREEMENTS_VERSION: '1.0.3',
+  TEST_REMOTE_STATIC_PATH: './remote',
+  TEST_REMOTE_STATIC_URI: '/remote',
+  TEST_FEATURE_FLAG_REMOTE_CONFIG_PATH: './remote/features-config.json',
 
   // local database
   TEST_LOCAL_DB_FILE_PATH: process.env.TEST_LOCAL_DB_FILE_PATH || './redisinsight.db',
@@ -210,8 +214,8 @@ export const constants = {
   TEST_ZSET_HUGE_MEMBER: ' 356897',
   TEST_ZSET_HUGE_SCORE: 356897,
   TEST_ZSET_TIMESTAMP_KEY: TEST_RUN_ID + '_zset_timestamp' + CLUSTER_HASH_SLOT,
-  TEST_ZSET_TIMESTAMP_MEMBER: '12345678910',
-  TEST_ZSET_TIMESTAMP_SCORE: 12345678910,
+  TEST_ZSET_TIMESTAMP_MEMBER: '1234567891',
+  TEST_ZSET_TIMESTAMP_SCORE: 1234567891,
   TEST_ZSET_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('zsetk'), unprintableBuf]),
   get TEST_ZSET_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_ZSET_KEY_BIN_BUFFER_1] } },
   get TEST_ZSET_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_ZSET_KEY_BIN_BUFFER_1) },
@@ -228,6 +232,8 @@ export const constants = {
   TEST_HASH_FIELD_1_VALUE: TEST_RUN_ID + '_hash_f_1_val',
   TEST_HASH_FIELD_2_NAME: TEST_RUN_ID + '_hash_f_2_name',
   TEST_HASH_FIELD_2_VALUE: TEST_RUN_ID + '_hash_f_2_val',
+  TEST_HASH_FIELD_3_NAME: TEST_RUN_ID + '_hash_f_3_name',
+  TEST_HASH_FIELD_3_VALUE: TEST_RUN_ID + '_hash_f_3_val',
   TEST_HASH_EXPIRE_1: KEY_TTL,
   TEST_HASH_KEY_2: TEST_RUN_ID + '_hash_2' + CLUSTER_HASH_SLOT,
   TEST_HASH_HUGE_KEY: 'big hash 1M',
@@ -479,6 +485,19 @@ export const constants = {
     threshold: 4 * 60 * 60 * 1000,
   },
 
+  // recommendations
+  TEST_RECOMMENDATIONS_DATABASE_ID: uuidv4(),
+  TEST_RECOMMENDATION_ID_1: uuidv4(),
+  TEST_RECOMMENDATION_ID_2: uuidv4(),
+  TEST_RECOMMENDATION_ID_3: uuidv4(),
+
+  TEST_RECOMMENDATION_VOTE: Vote.Like,
+  TEST_RECOMMENDATION_HIDE: true,
+
+  TEST_RECOMMENDATION_NAME_1: RECOMMENDATION_NAMES.BIG_SETS,
+  TEST_RECOMMENDATION_NAME_2: RECOMMENDATION_NAMES.BIG_STRINGS,
+  TEST_RECOMMENDATION_NAME_3: RECOMMENDATION_NAMES.BIG_STRINGS,
+
   TEST_LUA_DATABASE_ANALYSIS_RECOMMENDATION: {
     name: RECOMMENDATION_NAMES.LUA_SCRIPT,
   },
@@ -527,13 +546,16 @@ export const constants = {
     name: RECOMMENDATION_NAMES.REDIS_VERSION,
   },
 
-  TEST_REDISEARCH_RECOMMENDATION: {
-    name: RECOMMENDATION_NAMES.REDIS_SEARCH,
+  TEST_SEARCH_JSON_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.SEARCH_JSON,
   },
-
 
   TEST_SEARCH_INDEXES_RECOMMENDATION: {
     name: RECOMMENDATION_NAMES.SEARCH_INDEXES,
+  },
+
+  TEST_SEARCH_HASH_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.SEARCH_HASH,
   },
 
   TEST_LUA_SCRIPT_VOTE_RECOMMENDATION: {

@@ -21,5 +21,5 @@ export {
     PubSubPage,
     SlowLogPage,
     BasePage,
-    InstancePage
+    InstancePage,
 };

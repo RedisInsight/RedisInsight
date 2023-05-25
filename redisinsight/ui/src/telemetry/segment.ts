@@ -51,12 +51,15 @@ export class SegmentTelemetryService implements ITelemetryService {
     return this._anonymousId
   }
 
-  async pageView(name: string, appType: string, databaseId?: string): Promise<void> {
+  async pageView(
+    name: string,
+    properties: object
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         const pageInfo = this._getPageInfo()
         const { page = {} } = { ...pageInfo }
-        window.analytics.page(name, { databaseId, buildType: appType, ...page }, {
+        window.analytics.page(name, { ...properties, ...page }, {
           context: {
             ip: '0.0.0.0',
             ...pageInfo

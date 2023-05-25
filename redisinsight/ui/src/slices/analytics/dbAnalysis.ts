@@ -131,9 +131,9 @@ export function fetchDBAnalysisAction(
 
 // Asynchronous thunk action
 export function putRecommendationVote(
-  recommendationName: string,
+  name: string,
   vote: Vote,
-  onSuccessAction?: (instanceId: string, name: string, vote: Vote) => void,
+  onSuccessAction?: (recommendation: { name: string, vote: Vote }) => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -148,13 +148,13 @@ export function putRecommendationVote(
           ApiEndpoints.DATABASE_ANALYSIS,
           state.analytics.databaseAnalysis.history.selectedAnalysis ?? '',
         ),
-        { name: recommendationName, vote },
+        { name, vote },
       )
 
       if (isStatusSuccessful(status)) {
         dispatch(setRecommendationVoteSuccess(data))
 
-        onSuccessAction?.(instanceId, recommendationName, vote)
+        onSuccessAction?.({ name, vote })
       }
     } catch (_err) {
       const error = _err as AxiosError

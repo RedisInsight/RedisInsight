@@ -78,7 +78,7 @@ export class DatabaseInfoController {
     @Param('index', new DbIndexValidationPipe({ transform: true })) databaseIndexDto: DatabaseIndex,
       @ClientMetadataParam({
         databaseIdParam: 'id',
-        ignoreDbIndex: true,
+        ignoreDbIndex: false,
       }) clientMetadata: ClientMetadata,
   ): Promise<void> {
     return this.databaseInfoService.getDatabaseIndex(clientMetadata, databaseIndexDto.db);

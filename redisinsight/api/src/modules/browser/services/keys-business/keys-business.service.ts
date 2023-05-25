@@ -4,7 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
+import { DEFAULT_MATCH, RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
 import { catchAclError } from 'src/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
@@ -31,6 +31,7 @@ import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { pick } from 'lodash';
 import { StandaloneStrategy } from './scanner/strategies/standalone.strategy';
 import { ClusterStrategy } from './scanner/strategies/cluster.strategy';
@@ -66,6 +67,7 @@ export class KeysBusinessService {
     private browserHistory: BrowserHistoryService,
     private browserToolCluster: BrowserToolClusterService,
     private settingsService: SettingsService,
+    private recommendationService: DatabaseRecommendationService,
   ) {
     this.scanner = new Scanner();
     this.keyInfoManager = new KeyInfoManager(
@@ -144,6 +146,11 @@ export class KeysBusinessService {
           ),
         );
       }
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.USE_SMALLER_KEYS,
+        result[0]?.total,
+      );
 
       return result.map((nodeResult) => plainToClass(GetKeysWithDetailsResponse, nodeResult));
     } catch (error) {
@@ -177,7 +184,11 @@ export class KeysBusinessService {
       const client = await this.browserTool.getRedisClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.isCluster ? ConnectionType.CLUSTER : ConnectionType.STANDALONE);
       const result = await scanner.getKeysInfo(client, dto.keys, dto.type);
-
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_JSON,
+        { keys: result, client, databaseId: clientMetadata.databaseId },
+      );
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error(`Failed to get keys info: ${error.message}.`);
@@ -206,6 +217,21 @@ export class KeysBusinessService {
       const infoManager = this.keyInfoManager.getStrategy(type);
       const result = await infoManager.getInfo(clientMetadata, key, type);
       this.logger.log('Succeed to get key info');
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.BIG_SETS,
+        result,
+      );
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.BIG_STRINGS,
+        result,
+      );
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
+        result,
+      );
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error('Failed to get key info.', error);

@@ -25,4 +25,5 @@ export * from './durationUnits'
 export * from './streamViews'
 export * from './bulkActions'
 export * from './workbench'
+export * from './featureFlags'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

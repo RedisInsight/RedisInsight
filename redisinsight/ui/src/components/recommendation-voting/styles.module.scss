@@ -1,0 +1,31 @@
+.votingContainer {
+  :global {
+    .voteContent {
+      margin-left: 10px;
+
+      .vote__btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+
+        &:hover,
+        &:focus,
+        &.selected {
+          transform: none;
+          background-color: var(--separatorColor);
+        }
+      }
+
+      .euiIcon {
+        width: 34px;
+        height: 34px;
+        fill: none;
+
+        path {
+          stroke: var(--buttonSecondaryTextColor);
+        }
+      }
+    }
+  }
+}
+

@@ -10,7 +10,7 @@ import {
   catchAclError, catchTransactionError, isRedisGlob, unescapeRedisGlob,
 } from 'src/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { RedisErrorCodes } from 'src/constants';
+import { RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
 import config from 'src/utils/config';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
@@ -20,6 +20,7 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { RedisString } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import {
   AddFieldsToHashDto,
   CreateHashWithExpireDto,
@@ -39,6 +40,7 @@ export class HashBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
+    private recommendationService: DatabaseRecommendationService,
   ) {}
 
   public async createHash(
@@ -121,6 +123,12 @@ export class HashBusinessService {
         const scanResult = await this.scanHash(clientMetadata, dto);
         result = { ...result, ...scanResult };
       }
+
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.BIG_HASHES,
+        { total: result.total, keyName },
+      );
       this.logger.log('Succeed to get fields of the Hash data type.');
       return plainToClass(GetHashFieldsResponse, result);
     } catch (error) {

@@ -191,6 +191,14 @@ export const initDataHelper = (rte) => {
   }
 
   // Strings
+  const generateString = async (clean: boolean = false) => {
+    if (clean) {
+      await truncate();
+    }
+
+    await client.set(constants.TEST_STRING_KEY_1, constants.TEST_STRING_VALUE_1);
+  };
+
   const generateStrings = async (clean: boolean = false) => {
     if (clean) {
       await truncate();
@@ -551,6 +559,7 @@ export const initDataHelper = (rte) => {
     generateRedisearchIndexes,
     generateNReJSONs,
     generateNTimeSeries,
+    generateString,
     generateStrings,
     generateStreams,
     generateStreamsWithoutStrictMode,

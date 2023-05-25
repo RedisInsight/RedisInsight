@@ -10,7 +10,7 @@ import { localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
-import { checkIsAnalyticsGranted, getAppType } from 'uiSrc/telemetry/checkAnalytics'
+import { checkIsAnalyticsGranted, getInfoServer } from 'uiSrc/telemetry/checkAnalytics'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import {
   ITelemetrySendEvent,
@@ -60,13 +60,15 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
 
-  const appType = getAppType()
+  const { appType: buildType, controlNumber, controlGroup } = getInfoServer() as Record<string, any>
 
   if (isAnalyticsGranted || nonTracking) {
     return telemetryService?.event({
       event,
       properties: {
-        buildType: appType,
+        buildType,
+        controlNumber,
+        controlGroup,
         ...eventData,
       },
     })
@@ -86,10 +88,19 @@ const sendPageViewTelemetry = (payload: ITelemetrySendPageView) => {
 
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
-  const appType = getAppType()
+
+  const { appType: buildType, controlNumber, controlGroup } = getInfoServer() as Record<string, any>
 
   if (isAnalyticsGranted || nonTracking) {
-    telemetryService?.pageView(name, appType, databaseId)
+    telemetryService?.pageView(
+      name,
+      {
+        buildType,
+        controlNumber,
+        controlGroup,
+        databaseId
+      }
+    )
   }
 }
 

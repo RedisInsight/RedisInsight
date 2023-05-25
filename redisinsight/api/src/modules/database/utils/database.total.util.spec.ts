@@ -1,4 +1,4 @@
-import IORedis, { Command } from 'ioredis';
+import IORedis from 'ioredis';
 import { when } from 'jest-when';
 import { getTotal } from 'src/modules/database/utils/database.total.util';
 

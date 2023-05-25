@@ -21,12 +21,13 @@ import DatabaseAnalysisTabs from './components/data-nav-tabs'
 import styles from './styles.module.scss'
 
 const DatabaseAnalysisPage = () => {
-  const { instanceId } = useParams<{ instanceId: string }>()
   const { viewTab } = useSelector(analyticsSettingsSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { loading: analysisLoading, data } = useSelector(dbAnalysisSelector)
   const { data: reports, selectedAnalysis } = useSelector(dbAnalysisReportsSelector)
-  const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
+  const { name: connectedInstanceName, db, provider } = useSelector(connectedInstanceSelector)
+
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   const [isPageViewSent, setIsPageViewSent] = useState<boolean>(false)
 
@@ -57,6 +58,7 @@ const DatabaseAnalysisPage = () => {
       event: TelemetryEvent.DATABASE_ANALYSIS_HISTORY_VIEWED,
       eventData: {
         databaseId: instanceId,
+        provider,
       }
     })
     dispatch(setSelectedAnalysisId(reportId))

@@ -64,7 +64,7 @@ export const MOCK_GUIDES_ITEMS: IEnablementAreaItem[] = [
     args: {
       path: '_scripts/manual.txt'
     },
-  }
+  },
 ]
 
 export const MOCK_GUIDES = {

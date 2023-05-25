@@ -56,7 +56,7 @@ describe('POST /databases/:id/bulk-actions/import/tutorial-data', () => {
         responseBody: {
           id: 'empty',
           databaseId: constants.TEST_INSTANCE_ID,
-          type: 'import',
+          type: 'upload',
           summary: { processed: 1, succeed: 1, failed: 0, errors: [] },
           progress: null,
           filter: null,
@@ -91,7 +91,7 @@ describe('POST /databases/:id/bulk-actions/import/tutorial-data', () => {
         responseBody: {
           id: 'empty',
           databaseId: constants.TEST_INSTANCE_ID,
-          type: 'import',
+          type: 'upload',
           summary: { processed: 1, succeed: 1, failed: 0, errors: [] },
           progress: null,
           filter: null,

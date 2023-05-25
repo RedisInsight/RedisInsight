@@ -7,6 +7,7 @@ import { PubSubModule } from 'src/modules/pub-sub/pub-sub.module';
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
 import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
+import { DatabaseRecommendationModule } from 'src/modules/database-recommendation/database-recommendation.module';
 
 export const routes: Routes = [
   {
@@ -43,6 +44,10 @@ export const routes: Routes = [
       {
         path: '/:dbInstance',
         module: BulkActionsModule,
+      },
+      {
+        path: '/:dbInstance',
+        module: DatabaseRecommendationModule,
       },
     ],
   },

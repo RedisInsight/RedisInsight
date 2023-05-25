@@ -37,7 +37,7 @@ const mockCreateBulkActionDto = {
 
 const mockOverview = {
   ...mockCreateBulkActionDto,
-  duration: 0,
+  duration: jasmine.any(Number),
   filter: { match: '*', type: null },
   progress: {
     scanned: 0,

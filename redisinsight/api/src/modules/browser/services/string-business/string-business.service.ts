@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { RedisErrorCodes } from 'src/constants';
+import { RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
 import {
@@ -21,6 +21,7 @@ import {
 import { plainToClass } from 'class-transformer';
 import { GetKeyInfoDto } from 'src/modules/browser/dto';
 import { ClientMetadata } from 'src/common/models';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 
 @Injectable()
 export class StringBusinessService {
@@ -28,6 +29,7 @@ export class StringBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
+    private recommendationService: DatabaseRecommendationService,
   ) {}
 
   public async setString(
@@ -93,6 +95,11 @@ export class StringBusinessService {
       );
       throw new NotFoundException();
     } else {
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.STRING_TO_JSON,
+        { value: result.value, keyName: result.keyName },
+      );
       this.logger.log('Succeed to get string value.');
       return plainToClass(GetStringValueResponse, result);
     }

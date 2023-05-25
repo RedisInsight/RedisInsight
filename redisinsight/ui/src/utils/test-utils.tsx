@@ -45,6 +45,7 @@ import { initialState as initialStateAnalyticsSettings } from 'uiSrc/slices/anal
 import { initialState as initialStateDbAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { initialState as initialStatePubSub } from 'uiSrc/slices/pubsub/pubsub'
 import { initialState as initialStateRedisearch } from 'uiSrc/slices/browser/redisearch'
+import { initialState as initialStateRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
@@ -109,6 +110,7 @@ const initialStateDefault: RootState = {
     clusterDetails: cloneDeep(initialClusterDetails),
     databaseAnalysis: cloneDeep(initialStateDbAnalysis),
   },
+  recommendations: cloneDeep(initialStateRecommendations),
   pubsub: cloneDeep(initialStatePubSub),
 }
 
@@ -214,7 +216,8 @@ jest.mock(
   'uiSrc/telemetry/checkAnalytics',
   () => ({
     checkIsAnalyticsGranted: jest.fn(),
-    getAppType: jest.fn()
+    getAppType: jest.fn(),
+    getInfoServer: jest.fn().mockReturnValue({}),
   })
 )
 
@@ -238,6 +241,11 @@ jest.mock(
     }
   })
 )
+
+jest.mock('uiSrc/constants/recommendations', () => ({
+  ...jest.requireActual('uiSrc/constants/recommendations'),
+  ANIMATION_INSIGHT_PANEL_MS: jest.fn().mockReturnValue(0),
+}))
 
 export const localStorageMock = {
   getItem: jest.fn(),

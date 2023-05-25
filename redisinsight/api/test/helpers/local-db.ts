@@ -1,10 +1,5 @@
 import { Connection, createConnection, getConnectionManager } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
-import { SettingsEntity } from 'src/modules/settings/entities/settings.entity';
-import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
-import { CommandExecutionEntity } from "src/modules/workbench/entities/command-execution.entity";
-import { PluginStateEntity } from "src/modules/workbench/entities/plugin-state.entity";
 import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 
@@ -19,8 +14,11 @@ export const repositories = {
   SETTINGS: 'SettingsEntity',
   NOTIFICATION: 'NotificationEntity',
   DATABASE_ANALYSIS: 'DatabaseAnalysisEntity',
+  DATABASE_RECOMMENDATION: 'DatabaseRecommendationEntity',
   BROWSER_HISTORY: 'BrowserHistoryEntity',
   CUSTOM_TUTORIAL: 'CustomTutorialEntity',
+  FEATURES_CONFIG: 'FeaturesConfigEntity',
+  FEATURE: 'FeatureEntity',
 }
 
 let localDbConnection;
@@ -249,6 +247,51 @@ export const generateBrowserHistory = async (
       ...partial,
     }));
   }
+
+  return result;
+}
+
+export const generateDatabaseRecommendations = async (
+  partial: Record<string, any>,
+  truncate: boolean = false,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.DATABASE_RECOMMENDATION);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  result.push(await rep.save({
+    id: constants.TEST_RECOMMENDATION_ID_1,
+    databaseId: constants.TEST_RECOMMENDATIONS_DATABASE_ID,
+    name: constants.TEST_RECOMMENDATION_NAME_1,
+    createdAt: new Date(),
+    read: false,
+    vote: null,
+    ...partial,
+  }));
+
+  result.push(await rep.save({
+    id: constants.TEST_RECOMMENDATION_ID_2,
+    databaseId: constants.TEST_RECOMMENDATIONS_DATABASE_ID,
+    name: constants.TEST_RECOMMENDATION_NAME_2,
+    createdAt: new Date(),
+    read: false,
+    vote: null,
+    ...partial,
+  }));
+
+  result.push(await rep.save({
+    id: constants.TEST_RECOMMENDATION_ID_3,
+    databaseId: constants.TEST_RECOMMENDATIONS_DATABASE_ID,
+    name: constants.TEST_RECOMMENDATION_NAME_3,
+    createdAt: new Date(),
+    read: false,
+    db: 3,
+    vote: null,
+    ...partial,
+  }));
 
   return result;
 }
@@ -484,6 +527,7 @@ export const initAgreements = async () => {
     eula: true,
     encryption: constants.TEST_ENCRYPTION_STRATEGY === 'KEYTAR',
     analytics: true,
+    notifications: true,
   });
 
   await rep.save(agreements);
@@ -496,6 +540,14 @@ export const resetSettings = async () => {
   settings.data = null;
 
   await rep.save(settings);
+}
+
+export const enableAllDbFeatures = async () => {
+  const rep = await getRepository(repositories.FEATURE);
+  await rep.delete({});
+  await rep.insert([
+    { name: 'insightsRecommendations', flag: true },
+  ]);
 }
 
 export const initSettings = async () => {

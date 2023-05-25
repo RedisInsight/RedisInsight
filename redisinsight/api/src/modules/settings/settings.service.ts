@@ -18,6 +18,8 @@ import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
 import { SettingsRepository } from 'src/modules/settings/repositories/settings.repository';
 import { classToClass } from 'src/utils';
 import { AgreementsRepository } from 'src/modules/settings/repositories/agreements.repository';
+import { FeatureServerEvents } from 'src/modules/feature/constants';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from './dto/settings.dto';
 
 const SERVER_CONFIG = config.get('server');
@@ -31,6 +33,7 @@ export class SettingsService {
     private readonly agreementRepository: AgreementsRepository,
     private readonly analytics: SettingsAnalytics,
     private readonly keytarEncryptionStrategy: KeytarEncryptionStrategy,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   /**
@@ -86,6 +89,9 @@ export class SettingsService {
       this.logger.log('Succeed to update application settings.');
       const results = await this.getAppSettings(userId);
       this.analytics.sendSettingsUpdatedEvent(results, oldAppSettings);
+
+      this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
+
       return results;
     } catch (error) {
       this.logger.error('Failed to update application settings.', error);

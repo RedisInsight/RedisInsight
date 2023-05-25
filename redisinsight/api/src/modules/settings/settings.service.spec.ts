@@ -5,7 +5,7 @@ import {
   mockAgreementsRepository, mockAppSettings,
   mockEncryptionStrategyInstance, mockSettings,
   mockSettingsAnalyticsService, mockSettingsRepository,
-  MockType, mockUserId
+  MockType, mockUserId,
 } from 'src/__mocks__';
 import { UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
@@ -18,6 +18,8 @@ import { AgreementsRepository } from 'src/modules/settings/repositories/agreemen
 import { SettingsRepository } from 'src/modules/settings/repositories/settings.repository';
 import { Agreements } from 'src/modules/settings/models/agreements';
 import { Settings } from 'src/modules/settings/models/settings';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { FeatureServerEvents } from 'src/modules/feature/constants';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');
@@ -35,6 +37,7 @@ describe('SettingsService', () => {
   let settingsRepository: MockType<SettingsRepository>;
   let analyticsService: SettingsAnalytics;
   let keytarStrategy: MockType<KeytarEncryptionStrategy>;
+  let eventEmitter: EventEmitter2;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -57,6 +60,12 @@ describe('SettingsService', () => {
           provide: KeytarEncryptionStrategy,
           useFactory: mockEncryptionStrategyInstance,
         },
+        {
+          provide: EventEmitter2,
+          useFactory: () => ({
+            emit: jest.fn(),
+          }),
+        },
       ],
     }).compile();
 
@@ -65,6 +74,7 @@ describe('SettingsService', () => {
     keytarStrategy = await module.get(KeytarEncryptionStrategy);
     analyticsService = await module.get<SettingsAnalytics>(SettingsAnalytics);
     service = await module.get(SettingsService);
+    eventEmitter = await module.get(EventEmitter2);
   });
 
   describe('getAppSettings', () => {
@@ -80,6 +90,8 @@ describe('SettingsService', () => {
         batchSize: WORKBENCH_CONFIG.countBatch,
         agreements: null,
       });
+
+      expect(eventEmitter.emit).not.toHaveBeenCalled();
     });
     it('should return some application settings already defined by user', async () => {
       agreementsRepository.getOrCreate.mockResolvedValue(mockAgreements);
@@ -129,6 +141,7 @@ describe('SettingsService', () => {
         },
       });
       expect(response).toEqual(mockAppSettings);
+      expect(eventEmitter.emit).toHaveBeenCalledWith(FeatureServerEvents.FeaturesRecalculate);
     });
     it('should update agreements only', async () => {
       const dto: UpdateSettingsDto = {

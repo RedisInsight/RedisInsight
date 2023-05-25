@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
-import { convertRedisInfoReplyToObject, convertBulkStringsToObject } from 'src/utils';
+import { convertRedisInfoReplyToObject, convertBulkStringsToObject, checkTimestamp } from 'src/utils';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
@@ -23,6 +23,7 @@ import {
   SEARCH_INDEXES_RECOMMENDATION_KEYS_FOR_CHECK,
   SEARCH_HASH_RECOMMENDATION_KEYS_FOR_CHECK,
   SEARCH_HASH_RECOMMENDATION_KEYS_LENGTH,
+  RTS_KEYS_FOR_CHECK,
 } from 'src/common/constants';
 
 @Injectable()
@@ -394,9 +395,9 @@ export class RecommendationProvider {
       if (indexes?.length) {
         return null;
       }
-      const hashKeys = keys.filter(({ type, length }) =>
+      const hashKeys = keys.filter(({ type, length }) => (
         type === RedisDataType.Hash && length > SEARCH_HASH_RECOMMENDATION_KEYS_LENGTH
-      );
+      ));
 
       return hashKeys.length > SEARCH_HASH_RECOMMENDATION_KEYS_FOR_CHECK
         ? { name: RECOMMENDATION_NAMES.SEARCH_HASH }
@@ -492,5 +493,46 @@ export class RecommendationProvider {
     const keyIndex = types.findIndex(([, type]) => type === RedisDataType.JSON || type === RedisDataType.Hash);
 
     return keyIndex === -1 ? undefined : sortedSets[keyIndex].name;
+  }
+
+  /**
+   * Check RTS recommendation
+   * @param redisClient
+   * @param keys
+   */
+
+  async determineRTSRecommendation(
+    redisClient: Redis | Cluster,
+    keys: Key[],
+  ): Promise<Recommendation> {
+    try {
+      let processedKeysNumber = 0;
+      let timeSeriesKey = null;
+      let sortedSetNumber = 0;
+      while (
+        processedKeysNumber < keys.length
+        && !timeSeriesKey
+        && sortedSetNumber <= RTS_KEYS_FOR_CHECK
+      ) {
+        if (keys[processedKeysNumber].type !== RedisDataType.ZSet) {
+          processedKeysNumber += 1;
+        } else {
+          const [, membersArray] = await redisClient.sendCommand(
+            // get first member-score pair
+            new Command('zscan', [keys[processedKeysNumber].name, '0', 'COUNT', 2], { replyEncoding: 'utf8' }),
+          ) as string[];
+          if (checkTimestamp(membersArray[0]) || checkTimestamp(membersArray[1].toString())) {
+            timeSeriesKey = keys[processedKeysNumber].name;
+          }
+          processedKeysNumber += 1;
+          sortedSetNumber += 1;
+        }
+      }
+
+      return timeSeriesKey ? { name: RECOMMENDATION_NAMES.RTS, params: { keys: [timeSeriesKey] } } : null;
+    } catch (err) {
+      this.logger.error('Can not determine RTS recommendation', err);
+      return null;
+    }
   }
 }

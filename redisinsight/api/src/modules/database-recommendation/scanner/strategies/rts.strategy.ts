@@ -3,8 +3,7 @@ import { AbstractRecommendationStrategy }
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { getUTF8FromBuffer } from 'src/utils/cli-helper';
-import { RTS_RECOMMENDATION_PERCENTAGE } from 'src/common/constants';
-import { checkTimestamp } from '../utils';
+import { checkTimestamp } from 'src/utils';
 
 export class RTSStrategy extends AbstractRecommendationStrategy {
   /**
@@ -15,14 +14,11 @@ export class RTSStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     data,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    const timestampMemberNames = data?.members.filter(({ name }) => checkTimestamp(getUTF8FromBuffer(name as Buffer)));
-    if ((timestampMemberNames.length / data?.members.length) * 100 >= RTS_RECOMMENDATION_PERCENTAGE) {
-      return { isReached: true, params: { keys: [data?.keyName] } };
-    }
-    const timestampMemberScores = data?.members.filter(({ score }) => checkTimestamp(String(score)));
-    if ((timestampMemberScores.length / data?.members.length) * 100 >= RTS_RECOMMENDATION_PERCENTAGE) {
-      return { isReached: true, params: { keys: [data?.keyName] } };
-    }
-    return { isReached: false };
+    const timestampMemberNames = data?.members.some(({ name }) => checkTimestamp(getUTF8FromBuffer(name as Buffer)));
+    const timestampMemberScores = data?.members.some(({ score }) => checkTimestamp(String(score)));
+
+    return timestampMemberNames || timestampMemberScores
+      ? { isReached: true, params: { keys: [data?.keyName] } }
+      : { isReached: false };
   }
 }

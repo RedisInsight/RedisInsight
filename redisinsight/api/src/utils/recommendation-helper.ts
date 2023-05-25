@@ -1,5 +1,15 @@
 import { sortBy } from 'lodash';
-import { REDISEARCH_MODULES, REDIS_STACK, RECOMMENDATION_NAMES } from 'src/constants';
+import { isValid } from 'date-fns';
+
+import {
+  REDISEARCH_MODULES,
+  REDIS_STACK,
+  RECOMMENDATION_NAMES,
+  IS_TIMESTAMP,
+  IS_INTEGER_NUMBER_REGEX,
+  IS_NUMBER_REGEX,
+} from 'src/constants';
+
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 
 export const isRedisearchModule = (modules: AdditionalRedisModule[]): boolean => modules?.some(
@@ -12,3 +22,24 @@ export const sortRecommendations = (recommendations: any[]) => sortBy(recommenda
   ({ name }) => !REDIS_STACK.includes(name),
   ({ name }) => name,
 ]);
+
+export const checkTimestamp = (value: string): boolean => {
+  try {
+    if (!IS_NUMBER_REGEX.test(value) && isValid(new Date(value))) {
+      return true;
+    }
+    const integerPart = parseInt(value, 10);
+    if (!IS_TIMESTAMP.test(integerPart.toString())) {
+      return false;
+    }
+    if (integerPart.toString().length === value.length) {
+      return true;
+    }
+    // check part after separator
+    const subPart = value.replace(integerPart.toString(), '');
+    return IS_INTEGER_NUMBER_REGEX.test(subPart.substring(1, subPart.length));
+  } catch (err) {
+    // ignore errors
+    return false;
+  }
+};

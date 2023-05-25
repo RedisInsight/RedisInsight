@@ -404,6 +404,52 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
+    describe('RTS recommendation', () => {
+      requirements('!rte.pass');
+      [
+        {
+          name: 'Should create new database analysis with RTS recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          before: async () => {
+            await rte.data.sendCommand('ZADD', [constants.TEST_ZSET_KEY_2, constants.TEST_ZSET_TIMESTAMP_SCORE, constants.TEST_ZSET_MEMBER_1]);
+          },
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([{
+              ...constants.TEST_RTS_RECOMMENDATION,
+              params: { keys: [{ data: [...Buffer.from(constants.TEST_ZSET_KEY_2)], type: "Buffer" }]}
+            }]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+        {
+          name: 'Should create new database analysis with RTS recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          before: async () => {
+            await rte.data.sendCommand('ZADD', [constants.TEST_ZSET_KEY_3, constants.TEST_ZSET_MEMBER_1_SCORE, constants.TEST_ZSET_TIMESTAMP_MEMBER]);
+          },
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([{
+              ...constants.TEST_RTS_RECOMMENDATION,
+              params: { keys: [{ data: [...Buffer.from(constants.TEST_ZSET_KEY_3)], type: "Buffer" }]}
+            }]);
+          },
+          after: async () => {
+            expect(await repository.count()).to.eq(5);
+          }
+        },
+      ].map(mainCheckFn);
+    });
+
     describe('sync recommendations', () => {
       [
         {

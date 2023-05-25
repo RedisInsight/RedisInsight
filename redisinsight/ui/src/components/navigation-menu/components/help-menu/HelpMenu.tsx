@@ -43,9 +43,6 @@ const HelpMenu = () => {
   }
 
   const onClickReleaseNotes = async () => {
-    dispatch(addMessageNotification(
-      successMessages.INSTALLED_NEW_UPDATE('2.2.1', () => dispatch(setReleaseNotesViewed(true)))
-    ))
     sendEventTelemetry({
       event: TelemetryEvent.RELEASE_NOTES_LINK_CLICKED,
       eventData: {

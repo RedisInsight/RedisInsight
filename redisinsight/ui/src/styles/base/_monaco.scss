@@ -36,6 +36,11 @@
   overflow: auto;
 }
 
+.monaco-editor .suggest-widget {
+  max-width: 100% !important;
+  overflow: hidden;
+}
+
 .monaco-params-line {
   color: var(--monacoParamsColor) !important;
 }

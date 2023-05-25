@@ -158,7 +158,7 @@ describe('BulkActions', () => {
           action: BulkActionsType.Delete,
           filter: {
             match: '*',
-            filterType: 'hash'
+            type: 'hash'
           }
         }
       })

@@ -221,10 +221,10 @@ const LiveTimeRecommendations = () => {
                 <>
                   Recommendations will help you improve your database.
                   <br />
-                  Work in the database to see new recommendations appeared on how to improve performance,
-                  optimize memory usage, and enhance the performance of your database.
+                  New recommendations appear while you work with your database,
+                  including how to improve performance and optimize memory usage.
                   <br />
-                  Eager to see more recommendations? Run Database Analysis in order to see the magic happens.
+                  Eager for more recommendations? Run Database Analysis to get started.
                 </>
             )}
             >

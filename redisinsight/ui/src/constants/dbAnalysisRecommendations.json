@@ -395,7 +395,40 @@
       },
       {
         "type": "span",
-        "value": ", natively developed in Redis, and available as part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software."
+        "value": ", natively developed in Redis, and available as part of "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/about/",
+          "name": "Redis Stack"
+        }
+      },
+      {
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-cloud/overview/",
+          "name": "Redis Enterprise Cloud"
+        }
+      },
+      {
+        "type": "span",
+        "value": " and "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-software/overview/",
+          "name": "Redis Enterprise Software"
+        }
+      },
+      {
+        "type": "span",
+        "value": "."
       },
       {
         "type": "spacer",
@@ -505,8 +538,41 @@
         "value": "l"
       },
       {
-        "type": "paragraph",
-        "value": "These capabilities are part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software."
+        "type": "span",
+        "value": "These capabilities are part of "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/about/",
+          "name": "Redis Stack"
+        }
+      },
+      {
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-cloud/overview/",
+          "name": "Redis Enterprise Cloud"
+        }
+      },
+      {
+        "type": "span",
+        "value": " and "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-software/overview/",
+          "name": "Redis Enterprise Software"
+        }
+      },
+      {
+        "type": "span",
+        "value": "."
       },
       {
         "type": "spacer",
@@ -633,8 +699,41 @@
         "value": "l"
       },
       {
-        "type": "paragraph",
-        "value": "The capabilities are part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software."
+        "type": "span",
+        "value": "The capabilities are part of "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/about/",
+          "name": "Redis Stack"
+        }
+      },
+      {
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-cloud/overview/",
+          "name": "Redis Enterprise Cloud"
+        }
+      },
+      {
+        "type": "span",
+        "value": " and "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-software/overview/",
+          "name": "Redis Enterprise Software"
+        }
+      },
+      {
+        "type": "span",
+        "value": "."
       },
       {
         "type": "spacer",
@@ -821,7 +920,7 @@
     "content": [
       {
         "type": "paragraph",
-        "value": "If you are using sorted sets for indexing comes with downsides:"
+        "value": "If you are using sorted sets for indexing, this may have its downsides:"
       },
       {
         "type": "list",
@@ -879,7 +978,40 @@
       },
       {
         "type": "span",
-        "value": "The capability is part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software. Also supported in an "
+        "value": "The capability is part of "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/about/",
+          "name": "Redis Stack"
+        }
+      },
+      {
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-cloud/overview/",
+          "name": "Redis Enterprise Cloud"
+        }
+      },
+      {
+        "type": "span",
+        "value": " and "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-software/overview/",
+          "name": "Redis Enterprise Software"
+        }
+      },
+      {
+        "type": "span",
+        "value": ". Also supported in an "
       },
       {
         "type": "link",
@@ -938,7 +1070,40 @@
       },
       {
         "type": "span",
-        "value": "The capabilities are part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software. Also supported in an "
+        "value": "The capabilities are part of "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/about/",
+          "name": "Redis Stack"
+        }
+      },
+      {
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-cloud/overview/",
+          "name": "Redis Enterprise Cloud"
+        }
+      },
+      {
+        "type": "span",
+        "value": " and "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-software/overview/",
+          "name": "Redis Enterprise Software"
+        }
+      },
+      {
+        "type": "span",
+        "value": ". Also supported in an "
       },
       {
         "type": "link",
@@ -958,80 +1123,6 @@
       {
         "type": "paragraph",
         "value": "Try the interactive tutorial to learn how to index and query documents modeled with JSON."
-      }
-    ]
-  },
-  "integersInSets": {
-    "id": "integersInSets",
-    "redisStack": true,
-    "title": "Use only integers in sets to improve memory efficiency",
-    "tutorial": "/quick-guides/document/working-with-hashes.md",
-    "content": [
-      {
-        "type": "paragraph",
-        "value": "Sets that contain only integers are extremely efficient memory-wise. Try to use integers by mapping string identifiers to integers by either using enums in your programming language or using a Redis hash data structure to map values to integers."
-      },
-      {
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "type": "paragraph",
-        "value": "Once you switch to integers, Redis uses the IntSet encoding internally."
-      },
-      {
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "type": "span",
-        "value": "The IntSet encoding is extremely memory efficient. By default, the value of "
-      },
-      {
-        "type": "code",
-        "value": "set-max-intset-entries"
-      },
-      {
-        "type": "span",
-        "value": " is 512 and is configurable in redis.conf. However, increasing this value will lead to an increase in the latency of set operations and CPU utilization."
-      },
-      {
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "type": "span",
-        "value": "Run "
-      },
-      {
-        "type": "code-link",
-        "value": {
-          "href": "https://redis.io/commands/info/",
-          "name": "INFO COMMANDSTATS"
-        }
-      },
-      {
-        "type": "span",
-        "value": " before and after making this change to verify the latency numbers."
-      },
-      {
-        "type": "spacer",
-        "value": "l"
-      },
-      {
-        "type": "span",
-        "value": "See the "
-      },
-      {
-        "type": "link",
-        "value": {
-          "href": "https://redis.io/docs/management/optimization/memory-optimization/",
-          "name": "documentation"
-        }
-      },
-      {
-        "type": "span",
-        "value": " for more memory optimization strategies."
       }
     ]
   },
@@ -1107,8 +1198,41 @@
         ]
       },
       {
-        "type": "paragraph",
-        "value": "All these capabilities are natively part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software."
+        "type": "span",
+        "value": "All these capabilities are natively part of "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/about/",
+          "name": "Redis Stack"
+        }
+      },
+      {
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-cloud/overview/",
+          "name": "Redis Enterprise Cloud"
+        }
+      },
+      {
+        "type": "span",
+        "value": " and "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-software/overview/",
+          "name": "Redis Enterprise Software"
+        }
+      },
+      {
+        "type": "span",
+        "value": "."
       },
       {
         "type": "spacer",
@@ -1135,7 +1259,18 @@
       },
       {
         "type": "span",
-        "value": "It also provides user-friendly data visualizations and support for Redis Stack capabilities such as "
+        "value": "It also provides user-friendly data visualizations and support for "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/stack/about/",
+          "name": "Redis Stack"
+        }
+      },
+      {
+        "type": "span",
+        "value": " capabilities such as "
       },
       {
         "type": "link",
@@ -1174,24 +1309,70 @@
   },
   "searchHash": {
     "id": "searchHash",
-    "title": "Try indexing your hash documents for efficient data retrieval",
+    "title": "Try indexing your hash documents to query and retrieve data",
     "tutorial": "/quick-guides/document/working-with-hashes.md",
     "redisStack": true,
     "content": [
       {
         "type": "span",
-        "value": "If you are working with hashes and need fast and efficient data retrieval, consider using the "
+        "value": "If you are using hashes and would like to:"
+      },
+      {
+        "type": "list",
+        "value": [
+          [
+            {
+              "type": "span",
+              "value": "query and retrieve data based on attributes other than the primary key;"
+            }
+          ],
+          [
+            {
+              "type": "span",
+              "value": "sort and rank your data based on specific attributes;"
+            }
+          ],
+          [
+            {
+              "type": "span",
+              "value": "perform complex structured aggregations transforming your data by grouping, sorting, and applying different functions ("
+            },
+            {
+              "type": "link",
+              "value": {
+                "href": "https://redis.io/docs/stack/search/reference/aggregations/#apply-expressions/",
+                "name": "Apply Functions"
+              }
+            },
+            {
+              "type": "span",
+              "value": ");"
+            }
+          ]
+        ]
+      },
+      {
+        "type": "span",
+        "value": "consider using the "
       },
       {
         "type": "link",
         "value": {
           "href": "https://redis.io/docs/stack/search/",
-          "name": "query and search capabilities"
+          "name": "query and search"
         }
       },
       {
         "type": "span",
-        "value": ", natively developed in Redis."
+        "value": " capabilities, natively developed in Redis. With it you can perform complex structured queries, full-text searches, aggregations, geo-filtering and much more."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "paragraph",
+        "value": "It offers real-time searching through synchronous indexing, ensuring read-your-writes consistency, without compromising the database performance."
       },
       {
         "type": "spacer",
@@ -1199,37 +1380,51 @@
       },
       {
         "type": "span",
-        "value": "With it, you can perform complex structured aggregations transforming your data by grouping, sorting, and applying different functions ("
+        "value": "The capability is part of "
       },
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/reference/aggregations/#apply-expressions",
-          "name": "Apply Functions"
+          "href": "https://redis.io/docs/stack/about/",
+          "name": "Redis Stack"
         }
       },
       {
         "type": "span",
-        "value": "). Besides you can explore the full-text search, field matching, and complex filtering. It offers real-time searching through synchronous indexing, ensuring read-your-writes consistency, without compromising the database performance."
+        "value": ", "
       },
       {
-        "type": "spacer",
-        "value": "l"
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-cloud/overview/",
+          "name": "Redis Enterprise Cloud"
+        }
       },
       {
         "type": "span",
-        "value": "The capability is part of Redis Stack, Redis Enterprise Cloud, and Redis Enterprise Software. Also supported in an "
+        "value": " and "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-software/overview/",
+          "name": "Redis Enterprise Software"
+        }
+      },
+      {
+        "type": "span",
+        "value": ". Also supported in an "
       },
       {
         "type": "link",
         "value": {
           "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/",
-          "name": "Active-Active"
+          "name": "Active-Active setup"
         }
       },
       {
         "type": "span",
-        "value": " setup."
+        "value": "."
       },
       {
         "type": "spacer",

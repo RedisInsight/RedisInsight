@@ -28,7 +28,7 @@ describe('WS new recommendations', () => {
 
   it('Should notify about new big set recommendations', async () => {
     // generate big set
-    const NUMBERS_OF_SET_MEMBERS = 100_001;
+    const NUMBERS_OF_SET_MEMBERS = 1_001;
     await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
 
     // Initialize sync by connecting

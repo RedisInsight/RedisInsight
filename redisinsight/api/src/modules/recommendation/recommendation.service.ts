@@ -121,10 +121,6 @@ export class RecommendationService {
         () => null,
       ],
       [
-        RECOMMENDATION_NAMES.INTEGERS_IN_SET,
-        () => null,
-      ],
-      [
         RECOMMENDATION_NAMES.SEARCH_JSON,
         async () => await this.recommendationProvider.determineSearchJSONRecommendation(keys, indexes),
       ],

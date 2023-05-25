@@ -203,7 +203,7 @@ describe('POST /databases/:instanceId/analysis', () => {
           statusCode: 201,
           responseSchema,
           before: async () => {
-            await rte.data.generateHugeNumberOfTinyStringKeys(50);
+            await rte.data.generateHugeNumberOfTinyStringKeys(10);
           },
           checkFn: async ({ body }) => {
             // can not predict keys order, params.keys is random
@@ -533,7 +533,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          const BIG_STRING_MEMORY = 5_000_001;
+          const BIG_STRING_MEMORY = 100_001;
           const bigStringValue = Buffer.alloc(BIG_STRING_MEMORY, 'a').toString();
 
           await rte.data.sendCommand('set', [constants.TEST_STRING_KEY_1, bigStringValue]);
@@ -577,7 +577,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          const NUMBERS_OF_SET_MEMBERS = 100_001;
+          const NUMBERS_OF_SET_MEMBERS = 1_001;
           await rte.data.generateHugeNumberOfMembersForSetKey(NUMBERS_OF_SET_MEMBERS, true);
         },
         checkFn: async ({ body }) => {

@@ -670,7 +670,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.com/try-free/",
+          "href": "https://redis.io/docs/stack/timeseries/",
           "name": "time series capabilities"
         }
       },
@@ -692,7 +692,7 @@
       },
       {
         "type": "paragraph",
-        "value": "It also supports a variety of queries for visualization and monitoring with built-in connectors to popular tools."
+        "value": "It also supports a flexible query language for visualization and monitoring, allows querying of different time series keys across the entire keyspace, and provides built-in connectors to popular tools."
       },
       {
         "type": "spacer",
@@ -740,7 +740,7 @@
         "value": "l"
       },
       {
-        "type": "paragraph",
+        "type": "span",
         "value": "Try the interactive tutorial to learn about the time series data structure and capabilities."
       }
     ],

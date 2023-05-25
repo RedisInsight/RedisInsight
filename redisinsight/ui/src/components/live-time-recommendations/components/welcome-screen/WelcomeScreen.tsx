@@ -46,14 +46,14 @@ const NoRecommendationsScreen = () => {
     <div className={styles.container} data-testid="no-recommendations-screen">
       <EuiText className={styles.bigText}>Welcome to</EuiText>
       <EuiText className={styles.hugeText}>Insights!</EuiText>
-      <EuiText className={styles.mediumText}>Where we will help you improve your database.</EuiText>
+      <EuiText className={styles.mediumText}>Where we help improve your database.</EuiText>
       <EuiText className={cx(styles.text, styles.bigMargin)}>
-        Work in the database to see new recommendations appeared on how to improve performance, optimize memory usage,
-        and enhance the performance of your database.
+        New recommendations appear while you work with your database,
+        including how to improve performance and optimize memory usage.
       </EuiText>
       <WelcomeIcon className={styles.icon} />
       <EuiText className={styles.text}>
-        Eager to see more recommendations? Run Database Analysis in order to see the magic happens.
+        Eager for more recommendations? Run Database Analysis to get started.
       </EuiText>
 
       <PopoverRunAnalyze

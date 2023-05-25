@@ -422,7 +422,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.com/redis-enterprise-software/overview/",
           "name": "Redis Enterprise Software"
         }
       },
@@ -566,7 +566,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.com/redis-enterprise-software/overview/",
           "name": "Redis Enterprise Software"
         }
       },
@@ -727,7 +727,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.com/redis-enterprise-software/overview/",
           "name": "Redis Enterprise Software"
         }
       },
@@ -1005,13 +1005,13 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.com/redis-enterprise-software/overview/",
           "name": "Redis Enterprise Software"
         }
       },
       {
         "type": "span",
-        "value": ". Also supported in an"
+        "value": ". Also supported in an "
       },
       {
         "type": "link",
@@ -1097,7 +1097,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.com/redis-enterprise-software/overview/",
           "name": "Redis Enterprise Software"
         }
       },
@@ -1198,7 +1198,7 @@
         ]
       },
       {
-        "type": "paragraph",
+        "type": "span",
         "value": "All these capabilities are natively part of "
       },
       {
@@ -1226,7 +1226,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.com/redis-enterprise-software/overview/",
           "name": "Redis Enterprise Software"
         }
       },
@@ -1343,6 +1343,10 @@
                 "href": "https://redis.io/docs/stack/search/reference/aggregations/#apply-expressions/",
                 "name": "Apply Functions"
               }
+            },
+            {
+              "type": "span",
+              "value": ");"
             }
           ]
         ]
@@ -1403,7 +1407,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.com/redis-enterprise-software/overview/",
           "name": "Redis Enterprise Software"
         }
       },
@@ -1417,6 +1421,10 @@
           "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/",
           "name": "Active-Active setup"
         }
+      },
+      {
+        "type": "span",
+        "value": "."
       },
       {
         "type": "spacer",

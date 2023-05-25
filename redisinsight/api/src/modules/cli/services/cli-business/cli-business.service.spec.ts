@@ -9,6 +9,7 @@ import {
   mockRedisWrongTypeError,
   mockCliAnalyticsService,
   mockRedisMovedError, MockType,
+  mockDatabaseRecommendationService,
   mockCliClientMetadata,
 } from 'src/__mocks__';
 import {
@@ -27,11 +28,12 @@ import {
   CommandParsingError,
   WrongDatabaseTypeError,
 } from 'src/modules/cli/constants/errors';
-import { unknownCommand } from 'src/constants';
+import { RECOMMENDATION_NAMES, unknownCommand } from 'src/constants';
 import { CliAnalyticsService } from 'src/modules/cli/services/cli-analytics/cli-analytics.service';
 import { KeytarUnavailableException } from 'src/modules/encryption/exceptions';
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { CommandsService } from 'src/modules/commands/commands.service';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes, IOutputFormatterStrategy } from './output-formatter/output-formatter.interface';
 import { CliBusinessService } from './cli-business.service';
@@ -65,6 +67,7 @@ const mockIntegerResponse = 5;
 describe('CliBusinessService', () => {
   let service: CliBusinessService;
   let cliTool;
+  let recommendationService;
   let textFormatter: IOutputFormatterStrategy;
   let rawFormatter: IOutputFormatterStrategy;
   let analyticsService: MockType<CliAnalyticsService>;
@@ -85,12 +88,17 @@ describe('CliBusinessService', () => {
           provide: CommandsService,
           useFactory: mockCommandsService,
         },
+        {
+          provide: DatabaseRecommendationService,
+          useFactory: mockDatabaseRecommendationService,
+        },
       ],
     }).compile();
 
     service = module.get<CliBusinessService>(CliBusinessService);
     cliTool = module.get<RedisToolService>(RedisToolService);
     analyticsService = module.get(CliAnalyticsService);
+    recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
     const outputFormatterManager: OutputFormatterManager = get(
       service,
       'outputFormatterManager',
@@ -403,6 +411,20 @@ describe('CliBusinessService', () => {
         },
       );
     });
+
+    it('should call recommendationService', async () => {
+      const dto: SendCommandDto = { command: mockMemoryUsageCommand };
+      const [ command ] = dto.command.split(' ')
+
+      await service.sendCommand(mockCliClientMetadata, dto);
+
+      expect(recommendationService.check).toBeCalledWith(
+        mockCliClientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
+        command,
+      );
+      expect(recommendationService.check).toBeCalledTimes(1);
+    });
   });
 
   describe('sendClusterCommand', () => {
@@ -649,6 +671,29 @@ describe('CliBusinessService', () => {
           },
         );
       }
+    });
+
+    it('should call recommendationService', async () => {
+      const commandInit = mockServerInfoCommand;
+      const [ command ] = commandInit?.split(' ')
+
+      cliTool.execCommandForNodes.mockResolvedValue([
+        { response: 5, ...mockNode, status: CommandExecutionStatus.Success },
+      ]);
+
+      await service.sendCommandForNodes(
+        mockCliClientMetadata,
+        command,
+        ClusterNodeRole.Master,
+      );
+
+      expect(recommendationService.check).toBeCalledWith(
+        mockCliClientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
+        command,
+      );
+
+      expect(recommendationService.check).toBeCalledTimes(1);
     });
   });
 
@@ -1012,6 +1057,31 @@ describe('CliBusinessService', () => {
           },
         );
       }
+    });
+
+    it('should call recommendationService', async () => {
+      const commandInit = mockMemoryUsageCommand;
+      const [ command ] = commandInit?.split(' ')
+      cliTool.execCommandForNode.mockResolvedValue({
+        response: 5,
+        ...mockNode,
+        status: CommandExecutionStatus.Success,
+      });
+
+      await service.sendCommandForSingleNode(
+        mockCliClientMetadata,
+        commandInit,
+        ClusterNodeRole.All,
+        nodeOptions,
+      );
+
+      expect(recommendationService.check).toBeCalledWith(
+        mockCliClientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
+        command,
+      );
+
+      expect(recommendationService.check).toBeCalledTimes(1);
     });
   });
 });

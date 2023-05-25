@@ -2,6 +2,7 @@ import IORedis from 'ioredis';
 import { omit } from 'lodash';
 import {
   mockSocket,
+  mockBulActionsAnalyticsService,
 } from 'src/__mocks__';
 import {
   DeleteBulkActionSimpleRunner,
@@ -32,6 +33,23 @@ const mockCreateBulkActionDto = {
   id: 'bulk-action-id',
   databaseId: 'database-id',
   type: BulkActionType.Delete,
+};
+
+const mockOverview = {
+  ...mockCreateBulkActionDto,
+  duration: jasmine.any(Number),
+  filter: { match: '*', type: null },
+  progress: {
+    scanned: 0,
+    total: 0,
+  },
+  status: 'completed',
+  summary: {
+    failed: 0,
+    processed: 0,
+    succeed: 0,
+    errors: [],
+  },
 };
 
 let bulkAction;
@@ -85,6 +103,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
       mockCreateBulkActionDto.type,
       mockBulkActionFilter,
       mockSocket,
+      mockBulActionsAnalyticsService,
     );
   });
 
@@ -303,8 +322,14 @@ describe('AbstractBulkActionSimpleRunner', () => {
   });
   describe('sendOverview', () => {
     let sendOverviewSpy;
+    let sendActionSucceedSpy;
+    let sendActionFailedSpy;
+    let sendActionStoppedSpy;
 
     beforeEach(() => {
+      sendActionSucceedSpy = jest.spyOn(bulkAction['analyticsService'], 'sendActionSucceed');
+      sendActionFailedSpy = jest.spyOn(bulkAction['analyticsService'], 'sendActionFailed');
+      sendActionStoppedSpy = jest.spyOn(bulkAction['analyticsService'], 'sendActionStopped');
       sendOverviewSpy = jest.spyOn(bulkAction, 'sendOverview');
     });
 
@@ -319,6 +344,57 @@ describe('AbstractBulkActionSimpleRunner', () => {
       bulkAction.sendOverview();
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('Should call sendActionSucceed', () => {
+      mockSocket.emit.mockReturnValue();
+
+      bulkAction['status'] = BulkActionStatus.Completed;
+
+      bulkAction.sendOverview();
+
+      expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
+      expect(sendActionFailedSpy).not.toHaveBeenCalled();
+      expect(sendActionStoppedSpy).not.toHaveBeenCalled();
+      expect(sendActionSucceedSpy).toHaveBeenCalledWith(mockOverview);
+    });
+
+    it('Should call sendActionFailed', () => {
+      mockSocket.emit.mockReturnValue();
+
+      bulkAction['status'] = BulkActionStatus.Failed;
+      bulkAction['error'] = 'some error';
+
+      bulkAction.sendOverview();
+
+      expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
+      expect(sendActionSucceedSpy).not.toHaveBeenCalled();
+      expect(sendActionStoppedSpy).not.toHaveBeenCalled();
+      expect(sendActionFailedSpy).toHaveBeenCalledWith(
+        {
+          ...mockOverview,
+          status: 'failed',
+        },
+        'some error',
+      );
+    });
+
+    it('Should call sendActionStopped', () => {
+      mockSocket.emit.mockReturnValue();
+
+      bulkAction['status'] = BulkActionStatus.Aborted;
+
+      bulkAction.sendOverview();
+
+      expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
+      expect(sendActionSucceedSpy).not.toHaveBeenCalled();
+      expect(sendActionFailedSpy).not.toHaveBeenCalled();
+      expect(sendActionStoppedSpy).toHaveBeenCalledWith(
+        {
+          ...mockOverview,
+          status: 'aborted',
+        },
+      );
     });
   });
   describe('Other', () => {

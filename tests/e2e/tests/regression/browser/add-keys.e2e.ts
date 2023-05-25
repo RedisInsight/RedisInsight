@@ -8,7 +8,6 @@ import { BrowserActions } from '../../../common-actions/browser-actions';
 
 const browserPage = new BrowserPage();
 const browserActions = new BrowserActions();
-const common = new Common();
 const jsonKeys = [['JSON-string', '"test"'], ['JSON-number', '782364'], ['JSON-boolean', 'true'], ['JSON-null', 'null'], ['JSON-array', '[1, 2, 3]']];
 let keyNames: string[];
 let indexName: string;
@@ -32,10 +31,10 @@ fixture `Add keys`
     });
 test('Verify that user can create different types(string, number, null, array, boolean) of JSON', async t => {
     for (let i = 0; i < jsonKeys.length; i++) {
-        const keySelector = await browserPage.getKeySelectorByName(jsonKeys[i][0]);
+        const keySelector = browserPage.getKeySelectorByName(jsonKeys[i][0]);
         await browserPage.addJsonKey(jsonKeys[i][0], jsonKeys[i][1]);
-        await t.hover(browserPage.toastCloseButton);
-        await t.click(browserPage.toastCloseButton);
+        await t.hover(browserPage.Toast.toastCloseButton);
+        await t.click(browserPage.Toast.toastCloseButton);
         await t.click(browserPage.refreshKeysButton);
         await t.expect(keySelector.exists).ok(`${jsonKeys[i][0]} key not displayed`);
         // Add additional check for array elements
@@ -63,12 +62,12 @@ test
         await browserPage.Cli.sendCommandsInCli(commands);
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that the new key is displayed at the top of the list', async t => {
-        const keyName = common.generateWord(12);
-        const keyName1 = common.generateWord(12);
-        const keyName2 = common.generateWord(36);
-        const keyName3 = common.generateWord(10);
-        const keyName4 = `${common.generateWord(10)}-test`;
-        const keyName5 = `hash-${common.generateWord(12)}`;
+        const keyName = Common.generateWord(12);
+        const keyName1 = Common.generateWord(12);
+        const keyName2 = Common.generateWord(36);
+        const keyName3 = Common.generateWord(10);
+        const keyName4 = `${Common.generateWord(10)}-test`;
+        const keyName5 = `hash-${Common.generateWord(12)}`;
         keyNames = [keyName, keyName1, keyName2, keyName3, keyName4, keyName5];
         indexName = `idx:${keyName5}`;
         const command = `FT.CREATE ${indexName} ON HASH PREFIX 1 hash- SCHEMA name TEXT`;

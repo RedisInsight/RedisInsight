@@ -5,6 +5,9 @@ import { DatabaseOverview } from 'src/modules/database/models/database-overview'
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 import { ClientMetadata } from 'src/common/models';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
+import { RECOMMENDATION_NAMES } from 'src/constants';
+import { DatabaseService } from './database.service';
 
 @Injectable()
 export class DatabaseInfoService {
@@ -14,6 +17,8 @@ export class DatabaseInfoService {
     private readonly databaseConnectionService: DatabaseConnectionService,
     private readonly databaseOverviewProvider: DatabaseOverviewProvider,
     private readonly databaseInfoProvider: DatabaseInfoProvider,
+    private readonly recommendationService: DatabaseRecommendationService,
+    private readonly databaseService: DatabaseService,
   ) {}
 
   /**
@@ -54,17 +59,24 @@ export class DatabaseInfoService {
     this.logger.log(`Connection to database index: ${db}`);
 
     let client;
+    const prevDb = clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0;
 
     try {
       client = await this.databaseConnectionService.createClient({
         ...clientMetadata,
         db,
       });
-      client?.disconnect();
+      client?.disconnect?.();
+
+      this.recommendationService.check(
+        { ...clientMetadata, db },
+        RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES,
+        { db, prevDb },
+      );
       return undefined;
     } catch (e) {
       this.logger.error(`Unable to connect to logical database: ${db}`, e);
-      client?.disconnect();
+      client?.disconnect?.();
       throw e;
     }
   }

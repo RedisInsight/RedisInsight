@@ -10,10 +10,9 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const common = new Common();
 
-const keyName = common.generateWord(10);
-const longFieldName = common.generateSentence(20);
+const keyName = Common.generateWord(10);
+const longFieldName = Common.generateSentence(20);
 const keys = [
     {   type: 'Hash',
         name: `${keyName}:1`,
@@ -52,7 +51,7 @@ fixture `Resize columns in Key details`
         await acceptLicenseTerms();
         await addNewStandaloneDatabasesApi(databasesForAdding);
         // Reload Page
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
         await browserPage.addHashKey(keys[0].name, '2147476121', longFieldName, longFieldName);
         await browserPage.addListKey(keys[1].name, '2147476121', 'element');

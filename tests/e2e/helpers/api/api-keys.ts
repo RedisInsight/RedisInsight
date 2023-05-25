@@ -1,6 +1,6 @@
 import { t } from 'testcafe';
 import * as request from 'supertest';
-import { AddNewDatabaseParameters } from '../../pageObjects/add-redis-database-page';
+import { AddNewDatabaseParameters } from '../../pageObjects/components/myRedisDatabase/add-redis-database';
 import { Common } from '../../helpers/common';
 import {
     HashKeyParameters,
@@ -11,8 +11,7 @@ import {
 } from '../../pageObjects/browser-page';
 import { getDatabaseIdByName } from './api-database';
 
-const common = new Common();
-const endpoint = common.getEndpoint();
+const endpoint = Common.getEndpoint();
 
 /**
  * Add Hash key

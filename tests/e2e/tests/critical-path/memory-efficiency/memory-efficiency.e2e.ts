@@ -4,14 +4,12 @@ import { rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 const chance = new Chance();
 
 const hashKeyName = 'test:Hash1';
@@ -37,7 +35,7 @@ fixture `Memory Efficiency`
 test('No reports/keys message and report tooltip', async t => {
     const noReportsMessage = 'No Reports foundRun "New Analysis" to generate first report.';
     const noKeysMessage = 'No keys to displayUse Workbench Guides and Tutorials to quickly load the data.';
-    const tooltipText = 'Analyze up to 10 000 keys per Redis database to get an overview of your data.';
+    const tooltipText = 'Analyze up to 10 000 keys to get an overview of your data and recommendations';
 
     // Verify that user can see the “No reports found” message when report wasn't generated
     await t.expect(memoryEfficiencyPage.noReportsText.textContent).eql(noReportsMessage, 'No reports message not displayed or text is invalid');
@@ -59,8 +57,8 @@ test
         await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);
         await browserPage.addStreamKey(streamKeyName, 'field', 'value', keysTTL[2]);
         await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value', keysTTL[2]);
-        if (await browserPage.submitTooltipBtn.exists) {
-            await t.click(browserPage.submitTooltipBtn);
+        if (await browserPage.Toast.toastSubmitBtn.exists) {
+            await t.click(browserPage.Toast.toastSubmitBtn);
         }
         await browserPage.Cli.addKeysFromCliWithDelimiter('MSET', 15);
         await t.click(browserPage.treeViewButton);
@@ -191,7 +189,7 @@ test
         // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Reload page
-        await common.reloadPage();
+        await memoryEfficiencyPage.reloadPage();
         // Verify that context saved after reloading page
         await t.expect(memoryEfficiencyPage.nameSpaceTableRows.nth(0).textContent).contains(keySpaces[0], 'Summary per keyspaces context not saved');
         //Go to PubSub page

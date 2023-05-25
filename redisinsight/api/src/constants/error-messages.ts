@@ -3,6 +3,7 @@ export default {
   INVALID_DATABASE_INSTANCE_ID: 'Invalid database instance id.',
   COMMAND_EXECUTION_NOT_FOUND: 'Command execution was not found.',
   DATABASE_ANALYSIS_NOT_FOUND: 'Database analysis was not found.',
+  DATABASE_RECOMMENDATION_NOT_FOUND: 'Database recommendation was not found.',
   BROWSER_HISTORY_ITEM_NOT_FOUND: 'Browser history item was not found.',
   PROFILER_LOG_FILE_NOT_FOUND: 'Profiler log file was not found.',
   CONSUMER_GROUP_NOT_FOUND: 'Consumer Group with such name was not found.',

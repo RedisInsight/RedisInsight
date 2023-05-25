@@ -23,7 +23,9 @@ enum BrowserStorageItem {
   keyDetailSizes = 'keyDetailSizes',
   featuresHighlighting = 'featuresHighlighting',
   dbIndex = 'dbIndex_',
-  onboardingStep = 'onboardingStep'
+  onboardingStep = 'onboardingStep',
+  recommendationsViewed = 'recommendationsViewed',
+  showHiddenRecommendations = 'showHiddenRecommendations',
 }
 
 export default BrowserStorageItem

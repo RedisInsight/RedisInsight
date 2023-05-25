@@ -60,8 +60,10 @@ describe('BulkActionsTabs', () => {
       eventData: {
         databaseId: '',
         action: BulkActionsType.Delete,
-        match: 'PATTERN',
-        filterType: 'set'
+        filter: {
+          match: 'PATTERN',
+          type: 'set'
+        }
       }
     });
 

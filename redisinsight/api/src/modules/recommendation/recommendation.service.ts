@@ -14,6 +14,7 @@ interface RecommendationInput {
   total?: number,
   globalClient?: Redis | Cluster,
   exclude?: string[],
+  indexes?: string[],
 }
 
 @Injectable()
@@ -37,9 +38,10 @@ export class RecommendationService {
       total,
       globalClient,
       exclude,
+      indexes,
     } = dto;
 
-    const recommendations = new Map([
+    const recommendations = new Map<string, () => Promise<Recommendation | null>>([
       [
         RECOMMENDATION_NAMES.LUA_SCRIPT,
         async () => await this.recommendationProvider.determineLuaScriptRecommendation(client),
@@ -70,7 +72,7 @@ export class RecommendationService {
       ],
       [
         RECOMMENDATION_NAMES.COMPRESS_HASH_FIELD_NAMES,
-        async () => await this.recommendationProvider.determineCompressHashFieldNamesRecommendation(keys),
+        () => null,
       ],
       [
         RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST,
@@ -97,10 +99,6 @@ export class RecommendationService {
         async () => await this.recommendationProvider.determineRTSRecommendation(client, keys),
       ],
       [
-        RECOMMENDATION_NAMES.REDIS_SEARCH,
-        async () => await this.recommendationProvider.determineRediSearchRecommendation(client, keys),
-      ],
-      [
         RECOMMENDATION_NAMES.REDIS_VERSION,
         async () => await this.recommendationProvider.determineRedisVersionRecommendation(client),
       ],
@@ -111,6 +109,23 @@ export class RecommendationService {
       [
         RECOMMENDATION_NAMES.SET_PASSWORD,
         async () => await this.recommendationProvider.determineSetPasswordRecommendation(client),
+      ],
+      [
+        RECOMMENDATION_NAMES.SEARCH_HASH,
+        async () => await this.recommendationProvider.determineSearchHashRecommendation(keys, indexes),
+      ],
+      // it is live time recommendation (will add later)
+      [
+        RECOMMENDATION_NAMES.STRING_TO_JSON,
+        () => null,
+      ],
+      [
+        RECOMMENDATION_NAMES.SEARCH_JSON,
+        async () => await this.recommendationProvider.determineSearchJSONRecommendation(keys, indexes),
+      ],
+      [
+        RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
+        () => null,
       ],
     ]);
 

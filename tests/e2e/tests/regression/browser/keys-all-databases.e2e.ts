@@ -26,22 +26,21 @@ import {
 import { BrowserActions } from '../../../common-actions/browser-actions';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserActions = new BrowserActions();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const verifyKeysAdded = async(): Promise<void> => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     // Add Hash key
     await browserPage.addHashKey(keyName);
     // Check the notification message
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not correct');
     // Check that new key is displayed in the list
     await browserPage.searchByKeyName(keyName);
     const keyNameInTheList = Selector(`[data-testid="key-${keyName}"]`);
-    await common.waitForElementNotVisible(browserPage.loader);
+    await Common.waitForElementNotVisible(browserPage.loader);
     await t.expect(keyNameInTheList.exists).ok(`${keyName} key is not added`);
 };
 

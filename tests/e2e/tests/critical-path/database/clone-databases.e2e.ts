@@ -1,5 +1,5 @@
 import { rte } from '../../../helpers/constants';
-import { AddRedisDatabasePage, MyRedisDatabasePage } from '../../../pageObjects';
+import { MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossClusterConfig, ossSentinelConfig, ossStandaloneConfig } from '../../../helpers/conf';
 import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/database';
 import {
@@ -10,11 +10,8 @@ import {
     deleteStandaloneDatabaseApi,
     discoverSentinelDatabaseApi
 } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const common = new Common();
 const newOssDatabaseAlias = 'cloned oss cluster';
 
 fixture `Clone databases`
@@ -24,7 +21,7 @@ test
     .before(async() => {
         await acceptLicenseTerms();
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete databases
@@ -37,26 +34,26 @@ test
         await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
 
         // Verify that user can test Standalone connection on edit and see the success message
-        await t.click(addRedisDatabasePage.testConnectionBtn);
-        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'Standalone connection is not successful');
+        await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
+        await t.expect(myRedisDatabasePage.Toast.toastHeader.textContent).contains('Connection is successful', 'Standalone connection is not successful');
 
         // Verify that user can cancel the Clone by clicking the “Cancel” or the “x” button
-        await t.click(addRedisDatabasePage.cloneDatabaseButton);
-        await t.click(addRedisDatabasePage.cancelButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
         await t.expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).notOk('Clone panel is still displayed', { timeout: 2000 });
         await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
-        await t.click(addRedisDatabasePage.cloneDatabaseButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
         // Verify that user see the “Add Database Manually” form pre-populated with all the connection data when cloning DB
         await t
             // Verify that name in the header has the prefix “Clone”
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
-            .expect(addRedisDatabasePage.hostInput.getAttribute('value')).eql(ossStandaloneConfig.host, 'Wrong host value')
-            .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossStandaloneConfig.port, 'Wrong port value')
-            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossStandaloneConfig.databaseName, 'Wrong host value')
+            .expect(myRedisDatabasePage.AddRedisDatabase.hostInput.getAttribute('value')).eql(ossStandaloneConfig.host, 'Wrong host value')
+            .expect(myRedisDatabasePage.AddRedisDatabase.portInput.getAttribute('value')).eql(ossStandaloneConfig.port, 'Wrong port value')
+            .expect(myRedisDatabasePage.AddRedisDatabase.databaseAliasInput.getAttribute('value')).eql(ossStandaloneConfig.databaseName, 'Wrong host value')
             // Verify that timeout input is displayed for clone db window
-            .expect(addRedisDatabasePage.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30 on clone window');
+            .expect(myRedisDatabasePage.AddRedisDatabase.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30 on clone window');
         // Verify that user can confirm the creation of the database by clicking “Clone Database”
-        await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count).eql(2, 'DB was not cloned');
 
         // Verify new connection badge for cloned database
@@ -66,7 +63,7 @@ test
     .before(async() => {
         await acceptLicenseTerms();
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete database
@@ -77,17 +74,17 @@ test
         await clickOnEditDatabaseByName(ossClusterConfig.ossClusterDatabaseName);
 
         // Verify that user can test OSS Cluster connection on edit and see the success message
-        await t.click(addRedisDatabasePage.testConnectionBtn);
-        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'OSS Cluster connection is not successful');
+        await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
+        await t.expect(myRedisDatabasePage.Toast.toastHeader.textContent).contains('Connection is successful', 'OSS Cluster connection is not successful');
 
-        await t.click(addRedisDatabasePage.cloneDatabaseButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
         await t
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
-            .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossClusterConfig.ossClusterPort, 'Wrong port value')
-            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossClusterConfig.ossClusterDatabaseName, 'Wrong host value');
+            .expect(myRedisDatabasePage.AddRedisDatabase.portInput.getAttribute('value')).eql(ossClusterConfig.ossClusterPort, 'Wrong port value')
+            .expect(myRedisDatabasePage.AddRedisDatabase.databaseAliasInput.getAttribute('value')).eql(ossClusterConfig.ossClusterDatabaseName, 'Wrong host value');
         // Edit Database alias before cloning
-        await t.typeText(addRedisDatabasePage.databaseAliasInput, newOssDatabaseAlias, { replace: true });
-        await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+        await t.typeText(myRedisDatabasePage.AddRedisDatabase.databaseAliasInput, newOssDatabaseAlias, { replace: true });
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(newOssDatabaseAlias).exists).ok('DB was not closed');
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossClusterConfig.ossClusterDatabaseName).exists).ok('Original DB is not displayed');
 
@@ -99,37 +96,37 @@ test
         await acceptLicenseTerms();
         // Add Sentinel databases
         await discoverSentinelDatabaseApi(ossSentinelConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete all primary groups
         await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
     })
     .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
         await clickOnEditDatabaseByName(ossSentinelConfig.masters[1].alias);
-        await t.click(addRedisDatabasePage.cloneDatabaseButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
 
         // Verify that user can test Sentinel connection on edit and see the success message
-        await t.click(addRedisDatabasePage.testConnectionBtn);
-        await t.expect(myRedisDatabasePage.databaseInfoMessage.textContent).contains('Connection is successful', 'Sentinel connection is not successful');
+        await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
+        await t.expect(myRedisDatabasePage.Toast.toastHeader.textContent).contains('Connection is successful', 'Sentinel connection is not successful');
 
         // Verify that for Sentinel Host and Port fields are replaced with editable Primary Group Name field
         await t
             .expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).ok('Clone panel is not displayed')
-            .expect(addRedisDatabasePage.databaseAliasInput.getAttribute('value')).eql(ossSentinelConfig.masters[1].alias, 'Invalid primary group alias value')
-            .expect(addRedisDatabasePage.primaryGroupNameInput.getAttribute('value')).eql(ossSentinelConfig.masters[1].name, 'Invalid primary group name value');
+            .expect(myRedisDatabasePage.AddRedisDatabase.databaseAliasInput.getAttribute('value')).eql(ossSentinelConfig.masters[1].alias, 'Invalid primary group alias value')
+            .expect(myRedisDatabasePage.AddRedisDatabase.primaryGroupNameInput.getAttribute('value')).eql(ossSentinelConfig.masters[1].name, 'Invalid primary group name value');
         // Validate Databases section
         await t
-            .click(addRedisDatabasePage.cloneSentinelDatabaseNavigation)
-            .expect(addRedisDatabasePage.masterGroupPassword.getAttribute('value')).eql(ossSentinelConfig.masters[1].password, 'Invalid sentinel database password');
+            .click(myRedisDatabasePage.AddRedisDatabase.cloneSentinelDatabaseNavigation)
+            .expect(myRedisDatabasePage.AddRedisDatabase.masterGroupPassword.getAttribute('value')).eql(ossSentinelConfig.masters[1].password, 'Invalid sentinel database password');
         // Validate Sentinel section
         await t
-            .click(addRedisDatabasePage.cloneSentinelNavigation)
-            .expect(addRedisDatabasePage.portInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPort, 'Invalid sentinel port')
-            .expect(addRedisDatabasePage.passwordInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPassword, 'Invalid sentinel password');
+            .click(myRedisDatabasePage.AddRedisDatabase.cloneSentinelNavigation)
+            .expect(myRedisDatabasePage.AddRedisDatabase.portInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPort, 'Invalid sentinel port')
+            .expect(myRedisDatabasePage.AddRedisDatabase.passwordInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPassword, 'Invalid sentinel password');
         // Clone Sentinel Primary Group
-        await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.masters[1].alias).count).gt(1, 'Primary Group was not cloned');
 
         // Verify new connection badge for Sentinel db

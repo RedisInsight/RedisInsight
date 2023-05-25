@@ -1,7 +1,9 @@
 import {
   Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
-import { isEmpty, merge, omit, reject, sum } from 'lodash';
+import {
+  isEmpty, merge, omit, reject, sum,
+} from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -33,7 +35,7 @@ export class DatabaseService {
     'sshOptions.passphrase',
     'sshOptions.privateKey',
     'sentinelMaster.password',
-  ]
+  ];
 
   constructor(
     private repository: DatabaseRepository,
@@ -246,7 +248,7 @@ export class DatabaseService {
    * @param withSecrets
    */
   async export(ids: string[], withSecrets = false): Promise<ExportDatabase[]> {
-    const paths = !withSecrets ? this.exportSecurityFields : []
+    const paths = !withSecrets ? this.exportSecurityFields : [];
 
     this.logger.log(`Exporting many database: ${ids}`);
 
@@ -255,20 +257,21 @@ export class DatabaseService {
       throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
     }
 
-    let entities: ExportDatabase[] = reject(
+    const entities: ExportDatabase[] = reject(
       await Promise.all(ids.map(async (id) => {
         try {
           return await this.get(id);
         } catch (e) {
+          // ignore
         }
       })),
-    isEmpty)
+      isEmpty,
+    );
 
-    return entities.map((database) =>
-      classToClass(
-        ExportDatabase,
-        omit(database, paths),
-        { groups: ['security'] },
-    ))
+    return entities.map((database) => classToClass(
+      ExportDatabase,
+      omit(database, paths),
+      { groups: ['security'] },
+    ));
   }
 }

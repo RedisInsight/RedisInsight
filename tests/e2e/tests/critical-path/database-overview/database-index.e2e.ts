@@ -16,11 +16,10 @@ import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList, verifySe
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const common = new Common();
 const workbenchPage = new WorkbenchPage();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 
-const keyName = common.generateWord(10);
+const keyName = Common.generateWord(10);
 const indexName = `idx:${keyName}`;
 const keyNames = [`${keyName}:1`, `${keyName}:2`];
 const commands = [
@@ -63,7 +62,7 @@ test('Switching between indexed databases', async t => {
     await browserPage.verifyNoKeysInDatabase();
 
     // Verify that logical db not changed after reloading page
-    await common.reloadPage();
+    await browserPage.reloadPage();
     await browserPage.OverviewPanel.verifyDbIndexSelected(1);
     await browserPage.verifyNoKeysInDatabase();
 

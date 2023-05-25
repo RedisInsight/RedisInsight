@@ -13,6 +13,7 @@ import {
   mockRedisNoPermError,
   mockRedisWrongTypeError,
   mockBrowserClientMetadata,
+  mockDatabaseRecommendationService,
 } from 'src/__mocks__';
 import {
   GetHashFieldsDto,
@@ -29,11 +30,14 @@ import {
   mockGetFieldsResponse,
   mockRedisHScanResponse,
 } from 'src/modules/browser/__mocks__';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
+import { RECOMMENDATION_NAMES } from 'src/constants';
 import { HashBusinessService } from './hash-business.service';
 
 describe('HashBusinessService', () => {
   let service: HashBusinessService;
   let browserTool;
+  let recommendationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -43,11 +47,16 @@ describe('HashBusinessService', () => {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
         },
+        {
+          provide: DatabaseRecommendationService,
+          useFactory: mockDatabaseRecommendationService,
+        },
       ],
     }).compile();
 
     service = module.get<HashBusinessService>(HashBusinessService);
     browserTool = module.get<BrowserToolService>(BrowserToolService);
+    recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
   });
 
   describe('createHash', () => {
@@ -272,6 +281,35 @@ describe('HashBusinessService', () => {
       await expect(
         service.getFields(mockBrowserClientMetadata, mockGetFieldsDto),
       ).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should call recommendationService', async () => {
+      when(browserTool.execCommand)
+        .calledWith(
+          mockBrowserClientMetadata,
+          BrowserToolHashCommands.HScan,
+          expect.anything(),
+        )
+        .mockResolvedValue(mockRedisHScanResponse);
+
+      const result = await service.getFields(
+        mockBrowserClientMetadata,
+        mockGetFieldsDto,
+      );
+      expect(result).toEqual(mockGetFieldsResponse);
+      expect(browserTool.execCommand).toHaveBeenCalledWith(
+        mockBrowserClientMetadata,
+        BrowserToolHashCommands.HScan,
+        expect.anything(),
+      );
+
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.BIG_HASHES,
+        { total: result.total, keyName: result.keyName },
+      );
+
+      expect(recommendationService.check).toBeCalledTimes(1);
     });
   });
 

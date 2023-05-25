@@ -11,9 +11,8 @@ import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 
 fixture `Browser Context`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -27,7 +26,7 @@ fixture `Browser Context`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that if user has saved context on Browser page and go to Settings page, Browser and Workbench icons are displayed and user is able to open Browser with saved context', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     const command = 'HSET';
     // Create context modificaions and navigate to Settings
     await browserPage.addStringKey(keyName);
@@ -47,7 +46,7 @@ test('Verify that if user has saved context on Browser page and go to Settings p
     await t.click(browserPage.Cli.cliCollapseButton);
 });
 test('Verify that when user reload the window with saved context(on any page), context is not saved when he returns back to Browser page', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     // Create context modificaions and navigate to Workbench
     await browserPage.addStringKey(keyName);
     await browserPage.openKeyDetails(keyName);
@@ -58,7 +57,7 @@ test('Verify that when user reload the window with saved context(on any page), c
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is not selected');
     // Navigate to Workbench and reload the window
     await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
-    await common.reloadPage();
+    await myRedisDatabasePage.reloadPage();
     // Return back to Browser and check context is not saved
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', keyName).exists).notOk('Filter per key name is applied');

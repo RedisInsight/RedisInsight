@@ -64,6 +64,14 @@ export enum TelemetryEvents {
   // Bulk Actions
   BulkActionsStarted = 'BULK_ACTIONS_STARTED',
   BulkActionsStopped = 'BULK_ACTIONS_STOPPED',
+  BulkActionsSucceed = 'BULK_ACTIONS_SUCCEED',
+  BulkActionsFailed = 'BULK_ACTIONS_FAILED',
+
+  // Feature
+  FeatureFlagConfigUpdated = 'FEATURE_FLAG_CONFIG_UPDATED',
+  FeatureFlagConfigUpdateError = 'FEATURE_FLAG_CONFIG_UPDATE_ERROR',
+  FeatureFlagInvalidRemoteConfig = 'FEATURE_FLAG_INVALID_REMOTE_CONFIG',
+  FeatureFlagRecalculated = 'FEATURE_FLAG_RECALCULATED',
 }
 
 export enum CommandType {

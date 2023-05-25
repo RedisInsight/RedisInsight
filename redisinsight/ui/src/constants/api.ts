@@ -5,6 +5,7 @@ enum ApiEndpoints {
   DATABASES_EXPORT = 'databases/export',
 
   BULK_ACTIONS_IMPORT = 'bulk-actions/import',
+  BULK_ACTIONS_IMPORT_TUTORIAL_DATA = 'bulk-actions/import/tutorial-data',
 
   CA_CERTIFICATES = 'certificates/ca',
   CLIENT_CERTIFICATES = 'certificates/client',
@@ -100,6 +101,8 @@ enum ApiEndpoints {
   PUB_SUB_MESSAGES = 'pub-sub/messages',
   CLUSTER_DETAILS = 'cluster-details',
   DATABASE_ANALYSIS = 'analysis',
+  RECOMMENDATIONS = 'recommendations',
+  RECOMMENDATIONS_READ = 'recommendations/read',
 
   NOTIFICATIONS = 'notifications',
   NOTIFICATIONS_READ = 'notifications/read',
@@ -107,6 +110,8 @@ enum ApiEndpoints {
   REDISEARCH = 'redisearch',
   REDISEARCH_SEARCH = 'redisearch/search',
   HISTORY = 'history',
+
+  FEATURES = 'features',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

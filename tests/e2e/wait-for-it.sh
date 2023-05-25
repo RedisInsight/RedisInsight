@@ -44,7 +44,7 @@ wait_for()
             echoerr "$WAITFORIT_cmdname: $WAITFORIT_HOST:$WAITFORIT_PORT is available after $((WAITFORIT_end_ts - WAITFORIT_start_ts)) seconds"
             break
         fi
-        sleep 30
+        sleep 60
     done
     return $WAITFORIT_result
 }

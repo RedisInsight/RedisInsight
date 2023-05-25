@@ -12,12 +12,13 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { openCli, openCliHelper, resetCliHelperSettings, resetCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { setMonitorInitialState, showMonitor } from 'uiSrc/slices/cli/monitor'
 import { Pages } from 'uiSrc/constants'
-import { setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
+import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import { dbAnalysisSelector, setDatabaseAnalysisViewTab } from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { fetchRedisearchListAction, loadList } from 'uiSrc/slices/browser/redisearch'
 import { stringToBuffer } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
 import { ONBOARDING_FEATURES } from './OnboardingFeatures'
 
 jest.mock('uiSrc/slices/app/features', () => ({
@@ -326,6 +327,59 @@ describe('ONBOARDING_FEATURES', () => {
     })
   })
 
+  describe.skip('BROWSER_INSIGHTS', () => {
+    beforeEach(() => {
+      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+        currentStep: OnboardingSteps.BrowserInsights,
+        isActive: true,
+        totalSteps: Object.keys(ONBOARDING_FEATURES).length
+      })
+    })
+
+    it('should render', () => {
+      expect(
+        render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}><span /></OnboardingTour>)
+      ).toBeTruthy()
+      expect(screen.getByTestId('step-content')).toHaveTextContent('Insights will help you optimize performance and memory usage')
+    })
+
+    it('should call proper telemetry events', () => {
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+      render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}><span /></OnboardingTour>)
+      checkAllTelemetryButtons(OnboardingStepName.BrowserInsights, sendEventTelemetry as jest.Mock)
+    })
+
+    it('should call proper actions on back', () => {
+      render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}><span /></OnboardingTour>)
+      fireEvent.click(screen.getByTestId('back-btn'))
+
+      const expectedActions = [setIsContentVisible(false), showMonitor(), setOnboardPrevStep()]
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+    })
+
+    it('should call proper actions on next', () => {
+      render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}><span /></OnboardingTour>)
+      fireEvent.click(screen.getByTestId('next-btn'))
+
+      const expectedActions = [
+        setIsContentVisible(false),
+        setOnboardNextStep(),
+      ]
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+    })
+
+    it('should properly push history on next', () => {
+      const pushMock = jest.fn()
+      reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+      render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}><span /></OnboardingTour>)
+      fireEvent.click(screen.getByTestId('next-btn'))
+      expect(pushMock).toHaveBeenCalledWith(Pages.workbench(''))
+    })
+  })
+
   describe('WORKBENCH_PAGE', () => {
     beforeEach(() => {
       (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
@@ -426,12 +480,44 @@ describe('ONBOARDING_FEATURES', () => {
       const expectedActions = [setWorkbenchEAMinimized(false)]
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
+  })
+
+  describe('WORKBENCH_CUSTOM_TUTORIALS', () => {
+    beforeEach(() => {
+      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+        currentStep: OnboardingSteps.WorkbenchCustomTutorials,
+        isActive: true,
+        totalSteps: Object.keys(ONBOARDING_FEATURES).length
+      })
+    })
+
+    it('should render', () => {
+      expect(
+        render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_CUSTOM_TUTORIALS}><span /></OnboardingTour>)
+      ).toBeTruthy()
+      expect(screen.getByTestId('step-content')).toHaveTextContent('Share your Redis expertise with your team and the wider community by building custom RedisInsight tutorials.')
+    })
+
+    it('should call proper telemetry events', () => {
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+      render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_CUSTOM_TUTORIALS}><span /></OnboardingTour>)
+      checkAllTelemetryButtons(OnboardingStepName.WorkbenchCustomTutorials, sendEventTelemetry as jest.Mock)
+    })
+
+    it('should call proper actions init', () => {
+      render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_CUSTOM_TUTORIALS}><span /></OnboardingTour>)
+
+      const expectedActions = [setWorkbenchEAMinimized(false), resetWorkbenchEASearch()]
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+    })
 
     it('should properly push history on next', () => {
       const pushMock = jest.fn()
       reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
 
-      render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_ENABLEMENT_GUIDE}><span /></OnboardingTour>)
+      render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_CUSTOM_TUTORIALS}><span /></OnboardingTour>)
       fireEvent.click(screen.getByTestId('next-btn'))
       expect(pushMock).toHaveBeenCalledWith(Pages.clusterDetails(''))
     })

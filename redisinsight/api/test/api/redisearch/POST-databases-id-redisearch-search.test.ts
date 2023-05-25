@@ -38,6 +38,7 @@ const responseSchema = Joi.object({
   maxResults: Joi.number().integer().allow(null).required(),
   keys: Joi.array().items(Joi.object({
     name: JoiRedisString.required(),
+    type: Joi.string(),
   })).required(),
 }).required().strict(true);
 const mainCheckFn = getMainCheckFn(endpoint);

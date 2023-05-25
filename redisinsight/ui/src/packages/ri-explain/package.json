@@ -68,5 +68,8 @@
     "react-dom": "^18.2.0",
     "redisinsight-plugin-sdk": "^1.1.0",
     "uuid": "^9.0.0"
+  },
+  "resolutions": {
+    "trim": "0.0.3"
   }
 }

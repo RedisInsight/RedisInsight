@@ -8,6 +8,14 @@
       justify-content: space-between;
     }
 
+    .onboardingPopoverAnchor {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
     .group-header {
       font: normal normal medium 11px/15px Graphik, sans-serif;
       letter-spacing: -0.12px;
@@ -112,4 +120,8 @@
       background-color: var(--hoverInListColorDarken);
     }
   }
+}
+
+.hide {
+  display: none;
 }

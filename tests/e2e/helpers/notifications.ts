@@ -1,9 +1,6 @@
-import { join } from 'path';
-import * as os from 'os';
-import { NotificationParameters } from '../pageObjects/notification-page';
+import { workingDirectory} from '../helpers/conf';
+import { NotificationParameters } from '../pageObjects/components/navigation/notification-panel';
 
-const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
-    || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
 const dbPath = `${workingDirectory}/redisinsight.db`;
 
 const sqlite3 = require('sqlite3').verbose();

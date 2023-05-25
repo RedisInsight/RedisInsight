@@ -7,13 +7,12 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 
 const speed = 0.4;
-let indexName = common.generateWord(5);
+let indexName = Common.generateWord(5);
 
 fixture `Workbench Context`
-    .meta({type: 'critical_path', rte: rte.standalone})
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
@@ -26,10 +25,10 @@ fixture `Workbench Context`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see saved input in Editor when navigates away to any other page', async t => {
-    indexName = common.generateWord(5);
+    indexName = Common.generateWord(5);
     const command = `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`;
     // Enter the command in the Workbench editor and navigate to Browser
-    await t.typeText(workbenchPage.queryInput, command, { replace: true, speed: speed});
+    await t.typeText(workbenchPage.queryInput, command, { replace: true, speed: speed });
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Return back to Workbench and check input in editor
     await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);

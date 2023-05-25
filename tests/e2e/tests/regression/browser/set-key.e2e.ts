@@ -7,11 +7,10 @@ import { populateSetWithMembers } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
 const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port };
-const keyName = `TestSetKey-${common.generateWord(10)}`;
-const memberForSearch = `SearchField-${common.generateWord(5)}`;
+const keyName = `TestSetKey-${ Common.generateWord(10) }`;
+const memberForSearch = `SearchField-${ Common.generateWord(5) }`;
 const keyToAddParameters = { membersCount: 500000, keyName, memberStartWith: 'setMember' };
 
 fixture `Set Key verification`

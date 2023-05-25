@@ -7,11 +7,10 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 
 const commandForSend1 = 'info';
 const commandForSend2 = 'FT._LIST';
-let indexName = common.generateWord(5);
+let indexName = Common.generateWord(5);
 
 fixture `Command results at Workbench`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -64,7 +63,7 @@ test
     .after(async() => {
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
     })('Verify that user can switches between views and see results according to the view rules in Workbench in results', async t => {
-        indexName = common.generateWord(5);
+        indexName = Common.generateWord(5);
         const commands = [
             'hset doc:10 title "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud" url "redis.io" author "Test" rate "undefined" review "0" comment "Test comment"',
             `FT.CREATE ${indexName} ON HASH PREFIX 1 doc: SCHEMA title TEXT WEIGHT 5.0 body TEXT url TEXT author TEXT rate TEXT review TEXT comment TEXT`,
@@ -130,8 +129,8 @@ test
 
         await t.switchToIframe(workbenchPage.iframe);
 
-        let jsonTextActual = await common.removeEmptySpacesAndBreak(await workbenchPage.queryJsonResult.textContent);
-        let jsonTextExpected = await common.removeEmptySpacesAndBreak(json);
+        let jsonTextActual = await Common.removeEmptySpacesAndBreak(await workbenchPage.queryJsonResult.textContent);
+        let jsonTextExpected = await Common.removeEmptySpacesAndBreak(json);
         await t.expect(jsonTextActual).eql(jsonTextExpected);
 
         await t.switchToMainWindow();
@@ -141,8 +140,8 @@ test
 
         await t.switchToIframe(workbenchPage.iframe);
         const expectedJsonMGet = JSON.stringify([[jsonObj]]);
-        jsonTextActual = await common.removeEmptySpacesAndBreak(await workbenchPage.queryJsonResult.textContent);
-        jsonTextExpected = await common.removeEmptySpacesAndBreak(expectedJsonMGet);
+        jsonTextActual = await Common.removeEmptySpacesAndBreak(await workbenchPage.queryJsonResult.textContent);
+        jsonTextExpected = await Common.removeEmptySpacesAndBreak(expectedJsonMGet);
         await t.expect(jsonTextActual).eql(jsonTextExpected);
 
         await t.switchToMainWindow();
@@ -150,8 +149,8 @@ test
         await workbenchPage.selectViewTypeJson();
 
         await t.switchToIframe(workbenchPage.iframe);
-        jsonTextActual = await common.removeEmptySpacesAndBreak(await workbenchPage.queryJsonResult.textContent);
-        jsonTextExpected = await common.removeEmptySpacesAndBreak(json);
+        jsonTextActual = await Common.removeEmptySpacesAndBreak(await workbenchPage.queryJsonResult.textContent);
+        jsonTextExpected = await Common.removeEmptySpacesAndBreak(json);
         await t.expect(jsonTextActual).eql(jsonTextExpected);
     });
 

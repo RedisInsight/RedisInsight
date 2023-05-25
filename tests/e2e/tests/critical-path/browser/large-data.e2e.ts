@@ -6,9 +6,8 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 
 fixture `Cases with large data`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -22,12 +21,12 @@ fixture `Cases with large data`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see relevant information about key size', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     // Open CLI
     await t.click(browserPage.Cli.cliExpandButton);
     // Create new key with a lot of members
     const length = 500;
-    const arr = await common.createArrayWithKeyValue(length);
+    const arr = await Common.createArrayWithKeyValue(length);
     await t.typeText(browserPage.Cli.cliCommandInput, `HSET ${keyName} ${arr.join(' ')}`, { paste: true });
     await t.pressKey('enter');
     await t.click(browserPage.Cli.cliCollapseButton);

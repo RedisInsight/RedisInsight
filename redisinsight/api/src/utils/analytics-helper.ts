@@ -17,6 +17,14 @@ export const SCAN_THRESHOLD_BREAKPOINTS = [
   1000000,
 ];
 
+export const BULK_ACTIONS_BREAKPOINTS = [
+  5000,
+  10000,
+  50000,
+  100000,
+  1000000,
+];
+
 const numberWithSpaces = (x: number): string => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
 export const getRangeForNumber = (

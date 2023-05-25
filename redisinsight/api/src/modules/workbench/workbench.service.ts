@@ -81,7 +81,6 @@ export class WorkbenchService {
       db,
       databaseId: clientMetadata.databaseId,
     };
-    let executionTimeInNanoseconds = BigInt(0);
 
     const startCommandExecutionTime = process.hrtime.bigint();
 
@@ -96,11 +95,9 @@ export class WorkbenchService {
         });
       }
       const result = await this.commandsExecutor.sendCommand(clientMetadata, { ...dto, command });
-      const endCommandExecutionTime = process.hrtime.bigint();
-
-      executionTimeInNanoseconds += (endCommandExecutionTime - startCommandExecutionTime);
       return ({ ...result[0], command });
     }));
+    const executionTimeInNanoseconds = process.hrtime.bigint() - startCommandExecutionTime;
 
     if (Number(executionTimeInNanoseconds) !== 0) {
       commandExecution.executionTime = Math.round(Number(executionTimeInNanoseconds) / 1000);

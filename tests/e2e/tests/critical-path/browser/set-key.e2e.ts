@@ -6,9 +6,8 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const keyTTL = '2147476121';
 const keyMember = '1111setMember11111';
 
@@ -24,7 +23,7 @@ fixture `Set Key fields verification`
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search by full member name in Set', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     await browserPage.addSetKey(keyName, keyTTL, '1111');
     // Add member to the Set key
     await browserPage.addMemberToSet(keyMember);

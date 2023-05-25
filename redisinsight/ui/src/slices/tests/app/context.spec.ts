@@ -42,6 +42,7 @@ import reducer, {
   setDbConfig,
   setDbIndexState,
   appContextDbIndex,
+  setRecommendationsShowHidden,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -571,7 +572,8 @@ describe('slices', () => {
       // Arrange
       const data = {
         slowLogDurationUnit: 'ms',
-        treeViewDelimiter: ':-'
+        treeViewDelimiter: ':-',
+        showHiddenRecommendations: true,
       }
 
       const state = {
@@ -625,6 +627,28 @@ describe('slices', () => {
 
       // Act
       const nextState = reducer(initialState, setBrowserTreeDelimiter(delimiter))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextDbConfig(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setRecommendationsShowHidden', () => {
+    it('should properly set is show hidden live recommendations', () => {
+      // Arrange
+      const value = true
+
+      const state = {
+        ...initialState.dbConfig,
+        showHiddenRecommendations: value
+      }
+
+      // Act
+      const nextState = reducer(initialState, setRecommendationsShowHidden(value))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

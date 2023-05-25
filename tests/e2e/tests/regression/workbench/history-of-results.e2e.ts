@@ -8,10 +8,9 @@ import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const common = new Common();
 
 const oneMinuteTimeout = 60000;
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const command = `set ${keyName} test`;
 
 fixture `History of results at Workbench`
@@ -29,13 +28,13 @@ fixture `History of results at Workbench`
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can see original date and time of command execution in Workbench history after the page update', async t => {
-        keyName = common.generateWord(5);
+        keyName = Common.generateWord(5);
         // Send command and remember the time
         await workbenchPage.sendCommandInWorkbench(command);
         const dateTime = await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssCommandExecutionDateTime).textContent;
         // Wait fo 1 minute, refresh page and check results
         await t.wait(oneMinuteTimeout);
-        await common.reloadPage();
+        await workbenchPage.reloadPage();
         await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssCommandExecutionDateTime).textContent).eql(dateTime, 'The original date and time of command execution is not saved after the page update');
     });
 //skipped due the long time execution and hangs of test
@@ -53,13 +52,13 @@ test.skip
         await workbenchPage.sendCommandInWorkbench(`${commandToSend} "${commandText}"`);
         await workbenchPage.sendCommandInWorkbench(commandToGet);
         // Refresh the page and check result
-        await common.reloadPage();
+        await workbenchPage.reloadPage();
         await t.click(workbenchPage.queryCardContainer.withText(commandToGet));
         await t.expect(workbenchPage.queryTextResult.textContent).eql('"Results have been deleted since they exceed 1 MB. Re-run the command to see new results."', 'The message is not displayed');
     });
 test
     .meta({ rte: rte.standalone })('Verify that the first command in workbench history is deleted when user executes 31 command (new the following result replaces the first result)', async t => {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
         const numberOfCommands = 30;
         const firstCommand = 'FT._LIST';
 

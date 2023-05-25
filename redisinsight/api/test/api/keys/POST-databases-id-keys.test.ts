@@ -917,7 +917,7 @@ describe('POST /databases/:id/keys', () => {
           },
         ].map(mainCheckFn);
       });
-      describe('Filter by type (w/o keys info)', () => {
+      describe('Filter by type (w/o keys info, with sended type)', () => {
         requirements('rte.version>=6.0');
         [
           {
@@ -952,7 +952,7 @@ describe('POST /databases/:id/keys', () => {
                 expect(key.name).to.have.string('str_key_');
                 expect(key.ttl).to.eq(undefined);
                 expect(key.size).to.eq(undefined);
-                expect(key.type).to.eq(undefined);
+                expect(key.type).to.eq('string');
               });
             }
           },

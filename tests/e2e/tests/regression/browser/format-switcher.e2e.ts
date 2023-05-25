@@ -7,11 +7,10 @@ import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStanda
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
 const keysData = keyTypes.map(object => ({ ...object }));
-keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${common.generateWord(keyLength)}`);
+keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${Common.generateWord(keyLength)}`);
 const databasesForAdding = [
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB1' },
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB2' }
@@ -39,7 +38,7 @@ test
         await acceptLicenseTerms();
         await addNewStandaloneDatabasesApi(databasesForAdding);
         // Reload Page
-        await common.reloadPage();
+        await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
         // Create new keys
         await addKeysViaCli(keysData);
@@ -58,7 +57,7 @@ test
         // Verify that formatters selection is saved when user switches between keys
         await t.expect(browserPage.formatSwitcher.withExactText('JSON').visible).ok('Formatter value is not saved');
         // Verify that formatters selection is saved when user reloads the page
-        await common.reloadPage();
+        await browserPage.reloadPage();
         await browserPage.openKeyDetailsByKeyName(keysData[1].keyName);
         await t.expect(browserPage.formatSwitcher.withExactText('JSON').visible).ok('Formatter value is not saved');
         // Go to another database

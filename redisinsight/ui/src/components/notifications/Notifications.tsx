@@ -64,7 +64,7 @@ const Notifications = () => {
   )
 
   const getSuccessToasts = (data: IMessage[]) =>
-    data.map(({ id = '', title = '', message = '', group }) => {
+    data.map(({ id = '', title = '', message = '', className, group }) => {
       const toast: Toast = {
         id,
         iconType: 'iInCircle',
@@ -74,6 +74,7 @@ const Notifications = () => {
           </EuiTextColor>
         ),
         color: 'success',
+        className
       }
       toast.text = getSuccessText(message, toast, group)
       toast.onClose = () => removeToast(toast)

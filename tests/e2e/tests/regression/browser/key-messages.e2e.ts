@@ -6,11 +6,10 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 const workbenchPage = new WorkbenchPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const dataTypes: string[] = [
     'RedisTimeSeries',
     'RedisGraph'
@@ -27,7 +26,7 @@ fixture `Key messages`
     });
 test('Verify that user can see updated message in Browser for TimeSeries and Graph data types', async t => {
     for(let i = 0; i < dataTypes.length; i++) {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
         const commands: string[] = [
             `TS.CREATE ${keyName}`,
             `GRAPH.QUERY ${keyName} "CREATE ()"`
@@ -51,7 +50,7 @@ test('Verify that user can see updated message in Browser for TimeSeries and Gra
 });
 test('Verify that user can see link to Workbench under word “Workbench” in the RedisTimeSeries and Graph key details', async t => {
     for(let i = 0; i < dataTypes.length; i++) {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
         const commands: string[] = [
             `TS.CREATE ${keyName}`,
             `GRAPH.QUERY ${keyName} "CREATE ()"`

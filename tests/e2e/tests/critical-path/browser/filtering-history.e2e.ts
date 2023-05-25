@@ -6,10 +6,8 @@ import {
 } from '../../../helpers/conf';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
 fixture `Key name filters history`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -48,7 +46,7 @@ test('Recent filters history', async t => {
     await t.expect(browserPage.filterHistoryItemText.withText(keysForSearch[0]).count).eql(1, 'Filter history requests can be duplicated in list');
 
     // Refresh the page
-    await common.reloadPage();
+    await browserPage.reloadPage();
     // Verify that user can see the list of filters even when reloading page
     await t.click(browserPage.showFilterHistoryBtn);
     await t.expect(browserPage.filterHistoryItemText.withText(keysForSearch[0]).exists).ok('Filter history requests not saved after reloading page');

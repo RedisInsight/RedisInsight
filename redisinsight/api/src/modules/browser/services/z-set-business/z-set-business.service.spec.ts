@@ -8,11 +8,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { SortOrder } from 'src/constants/sort';
 import { ReplyError } from 'src/models';
+import { RECOMMENDATION_NAMES } from 'src/constants';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import {
   mockBrowserClientMetadata,
   mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
+  mockDatabaseRecommendationService,
 } from 'src/__mocks__';
 import {
   CreateZSetWithExpireDto,
@@ -34,6 +37,7 @@ import { BrowserToolService } from '../browser-tool/browser-tool.service';
 describe('ZSetBusinessService', () => {
   let service: ZSetBusinessService;
   let browserTool;
+  let recommendationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -43,11 +47,16 @@ describe('ZSetBusinessService', () => {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
         },
+        {
+          provide: DatabaseRecommendationService,
+          useFactory: mockDatabaseRecommendationService,
+        },
       ],
     }).compile();
 
     service = module.get<ZSetBusinessService>(ZSetBusinessService);
     browserTool = module.get<BrowserToolService>(BrowserToolService);
+    recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
   });
 
   describe('createZSet', () => {
@@ -201,6 +210,26 @@ describe('ZSetBusinessService', () => {
         sortOrder: SortOrder.Desc,
       });
       await expect(result).toEqual(getZSetMembersInDescResponse);
+    });
+    it('should call recommendationService', async () => {
+      when(browserTool.execCommand)
+        .calledWith(
+          mockBrowserClientMetadata,
+          BrowserToolZSetCommands.ZRevRange,
+          expect.anything(),
+        )
+        .mockResolvedValue(['member4', 'inf', 'member3', '2', 'member2', '0', 'member1', '-inf']);
+
+      const result = await service.getMembers(mockBrowserClientMetadata, {
+        ...mockGetMembersDto,
+        sortOrder: SortOrder.Desc,
+      });
+
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.RTS,
+        { members: result.members, keyName: result.keyName },
+      );
     });
     it('key with this name does not exist for getMembers', async () => {
       when(browserTool.execCommand)

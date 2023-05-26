@@ -39,7 +39,7 @@ jest.mock('uiSrc/slices/workbench/wb-guides', () => ({
               id: 'document-capabilities',
               label: 'Document Capabilities',
               args: {
-                path: '/quick-guides/document/working-with-hashes.md',
+                path: '/quick-guides/document/introduction.md',
               },
             },
           ]

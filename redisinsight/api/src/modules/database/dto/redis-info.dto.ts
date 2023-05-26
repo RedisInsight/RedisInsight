@@ -59,6 +59,12 @@ export class RedisNodeInfoResponse {
     type: Number,
   })
   hitRatio?: number;
+
+  @ApiPropertyOptional({
+    description: 'The number of the cached lua scripts',
+    type: Number,
+  })
+  cashedScripts?: number;
 }
 
 export class RedisDatabaseInfoResponse extends RedisNodeInfoResponse {

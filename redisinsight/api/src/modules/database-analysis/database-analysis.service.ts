@@ -10,6 +10,7 @@ import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/provider
 import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
@@ -22,6 +23,7 @@ export class DatabaseAnalysisService {
     private readonly analyzer: DatabaseAnalyzer,
     private readonly databaseAnalysisProvider: DatabaseAnalysisProvider,
     private readonly scanner: KeysScanner,
+    private databaseRecommendationService: DatabaseRecommendationService,
   ) {}
 
   /**
@@ -61,6 +63,7 @@ export class DatabaseAnalysisService {
         const nodeRecommendations = await this.recommendationService.getRecommendations({
           client: nodeResult.client,
           keys: nodeResult.keys,
+          indexes: nodeResult.indexes,
           total: progress.total,
           globalClient: client,
           exclude: recommendationToExclude,
@@ -75,7 +78,6 @@ export class DatabaseAnalysisService {
         jobsArray.push(foundedRecommendations);
         return flatten(jobsArray);
       }, Promise.resolve([]));
-
       const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
         databaseId: clientMetadata.databaseId,
         db: client?.options?.db || 0,
@@ -85,6 +87,10 @@ export class DatabaseAnalysisService {
       }, [].concat(...scanResults.map((nodeResult) => nodeResult.keys))));
 
       client.disconnect();
+      this.databaseRecommendationService.sync(
+        clientMetadata,
+        recommendations,
+      );
       return this.databaseAnalysisProvider.create(analysis);
     } catch (e) {
       client?.disconnect();

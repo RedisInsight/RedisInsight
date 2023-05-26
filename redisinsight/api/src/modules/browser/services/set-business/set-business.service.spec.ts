@@ -1,3 +1,4 @@
+import IORedis from 'ioredis';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   BadRequestException,
@@ -28,6 +29,9 @@ import {
   GetSetMembersDto,
 } from '../../dto';
 import { BrowserToolService } from '../browser-tool/browser-tool.service';
+
+const nodeClient = Object.create(IORedis.prototype);
+nodeClient.isCluster = false;
 
 describe('SetBusinessService', () => {
   let service: SetBusinessService;
@@ -171,6 +175,10 @@ describe('SetBusinessService', () => {
           mockGetSetMembersDto.keyName,
         ])
         .mockResolvedValue(mockSetMembers.length);
+
+      when(browserTool.getRedisClient)
+        .calledWith(mockBrowserClientMetadata)
+        .mockResolvedValue(nodeClient);
     });
     it('succeed to get members of the set', async () => {
       when(browserTool.execCommand)

@@ -5,14 +5,12 @@ import { Chance } from 'chance';
 import * as editJsonFile from 'edit-json-file';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
-import { commonUrl } from '../../../helpers/conf';
+import { commonUrl, workingDirectory } from '../../../helpers/conf';
 import { env } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const chance = new Chance();
 
-const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
-  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
 if (fs.existsSync(workingDirectory)) {
     const timestampPromoButtonPath = `${workingDirectory}/content/build.json`;
     const contentPromoButtonPath = `${workingDirectory}/content/create-redis.json`;

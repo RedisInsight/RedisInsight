@@ -30,6 +30,14 @@ export const MOCK_GUIDES_ITEMS: IEnablementAreaItem[] = [
         args: {
           path: 'quick-guides/working-with-hash.html',
         },
+      },
+      {
+        type: EnablementAreaComponent.InternalLink,
+        id: 'working-with-hash-2',
+        label: 'Working with HASH',
+        args: {
+          path: '\\quick-guides\\working-with-hash.html',
+        },
       }
     ]
   },
@@ -56,7 +64,7 @@ export const MOCK_GUIDES_ITEMS: IEnablementAreaItem[] = [
     args: {
       path: '_scripts/manual.txt'
     },
-  }
+  },
 ]
 
 export const MOCK_GUIDES = {

@@ -8,7 +8,7 @@ import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/compo
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { appContextWorkbenchEA, resetWorkbenchEASearch } from 'uiSrc/slices/app/context'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, EAItemActions, EAManifestFirstKey } from 'uiSrc/constants'
 import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { Nullable } from 'uiSrc/utils'
 import {
@@ -30,11 +30,6 @@ import {
   UploadTutorialForm,
   WelcomeMyTutorials,
 } from './components'
-
-import {
-  EAItemActions,
-  EAManifestFirstKey
-} from './constants'
 
 import styles from './styles.module.scss'
 
@@ -211,6 +206,7 @@ const EnablementArea = (props: Props) => {
             isShowActions={currentSourcePath.startsWith(ApiEndpoints.CUSTOM_TUTORIALS_PATH)}
             onCreate={() => setIsCreateOpen((v) => !v)}
             onDelete={onDeleteCustomTutorial}
+            isPageOpened={isInternalPageVisible}
             {...args}
           >
             <>

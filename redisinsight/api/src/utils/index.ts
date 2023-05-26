@@ -8,3 +8,5 @@ export * from './analytics-helper';
 export * from './redis-connection-helper';
 export * from './class-transformer';
 export * from './file-helper';
+export * from './recommendation-helper';
+export * from './path';

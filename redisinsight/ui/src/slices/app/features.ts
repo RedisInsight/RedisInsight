@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { remove } from 'lodash'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import { localStorageService } from 'uiSrc/services'
+import { apiService, localStorageService } from 'uiSrc/services'
 import { StateAppFeatures } from 'uiSrc/slices/interfaces'
 import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { getPagesForFeatures } from 'uiSrc/utils/highlighting'
 import { OnboardingSteps } from 'uiSrc/constants/onboarding'
-import { Maybe } from 'uiSrc/utils'
+import { isStatusSuccessful, Maybe } from 'uiSrc/utils'
 
 export const initialState: StateAppFeatures = {
   highlighting: {
@@ -19,6 +19,14 @@ export const initialState: StateAppFeatures = {
     currentStep: 0,
     totalSteps: 0,
     isActive: false,
+  },
+  featureFlags: {
+    loading: false,
+    features: {
+      [FeatureFlags.insightsRecommendations]: {
+        flag: false
+      }
+    }
   }
 }
 
@@ -81,7 +89,17 @@ const appFeaturesSlice = createSlice({
       }
 
       localStorageService.set(BrowserStorageItem.onboardingStep, step)
-    }
+    },
+    getFeatureFlags: (state) => {
+      state.featureFlags.loading = true
+    },
+    getFeatureFlagsSuccess: (state, { payload }) => {
+      state.featureFlags.loading = false
+      state.featureFlags.features = payload.features
+    },
+    getFeatureFlagsFailure: (state) => {
+      state.featureFlags.loading = false
+    },
   }
 })
 
@@ -92,7 +110,10 @@ export const {
   skipOnboarding,
   setOnboardPrevStep,
   setOnboardNextStep,
-  setOnboarding
+  setOnboarding,
+  getFeatureFlags,
+  getFeatureFlagsSuccess,
+  getFeatureFlagsFailure
 } = appFeaturesSlice.actions
 
 export const appFeatureSelector = (state: RootState) => state.app.features
@@ -100,6 +121,8 @@ export const appFeatureHighlightingSelector = (state: RootState) => state.app.fe
 export const appFeaturePagesHighlightingSelector = (state: RootState) => state.app.features.highlighting.pages
 
 export const appFeatureOnboardingSelector = (state: RootState) => state.app.features.onboarding
+export const appFeatureFlagsSelector = (state: RootState) => state.app.features.featureFlags
+export const appFeatureFlagsFeaturesSelector = (state: RootState) => state.app.features.featureFlags.features
 
 export default appFeaturesSlice.reducer
 
@@ -110,6 +133,29 @@ export function incrementOnboardStepAction(step: OnboardingSteps, skipCount = 0,
     if (isActive && currentStep === step) {
       dispatch(setOnboardNextStep(skipCount))
       onSuccess?.()
+    }
+  }
+}
+
+export function fetchFeatureFlags(
+  onSuccessAction?: (data: any) => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getFeatureFlags())
+
+    try {
+      const { data, status } = await apiService.get(
+        ApiEndpoints.FEATURES
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getFeatureFlagsSuccess(data))
+        onSuccessAction?.(data)
+      }
+    } catch (error) {
+      dispatch(getFeatureFlagsFailure())
+      onFailAction?.()
     }
   }
 }

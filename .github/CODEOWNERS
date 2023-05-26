@@ -1,3 +1,4 @@
 # Add reviewers for the most sensitive folders
 /.github/ egor.zalenski@softeq.com artem.horuzhenko@softeq.com
 /.circleci/ egor.zalenski@softeq.com artem.horuzhenko@softeq.com
+/redisinsight/api/config/features-config.json viktar.starastsenka@redis.com egor.zalenski@softeq.com artem.horuzhenko@softeq.com

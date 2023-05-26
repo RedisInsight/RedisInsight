@@ -2,7 +2,15 @@ import { TestingModule, Test } from '@nestjs/testing';
 import { InternalServerErrorException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Repository } from 'typeorm';
-import { mockEncryptionService, mockServer, mockServerRepository, MockType } from 'src/__mocks__';
+import {
+  mockControlGroup,
+  mockControlNumber,
+  mockEncryptionService,
+  mockFeaturesConfigService,
+  mockServer,
+  mockServerRepository,
+  MockType,
+} from 'src/__mocks__';
 import config from 'src/utils/config';
 import {
   ServerInfoNotFoundException,
@@ -16,6 +24,7 @@ import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { ServerService } from 'src/modules/server/server.service';
 import { ServerRepository } from 'src/modules/server/repositories/server.repository';
+import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 
 const SERVER_CONFIG = config.get('server');
 
@@ -50,6 +59,10 @@ describe('ServerService', () => {
           provide: EncryptionService,
           useFactory: mockEncryptionService,
         },
+        {
+          provide: FeaturesConfigService,
+          useFactory: mockFeaturesConfigService,
+        },
       ],
     }).compile();
 
@@ -72,7 +85,13 @@ describe('ServerService', () => {
       expect(eventEmitter.emit).toHaveBeenNthCalledWith(
         1,
         AppAnalyticsEvents.Initialize,
-        { anonymousId: mockServer.id, sessionId, appType: SERVER_CONFIG.buildType },
+        {
+          anonymousId: mockServer.id,
+          sessionId,
+          appType: SERVER_CONFIG.buildType,
+          controlNumber: mockControlNumber,
+          controlGroup: mockControlGroup,
+        },
       );
       expect(eventEmitter.emit).toHaveBeenNthCalledWith(
         2,

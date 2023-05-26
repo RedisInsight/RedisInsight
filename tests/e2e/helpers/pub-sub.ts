@@ -11,6 +11,6 @@ const pubSubPage = new PubSubPage();
 export async function verifyMessageDisplayingInPubSub(message: string, displayed: boolean): Promise<void> {
     const messageByText = pubSubPage.pubSubPageContainer.find(pubSubPage.cssSelectorMessage).withText(message);
     displayed
-        ? await t.expect(await messageByText.exists).ok(`"${message}" Message is not displayed`, { timeout: 5000 })
-        : await t.expect(await messageByText.exists).notOk(`"${message}" Message is still displayed`);
+        ? await t.expect(messageByText.exists).ok(`"${message}" Message is not displayed`, { timeout: 5000 })
+        : await t.expect(messageByText.exists).notOk(`"${message}" Message is still displayed`);
 }

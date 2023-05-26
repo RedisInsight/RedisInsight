@@ -188,4 +188,13 @@
   // Database analysis
   --badgeIconColor: #{$badgeIconColor};
   --recommendationBorderColor: #{$recommendationBorderColor};
+
+  // Recommendations
+  --recommendationsBgColor: #{$recommendationsBgColor};
+  --recommendationBgColor: #{$recommendationBgColor};
+  --recommendationLiveBorderColor: #{$recommendationLiveBorderColor};
+  --recommendationColor: #{$recommendationColor};
+  --triggerIconActiveColor: #{$triggerIconActiveColor};
+  --liveRecommendationVoteBgColor: #{$controlsBorderColor};
+  --triggerIconTextColor: #{$triggerIconTextColor};
 }

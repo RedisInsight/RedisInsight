@@ -6,7 +6,7 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { BuildType } from 'uiSrc/constants/env'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import { localStorageService } from 'uiSrc/services'
-import { setFeaturesToHighlight, setOnboarding } from 'uiSrc/slices/app/features'
+import { fetchFeatureFlags, setFeaturesToHighlight, setOnboarding } from 'uiSrc/slices/app/features'
 import { fetchNotificationsAction } from 'uiSrc/slices/app/notifications'
 
 import {
@@ -52,6 +52,8 @@ const Config = () => {
     // get guides & tutorials
     dispatch(fetchGuides())
     dispatch(fetchTutorials())
+
+    dispatch(fetchFeatureFlags())
 
     // fetch config settings, after that take spec
     if (pathname !== SETTINGS_PAGE_PATH) {

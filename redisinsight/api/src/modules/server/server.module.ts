@@ -3,6 +3,7 @@ import { ServerController } from 'src/modules/server/server.controller';
 import { ServerService } from 'src/modules/server/server.service';
 import { ServerRepository } from 'src/modules/server/repositories/server.repository';
 import { LocalServerRepository } from 'src/modules/server/repositories/local.server.repository';
+import { FeatureModule } from 'src/modules/feature/feature.module';
 
 @Module({})
 export class ServerModule {
@@ -19,6 +20,7 @@ export class ServerModule {
           useClass: serverRepository,
         },
       ],
+      imports: [FeatureModule],
     };
   }
 }

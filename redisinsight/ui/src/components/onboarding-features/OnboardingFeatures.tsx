@@ -12,7 +12,7 @@ import { dbAnalysisSelector, setDatabaseAnalysisViewTab } from 'uiSrc/slices/ana
 import { incrementOnboardStepAction, setOnboardNextStep, setOnboardPrevStep } from 'uiSrc/slices/app/features'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
-import { setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
+import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import OnboardingEmoji from 'uiSrc/assets/img/onboarding-emoji.svg'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
@@ -20,6 +20,7 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
 import { bufferToString, Nullable } from 'uiSrc/utils'
 import { CodeBlock } from 'uiSrc/components'
+
 import styles from './styles.module.scss'
 
 const sendTelemetry = (databaseId: string, step: string, action: string) => sendEventTelemetry({
@@ -262,7 +263,6 @@ const ONBOARDING_FEATURES = {
     title: 'Explore and learn more',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
-      const history = useHistory()
       const dispatch = useDispatch()
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.WorkbenchGuides]
 
@@ -273,6 +273,39 @@ const ONBOARDING_FEATURES = {
 
       return {
         content: 'Learn more about how Redis can solve your use cases using Guides and Tutorials.',
+        onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
+        onBack: () => sendBackTelemetryEvent(...telemetryArgs),
+        onNext: () => sendNextTelemetryEvent(...telemetryArgs)
+      }
+    }
+  },
+  WORKBENCH_CUSTOM_TUTORIALS: {
+    step: OnboardingSteps.WorkbenchCustomTutorials,
+    title: 'Upload your tutorials',
+    Inner: () => {
+      const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+      const history = useHistory()
+      const dispatch = useDispatch()
+      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.WorkbenchCustomTutorials]
+
+      useEffect(() => {
+        // here we can use it on mount, because enablement area always rendered on workbench
+        dispatch(setWorkbenchEAMinimized(false))
+        // close opened page
+        dispatch(resetWorkbenchEASearch())
+        history.push(Pages.workbench(connectedInstanceId))
+      }, [])
+
+      return {
+        content: (
+          <>
+            Share your Redis expertise with your team and the wider community by building custom RedisInsight tutorials.
+            <EuiSpacer size="xs" />
+            Use our <a href="https://github.com/RedisInsight/Tutorials" target="_blank" rel="noreferrer">instructions</a> to
+            describe your implementations of Redis for other users to follow and
+            interact with in the context of a connected Redis database
+          </>
+        ),
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => sendBackTelemetryEvent(...telemetryArgs),
         onNext: () => {

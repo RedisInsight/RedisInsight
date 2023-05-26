@@ -28,9 +28,9 @@ export class OnboardingCardsDialog {
      */
     async clickNextUntilLastStep(): Promise<void> {
         do {
-            await t.click(this.nextButton);
+            await this.clickNextStep();
         }
-        while (await this.skipTourButton.exists);
+        while (await this.skipTourButton.visible);
     }
     /**
      Start onboarding process

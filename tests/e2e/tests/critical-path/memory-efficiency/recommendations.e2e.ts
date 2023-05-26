@@ -1,23 +1,28 @@
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, WorkbenchPage } from '../../../pageObjects';
-import { rte } from '../../../helpers/constants';
+import { RecommendationIds, rte } from '../../../helpers/constants';
 import { acceptLicenseTermsAndAddDatabaseApi, deleteCustomDatabase } from '../../../helpers/database';
-import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
-import { MemoryEfficiencyActions } from '../../../common-actions/memory-efficiency-actions';
+import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
 import { Common } from '../../../helpers/common';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const memoryEfficiencyActions = new MemoryEfficiencyActions();
+const recommendationsActions = new RecommendationsActions();
 const workbenchPage = new WorkbenchPage();
 
 const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
 let keyName = `recomKey-${Common.generateWord(10)}`;
 const stringKeyName = `smallStringKey-${Common.generateWord(5)}`;
 const index = '1';
-
+const luaScriptRecommendation = RecommendationIds.luaScript;
+const useSmallerKeysRecommendation = RecommendationIds.useSmallerKeys;
+const avoidLogicalDbRecommendation = RecommendationIds.avoidLogicalDatabases;
+const redisVersionRecommendation = RecommendationIds.redisVersion;
+const searchJsonRecommendation = RecommendationIds.searchJson;
 fixture `Memory Efficiency Recommendations`
+
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -46,35 +51,33 @@ test
         await browserPage.Cli.sendCommandInCli('SCRIPT FLUSH');
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Recommendations displaying', async t => {
-        const luaScriptCodeChangesLabel = memoryEfficiencyPage.luaScriptAccordion.parent(0).find(memoryEfficiencyPage.cssCodeChangesLabel);
-        const luaScriptConfigurationChangesLabel = memoryEfficiencyPage.luaScriptAccordion.parent(0).find(memoryEfficiencyPage.cssConfigurationChangesLabel);
-
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that user can see Avoid dynamic Lua script recommendation when number_of_cached_scripts> 10
-        await t.expect(memoryEfficiencyPage.luaScriptAccordion.exists).ok('Avoid dynamic lua script recommendation not displayed');
+        await t.expect(await memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).exists)
+            .ok('Avoid dynamic lua script recommendation not displayed');
         // Verify that user can see type of recommendation badge
-        await t.expect(luaScriptCodeChangesLabel.exists).ok('Avoid dynamic lua script recommendation not have Code Changes label');
-        await t.expect(luaScriptConfigurationChangesLabel.exists).notOk('Avoid dynamic lua script recommendation have Configuration Changes label');
+        await t.expect(memoryEfficiencyPage.getRecommendationLabelByName(luaScriptRecommendation, 'code').exists)
+            .ok('Avoid dynamic lua script recommendation not have Code Changes label');
+        await t.expect(memoryEfficiencyPage.getRecommendationLabelByName(luaScriptRecommendation, 'configuration').exists)
+            .notOk('Avoid dynamic lua script recommendation have Configuration Changes label');
 
         // Verify that user can see Use smaller keys recommendation when database has 1M+ keys
-        await t.expect(memoryEfficiencyPage.useSmallKeysAccordion.exists).ok('Use smaller keys recommendation not displayed');
+        await t.expect(await memoryEfficiencyPage.getRecommendationByName(useSmallerKeysRecommendation).exists).ok('Use smaller keys recommendation not displayed');
 
         // Verify that user can see all the recommendations expanded by default
-        await t.expect(memoryEfficiencyPage.luaScriptButton.getAttribute('aria-expanded')).eql('true', 'Avoid dynamic lua script recommendation not expanded');
-        await t.expect(memoryEfficiencyPage.useSmallKeysButton.getAttribute('aria-expanded')).eql('true', 'Use smaller keys recommendation not expanded');
+        await t.expect(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecommendation).getAttribute('aria-expanded'))
+            .eql('true', 'Avoid dynamic lua script recommendation not expanded');
+        await t.expect(memoryEfficiencyPage.getRecommendationButtonByName(useSmallerKeysRecommendation).getAttribute('aria-expanded'))
+            .eql('true', 'Use smaller keys recommendation not expanded');
 
         // Verify that user can expand/collapse recommendation
-        const expandedTextContaiterSize = await memoryEfficiencyPage.luaScriptTextContainer.offsetHeight;
-        await t.click(memoryEfficiencyPage.luaScriptButton);
-        await t.expect(memoryEfficiencyPage.luaScriptTextContainer.offsetHeight).lt(expandedTextContaiterSize, 'Lua script recommendation not collapsed');
-        await t.click(memoryEfficiencyPage.luaScriptButton);
-        await t.expect(memoryEfficiencyPage.luaScriptTextContainer.offsetHeight).eql(expandedTextContaiterSize, 'Lua script recommendation not expanded');
-
-        // Verify that user can navigate by link to see the recommendation
-        await t.click(memoryEfficiencyPage.luaScriptTextContainer.find(memoryEfficiencyPage.cssReadMoreLink));
-        await Common.checkURL(externalPageLink);
-        // Close the window with external link to switch to the application window
-        await t.closeWindow();
+        const expandedTextContaiterSize = await memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).offsetHeight;
+        await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecommendation));
+        await t.expect(memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).offsetHeight)
+            .lt(expandedTextContaiterSize, 'Lua script recommendation not collapsed');
+        await t.click(memoryEfficiencyPage.getRecommendationButtonByName(luaScriptRecommendation));
+        await t.expect(memoryEfficiencyPage.getRecommendationByName(luaScriptRecommendation).offsetHeight)
+            .eql(expandedTextContaiterSize, 'Lua script recommendation not expanded');
     });
 // skipped due to inability to receive no recommendations for now
 test.skip('No recommendations message', async t => {
@@ -115,38 +118,45 @@ test
         // Go to Recommendations tab
         await t.click(memoryEfficiencyPage.recommendationsTab);
         // Verify that user can see Avoid using logical databases recommendation when the database supports logical databases and there are keys in more than 1 logical database
-        await t.expect(memoryEfficiencyPage.avoidLogicalDbAccordion.exists).ok('Avoid using logical databases recommendation not displayed');
-        await t.expect(memoryEfficiencyPage.codeChangesLabel.exists).ok('Avoid using logical databases recommendation not have Code Changes label');
+        await t.expect(await memoryEfficiencyPage.getRecommendationByName(avoidLogicalDbRecommendation).exists)
+            .ok('Avoid using logical databases recommendation not displayed');
+        await t.expect(memoryEfficiencyPage.getRecommendationLabelByName(avoidLogicalDbRecommendation, 'code').exists)
+            .ok('Avoid using logical databases recommendation not have Code Changes label');
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
         // Go to Analysis Tools page and create new report and open recommendations
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);
         await t.click(memoryEfficiencyPage.recommendationsTab);
     }).after(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can upvote recommendations', async t => {
-        await memoryEfficiencyActions.voteForVeryUsefulAndVerifyDisabled();
+        const notUsefulVoteOption = 'not useful';
+        const usefulVoteOption = 'useful';
+        await recommendationsActions.voteForRecommendation(redisVersionRecommendation, notUsefulVoteOption);
+        // Verify that user can rate recommendations with one of 2 existing types at the same time
+        await recommendationsActions.verifyVoteIsSelected(redisVersionRecommendation, notUsefulVoteOption);
+
+        // Verify that user can see the popup with link when he votes for “Not useful”
+        await recommendationsActions.verifyVotePopUpIsDisplayed(redisVersionRecommendation, notUsefulVoteOption);
+
         // Verify that user can see previous votes when reload the page
         await memoryEfficiencyPage.reloadPage();
         await t.click(memoryEfficiencyPage.recommendationsTab);
-        await memoryEfficiencyActions.verifyVoteDisabled();
+        await recommendationsActions.verifyVoteIsSelected(redisVersionRecommendation, notUsefulVoteOption);
 
         await t.click(memoryEfficiencyPage.newReportBtn);
-        await memoryEfficiencyActions.voteForUsefulAndVerifyDisabled();
-
-        await t.click(memoryEfficiencyPage.newReportBtn);
-        await memoryEfficiencyActions.voteForNotUsefulAndVerifyDisabled();
-        // Verify that user can see the popup with link when he votes for “Not useful”
-        await t.expect(memoryEfficiencyPage.recommendationsFeedbackBtn.visible).ok('popup did not appear after voting for not useful');
+        await recommendationsActions.voteForRecommendation(redisVersionRecommendation, usefulVoteOption);
+        await recommendationsActions.verifyVoteIsSelected(redisVersionRecommendation, usefulVoteOption);
     });
 test
     .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
         keyName = `recomKey-${Common.generateWord(10)}`;
-        await browserPage.addZSetKey(keyName, '151153320500121', '2147476121', '1511533205001:21');
+        const jsonValue = '{"name":"xyz"}';
+        await browserPage.addJsonKey(keyName, jsonValue);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);
@@ -154,19 +164,16 @@ test
         await t.click(memoryEfficiencyPage.recommendationsTab);
     })
     .after(async t => {
-    // Clear and delete database
+        // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-    })('Verify that user can see the Tutorial opened when clicking on "To Tutorial" for recommendations', async t => {
-        const optimizeTsRecommendation = await memoryEfficiencyPage.getRecommendationByName('Optimize the use of time series');
-        const toTutorialBtn = optimizeTsRecommendation.find(memoryEfficiencyPage.cssToTutorialsBtn);
-
+    })('Verify that user can see the Tutorial opened when clicking on "Tutorial" for recommendations', async t => {
         // Verify that Optimize the use of time series recommendation displayed
-        await t.expect(optimizeTsRecommendation.exists).ok('Optimize the use of time series recommendation not displayed');
+        await t.expect(await memoryEfficiencyPage.getRecommendationByName(searchJsonRecommendation).exists).ok('Query and search JSON documents recommendation not displayed');
         // Verify that tutorial opened
-        await t.click(toTutorialBtn);
+        await t.click(memoryEfficiencyPage.getToTutorialBtnByRecomName(searchJsonRecommendation));
         await t.expect(workbenchPage.preselectArea.visible).ok('Workbench Enablement area not opened');
         // Verify that REDIS FOR TIME SERIES tutorial expanded
-        await t.expect((await workbenchPage.getTutorialByName('REDIS FOR TIME SERIES')).visible).ok('REDIS FOR TIME SERIES tutorial is not expanded');
+        await t.expect((await workbenchPage.getTutorialByName('WORKING WITH JSON')).visible).ok('WORKING WITH JSON tutorial is not expanded');
     });

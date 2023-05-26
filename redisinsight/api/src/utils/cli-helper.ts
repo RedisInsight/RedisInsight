@@ -277,6 +277,14 @@ export const getASCIISafeStringFromBuffer = (reply: Buffer): string => {
 
 export const getUTF8FromBuffer = (reply: Buffer): string => reply.toString('utf8');
 
+export const getUTF8FromRedisString = (value: any) => {
+  if (value instanceof Buffer) {
+    return value.toString('utf8');
+  }
+
+  return value;
+};
+
 /**
  * Generates a Buffer from escaped string representation
  * An opposite for getASCIISafeStringFromBuffer

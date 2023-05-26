@@ -101,6 +101,8 @@ enum ApiEndpoints {
   PUB_SUB_MESSAGES = 'pub-sub/messages',
   CLUSTER_DETAILS = 'cluster-details',
   DATABASE_ANALYSIS = 'analysis',
+  RECOMMENDATIONS = 'recommendations',
+  RECOMMENDATIONS_READ = 'recommendations/read',
 
   NOTIFICATIONS = 'notifications',
   NOTIFICATIONS_READ = 'notifications/read',
@@ -108,6 +110,8 @@ enum ApiEndpoints {
   REDISEARCH = 'redisearch',
   REDISEARCH_SEARCH = 'redisearch/search',
   HISTORY = 'history',
+
+  FEATURES = 'features',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

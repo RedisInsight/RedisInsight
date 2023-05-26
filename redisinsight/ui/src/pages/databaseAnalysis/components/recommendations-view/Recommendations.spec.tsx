@@ -64,6 +64,13 @@ jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
   }),
 }))
 
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    provider: 'RE_CLOUD'
+  }),
+}))
+
 describe('Recommendations', () => {
   it('should render', () => {
     expect(render(<Recommendations />)).toBeTruthy()
@@ -88,6 +95,19 @@ describe('Recommendations', () => {
     render(<Recommendations />)
 
     expect(screen.queryByTestId('recommendations-loader')).not.toBeInTheDocument()
+  })
+
+  it('should render RecommendationVoting', () => {
+    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
+      ...mockdbAnalysisSelector,
+      data: {
+        recommendations: [{ name: 'luaScript' }]
+      }
+    }))
+
+    render(<Recommendations />)
+
+    expect(screen.getByTestId('recommendation-voting')).toBeInTheDocument()
   })
 
   it('should render code changes badge in luaScript recommendation', () => {
@@ -185,21 +205,6 @@ describe('Recommendations', () => {
       ...mockdbAnalysisSelector,
       data: {
         recommendations: [{ name: 'hashHashtableToZiplist' }]
-      }
-    }))
-
-    render(<Recommendations />)
-
-    expect(screen.queryByTestId('code_changes')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('upgrade')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('configuration_changes')).toBeInTheDocument()
-  })
-
-  it('should render configuration_changes badge in compressHashFieldNames recommendation', () => {
-    (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
-      ...mockdbAnalysisSelector,
-      data: {
-        recommendations: [{ name: 'compressHashFieldNames' }]
       }
     }))
 
@@ -369,6 +374,7 @@ describe('Recommendations', () => {
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         recommendation: 'luaScript',
+        provider: 'RE_CLOUD'
       }
     })
     sendEventTelemetry.mockRestore()
@@ -381,6 +387,7 @@ describe('Recommendations', () => {
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         recommendation: 'luaScript',
+        provider: 'RE_CLOUD',
       }
     })
     sendEventTelemetry.mockRestore()
@@ -426,7 +433,7 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('bigSets-redis-stack-link')).toHaveAttribute('href', 'https://redis.io/docs/stack/')
   })
 
-  it('should render go to tutorial button', () => {
+  it('should render go tutorial button', () => {
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
@@ -439,7 +446,7 @@ describe('Recommendations', () => {
     expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
   })
 
-  it('should call proper history push after click go to tutorial button', () => {
+  it('should call proper history push after click go tutorial button', () => {
     const sendEventTelemetryMock = jest.fn()
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock);
 
@@ -459,13 +466,14 @@ describe('Recommendations', () => {
       event: TelemetryEvent.DATABASE_RECOMMENDATIONS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
-        recommendation: 'bigHashes',
+        recommendation: 'shardHashes',
+        provider: 'RE_CLOUD',
       }
     })
     sendEventTelemetry.mockRestore()
   })
 
-  it('should call proper telemetry after click go to tutorial button', () => {
+  it('should call proper telemetry after click go tutorial button', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
 

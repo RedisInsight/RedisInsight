@@ -75,7 +75,7 @@
     "telemetryEvent": "shardHashes",
     "title": "Shard big hashes to small hashes",
     "redisStack": true,
-    "tutorial": "/quick-guides/document/working-with-hashes.md",
+    "tutorial": "/quick-guides/document/introduction.md",
     "content": [
       {
         "type": "paragraph",
@@ -1039,7 +1039,7 @@
     "id": "searchJSON",
     "title": "Try indexing your JSON documents for efficient data retrieval",
     "redisStack": true,
-    "tutorial": "/quick-guides/document/working-with-json.md",
+    "tutorial": "/quick-guides/document/introduction.md",
     "content": [
       {
         "type": "span",
@@ -1130,7 +1130,7 @@
     "id": "stringToJson",
     "title": "Try using our JSON native document store",
     "redisStack": true,
-    "tutorial": "/quick-guides/document/working-with-json.md",
+    "tutorial": "/quick-guides/document/introduction.md",
     "content": [
       {
         "type": "paragraph",
@@ -1310,7 +1310,7 @@
   "searchHash": {
     "id": "searchHash",
     "title": "Try indexing your hash documents to query and retrieve data",
-    "tutorial": "/quick-guides/document/working-with-hashes.md",
+    "tutorial": "/quick-guides/document/introduction.md",
     "redisStack": true,
     "content": [
       {

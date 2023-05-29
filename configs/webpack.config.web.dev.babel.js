@@ -174,7 +174,6 @@ export default merge(commonConfig, {
 
   devServer: {
     host: HOST,
-    // allowedHosts: 'all',
     disableHostCheck: true,
     port: 8080,
     hot: true, // enable HMR on the server

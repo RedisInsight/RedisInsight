@@ -10,7 +10,7 @@ import {
   isRepeatCountCorrect
 } from 'uiSrc/utils'
 import { cliTexts, SelectCommand } from 'uiSrc/constants/cliOutput'
-import { CommandMonitor, CommandPSubscribe, Pages } from 'uiSrc/constants'
+import { CommandMonitor, CommandPSubscribe, CommandSubscribe, Pages } from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
@@ -29,6 +29,10 @@ const CommonErrorResponse = (id: string, command = '', result?: any) => {
   // Flow if MONITOR command was executed
   if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
     return cliTexts.MONITOR_COMMAND(() => { dispatch(showMonitor()) })
+  }
+  // Flow if SUBSCRIBE command was executed
+  if (checkUnsupportedCommand([CommandSubscribe.toLowerCase()], commandLine)) {
+    return cliTexts.SUBSCRIBE_COMMAND(Pages.pubSub(instanceId))
   }
   // Flow if PSUBSCRIBE command was executed
   if (checkUnsupportedCommand([CommandPSubscribe.toLowerCase()], commandLine)) {

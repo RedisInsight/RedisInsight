@@ -19,6 +19,7 @@ import styles from './styles.module.scss'
 export interface IProps {
   moduleName: RedisDefaultModules
   id: string
+  type?: 'workbench' | 'modal'
 }
 
 const MIN_ELEMENT_WIDTH = 1210
@@ -49,7 +50,7 @@ const ListItem = ({ item }: { item: string }) => (
   </li>
 )
 
-const ModuleNotLoaded = ({ moduleName, id }: IProps) => {
+const ModuleNotLoaded = ({ moduleName, id, type = 'workbench' }: IProps) => {
   const [width, setWidth] = useState(0)
 
   const module = MODULE_TEXT_VIEW[moduleName]
@@ -62,7 +63,11 @@ const ModuleNotLoaded = ({ moduleName, id }: IProps) => {
   })
 
   return (
-    <div className={cx(styles.container, { [styles.fullScreen]: width > MAX_ELEMENT_WIDTH })}>
+    <div className={cx(styles.container, {
+      [styles.fullScreen]: width > MAX_ELEMENT_WIDTH || type === 'modal',
+      [styles.modal]: type === 'modal',
+    })}
+    >
       <div className={styles.flex}>
         <div>
           {width > MAX_ELEMENT_WIDTH

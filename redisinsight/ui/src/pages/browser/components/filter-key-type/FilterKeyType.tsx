@@ -20,9 +20,11 @@ import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
 
+const ALL_KEY_TYPES_VALUE = 'all'
+
 const FilterKeyType = () => {
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
-  const [typeSelected, setTypeSelected] = useState<string>('')
+  const [typeSelected, setTypeSelected] = useState<string>('all')
   const [isVersionSupported, setIsVersionSupported] = useState<boolean>(true)
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState<boolean>(false)
 
@@ -40,7 +42,7 @@ const FilterKeyType = () => {
   }, [version])
 
   useEffect(() => {
-    setTypeSelected(filter ?? '')
+    setTypeSelected(filter ?? ALL_KEY_TYPES_VALUE)
   }, [filter])
 
   const options: EuiSuperSelectOption<string>[] = FILTER_KEY_TYPE_OPTIONS.map(
@@ -49,13 +51,7 @@ const FilterKeyType = () => {
       return {
         value,
         inputDisplay: (
-          <>
-            <EuiIcon
-              type="controlsVertical"
-              className={styles.controlsIcon}
-              data-testid={`filter-option-type-selected-${value}`}
-            />
-          </>
+          <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>
         ),
         dropdownDisplay: <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>,
         'data-test-subj': `filter-option-type-${value}`,
@@ -63,19 +59,17 @@ const FilterKeyType = () => {
     }
   )
 
-  options.push({
-    value: 'clear',
-    inputDisplay: null,
-    dropdownDisplay: (
-      <div className={styles.clearSelectionBtn} data-testid="clear-selection-btn">Clear Selection</div>
-    )
+  options.unshift({
+    value: ALL_KEY_TYPES_VALUE,
+    inputDisplay: (<div className={styles.dropdownOption} data-testid="all-key-types-option">All Key Types</div>),
+    dropdownDisplay: 'All Key Types'
   })
 
   const onChangeType = (initValue: string) => {
-    const value = (initValue === 'clear') ? '' : typeSelected === initValue ? '' : initValue
+    const value = initValue || ALL_KEY_TYPES_VALUE
     setTypeSelected(value)
     setIsSelectOpen(false)
-    dispatch(setFilter(value || null))
+    dispatch(setFilter(value === ALL_KEY_TYPES_VALUE ? null : value))
     dispatch(
       fetchKeys(
         {
@@ -121,20 +115,7 @@ const FilterKeyType = () => {
           !isVersionSupported && styles.unsupported
         )}
       >
-        {!typeSelected && (
-          <div
-            className={styles.allTypes}
-            onClick={() => isVersionSupported && setIsSelectOpen(!isSelectOpen)}
-            role="presentation"
-          >
-            <EuiIcon
-              type="controlsVertical"
-              data-testid="filter-option-type-default"
-              className={cx(styles.controlsIcon, styles.allTypesIcon)}
-            />
-          </div>
-        )}
-        {!isVersionSupported && UnsupportedInfo()}
+        {/* {!isVersionSupported && UnsupportedInfo()} */}
         <EuiSuperSelect
           fullWidth
           itemClassName={cx('withColorDefinition', styles.filterKeyType)}

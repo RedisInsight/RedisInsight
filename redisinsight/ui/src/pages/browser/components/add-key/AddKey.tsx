@@ -7,7 +7,7 @@ import {
   EuiHealth,
   EuiTitle,
   EuiToolTip,
-  EuiButtonIcon,
+  EuiButtonIcon, EuiButton,
 } from '@elastic/eui'
 import Divider from 'uiSrc/components/divider/Divider'
 import { KeyTypes } from 'uiSrc/constants'
@@ -33,9 +33,10 @@ import styles from './styles.module.scss'
 export interface Props {
   onAddKeyPanel: (value: boolean, keyName?: RedisResponseBuffer) => void
   onClosePanel: () => void
+  arePanelsCollapsed?: boolean
 }
 const AddKey = (props: Props) => {
-  const { onAddKeyPanel, onClosePanel } = props
+  const { onAddKeyPanel, onClosePanel, arePanelsCollapsed } = props
   const dispatch = useDispatch()
 
   const { loading } = useSelector(addKeyStateSelector)
@@ -110,25 +111,39 @@ const AddKey = (props: Props) => {
           gutterSize="none"
           direction="column"
           justifyContent="center"
+          responsive={false}
           className={styles.content}
         >
           <EuiFlexItem grow style={{ marginBottom: '36px' }}>
             <EuiTitle size="xs">
               <h4>New Key</h4>
             </EuiTitle>
-            <EuiToolTip
-              content="Close"
-              position="left"
-              anchorClassName={styles.closeKeyTooltip}
-            >
-              <EuiButtonIcon
-                iconType="cross"
-                color="primary"
-                aria-label="Close key"
-                className={styles.closeBtn}
+            {arePanelsCollapsed ? (
+              <EuiButton
+                fill
+                color="secondary"
                 onClick={() => closeKey()}
-              />
-            </EuiToolTip>
+                size="s"
+                iconType="arrowLeft"
+                className={styles.backBtn}
+              >
+                Back
+              </EuiButton>
+            ) : (
+              <EuiToolTip
+                content="Close"
+                position="left"
+                anchorClassName={styles.closeKeyTooltip}
+              >
+                <EuiButtonIcon
+                  iconType="cross"
+                  color="primary"
+                  aria-label="Close key"
+                  className={styles.closeBtn}
+                  onClick={() => closeKey()}
+                />
+              </EuiToolTip>
+            )}
           </EuiFlexItem>
           <div className="eui-yScroll">
             <div className={styles.contentFields}>

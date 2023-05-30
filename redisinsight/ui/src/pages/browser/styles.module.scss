@@ -1,4 +1,4 @@
-$breakpoint-to-hide-resize-panel: 1124px;
+$breakpoint-to-hide-resize-panel: 1280px;
 
 .container {
   height: 100%;
@@ -11,7 +11,7 @@ $breakpoint-to-hide-resize-panel: 1124px;
   display: flex;
   flex: 1;
   padding: 0 16px;
-  height: calc(100% - 70px);
+  height: calc(100% - 280px);
 
   @media only screen and (min-width: 768px) {
     max-width: calc(100vw - 60px);
@@ -34,7 +34,7 @@ $breakpoint-to-hide-resize-panel: 1124px;
 }
 
 .resizePanelLeft {
-  min-width: 550px;
+  min-width: 600px;
   :global(.euiResizablePanel__content) {
     @media (min-width: $breakpoint-to-hide-resize-panel) {
       padding-right: 8px;
@@ -43,7 +43,7 @@ $breakpoint-to-hide-resize-panel: 1124px;
 }
 
 .resizePanelRight {
-  min-width: 500px;
+  min-width: 550px;
   :global(.euiResizablePanel__content) {
     @media (min-width: $breakpoint-to-hide-resize-panel) {
       padding-left: 8px;
@@ -85,8 +85,9 @@ $breakpoint-to-hide-resize-panel: 1124px;
   top: 0;
   height: 100% !important;
   left: 100%;
-  transition: left 0.1s ease;
+  transition: left 0.25s ease;
   z-index: 10;
+  will-change: left;
 }
 
 .keyDetailsOpen {

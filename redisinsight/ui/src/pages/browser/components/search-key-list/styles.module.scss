@@ -1,16 +1,8 @@
 .container {
   flex-grow: 1;
   height: 36px;
-  margin-left: 48px;
   position: relative;
-
-  &.redisearchMode {
-    margin-left: 8px;
-
-    > div > div {
-      border-radius: 4px 0 0 4px;
-    }
-  }
+  max-width: 708px;
 
   :global(.euiFormControlLayout) {
     max-width: calc(100%) !important;

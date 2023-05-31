@@ -58,6 +58,10 @@
       right: 14px;
     }
   }
+
+  .modalBody :global(.euiModalBody__overflow){
+    padding: 0 !important;
+  }
 }
 
 .iconVector svg {

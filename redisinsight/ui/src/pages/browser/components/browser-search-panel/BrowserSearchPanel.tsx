@@ -3,7 +3,7 @@
 import React, { FC, SVGProps, useCallback, useState } from 'react'
 
 import cx from 'classnames'
-import { EuiButton, EuiButtonIcon, EuiModal, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiButtonIcon, EuiModal, EuiModalBody, EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
@@ -199,7 +199,9 @@ const BrowserSearchPanel = (props: Props) => {
     <div className={styles.content}>
       {isPopoverOpen && (
         <EuiModal onClose={hidePopover} className={styles.moduleNotLoaded}>
-          <ModuleNotLoaded moduleName={RedisDefaultModules.Search} type="modal" id="0" />
+          <EuiModalBody className={styles.modalBody}>
+            <ModuleNotLoaded moduleName={RedisDefaultModules.Search} type="modal" id="0" />
+          </EuiModalBody>
         </EuiModal>
       )}
       <div className={styles.searchWrapper}>

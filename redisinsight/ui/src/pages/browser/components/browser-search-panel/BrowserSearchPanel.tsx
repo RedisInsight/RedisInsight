@@ -87,6 +87,13 @@ const BrowserSearchPanel = (props: Props) => {
       onClick() {
         if (this.disabled) {
           showPopover()
+          sendEventTelemetry({
+            event: TelemetryEvent.SEARCH_MODE_CHANGE_FAILED,
+            eventData: {
+              databaseId: instanceId,
+              view: viewType,
+            }
+          })
         } else {
           handleSwitchSearchMode(this.type)
         }
@@ -200,7 +207,7 @@ const BrowserSearchPanel = (props: Props) => {
       {isPopoverOpen && (
         <EuiModal onClose={hidePopover} className={styles.moduleNotLoaded}>
           <EuiModalBody className={styles.modalBody}>
-            <ModuleNotLoaded moduleName={RedisDefaultModules.Search} type="modal" id="0" />
+            <ModuleNotLoaded moduleName={RedisDefaultModules.Search} type="browser" id="0" />
           </EuiModalBody>
         </EuiModal>
       )}

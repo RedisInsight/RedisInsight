@@ -4,40 +4,13 @@
 
 .wrapper {
   height: 100%;
-
-  .badgesLegend {
-    margin: 0 22px 14px 0 !important;
-    padding-top: 20px;
-
-    .badgeWrapper {
-      margin-right: 0;
-    }
-
-    .badge {
-      margin: 0 0 0 24px;
-    }
-
-    .badgeIcon {
-      margin-right: 14px;
-    }
-  }
-
-  .badgeIcon {
-    fill: var(--badgeIconColor);
-  }
-
-  .badgeWrapper {
-    display: flex;
-    align-items: center;
-    margin-right: 24px;
-  }
 }
 
 .recommendationsContainer {
   @include euiScrollBar;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: calc(100% - 51px);
+  max-height: calc(100% - 70px);
 
   .accordionButton :global(.euiFlexItem) {
     margin: 0;
@@ -50,6 +23,10 @@
     .redisStackIcon {
       width: 20px;
       height: 20px;
+    }
+
+    :global(.euiScreenReaderOnly) {
+      display: none;
     }
   }
 
@@ -96,15 +73,6 @@
   margin-bottom: 6px;
   padding: 30px 18px 11px;
 
-  ul {
-    list-style: initial;
-    padding-left: 21px;
-
-    li::marker {
-      color: var(--euiTextSubduedColor);
-    }
-  }
-
   .accordionContent {
     padding: 18px 0 0 !important;
   }
@@ -138,13 +106,5 @@
 
   .accordionBtn {
     font: normal normal 500 16px/19px Graphik, sans-serif;
-  }
-
-  .text {
-    font: normal normal normal 14px/24px Graphik, sans-serif;
-  }
-
-  .span {
-    display: inline;
   }
 }

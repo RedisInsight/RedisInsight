@@ -14,7 +14,7 @@ while [ $TIMEOUT -gt 0 ]; do
       exit 0;
     fi
 
-    sleep 1
+    sleep 30
     echo "Waiting... (left: $TIMEOUT)"
 done
 

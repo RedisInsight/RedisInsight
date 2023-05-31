@@ -18,7 +18,6 @@ import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const chance = new Chance();
-const common = new Common();
 const workbenchPage = new WorkbenchPage();
 
 const fiveSecondsTimeout = 5000;
@@ -63,7 +62,7 @@ test
         //Add database with different modules
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
-        await common.reloadPage();
+        await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
         countOfModules = await browserPage.modulesButton.count;
         for(let i = 0; i < countOfModules; i++) {
@@ -107,13 +106,13 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see total number of keys rounded in format 100, 1K, 1M, 1B in DB header in Browser page', async t => {
         //Add 100 keys
-        keys1 = await common.createArrayWithKeyValue(100);
+        keys1 = await Common.createArrayWithKeyValue(100);
         await browserPage.Cli.sendCliCommandAndWaitForTotalKeys(`MSET ${keys1.join(' ')}`);
         let totalKeys = await browserPage.OverviewPanel.overviewTotalKeys.innerText;
         //Verify that the info on DB header is updated after adds
         await t.expect(totalKeys).eql('100', 'Info in DB header after ADD 100 keys');
         //Add 1000 keys
-        keys2 = await common.createArrayWithKeyValue(1000);
+        keys2 = await Common.createArrayWithKeyValue(1000);
         await browserPage.Cli.sendCliCommandAndWaitForTotalKeys(`MSET ${keys2.join(' ')}`);
         totalKeys = await browserPage.OverviewPanel.overviewTotalKeys.innerText;
         //Verify that the info on DB header is updated after adds
@@ -121,7 +120,7 @@ test
         //Add database with more than 1M keys
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await addNewStandaloneDatabaseApi(ossStandaloneBigConfig);
-        await common.reloadPage();
+        await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneBigConfig.databaseName);
         //Wait 5 seconds
         await t.wait(fiveSecondsTimeout);
@@ -137,7 +136,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see total memory rounded in format B, KB, MB, GB, TB in DB header in Browser page', async t => {
         //Add new keys
-        keys = await common.createArrayWithKeyValue(100);
+        keys = await Common.createArrayWithKeyValue(100);
         await browserPage.Cli.sendCommandInCli(`MSET ${keys.join(' ')}`);
         //Verify total memory
         await t.wait(fiveSecondsTimeout);

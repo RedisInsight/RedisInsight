@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import cx from 'classnames'
-import { useParams } from 'react-router-dom'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { dbAnalysisSelector, dbAnalysisReportsSelector } from 'uiSrc/slices/analytics/dbAnalysis'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { DEFAULT_EXTRAPOLATION, EmptyMessage, SectionName } from 'uiSrc/pages/databaseAnalysis/constants'
 import {
   TopKeys,
@@ -17,12 +17,11 @@ import {
 import styles from './styles.module.scss'
 
 const AnalysisDataView = () => {
+  const { id: instanceId, provider } = useSelector(connectedInstanceSelector)
   const { loading, data } = useSelector(dbAnalysisSelector)
   const { data: reports } = useSelector(dbAnalysisReportsSelector)
 
   const [extrapolation, setExtrapolation] = useState(DEFAULT_EXTRAPOLATION)
-
-  const { instanceId } = useParams<{ instanceId: string }>()
 
   useEffect(() => {
     if (data?.progress?.processed) {
@@ -37,7 +36,8 @@ const AnalysisDataView = () => {
         databaseId: instanceId,
         from: !value,
         to: value,
-        section
+        section,
+        provider
       }
     })
   }

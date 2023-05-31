@@ -11,11 +11,10 @@ import { Common } from '../../../helpers/common';
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const common = new Common();
 const chance = new Chance();
 
 const keyToAddParameters = { keysCount: 13, keyNameStartWith: 'hashKey' };
-const keyName = `TestHashKey-${common.generateWord(10)}`;
+const keyName = `TestHashKey-${ Common.generateWord(10) }`;
 const keyToAddParameters2 = { fieldsCount: 80000, keyName, fieldStartWith: 'hashField', fieldValueStartWith: 'hashValue' };
 const members = [...Array(100).keys()].toString().replace(/,/g, ' '); // The smallest key
 const keyNamesMemory = ['string', 'list', 'bloom', 'set'];

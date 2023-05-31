@@ -58,7 +58,7 @@ echo "Test run is starting... ${RTE}"
 eval "ID=$ID RTE=$RTE docker-compose -p $ID \
   -f $BASEDIR/$BUILD.build.yml \
   -f $BASEDIR/$RTE/docker-compose.yml \
-  --env-file $BASEDIR/$BUILD.build.env run test"
+  --env-file $BASEDIR/$BUILD.build.env run --use-aliases test"
 
 echo "Stop all containers... ${RTE}"
 eval "ID=$ID RTE=$RTE docker-compose -p $ID \

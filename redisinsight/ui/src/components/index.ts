@@ -22,6 +22,10 @@ import BulkActionsConfig from './bulk-actions-config'
 import ImportDatabasesDialog from './import-databases-dialog'
 import OnboardingTour from './onboarding-tour'
 import CodeBlock from './code-block'
+import ShowChildByCondition from './show-child-by-condition'
+import RecommendationVoting from './recommendation-voting'
+import RecommendationCopyComponent from './recommendation-copy-component'
+import FeatureFlagComponent from './feature-flag-component'
 
 export {
   NavigationMenu,
@@ -51,4 +55,8 @@ export {
   ImportDatabasesDialog,
   OnboardingTour,
   CodeBlock,
+  ShowChildByCondition,
+  RecommendationVoting,
+  RecommendationCopyComponent,
+  FeatureFlagComponent,
 }

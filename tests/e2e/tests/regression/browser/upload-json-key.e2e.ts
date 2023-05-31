@@ -7,11 +7,10 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
 const filePath = path.join('..', '..', '..', 'test-data', 'upload-json', 'sample.json');
 const jsonValues = ['Live JSON generator', '3.1', '"2014-06-25T00:00:00.000Z"', 'true'];
-const keyName = common.generateWord(10);
+const keyName = Common.generateWord(10);
 
 fixture `Upload json file`
     .meta({
@@ -35,7 +34,7 @@ test('Verify that user can insert a JSON from .json file on the form to add a JS
     await t.typeText(browserPage.addKeyNameInput, keyName, { replace: true, paste: true });
     await t.setFilesToUpload(browserPage.jsonUploadInput, [filePath]);
     await t.click(browserPage.addKeyButton);
-    const notification = await browserPage.getMessageText();
+    const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The key added notification not found');
     // Verify that user can see the JSON value populated from the file when the insert is successful.
     for (const el of jsonValues) {

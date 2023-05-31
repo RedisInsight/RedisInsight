@@ -39,6 +39,14 @@ jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
   }),
 }))
 
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: 'instanceId',
+    provider: 'RE_CLOUD'
+  }),
+}))
+
 const mockReports = [
   {
     id: MOCK_ANALYSIS_REPORT_DATA.id,
@@ -371,7 +379,8 @@ describe('AnalysisDataView', () => {
           databaseId: INSTANCE_ID_MOCK,
           from: !el.checked,
           to: el.checked,
-          section
+          section,
+          provider: 'RE_CLOUD'
         }
       })
       sendEventTelemetry.mockRestore()

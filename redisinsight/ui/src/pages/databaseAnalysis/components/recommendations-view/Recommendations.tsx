@@ -14,10 +14,10 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { RecommendationVoting } from 'uiSrc/pages/databaseAnalysis/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
-import recommendationsContent from 'uiSrc/constants/dbAnalysisRecommendations.json'
-import { Pages, Theme } from 'uiSrc/constants'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
+import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
@@ -26,23 +26,33 @@ import NoRecommendationsDark from 'uiSrc/assets/img/icons/recommendations_dark.s
 import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light.svg'
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
-import { findMarkdownPathByPath } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
-import { EAManifestFirstKey } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/constants'
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
-import { renderBadges, renderBadgesLegend, renderContent, sortRecommendations } from './utils'
+import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
+import {
+  findMarkdownPathByPath,
+  sortRecommendations,
+  renderRecommendationBadgesLegend,
+  renderRecommendationBadges,
+  renderRecommendationContent,
+} from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
+
+const recommendationsContent = _content as IRecommendationsStatic
 
 const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
   const { items: guides } = useSelector(workbenchGuidesSelector)
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
+  const { provider } = useSelector(connectedInstanceSelector)
   const { recommendations = [] } = data ?? {}
 
   const { theme } = useContext(ThemeContext)
-  const { instanceId } = useParams<{ instanceId: string }>()
   const history = useHistory()
   const dispatch = useDispatch()
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   const handleToggle = (isOpen: boolean, id: string) => sendEventTelemetry({
     event: isOpen
@@ -50,7 +60,8 @@ const Recommendations = () => {
       : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_COLLAPSED,
     eventData: {
       databaseId: instanceId,
-      recommendation: id,
+      recommendation: recommendationsContent[id]?.telemetryEvent || id,
+      provider,
     }
   })
 
@@ -59,7 +70,8 @@ const Recommendations = () => {
       event: TelemetryEvent.DATABASE_RECOMMENDATIONS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: instanceId,
-        recommendation: id,
+        recommendation: recommendationsContent[id]?.telemetryEvent || id,
+        provider,
       }
     })
 
@@ -90,7 +102,7 @@ const Recommendations = () => {
             <EuiLink
               external={false}
               target="_blank"
-              href="https://redis.io/docs/stack/"
+              href={EXTERNAL_LINKS.redisStack}
               className={styles.redisStackLink}
               data-testid={`${id}-redis-stack-link`}
             >
@@ -114,7 +126,7 @@ const Recommendations = () => {
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiFlexItem grow={false}>
-        {renderBadges(badges)}
+        {renderRecommendationBadges(badges)}
       </EuiFlexItem>
     </EuiFlexGroup>
   )
@@ -143,24 +155,28 @@ const Recommendations = () => {
 
   return (
     <div className={styles.wrapper}>
-      <div>
-        {renderBadgesLegend()}
-      </div>
+      {renderRecommendationBadgesLegend()}
       <div className={styles.recommendationsContainer}>
         {sortRecommendations(recommendations).map(({ name, params, vote }) => {
           const {
             id = '',
             title = '',
-            content = '',
+            content = [],
             badges = [],
             redisStack = false,
             tutorial,
-          } = recommendationsContent[name as keyof typeof recommendationsContent]
+            telemetryEvent
+          } = recommendationsContent[name] || {}
+
+          if (!(name in recommendationsContent)) {
+            return null
+          }
 
           return (
-            <div key={id} className={styles.recommendation}>
+            <div key={id} className={styles.recommendation} data-testid={`${id}-recommendation`}>
               <EuiAccordion
                 id={name}
+                key={`${name}-accordion`}
                 arrowDisplay="right"
                 buttonContent={renderButtonContent(redisStack, title, badges, id)}
                 buttonClassName={styles.accordionBtn}
@@ -171,7 +187,14 @@ const Recommendations = () => {
                 data-testid={`${id}-accordion`}
               >
                 <EuiPanel className={styles.accordionContent} color="subdued">
-                  {renderContent(content, params)}
+                  {renderRecommendationContent(content, params, telemetryEvent ?? name)}
+                  {!!params?.keys?.length && (
+                    <RecommendationCopyComponent
+                      keyName={params.keys[0]}
+                      provider={provider}
+                      telemetryEvent={recommendationsContent[name]?.telemetryEvent ?? name}
+                    />
+                  )}
                 </EuiPanel>
               </EuiAccordion>
               <div className={styles.footer}>
@@ -184,7 +207,7 @@ const Recommendations = () => {
                     onClick={() => goToTutorial(tutorial, id)}
                     data-testid={`${id}-to-tutorial-btn`}
                   >
-                    To Tutorial
+                    Tutorial
                   </EuiButton>
                 )}
               </div>

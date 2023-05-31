@@ -5,9 +5,8 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const keyTTL = '2147476121';
 const expectedTTL = /214747612*/;
 
@@ -23,7 +22,7 @@ fixture `Key details verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can see Hash Key details', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
 
     await browserPage.addHashKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -38,7 +37,7 @@ test('Verify that user can see Hash Key details', async t => {
     await t.expect(keyBadge).contains('Hash', 'The Hash Key Badge is incorrect');
 });
 test('Verify that user can see List Key details', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
 
     await browserPage.addListKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -53,7 +52,7 @@ test('Verify that user can see List Key details', async t => {
     await t.expect(keyBadge).contains('List', 'The List Key Badge is incorrect');
 });
 test('Verify that user can see Set Key details', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
 
     await browserPage.addSetKey(keyName, keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -68,7 +67,7 @@ test('Verify that user can see Set Key details', async t => {
     await t.expect(keyBadge).contains('Set', 'The Set Key Badge is incorrect');
 });
 test('Verify that user can see String Key details', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     const value = 'keyValue12334353434;';
 
     await browserPage.addStringKey(keyName, value, keyTTL);
@@ -84,7 +83,7 @@ test('Verify that user can see String Key details', async t => {
     await t.expect(keyBadge).contains('String', 'The String Key Badge is incorrect');
 });
 test('Verify that user can see ZSet Key details', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
 
     await browserPage.addZSetKey(keyName, '1', keyTTL);
     const keyDetails = await browserPage.keyDetailsHeader.textContent;
@@ -99,7 +98,7 @@ test('Verify that user can see ZSet Key details', async t => {
     await t.expect(keyBadge).contains('Sorted Set', 'The ZSet Key Badge is incorrect');
 });
 test('Verify that user can see JSON Key details', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
 
     const jsonValue = '{"employee":{ "name":"John", "age":30, "city":"New York" }}';
 

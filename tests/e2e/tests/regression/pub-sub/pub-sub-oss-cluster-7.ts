@@ -9,11 +9,9 @@ import {
     addNewOSSClusterDatabaseApi, addNewStandaloneDatabaseApi,
     deleteOSSClusterDatabaseApi, deleteStandaloneDatabaseApi
 } from '../../../helpers/api/api-database';
-import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
-const common = new Common();
 
 fixture `PubSub OSS Cluster 7 tests`
     .meta({ env: env.web, type: 'regression' })
@@ -23,7 +21,7 @@ test
     .before(async t => {
         await acceptLicenseTerms();
         await addNewOSSClusterDatabaseApi(ossClusterConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossClusterConfig.ossClusterDatabaseName);
         await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
@@ -45,7 +43,7 @@ test
     .before(async t => {
         await acceptLicenseTerms();
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await common.reloadPage();
+        await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })

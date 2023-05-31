@@ -24,10 +24,11 @@ import {
   ZSetMemberDto,
 } from 'src/modules/browser/dto';
 import { SortOrder } from 'src/constants/sort';
-import { RedisErrorCodes } from 'src/constants';
+import { RedisErrorCodes, RECOMMENDATION_NAMES } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ReplyError } from 'src/models';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
@@ -43,6 +44,7 @@ export class ZSetBusinessService {
 
   constructor(
     private browserTool: BrowserToolService,
+    private recommendationService: DatabaseRecommendationService,
   ) {}
 
   public async createZSet(
@@ -116,6 +118,11 @@ export class ZSetBusinessService {
         total,
         members,
       };
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.RTS,
+        { members, keyName },
+      );
     } catch (error) {
       this.logger.error('Failed to get members of the ZSet data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {

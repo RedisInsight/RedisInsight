@@ -1,5 +1,5 @@
 import { acceptLicenseTermsAndAddDatabaseApi, clickOnEditDatabaseByName, deleteDatabase } from '../../../helpers/database';
-import { AddRedisDatabasePage, BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
@@ -9,16 +9,14 @@ import { env, rte } from '../../../helpers/constants';
 import { Common } from '../../../helpers/common';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
-const common = new Common();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const addRedisDatabasePage = new AddRedisDatabasePage();
 const browserPage = new BrowserPage();
 const database = Object.assign({}, ossStandaloneConfig);
 
-const previousDatabaseName = common.generateWord(20);
-const newDatabaseName = common.generateWord(20);
+const previousDatabaseName = Common.generateWord(20);
+const newDatabaseName = Common.generateWord(20);
 database.databaseName = previousDatabaseName;
-const keyName = common.generateWord(10);
+const keyName = Common.generateWord(10);
 
 fixture`List of Databases`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -36,7 +34,7 @@ test
         await clickOnEditDatabaseByName(database.databaseName);
 
         // Verify that timeout input is displayed for edit db window with default value when it wasn't specified
-        await t.expect(addRedisDatabasePage.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30');
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30');
 
         await t.click(myRedisDatabasePage.editAliasButton);
         await t.typeText(myRedisDatabasePage.aliasInput, newDatabaseName, { replace: true });
@@ -51,8 +49,13 @@ test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
     })
-    .after(async() => {
+    .after(async t => {
         // Clear and delete database
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
+        await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await t.typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneConfig.port, { replace: true, paste: true });
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.deleteKeyByName(keyName);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that context for previous database not saved after editing port/username/password/certificates/SSH', async t => {
@@ -67,8 +70,8 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Edit port of added database
         await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
-        await t.typeText(addRedisDatabasePage.portInput, ossStandaloneBigConfig.port, { replace: true, paste: true });
-        await t.click(addRedisDatabasePage.addRedisDatabaseButton);
+        await t.typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneBigConfig.port, { replace: true, paste: true });
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         // Verify that keys from the database with new port are displayed
         await t.expect(browserPage.keysSummary.find('b').withText('18 00').exists).ok('DB with new port not opened');

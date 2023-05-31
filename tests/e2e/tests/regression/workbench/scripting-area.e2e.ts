@@ -9,10 +9,9 @@ import { Common } from '../../../helpers/common';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const settingsPage = new SettingsPage();
-const common = new Common();
 
-const indexName = common.generateWord(5);
-let keyName = common.generateWord(5);
+const indexName = Common.generateWord(5);
+let keyName = Common.generateWord(5);
 
 fixture `Scripting area at Workbench`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -56,7 +55,7 @@ test
         await workbenchPage.Cli.sendCommandInCli(`DEL ${keyName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can use double slashes (//) wrapped in double quotes and these slashes will not comment out any characters', async t => {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
         const commandsForSend = [
             `HMSET ${keyName} price 20`,
             'FT._LIST'
@@ -101,7 +100,7 @@ test
         await workbenchPage.Cli.sendCommandInCli(`DEL ${keyName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
-        keyName = common.generateWord(10);
+        keyName = Common.generateWord(10);
         const command = `HSET ${keyName} field value`;
 
         // Put a command in Editing Area

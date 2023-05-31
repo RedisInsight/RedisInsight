@@ -25,6 +25,15 @@ const mockReports = [
 ]
 
 let store: typeof mockedStore
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: 'instanceId',
+    provider: 'RE_CLOUD',
+  }),
+}))
+
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
@@ -104,6 +113,7 @@ describe('DatabaseAnalysisTabs', () => {
         event: TelemetryEvent.DATABASE_ANALYSIS_DATA_SUMMARY_CLICKED,
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
+          provider: 'RE_CLOUD',
         }
       })
       sendEventTelemetry.mockRestore()
@@ -126,6 +136,7 @@ describe('DatabaseAnalysisTabs', () => {
           databaseId: INSTANCE_ID_MOCK,
           recommendationsCount: 0,
           list: [],
+          provider: 'RE_CLOUD'
         }
       })
       sendEventTelemetry.mockRestore()
@@ -147,7 +158,8 @@ describe('DatabaseAnalysisTabs', () => {
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
           recommendationsCount: 2,
-          list: ['luaScript', 'bigHashes'],
+          list: ['luaScript', 'shardHashes'],
+          provider: 'RE_CLOUD'
         }
       })
       sendEventTelemetry.mockRestore()

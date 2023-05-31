@@ -54,7 +54,21 @@
   }
 }
 
+.euiGlobalToastList {
+  width: auto !important;
+
+  .euiToast {
+    width: 340px !important;
+
+    &.dynamic {
+      width: auto !important;
+      max-width: 480px !important;
+    }
+  }
+}
+
 .euiGlobalToastList--right:not(:empty) {
+  align-items: flex-end !important;
   right: 14px !important;
 }
 

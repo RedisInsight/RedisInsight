@@ -1,11 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as IORedis from 'ioredis';
 import { getRedisConnectionException } from 'src/utils';
+import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { Database } from 'src/modules/database/models/database';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClientMetadata } from 'src/common/models';
@@ -22,6 +24,7 @@ export class DatabaseConnectionService {
     private readonly analytics: DatabaseAnalytics,
     private readonly redisService: RedisService,
     private readonly redisConnectionFactory: RedisConnectionFactory,
+    private recommendationService: DatabaseRecommendationService,
   ) {}
 
   /**
@@ -56,6 +59,24 @@ export class DatabaseConnectionService {
     }
 
     await this.repository.update(clientMetadata.databaseId, toUpdate);
+
+    const generalInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client)
+
+    this.recommendationService.check(
+      clientMetadata,
+      RECOMMENDATION_NAMES.REDIS_VERSION,
+      generalInfo,
+    );
+    this.recommendationService.check(
+      clientMetadata,
+      RECOMMENDATION_NAMES.LUA_SCRIPT,
+      generalInfo,
+    );
+    this.recommendationService.check(
+      clientMetadata,
+      RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
+      generalInfo,
+    );
 
     this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
   }

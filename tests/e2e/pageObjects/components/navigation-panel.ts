@@ -1,6 +1,12 @@
 import { Selector } from 'testcafe';
 
+import NotificationPanel from './navigation/notification-panel';
+import { HelpCenter } from './navigation/help-center';
+
 export class NavigationPanel {
+    NotificationPanel = new NotificationPanel();
+    HelpCenter  = new HelpCenter();
+
     workbenchButton = Selector('[data-testid=workbench-page-btn]');
     analysisPageButton = Selector('[data-testid=analytics-page-btn]');
     browserButton = Selector('[data-testid=browser-page-btn]');

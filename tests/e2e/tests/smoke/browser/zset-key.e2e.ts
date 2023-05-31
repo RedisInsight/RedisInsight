@@ -5,9 +5,8 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 const keyTTL = '2147476121';
 const keyMember = '1111ZsetMember11111';
 const score = '0';
@@ -24,7 +23,7 @@ fixture `ZSet Key fields verification`
         await deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can remove member from ZSet', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     await browserPage.addZSetKey(keyName, '6', keyTTL);
     // Add member to the ZSet key
     await browserPage.addMemberToZSet(keyMember, score);
@@ -36,6 +35,6 @@ test('Verify that user can remove member from ZSet', async t => {
     await t.click(browserPage.removeZserMemberButton);
     await t.click(browserPage.confirmRemovZSetMemberButton);
     // Check the notification message
-    const notofication = await browserPage.getMessageText();
-    await t.expect(notofication).contains('Member has been removed', 'The notification not found');
+    const notification = browserPage.Toast.toastHeader.textContent;
+    await t.expect(notification).contains('Member has been removed', 'The notification not found');
 });

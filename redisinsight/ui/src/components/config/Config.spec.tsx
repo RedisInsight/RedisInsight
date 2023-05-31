@@ -2,7 +2,7 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { BuildType } from 'uiSrc/constants/env'
 import { localStorageService } from 'uiSrc/services'
-import { setFeaturesToHighlight, setOnboarding } from 'uiSrc/slices/app/features'
+import { getFeatureFlags, setFeaturesToHighlight, setOnboarding } from 'uiSrc/slices/app/features'
 import { getNotifications } from 'uiSrc/slices/app/notifications'
 import { render, mockedStore, cleanup, MOCKED_HIGHLIGHTING_FEATURES } from 'uiSrc/utils/test-utils'
 
@@ -63,6 +63,7 @@ describe('Config', () => {
       getNotifications(),
       getWBGuides(),
       getWBTutorials(),
+      getFeatureFlags(),
       getUserConfigSettings(),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
@@ -95,6 +96,7 @@ describe('Config', () => {
       getNotifications(),
       getWBGuides(),
       getWBTutorials(),
+      getFeatureFlags(),
       getUserConfigSettings(),
       setSettingsPopupState(true),
     ]

@@ -5,9 +5,8 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 let keyNames: string[] = [];
 const keyTTL = '2147476121';
 
@@ -31,10 +30,10 @@ test
         await deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user can scroll List of Keys in DB', async t => {
         keyNames = [
-            `key-${common.generateWord(10)}`,
-            `key-${common.generateWord(10)}`,
-            `key-${common.generateWord(10)}`,
-            `key-${common.generateWord(10)}`
+            `key-${Common.generateWord(10)}`,
+            `key-${Common.generateWord(10)}`,
+            `key-${Common.generateWord(10)}`,
+            `key-${Common.generateWord(10)}`
         ];
 
         await browserPage.addStringKey(keyNames[0]);
@@ -50,13 +49,13 @@ test
         await t.expect(browserPage.keyNameInTheList.exists).ok('The list of keys is not displayed');
     });
 test('Verify that user can refresh Keys', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     const newKeyName = 'KeyNameAfterEdit!testKey';
 
     // Add hash key
     await browserPage.addHashKey(keyName, keyTTL);
-    const notofication = await browserPage.getMessageText();
-    await t.expect(notofication).contains('Key has been added', 'The notification is not displayed');
+    const notification = browserPage.Toast.toastHeader.textContent;
+    await t.expect(notification).contains('Key has been added', 'The notification is not displayed');
     await t.click(browserPage.closeKeyButton);
     // Search for the added key
     await browserPage.searchByKeyName(keyName);
@@ -72,13 +71,13 @@ test('Verify that user can refresh Keys', async t => {
     await t.expect(isKeyIsNotDisplayedInTheList).eql(false, 'The key is still in the list');
 });
 test('Verify that user can open key details', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     const keyValue = 'StringValue!';
 
     // Add String key
     await browserPage.addStringKey(keyName, keyTTL, keyValue);
-    const notofication = await browserPage.getMessageText();
-    await t.expect(notofication).contains('Key has been added', 'The notification is not displayed');
+    const notification = browserPage.Toast.toastHeader.textContent;
+    await t.expect(notification).contains('Key has been added', 'The notification is not displayed');
     await t.click(browserPage.closeKeyButton);
     // Search for the added key
     await browserPage.searchByKeyName(keyName);

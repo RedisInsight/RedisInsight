@@ -17,6 +17,7 @@ import {
   getRedisPipelineSummary,
   getASCIISafeStringFromBuffer,
   getBufferFromSafeASCIIString,
+  getUTF8FromRedisString,
 } from 'src/utils/cli-helper';
 
 describe('Cli helper', () => {
@@ -347,6 +348,24 @@ describe('Cli helper', () => {
       console.log('Back to Buffer took: ', Date.now() - startTime);
       // todo: investigate how to optimize this
       expect(Date.now() - startTime).toBeLessThan(15000); // usually takes ~0.7s
+    });
+  });
+
+  describe('getUTF8FromRedisString', () => {
+    const tests = [
+      { input: Buffer.from('abc'), output: 'abc' },
+      { input: Buffer.from('123'), output: '123' },
+      { input: Buffer.from('ntoheuthao u2312'), output: 'ntoheuthao u2312' },
+      { input: Buffer.from('q;tkoeh uoaecr342 ""ueo!@#'), output: 'q;tkoeh uoaecr342 ""ueo!@#' },
+      { input: Buffer.from('\\x02\\x00\\x00\\x00zipcode'), output: '\\x02\\x00\\x00\\x00zipcode' },
+      { input: Buffer.from('€ != \\e2\\xzs\\02'), output: '€ != \\e2\\xzs\\02' },
+    ];
+    tests.forEach(({input, output}) => {
+      it(`should be output: ${output} for input: ${input} `, async () => {
+        const result = getUTF8FromRedisString(input);
+
+        expect(result).toEqual(output);
+      });
     });
   });
 });

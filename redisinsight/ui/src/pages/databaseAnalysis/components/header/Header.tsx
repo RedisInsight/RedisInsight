@@ -23,15 +23,13 @@ import { ConnectionType } from 'uiSrc/slices/interfaces'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
 import { Nullable, getDbIndex } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE } from 'uiSrc/constants/recommendations'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
 
 import styles from './styles.module.scss'
 
 const dateFormat = 'd MMM yyyy HH:mm'
-
-const commonTooltipMessage = 'Analyze up to 10 000 keys per Redis database to get an overview of your data.'
-const clusterTooltipMessage = 'Analyze up to 10 000 keys per shard to get an overview of your data.'
 
 export interface Props {
   items: ShortDatabaseAnalysis[]
@@ -50,7 +48,7 @@ const Header = (props: Props) => {
     analysisLoading
   } = props
 
-  const { connectionType } = useSelector(connectedInstanceSelector)
+  const { connectionType, provider } = useSelector(connectedInstanceSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
@@ -74,6 +72,7 @@ const Header = (props: Props) => {
       event: TelemetryEvent.DATABASE_ANALYSIS_STARTED,
       eventData: {
         databaseId: instanceId,
+        provider,
       }
     })
     dispatch(createNewAnalysis(instanceId, delimiter))
@@ -152,8 +151,12 @@ const Header = (props: Props) => {
                 anchorClassName={styles.tooltipAnchor}
                 className={styles.tooltip}
                 title="Database Analysis"
-                content={connectionType === ConnectionType.Cluster ? clusterTooltipMessage : commonTooltipMessage}
                 data-testid="db-new-reports-tooltip"
+                content={
+                  connectionType === ConnectionType.Cluster
+                    ? ANALYZE_CLUSTER_TOOLTIP_MESSAGE
+                    : ANALYZE_TOOLTIP_MESSAGE
+                }
               >
                 <EuiIcon
                   className={styles.infoIcon}

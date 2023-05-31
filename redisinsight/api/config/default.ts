@@ -51,13 +51,14 @@ export default {
     contentUri: '/static/content',
     defaultPluginsUri: '/static/plugins',
     pluginsAssetsUri: '/static/resources/plugins',
+    base: process.env.RI_BASE || '/',
     secretStoragePassword: process.env.SECRET_STORAGE_PASSWORD,
     tls: process.env.SERVER_TLS ? process.env.SERVER_TLS === 'true' : true,
     tlsCert: process.env.SERVER_TLS_CERT,
     tlsKey: process.env.SERVER_TLS_KEY,
     staticContent: !!process.env.SERVER_STATIC_CONTENT || false,
     buildType: process.env.BUILD_TYPE || 'ELECTRON',
-    appVersion: process.env.APP_VERSION || '2.24.0',
+    appVersion: process.env.APP_VERSION || '2.26.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -194,12 +195,18 @@ export default {
     },
   ],
   connections: {
-    timeout: parseInt(process.env.CONNECTIONS_TIMEOUT_DEFAULT, 10) || 30 * 1_000 // 30 sec
+    timeout: parseInt(process.env.CONNECTIONS_TIMEOUT_DEFAULT, 10) || 30 * 1_000, // 30 sec
   },
   redisStack: {
     id: process.env.BUILD_TYPE === 'REDIS_STACK' ? process.env.REDIS_STACK_DATABASE_ID || 'redis-stack' : undefined,
     name: process.env.REDIS_STACK_DATABASE_NAME,
     host: process.env.REDIS_STACK_DATABASE_HOST,
     port: process.env.REDIS_STACK_DATABASE_PORT,
+  },
+  features_config: {
+    url: process.env.RI_FEATURES_CONFIG_URL
+      // eslint-disable-next-line max-len
+      || 'https://raw.githubusercontent.com/RedisInsight/RedisInsight/main/redisinsight/api/config/features-config.json',
+    syncInterval: parseInt(process.env.RI_FEATURES_CONFIG_SYNC_INTERVAL, 10) || 1_000 * 60 * 60 * 4, // 4h
   },
 };

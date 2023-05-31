@@ -36,3 +36,14 @@ export enum env {
     web = 'web',
     desktop = 'desktop'
 }
+
+export enum RecommendationIds {
+    redisVersion = 'redisVersion',
+    searchVisualization = 'searchVisualization',
+    setPassword = 'setPassword',
+    optimizeTimeSeries = 'RTS',
+    luaScript = 'luaScript',
+    useSmallerKeys = 'useSmallerKeys',
+    avoidLogicalDatabases = 'avoidLogicalDatabases',
+    searchJson = 'searchJSON',
+}

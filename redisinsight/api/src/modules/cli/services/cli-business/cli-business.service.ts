@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ClientMetadata } from 'src/common/models';
-import { unknownCommand } from 'src/constants';
+import { RECOMMENDATION_NAMES, unknownCommand } from 'src/constants';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import {
   ClusterNodeRole,
@@ -36,6 +36,7 @@ import { EncryptionServiceErrorException } from 'src/modules/encryption/exceptio
 import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 import { getUnsupportedCommands } from 'src/modules/cli/utils/getUnsupportedCommands';
 import { ClientNotFoundErrorException } from 'src/modules/redis/exceptions/client-not-found-error.exception';
+import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';
@@ -50,6 +51,7 @@ export class CliBusinessService {
   constructor(
     private cliTool: RedisToolService,
     private cliAnalyticsService: CliAnalyticsService,
+    private recommendationService: DatabaseRecommendationService,
     private readonly commandsService: CommandsService,
   ) {
     this.outputFormatterManager = new OutputFormatterManager();
@@ -141,6 +143,12 @@ export class CliBusinessService {
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       this.checkUnsupportedCommands(`${command} ${args[0]}`);
 
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
+        command,
+      );
+
       const reply = await this.cliTool.execCommand(clientMetadata, command, args, replyEncoding);
 
       this.logger.log('Succeed to execute redis CLI command.');
@@ -226,6 +234,12 @@ export class CliBusinessService {
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       this.checkUnsupportedCommands(`${command} ${args[0]}`);
 
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
+        command,
+      );
+
       const result = await this.cliTool.execCommandForNodes(
         clientMetadata,
         command,
@@ -295,6 +309,11 @@ export class CliBusinessService {
       const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
       this.checkUnsupportedCommands(`${command} ${args[0]}`);
       const nodeAddress = `${nodeOptions.host}:${nodeOptions.port}`;
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
+        command,
+      );
       let result = await this.cliTool.execCommandForNode(
         clientMetadata,
         command,

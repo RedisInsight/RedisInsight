@@ -2,11 +2,14 @@ import React from 'react'
 import { EuiAccordion, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import cx from 'classnames'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import { EAItemActions } from 'uiSrc/constants'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { OnboardingTour } from 'uiSrc/components'
 import DeleteTutorialButton from '../DeleteTutorialButton'
-import { EAItemActions } from '../../constants'
 
 import './styles.scss'
 
@@ -26,6 +29,7 @@ export interface Props {
   triggerStyle?: any
   isCustomTutorialsLoading?: boolean
   highlightGroup?: boolean
+  isPageOpened?: boolean
 }
 
 const Group = (props: Props) => {
@@ -43,6 +47,7 @@ const Group = (props: Props) => {
     onCreate,
     onDelete,
     triggerStyle,
+    isPageOpened,
   } = props
   const { deleting: deletingCustomTutorials } = useSelector(workbenchCustomTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -66,18 +71,26 @@ const Group = (props: Props) => {
   const actionsContent = (
     <>
       {actions?.includes(EAItemActions.Create) && (
-        <EuiToolTip
-          content="Upload Tutorial"
+        <OnboardingTour
+          options={ONBOARDING_FEATURES.WORKBENCH_CUSTOM_TUTORIALS}
+          anchorPosition="downLeft"
+          anchorWrapperClassName="onboardingPopoverAnchor"
+          panelClassName={cx({ hide: isPageOpened })}
+          preventPropagation
         >
-          <div
-            className="group-header__btn group-header__create-btn"
-            role="presentation"
-            onClick={handleCreate}
-            data-testid="open-upload-tutorial-btn"
+          <EuiToolTip
+            content="Upload Tutorial"
           >
-            <EuiIcon type="plus" />
-          </div>
-        </EuiToolTip>
+            <div
+              className="group-header__btn group-header__create-btn"
+              role="presentation"
+              onClick={handleCreate}
+              data-testid="open-upload-tutorial-btn"
+            >
+              <EuiIcon type="plus" />
+            </div>
+          </EuiToolTip>
+        </OnboardingTour>
       )}
       {actions?.includes(EAItemActions.Delete) && (
         <DeleteTutorialButton id={id} label={label} onDelete={handleDelete} isLoading={deletingCustomTutorials} />

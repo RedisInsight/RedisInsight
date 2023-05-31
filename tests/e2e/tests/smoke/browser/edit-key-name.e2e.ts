@@ -6,11 +6,10 @@ import { Common } from '../../../helpers/common';
 import { Telemetry } from '../../../helpers/telemetry';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 const telemetry = new Telemetry();
 
-let keyNameBefore = common.generateWord(10);
-let keyNameAfter = common.generateWord(10);
+let keyNameBefore = Common.generateWord(10);
+let keyNameAfter = Common.generateWord(10);
 const keyTTL = '2147476121';
 const logger = telemetry.createLogger();
 const telemetryEvent = 'BROWSER_KEY_VALUE_VIEWED';
@@ -33,8 +32,8 @@ fixture `Edit Key names verification`
     });
 test
     .requestHooks(logger)('Verify that user can edit String Key name', async t => {
-        keyNameBefore = common.generateWord(10);
-        keyNameAfter = common.generateWord(10);
+        keyNameBefore = Common.generateWord(10);
+        keyNameAfter = Common.generateWord(10);
 
         await browserPage.addStringKey(keyNameBefore, keyTTL);
         let keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
@@ -49,8 +48,8 @@ test
         await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The String Key Name not correct after editing');
     });
 test('Verify that user can edit Set Key name', async t => {
-    keyNameBefore = common.generateWord(10);
-    keyNameAfter = common.generateWord(10);
+    keyNameBefore = Common.generateWord(10);
+    keyNameAfter = Common.generateWord(10);
 
     await browserPage.addSetKey(keyNameBefore, keyTTL);
     let keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
@@ -60,8 +59,8 @@ test('Verify that user can edit Set Key name', async t => {
     await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Set Key Name not correct after editing');
 });
 test('Verify that user can edit Zset Key name', async t => {
-    keyNameBefore = common.generateWord(10);
-    keyNameAfter = common.generateWord(10);
+    keyNameBefore = Common.generateWord(10);
+    keyNameAfter = Common.generateWord(10);
 
     await browserPage.addZSetKey(keyNameBefore, keyTTL);
     let keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
@@ -71,8 +70,8 @@ test('Verify that user can edit Zset Key name', async t => {
     await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Zset Key Name not correct after editing');
 });
 test('Verify that user can edit Hash Key name', async t => {
-    keyNameBefore = common.generateWord(10);
-    keyNameAfter = common.generateWord(10);
+    keyNameBefore = Common.generateWord(10);
+    keyNameAfter = Common.generateWord(10);
 
     await browserPage.addHashKey(keyNameBefore, keyTTL);
     let keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
@@ -82,8 +81,8 @@ test('Verify that user can edit Hash Key name', async t => {
     await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The Hash Key Name not correct after editing');
 });
 test('Verify that user can edit List Key name', async t => {
-    keyNameBefore = common.generateWord(10);
-    keyNameAfter = common.generateWord(10);
+    keyNameBefore = Common.generateWord(10);
+    keyNameAfter = Common.generateWord(10);
 
     await browserPage.addListKey(keyNameBefore, keyTTL);
     let keyNameFromDetails = await browserPage.keyNameFormDetails.textContent;
@@ -93,8 +92,8 @@ test('Verify that user can edit List Key name', async t => {
     await t.expect(keyNameFromDetails).contains(keyNameAfter, 'The List Key Name not correct after editing');
 });
 test('Verify that user can edit JSON Key name', async t => {
-    keyNameBefore = common.generateWord(10);
-    keyNameAfter = common.generateWord(10);
+    keyNameBefore = Common.generateWord(10);
+    keyNameAfter = Common.generateWord(10);
     const keyValue = '{"name":"xyz"}';
 
     await browserPage.addJsonKey(keyNameBefore, keyValue, keyTTL);

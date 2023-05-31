@@ -1,11 +1,13 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
-import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
+import { IBulkActionOverview, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { MOCK_CUSTOM_TUTORIALS, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
+import { getFileNameFromPath } from 'uiSrc/utils/pathUtil'
 import reducer, {
   initialState,
   getWBCustomTutorials,
@@ -21,6 +23,10 @@ import reducer, {
   fetchCustomTutorials,
   deleteCustomTutorial,
   workbenchCustomTutorialsSelector,
+  uploadDataBulk,
+  uploadDataBulkSuccess,
+  uploadDataBulkFailed,
+  uploadDataBulkAction,
   defaultItems,
 } from '../../workbench/wb-custom-tutorials'
 
@@ -276,6 +282,97 @@ describe('slices', () => {
     })
   })
 
+  describe('uploadDataBulk', () => {
+    it('should properly set loading for paths', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        bulkUpload: {
+          ...initialState.bulkUpload,
+          pathsInProgress: ['data/data']
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, uploadDataBulk('data/data'))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          customTutorials: nextState,
+        },
+      })
+
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('uploadDataBulk', () => {
+    it('should properly remove path from loading', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        bulkUpload: {
+          ...initialState.bulkUpload,
+          pathsInProgress: ['data/data', 'data/another']
+        }
+      }
+
+      const state = {
+        ...initialState,
+        bulkUpload: {
+          ...initialState.bulkUpload,
+          pathsInProgress: ['data/another']
+        }
+      }
+
+      // Act
+      const nextState = reducer(currentState, uploadDataBulkSuccess('data/data'))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          customTutorials: nextState,
+        },
+      })
+
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('uploadDataBulkFailed', () => {
+    it('should properly remove path from loading', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        bulkUpload: {
+          ...initialState.bulkUpload,
+          pathsInProgress: ['data/data']
+        }
+      }
+
+      const state = {
+        ...initialState,
+        bulkUpload: {
+          ...initialState.bulkUpload,
+          pathsInProgress: []
+        }
+      }
+
+      // Act
+      const nextState = reducer(currentState, uploadDataBulkFailed('data/data'))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          customTutorials: nextState,
+        },
+      })
+
+      expect(workbenchCustomTutorialsSelector(rootState)).toEqual(state)
+    })
+  })
+
   // thunks
 
   describe('fetchCustomTutorials', () => {
@@ -409,6 +506,58 @@ describe('slices', () => {
       const expectedActions = [
         deleteWbCustomTutorial(),
         deleteWBCustomTutorialFailure(errorMessage),
+        addErrorNotification(responsePayload as AxiosError),
+      ]
+
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
+  })
+
+  describe('uploadDataBulkAction', () => {
+    it('succeed to upload data', async () => {
+      // Arrange
+      const instanceId = '1'
+      const path = 'data/data'
+      const data = {}
+      const responsePayload = { status: 200, data }
+
+      apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(uploadDataBulkAction(instanceId, path))
+
+      // Assert
+      const expectedActions = [
+        uploadDataBulk(path),
+        uploadDataBulkSuccess(path),
+        addMessageNotification(
+          successMessages.UPLOAD_DATA_BULK(data as IBulkActionOverview, getFileNameFromPath(path))
+        )
+      ]
+
+      expect(mockedStore.getActions()).toEqual(expectedActions)
+    })
+
+    it('failed to delete tutorial', async () => {
+      // Arrange
+      const instanceId = '1'
+      const path = 'data/data'
+      const errorMessage = 'Something was wrong!'
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+      apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(uploadDataBulkAction(instanceId, path))
+
+      // Assert
+      const expectedActions = [
+        uploadDataBulk(path),
+        uploadDataBulkFailed(path),
         addErrorNotification(responsePayload as AxiosError),
       ]
 

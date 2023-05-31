@@ -16,6 +16,7 @@ import DEFAULT_ROUTES from './constants/defaultRoutes'
 const MainRouter = () => {
   const { server } = useSelector(appInfoSelector)
   const { isShowConceptsPopup: isShowConsents } = useSelector(userSettingsSelector)
+
   return (
     <>
       {isShowConsents && (<ConsentsSettingsPopup />)}

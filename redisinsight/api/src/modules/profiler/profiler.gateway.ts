@@ -69,6 +69,6 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   static getInstanceId(client: Socket): string {
-    return get(client, 'handshake.query.instanceId');
+    return get(client, 'handshake.query.instanceId') as string;
   }
 }

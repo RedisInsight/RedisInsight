@@ -11,10 +11,9 @@ import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const common = new Common();
 
 const speed = 0.4;
-let keyName = common.generateWord(10);
+let keyName = Common.generateWord(10);
 let keys: string[];
 
 fixture `Browser Context`
@@ -54,7 +53,7 @@ test('Verify that user can see saved Key details and Keys tables size on Browser
     await t.expect(await browserPage.keyListTable.clientWidth).gt(keyListWidth, 'Saved browser resizable context is proper');
 });
 test('Verify that user can see saved filter per key type applied when he returns back to Browser page', async t => {
-    keyName = common.generateWord(10);
+    keyName = Common.generateWord(10);
     // Filter per key type String and open Settings
     await browserPage.selectFilterGroupType(KeyTypesTexts.String);
     await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
@@ -128,7 +127,7 @@ test
         // Open CLI
         await t.click(browserPage.Cli.cliExpandButton);
         // Create new keys
-        keys = await common.createArrayWithKeyValue(numberOfItems);
+        keys = await Common.createArrayWithKeyValue(numberOfItems);
         await t.typeText(browserPage.Cli.cliCommandInput, `MSET ${keys.join(' ')}`, { replace: true, paste: true });
         await t.pressKey('enter');
         await t.click(browserPage.Cli.cliCollapseButton);

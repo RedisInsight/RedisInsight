@@ -9,12 +9,11 @@ import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
-const common = new Common();
 
-let keyName = common.generateWord(20);
-let consumerGroupName = common.generateWord(20);
-const keyField = common.generateWord(20);
-const keyValue = common.generateWord(20);
+let keyName = Common.generateWord(20);
+let consumerGroupName = Common.generateWord(20);
+const keyField = Common.generateWord(20);
+const keyValue = Common.generateWord(20);
 const entryIds = [
     '0',
     '$',
@@ -45,8 +44,8 @@ test('Verify that user can create a new Consumer Group in the current Stream', a
         '0',
         'fetches the entire stream from the beginning.'
     ];
-    keyName = common.generateWord(20);
-    consumerGroupName = `qwerty123456${common.generateWord(20)}!@#$%^&*()_+=`;
+    keyName = Common.generateWord(20);
+    consumerGroupName = `qwerty123456${Common.generateWord(20)}!@#$%^&*()_+=`;
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
     await t.click(browserPage.fullScreenModeButton);
@@ -62,8 +61,8 @@ test('Verify that user can create a new Consumer Group in the current Stream', a
     }
 });
 test('Verify that user can input the 0, $ and Valid Entry ID in the ID field', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     // Add New Stream Key
     await browserPage.addStreamKey(keyName, keyField, keyValue);
     await t.click(browserPage.fullScreenModeButton);
@@ -75,8 +74,8 @@ test('Verify that user can input the 0, $ and Valid Entry ID in the ID field', a
     }
 });
 test('Verify that user can see the Consumer group columns (Group Name, Consumers, Pending, Last Delivered ID)', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     const groupColumns = [
         'Group Name',
         'Consumers',
@@ -99,8 +98,8 @@ test('Verify that user can see the Consumer group columns (Group Name, Consumers
     await t.expect(browserPage.streamConsumersContainer.textContent).contains(message, 'The message for empty Consumer Group not displayed');
 });
 test('Verify that user can see the Consumer information columns (Consumer Name, Pendings, Idle Time,ms)', async t => {
-    keyName = common.generateWord(20);
-    consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    consumerGroupName = Common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,
@@ -128,8 +127,8 @@ test('Verify that user can see the Consumer information columns (Consumer Name, 
     await t.expect(browserPage.streamTabGroups.withAttribute('aria-selected', 'true').exists).ok('The Consumer Groups screen is not opened');
 });
 test('Verify that user can delete the Consumer from the Consumer Group', async t => {
-    keyName = common.generateWord(20);
-    const consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    const consumerGroupName = Common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,
@@ -153,8 +152,8 @@ test('Verify that user can delete the Consumer from the Consumer Group', async t
     await t.expect(browserPage.streamConsumerName.count).eql(consumerCountBefore - 1, 'The Consumers number after deletion not correct');
 });
 test('Verify that user can delete a Consumer Group', async t => {
-    keyName = common.generateWord(20);
-    const consumerGroupName = common.generateWord(20);
+    keyName = Common.generateWord(20);
+    const consumerGroupName = Common.generateWord(20);
     const cliCommands = [
         `XGROUP CREATE ${keyName} ${consumerGroupName} $ MKSTREAM`,
         `XADD ${keyName} * message apple`,

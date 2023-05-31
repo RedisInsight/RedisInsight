@@ -635,12 +635,14 @@ jobs:
               yarn package:prod
               yarn package:mas
               rm -rf release/mac
+              mv release/mas-universal/RedisInsight-mac-universal-mas.pkg release/RedisInsight-mac-universal-mas.pkg
               exit 0;
             fi
 
             if [ << parameters.env >> == 'stage' ]; then
               UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage && yarn package:mas
               rm -rf release/mac
+              mv release/mas-universal/RedisInsight-mac-universal-mas.pkg release/RedisInsight-mac-universal-mas.pkg
               exit 0;
             fi
 

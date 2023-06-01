@@ -104,6 +104,8 @@
     ]
   },
   "nsis": {
+    "onClick": false,
+    "perMachine": false,
     "allowToChangeInstallationDirectory": true
   },
   "linux": {

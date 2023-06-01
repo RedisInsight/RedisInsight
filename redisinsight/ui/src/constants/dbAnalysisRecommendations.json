@@ -1190,7 +1190,7 @@
             {
               "type": "link",
               "value": {
-                "href": "https://redis.io/docs/stack/search/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=stringToJson/",
+                "href": "https://redis.io/docs/stack/search/",
                 "name": "query and search capabilities"
               }
             }

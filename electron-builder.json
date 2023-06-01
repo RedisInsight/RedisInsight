@@ -104,7 +104,7 @@
     ]
   },
   "nsis": {
-    "onClick": false,
+    "oneClick": false,
     "perMachine": false,
     "allowToChangeInstallationDirectory": true
   },

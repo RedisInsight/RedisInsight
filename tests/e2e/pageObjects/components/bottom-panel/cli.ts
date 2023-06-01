@@ -160,4 +160,14 @@ export class Cli {
 
         await this.sendCommandsInCli(scripts);
     }
+
+    /**
+     * Get warning message text by command
+     * @param command command name
+     */
+    async getWarningMessageText(command: string): Promise<string> {
+
+        const executedCommand =  await this.cliCommandExecuted.withExactText(command);
+        return await executedCommand.nextSibling(0).textContent;
+    }
 }

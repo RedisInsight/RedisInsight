@@ -70,9 +70,24 @@ export const cliTexts = {
       {' to see the messages published to all channels in your database.'}
     </EuiTextColor>
   ),
+  SUBSCRIBE_COMMAND: (path: string = '') => (
+    <EuiTextColor color="danger" key={Date.now()}>
+      {'Use '}
+      <EuiLink {...getRouterLinkProps(path)} color="text" data-test-subj="pubsub-page-btn">
+        Pub/Sub
+      </EuiLink>
+      {' tool to subscribe to channels.'}
+    </EuiTextColor>
+  ),
   PSUBSCRIBE_COMMAND_CLI: (path: string = '') => (
     [
       cliTexts.PSUBSCRIBE_COMMAND(path),
+      '\n',
+    ]
+  ),
+  SUBSCRIBE_COMMAND_CLI: (path: string = '') => (
+    [
+      cliTexts.SUBSCRIBE_COMMAND(path),
       '\n',
     ]
   ),

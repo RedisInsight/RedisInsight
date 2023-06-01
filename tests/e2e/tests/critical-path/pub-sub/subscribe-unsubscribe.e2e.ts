@@ -1,5 +1,5 @@
 import { acceptLicenseTermsAndAddDatabaseApi, acceptLicenseTerms } from '../../../helpers/database';
-import { MyRedisDatabasePage, PubSubPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, PubSubPage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../helpers/pub-sub';
@@ -7,6 +7,7 @@ import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
+const workbenchPage = new WorkbenchPage();
 
 fixture `Subscribe/Unsubscribe from a channel`
     .meta({ env: env.web, rte: rte.standalone, type: 'critical_path' })
@@ -90,17 +91,38 @@ test
         await verifyMessageDisplayingInPubSub('message', false);
         await t.expect(pubSubPage.totalMessagesCount.exists).notOk('Total counter is still displayed');
     });
-test('Verify that user can see a internal link to pubsub window under word “Pub/Sub” when he try to run PSUBSCRIBE command in CLI or Workbench', async t => {
+test('Verify that user can see a internal link to pubsub window under word “Pub/Sub” when he tries to run PSUBSCRIBE or SUBSCRIBE commands in CLI or Workbench', async t => {
+    const commandFirst = 'PSUBSCRIBE';
+    const commandSecond = 'SUBSCRIBE';
+
     // Go to Browser Page
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-    // Verify that user can see a custom message when he try to run PSUBSCRIBE command in CLI or Workbench: “Use Pub/Sub to see the messages published to all channels in your database”
-    await pubSubPage.Cli.sendCommandInCli('PSUBSCRIBE');
+    // Verify that user can see a custom message when he tries to run PSUBSCRIBE command in CLI or Workbench: “Use Pub/Sub to see the messages published to all channels in your database”
+    await pubSubPage.Cli.sendCommandInCli(commandFirst);
     await t.click(pubSubPage.Cli.cliExpandButton);
-    await t.expect(pubSubPage.Cli.cliWarningMessage.textContent).eql('Use Pub/Sub to see the messages published to all channels in your database.', 'Message is not displayed', { timeout: 10000 });
+    await t.expect(await pubSubPage.Cli.getWarningMessageText(commandFirst)).eql('Use Pub/Sub to see the messages published to all channels in your database.', 'Message is not displayed', { timeout: 10000 });
+
     // Verify internal link to pubsub page in CLI
     await t.expect(pubSubPage.Cli.cliLinkToPubSub.exists).ok('Link to pubsub page is not displayed');
     await t.click(pubSubPage.Cli.cliLinkToPubSub);
     await t.expect(pubSubPage.pubSubPageContainer.exists).ok('Pubsub page is opened');
+
+    // Verify that user can see a custom message when he tries to run SUBSCRIBE command in CLI: “Use Pub/Sub tool to subscribe to channels.”
+    await t.click(pubSubPage.Cli.cliCollapseButton);
+    await pubSubPage.Cli.sendCommandInCli(commandSecond);
+    await t.click(pubSubPage.Cli.cliExpandButton);
+    await t.expect(await pubSubPage.Cli.getWarningMessageText(commandSecond)).eql('Use Pub/Sub tool to subscribe to channels.', 'Message is not displayed', { timeout: 10000 });
+
+    // Verify internal link to pubsub page in CLI
+    await t.expect(pubSubPage.Cli.cliLinkToPubSub.exists).ok('Link to pubsub page is not displayed');
+    await t.click(pubSubPage.Cli.cliLinkToPubSub);
+    await t.expect(pubSubPage.pubSubPageContainer.exists).ok('Pubsub page is opened');
+
+    // Verify that user can see a custom message when he tries to run SUBSCRIBE command in Workbench: “Use Pub/Sub tool to subscribe to channels.”
+    await t.click(pubSubPage.NavigationPanel.workbenchButton);
+    await workbenchPage.sendCommandInWorkbench(commandSecond);
+    await t.expect(await workbenchPage.commandExecutionResult.textContent).eql('Use Pub/Sub tool to subscribe to channels.', 'Message is not displayed', { timeout: 10000 });
+
 });
 test('Verify that the Message field input is preserved until user Publish a message', async t => {
     // Fill in Channel and Message inputs

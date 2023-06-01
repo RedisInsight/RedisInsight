@@ -26,7 +26,7 @@ export const initialState: StateMonitor = {
   }
 }
 
-export const MONITOR_ITEMS_MAX_COUNT = 5_000
+export const MONITOR_ITEMS_MAX_COUNT = 10_000
 
 // A slice for recipes
 const monitorSlice = createSlice({
@@ -114,17 +114,17 @@ const monitorSlice = createSlice({
     concatMonitorItems: (state, { payload }: { payload: IMonitorDataPayload[] }) => {
       // small optimization to not unnecessary concat big arrays since we know max logs to show limitations
       if (payload.length >= MONITOR_ITEMS_MAX_COUNT) {
-        state.items = [...payload.slice(-MONITOR_ITEMS_MAX_COUNT)]
+        state.items = payload.slice(-MONITOR_ITEMS_MAX_COUNT)
         return
       }
 
-      let newItems = [...state.items, ...payload]
-
-      if (newItems.length > MONITOR_ITEMS_MAX_COUNT) {
-        newItems = newItems.slice(newItems.length - MONITOR_ITEMS_MAX_COUNT)
+      if (state.items.length + payload.length >= MONITOR_ITEMS_MAX_COUNT) {
+        // concat is faster for arrays
+        state.items = state.items.slice(payload.length - MONITOR_ITEMS_MAX_COUNT).concat(payload)
+        return
       }
 
-      state.items = newItems
+      state.items = state.items.concat(payload)
     },
 
     resetMonitorItems: (state) => {

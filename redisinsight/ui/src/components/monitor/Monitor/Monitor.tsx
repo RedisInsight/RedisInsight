@@ -28,7 +28,6 @@ export interface Props {
   isShowHelper: boolean
   isSaveToFile: boolean
   isShowCli: boolean
-  scrollViewOnAppear: boolean
   handleRunMonitor: (isSaveToLog?: boolean) => void
 }
 
@@ -143,8 +142,8 @@ const Monitor = (props: Props) => {
               <AutoSizer>
                 {({ width, height }) => (
                   <MonitorOutputList
-                    width={width}
-                    height={height}
+                    width={width || 0}
+                    height={height || 0}
                     items={items}
                     compressed={isShowCli || isShowHelper}
                   />

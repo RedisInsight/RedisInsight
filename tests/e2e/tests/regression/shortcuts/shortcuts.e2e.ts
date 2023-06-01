@@ -1,11 +1,11 @@
-import { ClientFunction } from 'testcafe';
+// import { ClientFunction } from 'testcafe';
 import { rte, env } from '../../../helpers/constants';
 import { acceptLicenseTerms } from '../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const getPageUrl = ClientFunction(() => window.location.href);
+// const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `Shortcuts`
     .meta({ type: 'regression', rte: rte.none })
@@ -15,7 +15,7 @@ fixture `Shortcuts`
     });
 test
     .meta({ env: env.web })('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shortcuts" button in Help Center', async t => {
-        const link = 'https://github.com/RedisInsight/RedisInsight/releases';
+        // const link = 'https://github.com/RedisInsight/RedisInsight/releases';
 
         // Click on help center icon and verify panel
         await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
@@ -31,12 +31,12 @@ test
         // Verify that user can close the Shortcuts
         await t.click(myRedisDatabasePage.ShortcutsPanel.shortcutsCloseButton);
         await t.expect(myRedisDatabasePage.ShortcutsPanel.shortcutsPanel.exists).notOk('Shortcuts panel is not displayed');
-
-        // Click on the Release Notes in Help Center
-        await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
-        await t.click(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterReleaseNotesButton);
-        // Verify redirected link opening Release Notes in Help Center
-        await t.expect(getPageUrl()).eql(link, 'The Release Notes link not correct');
+        // update after resolving testcafe Native Automation mode limitations
+        // // Click on the Release Notes in Help Center
+        // await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
+        // await t.click(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterReleaseNotesButton);
+        // // Verify redirected link opening Release Notes in Help Center
+        // await t.expect(getPageUrl()).eql(link, 'The Release Notes link not correct');
     });
 test
     .meta({ env: env.desktop })('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shortcuts" button in Help Center for desktop', async t => {

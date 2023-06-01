@@ -55,7 +55,8 @@ test('Verify that user can use blocking command', async t => {
     // Verify that user can collapse CLI
     await t.expect(browserPage.Cli.cliArea.visible).notOk('CLI area should still displayed');
 });
-test
+// update after resolving testcafe Native Automation mode limitations
+test.skip
     .meta({ env: env.web })('Verify that user can use unblocking command', async t => {
         // Open CLI
         await t.click(browserPage.Cli.cliExpandButton);

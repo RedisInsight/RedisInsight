@@ -103,6 +103,9 @@
       "Redis Labs Inc."
     ]
   },
+  "nsis": {
+    "allowToChangeInstallationDirectory": true
+  },
   "linux": {
     "icon": "./resources/icons",
     "target": [

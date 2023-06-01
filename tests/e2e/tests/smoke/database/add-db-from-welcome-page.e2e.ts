@@ -11,7 +11,7 @@ const getPageUrl = ClientFunction(() => window.location.href);
 const sourcePage = 'https://developer.redis.com/create/from-source/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
 const dockerPage = 'https://developer.redis.com/create/docker/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
 const homebrewPage = 'https://developer.redis.com/create/homebrew/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
-const promoPage = 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_offer_jan';
+const promoPage = 'https://redis.com/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=main&utm_campaign=main';
 
 fixture `Add database from welcome page`
     .meta({ type: 'smoke', rte: rte.standalone })

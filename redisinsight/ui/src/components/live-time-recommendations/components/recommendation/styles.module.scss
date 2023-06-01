@@ -41,7 +41,7 @@
         font-weight: 500;
       }
 
-      .truncateText {
+      .euiIEFlexWrapFix .truncateText {
         display: flex;
         overflow: visible;
         white-space: normal;

@@ -37,28 +37,34 @@
   height: 100%;
   position: relative;
   overflow: auto;
-  padding-left: 12px;
 }
 
 .content {
-  @include euiScrollBar;
-
-  width: 100%;
   height: 100%;
-  position: relative;
-  overflow: auto;
-
+  width: 100%;
   display: flex;
   flex-direction: column;
-  margin-bottom: 6px;
+  overflow: hidden;
+  padding: 12px 4px 12px 12px;
 
-  &:first-child {
-    padding-top: 10px;
-  }
-
-  &:last-child {
-    padding-bottom: 10px;
-  }
+  //@include euiScrollBar;
+  //
+  //width: 100%;
+  //height: 100%;
+  //position: relative;
+  //overflow: auto;
+  //
+  //display: flex;
+  //flex-direction: column;
+  //margin-bottom: 6px;
+  //
+  //&:first-child {
+  //  padding-top: 10px;
+  //}
+  //
+  //&:last-child {
+  //  padding-bottom: 10px;
+  //}
 }
 
 .startContainer {
@@ -180,10 +186,10 @@
 
 .item {
   display: block;
-  overflow: hidden;
 
   & > span {
     padding-right: 5px;
+    word-break: break-word;
   }
 }
 

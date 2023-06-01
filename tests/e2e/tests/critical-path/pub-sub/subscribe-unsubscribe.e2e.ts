@@ -97,7 +97,7 @@ test('Verify that user can see a internal link to pubsub window under word “Pu
 
     // Go to Browser Page
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-    // Verify that user can see a custom message when he tris to run PSUBSCRIBE command in CLI or Workbench: “Use Pub/Sub to see the messages published to all channels in your database”
+    // Verify that user can see a custom message when he tries to run PSUBSCRIBE command in CLI or Workbench: “Use Pub/Sub to see the messages published to all channels in your database”
     await pubSubPage.Cli.sendCommandInCli(commandFirst);
     await t.click(pubSubPage.Cli.cliExpandButton);
     await t.expect(await pubSubPage.Cli.getWarningMessageText(commandFirst)).eql('Use Pub/Sub to see the messages published to all channels in your database.', 'Message is not displayed', { timeout: 10000 });
@@ -107,7 +107,7 @@ test('Verify that user can see a internal link to pubsub window under word “Pu
     await t.click(pubSubPage.Cli.cliLinkToPubSub);
     await t.expect(pubSubPage.pubSubPageContainer.exists).ok('Pubsub page is opened');
 
-    // Verify that user can see a custom message when he tris to run SUBSCRIBE command in CLI: “Use Pub/Sub tool to subscribe to channels.”
+    // Verify that user can see a custom message when he tries to run SUBSCRIBE command in CLI: “Use Pub/Sub tool to subscribe to channels.”
     await t.click(pubSubPage.Cli.cliCollapseButton);
     await pubSubPage.Cli.sendCommandInCli(commandSecond);
     await t.click(pubSubPage.Cli.cliExpandButton);
@@ -118,7 +118,7 @@ test('Verify that user can see a internal link to pubsub window under word “Pu
     await t.click(pubSubPage.Cli.cliLinkToPubSub);
     await t.expect(pubSubPage.pubSubPageContainer.exists).ok('Pubsub page is opened');
 
-    // Verify that user can see a custom message when he tris to run SUBSCRIBE command in Workbench: “Use Pub/Sub tool to subscribe to channels.”
+    // Verify that user can see a custom message when he tries to run SUBSCRIBE command in Workbench: “Use Pub/Sub tool to subscribe to channels.”
     await t.click(pubSubPage.NavigationPanel.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(commandSecond);
     await t.expect(await workbenchPage.commandExecutionResult.textContent).eql('Use Pub/Sub tool to subscribe to channels.', 'Message is not displayed', { timeout: 10000 });

@@ -1,4 +1,4 @@
-import { flatten } from 'lodash'
+import { flatten, isNull } from 'lodash'
 import React from 'react'
 
 import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
@@ -21,7 +21,7 @@ const QueryCardCliGroupResult = (props: Props) => {
         isFullScreen={isFullScreen}
         items={flatten(result?.[0]?.response.map((item: any) => {
           const commonError = CommonErrorResponse(item.id, item.command, item.response)
-          if (React.isValidElement(commonError)) {
+          if (React.isValidElement(commonError) && !isNull(item.response)) {
             return ([wbSummaryCommand(item.command), commonError])
           }
           return flatten(cliParseCommandsGroupResult(item, db))

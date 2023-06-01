@@ -120,4 +120,21 @@ describe('QueryCard', () => {
 
     expect(summaryString).toEqual(summaryText)
   })
+
+  it('should render QueryCardCliResultWrapper when command is null', () => {
+    const { queryByTestId } = render(
+      <QueryCard
+        {...instance(mockedProps)}
+        resultsMode={ResultsMode.GroupMode}
+        result={null}
+        isOpen
+        command={null}
+      />
+    )
+    const queryCommonResultEl = queryByTestId('query-common-result-wrapper')
+    const queryCliResultEl = queryByTestId('query-cli-result-wrapper')
+
+    expect(queryCommonResultEl).toBeInTheDocument()
+    expect(queryCliResultEl).not.toBeInTheDocument()
+  })
 })

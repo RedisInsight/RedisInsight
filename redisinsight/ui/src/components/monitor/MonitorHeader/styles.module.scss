@@ -44,3 +44,17 @@
 .profilerOnboardPanel {
   margin-top: -4px;
 }
+
+.minimizeIconWrapper {
+  border-left: 1px solid var(--euiColorLightShade);
+
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  margin-left: 12px;
+}
+
+.popoverWrapper {
+  min-width: 320px;
+  min-height: 280px;
+}

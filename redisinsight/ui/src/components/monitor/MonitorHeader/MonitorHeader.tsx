@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
@@ -9,6 +9,7 @@ import {
   EuiText,
   EuiToolTip,
   EuiIcon,
+  EuiPopover,
 } from '@elastic/eui'
 
 import {
@@ -22,6 +23,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ReactComponent as BanIcon } from 'uiSrc/assets/img/monitor/ban.svg'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import MonitorSettings from 'uiSrc/components/monitor/MonitorSettings'
 
 import styles from './styles.module.scss'
 
@@ -40,8 +42,11 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
     error,
     loadingPause
   } = useSelector(monitorSelector)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
   const isErrorShown = !!error && !isRunning
   const disabledPause = isErrorShown || isResumeLocked || loadingPause
+
   const dispatch = useDispatch()
 
   const handleCloseMonitor = () => {
@@ -74,6 +79,10 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
       eventData: { databaseId: instanceId }
     })
     dispatch(resetMonitorItems())
+  }
+
+  const openSettingsPanel = () => {
+    setIsSettingsOpen(true)
   }
 
   return (
@@ -124,6 +133,29 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
         )}
         <EuiFlexItem grow />
         <EuiFlexItem grow={false}>
+          <EuiPopover
+            ownFocus={false}
+            anchorPosition="downRight"
+            isOpen={isSettingsOpen}
+            anchorClassName={styles.anchorWrapper}
+            panelClassName={cx('popover-without-top-tail', styles.popoverWrapper)}
+            closePopover={() => setIsSettingsOpen(false)}
+            button={(
+              <EuiButtonIcon
+                iconType="gear"
+                color="primary"
+                id="settings-monitor"
+                aria-label="settings monitor"
+                data-testid="settings-monitor"
+                className={styles.icon}
+                onClick={openSettingsPanel}
+              />
+            )}
+          >
+            <MonitorSettings />
+          </EuiPopover>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false} className={styles.minimizeIconWrapper}>
           <EuiToolTip
             content="Minimize"
             position="top"

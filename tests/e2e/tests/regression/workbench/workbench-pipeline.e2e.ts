@@ -40,10 +40,11 @@ test
 
         // Verify text in setting for pipeline
         await t.expect(settingsPage.accordionWorkbenchSettings.textContent).contains(pipelineText, 'Text is incorrect');
-        await t.click(settingsPage.pipelineLink);
-        // Check new opened window page with the correct URL
-        await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page is incorrect');
-        await t.switchToParentWindow();
+        // update after resolving testcafe Native Automation mode limitations
+        // await t.click(settingsPage.pipelineLink);
+        // // Check new opened window page with the correct URL
+        // await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page is incorrect');
+        // await t.switchToParentWindow();
     });
 test.skip('Verify that only chosen in pipeline number of commands is loading at the same time in Workbench', async t => {
     await settingsPage.changeCommandsInPipeline(pipelineValues[1]);

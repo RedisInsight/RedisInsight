@@ -33,12 +33,12 @@
     flex-direction: row-reverse;
     align-items: center;
     justify-content: space-between;
-  
+
     .icon {
       width: 173px;
       margin-left: 15px;
     }
-  
+
     .bigIcon {
       width: 317px;
       margin-bottom: 42px;
@@ -57,7 +57,7 @@
   .listItem {
     display: flex;
     margin-bottom: 20px;
-  
+
     .iconWrapper {
       display: flex;
       flex: 0 0 16px;
@@ -69,29 +69,29 @@
       border-radius: 50%;
       margin-right: 10px;
     }
-  
+
     .listIcon {
       width: 10px;
       height: 10px;
-  
+
       path {
         fill: var(--euiPageBackgroundColor);
       }
     }
   }
-  
+
   .linksWrapper {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     margin-top: 20px;
-  
+
     .link {
       margin-right: 20px;
       color: var(-wbTextColor);
     }
   }
-  
+
   .marginBottom {
     margin-bottom: 20px;
   }
@@ -135,10 +135,14 @@
 
     .link {
       margin-right: 0;
-  
+
       &:first-child {
         margin-top: 13px;
       }
     }
+  }
+
+  &.modal {
+    padding: 30px;
   }
 }

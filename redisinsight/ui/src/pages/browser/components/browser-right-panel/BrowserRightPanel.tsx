@@ -123,6 +123,7 @@ const BrowserRightPanel = (props: Props) => {
         <AddKey
           onAddKeyPanel={handleAddKeyPanel}
           onClosePanel={closePanel}
+          arePanelsCollapsed={arePanelsCollapsed}
         />
       )}
       {isBulkActionsPanelOpen && every([!isAddKeyPanelOpen, !isCreateIndexPanelOpen], Boolean) && (

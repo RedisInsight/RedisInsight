@@ -31,18 +31,12 @@ import styles from './styles.module.scss'
 export interface Props {
   selectKey: ({ rowData }: { rowData: any }) => void
   setSelectedKey: (keyName: Nullable<RedisResponseBuffer>) => void
-  handleAddKeyPanel: (value: boolean) => void
-  handleBulkActionsPanel: (value: boolean) => void
-  handleCreateIndexPanel: (value: boolean) => void
 }
 
 const BrowserLeftPanel = (props: Props) => {
   const {
     selectKey,
     setSelectedKey,
-    handleAddKeyPanel,
-    handleBulkActionsPanel,
-    handleCreateIndexPanel,
   } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -123,9 +117,6 @@ const BrowserLeftPanel = (props: Props) => {
         loading={loading}
         isSearched={isSearched}
         loadKeys={loadKeys}
-        handleAddKeyPanel={handleAddKeyPanel}
-        handleBulkActionsPanel={handleBulkActionsPanel}
-        handleCreateIndexPanel={handleCreateIndexPanel}
         handleScanMoreClick={handleScanMoreClick}
         nextCursor={keysState.nextCursor}
       />

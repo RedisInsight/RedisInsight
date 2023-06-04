@@ -28,14 +28,14 @@ describe('KeysSummary', () => {
     const { queryByTestId } = render(
       <KeysSummary {...instance(mockedProps)} scanned={1} items={[{}]} totalItemsCount={1} />
     )
-    expect(queryByTestId('keys-summary')).toHaveTextContent('Results: 1 key.')
+    expect(queryByTestId('keys-summary')).toHaveTextContent('Results: 1.')
   })
 
   it('should Keys summary show proper text with count > 1', () => {
     const { queryByTestId } = render(
       <KeysSummary {...instance(mockedProps)} scanned={2} items={[{}, {}]} totalItemsCount={2} />
     )
-    expect(queryByTestId('keys-summary')).toHaveTextContent('Results: 2 keys.')
+    expect(queryByTestId('keys-summary')).toHaveTextContent('Results: 2.')
   })
 
   it('should not render Scan more button if showScanMore = false ', () => {

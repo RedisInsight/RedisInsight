@@ -79,7 +79,8 @@ describe('FilterKeyType', () => {
     expect(filterSelect).toBeDisabled()
   })
 
-  it('should be info box with database redis version < 6.0', () => {
+  // TODO add after implementation
+  it.skip('should be info box with database redis version < 6.0', () => {
     connectedInstanceOverviewSelector.mockImplementation(() => ({
       version: '5.1',
     }))

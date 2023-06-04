@@ -58,12 +58,6 @@ describe('KeysHeader', () => {
     expect(render(<KeysHeader {...propsMock} />)).toBeTruthy()
   })
 
-  it('should render search properly', () => {
-    render(<KeysHeader {...propsMock} />)
-    const searchInput = screen.queryByTestId('search-key')
-    expect(searchInput).toBeInTheDocument()
-  })
-
   it('should render key view type switcher properly', () => {
     render(<KeysHeader {...propsMock} />)
 

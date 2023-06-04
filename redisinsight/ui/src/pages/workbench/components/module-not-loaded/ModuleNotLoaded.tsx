@@ -19,6 +19,7 @@ import styles from './styles.module.scss'
 export interface IProps {
   moduleName: RedisDefaultModules
   id: string
+  type?: 'workbench' | 'browser'
 }
 
 const MIN_ELEMENT_WIDTH = 1210
@@ -49,7 +50,7 @@ const ListItem = ({ item }: { item: string }) => (
   </li>
 )
 
-const ModuleNotLoaded = ({ moduleName, id }: IProps) => {
+const ModuleNotLoaded = ({ moduleName, id, type = 'workbench' }: IProps) => {
   const [width, setWidth] = useState(0)
 
   const module = MODULE_TEXT_VIEW[moduleName]
@@ -61,8 +62,24 @@ const ModuleNotLoaded = ({ moduleName, id }: IProps) => {
     }
   })
 
+  const getStartedLink = (baseUrl: string) => {
+    const url = new URL(baseUrl)
+    try {
+      url.searchParams.append('utm_source', 'redisinsight')
+      url.searchParams.append('utm_medium', 'app')
+      url.searchParams.append('utm_campaign', type === 'browser' ? 'redisinsight_browser_search' : 'redisinsight_workbench')
+      return url.toString()
+    } catch (e) {
+      return baseUrl
+    }
+  }
+
   return (
-    <div className={cx(styles.container, { [styles.fullScreen]: width > MAX_ELEMENT_WIDTH })}>
+    <div className={cx(styles.container, {
+      [styles.fullScreen]: width > MAX_ELEMENT_WIDTH || type === 'browser',
+      [styles.modal]: type === 'browser',
+    })}
+    >
       <div className={styles.flex}>
         <div>
           {width > MAX_ELEMENT_WIDTH
@@ -96,7 +113,7 @@ const ModuleNotLoaded = ({ moduleName, id }: IProps) => {
           className={cx(styles.text, styles.link)}
           external={false}
           target="_blank"
-          href={CONTENT[moduleName]?.link}
+          href={getStartedLink(CONTENT[moduleName]?.link)}
           data-testid="learn-more-link"
         >
           Learn More
@@ -105,7 +122,7 @@ const ModuleNotLoaded = ({ moduleName, id }: IProps) => {
           className={styles.link}
           external={false}
           target="_blank"
-          href="https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_workbench"
+          href={getStartedLink('https://redis.com/try-free')}
           data-testid="get-started-link"
         >
           <EuiButton

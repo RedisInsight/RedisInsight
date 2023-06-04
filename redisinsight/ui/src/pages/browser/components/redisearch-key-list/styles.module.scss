@@ -1,6 +1,6 @@
 .container {
   height: 36px;
-  width: 154px;
+  width: 168px;
   min-width: 80px;
   overflow: hidden;
   position: relative;
@@ -10,10 +10,11 @@
       .euiSuperSelectControl {
         align-items: center;
         height: 36px !important;
-        background-color: var(--browserTableRowEven) !important;
+        background-color: var(--euiColorEmptyShade) !important;
         box-shadow: none !important;
-        border: 1px solid var(--separatorColor) !important;
-        border-radius: 4px;
+        border: 1px solid var(--controlsBorderColor) !important;
+        border-left: 0 !important;
+        border-right: 0 !important;
         padding: 0 25px 0 10px !important;
 
         overflow: hidden;
@@ -21,11 +22,11 @@
         text-overflow: ellipsis;
 
         &.euiSuperSelect--isOpen__button {
-          background-color: var(--browserTableRowEven) !important;
+          background-color: var(--euiColorEmptyShade) !important;
         }
 
         &:focus {
-          background-color: var(--browserTableRowEven) !important;
+          background-color: var(--euiColorEmptyShade) !important;
         }
         &:not(:disabled):hover {
           background-color: var(--hoverInListColorDarken) !important;
@@ -67,7 +68,7 @@
   line-height: 14px !important;
   height: auto;
   padding: 8px 4px !important;
-  background-color: var(--browserTableRowEven);
+  background-color: var(--euiColorEmptyShade);
   word-break: break-word;
 
   &:hover,
@@ -136,7 +137,9 @@
   }
 
   &:hover,
-  &:active {
+  &:active,
+  &:focus {
     transform: none !important;
+    background-color: transparent !important;
   }
 }

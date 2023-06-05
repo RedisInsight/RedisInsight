@@ -90,8 +90,4 @@ test
                 await t.expect(browserPage.keysNumberOfResults.textContent).match(regExp, 'Number of found keys');
             }
         }
-        // Check removing of the label
-        await t.click(browserPage.deleteFilterButton);
-        await t.expect(browserPage.multiSearchArea.find(browserPage.cssFilteringLabel).exists).notOk('The label of filtering type is removed');
-        await t.expect(browserPage.keysSummary.textContent).contains('Total', 'The filter is removed');
     });

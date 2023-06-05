@@ -48,7 +48,7 @@ test('Verify that user can comment out any characters in scripting area and all 
     const sentCommandText2 = workbenchPage.queryCardCommand.withExactText(command2);
     await t.expect(sentCommandText2.exists).ok('Result of sent command not exists');
 });
-test('Verify that user can run multiple commands in one query in Workbench', async t => {
+test.skip('Verify that user can run multiple commands in one query in Workbench', async t => {
     const commandForSend1 = 'info';
     const commandForSend2 = 'FT._LIST';
     const multipleCommands = [

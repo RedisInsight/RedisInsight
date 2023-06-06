@@ -1,5 +1,7 @@
 import * as fs from 'fs-extra';
+import * as os from 'os';
 import * as path from 'path';
+import { join as joinPath } from 'path';
 import { BasePage } from '../pageObjects';
 import { deleteRowsFromTableInDB, updateColumnValueInDBTable } from './database-scripts';
 import { syncFeaturesApi } from './api/api-info';
@@ -12,7 +14,7 @@ const basePage = new BasePage();
  */
 export async function modifyFeaturesConfigJson(filePath: string): Promise<void> {
     const configFileName = 'features-config.json';
-    const remoteConfigPath = process.env.REMOTE_FOLDER_PATH || './remote';
+    const remoteConfigPath = joinPath(os.homedir(), process.env.REMOTE_FOLDER_PATH || './remote');
     const targetFilePath = path.join(remoteConfigPath, configFileName);
 
     return new Promise((resolve, reject) => {

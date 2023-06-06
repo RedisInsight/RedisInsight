@@ -6,7 +6,7 @@
   <script>
     (() => {
 
-      if (process?.env?.NODE_ENV !== 'development') {
+      if (envVars.NODE_ENV !== 'development') {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = './dist/style.css';
@@ -19,16 +19,16 @@
 <body class="electron">
   <div id="root" style="height: 100%; width: 100%;"></div>
   <script>
-    if (typeof process === 'object') {
+    if (typeof envVars === 'object') {
       const scripts = [];
 
-      if (process.env.NODE_ENV === 'development') {
+      if (envVars.NODE_ENV === 'development') {
         // Dynamically insert the DLL script in development env in the
         // renderer process
         scripts.push('../dll/renderer.dev.dll.js');
 
         // Dynamically insert the bundled app script in the renderer process
-        const port = process.env.PORT || 1212;
+        const port = envVars.PORT || 1212;
         scripts.push(`http://localhost:${port}/dist/renderer.dev.js`);
       } else {
         scripts.push('./dist/renderer.prod.js');

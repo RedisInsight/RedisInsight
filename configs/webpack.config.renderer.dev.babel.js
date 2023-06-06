@@ -237,33 +237,41 @@ export default merge(baseConfig, {
 
   devServer: {
     port,
-    publicPath,
     compress: true,
-    noInfo: false,
-    stats: 'errors-only',
-    inline: true,
-    lazy: false,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
-    contentBase: path.join(__dirname, 'dist'),
-    watchOptions: {
-      aggregateTimeout: 300,
-      ignored: /node_modules/,
-      poll: 100,
+    static: {
+      publicPath: '/',
     },
     historyApiFallback: {
       verbose: true,
-      disableDotRule: false,
     },
-    before() {
-      console.log('Starting Main Process...');
-      spawn('npm', ['run', 'start:main'], {
+    setupMiddlewares(middlewares) {
+      console.log('Starting preload.js builder...');
+      const preloadProcess = spawn('npm', ['run', 'start:preload'], {
         shell: true,
-        env: process.env,
         stdio: 'inherit',
       })
         .on('close', (code) => process.exit(code))
         .on('error', (spawnError) => console.error(spawnError));
+
+      console.log('Starting Main Process...');
+      let args = ['run', 'start:main'];
+      if (process.env.MAIN_ARGS) {
+        args = args.concat(
+          ['--', ...process.env.MAIN_ARGS.matchAll(/"[^"]+"|[^\s"]+/g)].flat()
+        );
+      }
+      spawn('npm', args, {
+        shell: true,
+        stdio: 'inherit',
+      })
+        .on('close', (code) => {
+          preloadProcess.kill();
+          process.exit(code);
+        })
+        .on('error', (spawnError) => console.error(spawnError));
+      return middlewares;
     },
   },
 });

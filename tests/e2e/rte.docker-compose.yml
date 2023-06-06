@@ -1,6 +1,14 @@
 version: "3.4"
 
 services:
+  static-server:
+    build:
+      context: .
+      dockerfile: static-server.Dockerfile
+    volumes:
+      - ./remote:/app/remote
+    ports:
+      - 5552:5552
   # ssh
   ssh:
     image: lscr.io/linuxserver/openssh-server:latest

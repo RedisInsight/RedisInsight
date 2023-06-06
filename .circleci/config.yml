@@ -1033,8 +1033,7 @@ workflows:
       # e2e desktop tests on AppImage build
       - e2e-app-image:
           name: E2ETest (AppImage)
-          parallelism: 2
-          report: true
+          parallelism: 1
           requires:
             - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches

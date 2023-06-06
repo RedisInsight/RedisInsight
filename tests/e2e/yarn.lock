@@ -1420,10 +1420,10 @@ acorn-hammerhead@0.4.0:
   dependencies:
     "@types/estree" "0.0.46"
 
-acorn-hammerhead@0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/acorn-hammerhead/-/acorn-hammerhead-0.6.1.tgz#f8f27c58ceaf90fbdb77a92f4331a678271194f2"
-  integrity sha512-ZWG/nXPvFiveXhJq/PxuS+4LI1BqtEOviGXWjlTvI+64kwzaddYNaE0UzLorTX7kyxrFtxjJ4w1LmKN5yEzOCg==
+acorn-hammerhead@0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/acorn-hammerhead/-/acorn-hammerhead-0.6.2.tgz#3ee37498a0548593d5152a4a2f1c76884958b7f8"
+  integrity sha512-JZklfs1VVyjA1hf1y5qSzKSmK3K1UUUI7fQTuM/Zhv3rz4kFhdx4QwVnmU6tBEC8g/Ov6B+opfNFPeSZrlQfqA==
   dependencies:
     "@types/estree" "0.0.46"
 
@@ -2406,9 +2406,9 @@ depd@^2.0.0:
   integrity sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==
 
 des.js@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/des.js/-/des.js-1.0.1.tgz#5382142e1bdc53f85d86d53e5f4aa7deb91e0843"
-  integrity sha512-Q0I4pfFrv2VPd34/vfLrFOoRmlYj3OV50i7fskps1jZWK1kApMWWT9G6RRUeYedLcBDIhnSDaUvJMb3AhUlaEA==
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/des.js/-/des.js-1.1.0.tgz#1d37f5766f3bbff4ee9638e871a8768c173b81da"
+  integrity sha512-r17GxjhUCjSRy8aiJpr8/UadFIzMzJGexI3Nmz4ADi9LYSFx4gTBp80+NaX/YsXWWLhpZ7v/v/ubEc/bCNfKwg==
   dependencies:
     inherits "^2.0.1"
     minimalistic-assert "^1.0.0"
@@ -5747,12 +5747,12 @@ testcafe-hammerhead@24.2.1:
     webauth "^1.1.0"
 
 testcafe-hammerhead@>=19.4.0:
-  version "31.4.1"
-  resolved "https://registry.yarnpkg.com/testcafe-hammerhead/-/testcafe-hammerhead-31.4.1.tgz#36454e02d7abdf390cada50368139738b5a55c8f"
-  integrity sha512-1LqUfxRG5P1dKqgbXjPL0eS+cjCnMxHMZxD9RHJiMLZ8ddjnX+BjZ+LKHjsRpiAR9EBscQBwSkAuQYL2KR89Aw==
+  version "31.4.3"
+  resolved "https://registry.yarnpkg.com/testcafe-hammerhead/-/testcafe-hammerhead-31.4.3.tgz#b683d96368808bd366f6b30c382f9c3ddc3256ef"
+  integrity sha512-Z8wubj/8t3T5udVyqf2Kqy9oZFE8zDIWnuItVIEscYQ8PB6eWCkjq3oSx9J0XzSdakFnsUYP1T/KVlNe5z306w==
   dependencies:
     "@electron/asar" "^3.2.3"
-    acorn-hammerhead "0.6.1"
+    acorn-hammerhead "0.6.2"
     bowser "1.6.0"
     crypto-md5 "^1.0.0"
     css "2.2.3"

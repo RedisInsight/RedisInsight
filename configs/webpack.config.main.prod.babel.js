@@ -23,7 +23,7 @@ export default merge(baseConfig, {
 
   target: 'electron-main',
 
-  entry: './redisinsight/main.dev.ts',
+  entry: './redisinsight/electron/main.dev.ts',
 
   resolve: {
     alias: {
@@ -74,6 +74,10 @@ export default merge(baseConfig, {
       CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
         ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000), // 30 sec
+    }),
+
+    new webpack.DefinePlugin({
+      'process.type': '"browser"',
     }),
   ],
 

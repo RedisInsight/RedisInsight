@@ -36,6 +36,7 @@ lerna-debug.log*
 .vscode
 
 # App packaged
+redisinsight/electron/preload.js
 release
 main.prod.js
 main.prod.js.map

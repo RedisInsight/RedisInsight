@@ -22,12 +22,8 @@ export default {
         include: [path.resolve(__dirname, '../redisinsight/ui')],
         exclude: [
           /node_modules/,
-          path.resolve(__dirname, '../menu.ts'),
-          path.resolve(__dirname, 'menu.ts'),
-          path.resolve(__dirname, '../Menu.ts'),
-          path.resolve(__dirname, 'Menu.ts'),
-          path.resolve(__dirname, '../redisinsight/main.dev.ts'),
           path.resolve(__dirname, '../redisinsight/api'),
+          path.resolve(__dirname, '../redisinsight/electron'),
         ],
         use: {
           loader: 'babel-loader',

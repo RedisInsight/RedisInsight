@@ -5,11 +5,11 @@
   "files": [
     "dist/",
     "node_modules/",
-    "index.html",
-    "splash.html",
+    "electron/",
     "main.prod.js",
     "main.prod.js.map",
-    "package.json"
+    "package.json",
+    "redisinsight/electron/preload.js"
   ],
   "afterSign": "electron-builder-notarize",
   "artifactName": "${productName}-${os}-${arch}.${ext}",

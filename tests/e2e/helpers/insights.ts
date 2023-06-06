@@ -17,6 +17,11 @@ export async function modifyFeaturesConfigJson(filePath: string): Promise<void> 
 
     return new Promise((resolve, reject) => {
         try {
+            // Ensure the folder exists
+            if (!fs.existsSync(remoteConfigPath)) {
+                console.log(`Folder '${remoteConfigPath}' doesn't exist.`);
+            }
+
             fs.ensureFileSync(targetFilePath);
             fs.writeFileSync(targetFilePath, fs.readFileSync(filePath));
             resolve();

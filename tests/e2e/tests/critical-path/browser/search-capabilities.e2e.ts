@@ -247,7 +247,7 @@ test
         await t.expect(browserPage.keyListTable.textContent).contains(notSelectedIndexText, 'Search by Values of Keys section not opened');
     });
 
-test.only
+test
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, bigDbName);
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);

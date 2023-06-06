@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { EuiLoadingContent, keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
+import { isNull } from 'lodash'
 
 import { WBQueryType, ProfileQueryType, DEFAULT_TEXT_VIEW_TYPE } from 'uiSrc/pages/workbench/constants'
 import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
@@ -194,7 +195,7 @@ const QueryCard = (props: Props) => {
         />
         {isOpen && (
           <>
-            {React.isValidElement(commonError) && !isGroupResults(resultsMode)
+            {React.isValidElement(commonError) && (!isGroupResults(resultsMode) || isNull(command))
               ? <QueryCardCommonResult loading={loading} result={commonError} />
               : (
                 <>

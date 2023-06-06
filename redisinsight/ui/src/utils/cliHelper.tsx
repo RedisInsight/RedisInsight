@@ -1,6 +1,7 @@
 import React from 'react'
 import { Dispatch, PayloadAction } from '@reduxjs/toolkit'
 import parse from 'html-react-parser'
+import { isUndefined } from 'lodash'
 
 import { localStorageService } from 'uiSrc/services'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
@@ -48,6 +49,14 @@ const cliParseTextResponseWithOffset = (
   command: string = '',
   status: CommandExecutionStatus = CommandExecutionStatus.Success,
 ) => [cliParseTextResponse(text, command, status), '\n']
+
+const replaceEmptyValue = (value: any) => {
+  if (
+    isUndefined(value) || value === '' || value === false) {
+    return '(nil)'
+  }
+  return value
+}
 
 const cliParseTextResponse = (
   text: string | JSX.Element = '',
@@ -104,7 +113,7 @@ const cliParseCommandsGroupResult = (
 
   let executionResult = []
   if (result.status === CommandExecutionStatus.Success) {
-    executionResult = formatToText(result.response || '(nil)', result.command).split('\n')
+    executionResult = formatToText(replaceEmptyValue(result.response), result.command).split('\n')
   } else {
     executionResult = [cliParseTextResponse(result.response || '(nil)', result.command, result.status)]
   }
@@ -229,4 +238,5 @@ export {
   getDbIndexFromSelectQuery,
   getCommandNameFromQuery,
   wbSummaryCommand,
+  replaceEmptyValue,
 }

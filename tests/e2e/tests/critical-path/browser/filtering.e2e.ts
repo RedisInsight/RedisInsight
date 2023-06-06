@@ -81,7 +81,7 @@ test
         for (const { textType } of keyTypes) {
             await browserPage.selectFilterGroupType(textType);
             // Check key type label
-            await t.expect((await browserPage.filteringLabel.textContent).toUpperCase).eql(textType.toUpperCase, `The label of type ${textType} is displayed`);
+            await t.expect((await browserPage.filterByKeyTypeDropDown.innerText).toUpperCase).eql(textType.toUpperCase, `The label of type ${textType} is displayed`);
             if (['Stream', 'Graph', 'TS'].includes(textType)) {
                 await t.expect(browserPage.keysNumberOfResults.textContent).eql('0', 'Number of found keys');
             }

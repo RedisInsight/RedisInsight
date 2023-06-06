@@ -117,7 +117,7 @@ export class BrowserPage extends InstancePage {
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     userSurveyLink = Selector('[data-testid=user-survey-link]');
-    redisearchFreeLink = Selector('[data-testid=redisearch-free-db]');
+    redisearchFreeLink = Selector('[data-testid=get-started-link]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');
@@ -130,6 +130,7 @@ export class BrowserPage extends InstancePage {
     selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
     filterByKeyTypeDropDown = Selector('[data-testid=select-filter-key-type]', { timeout: 500 });
+    filterAllKeyType = Selector('[id=all]');
     filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
     consumerOption = Selector('[data-testid=consumer-option]');
     claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
@@ -490,6 +491,15 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.filterByKeyTypeDropDown)
             .click((this.filterOptionType).withExactText(groupName));
+    }
+
+    /**
+     * Select all key type filter group type
+     */
+    async setAllKeyType(): Promise<void> {
+        await t
+            .click(this.filterByKeyTypeDropDown)
+            .click(this.filterAllKeyType);
     }
 
     /**

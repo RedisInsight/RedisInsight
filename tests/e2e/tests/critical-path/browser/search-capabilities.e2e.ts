@@ -152,7 +152,7 @@ test
         const externalPageLink = 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_browser_search';
 
         await t.click(browserPage.redisearchModeBtn);
-        // Verify that user can see message in popover when he not have RediSearch module
+        // Verify that user can see message in the dialog when he doesn't have RediSearch module
         await t.expect(browserPage.noReadySearchDialogTitle.textContent).contains(noRedisearchMessage, 'Invalid text in no redisearch popover');
         // Verify that user can navigate by link to create a Redis db
         await t.click(browserPage.redisearchFreeLink);
@@ -247,7 +247,7 @@ test
         await t.expect(browserPage.keyListTable.textContent).contains(notSelectedIndexText, 'Search by Values of Keys section not opened');
     });
 
-test
+test.only
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, bigDbName);
         await addNewStandaloneDatabaseApi(ossStandaloneConfig);

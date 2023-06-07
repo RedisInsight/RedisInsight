@@ -1,10 +1,12 @@
-import path from 'path';
 import webpack from 'webpack';
-import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
+import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
+import webpackPaths from './webpack.paths';
 import { dependencies as externals } from '../redisinsight/package.json';
 
-export default {
+const configuration: webpack.Configuration =  {
   externals: [...Object.keys(externals || {})],
+
+  stats: 'errors-only',
 
   module: {
     rules: [
@@ -22,28 +24,27 @@ export default {
   },
 
   output: {
-    path: path.join(__dirname, '..'),
-    // commonjs2 https://github.com/webpack/webpack/issues/1114
-    libraryTarget: 'commonjs2',
+    path: webpackPaths.riPath,
+    // https://github.com/webpack/webpack/issues/1114
+    library: {
+      type: 'commonjs2',
+    },
   },
 
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx', '.scss'],
-    plugins: [
-      new TsconfigPathsPlugin({
-        configFile: path.join(__dirname, '..', 'tsconfig.json'),
-      }),
-    ],
+    modules: [webpackPaths.apiPath, 'node_modules'],
+    plugins: [new TsconfigPathsPlugins()],
     alias: {
-      src: path.resolve(__dirname, '../redisinsight/api/src'),
-      apiSrc: path.resolve(__dirname, '../redisinsight/api/src'),
-      uiSrc: path.resolve(__dirname, '../redisinsight/ui/src'),
+      src: webpackPaths.apiSrcPath,
+      apiSrc: webpackPaths.apiSrcPath,
+      uiSrc: webpackPaths.uiSrcPath,
     },
-    modules: [path.join(__dirname, '../redisinsight/api'), 'node_modules'],
   },
 
   plugins: [
     new webpack.EnvironmentPlugin({
+      NODE_ENV: 'production',
     }),
 
     new webpack.IgnorePlugin({
@@ -81,3 +82,5 @@ export default {
     }),
   ],
 };
+
+export default configuration;

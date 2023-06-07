@@ -1,32 +1,32 @@
 import path from 'path';
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import baseConfig from './webpack.config.base';
+import webpackPaths from './webpack.paths';
 
-
-const configuration = {
+const configuration: webpack.Configuration = {
   devtool: 'inline-source-map',
 
   mode: 'development',
 
   target: 'electron-preload',
 
-  // entry: path.join(webpackPaths.srcMainPath, 'preload.ts'),
-  entry: './redisinsight/electron/preload.ts',
+  entry: path.join(webpackPaths.electronPath, 'preload.ts'),
 
   output: {
-    // path: webpackPaths.dllPath,
-    path: path.join(__dirname, '../redisinsight/electron'),
-    // path: path.join(__dirname, '../resources'),
+    path: webpackPaths.dllPath,
     filename: 'preload.js',
-    libraryTarget: 'umd',
-    globalObject: 'this'
-    // library: {
-    //   type: 'umd',
-    // },
+    library: {
+      type: 'umd',
+    },
   },
 
   plugins: [
+    new BundleAnalyzerPlugin({
+      analyzerMode: process.env.ANALYZE === 'true' ? 'server' : 'disabled',
+    }),
+
     /**
      * Create global constants which can be configured at compile time.
      *

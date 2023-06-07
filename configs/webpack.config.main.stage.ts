@@ -2,7 +2,7 @@ import webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { toString } from 'lodash'
-import mainProdConfig from './webpack.config.main.prod.babel';
+import mainProdConfig from './webpack.config.main.prod';
 import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
 import { version } from '../redisinsight/package.json';
 
@@ -34,6 +34,12 @@ export default merge(mainProdConfig, {
       CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
         ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000), // 30 sec
+      API_PREFIX: 'api',
+      BASE_API_URL: process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
+      RESOURCES_BASE_URL: process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
+      SCAN_COUNT_DEFAULT: '500',
+      SCAN_TREE_COUNT_DEFAULT: '10000',
+      PIPELINE_COUNT_DEFAULT: '5',
     }),
   ],
 });

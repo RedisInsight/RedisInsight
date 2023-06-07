@@ -2,7 +2,7 @@ import webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import { toString } from 'lodash'
 import baseConfig from './webpack.config.base';
-import rendererProdConfig from './webpack.config.renderer.prod.babel';
+import rendererProdConfig from './webpack.config.renderer.prod';
 import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
 
 DeleteSourceMaps();

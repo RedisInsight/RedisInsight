@@ -2,6 +2,7 @@ import type { Nullable, Maybe } from './types'
 import getLetterByIndex from './getLetterByIndex'
 import RouterWithSubRoutes from './routerWithSubRoutes'
 
+export * from './envVars'
 export * from './common'
 export * from './validations'
 export * from './statuses'

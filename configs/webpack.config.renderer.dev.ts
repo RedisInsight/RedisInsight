@@ -1,45 +1,66 @@
+import 'webpack-dev-server';
 import path from 'path';
+import { execSync, spawn } from 'child_process';
+import fs from 'fs';
+import chalk from 'chalk';
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
-import { spawn } from 'child_process';
-import { toString } from 'lodash'
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import baseConfig from './webpack.config.base';
-import { version } from '../redisinsight/package.json';
+import webpackPaths from './webpack.paths';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 const port = process.env.PORT || 1212;
-const publicPath = `http://localhost:${port}/dist`;
-const dllDir = path.join(__dirname, '../dll');
-const manifest = path.resolve(dllDir, 'renderer.json');
-const requiredByDLLConfig = module.parent.filename.includes('webpack.config.renderer.dev.dll');
+const manifest = path.resolve(webpackPaths.dllPath, 'renderer.json');
+const skipDLLs =
+  module.parent?.filename.includes('webpack.config.renderer.dev.dll') ||
+  module.parent?.filename.includes('webpack.config.eslint');
+
+/**
+ * Warn if the DLL is not built
+ */
+if (
+  !skipDLLs &&
+  !(fs.existsSync(webpackPaths.dllPath) && fs.existsSync(manifest))
+) {
+  console.log(
+    chalk.black.bgYellow.bold(
+      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
+    )
+  );
+  execSync('npm run postinstall');
+}
 
 function employCache(loaders) {
   return ['cache-loader'].concat(loaders);
 }
 
-export default merge(baseConfig, {
-  devtool: 'inline-source-map',
+const configuration: webpack.Configuration = {
+  devtool: 'source-map',
 
   mode: 'development',
 
-  target: 'electron-renderer',
+  target: ['web', 'electron-renderer'],
 
   entry: [
-    'core-js',
-    'regenerator-runtime/runtime',
-    // require.resolve('../redisinsight/main.renderer.ts'),
-    require.resolve('../redisinsight/ui/indexElectron.tsx'),
+    `webpack-dev-server/client?http://localhost:${port}/dist`,
+    'webpack/hot/only-dev-server',
+    path.join(webpackPaths.uiPath, 'index.tsx'),
   ],
 
   output: {
-    publicPath: `http://localhost:${port}/dist/`,
+    path: webpackPaths.electronPath,
+    publicPath: '/',
     filename: 'renderer.dev.js',
+    library: {
+      type: 'umd',
+    },
   },
 
   resolve: {
     alias: {
-      apiSrc: path.resolve(__dirname, '../redisinsight/api/src'),
+      apiSrc: webpackPaths.apiSrcPath,
     },
   },
 
@@ -193,32 +214,20 @@ export default merge(baseConfig, {
     ],
   },
   plugins: [
-    requiredByDLLConfig
-      ? null
-      : new webpack.DllReferencePlugin({
-          context: path.join(__dirname, '../dll'),
-          manifest: require(manifest),
-          sourceType: 'var',
-        }),
+    ...(skipDLLs
+      ? []
+      : [
+          new webpack.DllReferencePlugin({
+            context: webpackPaths.dllPath,
+            manifest: require(manifest),
+            sourceType: 'var',
+          }),
+        ]),
 
     new webpack.NoEmitOnErrorsPlugin(),
 
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
-      APP_ENV: 'electron',
-      API_PREFIX: 'api',
-      BASE_API_URL: 'http://localhost',
-      RESOURCES_BASE_URL: 'http://localhost',
-      SCAN_COUNT_DEFAULT: '500',
-      SCAN_TREE_COUNT_DEFAULT: '10000',
-      PIPELINE_COUNT_DEFAULT: '5',
-      BUILD_TYPE: 'ELECTRON',
-      APP_VERSION: version,
-      SEGMENT_WRITE_KEY:
-        'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
-      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
-        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
-        : toString(30 * 1000), // 30 sec
     }),
 
     new webpack.LoaderOptionsPlugin({
@@ -228,6 +237,20 @@ export default merge(baseConfig, {
     new ReactRefreshWebpackPlugin(),
 
     new MonacoWebpackPlugin({ languages: ['json'], features: ['!rename'] }),
+
+    new HtmlWebpackPlugin({
+      filename: path.join('index.html'),
+      template: path.join(webpackPaths.electronPath, 'index.ejs'),
+      minify: {
+        collapseWhitespace: true,
+        removeAttributeQuotes: true,
+        removeComments: true,
+      },
+      isBrowser: false,
+      env: process.env.NODE_ENV,
+      isDevelopment: process.env.NODE_ENV !== 'production',
+      nodeModules: webpackPaths.appNodeModulesPath,
+    }),
   ],
 
   node: {
@@ -274,4 +297,6 @@ export default merge(baseConfig, {
       return middlewares;
     },
   },
-});
+};
+
+export default merge(baseConfig, configuration);

@@ -36,6 +36,7 @@ import AboutPanelOptions from './about-panel';
 import TrayBuilder from './tray';
 import server from '../api/dist/src/main';
 import { ElectronStorageItem, IpcEvent } from '../ui/src/electron/constants';
+import { resolveHtmlPath } from './util';
 
 if (process.env.NODE_ENV !== 'production') {
   log.transports.file.getFile().clear();
@@ -184,7 +185,7 @@ export const createSplashScreen = async () => {
     },
   });
 
-  splash.loadURL(`file://${__dirname}/splash.html`);
+  splash.loadURL(resolveHtmlPath('splash.html'));
 
   return splash;
 };
@@ -221,16 +222,13 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
       spellcheck: true,
       allowRunningInsecureContent: false,
       scrollBounce: true,
-      preload: path.join(__dirname, 'preload.js'),
-      // preload: app.isPackaged
-      //   ? path.join(__dirname, 'preload.js')
-      //   : path.join(__dirname, '../../dll/preload.js'),
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, './dll/preload.js'),
     },
   });
 
-  newWindow.loadURL(`file://${__dirname}/index.html`);
-
-  newWindow.webContents.openDevTools();
+  newWindow.loadURL(resolveHtmlPath('index.html'));
 
   newWindow.webContents.on('did-finish-load', () => {
     if (!newWindow) {
@@ -298,6 +296,11 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
     shell.openExternal(url);
   });
 
+  newWindow.webContents.setWindowOpenHandler((edata: any) => {
+    shell.openExternal(edata.url);
+    return { action: 'deny' };
+  });
+
   // event newWindow.webContents.on('context-menu', ...)
   contextMenu({ window: newWindow, showInspectElement: true });
 
@@ -361,7 +364,7 @@ app.on('continue-activity-error', (event, type, error) => {
 
 app.whenReady()
   .then(bootstrap)
-  // .then(createSplashScreen)
+  .then(createSplashScreen)
   .then(createWindow)
   .catch((e) => console.log(wrapErrorMessageSensitiveData(e)));
 

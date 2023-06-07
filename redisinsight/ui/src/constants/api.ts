@@ -1,3 +1,5 @@
+import { envVars } from 'uiSrc/utils'
+
 enum ApiEndpoints {
   DATABASES = 'databases',
   DATABASES_IMPORT = 'databases/import',
@@ -116,9 +118,9 @@ enum ApiEndpoints {
 
 export const DEFAULT_SEARCH_MATCH = '*'
 
-const SCAN_COUNT_DEFAULT_ENV = process.env.SCAN_COUNT_DEFAULT || '500'
-const PIPELINE_COUNT_DEFAULT_ENV = process.env.PIPELINE_COUNT_DEFAULT || '5'
-const SCAN_TREE_COUNT_DEFAULT_ENV = process.env.SCAN_TREE_COUNT_DEFAULT || '10000'
+const SCAN_COUNT_DEFAULT_ENV = envVars.SCAN_COUNT_DEFAULT || '500'
+const PIPELINE_COUNT_DEFAULT_ENV = envVars.PIPELINE_COUNT_DEFAULT || '5'
+const SCAN_TREE_COUNT_DEFAULT_ENV = envVars.SCAN_TREE_COUNT_DEFAULT || '10000'
 
 export const SCAN_COUNT_DEFAULT = parseInt(SCAN_COUNT_DEFAULT_ENV, 10)
 export const PIPELINE_COUNT_DEFAULT = parseInt(PIPELINE_COUNT_DEFAULT_ENV, 10)

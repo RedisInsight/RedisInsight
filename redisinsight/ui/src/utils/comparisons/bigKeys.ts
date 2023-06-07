@@ -17,10 +17,12 @@ const defaultConfig: { [key: string]: number } = {
 }
 
 const bigKeysConfig: { [key: string]: DefaultConfig } = {
-  [KeyTypes.List]: defaultConfig,
-  [KeyTypes.ZSet]: defaultConfig,
-  [KeyTypes.Set]: defaultConfig,
-  [KeyTypes.Hash]: defaultConfig,
+  // TODO: rollback to enum [KeyTypes.Hash]: ....
+  // TODO: import this enum not work well for packaged electron
+  list: defaultConfig,
+  zset: defaultConfig,
+  set: defaultConfig,
+  hash: defaultConfig,
 }
 
 const isBigKey = (keyType: string, type: HighlightType, count: number): boolean => {

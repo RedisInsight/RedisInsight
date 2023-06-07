@@ -18,7 +18,6 @@
     "node_modules/keytar",
     "node_modules/sqlite3",
     "node_modules/cpu-features",
-    "node_modules/ssh2",
     "**\\*.{node,dll}"
   ],
   "mac": {
@@ -83,6 +82,12 @@
     "artifactName": "${productName}-${os}-${arch}-masDev.${ext}"
   },
   "dmg": {
+    "binaries: [
+      "Contents/Resources/app.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-arm64/node_sqlite3.node",
+      "Contents/Resources/app.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-x64/node_sqlite3.node",
+      "Contents/Resources/app.asar.unpacked/node_modules/keytar/build/Release/keytar.node",
+      "Contents/Resources/app.asar.unpacked/node_modules/cpu-features/build/Release/cpufeatures.node"
+    ],
     "contents": [
       {
         "x": 130,

@@ -14,11 +14,9 @@ const basePage = new BasePage();
  */
 export async function modifyFeaturesConfigJson(filePath: string): Promise<void> {
     const configFileName = 'features-config.json';
-    // const remoteConfigPath = process.env.REMOTE_FOLDER_PATH || './remote';
-    const remoteConfigPath = joinPath(os.homedir(), process.env.REMOTE_FOLDER_PATH || './remote');
+    const remoteConfigPath = process.env.REMOTE_FOLDER_PATH || './remote';
+    // const remoteConfigPath = joinPath(os.homedir(), process.env.REMOTE_FOLDER_PATH || './remote');
     const targetFilePath = path.join(remoteConfigPath, configFileName);
-
-    console.log(`Remote config path: ${remoteConfigPath}`);
 
     return new Promise((resolve, reject) => {
         try {

@@ -212,9 +212,6 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
     // titleBarStyle: 'hidden',
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      // contextIsolation: false,
-      // nodeIntegration: true,
-      // nodeIntegrationInWorker: true,
       contextIsolation: true,
       nodeIntegration: false,
       nodeIntegrationInWorker: false,

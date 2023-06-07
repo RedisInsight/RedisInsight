@@ -6,7 +6,7 @@ import TerserPlugin from 'terser-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import commonConfig from './webpack.config.web.common.babel';
+import commonConfig from './webpack.config.web.common';
 import DeleteDistWeb from '../scripts/DeleteDistWeb';
 
 DeleteDistWeb();

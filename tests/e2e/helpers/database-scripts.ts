@@ -18,7 +18,7 @@ export async function updateColumnValueInDBTable(tableName: string, columnName: 
             if (err) {
                 reject(new Error(`Error during changing ${columnName} column value: ${err.message}`));
             } else {
-                console.log(`Value of data in ${tableName}:`, row[columnName]);
+                console.log(`Value of data in ${tableName}:`, row['data']);
                 db.run(query, (err: { message: string }) => {
                     if (err) {
                         reject(new Error(`Error during changing ${columnName} column value: ${err.message}`));

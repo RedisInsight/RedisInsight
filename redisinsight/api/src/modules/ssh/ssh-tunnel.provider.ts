@@ -22,7 +22,10 @@ export class SshTunnelProvider {
           reject(new UnableToCreateLocalServerException(e.message));
         });
 
-        detectPort(50000)
+        detectPort({
+          hostname: '127.0.0.1',
+          port: 50000,
+        })
           .then((port) => {
             server.listen({
               host: '127.0.0.1',

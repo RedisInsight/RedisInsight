@@ -1,5 +1,5 @@
-import { Expose } from 'class-transformer';
-import { IsArray, IsString, IsNumber } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import { IsArray, IsString, IsNumber, ValidateNested } from 'class-validator';
 import { Function } from 'src/modules/triggered-functions/models';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -52,9 +52,11 @@ export class GetTriggeredFunctionsDto {
   @ApiProperty({
     description: 'Array of functions',
     isArray: true,
-    type: () => Function,
+    type: Function,
   })
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Function)
   @Expose()
   functions: Function[];
 }

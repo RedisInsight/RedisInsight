@@ -1,7 +1,8 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import {
   IsArray, IsEnum, IsOptional, IsString, IsBoolean, IsNumber,
 } from 'class-validator';
+import { isNumber } from 'lodash';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export enum FunctionType {
@@ -67,11 +68,12 @@ export class Function {
 
   @ApiPropertyOptional({
     description: 'Is functions is async',
-    type: Number,
+    type: Boolean,
     example: 0,
   })
-  @IsNumber()
+  @IsBoolean()
   @IsOptional()
   @Expose()
-  is_async?: number;
+  @Transform((val) => isNumber(val) ? val === 1 : undefined)
+  isAsync?: boolean;
 }

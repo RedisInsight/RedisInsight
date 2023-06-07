@@ -14,15 +14,32 @@ export async function updateColumnValueInDBTable(tableName: string, columnName: 
     const query = `UPDATE ${tableName} SET ${columnName} = ${value}`;
 
     return new Promise<void>((resolve, reject) => {
-        db.run(query, (err: { message: string }) => {
+        db.get(`SELECT ${columnName} FROM ${tableName}`, (err: { message: string }, row: any) => {
             if (err) {
                 reject(new Error(`Error during changing ${columnName} column value: ${err.message}`));
             } else {
-                db.close();
-                resolve();
+                console.log(`Value of ${columnName} in ${tableName}:`, row[columnName]);
+                db.run(query, (err: { message: string }) => {
+                    if (err) {
+                        reject(new Error(`Error during changing ${columnName} column value: ${err.message}`));
+                    } else {
+                        db.close();
+                        resolve();
+                    }
+                });
             }
         });
     });
+    // return new Promise<void>((resolve, reject) => {
+    //     db.run(query, (err: { message: string }) => {
+    //         if (err) {
+    //             reject(new Error(`Error during changing ${columnName} column value: ${err.message}`));
+    //         } else {
+    //             db.close();
+    //             resolve();
+    //         }
+    //     });
+    // });
 }
 
 /**

@@ -10,7 +10,7 @@ import webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import ip from 'ip';
 import { toString } from 'lodash'
-import commonConfig from './webpack.config.web.common.babel';
+import commonConfig from './webpack.config.web.common';
 
 function employCache(loaders) {
   return ['cache-loader'].concat(loaders);

@@ -1013,31 +1013,12 @@ workflows:
           name: Build docker image
           requires:
             - Start E2E Tests
-      # build desktop app
-      - setup-sign-certificates:
-          name: Setup sign certificates (stage)
-          requires:
-            - Start E2E Tests
-      - setup-build:
-          name: Setup build (stage)
-          requires:
-            - Setup sign certificates (stage)
-      - linux:
-          name: Build app - Linux (stage)
-          requires:
-            - Setup build (stage)
       - e2e-tests:
           name: E2ETest
           build: docker
           parallelism: 4
           requires:
             - Build docker image
-      # e2e desktop tests on AppImage build
-      - e2e-app-image:
-          name: E2ETest (AppImage)
-          parallelism: 1
-          requires:
-            - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:

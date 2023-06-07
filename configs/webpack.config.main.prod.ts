@@ -6,6 +6,7 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import baseConfig from './webpack.config.base';
 import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
 import { version } from '../redisinsight/package.json';
+import webpackPaths from './webpack.paths';
 
 DeleteSourceMaps();
 
@@ -23,19 +24,25 @@ export default merge(baseConfig, {
 
   target: 'electron-main',
 
-  entry: './redisinsight/electron/main.dev.ts',
+  entry: {
+    main: path.join(webpackPaths.electronPath, 'main.dev.ts'),
+    preload: path.join(webpackPaths.electronPath, 'preload.ts'),
+  },
 
   resolve: {
     alias: {
-      ['apiSrc']: path.resolve(__dirname, '../redisinsight/api/src'),
-      ['src']: path.resolve(__dirname, '../redisinsight/api/src'),
+      ['apiSrc']: webpackPaths.apiSrcPath,
+      ['src']: webpackPaths.apiSrcPath,
     },
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
   },
 
   output: {
-    path: path.join(__dirname, '../redisinsight'),
-    filename: 'main.prod.js',
+    path: webpackPaths.distMainPath,
+    filename: '[name].js',
+    library: {
+      type: 'umd',
+    },
   },
 
   // optimization: {
@@ -44,10 +51,6 @@ export default merge(baseConfig, {
   //       parallel: true,
   //     }),
   //   ],
-  // },
-
-  // alias: {
-  //   'apiSrc': path.resolve(__dirname, '../redisinsight/api/src/')
   // },
 
   plugins: [
@@ -74,6 +77,12 @@ export default merge(baseConfig, {
       CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
         ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000), // 30 sec
+      API_PREFIX: 'api',
+      BASE_API_URL: process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
+      RESOURCES_BASE_URL: process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
+      SCAN_COUNT_DEFAULT: '500',
+      SCAN_TREE_COUNT_DEFAULT: '10000',
+      PIPELINE_COUNT_DEFAULT: '5',
     }),
 
     new webpack.DefinePlugin({

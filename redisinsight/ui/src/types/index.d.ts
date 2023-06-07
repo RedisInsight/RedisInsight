@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer'
 // eslint-disable-next-line import/order
-import { Nullable } from 'uiSrc/utils'
+import { Nullable, EnvVars } from 'uiSrc/utils'
 import { KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString, UintArray } from 'uiSrc/slices/interfaces'
 
@@ -8,6 +8,7 @@ declare global {
   interface Window {
     ri: RedisInsight
     Buffer: typeof Buffer
+    envVariables: EnvVars
   }
 
   interface RedisInsight {

@@ -3,13 +3,9 @@
   "appId": "org.RedisLabs.RedisInsight-V2",
   "copyright": "Copyright © 2023 Redis Ltd.",
   "files": [
-    "dist/",
-    "node_modules/",
-    "electron/",
-    "main.prod.js",
-    "main.prod.js.map",
-    "package.json",
-    "redisinsight/electron/preload.js"
+    "dist",
+    "node_modules",
+    "package.json"
   ],
   "afterSign": "electron-builder-notarize",
   "artifactName": "${productName}-${os}-${arch}.${ext}",

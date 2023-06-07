@@ -11,11 +11,6 @@
       "flag": true,
       "filters": [
         {
-          "name": "agreements.analytics",
-          "value": true,
-          "cond": "eq"
-        },
-        {
           "name": "config.server.buildType",
           "value": "DOCKER_ON_PREMISE",
           "cond": "eq"

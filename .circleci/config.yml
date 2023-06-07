@@ -1009,13 +1009,15 @@ workflows:
               only:
                 - /^e2e/feature.*/
                 - /^e2e/bugfix.*/
-      # - docker:
-      #     name: Build docker image
-      #     requires:
-      #       - Start E2E Tests
+      - docker:
+          name: Build docker image
+          requires:
+            - Start E2E Tests
       # build desktop app
       - setup-sign-certificates:
           name: Setup sign certificates (stage)
+          requires:
+            - Start E2E Tests
       - setup-build:
           name: Setup build (stage)
           requires:
@@ -1024,12 +1026,12 @@ workflows:
           name: Build app - Linux (stage)
           requires:
             - Setup build (stage)
-      # - e2e-tests:
-      #     name: E2ETest
-      #     build: docker
-      #     parallelism: 4
-      #     requires:
-      #       - Build docker image
+      - e2e-tests:
+          name: E2ETest
+          build: docker
+          parallelism: 4
+          requires:
+            - Build docker image
       # e2e desktop tests on AppImage build
       - e2e-app-image:
           name: E2ETest (AppImage)

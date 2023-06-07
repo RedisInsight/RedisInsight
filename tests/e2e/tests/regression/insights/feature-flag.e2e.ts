@@ -126,7 +126,7 @@ test
         await t.expect(featureVersion).eql(versionFromConfig, 'Config highest version not applied');
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when filter excludes this buildType');
     });
-test.only
+test
     .meta({ env: env.desktop })
     .before(async() => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);

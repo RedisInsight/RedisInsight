@@ -1,7 +1,5 @@
 import * as fs from 'fs-extra';
-import * as os from 'os';
 import * as path from 'path';
-import { join as joinPath } from 'path';
 import { BasePage } from '../pageObjects';
 import { deleteRowsFromTableInDB, updateColumnValueInDBTable } from './database-scripts';
 import { syncFeaturesApi } from './api/api-info';
@@ -15,22 +13,12 @@ const basePage = new BasePage();
 export async function modifyFeaturesConfigJson(filePath: string): Promise<void> {
     const configFileName = 'features-config.json';
     const remoteConfigPath = process.env.REMOTE_FOLDER_PATH || './remote';
-    // const remoteConfigPath = joinPath(os.homedir(), process.env.REMOTE_FOLDER_PATH || './remote');
     const targetFilePath = path.join(remoteConfigPath, configFileName);
 
     return new Promise((resolve, reject) => {
         try {
-            // Ensure the folder exists
-            if (!fs.existsSync(remoteConfigPath)) {
-                console.log(`Folder '${remoteConfigPath}' doesn't exist.`);
-            }
-
             fs.ensureFileSync(targetFilePath);
             fs.writeFileSync(targetFilePath, fs.readFileSync(filePath));
-
-            const fileContent = fs.readFileSync(targetFilePath, 'utf8');
-            console.log('JSON File Content:', fileContent);
-            
             resolve();
         }
         catch (err) {

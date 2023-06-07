@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: static-server.Dockerfile
     volumes:
-      - ./remote:/app/remote
+      - ./circleci/remote:/app/remote
     ports:
       - 5552:5552
   # ssh

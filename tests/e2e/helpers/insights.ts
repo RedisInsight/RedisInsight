@@ -27,6 +27,10 @@ export async function modifyFeaturesConfigJson(filePath: string): Promise<void> 
 
             fs.ensureFileSync(targetFilePath);
             fs.writeFileSync(targetFilePath, fs.readFileSync(filePath));
+
+            const fileContent = fs.readFileSync(targetFilePath, 'utf8');
+            console.log('JSON File Content:', fileContent);
+            
             resolve();
         }
         catch (err) {

@@ -14,11 +14,11 @@ export async function updateColumnValueInDBTable(tableName: string, columnName: 
     const query = `UPDATE ${tableName} SET ${columnName} = ${value}`;
 
     return new Promise<void>((resolve, reject) => {
-        db.get(`SELECT ${columnName} FROM ${tableName}`, (err: { message: string }, row: any) => {
+        db.get(`SELECT data FROM ${tableName}`, (err: { message: string }, row: any) => {
             if (err) {
                 reject(new Error(`Error during changing ${columnName} column value: ${err.message}`));
             } else {
-                console.log(`Value of ${columnName} in ${tableName}:`, row[columnName]);
+                console.log(`Value of data in ${tableName}:`, row[columnName]);
                 db.run(query, (err: { message: string }) => {
                     if (err) {
                         reject(new Error(`Error during changing ${columnName} column value: ${err.message}`));

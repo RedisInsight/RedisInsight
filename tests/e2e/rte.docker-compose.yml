@@ -8,7 +8,7 @@ services:
     volumes:
       - ./remote:/app/remote
     ports:
-      - 5552:5552
+      - 5551:5551
   # ssh
   ssh:
     image: lscr.io/linuxserver/openssh-server:latest

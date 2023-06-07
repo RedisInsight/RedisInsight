@@ -1,6 +1,8 @@
 .container {
   width: 168px;
   height: 36px;
+  flex-shrink: 0;
+
   :global {
     .euiFormControlLayout {
       .euiSuperSelectControl {

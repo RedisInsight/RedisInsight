@@ -63,8 +63,8 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench' }: IProps) => {
   })
 
   const getStartedLink = (baseUrl: string) => {
-    const url = new URL(baseUrl)
     try {
+      const url = new URL(baseUrl)
       url.searchParams.append('utm_source', 'redisinsight')
       url.searchParams.append('utm_medium', 'app')
       url.searchParams.append('utm_campaign', type === 'browser' ? 'redisinsight_browser_search' : 'redisinsight_workbench')

@@ -4,6 +4,7 @@
   min-width: 80px;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
 
   :global {
     .euiFormControlLayout {

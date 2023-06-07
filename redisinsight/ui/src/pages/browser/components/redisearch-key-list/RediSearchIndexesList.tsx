@@ -39,7 +39,7 @@ const RediSearchIndexesList = (props: Props) => {
   const { viewType, searchMode } = useSelector(keysSelector)
   const { selectedIndex = '' } = useSelector(redisearchSelector)
   const { data: list = [], loading } = useSelector(redisearchListSelector)
-  const { id: instanceId, modules, loading: instanceLoading } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, modules, host: instanceHost } = useSelector(connectedInstanceSelector)
 
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
   const [index, setIndex] = useState<Nullable<string>>(JSON.stringify(selectedIndex))
@@ -47,7 +47,7 @@ const RediSearchIndexesList = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (instanceLoading) return
+    if (!instanceHost) return
 
     const moduleExists = isRedisearchAvailable(modules)
     if (moduleExists) {
@@ -57,7 +57,7 @@ const RediSearchIndexesList = (props: Props) => {
 
       localStorageService.set(BrowserStorageItem.browserSearchMode, SearchMode.Pattern)
     }
-  }, [instanceLoading, modules])
+  }, [instanceHost, modules])
 
   useEffect(() => {
     setIndex(JSON.stringify(selectedIndex || ''))

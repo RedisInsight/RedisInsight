@@ -50,6 +50,15 @@ export class GetTriggeredFunctionsDto {
   configuration: string;
 
   @ApiProperty({
+    description: 'Library code',
+    type: String,
+    example: 0,
+  })
+  @IsString()
+  @Expose()
+  code: string;
+
+  @ApiProperty({
     description: 'Array of functions',
     isArray: true,
     type: Function,

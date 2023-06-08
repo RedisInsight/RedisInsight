@@ -25,7 +25,7 @@ services:
 
   # dummy service to prevent docker validation errors
   app:
-    image: node:18.14.2-alpine
+    image: node:16.15.1-alpine
 
 networks:
   default:

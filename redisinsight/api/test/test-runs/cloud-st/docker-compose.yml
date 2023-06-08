@@ -8,5 +8,5 @@ services:
       TEST_CLOUD_API_KEY: ${TEST_CLOUD_API_KEY}
       TEST_CLOUD_API_SECRET_KEY: ${TEST_CLOUD_API_SECRET_KEY}
   redis:
-    image: node:18.14.2-alpine
+    image: node:16.15.1-alpine
     entrypoint: [ "echo", "Dummy Service" ]

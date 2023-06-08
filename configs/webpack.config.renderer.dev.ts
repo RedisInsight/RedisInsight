@@ -7,9 +7,10 @@ import webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
+import { version } from '../redisinsight/package.json';
 
 const port = process.env.PORT || 1212;
 const manifest = path.resolve(webpackPaths.dllPath, 'renderer.json');
@@ -46,7 +47,7 @@ const configuration: webpack.Configuration = {
   entry: [
     `webpack-dev-server/client?http://localhost:${port}/dist`,
     'webpack/hot/only-dev-server',
-    path.join(webpackPaths.uiPath, 'index.tsx'),
+    path.join(webpackPaths.uiPath, 'indexElectron.tsx'),
   ],
 
   output: {
@@ -60,7 +61,9 @@ const configuration: webpack.Configuration = {
 
   resolve: {
     alias: {
+      src: webpackPaths.apiSrcPath,
       apiSrc: webpackPaths.apiSrcPath,
+      uiSrc: webpackPaths.uiSrcPath,
     },
   },
 
@@ -251,6 +254,25 @@ const configuration: webpack.Configuration = {
       isDevelopment: process.env.NODE_ENV !== 'production',
       nodeModules: webpackPaths.appNodeModulesPath,
     }),
+
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('development'),
+      'process.env.APP_ENV': JSON.stringify('web'),
+      'process.env.API_PREFIX': JSON.stringify('api'),
+      'process.env.BASE_API_URL': JSON.stringify('http://localhost'),
+      'process.env.RESOURCES_BASE_URL': JSON.stringify('http://localhost'),
+      'process.env.SCAN_COUNT_DEFAULT': JSON.stringify('500'),
+      'process.env.SCAN_TREE_COUNT_DEFAULT': JSON.stringify('10000'),
+      'process.env.PIPELINE_COUNT_DEFAULT': JSON.stringify('5'),
+      'process.env.BUILD_TYPE': JSON.stringify('ELECTRON'),
+      'process.env.APP_VERSION': JSON.stringify(version),
+      'process.env.CONNECTIONS_TIMEOUT_DEFAULT': 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? JSON.stringify(process.env.CONNECTIONS_TIMEOUT_DEFAULT)
+        : JSON.stringify(30 * 1000),
+      'process.env.SEGMENT_WRITE_KEY': 'SEGMENT_WRITE_KEY' in process.env
+        ? JSON.stringify(process.env.SEGMENT_WRITE_KEY)
+        : JSON.stringify('SOURCE_WRITE_KEY'),
+    }),
   ],
 
   node: {
@@ -268,6 +290,7 @@ const configuration: webpack.Configuration = {
     },
     historyApiFallback: {
       verbose: true,
+      disableDotRule: true,
     },
     setupMiddlewares(middlewares) {
       console.log('Starting preload.js builder...');

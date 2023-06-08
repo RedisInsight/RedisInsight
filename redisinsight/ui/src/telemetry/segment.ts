@@ -1,11 +1,10 @@
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
-import { ENV_VARS } from 'uiSrc/utils'
 import { ITelemetryService, ITelemetryEvent, ITelemetryIdentify } from './interfaces'
 import loadSegmentAnalytics from './loadSegmentAnalytics'
 
 export const NON_TRACKING_ANONYMOUS_ID = 'UNSET'
-const isWebApp = ENV_VARS.APP_ENV === 'web'
+const isWebApp = process.env.APP_ENV === 'web'
 
 interface IContextPage {
   page?: IContextPageInfo;

@@ -7,11 +7,10 @@ import {
   getDatabaseConfigInfoAction
 } from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { ENV_VARS } from 'uiSrc/utils'
 
 import { getOverviewMetrics } from './components/OverviewMetrics'
 
-const TIMEOUT_TO_GET_INFO = ENV_VARS.NODE_ENV !== 'development' ? 5000 : 60_000
+const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 60_000
 
 interface IProps { windowDimensions: number }
 

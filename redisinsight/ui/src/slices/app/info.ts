@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
-import { getApiErrorMessage, isStatusSuccessful, ENV_VARS } from 'uiSrc/utils'
+import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 
 import { AppDispatch, RootState } from '../store'
 import { RedisResponseEncoding, StateAppInfo } from '../interfaces'
 
-const segmentWriteKey = ENV_VARS.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY'
+const segmentWriteKey = process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY'
 
 export const initialState: StateAppInfo = {
   loading: true,

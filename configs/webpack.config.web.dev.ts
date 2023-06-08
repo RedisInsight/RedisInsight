@@ -18,7 +18,7 @@ function employCache(loaders) {
 
 const HOST = process.env.PUBLIC_DEV ? ip.address(): 'localhost'
 
-export default merge(commonConfig, {
+const configuration: webpack.Configuration = {
   target: 'web',
 
   mode: 'development',
@@ -39,7 +39,7 @@ export default merge(commonConfig, {
 
   entry: [
     'regenerator-runtime/runtime',
-    `webpack-dev-server/client?http://${HOST}:8081`,
+    `webpack-dev-server/client?http://${HOST}:8080`,
     'webpack/hot/only-dev-server',
     require.resolve('../redisinsight/ui/index.tsx'),
   ],
@@ -179,6 +179,7 @@ export default merge(commonConfig, {
     hot: true, // enable HMR on the server
     historyApiFallback: true,
   },
+
   plugins: [
     new webpack.HotModuleReplacementPlugin({
       multiStep: true,
@@ -202,13 +203,13 @@ export default merge(commonConfig, {
       NODE_ENV: 'development',
       APP_ENV: 'web',
       API_PREFIX: 'api',
-      API_PORT: '5001',
       BASE_API_URL: `http://${HOST}`,
       RESOURCES_BASE_URL: `http://${HOST}`,
       PIPELINE_COUNT_DEFAULT: '5',
       SCAN_COUNT_DEFAULT: '500',
       SCAN_TREE_COUNT_DEFAULT: '10000',
-      SEGMENT_WRITE_KEY: 'MWGOG146oPdLSWO5mZy3eM1NzcC3alRF',
+      SEGMENT_WRITE_KEY:
+        'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
       CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
         ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000),
@@ -224,4 +225,6 @@ export default merge(commonConfig, {
   externals: {
     // react: 'React',
   },
-});
+};
+
+export default merge(commonConfig, configuration);

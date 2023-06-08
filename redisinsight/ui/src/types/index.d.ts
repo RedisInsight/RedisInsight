@@ -8,7 +8,7 @@ declare global {
   interface Window {
     ri: RedisInsight
     Buffer: typeof Buffer
-    envVariables: EnvVars
+    ENV_VARS: EnvVars
   }
 
   interface RedisInsight {

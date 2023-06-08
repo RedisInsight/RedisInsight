@@ -65,6 +65,10 @@ export default {
   },
 
   plugins: [
+    new webpack.DefinePlugin({
+      'window.ENV_VARS.API_PORT': JSON.stringify('5000'),
+    }),
+
     new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
 
     new MonacoWebpackPlugin({ languages: ['json'], features: ['!rename'] }),

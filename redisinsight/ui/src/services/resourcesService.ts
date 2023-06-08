@@ -1,11 +1,10 @@
 import axios from 'axios'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
-import { ENV_VARS } from 'uiSrc/utils'
 
-const baseApiUrl = ENV_VARS.BASE_API_URL
-const apiPort = ENV_VARS.API_PORT
-const isDevelopment = ENV_VARS.NODE_ENV === 'development'
-const isWebApp = ENV_VARS.APP_ENV === 'web'
+const apiPort = window.ENV_VARS.API_PORT
+const baseApiUrl = process.env.BASE_API_URL
+const isDevelopment = process.env.NODE_ENV === 'development'
+const isWebApp = process.env.APP_ENV === 'web'
 
 export const RESOURCES_BASE_URL = !isDevelopment && isWebApp ? '/' : `${baseApiUrl}:${apiPort}/`
 axios.defaults.adapter = require('axios/lib/adapters/http')

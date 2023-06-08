@@ -1,6 +1,5 @@
 import { createBrowserHistory } from 'history'
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
-import { ENV_VARS } from 'uiSrc/utils'
 
 import instancesReducer from './instances/instances'
 import caCertsReducer from './instances/caCerts'
@@ -103,7 +102,7 @@ export const rootReducer = combineReducers({
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, }),
-  devTools: ENV_VARS.NODE_ENV !== 'production',
+  devTools: process.env.NODE_ENV !== 'production',
 })
 
 export default store

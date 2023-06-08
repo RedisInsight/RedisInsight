@@ -1,9 +1,9 @@
-import { envVars } from 'uiSrc/utils'
+import { ENV_VARS } from 'uiSrc/utils'
 
-const baseApiUrl = envVars.BASE_API_URL
-const isDevelopment = envVars.NODE_ENV === 'development'
-const isWebApp = envVars.APP_ENV === 'web'
-const apiPort = envVars.API_PORT
+const baseApiUrl = ENV_VARS.BASE_API_URL
+const isDevelopment = ENV_VARS.NODE_ENV === 'development'
+const isWebApp = ENV_VARS.APP_ENV === 'web'
+const apiPort = ENV_VARS.API_PORT
 
 export const getBaseApiUrl = () => (!isDevelopment && isWebApp
   ? window.location.origin

@@ -15,4 +15,4 @@ export interface EnvVars {
   CONNECTIONS_TIMEOUT_DEFAULT: Maybe<string>
 }
 
-export const envVars = window.envVariables?.APP_ENV === 'web' ? process.env : window.envVariables
+export const ENV_VARS = window.envVariables?.APP_ENV === 'web' ? process.env : window.envVariables

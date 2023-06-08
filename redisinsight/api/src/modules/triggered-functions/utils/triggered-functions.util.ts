@@ -38,6 +38,7 @@ export const getLibraryInformation = (lib: string[]) => {
     user: library.user,
     pendingJobs: library.pending_jobs,
     configuration: library.configuration,
+    code: library.code,
     functions,
   });
 };

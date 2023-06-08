@@ -25,7 +25,7 @@ export class TriggeredFunctionsService {
     try {
       client = await this.databaseConnectionService.createClient(clientMetadata);
       const reply = await client.sendCommand(
-        new Command('TFUNCTION', ['LIST', 'vvv'], { replyEncoding: 'utf8' }),
+        new Command('TFUNCTION', ['LIST', 'WITHCODE', 'vvv'], { replyEncoding: 'utf8' }),
       );
 
       client.disconnect();

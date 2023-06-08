@@ -127,11 +127,9 @@ export class BrowserPage extends InstancePage {
     hashOption = Selector('#hash');
     streamOption = Selector('#stream');
     removeFromHeadSelection = Selector('#HEAD');
-    selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
     filterByKeyTypeDropDown = Selector('[data-testid=select-filter-key-type]', { timeout: 500 });
     filterAllKeyType = Selector('[id=all]');
-    filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
     consumerOption = Selector('[data-testid=consumer-option]');
     claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
     relativeTimeOption = Selector('#idle');

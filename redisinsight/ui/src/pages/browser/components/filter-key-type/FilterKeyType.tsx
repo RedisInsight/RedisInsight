@@ -1,21 +1,23 @@
 import {
   EuiHealth,
-  EuiIcon,
+  EuiModal,
+  EuiModalBody,
   EuiOutsideClickDetector,
-  EuiPopover,
   EuiSuperSelect,
   EuiSuperSelectOption,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { fetchKeys, fetchSearchHistoryAction, keysSelector, setFilter } from 'uiSrc/slices/browser/keys'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
-import HelpTexts from 'uiSrc/constants/help-texts'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { FilterNotAvailable } from 'uiSrc/components'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
@@ -30,6 +32,8 @@ const FilterKeyType = () => {
 
   const { version } = useSelector(connectedInstanceOverviewSelector)
   const { filter, viewType, searchMode } = useSelector(keysSelector)
+
+  const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -82,28 +86,15 @@ const FilterKeyType = () => {
     )
   }
 
-  const UnsupportedInfo = () => (
-    <EuiPopover
-      anchorPosition="upCenter"
-      isOpen={isInfoPopoverOpen}
-      anchorClassName={styles.unsupportedInfo}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip')}
-      closePopover={() => setIsInfoPopoverOpen(false)}
-      initialFocus={false}
-      button={(
-        <EuiIcon
-          className={styles.infoIcon}
-          type="iInCircle"
-          color="subdued"
-          onClick={() => setIsInfoPopoverOpen((isPopoverOpen) => !isPopoverOpen)}
-          style={{ cursor: 'pointer' }}
-          data-testid="filter-info-popover-icon"
-        />
-      )}
-    >
-      <div className={styles.popover}>{HelpTexts.FILTER_UNSUPPORTED}</div>
-    </EuiPopover>
-  )
+  const handleClickSelect = () => {
+    setIsInfoPopoverOpen(true)
+    sendEventTelemetry({
+      event: TelemetryEvent.BROWSER_FILTER_MODE_CHANGE_FAILED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }
 
   return (
     <EuiOutsideClickDetector
@@ -115,7 +106,25 @@ const FilterKeyType = () => {
           !isVersionSupported && styles.unsupported
         )}
       >
-        {/* {!isVersionSupported && UnsupportedInfo()} */}
+        {!isVersionSupported && isInfoPopoverOpen && (
+          <EuiModal
+            onClose={() => setIsInfoPopoverOpen(false)}
+            className={styles.unsupportedInfoModal}
+            data-testid="filter-not-available-modal"
+          >
+            <EuiModalBody className={styles.modalBody}>
+              <FilterNotAvailable />
+            </EuiModalBody>
+          </EuiModal>
+        )}
+        {!isVersionSupported && (
+          <div
+            role="presentation"
+            onClick={handleClickSelect}
+            className={styles.unsupportedInfo}
+            data-testid="unsupported-btn-anchor"
+          />
+        )}
         <EuiSuperSelect
           fullWidth
           itemClassName={cx('withColorDefinition', styles.filterKeyType)}

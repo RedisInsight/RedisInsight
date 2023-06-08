@@ -74,6 +74,83 @@ export class Function {
   @IsBoolean()
   @IsOptional()
   @Expose()
-  @Transform((val) => isNumber(val) ? val === 1 : undefined)
+  @Transform((val) => (isNumber(val) ? val === 1 : undefined))
   isAsync?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Function description',
+    type: String,
+    example: 'some description',
+  })
+  @IsString()
+  @IsOptional()
+  @Expose()
+  description?: string;
+
+  @ApiPropertyOptional({
+    description: 'Last execution error',
+    type: String,
+    example: 'error',
+  })
+  @IsString()
+  @IsOptional()
+  @Expose()
+  lastError?: string;
+
+  @ApiPropertyOptional({
+    description: 'Last function execution time',
+    type: Number,
+    example: 1,
+  })
+  @IsNumber()
+  @Expose()
+  lastExecutionTime?: number;
+
+  @ApiPropertyOptional({
+    description: 'Total execution time',
+    type: Number,
+    example: 1,
+  })
+  @IsNumber()
+  @Expose()
+  totalExecutionTime?: number;
+
+  @ApiPropertyOptional({
+    description: 'Stream trigger prefix',
+    type: String,
+    example: 'stream',
+  })
+  @IsString()
+  @IsOptional()
+  @Expose()
+  prefix?: string;
+
+  @ApiPropertyOptional({
+    description: 'Whether or not to trim the stream',
+    type: Boolean,
+    example: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  @Transform((val) => (isNumber(val) ? val === 1 : undefined))
+  @Expose()
+  trim?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'How many elements can be processed simultaneously',
+    type: Number,
+    example: 1,
+  })
+  @IsNumber()
+  @Expose()
+  window?: number;
+
+  @ApiPropertyOptional({
+    description: 'Stream triggers streams',
+    isArray: true,
+  })
+  @IsArray()
+  @IsOptional()
+  @Expose()
+  streams?: any[];
 }

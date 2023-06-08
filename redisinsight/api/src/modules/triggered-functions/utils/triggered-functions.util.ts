@@ -5,8 +5,19 @@ import { FunctionType, Function } from 'src/modules/triggered-functions/models';
 /**
  * Get all functions
 */
-const getFunctionsInformation = (functions: string[][], type: FunctionType): Function[] => functions.map((reply) => {
+const getFunctionsInformation = (
+  functions: string[][] | string[],
+  type: FunctionType,
+): Function[] => functions.map((reply) => {
+  if (type === FunctionType.ClusterFunction) {
+    return ({
+      name: reply as string,
+      type,
+    });
+  }
+
   const func = convertStringsArrayToObject(reply);
+
   return ({
     name: func.name,
     success: func.num_success,
@@ -14,6 +25,13 @@ const getFunctionsInformation = (functions: string[][], type: FunctionType): Fun
     total: func.num_trigger,
     isAsync: func.is_async,
     flags: func.flags,
+    lastError: func.last_error,
+    lastExecutionTime: func.last_execution_time,
+    totalExecutionTime: func.total_execution_time,
+    prefix: func.prefix,
+    streams: func.streams?.map((stream) => convertStringsArrayToObject(stream)),
+    trim: func.trim,
+    window: func.window,
     type,
   });
 });

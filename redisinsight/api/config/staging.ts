@@ -20,9 +20,6 @@ export default {
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
   },
-  sockets: {
-    cors: true,
-  },
   server: {
     env: 'staging',
   },

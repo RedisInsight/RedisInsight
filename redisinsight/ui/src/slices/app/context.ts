@@ -45,11 +45,9 @@ export const initialState: StateAppContext = {
       opened: false,
     },
     keyDetailsSizes: {
-      // TODO: rollback to enum [KeyTypes.Hash]: ....
-      // TODO: import this enum not work well for packaged electron
-      hash: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.hash ?? null,
-      list: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.list ?? null,
-      zset: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.zset ?? null,
+      [KeyTypes.Hash]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.hash ?? null,
+      [KeyTypes.List]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.list ?? null,
+      [KeyTypes.ZSet]: localStorageService?.get(BrowserStorageItem.keyDetailSizes)?.zset ?? null,
     }
   },
   workbench: {

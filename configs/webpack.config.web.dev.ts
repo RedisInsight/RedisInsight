@@ -176,7 +176,6 @@ const configuration: webpack.Configuration = {
     host: HOST,
     allowedHosts: 'all',
     port: 8080,
-    hot: true, // enable HMR on the server
     historyApiFallback: true,
   },
 

@@ -11,12 +11,18 @@ import {
 import { loadKeys, setFilter } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { KeyTypes } from 'uiSrc/constants'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import FilterKeyType from './FilterKeyType'
 
 let store: typeof mockedStore
 
 const filterSelectId = 'select-filter-key-type'
-const filterInfoId = 'filter-info-popover-icon'
+const unsupportedAnchorId = 'unsupported-btn-anchor'
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   connectedInstanceOverviewSelector: jest.fn().mockReturnValue({
@@ -45,11 +51,11 @@ describe('FilterKeyType', () => {
     expect(filterSelect).not.toBeDisabled()
   })
 
-  it('should be info icon with database redis version > 6.0', () => {
+  it('should not be info anchor with database redis version > 6.0', () => {
     const { queryByTestId } = render(
       <FilterKeyType />
     )
-    expect(queryByTestId(filterInfoId)).not.toBeInTheDocument()
+    expect(queryByTestId(unsupportedAnchorId)).not.toBeInTheDocument()
   })
 
   it('"setFilter" and "loadKeys" should be called after selecte "Hash" type', () => {
@@ -79,12 +85,35 @@ describe('FilterKeyType', () => {
     expect(filterSelect).toBeDisabled()
   })
 
-  // TODO add after implementation
-  it.skip('should be info box with database redis version < 6.0', () => {
+  it('should be info box with database redis version < 6.0', () => {
     connectedInstanceOverviewSelector.mockImplementation(() => ({
       version: '5.1',
     }))
     render(<FilterKeyType />)
-    expect(screen.getByTestId(filterInfoId)).toBeInTheDocument()
+    expect(screen.getByTestId(unsupportedAnchorId)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByTestId(unsupportedAnchorId))
+
+    expect(screen.getByTestId('filter-not-available-modal')).toBeInTheDocument()
+  })
+
+  it('should send telemetry event with redis v < 6.0 after click on anchor', async () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    connectedInstanceOverviewSelector.mockImplementation(() => ({
+      version: '5.1',
+    }))
+
+    render(<FilterKeyType />)
+
+    fireEvent.click(screen.getByTestId(unsupportedAnchorId))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.BROWSER_FILTER_MODE_CHANGE_FAILED,
+      eventData: {
+        databaseId: 'instanceId',
+      }
+    })
   })
 })

@@ -1,4 +1,4 @@
-import { ElectronHandler } from '../../../electron/preload'
+import { ElectronHandler } from '../../../desktop/preload'
 
 declare global {
   // eslint-disable-next-line no-unused-vars

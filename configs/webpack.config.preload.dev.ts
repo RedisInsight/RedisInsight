@@ -12,7 +12,7 @@ const configuration: webpack.Configuration = {
 
   target: 'electron-preload',
 
-  entry: path.join(webpackPaths.electronPath, 'preload.ts'),
+  entry: path.join(webpackPaths.desktopPath, 'preload.ts'),
 
   output: {
     path: webpackPaths.dllPath,

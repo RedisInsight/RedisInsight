@@ -51,19 +51,11 @@ const configuration: webpack.Configuration = {
   ],
 
   output: {
-    path: webpackPaths.electronPath,
+    path: webpackPaths.desktopPath,
     publicPath: '/',
     filename: 'renderer.dev.js',
     library: {
       type: 'umd',
-    },
-  },
-
-  resolve: {
-    alias: {
-      src: webpackPaths.apiSrcPath,
-      apiSrc: webpackPaths.apiSrcPath,
-      uiSrc: webpackPaths.uiSrcPath,
     },
   },
 
@@ -243,7 +235,7 @@ const configuration: webpack.Configuration = {
 
     new HtmlWebpackPlugin({
       filename: path.join('index.html'),
-      template: path.join(webpackPaths.electronPath, 'index.ejs'),
+      template: path.join(webpackPaths.desktopPath, 'index.ejs'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,

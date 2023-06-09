@@ -189,7 +189,7 @@ const configuration: webpack.Configuration = {
 
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: path.join(webpackPaths.electronPath, 'index.ejs'),
+      template: path.join(webpackPaths.desktopPath, 'index.ejs'),
       isBrowser: false,
       isDevelopment: false,
     }),

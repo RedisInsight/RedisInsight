@@ -38,6 +38,9 @@
       "src/*": [
         "redisinsight/api/src/*"
       ],
+      "desktopSrc/*": [
+        "redisinsight/desktop/src/*"
+      ],
       "tests/*": [
         "redisinsight/ui/__tests__/*"
       ]
@@ -47,11 +50,11 @@
     "redisinsight/ui/src/**/*",
     "redisinsight/ui/index.tsx",
     "redisinsight/ui/indexElectron.tsx",
-    "redisinsight/electron/**/*",
+    "redisinsight/desktop/**/*",
     "jest.config.js"
   ],
   "exclude": [
-    "./redisinsight/electron/dll/*",
+    "redisinsight/desktop/dll/*",
     "./redisinsight/api",
     "**/main.prod.js",
     "**/renderer.prod.js",

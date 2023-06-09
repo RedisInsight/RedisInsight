@@ -24,16 +24,8 @@ export default merge(baseConfig, {
   target: 'electron-main',
 
   entry: {
-    main: path.join(webpackPaths.electronPath, 'main.dev.ts'),
-    preload: path.join(webpackPaths.electronPath, 'preload.ts'),
-  },
-
-  resolve: {
-    alias: {
-      ['apiSrc']: webpackPaths.apiSrcPath,
-      ['src']: webpackPaths.apiSrcPath,
-    },
-    extensions: ['.tsx', '.ts', '.js', '.jsx'],
+    main: path.join(webpackPaths.desktopPath, 'index.ts'),
+    preload: path.join(webpackPaths.desktopPath, 'preload.ts'),
   },
 
   output: {

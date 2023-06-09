@@ -6,6 +6,7 @@ import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
+import webpackPaths from './webpack.paths';
 import { dependencies as externals } from '../redisinsight/package.json';
 import { dependencies as externalsApi } from '../redisinsight/api/package.json';
 
@@ -18,12 +19,11 @@ export default {
     rules: [
       {
         test: /\.(js|jsx|ts|tsx)?$/,
-        // exclude: /node_modules/,
-        include: [path.resolve(__dirname, '../redisinsight/ui')],
+        include: [webpackPaths.uiPath],
         exclude: [
           /node_modules/,
-          path.resolve(__dirname, '../redisinsight/api'),
-          path.resolve(__dirname, '../redisinsight/electron'),
+          webpackPaths.apiPath,
+          webpackPaths.desktopPath,
         ],
         use: {
           loader: 'babel-loader',
@@ -44,8 +44,7 @@ export default {
     ],
   },
 
-  // context: path.resolve(__dirname, '../redisinsight/api/src'),
-  context: path.resolve(__dirname, '../redisinsight/ui'),
+  context: webpackPaths.uiPath,
 
   /**
    * Determine the array of extensions that should be used to resolve modules.

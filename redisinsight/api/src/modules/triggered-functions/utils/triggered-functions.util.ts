@@ -8,11 +8,13 @@ import { FunctionType, Function } from 'src/modules/triggered-functions/models';
 const getFunctionsInformation = (
   functions: string[][] | string[],
   type: FunctionType,
+  libName: string,
 ): Function[] => functions.map((reply) => {
   if (type === FunctionType.ClusterFunction) {
     return ({
       name: reply as string,
       type,
+      library: libName,
     });
   }
 
@@ -33,23 +35,49 @@ const getFunctionsInformation = (
     trim: func.trim,
     window: func.window,
     type,
+    library: libName,
   });
 });
+
+const getFunctionName = (
+  functions: string[][] | string[],
+  type: FunctionType,
+): Function[] => functions.map((reply) => ({
+  name: reply as string,
+  type,
+}));
+
+/**
+ * Get all function names
+*/
+const getFunctionNames = (
+  lib,
+): Function[] => {
+  const functionGroups = Object.values(FunctionType).map((type) => getFunctionName(lib[type], type));
+  return concat(...functionGroups);
+};
 
 /**
  * Get all functions
 */
 const collectFunctions = (lib) => {
-  const functionGroups = Object.values(FunctionType).map((type) => getFunctionsInformation(lib[type], type));
+  const functionGroups = Object.values(FunctionType).map((type) => getFunctionsInformation(lib[type], type, lib.name));
   return concat(...functionGroups);
 };
+
+/**
+ * Get functions count
+*/
+const getTotalFunctions = (lib) => (
+  Object.values(FunctionType).reduce((prev, cur) => prev + lib[cur].length, 0)
+);
 
 /**
  * Get library information
 */
 export const getLibraryInformation = (lib: string[]) => {
   const library = convertStringsArrayToObject(lib);
-  const functions = collectFunctions(library);
+  const functions = getFunctionNames(library);
   return ({
     name: library.name,
     apiVersion: library.api_version,
@@ -58,5 +86,18 @@ export const getLibraryInformation = (lib: string[]) => {
     configuration: library.configuration,
     code: library.code,
     functions,
+  });
+};
+
+export const getFunctions = (lib: string[]) => collectFunctions(convertStringsArrayToObject(lib));
+
+export const getShortLibraryInformation = (lib: string[]) => {
+  const library = convertStringsArrayToObject(lib);
+  const totalFunctions = getTotalFunctions(library);
+  return ({
+    name: library.name,
+    user: library.user,
+    pendingJobs: library.pending_jobs,
+    totalFunctions,
   });
 };

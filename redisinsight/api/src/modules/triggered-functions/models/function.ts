@@ -31,6 +31,15 @@ export class Function {
   name: string;
 
   @ApiPropertyOptional({
+    description: 'Library name',
+    type: String,
+    example: 0,
+  })
+  @IsString()
+  @Expose()
+  library?: string;
+
+  @ApiPropertyOptional({
     description: 'Total succeed function',
     type: Number,
     example: 1,

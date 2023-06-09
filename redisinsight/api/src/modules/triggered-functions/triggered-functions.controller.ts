@@ -1,12 +1,13 @@
 import {
   Get,
-  Controller, UsePipes, ValidationPipe,
+  Post,
+  Controller, UsePipes, ValidationPipe, Body,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import { TriggeredFunctionsService } from 'src/modules/triggered-functions/triggered-functions.service';
-import { GetTriggeredFunctionsDto } from 'src/modules/triggered-functions/dto';
-import { PublishResponse } from 'src/modules/pub-sub/dto/publish.response';
+import { ShortLibraryInformation, LibraryInformation, Function } from 'src/modules/triggered-functions/models';
+import { LibraryDto } from 'src/modules/triggered-functions/dto';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 
@@ -16,21 +17,58 @@ import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-cl
 export class TriggeredFunctionsController {
   constructor(private service: TriggeredFunctionsService) {}
 
-  @Get('')
+  @Get('/libraries')
   @ApiRedisInstanceOperation({
-    description: 'Returns libraries',
+    description: 'Returns short libraries information',
     statusCode: 200,
     responses: [
       {
         status: 200,
         description: 'Returns libraries',
-        type: PublishResponse,
+        type: ShortLibraryInformation,
       },
     ],
   })
-  async list(
+  async libraryList(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-  ): Promise<GetTriggeredFunctionsDto> {
-    return this.service.list(clientMetadata);
+  ): Promise<ShortLibraryInformation[]> {
+    return this.service.libraryList(clientMetadata);
+  }
+
+  @Post('/get-library')
+  @ApiRedisInstanceOperation({
+    description: 'Returns library information',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Returns library information',
+        type: LibraryInformation,
+      },
+    ],
+  })
+  async details(
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: LibraryDto,
+  ): Promise<LibraryInformation[]> {
+    return this.service.details(clientMetadata, dto.libraryName);
+  }
+
+  @Get('/functions')
+  @ApiRedisInstanceOperation({
+    description: 'Returns function information',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Returns functions',
+        type: Function,
+      },
+    ],
+  })
+  async functionsList(
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+  ): Promise<Function[]> {
+    return this.service.functionsList(clientMetadata);
   }
 }

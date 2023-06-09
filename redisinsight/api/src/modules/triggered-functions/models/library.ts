@@ -1,9 +1,11 @@
 import { Expose, Type } from 'class-transformer';
-import { IsArray, IsString, IsNumber, ValidateNested } from 'class-validator';
+import {
+  IsArray, IsString, IsNumber, ValidateNested,
+} from 'class-validator';
 import { Function } from 'src/modules/triggered-functions/models';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetTriggeredFunctionsDto {
+export class LibraryInformation {
   @ApiProperty({
     description: 'Library name',
     type: String,
@@ -68,4 +70,13 @@ export class GetTriggeredFunctionsDto {
   @Type(() => Function)
   @Expose()
   functions: Function[];
+
+  @ApiProperty({
+    description: 'Total number of functions',
+    type: Number,
+    example: 0,
+  })
+  @IsNumber()
+  @Expose()
+  totalFunctions: number;
 }

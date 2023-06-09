@@ -54,7 +54,7 @@ export class TriggeredFunctionsService {
   async details(
     clientMetadata: ClientMetadata,
     name: string,
-  ): Promise<LibraryInformation[]> {
+  ): Promise<LibraryInformation> {
     let client;
     try {
       client = await this.databaseConnectionService.createClient(clientMetadata);
@@ -63,10 +63,10 @@ export class TriggeredFunctionsService {
       );
       client.disconnect();
       const libraries = reply.map((lib: string[]) => getLibraryInformation(lib));
-      return libraries.map((lib) => classToClass(
+      return classToClass(
         LibraryInformation,
-        lib,
-      ));
+        libraries[0],
+      );
     } catch (e) {
       client?.disconnect();
       this.logger.error('Unable to get database triggered functions libraries', e);

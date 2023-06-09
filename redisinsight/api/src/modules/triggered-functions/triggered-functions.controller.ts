@@ -50,7 +50,7 @@ export class TriggeredFunctionsController {
   async details(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: LibraryDto,
-  ): Promise<LibraryInformation[]> {
+  ): Promise<LibraryInformation> {
     return this.service.details(clientMetadata, dto.libraryName);
   }
 

@@ -59,9 +59,9 @@ test('Verify that user can see saved filter per key type applied when he returns
     await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
     // Return back to Browser and check filter applied
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-    await t.expect(browserPage.selectedFilterTypeString.exists).ok('Filter per key type is still applied');
+    await t.expect(browserPage.filterByKeyTypeDropDown.innerText).eql(KeyTypesTexts.String, 'Filter per key type is still applied');
     // Clear filter
-    await t.click(browserPage.clearFilterButton);
+    await browserPage.setAllKeyType();
     // Filter per key name and open Settings
     await browserPage.searchByKeyName(keyName);
     await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);

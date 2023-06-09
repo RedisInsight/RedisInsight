@@ -12,10 +12,10 @@
     height: 100%;
     display: flex;
     align-items: center;
-    padding: 6px 12px 6px 6px;
-    border: 1px solid var(--separatorColor);
-    border-right: 0;
-    background-color: var(--browserTableRowEven);
+    padding: 5px 6px;
+    border: 1px solid var(--controlsBorderColor);
+    border-radius: 0 4px 4px 0;
+    background-color: var(--euiColorEmptyShade);
     background-repeat: no-repeat;
     background-size: 0 100%;
     transition: box-shadow 150ms ease-in, background-image 150ms ease-in, background-size 150ms ease-in,
@@ -73,10 +73,10 @@
     width: 100%;
     min-width: 180px;
 
-    background: var(--browserTableRowEven);
-    border: 1px solid var(--separatorColor);
+    background: var(--euiColorEmptyShade);
+    border: 1px solid var(--controlsBorderColor);
     border-radius: 4px;
-    z-index: 3;
+    z-index: 1001;
     padding: 4px 0;
 
     font-size: 13px;
@@ -93,7 +93,7 @@
 
       &:hover,
       &.focused {
-        background: var(--comboBoxBadgeBgColor);
+        background: var(--hoverInListColorDarken);
         .suggestionRemoveBtn {
           visibility: visible;
           pointer-events: auto;
@@ -137,16 +137,17 @@
     user-select: none;
 
     &:hover {
-      background: var(--comboBoxBadgeBgColor);
+      background: var(--hoverInListColorDarken);
     }
   }
 
   .searchButton {
-    width: 48px;
-    height: 100%;
+    width: 24px;
+    height: 24px;
     background-color: var(--euiColorSecondary);
     color: var(--euiColorPrimaryText) !important;
-    border-radius: 0 4px 4px 0;
+    border-radius: 4px;
+    margin-left: 12px;
 
     &:hover:not(:disabled),
     &:focus,
@@ -161,7 +162,6 @@
 
     &:disabled {
       border: 1px solid var(--separatorColor);
-      border-left: none;
       background-color: var(--euiColorLightestShade);
     }
   }

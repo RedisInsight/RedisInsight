@@ -26,6 +26,7 @@ import ShowChildByCondition from './show-child-by-condition'
 import RecommendationVoting from './recommendation-voting'
 import RecommendationCopyComponent from './recommendation-copy-component'
 import FeatureFlagComponent from './feature-flag-component'
+import { ModuleNotLoaded, FilterNotAvailable } from './messages'
 
 export {
   NavigationMenu,
@@ -59,4 +60,6 @@ export {
   RecommendationVoting,
   RecommendationCopyComponent,
   FeatureFlagComponent,
+  ModuleNotLoaded,
+  FilterNotAvailable
 }

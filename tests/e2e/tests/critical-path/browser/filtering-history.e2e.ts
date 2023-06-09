@@ -52,6 +52,7 @@ test('Recent filters history', async t => {
     await t.expect(browserPage.filterHistoryItemText.withText(keysForSearch[0]).exists).ok('Filter history requests not saved after reloading page');
 
     // Open Tree view to check also there
+    await t.click(browserPage.showFilterHistoryBtn);
     await t.click(browserPage.treeViewButton);
     // Search by 2nd key name
     await browserPage.searchByKeyName(`${keysForSearch[1]}*`);
@@ -60,7 +61,6 @@ test('Recent filters history', async t => {
     await t.hover(browserPage.filterHistoryItemText.withText(keysForSearch[1]));
     await t.click(browserPage.filterHistoryOption.withText(keysForSearch[1]).find(browserPage.cssRemoveSuggestionItem));
     await t.expect(browserPage.filterHistoryItemText.withText(keysForSearch[1]).exists).notOk('Filter history request not deleted');
-
     // Verify that user can clear the history of requests
     await t.click(browserPage.clearFilterHistoryBtn);
     await t.expect(browserPage.showFilterHistoryBtn.exists).notOk('Filter history button displayed for key type search');

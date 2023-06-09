@@ -68,5 +68,5 @@ test('Verify that when user switched from Tree View to Browser and goes back sta
     await t.click(browserPage.browserViewButton);
     await t.click(browserPage.treeViewButton);
     // Verify that state of filer by key type is saved
-    await t.expect(browserPage.selectedFilterTypeString.exists).ok('Filter per key type is not applied');
+    await t.expect(browserPage.filterByKeyTypeDropDown.innerText).eql(KeyTypesTexts.String, 'Filter per key type is not applied');
 });

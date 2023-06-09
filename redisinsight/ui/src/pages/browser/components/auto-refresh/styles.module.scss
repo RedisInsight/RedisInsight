@@ -8,6 +8,13 @@
   margin-top: 1px;
   transition: transform 0.3s ease;
 
+  &:global(.euiButtonIcon--xSmall) {
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
   svg {
     width: 20px;
     height: 20px;

@@ -16,7 +16,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   value: string
-  options: string[]
+  options?: string[]
   placeholder: string
   disableSubmit?: boolean
   onSubmit: () => void
@@ -146,6 +146,7 @@ const MultiSearch = (props: Props) => {
       aria-label="Search"
       disabled={disableSubmit}
       className={styles.searchButton}
+      iconSize="s"
       onClick={handleSubmit}
       data-testid="search-btn"
     />
@@ -268,18 +269,18 @@ const MultiSearch = (props: Props) => {
               />
             </EuiToolTip>
           )}
+          {disableSubmit && (
+            <EuiToolTip
+              position="top"
+              display="inlineBlock"
+              anchorClassName={styles.anchorSubmitBtn}
+              content="Please choose index in order to preform the search"
+            >
+              {SubmitBtn()}
+            </EuiToolTip>
+          )}
+          {!disableSubmit && SubmitBtn()}
         </div>
-        {disableSubmit && (
-          <EuiToolTip
-            position="top"
-            display="inlineBlock"
-            anchorClassName={styles.anchorSubmitBtn}
-            content="Please choose index in order to preform the search"
-          >
-            {SubmitBtn()}
-          </EuiToolTip>
-        )}
-        {!disableSubmit && SubmitBtn()}
       </div>
     </EuiOutsideClickDetector>
   )

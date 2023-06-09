@@ -5,6 +5,7 @@ import cx from 'classnames'
 import { last } from 'lodash'
 import { useSelector } from 'react-redux'
 import {
+  EuiBadge,
   EuiButtonIcon,
   EuiIcon,
   EuiLink,
@@ -12,7 +13,7 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
-import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
+import { ANALYTICS_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
 import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -33,6 +34,8 @@ import SlowLogSVG from 'uiSrc/assets/img/sidebar/slowlog.svg'
 import SlowLogActiveSVG from 'uiSrc/assets/img/sidebar/slowlog_active.svg'
 import PubSubSVG from 'uiSrc/assets/img/sidebar/pubsub.svg'
 import PubSubActiveSVG from 'uiSrc/assets/img/sidebar/pubsub_active.svg'
+import TriggeredFunctionsSVG from 'uiSrc/assets/img/sidebar/gears.svg'
+import TriggeredFunctionsActiveSVG from 'uiSrc/assets/img/sidebar/gears_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BuildType } from 'uiSrc/constants/env'
@@ -50,6 +53,7 @@ const pubSubPath = `/${PageNames.pubSub}`
 
 interface INavigations {
   isActivePage: boolean
+  isBeta?: boolean
   pageName: string
   tooltipText: string
   ariaLabel: string
@@ -78,6 +82,10 @@ const NavigationMenu = () => {
   const handleGoPage = (page: string) => history.push(page)
 
   const isAnalyticsPath = (activePage: string) => !!ANALYTICS_ROUTES.find(
+    ({ path }) => (`/${last(path.split('/'))}` === activePage)
+  )
+
+  const isTriggeredFunctionsPath = (activePage: string) => !!TRIGGERED_FUNCTIONS_ROUTES.find(
     ({ path }) => (`/${last(path.split('/'))}` === activePage)
   )
 
@@ -145,6 +153,22 @@ const NavigationMenu = () => {
       },
       onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE
     },
+    {
+      tooltipText: 'Triggers & Functions',
+      pageName: PageNames.triggeredFunctions,
+      ariaLabel: 'Triggers & Functions',
+      onClick: () => handleGoPage(Pages.triggeredFunctions(connectedInstanceId)),
+      dataTestId: 'triggered-functions-page-btn',
+      connectedInstanceId,
+      isActivePage: isTriggeredFunctionsPath(activePage),
+      isBeta: true,
+      getClassName() {
+        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+      },
+      getIconType() {
+        return this.isActivePage ? TriggeredFunctionsActiveSVG : TriggeredFunctionsSVG
+      },
+    },
   ]
 
   const publicRoutes: INavigations[] = [
@@ -190,13 +214,16 @@ const NavigationMenu = () => {
                     transformOnHover
                   >
                     <EuiToolTip content={nav.tooltipText} position="right">
-                      <EuiButtonIcon
-                        className={nav.getClassName()}
-                        iconType={nav.getIconType()}
-                        aria-label={nav.ariaLabel}
-                        onClick={nav.onClick}
-                        data-testid={nav.dataTestId}
-                      />
+                      <div className={styles.navigationButtonWrapper}>
+                        <EuiButtonIcon
+                          className={nav.getClassName()}
+                          iconType={nav.getIconType()}
+                          aria-label={nav.ariaLabel}
+                          onClick={nav.onClick}
+                          data-testid={nav.dataTestId}
+                        />
+                        {nav.isBeta && (<EuiBadge className={styles.betaLabel}>BETA</EuiBadge>)}
+                      </div>
                     </EuiToolTip>
                   </HighlightedFeature>
                 ),

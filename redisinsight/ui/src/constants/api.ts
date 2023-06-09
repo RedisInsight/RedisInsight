@@ -104,6 +104,8 @@ enum ApiEndpoints {
   RECOMMENDATIONS = 'recommendations',
   RECOMMENDATIONS_READ = 'recommendations/read',
 
+  TRIGGERED_FUNCTIONS_LIBRARIES = 'triggered-functions/libraries',
+
   NOTIFICATIONS = 'notifications',
   NOTIFICATIONS_READ = 'notifications/read',
 

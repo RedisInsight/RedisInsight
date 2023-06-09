@@ -1,13 +1,11 @@
-import React from 'react'
-
 export interface IRoute {
-  path: any;
-  component: React.ReactNode;
-  pageName?: PageNames;
-  exact?: boolean;
-  routes?: any;
-  protected?: boolean;
-  isAvailableWithoutAgreements?: boolean;
+  path: any
+  component: (routes: any) => JSX.Element | Element
+  pageName?: PageNames
+  exact?: boolean
+  routes?: any
+  protected?: boolean
+  isAvailableWithoutAgreements?: boolean
 }
 
 export enum PageNames {
@@ -18,7 +16,10 @@ export enum PageNames {
   analytics = 'analytics',
   clusterDetails = 'cluster-details',
   databaseAnalysis = 'database-analysis',
-  settings = 'settings'
+  settings = 'settings',
+  triggeredFunctions = 'triggered-functions',
+  triggeredFunctionsLibraries = 'libraries',
+  triggeredFunctionsFunctions = 'functions',
 }
 
 const redisCloud = '/redis-cloud'
@@ -43,4 +44,9 @@ export const Pages = {
   slowLog: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.slowLog}`,
   clusterDetails: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.clusterDetails}`,
   databaseAnalysis: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.databaseAnalysis}`,
+  triggeredFunctions: (instanceId: string) => `/${instanceId}/${PageNames.triggeredFunctions}`,
+  triggeredFunctionsLibraries: (instanceId: string) =>
+    `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsLibraries}`,
+  triggeredFunctionsFunctions: (instanceId: string) =>
+    `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
 }

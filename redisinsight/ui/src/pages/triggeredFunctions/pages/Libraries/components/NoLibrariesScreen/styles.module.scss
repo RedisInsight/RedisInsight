@@ -1,0 +1,27 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/global_styling/index';
+
+.wrapper {
+  height: 100%;
+  width: 100%;
+
+  @include euiScrollBar;
+  overflow: auto;
+
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  text-align: center;
+
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.icon {
+  color: transparent;
+}
+

@@ -1,0 +1,24 @@
+.topPanel {
+  margin: 16px 0;
+  min-height: 40px;
+
+  :global(.euiFormControlLayout) {
+    max-width: 600px;
+  }
+
+  .search {
+    &:global(.euiFieldSearch) {
+      position: relative;
+      border-top: none !important;
+      border-left: none !important;
+      border-right: none !important;
+      background-color: transparent !important;
+    }
+  }
+}
+
+
+.main {
+  background-color: var(--euiColorEmptyShade);
+  max-height: calc(100% - 72px);
+}

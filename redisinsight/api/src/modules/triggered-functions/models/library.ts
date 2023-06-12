@@ -3,7 +3,7 @@ import {
   IsArray, IsString, IsNumber,
 } from 'class-validator';
 import { ShortFunction } from 'src/modules/triggered-functions/models';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class Library {
   @ApiProperty({
@@ -45,7 +45,6 @@ export class Library {
   @ApiProperty({
     description: 'Library configuration',
     type: String,
-    example: 0,
   })
   @IsString()
   @Expose()
@@ -61,7 +60,7 @@ export class Library {
   code: string;
 
   @ApiProperty({
-    description: 'Array of short functions',
+    description: 'Array of functions with name, type fields',
     isArray: true,
     type: ShortFunction,
   })

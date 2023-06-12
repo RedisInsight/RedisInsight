@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class LibraryDto {
   @ApiProperty({
-    description: 'Key Name',
+    description: 'Library Name',
     type: String,
   })
   @IsDefined()

@@ -33,7 +33,7 @@ export class Function {
   @ApiPropertyOptional({
     description: 'Library name',
     type: String,
-    example: 0,
+    example: 'lib',
   })
   @IsString()
   @Expose()
@@ -76,9 +76,9 @@ export class Function {
   flags?: string[];
 
   @ApiPropertyOptional({
-    description: 'Is functions is async',
+    description: 'Is function is async',
     type: Boolean,
-    example: 0,
+    example: false,
   })
   @IsBoolean()
   @IsOptional()
@@ -125,7 +125,7 @@ export class Function {
   totalExecutionTime?: number;
 
   @ApiPropertyOptional({
-    description: 'Stream trigger prefix',
+    description: 'Stream prefix',
     type: String,
     example: 'stream',
   })

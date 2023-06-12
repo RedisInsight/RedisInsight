@@ -3,13 +3,13 @@ import { convertStringsArrayToObject } from 'src/utils';
 import { FunctionType, Function } from 'src/modules/triggered-functions/models';
 
 /**
- * Get all functions
+ * Get function details
 */
-const getFunctionsInformation = (
+const getFunctionDetails = (
   functions: string[][] | string[],
   type: FunctionType,
   libName: string,
-): Function[] => functions.map((reply) => {
+): Function[] => functions.map((reply: string | string[]) => {
   if (type === FunctionType.ClusterFunction) {
     return ({
       name: reply as string,
@@ -18,7 +18,7 @@ const getFunctionsInformation = (
     });
   }
 
-  const func = convertStringsArrayToObject(reply);
+  const func = convertStringsArrayToObject(reply as string[]);
 
   return ({
     name: func.name,
@@ -31,16 +31,16 @@ const getFunctionsInformation = (
     lastExecutionTime: func.last_execution_time,
     totalExecutionTime: func.total_execution_time,
     prefix: func.prefix,
-    streams: func.streams?.map((stream) => convertStringsArrayToObject(stream)),
     trim: func.trim,
     window: func.window,
+    description: func.description,
     type,
     library: libName,
   });
 });
 
 const getFunctionName = (
-  functions: string[][] | string[],
+  functions: string[],
   type: FunctionType,
 ): Function[] => functions.map((reply) => ({
   name: reply as string,
@@ -52,8 +52,8 @@ const getFunctionName = (
 */
 const getFunctionNames = (
   lib,
-): Function[] => {
-  const functionGroups = Object.values(FunctionType).map((type) => getFunctionName(lib[type], type));
+): Partial<Function>[] => {
+  const functionGroups = Object.values(FunctionType).map((type) => getFunctionName(lib[type] || [], type));
   return concat(...functionGroups);
 };
 
@@ -61,15 +61,15 @@ const getFunctionNames = (
  * Get all functions
 */
 const collectFunctions = (lib) => {
-  const functionGroups = Object.values(FunctionType).map((type) => getFunctionsInformation(lib[type], type, lib.name));
+  const functionGroups = Object.values(FunctionType).map((type) => getFunctionDetails(lib[type] || [], type, lib.name));
   return concat(...functionGroups);
 };
 
 /**
  * Get functions count
 */
-const getTotalFunctions = (lib) => (
-  Object.values(FunctionType).reduce((prev, cur) => prev + lib[cur].length, 0)
+const getTotalFunctions = (lib: { [key: string]: Function[] }) => (
+  Object.values(FunctionType).reduce((prev, cur) => prev + (lib[cur]?.length || 0), 0)
 );
 
 /**
@@ -89,8 +89,6 @@ export const getLibraryInformation = (lib: string[]) => {
   });
 };
 
-export const getFunctions = (lib: string[]) => collectFunctions(convertStringsArrayToObject(lib));
-
 export const getShortLibraryInformation = (lib: string[]) => {
   const library = convertStringsArrayToObject(lib);
   const totalFunctions = getTotalFunctions(library);
@@ -101,3 +99,5 @@ export const getShortLibraryInformation = (lib: string[]) => {
     totalFunctions,
   });
 };
+
+export const getLibraryFunctions = (lib: string[]) => collectFunctions(convertStringsArrayToObject(lib));

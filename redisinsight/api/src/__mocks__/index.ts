@@ -23,3 +23,4 @@ export * from './ssh';
 export * from './browser-history';
 export * from './database-recommendation';
 export * from './feature';
+export * from './triggered-functions';

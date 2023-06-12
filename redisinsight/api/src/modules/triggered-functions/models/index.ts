@@ -1,3 +1,4 @@
 export * from './function';
-export * from './short-library';
 export * from './library';
+export * from './short-function';
+export * from './short-library';

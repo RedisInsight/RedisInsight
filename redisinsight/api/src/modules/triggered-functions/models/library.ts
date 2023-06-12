@@ -1,11 +1,11 @@
 import { Expose, Type } from 'class-transformer';
 import {
-  IsArray, IsString, IsNumber, ValidateNested,
+  IsArray, IsString, IsNumber,
 } from 'class-validator';
-import { Function } from 'src/modules/triggered-functions/models';
+import { ShortFunction } from 'src/modules/triggered-functions/models';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class LibraryInformation {
+export class Library {
   @ApiProperty({
     description: 'Library name',
     type: String,
@@ -45,7 +45,6 @@ export class LibraryInformation {
   @ApiProperty({
     description: 'Library configuration',
     type: String,
-    example: 0,
   })
   @IsString()
   @Expose()
@@ -61,15 +60,14 @@ export class LibraryInformation {
   code: string;
 
   @ApiProperty({
-    description: 'Array of functions',
+    description: 'Array of functions with name, type fields',
     isArray: true,
-    type: Function,
+    type: ShortFunction,
   })
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Function)
+  @Type(() => ShortFunction)
   @Expose()
-  functions: Function[];
+  functions: ShortFunction[];
 
   @ApiProperty({
     description: 'Total number of functions',

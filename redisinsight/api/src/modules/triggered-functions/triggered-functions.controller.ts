@@ -6,7 +6,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import { TriggeredFunctionsService } from 'src/modules/triggered-functions/triggered-functions.service';
-import { ShortLibraryInformation, LibraryInformation, Function } from 'src/modules/triggered-functions/models';
+import { ShortLibrary, Library, Function } from 'src/modules/triggered-functions/models';
 import { LibraryDto } from 'src/modules/triggered-functions/dto';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
@@ -25,32 +25,32 @@ export class TriggeredFunctionsController {
       {
         status: 200,
         description: 'Returns libraries',
-        type: ShortLibraryInformation,
+        type: ShortLibrary,
       },
     ],
   })
   async libraryList(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-  ): Promise<ShortLibraryInformation[]> {
+  ): Promise<ShortLibrary[]> {
     return this.service.libraryList(clientMetadata);
   }
 
   @Post('/get-library')
   @ApiRedisInstanceOperation({
-    description: 'Returns library information',
+    description: 'Returns library details',
     statusCode: 200,
     responses: [
       {
         status: 200,
         description: 'Returns library information',
-        type: LibraryInformation,
+        type: Library,
       },
     ],
   })
   async details(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
       @Body() dto: LibraryDto,
-  ): Promise<LibraryInformation> {
+  ): Promise<Library> {
     return this.service.details(clientMetadata, dto.libraryName);
   }
 
@@ -61,7 +61,7 @@ export class TriggeredFunctionsController {
     responses: [
       {
         status: 200,
-        description: 'Returns functions',
+        description: 'Returns all functions',
         type: Function,
       },
     ],

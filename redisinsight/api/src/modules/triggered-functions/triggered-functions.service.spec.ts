@@ -92,7 +92,6 @@ describe('TriggeredFunctionsService', () => {
           library: 'libraryName',
           name: 'stream',
           prefix: 'prefix',
-          streams: [{ key: 'value' }],
           trim: 0,
           window: 1,
           type: FunctionType.StreamTrigger,

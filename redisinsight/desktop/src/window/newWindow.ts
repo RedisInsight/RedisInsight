@@ -1,12 +1,10 @@
 import contextMenu from 'electron-context-menu'
-import { BrowserWindow, app } from 'electron'
-import path from 'path'
+import { BrowserWindow } from 'electron'
 
 import config from 'desktopSrc/config'
 import { updateTray } from 'desktopSrc/lib'
 import { initWindowHandlers } from 'desktopSrc/handlers'
-import { getAssetPath, resolveHtmlPath } from 'desktopSrc/utils'
-import { TITLE_SPLASH } from './splashWindow'
+import { resolveHtmlPath } from 'desktopSrc/utils'
 
 export const windows = new Set<BrowserWindow>()
 export const getWindows = () => windows
@@ -16,7 +14,7 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
   let y
   const currentWindow = BrowserWindow.getFocusedWindow()
 
-  if (currentWindow && currentWindow?.getTitle() !== TITLE_SPLASH) {
+  if (currentWindow && currentWindow?.getTitle() !== config.splashWindow.title) {
     const [currentWindowX, currentWindowY] = currentWindow.getPosition()
     x = currentWindowX + 24
     y = currentWindowY + 24
@@ -25,10 +23,9 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
     ...config.mainWindow,
     x,
     y,
-    icon: getAssetPath('icon.png'),
     webPreferences: {
       ...config.mainWindow.webPreferences,
-      preload: app.isPackaged ? path.join(__dirname, 'preload.js') : path.join(__dirname, '../../dll/preload.js')
+      preload: config.preloadPath,
     }
   })
 

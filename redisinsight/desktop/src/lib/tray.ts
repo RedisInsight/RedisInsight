@@ -9,10 +9,12 @@ export class TrayBuilder {
 
   constructor() {
     // eslint-disable-next-line operator-linebreak
-    const iconRelevantPath =
-      process.platform === 'darwin' ? '../resources/icon-tray-white.png' : '../resources/icon-tray-colored.png'
-    const iconPath = path.join(__dirname, iconRelevantPath)
-    const icon = nativeImage.createFromPath(iconPath)
+    const iconName = process.platform === 'darwin'
+      ? 'icon-tray-white.png'
+      : 'icon-tray-colored.png'
+    const iconPath = `${!app.isPackaged ? '../' : ''}../../../resources/`
+    const iconFullPath = path.join(__dirname, iconPath, iconName)
+    const icon = nativeImage.createFromPath(iconFullPath)
     const iconTray = icon.resize({ height: 16, width: 16 })
     iconTray.setTemplateImage(true)
 

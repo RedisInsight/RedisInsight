@@ -1,6 +1,7 @@
 import { BrowserWindow, Tray } from 'electron'
 import { electronStore } from 'desktopSrc/services'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
+// eslint-disable-next-line import/no-cycle
 import { TrayBuilder } from './tray'
 
 let tray: TrayBuilder

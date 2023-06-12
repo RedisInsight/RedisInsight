@@ -20,7 +20,8 @@
       }
 
       .copyright {
-        color: #B5B6C0
+        color: #B5B6C0;
+        font-size: 11px;
       }
 
       .container {
@@ -79,11 +80,9 @@
   </div>
 
 <script>
-  const { ipcRenderer } = require('electron');
-
   const bootstrap = async () => {
 
-    const appVersion = await ipcRenderer.invoke('getAppVersion') || ''
+    const appVersion = await window.electron.ipcRenderer.invoke('getAppVersion') || ''
     const copyrightEl = document.getElementById('copyright') || null
 
     if (copyrightEl) {

@@ -127,7 +127,8 @@ const LibrariesList = (props: Props) => {
         responsive={false}
         rowProps={(row) => ({
           onClick: () => handleSelect(row),
-          className: row.name === selectedRow ? 'selected' : ''
+          className: row.name === selectedRow ? 'selected' : '',
+          'data-testid': `row-${row.name}`,
         })}
         message={NoLibrariesMessage}
         onTableChange={handleSorting}

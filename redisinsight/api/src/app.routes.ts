@@ -6,6 +6,7 @@ import { SlowLogModule } from 'src/modules/slow-log/slow-log.module';
 import { PubSubModule } from 'src/modules/pub-sub/pub-sub.module';
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
 import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
+import { TriggeredFunctionsModule } from 'src/modules/triggered-functions/triggered-functions.module';
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
 import { DatabaseRecommendationModule } from 'src/modules/database-recommendation/database-recommendation.module';
 
@@ -48,6 +49,10 @@ export const routes: Routes = [
       {
         path: '/:dbInstance',
         module: DatabaseRecommendationModule,
+      },
+      {
+        path: '/:dbInstance',
+        module: TriggeredFunctionsModule,
       },
     ],
   },

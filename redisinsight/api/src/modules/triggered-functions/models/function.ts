@@ -153,13 +153,4 @@ export class Function {
   @IsNumber()
   @Expose()
   window?: number;
-
-  @ApiPropertyOptional({
-    description: 'Stream triggers streams',
-    isArray: true,
-  })
-  @IsArray()
-  @IsOptional()
-  @Expose()
-  streams?: any[];
 }

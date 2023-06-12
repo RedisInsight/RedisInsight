@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { plainToClass } from 'class-transformer';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import {
   mockClientMetadata,
   mockDatabaseConnectionService,
@@ -9,6 +9,7 @@ import {
   mockSimpleLibraryReply,
   MockType,
 } from 'src/__mocks__';
+import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { TriggeredFunctionsService } from 'src/modules/triggered-functions/triggered-functions.service';
 import { FunctionType, ShortFunction, Function } from './models';
 
@@ -112,6 +113,26 @@ describe('TriggeredFunctionsService', () => {
         expect(mockIORedisClient.disconnect).toHaveBeenCalled();
       }
     });
+
+    it('should handle acl error NOPERM', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error('NOPERM'));
+        await service.functionsList(mockClientMetadata);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+      }
+    });
+
+    it('should handle HTTP error', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new NotFoundException('Not Found'));
+        await service.functionsList(mockClientMetadata);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+      }
+    });
   });
 
   describe('details', () => {
@@ -149,6 +170,26 @@ describe('TriggeredFunctionsService', () => {
         expect(mockIORedisClient.disconnect).toHaveBeenCalled();
       }
     });
+
+    it('should handle acl error', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error('NOPERM'));
+        await service.details(mockClientMetadata, mockLibraryName);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+      }
+    });
+
+    it('should handle HTTP error', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new NotFoundException('Not Found'));
+        await service.details(mockClientMetadata, mockLibraryName);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+      }
+    });
   });
 
   describe('libraryList', () => {
@@ -183,6 +224,26 @@ describe('TriggeredFunctionsService', () => {
         await service.libraryList(mockClientMetadata);
       } catch (err) {
         expect(mockIORedisClient.disconnect).toHaveBeenCalled();
+      }
+    });
+
+    it('should handle acl error', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error('NOPERM'));
+        await service.libraryList(mockClientMetadata);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+      }
+    });
+
+    it('should handle HTTP error', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new NotFoundException('Not Found'));
+        await service.libraryList(mockClientMetadata);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
       }
     });
   });

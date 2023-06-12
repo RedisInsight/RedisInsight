@@ -63,7 +63,6 @@ const getLibraryFunctionsTests = [
         window: 1,
         trim: 0,
         prefix: 'prefix',
-        streams: [{ key: 'value' }],
         library: 'libraryName',
       },
     ],

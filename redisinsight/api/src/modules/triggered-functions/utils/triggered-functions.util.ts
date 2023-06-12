@@ -31,7 +31,6 @@ const getFunctionDetails = (
     lastExecutionTime: func.last_execution_time,
     totalExecutionTime: func.total_execution_time,
     prefix: func.prefix,
-    streams: func.streams?.map((stream: string[]) => convertStringsArrayToObject(stream)),
     trim: func.trim,
     window: func.window,
     description: func.description,

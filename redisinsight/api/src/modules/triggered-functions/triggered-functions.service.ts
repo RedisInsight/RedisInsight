@@ -1,5 +1,6 @@
 import { Command } from 'ioredis';
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { catchAclError } from 'src/utils';
 import { concat } from 'lodash';
 import { plainToClass } from 'class-transformer';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
@@ -26,7 +27,7 @@ export class TriggeredFunctionsService {
   ): Promise<ShortLibrary[]> {
     let client;
     try {
-      client = await this.databaseConnectionService.createClient(clientMetadata);
+      client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
       const reply = await client.sendCommand(
         new Command('TFUNCTION', ['LIST'], { replyEncoding: 'utf8' }),
       );
@@ -39,7 +40,12 @@ export class TriggeredFunctionsService {
     } catch (e) {
       client?.disconnect();
       this.logger.error('Unable to get database libraries', e);
-      throw e;
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw catchAclError(e);
     }
   }
 
@@ -54,7 +60,7 @@ export class TriggeredFunctionsService {
   ): Promise<Library> {
     let client;
     try {
-      client = await this.databaseConnectionService.createClient(clientMetadata);
+      client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
       const reply = await client.sendCommand(
         new Command('TFUNCTION', ['LIST', 'WITHCODE', 'LIBRARY', name], { replyEncoding: 'utf8' }),
       );
@@ -67,7 +73,12 @@ export class TriggeredFunctionsService {
     } catch (e) {
       client?.disconnect();
       this.logger.error('Unable to get library details', e);
-      throw e;
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw catchAclError(e);
     }
   }
 
@@ -80,7 +91,7 @@ export class TriggeredFunctionsService {
   ): Promise<Function[]> {
     let client;
     try {
-      client = await this.databaseConnectionService.createClient(clientMetadata);
+      client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
       const reply = await client.sendCommand(
         new Command('TFUNCTION', ['LIST', 'vvv'], { replyEncoding: 'utf8' }),
       );
@@ -93,7 +104,12 @@ export class TriggeredFunctionsService {
     } catch (e) {
       client?.disconnect();
       this.logger.error('Unable to get all triggered functions', e);
-      throw e;
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw catchAclError(e);
     }
   }
 }

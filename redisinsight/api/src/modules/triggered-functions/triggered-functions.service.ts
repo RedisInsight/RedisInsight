@@ -32,13 +32,11 @@ export class TriggeredFunctionsService {
         new Command('TFUNCTION', ['LIST'], { replyEncoding: 'utf8' }),
       );
       const libraries = reply.map((lib: string[]) => getShortLibraryInformation(lib));
-      client.disconnect();
       return libraries.map((lib) => plainToClass(
         ShortLibrary,
         lib,
       ));
     } catch (e) {
-      client?.disconnect();
       this.logger.error('Unable to get database libraries', e);
 
       if (e instanceof HttpException) {
@@ -64,14 +62,12 @@ export class TriggeredFunctionsService {
       const reply = await client.sendCommand(
         new Command('TFUNCTION', ['LIST', 'WITHCODE', 'LIBRARY', name], { replyEncoding: 'utf8' }),
       );
-      client.disconnect();
       const library = getLibraryInformation(reply[0]);
       return plainToClass(
         Library,
         library,
       );
     } catch (e) {
-      client?.disconnect();
       this.logger.error('Unable to get library details', e);
 
       if (e instanceof HttpException) {
@@ -96,13 +92,11 @@ export class TriggeredFunctionsService {
         new Command('TFUNCTION', ['LIST', 'vvv'], { replyEncoding: 'utf8' }),
       );
       const functions = reply.reduce((prev, cur) => concat(prev, getLibraryFunctions(cur)), []);
-      client.disconnect();
       return functions.map((func) => plainToClass(
         Function,
         func,
       ));
     } catch (e) {
-      client?.disconnect();
       this.logger.error('Unable to get all triggered functions', e);
 
       if (e instanceof HttpException) {

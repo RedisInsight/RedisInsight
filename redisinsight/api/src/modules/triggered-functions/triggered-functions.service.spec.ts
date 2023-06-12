@@ -104,15 +104,6 @@ describe('TriggeredFunctionsService', () => {
       await expect(service.functionsList(mockClientMetadata)).rejects.toThrow(Error);
     });
 
-    it('Should call disconnect when sendCommand failed', async () => {
-      try {
-        mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error());
-        await service.functionsList(mockClientMetadata);
-      } catch (err) {
-        expect(mockIORedisClient.disconnect).toHaveBeenCalled();
-      }
-    });
-
     it('should handle acl error NOPERM', async () => {
       try {
         mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error('NOPERM'));
@@ -161,15 +152,6 @@ describe('TriggeredFunctionsService', () => {
       await expect(service.details(mockClientMetadata, mockLibraryName)).rejects.toThrow(Error);
     });
 
-    it('Should call disconnect', async () => {
-      try {
-        mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error());
-        await service.details(mockClientMetadata, mockLibraryName);
-      } catch (err) {
-        expect(mockIORedisClient.disconnect).toHaveBeenCalled();
-      }
-    });
-
     it('should handle acl error', async () => {
       try {
         mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error('NOPERM'));
@@ -215,15 +197,6 @@ describe('TriggeredFunctionsService', () => {
     it('Should throw Error when error during creating a client in libraryList', async () => {
       databaseConnectionService.createClient.mockRejectedValueOnce(new Error());
       await expect(service.libraryList(mockClientMetadata)).rejects.toThrow(Error);
-    });
-
-    it('Should call disconnect', async () => {
-      try {
-        mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error());
-        await service.libraryList(mockClientMetadata);
-      } catch (err) {
-        expect(mockIORedisClient.disconnect).toHaveBeenCalled();
-      }
     });
 
     it('should handle acl error', async () => {

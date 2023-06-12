@@ -3,8 +3,8 @@ import { isNumber } from 'lodash'
 import { sessionStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 
+const apiPort = window.ENV_VARS.API_PORT
 const baseApiUrl = process.env.BASE_API_URL
-const apiPort = process.env.API_PORT
 const apiPrefix = process.env.API_PREFIX
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.APP_ENV === 'web'

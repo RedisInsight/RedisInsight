@@ -1,14 +1,13 @@
 import path from 'path';
 import webpack from 'webpack';
-import { toString } from 'lodash'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import { merge } from 'webpack-merge';
-import TerserPlugin from 'terser-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
+import webpackPaths from './webpack.paths';
+import { version } from '../redisinsight/package.json';
 
 DeleteSourceMaps();
 
@@ -19,24 +18,24 @@ const devtoolsConfig =
       }
     : {};
 
-export default merge(baseConfig, {
+const configuration: webpack.Configuration = {
   ...devtoolsConfig,
+
+  devtool: 'source-map',
 
   mode: 'production',
 
-  target: 'electron-renderer',
+  target: ['web', 'electron-renderer'],
 
-  entry: [
-    'core-js',
-    'regenerator-runtime/runtime',
-    // path.join(__dirname, '../redisinsight/main.renderer.ts'),
-    path.join(__dirname, '../redisinsight/ui/indexElectron.tsx'),
-  ],
+  entry: [path.join(webpackPaths.uiPath, 'indexElectron.tsx')],
 
   output: {
-    path: path.join(__dirname, '../redisinsight/dist'),
-    publicPath: './dist/',
-    filename: 'renderer.prod.js',
+    path: webpackPaths.distRendererPath,
+    publicPath: './',
+    filename: 'renderer.js',
+    library: {
+      type: 'umd',
+    },
   },
 
   module: {
@@ -177,43 +176,44 @@ export default merge(baseConfig, {
     ],
   },
 
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        parallel: true,
-      }),
-      new CssMinimizerPlugin(),
-    ],
-  },
-
   plugins: [
     new MonacoWebpackPlugin({ languages: ['json'], features: ['!rename'] }),
 
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
-      DEBUG_PROD: false,
-      API_PREFIX: 'api',
-      BASE_API_URL: process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
-      RESOURCES_BASE_URL: process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
-      APP_ENV: 'electron',
-      SCAN_COUNT_DEFAULT: '500',
-      SCAN_TREE_COUNT_DEFAULT: '10000',
-      PIPELINE_COUNT_DEFAULT: '5',
-      SEGMENT_WRITE_KEY:
-      'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
-      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
-        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
-        : toString(30 * 1000), // 30 sec
     }),
 
     new MiniCssExtractPlugin({
       filename: 'style.css',
     }),
 
-    new BundleAnalyzerPlugin({
-      analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
-      openAnalyzer: process.env.OPEN_ANALYZER === 'true',
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: path.join(webpackPaths.electronPath, 'index.ejs'),
+      isBrowser: false,
+      isDevelopment: false,
+    }),
+
+    new webpack.DefinePlugin({
+      'process.type': '"renderer"',
+      'process.env.NODE_ENV': JSON.stringify('development'),
+      'process.env.APP_ENV': JSON.stringify('electron'),
+      'process.env.API_PREFIX': JSON.stringify('api'),
+      'process.env.BASE_API_URL': JSON.stringify('http://localhost'),
+      'process.env.RESOURCES_BASE_URL': JSON.stringify('http://localhost'),
+      'process.env.SCAN_COUNT_DEFAULT': JSON.stringify('500'),
+      'process.env.SCAN_TREE_COUNT_DEFAULT': JSON.stringify('10000'),
+      'process.env.PIPELINE_COUNT_DEFAULT': JSON.stringify('5'),
+      'process.env.BUILD_TYPE': JSON.stringify('ELECTRON'),
+      'process.env.APP_VERSION': JSON.stringify(version),
+      'process.env.CONNECTIONS_TIMEOUT_DEFAULT': 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? JSON.stringify(process.env.CONNECTIONS_TIMEOUT_DEFAULT)
+        : JSON.stringify(30 * 1000),
+      'process.env.SEGMENT_WRITE_KEY': 'SEGMENT_WRITE_KEY' in process.env
+        ? JSON.stringify(process.env.SEGMENT_WRITE_KEY)
+        : JSON.stringify('SOURCE_WRITE_KEY'),
     }),
   ],
-});
+};
+
+export default merge(baseConfig, configuration);

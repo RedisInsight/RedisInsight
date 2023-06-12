@@ -1,66 +1,51 @@
+/**
+ * Build config for development electron renderer process that uses
+ * Hot-Module-Replacement
+ *
+ * https://webpack.js.org/concepts/hot-module-replacement/
+ */
+
 import path from 'path';
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
-import { spawn } from 'child_process';
+import ip from 'ip';
 import { toString } from 'lodash'
-import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
-import baseConfig from './webpack.config.base';
-import { version } from '../redisinsight/package.json';
-
-const port = process.env.PORT || 1212;
-const publicPath = `http://localhost:${port}/dist`;
-const dllDir = path.join(__dirname, '../dll');
-const manifest = path.resolve(dllDir, 'renderer.json');
-const requiredByDLLConfig = module.parent.filename.includes('webpack.config.renderer.dev.dll');
+import commonConfig from './webpack.config.web.common';
 
 function employCache(loaders) {
   return ['cache-loader'].concat(loaders);
 }
 
-export default merge(baseConfig, {
-  devtool: 'inline-source-map',
+const HOST = process.env.PUBLIC_DEV ? ip.address(): 'localhost'
+
+const configuration: webpack.Configuration = {
+  target: 'web',
 
   mode: 'development',
 
-  target: 'electron-renderer',
+  cache: {
+    type: 'filesystem',
+    allowCollectingMemory: true,
+    cacheDirectory: path.resolve(__dirname, '../.temp_cache'),
+    name: 'webpack',
+    maxAge: 86_400_000, // 1 day
+    buildDependencies: {
+      // This makes all dependencies of this file - build dependencies
+      config: [__filename],
+    }
+  },
+
+  devtool: 'source-map',
 
   entry: [
-    'core-js',
     'regenerator-runtime/runtime',
-    // require.resolve('../redisinsight/main.renderer.ts'),
-    require.resolve('../redisinsight/ui/indexElectron.tsx'),
+    `webpack-dev-server/client?http://${HOST}:8080`,
+    'webpack/hot/only-dev-server',
+    require.resolve('../redisinsight/ui/index.tsx'),
   ],
-
-  output: {
-    publicPath: `http://localhost:${port}/dist/`,
-    filename: 'renderer.dev.js',
-  },
-
-  resolve: {
-    alias: {
-      apiSrc: path.resolve(__dirname, '../redisinsight/api/src'),
-    },
-  },
 
   module: {
     rules: [
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
-      },
-      {
-        test: /\.[jt]sx?$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: require.resolve('babel-loader'),
-            options: {
-              plugins: [require.resolve('react-refresh/babel')].filter(Boolean),
-            },
-          },
-        ],
-      },
       {
         test: /\.module\.s(a|c)ss$/,
         use: [
@@ -100,7 +85,6 @@ export default merge(baseConfig, {
           },
         ],
       },
-      // SASS lazy support
       {
         test: /\.lazy\.s(a|c)ss$/i,
         use: employCache([
@@ -116,6 +100,10 @@ export default merge(baseConfig, {
           },
         ]),
         exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       },
       // WOFF Font
       {
@@ -181,89 +169,61 @@ export default merge(baseConfig, {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         use: 'file-loader',
       },
-      {
-        test: /\.svg$/,
-        use: ['@svgr/webpack', 'url-loader'],
-      },
-      // Common Image Formats
-      {
-        test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader',
-      },
     ],
   },
+
+  devServer: {
+    host: HOST,
+    allowedHosts: 'all',
+    port: 8080,
+    historyApiFallback: true,
+  },
+
   plugins: [
-    requiredByDLLConfig
-      ? null
-      : new webpack.DllReferencePlugin({
-          context: path.join(__dirname, '../dll'),
-          manifest: require(manifest),
-          sourceType: 'var',
-        }),
+    new webpack.HotModuleReplacementPlugin({
+      multiStep: true,
+    }),
 
     new webpack.NoEmitOnErrorsPlugin(),
 
+    /**
+     * Create global constants which can be configured at compile time.
+     *
+     * Useful for allowing different behavior between development builds and
+     * release builds
+     *
+     * NODE_ENV should be production so that modules do not perform certain
+     * development checks
+     *
+     * By default, use 'development' as NODE_ENV. This can be override with
+     * 'staging', for example, by changing the ENV variables in the npm scripts
+     */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
-      APP_ENV: 'electron',
+      APP_ENV: 'web',
       API_PREFIX: 'api',
-      BASE_API_URL: 'http://localhost',
-      RESOURCES_BASE_URL: 'http://localhost',
+      BASE_API_URL: `http://${HOST}`,
+      RESOURCES_BASE_URL: `http://${HOST}`,
+      PIPELINE_COUNT_DEFAULT: '5',
       SCAN_COUNT_DEFAULT: '500',
       SCAN_TREE_COUNT_DEFAULT: '10000',
-      PIPELINE_COUNT_DEFAULT: '5',
-      BUILD_TYPE: 'ELECTRON',
-      APP_VERSION: version,
       SEGMENT_WRITE_KEY:
         'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
       CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
         ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
-        : toString(30 * 1000), // 30 sec
+        : toString(30 * 1000),
     }),
 
     new webpack.LoaderOptionsPlugin({
       debug: true,
     }),
 
-    new ReactRefreshWebpackPlugin(),
-
-    new MonacoWebpackPlugin({ languages: ['json'], features: ['!rename'] }),
+    new webpack.HotModuleReplacementPlugin(), // enable HMR globally
   ],
 
-  node: {
-    __dirname: false,
-    __filename: false,
+  externals: {
+    // react: 'React',
   },
+};
 
-  devServer: {
-    port,
-    publicPath,
-    compress: true,
-    noInfo: false,
-    stats: 'errors-only',
-    inline: true,
-    lazy: false,
-    hot: true,
-    headers: { 'Access-Control-Allow-Origin': '*' },
-    contentBase: path.join(__dirname, 'dist'),
-    watchOptions: {
-      aggregateTimeout: 300,
-      ignored: /node_modules/,
-      poll: 100,
-    },
-    historyApiFallback: {
-      verbose: true,
-      disableDotRule: false,
-    },
-    before() {
-      console.log('Starting Main Process...');
-      spawn('npm', ['run', 'start:main'], {
-        shell: true,
-        env: process.env,
-        stdio: 'inherit',
-      })
-        .on('close', (code) => process.exit(code))
-        .on('error', (spawnError) => console.error(spawnError));
-    },
-  },
-});
+export default merge(commonConfig, configuration);

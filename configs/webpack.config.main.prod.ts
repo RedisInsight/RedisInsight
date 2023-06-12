@@ -1,11 +1,11 @@
 import path from 'path';
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
-import { toString } from 'lodash'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import baseConfig from './webpack.config.base';
 import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
 import { version } from '../redisinsight/package.json';
+import webpackPaths from './webpack.paths';
 
 DeleteSourceMaps();
 
@@ -23,19 +23,25 @@ export default merge(baseConfig, {
 
   target: 'electron-main',
 
-  entry: './redisinsight/main.dev.ts',
+  entry: {
+    main: path.join(webpackPaths.electronPath, 'main.dev.ts'),
+    preload: path.join(webpackPaths.electronPath, 'preload.ts'),
+  },
 
   resolve: {
     alias: {
-      ['apiSrc']: path.resolve(__dirname, '../redisinsight/api/src'),
-      ['src']: path.resolve(__dirname, '../redisinsight/api/src'),
+      ['apiSrc']: webpackPaths.apiSrcPath,
+      ['src']: webpackPaths.apiSrcPath,
     },
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
   },
 
   output: {
-    path: path.join(__dirname, '../redisinsight'),
-    filename: 'main.prod.js',
+    path: webpackPaths.distMainPath,
+    filename: '[name].js',
+    library: {
+      type: 'umd',
+    },
   },
 
   // optimization: {
@@ -44,10 +50,6 @@ export default merge(baseConfig, {
   //       parallel: true,
   //     }),
   //   ],
-  // },
-
-  // alias: {
-  //   'apiSrc': path.resolve(__dirname, '../redisinsight/api/src/')
   // },
 
   plugins: [
@@ -71,9 +73,10 @@ export default merge(baseConfig, {
       APP_VERSION: version,
       AWS_BUCKET_NAME: 'AWS_BUCKET_NAME' in process.env ? process.env.AWS_BUCKET_NAME : '',
       SEGMENT_WRITE_KEY: 'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
-      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
-        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
-        : toString(30 * 1000), // 30 sec
+    }),
+
+    new webpack.DefinePlugin({
+      'process.type': '"browser"',
     }),
   ],
 

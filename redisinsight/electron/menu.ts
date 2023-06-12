@@ -6,7 +6,7 @@ import {
   MenuItemConstructorOptions,
   MenuItem,
 } from 'electron';
-import { ElectronStorageItem } from './ui/src/electron/constants';
+import { ElectronStorageItem } from '../ui/src/electron/constants';
 // eslint-disable-next-line import/no-cycle
 import {
   createWindow,

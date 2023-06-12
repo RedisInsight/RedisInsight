@@ -34,8 +34,9 @@ import MenuBuilder from './menu';
 import AboutPanelOptions from './about-panel';
 // eslint-disable-next-line import/no-cycle
 import TrayBuilder from './tray';
-import server from './api/dist/src/main';
-import { ElectronStorageItem, IpcEvent } from './ui/src/electron/constants';
+import server from '../api/dist/src/main';
+import { ElectronStorageItem, IpcEvent } from '../ui/src/electron/constants';
+import { resolveHtmlPath } from './util';
 
 if (process.env.NODE_ENV !== 'production') {
   log.transports.file.getFile().clear();
@@ -161,7 +162,7 @@ export const windows = new Set<BrowserWindow>();
 const getAssetPath = (...paths: string[]): string => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'resources')
-    : path.join(__dirname, '../resources');
+    : path.join(__dirname, '../../resources');
 
   return path.join(RESOURCES_PATH, ...paths);
 };
@@ -178,12 +179,12 @@ export const createSplashScreen = async () => {
     title: titleSplash,
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
     },
   });
 
-  splash.loadURL(`file://${__dirname}/splash.html`);
+  splash.loadURL(resolveHtmlPath('splash.html'));
 
   return splash;
 };
@@ -210,17 +211,20 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
     // titleBarStyle: 'hidden',
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      nodeIntegration: true,
-      nodeIntegrationInWorker: true,
+      contextIsolation: true,
+      nodeIntegration: false,
+      nodeIntegrationInWorker: false,
       webSecurity: true,
-      contextIsolation: false,
       spellcheck: true,
       allowRunningInsecureContent: false,
       scrollBounce: true,
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, './dll/preload.js'),
     },
   });
 
-  newWindow.loadURL(`file://${__dirname}/index.html`);
+  newWindow.loadURL(resolveHtmlPath('index.html'));
 
   newWindow.webContents.on('did-finish-load', () => {
     if (!newWindow) {
@@ -286,6 +290,11 @@ export const createWindow = async (splash: BrowserWindow | null = null) => {
   newWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
     shell.openExternal(url);
+  });
+
+  newWindow.webContents.setWindowOpenHandler((edata: any) => {
+    shell.openExternal(edata.url);
+    return { action: 'deny' };
   });
 
   // event newWindow.webContents.on('context-menu', ...)

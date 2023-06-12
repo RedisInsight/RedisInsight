@@ -3,12 +3,8 @@
   "appId": "org.RedisLabs.RedisInsight-V2",
   "copyright": "Copyright © 2023 Redis Ltd.",
   "files": [
-    "dist/",
-    "node_modules/",
-    "index.html",
-    "splash.html",
-    "main.prod.js",
-    "main.prod.js.map",
+    "dist",
+    "node_modules",
     "package.json"
   ],
   "afterSign": "electron-builder-notarize",

@@ -36,6 +36,7 @@ lerna-debug.log*
 .vscode
 
 # App packaged
+redisinsight/electron/preload.js
 release
 main.prod.js
 main.prod.js.map
@@ -56,6 +57,9 @@ dll
 main.js
 main.js.map
 vendor
+redisinsight/main.js.LICENSE.txt
+redisinsight/main.prod.js.LICENSE.txt
+
 
 # E2E tests report
 /tests/e2e/report

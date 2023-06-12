@@ -47,10 +47,11 @@
     "redisinsight/ui/src/**/*",
     "redisinsight/ui/index.tsx",
     "redisinsight/ui/indexElectron.tsx",
-    "redisinsight/main.dev.ts",
+    "redisinsight/electron/**/*",
     "jest.config.js"
   ],
   "exclude": [
+    "./redisinsight/electron/dll/*",
     "./redisinsight/api",
     "**/main.prod.js",
     "**/renderer.prod.js",

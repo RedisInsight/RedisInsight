@@ -6,7 +6,7 @@ import TerserPlugin from 'terser-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import commonConfig from './webpack.config.web.common.babel';
+import commonConfig from './webpack.config.web.common';
 import DeleteDistWeb from '../scripts/DeleteDistWeb';
 
 DeleteDistWeb();
@@ -18,7 +18,7 @@ const devtoolsConfig =
       }
     : {};
 
-export default merge(commonConfig, {
+const configuration: webpack.Configuration = {
   ...devtoolsConfig,
 
   mode: 'production',
@@ -208,4 +208,6 @@ export default merge(commonConfig, {
     ],
   },
   externals: {},
-});
+};
+
+export default merge(commonConfig, configuration);

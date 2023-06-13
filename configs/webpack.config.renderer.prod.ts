@@ -11,6 +11,8 @@ import { version } from '../redisinsight/package.json';
 
 DeleteSourceMaps();
 
+const htmlPagesNames = ['splash.ejs', 'index.ejs']
+
 const devtoolsConfig =
   process.env.DEBUG_PROD === 'true'
     ? {
@@ -187,12 +189,14 @@ const configuration: webpack.Configuration = {
       filename: 'style.css',
     }),
 
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: path.join(webpackPaths.electronPath, 'index.ejs'),
-      isBrowser: false,
-      isDevelopment: false,
-    }),
+    ...htmlPagesNames.map((htmlPageName) => (
+      new HtmlWebpackPlugin({
+        filename: path.join(`${htmlPageName.split('.')?.[0]}.html`),
+        template: path.join(webpackPaths.desktopPath, htmlPageName),
+        isBrowser: false,
+        isDevelopment: false,
+      })
+    )),
 
     new webpack.DefinePlugin({
       'process.type': '"renderer"',

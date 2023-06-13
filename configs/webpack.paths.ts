@@ -8,10 +8,10 @@ const apiPath = path.join(riPath, 'api');
 const uiPath = path.join(riPath, 'ui');
 const apiSrcPath = path.join(apiPath, 'src');
 const uiSrcPath = path.join(uiPath, 'src');
-const electronPath = path.join(riPath, 'electron');
-const srcMainPath = path.join(electronPath, 'main');
+const desktopPath = path.join(riPath, 'desktop');
+const desktopSrcPath = path.join(desktopPath, 'src');
 
-const dllPath = path.join(electronPath, 'dll');
+const dllPath = path.join(desktopPath, 'dll');
 
 const releasePath = path.join(rootPath, 'release');
 const appPackagePath = path.join(riPath, 'package.json');
@@ -32,9 +32,9 @@ export default {
   riPath,
   apiSrcPath,
   uiSrcPath,
-  srcMainPath,
   releasePath,
-  electronPath,
+  desktopPath,
+  desktopSrcPath,
   appPackagePath,
   appNodeModulesPath,
   srcNodeModulesPath,

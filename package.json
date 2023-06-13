@@ -37,7 +37,7 @@
     "start": "ts-node ./scripts/check-port-in-use.js && yarn start:renderer",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./configs/webpack.config.renderer.dev.ts",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./configs/webpack.config.preload.dev.ts",
-    "start:main": "cross-env NODE_ENV=development electron -r ./scripts/BabelRegister redisinsight/electron/main.dev.ts",
+    "start:main": "cross-env NODE_ENV=development electron -r ./scripts/BabelRegister -r tsconfig-paths/register redisinsight/desktop/index.ts",
     "start:web": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./configs/webpack.config.web.dev.ts",
     "start:web:public": "cross-env PUBLIC_DEV=true NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./configs/webpack.config.web.dev.ts",
     "test": "jest ./redisinsight/ui -w 1",

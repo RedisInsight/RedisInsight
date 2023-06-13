@@ -1,6 +1,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
+import { toString } from 'lodash';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import baseConfig from './webpack.config.base';
 import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
@@ -24,16 +25,8 @@ export default merge(baseConfig, {
   target: 'electron-main',
 
   entry: {
-    main: path.join(webpackPaths.electronPath, 'main.dev.ts'),
-    preload: path.join(webpackPaths.electronPath, 'preload.ts'),
-  },
-
-  resolve: {
-    alias: {
-      ['apiSrc']: webpackPaths.apiSrcPath,
-      ['src']: webpackPaths.apiSrcPath,
-    },
-    extensions: ['.tsx', '.ts', '.js', '.jsx'],
+    main: path.join(webpackPaths.desktopPath, 'index.ts'),
+    preload: path.join(webpackPaths.desktopPath, 'preload.ts'),
   },
 
   output: {
@@ -73,6 +66,9 @@ export default merge(baseConfig, {
       APP_VERSION: version,
       AWS_BUCKET_NAME: 'AWS_BUCKET_NAME' in process.env ? process.env.AWS_BUCKET_NAME : '',
       SEGMENT_WRITE_KEY: 'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
+      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
+        : toString(30 * 1000), // 30 sec
     }),
 
     new webpack.DefinePlugin({

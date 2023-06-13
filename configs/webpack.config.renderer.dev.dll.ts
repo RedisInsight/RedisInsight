@@ -54,7 +54,7 @@ export default merge(baseConfig, {
     new webpack.LoaderOptionsPlugin({
       debug: true,
       options: {
-        context: webpackPaths.electronPath,
+        context: webpackPaths.desktopPath,
         output: {
           path: webpackPaths.dllPath,
         },

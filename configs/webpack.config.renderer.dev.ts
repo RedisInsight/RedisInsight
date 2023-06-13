@@ -18,6 +18,7 @@ const skipDLLs =
   module.parent?.filename.includes('webpack.config.renderer.dev.dll') ||
   module.parent?.filename.includes('webpack.config.eslint');
 
+const htmlPagesNames = ['splash.ejs', 'index.ejs']
 /**
  * Warn if the DLL is not built
  */
@@ -51,19 +52,11 @@ const configuration: webpack.Configuration = {
   ],
 
   output: {
-    path: webpackPaths.electronPath,
+    path: webpackPaths.desktopPath,
     publicPath: '/',
     filename: 'renderer.dev.js',
     library: {
       type: 'umd',
-    },
-  },
-
-  resolve: {
-    alias: {
-      src: webpackPaths.apiSrcPath,
-      apiSrc: webpackPaths.apiSrcPath,
-      uiSrc: webpackPaths.uiSrcPath,
     },
   },
 
@@ -241,19 +234,21 @@ const configuration: webpack.Configuration = {
 
     new MonacoWebpackPlugin({ languages: ['json'], features: ['!rename'] }),
 
-    new HtmlWebpackPlugin({
-      filename: path.join('index.html'),
-      template: path.join(webpackPaths.electronPath, 'index.ejs'),
-      minify: {
-        collapseWhitespace: true,
-        removeAttributeQuotes: true,
-        removeComments: true,
-      },
-      isBrowser: false,
-      env: process.env.NODE_ENV,
-      isDevelopment: process.env.NODE_ENV !== 'production',
-      nodeModules: webpackPaths.appNodeModulesPath,
-    }),
+    ...htmlPagesNames.map((htmlPageName) => (
+      new HtmlWebpackPlugin({
+        filename: path.join(`${htmlPageName.split('.')?.[0]}.html`),
+        template: path.join(webpackPaths.desktopPath, htmlPageName),
+        minify: {
+          collapseWhitespace: true,
+          removeAttributeQuotes: true,
+          removeComments: true,
+        },
+        isBrowser: false,
+        env: process.env.NODE_ENV,
+        isDevelopment: process.env.NODE_ENV !== 'production',
+        nodeModules: webpackPaths.appNodeModulesPath,
+      })
+    )),
 
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development'),

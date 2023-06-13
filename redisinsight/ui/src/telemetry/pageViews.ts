@@ -7,5 +7,6 @@ export enum TelemetryPageView {
   SLOWLOG_PAGE = 'Slow Log',
   CLUSTER_DETAILS_PAGE = 'Overview',
   PUBSUB_PAGE = 'Pub/Sub',
-  DATABASE_ANALYSIS = 'Database Analysis'
+  DATABASE_ANALYSIS = 'Database Analysis',
+  TRIGGERED_FUNCTIONS = 'Triggers & Functions'
 }

@@ -1,0 +1,21 @@
+.main {
+  height: calc(100% - 70px);
+  padding: 16px 16px 0;
+  overflow: auto;
+
+  border-top: 1px solid var(--euiColorLightShade);
+
+  :global {
+    .euiTableRow {
+      border-left: 3px solid transparent;
+
+      &:hover, &:focus {
+        background-color: var(--tableRowSelectedColor) !important;
+      }
+      &.selected {
+        background-color: var(--hoverInListColorDarken) !important;
+        border-left: 3px solid var(--euiColorPrimary);
+      }
+    }
+  }
+}

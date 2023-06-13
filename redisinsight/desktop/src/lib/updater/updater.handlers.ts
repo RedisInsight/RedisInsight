@@ -2,7 +2,7 @@ import { app } from 'electron'
 import { autoUpdater, UpdateDownloadedEvent } from 'electron-updater'
 import log from 'electron-log'
 
-import { electronStore } from 'desktopSrc/services'
+import { electronStore } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
 

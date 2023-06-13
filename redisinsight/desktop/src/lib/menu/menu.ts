@@ -1,7 +1,12 @@
 import { app, Menu, shell, BrowserWindow, MenuItemConstructorOptions, MenuItem } from 'electron'
-import { electronStore } from 'desktopSrc/services'
 // eslint-disable-next-line import/no-cycle
-import { getDisplayAppInTrayValue, updateDisplayAppInTray, WindowType, windowFactory } from 'desktopSrc/lib'
+import {
+  getDisplayAppInTrayValue,
+  updateDisplayAppInTray,
+  WindowType,
+  windowFactory,
+  electronStore
+} from 'desktopSrc/lib'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {

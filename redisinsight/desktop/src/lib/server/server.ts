@@ -4,7 +4,7 @@ import log from 'electron-log'
 import { configMain as config } from 'desktopSrc/config'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 
-import server from '../../../api/dist/src/main'
+import server from '../../../../api/dist/src/main'
 
 const port = config.defaultPort
 

@@ -1,6 +1,12 @@
 import { BrowserWindow, app, shell } from 'electron'
-import { MenuBuilder, getDisplayAppInTrayValue, getIsQuiting, getTray, getTrayInstance } from 'desktopSrc/lib'
-import { electronStore } from 'desktopSrc/services'
+import {
+  MenuBuilder,
+  getDisplayAppInTrayValue,
+  getIsQuiting,
+  getTray,
+  getTrayInstance,
+  electronStore
+} from 'desktopSrc/lib'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
 
 export const initWindowHandlers = (

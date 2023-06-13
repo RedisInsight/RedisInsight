@@ -1,11 +1,8 @@
 /* eslint global-require: off, no-console: off */
 import { app, nativeTheme } from 'electron'
 
-import { initElectronHandlers } from 'desktopSrc/handlers'
-import { launchApiServer } from 'desktopSrc/services'
-import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
-import { configMain as config } from 'desktopSrc/config'
 import {
+  initElectronHandlers,
   initLogging,
   WindowType,
   windowFactory,
@@ -13,8 +10,11 @@ import {
   checkForUpdate,
   installExtensions,
   initTray,
-  initAutoUpdaterHandlers
+  initAutoUpdaterHandlers,
+  launchApiServer
 } from 'desktopSrc/lib'
+import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
+import { configMain as config } from 'desktopSrc/config'
 
 if (!config.isProduction) {
   const sourceMapSupport = require('source-map-support')

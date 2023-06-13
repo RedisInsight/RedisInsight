@@ -1,5 +1,5 @@
 import { app, ipcMain } from 'electron'
-import { electronStore } from 'desktopSrc/services'
+import { electronStore } from 'desktopSrc/lib'
 import { IpcEvent } from 'uiSrc/electron/constants'
 
 export const initIPCHandlers = () => {

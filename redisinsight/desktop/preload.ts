@@ -1,24 +1,24 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import { configRenderer as config } from 'desktopSrc/config/configRenderer'
 import { IpcEvent } from 'uiSrc/electron/constants'
+import { WindowApp } from 'uiSrc/types'
 
-const electronHandler = {
-  ipcRenderer: {
-    invoke: (channel: IpcEvent, data?: any) => {
-      // whitelist channels
-      if (Object.values(IpcEvent).includes(channel)) {
-        return ipcRenderer.invoke(channel, data)
-      }
-
-      return new Error('channel is not allowed')
+const ipcHandler = {
+  invoke: (channel: IpcEvent, data?: any) => {
+    // whitelist channels
+    if (Object.values(IpcEvent).includes(channel)) {
+      return ipcRenderer.invoke(channel, data)
     }
+
+    return new Error('channel is not allowed')
   }
 }
 
-contextBridge.exposeInMainWorld('electron', electronHandler)
+contextBridge.exposeInMainWorld('app', {
+  ipc: ipcHandler,
+  config: {
+    apiPort: config.apiPort
+  }
+} as WindowApp)
 
-contextBridge.exposeInMainWorld('ENV_VARS', {
-  NODE_ENV: process.env.NODE_ENV,
-  API_PORT: process.env.API_PORT
-})
-
-export type ElectronHandler = typeof electronHandler
+export type IPCHandler = typeof ipcHandler

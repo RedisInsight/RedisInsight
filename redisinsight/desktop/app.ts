@@ -1,15 +1,22 @@
 /* eslint global-require: off, no-console: off */
 import { app, nativeTheme } from 'electron'
 
-import { initHandlers } from 'desktopSrc/handlers'
-import { initLogging } from 'desktopSrc/lib/logging'
+import { initElectronHandlers } from 'desktopSrc/handlers'
 import { launchApiServer } from 'desktopSrc/services'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
-import { createSplashScreen, createWindow } from 'desktopSrc/window'
-import { AboutPanelOptions, checkForUpdate, installExtensions, initTray } from 'desktopSrc/lib'
-import config from 'desktopSrc/config'
+import { configMain as config } from 'desktopSrc/config'
+import {
+  initLogging,
+  WindowType,
+  windowFactory,
+  AboutPanelOptions,
+  checkForUpdate,
+  installExtensions,
+  initTray,
+  initAutoUpdaterHandlers
+} from 'desktopSrc/lib'
 
-if (process.env.NODE_ENV !== 'production') {
+if (!config.isProduction) {
   const sourceMapSupport = require('source-map-support')
   sourceMapSupport.install()
 }
@@ -17,16 +24,13 @@ if (process.env.NODE_ENV !== 'production') {
 const init = async () => {
   await launchApiServer()
   initLogging()
-  initHandlers()
+  initElectronHandlers()
+  initAutoUpdaterHandlers()
   initTray()
 
   nativeTheme.themeSource = config.themeSource
 
-  const upgradeUrl = process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK
-
-  if (upgradeUrl && !process.mas) {
-    checkForUpdate(upgradeUrl)
-  }
+  checkForUpdate(process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK)
 
   app.setName(config.name)
   app.setAppUserModelId(config.name)
@@ -34,15 +38,16 @@ const init = async () => {
     app.setAboutPanelOptions(AboutPanelOptions)
   }
 
-  if (process.env.NODE_ENV !== 'production') {
-    await installExtensions()
-  }
+  await installExtensions()
 
-  app
-    .whenReady()
-    .then(createSplashScreen)
-    .then(createWindow)
-    .catch((e) => console.log(wrapErrorMessageSensitiveData(e)))
+  try {
+    await app.whenReady()
+    const splashWindow = await windowFactory(WindowType.Splash)
+    await windowFactory(WindowType.Main, splashWindow)
+  } catch (_err) {
+    const error = _err as Error
+    console.log(wrapErrorMessageSensitiveData(error))
+  }
 }
 
 export default init

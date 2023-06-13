@@ -1,7 +1,7 @@
 {
   "build": "release",
-  "server_port": 5001,
-  "server_host": "localhost",
+  "defaultPort": 5001,
+  "host": "localhost",
   "debug": false,
   "themeSource": "dark",
   "appName": "RedisInsight",
@@ -34,7 +34,7 @@
       "contextIsolation": true
     }
   },
-  "crash_reporter": false,
+  "crashReporter": false,
   "updater": {
     "downloadUrl": ""
   }

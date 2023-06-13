@@ -3,6 +3,10 @@ import { autoUpdater } from 'electron-updater'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 
 export const checkForUpdate = (url: string = '') => {
+  if (!url || process.mas) {
+    return
+  }
+
   log.info('AppUpdater initialization')
   log.transports.file.level = 'info'
 

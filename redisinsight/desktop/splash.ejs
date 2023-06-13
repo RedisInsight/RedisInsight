@@ -82,7 +82,7 @@
 <script>
   const bootstrap = async () => {
 
-    const appVersion = await window.electron.ipcRenderer.invoke('getAppVersion') || ''
+    const appVersion = await window.app.ipc.invoke('getAppVersion') || ''
     const copyrightEl = document.getElementById('copyright') || null
 
     if (copyrightEl) {

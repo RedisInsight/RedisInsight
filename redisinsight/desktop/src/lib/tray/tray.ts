@@ -1,17 +1,15 @@
 import { app, Menu, shell, Tray, nativeImage, BrowserWindow, MenuItemConstructorOptions } from 'electron'
 import path from 'path'
-import { createWindow, getWindows } from 'desktopSrc/window'
+import { WindowType, getWindows, windowFactory } from 'desktopSrc/lib'
 // eslint-disable-next-line import/no-cycle
-import { setToQuiting } from './tray-manager'
+import { setToQuiting } from './trayManager'
 
 export class TrayBuilder {
   public tray: Tray
 
   constructor() {
     // eslint-disable-next-line operator-linebreak
-    const iconName = process.platform === 'darwin'
-      ? 'icon-tray-white.png'
-      : 'icon-tray-colored.png'
+    const iconName = process.platform === 'darwin' ? 'icon-tray-white.png' : 'icon-tray-colored.png'
     const iconPath = `${!app.isPackaged ? '../' : ''}../../../resources/`
     const iconFullPath = path.join(__dirname, iconPath, iconName)
     const icon = nativeImage.createFromPath(iconFullPath)
@@ -36,7 +34,7 @@ export class TrayBuilder {
           {
             type: 'separator'
           },
-          ...[...getWindows()].map((window) => ({
+          ...[...getWindows().values()].map((window) => ({
             label: window.webContents.getTitle(),
             click: () => {
               window.show()
@@ -109,7 +107,7 @@ export class TrayBuilder {
     }
 
     if (!getWindows()?.size) {
-      createWindow()
+      windowFactory(WindowType.Main)
     }
   }
 }

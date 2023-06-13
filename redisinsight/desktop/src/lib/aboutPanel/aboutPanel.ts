@@ -1,5 +1,6 @@
 import { app } from 'electron'
 import path from 'path'
+import { configMain as config } from 'desktopSrc/config'
 
 const ICON_PATH = app.isPackaged
   ? path.join(process.resourcesPath, 'resources', 'icon.png')
@@ -8,7 +9,7 @@ const ICON_PATH = app.isPackaged
 export const AboutPanelOptions = {
   applicationName: 'RedisInsight-v2',
   applicationVersion: `${app.getVersion() || '2.26.0'}${
-    process.env.NODE_ENV !== 'production' ? `-dev-${process.getCreationTime()}` : ''
+    !config.isProduction ? `-dev-${process.getCreationTime()}` : ''
   }`,
   copyright: `Copyright © ${new Date().getFullYear()} Redis Ltd.`,
   iconPath: ICON_PATH

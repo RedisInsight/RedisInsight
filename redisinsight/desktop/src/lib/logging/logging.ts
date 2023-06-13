@@ -1,7 +1,8 @@
 import log from 'electron-log'
+import { configMain as config } from 'desktopSrc/config'
 
 export const initLogging = () => {
-  if (process.env.NODE_ENV !== 'production') {
+  if (!config.isProduction) {
     log.transports.file.getFile().clear()
   }
 

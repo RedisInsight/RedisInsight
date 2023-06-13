@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 
-const apiPort = window.ENV_VARS.API_PORT
+const { apiPort } = window.app.config
 const baseApiUrl = process.env.BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.APP_ENV === 'web'

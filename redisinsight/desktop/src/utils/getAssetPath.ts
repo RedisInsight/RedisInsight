@@ -1,5 +1,5 @@
-import path from 'path'
 import { app } from 'electron'
+import path from 'path'
 
 export const getAssetPath = (...paths: string[]): string => {
   const RESOURCES_PATH = app.isPackaged

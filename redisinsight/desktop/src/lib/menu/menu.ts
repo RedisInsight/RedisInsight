@@ -1,9 +1,8 @@
 import { app, Menu, shell, BrowserWindow, MenuItemConstructorOptions, MenuItem } from 'electron'
 import { electronStore } from 'desktopSrc/services'
 // eslint-disable-next-line import/no-cycle
-import { createWindow } from 'desktopSrc/window'
+import { getDisplayAppInTrayValue, updateDisplayAppInTray, WindowType, windowFactory } from 'desktopSrc/lib'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
-import { getDisplayAppInTrayValue, updateDisplayAppInTray } from './tray-manager'
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string
@@ -144,7 +143,7 @@ export class MenuBuilder {
           label: 'New Window',
           accelerator: 'Command+N',
           click: () => {
-            createWindow()
+            windowFactory(WindowType.Main)
           }
         },
         {
@@ -210,7 +209,7 @@ export class MenuBuilder {
             label: 'New Window',
             accelerator: 'Ctrl+N',
             click: () => {
-              createWindow()
+              windowFactory(WindowType.Main)
             }
           },
           {

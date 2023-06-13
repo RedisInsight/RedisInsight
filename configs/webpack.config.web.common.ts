@@ -65,7 +65,7 @@ export default {
 
   plugins: [
     new webpack.DefinePlugin({
-      'window.ENV_VARS.API_PORT': JSON.stringify('5000'),
+      'window.app.config.apiPort': JSON.stringify('5000'),
     }),
 
     new HtmlWebpackPlugin({ template: 'index.html.ejs' }),

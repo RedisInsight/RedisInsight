@@ -6,7 +6,7 @@ import { ElectronStorageItem } from 'uiSrc/electron/constants'
 export const initWindowHandlers = (
   newWindow: BrowserWindow,
   splash: BrowserWindow | null = null,
-  windows: Set<BrowserWindow>
+  windows: Map<string, BrowserWindow>
 ) => {
   const tray = getTray()
   const trayInstance = getTrayInstance()
@@ -51,7 +51,7 @@ export const initWindowHandlers = (
 
   newWindow.on('closed', () => {
     if (newWindow) {
-      windows.delete(newWindow)
+      windows.delete(`${newWindow.id}`)
       // newWindow = null
     }
 

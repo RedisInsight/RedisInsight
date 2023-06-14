@@ -157,6 +157,9 @@ test
         keyName = `recomKey-${Common.generateWord(10)}`;
         const jsonValue = '{"name":"xyz"}';
         await browserPage.addJsonKey(keyName, jsonValue);
+        // Check that new key is displayed in the list
+        await browserPage.searchByKeyName(keyName);
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The JSON key is not added');
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);

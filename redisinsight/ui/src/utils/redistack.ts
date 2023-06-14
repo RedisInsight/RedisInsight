@@ -3,7 +3,7 @@ import { Instance, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { isVersionHigherOrEquals, Nullable } from 'uiSrc/utils'
 
 const REDISTACK_LOW_VERSION = '6.2.6'
-const REDISTACK_HIGH_VERSION = '7.2'
+const REDISTACK_HIGH_VERSION = '7.1'
 
 const REDISTACK_LOW_VERSION_REQUIRE_MODULES: Array<string | Array<string>> = [
   RedisDefaultModules.ReJSON,

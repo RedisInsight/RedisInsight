@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { EuiButton, EuiFieldSearch, EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFieldSearch,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiLoadingSpinner,
+} from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -51,10 +57,6 @@ const LibrariesPage = () => {
     setItems(itemsTemp || [])
   }
 
-  if (!libraries) {
-    return <></>
-  }
-
   return (
     <EuiFlexGroup direction="column" style={{ height: '100%' }} gutterSize="none" responsive={false}>
       <EuiFlexItem grow={false}>
@@ -92,6 +94,11 @@ const LibrariesPage = () => {
 
       </EuiFlexItem>
       <EuiFlexItem className={styles.main}>
+        {!libraries && loading && (
+          <div className={styles.loading} data-testid="loading-libraries">
+            <EuiLoadingSpinner size="xl" />
+          </div>
+        )}
         {(libraries?.length > 0) && (
           <LibrariesList
             items={items}

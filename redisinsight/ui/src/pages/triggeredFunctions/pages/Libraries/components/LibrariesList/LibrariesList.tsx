@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { EuiBasicTableColumn, EuiInMemoryTable, EuiText, EuiToolTip, PropertySort } from '@elastic/eui'
 import cx from 'classnames'
 
+import { useParams } from 'react-router-dom'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -21,6 +22,8 @@ const LibrariesList = (props: Props) => {
   const { items, loading, onRefresh, lastRefresh } = props
   const [sort, setSort] = useState<Maybe<PropertySort>>(undefined)
   const [selectedRow, setSelectedRow] = useState<Nullable<string>>(null)
+
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   const columns: EuiBasicTableColumn<any>[] = [
     {
@@ -81,6 +84,9 @@ const LibrariesList = (props: Props) => {
   const handleRefreshClicked = () => {
     sendEventTelemetry({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_REFRESH_CLICKED,
+      eventData: {
+        databaseId: instanceId
+      }
     })
   }
 
@@ -88,7 +94,10 @@ const LibrariesList = (props: Props) => {
     setSort(sort)
     sendEventTelemetry({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARIES_SORTED,
-      eventData: sort
+      eventData: {
+        ...sort,
+        databaseId: instanceId
+      }
     })
   }
 
@@ -98,7 +107,8 @@ const LibrariesList = (props: Props) => {
         ? TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_AUTO_REFRESH_ENABLED
         : TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_AUTO_REFRESH_DISABLED,
       eventData: {
-        refreshRate
+        refreshRate,
+        databaseId: instanceId
       }
     })
   }

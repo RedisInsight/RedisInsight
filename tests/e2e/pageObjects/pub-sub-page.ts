@@ -34,12 +34,11 @@ export class PubSubPage extends InstancePage {
      * @param message The message
      */
     async publishMessage(channel: string, message: string): Promise<void> {
-        await t
-            .click(this.channelNameInput)
-            .typeText(this.channelNameInput, channel, { replace: true, paste: true })
-            .click(this.messageInput)
-            .typeText(this.messageInput, message, { replace: true, paste: true })
-            .click(this.publishButton);
+        await t.click(this.channelNameInput);
+        await t.typeText(this.channelNameInput, channel, { replace: true, paste: true });
+        await t.click(this.messageInput);
+        await t.typeText(this.messageInput, message, { replace: true, paste: true });
+        await t.click(this.publishButton);
     }
 
     /**
@@ -50,6 +49,6 @@ export class PubSubPage extends InstancePage {
     async subsribeToChannelAndPublishMessage(channel: string, message: string): Promise<void> {
         await t.click(this.subscribeButton);
         await this.publishMessage(channel, message);
-        await t.expect(this.pubSubPageContainer.find('[data-testid^=row]').withText('message').exists).ok('Message is not displayed');
+        await t.expect((this.pubSubPageContainer.find('[data-testid^=row]').withText('message')).exists).ok('Message is not displayed');
     }
 }

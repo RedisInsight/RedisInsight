@@ -69,7 +69,7 @@ const isRediStack = (modules: any[], version?: Nullable<string>): boolean => {
 
 const checkRediStack = (instances: Instance[]): Instance[] => (instances.map((instance) => ({
   ...instance,
-  isRediStack: isRediStack(instance.modules)
+  isRediStack: isRediStack(instance.modules, instance.version)
 })))
 
 export { checkRediStack, isRediStack }

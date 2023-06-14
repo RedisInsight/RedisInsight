@@ -265,4 +265,14 @@ export class Database {
   @IsEnum(Compressor)
   @IsOptional()
   compressor?: Compressor = Compressor.NONE;
+
+  @ApiPropertyOptional({
+    description: 'The version your Redis server',
+    type: String,
+  })
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  version?: string;
 }

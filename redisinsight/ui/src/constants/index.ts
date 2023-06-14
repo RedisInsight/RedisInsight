@@ -26,4 +26,5 @@ export * from './streamViews'
 export * from './bulkActions'
 export * from './workbench'
 export * from './featureFlags'
+export * from './serverVersions'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

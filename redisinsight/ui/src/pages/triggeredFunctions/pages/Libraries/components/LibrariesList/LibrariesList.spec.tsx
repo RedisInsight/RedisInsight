@@ -57,6 +57,9 @@ describe('LibrariesList', () => {
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_REFRESH_CLICKED,
+      eventData: {
+        databaseId: 'instanceId'
+      }
     })
 
     sendEventTelemetry.mockRestore()
@@ -67,7 +70,8 @@ describe('LibrariesList', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_AUTO_REFRESH_ENABLED,
       eventData: {
-        refreshRate: '5.0'
+        refreshRate: '5.0',
+        databaseId: 'instanceId'
       }
     })
 
@@ -77,7 +81,8 @@ describe('LibrariesList', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_AUTO_REFRESH_DISABLED,
       eventData: {
-        refreshRate: '5.0'
+        refreshRate: '5.0',
+        databaseId: 'instanceId'
       }
     })
   })

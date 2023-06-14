@@ -9,6 +9,7 @@ import { PubSubPage } from './pub-sub-page';
 import { SlowLogPage } from './slow-log-page';
 import { BasePage } from './base-page';
 import { InstancePage } from './instance-page';
+import { TriggersAndFunctionsPage } from './triggers-and-functions-page';
 
 export {
     AutoDiscoverREDatabases,
@@ -22,4 +23,5 @@ export {
     SlowLogPage,
     BasePage,
     InstancePage,
+    TriggersAndFunctionsPage
 };

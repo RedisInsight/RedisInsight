@@ -6,7 +6,7 @@ import {
     commonUrl,
     ossStandaloneBigConfig
 } from '../../../helpers/conf';
-import {rte} from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();

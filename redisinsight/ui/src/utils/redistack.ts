@@ -1,9 +1,11 @@
 import { isArray, map, concat } from 'lodash'
 import { Instance, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { ServerVersions } from 'uiSrc/constants'
 import { isVersionHigherOrEquals, Nullable } from 'uiSrc/utils'
 
-export const REDISTACK_DEFAULT_MODULES: Array<string | Array<string>> = [
+const REDISTACK_LOW_VERSION = '6.2.6'
+const REDISTACK_HIGH_VERSION = '7.2'
+
+const REDISTACK_LOW_VERSION_REQUIRE_MODULES: Array<string | Array<string>> = [
   RedisDefaultModules.ReJSON,
   RedisDefaultModules.Bloom,
   RedisDefaultModules.Graph,
@@ -11,14 +13,14 @@ export const REDISTACK_DEFAULT_MODULES: Array<string | Array<string>> = [
   RedisDefaultModules.TimeSeries,
 ]
 
-export const REDISTACK_REQUIRED_MODULES: Array<string | Array<string>> = [
+const REDISTACK_HIGH_VERSION_REQUIRE_MODULES: Array<string | Array<string>> = [
   RedisDefaultModules.ReJSON,
   RedisDefaultModules.Bloom,
   [RedisDefaultModules.Search, RedisDefaultModules.SearchLight],
   RedisDefaultModules.TimeSeries,
 ]
 
-export const REDISTACK_OPTIONAL_MODULES: Array<string> = [
+const REDISTACK_HIGH_VERSION_OPTIONAL_MODULES: Array<string> = [
   RedisDefaultModules.Gears,
 ]
 
@@ -47,15 +49,19 @@ const checkRediStackModules = (modules: any[], required: any[], optional: any[] 
 
 const isRediStack = (modules: any[], version?: Nullable<string>): boolean => {
   if (!version) {
-    return checkRediStackModules(modules, REDISTACK_DEFAULT_MODULES)
+    return checkRediStackModules(modules, REDISTACK_LOW_VERSION_REQUIRE_MODULES)
   }
 
-  if (isVersionHigherOrEquals(version, ServerVersions.SERVER_VERSION)) {
-    return checkRediStackModules(modules, REDISTACK_REQUIRED_MODULES, REDISTACK_OPTIONAL_MODULES)
+  if (isVersionHigherOrEquals(version, REDISTACK_HIGH_VERSION)) {
+    return checkRediStackModules(
+      modules,
+      REDISTACK_HIGH_VERSION_REQUIRE_MODULES,
+      REDISTACK_HIGH_VERSION_OPTIONAL_MODULES
+    )
   }
 
-  if (isVersionHigherOrEquals(version, ServerVersions.MIN_SERVER_VERSION)) {
-    return checkRediStackModules(modules, REDISTACK_DEFAULT_MODULES)
+  if (isVersionHigherOrEquals(version, REDISTACK_LOW_VERSION)) {
+    return checkRediStackModules(modules, REDISTACK_LOW_VERSION_REQUIRE_MODULES)
   }
 
   return false

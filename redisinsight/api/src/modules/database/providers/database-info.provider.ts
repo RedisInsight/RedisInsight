@@ -89,6 +89,20 @@ export class DatabaseInfoProvider {
   }
 
   /**
+   * Determine database server version using "module list" command
+   * @param client
+   */
+  public async determineDatabaseServer(client: any): Promise<string> {
+    try {
+      const reply = convertRedisInfoReplyToObject(await client.call('info', ['server']));
+      return reply['server']?.redis_version;
+    } catch (e) {
+      // continue regardless of error
+    }
+    return null;
+  }
+
+  /**
    * Determine database modules by using "command info" command for each listed (known/supported) module
    * @param client
    * @private

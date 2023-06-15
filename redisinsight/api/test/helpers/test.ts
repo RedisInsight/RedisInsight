@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import * as chai from 'chai';
+import * as nock from 'nock';
 import * as Joi from 'joi';
 import * as AdmZip from 'adm-zip';
 import * as diff from 'object-diff';
@@ -13,7 +14,7 @@ import { cloneDeep, isMatch, isObject, set, isArray } from 'lodash';
 import { generateInvalidDataArray } from './test/dataGenerator';
 import serverConfig from 'src/utils/config';
 
-export { _, path, fs, fsExtra, AdmZip, serverConfig, axios }
+export { _, path, fs, fsExtra, AdmZip, serverConfig, axios, nock }
 export const expect = chai.expect;
 export const testEnv: Record<any, any> = {};
 export { Joi, describe, it, before, after, beforeEach };

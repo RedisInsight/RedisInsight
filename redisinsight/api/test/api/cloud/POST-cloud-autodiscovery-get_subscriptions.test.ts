@@ -1,18 +1,16 @@
 import {
   describe,
-  it,
   deps,
-  validateApiCall,
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  expect,
-  _,
-  Joi,
+  Joi, getMainCheckFn, serverConfig
 } from '../deps';
+import { nock } from '../../helpers/test';
+import { mockCloudApiSubscription, mockCloudSubscription } from 'src/__mocks__/cloud-autodiscovery';
 const { request, server, constants } = deps;
 
-const endpoint = () => request(server).post(`/redis-enterprise/cloud/get-subscriptions`);
+const endpoint = () => request(server).post(`/cloud/autodiscovery/get-subscriptions`);
 
 const dataSchema = Joi.object({
   apiKey: Joi.string().required(),
@@ -33,17 +31,12 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   region: Joi.string(),
 })).required();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
-describe('POST /redis-enterprise/cloud/get-subscriptions', () => {
-  requirements('rte.cloud');
+const nockScope = nock(serverConfig.get('redis_cloud').url);
+
+describe('POST /cloud/autodiscovery/get-subscriptions', () => {
+  requirements('rte.serverType=local');
 
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
@@ -54,17 +47,49 @@ describe('POST /redis-enterprise/cloud/get-subscriptions', () => {
   describe('Common', () => {
     [
       {
+        before: () => {
+          nockScope.get('/subscriptions')
+            .reply(200, { subscriptions: [mockCloudApiSubscription] });
+        },
         name: 'Should get subscriptions list',
         data: {
           apiKey: constants.TEST_CLOUD_API_KEY,
           apiSecretKey: constants.TEST_CLOUD_API_SECRET_KEY,
         },
         responseSchema,
-        checkFn: ({ body }) => {
-          expect(_.findIndex(body, { name: constants.TEST_CLOUD_SUBSCRIPTION_NAME })).to.gte(0);
+        responseBody: [mockCloudSubscription],
+      },
+      {
+        before: () => {
+          nockScope.get('/subscriptions')
+            .reply(403, {
+              response: {
+                status: 403,
+                data: { message: 'Unauthorized for this action' },
+              }
+            });
+        },
+        name: 'Should throw Forbidden error when api returned unauthorized error',
+        data: {
+          apiKey: constants.TEST_CLOUD_API_KEY,
+          apiSecretKey: constants.TEST_CLOUD_API_SECRET_KEY,
+        },
+        statusCode: 403,
+        responseBody: {
+          statusCode: 403,
+          error: 'Forbidden',
         },
       },
       {
+        before: () => {
+          nockScope.get('/subscriptions')
+            .reply(401, {
+              response: {
+                status: 401,
+                data: '',
+              }
+            });
+        },
         name: 'Should throw Forbidden error when api key is incorrect',
         data: {
           apiKey: 'wrong-api-key',
@@ -75,20 +100,6 @@ describe('POST /redis-enterprise/cloud/get-subscriptions', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-
-      },
-      {
-        name: 'Should throw Forbidden error when api secret key is incorrect',
-        data: {
-          apiKey: constants.TEST_CLOUD_API_KEY,
-          apiSecretKey: 'wrong-api-secret-key',
-        },
-        statusCode: 403,
-        responseBody: {
-          statusCode: 403,
-          error: 'Forbidden',
-        },
-
       },
     ].map(mainCheckFn);
   });

@@ -1,19 +1,17 @@
 import {
   describe,
-  it,
-  before,
   deps,
-  validateApiCall,
+  expect,
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  expect,
-  _,
-  Joi,
+  Joi, getMainCheckFn, serverConfig
 } from '../deps';
+import { nock } from '../../helpers/test';
+import { mockCloudApiDatabases, mockCloudDatabaseFromList } from 'src/__mocks__/cloud-autodiscovery';
 const { request, server, constants } = deps;
 
-const endpoint = () => request(server).post(`/redis-enterprise/cloud/get-databases`);
+const endpoint = () => request(server).post(`/cloud/autodiscovery/get-databases`);
 
 const dataSchema = Joi.object({
   apiKey: Joi.string().required(),
@@ -38,17 +36,12 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   options: Joi.object().required(),
 })).required();
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
-describe('POST /redis-enterprise/cloud/get-databases', () => {
-  requirements('rte.cloud');
+const nockScope = nock(serverConfig.get('redis_cloud').url);
+
+describe('POST /cloud/subscriptions/get-databases', () => {
+  requirements('rte.serverType=local');
 
   describe('Validation', () => {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
@@ -59,6 +52,10 @@ describe('POST /redis-enterprise/cloud/get-databases', () => {
   describe('Common', async () => {
     [
       {
+        before: () => {
+          nockScope.get(`/subscriptions/${constants.TEST_CLOUD_SUBSCRIPTION_ID}/databases`)
+            .reply(200, mockCloudApiDatabases);
+        },
         name: 'Should get databases list inside subscription',
         data: {
           apiKey: constants.TEST_CLOUD_API_KEY,
@@ -67,11 +64,20 @@ describe('POST /redis-enterprise/cloud/get-databases', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          const database = _.find(body, { name: constants.TEST_CLOUD_DATABASE_NAME });
-          expect(database.publicEndpoint).to.eql(`${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`);
+
+          expect(body).to.deep.eq([mockCloudDatabaseFromList]);
         },
       },
       {
+        before: () => {
+          nockScope.get(`/subscriptions/${constants.TEST_CLOUD_SUBSCRIPTION_ID}/databases`)
+            .reply(403, {
+              response: {
+                status: 403,
+                data: { message: 'Unauthorized for this action' },
+              }
+            });
+        },
         name: 'Should throw Forbidden error when api key is incorrect',
         data: {
           apiKey: 'wrong-api-key',
@@ -85,6 +91,15 @@ describe('POST /redis-enterprise/cloud/get-databases', () => {
         },
       },
       {
+        before: () => {
+          nockScope.get(`/subscriptions/${constants.TEST_CLOUD_SUBSCRIPTION_ID}/databases`)
+            .reply(401, {
+              response: {
+                status: 401,
+                data: '',
+              }
+            });
+        },
         name: 'Should throw Forbidden error when api secret key is incorrect',
         data: {
           apiKey: constants.TEST_CLOUD_API_KEY,
@@ -98,6 +113,15 @@ describe('POST /redis-enterprise/cloud/get-databases', () => {
         },
       },
       {
+        before: () => {
+          nockScope.get(`/subscriptions/${constants.TEST_CLOUD_SUBSCRIPTION_ID}/databases`)
+            .reply(404, {
+              response: {
+                status: 404,
+                data: 'Subscription is not found',
+              }
+            });
+        },
         name: 'Should throw Not Found error when subscription id is not found',
         data: {
           apiKey: constants.TEST_CLOUD_API_KEY,

@@ -9,29 +9,24 @@ import {
 } from '@nestjs/common';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { ApiTags } from '@nestjs/swagger';
-import { RedisEnterpriseDatabase } from 'src/modules/redis-enterprise/dto/cluster.dto';
-import {
-  CloudAuthDto,
-  GetCloudAccountShortInfoResponse,
-  GetDatabasesInMultipleCloudSubscriptionsDto,
-  GetRedisCloudSubscriptionResponse,
-  RedisCloudDatabase,
-} from 'src/modules/redis-enterprise/dto/cloud.dto';
+import { CloudAccountInfo, CloudDatabase, CloudSubscription } from 'src/modules/cloud/autodiscovery/models';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
-import { RedisCloudService } from 'src/modules/redis-enterprise/redis-cloud.service';
-import {
-  AddMultipleRedisCloudDatabasesDto,
-  AddRedisCloudDatabaseResponse,
-} from 'src/modules/redis-enterprise/dto/redis-enterprise-cloud.dto';
 import { Response } from 'express';
 import { ActionStatus } from 'src/common/models';
 import { BuildType } from 'src/modules/server/models/server';
+import { CloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.service';
+import {
+  AddCloudDatabaseResponse,
+  AddCloudDatabasesDto,
+  CloudAuthDto,
+  GetCloudDatabasesDto,
+} from 'src/modules/cloud/autodiscovery/dto';
 
-@ApiTags('Redis Enterprise Cloud')
+@ApiTags('Cloud Autodiscovery')
 @UsePipes(new ValidationPipe({ transform: true }))
-@Controller('redis-enterprise/cloud')
-export class CloudController {
-  constructor(private redisCloudService: RedisCloudService) {}
+@Controller('cloud/autodiscovery')
+export class CloudAutodiscoveryController {
+  constructor(private service: CloudAutodiscoveryService) {}
 
   @Post('get-account')
   @UseInterceptors(new TimeoutInterceptor())
@@ -43,14 +38,12 @@ export class CloudController {
       {
         status: 200,
         description: 'Account Details.',
-        type: RedisEnterpriseDatabase,
+        type: CloudAccountInfo,
       },
     ],
   })
-  async getAccount(
-    @Body() dto: CloudAuthDto,
-  ): Promise<GetCloudAccountShortInfoResponse> {
-    return await this.redisCloudService.getAccount(dto);
+  async getAccount(@Body() dto: CloudAuthDto): Promise<CloudAccountInfo> {
+    return await this.service.getAccount(dto);
   }
 
   @Post('get-subscriptions')
@@ -63,15 +56,13 @@ export class CloudController {
       {
         status: 200,
         description: 'Redis cloud subscription list.',
-        type: GetRedisCloudSubscriptionResponse,
+        type: CloudSubscription,
         isArray: true,
       },
     ],
   })
-  async getSubscriptions(
-    @Body() dto: CloudAuthDto,
-  ): Promise<GetRedisCloudSubscriptionResponse[]> {
-    return await this.redisCloudService.getSubscriptions(dto);
+  async getSubscriptions(@Body() dto: CloudAuthDto): Promise<CloudSubscription[]> {
+    return await this.service.getSubscriptions(dto);
   }
 
   @Post('get-databases')
@@ -84,17 +75,13 @@ export class CloudController {
       {
         status: 200,
         description: 'Databases list.',
-        type: RedisCloudDatabase,
+        type: CloudDatabase,
         isArray: true,
       },
     ],
   })
-  async getDatabases(
-    @Body() dto: GetDatabasesInMultipleCloudSubscriptionsDto,
-  ): Promise<RedisCloudDatabase[]> {
-    return await this.redisCloudService.getDatabasesInMultipleSubscriptions(
-      dto,
-    );
+  async getDatabases(@Body() dto: GetCloudDatabasesDto): Promise<CloudDatabase[]> {
+    return await this.service.getDatabases(dto);
   }
 
   @Post('databases')
@@ -106,23 +93,23 @@ export class CloudController {
       {
         status: 201,
         description: 'Added databases list.',
-        type: AddRedisCloudDatabaseResponse,
+        type: AddCloudDatabaseResponse,
         isArray: true,
       },
     ],
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   async addRedisCloudDatabases(
-    @Body() dto: AddMultipleRedisCloudDatabasesDto,
+    @Body() dto: AddCloudDatabasesDto,
       @Res() res: Response,
   ): Promise<Response> {
     const { databases, ...connectionDetails } = dto;
-    const result = await this.redisCloudService.addRedisCloudDatabases(
+    const result = await this.service.addRedisCloudDatabases(
       connectionDetails,
       databases,
     );
     const hasSuccessResult = result.some(
-      (addResponse: AddRedisCloudDatabaseResponse) => addResponse.status === ActionStatus.Success,
+      (addResponse: AddCloudDatabaseResponse) => addResponse.status === ActionStatus.Success,
     );
     if (!hasSuccessResult) {
       return res.status(200).json(result);

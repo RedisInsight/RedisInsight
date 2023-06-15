@@ -1,14 +1,14 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller,
+  Controller, Get,
   Post, Res,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiHeaders, ApiTags } from '@nestjs/swagger';
 import { CloudAccountInfo, CloudDatabase, CloudSubscription } from 'src/modules/cloud/autodiscovery/models';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Response } from 'express';
@@ -21,14 +21,20 @@ import {
   CloudAuthDto,
   GetCloudDatabasesDto,
 } from 'src/modules/cloud/autodiscovery/dto';
+import { CloudAuthHeaders } from 'src/modules/cloud/autodiscovery/decorators/cloud-auth.decorator';
 
 @ApiTags('Cloud Autodiscovery')
+@ApiHeaders([{
+  name: 'x-cloud-api-key',
+}, {
+  name: 'x-cloud-api-secret',
+}])
 @UsePipes(new ValidationPipe({ transform: true }))
 @Controller('cloud/autodiscovery')
 export class CloudAutodiscoveryController {
   constructor(private service: CloudAutodiscoveryService) {}
 
-  @Post('get-account')
+  @Get('account')
   @UseInterceptors(new TimeoutInterceptor())
   @ApiEndpoint({
     description: 'Get current account',
@@ -42,11 +48,11 @@ export class CloudAutodiscoveryController {
       },
     ],
   })
-  async getAccount(@Body() dto: CloudAuthDto): Promise<CloudAccountInfo> {
-    return await this.service.getAccount(dto);
+  async getAccount(@CloudAuthHeaders() authDto: CloudAuthDto): Promise<CloudAccountInfo> {
+    return await this.service.getAccount(authDto);
   }
 
-  @Post('get-subscriptions')
+  @Get('subscriptions')
   @UseInterceptors(new TimeoutInterceptor())
   @ApiEndpoint({
     description: 'Get information about current account’s subscriptions.',
@@ -61,11 +67,11 @@ export class CloudAutodiscoveryController {
       },
     ],
   })
-  async getSubscriptions(@Body() dto: CloudAuthDto): Promise<CloudSubscription[]> {
-    return await this.service.getSubscriptions(dto);
+  async getSubscriptions(@CloudAuthHeaders() authDto: CloudAuthDto): Promise<CloudSubscription[]> {
+    return await this.service.getSubscriptions(authDto);
   }
 
-  @Post('get-databases')
+  @Get('databases')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiEndpoint({
     description: 'Get databases belonging to subscriptions',
@@ -80,8 +86,11 @@ export class CloudAutodiscoveryController {
       },
     ],
   })
-  async getDatabases(@Body() dto: GetCloudDatabasesDto): Promise<CloudDatabase[]> {
-    return await this.service.getDatabases(dto);
+  async getDatabases(
+    @CloudAuthHeaders() authDto: CloudAuthDto,
+      @Body() dto: GetCloudDatabasesDto,
+  ): Promise<CloudDatabase[]> {
+    return await this.service.getDatabases(authDto, dto);
   }
 
   @Post('databases')
@@ -100,14 +109,12 @@ export class CloudAutodiscoveryController {
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   async addRedisCloudDatabases(
-    @Body() dto: AddCloudDatabasesDto,
+    @CloudAuthHeaders() authDto: CloudAuthDto,
+      @Body() dto: AddCloudDatabasesDto,
       @Res() res: Response,
   ): Promise<Response> {
-    const { databases, ...connectionDetails } = dto;
-    const result = await this.service.addRedisCloudDatabases(
-      connectionDetails,
-      databases,
-    );
+    const { databases } = dto;
+    const result = await this.service.addRedisCloudDatabases(authDto, databases);
     const hasSuccessResult = result.some(
       (addResponse: AddCloudDatabaseResponse) => addResponse.status === ActionStatus.Success,
     );

@@ -2,8 +2,6 @@ import {
   describe,
   deps,
   requirements,
-  generateInvalidDataTestCases,
-  validateInvalidDataTestCase,
   Joi,
   nock, getMainCheckFn,
   serverConfig,
@@ -11,16 +9,11 @@ import {
 import { mockCloudAccountInfo, mockCloudApiAccount } from 'src/__mocks__/cloud-autodiscovery';
 const { request, server, constants } = deps;
 
-const endpoint = () => request(server).post(`/cloud/autodiscovery/get-account`);
+const endpoint = () => request(server).get(`/cloud/autodiscovery/account`);
 
-const dataSchema = Joi.object({
-  apiKey: Joi.string().required(),
-  apiSecretKey: Joi.string().required(),
-}).strict();
-
-const validInputData = {
-  apiKey: constants.TEST_CLOUD_API_KEY,
-  apiSecretKey: constants.TEST_CLOUD_API_SECRET_KEY,
+const headers = {
+  'x-cloud-api-key': constants.TEST_CLOUD_API_KEY,
+  'x-cloud-api-secret': constants.TEST_CLOUD_API_SECRET_KEY,
 }
 
 const responseSchema = Joi.object().keys({
@@ -34,14 +27,8 @@ const mainCheckFn = getMainCheckFn(endpoint);
 
 const nockScope = nock(serverConfig.get('redis_cloud').url);
 
-describe('POST /cloud/autodiscovery/get-account', () => {
+describe('GET /cloud/autodiscovery/account', () => {
   requirements('rte.serverType=local');
-
-  describe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
-      validateInvalidDataTestCase(endpoint, dataSchema),
-    );
-  });
 
   describe('Common', () => {
     [
@@ -51,10 +38,7 @@ describe('POST /cloud/autodiscovery/get-account', () => {
             .reply(200, { account: mockCloudApiAccount });
         },
         name: 'Should get account info',
-        data: {
-          apiKey: constants.TEST_CLOUD_API_KEY,
-          apiSecretKey: constants.TEST_CLOUD_API_SECRET_KEY,
-        },
+        headers,
         responseSchema,
         responseBody: mockCloudAccountInfo,
       },
@@ -68,11 +52,8 @@ describe('POST /cloud/autodiscovery/get-account', () => {
               }
             });
         },
-        name: 'Should throw Forbidden error when api returned unauthorized error',
-        data: {
-          apiKey: constants.TEST_CLOUD_API_KEY,
-          apiSecretKey: constants.TEST_CLOUD_API_SECRET_KEY,
-        },
+        name: 'Should throw Forbidden error when api returned 403 error',
+        headers,
         statusCode: 403,
         responseBody: {
           statusCode: 403,
@@ -89,15 +70,22 @@ describe('POST /cloud/autodiscovery/get-account', () => {
               }
             });
         },
-        name: 'Should throw Forbidden error when api key is incorrect',
-        data: {
-          apiKey: 'wrong-api-key',
-          apiSecretKey: constants.TEST_CLOUD_API_SECRET_KEY,
-        },
+        name: 'Should throw Forbidden error when api returns 401 error',
+        headers,
         statusCode: 403,
         responseBody: {
           statusCode: 403,
           error: 'Forbidden',
+        },
+      },
+      {
+        name: 'Should throw Unauthorized error when api key or secret was not provided',
+        headers: {},
+        statusCode: 401,
+        responseBody: {
+          statusCode: 401,
+          error: 'Unauthorized',
+          message: 'Required authentication credentials were not provided',
         },
       },
     ].map(mainCheckFn);

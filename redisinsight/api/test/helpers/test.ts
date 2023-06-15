@@ -26,6 +26,7 @@ interface ITestCaseInput {
   endpoint: Function; // function that returns prepared supertest with url
   data?: any;
   attach?: any[];
+  headers?: Record<string, string>;
   fields?: [string, string][];
   query?: any;
   statusCode?: number;
@@ -43,6 +44,7 @@ interface ITestCaseInput {
 export const validateApiCall = async function ({
   endpoint,
   data,
+  headers,
   attach,
   fields,
   query,
@@ -56,6 +58,10 @@ export const validateApiCall = async function ({
   // data to send with POST, PUT etc
   if (data) {
     request.send(typeof data === 'function' ? data() : data);
+  }
+
+  if (headers) {
+    request.set(headers);
   }
 
   if (attach) {
@@ -186,16 +192,19 @@ const badRequestCheckFn = (schema, data) => {
  * @param schema
  * @param validData
  * @param target
+ * @param extra
  */
 export const generateInvalidDataTestCases = (
   schema,
   validData,
   target = 'data',
+  extra: any = {},
 ) => {
   return generateInvalidDataArray(schema).map(({ path, value }) => {
     return {
       name: `Validation error when ${target}: ${path.join('.')} = "${value}"`,
       [target]: path?.length ? set(cloneDeep(validData), path, value) : value,
+      ...extra,
     };
   });
 };

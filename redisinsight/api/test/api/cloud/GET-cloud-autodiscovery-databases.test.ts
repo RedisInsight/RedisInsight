@@ -11,18 +11,19 @@ import { nock } from '../../helpers/test';
 import { mockCloudApiDatabases, mockCloudDatabaseFromList } from 'src/__mocks__/cloud-autodiscovery';
 const { request, server, constants } = deps;
 
-const endpoint = () => request(server).post(`/cloud/autodiscovery/get-databases`);
+const endpoint = () => request(server).get(`/cloud/autodiscovery/databases`);
 
 const dataSchema = Joi.object({
-  apiKey: Joi.string().required(),
-  apiSecretKey: Joi.string().required(),
   subscriptionIds: Joi.number().allow(true).required(), // todo: review transform rules
 }).strict();
 
 const validInputData = {
-  apiKey: constants.TEST_CLOUD_API_KEY,
-  apiSecretKey: constants.TEST_CLOUD_API_SECRET_KEY,
   subscriptionIds: 1
+}
+
+const headers = {
+  'x-cloud-api-key': constants.TEST_CLOUD_API_KEY,
+  'x-cloud-api-secret': constants.TEST_CLOUD_API_SECRET_KEY,
 }
 
 const responseSchema = Joi.array().items(Joi.object().keys({
@@ -40,11 +41,11 @@ const mainCheckFn = getMainCheckFn(endpoint);
 
 const nockScope = nock(serverConfig.get('redis_cloud').url);
 
-describe('POST /cloud/subscriptions/get-databases', () => {
+describe('GET /cloud/subscriptions/databases', () => {
   requirements('rte.serverType=local');
 
   describe('Validation', () => {
-    generateInvalidDataTestCases(dataSchema, validInputData).map(
+    generateInvalidDataTestCases(dataSchema, validInputData, 'data', { headers }).map(
       validateInvalidDataTestCase(endpoint, dataSchema),
     );
   });
@@ -58,10 +59,9 @@ describe('POST /cloud/subscriptions/get-databases', () => {
         },
         name: 'Should get databases list inside subscription',
         data: {
-          apiKey: constants.TEST_CLOUD_API_KEY,
-          apiSecretKey: constants.TEST_CLOUD_API_SECRET_KEY,
           subscriptionIds: [constants.TEST_CLOUD_SUBSCRIPTION_ID]
         },
+        headers,
         responseSchema,
         checkFn: ({ body }) => {
 
@@ -78,10 +78,9 @@ describe('POST /cloud/subscriptions/get-databases', () => {
               }
             });
         },
-        name: 'Should throw Forbidden error when api key is incorrect',
+        name: 'Should throw Forbidden error when api returns 403',
+        headers,
         data: {
-          apiKey: 'wrong-api-key',
-          apiSecretKey: constants.TEST_CLOUD_API_SECRET_KEY,
           subscriptionIds: [constants.TEST_CLOUD_SUBSCRIPTION_ID]
         },
         statusCode: 403,
@@ -100,10 +99,9 @@ describe('POST /cloud/subscriptions/get-databases', () => {
               }
             });
         },
-        name: 'Should throw Forbidden error when api secret key is incorrect',
+        name: 'Should throw Forbidden error when api returns 401',
+        headers,
         data: {
-          apiKey: constants.TEST_CLOUD_API_KEY,
-          apiSecretKey: 'wrong-api-secret-key',
           subscriptionIds: [constants.TEST_CLOUD_SUBSCRIPTION_ID]
         },
         statusCode: 403,
@@ -123,9 +121,8 @@ describe('POST /cloud/subscriptions/get-databases', () => {
             });
         },
         name: 'Should throw Not Found error when subscription id is not found',
+        headers,
         data: {
-          apiKey: constants.TEST_CLOUD_API_KEY,
-          apiSecretKey: constants.TEST_CLOUD_API_SECRET_KEY,
           subscriptionIds: [1]
         },
         statusCode: 404,
@@ -133,7 +130,16 @@ describe('POST /cloud/subscriptions/get-databases', () => {
           statusCode: 404,
           error: 'Not Found',
         },
-
+      },
+      {
+        name: 'Should throw Unauthorized error when api key or secret was not provided',
+        headers: {},
+        statusCode: 401,
+        responseBody: {
+          statusCode: 401,
+          error: 'Unauthorized',
+          message: 'Required authentication credentials were not provided',
+        },
       },
     ].map(mainCheckFn);
   });

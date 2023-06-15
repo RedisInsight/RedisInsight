@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined, IsInt } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { CloudAuthDto } from 'src/modules/cloud/autodiscovery/dto/cloud-auth.dto';
 
-export class GetCloudDatabasesDto extends CloudAuthDto {
+export class GetCloudDatabasesDto {
   @ApiProperty({
     description: 'Subscription Ids',
     type: Number,

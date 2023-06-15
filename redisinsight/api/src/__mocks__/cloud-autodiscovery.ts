@@ -173,7 +173,7 @@ export const mockCloudApiDatabases = {
 
 export const mockCloudAuthDto: CloudAuthDto = {
   apiKey: 'api_key',
-  apiSecretKey: 'api_secret_key',
+  apiSecret: 'api_secret_key',
 };
 
 export const mockCloudAutodiscoveryAnalytics = jest.fn(() => ({

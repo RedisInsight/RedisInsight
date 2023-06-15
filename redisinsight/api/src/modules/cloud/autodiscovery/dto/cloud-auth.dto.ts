@@ -18,5 +18,5 @@ export class CloudAuthDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString({ always: true })
-  apiSecretKey: string;
+  apiSecret: string;
 }

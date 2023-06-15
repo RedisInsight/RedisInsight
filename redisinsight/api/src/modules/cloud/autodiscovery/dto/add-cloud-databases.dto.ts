@@ -3,10 +3,9 @@ import {
   ArrayNotEmpty, IsArray, IsDefined, ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CloudAuthDto } from 'src/modules/cloud/autodiscovery/dto/cloud-auth.dto';
 import { AddCloudDatabaseDto } from 'src/modules/cloud/autodiscovery/dto/add-cloud-database.dto';
 
-export class AddCloudDatabasesDto extends CloudAuthDto {
+export class AddCloudDatabasesDto {
   @ApiProperty({
     description: 'Cloud databases list.',
     type: AddCloudDatabaseDto,

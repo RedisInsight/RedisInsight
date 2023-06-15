@@ -51,13 +51,13 @@ export class CloudAutodiscoveryService {
   /**
    * Generates auth headers to attach to the request
    * @param apiKey
-   * @param apiSecretKey
+   * @param apiSecret
    * @private
    */
-  static getAuthHeaders(apiKey: string, apiSecretKey: string) {
+  static getAuthHeaders(apiKey: string, apiSecret: string) {
     return {
       'x-api-key': apiKey,
-      'x-api-secret-key': apiSecretKey,
+      'x-api-secret-key': apiSecret,
     };
   }
 
@@ -95,16 +95,16 @@ export class CloudAutodiscoveryService {
 
   /**
    * Get cloud account short info
-   * @param dto
+   * @param authDto
    */
-  async getAccount(dto: CloudAuthDto): Promise<CloudAccountInfo> {
+  async getAccount(authDto: CloudAuthDto): Promise<CloudAccountInfo> {
     this.logger.log('Getting cloud account.');
-    const { apiKey, apiSecretKey } = dto;
+    const { apiKey, apiSecret } = authDto;
     try {
       const {
         data: { account },
       }: AxiosResponse = await this.api.get(`${this.config.url}/`, {
-        headers: CloudAutodiscoveryService.getAuthHeaders(apiKey, apiSecretKey),
+        headers: CloudAutodiscoveryService.getAuthHeaders(apiKey, apiSecret),
       });
 
       this.logger.log('Succeed to get RE cloud account.');
@@ -117,18 +117,18 @@ export class CloudAutodiscoveryService {
 
   /**
    * Get list of account subscriptions
-   * @param dto
+   * @param authDto
    */
-  async getSubscriptions(dto: CloudAuthDto): Promise<CloudSubscription[]> {
+  async getSubscriptions(authDto: CloudAuthDto): Promise<CloudSubscription[]> {
     this.logger.log('Getting RE cloud subscriptions.');
-    const { apiKey, apiSecretKey } = dto;
+    const { apiKey, apiSecret } = authDto;
     try {
       const {
         data: { subscriptions },
       }: AxiosResponse = await this.api.get(
         `${this.config.url}/subscriptions`,
         {
-          headers: CloudAutodiscoveryService.getAuthHeaders(apiKey, apiSecretKey),
+          headers: CloudAutodiscoveryService.getAuthHeaders(apiKey, apiSecret),
         },
       );
       this.logger.log('Succeed to get RE cloud subscriptions.');
@@ -144,12 +144,15 @@ export class CloudAutodiscoveryService {
 
   /**
    * Get single database details
+   * @param authDto
    * @param dto
    */
-  async getSubscriptionDatabase(dto: GetCloudSubscriptionDatabaseDto): Promise<CloudDatabase> {
-    const {
-      apiKey, apiSecretKey, subscriptionId, databaseId,
-    } = dto;
+  async getSubscriptionDatabase(
+    authDto: CloudAuthDto,
+    dto: GetCloudSubscriptionDatabaseDto,
+  ): Promise<CloudDatabase> {
+    const { apiKey, apiSecret } = authDto;
+    const { subscriptionId, databaseId } = dto;
     this.logger.log(
       `Getting database in RE cloud subscription. subscription id: ${subscriptionId}, database id: ${databaseId}`,
     );
@@ -157,7 +160,7 @@ export class CloudAutodiscoveryService {
       const { data }: AxiosResponse = await this.api.get(
         `${this.config.url}/subscriptions/${subscriptionId}/databases/${databaseId}`,
         {
-          headers: CloudAutodiscoveryService.getAuthHeaders(apiKey, apiSecretKey),
+          headers: CloudAutodiscoveryService.getAuthHeaders(apiKey, apiSecret),
         },
       );
       this.logger.log('Succeed to get databases in RE cloud subscription.');
@@ -179,10 +182,15 @@ export class CloudAutodiscoveryService {
 
   /**
    * Get list of databases for subscription
+   * @param authDto
    * @param dto
    */
-  async getSubscriptionDatabases(dto: GetCloudSubscriptionDatabasesDto): Promise<CloudDatabase[]> {
-    const { apiKey, apiSecretKey, subscriptionId } = dto;
+  async getSubscriptionDatabases(
+    authDto: CloudAuthDto,
+    dto: GetCloudSubscriptionDatabasesDto,
+  ): Promise<CloudDatabase[]> {
+    const { apiKey, apiSecret } = authDto;
+    const { subscriptionId } = dto;
     this.logger.log(
       `Getting databases in RE cloud subscription. subscription id: ${subscriptionId}`,
     );
@@ -190,7 +198,7 @@ export class CloudAutodiscoveryService {
       const { data }: AxiosResponse = await this.api.get(
         `${this.config.url}/subscriptions/${subscriptionId}/databases`,
         {
-          headers: CloudAutodiscoveryService.getAuthHeaders(apiKey, apiSecretKey),
+          headers: CloudAutodiscoveryService.getAuthHeaders(apiKey, apiSecret),
         },
       );
       this.logger.log('Succeed to get databases in RE cloud subscription.');
@@ -216,19 +224,20 @@ export class CloudAutodiscoveryService {
 
   /**
    * Get get all databases from specified multiple subscriptions
+   * @param authDto
    * @param dto
    */
-  async getDatabases(dto: GetCloudDatabasesDto): Promise<CloudDatabase[]> {
-    const { apiKey, apiSecretKey } = dto;
+  async getDatabases(
+    authDto: CloudAuthDto,
+    dto: GetCloudDatabasesDto,
+  ): Promise<CloudDatabase[]> {
     const subscriptionIds = uniq(dto.subscriptionIds);
     this.logger.log('Getting databases in RE cloud subscriptions.');
     let result = [];
     try {
       await Promise.all(
         subscriptionIds.map(async (subscriptionId: number) => {
-          const databases = await this.getSubscriptionDatabases({
-            apiKey,
-            apiSecretKey,
+          const databases = await this.getSubscriptionDatabases(authDto, {
             subscriptionId,
           });
           result = [...result, ...databases];
@@ -243,7 +252,7 @@ export class CloudAutodiscoveryService {
   }
 
   async addRedisCloudDatabases(
-    auth: CloudAuthDto,
+    authDto: CloudAuthDto,
     addDatabasesDto: AddCloudDatabaseDto[],
   ): Promise<AddCloudDatabaseResponse[]> {
     this.logger.log('Adding Redis Cloud databases.');
@@ -254,8 +263,7 @@ export class CloudAutodiscoveryService {
           async (
             dto: AddCloudDatabaseResponse,
           ): Promise<AddCloudDatabaseResponse> => {
-            const database = await this.getSubscriptionDatabase({
-              ...auth,
+            const database = await this.getSubscriptionDatabase(authDto, {
               ...dto,
             });
             try {

@@ -30,6 +30,6 @@ describe('Analytics', () => {
     expect(found?.properties?.appVersion).to.be.a('string');
     expect(found?.properties?.osPlatform).to.be.a('string');
     expect(found?.properties?.buildType).to.be.a('string');
-    expect(found?.properties?.port).to.be.a('string');
+    expect(found?.properties?.port).to.be.a('number');
   });
 });

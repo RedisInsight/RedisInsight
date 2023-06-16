@@ -63,7 +63,7 @@ export class ServerService implements OnApplicationBootstrap {
           appVersion: SERVER_CONFIG.appVersion,
           osPlatform: process.platform,
           buildType: SERVER_CONFIG.buildType,
-          port: SERVER_CONFIG.port,
+          port: process.env.API_PORT || SERVER_CONFIG.port,
         },
         nonTracking: true,
       });

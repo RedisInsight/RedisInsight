@@ -15,6 +15,10 @@ const ipcHandler = {
 }
 
 contextBridge.exposeInMainWorld('app', {
+  // Send data from main to render
+  sendWindowId: ((windowId: any) => {
+    ipcRenderer.on('sendWindowId', windowId)
+  }),
   ipc: ipcHandler,
   config: {
     apiPort: config.apiPort

@@ -21,7 +21,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint --ext .ts .",
     "start": "nest start",
-    "start:dev": "cross-env NODE_ENV=development SERVER_STATIC_CONTENT=1 nest start --watch",
+    "start:dev": "cross-env NODE_ENV=development BUILD_TYPE=DOCKER_ON_PREMISE SERVER_STATIC_CONTENT=1 nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:stage": "cross-env NODE_ENV=staging SERVER_STATIC_CONTENT=true node dist/src/main",
     "start:prod": "cross-env NODE_ENV=production node dist/src/main",

@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
-import { NestApplicationOptions } from '@nestjs/common';
+import { INestApplication, NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
@@ -14,7 +14,12 @@ import LOGGER_CONFIG from '../config/logger';
 
 const serverConfig = get('server');
 
-export default async function bootstrap(): Promise<Function> {
+interface IApp {
+  app: INestApplication
+  gracefulShutdown: Function
+}
+
+export default async function bootstrap(): Promise<IApp> {
   await migrateHomeFolder();
 
   const port = process.env.API_PORT || serverConfig.port;
@@ -67,7 +72,7 @@ export default async function bootstrap(): Promise<Function> {
   process.on('SIGTERM', gracefulShutdown);
   process.on('SIGINT', gracefulShutdown);
 
-  return gracefulShutdown;
+  return { app, gracefulShutdown };
 }
 
 if (process.env.APP_ENV !== 'electron') {

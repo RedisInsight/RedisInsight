@@ -29,6 +29,10 @@ export const requestInterceptor = (config: AxiosRequestConfig) => {
         config.headers['ri-db-index'] = dbIndex
       }
     }
+
+    if (window.windowId) {
+      config.headers['ri-window-id'] = window.windowId
+    }
   }
 
   return config

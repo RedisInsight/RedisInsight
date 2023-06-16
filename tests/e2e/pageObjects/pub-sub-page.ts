@@ -48,6 +48,8 @@ export class PubSubPage extends InstancePage {
      */
     async subsribeToChannelAndPublishMessage(channel: string, message: string): Promise<void> {
         await t.click(this.subscribeButton);
+        // Wait for pubsub loading
+        await t.wait(1000);
         await this.publishMessage(channel, message);
         await t.expect((this.pubSubPageContainer.find('[data-testid^=row]').withText('message')).exists).ok('Message is not displayed');
     }

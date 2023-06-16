@@ -26,7 +26,7 @@ describe('Analytics', () => {
       fail('APPLICATION_STARTED or APPLICATION_FIRST_START events were not found');
     }
 
-    expect(found?.properties).to.have.all.keys('appVersion', 'osPlatform', 'buildType', 'controlNumber', 'controlGroup');
+    expect(found?.properties).to.have.all.keys('appVersion', 'osPlatform', 'buildType', 'controlNumber', 'controlGroup', 'port');
     expect(found?.properties?.appVersion).to.be.a('string');
     expect(found?.properties?.osPlatform).to.be.a('string');
     expect(found?.properties?.buildType).to.be.a('string');

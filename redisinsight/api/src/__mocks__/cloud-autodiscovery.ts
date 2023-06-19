@@ -195,8 +195,11 @@ export const mockCloudDatabaseFromList = Object.assign(new CloudDatabase(), {
 });
 
 export const mockCloudDatabaseFromListFixed = Object.assign(new CloudDatabase(), {
-  ...mockCloudDatabaseFromList,
-  subscriptionType: mockCloudDatabaseFixed.subscriptionType,
+  ...mockCloudDatabaseFixed,
+  options: {
+    ...mockCloudDatabaseFixed.options,
+    isReplicaSource: false,
+  },
 });
 
 export const mockCloudApiSubscriptionDatabases = {
@@ -212,7 +215,10 @@ export const mockCloudApiSubscriptionDatabases = {
 
 export const mockCloudApiSubscriptionDatabasesFixed = {
   ...mockCloudApiSubscriptionDatabases,
-  subscription: mockCloudApiSubscriptionDatabases.subscription[0],
+  subscription: {
+    ...mockCloudApiSubscriptionDatabases.subscription[0],
+    databases: [mockCloudApiDatabaseFixed],
+  },
 };
 
 export const mockCloudAuthDto: CloudAuthDto = {

@@ -8,7 +8,6 @@ import {
 } from '../deps';
 const { analytics } = deps;
 
-
 describe('Analytics', () => {
   requirements('rte.serverType=local');
 
@@ -28,7 +27,7 @@ describe('Analytics', () => {
     const found = appStarted || appFirstStarted;
 
     if (!found) {
-      fail('APPLICATION_STARTED or APPLICATION_FIRST_START events were not found');
+      expect.fail('APPLICATION_STARTED or APPLICATION_FIRST_START events were not found');
     }
 
     expect(found?.properties).to.have.all.keys('appVersion', 'osPlatform', 'buildType', 'controlNumber', 'controlGroup', 'port');

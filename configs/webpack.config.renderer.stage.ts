@@ -10,6 +10,8 @@ DeleteSourceMaps();
 export default merge(baseConfig, {
   ...rendererProdConfig,
 
+  devtool: 'source-map',
+
   plugins: [
     ...rendererProdConfig.plugins,
 

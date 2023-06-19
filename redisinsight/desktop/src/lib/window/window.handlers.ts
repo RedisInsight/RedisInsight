@@ -12,7 +12,8 @@ import { ElectronStorageItem } from 'uiSrc/electron/constants'
 export const initWindowHandlers = (
   newWindow: BrowserWindow,
   splash: BrowserWindow | null = null,
-  windows: Map<string, BrowserWindow>
+  windows: Map<string, BrowserWindow>,
+  id: string
 ) => {
   const tray = getTray()
   const trayInstance = getTrayInstance()
@@ -21,6 +22,9 @@ export const initWindowHandlers = (
     if (!newWindow) {
       throw new Error('"newWindow" is not defined')
     }
+
+    // set up windowId to preload.js
+    newWindow.webContents.send('sendWindowId', id)
 
     const zoomFactor = (electronStore?.get(ElectronStorageItem.zoomFactor) as number) ?? null
     if (zoomFactor) {

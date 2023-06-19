@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsInt, IsNotEmpty } from 'class-validator';
+import {
+  IsDefined, IsEnum, IsInt, IsNotEmpty,
+} from 'class-validator';
 import { Type } from 'class-transformer';
+import { CloudSubscriptionType } from 'src/modules/cloud/autodiscovery/models';
 
 export class GetCloudSubscriptionDatabaseDto {
   @ApiProperty({
@@ -12,6 +15,10 @@ export class GetCloudSubscriptionDatabaseDto {
   @IsInt({ always: true })
   @Type(() => Number)
   subscriptionId: number;
+
+  @IsEnum(CloudSubscriptionType)
+  @IsNotEmpty()
+  subscriptionType: CloudSubscriptionType;
 
   @ApiProperty({
     description: 'Database Id',

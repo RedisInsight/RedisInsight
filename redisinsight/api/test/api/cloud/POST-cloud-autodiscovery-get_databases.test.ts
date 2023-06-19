@@ -5,20 +5,37 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  Joi, getMainCheckFn, serverConfig
+  Joi, getMainCheckFn, serverConfig,
 } from '../deps';
 import { nock } from '../../helpers/test';
-import { mockCloudApiDatabases, mockCloudDatabaseFromList } from 'src/__mocks__/cloud-autodiscovery';
+import {
+  mockCloudApiSubscriptionDatabases,
+  mockCloudApiSubscriptionDatabasesFixed,
+  mockCloudDatabaseFromList,
+  mockCloudDatabaseFromListFixed,
+  mockGetCloudSubscriptionDatabasesDto,
+  mockGetCloudSubscriptionDatabasesDtoFixed,
+} from 'src/__mocks__/cloud-autodiscovery';
 const { request, server, constants } = deps;
 
-const endpoint = () => request(server).get(`/cloud/autodiscovery/databases`);
+const endpoint = () => request(server).post(`/cloud/autodiscovery/get-databases`);
 
 const dataSchema = Joi.object({
-  subscriptionIds: Joi.number().allow(true).required(), // todo: review transform rules
+  subscriptions: Joi.array().items({
+    subscriptionId: Joi.number().allow(true).required().label('.subscriptionId'), // todo: review transform rules
+    subscriptionType: Joi.string().valid('fixed', 'flexible').required().label('subscriptionType'),
+  }).required().messages({
+    'any.required': '{#label} should not be empty',
+    'array.sparse': '{#label} must be either object or array',
+    'array.base': 'property {#label} must be either object or array',
+  }),
 }).strict();
 
 const validInputData = {
-  subscriptionIds: 1
+  subscriptions: [{
+    subscriptionId: constants.TEST_CLOUD_SUBSCRIPTION_ID,
+    subscriptionType: 'fixed',
+  }]
 }
 
 const headers = {
@@ -28,6 +45,7 @@ const headers = {
 
 const responseSchema = Joi.array().items(Joi.object().keys({
   subscriptionId: Joi.number().required(),
+  subscriptionType: Joi.string().valid('fixed', 'flexible').required(),
   databaseId: Joi.number().required(),
   name: Joi.string().required(),
   publicEndpoint: Joi.string().required(),
@@ -41,7 +59,7 @@ const mainCheckFn = getMainCheckFn(endpoint);
 
 const nockScope = nock(serverConfig.get('redis_cloud').url);
 
-describe('GET /cloud/subscriptions/databases', () => {
+describe('POST /cloud/subscriptions/get-databases', () => {
   requirements('rte.serverType=local');
 
   describe('Validation', () => {
@@ -54,23 +72,37 @@ describe('GET /cloud/subscriptions/databases', () => {
     [
       {
         before: () => {
-          nockScope.get(`/subscriptions/${constants.TEST_CLOUD_SUBSCRIPTION_ID}/databases`)
-            .reply(200, mockCloudApiDatabases);
+          nockScope.get(`/subscriptions/${mockGetCloudSubscriptionDatabasesDto.subscriptionId}/databases`)
+            .reply(200, mockCloudApiSubscriptionDatabases);
         },
         name: 'Should get databases list inside subscription',
         data: {
-          subscriptionIds: [constants.TEST_CLOUD_SUBSCRIPTION_ID]
+          subscriptions: [mockGetCloudSubscriptionDatabasesDto]
         },
         headers,
         responseSchema,
         checkFn: ({ body }) => {
-
           expect(body).to.deep.eq([mockCloudDatabaseFromList]);
         },
       },
       {
         before: () => {
-          nockScope.get(`/subscriptions/${constants.TEST_CLOUD_SUBSCRIPTION_ID}/databases`)
+          nockScope.get(`/fixed/subscriptions/${mockGetCloudSubscriptionDatabasesDtoFixed.subscriptionId}/databases`)
+            .reply(200, mockCloudApiSubscriptionDatabasesFixed);
+        },
+        name: 'Should get databases list inside fixed subscription',
+        data: {
+          subscriptions: [mockGetCloudSubscriptionDatabasesDtoFixed]
+        },
+        headers,
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body).to.deep.eq([mockCloudDatabaseFromListFixed]);
+        },
+      },
+      {
+        before: () => {
+          nockScope.get(`/subscriptions/${mockGetCloudSubscriptionDatabasesDto.subscriptionId}/databases`)
             .reply(403, {
               response: {
                 status: 403,
@@ -81,7 +113,7 @@ describe('GET /cloud/subscriptions/databases', () => {
         name: 'Should throw Forbidden error when api returns 403',
         headers,
         data: {
-          subscriptionIds: [constants.TEST_CLOUD_SUBSCRIPTION_ID]
+          subscriptions: [mockGetCloudSubscriptionDatabasesDto]
         },
         statusCode: 403,
         responseBody: {
@@ -91,7 +123,7 @@ describe('GET /cloud/subscriptions/databases', () => {
       },
       {
         before: () => {
-          nockScope.get(`/subscriptions/${constants.TEST_CLOUD_SUBSCRIPTION_ID}/databases`)
+          nockScope.get(`/subscriptions/${mockGetCloudSubscriptionDatabasesDto.subscriptionId}/databases`)
             .reply(401, {
               response: {
                 status: 401,
@@ -102,7 +134,7 @@ describe('GET /cloud/subscriptions/databases', () => {
         name: 'Should throw Forbidden error when api returns 401',
         headers,
         data: {
-          subscriptionIds: [constants.TEST_CLOUD_SUBSCRIPTION_ID]
+          subscriptions: [mockGetCloudSubscriptionDatabasesDto]
         },
         statusCode: 403,
         responseBody: {
@@ -112,7 +144,7 @@ describe('GET /cloud/subscriptions/databases', () => {
       },
       {
         before: () => {
-          nockScope.get(`/subscriptions/${constants.TEST_CLOUD_SUBSCRIPTION_ID}/databases`)
+          nockScope.get(`/subscriptions/${mockGetCloudSubscriptionDatabasesDto.subscriptionId}/databases`)
             .reply(404, {
               response: {
                 status: 404,
@@ -123,7 +155,7 @@ describe('GET /cloud/subscriptions/databases', () => {
         name: 'Should throw Not Found error when subscription id is not found',
         headers,
         data: {
-          subscriptionIds: [1]
+          subscriptions: [mockGetCloudSubscriptionDatabasesDto]
         },
         statusCode: 404,
         responseBody: {

@@ -8,6 +8,11 @@ export enum CloudSubscriptionStatus {
   Error = 'error',
 }
 
+export enum CloudSubscriptionType {
+  Flexible = 'flexible',
+  Fixed = 'fixed',
+}
+
 export class CloudSubscription {
   @ApiProperty({
     description: 'Subscription id',
@@ -20,6 +25,12 @@ export class CloudSubscription {
     type: String,
   })
   name: string;
+
+  @ApiProperty({
+    description: 'Subscription type',
+    enum: CloudSubscriptionType,
+  })
+  type: CloudSubscriptionType;
 
   @ApiProperty({
     description: 'Number of databases in subscription',

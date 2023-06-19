@@ -61,13 +61,15 @@ export interface ICloudApiDatabase {
   alerts: ICloudApiAlert[];
 }
 
+export interface ICloudApiSubscriptionDatabasesSubscription {
+  subscriptionId: number;
+  numberOfDatabases: number;
+  databases: ICloudApiDatabase[];
+}
+
 export interface ICloudApiSubscriptionDatabases {
   accountId: number;
-  subscription: {
-    subscriptionId: number;
-    numberOfDatabases: number;
-    databases: ICloudApiDatabase[];
-  }[];
+  subscription: ICloudApiSubscriptionDatabasesSubscription | ICloudApiSubscriptionDatabasesSubscription[];
 }
 
 // Account interfaces

@@ -3,9 +3,15 @@ import {
   CloudDatabase, CloudDatabaseProtocol,
   CloudDatabaseStatus,
   CloudSubscription,
-  CloudSubscriptionStatus, ICloudApiAccount, ICloudApiDatabase, ICloudApiSubscription,
+  CloudSubscriptionStatus, CloudSubscriptionType, ICloudApiAccount, ICloudApiDatabase, ICloudApiSubscription,
 } from 'src/modules/cloud/autodiscovery/models';
-import { CloudAuthDto } from 'src/modules/cloud/autodiscovery/dto';
+import {
+  AddCloudDatabaseDto, AddCloudDatabaseResponse,
+  CloudAuthDto,
+  GetCloudSubscriptionDatabaseDto,
+  GetCloudSubscriptionDatabasesDto,
+} from 'src/modules/cloud/autodiscovery/dto';
+import { ActionStatus } from 'src/common/models';
 
 export const mockCloudApiAccount: ICloudApiAccount = {
   id: 40131,
@@ -76,11 +82,17 @@ export const mockCloudApiSubscription: ICloudApiSubscription = {
 
 export const mockCloudSubscription = Object.assign(new CloudSubscription(), {
   id: mockCloudApiSubscription.id,
+  type: CloudSubscriptionType.Flexible,
   name: mockCloudApiSubscription.name,
   numberOfDatabases: mockCloudApiSubscription.numberOfDatabases,
   provider: mockCloudApiSubscription.cloudDetails[0].provider,
   region: mockCloudApiSubscription.cloudDetails[0].regions[0].region,
   status: mockCloudApiSubscription.status,
+});
+
+export const mockCloudSubscriptionFixed = Object.assign(new CloudSubscription(), {
+  ...mockCloudSubscription,
+  type: CloudSubscriptionType.Fixed,
 });
 
 export const mockCloudApiDatabase: ICloudApiDatabase = {
@@ -135,6 +147,7 @@ export const mockCloudApiDatabase: ICloudApiDatabase = {
 
 export const mockCloudDatabase = Object.assign(new CloudDatabase(), {
   subscriptionId: mockCloudSubscription.id,
+  subscriptionType: CloudSubscriptionType.Flexible,
   databaseId: mockCloudApiDatabase.databaseId,
   name: mockCloudApiDatabase.name,
   publicEndpoint: mockCloudApiDatabase.publicEndpoint,
@@ -152,6 +165,11 @@ export const mockCloudDatabase = Object.assign(new CloudDatabase(), {
   },
 });
 
+export const mockCloudDatabaseFixed = Object.assign(new CloudDatabase(), {
+  ...mockCloudDatabase,
+  subscriptionType: CloudSubscriptionType.Fixed,
+});
+
 export const mockCloudDatabaseFromList = Object.assign(new CloudDatabase(), {
   ...mockCloudDatabase,
   options: {
@@ -160,7 +178,12 @@ export const mockCloudDatabaseFromList = Object.assign(new CloudDatabase(), {
   },
 });
 
-export const mockCloudApiDatabases = {
+export const mockCloudDatabaseFromListFixed = Object.assign(new CloudDatabase(), {
+  ...mockCloudDatabaseFromList,
+  subscriptionType: mockCloudDatabaseFixed.subscriptionType,
+});
+
+export const mockCloudApiSubscriptionDatabases = {
   accountId: mockCloudAccountInfo.accountId,
   subscription: [
     {
@@ -171,10 +194,54 @@ export const mockCloudApiDatabases = {
   ],
 };
 
+export const mockCloudApiSubscriptionDatabasesFixed = {
+  ...mockCloudApiSubscriptionDatabases,
+  subscription: mockCloudApiSubscriptionDatabases.subscription[0],
+};
+
 export const mockCloudAuthDto: CloudAuthDto = {
   apiKey: 'api_key',
   apiSecret: 'api_secret_key',
 };
+
+export const mockGetCloudSubscriptionDatabasesDto = Object.assign(new GetCloudSubscriptionDatabasesDto(), {
+  subscriptionId: mockCloudSubscription.id,
+  subscriptionType: mockCloudSubscription.type,
+});
+
+export const mockGetCloudSubscriptionDatabasesDtoFixed = Object.assign(new GetCloudSubscriptionDatabasesDto(), {
+  subscriptionId: mockCloudSubscription.id,
+  subscriptionType: CloudSubscriptionType.Fixed,
+});
+
+export const mockGetCloudSubscriptionDatabaseDto = Object.assign(new GetCloudSubscriptionDatabaseDto(), {
+  subscriptionId: mockCloudSubscription.id,
+  subscriptionType: mockCloudSubscription.type,
+  databaseId: mockCloudDatabase.databaseId,
+});
+
+export const mockAddCloudDatabaseDto = Object.assign(new AddCloudDatabaseDto(), {
+  ...mockGetCloudSubscriptionDatabaseDto,
+});
+
+export const mockAddCloudDatabaseDtoFixed = Object.assign(new AddCloudDatabaseDto(), {
+  ...mockGetCloudSubscriptionDatabaseDto,
+  subscriptionType: CloudSubscriptionType.Fixed,
+});
+
+export const mockAddCloudDatabaseResponse = Object.assign(new AddCloudDatabaseResponse(), {
+  ...mockAddCloudDatabaseDto,
+  status: ActionStatus.Success,
+  message: 'Added',
+  databaseDetails: mockCloudDatabase,
+});
+
+export const mockAddCloudDatabaseResponseFixed = Object.assign(new AddCloudDatabaseResponse(), {
+  ...mockAddCloudDatabaseDtoFixed,
+  status: ActionStatus.Success,
+  message: 'Added',
+  databaseDetails: mockCloudDatabaseFixed,
+});
 
 export const mockCloudAutodiscoveryAnalytics = jest.fn(() => ({
   sendGetRECloudSubsSucceedEvent: jest.fn(),

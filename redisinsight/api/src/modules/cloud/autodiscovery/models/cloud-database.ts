@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
+import { Expose } from 'class-transformer';
+import { CloudSubscriptionType } from 'src/modules/cloud/autodiscovery/models/cloud-subscription';
 
 export enum CloudDatabaseProtocol {
   Redis = 'redis',
@@ -36,6 +37,12 @@ export class CloudDatabase {
     type: Number,
   })
   subscriptionId: number;
+
+  @ApiProperty({
+    description: 'Subscription type',
+    enum: CloudSubscriptionType,
+  })
+  subscriptionType: CloudSubscriptionType;
 
   @ApiProperty({
     description: 'Database id',
@@ -81,6 +88,6 @@ export class CloudDatabase {
   })
   options: any;
 
-  @Exclude()
+  @Expose({ groups: ['security'] })
   password?: string;
 }

@@ -5,7 +5,11 @@ import {
   Joi, getMainCheckFn, serverConfig
 } from '../deps';
 import { nock } from '../../helpers/test';
-import { mockCloudApiSubscription, mockCloudSubscription } from 'src/__mocks__/cloud-autodiscovery';
+import {
+  mockCloudApiSubscription,
+  mockCloudSubscription,
+  mockCloudSubscriptionFixed
+} from 'src/__mocks__/cloud-autodiscovery';
 const { request, server, constants } = deps;
 
 const endpoint = () => request(server).get(`/cloud/autodiscovery/subscriptions`);
@@ -22,6 +26,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   status: Joi.string().required(),
   provider: Joi.string(),
   region: Joi.string(),
+  type: Joi.string(),
 })).required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
@@ -35,17 +40,23 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
     [
       {
         before: () => {
-          nockScope.get('/subscriptions')
+          nockScope
+            .get('/fixed/subscriptions')
+            .reply(200, { subscriptions: [mockCloudApiSubscription] })
+            .get('/subscriptions')
             .reply(200, { subscriptions: [mockCloudApiSubscription] });
         },
         headers,
         name: 'Should get subscriptions list',
         responseSchema,
-        responseBody: [mockCloudSubscription],
+        responseBody: [mockCloudSubscriptionFixed, mockCloudSubscription],
       },
       {
         before: () => {
-          nockScope.get('/subscriptions')
+          nockScope
+            .get('/fixed/subscriptions')
+            .reply(200, { subscriptions: [mockCloudApiSubscription] })
+            .get('/subscriptions')
             .reply(403, {
               response: {
                 status: 403,
@@ -63,13 +74,16 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
       },
       {
         before: () => {
-          nockScope.get('/subscriptions')
+          nockScope
+            .get('/fixed/subscriptions')
             .reply(401, {
               response: {
                 status: 401,
                 data: '',
               }
-            });
+            })
+            .get('/subscriptions')
+            .reply(200, { subscriptions: [mockCloudApiSubscription] });
         },
         name: 'Should throw Forbidden error when api returned 401',
         headers,

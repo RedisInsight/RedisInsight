@@ -1,21 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsInt } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import {
+  ArrayNotEmpty, IsArray, IsNotEmpty, ValidateNested
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  GetCloudSubscriptionDatabasesDto,
+} from 'src/modules/cloud/autodiscovery/dto/get-cloud-subscription-databases.dto';
 
 export class GetCloudDatabasesDto {
   @ApiProperty({
-    description: 'Subscription Ids',
-    type: Number,
+    description: 'Subscriptions where to discover databases',
+    type: GetCloudSubscriptionDatabasesDto,
     isArray: true,
   })
-  @IsDefined()
-  @IsInt({ each: true })
-  @Type(() => Number)
-  @Transform((value: number | number[]) => {
-    if (typeof value === 'number') {
-      return [value];
-    }
-    return value;
-  })
-  subscriptionIds: number[];
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested()
+  @Type(() => GetCloudSubscriptionDatabasesDto)
+  subscriptions: GetCloudSubscriptionDatabasesDto[];
 }

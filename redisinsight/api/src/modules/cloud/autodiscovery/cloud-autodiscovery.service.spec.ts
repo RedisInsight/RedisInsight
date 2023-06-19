@@ -1,18 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import axios, { AxiosError } from 'axios';
+import { ForbiddenException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import {
-  ForbiddenException,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import {
-  mockCloudAccountInfo, mockCloudApiAccount, mockCloudApiDatabase, mockCloudApiDatabases, mockCloudApiSubscription,
-  mockCloudAuthDto, mockCloudAutodiscoveryAnalytics, mockCloudDatabase, mockCloudDatabaseFromList,
-  mockCloudSubscription, mockDatabaseService, MockType,
+  mockAddCloudDatabaseDto,
+  mockAddCloudDatabaseDtoFixed,
+  mockAddCloudDatabaseResponse,
+  mockAddCloudDatabaseResponseFixed,
+  mockCloudAccountInfo,
+  mockCloudApiAccount,
+  mockCloudApiDatabase,
+  mockCloudApiSubscription,
+  mockCloudApiSubscriptionDatabases,
+  mockCloudApiSubscriptionDatabasesFixed,
+  mockCloudAuthDto,
+  mockCloudAutodiscoveryAnalytics,
+  mockCloudDatabase,
+  mockCloudDatabaseFixed,
+  mockCloudDatabaseFromList,
+  mockCloudSubscription,
+  mockDatabaseService,
+  mockGetCloudSubscriptionDatabaseDto,
+  mockGetCloudSubscriptionDatabasesDto,
+  MockType
 } from 'src/__mocks__';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { CloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.service';
 import { CloudAutodiscoveryAnalytics } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.analytics';
+import { CloudDatabaseStatus, CloudSubscriptionType } from 'src/modules/cloud/autodiscovery/models';
+import { ActionStatus } from 'src/common/models';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -29,6 +44,7 @@ const mockApiUnauthenticatedResponse = {
 describe('CloudAutodiscoveryService', () => {
   let service: CloudAutodiscoveryService;
   let analytics: MockType<CloudAutodiscoveryAnalytics>;
+  let databaseService: MockType<DatabaseService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -47,6 +63,7 @@ describe('CloudAutodiscoveryService', () => {
 
     service = module.get(CloudAutodiscoveryService);
     analytics = module.get(CloudAutodiscoveryAnalytics);
+    databaseService = module.get(DatabaseService);
   });
 
   describe('getAccount', () => {
@@ -76,8 +93,23 @@ describe('CloudAutodiscoveryService', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getSubscriptions(mockCloudAuthDto)).toEqual([mockCloudSubscription]);
-      expect(analytics.sendGetRECloudSubsSucceedEvent).toHaveBeenCalledWith([mockCloudSubscription]);
+      expect(await service.getSubscriptions(mockCloudAuthDto)).toEqual([{
+        ...mockCloudSubscription,
+        type: CloudSubscriptionType.Fixed,
+      }, {
+        ...mockCloudSubscription,
+        type: CloudSubscriptionType.Flexible,
+      }]);
+      expect(analytics.sendGetRECloudSubsSucceedEvent)
+        .toHaveBeenCalledWith([{
+          ...mockCloudSubscription,
+          type: CloudSubscriptionType.Fixed,
+        }]);
+      expect(analytics.sendGetRECloudSubsSucceedEvent)
+        .toHaveBeenCalledWith([{
+          ...mockCloudSubscription,
+          type: CloudSubscriptionType.Flexible,
+        }]);
     });
     it('should throw forbidden error when get subscriptions', async () => {
       mockedAxios.get.mockRejectedValue(mockApiUnauthenticatedResponse);
@@ -101,19 +133,16 @@ describe('CloudAutodiscoveryService', () => {
         data: mockCloudApiDatabase,
       });
 
-      expect(await service.getSubscriptionDatabase(mockCloudAuthDto, {
-        subscriptionId: mockCloudSubscription.id,
-        databaseId: mockCloudDatabase.databaseId,
-      })).toEqual(mockCloudDatabase);
+      expect(await service.getSubscriptionDatabase(
+        mockCloudAuthDto,
+        mockGetCloudSubscriptionDatabaseDto,
+      )).toEqual(mockCloudDatabase);
     });
     it('the user could not be authenticated', async () => {
       mockedAxios.get.mockRejectedValue(mockApiUnauthenticatedResponse);
 
       await expect(
-        service.getSubscriptionDatabase(mockCloudAuthDto, {
-          subscriptionId: mockCloudSubscription.id,
-          databaseId: mockCloudDatabase.databaseId,
-        }),
+        service.getSubscriptionDatabase(mockCloudAuthDto, mockGetCloudSubscriptionDatabaseDto),
       ).rejects.toThrow(ForbiddenException);
     });
     it('database not found', async () => {
@@ -126,31 +155,35 @@ describe('CloudAutodiscoveryService', () => {
       mockedAxios.get.mockRejectedValue(apiResponse);
 
       await expect(
-        service.getSubscriptionDatabase(mockCloudAuthDto, {
-          subscriptionId: mockCloudSubscription.id,
-          databaseId: mockCloudDatabase.databaseId,
-        }),
+        service.getSubscriptionDatabase(mockCloudAuthDto, mockGetCloudSubscriptionDatabaseDto),
       ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('getSubscriptionDatabases', () => {
-    it('successfully get Redis Enterprise Cloud databases', async () => {
+    it('successfully get cloud databases', async () => {
       mockedAxios.get.mockResolvedValue({
         status: 200,
-        data: mockCloudApiDatabases,
+        data: mockCloudApiSubscriptionDatabases,
       });
 
-      expect(await service.getSubscriptionDatabases(mockCloudAuthDto, {
-        subscriptionId: mockCloudSubscription.id,
-      })).toEqual([mockCloudDatabaseFromList]);
+      expect(await service.getSubscriptionDatabases(mockCloudAuthDto, mockGetCloudSubscriptionDatabasesDto))
+        .toEqual([mockCloudDatabaseFromList]);
+    });
+    it('successfully get cloud fixed databases', async () => {
+      mockedAxios.get.mockResolvedValue({
+        status: 200,
+        data: mockCloudApiSubscriptionDatabasesFixed,
+      });
+
+      expect(await service.getSubscriptionDatabases(mockCloudAuthDto, mockGetCloudSubscriptionDatabasesDto))
+        .toEqual([mockCloudDatabaseFromList]);
     });
     it('the user could not be authenticated', async () => {
       mockedAxios.get.mockRejectedValue(mockApiUnauthenticatedResponse);
 
-      await expect(service.getSubscriptionDatabases(mockCloudAuthDto, {
-        subscriptionId: mockCloudSubscription.id,
-      })).rejects.toThrow(ForbiddenException);
+      await expect(service.getSubscriptionDatabases(mockCloudAuthDto, mockGetCloudSubscriptionDatabasesDto))
+        .rejects.toThrow(ForbiddenException);
     });
     it('subscription not found', async () => {
       mockedAxios.get.mockRejectedValue({
@@ -160,26 +193,52 @@ describe('CloudAutodiscoveryService', () => {
         },
       });
 
-      await expect(service.getSubscriptionDatabases(mockCloudAuthDto, {
-        subscriptionId: mockCloudSubscription.id,
-      })).rejects.toThrow(NotFoundException);
+      await expect(service.getSubscriptionDatabases(mockCloudAuthDto, mockGetCloudSubscriptionDatabasesDto))
+        .rejects.toThrow(NotFoundException);
     });
   });
 
-  describe('getDatabasesInMultipleSubscriptions', () => {
+  describe('getDatabases', () => {
     beforeEach(() => {
       service.getSubscriptionDatabases = jest.fn().mockResolvedValue([]);
     });
-    it('should call getDatabasesInSubscription', async () => {
+    it('should call getSubscriptionDatabases 2 times', async () => {
       await service.getDatabases(mockCloudAuthDto, {
-        subscriptionIds: [86070, 86071],
+        subscriptions: [
+          { subscriptionId: 86070, subscriptionType: CloudSubscriptionType.Flexible },
+          { subscriptionId: 86071, subscriptionType: CloudSubscriptionType.Flexible },
+        ],
       });
 
       expect(service.getSubscriptionDatabases).toHaveBeenCalledTimes(2);
     });
-    it('should not call getDatabasesInSubscription for duplicated ids', async () => {
+    it('should call getSubscriptionDatabases 2 times (different types)', async () => {
       await service.getDatabases(mockCloudAuthDto, {
-        subscriptionIds: [86070, 86070, 86071],
+        subscriptions: [
+          { subscriptionId: 86070, subscriptionType: CloudSubscriptionType.Flexible },
+          { subscriptionId: 86071, subscriptionType: CloudSubscriptionType.Fixed },
+        ],
+      });
+
+      expect(service.getSubscriptionDatabases).toHaveBeenCalledTimes(2);
+    });
+    it('should call getSubscriptionDatabases 2 times (same id but different types)', async () => {
+      await service.getDatabases(mockCloudAuthDto, {
+        subscriptions: [
+          { subscriptionId: 86070, subscriptionType: CloudSubscriptionType.Flexible },
+          { subscriptionId: 86070, subscriptionType: CloudSubscriptionType.Fixed },
+        ],
+      });
+
+      expect(service.getSubscriptionDatabases).toHaveBeenCalledTimes(2);
+    });
+    it('should call getSubscriptionDatabases 2 times (uniq by id and type)', async () => {
+      await service.getDatabases(mockCloudAuthDto, {
+        subscriptions: [
+          { subscriptionId: 86070, subscriptionType: CloudSubscriptionType.Flexible },
+          { subscriptionId: 86071, subscriptionType: CloudSubscriptionType.Fixed },
+          { subscriptionId: 86071, subscriptionType: CloudSubscriptionType.Fixed },
+        ],
       });
 
       expect(service.getSubscriptionDatabases).toHaveBeenCalledTimes(2);
@@ -191,7 +250,10 @@ describe('CloudAutodiscoveryService', () => {
 
       await expect(
         service.getDatabases(mockCloudAuthDto, {
-          subscriptionIds: [86070, 86071],
+          subscriptions: [
+            { subscriptionId: 86070, subscriptionType: CloudSubscriptionType.Flexible },
+            { subscriptionId: 86071, subscriptionType: CloudSubscriptionType.Fixed },
+          ],
         }),
       ).rejects.toThrow(NotFoundException);
     });
@@ -242,6 +304,118 @@ describe('CloudAutodiscoveryService', () => {
       const result = service['getApiError'](error, title);
 
       expect(result).toBeInstanceOf(InternalServerErrorException);
+    });
+    it('should throw InternalServerErrorException with error from data', async () => {
+      const error = {
+        ...mockError,
+        message: 'Request failed with status code 500',
+        response: {
+          data: {
+            error: 'Service Unavailable',
+          },
+        },
+      };
+      const result = service['getApiError'](error as AxiosError, title);
+
+      expect(result).toBeInstanceOf(InternalServerErrorException);
+    });
+  });
+
+  describe('addRedisCloudDatabases', () => {
+    let spy;
+
+    beforeEach(() => {
+      spy = jest.spyOn(service, 'getSubscriptionDatabase');
+    });
+
+    it('should successfully add 1 fixed and 1 flexible databases', async () => {
+      spy.mockResolvedValueOnce(mockCloudDatabase);
+      spy.mockResolvedValueOnce(mockCloudDatabaseFixed);
+
+      const result = await service.addRedisCloudDatabases(mockCloudAuthDto, [
+        mockAddCloudDatabaseDto,
+        mockAddCloudDatabaseDtoFixed,
+      ]);
+
+      expect(result).toEqual([
+        mockAddCloudDatabaseResponse,
+        mockAddCloudDatabaseResponseFixed,
+      ]);
+    });
+
+    it('should successfully add 1 fixed database and report 1 error without database details (404)', async () => {
+      spy.mockRejectedValueOnce(new NotFoundException());
+      spy.mockResolvedValueOnce(mockCloudDatabaseFixed);
+
+      const result = await service.addRedisCloudDatabases(mockCloudAuthDto, [
+        mockAddCloudDatabaseDto,
+        mockAddCloudDatabaseDtoFixed,
+      ]);
+
+      expect(result).toEqual([
+        {
+          ...mockAddCloudDatabaseResponse,
+          error: {
+            message: 'Not Found',
+            statusCode: 404,
+          },
+          message: 'Not Found',
+          status: 'fail',
+          databaseDetails: undefined, // no database details when database wasn't fetched from cloud
+        },
+        mockAddCloudDatabaseResponseFixed,
+      ]);
+    });
+
+    it('should successfully add 1 fixed database and report 1 error with database details', async () => {
+      spy.mockResolvedValueOnce(mockCloudDatabase);
+      spy.mockResolvedValueOnce(mockCloudDatabaseFixed);
+      databaseService.create.mockRejectedValueOnce(new Error('Connectivity issue'));
+
+      const result = await service.addRedisCloudDatabases(mockCloudAuthDto, [
+        mockAddCloudDatabaseDto,
+        mockAddCloudDatabaseDtoFixed,
+      ]);
+
+      expect(result).toEqual([
+        {
+          ...mockAddCloudDatabaseResponse,
+          message: 'Connectivity issue',
+          status: ActionStatus.Fail,
+        },
+        mockAddCloudDatabaseResponseFixed,
+      ]);
+    });
+
+    it('should successfully add 1 fixed database and report 1 error if db is not actives', async () => {
+      spy.mockResolvedValueOnce({
+        ...mockCloudDatabase,
+        status: CloudDatabaseStatus.Pending,
+      });
+      spy.mockResolvedValueOnce(mockCloudDatabaseFixed);
+
+      const result = await service.addRedisCloudDatabases(mockCloudAuthDto, [
+        mockAddCloudDatabaseDto,
+        mockAddCloudDatabaseDtoFixed,
+      ]);
+
+      expect(result).toEqual([
+        {
+          ...mockAddCloudDatabaseResponse,
+          error: {
+            error: 'Service Unavailable',
+            message: 'The base is inactive.',
+            statusCode: 503,
+          },
+          message: 'The base is inactive.',
+          status: ActionStatus.Fail,
+          databaseDetails: {
+            ...mockAddCloudDatabaseResponse.databaseDetails,
+            status: CloudDatabaseStatus.Pending,
+          },
+        },
+        mockAddCloudDatabaseResponseFixed,
+      ]);
     });
   });
 });

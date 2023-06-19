@@ -1,10 +1,10 @@
 import { RE_CLOUD_MODULES_NAMES } from 'src/constants';
-import { get, find } from 'lodash';
+import { get, find, isArray } from 'lodash';
 import {
   CloudAccountInfo,
   CloudDatabase, CloudDatabaseMemoryStorage,
   CloudDatabasePersistencePolicy, CloudDatabaseProtocol,
-  CloudSubscription,
+  CloudSubscription, CloudSubscriptionType,
 } from 'src/modules/cloud/autodiscovery/models';
 import { plainToClass } from 'class-transformer';
 
@@ -19,12 +19,16 @@ export const parseCloudAccountResponse = (account: any): CloudAccountInfo => pla
   ownerEmail: get(account, ['key', 'owner', 'email']),
 });
 
-export const parseCloudSubscriptionsResponse = (subscriptions: any[]): CloudSubscription[] => {
+export const parseCloudSubscriptionsResponse = (
+  subscriptions: any[],
+  type: CloudSubscriptionType,
+): CloudSubscription[] => {
   const result: CloudSubscription[] = [];
   if (subscriptions?.length) {
     subscriptions.forEach((subscription): void => {
       result.push(plainToClass(CloudSubscription, {
         id: subscription.id,
+        type,
         name: subscription.name,
         numberOfDatabases: subscription.numberOfDatabases,
         status: subscription.status,
@@ -42,13 +46,18 @@ export const parseCloudSubscriptionsResponse = (subscriptions: any[]): CloudSubs
   return result;
 };
 
-export const parseCloudDatabaseResponse = (database: any, subscriptionId: number): CloudDatabase => {
+export const parseCloudDatabaseResponse = (
+  database: any,
+  subscriptionId: number,
+  subscriptionType: CloudSubscriptionType,
+): CloudDatabase => {
   const {
     databaseId, name, publicEndpoint, status, security,
   } = database;
 
   return plainToClass(CloudDatabase, {
     subscriptionId,
+    subscriptionType,
     databaseId,
     name,
     publicEndpoint,
@@ -68,7 +77,7 @@ export const parseCloudDatabaseResponse = (database: any, subscriptionId: number
       enabledClustering: database.clustering.numberOfShards > 1,
       isReplicaDestination: !!database.replicaOf,
     },
-  });
+  }, { groups: ['security'] });
 };
 
 export const findReplicasForDatabase = (databases: any[], sourceDatabaseId: number): any[] => {
@@ -94,18 +103,24 @@ export const findReplicasForDatabase = (databases: any[], sourceDatabaseId: numb
   });
 };
 
-export const parseCloudDatabasesInSubscriptionResponse = (response: any): CloudDatabase[] => {
-  const subscription = response.subscription[0];
+export const parseCloudDatabasesInSubscriptionResponse = (
+  response: any,
+  subscriptionType: CloudSubscriptionType,
+): CloudDatabase[] => {
+  const subscription = isArray(response.subscription) ? response.subscription[0] : response.subscription;
+
   const { subscriptionId, databases } = subscription;
+
   let result: CloudDatabase[] = [];
   databases.forEach((database): void => {
     // We do not send the databases which have 'memcached' as their protocol.
     if (database.protocol === CloudDatabaseProtocol.Redis) {
-      result.push(parseCloudDatabaseResponse(database, subscriptionId));
+      result.push(parseCloudDatabaseResponse(database, subscriptionId, subscriptionType));
     }
   });
   result = result.map((database) => ({
     ...database,
+    subscriptionType,
     options: {
       ...database.options,
       isReplicaSource: !!findReplicasForDatabase(

@@ -71,7 +71,7 @@ export class CloudAutodiscoveryController {
     return await this.service.getSubscriptions(authDto);
   }
 
-  @Get('databases')
+  @Post('get-databases')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiEndpoint({
     description: 'Get databases belonging to subscriptions',

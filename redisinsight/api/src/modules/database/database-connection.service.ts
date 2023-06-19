@@ -43,6 +43,7 @@ export class DatabaseConnectionService {
       lastConnection: new Date(),
       timeout: client.options.connectTimeout,
       modules: await this.databaseInfoProvider.determineDatabaseModules(client),
+      version: await this.databaseInfoProvider.determineDatabaseServer(client),
     };
 
     // !Temporary. Refresh cluster nodes on connection
@@ -60,7 +61,7 @@ export class DatabaseConnectionService {
 
     await this.repository.update(clientMetadata.databaseId, toUpdate);
 
-    const generalInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client)
+    const generalInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
 
     this.recommendationService.check(
       clientMetadata,

@@ -404,6 +404,7 @@ export const createDatabaseInstances = async () => {
       connectionType: 'STANDALONE',
       ...instance,
       modules: '[]',
+      version: '7.0',
     });
   }
 }

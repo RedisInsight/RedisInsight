@@ -30,7 +30,7 @@ import {
 
 import { ConnectionType, InstanceType, } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { getDiffKeysOfObjectValues, checkRediStackModules } from 'uiSrc/utils'
+import { getDiffKeysOfObjectValues, isRediStack } from 'uiSrc/utils'
 import { BuildType } from 'uiSrc/constants/env'
 
 import {
@@ -129,6 +129,7 @@ const AddStandaloneForm = (props: Props) => {
       ssh,
       sshPassType = SshPassType.Password,
       sshOptions,
+      version,
     },
     initialValues: initialValuesProp,
     width,
@@ -510,7 +511,7 @@ const AddStandaloneForm = (props: Props) => {
       {isEditMode && name && (
         <div className="fluid" style={{ marginBottom: 15 }}>
           <DatabaseAlias
-            isRediStack={checkRediStackModules(modules)}
+            isRediStack={isRediStack(modules, version)}
             isCloneMode={isCloneMode}
             alias={name}
             database={db}

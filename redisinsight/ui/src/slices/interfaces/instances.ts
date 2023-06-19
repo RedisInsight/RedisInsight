@@ -47,6 +47,7 @@ export interface Instance extends DatabaseInstanceResponse {
   isDeleting?: boolean
   sentinelMaster?: SentinelMaster
   modules: AdditionalRedisModule[]
+  version: Nullable<string>
   isRediStack?: boolean
   visible?: boolean
   loading?: boolean

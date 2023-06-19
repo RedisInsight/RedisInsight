@@ -16,11 +16,11 @@ export class UploadLibraryDto {
   code: string;
 
   @ApiPropertyOptional({
-    description: 'Library config',
+    description: 'Library configuration',
     type: String,
   })
   @IsOptional()
   @IsRedisString()
   @RedisStringType()
-  config?: string;
+  configuration?: string;
 }

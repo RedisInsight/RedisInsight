@@ -236,9 +236,9 @@ describe('TriggeredFunctionsService', () => {
       }));
     });
 
-    it('should upload library with config', async () => {
+    it('should upload library with configuration', async () => {
       mockIORedisClient.sendCommand.mockResolvedValueOnce(mockLibrariesReply);
-      await service.upload(mockClientMetadata, { code: mockCode, config: mockConfig });
+      await service.upload(mockClientMetadata, { code: mockCode, configuration: mockConfig });
 
       expect(mockIORedisClient.sendCommand).toHaveBeenCalledTimes(1);
       expect(mockIORedisClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
@@ -258,9 +258,9 @@ describe('TriggeredFunctionsService', () => {
       }));
     });
 
-    it('should replace library with config', async () => {
+    it('should replace library with configuration', async () => {
       mockIORedisClient.sendCommand.mockResolvedValueOnce(mockLibrariesReply);
-      await service.upload(mockClientMetadata, { code: mockCode, config: mockConfig }, true);
+      await service.upload(mockClientMetadata, { code: mockCode, configuration: mockConfig }, true);
 
       expect(mockIORedisClient.sendCommand).toHaveBeenCalledTimes(1);
       expect(mockIORedisClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({

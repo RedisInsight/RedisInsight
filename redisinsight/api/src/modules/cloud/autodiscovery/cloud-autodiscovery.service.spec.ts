@@ -16,12 +16,12 @@ import {
   mockCloudAutodiscoveryAnalytics,
   mockCloudDatabase,
   mockCloudDatabaseFixed,
-  mockCloudDatabaseFromList,
+  mockCloudDatabaseFromList, mockCloudDatabaseFromListFixed,
   mockCloudSubscription,
   mockDatabaseService,
   mockGetCloudSubscriptionDatabaseDto,
   mockGetCloudSubscriptionDatabaseDtoFixed,
-  mockGetCloudSubscriptionDatabasesDto,
+  mockGetCloudSubscriptionDatabasesDto, mockGetCloudSubscriptionDatabasesDtoFixed,
   MockType,
 } from 'src/__mocks__';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -188,8 +188,8 @@ describe('CloudAutodiscoveryService', () => {
         data: mockCloudApiSubscriptionDatabasesFixed,
       });
 
-      expect(await service.getSubscriptionDatabases(mockCloudAuthDto, mockGetCloudSubscriptionDatabasesDto))
-        .toEqual([mockCloudDatabaseFromList]);
+      expect(await service.getSubscriptionDatabases(mockCloudAuthDto, mockGetCloudSubscriptionDatabasesDtoFixed))
+        .toEqual([mockCloudDatabaseFromListFixed]);
     });
     it('the user could not be authenticated', async () => {
       mockedAxios.get.mockRejectedValue(mockApiUnauthenticatedResponse);

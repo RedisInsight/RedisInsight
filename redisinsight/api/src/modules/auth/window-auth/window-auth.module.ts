@@ -1,16 +1,13 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import config from 'src/utils/config';
-import { WindowAuthManager } from './window-auth.manager';
+import { WindowAuthService } from './window-auth.service';
 import { WindowAuthMiddleware } from './middleware/window.auth.middleware';
 
 const SERVER_CONFIG = config.get('server');
 
 @Module({
-  providers: [
-    WindowAuthManager,
-  ],
+  providers: [WindowAuthService],
 })
-
 export class WindowAuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer

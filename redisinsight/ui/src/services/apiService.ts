@@ -31,7 +31,7 @@ export const requestInterceptor = (config: AxiosRequestConfig) => {
     }
 
     if (window.windowId) {
-      config.headers['ri-window-id'] = window.windowId
+      config.headers['x-window-id'] = window.windowId
     }
   }
 

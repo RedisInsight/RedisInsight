@@ -1,26 +1,19 @@
-import {
-  Injectable,
-  Logger,
-  NestMiddleware,
-} from '@nestjs/common';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { API_HEADER_WINDOW_ID } from 'src/common/constants';
-import { WindowAuthManager } from '../window-auth.manager';
+import { WindowAuthService } from '../window-auth.service';
 import { WindowUnauthorizedException } from '../constants/exceptions';
 
 @Injectable()
 export class WindowAuthMiddleware implements NestMiddleware {
   private logger = new Logger('WindowAuthMiddleware');
 
-  constructor(
-    private windowAuthService: WindowAuthManager,
-  ) {}
+  constructor(private windowAuthService: WindowAuthService) {}
 
   async use(req: Request, res: Response, next: NextFunction): Promise<any> {
     const { windowId } = WindowAuthMiddleware.getWindowIdFromReq(req);
-    const { isExists: isWindowExists = false } = await this.windowAuthService.getStrategy()?.isWindowExists(windowId)
-      ?? {};
+    const isWindowExists = (await this.windowAuthService.getStrategy()?.isWindowExists(windowId)) ?? false;
 
     if (!isWindowExists) {
       this.throwError(req, ERROR_MESSAGES.UNDEFINED_WINDOW_ID);

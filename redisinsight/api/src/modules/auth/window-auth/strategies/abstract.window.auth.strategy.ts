@@ -1,5 +1,3 @@
-import { IWindowAuthStrategy, IWindowAuthStrategyData } from '../window.auth.strategy.interface';
-
-export abstract class AbstractWindowAuthStrategy implements IWindowAuthStrategy {
-  abstract isWindowExists(data: any): Promise<IWindowAuthStrategyData>;
+export abstract class AbstractWindowAuthStrategy {
+  abstract isWindowExists(data: any): Promise<boolean>;
 }

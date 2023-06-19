@@ -50,7 +50,7 @@ const AddDatabasesContainer = React.memo((props: Props) => {
   } = props
 
   const [typeSelected, setTypeSelected] = useState<InstanceType>(
-    InstanceType.RedisEnterpriseCluster
+    InstanceType.RedisCloudPro
   )
   const [connectionType, setConnectionType] = useState<AddDbType>(
     AddDbType.manual
@@ -114,14 +114,14 @@ const AddDatabasesContainer = React.memo((props: Props) => {
 
   const typesFormStage: EuiRadioGroupOption[] = [
     {
-      id: InstanceType.RedisEnterpriseCluster,
-      label: InstanceType.RedisEnterpriseCluster,
-      'data-test-subj': 'radio-btn-enterprise-cluster',
-    },
-    {
       id: InstanceType.RedisCloudPro,
       label: InstanceType.RedisCloudPro,
       'data-test-subj': 'radio-btn-cloud-pro',
+    },
+    {
+      id: InstanceType.RedisEnterpriseCluster,
+      label: InstanceType.RedisEnterpriseCluster,
+      'data-test-subj': 'radio-btn-enterprise-cluster',
     },
     {
       id: InstanceType.Sentinel,

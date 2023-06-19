@@ -54,7 +54,7 @@ const clusterSlice = createSlice({
       state.loading = false
 
       state.dataAdded = payload?.map((instance: InstanceRedisCluster) => ({
-        ...instance.databaseDetails,
+        ...instance.databaseDetails || {},
         uidAdded: instance.uid,
         statusAdded: instance.status,
         messageAdded: instance.message,

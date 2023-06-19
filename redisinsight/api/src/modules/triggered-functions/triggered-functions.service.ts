@@ -122,13 +122,13 @@ export class TriggeredFunctionsService {
     let client;
      try {
       const {
-        code, config,
+        code, configuration,
       } = dto;
        
        const commandArgs: any[] = isExist ? ['LOAD', 'REPLACE'] : ['LOAD'];
        
-       if (config) {
-        commandArgs.push('CONFIG', config);
+       if (configuration) {
+        commandArgs.push('CONFIG', configuration);
        }
 
        commandArgs.push(code);

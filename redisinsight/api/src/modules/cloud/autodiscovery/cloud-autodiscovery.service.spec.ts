@@ -17,7 +17,7 @@ import {
   mockCloudDatabase,
   mockCloudDatabaseFixed,
   mockCloudDatabaseFromList, mockCloudDatabaseFromListFixed,
-  mockCloudSubscription,
+  mockCloudSubscription, mockCloudSubscriptionFixed,
   mockDatabaseService,
   mockGetCloudSubscriptionDatabaseDto,
   mockGetCloudSubscriptionDatabaseDtoFixed,
@@ -95,7 +95,7 @@ describe('CloudAutodiscoveryService', () => {
       mockedAxios.get.mockResolvedValue(response);
 
       expect(await service.getSubscriptions(mockCloudAuthDto)).toEqual([{
-        ...mockCloudSubscription,
+        ...mockCloudSubscriptionFixed,
         type: CloudSubscriptionType.Fixed,
       }, {
         ...mockCloudSubscription,
@@ -103,14 +103,12 @@ describe('CloudAutodiscoveryService', () => {
       }]);
       expect(analytics.sendGetRECloudSubsSucceedEvent)
         .toHaveBeenCalledWith([{
-          ...mockCloudSubscription,
-          type: CloudSubscriptionType.Fixed,
-        }]);
+          ...mockCloudSubscriptionFixed,
+        }], CloudSubscriptionType.Fixed);
       expect(analytics.sendGetRECloudSubsSucceedEvent)
         .toHaveBeenCalledWith([{
           ...mockCloudSubscription,
-          type: CloudSubscriptionType.Flexible,
-        }]);
+        }], CloudSubscriptionType.Flexible);
     });
     it('should throw forbidden error when get subscriptions', async () => {
       mockedAxios.get.mockRejectedValue(mockApiUnauthenticatedResponse);
@@ -123,7 +121,7 @@ describe('CloudAutodiscoveryService', () => {
         .toHaveBeenCalledWith(service['getApiError'](
           mockApiUnauthenticatedResponse as AxiosError,
           'Failed to get RE cloud subscriptions',
-        ));
+        ), CloudSubscriptionType.Flexible);
     });
   });
 

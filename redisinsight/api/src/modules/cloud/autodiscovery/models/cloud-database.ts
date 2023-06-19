@@ -5,6 +5,7 @@ import { CloudDatabaseDetails } from 'src/modules/cloud/autodiscovery/models/clo
 
 export enum CloudDatabaseProtocol {
   Redis = 'redis',
+  Stack = 'stack',
   Memcached = 'memcached',
 }
 

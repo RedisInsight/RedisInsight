@@ -120,7 +120,7 @@ export const parseCloudDatabasesInSubscriptionResponse = (
   let result: CloudDatabase[] = [];
   databases.forEach((database): void => {
     // We do not send the databases which have 'memcached' as their protocol.
-    if (database.protocol === CloudDatabaseProtocol.Redis) {
+    if ([CloudDatabaseProtocol.Redis, CloudDatabaseProtocol.Stack].includes(database.protocol)) {
       result.push(parseCloudDatabaseResponse(database, subscriptionId, subscriptionType));
     }
   });

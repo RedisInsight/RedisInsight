@@ -147,6 +147,7 @@ export const mockCloudApiDatabase: ICloudApiDatabase = {
 
 export const mockCloudApiDatabaseFixed: ICloudApiDatabase = {
   ...mockCloudApiDatabase,
+  protocol: CloudDatabaseProtocol.Stack,
   planMemoryLimit: 256,
   memoryLimitMeasurementUnit: 'MB',
 };

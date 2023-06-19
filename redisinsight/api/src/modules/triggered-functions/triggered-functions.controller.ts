@@ -7,7 +7,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import { TriggeredFunctionsService } from 'src/modules/triggered-functions/triggered-functions.service';
 import { ShortLibrary, Library, Function } from 'src/modules/triggered-functions/models';
-import { LibraryDto } from 'src/modules/triggered-functions/dto';
+import { LibraryDto, UploadLibraryDto } from 'src/modules/triggered-functions/dto';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 
@@ -70,5 +70,29 @@ export class TriggeredFunctionsController {
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
   ): Promise<Function[]> {
     return this.service.functionsList(clientMetadata);
+  }
+
+  @Post('library')
+  @ApiRedisInstanceOperation({
+    description: 'Upload new library',
+    statusCode: 201,
+  })
+  async upload(
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: UploadLibraryDto,
+  ): Promise<void> {
+    return this.service.upload(clientMetadata, dto);
+  }
+
+  @Post('library/replace')
+  @ApiRedisInstanceOperation({
+    description: 'Upgrade existing library',
+    statusCode: 201,
+  })
+  async upgrade(
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: UploadLibraryDto,
+  ): Promise<void> {
+    return this.service.upload(clientMetadata, dto, true);
   }
 }

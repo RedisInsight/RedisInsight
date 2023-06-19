@@ -8,6 +8,7 @@ import { ShortLibrary, Library, Function } from 'src/modules/triggered-functions
 import {
   getLibraryInformation, getShortLibraryInformation, getLibraryFunctions,
 } from 'src/modules/triggered-functions/utils';
+import { UploadLibraryDto } from 'src/modules/triggered-functions/dto';
 import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
@@ -98,6 +99,50 @@ export class TriggeredFunctionsService {
       ));
     } catch (e) {
       this.logger.error('Unable to get all triggered functions', e);
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw catchAclError(e);
+    }
+  }
+
+  /**
+   * Upload triggered functions library
+   * @param clientMetadata
+   * @param dto
+   * @param isExist
+   */
+   async upload(
+    clientMetadata: ClientMetadata,
+    dto: UploadLibraryDto,
+    isExist = false,
+  ): Promise<void> {
+    let client;
+     try {
+      const {
+        code, config,
+      } = dto;
+       
+       const commandArgs: any[] = isExist ? ['LOAD', 'REPLACE'] : ['LOAD'];
+       
+       if (config) {
+        commandArgs.push('CONFIG', config);
+       }
+
+       commandArgs.push(code);
+
+      client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
+      await client.sendCommand(
+        new Command('TFUNCTION', [...commandArgs], { replyEncoding: 'utf8' }),
+      );
+       
+      this.logger.log('Succeed to upload library.');
+
+      return undefined;
+    } catch (e) {
+      this.logger.error('Unable to upload library', e);
 
       if (e instanceof HttpException) {
         throw e;

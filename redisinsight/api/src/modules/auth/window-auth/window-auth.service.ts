@@ -13,7 +13,7 @@ export class WindowAuthService {
     this.strategy = strategy;
   }
 
-  getStrategy(): AbstractWindowAuthStrategy {
-    return this.strategy;
+  isAuthorized(id: string = ''): Promise<boolean> {
+    return this.strategy?.isAuthorized?.(id);
   }
 }

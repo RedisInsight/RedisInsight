@@ -4,7 +4,7 @@ import { AbstractWindowAuthStrategy } from './strategies/abstract.window.auth.st
 
 export class TestAuthStrategy extends AbstractWindowAuthStrategy {
   async isAuthorized(): Promise<boolean> {
-    return false;
+    return true;
   }
 }
 
@@ -21,8 +21,8 @@ describe('WindowAuthService', () => {
 
     windowAuthService = module.get<WindowAuthService>(WindowAuthService);
   });
-  it('Should set strategy to window auth manager and get it back', () => {
+  it('Should set strategy to window auth service and call it', async () => {
     windowAuthService.setStrategy(testStrategy);
-    expect(windowAuthService.getStrategy()).toEqual(testStrategy);
+    expect(await windowAuthService.isAuthorized('')).toEqual(true);
   });
 });

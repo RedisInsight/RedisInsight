@@ -1,3 +1,3 @@
 export enum CustomErrorCodes {
-  WindowUnauthorized = 'WindowUnauthorizedException',
+  WindowUnauthorized = 10_001,
 }

@@ -10,6 +10,7 @@ import {
   generateInvalidDataTestCases, validateInvalidDataTestCase, getMainCheckFn, serverConfig,
 } from '../deps';
 import { databaseSchema } from './constants';
+import { ServerService } from 'src/modules/server/server.service';
 const { rte, request, server, localDb, constants, analytics } = deps;
 
 const endpoint = () => request(server).post(`/${constants.API.DATABASES}`);
@@ -167,7 +168,7 @@ describe('POST /databases', () => {
                   // RedisJSON: { loaded: false },
                   // RedisTimeSeries: { loaded: false },
                   // customModules: [],
-                  buildType: serverConfig.get('server').buildType,
+                  buildType: ServerService.getAppType(serverConfig.get('server').buildType),
                 },
               });
             },

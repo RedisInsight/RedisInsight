@@ -13,10 +13,9 @@ describe('Analytics', () => {
   requirements('rte.serverType=local');
 
   it('APPLICATION_STARTED', () => {
-    if(serverConfig.get('server').buildType !== 'ELECTRON') {
-      return
-    }
-
+    // if(serverConfig.get('server').buildType !== 'ELECTRON') {
+    //   return
+    // }
     const appStarted = analytics.findEvent({
       event: 'APPLICATION_STARTED',
     })

@@ -31,6 +31,7 @@ describe('DatabaseConnectionService', () => {
   let redisConnectionFactory: MockType<RedisConnectionFactory>;
   let analytics: MockType<DatabaseAnalytics>;
   let recommendationService: MockType<DatabaseRecommendationService>;
+  let databaseInfoProvider: MockType<DatabaseInfoProvider>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -74,6 +75,7 @@ describe('DatabaseConnectionService', () => {
     redisConnectionFactory = await module.get(RedisConnectionFactory);
     analytics = await module.get(DatabaseAnalytics);
     recommendationService = module.get(DatabaseRecommendationService);
+    databaseInfoProvider = module.get(DatabaseInfoProvider);
   });
 
   describe('connect', () => {
@@ -102,6 +104,13 @@ describe('DatabaseConnectionService', () => {
         RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
         mockRedisGeneralInfo,
       );
+    });
+
+    it('should call databaseInfoProvider', async () => {
+      expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
+
+      expect(databaseInfoProvider.determineDatabaseServer).toHaveBeenCalled();
+      expect(databaseInfoProvider.determineDatabaseModules).toHaveBeenCalled();
     });
   });
 

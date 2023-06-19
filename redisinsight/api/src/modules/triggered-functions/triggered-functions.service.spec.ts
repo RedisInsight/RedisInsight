@@ -42,6 +42,10 @@ const mockTFunctionsVerboseReply = [[
 
 const mockLibraryName = 'name';
 
+const mockCode = '#!js api_version=1.0 name=lib';
+
+const mockConfig = '{}';
+
 describe('TriggeredFunctionsService', () => {
   let service: TriggeredFunctionsService;
   let databaseConnectionService: MockType<DatabaseConnectionService>;
@@ -213,6 +217,82 @@ describe('TriggeredFunctionsService', () => {
       try {
         mockIORedisClient.sendCommand.mockRejectedValueOnce(new NotFoundException('Not Found'));
         await service.libraryList(mockClientMetadata);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+      }
+    });
+  });
+
+  describe('upload', () => {
+    it('should upload library', async () => {
+      mockIORedisClient.sendCommand.mockResolvedValueOnce(mockLibrariesReply);
+      await service.upload(mockClientMetadata, { code: mockCode });
+
+      expect(mockIORedisClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(mockIORedisClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'TFUNCTION',
+        args: ['LOAD', mockCode],
+      }));
+    });
+
+    it('should upload library with config', async () => {
+      mockIORedisClient.sendCommand.mockResolvedValueOnce(mockLibrariesReply);
+      await service.upload(mockClientMetadata, { code: mockCode, config: mockConfig });
+
+      expect(mockIORedisClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(mockIORedisClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'TFUNCTION',
+        args: ['LOAD', 'CONFIG', mockConfig, mockCode],
+      }));
+    });
+
+    it('should replace library', async () => {
+      mockIORedisClient.sendCommand.mockResolvedValueOnce(mockLibrariesReply);
+      await service.upload(mockClientMetadata, { code: mockCode }, true);
+
+      expect(mockIORedisClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(mockIORedisClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'TFUNCTION',
+        args: ['LOAD', 'REPLACE', mockCode],
+      }));
+    });
+
+    it('should replace library with config', async () => {
+      mockIORedisClient.sendCommand.mockResolvedValueOnce(mockLibrariesReply);
+      await service.upload(mockClientMetadata, { code: mockCode, config: mockConfig }, true);
+
+      expect(mockIORedisClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(mockIORedisClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
+        name: 'TFUNCTION',
+        args: ['LOAD', 'REPLACE', 'CONFIG', mockConfig, mockCode],
+      }));
+    });
+
+    it('Should throw Error when error during creating a client in upload', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error());
+        await service.upload(mockClientMetadata, { code: mockCode });
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(Error);
+      }
+    });
+
+    it('should handle acl error', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error('NOPERM'));
+        await service.upload(mockClientMetadata, { code: mockCode });
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+      }
+    });
+
+    it('should handle HTTP error', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new NotFoundException('Not Found'));
+        await service.upload(mockClientMetadata, { code: mockCode });
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);

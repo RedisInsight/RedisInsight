@@ -3,8 +3,12 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { InternalServerErrorException } from '@nestjs/common';
 import { CloudAutodiscoveryAnalytics } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.analytics';
-import { CloudDatabaseStatus, CloudSubscriptionStatus } from 'src/modules/cloud/autodiscovery/models';
-import { mockCloudDatabase, mockCloudSubscription } from 'src/__mocks__';
+import {
+  CloudDatabaseStatus,
+  CloudSubscriptionStatus,
+  CloudSubscriptionType
+} from 'src/modules/cloud/autodiscovery/models';
+import { mockCloudDatabase, mockCloudDatabaseFixed, mockCloudSubscription } from 'src/__mocks__';
 
 describe('CloudAutodiscoveryAnalytics', () => {
   let service: CloudAutodiscoveryAnalytics;
@@ -36,13 +40,14 @@ describe('CloudAutodiscoveryAnalytics', () => {
       service.sendGetRECloudSubsSucceedEvent([
         mockCloudSubscription,
         mockCloudSubscription,
-      ]);
+      ], CloudSubscriptionType.Flexible);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: 2,
           totalNumberOfSubscriptions: 2,
+          type: CloudSubscriptionType.Flexible,
         },
       );
     });
@@ -53,13 +58,14 @@ describe('CloudAutodiscoveryAnalytics', () => {
           status: CloudSubscriptionStatus.Error,
         },
         mockCloudSubscription,
-      ]);
+      ], CloudSubscriptionType.Flexible);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: 1,
           totalNumberOfSubscriptions: 2,
+          type: CloudSubscriptionType.Flexible,
         },
       );
     });
@@ -73,52 +79,56 @@ describe('CloudAutodiscoveryAnalytics', () => {
           ...mockCloudSubscription,
           status: CloudSubscriptionStatus.Error,
         },
-      ]);
+      ], CloudSubscriptionType.Flexible);
       expect(sendEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: 0,
           totalNumberOfSubscriptions: 2,
+          type: CloudSubscriptionType.Flexible,
         },
       );
     });
     it('should emit GetRECloudSubsSucceedEvent event for empty list', () => {
-      service.sendGetRECloudSubsSucceedEvent([]);
+      service.sendGetRECloudSubsSucceedEvent([], CloudSubscriptionType.Flexible);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: 0,
           totalNumberOfSubscriptions: 0,
+          type: CloudSubscriptionType.Flexible,
         },
       );
     });
     it('should emit GetRECloudSubsSucceedEvent event for undefined input value', () => {
-      service.sendGetRECloudSubsSucceedEvent(undefined);
+      service.sendGetRECloudSubsSucceedEvent(undefined, CloudSubscriptionType.Fixed);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
         {
           numberOfActiveSubscriptions: 0,
           totalNumberOfSubscriptions: 0,
+          type: CloudSubscriptionType.Fixed,
         },
       );
     });
     it('should not throw on error when sending GetRECloudSubsSucceedEvent event', () => {
       const input: any = {};
 
-      expect(() => service.sendGetRECloudSubsSucceedEvent(input)).not.toThrow();
+      expect(() => service.sendGetRECloudSubsSucceedEvent(input, CloudSubscriptionType.Flexible)).not.toThrow();
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
   });
 
   describe('sendGetRECloudSubsFailedEvent', () => {
     it('should emit GetRECloudSubsFailedEvent event', () => {
-      service.sendGetRECloudSubsFailedEvent(httpException);
+      service.sendGetRECloudSubsFailedEvent(httpException, CloudSubscriptionType.Fixed);
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.RECloudSubscriptionsDiscoveryFailed,
         httpException,
+        { type: CloudSubscriptionType.Fixed },
       );
     });
   });
@@ -127,7 +137,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
     it('should emit event with active databases', () => {
       service.sendGetRECloudDbsSucceedEvent([
         mockCloudDatabase,
-        mockCloudDatabase,
+        mockCloudDatabaseFixed,
       ]);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
@@ -135,6 +145,8 @@ describe('CloudAutodiscoveryAnalytics', () => {
         {
           numberOfActiveDatabases: 2,
           totalNumberOfDatabases: 2,
+          fixed: 1,
+          flexible: 1,
         },
       );
     });
@@ -152,6 +164,8 @@ describe('CloudAutodiscoveryAnalytics', () => {
         {
           numberOfActiveDatabases: 1,
           totalNumberOfDatabases: 2,
+          fixed: 0,
+          flexible: 2,
         },
       );
     });
@@ -168,6 +182,8 @@ describe('CloudAutodiscoveryAnalytics', () => {
         {
           numberOfActiveDatabases: 0,
           totalNumberOfDatabases: 1,
+          fixed: 0,
+          flexible: 1,
         },
       );
     });
@@ -179,6 +195,8 @@ describe('CloudAutodiscoveryAnalytics', () => {
         {
           numberOfActiveDatabases: 0,
           totalNumberOfDatabases: 0,
+          fixed: 0,
+          flexible: 0,
         },
       );
     });
@@ -190,6 +208,8 @@ describe('CloudAutodiscoveryAnalytics', () => {
         {
           numberOfActiveDatabases: 0,
           totalNumberOfDatabases: 0,
+          fixed: 0,
+          flexible: 0,
         },
       );
     });

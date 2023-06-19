@@ -1,3 +1,4 @@
+import { countBy } from 'lodash';
 import { HttpException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
@@ -6,7 +7,7 @@ import {
   CloudDatabase,
   CloudDatabaseStatus,
   CloudSubscription,
-  CloudSubscriptionStatus,
+  CloudSubscriptionStatus, CloudSubscriptionType,
 } from 'src/modules/cloud/autodiscovery/models';
 
 @Injectable()
@@ -15,7 +16,7 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendGetRECloudSubsSucceedEvent(subscriptions: CloudSubscription[] = []) {
+  sendGetRECloudSubsSucceedEvent(subscriptions: CloudSubscription[] = [], type: CloudSubscriptionType) {
     try {
       this.sendEvent(
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
@@ -24,6 +25,7 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
             (sub) => sub.status === CloudSubscriptionStatus.Active,
           ).length,
           totalNumberOfSubscriptions: subscriptions.length,
+          type,
         },
       );
     } catch (e) {
@@ -31,8 +33,8 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendGetRECloudSubsFailedEvent(exception: HttpException) {
-    this.sendFailedEvent(TelemetryEvents.RECloudSubscriptionsDiscoveryFailed, exception);
+  sendGetRECloudSubsFailedEvent(exception: HttpException, type: CloudSubscriptionType) {
+    this.sendFailedEvent(TelemetryEvents.RECloudSubscriptionsDiscoveryFailed, exception, { type });
   }
 
   sendGetRECloudDbsSucceedEvent(databases: CloudDatabase[] = []) {
@@ -44,6 +46,9 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
             (db) => db.status === CloudDatabaseStatus.Active,
           ).length,
           totalNumberOfDatabases: databases.length,
+          fixed: 0,
+          flexible: 0,
+          ...countBy(databases, 'subscriptionType'),
         },
       );
     } catch (e) {

@@ -143,11 +143,11 @@ export class CloudAutodiscoveryService {
       );
       this.logger.log('Succeed to get cloud flexible subscriptions.');
       const result = parseCloudSubscriptionsResponse(subscriptions, type);
-      this.analytics.sendGetRECloudSubsSucceedEvent(result);
+      this.analytics.sendGetRECloudSubsSucceedEvent(result, type);
       return result;
     } catch (error) {
       const exception = this.getApiError(error, 'Failed to get cloud flexible subscriptions');
-      this.analytics.sendGetRECloudSubsFailedEvent(exception);
+      this.analytics.sendGetRECloudSubsFailedEvent(exception, type);
       throw exception;
     }
   }

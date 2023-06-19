@@ -1,69 +1,37 @@
 /* eslint-disable max-len */
-import { checkRediStack, REDISTACK_PORT } from 'uiSrc/utils'
-import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { isRediStack } from 'uiSrc/utils'
 
 const unmapWithName = (arr: any[]) => arr.map((item) => ({ name: item }))
 
-const REDISTACK_MODULE_DEFAULT = unmapWithName([
-  RedisDefaultModules.ReJSON,
-  RedisDefaultModules.Graph,
-  RedisDefaultModules.TimeSeries,
-  RedisDefaultModules.Search,
-  RedisDefaultModules.Bloom,
-].sort())
-
-const getOutputCheckRediStackTests: any[] = [
-  [
-    [{ port: REDISTACK_PORT, modules: REDISTACK_MODULE_DEFAULT }, { port: 12000, modules: REDISTACK_MODULE_DEFAULT }],
-    [{ port: REDISTACK_PORT, modules: REDISTACK_MODULE_DEFAULT, isRediStack: true }, { port: 12000, modules: REDISTACK_MODULE_DEFAULT, isRediStack: false }]
-  ],
-  [
-    [{ port: REDISTACK_PORT, modules: REDISTACK_MODULE_DEFAULT }],
-    [{ port: REDISTACK_PORT, modules: REDISTACK_MODULE_DEFAULT, isRediStack: true }]
-  ],
-  [
-    [{ port: REDISTACK_PORT, modules: unmapWithName(['']) }],
-    [{ port: REDISTACK_PORT, modules: unmapWithName(['']), isRediStack: false }]
-  ],
-  [
-    [{ port: REDISTACK_PORT, modules: unmapWithName(['search']) }],
-    [{ port: REDISTACK_PORT, modules: unmapWithName(['search']), isRediStack: false }]
-  ],
-  [
-    [{ port: REDISTACK_PORT, modules: unmapWithName(['bf', 'search', 'timeseries']) }],
-    [{ port: REDISTACK_PORT, modules: unmapWithName(['bf', 'search', 'timeseries']), isRediStack: false }]
-  ],
-  [
-    [{ port: 12000, modules: REDISTACK_MODULE_DEFAULT }],
-    [{ port: 12000, modules: REDISTACK_MODULE_DEFAULT, isRediStack: true }]
-  ],
-  [
-    [{ port: 12000, modules: unmapWithName(['search']) }],
-    [{ port: 12000, modules: unmapWithName(['search']), isRediStack: false }]
-  ],
-  // check searchlight - should be also marked as RediStack
-  [
-    [{ port: 12000, modules: unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph']) }],
-    [{ port: 12000, modules: unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph']), isRediStack: true }]
-  ],
-  [
-    [{ port: 12000, modules: [] }],
-    [{ port: 12000, modules: [], isRediStack: false }]
-  ],
-  [
-    [{ port: 12000, modules: unmapWithName(['ReJSON']) }],
-    [{ port: 12000, modules: unmapWithName(['ReJSON']), isRediStack: false }]
-  ],
-  [
-    [{ port: 12000, modules: unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph', 'custom']) }],
-    [{ port: 12000, modules: unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph', 'custom']), isRediStack: false }]
-  ],
+const isRediStackTests = [
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph', 'custom']), '6.2.6'], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'search', 'graph', 'custom']), '6.2.6'], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph']), '6.2.6'], expected: true },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph'])], expected: true },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph']), null], expected: true },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'search']), null], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'rg', 'search'])], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'search', 'graph']), '6.2.6'], expected: true },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph']), '6.2.5'], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'search', 'graph']), '6.2.5'], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph']), '7.1'], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'search', 'graph']), '7.1'], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'rg', 'searchlight']), '7.1'], expected: true },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'rg', 'search']), '7.1'], expected: true },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight']), '7.1'], expected: true },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'search']), '7.1'], expected: true },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'search']), '7.1'], expected: true },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'search', 'custom']), '7.1'], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'seasearchlightrch', 'custom']), '7.1'], expected: false },
 ]
 
-describe('checkRediStack', () => {
-  it.each(getOutputCheckRediStackTests)('for input: %s (reply), should be output: %s',
-    (reply, expected) => {
-      const result = checkRediStack(reply)
-      expect(result).toStrictEqual(expected)
-    })
+describe('isRediStack', () => {
+  test.each(isRediStackTests)(
+    '%j',
+    ({ input, expected }) => {
+      // @ts-ignore
+      const result = isRediStack(...input)
+      expect(result).toEqual(expected)
+    }
+  )
 })

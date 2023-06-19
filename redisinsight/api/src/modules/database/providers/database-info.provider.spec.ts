@@ -311,6 +311,18 @@ describe('DatabaseInfoProvider', () => {
     });
   });
 
+  describe('determineDatabaseServer', () => {
+    it('get modules by using MODULE LIST command', async () => {
+      when(mockIORedisClient.call)
+        .calledWith('info', ['server'])
+        .mockResolvedValue(mockRedisServerInfoResponse);
+
+      const result = await service.determineDatabaseServer(mockIORedisClient);
+
+      expect(result).toEqual(mockRedisGeneralInfo.version);
+    });
+  });
+
   describe('getRedisGeneralInfo', () => {
     beforeEach(() => {
       service.getDatabasesCount = jest.fn().mockResolvedValue(16);

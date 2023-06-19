@@ -149,7 +149,7 @@ test
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('No RediSearch module message', async t => {
         const noRedisearchMessage = 'Looks like RediSearch is not available for this database';
-        const externalPageLink = 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_browser_search';
+        const externalPageLink = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_browser_search';
 
         await t.click(browserPage.redisearchModeBtn);
         // Verify that user can see message in the dialog when he doesn't have RediSearch module

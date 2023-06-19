@@ -488,7 +488,7 @@ export class BrowserPage extends InstancePage {
     async selectFilterGroupType(groupName: string): Promise<void> {
         await t
             .click(this.filterByKeyTypeDropDown)
-            .click((this.filterOptionType).withExactText(groupName));
+            .click(this.filterOptionType.withExactText(groupName));
     }
 
     /**

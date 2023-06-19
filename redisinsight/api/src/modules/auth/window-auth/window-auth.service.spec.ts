@@ -3,7 +3,7 @@ import { WindowAuthService } from './window-auth.service';
 import { AbstractWindowAuthStrategy } from './strategies/abstract.window.auth.strategy';
 
 export class TestAuthStrategy extends AbstractWindowAuthStrategy {
-  async isWindowExists(): Promise<boolean> {
+  async isAuthorized(): Promise<boolean> {
     return false;
   }
 }

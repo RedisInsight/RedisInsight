@@ -14,7 +14,7 @@ import server from '../../../../api/dist/src/main'
 const port = config.defaultPort
 
 export class ElectronWindowAuthStrategy extends AbstractWindowAuthStrategy {
-  async isWindowExists(id: string): Promise<boolean> {
+  async isAuthorized(id: string): Promise<boolean> {
     return getWindows()?.has(id)
   }
 }

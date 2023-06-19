@@ -59,6 +59,8 @@ export interface ICloudApiDatabase {
   security: ICloudApiDatabaseSecurity;
   modules: ICloudApiDatabaseModule[];
   alerts: ICloudApiAlert[];
+  planMemoryLimit?: number;
+  memoryLimitMeasurementUnit?: string;
 }
 
 export interface ICloudApiSubscriptionDatabasesSubscription {

@@ -4,7 +4,7 @@ import {
   CloudAccountInfo,
   CloudDatabase, CloudDatabaseMemoryStorage,
   CloudDatabasePersistencePolicy, CloudDatabaseProtocol,
-  CloudSubscription, CloudSubscriptionType,
+  CloudSubscription, CloudSubscriptionType, ICloudApiDatabase,
 } from 'src/modules/cloud/autodiscovery/models';
 import { plainToClass } from 'class-transformer';
 
@@ -47,12 +47,12 @@ export const parseCloudSubscriptionsResponse = (
 };
 
 export const parseCloudDatabaseResponse = (
-  database: any,
+  database: ICloudApiDatabase,
   subscriptionId: number,
   subscriptionType: CloudSubscriptionType,
 ): CloudDatabase => {
   const {
-    databaseId, name, publicEndpoint, status, security,
+    databaseId, name, publicEndpoint, status, security, planMemoryLimit, memoryLimitMeasurementUnit,
   } = database;
 
   return plainToClass(CloudDatabase, {
@@ -76,6 +76,12 @@ export const parseCloudDatabaseResponse = (
       enabledBackup: !!database.periodicBackupPath,
       enabledClustering: database.clustering.numberOfShards > 1,
       isReplicaDestination: !!database.replicaOf,
+    },
+    cloudDetails: {
+      cloudId: databaseId,
+      subscriptionType,
+      planMemoryLimit,
+      memoryLimitMeasurementUnit,
     },
   }, { groups: ['security'] });
 };

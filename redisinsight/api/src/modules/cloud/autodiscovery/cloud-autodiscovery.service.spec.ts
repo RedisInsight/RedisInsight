@@ -8,7 +8,7 @@ import {
   mockAddCloudDatabaseResponseFixed,
   mockCloudAccountInfo,
   mockCloudApiAccount,
-  mockCloudApiDatabase,
+  mockCloudApiDatabase, mockCloudApiDatabaseFixed,
   mockCloudApiSubscription,
   mockCloudApiSubscriptionDatabases,
   mockCloudApiSubscriptionDatabasesFixed,
@@ -20,8 +20,9 @@ import {
   mockCloudSubscription,
   mockDatabaseService,
   mockGetCloudSubscriptionDatabaseDto,
+  mockGetCloudSubscriptionDatabaseDtoFixed,
   mockGetCloudSubscriptionDatabasesDto,
-  MockType
+  MockType,
 } from 'src/__mocks__';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { CloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.service';
@@ -137,6 +138,17 @@ describe('CloudAutodiscoveryService', () => {
         mockCloudAuthDto,
         mockGetCloudSubscriptionDatabaseDto,
       )).toEqual(mockCloudDatabase);
+    });
+    it('successfully get fixed database from Redis Cloud subscriptions', async () => {
+      mockedAxios.get.mockResolvedValue({
+        status: 200,
+        data: mockCloudApiDatabaseFixed,
+      });
+
+      expect(await service.getSubscriptionDatabase(
+        mockCloudAuthDto,
+        mockGetCloudSubscriptionDatabaseDtoFixed,
+      )).toEqual(mockCloudDatabaseFixed);
     });
     it('the user could not be authenticated', async () => {
       mockedAxios.get.mockRejectedValue(mockApiUnauthenticatedResponse);

@@ -73,12 +73,12 @@ describe('POST /cloud/subscriptions/databases', () => {
             .get(`/subscriptions/${mockAddCloudDatabaseDto.subscriptionId}/databases/${mockAddCloudDatabaseDto.databaseId}`)
             .reply(200, {
               ...mockCloudApiDatabase,
-              publicEndpoint: 'localhost:6379',
+              publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
             })
             .get(`/fixed/subscriptions/${mockAddCloudDatabaseDtoFixed.subscriptionId}/databases/${mockAddCloudDatabaseDtoFixed.databaseId}`)
             .reply(200, {
               ...mockCloudApiDatabase,
-              publicEndpoint: 'localhost:6379',
+              publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
             });
         },
         name: 'Should add 2 databases',
@@ -98,7 +98,7 @@ describe('POST /cloud/subscriptions/databases', () => {
             status: 'success',
             databaseDetails: {
               ...mockCloudDatabase,
-              publicEndpoint: 'localhost:6379',
+              publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
             }
           }, {
             ...mockAddCloudDatabaseDtoFixed,
@@ -106,7 +106,7 @@ describe('POST /cloud/subscriptions/databases', () => {
             status: 'success',
             databaseDetails: {
               ...mockCloudDatabaseFixed,
-              publicEndpoint: 'localhost:6379',
+              publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
             }
           }]);
         },

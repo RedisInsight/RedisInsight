@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { CloudSubscriptionType } from 'src/modules/cloud/autodiscovery/models/cloud-subscription';
+import { CloudDatabaseDetails } from 'src/modules/cloud/autodiscovery/models/cloud-database-details';
 
 export enum CloudDatabaseProtocol {
   Redis = 'redis',
@@ -36,30 +37,35 @@ export class CloudDatabase {
     description: 'Subscription id',
     type: Number,
   })
+  @Expose()
   subscriptionId: number;
 
   @ApiProperty({
     description: 'Subscription type',
     enum: CloudSubscriptionType,
   })
+  @Expose()
   subscriptionType: CloudSubscriptionType;
 
   @ApiProperty({
     description: 'Database id',
     type: Number,
   })
+  @Expose()
   databaseId: number;
 
   @ApiProperty({
     description: 'Database name',
     type: String,
   })
+  @Expose()
   name: string;
 
   @ApiProperty({
     description: 'Address your Redis Cloud database is available on',
     type: String,
   })
+  @Expose()
   publicEndpoint: string;
 
   @ApiProperty({
@@ -67,12 +73,14 @@ export class CloudDatabase {
     enum: CloudDatabaseStatus,
     default: CloudDatabaseStatus.Active,
   })
+  @Expose()
   status: CloudDatabaseStatus;
 
   @ApiProperty({
     description: 'Is ssl authentication enabled or not',
     type: Boolean,
   })
+  @Expose()
   sslClientAuthentication: boolean;
 
   @ApiProperty({
@@ -80,14 +88,20 @@ export class CloudDatabase {
     type: String,
     isArray: true,
   })
+  @Expose()
   modules: string[];
 
   @ApiProperty({
     description: 'Additional database options',
     type: Object,
   })
+  @Expose()
   options: any;
 
   @Expose({ groups: ['security'] })
   password?: string;
+
+  @Expose()
+  @Type(() => CloudDatabaseDetails)
+  cloudDetails?: CloudDatabaseDetails;
 }

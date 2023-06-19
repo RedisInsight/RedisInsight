@@ -305,6 +305,7 @@ export class CloudAutodiscoveryService {
               nameFromProvider: name,
               password,
               provider: HostingProvider.RE_CLOUD,
+              cloudDetails: database?.cloudDetails,
             });
 
             return {

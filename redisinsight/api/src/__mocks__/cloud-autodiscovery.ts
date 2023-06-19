@@ -145,6 +145,12 @@ export const mockCloudApiDatabase: ICloudApiDatabase = {
   alerts: [],
 };
 
+export const mockCloudApiDatabaseFixed: ICloudApiDatabase = {
+  ...mockCloudApiDatabase,
+  planMemoryLimit: 256,
+  memoryLimitMeasurementUnit: 'MB',
+};
+
 export const mockCloudDatabase = Object.assign(new CloudDatabase(), {
   subscriptionId: mockCloudSubscription.id,
   subscriptionType: CloudSubscriptionType.Flexible,
@@ -163,11 +169,21 @@ export const mockCloudDatabase = Object.assign(new CloudDatabase(), {
     isReplicaDestination: true,
     persistencePolicy: 'none',
   },
+  cloudDetails: {
+    cloudId: mockCloudApiDatabase.databaseId,
+    subscriptionType: CloudSubscriptionType.Flexible,
+  },
 });
 
 export const mockCloudDatabaseFixed = Object.assign(new CloudDatabase(), {
   ...mockCloudDatabase,
   subscriptionType: CloudSubscriptionType.Fixed,
+  cloudDetails: {
+    cloudId: mockCloudApiDatabase.databaseId,
+    subscriptionType: CloudSubscriptionType.Fixed,
+    planMemoryLimit: mockCloudApiDatabaseFixed.planMemoryLimit,
+    memoryLimitMeasurementUnit: mockCloudApiDatabaseFixed.memoryLimitMeasurementUnit,
+  },
 });
 
 export const mockCloudDatabaseFromList = Object.assign(new CloudDatabase(), {
@@ -218,6 +234,11 @@ export const mockGetCloudSubscriptionDatabaseDto = Object.assign(new GetCloudSub
   subscriptionId: mockCloudSubscription.id,
   subscriptionType: mockCloudSubscription.type,
   databaseId: mockCloudDatabase.databaseId,
+});
+
+export const mockGetCloudSubscriptionDatabaseDtoFixed = Object.assign(new GetCloudSubscriptionDatabaseDto(), {
+  ...mockGetCloudSubscriptionDatabaseDto,
+  subscriptionType: mockCloudSubscriptionFixed.type,
 });
 
 export const mockAddCloudDatabaseDto = Object.assign(new AddCloudDatabaseDto(), {

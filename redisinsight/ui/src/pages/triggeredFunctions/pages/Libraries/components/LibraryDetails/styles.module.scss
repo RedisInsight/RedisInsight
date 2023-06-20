@@ -1,0 +1,87 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+.main {
+  position: relative;
+  height: 100%;
+
+  .header {
+    height: 92px;
+    padding: 16px;
+    border-bottom: 1px solid var(--euiColorLightShade);
+
+    .titleTooltip {
+      width: auto;
+      max-width: calc(100% - 80px);
+    }
+  }
+
+  .content {
+    position: relative;
+    padding: 16px 16px 40px;
+
+    @include euiScrollBar;
+    overflow: auto;
+    height: 100%;
+    max-height: calc(100% - 92px);
+  }
+
+  .editorWrapper {
+    height: 280px;
+
+    :global(.inlineMonacoEditor) {
+      height: 278px;
+    }
+  }
+
+  .closeRightPanel {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+
+  .accordion {
+    margin-top: 0;
+    margin-bottom: 20px;
+
+    &:global(.euiAccordion-isOpen) {
+      :global {
+        .euiAccordion__triggerWrapper {
+          border-radius: 4px 4px 0 0;
+          background: var(--euiColorLightestShade);
+        }
+      }
+    }
+
+    :global {
+      .euiAccordion__triggerWrapper {
+        padding: 6px 10px;
+        background: transparent;
+        border: 1px solid var(--controlsBorderColor);
+        border-radius: 4px;
+      }
+
+      .euiAccordion__childWrapper {
+        background: transparent;
+        border: 1px solid var(--controlsBorderColor) !important;
+        border-top-width: 0 !important;
+        border-radius: 0 0 4px 4px;
+      }
+
+      .euiCollapsibleNavGroup__title {
+        color: var(--euiTextSubduedColor) !important;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+      }
+    }
+  }
+
+  .listItem {
+    margin-bottom: 4px;
+  }
+
+  :global(.monaco-editor.readMode .monaco-mouse-cursor-text) {
+    cursor: default;
+  }
+}

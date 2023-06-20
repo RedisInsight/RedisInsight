@@ -71,7 +71,7 @@ export default {
   plugins: [
     new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
 
-    new MonacoWebpackPlugin({ languages: ['json'], features: ['!rename'] }),
+    new MonacoWebpackPlugin({ languages: ['json', 'javascript', 'typescript'], features: ['!rename'] }),
 
     new webpack.IgnorePlugin({
       checkResource(resource) {

@@ -3,14 +3,25 @@ import { AxiosError } from 'axios'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import reducer, {
   fetchTriggeredFunctionsLibrariesList,
-  getTriggeredFunctionsFailure,
-  getTriggeredFunctionsList,
-  getTriggeredFunctionsListSuccess,
+  getTriggeredFunctionsLibrariesListFailure,
+  getTriggeredFunctionsLibrariesList,
+  getTriggeredFunctionsLibrariesListSuccess,
   initialState,
-  triggeredFunctionsSelector
+  triggeredFunctionsSelector,
+  getTriggeredFunctionsLibraryDetails,
+  getTriggeredFunctionsLibraryDetailsSuccess,
+  getTriggeredFunctionsLibraryDetailsFailure,
+  replaceTriggeredFunctionsLibrary,
+  replaceTriggeredFunctionsLibrarySuccess,
+  replaceTriggeredFunctionsLibraryFailure,
+  fetchTriggeredFunctionsLibrary,
+  replaceTriggeredFunctionsLibraryAction
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import {
+  TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA
+} from 'uiSrc/mocks/handlers/triggeredFunctions/triggeredFunctionsHandler'
 
 let store: typeof mockedStore
 
@@ -45,7 +56,7 @@ describe('triggeredFunctions slice', () => {
     })
   })
 
-  describe('getTriggeredFunctionsList', () => {
+  describe('getTriggeredFunctionsLibrariesList', () => {
     it('should properly set state', () => {
       // Arrange
       const state = {
@@ -54,7 +65,7 @@ describe('triggeredFunctions slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, getTriggeredFunctionsList())
+      const nextState = reducer(initialState, getTriggeredFunctionsLibrariesList())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -64,7 +75,7 @@ describe('triggeredFunctions slice', () => {
     })
   })
 
-  describe('getTriggeredFunctionsListSuccess', () => {
+  describe('getTriggeredFunctionsLibrariesListSuccess', () => {
     it('should properly set state', () => {
       // Arrange
       const libraries = [{ name: 'lib1', user: 'user1' }]
@@ -75,7 +86,7 @@ describe('triggeredFunctions slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, getTriggeredFunctionsListSuccess(libraries))
+      const nextState = reducer(initialState, getTriggeredFunctionsLibrariesListSuccess(libraries))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -85,7 +96,7 @@ describe('triggeredFunctions slice', () => {
     })
   })
 
-  describe('getTriggeredFunctionsFailure', () => {
+  describe('getTriggeredFunctionsLibrariesListFailure', () => {
     it('should properly set state', () => {
       // Arrange
       const error = 'error'
@@ -95,7 +106,162 @@ describe('triggeredFunctions slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, getTriggeredFunctionsFailure(error))
+      const nextState = reducer(initialState, getTriggeredFunctionsLibrariesListFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getTriggeredFunctionsLibraryDetails', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        selectedLibrary: {
+          ...initialState.selectedLibrary,
+          loading: true
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getTriggeredFunctionsLibraryDetails())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getTriggeredFunctionsLibraryDetailsSuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const libraryDetails = TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA
+      const state = {
+        ...initialState,
+        selectedLibrary: {
+          ...initialState.selectedLibrary,
+          lastRefresh: Date.now(),
+          data: libraryDetails
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getTriggeredFunctionsLibraryDetailsSuccess(libraryDetails))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getTriggeredFunctionsLibraryDetailsFailure', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        selectedLibrary: {
+          ...initialState.selectedLibrary,
+          loading: true
+        }
+      }
+      const state = {
+        ...initialState,
+        selectedLibrary: {
+          ...initialState.selectedLibrary,
+          loading: false
+        },
+      }
+
+      // Act
+      const nextState = reducer(currentState, getTriggeredFunctionsLibraryDetailsFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('replaceTriggeredFunctionsLibrary', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        selectedLibrary: {
+          ...initialState.selectedLibrary,
+          loading: true
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, replaceTriggeredFunctionsLibrary())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('replaceTriggeredFunctionsLibrarySuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        selectedLibrary: {
+          ...initialState.selectedLibrary,
+          loading: true
+        }
+      }
+      const state = {
+        ...initialState,
+        selectedLibrary: {
+          ...initialState.selectedLibrary,
+          loading: false,
+        },
+      }
+
+      // Act
+      const nextState = reducer(currentState, replaceTriggeredFunctionsLibrarySuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('replaceTriggeredFunctionsLibraryFailure', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        selectedLibrary: {
+          ...initialState.selectedLibrary,
+          loading: true
+        }
+      }
+      const state = {
+        ...initialState,
+        selectedLibrary: {
+          ...initialState.selectedLibrary,
+          loading: false
+        },
+      }
+
+      // Act
+      const nextState = reducer(currentState, replaceTriggeredFunctionsLibraryFailure())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -122,8 +288,8 @@ describe('triggeredFunctions slice', () => {
 
         // Assert
         const expectedActions = [
-          getTriggeredFunctionsList(),
-          getTriggeredFunctionsListSuccess(data),
+          getTriggeredFunctionsLibrariesList(),
+          getTriggeredFunctionsLibrariesListSuccess(data),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -147,9 +313,104 @@ describe('triggeredFunctions slice', () => {
 
         // Assert
         const expectedActions = [
-          getTriggeredFunctionsList(),
+          getTriggeredFunctionsLibrariesList(),
           addErrorNotification(responsePayload as AxiosError),
-          getTriggeredFunctionsFailure(errorMessage)
+          getTriggeredFunctionsLibrariesListFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchTriggeredFunctionsLibrary', () => {
+      it('succeed to fetch data', async () => {
+        const data = TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchTriggeredFunctionsLibrary('123', 'lib')
+        )
+
+        // Assert
+        const expectedActions = [
+          getTriggeredFunctionsLibraryDetails(),
+          getTriggeredFunctionsLibraryDetailsSuccess(data),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchTriggeredFunctionsLibrary('123', 'lib')
+        )
+
+        // Assert
+        const expectedActions = [
+          getTriggeredFunctionsLibraryDetails(),
+          addErrorNotification(responsePayload as AxiosError),
+          getTriggeredFunctionsLibraryDetailsFailure()
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('replaceTriggeredFunctionsLibraryAction', () => {
+      it('succeed to fetch data', async () => {
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          replaceTriggeredFunctionsLibraryAction('123', 'code', 'config')
+        )
+
+        // Assert
+        const expectedActions = [
+          replaceTriggeredFunctionsLibrary(),
+          replaceTriggeredFunctionsLibrarySuccess(),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          replaceTriggeredFunctionsLibraryAction('123', 'code', 'config')
+        )
+
+        // Assert
+        const expectedActions = [
+          replaceTriggeredFunctionsLibrary(),
+          addErrorNotification(responsePayload as AxiosError),
+          replaceTriggeredFunctionsLibraryFailure()
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

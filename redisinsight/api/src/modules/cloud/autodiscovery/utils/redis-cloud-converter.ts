@@ -32,14 +32,14 @@ export const parseCloudSubscriptionsResponse = (
         name: subscription.name,
         numberOfDatabases: subscription.numberOfDatabases,
         status: subscription.status,
-        provider: get(subscription, ['cloudDetails', 0, 'provider']),
+        provider: get(subscription, ['cloudDetails', 0, 'provider'], get(subscription, 'provider')),
         region: get(subscription, [
           'cloudDetails',
           0,
           'regions',
           0,
           'region',
-        ]),
+        ], get(subscription, 'region')),
       }));
     });
   }

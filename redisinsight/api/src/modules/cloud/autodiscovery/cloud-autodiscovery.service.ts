@@ -306,6 +306,7 @@ export class CloudAutodiscoveryService {
               password,
               provider: HostingProvider.RE_CLOUD,
               cloudDetails: database?.cloudDetails,
+              timeout: this.config.cloudDatabaseConnectionTimeout,
             });
 
             return {

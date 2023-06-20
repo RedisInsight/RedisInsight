@@ -22,6 +22,9 @@ import {
   GetCloudDatabasesDto,
 } from 'src/modules/cloud/autodiscovery/dto';
 import { CloudAuthHeaders } from 'src/modules/cloud/autodiscovery/decorators/cloud-auth.decorator';
+import config from 'src/utils/config';
+
+const cloudConf = config.get('redis_cloud');
 
 @ApiTags('Cloud Autodiscovery')
 @ApiHeaders([{
@@ -30,12 +33,12 @@ import { CloudAuthHeaders } from 'src/modules/cloud/autodiscovery/decorators/clo
   name: 'x-cloud-api-secret',
 }])
 @UsePipes(new ValidationPipe({ transform: true }))
+@UseInterceptors(new TimeoutInterceptor(undefined, cloudConf.cloudDiscoveryTimeout))
 @Controller('cloud/autodiscovery')
 export class CloudAutodiscoveryController {
   constructor(private service: CloudAutodiscoveryService) {}
 
   @Get('account')
-  @UseInterceptors(new TimeoutInterceptor())
   @ApiEndpoint({
     description: 'Get current account',
     statusCode: 200,
@@ -53,7 +56,6 @@ export class CloudAutodiscoveryController {
   }
 
   @Get('subscriptions')
-  @UseInterceptors(new TimeoutInterceptor())
   @ApiEndpoint({
     description: 'Get information about current account’s subscriptions.',
     statusCode: 200,
@@ -107,7 +109,6 @@ export class CloudAutodiscoveryController {
       },
     ],
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
   async addRedisCloudDatabases(
     @CloudAuthHeaders() authDto: CloudAuthDto,
       @Body() dto: AddCloudDatabasesDto,

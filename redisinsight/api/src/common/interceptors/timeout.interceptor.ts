@@ -18,13 +18,16 @@ export class TimeoutInterceptor implements NestInterceptor {
 
   private readonly message: string;
 
-  constructor(message: string = 'Request timeout') {
+  private readonly timeout: number;
+
+  constructor(message: string = 'Request timeout', timeoutMs?: number) {
     this.message = message;
+    this.timeout = timeoutMs ?? serverConfig.requestTimeout;
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      timeout(serverConfig.requestTimeout),
+      timeout(this.timeout),
       catchError((err) => {
         if (err instanceof TimeoutError) {
           const { method, url } = context.switchToHttp().getRequest();

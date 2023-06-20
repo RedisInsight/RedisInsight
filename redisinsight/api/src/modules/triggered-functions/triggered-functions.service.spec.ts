@@ -175,6 +175,15 @@ describe('TriggeredFunctionsService', () => {
         expect(e).toBeInstanceOf(NotFoundException);
       }
     });
+
+    it('should return NotFoundException when library does not exist', async () => {
+      mockIORedisClient.sendCommand.mockResolvedValueOnce([]);
+
+      await expect(
+        service.details(mockClientMetadata, mockLibraryName),
+      ).rejects.toThrow(NotFoundException);
+    });
+
   });
 
   describe('libraryList', () => {

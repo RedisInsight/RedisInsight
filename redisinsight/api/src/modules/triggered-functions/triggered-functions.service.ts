@@ -1,5 +1,5 @@
 import { Command } from 'ioredis';
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { catchAclError } from 'src/utils';
 import { concat } from 'lodash';
 import { plainToClass } from 'class-transformer';
@@ -10,6 +10,7 @@ import {
 } from 'src/modules/triggered-functions/utils';
 import { UploadLibraryDto } from 'src/modules/triggered-functions/dto';
 import { ClientMetadata } from 'src/common/models';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 @Injectable()
 export class TriggeredFunctionsService {
@@ -63,6 +64,15 @@ export class TriggeredFunctionsService {
       const reply = await client.sendCommand(
         new Command('TFUNCTION', ['LIST', 'WITHCODE', 'LIBRARY', name], { replyEncoding: 'utf8' }),
       );
+
+      if (!reply.length) {
+        this.logger.error(
+          `Failed to get library details. Not Found library: ${name}.`,
+        );
+        return Promise.reject(
+          new NotFoundException(ERROR_MESSAGES.LIBRARY_NOT_EXIST),
+        );
+      }
       const library = getLibraryInformation(reply[0]);
       return plainToClass(
         Library,

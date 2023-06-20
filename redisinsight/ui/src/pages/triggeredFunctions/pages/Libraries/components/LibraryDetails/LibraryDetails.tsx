@@ -58,8 +58,8 @@ const LibraryDetails = (props: Props) => {
   const { loading, lastRefresh, data: library } = useSelector(triggeredFunctionsSelectedLibrarySelector)
 
   const [selectedView, setSelectedView] = useState<string>(tabs[0].id)
-  const [configuration, setConfiguration] = useState<string>('')
-  const [code, setCode] = useState<string>('')
+  const [configuration, setConfiguration] = useState<string>('_')
+  const [code, setCode] = useState<string>('_')
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -82,8 +82,16 @@ const LibraryDetails = (props: Props) => {
   }, [name])
 
   useEffect(() => {
-    setConfiguration(reSerializeJSON(library?.configuration ?? '', 2))
-    setCode(library?.code ?? '')
+    // set first values, to clear selection after lib will be fetched
+    // https://github.com/react-monaco-editor/react-monaco-editor/issues/539
+    if (!library) {
+      setCode('_')
+      setConfiguration('_')
+      return
+    }
+
+    setConfiguration(reSerializeJSON(library.configuration ?? '', 2))
+    setCode(library.code)
   }, [library])
 
   const handleRefresh = () => {

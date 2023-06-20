@@ -52,23 +52,12 @@ const MonacoEditor = (props: Props) => {
 
   const [isEditing, setIsEditing] = useState(!readOnly && !disabled)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
-  const valueRef = useRef<string>('')
 
   const { theme } = useContext(ThemeContext)
 
   useEffect(() => {
     monacoObjects.current?.editor.updateOptions({ readOnly: !isEditing && (disabled || readOnly) })
   }, [disabled, readOnly, isEditing])
-
-  useEffect(() => {
-    // clear selection after update empty value
-    // https://github.com/react-monaco-editor/react-monaco-editor/issues/539
-    if (value && !valueRef.current) {
-      monacoObjects.current?.editor.setSelection(new monaco.Selection(0, 0, 0, 0))
-    }
-
-    valueRef.current = value
-  }, [value])
 
   const editorDidMount = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,

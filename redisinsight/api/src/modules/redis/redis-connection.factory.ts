@@ -1,5 +1,5 @@
 import Redis, { Cluster, RedisOptions } from 'ioredis';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Database } from 'src/modules/database/models/database';
 import apiConfig from 'src/utils/config';
 import { ConnectionOptions } from 'tls';
@@ -10,6 +10,7 @@ import { ClientMetadata } from 'src/common/models';
 import { ClusterOptions } from 'ioredis/built/cluster/ClusterOptions';
 import { SshTunnelProvider } from 'src/modules/ssh/ssh-tunnel.provider';
 import { TunnelConnectionLostException } from 'src/modules/ssh/exceptions';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -195,6 +196,10 @@ export class RedisConnectionFactory {
             this.logger.error('Failed connection to the redis database.', e);
             reject(e);
           });
+          connection.on('end', (): void => {
+            this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+            reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+          });
           connection.on('ready', (): void => {
             this.logger.log('Successfully connected to the redis database');
             resolve(connection);
@@ -241,6 +246,10 @@ export class RedisConnectionFactory {
           this.logger.error('Failed connection to the redis oss cluster', e);
           reject(!isEmpty(e.lastNodeError) ? e.lastNodeError : e);
         });
+        cluster.on('end', (): void => {
+          this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+          reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+        });
         cluster.on('ready', (): void => {
           this.logger.log('Successfully connected to the redis oss cluster.');
           resolve(cluster);
@@ -270,6 +279,10 @@ export class RedisConnectionFactory {
         client.on('error', (e): void => {
           this.logger.error('Failed connection to the redis oss sentinel', e);
           reject(e);
+        });
+        client.on('end', (): void => {
+          this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+          reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
         });
         client.on('ready', (): void => {
           this.logger.log('Successfully connected to the redis oss sentinel.');

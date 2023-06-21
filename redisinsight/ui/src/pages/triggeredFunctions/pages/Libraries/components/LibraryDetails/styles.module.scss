@@ -74,11 +74,18 @@
         font-size: 14px !important;
         font-weight: 400 !important;
       }
+
+      .euiCollapsibleNavGroup__children {
+        max-height: 200px;
+        overflow-y: auto;
+        @include euiScrollBar;
+      }
     }
   }
 
   .listItem {
     margin-bottom: 4px;
+    word-wrap: break-word;
   }
 
   :global(.monaco-editor.readMode .monaco-mouse-cursor-text) {

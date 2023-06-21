@@ -39,13 +39,7 @@
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
-    "gatekeeperAssess": false,
-    "binaries": [
-      "Contents/Resources/app.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-arm64/node_sqlite3.node",
-      "Contents/Resources/app.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-x64/node_sqlite3.node",
-      "Contents/Resources/app.asar.unpacked/node_modules/keytar/build/Release/keytar.node",
-      "Contents/Resources/app.asar.unpacked/node_modules/cpu-features/build/Release/cpufeatures.node"
-    ]
+    "gatekeeperAssess": false
   },
   "mas": {
     "mergeASARs": false,

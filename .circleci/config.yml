@@ -1092,31 +1092,31 @@ workflows:
           env: dev
           requires:
             - Setup sign certificates (dev)
-      - linux:
-          name: Build app - Linux (dev)
-          env: dev
-          requires: &devBuildRequire
-            - Setup build (dev)
+      # - linux:
+      #     name: Build app - Linux (dev)
+      #     env: dev
+      #     requires: &devBuildRequire
+      #       - Setup build (dev)
       - macosx:
           name: Build app - MacOS (dev)
           env: dev
           requires: *devBuildRequire
-      - windows:
-          name: Build app - Windows (dev)
-          env: dev
-          requires: *devBuildRequire
+      # - windows:
+      #     name: Build app - Windows (dev)
+      #     env: dev
+      #     requires: *devBuildRequire
       - store-build-artifacts:
           name: Store build artifacts (dev)
           requires:
-            - Build app - Linux (dev)
+            # - Build app - Linux (dev)
             - Build app - MacOS (dev)
-            - Build app - Windows (dev)
+            # - Build app - Windows (dev)
       - release-aws-test:
           name: Release AWS dev
           requires:
-            - Build app - Linux (dev)
+            # - Build app - Linux (dev)
             - Build app - MacOS (dev)
-            - Build app - Windows (dev)
+            # - Build app - Windows (dev)
   # Main workflow for release/* and latest branches only
   release:
     jobs:

@@ -100,8 +100,8 @@ export const cloudDatabaseConfig = {
     databaseName: `${process.env.E2E_CLOUD_DATABASE_NAME || 'cloud-database'}-${uniqueId}`,
     databaseUsername: process.env.E2E_CLOUD_DATABASE_USERNAME,
     databasePassword: process.env.E2E_CLOUD_DATABASE_PASSWORD,
-    cloudAPIAccessKey: process.env.E2E_CLOUD_API_ACCESS_KEY || '',
-    cloudAPISecretKey: process.env.E2E_CLOUD_API_SECRET_KEY || ''
+    accessKey: process.env.E2E_CLOUD_API_ACCESS_KEY || '',
+    secretKey: process.env.E2E_CLOUD_API_SECRET_KEY || ''
 };
 
 export const ossStandaloneNoPermissionsConfig = {

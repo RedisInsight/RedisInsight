@@ -1114,9 +1114,9 @@ workflows:
       - release-aws-test:
           name: Release AWS dev
           requires:
-            # - Build app - Linux (dev)
+            - Build app - Linux (dev)
             - Build app - MacOS (dev)
-            # - Build app - Windows (dev)
+            - Build app - Windows (dev)
   # Main workflow for release/* and latest branches only
   release:
     jobs:

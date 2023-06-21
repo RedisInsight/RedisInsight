@@ -114,6 +114,11 @@ enum ApiEndpoints {
   FEATURES = 'features',
 }
 
+export enum CustomHeaders {
+  DbIndex = 'ri-db-index',
+  WindowId = 'x-window-id',
+}
+
 export const DEFAULT_SEARCH_MATCH = '*'
 
 const SCAN_COUNT_DEFAULT_ENV = process.env.SCAN_COUNT_DEFAULT || '500'

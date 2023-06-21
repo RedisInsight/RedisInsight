@@ -8,6 +8,7 @@ import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { get } from 'src/utils';
 import { migrateHomeFolder } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
+import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
@@ -49,6 +50,8 @@ export default async function bootstrap(): Promise<IApp> {
       app,
       SwaggerModule.createDocument(app, SWAGGER_CONFIG),
     );
+  } else {
+    app.useWebSocketAdapter(new WindowsAuthAdapter(app));
   }
 
   const logFileProvider = app.get(LogFileProvider);

@@ -195,7 +195,6 @@ export class BrowserPage extends InstancePage {
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
     keyNameInTheList = Selector(this.cssSelectorKey);
-    databaseNames = Selector('[data-testid^=db_name_]');
     hashFieldsList = Selector('[data-testid^=hash-field-] span');
     hashValuesList = Selector('[data-testid^=hash-field-value-] span');
     hashField = Selector('[data-testid^=hash-field-]').nth(0);
@@ -753,11 +752,6 @@ export class BrowserPage extends InstancePage {
             .typeText(this.setMemberInput, keyMember, { replace: true, paste: true })
             .typeText(this.zsetMemberScoreInput, score, { replace: true, paste: true })
             .click(this.saveMemberButton);
-    }
-
-    //Get databases name
-    async getDatabasesName(): Promise<string> {
-        return this.databaseNames.textContent;
     }
 
     //Open key details

@@ -11,7 +11,7 @@ import { nock } from '../../helpers/test';
 import {
   mockAddCloudDatabaseDto,
   mockAddCloudDatabaseDtoFixed,
-  mockCloudApiDatabase, mockCloudDatabase, mockCloudDatabaseFixed,
+  mockCloudApiDatabase, mockCloudApiDatabaseFixed, mockCloudDatabase, mockCloudDatabaseFixed,
 } from 'src/__mocks__/cloud-autodiscovery';
 const { request, server, constants } = deps;
 
@@ -77,7 +77,7 @@ describe('POST /cloud/subscriptions/databases', () => {
             })
             .get(`/fixed/subscriptions/${mockAddCloudDatabaseDtoFixed.subscriptionId}/databases/${mockAddCloudDatabaseDtoFixed.databaseId}`)
             .reply(200, {
-              ...mockCloudApiDatabase,
+              ...mockCloudApiDatabaseFixed,
               publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
             });
         },

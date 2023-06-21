@@ -53,12 +53,12 @@ export async function discoverSentinelDatabase(databaseParameters: SentinelParam
  */
 export async function addNewREClusterDatabase(databaseParameters: AddNewDatabaseParameters): Promise<void> {
     // Fill the add database form
-    await myRedisDatabasePage.AddRedisDatabase.addAutodiscoverREClucterDatabase(databaseParameters);
+    await myRedisDatabasePage.AddRedisDatabase.addAutodiscoverREClusterDatabase(databaseParameters);
     // Click on submit button
     await t
         .click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton)
     // Wait for database to be exist in the list of Autodiscover databases and select it
-        .expect(autoDiscoverREDatabases.databaseNames.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 10000 })
+        .expect(autoDiscoverREDatabases.databaseName.withExactText(databaseParameters.databaseName ?? '').exists).ok('The database not displayed', { timeout: 10000 })
         .typeText(autoDiscoverREDatabases.search, databaseParameters.databaseName ?? '')
         .click(autoDiscoverREDatabases.databaseCheckbox)
     // Click Add selected databases button
@@ -87,18 +87,20 @@ export async function addOSSClusterDatabase(databaseParameters: OSSClusterParame
  * @param cloudAPIAccessKey The Cloud API Access Key
  * @param cloudAPISecretKey The Cloud API Secret Key
  */
-export async function addNewRECloudDatabase(cloudAPIAccessKey: string, cloudAPISecretKey: string): Promise<string> {
+export async function autodiscoverRECloudDatabase(cloudAPIAccessKey: string, cloudAPISecretKey: string): Promise<string> {
     // Fill the add database form and Submit
     await myRedisDatabasePage.AddRedisDatabase.addAutodiscoverRECloudDatabase(cloudAPIAccessKey, cloudAPISecretKey);
     await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+    await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Enterprise Cloud Subscriptions').exists).ok('Subscriptions list not displayed', { timeout: 120000 });
     // Select subscriptions
     await t.click(myRedisDatabasePage.AddRedisDatabase.selectAllCheckbox);
     await t.click(myRedisDatabasePage.AddRedisDatabase.showDatabasesButton);
     // Select databases for adding
-    const databaseName = await browserPage.getDatabasesName();
-    await t.click(myRedisDatabasePage.AddRedisDatabase.selectAllCheckbox);
+    const databaseName = await autoDiscoverREDatabases.getDatabaseName();
+    await t.click(autoDiscoverREDatabases.databaseCheckbox);
     await t.click(autoDiscoverREDatabases.addSelectedDatabases);
     // Wait for database to be exist in the My redis databases list
+    await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Enterprise Databases Added').exists).ok('Added databases list not displayed', { timeout: 20000 });
     await t.click(autoDiscoverREDatabases.viewDatabasesButton);
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(databaseName).exists).ok('The database not displayed', { timeout: 10000 });
     return databaseName;

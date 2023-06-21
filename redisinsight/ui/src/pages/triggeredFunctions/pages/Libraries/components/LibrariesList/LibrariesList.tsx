@@ -14,14 +14,15 @@ export interface Props {
   loading: boolean
   onRefresh: () => void
   lastRefresh: Nullable<number>
+  selectedRow: Nullable<string>
+  onSelectRow: (name: string) => void
 }
 
 const NoLibrariesMessage: React.ReactNode = (<span data-testid="no-libraries-message">No Libraries found</span>)
 
 const LibrariesList = (props: Props) => {
-  const { items, loading, onRefresh, lastRefresh } = props
+  const { items, loading, onRefresh, lastRefresh, selectedRow, onSelectRow } = props
   const [sort, setSort] = useState<Maybe<PropertySort>>(undefined)
-  const [selectedRow, setSelectedRow] = useState<Nullable<string>>(null)
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -78,7 +79,7 @@ const LibrariesList = (props: Props) => {
   ]
 
   const handleSelect = (item: TriggeredFunctionsLibrary) => {
-    setSelectedRow(item.name)
+    onSelectRow(item.name)
   }
 
   const handleRefreshClicked = () => {

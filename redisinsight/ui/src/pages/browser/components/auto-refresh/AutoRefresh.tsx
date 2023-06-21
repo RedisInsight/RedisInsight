@@ -30,7 +30,7 @@ export interface Props {
   containerClassName?: string
   turnOffAutoRefresh?: boolean
   onRefresh: (enableAutoRefresh: boolean) => void
-  onRefreshClicked: () => void
+  onRefreshClicked?: () => void
   onEnableAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
   onChangeAutoRefreshRate?: (enableAutoRefresh: boolean, refreshRate: string) => void
 }

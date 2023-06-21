@@ -1,3 +1,5 @@
+$breakpoint-to-hide-resize-panel: 1124px;
+
 .topPanel {
   margin: 16px 0;
   min-height: 40px;
@@ -17,9 +19,55 @@
   }
 }
 
+.resizePanelLeft {
+  padding-right: 8px;
+
+  &.withSelectedRow {
+    @media screen and (max-width: $breakpoint-to-hide-resize-panel) {
+      display: none;
+    }
+  }
+}
+
+.resizableButton {
+  @media screen and (max-width: $breakpoint-to-hide-resize-panel) {
+    display: none;
+  }
+}
+
+.resizePanelRight {
+  padding-left: 8px;
+
+  @media screen and (max-width: $breakpoint-to-hide-resize-panel) {
+    padding-left: 0;
+    width: 100% !important;
+  }
+}
+
+.panelWrapper {
+  background-color: var(--euiColorEmptyShade);
+  height: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+.noVisible {
+  visibility: hidden;
+}
+
+.fullWidth {
+  width: 100% !important;
+  min-width: 100% !important;
+  padding: 0;
+  :global(.euiResizablePanel__content) {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
 
 .main {
-  background-color: var(--euiColorEmptyShade);
   max-height: calc(100% - 72px);
 
   .loading {

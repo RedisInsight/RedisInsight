@@ -188,7 +188,7 @@ export default merge(baseConfig, {
   },
 
   plugins: [
-    new MonacoWebpackPlugin({ languages: ['json'], features: ['!rename'] }),
+    new MonacoWebpackPlugin({ languages: ['json', 'javascript', 'typescript'], features: ['!rename'] }),
 
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',

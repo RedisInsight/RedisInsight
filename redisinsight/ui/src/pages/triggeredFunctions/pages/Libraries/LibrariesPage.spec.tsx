@@ -2,7 +2,7 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
-import { getTriggeredFunctionsList, triggeredFunctionsSelector } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { getTriggeredFunctionsLibrariesList, triggeredFunctionsSelector } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import LibrariesPage from './LibrariesPage'
 
 jest.mock('uiSrc/slices/triggeredFunctions/triggeredFunctions', () => ({
@@ -49,7 +49,7 @@ describe('LibrariesPage', () => {
   it('should fetch list of libraries', () => {
     render(<LibrariesPage />)
 
-    const expectedActions = [getTriggeredFunctionsList()]
+    const expectedActions = [getTriggeredFunctionsLibrariesList()]
     expect(store.getActions()).toEqual(expectedActions)
   })
 
@@ -102,5 +102,17 @@ describe('LibrariesPage', () => {
       { target: { value: '' } }
     )
     expect(screen.queryAllByTestId(/^row-/).length).toEqual(3)
+  })
+
+  it('should open library details', () => {
+    (triggeredFunctionsSelector as jest.Mock).mockReturnValueOnce({
+      libraries: mockedLibraries,
+      loading: false
+    })
+    render(<LibrariesPage />)
+
+    fireEvent.click(screen.getByTestId('row-lib1'))
+
+    expect(screen.getByTestId('lib-details-lib1')).toBeInTheDocument()
   })
 })

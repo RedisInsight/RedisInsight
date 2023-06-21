@@ -25,12 +25,21 @@
 .logo {
   transition: transform 0.1s linear;
 
+  background-size: cover;
+
+  margin-right: 10px;
+
+  width: 45px;
+  height: 65px;
+
   &:hover {
     transform: translateY(-1px) !important;
   }
+}
 
-  img {
-    height: 28px !important;
-    width: 150px !important;
-  }
+.google {
+  background-image: url("uiSrc/assets/img/auth/google.png") !important;
+}
+.github {
+  background-image: url("uiSrc/assets/img/auth/github.png") !important;
 }

@@ -35,6 +35,7 @@ export const mockDatabase = Object.assign(new Database(), {
   timeout: 30_000,
   new: false,
   compressor: Compressor.NONE,
+  version: '7.0',
 });
 
 export const mockDatabaseEntity = Object.assign(new DatabaseEntity(), {
@@ -219,6 +220,7 @@ export const mockDatabaseInfoProvider = jest.fn(() => ({
   isCluster: jest.fn(),
   isSentinel: jest.fn(),
   determineDatabaseModules: jest.fn(),
+  determineDatabaseServer: jest.fn(),
   determineSentinelMasterGroups: jest.fn().mockReturnValue([mockSentinelMasterDto]),
   determineClusterNodes: jest.fn().mockResolvedValue(mockClusterNodes),
   getRedisGeneralInfo: jest.fn().mockResolvedValueOnce(mockRedisGeneralInfo),

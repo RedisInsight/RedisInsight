@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { isNumber } from 'lodash'
 import { sessionStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
+import { CustomHeaders } from 'uiSrc/constants/api'
 
 const { apiPort } = window.app.config
 const baseApiUrl = process.env.BASE_API_URL
@@ -26,8 +27,12 @@ export const requestInterceptor = (config: AxiosRequestConfig) => {
       const dbIndex = sessionStorageService.get(`${BrowserStorageItem.dbIndex}${instanceId}`)
 
       if (isNumber(dbIndex)) {
-        config.headers['ri-db-index'] = dbIndex
+        config.headers[CustomHeaders.DbIndex] = dbIndex
       }
+    }
+
+    if (window.windowId) {
+      config.headers[CustomHeaders.WindowId] = window.windowId
     }
   }
 

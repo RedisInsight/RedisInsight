@@ -10,6 +10,7 @@ import { AnalyticsModule } from 'src/modules/analytics/analytics.module';
 import { SshModule } from 'src/modules/ssh/ssh.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { FeatureModule } from 'src/modules/feature/feature.module';
+import { AuthModule } from 'src/modules/auth/auth.module';
 
 @Global()
 @Module({
@@ -25,6 +26,7 @@ import { FeatureModule } from 'src/modules/feature/feature.module';
     SshModule,
     NestjsFormDataModule,
     FeatureModule.register(),
+    AuthModule.register(),
   ],
   exports: [
     EncryptionModule,

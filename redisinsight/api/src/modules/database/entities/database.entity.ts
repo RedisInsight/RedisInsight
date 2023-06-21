@@ -201,4 +201,8 @@ export class DatabaseEntity {
     default: Compressor.NONE,
   })
   compressor: Compressor;
+
+  @Expose()
+  @Column({ nullable: true })
+  version: string;
 }

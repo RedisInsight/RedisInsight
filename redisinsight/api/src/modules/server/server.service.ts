@@ -51,7 +51,7 @@ export class ServerService implements OnApplicationBootstrap {
     this.eventEmitter.emit(AppAnalyticsEvents.Initialize, {
       anonymousId: server.id,
       sessionId: this.sessionId,
-      appType: this.getAppType(SERVER_CONFIG.buildType),
+      appType: ServerService.getAppType(SERVER_CONFIG.buildType),
       ...(await this.featuresConfigService.getControlInfo()),
     });
 
@@ -63,6 +63,7 @@ export class ServerService implements OnApplicationBootstrap {
           appVersion: SERVER_CONFIG.appVersion,
           osPlatform: process.platform,
           buildType: SERVER_CONFIG.buildType,
+          port: process.env.API_PORT || SERVER_CONFIG.port,
         },
         nonTracking: true,
       });
@@ -85,7 +86,7 @@ export class ServerService implements OnApplicationBootstrap {
         appVersion: SERVER_CONFIG.appVersion,
         osPlatform: process.platform,
         buildType: SERVER_CONFIG.buildType,
-        appType: this.getAppType(SERVER_CONFIG.buildType),
+        appType: ServerService.getAppType(SERVER_CONFIG.buildType),
         encryptionStrategies: await this.encryptionService.getAvailableEncryptionStrategies(),
         fixedDatabaseId: REDIS_STACK_CONFIG?.id,
         ...(await this.featuresConfigService.getControlInfo()),
@@ -98,7 +99,7 @@ export class ServerService implements OnApplicationBootstrap {
     }
   }
 
-  getAppType(buildType: string): AppType {
+  static getAppType(buildType: string): AppType {
     switch (buildType) {
       case BuildType.DockerOnPremise:
         return AppType.Docker;

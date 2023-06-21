@@ -23,8 +23,6 @@ const devtoolsConfig =
 const configuration: webpack.Configuration = {
   ...devtoolsConfig,
 
-  devtool: 'source-map',
-
   mode: 'production',
 
   target: ['web', 'electron-renderer'],

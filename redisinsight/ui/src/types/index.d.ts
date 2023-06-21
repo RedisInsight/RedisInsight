@@ -10,6 +10,7 @@ declare global {
     ri: RedisInsight
     Buffer: typeof Buffer
     app: WindowApp
+    windowId?: string
   }
 }
 
@@ -30,8 +31,10 @@ export interface RedisInsight {
 }
 
 export interface WindowApp {
+  sendWindowId: any
   ipc: IPCHandler
   config: {
     apiPort: string
+    segmentWriteKey: string
   }
 }

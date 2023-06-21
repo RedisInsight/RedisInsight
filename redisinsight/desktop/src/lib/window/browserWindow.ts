@@ -1,5 +1,6 @@
 import contextMenu from 'electron-context-menu'
 import { BrowserWindow } from 'electron'
+import { v4 as uuidv4 } from 'uuid'
 
 import { configMain as config } from 'desktopSrc/config'
 import { updateTray } from 'desktopSrc/lib'
@@ -17,6 +18,7 @@ export enum WindowType {
 export interface ICreateWindow {
   prevWindow: BrowserWindow | null
   htmlFileName: string
+  id?: string
   windowType: WindowType
   options: any
 }
@@ -25,6 +27,7 @@ export const createWindow = async ({
   prevWindow = null,
   htmlFileName = '',
   windowType = WindowType.Main,
+  id = uuidv4(),
   options = {}
 }: ICreateWindow) => {
   let x
@@ -53,11 +56,11 @@ export const createWindow = async ({
 
   newWindow.loadURL(resolveHtmlPath(htmlFileName))
 
-  initWindowHandlers(newWindow, prevWindow, windows)
+  initWindowHandlers(newWindow, prevWindow, windows, id)
 
   contextMenu({ window: newWindow, showInspectElement: true })
 
-  windows.set(`${newWindow.id}`, newWindow)
+  windows.set(id, newWindow)
 
   updateTray(newWindow.webContents.getTitle())
 

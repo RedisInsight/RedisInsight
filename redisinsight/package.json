@@ -4,7 +4,7 @@
   "private": true,
   "version": "2.26.0",
   "description": "RedisInsight",
-  "main": "./main.prod.js",
+  "main": "./dist/main/main.js",
   "author": {
     "name": "Redis Ltd.",
     "email": "support@redis.com",

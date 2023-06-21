@@ -1,6 +1,6 @@
 import React from 'react'
-import { ReactComponent as LogoIcon } from 'uiSrc/assets/img/logo.svg'
 import { EuiLoadingLogo, EuiEmptyPrompt } from '@elastic/eui'
+import { ReactComponent as LogoIcon } from 'uiSrc/assets/img/logo.svg'
 
 const PagePlaceholder = () => (
   <>

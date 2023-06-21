@@ -1092,20 +1092,19 @@ workflows:
           env: dev
           requires:
             - Setup sign certificates (dev)
-      # - linux:
-      #     name: Build app - Linux (dev)
-      #     env: dev
-      #     requires: &devBuildRequire
-      #       - Setup build (dev)
+      - linux:
+          name: Build app - Linux (dev)
+          env: dev
+          requires: &devBuildRequire
+            - Setup build (dev)
       - macosx:
           name: Build app - MacOS (dev)
           env: dev
-          requires:
-            - Setup build (dev)
-      # - windows:
-      #     name: Build app - Windows (dev)
-      #     env: dev
-      #     requires: *devBuildRequire
+          requires: *devBuildRequire
+      - windows:
+          name: Build app - Windows (dev)
+          env: dev
+          requires: *devBuildRequire
       - store-build-artifacts:
           name: Store build artifacts (dev)
           requires:

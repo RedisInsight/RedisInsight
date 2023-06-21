@@ -52,7 +52,7 @@ test
         // await deleteDatabase(databaseName);
     })('Verify that user can connect to the RE Cloud database via auto-discover flow', async t => {
         // Verify that user can see the Cloud auto-discovery option selected by default when switching to the auto-discovery of databases
-        databaseName = await autodiscoverRECloudDatabase(cloudDatabaseConfig.accessKey!, cloudDatabaseConfig.secretKey!);
+        databaseName = await autodiscoverRECloudDatabase(cloudDatabaseConfig.accessKey, cloudDatabaseConfig.secretKey);
         // uncomment when fixed db will be added to cloud subscription
         // await myRedisDatabasePage.clickOnDBByName(databaseName);
         // // Verify that user can add database from fixed subscription

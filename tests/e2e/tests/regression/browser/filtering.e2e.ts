@@ -121,15 +121,6 @@ test
         await t.expect(browserPage.multiSearchArea.find(browserPage.cssFilteringLabel).visible).notOk('The filter per key type is not removed');
         await t.expect(browserPage.filterByPatterSearchInput.getAttribute('value')).eql('', 'All characters from filter input are not removed');
         await t.expect(browserPage.clearFilterButton.visible).notOk('The clear control is not disappeared');
-
-        // Set filter by key type and type characters
-        await t.typeText(browserPage.filterByPatterSearchInput, keyName);
-        await browserPage.selectFilterGroupType(COMMAND_GROUP_SET);
-        // Verify that when user clicks "Clear selection button" in Dropdown with key data types selected data type is reseted
-        await t.click(browserPage.filterOptionTypeSelected.nth(1));
-        await t.click(browserPage.clearSelectionButton);
-        await t.expect(browserPage.multiSearchArea.find(browserPage.cssFilteringLabel).visible).notOk('The filter per key type is not removed');
-        await t.expect(browserPage.filterByPatterSearchInput.getAttribute('value')).eql(keyName, 'All characters from filter input are not removed');
     });
 test
     .before(async() => {

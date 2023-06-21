@@ -1,9 +1,9 @@
 {
-  "version": 1,
+  "version": 2,
   "features": {
     "insightsRecommendations": {
       "flag": true,
-      "perc": [],
+      "perc": [[0,30]],
       "filters": [
         {
           "name": "agreements.analytics",

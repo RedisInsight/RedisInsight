@@ -6,7 +6,7 @@ import {
   EuiFlexItem,
   EuiTitle,
   EuiToolTip,
-  EuiButtonIcon,
+  EuiButtonIcon, EuiButton,
 } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
@@ -111,20 +111,34 @@ const BulkActions = (props: Props) => {
               />
             </EuiToolTip>
           )}
-          <EuiToolTip
-            content="Close"
-            position="left"
-            anchorClassName={styles.anchorTooltip}
-          >
-            <EuiButtonIcon
-              iconType="cross"
-              color="primary"
-              aria-label="Close panel"
-              className={styles.closeBtn}
-              data-testid="bulk-close-panel"
+          {arePanelsCollapsed && !isFullScreen ? (
+            <EuiButton
+              fill
+              color="secondary"
               onClick={closePanel}
-            />
-          </EuiToolTip>
+              size="s"
+              iconType="arrowLeft"
+              className={styles.backBtn}
+            >
+              Back
+            </EuiButton>
+          ) : (
+            <EuiToolTip
+              content="Close"
+              position="left"
+              anchorClassName={styles.anchorTooltip}
+            >
+              <EuiButtonIcon
+                iconType="cross"
+                color="primary"
+                aria-label="Close panel"
+                className={styles.closeBtn}
+                data-testid="bulk-close-panel"
+                onClick={closePanel}
+              />
+            </EuiToolTip>
+          )}
+
         </EuiFlexItem>
         <div className="eui-yScroll">
           <div className={styles.contentActions} data-testid="bulk-actions-content">

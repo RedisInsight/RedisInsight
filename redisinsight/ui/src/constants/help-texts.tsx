@@ -37,21 +37,6 @@ export default {
       </EuiText>
     </div>
   ),
-  FILTER_UNSUPPORTED: (
-    <>
-      Filtering per Key types is available for Redis databases v. 6.0 or later.
-      Update your Redis database or create a new&nbsp;
-      <a
-        href={`${tryFreeHref}?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_redis_latest`}
-        target="_blank"
-        className="link-underline"
-        rel="noreferrer"
-      >
-        free up-to-date
-      </a>
-      &nbsp;Redis database.
-    </>
-  ),
   REMOVING_MULTIPLE_ELEMENTS_NOT_SUPPORT: (
     <>
       Removing multiple elements is available for Redis databases v. 6.2 or

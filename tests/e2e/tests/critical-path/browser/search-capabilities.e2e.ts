@@ -148,12 +148,12 @@ test
     .after(async() => {
         await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('No RediSearch module message', async t => {
-        const noRedisearchMessage = 'RediSearch module is not loaded. Create a free Redis database(opens in a new tab or window) with module support on Redis Cloud.';
-        const externalPageLink = 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_browser_search';
+        const noRedisearchMessage = 'Looks like RediSearch is not available for this database';
+        const externalPageLink = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_browser_search';
 
         await t.click(browserPage.redisearchModeBtn);
-        // Verify that user can see message in popover when he not have RediSearch module
-        await t.expect(browserPage.popover.textContent).contains(noRedisearchMessage, 'Invalid text in no redisearch popover');
+        // Verify that user can see message in the dialog when he doesn't have RediSearch module
+        await t.expect(browserPage.noReadySearchDialogTitle.textContent).contains(noRedisearchMessage, 'Invalid text in no redisearch popover');
         // Verify that user can navigate by link to create a Redis db
         await t.click(browserPage.redisearchFreeLink);
         await Common.checkURL(externalPageLink);

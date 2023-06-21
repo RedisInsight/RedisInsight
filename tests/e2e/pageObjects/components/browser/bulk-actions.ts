@@ -10,7 +10,7 @@ export class BulkActions {
     //BUTTONS
     bulkDeleteTooltipIcon = Selector('[data-testid=bulk-delete-tooltip]');
     actionButton = Selector('[data-testid=bulk-action-warning-btn]');
-    bulkApplyButton = Selector('[data-testid=bulk-action-apply-btn]');
+    bulkApplyButton = Selector('[data-testid=bulk-action-apply-btn]', { timeout: 500 });
     bulkStopButton = Selector('[data-testid=bulk-action-stop-btn]');
     bulkStartAgainButton = Selector('[data-testid=bulk-action-start-again-btn]');
     bulkCancelButton = Selector('[data-testid=bulk-action-cancel-btn]');
@@ -41,6 +41,8 @@ export class BulkActions {
      * Open Bulk Actions and confirm deletion
      */
     async startBulkDelete(): Promise<void> {
+        // Wait for Bulk actions animation ends
+        await t.wait(1000);
         await t
             .click(this.actionButton)
             .click(this.bulkApplyButton);

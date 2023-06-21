@@ -34,6 +34,7 @@ const mockEventPayload: ITelemetryEvent = {
     appVersion: SERVER_CONFIG.appVersion,
     osPlatform: process.platform,
     buildType: SERVER_CONFIG.buildType,
+    port: SERVER_CONFIG.port,
   },
   nonTracking: true,
 };

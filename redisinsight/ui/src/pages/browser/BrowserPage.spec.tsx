@@ -17,7 +17,7 @@ import KeyDetailsWrapper, {
   Props as KeyDetailsWrapperProps
 } from './components/key-details/KeyDetailsWrapper'
 import AddKey, { Props as AddKeyProps } from './components/add-key/AddKey'
-import KeysHeader from './components/keys-header'
+import BrowserSearchPanel from './components/browser-search-panel'
 import { Props as KeysHeaderProps } from './components/keys-header/KeysHeader'
 
 jest.mock('./components/key-list/KeyList', () => ({
@@ -38,7 +38,7 @@ jest.mock('./components/key-details/KeyDetailsWrapper', () => ({
   default: jest.fn(),
 }))
 
-jest.mock('./components/keys-header', () => ({
+jest.mock('./components/browser-search-panel', () => ({
   __esModule: true,
   namedExport: jest.fn(),
   default: jest.fn(),
@@ -68,7 +68,7 @@ const mockAddKey = (props: AddKeyProps) => (
   </div>
 )
 
-const mockKeysHeader = (props: KeysHeaderProps) => (
+const mockBrowserSearchPanel = (props: KeysHeaderProps) => (
   <div>
     <button
       type="button"
@@ -102,7 +102,7 @@ beforeEach(() => {
 describe('BrowserPage', () => {
   beforeAll(() => {
     KeyList.mockImplementation(mockKeyList)
-    KeysHeader.mockImplementation(mockKeysHeader)
+    BrowserSearchPanel.mockImplementation(mockBrowserSearchPanel)
     KeyDetailsWrapper.mockImplementation(mockKeyDetailsWrapper)
     AddKey.mockImplementation(mockAddKey)
   })

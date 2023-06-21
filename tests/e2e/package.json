@@ -28,7 +28,8 @@
   },
   "resolutions": {
     "@types/lodash": "4.14.192",
-    "@types/node": "18.11.9"
+    "@types/node": "18.11.9",
+    "testcafe-hammerhead": "24.2.1"
   },
   "devDependencies": {
     "@types/archiver": "^5.3.2",

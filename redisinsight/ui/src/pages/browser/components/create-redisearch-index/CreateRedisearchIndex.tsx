@@ -302,7 +302,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
         borderRadius="none"
         className={styles.footer}
       >
-        <EuiFlexGroup justifyContent="flexEnd">
+        <EuiFlexGroup justifyContent="flexEnd" responsive={false}>
           <EuiFlexItem grow={false}>
             <EuiButton
               color="secondary"

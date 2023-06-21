@@ -72,7 +72,6 @@ export class BrowserPage extends InstancePage {
     treeViewButton = Selector('[data-testid=view-type-list-btn]');
     browserViewButton = Selector('[data-testid=view-type-browser-btn]');
     treeViewSeparator = Selector('[data-testid=tree-view-delimiter-btn]');
-    deleteFilterButton = Selector('[data-testid*=delete-btn]');
     searchButton = Selector('[data-testid=search-btn]');
     clearFilterButton = Selector('[data-testid=reset-filter-btn]');
     clearSelectionButton = Selector('[data-testid=clear-selection-btn]');
@@ -118,7 +117,7 @@ export class BrowserPage extends InstancePage {
     //LINKS
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     userSurveyLink = Selector('[data-testid=user-survey-link]');
-    redisearchFreeLink = Selector('[data-testid=redisearch-free-db]');
+    redisearchFreeLink = Selector('[data-testid=get-started-link]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');
@@ -128,10 +127,9 @@ export class BrowserPage extends InstancePage {
     hashOption = Selector('#hash');
     streamOption = Selector('#stream');
     removeFromHeadSelection = Selector('#HEAD');
-    selectedFilterTypeString = Selector('[data-testid=filter-option-type-selected-string]');
     filterOptionType = Selector('[data-test-subj^=filter-option-type-]');
-    filterByKeyTypeDropDown = Selector('[data-testid=filter-option-type-default]', { timeout: 500 });
-    filterOptionTypeSelected = Selector('[data-testid^=filter-option-type-selected]');
+    filterByKeyTypeDropDown = Selector('[data-testid=select-filter-key-type]', { timeout: 500 });
+    filterAllKeyType = Selector('[id=all]');
     consumerOption = Selector('[data-testid=consumer-option]');
     claimTimeOptionSelect = Selector('[data-testid=time-option-select]');
     relativeTimeOption = Selector('#idle');
@@ -209,7 +207,6 @@ export class BrowserPage extends InstancePage {
     jsonKeyValue = Selector('[data-testid=json-data]');
     jsonError = Selector('[data-testid=edit-json-error]');
     tooltip = Selector('[role=tooltip]');
-    popover = Selector('[role=dialog]');
     noResultsFound = Selector('[data-test-subj=no-result-found]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
@@ -274,6 +271,8 @@ export class BrowserPage extends InstancePage {
     changeValueWarning = Selector('[data-testid=approve-popover]');
     // TABLE
     keyListItem = Selector('[role=rowgroup] [role=row]');
+    // Dialog
+    noReadySearchDialogTitle = Selector('[data-testid=welcome-page-title]');
 
     /**
      * Common part for Add any new key
@@ -487,12 +486,18 @@ export class BrowserPage extends InstancePage {
      * @param groupName The group name
      */
     async selectFilterGroupType(groupName: string): Promise<void> {
-        if (await this.deleteFilterButton.exists) {
-            await t.click(this.deleteFilterButton);
-        }
         await t
             .click(this.filterByKeyTypeDropDown)
-            .click((this.filterOptionType).withExactText(groupName));
+            .click(this.filterOptionType.withExactText(groupName));
+    }
+
+    /**
+     * Select all key type filter group type
+     */
+    async setAllKeyType(): Promise<void> {
+        await t
+            .click(this.filterByKeyTypeDropDown)
+            .click(this.filterAllKeyType);
     }
 
     /**

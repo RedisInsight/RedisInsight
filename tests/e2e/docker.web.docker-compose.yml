@@ -1,15 +1,6 @@
 version: "3.4"
 
 services:
-  static-server:
-    build:
-      context: .
-      dockerfile: static-server.Dockerfile
-    volumes:
-      - ./remote:/app/remote
-    ports:
-      - 5551:5551
-
   e2e:
     build:
       context: .

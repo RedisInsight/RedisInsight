@@ -77,7 +77,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
       .createQueryBuilder('d')
       .select([
         'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
-        'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider',
+        'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version',
       ])
       .getMany();
 

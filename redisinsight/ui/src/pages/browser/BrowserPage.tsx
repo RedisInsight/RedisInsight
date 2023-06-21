@@ -41,12 +41,13 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import OnboardingStartPopover from 'uiSrc/pages/browser/components/onboarding-start-popover'
+import BrowserSearchPanel from './components/browser-search-panel'
 import BrowserLeftPanel from './components/browser-left-panel'
 import BrowserRightPanel from './components/browser-right-panel'
 
 import styles from './styles.module.scss'
 
-const widthResponsiveSize = 1124
+const widthResponsiveSize = 1280
 export const firstPanelId = 'keys'
 export const secondPanelId = 'keyDetails'
 
@@ -190,10 +191,20 @@ const BrowserPage = () => {
   }
 
   const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen || isBulkActionsPanelOpen || isCreateIndexPanelOpen
+  const isRightPanelFullScreen = (isBrowserFullScreen && isRightPanelOpen) || (arePanelsCollapsed && isRightPanelOpen)
 
   return (
     <div className={`browserPage ${styles.container}`}>
       <InstanceHeader onChangeDbIndex={onChangeDbIndex} />
+      <div className={cx({
+        [styles.hidden]: isRightPanelFullScreen })}
+      >
+        <BrowserSearchPanel
+          handleAddKeyPanel={handleAddKeyPanel}
+          handleBulkActionsPanel={handleBulkActionsPanel}
+          handleCreateIndexPanel={handleCreateIndexPanel}
+        />
+      </div>
       <div className={styles.main}>
         <div className={styles.resizableContainer}>
           <EuiResizableContainer onPanelWidthChange={onPanelWidthChange} style={{ height: '100%' }}>
@@ -203,7 +214,7 @@ const BrowserPage = () => {
                   id={firstPanelId}
                   scrollable={false}
                   initialSize={sizes[firstPanelId] ?? 50}
-                  minSize="550px"
+                  minSize="600px"
                   paddingSize="none"
                   wrapperProps={{
                     className: cx(styles.resizePanelLeft, {
@@ -214,9 +225,6 @@ const BrowserPage = () => {
                   <BrowserLeftPanel
                     selectKey={selectKey}
                     setSelectedKey={setSelectedKey}
-                    handleAddKeyPanel={handleAddKeyPanel}
-                    handleBulkActionsPanel={handleBulkActionsPanel}
-                    handleCreateIndexPanel={handleCreateIndexPanel}
                   />
                 </EuiResizablePanel>
 
@@ -231,7 +239,7 @@ const BrowserPage = () => {
                   id={secondPanelId}
                   scrollable={false}
                   initialSize={sizes[secondPanelId] ?? 50}
-                  minSize="550px"
+                  minSize="600px"
                   paddingSize="none"
                   data-testid="key-details"
                   wrapperProps={{

@@ -15,6 +15,7 @@ import { clientCertTransformer } from 'src/modules/certificate/transformers/clie
 import { CreateBasicSshOptionsDto } from 'src/modules/ssh/dto/create.basic-ssh-options.dto';
 import { CreateCertSshOptionsDto } from 'src/modules/ssh/dto/create.cert-ssh-options.dto';
 import { sshOptionsTransformer } from 'src/modules/ssh/transformers/ssh-options.transformer';
+import { CloudDatabaseDetails } from 'src/modules/cloud/autodiscovery/models/cloud-database-details';
 
 @ApiExtraModels(
   CreateCaCertificateDto, UseCaCertificateDto,
@@ -23,7 +24,7 @@ import { sshOptionsTransformer } from 'src/modules/ssh/transformers/ssh-options.
 )
 export class CreateDatabaseDto extends PickType(Database, [
   'host', 'port', 'name', 'db', 'username', 'password', 'timeout', 'nameFromProvider', 'provider',
-  'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster', 'ssh', 'compressor',
+  'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster', 'ssh', 'compressor', 'cloudDetails',
 ] as const) {
   @ApiPropertyOptional({
     description: 'CA Certificate',
@@ -66,4 +67,15 @@ export class CreateDatabaseDto extends PickType(Database, [
   @Type(sshOptionsTransformer)
   @ValidateNested()
   sshOptions?: CreateBasicSshOptionsDto | CreateCertSshOptionsDto;
+
+  @ApiPropertyOptional({
+    description: 'Cloud details',
+    type: CloudDatabaseDetails,
+  })
+  @Expose()
+  @IsOptional()
+  @IsNotEmptyObject()
+  @Type(() => CloudDatabaseDetails)
+  @ValidateNested()
+  cloudDetails?: CloudDatabaseDetails;
 }

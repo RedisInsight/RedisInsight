@@ -136,7 +136,7 @@ export async function getDatabaseByConnectionType(connectionType?: string): Prom
     let response: object = {};
     response = await asyncFilter(allDataBases, async(item: databaseParameters) => {
         await doAsyncStuff();
-        return await item.connectionType === connectionType;
+        return item.connectionType === connectionType;
     });
     return await response[0].id;
 }
@@ -167,10 +167,14 @@ export async function deleteAllDatabasesApi(): Promise<void> {
  */
 export async function deleteStandaloneDatabaseApi(databaseParameters: AddNewDatabaseParameters): Promise<void> {
     const databaseId = await getDatabaseIdByName(databaseParameters.databaseName);
+    if (databaseId) {
     await request(endpoint).delete('/databases')
         .send({ 'ids': [`${databaseId}`] })
         .set('Accept', 'application/json')
         .expect(200);
+    } else {
+        throw new Error('Error: Missing databaseId');
+    }
 }
 
 /**
@@ -185,6 +189,8 @@ export async function deleteStandaloneDatabasesByNamesApi(databaseNames: string[
                 .send({ 'ids': [`${databaseId}`] })
                 .set('Accept', 'application/json')
                 .expect(200);
+        } else {
+            throw new Error('Error: Missing databaseId');
         }
     });
 }
@@ -229,8 +235,8 @@ export async function deleteAllDatabasesByConnectionTypeApi(connectionType: stri
  * @param databasesParameters The databases parameters as array
  */
 export async function deleteStandaloneDatabasesApi(databasesParameters: AddNewDatabaseParameters[]): Promise<void> {
-    if (await databasesParameters.length) {
-        await databasesParameters.forEach(async parameter => {
+    if (databasesParameters.length) {
+        databasesParameters.forEach(async parameter => {
             await deleteStandaloneDatabaseApi(parameter);
         });
     }

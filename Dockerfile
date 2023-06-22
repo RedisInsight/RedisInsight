@@ -1,4 +1,4 @@
-FROM node:16.15.1-alpine as front
+FROM node:18.15.0-alpine as front
 RUN apk update
 RUN apk add --no-cache --virtual .gyp \
         python3 \
@@ -20,7 +20,7 @@ ENV SEGMENT_WRITE_KEY=${SEGMENT_WRITE_KEY}
 RUN yarn build:web
 RUN yarn build:statics
 
-FROM node:16.15.1-alpine as back
+FROM node:18.15.0-alpine as back
 WORKDIR /usr/src/app
 COPY redisinsight/api/package.json redisinsight/api/yarn.lock ./
 RUN yarn install
@@ -29,7 +29,7 @@ COPY --from=front /usr/src/app/redisinsight/api/static ./static
 COPY --from=front /usr/src/app/redisinsight/api/defaults ./defaults
 RUN yarn run build:prod
 
-FROM node:16.15.1-slim
+FROM node:18.15.0-slim
 # Set up mDNS functionality, to play well with Redis Enterprise
 # clusters on the network.
 RUN set -ex \

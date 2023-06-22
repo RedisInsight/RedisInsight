@@ -7,6 +7,10 @@ import { version } from '../redisinsight/package.json';
 
 DeleteSourceMaps();
 
+const apiUrl = process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY
+  ? 'https://localhost'
+  : 'http://localhost'
+
 export default merge(baseConfig, {
   ...rendererProdConfig,
 
@@ -20,8 +24,8 @@ export default merge(baseConfig, {
       'process.env.NODE_ENV': JSON.stringify('staging'),
       'process.env.APP_ENV': JSON.stringify('electron'),
       'process.env.API_PREFIX': JSON.stringify('api'),
-      'process.env.BASE_API_URL': JSON.stringify('http://localhost'),
-      'process.env.RESOURCES_BASE_URL': JSON.stringify('http://localhost'),
+      'process.env.BASE_API_URL': JSON.stringify(apiUrl),
+      'process.env.RESOURCES_BASE_URL': JSON.stringify(apiUrl),
       'process.env.SCAN_COUNT_DEFAULT': JSON.stringify('500'),
       'process.env.SCAN_TREE_COUNT_DEFAULT': JSON.stringify('10000'),
       'process.env.PIPELINE_COUNT_DEFAULT': JSON.stringify('5'),

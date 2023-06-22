@@ -342,6 +342,9 @@ export class BrowserPage extends InstancePage {
      * @param members The key members
      */
     async addSetKey(keyName: string, TTL = ' ', members = ' '): Promise<void> {
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
+        }
         await Common.waitForElementNotVisible(this.progressLine);
         await Common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
@@ -406,6 +409,9 @@ export class BrowserPage extends InstancePage {
      * @param value The value of the key
      */
     async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' '): Promise<void> {
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
+        }
         await Common.waitForElementNotVisible(this.progressLine);
         await Common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);

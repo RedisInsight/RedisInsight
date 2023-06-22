@@ -41,8 +41,6 @@ export class BulkActions {
      * Open Bulk Actions and confirm deletion
      */
     async startBulkDelete(): Promise<void> {
-        // Wait for Bulk actions animation ends
-        await t.wait(1000);
         await t
             .click(this.actionButton)
             .click(this.bulkApplyButton);

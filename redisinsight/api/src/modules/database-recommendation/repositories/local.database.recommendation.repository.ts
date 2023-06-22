@@ -59,7 +59,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
 
       return recommendation;
     } catch (err) {
-      this.logger.error(`Failed to create database recommendation, ${err}`);
+      this.logger.error('Failed to create database recommendation', err);
 
       return null;
     }

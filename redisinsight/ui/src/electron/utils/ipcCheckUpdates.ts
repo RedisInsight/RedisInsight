@@ -1,4 +1,3 @@
-import { ipcRenderer } from 'electron'
 import { Dispatch } from 'react'
 import { omit } from 'lodash'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -10,13 +9,13 @@ import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { ElectronStorageItem, IpcEvent } from '../constants'
 
 export const ipcCheckUpdates = async (serverInfo: GetServerInfoResponse, dispatch: Dispatch<any>) => {
-  const isUpdateDownloaded = await ipcRenderer.invoke(
+  const isUpdateDownloaded = await window.app.ipc.invoke(
     IpcEvent.getStoreValue, ElectronStorageItem.updateDownloaded
   )
-  const isUpdateAvailable = await ipcRenderer.invoke(
+  const isUpdateAvailable = await window.app.ipc.invoke(
     IpcEvent.getStoreValue, ElectronStorageItem.isUpdateAvailable
   )
-  const updateDownloadedVersion = await ipcRenderer.invoke(
+  const updateDownloadedVersion = await window.app.ipc.invoke(
     IpcEvent.getStoreValue,
     ElectronStorageItem.updateDownloadedVersion
   )
@@ -36,7 +35,7 @@ export const ipcCheckUpdates = async (serverInfo: GetServerInfoResponse, dispatc
       ))
     }
 
-    await ipcRenderer.invoke(IpcEvent.deleteStoreValue, ElectronStorageItem.updateDownloaded)
+    await window.app.ipc.invoke(IpcEvent.deleteStoreValue, ElectronStorageItem.updateDownloaded)
   }
 
   if (updateDownloadedVersion && !isUpdateAvailable && serverInfo.appVersion === updateDownloadedVersion) {
@@ -47,19 +46,19 @@ export const ipcCheckUpdates = async (serverInfo: GetServerInfoResponse, dispatc
 }
 
 export const ipcSendEvents = async (serverInfo: GetServerInfoResponse) => {
-  const isUpdateDownloadedForTelemetry = await ipcRenderer.invoke(
+  const isUpdateDownloadedForTelemetry = await window.app.ipc.invoke(
     IpcEvent.getStoreValue, ElectronStorageItem.updateDownloadedForTelemetry
   )
-  const isUpdateAvailable = await ipcRenderer.invoke(
+  const isUpdateAvailable = await window.app.ipc.invoke(
     IpcEvent.getStoreValue, ElectronStorageItem.isUpdateAvailable
   )
 
   if (isUpdateDownloadedForTelemetry && !isUpdateAvailable) {
-    const newVer = await ipcRenderer.invoke(
+    const newVer = await window.app.ipc.invoke(
       IpcEvent.getStoreValue,
       ElectronStorageItem.updateDownloadedVersion
     )
-    const prevVer = await ipcRenderer.invoke(
+    const prevVer = await window.app.ipc.invoke(
       IpcEvent.getStoreValue,
       ElectronStorageItem.updatePreviousVersion
     )
@@ -71,6 +70,9 @@ export const ipcSendEvents = async (serverInfo: GetServerInfoResponse) => {
         toVersion: newVer
       },
     })
-    await ipcRenderer.invoke(IpcEvent.deleteStoreValue, ElectronStorageItem.updateDownloadedForTelemetry)
+    await window.app.ipc.invoke(
+      IpcEvent.deleteStoreValue,
+      ElectronStorageItem.updateDownloadedForTelemetry,
+    )
   }
 }

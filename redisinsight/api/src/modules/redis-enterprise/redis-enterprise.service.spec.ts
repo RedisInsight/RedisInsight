@@ -9,8 +9,8 @@ import {
   RedisEnterpriseDatabaseAofPolicy,
   RedisEnterpriseDatabasePersistence,
   RedisEnterpriseDatabaseStatus,
+  RedisEnterprisePersistencePolicy,
 } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
-import { RedisPersistencePolicy } from 'src/modules/redis-enterprise/models/redis-cloud-database';
 import { RedisEnterpriseService } from 'src/modules/redis-enterprise/redis-enterprise.service';
 import { ClusterConnectionDetailsDto } from 'src/modules/redis-enterprise/dto/cluster.dto';
 import { RedisEnterpriseAnalytics } from 'src/modules/redis-enterprise/redis-enterprise.analytics';
@@ -221,7 +221,7 @@ describe('RedisEnterpriseService', () => {
         data_persistence: RedisEnterpriseDatabasePersistence.Aof,
         aof_policy: RedisEnterpriseDatabaseAofPolicy.AofEveryOneSecond,
       });
-      expect(result).toEqual(RedisPersistencePolicy.AofEveryOneSecond);
+      expect(result).toEqual(RedisEnterprisePersistencePolicy.AofEveryOneSecond);
     });
     it('should return AofEveryWrite', async () => {
       const result = service.getDatabasePersistencePolicy({
@@ -229,7 +229,7 @@ describe('RedisEnterpriseService', () => {
         data_persistence: RedisEnterpriseDatabasePersistence.Aof,
         aof_policy: RedisEnterpriseDatabaseAofPolicy.AofEveryWrite,
       });
-      expect(result).toEqual(RedisPersistencePolicy.AofEveryWrite);
+      expect(result).toEqual(RedisEnterprisePersistencePolicy.AofEveryWrite);
     });
     it('should return SnapshotEveryOneHour', async () => {
       const result = service.getDatabasePersistencePolicy({
@@ -237,7 +237,7 @@ describe('RedisEnterpriseService', () => {
         data_persistence: RedisEnterpriseDatabasePersistence.Snapshot,
         snapshot_policy: [{ secs: 3600 }],
       });
-      expect(result).toEqual(RedisPersistencePolicy.SnapshotEveryOneHour);
+      expect(result).toEqual(RedisEnterprisePersistencePolicy.SnapshotEveryOneHour);
     });
     it('should return SnapshotEverySixHours', async () => {
       const result = service.getDatabasePersistencePolicy({
@@ -245,7 +245,7 @@ describe('RedisEnterpriseService', () => {
         data_persistence: RedisEnterpriseDatabasePersistence.Snapshot,
         snapshot_policy: [{ secs: 21600 }],
       });
-      expect(result).toEqual(RedisPersistencePolicy.SnapshotEverySixHours);
+      expect(result).toEqual(RedisEnterprisePersistencePolicy.SnapshotEverySixHours);
     });
     it('should return SnapshotEveryTwelveHours', async () => {
       const result = service.getDatabasePersistencePolicy({
@@ -253,14 +253,14 @@ describe('RedisEnterpriseService', () => {
         data_persistence: RedisEnterpriseDatabasePersistence.Snapshot,
         snapshot_policy: [{ secs: 43200 }],
       });
-      expect(result).toEqual(RedisPersistencePolicy.SnapshotEveryTwelveHours);
+      expect(result).toEqual(RedisEnterprisePersistencePolicy.SnapshotEveryTwelveHours);
     });
     it('should return None', async () => {
       const result = service.getDatabasePersistencePolicy({
         ...mockREClusterDatabase,
         data_persistence: null,
       });
-      expect(result).toEqual(RedisPersistencePolicy.None);
+      expect(result).toEqual(RedisEnterprisePersistencePolicy.None);
     });
   });
 

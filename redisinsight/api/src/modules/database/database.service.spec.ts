@@ -5,8 +5,20 @@ import { omit, get, update } from 'lodash';
 
 import { classToClass } from 'src/utils';
 import {
-  mockDatabase, mockDatabaseAnalytics, mockDatabaseFactory, mockDatabaseInfoProvider, mockDatabaseRepository,
-  mockRedisService, MockType, mockRedisGeneralInfo, mockRedisConnectionFactory, mockDatabaseWithTls, mockDatabaseWithTlsAuth, mockDatabaseWithSshPrivateKey, mockSentinelDatabaseWithTlsAuth,
+  mockDatabase,
+  mockDatabaseAnalytics,
+  mockDatabaseFactory,
+  mockDatabaseInfoProvider,
+  mockDatabaseRepository,
+  mockRedisService,
+  MockType,
+  mockRedisGeneralInfo,
+  mockRedisConnectionFactory,
+  mockDatabaseWithTls,
+  mockDatabaseWithTlsAuth,
+  mockDatabaseWithSshPrivateKey,
+  mockSentinelDatabaseWithTlsAuth,
+  mockDatabaseWithCloudDetails,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -111,6 +123,12 @@ describe('DatabaseService', () => {
     it('should create new database and send analytics event', async () => {
       expect(await service.create(mockDatabase)).toEqual(mockDatabase);
       expect(analytics.sendInstanceAddedEvent).toHaveBeenCalledWith(mockDatabase, mockRedisGeneralInfo);
+      expect(analytics.sendInstanceAddFailedEvent).not.toHaveBeenCalled();
+    });
+    it('should create new database with cloud details and send analytics event', async () => {
+      databaseRepository.create.mockResolvedValueOnce(mockDatabaseWithCloudDetails);
+      expect(await service.create(mockDatabaseWithCloudDetails)).toEqual(mockDatabaseWithCloudDetails);
+      expect(analytics.sendInstanceAddedEvent).toHaveBeenCalledWith(mockDatabaseWithCloudDetails, mockRedisGeneralInfo);
       expect(analytics.sendInstanceAddFailedEvent).not.toHaveBeenCalled();
     });
     it('should not fail when collecting data for analytics event', async () => {

@@ -31,7 +31,7 @@ const JSONView = (props: Props) => {
       )}
       {!formattedValue && (
         <div className="jsonViewer" data-testid="json-view">
-          <JSONPretty json={value} space={4} />
+          <JSONPretty json={value} space={2} />
         </div>
       )}
     </>

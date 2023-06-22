@@ -21,7 +21,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint --ext .ts .",
     "start": "nest start",
-    "start:dev": "cross-env NODE_ENV=development SERVER_STATIC_CONTENT=1 nest start --watch",
+    "start:dev": "cross-env NODE_ENV=development BUILD_TYPE=DOCKER_ON_PREMISE SERVER_STATIC_CONTENT=1 nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:stage": "cross-env NODE_ENV=staging SERVER_STATIC_CONTENT=true node dist/src/main",
     "start:prod": "cross-env NODE_ENV=production node dist/src/main",
@@ -32,8 +32,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json -w 1",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d ./config/ormconfig.ts",
     "test:api": "cross-env NODE_ENV=test ts-mocha --paths -p test/api/api.tsconfig.json --config ./test/api/.mocharc.yml",
-    "test:api:cov": "nyc --reporter=html --reporter=text --reporter=text-summary yarn run test:api",
-    "test:api:ci:cov": "nyc -r text -r text-summary -r html yarn run test:api --reporter mocha-multi-reporters --reporter-options configFile=test/api/reporters.json && nyc merge .nyc_output ./coverage/test-run-coverage.json",
+    "test:api:cov": "cross-env BUILD_TYPE=DOCKER_ON_PREMISE nyc --reporter=html --reporter=text --reporter=text-summary yarn run test:api",
+    "test:api:ci:cov": "cross-env BUILD_TYPE=DOCKER_ON_PREMISE nyc -r text -r text-summary -r html yarn run test:api --reporter mocha-multi-reporters --reporter-options configFile=test/api/reporters.json && nyc merge .nyc_output ./coverage/test-run-coverage.json",
     "typeorm:migrate": "cross-env NODE_ENV=staging yarn typeorm migration:generate ./migration/migration",
     "typeorm:run": "yarn typeorm migration:run"
   },
@@ -71,8 +71,8 @@
     "rxjs": "^7.5.6",
     "socket.io": "^4.4.0",
     "source-map-support": "^0.5.19",
-    "sqlite3": "^5.0.11",
-    "ssh2": "^1.11.0",
+    "sqlite3": "5.1.6",
+    "ssh2": "^1.14.0",
     "swagger-ui-express": "^4.1.4",
     "typeorm": "^0.3.9",
     "uuid": "^8.3.2",
@@ -143,6 +143,7 @@
       ".spec.ts$"
     ],
     "testEnvironment": "node",
+    "setupFilesAfterEnv": ["<rootDir>/../.jest.setup.ts"],
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/$1",
       "apiSrc/(.*)": "<rootDir>/$1",

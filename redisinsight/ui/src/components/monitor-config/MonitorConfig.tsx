@@ -20,6 +20,7 @@ import { getBaseApiUrl } from 'uiSrc/utils'
 import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { CustomHeaders } from 'uiSrc/constants/api'
 import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
 import ApiStatusCode from '../../constants/apiStatusCode'
@@ -59,6 +60,7 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
     const newSocket = io(`${getBaseApiUrl()}/monitor`, {
       forceNew: true,
       query: { instanceId },
+      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
       rejectUnauthorized: false,
     })
     dispatch(setSocket(newSocket))

@@ -12,13 +12,16 @@ export class DatabaseRecommendationAnalytics extends TelemetryBaseService {
   }
 
   sendCreatedRecommendationEvent(recommendation: DatabaseRecommendation, database: Database): void {
-    this.sendEvent(
-      TelemetryEvents.InsightsRecommendationGenerated,
-      {
-        recommendationName: recommendation.name,
-        databaseId: database.id,
-        provider: database.provider,
-      },
-    );
+    try {
+      this.sendEvent(
+        TelemetryEvents.InsightsRecommendationGenerated,
+        {
+          recommendationName: recommendation.name,
+          databaseId: database.id,
+          provider: database.provider,
+        },
+      );
+    } catch (e) {
+    }
   }
 }

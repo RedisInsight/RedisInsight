@@ -22,8 +22,6 @@ import {
 import { RecommendationEvents } from 'src/modules/database-recommendation/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
-import { DatabaseService } from 'src/modules/database/database.service';
-import { DatabaseRecommendationAnalytics } from '../database-recommendation.analytics';
 
 @Injectable()
 export class LocalDatabaseRecommendationRepository extends DatabaseRecommendationRepository {
@@ -35,8 +33,6 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
     @InjectRepository(DatabaseRecommendationEntity)
     private readonly repository: Repository<DatabaseRecommendationEntity>,
     private eventEmitter: EventEmitter2,
-    private readonly analytics: DatabaseRecommendationAnalytics,
-    private readonly databaseService: DatabaseService,
     private readonly encryptionService: EncryptionService,
   ) {
     super();
@@ -59,10 +55,6 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
       await this.modelEncryptor.decryptEntity(model, true),
     );
     this.eventEmitter.emit(RecommendationEvents.NewRecommendation, [recommendation]);
-
-    const database = await this.databaseService.get(entity?.databaseId)
-
-    this.analytics.sendCreatedRecommendationEvent(recommendation, database)
 
     return recommendation;
   }

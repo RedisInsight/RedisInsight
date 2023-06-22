@@ -11,6 +11,7 @@ import {
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { ModifyDatabaseRecommendationDto, DeleteDatabaseRecommendationResponse } from './dto';
+import { DatabaseRecommendationAnalytics } from './database-recommendation.analytics';
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
@@ -21,6 +22,7 @@ export class DatabaseRecommendationService {
     private readonly databaseRecommendationRepository: DatabaseRecommendationRepository,
     private readonly scanner: RecommendationScanner,
     private readonly databaseService: DatabaseService,
+    private readonly analytics: DatabaseRecommendationAnalytics,
   ) {}
 
   /**
@@ -33,7 +35,11 @@ export class DatabaseRecommendationService {
       DatabaseRecommendation,
       { databaseId: clientMetadata?.databaseId, name: recommendationName },
     );
-    return this.databaseRecommendationRepository.create(entity);
+
+    const recommendation = await this.databaseRecommendationRepository.create(entity)
+    const database = await this.databaseService.get(clientMetadata?.databaseId)
+    this.analytics.sendCreatedRecommendationEvent(recommendation, database)
+    return recommendation;
   }
 
   /**

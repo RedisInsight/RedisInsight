@@ -46,24 +46,23 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
   async create(entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
     this.logger.log('Creating database recommendation');
 
-    const model = await this.repository.save(
-      await this.modelEncryptor.encryptEntity(plainToClass(DatabaseRecommendationEntity, entity)),
-    );
-    // cleanup recommendations and ignore error if any
     try {
-      await this.cleanupDatabaseRecommendations(entity.databaseId);
-    } catch (e) {
-      this.logger.error('Error when trying to cleanup recommendations after insert', e);
+      const model = await this.repository.save(
+        await this.modelEncryptor.encryptEntity(plainToClass(DatabaseRecommendationEntity, entity)),
+      );
+
+      const recommendation = classToClass(
+        DatabaseRecommendation,
+        await this.modelEncryptor.decryptEntity(model, true),
+      );
+      this.eventEmitter.emit(RecommendationEvents.NewRecommendation, [recommendation]);
+
+      return recommendation;
+    } catch (err) {
+      this.logger.error(`Failed to create database recommendation, ${err}`);
+
+      return null;
     }
-
-    const recommendation = classToClass(
-      DatabaseRecommendation,
-      await this.modelEncryptor.decryptEntity(model, true),
-    );
-    this.eventEmitter.emit(RecommendationEvents.NewRecommendation, [recommendation]);
-
-    return recommendation;
-
   }
 
   /**
@@ -232,26 +231,5 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
       this.logger.error(`Failed to delete recommendation: ${id}`, error);
       throw new InternalServerErrorException(error.message);
     }
-  }
-
-  /**
-   * Remove duplicates for particular database
-   * @param databaseId
-   */
-   async cleanupDatabaseRecommendations(databaseId: string): Promise<void> {
-    // todo: investigate why delete with sub-query doesn't works
-    const idsDuplicates = (await this.repository
-      .createQueryBuilder()
-      .where({ databaseId })
-      .select('id')
-      .groupBy('name')
-      .having('COUNT(name) > 1')
-      .getRawMany()).map((item) => item.id);
-
-    await this.repository
-      .createQueryBuilder()
-      .delete()
-      .whereInIds(idsDuplicates)
-      .execute();
   }
 }

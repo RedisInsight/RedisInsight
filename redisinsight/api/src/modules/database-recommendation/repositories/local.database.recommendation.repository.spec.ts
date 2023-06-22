@@ -1,5 +1,4 @@
 import { when } from 'jest-when';
-import { pick } from 'lodash';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -53,11 +52,11 @@ describe('LocalDatabaseRecommendationRepository', () => {
     repository.update.mockResolvedValue(mockDatabaseRecommendationEntity);
 
     when(encryptionService.encrypt)
-    .calledWith(JSON.stringify(mockDatabaseRecommendation.params))
-    .mockReturnValue({
-      encryption: mockDatabaseRecommendationEntity.encryption,
-      data: mockDatabaseRecommendationEntity.params,
-    });
+      .calledWith(JSON.stringify(mockDatabaseRecommendation.params))
+      .mockReturnValue({
+        encryption: mockDatabaseRecommendationEntity.encryption,
+        data: mockDatabaseRecommendationEntity.params,
+      });
     when(encryptionService.decrypt)
       .calledWith(mockDatabaseRecommendationEntity.params, jasmine.anything())
       .mockReturnValue(JSON.stringify(mockDatabaseRecommendation.params));
@@ -81,16 +80,17 @@ describe('LocalDatabaseRecommendationRepository', () => {
 
   describe('create', () => {
     it('should create recommendation', async () => {
-      service.cleanupDatabaseRecommendations = jest
-        .fn()
-        .mockResolvedValue(undefined);
-
       const result = await service.create(mockDatabaseRecommendation);
 
       expect(result).toEqual(mockDatabaseRecommendation);
-      expect(service.cleanupDatabaseRecommendations).toHaveBeenCalledWith(
-        mockDatabaseRecommendation.databaseId
-      );
+    });
+
+    it('should not create recommendation', async () => {
+      repository.save.mockRejectedValueOnce(new Error());
+
+      const result = await service.create(mockDatabaseRecommendation);
+
+      expect(result).toEqual(null);
     });
   });
 
@@ -111,17 +111,6 @@ describe('LocalDatabaseRecommendationRepository', () => {
         expect(e).toBeInstanceOf(InternalServerErrorException);
         expect(e.message).toEqual(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND);
       }
-    });
-  });
-
-  describe('cleanupDatabaseRecommendations', () => {
-    it('Should not return anything on cleanup', async () => {
-      repository.createQueryBuilder().getRawMany.mockResolvedValueOnce([
-        { id: mockDatabaseRecommendationEntity.id },
-        { id: mockDatabaseRecommendationEntity.id },
-      ]);
-
-      expect(await service.cleanupDatabaseRecommendations(mockDatabaseRecommendationEntity.databaseId)).toEqual(undefined);
     });
   });
 });

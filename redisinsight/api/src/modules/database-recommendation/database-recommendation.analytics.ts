@@ -22,6 +22,7 @@ export class DatabaseRecommendationAnalytics extends TelemetryBaseService {
         },
       );
     } catch (e) {
+      // ignore
     }
   }
 }

@@ -28,17 +28,15 @@ export class DatabaseRecommendationService {
   /**
    * Create recommendation entity
    * @param clientMetadata
-   * @param recommendationName
+   * @param entity
    */
-  public async create(clientMetadata: ClientMetadata, recommendationName: string): Promise<DatabaseRecommendation> {
-    const entity = plainToClass(
-      DatabaseRecommendation,
-      { databaseId: clientMetadata?.databaseId, name: recommendationName },
-    );
+  public async create(clientMetadata: ClientMetadata, entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
+    const recommendation = await this.databaseRecommendationRepository.create(entity);
 
-    const recommendation = await this.databaseRecommendationRepository.create(entity)
-    const database = await this.databaseService.get(clientMetadata?.databaseId)
-    this.analytics.sendCreatedRecommendationEvent(recommendation, database)
+    const database = await this.databaseService.get(clientMetadata?.databaseId);
+
+    this.analytics.sendCreatedRecommendationEvent(recommendation, database);
+
     return recommendation;
   }
 
@@ -80,7 +78,7 @@ export class DatabaseRecommendationService {
           { databaseId: newClientMetadata?.databaseId, ...recommendation },
         );
 
-        return await this.databaseRecommendationRepository.create(entity);
+        return await this.create(newClientMetadata, entity);
       }
     }
 

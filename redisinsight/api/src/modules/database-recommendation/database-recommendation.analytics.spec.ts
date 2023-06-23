@@ -8,7 +8,7 @@ import {
 import { TelemetryEvents } from 'src/constants';
 import { DatabaseRecommendationAnalytics } from './database-recommendation.analytics';
 
-const provider = 'cloud'
+const provider = 'cloud';
 
 describe('DatabaseRecommendationAnalytics', () => {
   let service: DatabaseRecommendationAnalytics;

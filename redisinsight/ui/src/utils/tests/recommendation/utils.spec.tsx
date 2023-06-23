@@ -1,4 +1,4 @@
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import {
   addUtmToLink,
   sortRecommendations,
@@ -198,7 +198,7 @@ describe('replaceVariables', () => {
 
 describe('renderRecommendationContent', () => {
   it('should render content', () => {
-    const renderedContent = renderRecommendationContent(mockContent, undefined, mockTelemetryName)
+    const renderedContent = renderRecommendationContent(mockContent, undefined, { telemetryName: mockTelemetryName })
     render(renderedContent)
 
     expect(screen.queryByTestId(`paragraph-${mockTelemetryName}-0`)).toBeInTheDocument()
@@ -209,5 +209,19 @@ describe('renderRecommendationContent', () => {
     expect(screen.queryByTestId(`link-${mockTelemetryName}-6`)).toBeInTheDocument()
     expect(screen.queryByTestId(`code-link-${mockTelemetryName}-7`)).toBeInTheDocument()
     expect(screen.getByText('unknown')).toBeInTheDocument()
+  })
+
+  it('click on link should call onClick', () => {
+    const onClickMock = jest.fn()
+    const renderedContent = renderRecommendationContent(
+      mockContent,
+      null,
+      { telemetryName: mockTelemetryName, onClickLink: onClickMock },
+    )
+    const { queryByTestId } = render(renderedContent)
+
+    fireEvent.click(queryByTestId(`link-${mockTelemetryName}-6`))
+
+    expect(onClickMock).toBeCalled()
   })
 })

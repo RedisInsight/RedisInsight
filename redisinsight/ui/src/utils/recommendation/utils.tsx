@@ -23,6 +23,11 @@ const recommendationsContent = _content as IRecommendationsStatic
 const utmSource = 'redisinsight'
 const utmMedium = 'recommendation'
 
+interface ITelemetry {
+  telemetryName: string
+  onClickLink?: () => void
+}
+
 const badgesContent = [
   { id: 'code_changes', icon: <CodeIcon className={styles.badgeIcon} />, name: 'Code Changes' },
   { id: 'configuration_changes', icon: <ConfigurationIcon className={styles.badgeIcon} />, name: 'Configuration Changes' },
@@ -87,7 +92,7 @@ const addUtmToLink = (href: string, telemetryName: string): string => {
 const renderContentElement = (
   { type, value: jsonValue, parameter }: IRecommendationContent,
   params: any,
-  telemetryName: string,
+  telemetry: ITelemetry,
   insights: boolean,
   idx: number
 ) => {
@@ -96,8 +101,8 @@ const renderContentElement = (
     case 'paragraph':
       return (
         <EuiTextColor
-          data-testid={`paragraph-${telemetryName}-${idx}`}
-          key={`${telemetryName}-${idx}`}
+          data-testid={`paragraph-${telemetry.telemetryName}-${idx}`}
+          key={`${telemetry.telemetryName}-${idx}`}
           component="div"
           className={cx(styles.text, { [styles.insights]: insights })}
           color="subdued"
@@ -108,9 +113,9 @@ const renderContentElement = (
     case 'code':
       return (
         <EuiTextColor
-          data-testid={`code-${telemetryName}-${idx}`}
+          data-testid={`code-${telemetry.telemetryName}-${idx}`}
           className={cx(styles.code, { [styles.insights]: insights })}
-          key={`${telemetryName}-${idx}`}
+          key={`${telemetry.telemetryName}-${idx}`}
           color="subdued"
         >
           <code className={cx(styles.span, styles.text)}>
@@ -121,8 +126,8 @@ const renderContentElement = (
     case 'span':
       return (
         <EuiTextColor
-          data-testid={`span-${telemetryName}-${idx}`}
-          key={`${telemetryName}-${idx}`}
+          data-testid={`span-${telemetry.telemetryName}-${idx}`}
+          key={`${telemetry.telemetryName}-${idx}`}
           color="subdued"
           className={cx(styles.span, styles.text, { [styles.insights]: !!insights })}
         >
@@ -132,11 +137,12 @@ const renderContentElement = (
     case 'link':
       return (
         <EuiLink
-          key={`${telemetryName}-${idx}`}
+          key={`${telemetry.telemetryName}-${idx}`}
           external={false}
-          data-testid={`link-${telemetryName}-${idx}`}
+          data-testid={`link-${telemetry.telemetryName}-${idx}`}
           target="_blank"
-          href={addUtmToLink(value.href, telemetryName)}
+          href={addUtmToLink(value.href, telemetry.telemetryName)}
+          onClick={() => telemetry.onClickLink?.()}
         >
           {value.name}
         </EuiLink>
@@ -144,11 +150,11 @@ const renderContentElement = (
     case 'code-link':
       return (
         <EuiLink
-          key={`${telemetryName}-${idx}`}
+          key={`${telemetry.telemetryName}-${idx}`}
           external={false}
-          data-testid={`code-link-${telemetryName}-${idx}`}
+          data-testid={`code-link-${telemetry.telemetryName}-${idx}`}
           target="_blank"
-          href={addUtmToLink(value.href, telemetryName)}
+          href={addUtmToLink(value.href, telemetry.telemetryName)}
         >
           <EuiTextColor
             className={cx(styles.code, { [styles.insights]: insights })}
@@ -163,21 +169,25 @@ const renderContentElement = (
     case 'spacer':
       return (
         <EuiSpacer
-          data-testid={`spacer-${telemetryName}-${idx}`}
-          key={`${telemetryName}-${idx}`}
+          data-testid={`spacer-${telemetry.telemetryName}-${idx}`}
+          key={`${telemetry.telemetryName}-${idx}`}
           size={value as SpacerSize}
         />
       )
     case 'list':
       return (
-        <ul className={styles.list} data-testid={`list-${telemetryName}-${idx}`} key={`${telemetryName}-${idx}`}>
+        <ul
+          className={styles.list}
+          data-testid={`list-${telemetry.telemetryName}-${idx}`}
+          key={`${telemetry.telemetryName}-${idx}`}
+        >
           {isArray(jsonValue) && jsonValue.map((listElement: IRecommendationContent[], idx) => (
             <li
               className={cx(styles.listItem, { [styles.insights]: insights })}
               // eslint-disable-next-line react/no-array-index-key
               key={`list-item-${listElement[0]}-${idx}`}
             >
-              {renderRecommendationContent(listElement, params, telemetryName, insights)}
+              {renderRecommendationContent(listElement, params, telemetry, insights)}
             </li>
           ))}
         </ul>
@@ -190,10 +200,10 @@ const renderContentElement = (
 const renderRecommendationContent = (
   elements: IRecommendationContent[] = [],
   params: any,
-  telemetryName: string,
+  telemetry: ITelemetry,
   insights: boolean = false
 ) => (
-  elements?.map((item, idx) => renderContentElement(item, params, telemetryName, insights, idx)))
+  elements?.map((item, idx) => renderContentElement(item, params, telemetry, insights, idx)))
 
 const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [
   ({ name }) => name !== 'searchJSON',

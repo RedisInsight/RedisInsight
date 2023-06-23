@@ -163,6 +163,8 @@ export enum RedisDefaultModules {
   TimeSeries = 'timeseries',
   FT = 'ft',
   FTL = 'ftl',
+  RedisGears = 'redisgears',
+  RedisGears2 = 'redisgears_2',
 }
 
 export enum RedisCustomModulesName {

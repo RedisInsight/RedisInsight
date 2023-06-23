@@ -135,12 +135,27 @@ const Recommendation = ({
     setIsLoading(false)
   }
 
+  const onRecommendationLinkClick = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_LINK_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        name: recommendationsContent[name]?.telemetryEvent ?? name,
+        provider
+      }
+    })
+    setIsLoading(false)
+  }
+
   const recommendationContent = () => (
     <EuiText>
       {renderRecommendationContent(
         recommendationsContent[name]?.content,
         params,
-        recommendationsContent[name]?.telemetryEvent ?? name,
+        {
+          onClickLink: onRecommendationLinkClick,
+          telemetryName: recommendationsContent[name]?.telemetryEvent ?? name,
+        },
         true
       )}
       {!!params?.keys?.length && (

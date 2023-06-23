@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { EuiFlexItem, EuiIcon, EuiLoadingContent, EuiTextColor } from '@elastic/eui'
 import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { getBaseApiUrl, Nullable, formatToText } from 'uiSrc/utils'
+import { getBaseApiUrl, Nullable, formatToText, replaceEmptyValue } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
 import { CommandExecutionResult, IPluginVisualization, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { PluginEvents } from 'uiSrc/plugins/pluginEvents'
@@ -161,7 +161,7 @@ const QueryCardCliPlugin = (props: Props) => {
     { requestId, data }: { requestId: string, data: { response: any, command: string } }
   ) => {
     try {
-      const reply = formatToText(data?.response || '(nil)', data.command)
+      const reply = formatToText(replaceEmptyValue(data?.response), data.command)
 
       sendMessageToPlugin({
         event: PluginEvents.formatRedisReply,

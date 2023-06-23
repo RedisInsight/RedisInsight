@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ipcCheckUpdates, ipcSendEvents } from 'uiSrc/electron/utils'
 import {
   appAnalyticsInfoSelector,
   appServerInfoSelector,
   appElectronInfoSelector
 } from 'uiSrc/slices/app/info'
+import { ipcCheckUpdates, ipcSendEvents } from 'uiSrc/electron/utils'
 import { ipcDeleteDownloadedVersion } from 'uiSrc/electron/utils/ipcDeleteStoreValues'
 
 const ConfigElectron = () => {

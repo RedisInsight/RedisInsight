@@ -180,7 +180,7 @@ export class AddRedisDatabase {
      * Adding a new database from RE Cluster via auto-discover flow
      * @param parameters the parameters of the database
      */
-    async addAutodiscoverREClucterDatabase(parameters: AddNewDatabaseParameters): Promise<void> {
+    async addAutodiscoverREClusterDatabase(parameters: AddNewDatabaseParameters): Promise<void> {
         await t
             .click(this.addDatabaseButton)
             .click(this.addAutoDiscoverDatabase)
@@ -199,8 +199,7 @@ export class AddRedisDatabase {
     async addAutodiscoverRECloudDatabase(cloudAPIAccessKey: string, cloudAPISecretKey: string): Promise<void> {
         await t
             .click(this.addDatabaseButton)
-            .click(this.addAutoDiscoverDatabase)
-            .click(this.redisCloudProType);
+            .click(this.addAutoDiscoverDatabase);
         await t
             .typeText(this.accessKeyInput, cloudAPIAccessKey, { replace: true, paste: true })
             .typeText(this.secretKeyInput, cloudAPISecretKey, { replace: true, paste: true });

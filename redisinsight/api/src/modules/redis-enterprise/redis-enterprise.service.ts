@@ -14,8 +14,8 @@ import {
   IRedisEnterpriseReplicaSource,
   RedisEnterpriseDatabaseAofPolicy,
   RedisEnterpriseDatabasePersistence,
+  RedisEnterprisePersistencePolicy,
 } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
-import { RedisPersistencePolicy } from 'src/modules/redis-enterprise/models/redis-cloud-database';
 import {
   ClusterConnectionDetailsDto,
   RedisEnterpriseDatabase,
@@ -140,27 +140,27 @@ export class RedisEnterpriseService {
 
   private getDatabasePersistencePolicy(
     database: IRedisEnterpriseDatabase,
-  ): RedisPersistencePolicy {
+  ): RedisEnterprisePersistencePolicy {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { data_persistence, aof_policy, snapshot_policy } = database;
     if (data_persistence === RedisEnterpriseDatabasePersistence.Aof) {
       return aof_policy === RedisEnterpriseDatabaseAofPolicy.AofEveryOneSecond
-        ? RedisPersistencePolicy.AofEveryOneSecond
-        : RedisPersistencePolicy.AofEveryWrite;
+        ? RedisEnterprisePersistencePolicy.AofEveryOneSecond
+        : RedisEnterprisePersistencePolicy.AofEveryWrite;
     }
     if (data_persistence === RedisEnterpriseDatabasePersistence.Snapshot) {
       const { secs } = snapshot_policy.pop();
       if (secs === 3600) {
-        return RedisPersistencePolicy.SnapshotEveryOneHour;
+        return RedisEnterprisePersistencePolicy.SnapshotEveryOneHour;
       }
       if (secs === 21600) {
-        return RedisPersistencePolicy.SnapshotEverySixHours;
+        return RedisEnterprisePersistencePolicy.SnapshotEverySixHours;
       }
       if (secs === 43200) {
-        return RedisPersistencePolicy.SnapshotEveryTwelveHours;
+        return RedisEnterprisePersistencePolicy.SnapshotEveryTwelveHours;
       }
     }
-    return RedisPersistencePolicy.None;
+    return RedisEnterprisePersistencePolicy.None;
   }
 
   private findReplicasForDatabase(

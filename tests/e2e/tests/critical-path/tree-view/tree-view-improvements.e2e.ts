@@ -56,7 +56,7 @@ test
         // The folder without any namespaces is selected (if exists) when folder does not exist after search/filter
         await verifyKeysDisplayedInTheList([keyNameSingle]);
 
-        await t.click(browserPage.setDeleteButton);
+        await browserPage.setAllKeyType();
         // The folder without any patterns selected and the list of keys is displayed when there is a folder without any patterns
         await verifyKeysDisplayedInTheList([keyNameSingle]);
         await verifyKeysNotDisplayedInTheList([`${keyNames[0]}:1`, `${keyNames[2]}:2`]);
@@ -104,7 +104,7 @@ test
         // Filtered Tree view preselected folder
         await t.expect(browserPage.keyListTable.textContent).contains('No results found.', 'Key is not found message not displayed');
 
-        await t.click(browserPage.streamDeleteButton); // clear stream from filter
+        await browserPage.setAllKeyType(); // clear stream from filter
         // Filtered Tree view preselected folder
         await t.expect(browserPage.keyListTable.textContent).notContains('No results found.', 'Key is not found message still displayed');
         await t.expect(
@@ -180,7 +180,7 @@ test
         // The first folder with namespaces is expanded and selected when folder and folder without any namespaces does not exist after search/filter
         await verifyKeysDisplayedInTheList([keyNames[0], keyNames[1]]);
 
-        await t.click(browserPage.hashDeleteButton);
+        await browserPage.setAllKeyType();
         await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames[0]}`]);
         await t.click(browserPage.refreshKeysButton); // refresh keys
         // The previously selected folder is preselected when key does not exist after keys refresh

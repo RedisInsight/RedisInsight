@@ -19,6 +19,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { isProcessingBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
 import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, SocketEvent } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { CustomHeaders } from 'uiSrc/constants/api'
 
 interface IProps {
   retryDelay?: number
@@ -43,6 +44,7 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
     socketRef.current = io(`${getBaseApiUrl()}/bulk-actions`, {
       forceNew: true,
       query: { instanceId },
+      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
       rejectUnauthorized: false,
     })
 

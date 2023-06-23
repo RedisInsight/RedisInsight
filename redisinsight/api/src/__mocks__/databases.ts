@@ -15,6 +15,8 @@ import {
   mockSshOptionsPrivateKey,
   mockSshOptionsPrivateKeyEntity,
 } from 'src/__mocks__/ssh';
+import { CloudDatabaseDetails, CloudSubscriptionType } from 'src/modules/cloud/autodiscovery/models';
+import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/autodiscovery/entities/cloud-database-details.entity';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';
 
@@ -35,11 +37,32 @@ export const mockDatabase = Object.assign(new Database(), {
   timeout: 30_000,
   new: false,
   compressor: Compressor.NONE,
+  version: '7.0',
+});
+
+export const mockDatabaseCloudDetails = Object.assign(new CloudDatabaseDetails(), {
+  subscriptionType: CloudSubscriptionType.Fixed,
+  cloudId: 500001,
+  planMemoryLimit: 256,
+  memoryLimitMeasurementUnit: 'MB',
+});
+
+export const mockDatabaseWithCloudDetails = Object.assign(new Database(), {
+  ...mockDatabase,
+  cloudDetails: mockDatabaseCloudDetails,
 });
 
 export const mockDatabaseEntity = Object.assign(new DatabaseEntity(), {
   ...mockDatabase,
   encryption: null,
+});
+
+export const mockDatabaseEntityWithCloudDetails = Object.assign(new DatabaseEntity(), {
+  ...mockDatabaseEntity,
+  cloudDetails: Object.assign(new CloudDatabaseDetailsEntity(), {
+    id: 'some-uuid',
+    ...mockDatabaseCloudDetails,
+  }),
 });
 
 export const mockDatabaseWithSshBasic = Object.assign(new Database(), {
@@ -219,6 +242,7 @@ export const mockDatabaseInfoProvider = jest.fn(() => ({
   isCluster: jest.fn(),
   isSentinel: jest.fn(),
   determineDatabaseModules: jest.fn(),
+  determineDatabaseServer: jest.fn(),
   determineSentinelMasterGroups: jest.fn().mockReturnValue([mockSentinelMasterDto]),
   determineClusterNodes: jest.fn().mockResolvedValue(mockClusterNodes),
   getRedisGeneralInfo: jest.fn().mockResolvedValueOnce(mockRedisGeneralInfo),

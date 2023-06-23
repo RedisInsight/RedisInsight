@@ -32,6 +32,9 @@ import { customTutorials1677135091633 } from './1677135091633-custom-tutorials';
 import { databaseRecommendations1681900503586 } from './1681900503586-database-recommendations';
 import { databaseRecommendationParams1683006064293 } from './1683006064293-database-recommendation-params';
 import { Feature1684931530343 } from './1684931530343-feature';
+import { DatabaseRedisServer1686719451753 } from './1686719451753-database-redis-server';
+import { DatabaseRecommendationUnique1687435940110 } from './1687435940110-database-recommendation-unique';
+import { CloudDatabaseDetails1687166457712 } from './1687166457712-cloud-database-details';
 
 export default [
   initialMigration1614164490968,
@@ -68,4 +71,7 @@ export default [
   databaseRecommendations1681900503586,
   databaseRecommendationParams1683006064293,
   Feature1684931530343,
+  DatabaseRedisServer1686719451753,
+  DatabaseRecommendationUnique1687435940110,
+  CloudDatabaseDetails1687166457712,
 ];

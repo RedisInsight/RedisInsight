@@ -11,6 +11,7 @@ import {
   validateApiCall,
   requirements, serverConfig
 } from '../deps';
+import { ServerService } from 'src/modules/server/server.service';
 const { server, request, constants, rte, analytics } = deps;
 
 // endpoint to test
@@ -98,7 +99,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
                 capability: 'string',
                 command: 'SET',
                 outputFormat: 'TEXT',
-                buildType: serverConfig.get('server').buildType,
+                buildType: ServerService.getAppType(serverConfig.get('server').buildType),
               },
             });
           }

@@ -15,6 +15,7 @@ export default {
   WRONG_DATABASE_TYPE: 'Wrong database type.',
   CONNECTION_TIMEOUT:
     'The connection has timed out, please check the connection details.',
+  SERVER_CLOSED_CONNECTION: 'Server closed the connection.',
   AUTHENTICATION_FAILED: () => 'Failed to authenticate, please check the username or password.',
   INCORRECT_DATABASE_URL: (url) => `Could not connect to ${url}, please check the connection details.`,
   INCORRECT_CERTIFICATES: (url) => `Could not connect to ${url}, please check the CA or Client certificate.`,
@@ -64,4 +65,6 @@ export default {
   APP_SETTINGS_NOT_FOUND: () => 'Could not find application settings.',
   SERVER_INFO_NOT_FOUND: () => 'Could not find server info.',
   INCREASE_MINIMUM_LIMIT: (count: string) => `Set MAXSEARCHRESULTS to at least ${count}.`,
+  INVALID_WINDOW_ID: 'Invalid window id.',
+  UNDEFINED_WINDOW_ID: 'Undefined window id.',
 };

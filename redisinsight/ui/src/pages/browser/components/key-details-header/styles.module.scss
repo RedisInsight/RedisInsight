@@ -142,6 +142,16 @@
   }
 }
 
+.backBtn:global(.euiButton.euiButton--fill.euiButton--secondary) {
+  background-color: var(--browserComponentActive) !important;
+  border-color: var(--browserComponentActive) !important;
+  color: var(--buttonSecondaryTextColor) !important;
+
+  &:hover, &:focus {
+    color: var(--buttonSecondaryTextColor) !important;
+  }
+}
+
 .flexItemKeyInput {
   flex-direction: row !important;
   width: 100% !important;

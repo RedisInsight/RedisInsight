@@ -6,6 +6,9 @@ yarn --cwd tests/e2e install
 # mount app resources
 ./release/*.AppImage --appimage-mount >> apppath &
 
+# create folder before tests run to prevent permissions issue
+mkdir -p tests/e2e/remote
+
 # run rte
 docker-compose -f tests/e2e/rte.docker-compose.yml build
 docker-compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V

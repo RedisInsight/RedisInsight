@@ -11,7 +11,7 @@ import {
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-import { loadKeys, loadList, redisearchListSelector, setSelectedIndex } from 'uiSrc/slices/browser/redisearch'
+import { loadList, redisearchListSelector, setSelectedIndex } from 'uiSrc/slices/browser/redisearch'
 import { bufferToString, stringToBuffer } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import { SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -111,7 +111,7 @@ describe('RediSearchIndexesList', () => {
     localStorageService.set = jest.fn();
 
     (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
-      loading: false,
+      host: '123.123.2.2',
       modules: [],
     }))
 
@@ -138,7 +138,7 @@ describe('RediSearchIndexesList', () => {
     );
 
     (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
-      loading: false,
+      host: '123.23.1.1',
       modules: [{ name: RedisDefaultModules.Search, }]
     }))
 
@@ -182,7 +182,7 @@ describe('RediSearchIndexesList', () => {
     );
 
     (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
-      loading: false,
+      host: '123.123.1.1',
       modules: [{ name: RedisDefaultModules.Search, }]
     }))
 

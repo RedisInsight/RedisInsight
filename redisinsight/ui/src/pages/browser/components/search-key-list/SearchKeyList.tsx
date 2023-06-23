@@ -31,20 +31,15 @@ const placeholders = {
 
 const SearchKeyList = () => {
   const { id } = useSelector(connectedInstanceSelector)
-  const { search, viewType, filter, searchMode } = useSelector(keysSelector)
+  const { search, viewType, searchMode } = useSelector(keysSelector)
   const { search: redisearchQuery, selectedIndex } = useSelector(redisearchSelector)
   const { data: rediSearchHistory, loading: rediSearchHistoryLoading } = useSelector(redisearchHistorySelector)
   const { data: searchHistory, loading: searchHistoryLoading } = useSelector(keysSearchHistorySelector)
 
-  const [options, setOptions] = useState<string[]>(filter ? [filter] : [])
   const [value, setValue] = useState(search || '')
   const [disableSubmit, setDisableSubmit] = useState(false)
 
   const dispatch = useDispatch()
-
-  useEffect(() => {
-    setOptions(filter ? [filter] : [])
-  }, [filter])
 
   useEffect(() => {
     if (id) {
@@ -128,7 +123,6 @@ const SearchKeyList = () => {
         onChange={handleChangeValue}
         onChangeOptions={handleChangeOptions}
         onClear={onClear}
-        options={searchMode === SearchMode.Pattern ? options : []}
         suggestions={{
           options: mapOptions(searchMode === SearchMode.Pattern ? searchHistory : rediSearchHistory),
           buttonTooltipTitle: 'Show History',

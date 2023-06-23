@@ -551,20 +551,34 @@ const KeyDetailsHeader = ({
                   </EuiFlexItem>
                 )}
                 <EuiFlexItem grow={false}>
-                  <EuiToolTip
-                    content="Close"
-                    position="left"
-                    anchorClassName={styles.closeKeyTooltip}
-                  >
-                    <EuiButtonIcon
-                      iconType="cross"
-                      color="primary"
-                      aria-label="Close key"
-                      className={styles.closeBtn}
+                  {arePanelsCollapsed && !isFullScreen ? (
+                    <EuiButton
+                      fill
+                      color="secondary"
                       onClick={() => onClose(keyProp)}
-                      data-testid="close-key-btn"
-                    />
-                  </EuiToolTip>
+                      size="s"
+                      iconType="arrowLeft"
+                      className={styles.backBtn}
+                    >
+                      Back
+                    </EuiButton>
+                  ) : (
+                    <EuiToolTip
+                      content="Close"
+                      position="left"
+                      anchorClassName={styles.closeKeyTooltip}
+                    >
+                      <EuiButtonIcon
+                        iconType="cross"
+                        color="primary"
+                        aria-label="Close key"
+                        className={styles.closeBtn}
+                        onClick={() => onClose(keyProp)}
+                        data-testid="close-key-btn"
+                      />
+                    </EuiToolTip>
+                  )}
+
                 </EuiFlexItem>
               </EuiFlexGroup>
               <EuiFlexGroup

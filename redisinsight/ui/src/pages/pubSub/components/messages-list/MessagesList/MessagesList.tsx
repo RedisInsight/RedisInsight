@@ -76,8 +76,8 @@ const MessagesList = (props: Props) => {
       return
     }
 
-    if (e.scrollUpdateWasRequested === false) {
-      if (followRef.current && outerRef.current.scrollHeight !== outerRef.current.offsetHeight) {
+    if (!e.scrollUpdateWasRequested) {
+      if (followRef.current && outerRef.current?.scrollHeight !== outerRef.current?.offsetHeight) {
         sendEventTelemetry({
           event: TelemetryEvent.PUBSUB_AUTOSCROLL_PAUSED,
           eventData: {

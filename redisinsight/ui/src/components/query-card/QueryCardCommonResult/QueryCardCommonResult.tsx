@@ -13,7 +13,7 @@ const QueryCardCommonResult = (props: Props) => {
   const { result, loading } = props
 
   return (
-    <div className={cx('queryResultsContainer', styles.container)}>
+    <div data-testid="query-common-result-wrapper" className={cx('queryResultsContainer', styles.container)}>
       {!loading && (
         <div data-testid="query-common-result">
           { result || '(nil)' }

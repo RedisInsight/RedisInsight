@@ -40,7 +40,6 @@ const MonitorWrapper = () => {
     <section className={styles.monitorWrapper} data-testid="monitor-container">
       <MonitorHeader handleRunMonitor={handleRunMonitor} />
       <Monitor
-        scrollViewOnAppear
         items={items}
         error={error}
         isStarted={isStarted}

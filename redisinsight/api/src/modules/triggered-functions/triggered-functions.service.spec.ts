@@ -183,7 +183,6 @@ describe('TriggeredFunctionsService', () => {
         service.details(mockClientMetadata, mockLibraryName),
       ).rejects.toThrow(NotFoundException);
     });
-
   });
 
   describe('libraryList', () => {
@@ -302,6 +301,44 @@ describe('TriggeredFunctionsService', () => {
       try {
         mockIORedisClient.sendCommand.mockRejectedValueOnce(new NotFoundException('Not Found'));
         await service.upload(mockClientMetadata, { code: mockCode });
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+      }
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete library', async () => {
+      mockIORedisClient.sendCommand.mockResolvedValueOnce('OK');
+
+      expect(await service.delete(mockClientMetadata, mockLibraryName)).toEqual(undefined);
+    });
+
+    it('Should throw Error when error during creating a client in delete', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error());
+        await service.delete(mockClientMetadata, mockLibraryName);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(Error);
+      }
+    });
+
+    it('should handle acl error', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new Error('NOPERM'));
+        await service.delete(mockClientMetadata, mockLibraryName);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(ForbiddenException);
+      }
+    });
+
+    it('should handle HTTP error during deleting library', async () => {
+      try {
+        mockIORedisClient.sendCommand.mockRejectedValueOnce(new NotFoundException('Not Found'));
+        await service.delete(mockClientMetadata, mockLibraryName);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);

@@ -3,24 +3,26 @@ import { EuiBasicTableColumn, EuiInMemoryTable, EuiText, EuiToolTip, PropertySor
 import cx from 'classnames'
 
 import { useParams } from 'react-router-dom'
+import { isEqual, pick } from 'lodash'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { TriggeredFunctionsLibrary } from 'uiSrc/slices/interfaces/triggeredFunctions'
+import { FunctionType, TriggeredFunctionsFunction } from 'uiSrc/slices/interfaces/triggeredFunctions'
+import { LIST_OF_FUNCTION_NAMES } from 'uiSrc/pages/triggeredFunctions/constants'
 import styles from './styles.module.scss'
 
 export interface Props {
-  items: Nullable<TriggeredFunctionsLibrary[]>
+  items: Nullable<TriggeredFunctionsFunction[]>
   loading: boolean
   onRefresh: () => void
   lastRefresh: Nullable<number>
-  selectedRow: Nullable<string>
-  onSelectRow: (name: string) => void
+  selectedRow: Nullable<TriggeredFunctionsFunction>
+  onSelectRow: (item: TriggeredFunctionsFunction) => void
 }
 
-const NoLibrariesMessage: React.ReactNode = (<span data-testid="no-libraries-message">No Libraries found</span>)
+const NoFunctionsMessage: React.ReactNode = (<span data-testid="no-functions-message">No Functions found</span>)
 
-const LibrariesList = (props: Props) => {
+const FunctionsList = (props: Props) => {
   const { items, loading, onRefresh, lastRefresh, selectedRow, onSelectRow } = props
   const [sort, setSort] = useState<Maybe<PropertySort>>(undefined)
 
@@ -28,63 +30,41 @@ const LibrariesList = (props: Props) => {
 
   const columns: EuiBasicTableColumn<any>[] = [
     {
-      name: 'Library Name',
+      name: 'Function Name',
       field: 'name',
       sortable: true,
       truncateText: true,
       width: '25%',
       render: (value: string) => (
-        <EuiToolTip
-          title="Library Name"
-          content={value}
-        >
-          <>{value}</>
-        </EuiToolTip>
+        <EuiToolTip title="Function Name" content={value}><>{value}</></EuiToolTip>
       )
     },
     {
-      name: 'Username',
-      field: 'user',
+      name: 'Library',
+      field: 'library',
       sortable: true,
       truncateText: true,
       width: '25%',
       render: (value: string) => (
-        <EuiToolTip
-          title="Username"
-          content={value}
-        >
-          <>{value}</>
-        </EuiToolTip>
+        <EuiToolTip title="Library Name" content={value}><>{value}</></EuiToolTip>
       )
     },
     {
-      name: 'Pending',
-      field: 'pendingJobs',
-      align: 'right',
+      name: 'Type',
+      field: 'type',
       sortable: true,
-      width: '140x'
-    },
-    {
-      name: 'Total Functions',
-      field: 'totalFunctions',
-      align: 'right',
-      width: '140px',
-      sortable: true,
-    },
-    {
-      name: '',
-      field: 'actions',
-      width: '20%'
+      width: '50%',
+      render: (value: string) => LIST_OF_FUNCTION_NAMES[value as FunctionType]
     },
   ]
 
-  const handleSelect = (item: TriggeredFunctionsLibrary) => {
-    onSelectRow(item.name)
+  const handleSelect = (item: TriggeredFunctionsFunction) => {
+    onSelectRow(item)
   }
 
   const handleRefreshClicked = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_REFRESH_CLICKED,
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_LIST_REFRESH_CLICKED,
       eventData: {
         databaseId: instanceId
       }
@@ -94,7 +74,7 @@ const LibrariesList = (props: Props) => {
   const handleSorting = ({ sort }: any) => {
     setSort(sort)
     sendEventTelemetry({
-      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARIES_SORTED,
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTIONS_SORTED,
       eventData: {
         ...sort,
         databaseId: instanceId
@@ -105,13 +85,18 @@ const LibrariesList = (props: Props) => {
   const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
     sendEventTelemetry({
       event: enableAutoRefresh
-        ? TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_AUTO_REFRESH_ENABLED
-        : TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_AUTO_REFRESH_DISABLED,
+        ? TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_LIST_AUTO_REFRESH_ENABLED
+        : TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_LIST_AUTO_REFRESH_DISABLED,
       eventData: {
         refreshRate,
         databaseId: instanceId
       }
     })
+  }
+
+  const isRowSelected = (row: TriggeredFunctionsFunction, selectedRow: Nullable<TriggeredFunctionsFunction>) => {
+    const pickFields = ['name', 'library', 'type']
+    return selectedRow && isEqual(pick(row, pickFields), pick(selectedRow, pickFields))
   }
 
   return (
@@ -138,16 +123,16 @@ const LibrariesList = (props: Props) => {
         responsive={false}
         rowProps={(row) => ({
           onClick: () => handleSelect(row),
-          className: row.name === selectedRow ? 'selected' : '',
+          className: isRowSelected(row, selectedRow) ? 'selected' : '',
           'data-testid': `row-${row.name}`,
         })}
-        message={NoLibrariesMessage}
+        message={NoFunctionsMessage}
         onTableChange={handleSorting}
         className={cx('inMemoryTableDefault', 'noBorders', 'triggeredFunctions__table')}
-        data-testid="libraries-list-table"
+        data-testid="functions-list-table"
       />
     </div>
   )
 }
 
-export default LibrariesList
+export default FunctionsList

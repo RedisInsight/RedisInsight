@@ -10,7 +10,7 @@ import ClusterDetailsPage from 'uiSrc/pages/clusterDetails'
 import AnalyticsPage from 'uiSrc/pages/analytics'
 import DatabaseAnalysisPage from 'uiSrc/pages/databaseAnalysis'
 import TriggeredFunctionsPage from 'uiSrc/pages/triggeredFunctions'
-import { LibrariesPage } from 'uiSrc/pages/triggeredFunctions/pages'
+import { LibrariesPage, FunctionsPage } from 'uiSrc/pages/triggeredFunctions/pages'
 import COMMON_ROUTES from './commonRoutes'
 
 const ANALYTICS_ROUTES: IRoute[] = [
@@ -39,7 +39,7 @@ const TRIGGERED_FUNCTIONS_ROUTES: IRoute[] = [
     pageName: PageNames.triggeredFunctionsFunctions,
     path: Pages.triggeredFunctionsFunctions(':instanceId'),
     protected: true,
-    component: LibrariesPage,
+    component: FunctionsPage,
   },
   {
     pageName: PageNames.triggeredFunctionsLibraries,

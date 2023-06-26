@@ -13,27 +13,30 @@ import {
   EuiLoadingContent,
   EuiTabs,
   EuiTab,
-  EuiProgress
+  EuiProgress,
 } from '@elastic/eui'
 import cx from 'classnames'
 import {
   fetchTriggeredFunctionsLibrary,
   replaceTriggeredFunctionsLibraryAction,
-  triggeredFunctionsSelectedLibrarySelector
+  triggeredFunctionsSelectedLibrarySelector,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 
 import { MonacoJS, MonacoJson } from 'uiSrc/components/monaco-editor'
+import DeleteLibraryButton from 'uiSrc/pages/triggeredFunctions/pages/Libraries/components/DeleteLibrary'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 import { FunctionType } from 'uiSrc/slices/interfaces/triggeredFunctions'
 
 import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { formatLongName, Maybe } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   name: string
   onClose: () => void
+  onDeleteRow: (name: string) => void
 }
 
 const LIST_OF_FUNCTION_TYPES = [
@@ -54,12 +57,13 @@ const tabs = [
 ]
 
 const LibraryDetails = (props: Props) => {
-  const { name, onClose } = props
+  const { name, onClose, onDeleteRow } = props
   const { loading, lastRefresh, data: library } = useSelector(triggeredFunctionsSelectedLibrarySelector)
 
   const [selectedView, setSelectedView] = useState<string>(tabs[0].id)
   const [configuration, setConfiguration] = useState<string>('_')
   const [code, setCode] = useState<string>('_')
+  const [popover, setPopover] = useState<Maybe<string>>(undefined)
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -138,6 +142,14 @@ const LibraryDetails = (props: Props) => {
     setCode(library?.code ?? '')
   }
 
+  const handleDeleteClick = (library: string) => {
+    setPopover(library)
+  }
+
+  const handleClosePopover = () => {
+    setPopover(undefined)
+  }
+
   const functionGroup = (title: string, list: Array<{ type: FunctionType, name: string }>, initialIsOpen = false) => {
     const count = list.length > 0 ? `(${list.length})` : ''
     return (
@@ -192,7 +204,7 @@ const LibraryDetails = (props: Props) => {
       <div className={styles.header}>
         <EuiToolTip
           title="Library Name"
-          content={name}
+          content={formatLongName(name)}
           anchorClassName={cx('truncateText', styles.titleTooltip)}
         >
           <EuiTitle size="xs" className={styles.libName} data-testid="lib-name"><span>{name}</span></EuiTitle>
@@ -203,17 +215,26 @@ const LibraryDetails = (props: Props) => {
             {library?.apiVersion && (<EuiText color="subdued" data-testid="lib-apiVersion">API: {library.apiVersion}</EuiText>)}
           </EuiFlexItem>
           <EuiFlexItem style={{ alignSelf: 'flex-end' }} grow={false}>
-            <AutoRefresh
-              loading={loading}
-              postfix="library-details"
-              displayText
-              lastRefreshTime={lastRefresh}
-              containerClassName={styles.refreshContainer}
-              onRefresh={handleRefresh}
-              onRefreshClicked={handleRefreshClicked}
-              onEnableAutoRefresh={handleEnableAutoRefresh}
-              testid="refresh-lib-details-btn"
-            />
+            <div className={styles.actions}>
+              <AutoRefresh
+                loading={loading}
+                postfix="library-details"
+                displayText
+                lastRefreshTime={lastRefresh}
+                containerClassName={styles.refreshContainer}
+                onRefresh={handleRefresh}
+                onRefreshClicked={handleRefreshClicked}
+                onEnableAutoRefresh={handleEnableAutoRefresh}
+                testid="refresh-lib-details-btn"
+              />
+              <DeleteLibraryButton
+                library={library}
+                isOpen={popover === library?.name}
+                openPopover={handleDeleteClick}
+                closePopover={handleClosePopover}
+                onDelete={onDeleteRow}
+              />
+            </div>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiToolTip

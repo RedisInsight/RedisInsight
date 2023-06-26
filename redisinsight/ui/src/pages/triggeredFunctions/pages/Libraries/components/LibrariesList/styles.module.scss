@@ -35,4 +35,12 @@
       padding: 16px 18px !important;
     }
   }
+
+  .deleteBtn {
+    display: hidden;
+  }
+
+  :global(.euiTableRow:hover) .deleteBtn {
+    display: block;
+  }
 }

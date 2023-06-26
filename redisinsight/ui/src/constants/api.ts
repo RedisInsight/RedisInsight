@@ -107,6 +107,7 @@ enum ApiEndpoints {
   TRIGGERED_FUNCTIONS_LIBRARIES = 'triggered-functions/libraries',
   TRIGGERED_FUNCTIONS_GET_LIBRARY = 'triggered-functions/get-library',
   TRIGGERED_FUNCTIONS_REPLACE_LIBRARY = 'triggered-functions/library/replace',
+  TRIGGERED_FUNCTIONS_LIBRARY = 'triggered-functions/library',
 
   NOTIFICATIONS = 'notifications',
   NOTIFICATIONS_READ = 'notifications/read',

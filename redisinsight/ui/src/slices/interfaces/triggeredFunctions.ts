@@ -37,4 +37,5 @@ export interface StateTriggeredFunctions {
   loading: boolean,
   lastRefresh: Nullable<number>
   error: string
+  deleting: boolean
 }

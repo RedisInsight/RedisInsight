@@ -46,4 +46,10 @@ export const databaseSchema = Joi.object().keys({
     passphrase: Joi.string().allow(null),
   }).allow(null),
   version: Joi.string().allow(null),
+  cloudDetails: Joi.object().keys({
+    cloudId: Joi.number().required(),
+    subscriptionType: Joi.string().valid('fixed', 'flexible').required(),
+    planMemoryLimit: Joi.number(),
+    memoryLimitMeasurementUnit: Joi.string(),
+  }).allow(null),
 });

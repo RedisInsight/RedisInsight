@@ -1,5 +1,5 @@
 import { AdditionalRedisModuleName } from 'src/constants';
-import { convertRECloudModuleName } from 'src/modules/redis-enterprise/utils/redis-cloud-converter';
+import { convertRECloudModuleName } from 'src/modules/cloud/autodiscovery/utils/redis-cloud-converter';
 
 describe('convertRedisCloudModuleName', () => {
   it('should return exist module name', () => {

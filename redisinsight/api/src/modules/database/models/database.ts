@@ -21,6 +21,7 @@ import { Endpoint } from 'src/common/models';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { SshOptions } from 'src/modules/ssh/models/ssh-options';
 import { Default } from 'src/common/decorators';
+import { CloudDatabaseDetails } from 'src/modules/cloud/autodiscovery/models/cloud-database-details';
 
 const CONNECTIONS_CONFIG = config.get('connections');
 
@@ -255,6 +256,17 @@ export class Database {
   @Type(() => SshOptions)
   @ValidateNested()
   sshOptions?: SshOptions;
+
+  @ApiPropertyOptional({
+    description: 'Cloud details',
+    type: CloudDatabaseDetails,
+  })
+  @Expose()
+  @IsOptional()
+  @IsNotEmptyObject()
+  @Type(() => CloudDatabaseDetails)
+  @ValidateNested()
+  cloudDetails?: CloudDatabaseDetails;
 
   @ApiPropertyOptional({
     description: 'Database compressor',

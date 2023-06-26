@@ -21,6 +21,8 @@ import {
   InstanceRedisCloud,
   AddRedisDatabaseStatus,
   LoadedCloud,
+  RedisCloudSubscriptionType,
+  RedisCloudSubscriptionTypeText,
 } from 'uiSrc/slices/interfaces'
 import {
   formatLongName,
@@ -120,6 +122,16 @@ const RedisCloudDatabasesResultPage = () => {
       },
     },
     {
+      field: 'subscriptionType',
+      className: 'column_subscriptionType',
+      name: 'Type',
+      width: '95px',
+      dataType: 'string',
+      sortable: true,
+      truncateText: true,
+      render: (type: RedisCloudSubscriptionType) => RedisCloudSubscriptionTypeText[type] ?? '-',
+    },
+    {
       field: 'status',
       className: 'column_status',
       name: 'Status',
@@ -167,7 +179,7 @@ const RedisCloudDatabasesResultPage = () => {
       width: '200px',
       sortable: true,
       render: function Modules(modules: any[], instance: InstanceRedisCloud) {
-        return <DatabaseListModules modules={instance.modules.map((name) => ({ name }))} />
+        return <DatabaseListModules modules={instance.modules?.map((name) => ({ name }))} />
       },
     },
     {

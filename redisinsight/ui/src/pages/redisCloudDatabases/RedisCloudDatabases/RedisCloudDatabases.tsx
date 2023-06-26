@@ -32,7 +32,7 @@ export interface Props {
   onClose: () => void;
   onBack: () => void;
   onSubmit: (
-    databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId'>[]
+    databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'databaseId'>[]
   ) => void;
 }
 
@@ -84,7 +84,7 @@ const RedisCloudDatabasesPage = ({
   }
 
   const handleSubmit = () => {
-    onSubmit(map(selection, (i) => pick(i, 'subscriptionId', 'databaseId')))
+    onSubmit(map(selection, (i) => pick(i, 'subscriptionId', 'subscriptionType', 'databaseId')))
   }
 
   const showPopover = () => {

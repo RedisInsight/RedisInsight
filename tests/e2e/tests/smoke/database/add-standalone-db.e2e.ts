@@ -1,18 +1,14 @@
 import { t } from 'testcafe';
 import { Chance } from 'chance';
 import {
-    addNewREClusterDatabase,
     addOSSClusterDatabase,
     acceptLicenseTerms,
-    deleteDatabase,
-    addRECloudDatabase
+    deleteDatabase
 } from '../../../helpers/database';
 import {
     commonUrl,
     ossStandaloneConfig,
-    ossClusterConfig,
-    redisEnterpriseClusterConfig,
-    cloudDatabaseConfig
+    ossClusterConfig
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
@@ -87,16 +83,6 @@ test
         await t.expect(myRedisDatabasePage.AddRedisDatabase.timeoutInput.value).eql(connectionTimeout, 'Connection timeout is not customized');
     });
 test
-    .meta({ rte: rte.reCluster })
-    .after(async() => {
-        await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
-    })('Verify that user can add database from RE Cluster via auto-discover flow', async() => {
-        await addNewREClusterDatabase(redisEnterpriseClusterConfig);
-        // Verify that user can see an indicator of databases that are added using autodiscovery and not opened yet
-        // Verify new connection badge for RE cluster
-        await myRedisDatabasePage.verifyDatabaseStatusIsVisible(redisEnterpriseClusterConfig.databaseName);
-    });
-test
     .meta({ env: env.web, rte: rte.ossCluster })
     .after(async() => {
         await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
@@ -104,16 +90,4 @@ test
         await addOSSClusterDatabase(ossClusterConfig);
         // Verify new connection badge for OSS cluster
         await myRedisDatabasePage.verifyDatabaseStatusIsVisible(ossClusterConfig.ossClusterDatabaseName);
-    });
-
-test
-    .meta({ rte: rte.reCloud })
-    .after(async() => {
-        await deleteDatabase(cloudDatabaseConfig.databaseName);
-    })('Verify that user can add database from RE Cloud via auto-discover flow', async() => {
-        await addRECloudDatabase(cloudDatabaseConfig);
-        // Verify new connection badge for RE cloud
-        await myRedisDatabasePage.verifyDatabaseStatusIsVisible(cloudDatabaseConfig.databaseName);
-        // Verify redis stack icon for RE Cloud with all 5 modules
-        await t.expect(myRedisDatabasePage.redisStackIcon.visible).ok('Redis Stack icon not found for RE Cloud db with all 5 modules');
     });

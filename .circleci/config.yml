@@ -167,7 +167,7 @@ aliases:
 
 orbs:
   win: circleci/windows@2.4.1
-  node: circleci/node@5.0.2
+  node: circleci/node@5.1.0
   aws: circleci/aws-cli@2.0.3
 
 executors:
@@ -1009,16 +1009,33 @@ workflows:
               only:
                 - /^e2e/feature.*/
                 - /^e2e/bugfix.*/
-      - docker:
-          name: Build docker image
+      # - docker:
+      #     name: Build docker image
+      #     requires:
+      #       - Start E2E Tests
+      # - e2e-tests:
+      #     name: E2ETest
+      #     build: docker
+      #     parallelism: 4
+      #     requires:
+      #       - Build docker image
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+      - setup-build:
+          name: Setup build (stage)
           requires:
-            - Start E2E Tests
-      - e2e-tests:
-          name: E2ETest
-          build: docker
-          parallelism: 4
+            - Setup sign certificates (stage)
+      - linux:
+          name: Build app - Linux (stage)
           requires:
-            - Build docker image
+            - Setup build (stage) 
+      # e2e desktop tests on AppImage build
+      - e2e-app-image:
+          name: E2ETest (AppImage) - Nightly
+          parallelism: 2
+          report: true
+          requires:
+            - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:

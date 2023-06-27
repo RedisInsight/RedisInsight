@@ -1,16 +1,27 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 
-import { getTriggeredFunctionsLibrariesList, triggeredFunctionsSelector } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import {
+  getTriggeredFunctionsLibrariesList,
+  triggeredFunctionsLibrariesSelector,
+} from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { TRIGGERED_FUNCTIONS_LIBRARIES_LIST_MOCKED_DATA } from 'uiSrc/mocks/data/triggeredFunctions'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+
 import LibrariesPage from './LibrariesPage'
 
 jest.mock('uiSrc/slices/triggeredFunctions/triggeredFunctions', () => ({
   ...jest.requireActual('uiSrc/slices/triggeredFunctions/triggeredFunctions'),
-  triggeredFunctionsSelector: jest.fn().mockReturnValue({
+  triggeredFunctionsLibrariesSelector: jest.fn().mockReturnValue({
     loading: false,
-    libraries: null
+    data: null
   }),
+}))
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
 }))
 
 let store: typeof mockedStore
@@ -20,26 +31,7 @@ beforeEach(() => {
   store.clearActions()
 })
 
-const mockedLibraries = [
-  {
-    name: 'lib1',
-    user: 'user1',
-    totalFunctions: 2,
-    pendingJobs: 1
-  },
-  {
-    name: 'lib2',
-    user: 'user1',
-    totalFunctions: 2,
-    pendingJobs: 1
-  },
-  {
-    name: 'lib3',
-    user: 'user2',
-    totalFunctions: 2,
-    pendingJobs: 1
-  }
-]
+const mockedLibraries = TRIGGERED_FUNCTIONS_LIBRARIES_LIST_MOCKED_DATA
 
 describe('LibrariesPage', () => {
   it('should render', () => {
@@ -54,8 +46,8 @@ describe('LibrariesPage', () => {
   })
 
   it('should render message when no libraries uploaded', () => {
-    (triggeredFunctionsSelector as jest.Mock).mockReturnValueOnce({
-      libraries: [],
+    (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
+      data: [],
       loading: false
     })
     render(<LibrariesPage />)
@@ -64,8 +56,8 @@ describe('LibrariesPage', () => {
   })
 
   it('should render libraries list', () => {
-    (triggeredFunctionsSelector as jest.Mock).mockReturnValueOnce({
-      libraries: mockedLibraries,
+    (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
+      data: mockedLibraries,
       loading: false
     })
     render(<LibrariesPage />)
@@ -76,8 +68,8 @@ describe('LibrariesPage', () => {
   })
 
   it('should filter libraries list', () => {
-    (triggeredFunctionsSelector as jest.Mock).mockReturnValueOnce({
-      libraries: mockedLibraries,
+    (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
+      data: mockedLibraries,
       loading: false
     })
     render(<LibrariesPage />)
@@ -105,8 +97,8 @@ describe('LibrariesPage', () => {
   })
 
   it('should open library details', () => {
-    (triggeredFunctionsSelector as jest.Mock).mockReturnValueOnce({
-      libraries: mockedLibraries,
+    (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
+      data: mockedLibraries,
       loading: false
     })
     render(<LibrariesPage />)
@@ -114,5 +106,23 @@ describe('LibrariesPage', () => {
     fireEvent.click(screen.getByTestId('row-lib1'))
 
     expect(screen.getByTestId('lib-details-lib1')).toBeInTheDocument()
+  })
+
+  it('should call proper telemetry events', async () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    await act(() => {
+      render(<LibrariesPage />)
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARIES_RECEIVED,
+      eventData: {
+        databaseId: 'instanceId',
+        total: mockedLibraries.length
+      }
+    })
   })
 })

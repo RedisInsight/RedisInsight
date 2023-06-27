@@ -2,8 +2,8 @@ import React from 'react'
 
 import { mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
-import { TriggeredFunctionsLibrary } from 'uiSrc/slices/interfaces/triggeredFunctions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { TRIGGERED_FUNCTIONS_FUNCTIONS_LIST_MOCKED_DATA } from 'uiSrc/mocks/data/triggeredFunctions'
 import FunctionsList, { Props } from './FunctionsList'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -11,39 +11,20 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn(),
 }))
 
-const mockedLibraries: TriggeredFunctionsLibrary[] = [
-  {
-    name: 'lib1',
-    user: 'user1',
-    totalFunctions: 2,
-    pendingJobs: 1
-  },
-  {
-    name: 'lib2',
-    user: 'user1',
-    totalFunctions: 2,
-    pendingJobs: 1
-  },
-  {
-    name: 'lib3',
-    user: 'user2',
-    totalFunctions: 2,
-    pendingJobs: 1
-  }
-]
+const mockedFunctions = TRIGGERED_FUNCTIONS_FUNCTIONS_LIST_MOCKED_DATA
 
 const mockedProps = mock<Props>()
 
-describe('LibrariesList', () => {
+describe('FunctionsList', () => {
   it('should render', () => {
-    expect(render(<FunctionsList {...mockedProps} items={mockedLibraries} />)).toBeTruthy()
+    expect(render(<FunctionsList {...mockedProps} items={mockedFunctions} />)).toBeTruthy()
   })
 
   it('should render items properly', () => {
-    render(<FunctionsList {...mockedProps} items={mockedLibraries} />)
+    render(<FunctionsList {...mockedProps} items={mockedFunctions} />)
 
-    expect(screen.getByTestId('total-libraries')).toHaveTextContent('Total: 3')
-    expect(screen.queryAllByTestId(/^row-/).length).toEqual(3)
+    expect(screen.getByTestId('total-functions')).toHaveTextContent('Total: 5')
+    expect(screen.queryAllByTestId(/^row-/).length).toEqual(5)
   })
 
   it('should call proper telemetry events', () => {
@@ -51,12 +32,12 @@ describe('LibrariesList', () => {
 
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
 
-    render(<FunctionsList {...mockedProps} items={mockedLibraries} />)
+    render(<FunctionsList {...mockedProps} items={mockedFunctions} />)
 
-    fireEvent.click(screen.getByTestId('refresh-libraries-btn'))
+    fireEvent.click(screen.getByTestId('refresh-functions-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_REFRESH_CLICKED,
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_LIST_REFRESH_CLICKED,
       eventData: {
         databaseId: 'instanceId'
       }
@@ -68,7 +49,7 @@ describe('LibrariesList', () => {
     fireEvent.click(screen.getByTestId('auto-refresh-switch'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_AUTO_REFRESH_ENABLED,
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_LIST_AUTO_REFRESH_ENABLED,
       eventData: {
         refreshRate: '5.0',
         databaseId: 'instanceId'
@@ -79,7 +60,7 @@ describe('LibrariesList', () => {
     fireEvent.click(screen.getByTestId('auto-refresh-switch'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_AUTO_REFRESH_DISABLED,
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_LIST_AUTO_REFRESH_DISABLED,
       eventData: {
         refreshRate: '5.0',
         databaseId: 'instanceId'

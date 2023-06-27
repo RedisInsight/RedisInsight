@@ -21,8 +21,8 @@ import FunctionDetails from './components/FunctionDetails'
 
 import styles from './styles.module.scss'
 
-export const firstPanelId = 'libraries-left-panel'
-export const secondPanelId = 'libraries-right-panel'
+export const firstPanelId = 'functions-left-panel'
+export const secondPanelId = 'functions-right-panel'
 
 const FunctionsPage = () => {
   const { lastRefresh, loading, data: functions, selected } = useSelector(triggeredFunctionsFunctionsSelector)
@@ -110,8 +110,8 @@ const FunctionsPage = () => {
                 placeholder="Search for Functions"
                 className="triggeredFunctions__search"
                 onChange={onChangeFiltering}
-                aria-label="Search libraries"
-                data-testid="search-libraries-list"
+                aria-label="Search functions"
+                data-testid="search-functions-list"
               />
             )}
           </EuiFlexItem>
@@ -136,7 +136,7 @@ const FunctionsPage = () => {
               >
                 <div className="triggeredFunctions__panelWrapper">
                   {!functions && loading && (
-                    <div className={styles.loading} data-testid="loading-libraries">
+                    <div className={styles.loading} data-testid="loading-functions">
                       <EuiLoadingSpinner size="xl" />
                     </div>
                   )}
@@ -156,7 +156,7 @@ const FunctionsPage = () => {
                 className={cx('triggeredFunctions__resizableButton', {
                   hidden: !selectedRow,
                 })}
-                data-test-subj="resize-btn-libraries"
+                data-test-subj="resize-btn-functions"
               />
               <EuiResizablePanel
                 id={secondPanelId}

@@ -1,17 +1,16 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
-
-import {
-  getTriggeredFunctionsLibraryDetails,
-  triggeredFunctionsSelectedLibrarySelector
-} from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import reactRouterDom from 'react-router-dom'
+import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import {
-  TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA
-} from 'uiSrc/mocks/handlers/triggeredFunctions/triggeredFunctionsHandler'
+  TRIGGERED_FUNCTIONS_FUNCTIONS_LIST_MOCKED_DATA,
+} from 'uiSrc/mocks/data/triggeredFunctions'
+import {
+  setSelectedLibraryToShow
+} from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import FunctionDetails from './FunctionDetails'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -19,11 +18,11 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn(),
 }))
 
-jest.mock('uiSrc/slices/triggeredFunctions/triggeredFunctions', () => ({
-  ...jest.requireActual('uiSrc/slices/triggeredFunctions/triggeredFunctions'),
-  triggeredFunctionsSelectedLibrarySelector: jest.fn().mockReturnValue({
-    ...jest.requireActual('uiSrc/slices/triggeredFunctions/triggeredFunctions').triggeredFunctionsSelectedLibrarySelector
-  })
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: jest.fn,
+  }),
 }))
 
 let store: typeof mockedStore
@@ -33,59 +32,56 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('LibraryDetails', () => {
+const mockedItem = TRIGGERED_FUNCTIONS_FUNCTIONS_LIST_MOCKED_DATA[0]
+const mockedItemKeySpaceTriggers = TRIGGERED_FUNCTIONS_FUNCTIONS_LIST_MOCKED_DATA[3]
+
+describe('FunctionDetails', () => {
   it('should render', () => {
-    expect(render(<FunctionDetails name="lib" onClose={jest.fn()} />)).toBeTruthy()
+    expect(render(<FunctionDetails item={mockedItem} onClose={jest.fn()} />)).toBeTruthy()
   })
 
-  it('should call fetch details on render', () => {
-    render(<FunctionDetails name="lib" onClose={jest.fn()} />)
-
-    const expectedActions = [getTriggeredFunctionsLibraryDetails()]
-    expect(store.getActions()).toEqual(expectedActions)
-  })
-
-  it('should call onCLose', () => {
+  it('should call onClose', () => {
     const onClose = jest.fn()
-    render(<FunctionDetails name="lib" onClose={onClose} />)
+    render(<FunctionDetails item={mockedItem} onClose={onClose} />)
 
     fireEvent.click(screen.getByTestId('close-right-panel-btn'))
     expect(onClose).toBeCalled()
   })
 
-  it('should render proper content', async () => {
-    (triggeredFunctionsSelectedLibrarySelector as jest.Mock).mockReturnValueOnce({
-      lastRefresh: null,
-      loading: false,
-      data: {
-        apiVersion: '1.2',
-        code: 'code',
-        configuration: 'config',
-        functions: [
-          { name: 'foo', type: 'functions' },
-          { name: 'foo1', type: 'functions' },
-          { name: 'foo2', type: 'cluster_functions' },
-          { name: 'foo3', type: 'keyspace_triggers' },
-        ],
-        name: 'lib',
-        pendingJobs: 12,
-        user: 'default',
-      }
-    })
+  it('should render proper content for functions type', async () => {
+    render(<FunctionDetails item={mockedItem} onClose={jest.fn()} />)
 
-    render(<FunctionDetails name="lib" onClose={jest.fn()} />)
+    expect(screen.getByTestId('function-name')).toHaveTextContent(mockedItem.name)
+    expect(screen.getByTestId('function-details-General')).toHaveTextContent([
+      'General',
+      'Library:',
+      mockedItem.library,
+      'isAsync:',
+      mockedItem.isAsync ? 'Yes' : 'No'
+    ].join(''))
 
-    expect(screen.getByTestId('lib-name')).toHaveTextContent('lib')
-    expect(screen.getByTestId('lib-apiVersion')).toHaveTextContent('1.2')
-    expect(screen.getByTestId('functions-Functions')).toHaveTextContent('Functions (2)foofoo1')
-    expect(screen.getByTestId('functions-Keyspace triggers')).toHaveTextContent('Keyspace triggers (1)foo3')
-    expect(screen.getByTestId('functions-Cluster Functions')).toHaveTextContent('Cluster Functions (1)foo2')
-    expect(screen.getByTestId('functions-Stream Functions')).toHaveTextContent('Stream Functions Empty')
+    expect(screen.getByTestId('function-details-Description')).toHaveTextContent(mockedItem.description!)
+    expect(screen.getByTestId('function-details-Flags')).toHaveTextContent(mockedItem.flags?.join('')!)
+  })
 
-    expect(screen.getByTestId('library-code')).toHaveValue('code')
+  it('should render proper content for keyspace triggers type', async () => {
+    render(<FunctionDetails item={mockedItemKeySpaceTriggers} onClose={jest.fn()} />)
 
-    fireEvent.click(screen.getByTestId('library-view-tab-config'))
-    expect(screen.getByTestId('library-configuration')).toHaveValue('config')
+    expect(screen.getByTestId('function-name')).toHaveTextContent(mockedItemKeySpaceTriggers.name)
+    expect(screen.getByTestId('function-details-General')).toHaveTextContent([
+      'General',
+      'Library:',
+      mockedItemKeySpaceTriggers.library,
+      'Total:',
+      mockedItemKeySpaceTriggers.total,
+      'Success:',
+      mockedItemKeySpaceTriggers.success,
+      'Failed:',
+      mockedItemKeySpaceTriggers.fail,
+    ].join(''))
+
+    expect(screen.getByTestId('function-details-Description')).toHaveTextContent(mockedItemKeySpaceTriggers.description!)
+    expect(screen.queryByTestId('function-details-Flags')).not.toBeInTheDocument()
   })
 
   it('should call proper telemetry events', async () => {
@@ -93,50 +89,51 @@ describe('LibraryDetails', () => {
 
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
 
-    await act(() => {
-      render(<FunctionDetails name="lib" onClose={jest.fn()} />)
-    })
+    render(<FunctionDetails item={mockedItem} onClose={jest.fn()} />)
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_VIEWED,
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_VIEWED,
       eventData: {
         databaseId: 'instanceId',
-        apiVersion: TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA.apiVersion,
-        pendingJobs: TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA.pendingJobs
-      }
-    })
-
-    fireEvent.click(screen.getByTestId('refresh-lib-details-btn'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_DETAILS_REFRESH_CLICKED,
-      eventData: {
-        databaseId: 'instanceId'
+        functionType: mockedItem.type,
+        isAsync: mockedItem.isAsync
       }
     })
 
     sendEventTelemetry.mockRestore()
+  })
 
-    fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+  it('should call proper telemetry events', async () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<FunctionDetails item={mockedItemKeySpaceTriggers} onClose={jest.fn()} />)
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_DETAILS_AUTO_REFRESH_ENABLED,
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_VIEWED,
       eventData: {
-        refreshRate: '5.0',
-        databaseId: 'instanceId'
+        databaseId: 'instanceId',
+        functionType: mockedItemKeySpaceTriggers.type,
+        isAsync: mockedItemKeySpaceTriggers.isAsync
       }
     })
 
     sendEventTelemetry.mockRestore()
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+  })
 
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_DETAILS_AUTO_REFRESH_DISABLED,
-      eventData: {
-        refreshRate: '5.0',
-        databaseId: 'instanceId'
-      }
-    })
+  it('should call proper actions and history to move to the library', () => {
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+    render(<FunctionDetails item={mockedItem} onClose={jest.fn()} />)
+
+    fireEvent.click(screen.getByTestId('moveToLibrary-libStringLong'))
+
+    const expectedActions = [setSelectedLibraryToShow('libStringLong')]
+    expect(store.getActions()).toEqual(expectedActions)
+
+    expect(pushMock).toHaveBeenCalledTimes(1)
+    expect(pushMock).toHaveBeenCalledWith('/instanceId/triggered-functions/libraries')
   })
 })

@@ -102,17 +102,17 @@ const FunctionsList = (props: Props) => {
   return (
     <div className="triggeredFunctions__tableWrapper">
       <div className="triggeredFunctions__tableHeader">
-        <EuiText color="subdued" size="xs" data-testid="total-libraries">Total: {items?.length || 0}</EuiText>
+        <EuiText color="subdued" size="xs" data-testid="total-functions">Total: {items?.length || 0}</EuiText>
         <AutoRefresh
           loading={loading}
-          postfix="triggered-functions-libraries"
+          postfix="triggered-functions-functions"
           displayText
           lastRefreshTime={lastRefresh}
           containerClassName={styles.refreshContainer}
           onRefresh={() => onRefresh?.()}
           onRefreshClicked={handleRefreshClicked}
           onEnableAutoRefresh={handleEnableAutoRefresh}
-          testid="refresh-libraries-btn"
+          testid="refresh-functions-btn"
         />
       </div>
       <EuiInMemoryTable

@@ -17,6 +17,7 @@ import {
   EuiLink
 } from '@elastic/eui'
 import cx from 'classnames'
+import { isNil } from 'lodash'
 import {
   fetchTriggeredFunctionsLibrary,
   replaceTriggeredFunctionsLibraryAction, setSelectedFunctionToShow,
@@ -67,7 +68,7 @@ const LibraryDetails = (props: Props) => {
             databaseId: instanceId,
             pendingJobs: lib?.pendingJobs || 0,
             apiVersion: lib?.apiVersion || '1.0',
-            configLoaded: lib?.code || false,
+            configLoaded: !isNil(lib?.code) || false,
             functions: {
               total: lib?.functions.length || 0,
               ...getFunctionsLengthByType(lib?.functions)

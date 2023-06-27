@@ -29,7 +29,7 @@ import { FunctionType } from 'uiSrc/slices/interfaces/triggeredFunctions'
 
 import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { formatLongName, Maybe } from 'uiSrc/utils'
+import { formatLongName, Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -63,7 +63,7 @@ const LibraryDetails = (props: Props) => {
   const [selectedView, setSelectedView] = useState<string>(tabs[0].id)
   const [configuration, setConfiguration] = useState<string>('_')
   const [code, setCode] = useState<string>('_')
-  const [popover, setPopover] = useState<Maybe<string>>(undefined)
+  const [popover, setPopover] = useState<Nullable<string>>(null)
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -147,7 +147,7 @@ const LibraryDetails = (props: Props) => {
   }
 
   const handleClosePopover = () => {
-    setPopover(undefined)
+    setPopover(null)
   }
 
   const functionGroup = (title: string, list: Array<{ type: FunctionType, name: string }>, initialIsOpen = false) => {

@@ -37,10 +37,10 @@
   }
 
   .deleteBtn {
-    display: hidden;
+    visibility: hidden;
   }
 
   :global(.euiTableRow:hover) .deleteBtn {
-    display: block;
+    visibility: visible;
   }
 }

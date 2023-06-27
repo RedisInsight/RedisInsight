@@ -345,6 +345,8 @@ jobs:
     parallelism: << parameters.parallelism >>
     steps:
       - checkout
+      - node/install:
+          node-version: '18.15.0'
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools

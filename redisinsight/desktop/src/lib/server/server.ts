@@ -1,5 +1,5 @@
-import detectPort from 'detect-port'
 import log from 'electron-log'
+import getPort, { portNumbers } from 'get-port'
 
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
@@ -22,7 +22,7 @@ export class ElectronWindowAuthStrategy extends AbstractWindowAuthStrategy {
 let backendGracefulShutdown: Function
 export const launchApiServer = async () => {
   try {
-    const detectPortConst = await detectPort(port)
+    const detectPortConst = await getPort({ port: portNumbers(port, port + 1_000) })
     process.env.API_PORT = detectPortConst?.toString()
     log.info('Available port:', detectPortConst)
     const { gracefulShutdown: beGracefulShutdown, app: beApp } = await server()

@@ -6,9 +6,10 @@ const endpoint = Common.getEndpoint();
 
 /**
  * Send request using API
+ * @param method http method
  * @param resourcePath URI path segment
- * @param body Request body
  * @param statusCode Expected status code of the response
+ * @param body Request body
  */
 export async function sendRequest(
     method: string,

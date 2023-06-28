@@ -133,6 +133,7 @@ export interface InstanceRedisCloud {
   databaseId: number
   databaseIdAdded?: number
   subscriptionId?: number
+  subscriptionType?: RedisCloudSubscriptionType
   subscriptionName: string
   subscriptionIdAdded?: number
   statusAdded?: AddRedisDatabaseStatus
@@ -162,6 +163,8 @@ export enum RedisDefaultModules {
   TimeSeries = 'timeseries',
   FT = 'ft',
   FTL = 'ftl',
+  RedisGears = 'redisgears',
+  RedisGears2 = 'redisgears_2',
 }
 
 export enum RedisCustomModulesName {
@@ -270,9 +273,20 @@ export const RedisCloudSubscriptionStatusText = Object.freeze({
   [RedisCloudSubscriptionStatus.Error]: 'Error',
 })
 
+export enum RedisCloudSubscriptionType {
+  Flexible = 'flexible',
+  Fixed = 'fixed',
+}
+
+export const RedisCloudSubscriptionTypeText = Object.freeze({
+  [RedisCloudSubscriptionType.Fixed]: 'Fixed',
+  [RedisCloudSubscriptionType.Flexible]: 'Flexible',
+})
+
 export interface RedisCloudSubscription {
   id: number
   name: string
+  type: RedisCloudSubscriptionType
   numberOfDatabases: number
   provider: string
   region: string

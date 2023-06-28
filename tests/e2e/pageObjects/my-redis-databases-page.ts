@@ -71,6 +71,8 @@ export class MyRedisDatabasePage extends BasePage {
     successResultsAccordion = Selector('[data-testid^=success-results-]');
     partialResultsAccordion = Selector('[data-testid^=partial-results-]');
     failedResultsAccordion = Selector('[data-testid^=failed-results-]');
+    // CONTAINERS
+    databaseContainer = Selector('.databaseContainer');
 
     /**
      * Click on the database by name

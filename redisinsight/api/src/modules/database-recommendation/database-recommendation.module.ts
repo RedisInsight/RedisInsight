@@ -10,6 +10,7 @@ import { DatabaseRecommendationGateway } from 'src/modules/database-recommendati
 import {
   DatabaseRecommendationEmitter,
 } from 'src/modules/database-recommendation/providers/database-recommendation.emitter';
+import { DatabaseRecommendationAnalytics } from 'src/modules/database-recommendation/database-recommendation.analytics';
 
 @Module({})
 export class DatabaseRecommendationModule {
@@ -25,6 +26,7 @@ export class DatabaseRecommendationModule {
         RecommendationProvider,
         DatabaseRecommendationGateway,
         DatabaseRecommendationEmitter,
+        DatabaseRecommendationAnalytics,
         {
           provide: DatabaseRecommendationRepository,
           useClass: databaseRecommendationRepository,

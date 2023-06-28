@@ -13,10 +13,10 @@ enum ApiEndpoints {
   REDIS_CLUSTER_GET_DATABASES = 'redis-enterprise/cluster/get-databases',
   REDIS_CLUSTER_DATABASES = 'redis-enterprise/cluster/databases',
 
-  REDIS_CLOUD_ACCOUNT = 'redis-enterprise/cloud/get-account',
-  REDIS_CLOUD_SUBSCRIPTIONS = 'redis-enterprise/cloud/get-subscriptions',
-  REDIS_CLOUD_GET_DATABASES = 'redis-enterprise/cloud/get-databases',
-  REDIS_CLOUD_DATABASES = 'redis-enterprise/cloud/databases',
+  REDIS_CLOUD_ACCOUNT = 'cloud/autodiscovery/account',
+  REDIS_CLOUD_SUBSCRIPTIONS = 'cloud/autodiscovery/subscriptions',
+  REDIS_CLOUD_GET_DATABASES = 'cloud/autodiscovery/get-databases',
+  REDIS_CLOUD_DATABASES = 'cloud/autodiscovery/databases',
 
   SENTINEL_GET_DATABASES = 'redis-sentinel/get-databases',
   SENTINEL_DATABASES = 'redis-sentinel/databases',
@@ -117,6 +117,11 @@ enum ApiEndpoints {
   HISTORY = 'history',
 
   FEATURES = 'features',
+}
+
+export enum CustomHeaders {
+  DbIndex = 'ri-db-index',
+  WindowId = 'x-window-id',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

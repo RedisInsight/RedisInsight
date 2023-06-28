@@ -17,10 +17,13 @@ const keyToAddParameters2 = { keysCount: 500000, keyNameStartWith: 'hashKey' };
 fixture `Bulk Delete`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async() => {
+    .beforeEach(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         await browserPage.addHashKey(keyNames[0], '100000', Common.generateWord(20), Common.generateWord(20));
         await browserPage.addSetKey(keyNames[1], '100000', Common.generateWord(20));
+        if (await browserPage.Toast.toastCloseButton.exists) {
+            await t.click(browserPage.Toast.toastCloseButton);
+        }
     })
     .afterEach(async() => {
         // Clear and delete database
@@ -131,9 +134,12 @@ test('Verify that when bulk deletion is completed, status Action completed is di
     await t.expect(browserPage.BulkActions.bulkDeleteSummary.innerText).contains('Scanned 100% (2/2) and found 1 keys', 'Bulk delete summary is not correct');
 });
 test
-    .before(async() => {
+    .before(async t => {
         await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
         await browserPage.addSetKey(keyNames[1], '100000', Common.generateWord(20));
+        if (await browserPage.Toast.toastCloseButton.exists) {
+            await t.click(browserPage.Toast.toastCloseButton);
+        }
         // Add 10000 Hash keys
         await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters);
         // Filter by Hash keys

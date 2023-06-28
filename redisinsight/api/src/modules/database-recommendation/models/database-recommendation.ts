@@ -50,6 +50,9 @@ export class DatabaseRecommendation {
     type: Boolean,
     example: false,
   })
+  @Expose()
+  @IsOptional()
+  @IsBoolean()
   disabled?: boolean;
 
   @ApiPropertyOptional({

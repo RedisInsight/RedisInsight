@@ -114,7 +114,7 @@ const cloudSlice = createSlice({
       state.loaded[LoadedCloud.InstancesAdded] = true
 
       state.dataAdded = payload?.map((instance: InstanceRedisCloud) => ({
-        ...instance.databaseDetails,
+        ...instance.databaseDetails || {},
         databaseIdAdded: instance.databaseId,
         subscriptionIdAdded: instance.subscriptionId,
         statusAdded: instance.status,
@@ -172,20 +172,28 @@ export const cloudSelector = (state: RootState) => state.connections.cloud
 // The reducer
 export default cloudSlice.reducer
 
+const generateAuthHeaders = (credentials: Nullable<ICredentialsRedisCloud>) => {
+  return {
+    'x-cloud-api-key': credentials?.accessKey || '',
+    'x-cloud-api-secret': credentials?.secretKey || '',
+  }
+}
+
 // Asynchronous thunk action
 export function fetchSubscriptionsRedisCloud(
-  { accessKey, secretKey }: ICredentialsRedisCloud,
+  credentials: ICredentialsRedisCloud,
   onSuccessAction?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(loadSubscriptionsRedisCloud())
 
     try {
-      const { data, status } = await apiService.post(
+      const { data, status } = await apiService.get(
         `${ApiEndpoints.REDIS_CLOUD_SUBSCRIPTIONS}`,
         {
-          apiKey: accessKey,
-          apiSecretKey: secretKey,
+          headers: {
+            ...generateAuthHeaders(credentials),
+          }
         }
       )
 
@@ -193,11 +201,11 @@ export function fetchSubscriptionsRedisCloud(
         dispatch(
           loadSubscriptionsRedisCloudSuccess({
             data,
-            credentials: { accessKey, secretKey },
+            credentials,
           })
         )
         onSuccessAction?.()
-        dispatch<any>(fetchAccountRedisCloud({ accessKey, secretKey }))
+        dispatch<any>(fetchAccountRedisCloud(credentials))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error)
@@ -208,16 +216,17 @@ export function fetchSubscriptionsRedisCloud(
 }
 
 // Asynchronous thunk action
-export function fetchAccountRedisCloud(payload: ICredentialsRedisCloud) {
+export function fetchAccountRedisCloud(credentials: ICredentialsRedisCloud) {
   return async (dispatch: AppDispatch) => {
     dispatch(loadAccountRedisCloud())
 
     try {
-      const { data, status } = await apiService.post(
+      const { data, status } = await apiService.get(
         `${ApiEndpoints.REDIS_CLOUD_ACCOUNT}`,
         {
-          apiKey: payload?.accessKey,
-          apiSecretKey: payload?.secretKey,
+          headers: {
+            ...generateAuthHeaders(credentials),
+          }
         }
       )
 
@@ -234,7 +243,7 @@ export function fetchAccountRedisCloud(payload: ICredentialsRedisCloud) {
 
 // Asynchronous thunk action
 export function fetchInstancesRedisCloud(payload: {
-  ids: Maybe<number>[];
+  subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType'>>[];
   credentials: Nullable<ICredentialsRedisCloud>;
 }) {
   return async (dispatch: AppDispatch) => {
@@ -244,9 +253,12 @@ export function fetchInstancesRedisCloud(payload: {
       const { data, status } = await apiService.post(
         `${ApiEndpoints.REDIS_CLOUD_GET_DATABASES}`,
         {
-          apiKey: payload.credentials?.accessKey,
-          apiSecretKey: payload.credentials?.secretKey,
-          subscriptionIds: payload.ids,
+          subscriptions: payload.subscriptions,
+        },
+        {
+          headers: {
+            ...generateAuthHeaders(payload.credentials),
+          }
         }
       )
 
@@ -275,10 +287,13 @@ export function addInstancesRedisCloud(payload: {
       const { data, status } = await apiService.post(
         `${ApiEndpoints.REDIS_CLOUD_DATABASES}`,
         {
-          apiKey: payload.credentials?.accessKey,
-          apiSecretKey: payload.credentials?.secretKey,
           databases: payload.databases,
         },
+        {
+          headers: {
+            ...generateAuthHeaders(payload.credentials),
+          }
+        }
       )
 
       if (isStatusSuccessful(status)) {

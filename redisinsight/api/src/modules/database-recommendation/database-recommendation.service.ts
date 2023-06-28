@@ -11,6 +11,7 @@ import {
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { ModifyDatabaseRecommendationDto, DeleteDatabaseRecommendationResponse } from './dto';
+import { DatabaseRecommendationAnalytics } from './database-recommendation.analytics';
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
@@ -21,19 +22,22 @@ export class DatabaseRecommendationService {
     private readonly databaseRecommendationRepository: DatabaseRecommendationRepository,
     private readonly scanner: RecommendationScanner,
     private readonly databaseService: DatabaseService,
+    private readonly analytics: DatabaseRecommendationAnalytics,
   ) {}
 
   /**
    * Create recommendation entity
    * @param clientMetadata
-   * @param recommendationName
+   * @param entity
    */
-  public async create(clientMetadata: ClientMetadata, recommendationName: string): Promise<DatabaseRecommendation> {
-    const entity = plainToClass(
-      DatabaseRecommendation,
-      { databaseId: clientMetadata?.databaseId, name: recommendationName },
-    );
-    return this.databaseRecommendationRepository.create(entity);
+  public async create(clientMetadata: ClientMetadata, entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
+    const recommendation = await this.databaseRecommendationRepository.create(entity);
+
+    const database = await this.databaseService.get(clientMetadata?.databaseId);
+
+    this.analytics.sendCreatedRecommendationEvent(recommendation, database);
+
+    return recommendation;
   }
 
   /**
@@ -74,7 +78,7 @@ export class DatabaseRecommendationService {
           { databaseId: newClientMetadata?.databaseId, ...recommendation },
         );
 
-        return await this.databaseRecommendationRepository.create(entity);
+        return await this.create(newClientMetadata, entity);
       }
     }
 

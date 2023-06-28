@@ -46,17 +46,23 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
   async create(entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
     this.logger.log('Creating database recommendation');
 
-    const model = await this.repository.save(
-      await this.modelEncryptor.encryptEntity(plainToClass(DatabaseRecommendationEntity, entity)),
-    );
+    try {
+      const model = await this.repository.save(
+        await this.modelEncryptor.encryptEntity(plainToClass(DatabaseRecommendationEntity, entity)),
+      );
 
-    const recommendation = classToClass(
-      DatabaseRecommendation,
-      await this.modelEncryptor.decryptEntity(model, true),
-    );
-    this.eventEmitter.emit(RecommendationEvents.NewRecommendation, [recommendation]);
+      const recommendation = classToClass(
+        DatabaseRecommendation,
+        await this.modelEncryptor.decryptEntity(model, true),
+      );
+      this.eventEmitter.emit(RecommendationEvents.NewRecommendation, [recommendation]);
 
-    return recommendation;
+      return recommendation;
+    } catch (err) {
+      this.logger.error('Failed to create database recommendation', err);
+
+      return null;
+    }
   }
 
   /**

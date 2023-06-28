@@ -58,7 +58,7 @@ export default {
     tlsKey: process.env.SERVER_TLS_KEY,
     staticContent: !!process.env.SERVER_STATIC_CONTENT || false,
     buildType: process.env.BUILD_TYPE || 'ELECTRON',
-    appVersion: process.env.APP_VERSION || '2.26.0',
+    appVersion: process.env.APP_VERSION || '2.28.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -74,6 +74,8 @@ export default {
   },
   redis_cloud: {
     url: process.env.REDIS_CLOUD_URL || 'https://api-cloudapi.qa.redislabs.com/v1',
+    cloudDiscoveryTimeout: parseInt(process.env.RI_CLOUD_DISCOVERY_TIMEOUT, 10) || 60 * 1000, // 1 min
+    cloudDatabaseConnectionTimeout: parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) || 30 * 1000,
   },
   redis_clients: {
     idleSyncInterval: parseInt(process.env.CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr

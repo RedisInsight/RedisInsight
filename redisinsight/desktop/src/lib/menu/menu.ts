@@ -257,6 +257,8 @@ export class MenuBuilder {
             accelerator: 'F11',
             click: () => {
               this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen())
+              // on Linux menubar is hidden on full screen mode
+              this.mainWindow.setMenuBarVisibility(true)
             }
           },
           {

@@ -1,40 +1,34 @@
 import React, { useEffect, useState } from 'react'
-import {
-  EuiButton,
-  EuiFieldSearch,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiLoadingSpinner,
-  EuiResizableContainer,
-} from '@elastic/eui'
+import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiLoadingSpinner, EuiResizableContainer, } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 import { find } from 'lodash'
 import {
-  fetchTriggeredFunctionsLibrariesList,
-  setSelectedLibraryToShow,
-  setTriggeredFunctionsSelectedLibrary,
-  triggeredFunctionsLibrariesSelector,
+  fetchTriggeredFunctionsFunctionsList,
+  setSelectedFunctionToShow,
+  triggeredFunctionsFunctionsSelector,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
-import { TriggeredFunctionsLibrary } from 'uiSrc/slices/interfaces/triggeredFunctions'
+import { TriggeredFunctionsFunction } from 'uiSrc/slices/interfaces/triggeredFunctions'
 import { Nullable } from 'uiSrc/utils'
+
+import { LIST_OF_FUNCTION_NAMES } from 'uiSrc/pages/triggeredFunctions/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import NoLibrariesScreen from './components/NoLibrariesScreen'
-import LibrariesList from './components/LibrariesList'
-import LibraryDetails from './components/LibraryDetails'
+import { getFunctionsLengthByType } from 'uiSrc/utils/triggered-functions/utils'
+import FunctionsList from './components/FunctionsList'
+import FunctionDetails from './components/FunctionDetails'
 
 import styles from './styles.module.scss'
 
-export const firstPanelId = 'libraries-left-panel'
-export const secondPanelId = 'libraries-right-panel'
+export const firstPanelId = 'functions-left-panel'
+export const secondPanelId = 'functions-right-panel'
 
-const LibrariesPage = () => {
-  const { lastRefresh, loading, data: libraries, selected } = useSelector(triggeredFunctionsLibrariesSelector)
-  const [items, setItems] = useState<TriggeredFunctionsLibrary[]>([])
+const FunctionsPage = () => {
+  const { lastRefresh, loading, data: functions, selected } = useSelector(triggeredFunctionsFunctionsSelector)
+  const [items, setItems] = useState<TriggeredFunctionsFunction[]>([])
   const [filterValue, setFilterValue] = useState<string>('')
-  const [selectedRow, setSelectedRow] = useState<Nullable<string>>(null)
+  const [selectedRow, setSelectedRow] = useState<Nullable<TriggeredFunctionsFunction>>(null)
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -45,25 +39,28 @@ const LibrariesPage = () => {
 
   useEffect(() => {
     applyFiltering()
-  }, [filterValue, libraries])
+  }, [filterValue, functions])
 
   const updateList = () => {
-    dispatch(fetchTriggeredFunctionsLibrariesList(instanceId, (librariesList) => {
+    dispatch(fetchTriggeredFunctionsFunctionsList(instanceId, (functionsList) => {
       if (selected) {
-        const findRow = find(librariesList, (item) => item.name === selected)
+        const findRow = find(functionsList, selected)
 
         if (findRow) {
-          setSelectedRow(selected)
+          setSelectedRow(findRow)
         }
 
-        dispatch(setSelectedLibraryToShow(null))
+        dispatch(setSelectedFunctionToShow(null))
       }
 
       sendEventTelemetry({
-        event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARIES_RECEIVED,
+        event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTIONS_RECEIVED,
         eventData: {
           databaseId: instanceId,
-          total: librariesList.length
+          functions: {
+            total: functionsList.length,
+            ...getFunctionsLengthByType(functionsList)
+          }
         }
       })
     }))
@@ -73,24 +70,20 @@ const LibrariesPage = () => {
     setFilterValue(e.target.value.toLowerCase())
   }
 
-  const handleSelectRow = (name?: string) => {
-    setSelectedRow(name ?? null)
-
-    if (name !== selectedRow) {
-      // clear prev value to get new one
-      dispatch(setTriggeredFunctionsSelectedLibrary(null))
-    }
+  const handleSelectRow = (item?: TriggeredFunctionsFunction) => {
+    setSelectedRow(item ?? null)
   }
 
   const applyFiltering = () => {
     if (!filterValue) {
-      setItems(libraries || [])
+      setItems(functions || [])
       return
     }
 
-    const itemsTemp = libraries?.filter((item: TriggeredFunctionsLibrary) => (
+    const itemsTemp = functions?.filter((item: TriggeredFunctionsFunction) => (
       item.name?.toLowerCase().indexOf(filterValue) !== -1
-      || item.user?.toLowerCase().indexOf(filterValue) !== -1
+      || item.library?.toLowerCase().indexOf(filterValue) !== -1
+      || (item.type && LIST_OF_FUNCTION_NAMES[item.type].toLowerCase().indexOf(filterValue) !== -1)
     ))
 
     setItems(itemsTemp || [])
@@ -111,28 +104,16 @@ const LibrariesPage = () => {
           className="triggeredFunctions__topPanel"
         >
           <EuiFlexItem style={{ marginRight: 24 }}>
-            {!!libraries?.length && (
+            {!!functions?.length && (
               <EuiFieldSearch
                 isClearable
-                placeholder="Search for Libraries"
+                placeholder="Search for Functions"
                 className="triggeredFunctions__search"
                 onChange={onChangeFiltering}
-                aria-label="Search libraries"
-                data-testid="search-libraries-list"
+                aria-label="Search functions"
+                data-testid="search-functions-list"
               />
             )}
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiButton
-              fill
-              size="s"
-              color="secondary"
-              onClick={() => {}}
-              className={styles.addLibrary}
-              data-testid="btn-add-library"
-            >
-              + Library
-            </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlexItem>
@@ -154,13 +135,13 @@ const LibrariesPage = () => {
                 }}
               >
                 <div className="triggeredFunctions__panelWrapper">
-                  {!libraries && loading && (
-                    <div className={styles.loading} data-testid="loading-libraries">
+                  {!functions && loading && (
+                    <div className={styles.loading} data-testid="loading-functions">
                       <EuiLoadingSpinner size="xl" />
                     </div>
                   )}
-                  {!!libraries?.length && (
-                    <LibrariesList
+                  {functions && (
+                    <FunctionsList
                       items={items}
                       loading={loading}
                       onRefresh={updateList}
@@ -169,16 +150,13 @@ const LibrariesPage = () => {
                       onSelectRow={handleSelectRow}
                     />
                   )}
-                  {libraries?.length === 0 && (
-                    <NoLibrariesScreen />
-                  )}
                 </div>
               </EuiResizablePanel>
               <EuiResizableButton
                 className={cx('triggeredFunctions__resizableButton', {
                   hidden: !selectedRow,
                 })}
-                data-test-subj="resize-btn-libraries"
+                data-test-subj="resize-btn-functions"
               />
               <EuiResizablePanel
                 id={secondPanelId}
@@ -194,10 +172,7 @@ const LibrariesPage = () => {
               >
                 <div className="triggeredFunctions__panelWrapper">
                   {selectedRow && (
-                    <LibraryDetails
-                      name={selectedRow}
-                      onClose={handleSelectRow}
-                    />
+                    <FunctionDetails item={selectedRow} onClose={() => setSelectedRow(null)} />
                   )}
                 </div>
               </EuiResizablePanel>
@@ -209,4 +184,4 @@ const LibrariesPage = () => {
   )
 }
 
-export default LibrariesPage
+export default FunctionsPage

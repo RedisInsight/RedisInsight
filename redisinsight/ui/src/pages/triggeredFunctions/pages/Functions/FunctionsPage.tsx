@@ -4,7 +4,7 @@ import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiLoadingSpinner, EuiResiza
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
-import { find } from 'lodash'
+import { find, pick } from 'lodash'
 import {
   fetchTriggeredFunctionsFunctionsList,
   setSelectedFunctionToShow,
@@ -42,28 +42,36 @@ const FunctionsPage = () => {
   }, [filterValue, functions])
 
   const updateList = () => {
-    dispatch(fetchTriggeredFunctionsFunctionsList(instanceId, (functionsList) => {
-      if (selected) {
-        const findRow = find(functionsList, selected)
+    dispatch(fetchTriggeredFunctionsFunctionsList(instanceId, handleSuccessUpdateList))
+  }
 
-        if (findRow) {
-          setSelectedRow(findRow)
-        }
+  const handleSuccessUpdateList = (data: TriggeredFunctionsFunction[]) => {
+    if (selectedRow) {
+      const pickFields = ['name', 'library', 'type']
+      const findRow = find(data, pick(selectedRow, pickFields))
+      setSelectedRow(findRow ?? null)
+    }
 
-        dispatch(setSelectedFunctionToShow(null))
+    if (selected) {
+      const findRow = find(data, selected)
+
+      if (findRow) {
+        setSelectedRow(findRow)
       }
 
-      sendEventTelemetry({
-        event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTIONS_RECEIVED,
-        eventData: {
-          databaseId: instanceId,
-          functions: {
-            total: functionsList.length,
-            ...getFunctionsLengthByType(functionsList)
-          }
+      dispatch(setSelectedFunctionToShow(null))
+    }
+
+    sendEventTelemetry({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTIONS_RECEIVED,
+      eventData: {
+        databaseId: instanceId,
+        functions: {
+          total: data.length,
+          ...getFunctionsLengthByType(data)
         }
-      })
-    }))
+      }
+    })
   }
 
   const onChangeFiltering = (e: React.ChangeEvent<HTMLInputElement>) => {

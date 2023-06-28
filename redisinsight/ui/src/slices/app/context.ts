@@ -67,6 +67,9 @@ export const initialState: StateAppContext = {
   },
   analytics: {
     lastViewedPage: ''
+  },
+  triggeredFunctions: {
+    lastViewedPage: ''
   }
 }
 
@@ -216,7 +219,10 @@ const appContextSlice = createSlice({
     },
     setDbIndexState: (state, { payload }: { payload: boolean }) => {
       state.dbIndex.disabled = payload
-    }
+    },
+    setLastTriggeredFunctionsPage: (state, { payload }: { payload: string }) => {
+      state.triggeredFunctions.lastViewedPage = payload
+    },
   },
 })
 
@@ -253,6 +259,7 @@ export const {
   clearBrowserKeyListData,
   setDbIndexState,
   setRecommendationsShowHidden,
+  setLastTriggeredFunctionsPage,
 } = appContextSlice.actions
 
 // Selectors
@@ -278,6 +285,8 @@ export const appContextAnalytics = (state: RootState) =>
   state.app.context.analytics
 export const appContextDbIndex = (state: RootState) =>
   state.app.context.dbIndex
+export const appContextTriggeredFunctions = (state: RootState) =>
+  state.app.context.triggeredFunctions
 
 // The reducer
 export default appContextSlice.reducer

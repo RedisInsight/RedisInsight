@@ -1,13 +1,14 @@
 import {
   Get,
   Post,
+  Delete,
   Controller, UsePipes, ValidationPipe, Body,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import { TriggeredFunctionsService } from 'src/modules/triggered-functions/triggered-functions.service';
 import { ShortLibrary, Library, Function } from 'src/modules/triggered-functions/models';
-import { LibraryDto, UploadLibraryDto } from 'src/modules/triggered-functions/dto';
+import { LibraryDto, UploadLibraryDto, DeleteLibraryDto } from 'src/modules/triggered-functions/dto';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 
@@ -94,5 +95,18 @@ export class TriggeredFunctionsController {
       @Body() dto: UploadLibraryDto,
   ): Promise<void> {
     return this.service.upload(clientMetadata, dto, true);
+  }
+
+  @Delete('/library')
+  @ApiRedisInstanceOperation({
+    statusCode: 200,
+    description: 'Delete library by name',
+  })
+  async deleteLibraries(
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      // library name probably can be really huge
+      @Body() dto: DeleteLibraryDto,
+  ): Promise<void> {
+    return await this.service.delete(clientMetadata, dto.libraryName);
   }
 }

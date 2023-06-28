@@ -1,5 +1,7 @@
 import { Command } from 'ioredis';
-import { HttpException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  HttpException, Injectable, Logger, NotFoundException,
+} from '@nestjs/common';
 import { catchAclError } from 'src/utils';
 import { concat } from 'lodash';
 import { plainToClass } from 'class-transformer';
@@ -124,35 +126,65 @@ export class TriggeredFunctionsService {
    * @param dto
    * @param isExist
    */
-   async upload(
+  async upload(
     clientMetadata: ClientMetadata,
     dto: UploadLibraryDto,
     isExist = false,
   ): Promise<void> {
     let client;
-     try {
+    try {
       const {
         code, configuration,
       } = dto;
-       
-       const commandArgs: any[] = isExist ? ['LOAD', 'REPLACE'] : ['LOAD'];
-       
-       if (configuration) {
-        commandArgs.push('CONFIG', configuration);
-       }
+      const commandArgs: any[] = isExist ? ['LOAD', 'REPLACE'] : ['LOAD'];
 
-       commandArgs.push(code);
+      if (configuration) {
+        commandArgs.push('CONFIG', configuration);
+      }
+
+      commandArgs.push(code);
 
       client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
       await client.sendCommand(
         new Command('TFUNCTION', [...commandArgs], { replyEncoding: 'utf8' }),
       );
-       
+
       this.logger.log('Succeed to upload library.');
 
       return undefined;
     } catch (e) {
       this.logger.error('Unable to upload library', e);
+
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw catchAclError(e);
+    }
+  }
+
+  /**
+   * Delete triggered functions library
+   * @param clientMetadata
+   * @param libraryName
+   */
+  async delete(
+    clientMetadata: ClientMetadata,
+    libraryName: string,
+  ): Promise<void> {
+    let client;
+    try {
+      client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
+
+      await client.sendCommand(
+        new Command('TFUNCTION', ['DELETE', libraryName], { replyEncoding: 'utf8' }),
+      );
+
+      this.logger.log('Succeed to delete library.');
+
+      return undefined;
+    } catch (e) {
+      this.logger.error('Unable to delete library', e);
 
       if (e instanceof HttpException) {
         throw e;

@@ -1,11 +1,11 @@
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
-import { LibrariesPage } from 'uiSrc/pages/triggeredFunctions/pages'
+import { LibrariesPage, FunctionsPage } from 'uiSrc/pages/triggeredFunctions/pages'
 
 export const TRIGGERED_FUNCTIONS_ROUTES: IRoute[] = [
   {
     pageName: PageNames.triggeredFunctionsFunctions,
     path: Pages.triggeredFunctionsFunctions(':instanceId'),
-    component: LibrariesPage,
+    component: FunctionsPage,
   },
   {
     pageName: PageNames.triggeredFunctionsLibraries,

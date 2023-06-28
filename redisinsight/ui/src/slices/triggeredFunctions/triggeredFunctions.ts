@@ -1,8 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { remove } from 'lodash'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { StateTriggeredFunctions, TriggeredFunctionsLibraryDetails } from 'uiSrc/slices/interfaces/triggeredFunctions'
+import {
+  StateTriggeredFunctions,
+  TriggeredFunctionsFunction,
+  TriggeredFunctionsLibrary,
+  TriggeredFunctionsLibraryDetails
+} from 'uiSrc/slices/interfaces/triggeredFunctions'
 import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Nullable } from 'uiSrc/utils'
@@ -10,16 +15,26 @@ import { ApiEndpoints } from 'uiSrc/constants'
 import { addMessageNotification, addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 export const initialState: StateTriggeredFunctions = {
-  libraries: null,
+  libraries: {
+    data: null,
+    loading: false,
+    lastRefresh: null,
+    error: '',
+    selected: null,
+    deleting: false,
+  },
+  functions: {
+    data: null,
+    loading: false,
+    lastRefresh: null,
+    error: '',
+    selected: null
+  },
   selectedLibrary: {
     lastRefresh: null,
     loading: false,
     data: null
   },
-  loading: false,
-  lastRefresh: null,
-  error: '',
-  deleting: false,
 }
 
 const triggeredFunctionsSlice = createSlice({
@@ -28,17 +43,30 @@ const triggeredFunctionsSlice = createSlice({
   reducers: {
     setTriggeredFunctionsInitialState: () => initialState,
     getTriggeredFunctionsLibrariesList: (state) => {
-      state.loading = true
-      state.error = ''
+      state.libraries.loading = true
+      state.libraries.error = ''
     },
     getTriggeredFunctionsLibrariesListSuccess: (state, { payload }) => {
-      state.loading = false
-      state.lastRefresh = Date.now()
-      state.libraries = payload
+      state.libraries.loading = false
+      state.libraries.lastRefresh = Date.now()
+      state.libraries.data = payload
     },
     getTriggeredFunctionsLibrariesListFailure: (state, { payload }) => {
-      state.loading = false
-      state.error = payload
+      state.libraries.loading = false
+      state.libraries.error = payload
+    },
+    getTriggeredFunctionsFunctionsList: (state) => {
+      state.functions.loading = true
+      state.functions.error = ''
+    },
+    getTriggeredFunctionsFunctionsListSuccess: (state, { payload }) => {
+      state.functions.loading = false
+      state.functions.lastRefresh = Date.now()
+      state.functions.data = payload
+    },
+    getTriggeredFunctionsFunctionsListFailure: (state, { payload }) => {
+      state.functions.loading = false
+      state.functions.error = payload
     },
     setTriggeredFunctionsSelectedLibrary: (state, { payload }) => {
       state.selectedLibrary.data = payload
@@ -65,17 +93,23 @@ const triggeredFunctionsSlice = createSlice({
     },
     // delete library
     deleteTriggeredFunctionsLibrary: (state) => {
-      state.deleting = true
+      state.libraries.deleting = true
     },
     deleteTriggeredFunctionsLibrarySuccess: (state, { payload }) => {
-      state.deleting = false
-      if (state.libraries) {
-        remove(state.libraries, (library) => library.name === payload)
+      state.libraries.deleting = false
+      if (state.libraries.data) {
+        remove(state.libraries.data, (library) => library.name === payload)
       }
     },
     deleteTriggeredFunctionsLibraryFailure: (state) => {
-      state.deleting = false
-    }
+      state.libraries.deleting = false
+    },
+    setSelectedFunctionToShow: (state, { payload }: PayloadAction<Nullable<TriggeredFunctionsFunction>>) => {
+      state.functions.selected = payload
+    },
+    setSelectedLibraryToShow: (state, { payload }: PayloadAction<Nullable<string>>) => {
+      state.libraries.selected = payload
+    },
   }
 })
 
@@ -83,6 +117,9 @@ export const {
   setTriggeredFunctionsInitialState,
   getTriggeredFunctionsLibrariesList,
   getTriggeredFunctionsLibrariesListSuccess,
+  getTriggeredFunctionsFunctionsList,
+  getTriggeredFunctionsFunctionsListSuccess,
+  getTriggeredFunctionsFunctionsListFailure,
   getTriggeredFunctionsLibrariesListFailure,
   setTriggeredFunctionsSelectedLibrary,
   getTriggeredFunctionsLibraryDetails,
@@ -94,9 +131,13 @@ export const {
   deleteTriggeredFunctionsLibrary,
   deleteTriggeredFunctionsLibrarySuccess,
   deleteTriggeredFunctionsLibraryFailure,
+  setSelectedFunctionToShow,
+  setSelectedLibraryToShow,
 } = triggeredFunctionsSlice.actions
 
 export const triggeredFunctionsSelector = (state: RootState) => state.triggeredFunctions
+export const triggeredFunctionsLibrariesSelector = (state: RootState) => state.triggeredFunctions.libraries
+export const triggeredFunctionsFunctionsSelector = (state: RootState) => state.triggeredFunctions.functions
 export const triggeredFunctionsSelectedLibrarySelector = (state: RootState) => state.triggeredFunctions.selectedLibrary
 
 export default triggeredFunctionsSlice.reducer
@@ -104,7 +145,7 @@ export default triggeredFunctionsSlice.reducer
 // Asynchronous thunk action
 export function fetchTriggeredFunctionsLibrariesList(
   instanceId: string,
-  onSuccessAction?: () => void,
+  onSuccessAction?: (data: TriggeredFunctionsLibrary[]) => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
@@ -120,13 +161,43 @@ export function fetchTriggeredFunctionsLibrariesList(
 
       if (isStatusSuccessful(status)) {
         dispatch(getTriggeredFunctionsLibrariesListSuccess(data))
-        onSuccessAction?.()
+        onSuccessAction?.(data)
       }
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(getTriggeredFunctionsLibrariesListFailure(errorMessage))
+      onFailAction?.()
+    }
+  }
+}
+
+export function fetchTriggeredFunctionsFunctionsList(
+  instanceId: string,
+  onSuccessAction?: (data: TriggeredFunctionsFunction[]) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      dispatch(getTriggeredFunctionsFunctionsList())
+
+      const { data, status } = await apiService.get(
+        getUrl(
+          instanceId,
+          ApiEndpoints.TRIGGERED_FUNCTIONS_FUNCTIONS,
+        )
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getTriggeredFunctionsFunctionsListSuccess(data))
+        onSuccessAction?.(data)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(getTriggeredFunctionsFunctionsListFailure(errorMessage))
       onFailAction?.()
     }
   }

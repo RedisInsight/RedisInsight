@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
 import InstanceHeader from 'uiSrc/components/instance-header'
-import AnalyticsPageRouter from 'uiSrc/pages/analytics/AnalyticsPageRouter'
 
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
+
+import TriggeredFunctionsPageRouter from './TriggeredFunctionsPageRouter'
+import TriggeredFunctionsTabs from './components/TriggeredFunctionsTabs'
+
 import styles from './styles.modules.scss'
 
 export interface Props {
@@ -21,16 +24,27 @@ const TriggeredFunctionsPage = ({ routes = [] }: Props) => {
   const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState<boolean>(false)
+  const pathnameRef = useRef<string>('')
+
   const { instanceId } = useParams<{ instanceId: string }>()
   const history = useHistory()
+  const { pathname } = useLocation()
 
   const dbName = `${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)}`
   setTitle(`${dbName} - Triggers & Functions`)
 
   useEffect(() => {
-    // TODO update routing
-    history.push(Pages.triggeredFunctionsLibraries(instanceId))
-  }, [])
+    if (pathname === Pages.triggeredFunctions(instanceId)) {
+      if (pathnameRef.current === Pages.triggeredFunctionsLibraries(instanceId)) {
+        history.push(pathnameRef.current)
+        return
+      }
+
+      history.push(Pages.triggeredFunctionsFunctions(instanceId))
+    }
+
+    pathnameRef.current = pathname === Pages.triggeredFunctions(instanceId) ? '' : pathname
+  }, [pathname])
 
   useEffect(() => {
     if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {
@@ -46,11 +60,14 @@ const TriggeredFunctionsPage = ({ routes = [] }: Props) => {
     setIsPageViewSent(true)
   }
 
+  const path = pathname?.split('/').pop() || ''
+
   return (
     <>
       <InstanceHeader />
       <div className={styles.main}>
-        <AnalyticsPageRouter routes={routes} />
+        <TriggeredFunctionsTabs path={path} />
+        <TriggeredFunctionsPageRouter routes={routes} />
       </div>
     </>
   )

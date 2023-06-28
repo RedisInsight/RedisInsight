@@ -1,9 +1,11 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
+import reactRouterDom from 'react-router-dom'
 import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 
 import {
   getTriggeredFunctionsLibraryDetails,
+  setSelectedFunctionToShow,
   triggeredFunctionsSelectedLibrarySelector
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 
@@ -11,7 +13,8 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import {
   TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA
-} from 'uiSrc/mocks/handlers/triggeredFunctions/triggeredFunctionsHandler'
+} from 'uiSrc/mocks/data/triggeredFunctions'
+import { FunctionType } from 'uiSrc/slices/interfaces/triggeredFunctions'
 import LibraryDetails from './LibraryDetails'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -32,6 +35,8 @@ beforeEach(() => {
   store = cloneDeep(mockedStore)
   store.clearActions()
 })
+
+const mockedLibrary = TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA
 
 describe('LibraryDetails', () => {
   it('should render', () => {
@@ -57,20 +62,7 @@ describe('LibraryDetails', () => {
     (triggeredFunctionsSelectedLibrarySelector as jest.Mock).mockReturnValueOnce({
       lastRefresh: null,
       loading: false,
-      data: {
-        apiVersion: '1.2',
-        code: 'code',
-        configuration: 'config',
-        functions: [
-          { name: 'foo', type: 'functions' },
-          { name: 'foo1', type: 'functions' },
-          { name: 'foo2', type: 'cluster_functions' },
-          { name: 'foo3', type: 'keyspace_triggers' },
-        ],
-        name: 'lib',
-        pendingJobs: 12,
-        user: 'default',
-      }
+      data: mockedLibrary
     })
 
     render(<LibraryDetails name="lib" onClose={jest.fn()} />)
@@ -102,7 +94,15 @@ describe('LibraryDetails', () => {
       eventData: {
         databaseId: 'instanceId',
         apiVersion: TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA.apiVersion,
-        pendingJobs: TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA.pendingJobs
+        pendingJobs: TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA.pendingJobs,
+        configLoaded: true,
+        functions: {
+          cluster_functions: 1,
+          functions: 2,
+          keyspace_triggers: 1,
+          stream_triggers: 0,
+          total: 4
+        }
       }
     })
 
@@ -138,5 +138,30 @@ describe('LibraryDetails', () => {
         databaseId: 'instanceId'
       }
     })
+  })
+
+  it('should call proper actions and history to move to the library', () => {
+    (triggeredFunctionsSelectedLibrarySelector as jest.Mock).mockReturnValueOnce({
+      lastRefresh: null,
+      loading: false,
+      data: mockedLibrary
+    })
+
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+    render(<LibraryDetails name="lib" onClose={jest.fn()} />)
+
+    fireEvent.click(screen.getByTestId('moveToFunction-foo'))
+
+    const expectedActions = [getTriggeredFunctionsLibraryDetails(), setSelectedFunctionToShow({
+      library: 'lib',
+      name: 'foo',
+      type: 'functions' as FunctionType
+    })]
+    expect(store.getActions()).toEqual(expectedActions)
+
+    expect(pushMock).toHaveBeenCalledTimes(1)
+    expect(pushMock).toHaveBeenCalledWith('/instanceId/triggered-functions/functions')
   })
 })

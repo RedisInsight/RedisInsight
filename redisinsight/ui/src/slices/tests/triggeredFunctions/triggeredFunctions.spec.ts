@@ -2,20 +2,26 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import reducer, {
+  fetchTriggeredFunctionsFunctionsList,
   fetchTriggeredFunctionsLibrariesList,
-  getTriggeredFunctionsLibrariesListFailure,
-  getTriggeredFunctionsLibrariesList,
-  getTriggeredFunctionsLibrariesListSuccess,
-  initialState,
-  triggeredFunctionsSelector,
-  getTriggeredFunctionsLibraryDetails,
-  getTriggeredFunctionsLibraryDetailsSuccess,
-  getTriggeredFunctionsLibraryDetailsFailure,
-  replaceTriggeredFunctionsLibrary,
-  replaceTriggeredFunctionsLibrarySuccess,
-  replaceTriggeredFunctionsLibraryFailure,
   fetchTriggeredFunctionsLibrary,
+  getTriggeredFunctionsFunctionsList,
+  getTriggeredFunctionsFunctionsListFailure,
+  getTriggeredFunctionsFunctionsListSuccess,
+  getTriggeredFunctionsLibrariesList,
+  getTriggeredFunctionsLibrariesListFailure,
+  getTriggeredFunctionsLibrariesListSuccess,
+  getTriggeredFunctionsLibraryDetails,
+  getTriggeredFunctionsLibraryDetailsFailure,
+  getTriggeredFunctionsLibraryDetailsSuccess,
+  initialState,
+  replaceTriggeredFunctionsLibrary,
   replaceTriggeredFunctionsLibraryAction,
+  replaceTriggeredFunctionsLibraryFailure,
+  replaceTriggeredFunctionsLibrarySuccess,
+  setSelectedFunctionToShow,
+  setSelectedLibraryToShow,
+  triggeredFunctionsSelector,
   deleteTriggeredFunctionsLibrary,
   deleteTriggeredFunctionsLibrarySuccess,
   deleteTriggeredFunctionsLibraryFailure,
@@ -24,10 +30,8 @@ import reducer, {
 import { apiService } from 'uiSrc/services'
 import { addMessageNotification, addErrorNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import {
-  TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA
-} from 'uiSrc/mocks/handlers/triggeredFunctions/triggeredFunctionsHandler'
-import { TriggeredFunctionsLibrary } from 'uiSrc/slices/interfaces/triggeredFunctions'
+import { TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA } from 'uiSrc/mocks/data/triggeredFunctions'
+import { FunctionType, TriggeredFunctionsFunction } from 'uiSrc/slices/interfaces/triggeredFunctions'
 
 let store: typeof mockedStore
 
@@ -67,7 +71,10 @@ describe('triggeredFunctions slice', () => {
       // Arrange
       const state = {
         ...initialState,
-        loading: true
+        libraries: {
+          ...initialState.libraries,
+          loading: true
+        }
       }
 
       // Act
@@ -87,8 +94,11 @@ describe('triggeredFunctions slice', () => {
       const libraries = [{ name: 'lib1', user: 'user1' }]
       const state = {
         ...initialState,
-        lastRefresh: Date.now(),
-        libraries
+        libraries: {
+          ...initialState.libraries,
+          lastRefresh: Date.now(),
+          data: libraries
+        }
       }
 
       // Act
@@ -108,11 +118,135 @@ describe('triggeredFunctions slice', () => {
       const error = 'error'
       const state = {
         ...initialState,
-        error,
+        libraries: {
+          ...initialState.libraries,
+          error
+        }
       }
 
       // Act
       const nextState = reducer(initialState, getTriggeredFunctionsLibrariesListFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getTriggeredFunctionsFunctionsList', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        functions: {
+          ...initialState.functions,
+          loading: true
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getTriggeredFunctionsFunctionsList())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getTriggeredFunctionsFunctionsListSuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const functions = [{ name: 'foo' }]
+      const state = {
+        ...initialState,
+        functions: {
+          ...initialState.functions,
+          lastRefresh: Date.now(),
+          data: functions
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getTriggeredFunctionsFunctionsListSuccess(functions))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getTriggeredFunctionsFunctionsListFailure', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const error = 'error'
+      const state = {
+        ...initialState,
+        functions: {
+          ...initialState.functions,
+          error
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getTriggeredFunctionsFunctionsListFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setSelectedFunctionToShow', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const func: TriggeredFunctionsFunction = {
+        name: 'foo',
+        type: FunctionType.Function,
+        library: 'lib'
+      }
+
+      const state = {
+        ...initialState,
+        functions: {
+          ...initialState.functions,
+          selected: func
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setSelectedFunctionToShow(func))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        triggeredFunctions: nextState,
+      })
+      expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setSelectedLibraryToShow', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const lib = 'lib'
+
+      const state = {
+        ...initialState,
+        libraries: {
+          ...initialState.libraries,
+          selected: lib
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setSelectedLibraryToShow(lib))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -281,7 +415,10 @@ describe('triggeredFunctions slice', () => {
         // Arrange
         const state = {
           ...initialState,
-          deleting: true
+          libraries: {
+            ...initialState.libraries,
+            deleting: true
+          }
         }
 
         // Act
@@ -297,19 +434,25 @@ describe('triggeredFunctions slice', () => {
 
     describe('deleteTriggeredFunctionsLibrarySuccess', () => {
       it('should properly set state', () => {
-        const libraries: TriggeredFunctionsLibrary[] = [
+        const libraries = [
           { name: 'lib1', user: 'user1', pendingJobs: 0, totalFunctions: 0 },
         ]
         // Arrange
         const currentState = {
           ...initialState,
-          libraries,
-          deleting: true,
+          libraries: {
+            ...initialState.libraries,
+            data: libraries,
+            deleting: true,
+          },
         }
         const state = {
           ...initialState,
-          libraries: [],
-          deleting: false,
+          libraries: {
+            ...initialState.libraries,
+            data: [],
+            deleting: false,
+          },
         }
 
         // Act
@@ -328,11 +471,17 @@ describe('triggeredFunctions slice', () => {
         // Arrange
         const currentState = {
           ...initialState,
-          deleting: true,
+          libraries: {
+            ...initialState.libraries,
+            deleting: true,
+          },
         }
         const state = {
           ...initialState,
-          deleting: false,
+          libraries: {
+            ...initialState.libraries,
+            deleting: false,
+          },
         }
 
         // Act
@@ -392,6 +541,56 @@ describe('triggeredFunctions slice', () => {
           getTriggeredFunctionsLibrariesList(),
           addErrorNotification(responsePayload as AxiosError),
           getTriggeredFunctionsLibrariesListFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchTriggeredFunctionsFunctionsList', () => {
+      it('succeed to fetch data', async () => {
+        const data: TriggeredFunctionsFunction[] = [
+          { name: 'foo', library: 'lib', type: 'functions' as FunctionType }
+        ]
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchTriggeredFunctionsFunctionsList('123')
+        )
+
+        // Assert
+        const expectedActions = [
+          getTriggeredFunctionsFunctionsList(),
+          getTriggeredFunctionsFunctionsListSuccess(data),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchTriggeredFunctionsFunctionsList('123')
+        )
+
+        // Assert
+        const expectedActions = [
+          getTriggeredFunctionsFunctionsList(),
+          addErrorNotification(responsePayload as AxiosError),
+          getTriggeredFunctionsFunctionsListFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

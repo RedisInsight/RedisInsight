@@ -27,15 +27,43 @@ export interface TriggeredFunctionsLibrary {
   totalFunctions: number
 }
 
+export interface TriggeredFunctionsFunction {
+  name: string
+  library: string
+  type: FunctionType
+  isAsync?: boolean
+  success?: number
+  fail?: number
+  total?: number
+  flags?: string[]
+  description?: Nullable<string>
+  lastError?: Nullable<string>
+  lastExecutionTime?: number
+  totalExecutionTime?: number
+  prefix?: string
+  trim?: boolean
+  window?: number
+}
+
 export interface StateTriggeredFunctions {
-  libraries: Nullable<TriggeredFunctionsLibrary[]>
+  libraries: {
+    data: Nullable<TriggeredFunctionsLibrary[]>
+    loading: boolean,
+    lastRefresh: Nullable<number>
+    error: string
+    selected: Nullable<string>
+    deleting: boolean
+  }
+  functions: {
+    data: Nullable<TriggeredFunctionsFunction[]>
+    loading: boolean,
+    lastRefresh: Nullable<number>
+    error: string
+    selected: Nullable<TriggeredFunctionsFunction>
+  }
   selectedLibrary: {
     lastRefresh: Nullable<number>
     data: Nullable<TriggeredFunctionsLibraryDetails>
     loading: boolean
   }
-  loading: boolean,
-  lastRefresh: Nullable<number>
-  error: string
-  deleting: boolean
 }

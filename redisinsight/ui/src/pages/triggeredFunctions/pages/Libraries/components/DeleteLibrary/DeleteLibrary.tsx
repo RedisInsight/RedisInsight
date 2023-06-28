@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EuiButton, EuiButtonIcon, EuiPopover, EuiText, EuiSpacer } from '@elastic/eui'
 
-import { deleteTriggeredFunctionsLibraryAction, triggeredFunctionsSelector } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { deleteTriggeredFunctionsLibraryAction, triggeredFunctionsLibrariesSelector } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { TriggeredFunctionsLibrary, TriggeredFunctionsLibraryDetails } from 'uiSrc/slices/interfaces/triggeredFunctions'
 import { formatLongName, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -21,7 +21,7 @@ export interface Props {
 const DeleteLibraryButton = (props: Props) => {
   const { library, onDelete, isOpen, closePopover, openPopover } = props
 
-  const { deleting } = useSelector(triggeredFunctionsSelector)
+  const { deleting } = useSelector(triggeredFunctionsLibrariesSelector)
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -66,7 +66,7 @@ const DeleteLibraryButton = (props: Props) => {
         <EuiButtonIcon
           iconType="trash"
           color="primary"
-          aria-label="Delete Key"
+          aria-label="Delete Library"
           className="deleteKeyBtn"
           onClick={handleClickDelete}
           data-testid={`delete-library-icon-${name}`}

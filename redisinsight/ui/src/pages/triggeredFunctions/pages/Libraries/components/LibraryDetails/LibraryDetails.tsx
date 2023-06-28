@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiButtonIcon,
   EuiFlexGroup,
@@ -14,12 +14,14 @@ import {
   EuiTabs,
   EuiTab,
   EuiProgress,
+  EuiLink
 } from '@elastic/eui'
 import cx from 'classnames'
+import { isNil } from 'lodash'
 import {
   fetchTriggeredFunctionsLibrary,
-  replaceTriggeredFunctionsLibraryAction,
-  triggeredFunctionsSelectedLibrarySelector,
+  replaceTriggeredFunctionsLibraryAction, setSelectedFunctionToShow,
+  triggeredFunctionsSelectedLibrarySelector
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 
 import { MonacoJS, MonacoJson } from 'uiSrc/components/monaco-editor'
@@ -31,6 +33,13 @@ import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { formatLongName, Nullable } from 'uiSrc/utils'
 
+import {
+  LIB_DETAILS_TABS,
+  LibDetailsSelectedView,
+  LIST_OF_FUNCTION_TYPES
+} from 'uiSrc/pages/triggeredFunctions/constants'
+import { Pages } from 'uiSrc/constants'
+import { getFunctionsLengthByType } from 'uiSrc/utils/triggered-functions/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -39,33 +48,17 @@ export interface Props {
   onDeleteRow: (name: string) => void
 }
 
-const LIST_OF_FUNCTION_TYPES = [
-  { title: 'Functions', type: FunctionType.Function },
-  { title: 'Keyspace triggers', type: FunctionType.KeyspaceTrigger },
-  { title: 'Cluster Functions', type: FunctionType.ClusterFunction },
-  { title: 'Stream Functions', type: FunctionType.StreamTrigger },
-]
-
-enum SelectedView {
-  Code = 'code',
-  Config = 'config'
-}
-
-const tabs = [
-  { id: SelectedView.Code, label: 'Library Code' },
-  { id: SelectedView.Config, label: 'Configuration' }
-]
-
 const LibraryDetails = (props: Props) => {
   const { name, onClose, onDeleteRow } = props
   const { loading, lastRefresh, data: library } = useSelector(triggeredFunctionsSelectedLibrarySelector)
 
-  const [selectedView, setSelectedView] = useState<string>(tabs[0].id)
+  const [selectedView, setSelectedView] = useState<string>(LIB_DETAILS_TABS[0].id)
   const [configuration, setConfiguration] = useState<string>('_')
   const [code, setCode] = useState<string>('_')
   const [popover, setPopover] = useState<Nullable<string>>(null)
 
   const { instanceId } = useParams<{ instanceId: string }>()
+  const history = useHistory()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -78,7 +71,12 @@ const LibraryDetails = (props: Props) => {
           eventData: {
             databaseId: instanceId,
             pendingJobs: lib?.pendingJobs || 0,
-            apiVersion: lib?.apiVersion || '1.0'
+            apiVersion: lib?.apiVersion || '1.0',
+            configLoaded: !isNil(lib?.code) || false,
+            functions: {
+              total: lib?.functions.length || 0,
+              ...getFunctionsLengthByType(lib?.functions)
+            }
           }
         })
       }
@@ -127,7 +125,7 @@ const LibraryDetails = (props: Props) => {
     dispatch(replaceTriggeredFunctionsLibraryAction(instanceId, code, configuration, () => {
       closeEditor()
       sendEventTelemetry({
-        event: selectedView === SelectedView.Code
+        event: selectedView === LibDetailsSelectedView.Code
           ? TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_CODE_REPLACED
           : TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_CONFIGURATION_REPLACED,
         eventData: {
@@ -150,6 +148,19 @@ const LibraryDetails = (props: Props) => {
     setPopover(null)
   }
 
+  const goToFunction = (
+    e: React.MouseEvent,
+    { functionName, type }: { functionName: string, type: FunctionType }
+  ) => {
+    e.preventDefault()
+    dispatch(setSelectedFunctionToShow({
+      name: functionName,
+      type,
+      library: name
+    }))
+    history.push(Pages.triggeredFunctionsFunctions(instanceId))
+  }
+
   const functionGroup = (title: string, list: Array<{ type: FunctionType, name: string }>, initialIsOpen = false) => {
     const count = list.length > 0 ? `(${list.length})` : ''
     return (
@@ -165,13 +176,19 @@ const LibraryDetails = (props: Props) => {
       >
         {list.length ? (
           <ul className={styles.list}>
-            {list.map(({ name }) => (
+            {list.map(({ name, type }) => (
               <li
                 className={styles.listItem}
                 key={name}
                 data-testid={`func-${name}`}
               >
-                {name}
+                <EuiLink
+                  href="#"
+                  onClick={(e: React.MouseEvent) => goToFunction(e, { functionName: name, type })}
+                  data-testid={`moveToFunction-${name}`}
+                >
+                  {name}
+                </EuiLink>
               </li>
             ))}
           </ul>
@@ -187,7 +204,7 @@ const LibraryDetails = (props: Props) => {
     return functionGroup(title, functionsList, functionsList.length > 0)
   })
 
-  const renderTabs = useCallback(() => tabs.map(({ id, label }) => (
+  const renderTabs = useCallback(() => LIB_DETAILS_TABS.map(({ id, label }) => (
     <EuiTab
       isSelected={selectedView === id}
       onClick={() => setSelectedView(id)}
@@ -209,8 +226,8 @@ const LibraryDetails = (props: Props) => {
         >
           <EuiTitle size="xs" className={styles.libName} data-testid="lib-name"><span>{name}</span></EuiTitle>
         </EuiToolTip>
-        <EuiSpacer size="s" />
-        <EuiFlexGroup justifyContent="spaceBetween" responsive={false} gutterSize="none">
+        <EuiSpacer size="xs" />
+        <EuiFlexGroup justifyContent="spaceBetween" alignItems="center" responsive={false} gutterSize="none">
           <EuiFlexItem>
             {library?.apiVersion && (<EuiText color="subdued" data-testid="lib-apiVersion">API: {library.apiVersion}</EuiText>)}
           </EuiFlexItem>
@@ -240,7 +257,7 @@ const LibraryDetails = (props: Props) => {
         <EuiToolTip
           content="Close"
           position="left"
-          anchorClassName={styles.closeRightPanel}
+          anchorClassName="triggeredFunctions__closeRightPanel"
         >
           <EuiButtonIcon
             iconType="cross"
@@ -266,7 +283,7 @@ const LibraryDetails = (props: Props) => {
           <>
             {renderFunctionsLists()}
             <EuiTabs>{renderTabs()}</EuiTabs>
-            {selectedView === SelectedView.Code && (
+            {selectedView === LibDetailsSelectedView.Code && (
               <MonacoJS
                 readOnly
                 isEditable
@@ -278,7 +295,7 @@ const LibraryDetails = (props: Props) => {
                 data-testid="library-code"
               />
             )}
-            {selectedView === SelectedView.Config && (
+            {selectedView === LibDetailsSelectedView.Config && (
               <MonacoJson
                 readOnly
                 isEditable

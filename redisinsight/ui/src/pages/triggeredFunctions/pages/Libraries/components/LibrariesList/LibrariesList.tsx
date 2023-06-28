@@ -148,8 +148,8 @@ const LibrariesList = (props: Props) => {
   }
 
   return (
-    <div className={styles.tableWrapper}>
-      <div className={styles.header}>
+    <div className="triggeredFunctions__tableWrapper">
+      <div className="triggeredFunctions__tableHeader">
         <EuiText color="subdued" size="xs" data-testid="total-libraries">Total: {items?.length || 0}</EuiText>
         <AutoRefresh
           loading={loading}
@@ -176,8 +176,8 @@ const LibrariesList = (props: Props) => {
         })}
         message={NoLibrariesMessage}
         onTableChange={handleSorting}
-        className={cx('inMemoryTableDefault', 'noBorders', styles.table)}
         onWheel={handleClosePopover}
+        className={cx('inMemoryTableDefault', 'noBorders', 'triggeredFunctions__table')}
         data-testid="libraries-list-table"
       />
     </div>

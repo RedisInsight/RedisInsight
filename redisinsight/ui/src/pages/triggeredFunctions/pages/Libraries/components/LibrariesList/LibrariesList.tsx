@@ -1,10 +1,17 @@
 import React, { useState } from 'react'
-import { EuiBasicTableColumn, EuiInMemoryTable, EuiText, EuiToolTip, PropertySort } from '@elastic/eui'
+import {
+  EuiBasicTableColumn,
+  EuiInMemoryTable,
+  EuiText,
+  EuiToolTip,
+  PropertySort,
+} from '@elastic/eui'
 import cx from 'classnames'
 
 import { useParams } from 'react-router-dom'
-import { Maybe, Nullable } from 'uiSrc/utils'
+import { Maybe, Nullable, formatLongName } from 'uiSrc/utils'
 import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
+import DeleteLibraryButton from 'uiSrc/pages/triggeredFunctions/pages/Libraries/components/DeleteLibrary'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { TriggeredFunctionsLibrary } from 'uiSrc/slices/interfaces/triggeredFunctions'
 import styles from './styles.module.scss'
@@ -16,13 +23,15 @@ export interface Props {
   lastRefresh: Nullable<number>
   selectedRow: Nullable<string>
   onSelectRow: (name: string) => void
+  onDeleteRow: (name: string) => void
 }
 
 const NoLibrariesMessage: React.ReactNode = (<span data-testid="no-libraries-message">No Libraries found</span>)
 
 const LibrariesList = (props: Props) => {
-  const { items, loading, onRefresh, lastRefresh, selectedRow, onSelectRow } = props
+  const { items, loading, onRefresh, lastRefresh, selectedRow, onSelectRow, onDeleteRow } = props
   const [sort, setSort] = useState<Maybe<PropertySort>>(undefined)
+  const [popover, setPopover] = useState<Maybe<string>>(undefined)
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -33,14 +42,18 @@ const LibrariesList = (props: Props) => {
       sortable: true,
       truncateText: true,
       width: '25%',
-      render: (value: string) => (
-        <EuiToolTip
-          title="Library Name"
-          content={value}
-        >
-          <>{value}</>
-        </EuiToolTip>
-      )
+      render: (value: string) => {
+        const tooltipContent = formatLongName(value)
+
+        return (
+          <EuiToolTip
+            title="Library Name"
+            content={tooltipContent}
+          >
+            <>{value}</>
+          </EuiToolTip>
+        )
+      }
     },
     {
       name: 'Username',
@@ -74,9 +87,29 @@ const LibrariesList = (props: Props) => {
     {
       name: '',
       field: 'actions',
-      width: '20%'
+      align: 'right',
+      width: '20%',
+      render: (_act: any, library: TriggeredFunctionsLibrary) => (
+        <div className={cx(styles.deleteBtn, { [styles.show]: popover === library?.name })}>
+          <DeleteLibraryButton
+            library={library}
+            isOpen={popover === library?.name}
+            openPopover={handleDeleteClick}
+            closePopover={handleClosePopover}
+            onDelete={onDeleteRow}
+          />
+        </div>
+      )
     },
   ]
+
+  const handleDeleteClick = (library: string) => {
+    setPopover(library)
+  }
+
+  const handleClosePopover = () => {
+    setPopover(undefined)
+  }
 
   const handleSelect = (item: TriggeredFunctionsLibrary) => {
     onSelectRow(item.name)
@@ -143,6 +176,7 @@ const LibrariesList = (props: Props) => {
         })}
         message={NoLibrariesMessage}
         onTableChange={handleSorting}
+        onWheel={handleClosePopover}
         className={cx('inMemoryTableDefault', 'noBorders', 'triggeredFunctions__table')}
         data-testid="libraries-list-table"
       />

@@ -52,6 +52,7 @@ export interface StateTriggeredFunctions {
     lastRefresh: Nullable<number>
     error: string
     selected: Nullable<string>
+    deleting: boolean
   }
   functions: {
     data: Nullable<TriggeredFunctionsFunction[]>

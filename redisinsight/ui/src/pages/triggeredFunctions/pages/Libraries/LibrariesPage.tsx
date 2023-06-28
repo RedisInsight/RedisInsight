@@ -82,6 +82,13 @@ const LibrariesPage = () => {
     }
   }
 
+  const handleDelete = (name: string) => {
+    if (name === selectedRow) {
+      // clear selected library after delete
+      setSelectedRow(null)
+    }
+  }
+
   const applyFiltering = () => {
     if (!filterValue) {
       setItems(libraries || [])
@@ -167,6 +174,7 @@ const LibrariesPage = () => {
                       lastRefresh={lastRefresh}
                       selectedRow={selectedRow}
                       onSelectRow={handleSelectRow}
+                      onDeleteRow={handleDelete}
                     />
                   )}
                   {libraries?.length === 0 && (
@@ -197,6 +205,7 @@ const LibrariesPage = () => {
                     <LibraryDetails
                       name={selectedRow}
                       onClose={handleSelectRow}
+                      onDeleteRow={handleDelete}
                     />
                   )}
                 </div>

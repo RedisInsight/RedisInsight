@@ -33,7 +33,14 @@ const handlers: RestHandler[] = [
       ctx.status(200),
       ctx.json(TRIGGERED_FUNCTIONS_FUNCTIONS_LIST_MOCKED_DATA),
     )
-  )
+  ),
+  // delete library
+  rest.delete(getMswURL(
+    getUrl(INSTANCE_ID_MOCK, ApiEndpoints.TRIGGERED_FUNCTIONS_LIBRARY)
+  ),
+  async (_req, res, ctx) => res(
+    ctx.status(200),
+  )),
 ]
 
 export default handlers

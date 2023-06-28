@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
+import { remove } from 'lodash'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   StateTriggeredFunctions,
   TriggeredFunctionsFunction,
@@ -10,7 +12,7 @@ import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { ApiEndpoints } from 'uiSrc/constants'
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addMessageNotification, addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 export const initialState: StateTriggeredFunctions = {
   libraries: {
@@ -19,6 +21,7 @@ export const initialState: StateTriggeredFunctions = {
     lastRefresh: null,
     error: '',
     selected: null,
+    deleting: false,
   },
   functions: {
     data: null,
@@ -88,6 +91,19 @@ const triggeredFunctionsSlice = createSlice({
     replaceTriggeredFunctionsLibraryFailure: (state) => {
       state.selectedLibrary.loading = false
     },
+    // delete library
+    deleteTriggeredFunctionsLibrary: (state) => {
+      state.libraries.deleting = true
+    },
+    deleteTriggeredFunctionsLibrarySuccess: (state, { payload }) => {
+      state.libraries.deleting = false
+      if (state.libraries.data) {
+        remove(state.libraries.data, (library) => library.name === payload)
+      }
+    },
+    deleteTriggeredFunctionsLibraryFailure: (state) => {
+      state.libraries.deleting = false
+    },
     setSelectedFunctionToShow: (state, { payload }: PayloadAction<Nullable<TriggeredFunctionsFunction>>) => {
       state.functions.selected = payload
     },
@@ -112,6 +128,9 @@ export const {
   replaceTriggeredFunctionsLibrary,
   replaceTriggeredFunctionsLibrarySuccess,
   replaceTriggeredFunctionsLibraryFailure,
+  deleteTriggeredFunctionsLibrary,
+  deleteTriggeredFunctionsLibrarySuccess,
+  deleteTriggeredFunctionsLibraryFailure,
   setSelectedFunctionToShow,
   setSelectedLibraryToShow,
 } = triggeredFunctionsSlice.actions
@@ -247,6 +266,42 @@ export function replaceTriggeredFunctionsLibraryAction(
       const error = _err as AxiosError
       dispatch(addErrorNotification(error))
       dispatch(replaceTriggeredFunctionsLibraryFailure())
+      onFailAction?.()
+    }
+  }
+}
+
+export function deleteTriggeredFunctionsLibraryAction(
+  instanceId: string,
+  libraryName: string,
+  onSuccessAction?: (library: string) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      dispatch(deleteTriggeredFunctionsLibrary())
+
+      const { status } = await apiService.delete(
+        getUrl(
+          instanceId,
+          ApiEndpoints.TRIGGERED_FUNCTIONS_LIBRARY,
+        ),
+        {
+          data: { libraryName },
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(deleteTriggeredFunctionsLibrarySuccess(libraryName))
+        dispatch(
+          addMessageNotification(successMessages.DELETE_LIBRARY(libraryName))
+        )
+        onSuccessAction?.(libraryName)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      dispatch(addErrorNotification(error))
+      dispatch(deleteTriggeredFunctionsLibraryFailure())
       onFailAction?.()
     }
   }

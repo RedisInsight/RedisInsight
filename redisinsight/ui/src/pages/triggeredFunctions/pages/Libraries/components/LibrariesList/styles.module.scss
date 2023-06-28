@@ -38,6 +38,10 @@
 
   .deleteBtn {
     visibility: hidden;
+
+    &.show {
+      visibility: visible;
+    }
   }
 
   :global(.euiTableRow:hover) .deleteBtn {

@@ -90,7 +90,7 @@ const LibrariesList = (props: Props) => {
       align: 'right',
       width: '20%',
       render: (_act: any, library: TriggeredFunctionsLibrary) => (
-        <div className={styles.deleteBtn}>
+        <div className={cx(styles.deleteBtn, { [styles.show]: popover === library?.name })}>
           <DeleteLibraryButton
             library={library}
             isOpen={popover === library?.name}

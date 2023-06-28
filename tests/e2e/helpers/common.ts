@@ -7,6 +7,13 @@ import { apiUrl, commonUrl } from './conf';
 
 const chance = new Chance();
 
+declare global {
+    interface Window {
+      windowId?: string
+    }
+  }
+
+
 const settingsApiUrl = `${commonUrl}/api/settings`;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
 const mockedSettingsResponse = {
@@ -155,6 +162,13 @@ export class Common {
     */
     static getEndpoint(): string {
         return apiUrl;
+    }
+
+    /**
+    * Return windowId
+    */
+    static getWindowId(): Promise<string> {
+        return t.eval(() => window.windowId);
     }
 
     /**

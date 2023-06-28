@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useHistory } from 'react-router'
-import { useLocation, useParams } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useLocation, useParams, useHistory } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
 import InstanceHeader from 'uiSrc/components/instance-header'
 
@@ -10,6 +9,10 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 
+import {
+  appContextTriggeredFunctions,
+  setLastTriggeredFunctionsPage
+} from 'uiSrc/slices/app/context'
 import TriggeredFunctionsPageRouter from './TriggeredFunctionsPageRouter'
 import TriggeredFunctionsTabs from './components/TriggeredFunctionsTabs'
 
@@ -22,6 +25,7 @@ export interface Props {
 const TriggeredFunctionsPage = ({ routes = [] }: Props) => {
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
+  const { lastViewedPage } = useSelector(appContextTriggeredFunctions)
 
   const [isPageViewSent, setIsPageViewSent] = useState<boolean>(false)
   const pathnameRef = useRef<string>('')
@@ -29,14 +33,25 @@ const TriggeredFunctionsPage = ({ routes = [] }: Props) => {
   const { instanceId } = useParams<{ instanceId: string }>()
   const history = useHistory()
   const { pathname } = useLocation()
+  const dispatch = useDispatch()
 
   const dbName = `${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)}`
   setTitle(`${dbName} - Triggers & Functions`)
 
+  useEffect(() => () => {
+    dispatch(setLastTriggeredFunctionsPage(pathnameRef.current))
+  }, [])
+
   useEffect(() => {
     if (pathname === Pages.triggeredFunctions(instanceId)) {
-      if (pathnameRef.current === Pages.triggeredFunctionsLibraries(instanceId)) {
+      if (pathnameRef.current && pathnameRef.current !== lastViewedPage) {
         history.push(pathnameRef.current)
+        return
+      }
+
+      // restore from context
+      if (lastViewedPage) {
+        history.push(lastViewedPage)
         return
       }
 

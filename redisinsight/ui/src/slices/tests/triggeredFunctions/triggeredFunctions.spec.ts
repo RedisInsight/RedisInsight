@@ -21,10 +21,15 @@ import reducer, {
   replaceTriggeredFunctionsLibrarySuccess,
   setSelectedFunctionToShow,
   setSelectedLibraryToShow,
-  triggeredFunctionsSelector
+  triggeredFunctionsSelector,
+  deleteTriggeredFunctionsLibrary,
+  deleteTriggeredFunctionsLibrarySuccess,
+  deleteTriggeredFunctionsLibraryFailure,
+  deleteTriggeredFunctionsLibraryAction,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addMessageNotification, addErrorNotification } from 'uiSrc/slices/app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import { TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA } from 'uiSrc/mocks/data/triggeredFunctions'
 import { FunctionType, TriggeredFunctionsFunction } from 'uiSrc/slices/interfaces/triggeredFunctions'
 
@@ -404,6 +409,91 @@ describe('triggeredFunctions slice', () => {
       })
       expect(triggeredFunctionsSelector(rootState)).toEqual(state)
     })
+
+    describe('deleteTriggeredFunctionsLibrary', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState,
+          libraries: {
+            ...initialState.libraries,
+            deleting: true
+          }
+        }
+
+        // Act
+        const nextState = reducer(initialState, deleteTriggeredFunctionsLibrary())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          triggeredFunctions: nextState,
+        })
+        expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('deleteTriggeredFunctionsLibrarySuccess', () => {
+      it('should properly set state', () => {
+        const libraries = [
+          { name: 'lib1', user: 'user1', pendingJobs: 0, totalFunctions: 0 },
+        ]
+        // Arrange
+        const currentState = {
+          ...initialState,
+          libraries: {
+            ...initialState.libraries,
+            data: libraries,
+            deleting: true,
+          },
+        }
+        const state = {
+          ...initialState,
+          libraries: {
+            ...initialState.libraries,
+            data: [],
+            deleting: false,
+          },
+        }
+
+        // Act
+        const nextState = reducer(currentState, deleteTriggeredFunctionsLibrarySuccess('lib1'))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          triggeredFunctions: nextState,
+        })
+        expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('deleteTriggeredFunctionsLibraryFailure', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          libraries: {
+            ...initialState.libraries,
+            deleting: true,
+          },
+        }
+        const state = {
+          ...initialState,
+          libraries: {
+            ...initialState.libraries,
+            deleting: false,
+          },
+        }
+
+        // Act
+        const nextState = reducer(currentState, deleteTriggeredFunctionsLibraryFailure())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          triggeredFunctions: nextState,
+        })
+        expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+      })
+    })
   })
 
   // thunks
@@ -596,6 +686,54 @@ describe('triggeredFunctions slice', () => {
           replaceTriggeredFunctionsLibrary(),
           addErrorNotification(responsePayload as AxiosError),
           replaceTriggeredFunctionsLibraryFailure()
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('deleteTriggeredFunctionsLibraryAction', () => {
+      it('succeed to delete libraries', async () => {
+        const responsePayload = { status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          deleteTriggeredFunctionsLibraryAction('instanceId', 'name')
+        )
+
+        // Assert
+        const expectedActions = [
+          deleteTriggeredFunctionsLibrary(),
+          deleteTriggeredFunctionsLibrarySuccess('name'),
+          addMessageNotification(successMessages.DELETE_LIBRARY('name'))
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to delete libraries', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          deleteTriggeredFunctionsLibraryAction('instanceId', 'name')
+        )
+
+        // Assert
+        const expectedActions = [
+          deleteTriggeredFunctionsLibrary(),
+          addErrorNotification(responsePayload as AxiosError),
+          deleteTriggeredFunctionsLibraryFailure()
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

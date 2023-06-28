@@ -11,6 +11,15 @@
     padding: 16px;
     border-bottom: 1px solid var(--euiColorLightShade);
 
+    .actions {
+      display: flex;
+      align-items: center;
+
+      .refreshContainer {
+        margin-right: 12px;
+      }
+    }
+
     .titleTooltip {
       width: auto;
       max-width: calc(100% - 80px);

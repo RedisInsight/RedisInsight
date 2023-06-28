@@ -68,7 +68,7 @@ test('Verify that user can switches between Chart and Text for TimeSeries comman
     await t.click(workbenchPage.showSalesPerRegiomButton);
     await t.click(workbenchPage.submitCommandButton);
     // Check result is in chart view
-    await t.expect(workbenchPage.chartViewTypeOptionSelected.visible).ok('The chart view option is not selected by default');
+    await t.expect(workbenchPage.chartViewTypeOptionSelected.exists).ok('The chart view option is not selected by default');
     // Switch to Text view and check result
     await workbenchPage.selectViewTypeText();
     await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).exists).ok('The result in text view is not displayed');

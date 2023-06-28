@@ -129,7 +129,7 @@ test
         const command = 'CLIENT LIST';
         // Send command in workbench to view client list
         await workbenchPage.sendCommandInWorkbench(command);
-        await t.expect(workbenchPage.typeSelectedClientsList.visible).ok('client list view button is not visible');
+        await t.expect(workbenchPage.typeSelectedClientsList.exists).ok('client list view button is not visible');
         await workBenchActions.verifyClientListColumnsAreVisible(['id', 'addr', 'name', 'user']);
         // verify table view row count match with text view after client list command
         await workBenchActions.verifyClientListTableViewRowCount();

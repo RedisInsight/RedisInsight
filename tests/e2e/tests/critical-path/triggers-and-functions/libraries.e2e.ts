@@ -13,6 +13,15 @@ const triggersAndFunctionsPage = new TriggersAndFunctionsPage();
 
 const libraryName = 'lib';
 
+const LIBRARIES_LIST = [
+    { name: 'Function1', type: LibrariesSections.Functions },
+    { name: 'function2', type: LibrariesSections.Functions },
+    { name: 'AsyncFunction', type: LibrariesSections.Functions },
+    { name: 'StreamTrigger', type: LibrariesSections.StreamFunctions },
+    { name: 'ClusterFunction', type: LibrariesSections.ClusterFunctions },
+    { name: 'keySpaceTrigger', type: LibrariesSections.KeyspaceTriggers },
+];
+
 fixture `Triggers and Functions`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
@@ -41,36 +50,27 @@ test
         await t.expect(row.totalFunctions).eql(item.totalFunctions, 'user name is unexpected');
     });
 
-test.only
+test
     .after(async() => {
         await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libraryName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
     })('Verify that library details is displayed', async t => {
-
-        const function1 = 'Function1';
-        const function2 = 'function2';
-        const asyncFunction = 'AsyncFunction';
-        const stream = 'StreamTrigger';
-        const cluster = 'registerClusterFunction';
-        const keySpaceTrigger = 'registerKeySpaceTrigger';
         const command = `TFUNCTION LOAD "#!js api_version=1.0 name=${libraryName}\\n
-            redis.registerFunction('${function1}', function(){});
-            redis.registerFunction('${function2}', function(){});
-            redis.registerAsyncFunction('${asyncFunction}', function(){});
-            redis.registerStreamTrigger('${stream}', 'name', function(){});
-            redis.registerClusterFunction('${cluster}', async function(){});
-            redis.registerKeySpaceTrigger('${keySpaceTrigger}','',function(){});"`;
+            redis.registerFunction('${LIBRARIES_LIST[0]}', function(){});
+            redis.registerFunction('${LIBRARIES_LIST[1]}', function(){});
+            redis.registerAsyncFunction('${LIBRARIES_LIST[2]}', function(){});
+            redis.registerStreamTrigger('${LIBRARIES_LIST[3]}', 'name', function(){});
+            redis.registerClusterFunction('${LIBRARIES_LIST[4]}', async function(){});
+            redis.registerKeySpaceTrigger('${LIBRARIES_LIST[5]}','',function(){});"`;
 
         await browserPage.Cli.sendCommandInCli(command);
 
         await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
         await t.click(await triggersAndFunctionsPage.getLibraryNameSelector(libraryName));
-        await t.expect(await triggersAndFunctionsPage.getFunctionsByName(LibrariesSections.Functions, function1).exists).ok('library is not displayed in Functions section');
-        await t.expect(await triggersAndFunctionsPage.getFunctionsByName(LibrariesSections.Functions, function2).exists).ok('library is not displayed in Functions section');
-        await t.expect(await triggersAndFunctionsPage.getFunctionsByName(LibrariesSections.Functions, asyncFunction).exists).ok('library is not displayed in Functions section');
-        await t.expect(await triggersAndFunctionsPage.getFunctionsByName(LibrariesSections.StreamFunctions, stream).exists).ok('library is not displayed in Stream section');
-        await t.expect(await triggersAndFunctionsPage.getFunctionsByName(LibrariesSections.ClusterFunctions, cluster).exists).ok('library is not displayed in cluster section');
-        await t.expect(await triggersAndFunctionsPage.getFunctionsByName(LibrariesSections.KeyspaceTriggers, keySpaceTrigger).exists).ok('library is not displayed in key Space Trigger section');
+
+        for (const { name, type } of LIBRARIES_LIST) {
+            await t.expect(await triggersAndFunctionsPage.getFunctionsByName(type, name).exists).ok(`library is not displayed in ${type} section`);
+        }
     });
 
 test

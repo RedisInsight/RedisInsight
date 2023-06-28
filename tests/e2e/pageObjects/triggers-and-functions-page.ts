@@ -37,8 +37,8 @@ export class TriggersAndFunctionsPage extends InstancePage {
 
     /**
      * Is function displayed in the list
-     * @param functionsName The functions Name
-     * @param sectionName The section Name
+     * @param sectionName The functions Name
+     * @param functionsName The section Name
      */
     getFunctionsByName(sectionName: LibrariesSections, functionsName: string): Selector {
         const KeySpaceSection = Selector(`[data-testid^=functions-${sectionName}]`);

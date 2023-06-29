@@ -54,3 +54,8 @@ export enum LibrariesSections {
     ClusterFunctions = 'Cluster',
     StreamFunctions= 'Stream',
 }
+
+export enum FunctionsSections {
+    General = 'General',
+    Flag = 'Flag'
+}

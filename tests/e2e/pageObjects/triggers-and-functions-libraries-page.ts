@@ -3,7 +3,7 @@ import { TriggersAndFunctionLibrary } from '../interfaces/triggers-and-functions
 import { LibrariesSections } from '../helpers/constants';
 import { InstancePage } from './instance-page';
 
-export class TriggersAndFunctionsPage extends InstancePage {
+export class TriggersAndFunctionsLibrariesPage extends InstancePage {
     editMonacoButton = Selector('[data-testid=edit-monaco-value]');
     acceptButton = Selector('[data-testid=apply-btn]');
 

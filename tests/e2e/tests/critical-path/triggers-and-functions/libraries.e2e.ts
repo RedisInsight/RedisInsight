@@ -104,7 +104,7 @@ test
             (await triggersAndFunctionsLibrariesPage.getTextToMonaco())).eql(configuration, 'configuration was not added');
     });
 
-test.only
+test
     .after(async() => {
         await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libraryName}`);
         await deleteStandaloneDatabaseApi(ossStandaloneRedisGears);

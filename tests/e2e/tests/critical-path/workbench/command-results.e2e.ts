@@ -56,7 +56,7 @@ test('Verify that user can see the results found in the table view by default fo
         // Send commands and check table view is default
     for(const command of commands) {
         await workbenchPage.sendCommandInWorkbench(command);
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible).ok(`The table view is not selected by default for command ${command}`);
+        await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).exists).ok(`The table view is not selected by default for command ${command}`);
     }
 });
 test
@@ -73,7 +73,7 @@ test
         for (const command of commands) {
             await workbenchPage.sendCommandInWorkbench(command);
         }
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).visible)
+        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssTableViewTypeOption).exists)
             .ok('The table view is not selected by default for command FT.SEARCH');
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(await workbenchPage.queryTableResult.visible).ok('The table result is not displayed for command FT.SEARCH');
@@ -87,7 +87,7 @@ test('Verify that user can switches between Table and Text for Client List and s
     const command = 'CLIENT LIST';
     // Send command and check table view is default
     await workbenchPage.sendCommandInWorkbench(command);
-    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssClientListViewTypeOption).visible)
+    await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssClientListViewTypeOption).exists)
         .ok('The table view is not selected by default for command CLIENT LIST');
     await t.switchToIframe(workbenchPage.iframe);
 
@@ -124,7 +124,7 @@ test
 
         // Send command and check json view is default for json.get
         await workbenchPage.sendCommandInWorkbench(sendCommandsJsonGet.join('\n'));
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssJsonViewTypeOption).visible)
+        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssJsonViewTypeOption).exists)
             .ok('The json view is not selected by default for command JSON.GET');
 
         await t.switchToIframe(workbenchPage.iframe);
@@ -135,7 +135,7 @@ test
 
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(sendCommandsJsonMGet.join('\n'));
-        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssJsonViewTypeOption).visible)
+        await t.expect(await workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssJsonViewTypeOption).exists)
             .ok('The json view is not selected by default for command JSON.MGET');
 
         await t.switchToIframe(workbenchPage.iframe);

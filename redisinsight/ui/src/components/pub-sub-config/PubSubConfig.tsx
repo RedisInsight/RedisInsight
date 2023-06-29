@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 
 import { SocketEvent } from 'uiSrc/constants'
+import { CustomHeaders } from 'uiSrc/constants/api'
 import { PubSubEvent } from 'uiSrc/constants/pubSub'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { PubSubSubscription } from 'uiSrc/slices/interfaces/pubsub'
@@ -37,6 +38,7 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
     socketRef.current = io(`${getBaseApiUrl()}/pub-sub`, {
       forceNew: true,
       query: { instanceId },
+      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
       rejectUnauthorized: false,
     })
 

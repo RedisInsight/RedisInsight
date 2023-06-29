@@ -50,9 +50,7 @@ describe('WS new recommendations', () => {
     expect(recommendationsResponse.recommendations[0].name).to.eq('bigSets');
     expect(recommendationsResponse.recommendations[0].databaseId).to.eq(constants.TEST_INSTANCE_ID);
     expect(recommendationsResponse.recommendations[0].read).to.eq(false);
-    // expect(recommendationsResponse.recommendations[0].disabled).to.eq(false);
-    // todo: investigate if it should return false vs undefined
-    expect(recommendationsResponse.recommendations[0].disabled).to.eq(undefined);
+    expect(recommendationsResponse.recommendations[0].disabled).to.eq(false);
     expect(recommendationsResponse.totalUnread).to.eq(1);
   });
 });

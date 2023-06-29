@@ -4,7 +4,7 @@ import { instance, mock } from 'ts-mockito'
 import { PluginEvents } from 'uiSrc/plugins/pluginEvents'
 import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { formatToText } from 'uiSrc/utils'
+import { formatToText, replaceEmptyValue } from 'uiSrc/utils'
 import { sendPluginCommandAction, getPluginStateAction, setPluginStateAction } from 'uiSrc/slices/app/plugins'
 import QueryCardCliPlugin, { Props } from './QueryCardCliPlugin'
 
@@ -19,7 +19,8 @@ jest.mock('uiSrc/services/PluginAPI', () => ({
 
 jest.mock('uiSrc/utils', () => ({
   ...jest.requireActual('uiSrc/utils'),
-  formatToText: jest.fn()
+  formatToText: jest.fn(),
+  replaceEmptyValue: jest.fn(),
 }))
 
 jest.mock('uiSrc/slices/app/plugins', () => ({
@@ -156,7 +157,9 @@ describe('QueryCardCliPlugin', () => {
   })
 
   it('should subscribes and call formatToText', () => {
-    const formatToTextMock = jest.fn();
+    const formatToTextMock = jest.fn()
+    const replaceEmptyValueMock = jest.fn();
+    (replaceEmptyValue as jest.Mock).mockImplementation(replaceEmptyValueMock).mockReturnValue([]);
     (formatToText as jest.Mock).mockImplementation(formatToTextMock)
     const onEventMock = jest.fn().mockImplementation(
       (_iframeId: string, event: string, callback: (dat: any) => void) => {
@@ -171,5 +174,23 @@ describe('QueryCardCliPlugin', () => {
     render(<QueryCardCliPlugin {...instance(mockedProps)} id="1" />)
 
     expect(formatToTextMock).toBeCalledWith([], 'info')
+  })
+
+  it('should subscribes and call replaceEmptyValue', () => {
+    const replaceEmptyValueMock = jest.fn();
+    (replaceEmptyValue as jest.Mock).mockImplementation(replaceEmptyValueMock)
+    const onEventMock = jest.fn().mockImplementation(
+      (_iframeId: string, event: string, callback: (dat: any) => void) => {
+        if (event === PluginEvents.formatRedisReply) {
+          callback({ requestId: '1', data: { response: [], command: 'info' } })
+        }
+      }
+    );
+
+    (pluginApi.onEvent as jest.Mock).mockImplementation(onEventMock)
+
+    render(<QueryCardCliPlugin {...instance(mockedProps)} id="1" />)
+
+    expect(replaceEmptyValueMock).toBeCalledWith([])
   })
 })

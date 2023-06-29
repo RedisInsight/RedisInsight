@@ -7,6 +7,7 @@ import { DataAsJsonString } from 'src/common/decorators';
 import { Expose, Transform, Type } from 'class-transformer';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
+import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/autodiscovery/entities/cloud-database-details.entity';
 
 export enum HostingProvider {
   UNKNOWN = 'UNKNOWN',
@@ -196,9 +197,26 @@ export class DatabaseEntity {
   sshOptions: SshOptionsEntity;
 
   @Expose()
+  @OneToOne(
+    () => CloudDatabaseDetailsEntity,
+    (cloudDetails) => cloudDetails.database,
+    {
+      eager: true,
+      onDelete: 'CASCADE',
+      cascade: true,
+    },
+  )
+  @Type(() => CloudDatabaseDetailsEntity)
+  cloudDetails: CloudDatabaseDetailsEntity;
+
+  @Expose()
   @Column({
     nullable: false,
     default: Compressor.NONE,
   })
   compressor: Compressor;
+
+  @Expose()
+  @Column({ nullable: true })
+  version: string;
 }

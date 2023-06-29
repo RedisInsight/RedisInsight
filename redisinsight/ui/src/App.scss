@@ -36,6 +36,8 @@ input[type='number'] {
 }
 
 .euiScreenReaderOnly {
+  // fix additional scroll
+  display: none;
   // position: absolute !important;
 }
 

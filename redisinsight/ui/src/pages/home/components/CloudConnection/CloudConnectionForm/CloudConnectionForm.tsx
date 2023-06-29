@@ -16,7 +16,6 @@ import {
   keys,
 } from '@elastic/eui'
 
-import RESOURCES from 'uiSrc/resourses/en-EN'
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
@@ -61,16 +60,6 @@ const Message = () => (
       href="https://docs.redis.com/latest/rc/api/how-to/enable-your-account-to-use-api/"
     >
       documentation.
-    </EuiLink>
-    {` If you want to add databases that belong to a ${RESOURCES.Fixed} subscription, please follow `}
-    <EuiLink
-      color="text"
-      className={styles.link}
-      external={false}
-      target="_blank"
-      href="https://docs.redis.com/latest/ri/using-redisinsight/add-instance/#add-a-standalone-redis-database"
-    >
-      these steps.
     </EuiLink>
   </EuiText>
 )

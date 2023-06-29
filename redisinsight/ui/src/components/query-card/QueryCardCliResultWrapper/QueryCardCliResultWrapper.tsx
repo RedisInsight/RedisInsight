@@ -5,7 +5,7 @@ import { isArray } from 'lodash'
 
 import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { cliParseTextResponse, formatToText, isGroupResults, Maybe } from 'uiSrc/utils'
+import { cliParseTextResponse, formatToText, replaceEmptyValue, isGroupResults, Maybe } from 'uiSrc/utils'
 
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import QueryCardCliDefaultResult from '../QueryCardCliDefaultResult'
@@ -16,7 +16,6 @@ export interface Props {
   query: string
   result: Maybe<CommandExecutionResult[]>
   loading?: boolean
-  status?: string
   resultsMode?: ResultsMode
   isNotStored?: boolean
   isFullScreen?: boolean
@@ -27,7 +26,7 @@ const QueryCardCliResultWrapper = (props: Props) => {
   const { result = [], query, loading, resultsMode, isNotStored, isFullScreen, db } = props
 
   return (
-    <div className={cx('queryResultsContainer', styles.container)}>
+    <div data-testid="query-cli-result-wrapper" className={cx('queryResultsContainer', styles.container)}>
       {!loading && (
         <div data-testid="query-cli-result" className={cx(styles.content)}>
           {isNotStored && (
@@ -42,9 +41,9 @@ const QueryCardCliResultWrapper = (props: Props) => {
               <QueryCardCliDefaultResult
                 isFullScreen={isFullScreen}
                 items={
-                  result[0].status === CommandExecutionStatus.Success
-                    ? formatToText(result[0].response || '(nil)', query).split('\n')
-                    : [cliParseTextResponse(result[0].response || '(nil)', '', result[0].status)]
+                  result[0]?.status === CommandExecutionStatus.Success
+                    ? formatToText(replaceEmptyValue(result[0]?.response), query).split('\n')
+                    : [cliParseTextResponse(replaceEmptyValue(result[0]?.response), '', result[0]?.status)]
                 }
               />
             )}

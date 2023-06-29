@@ -19,6 +19,7 @@ export const repositories = {
   CUSTOM_TUTORIAL: 'CustomTutorialEntity',
   FEATURES_CONFIG: 'FeaturesConfigEntity',
   FEATURE: 'FeatureEntity',
+  CLOUD_DATABASE_DETAILS: 'CloudDatabaseDetailsEntity',
 }
 
 let localDbConnection;
@@ -403,6 +404,7 @@ export const createDatabaseInstances = async () => {
       connectionType: 'STANDALONE',
       ...instance,
       modules: '[]',
+      version: '7.0',
     });
   }
 }

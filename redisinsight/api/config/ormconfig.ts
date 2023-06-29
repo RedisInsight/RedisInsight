@@ -17,6 +17,7 @@ import { BrowserHistoryEntity } from 'src/modules/browser/entities/browser-histo
 import { CustomTutorialEntity } from 'src/modules/custom-tutorial/entities/custom-tutorial.entity';
 import { FeatureEntity } from 'src/modules/feature/entities/feature.entity';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
+import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/autodiscovery/entities/cloud-database-details.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
 
@@ -44,6 +45,7 @@ const ormConfig = {
     CustomTutorialEntity,
     FeatureEntity,
     FeaturesConfigEntity,
+    CloudDatabaseDetailsEntity,
   ],
   migrations,
 };

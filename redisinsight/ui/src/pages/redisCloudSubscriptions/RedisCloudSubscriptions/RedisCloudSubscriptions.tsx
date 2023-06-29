@@ -18,6 +18,7 @@ import {
 } from '@elastic/eui'
 import cx from 'classnames'
 import {
+  InstanceRedisCloud,
   RedisCloudAccount,
   RedisCloudSubscription,
   RedisCloudSubscriptionStatus,
@@ -37,7 +38,7 @@ export interface Props {
   error: string;
   onClose: () => void;
   onBack: () => void;
-  onSubmit: (uids: Maybe<number>[]) => void;
+  onSubmit: (subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType'>>[]) => void;
 }
 
 interface IPopoverProps {
@@ -87,7 +88,7 @@ const RedisCloudSubscriptions = ({
   }
 
   const handleSubmit = () => {
-    onSubmit(map(selection, 'id'))
+    onSubmit(map(selection, ({ id, type }) => ({ subscriptionId: id, subscriptionType: type })))
   }
 
   const showPopover = () => {

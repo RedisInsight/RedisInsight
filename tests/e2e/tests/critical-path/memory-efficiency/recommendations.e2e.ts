@@ -157,6 +157,9 @@ test
         keyName = `recomKey-${Common.generateWord(10)}`;
         const jsonValue = '{"name":"xyz"}';
         await browserPage.addJsonKey(keyName, jsonValue);
+        // Check that new key is displayed in the list
+        await browserPage.searchByKeyName(keyName);
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The JSON key is not added');
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);
@@ -175,5 +178,5 @@ test
         await t.click(memoryEfficiencyPage.getToTutorialBtnByRecomName(searchJsonRecommendation));
         await t.expect(workbenchPage.preselectArea.visible).ok('Workbench Enablement area not opened');
         // Verify that REDIS FOR TIME SERIES tutorial expanded
-        await t.expect((await workbenchPage.getTutorialByName('INTRODUCTION')).visible).ok('INTRODUCTION tutorial is not expanded');
+        await t.expect(workbenchPage.getTutorialByName('INTRODUCTION').visible).ok('INTRODUCTION tutorial is not expanded');
     });

@@ -9,12 +9,12 @@ import {
   mockClusterDatabaseWithTlsAuth,
   mockClusterDatabaseWithTlsAuthEntity,
   mockDatabase,
-  mockDatabaseEntity,
+  mockDatabaseEntity, mockDatabaseEntityWithCloudDetails,
   mockDatabaseId,
   mockDatabasePasswordEncrypted,
   mockDatabasePasswordPlain,
   mockDatabaseSentinelMasterPasswordEncrypted,
-  mockDatabaseSentinelMasterPasswordPlain,
+  mockDatabaseSentinelMasterPasswordPlain, mockDatabaseWithCloudDetails,
   mockDatabaseWithSshBasic,
   mockDatabaseWithSshBasicEntity,
   mockDatabaseWithSshPrivateKey,
@@ -48,7 +48,7 @@ import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 
 const listFields = [
   'id', 'name', 'host', 'port', 'db', 'timeout',
-  'connectionType', 'modules', 'lastConnection',
+  'connectionType', 'modules', 'lastConnection', 'version',
 ];
 
 describe('LocalDatabaseRepository', () => {
@@ -243,6 +243,16 @@ describe('LocalDatabaseRepository', () => {
       const result = await service.create(mockDatabase);
 
       expect(result).toEqual(mockDatabase);
+      expect(caCertRepository.create).not.toHaveBeenCalled();
+      expect(clientCertRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('should create standalone database with cloud details', async () => {
+      repository.save.mockResolvedValue(mockDatabaseEntityWithCloudDetails);
+
+      const result = await service.create(mockDatabaseWithCloudDetails);
+
+      expect(result).toEqual(mockDatabaseWithCloudDetails);
       expect(caCertRepository.create).not.toHaveBeenCalled();
       expect(clientCertRepository.create).not.toHaveBeenCalled();
     });

@@ -21,7 +21,12 @@ import {
   replaceSpaces,
   setTitle,
 } from 'uiSrc/utils'
-import { InstanceRedisCloud, LoadedCloud } from 'uiSrc/slices/interfaces'
+import {
+  InstanceRedisCloud,
+  LoadedCloud,
+  RedisCloudSubscriptionType,
+  RedisCloudSubscriptionTypeText,
+} from 'uiSrc/slices/interfaces'
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -142,6 +147,16 @@ const RedisCloudDatabasesPage = () => {
           </div>
         )
       },
+    },
+    {
+      field: 'subscriptionType',
+      className: 'column_subscriptionType',
+      name: 'Type',
+      width: '95px',
+      dataType: 'string',
+      sortable: true,
+      truncateText: true,
+      render: (type: RedisCloudSubscriptionType) => RedisCloudSubscriptionTypeText[type] ?? '-',
     },
     {
       field: 'status',

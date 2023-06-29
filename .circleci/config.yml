@@ -183,7 +183,7 @@ jobs:
   # Test jobs
   unit-tests-ui:
     docker:
-      - image: cimg/node:16.15.1
+      - image: cimg/node:18.15.0
     steps:
       - checkout
       - restore_cache:
@@ -227,7 +227,7 @@ jobs:
             - ./node_modules
   unit-tests-api:
     docker:
-      - image: cimg/node:16.15.1
+      - image: cimg/node:18.15.0
     steps:
       - checkout
       - restore_cache:
@@ -345,6 +345,8 @@ jobs:
     parallelism: << parameters.parallelism >>
     steps:
       - checkout
+      - node/install:
+          node-version: '18.15.0'
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
@@ -385,7 +387,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: choco install nodejs --version=16.15.1
+      - run: choco install nodejs --version=18.15.0
       - run:
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
@@ -534,7 +536,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '16.15.1'
+          node-version: '18.15.0'
       - attach_workspace:
           at: .
       - run:
@@ -599,7 +601,7 @@ jobs:
             - release/redisstack
   macosx:
     macos:
-      xcode: 14.3.0
+      xcode: 14.2.0
     resource_class: macos.x86.medium.gen2
     parameters:
       env:
@@ -610,7 +612,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '16.15.1'
+          node-version: '18.15.0'
       - attach_workspace:
           at: .
       - run:
@@ -684,7 +686,7 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            choco install nodejs --version=16.15.1
+            choco install nodejs --version=18.15.0
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
             yarn --cwd redisinsight/api/ install
@@ -1179,6 +1181,12 @@ workflows:
       - windows:
           name: Build app - Windows (stage)
           requires: *stageElectronBuildRequires
+      # e2e desktop tests on AppImage build
+      - e2e-app-image:
+          name: E2ETest (AppImage)
+          parallelism: 2
+          requires:
+            - Build app - Linux (stage)
       # release to AWS (stage)
       - release-aws-test:
           name: Release AWS stage

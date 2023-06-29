@@ -72,6 +72,9 @@ export enum TelemetryEvents {
   FeatureFlagConfigUpdateError = 'FEATURE_FLAG_CONFIG_UPDATE_ERROR',
   FeatureFlagInvalidRemoteConfig = 'FEATURE_FLAG_INVALID_REMOTE_CONFIG',
   FeatureFlagRecalculated = 'FEATURE_FLAG_RECALCULATED',
+
+  // Insights
+  InsightsRecommendationGenerated = 'INSIGHTS_RECOMMENDATION_GENERATED',
 }
 
 export enum CommandType {

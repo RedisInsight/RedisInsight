@@ -8,6 +8,7 @@ import {
   checkCommandModule,
   checkUnsupportedCommand,
   checkBlockingCommand,
+  replaceEmptyValue,
 } from 'uiSrc/utils'
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import { render, screen } from 'uiSrc/utils/test-utils'
@@ -28,6 +29,23 @@ const getDbIndexFromSelectQueryTests = [
   { input: 'select abc', expected: new Error('Parsing error') },
   { input: 'select ', expected: new Error('Parsing error') },
 ]
+
+const replaceEmptyValueTests = [
+  { input: '', expected: '(nil)' },
+  { input: undefined, expected: '(nil)' },
+  { input: false, expected: '(nil)' },
+  { input: 'string', expected: 'string' },
+  { input: 0, expected: 0 },
+  { input: 1, expected: 1 },
+  { input: [], expected: [] },
+  { input: {}, expected: {} },
+]
+
+describe('replaceEmptyValue', () => {
+  test.each(replaceEmptyValueTests)('%j', ({ input, expected }) => {
+    expect(replaceEmptyValue(input)).toEqual(expected)
+  })
+})
 
 describe('getDbIndexFromSelectQuery', () => {
   test.each(getDbIndexFromSelectQueryTests)('%j', ({ input, expected }) => {

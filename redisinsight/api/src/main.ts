@@ -1,20 +1,26 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
-import { NestApplicationOptions } from '@nestjs/common';
+import { INestApplication, NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { get } from 'src/utils';
 import { migrateHomeFolder } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
+import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
 
 const serverConfig = get('server');
 
-export default async function bootstrap(): Promise<Function> {
+interface IApp {
+  app: INestApplication
+  gracefulShutdown: Function
+}
+
+export default async function bootstrap(): Promise<IApp> {
   await migrateHomeFolder();
 
   const port = process.env.API_PORT || serverConfig.port;
@@ -44,6 +50,8 @@ export default async function bootstrap(): Promise<Function> {
       app,
       SwaggerModule.createDocument(app, SWAGGER_CONFIG),
     );
+  } else {
+    app.useWebSocketAdapter(new WindowsAuthAdapter(app));
   }
 
   const logFileProvider = app.get(LogFileProvider);
@@ -67,7 +75,7 @@ export default async function bootstrap(): Promise<Function> {
   process.on('SIGTERM', gracefulShutdown);
   process.on('SIGINT', gracefulShutdown);
 
-  return gracefulShutdown;
+  return { app, gracefulShutdown };
 }
 
 if (process.env.APP_ENV !== 'electron') {

@@ -1,11 +1,12 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
+  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index, Unique,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DataAsJsonString } from 'src/common/decorators';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 @Entity('database_recommendations')
+@Unique(['databaseId', 'name'])
 export class DatabaseRecommendationEntity {
   @PrimaryGeneratedColumn('uuid')
   @Expose()

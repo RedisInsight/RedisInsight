@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { EuiButtonIcon, EuiIcon, EuiPopover, EuiSwitch, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
+import { EuiButtonIconSizes } from '@elastic/eui/src/components/button/button_icon/button_icon'
 import {
   errorValidateRefreshRateNumber,
   MIN_REFRESH_RATE,
@@ -32,6 +33,7 @@ export interface Props {
   onRefresh: (enableAutoRefresh: boolean) => void
   onEnableAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
   onChangeAutoRefreshRate?: (enableAutoRefresh: boolean, refreshRate: string) => void
+  iconSize?: EuiButtonIconSizes
 }
 
 const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * MINUTE // once a minute
@@ -47,6 +49,7 @@ const AutoRefresh = ({
   onRefresh,
   onEnableAutoRefresh,
   onChangeAutoRefreshRate,
+  iconSize = 'm'
 }: Props) => {
   let intervalText: NodeJS.Timeout
   let intervalRefresh: NodeJS.Timeout
@@ -168,6 +171,7 @@ const AutoRefresh = ({
         content={refreshMessage}
       >
         <EuiButtonIcon
+          size={iconSize}
           iconType="refresh"
           disabled={loading}
           onClick={handleRefresh}

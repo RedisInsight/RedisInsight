@@ -1,15 +1,6 @@
 version: "3.4"
 
 services:
-  static-server:
-    build:
-      context: .
-      dockerfile: static-server.Dockerfile
-    volumes:
-      - ./remote:/app/remote
-    ports:
-      - 5551:5551
-
   e2e:
     build:
       context: .
@@ -33,6 +24,8 @@ services:
       E2E_CLOUD_DATABASE_PASSWORD: $E2E_CLOUD_DATABASE_PASSWORD
       E2E_CLOUD_DATABASE_USERNAME: $E2E_CLOUD_DATABASE_USERNAME
       E2E_CLOUD_DATABASE_NAME: $E2E_CLOUD_DATABASE_NAME
+      E2E_CLOUD_API_ACCESS_KEY: $E2E_CLOUD_API_ACCESS_KEY
+      E2E_CLOUD_API_SECRET_KEY: $E2E_CLOUD_API_SECRET_KEY
       REMOTE_FOLDER_PATH: "/root/remote"
     entrypoint: [
         './upload-custom-plugins.sh',

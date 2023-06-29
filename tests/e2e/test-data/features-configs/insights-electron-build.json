@@ -11,11 +11,6 @@
       "flag": true,
       "filters": [
         {
-          "name": "agreements.analytics",
-          "value": false,
-          "cond": "eq"
-        },
-        {
           "name": "config.server.buildType",
           "value": "ELECTRON",
           "cond": "eq"

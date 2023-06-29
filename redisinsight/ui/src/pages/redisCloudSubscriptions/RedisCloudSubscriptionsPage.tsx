@@ -11,10 +11,13 @@ import {
 
 import { Pages } from 'uiSrc/constants'
 import {
+  InstanceRedisCloud,
   LoadedCloud,
   RedisCloudSubscription,
   RedisCloudSubscriptionStatus,
   RedisCloudSubscriptionStatusText,
+  RedisCloudSubscriptionType,
+  RedisCloudSubscriptionTypeText,
 } from 'uiSrc/slices/interfaces'
 import {
   cloudSelector,
@@ -73,8 +76,10 @@ const RedisCloudSubscriptionsPage = () => {
     history.push(Pages.home)
   }
 
-  const handleLoadInstances = (ids: Maybe<number>[]) => {
-    dispatch(fetchInstancesRedisCloud({ ids, credentials }))
+  const handleLoadInstances = (
+    subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType'>>[]
+  ) => {
+    dispatch(fetchInstancesRedisCloud({ subscriptions, credentials }))
   }
 
   const AlertStatusContent = () => (
@@ -158,6 +163,15 @@ const RedisCloudSubscriptionsPage = () => {
           </div>
         )
       },
+    },
+    {
+      field: 'type',
+      className: 'column_type',
+      name: 'Type',
+      width: '120px',
+      dataType: 'string',
+      sortable: true,
+      render: (type: RedisCloudSubscriptionType) => RedisCloudSubscriptionTypeText[type] ?? '-',
     },
     {
       field: 'provider',

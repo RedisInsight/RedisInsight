@@ -56,6 +56,9 @@ dll
 main.js
 main.js.map
 vendor
+redisinsight/main.js.LICENSE.txt
+redisinsight/main.prod.js.LICENSE.txt
+
 
 # E2E tests report
 /tests/e2e/report

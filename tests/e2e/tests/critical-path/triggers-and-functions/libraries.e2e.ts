@@ -46,7 +46,7 @@ test
         await browserPage.Cli.sendCommandInCli(command);
         await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
         await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
-        const row =  await triggersAndFunctionsLibrariesPage.getLibraryItem(libraryName);
+        const row = await triggersAndFunctionsLibrariesPage.getLibraryItem(libraryName);
         await t.expect(row.name).eql(item.name, 'library name is unexpected');
         await t.expect(row.user).eql(item.user, 'user name is unexpected');
         await t.expect(row.pending).eql(item.pending, 'user name is unexpected');

@@ -11,7 +11,7 @@ export class TriggersAndFunctionsFunctionsPage extends InstancePage {
     sectionMask = '[data-testid^=function-details-$name]';
 
     /**
-     * Is functions displayed in the table
+     * get function by name
      * @param name The functions Name
      */
     getFunctionsNameSelector(name: string): Selector {
@@ -19,10 +19,10 @@ export class TriggersAndFunctionsFunctionsPage extends InstancePage {
     }
 
     /**
-     * Is function displayed in the list
-     * @param sectionName The functions Name
+     * get all fields and all field's values from the section
+     * @param sectionName The section Name
      */
     async getFieldsAndValuesBySection(sectionName: FunctionsSections): Promise<string> {
-        return  Selector(this.sectionMask.replace(/\$name/g, sectionName)).textContent;
+        return Selector(this.sectionMask.replace(/\$name/g, sectionName)).textContent;
     }
 }

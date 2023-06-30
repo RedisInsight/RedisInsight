@@ -47,3 +47,9 @@ export enum RecommendationIds {
     avoidLogicalDatabases = 'avoidLogicalDatabases',
     searchJson = 'searchJSON',
 }
+
+export enum Methods {
+    post = 'post',
+    get = 'get',
+    delete = 'delete'
+}

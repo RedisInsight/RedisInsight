@@ -1,7 +1,7 @@
 @echo off
 
-set COMMON_URL=%USERPROFILE%/AppData/Local/Programs/redisinsight/resources/app.asar/index.html
-set ELECTRON_PATH=%USERPROFILE%/AppData/Local/Programs/redisinsight/RedisInsight-preview.exe
+set COMMON_URL=%USERPROFILE%/AppData/Local/Programs/redisinsight/resources/app.asar/dist/renderer/index.html
+set ELECTRON_PATH=%USERPROFILE%/AppData/Local/Programs/redisinsight/RedisInsight-v2.exe
 set OSS_STANDALONE_HOST=%E2E_CLOUD_DATABASE_HOST%
 set OSS_STANDALONE_PORT=%E2E_CLOUD_DATABASE_PORT%
 set OSS_STANDALONE_USERNAME=%E2E_CLOUD_DATABASE_USERNAME%

@@ -12,6 +12,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { setTotalUnread } from 'uiSrc/slices/recommendations/recommendations'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
+import { CustomHeaders } from 'uiSrc/constants/api'
 
 const CommonAppSubscription = () => {
   const { id: instanceId } = useSelector(connectedInstanceSelector)
@@ -28,7 +29,8 @@ const CommonAppSubscription = () => {
     socketRef.current = io(`${getBaseApiUrl()}`, {
       forceNew: false,
       rejectUnauthorized: false,
-      reconnection: true
+      reconnection: true,
+      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {

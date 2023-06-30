@@ -23,6 +23,7 @@ import { AutodiscoveryModule } from 'src/modules/autodiscovery/autodiscovery.mod
 import { DatabaseImportModule } from 'src/modules/database-import/database-import.module';
 import { DummyAuthMiddleware } from 'src/common/middlewares/dummy-auth.middleware';
 import { CustomTutorialModule } from 'src/modules/custom-tutorial/custom-tutorial.module';
+import { CloudModule } from 'src/modules/cloud/cloud.module';
 import { BrowserModule } from './modules/browser/browser.module';
 import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterprise.module';
 import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.module';
@@ -43,6 +44,7 @@ const PATH_CONFIG = config.get('dir_path');
     RouterModule.forRoutes(routes),
     AutodiscoveryModule,
     RedisEnterpriseModule,
+    CloudModule.register(),
     RedisSentinelModule,
     BrowserModule,
     CliModule,

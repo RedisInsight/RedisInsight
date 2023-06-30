@@ -131,6 +131,7 @@ const MonacoEditor = (props: Props) => {
           color="secondary"
           onClick={() => setIsEditing(true)}
           className={styles.editBtn}
+          data-testid="edit-monaco-value"
         >
           <EuiIcon type="pencil" />
         </EuiButton>

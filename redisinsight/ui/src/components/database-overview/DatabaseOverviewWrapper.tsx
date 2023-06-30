@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
-import { DatabaseOverview } from 'uiSrc/components'
 import { useDispatch, useSelector } from 'react-redux'
+import { DatabaseOverview } from 'uiSrc/components'
 import {
   connectedInstanceOverviewSelector,
   connectedInstanceSelector,

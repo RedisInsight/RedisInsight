@@ -47,3 +47,15 @@ export enum RecommendationIds {
     avoidLogicalDatabases = 'avoidLogicalDatabases',
     searchJson = 'searchJSON',
 }
+
+export enum LibrariesSections {
+    Functions = 'Functions',
+    KeyspaceTriggers = 'Keyspace',
+    ClusterFunctions = 'Cluster',
+    StreamFunctions= 'Stream',
+}
+
+export enum FunctionsSections {
+    General = 'General',
+    Flag = 'Flag'
+}

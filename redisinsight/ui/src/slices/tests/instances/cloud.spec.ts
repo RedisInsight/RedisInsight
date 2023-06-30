@@ -30,7 +30,7 @@ import reducer, {
   createInstancesRedisCloud,
   createInstancesRedisCloudSuccess,
 } from '../../instances/cloud'
-import { LoadedCloud } from '../../interfaces'
+import { LoadedCloud, RedisCloudSubscriptionType } from '../../interfaces'
 import { addErrorNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services', () => ({
@@ -565,6 +565,7 @@ describe('cloud slice', () => {
         const data = [
           {
             id: 110358,
+            type: RedisCloudSubscriptionType.Flexible,
             name: 'Subscription test example with',
             numberOfDatabases: 1,
             status: 'active',
@@ -576,7 +577,7 @@ describe('cloud slice', () => {
         }
         const responsePayload = { data, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(fetchSubscriptionsRedisCloud(credentials))
@@ -609,7 +610,7 @@ describe('cloud slice', () => {
           },
         }
 
-        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
         await store.dispatch<any>(fetchSubscriptionsRedisCloud(credentials))
@@ -636,7 +637,7 @@ describe('cloud slice', () => {
         }
         const responsePayload = { data: account, status: 200 }
 
-        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(fetchAccountRedisCloud(credentials))
@@ -667,7 +668,7 @@ describe('cloud slice', () => {
           },
         }
 
-        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
         await store.dispatch<any>(fetchAccountRedisCloud(credentials))
@@ -686,7 +687,11 @@ describe('cloud slice', () => {
     describe('fetchInstancesRedisCloud', () => {
       it('call fetchInstancesRedisCloud and loadInstancesRedisCloudSuccess when fetch is successed', async () => {
         // Arrange
-        const ids = [1, 2, 3]
+        const subscriptions = [
+          { subscriptionId: 1, subscriptionType: RedisCloudSubscriptionType.Flexible },
+          { subscriptionId: 2, subscriptionType: RedisCloudSubscriptionType.Flexible },
+          { subscriptionId: 3, subscriptionType: RedisCloudSubscriptionType.Fixed },
+        ]
         const credentials = {
           accessKey: '123',
           secretKey: '123',
@@ -697,7 +702,7 @@ describe('cloud slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchInstancesRedisCloud({ ids, credentials })
+          fetchInstancesRedisCloud({ subscriptions, credentials })
         )
 
         // Assert
@@ -705,7 +710,7 @@ describe('cloud slice', () => {
           loadInstancesRedisCloud(),
           loadInstancesRedisCloudSuccess({
             data: responsePayload.data,
-            credentials: { ids, credentials },
+            credentials: { subscriptions, credentials },
           }),
         ]
 

@@ -20,8 +20,8 @@ const REDISTACK_HIGH_VERSION_REQUIRE_MODULES: Array<string | Array<string>> = [
   RedisDefaultModules.TimeSeries,
 ]
 
-const REDISTACK_HIGH_VERSION_OPTIONAL_MODULES: Array<string> = [
-  RedisDefaultModules.Gears,
+const REDISTACK_HIGH_VERSION_OPTIONAL_MODULES: Array<string[]> = [
+  [RedisDefaultModules.RedisGears, RedisDefaultModules.RedisGears2]
 ]
 
 const checkRediStackModules = (modules: any[], required: any[], optional: any[] = []) => {

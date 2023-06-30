@@ -9,7 +9,7 @@ interface Props {
 }
 
 const JSONViewer = (props: Props) => {
-  const { value, expanded = false, space = 4 } = props
+  const { value, expanded = false, space = 2 } = props
 
   try {
     JSON.parse(value)

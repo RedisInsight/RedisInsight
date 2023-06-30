@@ -18,7 +18,6 @@ export class MyRedisDatabasePage extends BasePage {
     //BUTTONS
     deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
     confirmDeleteButton = Selector('[data-testid^=delete-instance-]').withExactText('Remove');
-    
     deleteButtonInPopover = Selector('#deletePopover button');
     confirmDeleteAllDbButton = Selector('[data-testid=delete-selected-dbs]');
     editDatabaseButton = Selector('[data-testid^=edit-instance]');
@@ -39,7 +38,7 @@ export class MyRedisDatabasePage extends BasePage {
     exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
-    exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', {timeout: 500});
+    exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', { timeout: 500 });
     //ICONS
     moduleColumn = Selector('[data-test-subj=tableHeaderCell_modules_3]');
     moduleSearchIcon = Selector('[data-testid^=RediSearch]');
@@ -72,6 +71,8 @@ export class MyRedisDatabasePage extends BasePage {
     successResultsAccordion = Selector('[data-testid^=success-results-]');
     partialResultsAccordion = Selector('[data-testid^=partial-results-]');
     failedResultsAccordion = Selector('[data-testid^=failed-results-]');
+    // CONTAINERS
+    databaseContainer = Selector('.databaseContainer');
 
     /**
      * Click on the database by name
@@ -82,7 +83,7 @@ export class MyRedisDatabasePage extends BasePage {
             await t.click(this.Toast.toastCloseButton);
         }
         const db = this.dbNameList.withExactText(dbName.trim());
-        await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, {timeout: 10000});
+        await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, { timeout: 10000 });
         await t.click(db);
     }
 

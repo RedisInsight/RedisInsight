@@ -10,3 +10,4 @@ export * from './telemetry-events';
 export * from './app-events';
 export * from './redis-connection';
 export * from './recommendations';
+export * from './custom-error-codes';

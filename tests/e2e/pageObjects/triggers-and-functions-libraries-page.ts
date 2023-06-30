@@ -11,6 +11,12 @@ export class TriggersAndFunctionsLibrariesPage extends InstancePage {
     textAreaMonaco = Selector('[class^=view-lines]');
 
     configurationLink = Selector('[data-testid=library-view-tab-config]');
+    functionsLink = Selector('[data-testid=triggered-functions-tab-functions]');
+
+    trashMask = '[data-testid=delete-library-icon-$name]';
+    deleteMask = '[data-testid=delete-library-$name]';
+    sectionMask = '[data-testid^=functions-$name]';
+    functionMask = '[data-testid=func-$name]';
 
     /**
      * Is library displayed in the table
@@ -41,8 +47,8 @@ export class TriggersAndFunctionsLibrariesPage extends InstancePage {
      * @param functionsName The section Name
      */
     getFunctionsByName(sectionName: LibrariesSections, functionsName: string): Selector {
-        const KeySpaceSection = Selector(`[data-testid^=functions-${sectionName}]`);
-        return KeySpaceSection.find(`[data-testid=func-${functionsName}]`);
+        const KeySpaceSection = Selector(this.sectionMask.replace(/\$name/g, sectionName));
+        return KeySpaceSection.find(this.functionMask.replace(/\$name/g, functionsName));
     }
 
     /**
@@ -68,7 +74,16 @@ export class TriggersAndFunctionsLibrariesPage extends InstancePage {
      * Get  text from monacoEditor
      */
     async getTextToMonaco(): Promise<string> {
-
         return (await this.textAreaMonaco.textContent).replace(/\s+/g, ' ');
+    }
+
+    /**
+     * Delete library
+     * @param name The name os library
+     */
+    async deleteLibraryByName(name: string){
+        await t.hover(this.getLibraryNameSelector(name))
+            .click(Selector(this.trashMask.replace(/\$name/g, name)))
+            .click(Selector(this.deleteMask.replace(/\$name/g, name)));
     }
 }

@@ -135,7 +135,7 @@ export class BrowserPage extends InstancePage {
     relativeTimeOption = Selector('#idle');
     timestampOption = Selector('#time');
     formatSwitcher = Selector('[data-testid=select-format-key-value]', { timeout: 2000 });
-    formatSwitcherIcon = Selector('img[data-testid^=key-value-formatter-option-selected]');
+    formatSwitcherIcon = Selector('[data-testid^=key-value-formatter-option-selected]');
     selectIndexDdn = Selector('[data-testid=select-index-placeholder],[data-testid=select-search-mode]', { timeout: 1000 });
     createIndexBtn = Selector('[data-testid=create-index-btn]');
     cancelIndexCreationBtn = Selector('[data-testid=create-index-cancel-btn]');
@@ -195,7 +195,6 @@ export class BrowserPage extends InstancePage {
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
     keyNameInTheList = Selector(this.cssSelectorKey);
-    databaseNames = Selector('[data-testid^=db_name_]');
     hashFieldsList = Selector('[data-testid^=hash-field-] span');
     hashValuesList = Selector('[data-testid^=hash-field-value-] span');
     hashField = Selector('[data-testid^=hash-field-]').nth(0);
@@ -343,6 +342,9 @@ export class BrowserPage extends InstancePage {
      * @param members The key members
      */
     async addSetKey(keyName: string, TTL = ' ', members = ' '): Promise<void> {
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
+        }
         await Common.waitForElementNotVisible(this.progressLine);
         await Common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
@@ -407,6 +409,9 @@ export class BrowserPage extends InstancePage {
      * @param value The value of the key
      */
     async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' '): Promise<void> {
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
+        }
         await Common.waitForElementNotVisible(this.progressLine);
         await Common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
@@ -753,11 +758,6 @@ export class BrowserPage extends InstancePage {
             .typeText(this.setMemberInput, keyMember, { replace: true, paste: true })
             .typeText(this.zsetMemberScoreInput, score, { replace: true, paste: true })
             .click(this.saveMemberButton);
-    }
-
-    //Get databases name
-    async getDatabasesName(): Promise<string> {
-        return this.databaseNames.textContent;
     }
 
     //Open key details

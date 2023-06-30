@@ -31,7 +31,7 @@ const RecommendationVoting = ({ vote, name, id = '', live = false, containerClas
       gutterSize={live ? 'none' : 'l'}
       data-testid="recommendation-voting"
     >
-      <EuiText size="m">Is this useful?</EuiText>
+      <EuiText size="m" className={cx({ [styles.highlightText]: live })}>Is this useful?</EuiText>
       <div className="voteContent">
         {Object.values(Vote).map((option) => (
           <VoteOption

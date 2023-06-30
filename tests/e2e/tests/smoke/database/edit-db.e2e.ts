@@ -1,5 +1,5 @@
 import { ClientFunction } from 'testcafe';
-import { acceptLicenseTerms, deleteDatabase, addNewStandaloneDatabase, addNewREClusterDatabase, addNewRECloudDatabase } from '../../../helpers/database';
+import { acceptLicenseTerms, deleteDatabase, addNewStandaloneDatabase, addNewREClusterDatabase } from '../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
@@ -41,12 +41,4 @@ test
         await addNewStandaloneDatabase(ossStandaloneConfig);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.expect(getPageUrl()).contains('browser', 'Browser page not opened');
-    });
-// skiped until the RE Cloud connection is implemented
-test.skip
-    .meta({ rte: rte.reCloud })('Verify that user can connect to the RE Cloud database', async t => {
-    // TODO: add api keys from env
-        const databaseName = await addNewRECloudDatabase('', '');
-        await myRedisDatabasePage.clickOnDBByName(databaseName);
-        await t.expect(getPageUrl()).contains('browser', 'The edit view is not opened');
     });

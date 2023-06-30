@@ -1,3 +1,12 @@
+export enum RedisEnterprisePersistencePolicy {
+  AofEveryOneSecond = 'aof-every-1-second',
+  AofEveryWrite = 'aof-every-write',
+  SnapshotEveryOneHour = 'snapshot-every-1-hour',
+  SnapshotEverySixHours = 'snapshot-every-6-hours',
+  SnapshotEveryTwelveHours = 'snapshot-every-12-hours',
+  None = 'none',
+}
+
 export interface IRedisEnterpriseDatabase {
   gradual_src_mode: string;
   group_uid: number;

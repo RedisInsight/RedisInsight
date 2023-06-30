@@ -3,7 +3,7 @@ import React, { ReactElement } from 'react'
 import { Provider, useSelector } from 'react-redux'
 import { EuiPage, EuiPageBody } from '@elastic/eui'
 
-import store from 'uiSrc/slices/store'
+import { store } from 'uiSrc/slices/store'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { PagePlaceholder } from 'uiSrc/components'
 import Router from './Router'

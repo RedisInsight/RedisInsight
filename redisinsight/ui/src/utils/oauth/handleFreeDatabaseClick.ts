@@ -3,21 +3,18 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { setSignInDialogState } from 'uiSrc/slices/oauth/cloud'
 import { SignInDialogSource } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-// import store from 'uiSrc/slices/store'
+import { store } from 'uiSrc/slices/store'
 
 export const handleFreeDatabaseClick = async (e: React.MouseEvent, source: SignInDialogSource) => {
-  //
-  const { default: store } = await import('uiSrc/slices/store')
-
   const state = store?.getState()
 
-  const isCloudSSOEnabled = get(
+  const isCloudSsoEnabled = get(
     state,
     `app.features.featureFlags.features.${FeatureFlags.cloudSso}.flag`,
     false
   )
 
-  if (!isCloudSSOEnabled) {
+  if (!isCloudSsoEnabled) {
     return
   }
   e?.preventDefault()

@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import configureMockStore from 'redux-mock-store'
 import { render as rtlRender, waitFor } from '@testing-library/react'
 
-import rootStore, { RootState } from 'uiSrc/slices/store'
+import { RootState, store as rootStore } from 'uiSrc/slices/store'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
 import { initialState as initialStateCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { initialState as initialStateClientCerts } from 'uiSrc/slices/instances/clientCerts'

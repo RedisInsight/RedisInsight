@@ -24,7 +24,7 @@ import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import { SignInDialogSource } from 'uiSrc/slices/interfaces'
 import { handleFreeDatabaseClick } from 'uiSrc/utils/oauth/handleFreeDatabaseClick'
 import { FeatureFlags } from 'uiSrc/constants'
-import { ReactComponent as TadaIcon } from 'uiSrc/assets/img/oauth/tada.svg'
+import { ReactComponent as ConfettiIcon } from 'uiSrc/assets/img/oauth/confetti.svg'
 import SearchDatabasesList from '../SearchDatabasesList'
 
 import styles from './styles.module.scss'
@@ -101,7 +101,10 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
     event: TelemetryEvent,
     eventData: any = {},
   ) => {
-    handleFreeDatabaseClick(e, SignInDialogSource.WelcomeScreen)
+    handleFreeDatabaseClick(
+      e,
+      welcomePage ? SignInDialogSource.WelcomeScreen : SignInDialogSource.ListOfDatabases
+    )
     handleClickLink(event, eventData)
   }
 
@@ -204,7 +207,7 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
           anchorClassName={styles.cloudSsoPromoBtnAnchor}
           content={(
             <div className={styles.cloudSsoPromoTooltip}>
-              <EuiIcon type={TadaIcon} className={styles.cloudSsoPromoTooltipIcon} />
+              <EuiIcon type={ConfettiIcon} className={styles.cloudSsoPromoTooltipIcon} />
               <div>
                 New!
                 <br />

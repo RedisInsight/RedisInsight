@@ -75,6 +75,8 @@ const LiveTimeRecommendations = () => {
   // To prevent duplication emit for FlyOut close event
   // https://github.com/elastic/eui/issues/3437
   const isCloseEventSent = useRef<boolean>(false)
+  // Flyout onClose did not updated between rerenders
+  const recommendationsState = useRef<IRecommendation[]>([])
 
   const dispatch = useDispatch()
   const history = useHistory()
@@ -107,6 +109,10 @@ const LiveTimeRecommendations = () => {
       })
     }
   }, [isContentVisible])
+
+  useEffect(() => {
+    recommendationsState.current = recommendations
+  }, [recommendations])
 
   const toggleContent = () => {
     dispatch(setIsContentVisible(!isContentVisible))
@@ -145,7 +151,7 @@ const LiveTimeRecommendations = () => {
     dispatch(setIsContentVisible(false))
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
-      eventData: getTelemetryData(recommendations),
+      eventData: getTelemetryData(recommendationsState.current),
     })
     isCloseEventSent.current = true
   }

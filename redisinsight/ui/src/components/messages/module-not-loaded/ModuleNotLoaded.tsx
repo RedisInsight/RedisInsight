@@ -12,13 +12,15 @@ import { ReactComponent as MobileIcon } from 'uiSrc/assets/img/icons/mobile_modu
 import { ReactComponent as DesktopIcon } from 'uiSrc/assets/img/icons/module_not_loaded.svg'
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
 import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
-import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { RedisDefaultModules, SignInDialogSource } from 'uiSrc/slices/interfaces'
+import { handleFreeDatabaseClick } from 'uiSrc/utils/oauth/handleFreeDatabaseClick'
 
 import styles from './styles.module.scss'
 
 export interface IProps {
   moduleName: RedisDefaultModules
   id: string
+  onClose?: () => void
   type?: 'workbench' | 'browser'
 }
 
@@ -50,7 +52,7 @@ const ListItem = ({ item }: { item: string }) => (
   </li>
 )
 
-const ModuleNotLoaded = ({ moduleName, id, type = 'workbench' }: IProps) => {
+const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps) => {
   const [width, setWidth] = useState(0)
 
   const module = MODULE_TEXT_VIEW[moduleName]
@@ -72,6 +74,13 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench' }: IProps) => {
     } catch (e) {
       return baseUrl
     }
+  }
+
+  const onFreeDatabaseClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const source = type === 'browser' ? SignInDialogSource.BrowserSearch : SignInDialogSource[module]
+
+    handleFreeDatabaseClick(e, source)
+    onClose?.()
   }
 
   return (
@@ -123,6 +132,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench' }: IProps) => {
           external={false}
           target="_blank"
           href={getStartedLink('https://redis.com/try-free')}
+          onClick={onFreeDatabaseClick}
           data-testid="get-started-link"
         >
           <EuiButton

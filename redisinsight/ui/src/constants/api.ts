@@ -112,6 +112,8 @@ enum ApiEndpoints {
   HISTORY = 'history',
 
   FEATURES = 'features',
+
+  CLOUD_ME = 'cloud/me',
 }
 
 export enum CustomHeaders {

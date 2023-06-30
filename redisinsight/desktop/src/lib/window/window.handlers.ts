@@ -7,7 +7,7 @@ import {
   getTrayInstance,
   electronStore
 } from 'desktopSrc/lib'
-import { ElectronStorageItem } from 'uiSrc/electron/constants'
+import { ElectronStorageItem, IpcOnEvent } from 'uiSrc/electron/constants'
 
 export const initWindowHandlers = (
   newWindow: BrowserWindow,
@@ -24,7 +24,7 @@ export const initWindowHandlers = (
     }
 
     // set up windowId to preload.js
-    newWindow.webContents.send('sendWindowId', id)
+    newWindow.webContents.send(IpcOnEvent.sendWindowId, id)
 
     const zoomFactor = (electronStore?.get(ElectronStorageItem.zoomFactor) as number) ?? null
     if (zoomFactor) {

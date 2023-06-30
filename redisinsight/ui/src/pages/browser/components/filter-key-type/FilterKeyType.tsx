@@ -113,7 +113,7 @@ const FilterKeyType = () => {
             data-testid="filter-not-available-modal"
           >
             <EuiModalBody className={styles.modalBody}>
-              <FilterNotAvailable />
+              <FilterNotAvailable onClose={() => setIsInfoPopoverOpen(false)} />
             </EuiModalBody>
           </EuiModal>
         )}

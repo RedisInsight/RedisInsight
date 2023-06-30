@@ -804,7 +804,7 @@
         "value": "For a quick trial of the features, spin up a free developer database with "
       },
       {
-        "type": "link",
+        "type": "link-sso",
         "value": {
           "href": "https://redis.com/try-free/",
           "name": "Redis Cloud"

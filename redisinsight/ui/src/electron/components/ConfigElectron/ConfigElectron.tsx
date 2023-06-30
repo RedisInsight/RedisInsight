@@ -17,6 +17,12 @@ const ConfigElectron = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    window.app.sendSsoConnected((_e: any, connected: string = '') => {
+      console.log({ connected })
+    })
+  }, [])
+
+  useEffect(() => {
     if (serverInfo) {
       ipcCheckUpdates(serverInfo, dispatch)
     }

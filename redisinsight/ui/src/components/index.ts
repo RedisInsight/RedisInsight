@@ -27,6 +27,8 @@ import RecommendationVoting from './recommendation-voting'
 import RecommendationCopyComponent from './recommendation-copy-component'
 import FeatureFlagComponent from './feature-flag-component'
 import { ModuleNotLoaded, FilterNotAvailable } from './messages'
+import OAuthSignInDialog from './oauth-sign-in-dialog'
+import OAuthSocial from './oauth-social'
 
 export {
   NavigationMenu,
@@ -61,5 +63,7 @@ export {
   RecommendationCopyComponent,
   FeatureFlagComponent,
   ModuleNotLoaded,
-  FilterNotAvailable
+  FilterNotAvailable,
+  OAuthSignInDialog,
+  OAuthSocial,
 }

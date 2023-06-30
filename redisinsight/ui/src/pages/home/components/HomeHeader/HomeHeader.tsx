@@ -11,7 +11,7 @@ import {
 import { isEmpty } from 'lodash'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import { ImportDatabasesDialog } from 'uiSrc/components'
+import { FeatureFlagComponent, ImportDatabasesDialog } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import HelpLinksMenu from 'uiSrc/pages/home/components/HelpLinksMenu'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
@@ -21,6 +21,10 @@ import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
+import { SignInDialogSource } from 'uiSrc/slices/interfaces'
+import { handleFreeDatabaseClick } from 'uiSrc/utils/oauth/handleFreeDatabaseClick'
+import { FeatureFlags } from 'uiSrc/constants'
+import { ReactComponent as TadaIcon } from 'uiSrc/assets/img/oauth/tada.svg'
 import SearchDatabasesList from '../SearchDatabasesList'
 
 import styles from './styles.module.scss'
@@ -92,6 +96,15 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
     })
   }
 
+  const handleCreateDatabaseClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    event: TelemetryEvent,
+    eventData: any = {},
+  ) => {
+    handleFreeDatabaseClick(e, SignInDialogSource.WelcomeScreen)
+    handleClickLink(event, eventData)
+  }
+
   const AddInstanceBtn = () => (
     <>
       <EuiButton
@@ -161,10 +174,10 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
   )
 
   const CreateBtn = ({ content }: { content: ContentCreateRedis }) => {
-    const { title, description, styles, links } = content
+    const { title, description, styles: stylesCss, links } = content
     // @ts-ignore
-    const linkStyles = styles ? styles[theme] : {}
-    return (
+    const linkStyles = stylesCss ? stylesCss[theme] : {}
+    const promoLink = (
       <PromoLink
         title={title}
         description={description}
@@ -177,11 +190,32 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
             ? `url(${getPathToResource(linkStyles.backgroundImage)})`
             : undefined
         }}
-        onClick={() => handleClickLink(
+        onClick={(e) => handleCreateDatabaseClick(
+          e,
           HELP_LINKS.cloud.event,
           { source: welcomePage ? 'Welcome page' : 'My Redis databases' }
         )}
       />
+    )
+    return (
+      <FeatureFlagComponent name={FeatureFlags.cloudSso} otherwise={promoLink}>
+        <EuiToolTip
+          position="bottom"
+          anchorClassName={styles.cloudSsoPromoBtnAnchor}
+          content={(
+            <div className={styles.cloudSsoPromoTooltip}>
+              <EuiIcon type={TadaIcon} className={styles.cloudSsoPromoTooltipIcon} />
+              <div>
+                New!
+                <br />
+                Now you can easily connect and create new database on Redis Cloud
+              </div>
+            </div>
+          )}
+        >
+          {promoLink}
+        </EuiToolTip>
+      </FeatureFlagComponent>
     )
   }
 

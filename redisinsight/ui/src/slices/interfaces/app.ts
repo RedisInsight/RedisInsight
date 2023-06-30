@@ -200,6 +200,38 @@ export interface StateAppNotifications {
   }
 }
 
+export interface StateAppOAuth {
+  loading: boolean
+  error: string
+  currentAccount: Nullable<Account>
+  signInDialog: SignInDialog
+}
+
+export enum SignInDialogSource {
+  ListOfDatabases = 'list of databases',
+  WelcomeScreen = 'welcome screen',
+  BrowserContentMenu = 'browser content menu',
+  BrowserFiltering = 'browser filtering',
+  BrowserSearch = 'browser search',
+  RediSearch = 'workbench RediSearch',
+  RedisJSON = 'workbench RedisJSON',
+  RedisTimeSeries = 'workbench RedisTimeSeries',
+  RedisGraph = 'workbench RedisGraph',
+  RedisBloom = 'workbench RedisBloom',
+}
+
+export interface SignInDialog {
+  isOpen: boolean
+  source: Nullable<SignInDialogSource>
+}
+
+export interface Account {
+  name?: string
+  id?: number
+  currentAccountId?: number
+  accounts?: Account[]
+}
+
 export enum RedisResponseEncoding {
   UTF8 = 'utf8',
   ASCII = 'ascii',

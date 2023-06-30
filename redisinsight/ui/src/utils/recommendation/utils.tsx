@@ -16,6 +16,7 @@ import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
 import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
 
+import { handleFreeDatabaseClick } from '../oauth/handleFreeDatabaseClick'
 import styles from './styles.module.scss'
 
 const recommendationsContent = _content as IRecommendationsStatic
@@ -136,6 +137,19 @@ const renderContentElement = (
           external={false}
           data-testid={`link-${telemetryName}-${idx}`}
           target="_blank"
+          href={addUtmToLink(value.href, telemetryName)}
+        >
+          {value.name}
+        </EuiLink>
+      )
+    case 'link-sso':
+      return (
+        <EuiLink
+          key={`${telemetryName}-${idx}`}
+          external={false}
+          data-testid={`link-sso-${telemetryName}-${idx}`}
+          target="_blank"
+          onClick={(e) => handleFreeDatabaseClick(e, telemetryName)}
           href={addUtmToLink(value.href, telemetryName)}
         >
           {value.name}

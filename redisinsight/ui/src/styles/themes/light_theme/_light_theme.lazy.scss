@@ -1,14 +1,14 @@
-@import '../../../../../../node_modules/@elastic/eui/src/themes/eui/eui_colors_light';
-@import 'theme_color';
+@import "../../../../../../node_modules/@elastic/eui/src/themes/eui/eui_colors_light";
+@import "theme_color";
 
 // Global styling
-@import '../../../../../../node_modules/@elastic/eui/src/global_styling/index';
+@import "../../../../../../node_modules/@elastic/eui/src/global_styling/index";
 
 // Components
-@import '../../../../../../node_modules/@elastic/eui/src/components/index';
+@import "../../../../../../node_modules/@elastic/eui/src/components/index";
 
 // Packages
-@import '../../../../../../node_modules/@elastic/eui/packages/index';
+@import "../../../../../../node_modules/@elastic/eui/packages/index";
 
 // TODO[artyom.podymov]: Maybe there is a better approach for dynamically switching themes
 :root {
@@ -199,4 +199,9 @@
   --triggerIconActiveColor: #{$triggerIconActiveColor};
   --liveRecommendationVoteBgColor: #{$separatorColor};
   --triggerIconTextColor: #{$triggerIconTextColor};
+
+  //cloud sso
+  --cloudSsoGoogle: #{$cloudSsoGoogle};
+  --cloudSsoGithub: #{$cloudSsoGithub};
+  --cloudSsoAdvantagesBgColor: #{$cloudSsoAdvantagesBgColor};
 }

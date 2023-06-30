@@ -1,0 +1,75 @@
+.content {
+  width: 800px !important;
+  min-width: 800px !important;
+  height: 500px;
+}
+
+.advantages {
+  align-items: stretch;
+  min-width: 400px !important;
+  width: 400px !important;
+  padding: 80px 40px 0;
+  justify-content: space-between;
+
+  background-color: var(--cloudSsoAdvantagesBgColor);
+}
+
+.title {
+  font-size: 20px;
+}
+
+.advantageTitle {
+  font-size: 14px;
+  line-height: normal;
+  padding-bottom: 5px;
+}
+
+.advantageText {
+  font-size: 12px;
+  line-height: normal;
+  color: var(--euiTextSubduedColor);
+}
+
+.flexGroup {
+  height: 100%;
+}
+
+.advantage {
+  display: flex;
+  padding-top: 16px;
+}
+
+.advantageIcon {
+  margin-right: 6px;
+}
+
+.developerIcon {
+  height: 108px !important;
+  width: 120px !important;
+}
+
+.social {
+  justify-content: normal;
+  text-align: center;
+  padding: 80px 24px 0;
+}
+
+.socialSubTitle {
+  padding-top: 10px;
+  font-size: 12px;
+}
+
+.socialText {
+  font-size: 10px !important;
+  line-height: 150% !important;
+}
+
+:global {
+  .euiModal .euiModal__flex {
+    max-height: 100% !important;
+    border-radius: 8px;
+  }
+  .euiModalBody__overflow {
+    padding: 0 !important;
+  }
+}

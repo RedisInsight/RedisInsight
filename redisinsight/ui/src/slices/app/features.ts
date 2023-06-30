@@ -25,7 +25,10 @@ export const initialState: StateAppFeatures = {
     features: {
       [FeatureFlags.insightsRecommendations]: {
         flag: false
-      }
+      },
+      [FeatureFlags.cloudSso]: {
+        flag: false
+      },
     }
   }
 }
@@ -95,7 +98,13 @@ const appFeaturesSlice = createSlice({
     },
     getFeatureFlagsSuccess: (state, { payload }) => {
       state.featureFlags.loading = false
-      state.featureFlags.features = payload.features
+      // state.featureFlags.features = payload.features
+      state.featureFlags.features = {
+        ...payload.features,
+        [FeatureFlags.cloudSso]: {
+          flag: true,
+        },
+      }
     },
     getFeatureFlagsFailure: (state) => {
       state.featureFlags.loading = false

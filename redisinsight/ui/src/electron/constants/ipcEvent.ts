@@ -1,7 +1,15 @@
-enum IpcEvent {
+enum IpcInvokeEvent {
   getStoreValue = 'getStoreValue',
   deleteStoreValue = 'deleteStoreValue',
   getAppVersion = 'getAppVersion',
 }
 
-export default IpcEvent
+enum IpcOnEvent {
+  sendWindowId = 'sendWindowId',
+  sendSsoConnected = 'sendSsoConnected',
+}
+
+export {
+  IpcInvokeEvent,
+  IpcOnEvent,
+}

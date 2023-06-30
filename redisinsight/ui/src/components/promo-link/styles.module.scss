@@ -9,20 +9,20 @@
 }
 
 .link {
-  border: 2px solid var(--euiColorSecondary);
-  padding: 9px 24px;
+  border: 1px solid var(--separatorColorLight);
+  padding: 6px 16px;
   letter-spacing: normal;
   border-radius: 4px;
   text-align: left;
   position: relative;
-  width: 420px;
-  height: 64px;
-  padding-right: 40px;
+  width: 260px;
+  height: 40px;
   background-size: cover;
   background-position: center;
+  background-color: var(--euiColorEmptyShade);
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     right: 0;
@@ -35,21 +35,26 @@
   }
 
   .title {
-    padding-top: 3px;
-    line-height: 16px;
+    font-size: 12px !important;
     position: relative;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1;
+    padding-left: 30px;
   }
 
   .description {
-    font-size: 12px !important;
+    font-size: 10px !important;
+    padding-left: 30px;
     position: relative;
+    padding-top: 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1;
+    color: var(--euiTextSubduedColor) !important;
   }
 
   .icon {
@@ -59,5 +64,18 @@
     color: var(--euiTextColor);
     width: 20px;
     height: 20px;
+  }
+
+  .cloudIcon {
+    position: absolute;
+    width: 28px;
+    height: 20px;
+    top: 8px;
+    left: 10px;
+
+    path {
+      fill: var(--euiColorEmptyShade);
+      stroke: var(--euiTextSubduedColor);
+    }
   }
 }

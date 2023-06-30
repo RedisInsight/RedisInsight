@@ -3,7 +3,6 @@ import React, { useContext } from 'react'
 import { EuiButtonEmpty, EuiTitle } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import cx from 'classnames'
 
 import { Theme, Pages } from 'uiSrc/constants'
 import { resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
@@ -11,7 +10,9 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
 import { resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
 
-import { ipcAuthGithub, ipcAuthGoogle } from 'uiSrc/electron/utils'
+import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
+import lightLogo from 'uiSrc/assets/img/light_logo.svg'
+
 import styles from './PageHeader.module.scss'
 
 interface Props {
@@ -36,14 +37,6 @@ const PageHeader = ({ title, subtitle, children }: Props) => {
     history.push(Pages.home)
   }
 
-  const authGoogle = () => {
-    ipcAuthGoogle()
-  }
-
-  const authGithub = () => {
-    ipcAuthGithub()
-  }
-
   return (
     <div className={styles.pageHeader}>
       <div className={styles.pageHeaderTop}>
@@ -57,18 +50,12 @@ const PageHeader = ({ title, subtitle, children }: Props) => {
         </div>
         <div className={styles.pageHeaderLogo}>
           <EuiButtonEmpty
-            aria-label="auth google"
-            onClick={authGoogle}
-            onKeyDown={authGoogle}
-            className={cx(styles.logo, styles.google)}
+            aria-label="redisinsight"
+            onClick={goHome}
+            onKeyDown={goHome}
+            className={styles.logo}
             tabIndex={0}
-          />
-          <EuiButtonEmpty
-            aria-label="auth github"
-            onClick={authGithub}
-            onKeyDown={authGithub}
-            className={cx(styles.logo, styles.github)}
-            tabIndex={0}
+            iconType={theme === Theme.Dark ? darkLogo : lightLogo}
           />
         </div>
       </div>

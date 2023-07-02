@@ -1,6 +1,9 @@
 import 'dotenv/config';
+import { join } from 'path';
+import * as hbs from 'hbs';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { INestApplication, NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
@@ -37,18 +40,29 @@ export default async function bootstrap(): Promise<IApp> {
     };
   }
 
-  const app = await NestFactory.create(AppModule, options);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
   app.useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()));
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
   app.setGlobalPrefix(serverConfig.globalPrefix);
+  // eslint-disable-next-line no-underscore-dangle
+  app.engine('hbs', hbs.__express);
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
 
   if (process.env.APP_ENV !== 'electron') {
     SwaggerModule.setup(
       serverConfig.docPrefix,
       app,
       SwaggerModule.createDocument(app, SWAGGER_CONFIG),
+      {
+        swaggerOptions: {
+          docExpansion: 'none',
+          tagsSorter: 'alpha',
+          operationsSorter: 'alpha',
+        },
+      },
     );
   } else {
     app.useWebSocketAdapter(new WindowsAuthAdapter(app));

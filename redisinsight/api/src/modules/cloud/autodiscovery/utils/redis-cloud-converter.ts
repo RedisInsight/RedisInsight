@@ -4,7 +4,7 @@ import {
   CloudAccountInfo,
   CloudDatabase, CloudDatabaseMemoryStorage,
   CloudDatabasePersistencePolicy, CloudDatabaseProtocol,
-  CloudSubscription, CloudSubscriptionType, ICloudApiDatabase,
+  CloudSubscription, CloudSubscriptionType, ICloudApiDatabase, ICloudApiSubscription,
 } from 'src/modules/cloud/autodiscovery/models';
 import { plainToClass } from 'class-transformer';
 
@@ -20,12 +20,12 @@ export const parseCloudAccountResponse = (account: any): CloudAccountInfo => pla
 });
 
 export const parseCloudSubscriptionsResponse = (
-  subscriptions: any[],
+  subscriptions: ICloudApiSubscription[],
   type: CloudSubscriptionType,
 ): CloudSubscription[] => {
   const result: CloudSubscription[] = [];
   if (subscriptions?.length) {
-    subscriptions.forEach((subscription): void => {
+    subscriptions?.forEach?.((subscription): void => {
       result.push(plainToClass(CloudSubscription, {
         id: subscription.id,
         type,

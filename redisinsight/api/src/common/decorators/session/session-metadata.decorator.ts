@@ -1,14 +1,14 @@
 import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Validator } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { Session } from 'src/common/models';
+import { SessionMetadata } from 'src/common/models';
 
 const validator = new Validator();
 
-export const sessionFromRequestFactory = (data: unknown, ctx: ExecutionContext): Session => {
+export const sessionMetadataFromRequestFactory = (data: unknown, ctx: ExecutionContext): SessionMetadata => {
   const request = ctx.switchToHttp().getRequest();
 
-  const session = plainToClass(Session, request.session);
+  const session = plainToClass(SessionMetadata, request.session);
 
   const errors = validator.validateSync(session, {
     whitelist: false, // we need this to allow additional fields if needed for flexibility
@@ -21,4 +21,4 @@ export const sessionFromRequestFactory = (data: unknown, ctx: ExecutionContext):
   return session;
 };
 
-export const SessionFromRequest = createParamDecorator(sessionFromRequestFactory);
+export const RequestSessionMetadata = createParamDecorator(sessionMetadataFromRequestFactory);

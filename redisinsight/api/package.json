@@ -47,6 +47,7 @@
     "@nestjs/swagger": "^6.1.2",
     "@nestjs/typeorm": "^9.0.1",
     "@nestjs/websockets": "^9.0.11",
+    "@okta/okta-auth-js": "^7.3.0",
     "adm-zip": "^0.5.9",
     "analytics-node": "^4.0.1",
     "axios": "^0.25.0",
@@ -59,6 +60,7 @@
     "dotenv": "^16.0.0",
     "express": "^4.17.1",
     "fs-extra": "^10.0.0",
+    "hbs": "^4.2.0",
     "ioredis": "^5.2.2",
     "is-glob": "^4.0.1",
     "keytar": "^7.9.0",
@@ -143,7 +145,9 @@
       ".spec.ts$"
     ],
     "testEnvironment": "node",
-    "setupFilesAfterEnv": ["<rootDir>/../.jest.setup.ts"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/../.jest.setup.ts"
+    ],
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/$1",
       "apiSrc/(.*)": "<rootDir>/$1",

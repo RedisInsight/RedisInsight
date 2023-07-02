@@ -211,4 +211,28 @@ export default {
       || 'https://raw.githubusercontent.com/RedisInsight/RedisInsight/main/redisinsight/api/config/features-config.json',
     syncInterval: parseInt(process.env.RI_FEATURES_CONFIG_SYNC_INTERVAL, 10) || 1_000 * 60 * 60 * 4, // 4h
   },
+  cloud: {
+    cloudApiKeyName: process.env.RI_CLOUD_API_KEY_NAME || 'RedisInsight',
+    apiUrl: process.env.RI_CLOUD_API_URL,
+    idp: {
+      google: {
+        authorizeUrl: process.env.RI_CLOUD_IDP_GOOGLE_AUTHORIZE_URL,
+        tokenUrl: process.env.RI_CLOUD_IDP_GOOGLE_TOKEN_URL,
+        issuer: process.env.RI_CLOUD_IDP_GOOGLE_ISSUER,
+        audience: process.env.RI_CLOUD_IDP_GOOGLE_AUDIENCE,
+        clientId: process.env.RI_CLOUD_IDP_GOOGLE_CLIENT_ID,
+        redirectUri: process.env.RI_CLOUD_IDP_GOOGLE_REDIRECT_URI,
+        idp: process.env.RI_CLOUD_IDP_GOOGLE_IDP,
+      },
+      github: {
+        authorizeUrl: process.env.RI_CLOUD_IDP_GH_AUTHORIZE_URL,
+        tokenUrl: process.env.RI_CLOUD_IDP_GH_TOKEN_URL,
+        issuer: process.env.RI_CLOUD_IDP_GH_ISSUER,
+        audience: process.env.RI_CLOUD_IDP_GH_AUDIENCE,
+        clientId: process.env.RI_CLOUD_IDP_GH_CLIENT_ID,
+        redirectUri: process.env.RI_CLOUD_IDP_GH_REDIRECT_URI,
+        idp: process.env.RI_CLOUD_IDP_GH_IDP,
+      },
+    },
+  },
 };

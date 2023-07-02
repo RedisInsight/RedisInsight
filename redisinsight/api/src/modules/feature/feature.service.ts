@@ -1,11 +1,12 @@
 import { find } from 'lodash';
 import { Injectable, Logger } from '@nestjs/common';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
-import { FeatureServerEvents, FeatureStorage, knownFeatures } from 'src/modules/feature/constants';
+import { FeatureServerEvents, FeatureStorage } from 'src/modules/feature/constants';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/feature-flag.provider';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
+import { knownFeatures } from 'src/modules/feature/constants/known-features';
 
 @Injectable()
 export class FeatureService {
@@ -46,11 +47,22 @@ export class FeatureService {
 
     knownFeatures.forEach((feature) => {
       // todo: implement various storage strategies support with next features
-      if (feature.storage === FeatureStorage.Database) {
-        const dbFeature = find(featuresFromDatabase, { name: feature.name });
-        if (dbFeature) {
-          features[feature.name] = { flag: dbFeature.flag };
+      switch (feature?.storage) {
+        case FeatureStorage.Database: {
+          const dbFeature = find(featuresFromDatabase, { name: feature.name });
+          if (dbFeature) {
+            features[feature.name] = {
+              name: dbFeature.name,
+              flag: dbFeature.flag,
+            };
+          }
+          break;
         }
+        case FeatureStorage.Custom:
+          features[feature.name] = feature?.factory?.();
+          break;
+        default:
+          // do nothing
       }
     });
 

@@ -11,6 +11,7 @@ import { SshModule } from 'src/modules/ssh/ssh.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { FeatureModule } from 'src/modules/feature/feature.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
+import { SessionModule } from 'src/modules/session/session.module';
 
 @Global()
 @Module({
@@ -27,6 +28,7 @@ import { AuthModule } from 'src/modules/auth/auth.module';
     NestjsFormDataModule,
     FeatureModule.register(),
     AuthModule.register(),
+    SessionModule.register(),
   ],
   exports: [
     EncryptionModule,
@@ -38,6 +40,7 @@ import { AuthModule } from 'src/modules/auth/auth.module';
     SshModule,
     NestjsFormDataModule,
     FeatureModule,
+    SessionModule,
   ],
 })
 export class CoreModule {}

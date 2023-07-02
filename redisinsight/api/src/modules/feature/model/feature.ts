@@ -6,4 +6,7 @@ export class Feature {
 
   @Expose()
   flag: boolean;
+
+  @Expose()
+  strategy?: string;
 }

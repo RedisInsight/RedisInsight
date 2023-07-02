@@ -32,7 +32,7 @@ export interface RedisInsight {
 
 export interface WindowApp {
   sendWindowId: any
-  sendSsoConnected: any
+  cloudOauthCallback: any
   ipc: IPCHandler
   config: {
     apiPort: string

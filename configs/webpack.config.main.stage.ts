@@ -34,6 +34,15 @@ export default merge(mainProdConfig, {
       CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
         ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000), // 30 sec
+      // cloud auth
+      RI_CLOUD_IDP_AUTHORIZE_URL: 'RI_CLOUD_IDP_AUTHORIZE_URL' in process.env ? process.env.RI_CLOUD_IDP_AUTHORIZE_URL: '',
+      RI_CLOUD_IDP_TOKEN_URL: 'RI_CLOUD_IDP_TOKEN_URL' in process.env ? process.env.RI_CLOUD_IDP_TOKEN_URL: '',
+      RI_CLOUD_IDP_ISSUER: 'RI_CLOUD_IDP_ISSUER' in process.env ? process.env.RI_CLOUD_IDP_ISSUER: '',
+      RI_CLOUD_IDP_CLIENT_ID: 'RI_CLOUD_IDP_CLIENT_ID' in process.env ? process.env.RI_CLOUD_IDP_CLIENT_ID: '',
+      RI_CLOUD_IDP_REDIRECT_URI: 'RI_CLOUD_IDP_REDIRECT_URI' in process.env ? process.env.RI_CLOUD_IDP_REDIRECT_URI: '',
+      RI_CLOUD_IDP_GOOGLE_ID: 'RI_CLOUD_IDP_GOOGLE_ID' in process.env ? process.env.RI_CLOUD_IDP_GOOGLE_ID: '',
+      RI_CLOUD_IDP_GH_ID: 'RI_CLOUD_IDP_GH_ID' in process.env ? process.env.RI_CLOUD_IDP_GH_ID: '',
+      RI_CLOUD_API_URL: 'RI_CLOUD_API_URL' in process.env ? process.env.RI_CLOUD_API_URL: '',
     }),
   ],
 });

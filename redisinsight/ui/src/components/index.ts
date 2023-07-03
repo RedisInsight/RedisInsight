@@ -29,7 +29,7 @@ import FeatureFlagComponent from './feature-flag-component'
 import { ModuleNotLoaded, FilterNotAvailable } from './messages'
 import OAuthSignInDialog from './oauth-sign-in-dialog'
 import OAuthSocial from './oauth-social'
-import OAuthSsoHandlerDialog from './oauth-sso-handler-dialog'
+import OAuthSsoHandlerDialog from './oauth-sso-handler-dialog/OAuthSsoHandlerDialog'
 
 export {
   NavigationMenu,

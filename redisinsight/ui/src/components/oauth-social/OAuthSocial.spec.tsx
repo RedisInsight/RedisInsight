@@ -1,7 +1,7 @@
 import React from 'react'
 import { fireEvent, render } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { IpcInvokeEvent } from 'uiSrc/electron/constants'
+import { CloudAuthSocial, IpcInvokeEvent } from 'uiSrc/electron/constants'
 import OAuthSocial from './OAuthSocial'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -45,7 +45,7 @@ describe('OAuthSocial', () => {
     })
 
     expect(invokeMock).toBeCalledTimes(1)
-    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.getAppVersion)
+    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Google)
     invokeMock.mockRestore();
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
@@ -67,7 +67,7 @@ describe('OAuthSocial', () => {
     })
 
     expect(invokeMock).toBeCalledTimes(1)
-    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.getAppVersion)
+    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Github)
     invokeMock.mockRestore();
 
     (sendEventTelemetry as jest.Mock).mockRestore()

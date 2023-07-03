@@ -4,8 +4,7 @@ import cx from 'classnames'
 
 import { DATABASE_LIST_MODULES_TEXT, SignInDialogSource } from 'uiSrc/slices/interfaces'
 import { getModule, truncateText } from 'uiSrc/utils'
-import OAuthSsoHandlerDialog from 'uiSrc/components/oauth-sso-handler-dialog'
-// import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import { IMetric } from '../OverviewMetrics'

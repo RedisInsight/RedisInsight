@@ -7,20 +7,21 @@ export interface Props {
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onClick?: () => void
   accept?: string
+  id?: string
 }
 
-const UploadFile = ({ onFileChange, onClick, accept }: Props) => (
+const UploadFile = ({ onFileChange, onClick, accept, id = 'upload-input-file' }: Props) => (
   <EuiButtonEmpty
     className={styles.emptyBtn}
     onClick={() => onClick?.()}
   >
-    <label htmlFor="upload-input-file" className={styles.uploadBtn}>
+    <label htmlFor={id} className={styles.uploadBtn}>
       <EuiIcon className={styles.icon} type="folderOpen" />
       <EuiText className={styles.label}>Upload</EuiText>
       <input
         type="file"
-        id="upload-input-file"
-        data-testid="upload-input-file"
+        id={id}
+        data-testid={id}
         accept={accept || '*'}
         onChange={onFileChange}
         className={styles.fileDrop}

@@ -41,6 +41,13 @@ const handlers: RestHandler[] = [
   async (_req, res, ctx) => res(
     ctx.status(200),
   )),
+  // upload triggered functions lib
+  rest.post(getMswURL(
+    getUrl(INSTANCE_ID_MOCK, ApiEndpoints.TRIGGERED_FUNCTIONS_LIBRARY)
+  ),
+  async (_req, res, ctx) => res(
+    ctx.status(200),
+  )),
 ]
 
 export default handlers

@@ -8,3 +8,15 @@ export const getFunctionsLengthByType = (functions: Array<{
   ...current,
   [next.type]: functions?.filter((f) => f.type === next.type).length || 0
 }), {})
+
+const DEFAULT_LIBRARY_NAME = 'Library'
+
+export const getLibraryName = (code: string): string => {
+  try {
+    const firstLine = code.split('\n')[0]
+    const regexp = /^.name=$/
+    return firstLine.split('name=')[1].split(' ')[0] || DEFAULT_LIBRARY_NAME
+  } catch (err) {
+    return DEFAULT_LIBRARY_NAME
+  }
+}

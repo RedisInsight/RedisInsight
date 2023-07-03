@@ -26,6 +26,10 @@ import reducer, {
   deleteTriggeredFunctionsLibrarySuccess,
   deleteTriggeredFunctionsLibraryFailure,
   deleteTriggeredFunctionsLibraryAction,
+  addTriggeredFunctionsLibrary,
+  addTriggeredFunctionsLibrarySuccess,
+  addTriggeredFunctionsLibraryFailure,
+  addTriggeredFunctionsLibraryAction,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { apiService } from 'uiSrc/services'
 import { addMessageNotification, addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -494,6 +498,81 @@ describe('triggeredFunctions slice', () => {
         expect(triggeredFunctionsSelector(rootState)).toEqual(state)
       })
     })
+
+    describe('addTriggeredFunctionsLibrary', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState,
+          addLibrary: {
+            loading: true
+          }
+        }
+
+        // Act
+        const nextState = reducer(initialState, addTriggeredFunctionsLibrary())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          triggeredFunctions: nextState,
+        })
+        expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('addTriggeredFunctionsLibrarySuccess', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          addLibrary: {
+            loading: true,
+          },
+        }
+        const state = {
+          ...initialState,
+          addLibrary: {
+            loading: false,
+          },
+        }
+
+        // Act
+        const nextState = reducer(currentState, addTriggeredFunctionsLibrarySuccess())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          triggeredFunctions: nextState,
+        })
+        expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('addTriggeredFunctionsLibraryFailure', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          addLibrary: {
+            loading: true,
+          },
+        }
+        const state = {
+          ...initialState,
+          addLibrary: {
+            loading: false,
+          },
+        }
+
+        // Act
+        const nextState = reducer(currentState, addTriggeredFunctionsLibraryFailure())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          triggeredFunctions: nextState,
+        })
+        expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+      })
+    })
   })
 
   // thunks
@@ -686,6 +765,55 @@ describe('triggeredFunctions slice', () => {
           replaceTriggeredFunctionsLibrary(),
           addErrorNotification(responsePayload as AxiosError),
           replaceTriggeredFunctionsLibraryFailure()
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('addTriggeredFunctionsLibraryAction', () => {
+      it('succeed to fetch data', async () => {
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          addTriggeredFunctionsLibraryAction('123', 'code', 'config')
+        )
+
+        // Assert
+        const expectedActions = [
+          addTriggeredFunctionsLibrary(),
+          addTriggeredFunctionsLibrarySuccess(),
+          addMessageNotification(successMessages.ADD_LIBRARY('Library')),
+          getTriggeredFunctionsLibrariesList(),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          addTriggeredFunctionsLibraryAction('123', 'code', 'config')
+        )
+
+        // Assert
+        const expectedActions = [
+          addTriggeredFunctionsLibrary(),
+          addErrorNotification(responsePayload as AxiosError),
+          addTriggeredFunctionsLibraryFailure()
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

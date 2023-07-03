@@ -7,11 +7,11 @@ import {
   EuiLoadingSpinner,
   EuiResizableContainer,
 } from '@elastic/eui'
+import { isNull, find } from 'lodash'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
-import { find } from 'lodash'
 import {
   fetchTriggeredFunctionsLibrariesList,
   setSelectedLibraryToShow,
@@ -24,6 +24,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import NoLibrariesScreen from './components/NoLibrariesScreen'
 import LibrariesList from './components/LibrariesList'
 import LibraryDetails from './components/LibraryDetails'
+import AddLibrary from './components/AddLibrary'
 
 import styles from './styles.module.scss'
 
@@ -35,6 +36,7 @@ const LibrariesPage = () => {
   const [items, setItems] = useState<TriggeredFunctionsLibrary[]>([])
   const [filterValue, setFilterValue] = useState<string>('')
   const [selectedRow, setSelectedRow] = useState<Nullable<string>>(null)
+  const [isAddLibraryPanelOpen, setIsAddLibraryPanelOpen] = useState(false)
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -74,6 +76,7 @@ const LibrariesPage = () => {
   }
 
   const handleSelectRow = (name?: string) => {
+    setIsAddLibraryPanelOpen(false)
     setSelectedRow(name ?? null)
 
     if (name !== selectedRow) {
@@ -102,6 +105,34 @@ const LibrariesPage = () => {
 
     setItems(itemsTemp || [])
   }
+
+  const onAddLibrary = () => {
+    setSelectedRow(null)
+    setIsAddLibraryPanelOpen(true)
+    sendEventTelemetry({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }
+
+  const onCloseAddLibrary = () => {
+    setIsAddLibraryPanelOpen(false)
+    sendEventTelemetry({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CANCELLED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }
+
+  const onAdded = (libraryName: string) => {
+    setIsAddLibraryPanelOpen(false)
+    setSelectedRow(libraryName)
+  }
+
+  const isRightPanelOpen = !isNull(selectedRow) || isAddLibraryPanelOpen
 
   return (
     <EuiFlexGroup
@@ -134,7 +165,7 @@ const LibrariesPage = () => {
               fill
               size="s"
               color="secondary"
-              onClick={() => {}}
+              onClick={onAddLibrary}
               className={styles.addLibrary}
               data-testid="btn-add-library"
             >
@@ -155,8 +186,8 @@ const LibrariesPage = () => {
                 paddingSize="none"
                 wrapperProps={{
                   className: cx('triggeredFunctions__resizePanelLeft', {
-                    fullWidth: !selectedRow,
-                    openedRightPanel: selectedRow,
+                    fullWidth: !isRightPanelOpen,
+                    openedRightPanel: isRightPanelOpen,
                   }),
                 }}
               >
@@ -178,13 +209,13 @@ const LibrariesPage = () => {
                     />
                   )}
                   {libraries?.length === 0 && (
-                    <NoLibrariesScreen />
+                    <NoLibrariesScreen onAddLibrary={onAddLibrary} />
                   )}
                 </div>
               </EuiResizablePanel>
               <EuiResizableButton
                 className={cx('triggeredFunctions__resizableButton', {
-                  hidden: !selectedRow,
+                  hidden: !isRightPanelOpen,
                 })}
                 data-test-subj="resize-btn-libraries"
               />
@@ -196,7 +227,7 @@ const LibrariesPage = () => {
                 paddingSize="none"
                 wrapperProps={{
                   className: cx('triggeredFunctions__resizePanelRight', {
-                    noVisible: !selectedRow
+                    noVisible: !isRightPanelOpen
                   }),
                 }}
               >
@@ -207,6 +238,9 @@ const LibrariesPage = () => {
                       onClose={handleSelectRow}
                       onDeleteRow={handleDelete}
                     />
+                  )}
+                  {isAddLibraryPanelOpen && (
+                    <AddLibrary onClose={onCloseAddLibrary} onAdded={onAdded} />
                   )}
                 </div>
               </EuiResizablePanel>

@@ -206,4 +206,14 @@ export default {
       </>
     ),
   }),
+  ADD_LIBRARY: (libraryName: string) => ({
+    title: 'Library has been added',
+    message: (
+      <>
+        <b>{formatNameShort(libraryName)}</b>
+        {' '}
+        has been added.
+      </>
+    ),
+  })
 }

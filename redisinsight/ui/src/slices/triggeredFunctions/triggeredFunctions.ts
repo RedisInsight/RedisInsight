@@ -11,6 +11,7 @@ import {
 import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { getLibraryName } from 'uiSrc/utils/triggered-functions/utils'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { addMessageNotification, addErrorNotification } from 'uiSrc/slices/app/notifications'
 
@@ -34,6 +35,9 @@ export const initialState: StateTriggeredFunctions = {
     lastRefresh: null,
     loading: false,
     data: null
+  },
+  addLibrary: {
+    loading: false,
   },
 }
 
@@ -110,6 +114,16 @@ const triggeredFunctionsSlice = createSlice({
     setSelectedLibraryToShow: (state, { payload }: PayloadAction<Nullable<string>>) => {
       state.libraries.selected = payload
     },
+
+    addTriggeredFunctionsLibrary: (state) => {
+      state.addLibrary.loading = true
+    },
+    addTriggeredFunctionsLibrarySuccess: (state) => {
+      state.addLibrary.loading = false
+    },
+    addTriggeredFunctionsLibraryFailure: (state) => {
+      state.addLibrary.loading = false
+    },
   }
 })
 
@@ -133,12 +147,16 @@ export const {
   deleteTriggeredFunctionsLibraryFailure,
   setSelectedFunctionToShow,
   setSelectedLibraryToShow,
+  addTriggeredFunctionsLibrary,
+  addTriggeredFunctionsLibrarySuccess,
+  addTriggeredFunctionsLibraryFailure,
 } = triggeredFunctionsSlice.actions
 
 export const triggeredFunctionsSelector = (state: RootState) => state.triggeredFunctions
 export const triggeredFunctionsLibrariesSelector = (state: RootState) => state.triggeredFunctions.libraries
 export const triggeredFunctionsFunctionsSelector = (state: RootState) => state.triggeredFunctions.functions
 export const triggeredFunctionsSelectedLibrarySelector = (state: RootState) => state.triggeredFunctions.selectedLibrary
+export const triggeredFunctionsAddLibrarySelector = (state: RootState) => state.triggeredFunctions.addLibrary
 
 export default triggeredFunctionsSlice.reducer
 
@@ -267,6 +285,46 @@ export function replaceTriggeredFunctionsLibraryAction(
       dispatch(addErrorNotification(error))
       dispatch(replaceTriggeredFunctionsLibraryFailure())
       onFailAction?.()
+    }
+  }
+}
+
+export function addTriggeredFunctionsLibraryAction(
+  instanceId: string,
+  code: string,
+  configuration: Nullable<string>,
+  onSuccessAction?: (name: string) => void,
+  onFailAction?: (error: string) => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      dispatch(addTriggeredFunctionsLibrary())
+
+      const { status } = await apiService.post(
+        getUrl(
+          instanceId,
+          ApiEndpoints.TRIGGERED_FUNCTIONS_LIBRARY,
+        ),
+        {
+          code,
+          configuration
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        const libraryName = getLibraryName(code)
+        dispatch(addTriggeredFunctionsLibrarySuccess())
+        dispatch(
+          addMessageNotification(successMessages.ADD_LIBRARY(libraryName))
+        )
+        dispatch(fetchTriggeredFunctionsLibrariesList(instanceId))
+        onSuccessAction?.(libraryName)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      dispatch(addErrorNotification(error))
+      dispatch(addTriggeredFunctionsLibraryFailure())
+      onFailAction?.(getApiErrorMessage(error))
     }
   }
 }

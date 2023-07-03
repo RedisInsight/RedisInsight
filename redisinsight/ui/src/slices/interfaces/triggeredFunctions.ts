@@ -66,4 +66,7 @@ export interface StateTriggeredFunctions {
     data: Nullable<TriggeredFunctionsLibraryDetails>
     loading: boolean
   }
+  addLibrary: {
+    loading: boolean
+  }
 }

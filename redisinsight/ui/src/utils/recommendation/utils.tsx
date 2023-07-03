@@ -10,13 +10,15 @@ import {
 } from '@elastic/eui'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
-import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
+
 import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { SignInDialogSource } from 'uiSrc/slices/interfaces'
+import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
 import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
 
-import { handleFreeDatabaseClick } from '../oauth/handleFreeDatabaseClick'
 import styles from './styles.module.scss'
 
 const recommendationsContent = _content as IRecommendationsStatic
@@ -150,16 +152,22 @@ const renderContentElement = (
       )
     case 'link-sso':
       return (
-        <EuiLink
-          key={`${telemetryName}-${idx}`}
-          external={false}
-          data-testid={`link-sso-${telemetryName}-${idx}`}
-          target="_blank"
-          onClick={(e) => handleFreeDatabaseClick(e, telemetryName)}
-          href={addUtmToLink(value.href, telemetryName)}
-        >
-          {value.name}
-        </EuiLink>
+        <OAuthSsoHandlerDialog>
+          {(ssoCloudHandlerClick) => (
+            <EuiLink
+              key={`${telemetry.telemetryName}-${idx}`}
+              external={false}
+              data-testid={`link-sso-${telemetry.telemetryName}-${idx}`}
+              target="_blank"
+              onClick={(e) => {
+                ssoCloudHandlerClick(e, telemetry.telemetryName as SignInDialogSource)
+              }}
+              href={addUtmToLink(value.href, telemetry.telemetryName)}
+            >
+              {value.name}
+            </EuiLink>
+          )}
+        </OAuthSsoHandlerDialog>
       )
     case 'code-link':
       return (

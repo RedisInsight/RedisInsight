@@ -111,7 +111,16 @@ const mockContent: IRecommendationContent[] = [
     type: 'code-link',
     value: 'link',
   },
+  {
+    type: 'link-sso',
+    value: 'link-sso',
+  },
 ]
+
+jest.mock('uiSrc/utils/oauth/handleFreeDatabaseClick', () => ({
+  ...jest.requireActual('uiSrc/utils/oauth/handleFreeDatabaseClick'),
+  handleFreeDatabaseClick: jest.fn(),
+}))
 
 describe('renderRecommendationBadgesLegend', () => {
   const renderedBadgesLegend = renderRecommendationBadgesLegend()

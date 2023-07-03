@@ -19,8 +19,8 @@ contextBridge.exposeInMainWorld('app', {
   sendWindowId: ((windowId: any) => {
     ipcRenderer.on(IpcOnEvent.sendWindowId, windowId)
   }),
-  sendSsoConnected: ((connected: any) => {
-    ipcRenderer.on(IpcOnEvent.sendSsoConnected, connected)
+  cloudOauthCallback: ((data: any) => {
+    ipcRenderer.on(IpcOnEvent.cloudOauthCallback, data)
   }),
   ipc: ipcHandler,
   config: {

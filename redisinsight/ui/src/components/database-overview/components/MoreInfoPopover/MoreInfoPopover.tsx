@@ -4,7 +4,8 @@ import cx from 'classnames'
 
 import { DATABASE_LIST_MODULES_TEXT, SignInDialogSource } from 'uiSrc/slices/interfaces'
 import { getModule, truncateText } from 'uiSrc/utils'
-import { handleFreeDatabaseClick } from 'uiSrc/utils/oauth/handleFreeDatabaseClick'
+import OAuthSsoHandlerDialog from 'uiSrc/components/oauth-sso-handler-dialog'
+// import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import { IMetric } from '../OverviewMetrics'
@@ -12,7 +13,7 @@ import { IMetric } from '../OverviewMetrics'
 import './styles.scss'
 import styles from './styles.module.scss'
 
-interface IProps {
+export interface IProps {
   metrics: Array<IMetric>,
   modules: Array<AdditionalRedisModule>
 }
@@ -20,8 +21,7 @@ interface IProps {
 const MoreInfoPopover = ({ metrics, modules }: IProps) => {
   const [isShowMoreInfoPopover, setIsShowMoreInfoPopover] = useState(false)
 
-  const onFreeDatabaseClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    handleFreeDatabaseClick(e, SignInDialogSource.BrowserContentMenu)
+  const onFreeDatabaseClick = () => {
     setIsShowMoreInfoPopover(false)
   }
 
@@ -120,16 +120,23 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
             <a className="link-underline" href="https://redis.io/modules" target="_blank" rel="noreferrer">here</a>.
             <br />
             {'Create a '}
-            <EuiLink
-              color="text"
-              onClick={onFreeDatabaseClick}
-              external={false}
-              target="_blank"
-              href="https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight"
-              data-testid="free-database-link"
-            >
-              free Redis database
-            </EuiLink>
+            <OAuthSsoHandlerDialog>
+              {(ssoCloudHandlerClick) => (
+                <EuiLink
+                  color="text"
+                  onClick={(e) => {
+                    ssoCloudHandlerClick(e, SignInDialogSource.BrowserContentMenu)
+                    onFreeDatabaseClick()
+                  }}
+                  external={false}
+                  target="_blank"
+                  href="https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight"
+                  data-testid="free-database-link"
+                >
+                  free Redis database
+                </EuiLink>
+              )}
+            </OAuthSsoHandlerDialog>
             {' with modules support on Redis Cloud.'}
           </p>
         </div>

@@ -12,7 +12,7 @@ import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 
 import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
-import OAuthSsoHandlerDialog from 'uiSrc/components/oauth-sso-handler-dialog'
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { SignInDialogSource } from 'uiSrc/slices/interfaces'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'

@@ -203,7 +203,11 @@ export interface StateAppNotifications {
 export interface StateAppOAuth {
   loading: boolean
   error: string
-  currentAccount: Nullable<Account>
+  account: {
+    error: string
+    loading: boolean
+    currentAccount: Nullable<Account>
+  }
   signInDialog: SignInDialog
 }
 

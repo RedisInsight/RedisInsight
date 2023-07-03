@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { SignInDialogSource } from 'uiSrc/slices/interfaces'
-import { oauthCloudAccountSelector, setSignInDialogState } from 'uiSrc/slices/oauth/cloud'
+import { oauthCloudCurrentAccountSelector, setSignInDialogState } from 'uiSrc/slices/oauth/cloud'
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import OAuthSsoHandlerDialog from './OAuthSsoHandlerDialog'
@@ -17,7 +17,7 @@ beforeEach(() => {
 
 jest.mock('uiSrc/slices/oauth/cloud', () => ({
   ...jest.requireActual('uiSrc/slices/oauth/cloud'),
-  oauthCloudAccountSelector: jest.fn().mockReturnValue(null),
+  oauthCloudCurrentAccountSelector: jest.fn().mockReturnValue(null),
 }))
 
 jest.mock('uiSrc/slices/app/features', () => ({
@@ -110,7 +110,7 @@ describe('OAuthSsoHandlerDialog', () => {
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockImplementation(() => (
       { [FeatureFlags.cloudSso]: { flag: true } }
     ));
-    (oauthCloudAccountSelector as jest.Mock).mockImplementation(() => (
+    (oauthCloudCurrentAccountSelector as jest.Mock).mockImplementation(() => (
       { id: '123' }
     ))
 

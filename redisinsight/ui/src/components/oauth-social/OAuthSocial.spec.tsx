@@ -1,7 +1,9 @@
 import React from 'react'
-import { fireEvent, render } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { CloudAuthSocial, IpcInvokeEvent } from 'uiSrc/electron/constants'
+import { signIn } from 'uiSrc/slices/oauth/cloud'
 import OAuthSocial from './OAuthSocial'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -16,8 +18,12 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
   }),
 }))
 
+let store: typeof mockedStore
 const invokeMock = jest.fn()
 beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
   window.app = {
     ipc: { invoke: invokeMock }
   }
@@ -46,6 +52,10 @@ describe('OAuthSocial', () => {
 
     expect(invokeMock).toBeCalledTimes(1)
     expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Google)
+
+    const expectedActions = [signIn()]
+    expect(store.getActions()).toEqual(expectedActions)
+
     invokeMock.mockRestore();
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
@@ -68,8 +78,12 @@ describe('OAuthSocial', () => {
 
     expect(invokeMock).toBeCalledTimes(1)
     expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Github)
-    invokeMock.mockRestore();
+    invokeMock.mockRestore()
 
+    const expectedActions = [signIn()]
+    expect(store.getActions()).toEqual(expectedActions)
+
+    invokeMock.mockRestore();
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

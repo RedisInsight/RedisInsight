@@ -39,6 +39,7 @@ const oauthCloudSlice = createSlice({
     },
     getAccountInfoSuccess: (state, { payload }: PayloadAction<any>) => {
       state.loading = false
+      state.currentAccount = payload
     },
     getAccountInfoFailure: (state, { payload }) => {
       state.loading = false
@@ -74,22 +75,22 @@ export const oauthCloudAccountSelector = (state: RootState) => state.oauth.cloud
 export default oauthCloudSlice.reducer
 
 // Asynchronous thunk action
-// export function fetchAccountInfo(onSuccessAction?: () => void, onFailAction?: () => void) {
-//   return async (dispatch: AppDispatch) => {
-//     dispatch(getAccountInfo())
+export function fetchAccountInfo(onSuccessAction?: () => void, onFailAction?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getAccountInfo())
 
-//     try {
-//       const { data, status } = await apiService.get<any>(ApiEndpoints.CLOUD_ME)
+    try {
+      const { data, status } = await apiService.get<any>(ApiEndpoints.CLOUD_ME)
 
-//       if (isStatusSuccessful(status)) {
-//         dispatch(getAccountInfoSuccess(data))
-//         onSuccessAction?.()
-//       }
-//     } catch (_err) {
-//       const error = _err as AxiosError
-//       const errorMessage = getApiErrorMessage(error)
-//       dispatch(getAccountInfoFailure(errorMessage))
-//       onFailAction?.()
-//     }
-//   }
-// }
+      if (isStatusSuccessful(status)) {
+        dispatch(getAccountInfoSuccess(data))
+        onSuccessAction?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(getAccountInfoFailure(errorMessage))
+      onFailAction?.()
+    }
+  }
+}

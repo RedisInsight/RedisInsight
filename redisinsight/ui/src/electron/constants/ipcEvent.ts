@@ -1,12 +1,13 @@
 enum IpcInvokeEvent {
-  getStoreValue = 'getStoreValue',
-  deleteStoreValue = 'deleteStoreValue',
-  getAppVersion = 'getAppVersion',
+  getStoreValue = 'store:get:value',
+  deleteStoreValue = 'store:delete:value',
+  getAppVersion = 'app:get:version',
+  cloudOauth = 'cloud:oauth',
 }
 
 enum IpcOnEvent {
-  sendWindowId = 'sendWindowId',
-  sendSsoConnected = 'sendSsoConnected',
+  sendWindowId = 'window:send:id',
+  cloudOauthCallback = 'cloud:oauth:callback',
 }
 
 export {

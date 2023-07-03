@@ -34,7 +34,7 @@ export class CloudAuthController {
   })
   @Render('cloud_oauth_callback')
   async callback(@Query() query) {
-    return this.cloudAuthService.callbackWeb(query);
+    return this.cloudAuthService.handleCallback(query);
   }
 
   @Get('logout')

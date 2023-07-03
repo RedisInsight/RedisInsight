@@ -565,6 +565,15 @@ jobs:
               exit 0;
             fi
 
+            set RI_CLOUD_IDP_AUTHORIZE_URL=$RI_CLOUD_IDP_AUTHORIZE_URL_STAGE
+            set RI_CLOUD_IDP_TOKEN_URL=$RI_CLOUD_IDP_TOKEN_URL_STAGE
+            set RI_CLOUD_IDP_ISSUER=$RI_CLOUD_IDP_ISSUER_STAGE
+            set RI_CLOUD_IDP_CLIENT_ID=$RI_CLOUD_IDP_CLIENT_ID_STAGE
+            set RI_CLOUD_IDP_REDIRECT_URI=$RI_CLOUD_IDP_REDIRECT_URI_STAGE
+            set RI_CLOUD_IDP_GOOGLE_ID=$RI_CLOUD_IDP_GOOGLE_ID_STAGE
+            set RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
+            set RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
+
             if [ << parameters.env >> == 'stage' ]; then
               UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
               exit 0;
@@ -641,6 +650,15 @@ jobs:
               exit 0;
             fi
 
+            set RI_CLOUD_IDP_AUTHORIZE_URL=$RI_CLOUD_IDP_AUTHORIZE_URL_STAGE
+            set RI_CLOUD_IDP_TOKEN_URL=$RI_CLOUD_IDP_TOKEN_URL_STAGE
+            set RI_CLOUD_IDP_ISSUER=$RI_CLOUD_IDP_ISSUER_STAGE
+            set RI_CLOUD_IDP_CLIENT_ID=$RI_CLOUD_IDP_CLIENT_ID_STAGE
+            set RI_CLOUD_IDP_REDIRECT_URI=$RI_CLOUD_IDP_REDIRECT_URI_STAGE
+            set RI_CLOUD_IDP_GOOGLE_ID=$RI_CLOUD_IDP_GOOGLE_ID_STAGE
+            set RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
+            set RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
+
             if [ << parameters.env >> == 'stage' ]; then
               UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage && yarn package:mas
               rm -rf release/mac
@@ -696,6 +714,15 @@ jobs:
               rm -rf release/win-unpacked
               exit 0;
             fi
+
+            set RI_CLOUD_IDP_AUTHORIZE_URL=$RI_CLOUD_IDP_AUTHORIZE_URL_STAGE
+            set RI_CLOUD_IDP_TOKEN_URL=$RI_CLOUD_IDP_TOKEN_URL_STAGE
+            set RI_CLOUD_IDP_ISSUER=$RI_CLOUD_IDP_ISSUER_STAGE
+            set RI_CLOUD_IDP_CLIENT_ID=$RI_CLOUD_IDP_CLIENT_ID_STAGE
+            set RI_CLOUD_IDP_REDIRECT_URI=$RI_CLOUD_IDP_REDIRECT_URI_STAGE
+            set RI_CLOUD_IDP_GOOGLE_ID=$RI_CLOUD_IDP_GOOGLE_ID_STAGE
+            set RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
+            set RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
               UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage

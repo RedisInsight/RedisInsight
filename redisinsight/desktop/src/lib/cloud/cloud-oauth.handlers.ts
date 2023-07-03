@@ -10,7 +10,7 @@ import { CloudOauthUnexpectedErrorException } from 'apiSrc/modules/cloud/auth/ex
 import { CloudAuthService } from '../../../../api/dist/src/modules/cloud/auth/cloud-auth.service'
 
 export const getTokenCallbackFunction = (webContents: WebContents) => (response: CloudAuthResponse) => {
-  webContents.emit(IpcOnEvent.cloudOauthCallback, response)
+  webContents.send(IpcOnEvent.cloudOauthCallback, response)
   webContents.focus()
 }
 export const initCloudOauthHandlers = () => {
@@ -49,7 +49,7 @@ export const cloudOauthCallback = async (from?: string) => {
     const url = new URL(from)
     if (url?.pathname === '/cloud/oauth/callback') {
       const authService: CloudAuthService = getBackendApp()?.get?.(CloudAuthService)
-      await authService.callbackIpc(Object.fromEntries(url.searchParams as any))
+      await authService.handleCallback(Object.fromEntries(url.searchParams as any))
     }
   } catch (e) {
     log.error(wrapErrorMessageSensitiveData(e as Error))

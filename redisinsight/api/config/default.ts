@@ -1,5 +1,6 @@
 import { join } from 'path';
 import * as os from 'os';
+import { RequestMethod } from '@nestjs/common';
 
 const homedir = join(__dirname, '..');
 
@@ -61,7 +62,9 @@ export default {
     appVersion: process.env.APP_VERSION || '2.28.1',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
-    excludeAuthRoutes: [],
+    excludeAuthRoutes: [
+      { path: 'cloud/oauth/callback', method: RequestMethod.GET },
+    ],
   },
   sockets: {
     cors: process.env.SOCKETS_CORS ? process.env.SOCKETS_CORS === 'true' : false,
@@ -216,22 +219,20 @@ export default {
     apiUrl: process.env.RI_CLOUD_API_URL,
     idp: {
       google: {
-        authorizeUrl: process.env.RI_CLOUD_IDP_GOOGLE_AUTHORIZE_URL,
-        tokenUrl: process.env.RI_CLOUD_IDP_GOOGLE_TOKEN_URL,
-        issuer: process.env.RI_CLOUD_IDP_GOOGLE_ISSUER,
-        audience: process.env.RI_CLOUD_IDP_GOOGLE_AUDIENCE,
-        clientId: process.env.RI_CLOUD_IDP_GOOGLE_CLIENT_ID,
-        redirectUri: process.env.RI_CLOUD_IDP_GOOGLE_REDIRECT_URI,
-        idp: process.env.RI_CLOUD_IDP_GOOGLE_IDP,
+        authorizeUrl: process.env.RI_CLOUD_IDP_GOOGLE_AUTHORIZE_URL || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
+        tokenUrl: process.env.RI_CLOUD_IDP_GOOGLE_TOKEN_URL || process.env.RI_CLOUD_IDP_TOKEN_URL,
+        issuer: process.env.RI_CLOUD_IDP_GOOGLE_ISSUER || process.env.RI_CLOUD_IDP_ISSUER,
+        clientId: process.env.RI_CLOUD_IDP_GOOGLE_CLIENT_ID || process.env.RI_CLOUD_IDP_CLIENT_ID,
+        redirectUri: process.env.RI_CLOUD_IDP_GOOGLE_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
+        idp: process.env.RI_CLOUD_IDP_GOOGLE_ID,
       },
       github: {
-        authorizeUrl: process.env.RI_CLOUD_IDP_GH_AUTHORIZE_URL,
-        tokenUrl: process.env.RI_CLOUD_IDP_GH_TOKEN_URL,
-        issuer: process.env.RI_CLOUD_IDP_GH_ISSUER,
-        audience: process.env.RI_CLOUD_IDP_GH_AUDIENCE,
-        clientId: process.env.RI_CLOUD_IDP_GH_CLIENT_ID,
-        redirectUri: process.env.RI_CLOUD_IDP_GH_REDIRECT_URI,
-        idp: process.env.RI_CLOUD_IDP_GH_IDP,
+        authorizeUrl: process.env.RI_CLOUD_IDP_GH_AUTHORIZE_URL || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
+        tokenUrl: process.env.RI_CLOUD_IDP_GH_TOKEN_URL || process.env.RI_CLOUD_IDP_TOKEN_URL,
+        issuer: process.env.RI_CLOUD_IDP_GH_ISSUER || process.env.RI_CLOUD_IDP_ISSUER,
+        clientId: process.env.RI_CLOUD_IDP_GH_CLIENT_ID || process.env.RI_CLOUD_IDP_CLIENT_ID,
+        redirectUri: process.env.RI_CLOUD_IDP_GH_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
+        idp: process.env.RI_CLOUD_IDP_GH_ID,
       },
     },
   },

@@ -13,6 +13,8 @@ import {
   CloudOauthUnknownAuthorizationRequestException,
 } from 'src/modules/cloud/auth/exceptions';
 import { CloudAuthResponse, CloudAuthStatus } from 'src/modules/cloud/auth/models';
+import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics';
+import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
 
 @Injectable()
 export class CloudAuthService {
@@ -24,6 +26,7 @@ export class CloudAuthService {
     private readonly sessionService: CloudSessionService,
     private readonly googleIdpAuthStrategy: GoogleIdpCloudAuthStrategy,
     private readonly githubIdpCloudAuthStrategy: GithubIdpCloudAuthStrategy,
+    private readonly analytics: CloudAuthAnalytics,
   ) {}
 
   static getAuthorizationServerRedirectError(query: { errorDescription: string }) {
@@ -99,7 +102,7 @@ export class CloudAuthService {
   }
 
   /**
-   * Handle oauth callback
+   * Process oauth callback
    * Exchanges code and mofidy user session
    * Generates proper errors
    * @param query
@@ -128,23 +131,12 @@ export class CloudAuthService {
     return authRequest.callback;
   }
 
-  async callbackIpc(query): Promise<CloudAuthResponse> {
-    try {
-      await this.callback(query);
-
-      return {
-        status: CloudAuthStatus.Succeed,
-        message: 'Successfully authenticated',
-      };
-    } catch (e) {
-      return {
-        status: CloudAuthStatus.Failed,
-        error: wrapHttpError(e).getResponse(),
-      };
-    }
-  }
-
-  async callbackWeb(query): Promise<CloudAuthResponse> {
+  /**
+   * Hanfle OAuth callback from Web or by deep link
+   * @param query
+   * @param from
+   */
+  async handleCallback(query, from = CloudSsoFeatureStrategy.DeepLink): Promise<CloudAuthResponse> {
     let result: CloudAuthResponse = {
       status: CloudAuthStatus.Succeed,
       message: 'Successfully authenticated',
@@ -154,7 +146,12 @@ export class CloudAuthService {
 
     try {
       callback = await this.callback(query);
+      this.analytics.sendCloudSignInSucceeded(from);
     } catch (e) {
+      this.logger.error(`Error on ${from} cloud oauth callback`, e);
+
+      this.analytics.sendCloudSignInFailed(e, from);
+
       result = {
         status: CloudAuthStatus.Failed,
         error: wrapHttpError(e).getResponse(),

@@ -125,4 +125,63 @@ describe('LibrariesPage', () => {
       }
     })
   })
+
+  it('should open library add form and sent proper telemetry event', () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<LibrariesPage />)
+
+    fireEvent.click(screen.getByTestId('btn-add-library'))
+
+    expect(screen.getByTestId('lib-add-form')).toBeInTheDocument()
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CLICKED,
+      eventData: {
+        databaseId: 'instanceId',
+      }
+    })
+  })
+
+  it('should close library add form and sent proper telemetry event', () => {
+    render(<LibrariesPage />)
+
+    fireEvent.click(screen.getByTestId('btn-add-library'))
+
+    expect(screen.getByTestId('lib-add-form')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByTestId('close-add-form-btn'))
+
+    expect(screen.queryByTestId('lib-add-form')).not.toBeInTheDocument()
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CANCELLED,
+      eventData: {
+        databaseId: 'instanceId',
+      }
+    })
+  })
+
+  it('should close library details', async () => {
+    (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
+      data: mockedLibraries,
+      loading: false
+    })
+    render(<LibrariesPage />)
+
+    fireEvent.click(screen.getByTestId('row-lib1'))
+
+    expect(screen.getByTestId('lib-details-lib1')).toBeInTheDocument()
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('delete-library-icon-lib1'))
+    })
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('delete-library-lib1'))
+    })
+
+    expect(screen.queryByTestId('lib-details-lib1')).not.toBeInTheDocument()
+  })
 })

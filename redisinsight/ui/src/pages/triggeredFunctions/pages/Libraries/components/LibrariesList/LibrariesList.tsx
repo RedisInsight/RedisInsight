@@ -31,7 +31,7 @@ const NoLibrariesMessage: React.ReactNode = (<span data-testid="no-libraries-mes
 const LibrariesList = (props: Props) => {
   const { items, loading, onRefresh, lastRefresh, selectedRow, onSelectRow, onDeleteRow } = props
   const [sort, setSort] = useState<Maybe<PropertySort>>(undefined)
-  const [popover, setPopover] = useState<Maybe<string>>(undefined)
+  const [popover, setPopover] = useState<Nullable<string>>(null)
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -108,7 +108,7 @@ const LibrariesList = (props: Props) => {
   }
 
   const handleClosePopover = () => {
-    setPopover(undefined)
+    setPopover(null)
   }
 
   const handleSelect = (item: TriggeredFunctionsLibrary) => {

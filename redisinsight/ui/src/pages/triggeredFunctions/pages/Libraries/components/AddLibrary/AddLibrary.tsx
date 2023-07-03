@@ -85,21 +85,14 @@ const LibraryDetails = (props: IProps) => {
     setIsShowConfiguration(isChecked)
   }
 
-  const onCodeFileChange = ({ target: { files } }: { target: { files: FileList | null } }) => {
+  const onFileChange = (
+    { target: { files } }: { target: { files: FileList | null } },
+    callback: (value: string) => void
+  ) => {
     if (files && files[0]) {
       const reader = new FileReader()
       reader.onload = async (e) => {
-        setCode(e?.target?.result as string)
-      }
-      reader.readAsText(files[0])
-    }
-  }
-
-  const onConfigurationFileChange = ({ target: { files } }: { target: { files: FileList | null } }) => {
-    if (files && files[0]) {
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        setConfiguration(e?.target?.result as string)
+        callback(e?.target?.result as string)
       }
       reader.readAsText(files[0])
     }
@@ -143,7 +136,7 @@ const LibraryDetails = (props: IProps) => {
               />
               <EuiFlexGroup justifyContent="flexEnd">
                 <EuiFlexItem grow={false}>
-                  <UploadFile id="upload-code-file" onFileChange={onCodeFileChange} accept=".js, text/plain" />
+                  <UploadFile id="upload-code-file" onFileChange={(e) => onFileChange(e, setCode)} accept=".js, text/plain" />
                 </EuiFlexItem>
               </EuiFlexGroup>
             </>
@@ -179,7 +172,7 @@ const LibraryDetails = (props: IProps) => {
                   />
                   <EuiFlexGroup justifyContent="flexEnd">
                     <EuiFlexItem grow={false}>
-                      <UploadFile id="upload-configuration-file" onFileChange={onConfigurationFileChange} accept="application/json, text/plain" />
+                      <UploadFile id="upload-configuration-file" onFileChange={(e) => onFileChange(e, setConfiguration)} accept="application/json, text/plain" />
                     </EuiFlexItem>
                   </EuiFlexGroup>
                 </>

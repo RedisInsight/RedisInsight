@@ -14,8 +14,9 @@ const DEFAULT_LIBRARY_NAME = 'Library'
 export const getLibraryName = (code: string): string => {
   try {
     const firstLine = code.split('\n')[0]
-    const regexp = /^.name=$/
-    return firstLine.split('name=')[1].split(' ')[0] || DEFAULT_LIBRARY_NAME
+    const regexp = /name=[^\s\\]+/
+    const matches = firstLine.match(regexp)
+    return matches ? matches[0].split('=')[1].trim() : DEFAULT_LIBRARY_NAME
   } catch (err) {
     return DEFAULT_LIBRARY_NAME
   }

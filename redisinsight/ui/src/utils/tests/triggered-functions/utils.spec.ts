@@ -36,6 +36,7 @@ const getLibraryNamesTests: any[] = [
  }`, 'lib'],
   ['!js api_version=1.0 name=lib1', 'lib1'],
   ['!js name=lib1 api_version=1.0', 'lib1'],
+  ['!js name=lib1_21@% api_version=1.0', 'lib1_21@%'],
   [1, 'Library'],
   ['   ', 'Library'],
   [null, 'Library'],

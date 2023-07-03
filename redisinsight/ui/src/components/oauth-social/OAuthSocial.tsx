@@ -1,11 +1,11 @@
 import React from 'react'
 import { EuiButtonIcon } from '@elastic/eui'
 import cx from 'classnames'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { ipcAuthGithub, ipcAuthGoogle } from 'uiSrc/electron/utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { oauthCloudSignInDialogSelector } from 'uiSrc/slices/oauth/cloud'
+import { oauthCloudSignInDialogSelector, signIn } from 'uiSrc/slices/oauth/cloud'
 
 import { ReactComponent as GoogleIcon } from 'uiSrc/assets/img/oauth/google.svg'
 import { ReactComponent as GithubIcon } from 'uiSrc/assets/img/oauth/github.svg'
@@ -14,6 +14,7 @@ import styles from './styles.module.scss'
 
 const OAuthSocial = () => {
   const { source = '' } = useSelector(oauthCloudSignInDialogSelector)
+  const dispatch = useDispatch()
 
   const sendTelemetry = (accountOption: string) => sendEventTelemetry({
     event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
@@ -31,6 +32,7 @@ const OAuthSocial = () => {
       onClick: () => {
         sendTelemetry('Google')
         ipcAuthGoogle()
+        dispatch(signIn())
       },
     },
     {
@@ -40,6 +42,7 @@ const OAuthSocial = () => {
       onClick: () => {
         sendTelemetry('GitHub')
         ipcAuthGithub()
+        dispatch(signIn())
       },
     }
   ]

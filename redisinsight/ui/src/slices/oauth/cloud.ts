@@ -6,6 +6,7 @@ import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
 import { AppDispatch, RootState } from '../store'
 import { SignInDialogSource, StateAppOAuth } from '../interfaces'
+import { addErrorNotification } from '../app/notifications'
 
 export const initialState: StateAppOAuth = {
   loading: true,
@@ -14,7 +15,11 @@ export const initialState: StateAppOAuth = {
     isOpen: false,
     source: null,
   },
-  currentAccount: null,
+  account: {
+    loading: false,
+    error: '',
+    currentAccount: null,
+  }
 }
 
 // A slice for recipes
@@ -27,23 +32,23 @@ const oauthCloudSlice = createSlice({
     signIn: (state) => {
       state.loading = true
     },
-    signInSuccess: (state, { payload }) => {
+    signInSuccess: (state) => {
       state.loading = false
     },
-    signInFailure: (state, { payload }) => {
+    signInFailure: (state, { payload }: PayloadAction<string>) => {
       state.loading = false
       state.error = payload
     },
     getAccountInfo: (state) => {
-      state.loading = true
+      state.account.loading = true
     },
     getAccountInfoSuccess: (state, { payload }: PayloadAction<any>) => {
-      state.loading = false
-      state.currentAccount = payload
+      state.account.loading = false
+      state.account.currentAccount = payload
     },
-    getAccountInfoFailure: (state, { payload }) => {
-      state.loading = false
-      state.error = payload
+    getAccountInfoFailure: (state, { payload }: PayloadAction<string>) => {
+      state.account.loading = false
+      state.account.error = payload
     },
     setSignInDialogState: (state, { payload }: PayloadAction<Nullable<SignInDialogSource>>) => {
       state.signInDialog = {
@@ -69,7 +74,8 @@ export const {
 // A selector
 export const oauthCloudSelector = (state: RootState) => state.oauth.cloud
 export const oauthCloudSignInDialogSelector = (state: RootState) => state.oauth.cloud.signInDialog
-export const oauthCloudAccountSelector = (state: RootState) => state.oauth.cloud.currentAccount
+export const oauthCloudAccountSelector = (state: RootState) => state.oauth.cloud.account
+export const oauthCloudCurrentAccountSelector = (state: RootState) => state.oauth.cloud.account.currentAccount
 
 // The reducer
 export default oauthCloudSlice.reducer
@@ -89,6 +95,7 @@ export function fetchAccountInfo(onSuccessAction?: () => void, onFailAction?: ()
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
       dispatch(getAccountInfoFailure(errorMessage))
       onFailAction?.()
     }

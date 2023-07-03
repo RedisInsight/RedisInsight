@@ -13,7 +13,7 @@ import { ReactComponent as DesktopIcon } from 'uiSrc/assets/img/icons/module_not
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
 import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { RedisDefaultModules, SignInDialogSource } from 'uiSrc/slices/interfaces'
-import { handleFreeDatabaseClick } from 'uiSrc/utils/oauth/handleFreeDatabaseClick'
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 import styles from './styles.module.scss'
 
@@ -76,10 +76,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     }
   }
 
-  const onFreeDatabaseClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const source = type === 'browser' ? SignInDialogSource.BrowserSearch : SignInDialogSource[module]
-
-    handleFreeDatabaseClick(e, source)
+  const onFreeDatabaseClick = () => {
     onClose?.()
   }
 
@@ -127,23 +124,33 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
         >
           Learn More
         </EuiLink>
-        <EuiLink
-          className={styles.link}
-          external={false}
-          target="_blank"
-          href={getStartedLink('https://redis.com/try-free')}
-          onClick={onFreeDatabaseClick}
-          data-testid="get-started-link"
-        >
-          <EuiButton
-            fill
-            size="s"
-            color="secondary"
-            className={styles.btnLink}
-          >
-            Get Started For Free
-          </EuiButton>
-        </EuiLink>
+        <OAuthSsoHandlerDialog>
+          {(ssoCloudHandlerClick) => (
+            <EuiLink
+              className={styles.link}
+              external={false}
+              target="_blank"
+              href={getStartedLink('https://redis.com/try-free')}
+              onClick={(e) => {
+                ssoCloudHandlerClick(
+                  e,
+                  type === 'browser' ? SignInDialogSource.BrowserSearch : SignInDialogSource[module]
+                )
+                onFreeDatabaseClick()
+              }}
+              data-testid="get-started-link"
+            >
+              <EuiButton
+                fill
+                size="s"
+                color="secondary"
+                className={styles.btnLink}
+              >
+                Get Started For Free
+              </EuiButton>
+            </EuiLink>
+          )}
+        </OAuthSsoHandlerDialog>
       </div>
     </div>
   )

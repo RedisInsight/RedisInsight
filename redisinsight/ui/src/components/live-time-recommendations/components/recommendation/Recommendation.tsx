@@ -16,7 +16,8 @@ import {
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
-import { Nullable, findMarkdownPathByPath, Maybe, renderRecommendationContent } from 'uiSrc/utils'
+import { Nullable, findMarkdownPathByPath, Maybe } from 'uiSrc/utils'
+import { renderRecommendationContent } from 'uiSrc/utils/recommendation/utils'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'

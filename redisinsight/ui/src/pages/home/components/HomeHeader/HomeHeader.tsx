@@ -11,7 +11,7 @@ import {
 import { isEmpty } from 'lodash'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import { FeatureFlagComponent, ImportDatabasesDialog } from 'uiSrc/components'
+import { FeatureFlagComponent, ImportDatabasesDialog, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import HelpLinksMenu from 'uiSrc/pages/home/components/HelpLinksMenu'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
@@ -22,7 +22,6 @@ import { getPathToResource } from 'uiSrc/services/resourcesService'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import { SignInDialogSource } from 'uiSrc/slices/interfaces'
-import { handleFreeDatabaseClick } from 'uiSrc/utils/oauth/handleFreeDatabaseClick'
 import { FeatureFlags } from 'uiSrc/constants'
 import { ReactComponent as ConfettiIcon } from 'uiSrc/assets/img/oauth/confetti.svg'
 import SearchDatabasesList from '../SearchDatabasesList'
@@ -97,14 +96,9 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
   }
 
   const handleCreateDatabaseClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
     event: TelemetryEvent,
     eventData: any = {},
   ) => {
-    handleFreeDatabaseClick(
-      e,
-      welcomePage ? SignInDialogSource.WelcomeScreen : SignInDialogSource.ListOfDatabases
-    )
     handleClickLink(event, eventData)
   }
 
@@ -181,24 +175,33 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
     // @ts-ignore
     const linkStyles = stylesCss ? stylesCss[theme] : {}
     const promoLink = (
-      <PromoLink
-        title={title}
-        description={description}
-        url={links?.main?.url}
-        testId="promo-btn"
-        icon="arrowRight"
-        styles={{
-          ...linkStyles,
-          backgroundImage: linkStyles?.backgroundImage
-            ? `url(${getPathToResource(linkStyles.backgroundImage)})`
-            : undefined
-        }}
-        onClick={(e) => handleCreateDatabaseClick(
-          e,
-          HELP_LINKS.cloud.event,
-          { source: welcomePage ? 'Welcome page' : 'My Redis databases' }
+      <OAuthSsoHandlerDialog>
+        {(ssoCloudHandlerClick) => (
+          <PromoLink
+            title={title}
+            description={description}
+            url={links?.main?.url}
+            testId="promo-btn"
+            icon="arrowRight"
+            styles={{
+              ...linkStyles,
+              backgroundImage: linkStyles?.backgroundImage
+                ? `url(${getPathToResource(linkStyles.backgroundImage)})`
+                : undefined
+            }}
+            onClick={(e) => {
+              handleCreateDatabaseClick(
+                HELP_LINKS.cloud.event,
+                { source: welcomePage ? 'Welcome page' : 'My Redis databases' }
+              )
+              ssoCloudHandlerClick(
+                e,
+                welcomePage ? SignInDialogSource.WelcomeScreen : SignInDialogSource.ListOfDatabases
+              )
+            }}
+          />
         )}
-      />
+      </OAuthSsoHandlerDialog>
     )
     return (
       <FeatureFlagComponent name={FeatureFlags.cloudSso} otherwise={promoLink}>

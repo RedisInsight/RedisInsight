@@ -12,7 +12,7 @@ import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 
 import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
-import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import OAuthSsoHandlerDialog from 'uiSrc/components/oauth-sso-handler-dialog'
 import { SignInDialogSource } from 'uiSrc/slices/interfaces'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
@@ -160,7 +160,7 @@ const renderContentElement = (
               data-testid={`link-sso-${telemetry.telemetryName}-${idx}`}
               target="_blank"
               onClick={(e) => {
-                ssoCloudHandlerClick(e, telemetry.telemetryName as SignInDialogSource)
+                ssoCloudHandlerClick?.(e, telemetry.telemetryName as SignInDialogSource)
               }}
               href={addUtmToLink(value.href, telemetry.telemetryName)}
             >

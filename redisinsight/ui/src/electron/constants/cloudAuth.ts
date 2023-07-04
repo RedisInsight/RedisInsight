@@ -5,9 +5,7 @@ export enum CloudAuthStatus {
 
 export interface CloudAuthResponse {
   status: CloudAuthStatus
-
   message?: string
-
   error?: object | string
 }
 

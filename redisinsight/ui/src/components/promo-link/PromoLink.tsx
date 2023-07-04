@@ -36,7 +36,6 @@ const PromoLink = (props: Props) => {
       <EuiText className={styles.description}>
         <span style={{ color: linkStyles?.color }}>{description}</span>
       </EuiText>
-      {/* {icon && <EuiIcon type={icon} size="m" className={styles.icon} />} */}
     </a>
   )
 }

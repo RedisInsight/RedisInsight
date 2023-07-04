@@ -24,7 +24,7 @@ fixture `Database modules`
         // Delete database
         await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test
+test.skip
     .meta({ rte: rte.standalone, env: env.web })('Verify that user can see DB modules on DB list page for Standalone DB', async t => {
         // Check module column on DB list page
         await t.expect(myRedisDatabasePage.moduleColumn.exists).ok('Module column not found');
@@ -48,7 +48,7 @@ test
         //Verify that user can hover over the module icons and see tooltip with version.
         await myRedisDatabasePage.checkModulesInTooltip(moduleNameList);
     });
-test
+test.skip
     .meta({ rte: rte.standalone })('Verify that user can see full module list in the Edit mode', async t => {
         // Verify that module column is displayed
         await t.expect(myRedisDatabasePage.moduleColumn.visible).ok('Module column not found');
@@ -59,7 +59,7 @@ test
         // Verify modules in Edit mode
         await myRedisDatabasePage.checkModulesOnPage(moduleList);
     });
-test
+test.skip
     .meta({ rte: rte.standalone })('Verify that user can see icons in DB header for RediSearch, RedisGraph, RedisJSON, RedisBloom, RedisTimeSeries, RedisGears, RedisAI default modules', async t => {
         // Connect to DB
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);

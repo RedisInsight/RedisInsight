@@ -10,7 +10,9 @@ export interface Props {
   id?: string
 }
 
-const UploadFile = ({ onFileChange, onClick, accept, id = 'upload-input-file' }: Props) => {
+const UploadFile = (props: Props) => {
+  const { onFileChange, onClick, accept, id = 'upload-input-file' } = props
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader()
@@ -22,6 +24,7 @@ const UploadFile = ({ onFileChange, onClick, accept, id = 'upload-input-file' }:
       e.target.value = ''
     }
   }
+
   return (
     <EuiButtonEmpty
       className={styles.emptyBtn}

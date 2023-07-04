@@ -85,19 +85,6 @@ const LibraryDetails = (props: IProps) => {
     setIsShowConfiguration(isChecked)
   }
 
-  const onFileChange = (
-    { target: { files } }: { target: { files: FileList | null } },
-    callback: (value: string) => void
-  ) => {
-    if (files && files[0]) {
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        callback(e?.target?.result as string)
-      }
-      reader.readAsText(files[0])
-    }
-  }
-
   return (
     <div className={styles.main} data-testid="lib-add-form">
       <div className={styles.header}>
@@ -136,7 +123,7 @@ const LibraryDetails = (props: IProps) => {
               />
               <EuiFlexGroup justifyContent="flexEnd">
                 <EuiFlexItem grow={false}>
-                  <UploadFile id="upload-code-file" onFileChange={(e) => onFileChange(e, setCode)} accept=".js, text/plain" />
+                  <UploadFile id="upload-code-file" onFileChange={setCode} accept=".js, text/plain" />
                 </EuiFlexItem>
               </EuiFlexGroup>
             </>
@@ -172,7 +159,7 @@ const LibraryDetails = (props: IProps) => {
                   />
                   <EuiFlexGroup justifyContent="flexEnd">
                     <EuiFlexItem grow={false}>
-                      <UploadFile id="upload-configuration-file" onFileChange={(e) => onFileChange(e, setConfiguration)} accept="application/json, text/plain" />
+                      <UploadFile id="upload-configuration-file" onFileChange={setConfiguration} accept="application/json, text/plain" />
                     </EuiFlexItem>
                   </EuiFlexGroup>
                 </>

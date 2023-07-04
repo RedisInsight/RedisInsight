@@ -12,13 +12,15 @@ import { ReactComponent as MobileIcon } from 'uiSrc/assets/img/icons/mobile_modu
 import { ReactComponent as DesktopIcon } from 'uiSrc/assets/img/icons/module_not_loaded.svg'
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
 import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
-import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { RedisDefaultModules, SignInDialogSource } from 'uiSrc/slices/interfaces'
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 import styles from './styles.module.scss'
 
 export interface IProps {
   moduleName: RedisDefaultModules
   id: string
+  onClose?: () => void
   type?: 'workbench' | 'browser'
 }
 
@@ -50,7 +52,7 @@ const ListItem = ({ item }: { item: string }) => (
   </li>
 )
 
-const ModuleNotLoaded = ({ moduleName, id, type = 'workbench' }: IProps) => {
+const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps) => {
   const [width, setWidth] = useState(0)
 
   const module = MODULE_TEXT_VIEW[moduleName]
@@ -72,6 +74,10 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench' }: IProps) => {
     } catch (e) {
       return baseUrl
     }
+  }
+
+  const onFreeDatabaseClick = () => {
+    onClose?.()
   }
 
   return (
@@ -118,22 +124,33 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench' }: IProps) => {
         >
           Learn More
         </EuiLink>
-        <EuiLink
-          className={styles.link}
-          external={false}
-          target="_blank"
-          href={getStartedLink('https://redis.com/try-free')}
-          data-testid="get-started-link"
-        >
-          <EuiButton
-            fill
-            size="s"
-            color="secondary"
-            className={styles.btnLink}
-          >
-            Get Started For Free
-          </EuiButton>
-        </EuiLink>
+        <OAuthSsoHandlerDialog>
+          {(ssoCloudHandlerClick) => (
+            <EuiLink
+              className={styles.link}
+              external={false}
+              target="_blank"
+              href={getStartedLink('https://redis.com/try-free')}
+              onClick={(e) => {
+                ssoCloudHandlerClick(
+                  e,
+                  type === 'browser' ? SignInDialogSource.BrowserSearch : SignInDialogSource[module]
+                )
+                onFreeDatabaseClick()
+              }}
+              data-testid="get-started-link"
+            >
+              <EuiButton
+                fill
+                size="s"
+                color="secondary"
+                className={styles.btnLink}
+              >
+                Get Started For Free
+              </EuiButton>
+            </EuiLink>
+          )}
+        </OAuthSsoHandlerDialog>
       </div>
     </div>
   )

@@ -3,15 +3,16 @@ import React, { ReactElement } from 'react'
 import { Provider, useSelector } from 'react-redux'
 import { EuiPage, EuiPageBody } from '@elastic/eui'
 
+import { store } from 'uiSrc/slices/store'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { PagePlaceholder } from 'uiSrc/components'
 import Router from './Router'
-import store from './slices/store'
 import { Theme } from './constants'
 import { themeService } from './services'
 import { Config, GlobalSubscriptions, NavigationMenu, Notifications, ShortcutsFlyout } from './components'
 import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
+import GlobalDialogs from './components/global-dialogs'
 
 import themeDark from './styles/themes/dark_theme/_dark_theme.lazy.scss'
 import themeLight from './styles/themes/light_theme/_light_theme.lazy.scss'
@@ -39,6 +40,7 @@ const App = () => {
         ? <PagePlaceholder />
         : (
           <EuiPage className="main">
+            <GlobalDialogs />
             <GlobalSubscriptions />
             <NavigationMenu />
             <EuiPageBody component="main">

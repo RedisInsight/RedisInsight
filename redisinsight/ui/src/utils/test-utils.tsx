@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import configureMockStore from 'redux-mock-store'
 import { render as rtlRender, waitFor } from '@testing-library/react'
 
-import rootStore, { RootState } from 'uiSrc/slices/store'
+import { RootState, store as rootStore } from 'uiSrc/slices/store'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
 import { initialState as initialStateCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { initialState as initialStateClientCerts } from 'uiSrc/slices/instances/clientCerts'
@@ -46,6 +46,7 @@ import { initialState as initialStateDbAnalysis } from 'uiSrc/slices/analytics/d
 import { initialState as initialStatePubSub } from 'uiSrc/slices/pubsub/pubsub'
 import { initialState as initialStateRedisearch } from 'uiSrc/slices/browser/redisearch'
 import { initialState as initialStateRecommendations } from 'uiSrc/slices/recommendations/recommendations'
+import { initialState as initialStateOAuth } from 'uiSrc/slices/oauth/cloud'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
@@ -65,7 +66,7 @@ const initialStateDefault: RootState = {
     redisCommands: cloneDeep(initialStateAppRedisCommands),
     plugins: cloneDeep(initialStateAppPluginsReducer),
     socketConnection: cloneDeep(initialStateAppSocketConnectionReducer),
-    features: cloneDeep(initialStateAppFeaturesReducer)
+    features: cloneDeep(initialStateAppFeaturesReducer),
   },
   connections: {
     instances: cloneDeep(initialStateInstances),
@@ -112,6 +113,9 @@ const initialStateDefault: RootState = {
   },
   recommendations: cloneDeep(initialStateRecommendations),
   pubsub: cloneDeep(initialStatePubSub),
+  oauth: {
+    cloud: cloneDeep(initialStateOAuth),
+  }
 }
 
 // mocked store

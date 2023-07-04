@@ -106,6 +106,9 @@
     border-top-width: 1px;
     margin: 25px auto 20px;
   }
+  .cloudSsoPromoBtnAnchor {
+    width: 100%;
+  }
   .otherGuides {
     flex-wrap: wrap;
     & > div {
@@ -161,4 +164,21 @@
   @media (min-width: 1101px) and (max-width: 1249px) {
     display: flex !important;
   }
+}
+
+.cloudSsoPromoBtnAnchor {
+  position: relative;
+  display: flex !important;
+  width: 260px;
+}
+.cloudSsoPromoTooltip {
+  display: flex;
+  flex-direction: row;
+  line-height: normal;
+  font-size: 12px !important;
+}
+.cloudSsoPromoTooltipIcon {
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: 8px;
 }

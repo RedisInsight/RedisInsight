@@ -1,10 +1,8 @@
-import { IpcEvent } from '../constants'
+import { CloudAuthSocial, IpcInvokeEvent } from '../constants'
 
 export const ipcAuthGoogle = async () => {
-  const appVersion = await window.app?.ipc?.invoke(IpcEvent.getAppVersion)
-  console.log('google', { appVersion })
+  await window.app?.ipc?.invoke(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Google)
 }
 export const ipcAuthGithub = async () => {
-  const appVersion = await window.app?.ipc?.invoke(IpcEvent.getAppVersion)
-  console.log('github', { appVersion })
+  await window.app?.ipc?.invoke(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Github)
 }

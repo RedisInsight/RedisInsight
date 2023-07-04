@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
+import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
-import parse from 'html-react-parser'
-import { DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
 
+import { DATABASE_LIST_MODULES_TEXT, SignInDialogSource } from 'uiSrc/slices/interfaces'
 import { getModule, truncateText } from 'uiSrc/utils'
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import { IMetric } from '../OverviewMetrics'
@@ -12,15 +12,17 @@ import { IMetric } from '../OverviewMetrics'
 import './styles.scss'
 import styles from './styles.module.scss'
 
-const ModulesInfoText = 'More information about Redis modules can be found <a class="link-underline" href="https://redis.io/modules" target="_blank" rel="noreferrer">here</a>.\nCreate a <a class="link-underline" href="https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight" target="_blank" rel="noreferrer">free Redis database</a> with modules support on Redis Cloud.\n'
-
-interface IProps {
+export interface IProps {
   metrics: Array<IMetric>,
   modules: Array<AdditionalRedisModule>
 }
 
 const MoreInfoPopover = ({ metrics, modules }: IProps) => {
   const [isShowMoreInfoPopover, setIsShowMoreInfoPopover] = useState(false)
+
+  const onFreeDatabaseClick = () => {
+    setIsShowMoreInfoPopover(false)
+  }
 
   return (
     <EuiPopover
@@ -112,7 +114,30 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
               </div>
             ))
           }
-          <p style={{ marginTop: '12px' }} className={styles.mi_smallText}>{parse(ModulesInfoText)}</p>
+          <p style={{ marginTop: '12px' }} className={styles.mi_smallText}>
+            {'More information about Redis modules can be found '}
+            <a className="link-underline" href="https://redis.io/modules" target="_blank" rel="noreferrer">here</a>.
+            <br />
+            {'Create a '}
+            <OAuthSsoHandlerDialog>
+              {(ssoCloudHandlerClick) => (
+                <EuiLink
+                  color="text"
+                  onClick={(e) => {
+                    ssoCloudHandlerClick(e, SignInDialogSource.BrowserContentMenu)
+                    onFreeDatabaseClick()
+                  }}
+                  external={false}
+                  target="_blank"
+                  href="https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight"
+                  data-testid="free-database-link"
+                >
+                  free Redis database
+                </EuiLink>
+              )}
+            </OAuthSsoHandlerDialog>
+            {' with modules support on Redis Cloud.'}
+          </p>
         </div>
       </div>
     </EuiPopover>

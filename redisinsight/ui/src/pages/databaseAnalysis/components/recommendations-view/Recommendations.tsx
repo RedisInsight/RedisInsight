@@ -30,13 +30,14 @@ import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/ap
 import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
+
+import { findMarkdownPathByPath } from 'uiSrc/utils'
 import {
-  findMarkdownPathByPath,
   sortRecommendations,
   renderRecommendationBadgesLegend,
   renderRecommendationBadges,
   renderRecommendationContent,
-} from 'uiSrc/utils'
+} from 'uiSrc/utils/recommendation/utils'
 
 import styles from './styles.module.scss'
 

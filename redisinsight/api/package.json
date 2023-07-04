@@ -24,7 +24,7 @@
     "start:dev": "cross-env NODE_ENV=development BUILD_TYPE=DOCKER_ON_PREMISE SERVER_STATIC_CONTENT=1 nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:stage": "cross-env NODE_ENV=staging BUILD_TYPE=DOCKER_ON_PREMISE SERVER_STATIC_CONTENT=true node dist/src/main",
-    "start:prod": "cross-env NODE_ENV=production node dist/src/main",
+    "start:prod": "cross-env NODE_ENV=production BUILD_TYPE=DOCKER_ON_PREMISE node dist/src/main",
     "test": "cross-env NODE_ENV=test ./node_modules/.bin/jest -w 1",
     "test:watch": "cross-env NODE_ENV=test jest --watch -w 1",
     "test:cov": "cross-env NODE_ENV=test ./node_modules/.bin/jest --forceExit --coverage -w 1",

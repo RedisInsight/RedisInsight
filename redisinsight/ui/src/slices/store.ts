@@ -27,6 +27,7 @@ import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
 import appsSocketConnectionReducer from './app/socket-connection'
 import appFeaturesReducer from './app/features'
+import appOauthReducer from './oauth/cloud'
 import workbenchResultsReducer from './workbench/wb-results'
 import workbenchGuidesReducer from './workbench/wb-guides'
 import workbenchTutorialsReducer from './workbench/wb-tutorials'
@@ -50,7 +51,7 @@ export const rootReducer = combineReducers({
     redisCommands: appRedisCommandsReducer,
     plugins: appPluginsReducer,
     socketConnection: appsSocketConnectionReducer,
-    features: appFeaturesReducer
+    features: appFeaturesReducer,
   }),
   connections: combineReducers({
     instances: instancesReducer,
@@ -97,6 +98,9 @@ export const rootReducer = combineReducers({
   }),
   pubsub: pubSubReducer,
   recommendations: recommendationsReducer,
+  oauth: combineReducers({
+    cloud: appOauthReducer,
+  })
 })
 
 const store = configureStore({
@@ -105,7 +109,7 @@ const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
 })
 
-export default store
+export { store }
 
 export type RootState = ReturnType<typeof rootReducer>
 export type AppDispatch = typeof store.dispatch

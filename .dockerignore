@@ -4,18 +4,15 @@
 .circleci
 .docker
 
-coverage
-dll
 **/node_modules
 release
 
-redisinsight/dist
-redisinsight/node_modules
+**/dist
+**/coverage
+**/dll
+**/.issues
+**/.parcel-cache
+**/.temp_cache
+**/.nyc_output
+
 redisinsight/main.prod.js
-
-redisinsight/api/.nyc_output
-redisinsight/api/coverage
-redisinsight/api/dist
-redisinsight/api/node_modules
-
-redisinsight/ui/dist

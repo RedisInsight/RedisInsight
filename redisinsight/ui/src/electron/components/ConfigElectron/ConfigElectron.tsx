@@ -55,8 +55,8 @@ const ConfigElectron = () => {
   }, [isReleaseNotesViewed])
 
   useEffect(() => {
-    console.log({ userData })
-  }, [userData])
+    console.log({ currentAccount })
+  }, [currentAccount])
 
   return null
 }

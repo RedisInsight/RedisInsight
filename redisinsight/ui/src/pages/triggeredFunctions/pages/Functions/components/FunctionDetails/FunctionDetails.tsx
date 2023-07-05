@@ -1,14 +1,24 @@
-import React, { useEffect } from 'react'
-import { EuiBadge, EuiButtonIcon, EuiCollapsibleNavGroup, EuiLink, EuiText, EuiTitle, EuiToolTip, } from '@elastic/eui'
+import React, { useEffect, useState } from 'react'
+import {
+  EuiBadge,
+  EuiButton,
+  EuiButtonIcon,
+  EuiCollapsibleNavGroup,
+  EuiLink,
+  EuiText,
+  EuiTitle,
+  EuiToolTip,
+} from '@elastic/eui'
 import cx from 'classnames'
 import { isNil } from 'lodash'
 import { useHistory, useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { TriggeredFunctionsFunction } from 'uiSrc/slices/interfaces/triggeredFunctions'
+import { FunctionType, TriggeredFunctionsFunction } from 'uiSrc/slices/interfaces/triggeredFunctions'
 
 import { Pages } from 'uiSrc/constants'
 import { setSelectedLibraryToShow } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import InvokeFunction from 'uiSrc/pages/triggeredFunctions/pages/Functions/components/InvokeFunction'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -18,7 +28,9 @@ export interface Props {
 
 const FunctionDetails = (props: Props) => {
   const { item, onClose } = props
-  const { name, library, description, flags, lastError, totalExecutionTime, lastExecutionTime } = item
+  const { name, library, type, description, flags, lastError, totalExecutionTime, lastExecutionTime } = item
+
+  const [isInvokeOpen, setIsInvokeOpen] = useState(false)
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const history = useHistory()
@@ -35,6 +47,27 @@ const FunctionDetails = (props: Props) => {
     })
   }, [item])
 
+  const handleClickInvoke = () => {
+    setIsInvokeOpen(true)
+    sendEventTelemetry({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_INVOKE_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        isAsync: item?.isAsync
+      }
+    })
+  }
+
+  const handleCancelInvoke = () => {
+    setIsInvokeOpen(false)
+    sendEventTelemetry({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_INVOKE_CANCELLED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }
+
   const goToLibrary = (e: React.MouseEvent, libName: string) => {
     e.preventDefault()
     dispatch(setSelectedLibraryToShow(libName))
@@ -48,6 +81,8 @@ const FunctionDetails = (props: Props) => {
     </div>
   )
 
+  const isShowInvokeButton = type === FunctionType.Function
+
   return (
     <div className={styles.main} data-testid={`function-details-${name}`}>
       <div className={styles.header}>
@@ -58,6 +93,18 @@ const FunctionDetails = (props: Props) => {
         >
           <EuiTitle size="xs" className={styles.libName} data-testid="function-name"><span>{name}</span></EuiTitle>
         </EuiToolTip>
+        {isShowInvokeButton && (
+          <EuiButton
+            fill
+            color="secondary"
+            iconType="play"
+            size="s"
+            onClick={handleClickInvoke}
+            data-testid="invoke-btn"
+          >
+            Invoke
+          </EuiButton>
+        )}
         <EuiToolTip
           content="Close"
           position="left"
@@ -137,6 +184,16 @@ const FunctionDetails = (props: Props) => {
           </EuiCollapsibleNavGroup>
         )}
       </div>
+      {isInvokeOpen && (
+        <div className="formFooterBar">
+          <InvokeFunction
+            libName={library}
+            name={name}
+            isAsync={item.isAsync}
+            onCancel={handleCancelInvoke}
+          />
+        </div>
+      )}
     </div>
   )
 }

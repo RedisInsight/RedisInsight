@@ -49,26 +49,33 @@ const LibrariesPage = () => {
     applyFiltering()
   }, [filterValue, libraries])
 
-  const updateList = () => {
-    dispatch(fetchTriggeredFunctionsLibrariesList(instanceId, (librariesList) => {
-      if (selected) {
-        const findRow = find(librariesList, (item) => item.name === selected)
+  const handleSuccessUpdateList = (data: TriggeredFunctionsLibrary[]) => {
+    if (selectedRow) {
+      const findRow = find(data, (item) => item.name === selectedRow)
+      setSelectedRow(findRow?.name ?? null)
+    }
 
-        if (findRow) {
-          setSelectedRow(selected)
-        }
+    if (selected) {
+      const findRow = find(data, (item) => item.name === selected)
 
-        dispatch(setSelectedLibraryToShow(null))
+      if (findRow) {
+        setSelectedRow(selected)
       }
 
-      sendEventTelemetry({
-        event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARIES_RECEIVED,
-        eventData: {
-          databaseId: instanceId,
-          total: librariesList.length
-        }
-      })
-    }))
+      dispatch(setSelectedLibraryToShow(null))
+    }
+
+    sendEventTelemetry({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARIES_RECEIVED,
+      eventData: {
+        databaseId: instanceId,
+        total: data.length
+      }
+    })
+  }
+
+  const updateList = () => {
+    dispatch(fetchTriggeredFunctionsLibrariesList(instanceId, handleSuccessUpdateList))
   }
 
   const onChangeFiltering = (e: React.ChangeEvent<HTMLInputElement>) => {

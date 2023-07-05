@@ -136,4 +136,47 @@ describe('FunctionDetails', () => {
     expect(pushMock).toHaveBeenCalledTimes(1)
     expect(pushMock).toHaveBeenCalledWith('/instanceId/triggered-functions/libraries')
   })
+
+  it('should render invoke button', () => {
+    render(<FunctionDetails item={mockedItem} onClose={jest.fn()} />)
+
+    expect(screen.getByTestId('invoke-btn')).toBeInTheDocument()
+  })
+
+  it('should not render invoke button', () => {
+    render(<FunctionDetails item={mockedItemKeySpaceTriggers} onClose={jest.fn()} />)
+
+    expect(screen.queryByTestId('invoke-btn')).not.toBeInTheDocument()
+  })
+
+  it('should call proper telemetry events on invoke', async () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<FunctionDetails item={mockedItem} onClose={jest.fn()} />)
+
+    sendEventTelemetry.mockRestore()
+
+    fireEvent.click(screen.getByTestId('invoke-btn'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_INVOKE_CLICKED,
+      eventData: {
+        databaseId: 'instanceId',
+        isAsync: mockedItem.isAsync
+      }
+    })
+
+    sendEventTelemetry.mockRestore()
+
+    fireEvent.click(screen.getByTestId('cancel-invoke-btn'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_INVOKE_CANCELLED,
+      eventData: {
+        databaseId: 'instanceId',
+      }
+    })
+  })
 })

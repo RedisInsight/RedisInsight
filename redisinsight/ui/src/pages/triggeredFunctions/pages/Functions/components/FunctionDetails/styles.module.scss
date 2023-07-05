@@ -7,13 +7,17 @@
   height: 100%;
 
   .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     height: 58px;
-    padding: 16px;
+    padding: 16px 48px 16px 16px;
     border-bottom: 1px solid var(--euiColorLightShade);
+
 
     .titleTooltip {
       width: auto;
-      max-width: calc(100% - 80px);
+      max-width: calc(100% - 120px);
     }
   }
 

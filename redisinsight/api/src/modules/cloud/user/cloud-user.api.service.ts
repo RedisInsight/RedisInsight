@@ -40,7 +40,7 @@ export class CloudUserApiService {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       if (!session?.csrf) {
-        this.logger.log('Trying to login user');
+        this.logger.log('Trying to get csrf token');
         const csrf = await this.api.getCsrfToken(session);
 
         if (!csrf) {
@@ -93,8 +93,6 @@ export class CloudUserApiService {
     try {
       await this.ensureLogin(sessionMetadata);
 
-      this.logger.log('Syncing user profile');
-
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       const existingUser = await this.repository.get(sessionMetadata.sessionId);
@@ -102,6 +100,8 @@ export class CloudUserApiService {
       if (existingUser?.id && !force) {
         return;
       }
+
+      this.logger.log('Trying to sync user profile');
 
       const userData = await this.api.getCurrentUser(session);
 
@@ -175,8 +175,6 @@ export class CloudUserApiService {
    */
   private async ensureCapiKeys(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      this.logger.log('Ensure Capi keys');
-
       let user = await this.me(sessionMetadata);
 
       // nothing is needed since we have capi key
@@ -193,7 +191,12 @@ export class CloudUserApiService {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       if (!user?.capiKey) {
+        this.logger.log('Trying to enable capi');
+
         await this.api.enableCapi(session);
+
+        this.logger.log('Successfully enabled capi');
+
         user = await this.me(sessionMetadata, true);
         currentAccount = CloudUserApiService.getCurrentAccount(user);
       }
@@ -204,12 +207,12 @@ export class CloudUserApiService {
         const existingKey = find(existingKeys, { name: cloudConfig.capiKeyName });
 
         if (existingKey) {
-          this.logger.log('Removing existing CAPI key');
+          this.logger.log('Removing existing capi key');
           await this.api.deleteCApiKeys(session, existingKey.id);
         }
       }
 
-      this.logger.log('Creating new CAPI key');
+      this.logger.log('Creating new capi key');
       const apiKey = await this.api.createCapiKey(session, user.id);
       currentAccount.capiSecret = apiKey.secret_key;
 
@@ -218,7 +221,7 @@ export class CloudUserApiService {
         accounts: user.accounts,
       });
     } catch (e) {
-      this.logger.error('Unable to generate CAPI keys', e);
+      this.logger.error('Unable to generate capi keys', e);
       throw wrapHttpError(e);
     }
   }
@@ -240,7 +243,7 @@ export class CloudUserApiService {
         capiSecret: user.capiSecret,
       };
     } catch (e) {
-      this.logger.error('Unable to get CAPI keys', e);
+      this.logger.error('Unable to get capi keys', e);
       throw wrapHttpError(e);
     }
   }

@@ -34,6 +34,7 @@ export interface ICloudCapiSubscription {
   numberOfDatabases: number;
   subscriptionPricing: ICloudCapiSubscriptionPricing[];
   cloudDetails: ICloudCapiSubscriptionDetails[];
+  price: number;
 }
 
 export interface ICloudCapiSubscriptions {

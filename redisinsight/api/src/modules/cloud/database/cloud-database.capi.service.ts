@@ -1,3 +1,4 @@
+import { find, filter } from 'lodash';
 import { Injectable, Logger } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { wrapHttpError } from 'src/common/utils';
@@ -6,6 +7,13 @@ import { GetCloudSubscriptionDatabaseDto, GetCloudSubscriptionDatabasesDto } fro
 import { CloudDatabaseCapiProvider } from 'src/modules/cloud/database/cloud-database.capi.provider';
 import { CloudDatabase } from 'src/modules/cloud/database/models';
 import { parseCloudDatabaseCapiResponse, parseCloudDatabasesCapiResponse } from 'src/modules/cloud/database/utils';
+import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
+import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
+import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
+import config from 'src/utils/config';
+
+const cloudConfig = config.get('cloud');
 
 @Injectable()
 export class CloudDatabaseCapiService {
@@ -13,6 +21,9 @@ export class CloudDatabaseCapiService {
 
   constructor(
     private readonly capi: CloudDatabaseCapiProvider,
+    private readonly cloudSessionService: CloudSessionService,
+    private readonly cloudSubscriptionCapiService: CloudSubscriptionCapiService,
+    private readonly cloudUserApiService: CloudUserApiService,
   ) {}
 
   /**
@@ -67,17 +78,28 @@ export class CloudDatabaseCapiService {
   async createFreeDatabase(sessionMetadata: SessionMetadata) {
     try {
       this.logger.log('Creating free database');
-      //
-      // const session = await this.sessionService.getSession(sessionMetadata.sessionId);
-      //
-      // const user = await this.repository.get(sessionMetadata.sessionId);
-      //
-      // const fixedSubscriptions = await this.cloudSubscriptionService.getSubscriptionsByType({
-      //   apiKey: user.currentCApiKey,
-      //   apiSecret: user.currentCApiSecret,
-      // }, CloudSubscriptionType.Fixed);
 
-      // console.log('___ fixedSubscriptions', fixedSubscriptions);
+      const credentials = await this.cloudUserApiService.getCapiKeys(sessionMetadata);
+      const fixedSubscriptions = await this.cloudSubscriptionCapiService.getSubscriptions(
+        credentials,
+        CloudSubscriptionType.Fixed,
+      );
+
+      console.log('___ fixedSubscriptions', fixedSubscriptions);
+
+      const freeSubscriptions = filter(fixedSubscriptions, { price: 0 });
+
+      console.log('___ freeSubscriptions', freeSubscriptions)
+
+      const freeSubscription = find(freeSubscriptions, { name: cloudConfig.freeSubscriptionName }) || freeSubscriptions[0];
+
+      if (!freeSubscription) {
+        // todo: create one
+      }
+
+      // const databases = this.getDatabase(credentials, {
+      // });
+      // todo: check databases
     } catch (e) {
       this.logger.error('Unable to create free database', e);
       throw wrapHttpError(e);

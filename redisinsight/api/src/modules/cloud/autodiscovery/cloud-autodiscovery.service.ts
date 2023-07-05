@@ -1,12 +1,8 @@
 import {
-  ForbiddenException,
-  HttpException,
   Injectable,
-  InternalServerErrorException,
   Logger,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { AxiosError } from 'axios';
 import { uniqBy } from 'lodash';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
@@ -44,38 +40,6 @@ export class CloudAutodiscoveryService {
   ) {}
 
   /**
-   * Generates proper error based on api response
-   * @param error
-   * @param errorTitle
-   * @private
-   */
-  private getApiError(error: AxiosError, errorTitle: string): HttpException {
-    const { response } = error;
-    if (response) {
-      if (response.status === 401 || response.status === 403) {
-        this.logger.error(`${errorTitle}. ${error.message}`);
-        return new ForbiddenException(ERROR_MESSAGES.REDIS_CLOUD_FORBIDDEN);
-      }
-      if (response.status === 500) {
-        this.logger.error(`${errorTitle}. ${error.message}`);
-        return new InternalServerErrorException(
-          ERROR_MESSAGES.SERVER_NOT_AVAILABLE,
-        );
-      }
-      if (response.data) {
-        const { data } = response;
-        this.logger.error(
-          `${errorTitle} ${error.message}`,
-          JSON.stringify(data),
-        );
-        return new InternalServerErrorException(data.description || data.error);
-      }
-    }
-    this.logger.error(`${errorTitle}. ${error.message}`);
-    return new InternalServerErrorException(ERROR_MESSAGES.SERVER_NOT_AVAILABLE);
-  }
-
-  /**
    * Get cloud account short info
    * @param authDto
    */
@@ -84,8 +48,6 @@ export class CloudAutodiscoveryService {
       return await this.cloudUserCapiService.getCurrentAccount(authDto);
     } catch (e) {
       throw wrapHttpError(e);
-      // todo: error
-      throw this.getApiError(e, 'Failed to get RE cloud account');
     }
   }
 
@@ -107,11 +69,6 @@ export class CloudAutodiscoveryService {
     } catch (e) {
       this.analytics.sendGetRECloudSubsFailedEvent(e, type, authType);
       throw wrapHttpError(e);
-
-      // todo: rethink
-      // const exception = wrapHttpError(error, 'Failed to get cloud flexible subscriptions');
-      // this.analytics.sendGetRECloudSubsFailedEvent(exception, type, authType);
-      // throw exception;
     }
   }
 
@@ -163,8 +120,6 @@ export class CloudAutodiscoveryService {
       this.analytics.sendGetRECloudDbsFailedEvent(e, authType);
 
       throw wrapHttpError(e);
-      // this.analytics.sendGetRECloudDbsFailedEvent(exception, authType);
-      // throw exception;
     }
   }
 

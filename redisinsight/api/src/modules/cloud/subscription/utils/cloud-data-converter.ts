@@ -25,6 +25,7 @@ export const parseCloudSubscriptionsCapiResponse = (
           0,
           'region',
         ], get(subscription, 'region')),
+        price: subscription?.price,
       }));
     });
   }

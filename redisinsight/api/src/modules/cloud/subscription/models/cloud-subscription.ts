@@ -56,4 +56,10 @@ export class CloudSubscription {
     type: String,
   })
   region?: string;
+
+  @ApiPropertyOptional({
+    description: 'Subscription price',
+    type: Number,
+  })
+  price?: number;
 }

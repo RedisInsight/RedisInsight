@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios'
-import { set } from 'lodash'
+import { isString, set } from 'lodash'
 import React from 'react'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
@@ -12,7 +12,7 @@ export const parseCloudOAuthCallbackError = (err: object | string): AxiosError =
     },
   }
 
-  if (typeof err === 'string') {
+  if (isString(err)) {
     return set(error, 'response.data.message', err) as AxiosError
   }
 

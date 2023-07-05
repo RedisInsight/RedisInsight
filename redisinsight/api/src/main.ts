@@ -8,8 +8,8 @@ import { INestApplication, NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
-import { get, hbsEq } from 'src/utils';
-import { migrateHomeFolder } from 'src/init-helper';
+import { get } from 'src/utils';
+import { migrateHomeFolder, initHandlebars } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
 import { AppModule } from './app.module';
@@ -25,6 +25,7 @@ interface IApp {
 
 export default async function bootstrap(): Promise<IApp> {
   await migrateHomeFolder();
+  initHandlebars();
 
   const port = process.env.API_PORT || serverConfig.port;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
@@ -46,7 +47,6 @@ export default async function bootstrap(): Promise<IApp> {
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
   app.setGlobalPrefix(serverConfig.globalPrefix);
-  hbs.registerHelper('eq', hbsEq);
   // eslint-disable-next-line no-underscore-dangle
   app.engine('hbs', hbs.__express);
   app.setBaseViewsDir(join(__dirname, '..', 'views'));

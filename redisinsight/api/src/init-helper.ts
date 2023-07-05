@@ -1,6 +1,12 @@
 import * as fs from 'fs-extra';
-import config from 'src/utils/config';
 import { join } from 'path';
+import * as hbs from 'hbs';
+
+import config from 'src/utils/config';
+import { hbsEq } from './utils';
+import logoTemplate from '../views/cloud_oauth_callback/partials/logo.hbs';
+import errorsTemplate from '../views/cloud_oauth_callback/partials/errors.hbs';
+import stylesTemplate from '../views/cloud_oauth_callback/partials/styles.hbs';
 
 const PATH_CONFIG = config.get('dir_path');
 const DB_CONFIG = config.get('db');
@@ -36,3 +42,14 @@ export const migrateHomeFolder = async () => {
     // continue initialization even without migration
   }
 };
+
+/**
+ * Register helpers and partials for Handlebars
+ */
+export const initHandlebars = () => {
+  hbs.registerHelper('eq', hbsEq);
+  hbs.registerPartial('logoPartial', logoTemplate);
+  hbs.registerPartial('errorsPartial', errorsTemplate);
+  hbs.registerPartial('stylesPartial', stylesTemplate);
+}
+

@@ -90,6 +90,7 @@
     "@types/adm-zip": "^0.5.0",
     "@types/axios": "^0.14.0",
     "@types/express": "^4.17.3",
+    "@types/hbs": "^4.0.1",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.167",
     "@types/node": "14.14.10",

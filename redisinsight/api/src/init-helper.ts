@@ -4,9 +4,6 @@ import * as hbs from 'hbs';
 
 import config from 'src/utils/config';
 import { hbsEq } from './utils';
-import logoTemplate from '../views/cloud_oauth_callback/partials/logo.hbs';
-import errorsTemplate from '../views/cloud_oauth_callback/partials/errors.hbs';
-import stylesTemplate from '../views/cloud_oauth_callback/partials/styles.hbs';
 
 const PATH_CONFIG = config.get('dir_path');
 const DB_CONFIG = config.get('db');
@@ -48,8 +45,6 @@ export const migrateHomeFolder = async () => {
  */
 export const initHandlebars = () => {
   hbs.registerHelper('eq', hbsEq);
-  hbs.registerPartial('logoPartial', logoTemplate);
-  hbs.registerPartial('errorsPartial', errorsTemplate);
-  hbs.registerPartial('stylesPartial', stylesTemplate);
+  hbs.registerPartials(join(__dirname, '..', 'views', 'partials'));
 }
 

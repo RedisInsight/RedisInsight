@@ -4,7 +4,7 @@ import React from 'react'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 
-export const parseCloudOAuthCallbackError = (err: object | string): AxiosError => {
+export const parseCloudOAuthCallbackError = (err: object | string = DEFAULT_ERROR_MESSAGE): AxiosError => {
   const error = {
     response: {
       status: 500,

@@ -5,7 +5,7 @@ import { parseCloudOAuthCallbackError } from 'uiSrc/utils'
 const responseData = { response: { data: { }, status: 500 } }
 
 const parseCloudOAuthCallbackErrorTests = [
-  ['', set(cloneDeep(responseData), 'response.data', { message: '' })],
+  ['', set(cloneDeep(responseData), 'response.data', { message: 'Something was wrong!' })],
   ['test', set(cloneDeep(responseData), 'response.data', { message: 'test' })],
   [{ errorCode: 11_003 },
     set(cloneDeep(responseData), 'response.data', {

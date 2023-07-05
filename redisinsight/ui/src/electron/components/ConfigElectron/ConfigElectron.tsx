@@ -28,7 +28,7 @@ const ConfigElectron = () => {
         dispatch(fetchAccountInfo())
       }
 
-      if (status === CloudAuthStatus.Failed && error) {
+      if (status === CloudAuthStatus.Failed) {
         dispatch(signInFailure(error))
         dispatch(addErrorNotification(parseCloudOAuthCallbackError(error)))
       }

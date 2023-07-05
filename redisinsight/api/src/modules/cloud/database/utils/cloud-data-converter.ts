@@ -1,53 +1,18 @@
-import { RE_CLOUD_MODULES_NAMES } from 'src/constants';
-import { get, find, isArray } from 'lodash';
-import {
-  CloudAccountInfo,
-  CloudDatabase, CloudDatabaseMemoryStorage,
-  CloudDatabasePersistencePolicy, CloudDatabaseProtocol,
-  CloudSubscription, CloudSubscriptionType, ICloudApiDatabase, ICloudApiSubscription,
-} from 'src/modules/cloud/autodiscovery/models';
+import { find, get, isArray } from 'lodash';
 import { plainToClass } from 'class-transformer';
+import {
+  CloudDatabase, CloudDatabaseMemoryStorage,
+  CloudDatabasePersistencePolicy, CloudDatabaseProtocol, ICloudCapiDatabase, ICloudCapiSubscriptionDatabases,
+} from 'src/modules/cloud/database/models';
+import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
+import { RE_CLOUD_MODULES_NAMES } from 'src/constants';
 
 export function convertRECloudModuleName(name: string): string {
   return RE_CLOUD_MODULES_NAMES[name] ?? name;
 }
 
-export const parseCloudAccountResponse = (account: any): CloudAccountInfo => plainToClass(CloudAccountInfo, {
-  accountId: account.id,
-  accountName: account.name,
-  ownerName: get(account, ['key', 'owner', 'name']),
-  ownerEmail: get(account, ['key', 'owner', 'email']),
-});
-
-export const parseCloudSubscriptionsResponse = (
-  subscriptions: ICloudApiSubscription[],
-  type: CloudSubscriptionType,
-): CloudSubscription[] => {
-  const result: CloudSubscription[] = [];
-  if (subscriptions?.length) {
-    subscriptions?.forEach?.((subscription): void => {
-      result.push(plainToClass(CloudSubscription, {
-        id: subscription.id,
-        type,
-        name: subscription.name,
-        numberOfDatabases: subscription.numberOfDatabases,
-        status: subscription.status,
-        provider: get(subscription, ['cloudDetails', 0, 'provider'], get(subscription, 'provider')),
-        region: get(subscription, [
-          'cloudDetails',
-          0,
-          'regions',
-          0,
-          'region',
-        ], get(subscription, 'region')),
-      }));
-    });
-  }
-  return result;
-};
-
-export const parseCloudDatabaseResponse = (
-  database: ICloudApiDatabase,
+export const parseCloudDatabaseCapiResponse = (
+  database: ICloudCapiDatabase,
   subscriptionId: number,
   subscriptionType: CloudSubscriptionType,
 ): CloudDatabase => {
@@ -104,13 +69,13 @@ export const findReplicasForDatabase = (databases: any[], sourceDatabaseId: numb
     }
     return endpoints.some((endpoint: string): boolean => (
       endpoint.includes(sourceDatabase.publicEndpoint)
-        || endpoint.includes(sourceDatabase.privateEndpoint)
+      || endpoint.includes(sourceDatabase.privateEndpoint)
     ));
   });
 };
 
-export const parseCloudDatabasesInSubscriptionResponse = (
-  response: any,
+export const parseCloudDatabasesCapiResponse = (
+  response: ICloudCapiSubscriptionDatabases,
   subscriptionType: CloudSubscriptionType,
 ): CloudDatabase[] => {
   const subscription = isArray(response.subscription) ? response.subscription[0] : response.subscription;
@@ -121,7 +86,7 @@ export const parseCloudDatabasesInSubscriptionResponse = (
   databases.forEach((database): void => {
     // We do not send the databases which have 'memcached' as their protocol.
     if ([CloudDatabaseProtocol.Redis, CloudDatabaseProtocol.Stack].includes(database.protocol)) {
-      result.push(parseCloudDatabaseResponse(database, subscriptionId, subscriptionType));
+      result.push(parseCloudDatabaseCapiResponse(database, subscriptionId, subscriptionType));
     }
   });
   result = result.map((database) => ({

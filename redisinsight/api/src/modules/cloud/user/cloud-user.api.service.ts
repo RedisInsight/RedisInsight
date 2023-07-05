@@ -1,192 +1,247 @@
-import axios from 'axios';
-import { get } from 'lodash';
-import { Injectable } from '@nestjs/common';
-import {
-  ICloudApiAccount, ICloudApiCredentials, ICloudCApiKey, ICloudApiUser,
-} from 'src/modules/cloud/user/models';
+import { find } from 'lodash';
+import { Injectable, Logger } from '@nestjs/common';
+import { SessionMetadata } from 'src/common/models';
+import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
+import { CloudUser, CloudUserAccount } from 'src/modules/cloud/user/models';
+import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 import config from 'src/utils/config';
-import { wrapCloudApiError } from 'src/modules/cloud/common/exceptions';
+import { wrapHttpError } from 'src/common/utils';
+import { CloudApiBadRequestException, CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
+import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 
 const cloudConfig = config.get('cloud');
 
 @Injectable()
 export class CloudUserApiService {
-  private apiClient = axios.create({
-    baseURL: cloudConfig.apiUrl,
-  });
+  private logger = new Logger('CloudUserApiService');
+
+  constructor(
+    private readonly repository: CloudUserRepository,
+    private readonly sessionService: CloudSessionService,
+    private readonly api: CloudUserApiProvider,
+  ) {}
 
   /**
-   * Prepare header for authorized requests
-   * @param credentials
+   * Find current account in accounts list by currentAccountId
+   * @param user
    */
-  static getApiHeaders(credentials: ICloudApiCredentials) {
-    const headers = {};
-
-    if (credentials?.accessToken) {
-      headers['authorization'] = `Bearer ${credentials.accessToken}`;
-    }
-
-    if (credentials?.apiSessionId) {
-      headers['cookie'] = `JSESSIONID=${credentials.apiSessionId}`;
-    }
-
-    if (credentials?.csrf) {
-      headers['x-csrf-token'] = credentials.csrf;
-    }
-
-    return {
-      headers,
-    };
+  static getCurrentAccount(user: CloudUser): CloudUserAccount {
+    return find(user?.accounts, { id: user?.currentAccountId });
   }
 
   /**
-   * Login user to api using accessToken from oauth flow
-   * returns JSESSIONID
-   * @param credentials
+   * Fetch csrf token if needed
+   * @param sessionMetadata
    * @private
    */
-  async getCsrfToken(credentials: ICloudApiCredentials): Promise<string> {
+  private async ensureCsrf(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      const { data } = await this.apiClient.get(
-        'csrf',
-        CloudUserApiService.getApiHeaders(credentials),
-      );
+      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
-      return data?.csrfToken?.csrf_token;
+      if (!session?.csrf) {
+        this.logger.log('Trying to login user');
+        const csrf = await this.api.getCsrfToken(session);
+
+        if (!csrf) {
+          throw new CloudApiUnauthorizedException();
+        }
+
+        await this.sessionService.updateSessionData(sessionMetadata.sessionId, { csrf });
+      }
     } catch (e) {
-      throw wrapCloudApiError(e);
+      this.logger.error('Unable to get csrf token', e);
+      throw wrapHttpError(e);
     }
   }
 
   /**
    * Login user to api using accessToken from oauth flow
-   * returns JSESSIONID
-   * @param credentials
+   * @param sessionMetadata
    * @private
    */
-  async getApiSessionId(credentials: ICloudApiCredentials): Promise<string> {
+  private async ensureLogin(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      const { headers } = await this.apiClient.post(
-        'login',
-        {},
-        CloudUserApiService.getApiHeaders(credentials),
-      );
+      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
-      return get(headers, 'set-cookie', []).find(
-        (header) => header.indexOf('JSESSIONID=') > -1,
-      )
-        ?.match(/JSESSIONID=(\w+)/)?.[1];
+      if (!session?.apiSessionId) {
+        this.logger.log('Trying to login user');
+        const apiSessionId = await this.api.getApiSessionId(session);
+
+        if (!apiSessionId) {
+          throw new CloudApiUnauthorizedException();
+        }
+
+        await this.sessionService.updateSessionData(sessionMetadata.sessionId, { apiSessionId });
+      }
+
+      await this.ensureCsrf(sessionMetadata);
     } catch (e) {
-      throw wrapCloudApiError(e);
+      this.logger.error('Unable to login user', e);
+      throw wrapHttpError(e);
     }
   }
 
   /**
-   * Get current user profile
-   * @param credentials
+   * Sync cloud user profile when needed
+   * Always sync with force=true
+   * @param sessionMetadata
+   * @param force
+   * @private
    */
-  async getCurrentUser(credentials: ICloudApiCredentials): Promise<ICloudApiUser> {
+  private async ensureCloudUser(sessionMetadata: SessionMetadata, force = false) {
     try {
-      const { data } = await this.apiClient.get(
-        '/users/me',
-        CloudUserApiService.getApiHeaders(credentials),
-      );
+      await this.ensureLogin(sessionMetadata);
 
-      return data;
+      this.logger.log('Syncing user profile');
+
+      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+
+      const existingUser = await this.repository.get(sessionMetadata.sessionId);
+
+      if (existingUser?.id && !force) {
+        return;
+      }
+
+      const userData = await this.api.getCurrentUser(session);
+
+      const user: CloudUser = {
+        id: +userData?.id,
+        name: userData?.name,
+        currentAccountId: +userData?.current_account_id,
+      };
+
+      const accounts = await this.api.getAccounts(session);
+
+      // todo: remember existing CApi key?
+      user.accounts = accounts?.map?.((account) => ({
+        id: account.id,
+        name: account.name,
+        capiKey: account?.api_access_key,
+      }));
+
+      const currentAccount = CloudUserApiService.getCurrentAccount(user);
+
+      if (currentAccount?.capiKey) {
+        user.capiKey = currentAccount.capiKey;
+      }
+
+      await this.repository.update(sessionMetadata.sessionId, user);
+      this.logger.log('Successfully synchronized user profile');
     } catch (e) {
-      throw wrapCloudApiError(e);
+      this.logger.error('Unable to sync user profile', e);
+      throw wrapHttpError(e);
     }
   }
 
   /**
-   * Fetch list of user accounts
-   * @param credentials
+   * Get cloud user profile
+   * @param sessionMetadata
+   * @param forceSync
    */
-  async getAccounts(credentials: ICloudApiCredentials): Promise<ICloudApiAccount[]> {
+  async me(sessionMetadata: SessionMetadata, forceSync = false): Promise<CloudUser> {
     try {
-      const { data } = await this.apiClient.get(
-        '/accounts',
-        CloudUserApiService.getApiHeaders(credentials),
-      );
+      await this.ensureCloudUser(sessionMetadata, forceSync);
 
-      return data?.accounts;
+      return this.repository.get(sessionMetadata.sessionId);
     } catch (e) {
-      throw wrapCloudApiError(e);
+      throw wrapHttpError(e);
     }
   }
 
   /**
    * Select current account to work with
-   * @param credentials
+   * @param sessionMetadata
    * @param accountId
    */
-  async setCurrentAccount(credentials: ICloudApiCredentials, accountId: number): Promise<void> {
+  async setCurrentAccount(sessionMetadata: SessionMetadata, accountId: string | number): Promise<CloudUser> {
     try {
-      await this.apiClient.post(
-        `/accounts/setcurrent/${accountId}`,
-        {},
-        CloudUserApiService.getApiHeaders(credentials),
-      );
+      this.logger.log('Switching user account');
+
+      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+
+      await this.api.setCurrentAccount(session, +accountId);
+
+      return this.me(sessionMetadata, true);
     } catch (e) {
-      throw wrapCloudApiError(e);
+      this.logger.error('Unable to switch current account', e);
+      throw wrapHttpError(e);
     }
   }
 
   /**
-   * Delete CApi key from current account
-   * @param credentials
-   * @param id
+   * Generate CAPI key + secret if needed
+   * @param sessionMetadata
    */
-  async deleteCApiKeys(credentials: ICloudApiCredentials, id: number): Promise<void> {
+  private async ensureCapiKeys(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      await this.apiClient.delete(
-        `/accounts/cloud-api/cloudApiKeys/${id}`,
-        CloudUserApiService.getApiHeaders(credentials),
-      );
+      this.logger.log('Ensure Capi keys');
+
+      let user = await this.me(sessionMetadata);
+
+      // nothing is needed since we have capi key
+      if (user?.capiSecret && user?.capiKey) {
+        return;
+      }
+
+      let currentAccount = CloudUserApiService.getCurrentAccount(user);
+
+      if (!currentAccount) {
+        throw new CloudApiBadRequestException('No active account');
+      }
+
+      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+
+      if (!user?.capiKey) {
+        await this.api.enableCapi(session);
+        user = await this.me(sessionMetadata, true);
+        currentAccount = CloudUserApiService.getCurrentAccount(user);
+      }
+
+      const existingKeys = await this.api.getCapiKeys(session);
+
+      if (existingKeys?.length) {
+        const existingKey = find(existingKeys, { name: cloudConfig.capiKeyName });
+
+        if (existingKey) {
+          this.logger.log('Removing existing CAPI key');
+          await this.api.deleteCApiKeys(session, existingKey.id);
+        }
+      }
+
+      this.logger.log('Creating new CAPI key');
+      const apiKey = await this.api.createCapiKey(session, user.id);
+      currentAccount.capiSecret = apiKey.secret_key;
+
+      await this.repository.update(sessionMetadata.sessionId, {
+        capiSecret: apiKey.secret_key,
+        accounts: user.accounts,
+      });
     } catch (e) {
-      throw wrapCloudApiError(e);
+      this.logger.error('Unable to generate CAPI keys', e);
+      throw wrapHttpError(e);
     }
   }
 
   /**
-   * Get list of CApi keys
-   * @param credentials
+   * Gets current capi keys from local storage or generate new one
+   * @param sessionMetadata
    */
-  async getCApiKeys(credentials: ICloudApiCredentials): Promise<ICloudCApiKey[]> {
+  async getCapiKeys(sessionMetadata: SessionMetadata): Promise<CloudCapiAuthDto> {
     try {
-      const { data } = await this.apiClient.get(
-        '/accounts/cloud-api/cloudApiKeys',
-        CloudUserApiService.getApiHeaders(credentials),
-      );
+      this.logger.log('Getting capi keys');
 
-      return data?.cloudApiKeys;
+      await this.ensureCapiKeys(sessionMetadata);
+
+      const user = await this.me(sessionMetadata);
+
+      return {
+        capiKey: user.capiKey,
+        capiSecret: user.capiSecret,
+      };
     } catch (e) {
-      throw wrapCloudApiError(e);
-    }
-  }
-
-  /**
-   * Create new CApi key
-   * @param credentials
-   * @param accountId
-   */
-  async createCApiKey(credentials: ICloudApiCredentials, accountId: number): Promise<ICloudCApiKey> {
-    try {
-      const { data } = await this.apiClient.post(
-        '/accounts/cloud-api/cloudApiKeys',
-        {
-          cloudApiKey: {
-            name: cloudConfig.cloudApiKeyName,
-            user_account: accountId,
-            ip_whitelist: [],
-          },
-        },
-        CloudUserApiService.getApiHeaders(credentials),
-      );
-
-      return data?.cloudApiKey;
-    } catch (e) {
-      throw wrapCloudApiError(e);
+      this.logger.error('Unable to get CAPI keys', e);
+      throw wrapHttpError(e);
     }
   }
 }

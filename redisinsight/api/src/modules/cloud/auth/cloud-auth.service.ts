@@ -48,11 +48,6 @@ export class CloudAuthService {
     }
   }
 
-  // todo: delete. needed for manual tests during development
-  async oauth(sessionMetadata: SessionMetadata, strategy: CloudAuthIdpType): Promise<string> {
-    return this.getAuthorizationUrl(sessionMetadata, strategy);
-  }
-
   /**
    * Returns authorization url to open in the native browser to initialize oauth flow
    * @param sessionMetadata

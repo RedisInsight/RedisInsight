@@ -75,11 +75,6 @@ export default {
     synchronize: process.env.DB_SYNC ? process.env.DB_SYNC === 'true' : false,
     migrationsRun: process.env.DB_MIGRATIONS ? process.env.DB_MIGRATIONS === 'true' : true,
   },
-  redis_cloud: {
-    url: process.env.REDIS_CLOUD_URL || 'https://api-cloudapi.qa.redislabs.com/v1',
-    cloudDiscoveryTimeout: parseInt(process.env.RI_CLOUD_DISCOVERY_TIMEOUT, 10) || 60 * 1000, // 1 min
-    cloudDatabaseConnectionTimeout: parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) || 30 * 1000,
-  },
   redis_clients: {
     idleSyncInterval: parseInt(process.env.CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr
     maxIdleThreshold: parseInt(process.env.CLIENTS_MAX_IDLE_THRESHOLD, 10) || 1000 * 60 * 60, // 1hr
@@ -215,8 +210,13 @@ export default {
     syncInterval: parseInt(process.env.RI_FEATURES_CONFIG_SYNC_INTERVAL, 10) || 1_000 * 60 * 60 * 4, // 4h
   },
   cloud: {
-    cloudApiKeyName: process.env.RI_CLOUD_API_KEY_NAME || 'RedisInsight',
-    apiUrl: process.env.RI_CLOUD_API_URL,
+    apiUrl: process.env.RI_CLOUD_API_URL || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com/api/v1',
+    capiUrl: process.env.RI_CLOUD_CAPI_URL || 'https://api-k8s-cloudapi.qa.redislabs.com/v1',
+    capiKeyName: process.env.RI_CLOUD_CAPI_KEY_NAME || 'RedisInsight',
+    freeSubscriptionName: process.env.RI_CLOUD_FREE_SUBSCRIPTION_NAME || 'RedisInsight',
+    freeDatabaseName: process.env.RI_CLOUD_FREE_DATABASE_NAME || 'RedisInsight',
+    discoveryTimeout: parseInt(process.env.RI_CLOUD_DISCOVERY_TIMEOUT, 10) || 60 * 1000, // 1 min
+    databaseConnectionTimeout: parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) || 30 * 1000,
     idp: {
       google: {
         authorizeUrl: process.env.RI_CLOUD_IDP_GOOGLE_AUTHORIZE_URL || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,

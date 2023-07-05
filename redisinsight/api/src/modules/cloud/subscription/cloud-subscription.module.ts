@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { CloudSubscriptionApiService } from 'src/modules/cloud/subscription/cloud-subscription.api.service';
-import { CloudSubscriptionService } from 'src/modules/cloud/subscription/cloud-subscription.service';
+import { CloudSubscriptionCapiProvider } from 'src/modules/cloud/subscription/cloud-subscription.capi.provider';
+import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
 
 @Module({
   providers: [
-    CloudSubscriptionApiService,
-    CloudSubscriptionService,
+    CloudSubscriptionCapiProvider,
+    CloudSubscriptionCapiService,
   ],
   exports: [
-    CloudSubscriptionService,
+    CloudSubscriptionCapiService,
   ],
 })
 export class CloudSubscriptionModule {}

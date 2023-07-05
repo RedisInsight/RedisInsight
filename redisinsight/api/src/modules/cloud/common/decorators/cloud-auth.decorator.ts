@@ -1,16 +1,16 @@
 import { createParamDecorator, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Validator } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { CloudAuthDto } from 'src/modules/cloud/autodiscovery/dto';
+import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 
 const validator = new Validator();
 
-export const cloudAuthDtoFromRequestHeadersFactory = (data: unknown, ctx: ExecutionContext): CloudAuthDto => {
+export const cloudAuthDtoFromRequestHeadersFactory = (data: unknown, ctx: ExecutionContext): CloudCapiAuthDto => {
   const request = ctx.switchToHttp().getRequest();
 
-  const dto = plainToClass(CloudAuthDto, {
-    apiKey: request.headers['x-cloud-api-key'],
-    apiSecret: request.headers['x-cloud-api-secret'],
+  const dto = plainToClass(CloudCapiAuthDto, {
+    capiKey: request.headers['x-cloud-api-key'],
+    capiSecret: request.headers['x-cloud-api-secret'],
   });
 
   const errors = validator.validateSync(dto);

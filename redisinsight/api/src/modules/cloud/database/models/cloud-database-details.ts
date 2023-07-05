@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { CloudSubscriptionType } from 'src/modules/cloud/autodiscovery/models/cloud-subscription';
+import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models/cloud-subscription';
 
 export class CloudDatabaseDetails {
   @ApiProperty({

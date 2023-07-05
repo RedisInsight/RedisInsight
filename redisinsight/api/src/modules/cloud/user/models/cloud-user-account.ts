@@ -9,8 +9,8 @@ export class CloudUserAccount {
   name: string;
 
   @Expose({ groups: [TransformGroup.Secure] })
-  apiAccessKey?: string; // api_access_key
+  capiKey?: string; // api_access_key
 
   @Expose({ groups: [TransformGroup.Secure] })
-  apiKey?: string;
+  capiSecret?: string;
 }

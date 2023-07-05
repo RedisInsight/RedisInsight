@@ -7,7 +7,7 @@ import { DataAsJsonString } from 'src/common/decorators';
 import { Expose, Transform, Type } from 'class-transformer';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
-import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/autodiscovery/entities/cloud-database-details.entity';
+import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 
 export enum HostingProvider {
   UNKNOWN = 'UNKNOWN',

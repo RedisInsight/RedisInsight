@@ -9,9 +9,9 @@ export class CloudModule {
     return {
       module: CloudModule,
       imports: [
-        CloudAutodiscoveryModule,
         CloudAuthModule,
-        CloudUserModule.register(),
+        CloudUserModule,
+        CloudAutodiscoveryModule,
       ],
     };
   }

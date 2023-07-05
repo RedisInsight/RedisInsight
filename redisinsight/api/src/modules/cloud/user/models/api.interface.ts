@@ -1,9 +1,3 @@
-export interface ICloudApiCredentials {
-  accessToken?: string;
-  apiSessionId?: string;
-  csrf?: string;
-}
-
 export interface ICloudApiUser {
   id: string; // what difference between user_id?
   current_account_id: string;
@@ -19,7 +13,7 @@ export interface ICloudApiAccount {
   api_access_key: string;
 }
 
-export interface ICloudCApiKey {
+export interface ICloudApiCapiKey {
   id: number;
   name: string;
   user_account: number;

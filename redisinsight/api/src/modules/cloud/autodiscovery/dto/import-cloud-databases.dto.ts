@@ -3,18 +3,18 @@ import {
   ArrayNotEmpty, IsArray, IsDefined, ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { AddCloudDatabaseDto } from 'src/modules/cloud/autodiscovery/dto/add-cloud-database.dto';
+import { ImportCloudDatabaseDto } from 'src/modules/cloud/autodiscovery/dto/import-cloud-database.dto';
 
-export class AddCloudDatabasesDto {
+export class ImportCloudDatabasesDto {
   @ApiProperty({
     description: 'Cloud databases list.',
-    type: AddCloudDatabaseDto,
+    type: ImportCloudDatabaseDto,
     isArray: true,
   })
   @IsDefined()
   @IsArray()
   @ArrayNotEmpty()
   @ValidateNested()
-  @Type(() => AddCloudDatabaseDto)
-  databases: AddCloudDatabaseDto[];
+  @Type(() => ImportCloudDatabaseDto)
+  databases: ImportCloudDatabaseDto[];
 }

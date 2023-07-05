@@ -3,7 +3,7 @@ import {
   IsDefined, IsEnum, IsInt, IsNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CloudSubscriptionType } from 'src/modules/cloud/autodiscovery/models';
+import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 
 export class GetCloudSubscriptionDatabaseDto {
   @ApiProperty({

@@ -1,20 +1,20 @@
 import {
   ClassSerializerInterceptor,
-  Controller, Get, Param, Post, Put, UseInterceptors, UsePipes, ValidationPipe
+  Controller, Get, Param, Put, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
-import { CloudUserService } from 'src/modules/cloud/user/cloud-user.service';
 import { CloudUser } from 'src/modules/cloud/user/models';
+import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
 
-@ApiTags('Cloud')
+@ApiTags('Cloud User')
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('cloud/me')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class CloudUserController {
   constructor(
-    private readonly service: CloudUserService,
+    private readonly service: CloudUserApiService,
   ) {}
 
   @Get('')
@@ -39,29 +39,5 @@ export class CloudUserController {
       @RequestSessionMetadata() sessionMetadata,
   ): Promise<CloudUser> {
     return this.service.setCurrentAccount(sessionMetadata, id);
-  }
-
-  @Get('/api-keys')
-  @ApiEndpoint({
-    description: 'Test endpoint will be removed',
-    statusCode: 200,
-    responses: [{ type: CloudUser }],
-  })
-  async g(
-    @RequestSessionMetadata() sessionMetadata,
-  ): Promise<any> {
-    return this.service.generateCKeys(sessionMetadata);
-  }
-
-  @Post('/free-database')
-  @ApiEndpoint({
-    description: 'Test endpoint will be moved from here',
-    statusCode: 200,
-    responses: [{ type: CloudUser }],
-  })
-  async f(
-    @RequestSessionMetadata() sessionMetadata,
-  ): Promise<any> {
-    return this.service.createFreeDatabase(sessionMetadata);
   }
 }

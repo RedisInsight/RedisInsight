@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { CloudSubscriptionType } from 'src/modules/cloud/autodiscovery/models/cloud-subscription';
-import { CloudDatabaseDetails } from 'src/modules/cloud/autodiscovery/models/cloud-database-details';
+import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models/cloud-subscription';
+import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-database-details';
 
 export enum CloudDatabaseProtocol {
   Redis = 'redis',

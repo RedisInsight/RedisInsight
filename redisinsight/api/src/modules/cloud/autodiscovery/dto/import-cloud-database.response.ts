@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ActionStatus } from 'src/common/models';
-import { CloudDatabase } from 'src/modules/cloud/autodiscovery/models';
+import { CloudDatabase } from 'src/modules/cloud/database/models';
 
-export class AddCloudDatabaseResponse {
+export class ImportCloudDatabaseResponse {
   @ApiProperty({
     description: 'Subscription id',
     type: Number,

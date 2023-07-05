@@ -1,31 +1,18 @@
 import {
-  Controller, Get, Post, Query, UsePipes, ValidationPipe, Render,
+  Controller, Get, Query, UsePipes, ValidationPipe, Render,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
-import { CloudAuthIdpType } from 'src/modules/cloud/auth/models/cloud-auth-request';
 
-@ApiTags('Cloud')
+@ApiTags('Cloud Auth')
 @Controller('cloud')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class CloudAuthController {
   constructor(
     private readonly cloudAuthService: CloudAuthService,
   ) {}
-
-  // todo: remove it is temporary
-  @Post('oauth')
-  @ApiEndpoint({
-    description: 'Authenticate user using OAuth flow',
-    statusCode: 200,
-  })
-  async oauth(
-    @RequestSessionMetadata() sessionMetadata,
-  ): Promise<string> {
-    return this.cloudAuthService.oauth(sessionMetadata, CloudAuthIdpType.Google);
-  }
 
   @Get('oauth/callback')
   @ApiEndpoint({

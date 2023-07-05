@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined, IsNotEmpty, IsString } from 'class-validator';
+import { ICloudCapiCredentials } from 'src/modules/cloud/common/models';
 
-export class CloudAuthDto {
+export class CloudCapiAuthDto implements ICloudCapiCredentials {
   @ApiProperty({
     description: 'Cloud API account key',
     type: String,
@@ -9,7 +10,7 @@ export class CloudAuthDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString({ always: true })
-  apiKey: string;
+  capiKey: string;
 
   @ApiProperty({
     description: 'Cloud API secret key',
@@ -18,5 +19,5 @@ export class CloudAuthDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString({ always: true })
-  apiSecret: string;
+  capiSecret: string;
 }

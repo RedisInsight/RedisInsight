@@ -13,10 +13,10 @@ export class CloudUser {
   currentAccountId?: number;
 
   @Expose({ groups: [TransformGroup.Secure] })
-  currentCApiAccessKey?: string;
+  capiKey?: string;
 
   @Expose({ groups: [TransformGroup.Secure] })
-  currentCApiKey?: string;
+  capiSecret?: string;
 
   @Type(() => CloudUserAccount)
   @Expose()

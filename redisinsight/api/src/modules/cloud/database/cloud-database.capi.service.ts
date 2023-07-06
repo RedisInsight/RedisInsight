@@ -85,11 +85,7 @@ export class CloudDatabaseCapiService {
         CloudSubscriptionType.Fixed,
       );
 
-      console.log('___ fixedSubscriptions', fixedSubscriptions);
-
       const freeSubscriptions = filter(fixedSubscriptions, { price: 0 });
-
-      console.log('___ freeSubscriptions', freeSubscriptions)
 
       const freeSubscription = find(freeSubscriptions, { name: cloudConfig.freeSubscriptionName }) || freeSubscriptions[0];
 

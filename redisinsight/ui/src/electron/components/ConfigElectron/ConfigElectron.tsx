@@ -8,6 +8,7 @@ import {
 import { ipcCheckUpdates, ipcSendEvents } from 'uiSrc/electron/utils'
 import { ipcDeleteDownloadedVersion } from 'uiSrc/electron/utils/ipcDeleteStoreValues'
 import { CloudAuthResponse, CloudAuthStatus } from 'uiSrc/electron/constants'
+import { parseCloudOAuthCallbackError } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { fetchAccountInfo, oauthCloudCurrentAccountSelector, signInFailure, signInSuccess } from 'uiSrc/slices/oauth/cloud'
 
@@ -29,7 +30,7 @@ const ConfigElectron = () => {
 
       if (status === CloudAuthStatus.Failed) {
         dispatch(signInFailure(error))
-        dispatch(addErrorNotification(error))
+        dispatch(addErrorNotification(parseCloudOAuthCallbackError(error)))
       }
     })
   }, [])

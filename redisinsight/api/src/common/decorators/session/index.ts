@@ -1,1 +1,1 @@
-export * from './session.decorator';
+export * from './session-metadata.decorator';

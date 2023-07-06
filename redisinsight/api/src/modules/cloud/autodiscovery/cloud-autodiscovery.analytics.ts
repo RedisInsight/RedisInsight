@@ -4,11 +4,14 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import {
-  CloudDatabase,
-  CloudDatabaseStatus,
-  CloudSubscription,
-  CloudSubscriptionStatus, CloudSubscriptionType,
+  CloudAutodiscoveryAuthType,
 } from 'src/modules/cloud/autodiscovery/models';
+import {
+  CloudSubscription,
+  CloudSubscriptionStatus,
+  CloudSubscriptionType,
+} from 'src/modules/cloud/subscription/models';
+import { CloudDatabase, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
 
 @Injectable()
 export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
@@ -16,7 +19,11 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendGetRECloudSubsSucceedEvent(subscriptions: CloudSubscription[] = [], type: CloudSubscriptionType) {
+  sendGetRECloudSubsSucceedEvent(
+    subscriptions: CloudSubscription[] = [],
+    type: CloudSubscriptionType,
+    authType: CloudAutodiscoveryAuthType,
+  ) {
     try {
       this.sendEvent(
         TelemetryEvents.RECloudSubscriptionsDiscoverySucceed,
@@ -26,6 +33,7 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
           ).length,
           totalNumberOfSubscriptions: subscriptions.length,
           type,
+          authType,
         },
       );
     } catch (e) {
@@ -33,11 +41,22 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendGetRECloudSubsFailedEvent(exception: HttpException, type: CloudSubscriptionType) {
-    this.sendFailedEvent(TelemetryEvents.RECloudSubscriptionsDiscoveryFailed, exception, { type });
+  sendGetRECloudSubsFailedEvent(
+    exception: HttpException,
+    type: CloudSubscriptionType,
+    authType: CloudAutodiscoveryAuthType,
+  ) {
+    this.sendFailedEvent(
+      TelemetryEvents.RECloudSubscriptionsDiscoveryFailed,
+      exception,
+      {
+        type,
+        authType,
+      },
+    );
   }
 
-  sendGetRECloudDbsSucceedEvent(databases: CloudDatabase[] = []) {
+  sendGetRECloudDbsSucceedEvent(databases: CloudDatabase[] = [], authType: CloudAutodiscoveryAuthType) {
     try {
       this.sendEvent(
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
@@ -49,6 +68,7 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
           fixed: 0,
           flexible: 0,
           ...countBy(databases, 'subscriptionType'),
+          authType,
         },
       );
     } catch (e) {
@@ -56,7 +76,7 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
     }
   }
 
-  sendGetRECloudDbsFailedEvent(exception: HttpException) {
-    this.sendFailedEvent(TelemetryEvents.RECloudDatabasesDiscoveryFailed, exception);
+  sendGetRECloudDbsFailedEvent(exception: HttpException, authType: CloudAutodiscoveryAuthType) {
+    this.sendFailedEvent(TelemetryEvents.RECloudDatabasesDiscoveryFailed, exception, { authType });
   }
 }

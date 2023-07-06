@@ -1,6 +1,9 @@
 import * as fs from 'fs-extra';
-import config from 'src/utils/config';
 import { join } from 'path';
+import * as hbs from 'hbs';
+
+import config from 'src/utils/config';
+import { hbsEq } from './utils';
 
 const PATH_CONFIG = config.get('dir_path');
 const DB_CONFIG = config.get('db');
@@ -36,3 +39,12 @@ export const migrateHomeFolder = async () => {
     // continue initialization even without migration
   }
 };
+
+/**
+ * Register helpers and partials for Handlebars
+ */
+export const initHandlebars = () => {
+  hbs.registerHelper('eq', hbsEq);
+  hbs.registerPartials(join(__dirname, '..', 'views', 'partials'));
+}
+

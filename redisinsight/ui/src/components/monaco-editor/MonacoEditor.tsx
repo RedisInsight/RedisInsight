@@ -112,7 +112,7 @@ const MonacoEditor = (props: Props) => {
         declineOnUnmount={false}
         preventOutsideClick
       >
-        <div className="inlineMonacoEditor">
+        <div className="inlineMonacoEditor" data-testid={dataTestId}>
           <ReactMonacoEditor
             language={language}
             theme={theme === Theme.Dark ? 'dark' : 'light'}
@@ -121,7 +121,6 @@ const MonacoEditor = (props: Props) => {
             options={monacoOptions}
             className={cx(styles.editor, className, { readMode: !isEditing && readOnly })}
             editorDidMount={editorDidMount}
-            data-testid={dataTestId}
           />
         </div>
       </InlineItemEditor>

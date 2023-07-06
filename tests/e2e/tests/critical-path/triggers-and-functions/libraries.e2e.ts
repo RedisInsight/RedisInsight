@@ -1,19 +1,22 @@
+import * as path from 'path';
 import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import { BrowserPage, TriggersAndFunctionsLibrariesPage } from '../../../pageObjects';
 import {
-    commonUrl,
-    ossStandaloneRedisGears
-} from '../../../helpers/conf';
-import { rte, LibrariesSections, FunctionsSections } from '../../../helpers/constants';
+    BrowserPage,
+    TriggersAndFunctionsFunctionsPage,
+    TriggersAndFunctionsLibrariesPage
+} from '../../../pageObjects';
+import { commonUrl, ossStandaloneRedisGears } from '../../../helpers/conf';
+import { FunctionsSections, LibrariesSections, MonacoEditorInputs, rte } from '../../../helpers/constants';
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { TriggersAndFunctionLibrary } from '../../../interfaces/triggers-and-functions';
-import { TriggersAndFunctionsFunctionsPage } from '../../../pageObjects/triggers-and-functions-functions-page';
+import { CommonElementsActions } from '../../../common-actions/common-elements-actions';
 
 const browserPage = new BrowserPage();
 const triggersAndFunctionsLibrariesPage = new TriggersAndFunctionsLibrariesPage();
 const triggersAndFunctionsFunctionsPage = new TriggersAndFunctionsFunctionsPage();
 
 const libraryName = 'lib';
+const filePath =  path.join('..', '..', '..', 'test-data', 'triggers-and-functions', 'library.txt');
 
 const LIBRARIES_LIST = [
     { name: 'Function1', type: LibrariesSections.Functions },
@@ -81,16 +84,17 @@ test('Verify that user can modify  code', async t => {
     await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
     await t.click(await triggersAndFunctionsLibrariesPage.getLibraryNameSelector(libraryName));
     await t.click(triggersAndFunctionsLibrariesPage.editMonacoButton);
-    await triggersAndFunctionsLibrariesPage.sendTextToMonaco(commandUpdatedPart1, commandUpdatedPart2);
-
+    await triggersAndFunctionsLibrariesPage.sendTextToMonaco(MonacoEditorInputs.Library, commandUpdatedPart1, commandUpdatedPart2);
+    await t.click(triggersAndFunctionsLibrariesPage.acceptButton);
     await t.expect(
-        (await triggersAndFunctionsLibrariesPage.getTextToMonaco())).eql(commandUpdatedPart1 + commandUpdatedPart2), 'code was not updated';
+        (await triggersAndFunctionsLibrariesPage.getTextFromMonaco())).eql(commandUpdatedPart1 + commandUpdatedPart2), 'code was not updated';
 
     await t.click(await triggersAndFunctionsLibrariesPage.configurationLink);
     await t.click(triggersAndFunctionsLibrariesPage.editMonacoButton);
-    await triggersAndFunctionsLibrariesPage.sendTextToMonaco(configuration);
+    await triggersAndFunctionsLibrariesPage.sendTextToMonaco(MonacoEditorInputs.LibraryConfiguration, configuration);
+    await t.click(triggersAndFunctionsLibrariesPage.acceptButton);
     await t.expect(
-        (await triggersAndFunctionsLibrariesPage.getTextToMonaco())).eql(configuration, 'configuration was not added');
+        (await triggersAndFunctionsLibrariesPage.getTextFromMonaco())).eql(configuration, 'configuration was not added');
 });
 
 test('Verify that function details is displayed', async t => {
@@ -116,11 +120,27 @@ test('Verify that library and functions can be deleted', async t => {
     const command2 = `TFUNCTION LOAD "#!js api_version=1.0 name=${libraryName2}\\n redis.registerFunction(\'${LIBRARIES_LIST[1].name}\', ()=>{return \'bar\'})"`;
     await browserPage.Cli.sendCommandInCli(command1);
     await browserPage.Cli.sendCommandInCli(command2);
-    await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
-    await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
+    await t.click(await browserPage.NavigationPanel.triggeredFunctionsButton);
+    await t.click(await triggersAndFunctionsFunctionsPage.librariesLink);
     await triggersAndFunctionsLibrariesPage.deleteLibraryByName(libraryName2);
     await t.expect(await triggersAndFunctionsLibrariesPage.getLibraryNameSelector(libraryName2).exists).notOk(`the library ${libraryName2} was not deleted`);
     await t.click(triggersAndFunctionsLibrariesPage.functionsLink);
     await t.expect(await triggersAndFunctionsFunctionsPage.getFunctionsNameSelector(LIBRARIES_LIST[1].name).exists).notOk(`the functions ${LIBRARIES_LIST[1].name} was not deleted`);
+});
+test('Verify that library can be uploaded', async t => {
+    const configuration = '{"redisgears_2.lock-redis-timeout": 1000}';
+    const functionNameFromFile = 'function';
+
+    await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
+    await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
+    await t.click(triggersAndFunctionsLibrariesPage.addLibraryButton);
+    await t.setFilesToUpload(triggersAndFunctionsLibrariesPage.uploadInput, [filePath]);
+    const uploadedText = await triggersAndFunctionsLibrariesPage.getTextFromMonaco();
+    await t.expect(uploadedText.length).gte(1, 'file was not uploaded');
+    await CommonElementsActions.checkCheckbox(triggersAndFunctionsLibrariesPage.addConfigurationCheckBox, true);
+    await triggersAndFunctionsLibrariesPage.sendTextToMonaco(MonacoEditorInputs.Configuration, configuration);
+    await t.click(await triggersAndFunctionsLibrariesPage.addLibrarySubmitButton);
+    await t.expect(triggersAndFunctionsLibrariesPage.getLibraryNameSelector(libraryName).exists).ok('the library was not added');
+    await t.expect(triggersAndFunctionsLibrariesPage.getFunctionsByName(LibrariesSections.Functions, functionNameFromFile).exists).ok('the library information was not opened');
 });
 

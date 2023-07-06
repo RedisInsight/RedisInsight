@@ -16,8 +16,6 @@ const triggersAndFunctionsLibrariesPage = new TriggersAndFunctionsLibrariesPage(
 const triggersAndFunctionsFunctionsPage = new TriggersAndFunctionsFunctionsPage();
 
 const libraryName = 'lib';
-
-//const filesToUpload = ['bulkUplAllKeyTypes.txt', 'bigKeysData.rtf'];
 const filePath =  path.join('..', '..', '..', 'test-data', 'triggers-and-functions', 'library.txt');
 
 const LIBRARIES_LIST = [

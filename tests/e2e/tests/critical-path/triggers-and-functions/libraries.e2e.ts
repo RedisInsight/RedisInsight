@@ -129,7 +129,7 @@ test('Verify that library and functions can be deleted', async t => {
     await t.click(triggersAndFunctionsLibrariesPage.functionsLink);
     await t.expect(await triggersAndFunctionsFunctionsPage.getFunctionsNameSelector(LIBRARIES_LIST[1].name).exists).notOk(`the functions ${LIBRARIES_LIST[1].name} was not deleted`);
 });
-test.only('Verify that library can be uploaded', async t => {
+test('Verify that library can be uploaded', async t => {
     const configuration = '{"redisgears_2.lock-redis-timeout": 1000}';
     const functionNameFromFile = 'function';
 

@@ -79,18 +79,15 @@ const StreamTabs = () => {
       })
     }
 
-    return tabs.map(({ id, label, separator = '' }) => (
-      <>
-        {separator}
-        <EuiTab
-          isSelected={viewType === id}
-          onClick={() => onSelectedTabChanged(id)}
-          key={id}
-          data-testid={`stream-tab-${id}`}
-        >
-          {label}
-        </EuiTab>
-      </>
+    return tabs.map(({ id, label }) => (
+      <EuiTab
+        isSelected={viewType === id}
+        onClick={() => onSelectedTabChanged(id)}
+        key={id}
+        data-testid={`stream-tab-${id}`}
+      >
+        {label}
+      </EuiTab>
     ))
   }, [viewType, selectedGroupName, selectedConsumerName])
 

@@ -1,22 +1,35 @@
 import { Selector, t } from 'testcafe';
 import { TriggersAndFunctionLibrary } from '../interfaces/triggers-and-functions';
-import { LibrariesSections } from '../helpers/constants';
+import { LibrariesSections, MonacoEditorInputs } from '../helpers/constants';
 import { InstancePage } from './instance-page';
 
 export class TriggersAndFunctionsLibrariesPage extends InstancePage {
+    //Buttons
     editMonacoButton = Selector('[data-testid=edit-monaco-value]');
     acceptButton = Selector('[data-testid=apply-btn]');
+    addLibraryButton = Selector('[data-testid=btn-add-library]');
+    uploadFileButton = Selector('[data-testid=upload-file-btn]');
+    addLibrarySubmitButton = Selector('[data-testid=add-library-btn-submit]');
 
-    inputMonaco = Selector('[class=inlineMonacoEditor]');
+    //CheckBoxes
+    addConfigurationCheckBox = Selector('[data-testid=show-configuration] ~ label');
+
+    //Inputs
     textAreaMonaco = Selector('[class^=view-lines]');
 
+    //Links
     configurationLink = Selector('[data-testid=library-view-tab-config]');
     functionsLink = Selector('[data-testid=triggered-functions-tab-functions]');
 
+    // Import
+    uploadInput = Selector('[data-testid=upload-code-file]', { timeout: 2000 });
+
+    //Masks
     trashMask = '[data-testid=delete-library-icon-$name]';
     deleteMask = '[data-testid=delete-library-$name]';
     sectionMask = '[data-testid^=functions-$name]';
     functionMask = '[data-testid=func-$name]';
+    inputMonaco = '[data-testid=$name]';
 
     /**
      * Is library displayed in the table
@@ -56,24 +69,24 @@ export class TriggersAndFunctionsLibrariesPage extends InstancePage {
      * @param commandPart1 The command that should be on the first line
      * @param commandPart2 command part except mandatory part
      */
-    async sendTextToMonaco(commandPart1: string, commandPart2?: string): Promise<void> {
+    async sendTextToMonaco(input: MonacoEditorInputs, commandPart1: string, commandPart2?: string): Promise<void> {
+        const inputSelector = Selector(this.inputMonaco.replace(/\$name/g, input));
 
         await t
             // remove text since replace doesn't work here
             .pressKey('ctrl+a')
             .pressKey('delete')
-            .typeText(this.inputMonaco, commandPart1);
+            .typeText(inputSelector, commandPart1);
         if (commandPart2) {
             await t.pressKey('enter')
-                .typeText(this.inputMonaco, commandPart2);
+                .typeText(inputSelector, commandPart2);
         }
-        await t.click(this.acceptButton);
     }
 
     /**
      * Get  text from monacoEditor
      */
-    async getTextToMonaco(): Promise<string> {
+    async getTextFromMonaco(): Promise<string> {
         return (await this.textAreaMonaco.textContent).replace(/\s+/g, ' ');
     }
 
@@ -81,7 +94,7 @@ export class TriggersAndFunctionsLibrariesPage extends InstancePage {
      * Delete library
      * @param name The name os library
      */
-    async deleteLibraryByName(name: string){
+    async deleteLibraryByName(name: string): Promise<void> {
         await t.hover(this.getLibraryNameSelector(name))
             .click(Selector(this.trashMask.replace(/\$name/g, name)))
             .click(Selector(this.deleteMask.replace(/\$name/g, name)));

@@ -57,5 +57,14 @@ export enum LibrariesSections {
 
 export enum FunctionsSections {
     General = 'General',
-    Flag = 'Flag'
+    Flag = 'Flag',
+}
+
+export enum MonacoEditorInputs {
+    //add library fields
+    Code = 'code-value',
+    Configuration = 'configuration-value',
+    // added library fields
+    Library = 'library-code',
+    LibraryConfiguration = 'library-configuration',
 }

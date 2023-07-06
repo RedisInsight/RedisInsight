@@ -8,34 +8,39 @@ const nodeClient = Object.create(IORedis.prototype);
 nodeClient.isCluster = false;
 nodeClient.sendCommand = jest.fn();
 
-const mockRedisMemoryInfoResponse_1: string = '# Memory\r\nnumber_of_cached_scripts:10\r\n';
-const mockRedisMemoryInfoResponse_2: string = '# Memory\r\nnumber_of_cached_scripts:11\r\n';
+const mockRedisMemoryInfoResponse1: string = '# Memory\r\nnumber_of_cached_scripts:10\r\n';
+const mockRedisMemoryInfoResponse2: string = '# Memory\r\nnumber_of_cached_scripts:11\r\n';
+const mockRedisMemoryInfoResponse3: string = '# Memory\r\nnumber_of_cached_scripts:1\r\n';
+const mockRedisMemoryInfoResponse4: string = '# Memory\r\nnumber_of_cached_scripts:2\r\n';
 
-const mockRedisKeyspaceInfoResponse_1: string = '# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n';
-const mockRedisKeyspaceInfoResponse_2: string = `# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n
+const mockRedisKeyspaceInfoResponse1: string = '# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n';
+const mockRedisKeyspaceInfoResponse2: string = `# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n
   db1:keys=0,expires=0,avg_ttl=0\r\n`;
-const mockRedisKeyspaceInfoResponse_3: string = `# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n
+const mockRedisKeyspaceInfoResponse3: string = `# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n
   db2:keys=20,expires=0,avg_ttl=0\r\n`;
 
 const mockRedisConfigResponse = ['name', '512'];
 
-const mockRedisClientsResponse_1: string = '# Clients\r\nconnected_clients:100\r\n';
-const mockRedisClientsResponse_2: string = '# Clients\r\nconnected_clients:101\r\n';
+const mockRedisClientsResponse1: string = '# Clients\r\nconnected_clients:100\r\n';
+const mockRedisClientsResponse2: string = '# Clients\r\nconnected_clients:101\r\n';
 
-const mockRedisServerResponse_1: string = '# Server\r\nredis_version:6.0.0\r\n';
-const mockRedisServerResponse_2: string = '# Server\r\nredis_version:5.1.1\r\n';
+const mockRedisServerResponse1: string = '# Server\r\nredis_version:6.0.0\r\n';
+const mockRedisServerResponse2: string = '# Server\r\nredis_version:5.1.1\r\n';
 
-const mockRedisAclListResponse_1: string[] = [
+const mockRedisAclListResponse1: string[] = [
   'user <pass off resetchannels -@all',
   'user default on #d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1 ~* &* +@all',
 ];
-const mockRedisAclListResponse_2: string[] = [
-  ...mockRedisAclListResponse_1,
+const mockRedisAclListResponse2: string[] = [
+  ...mockRedisAclListResponse1,
   'user test_2 on nopass ~* &* +@all',
 ];
 
-const mockFTListResponse_1 = [];
-const mockFTListResponse_2 = ['idx'];
+const mockFTListResponse1 = [];
+const mockFTListResponse2 = ['idx'];
+
+const mockTfunctionListResponse1 = [];
+const mockTfunctionListResponse2 = ['library'];
 
 const mockKeys = [
   {
@@ -68,7 +73,7 @@ const mockBigHashKey = {
   name: Buffer.from('name'), type: 'hash', length: 5001, memory: 10, ttl: -1,
 };
 
-const mockBigHashKey_3 = {
+const mockBigHashKey3 = {
   name: Buffer.from('name'), type: 'hash', length: 513, memory: 10, ttl: -1,
 };
 
@@ -78,10 +83,6 @@ const mockBigStringKey = {
 
 const mockHugeStringKey = {
   name: Buffer.from('name'), type: 'string', length: 10, memory: 100_001, ttl: -1,
-};
-
-const mockHugeStringKey1 = {
-  name: Buffer.from('name'), type: 'string', length: 10, memory: 512 * 1024 + 1, ttl: -1,
 };
 
 const mockBigSet = {
@@ -103,6 +104,11 @@ const mockBigListKey = {
 const mockSmallStringKey = {
   name: Buffer.from('name'), type: 'string', length: 10, memory: 199, ttl: -1,
 };
+
+const mockStreamKey = {
+  name: Buffer.from('name'), type: 'stream', length: 1, memory: 1, ttl: -1,
+};
+
 const mockSearchHashes = new Array(51).fill(mockBigHashKey);
 
 const generateRTSRecommendationTests = [
@@ -137,12 +143,12 @@ const mockSortedSets = new Array(101).fill(
   },
 );
 
-const mockZScanResponse_2 = [
+const mockZScanResponse2 = [
   '0',
   ['12345678910', 12345678910, 1, 1],
 ];
 
-const mockZScanResponse_1 = [
+const mockZScanResponse1 = [
   '0',
   ['1', 1, '12345678910', 12345678910],
 ];
@@ -154,7 +160,7 @@ describe('RecommendationProvider', () => {
     it('should not return luaScript recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValue(mockRedisMemoryInfoResponse_1);
+        .mockResolvedValue(mockRedisMemoryInfoResponse1);
 
       const luaScriptRecommendation = await service.determineLuaScriptRecommendation(nodeClient);
       expect(luaScriptRecommendation).toEqual(null);
@@ -163,7 +169,7 @@ describe('RecommendationProvider', () => {
     it('should return luaScript recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValue(mockRedisMemoryInfoResponse_2);
+        .mockResolvedValue(mockRedisMemoryInfoResponse2);
 
       const luaScriptRecommendation = await service.determineLuaScriptRecommendation(nodeClient);
       expect(luaScriptRecommendation).toEqual({ name: RECOMMENDATION_NAMES.LUA_SCRIPT });
@@ -208,7 +214,7 @@ describe('RecommendationProvider', () => {
     it('should not return avoidLogicalDatabases recommendation when only one logical db', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValue(mockRedisKeyspaceInfoResponse_1);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse1);
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(nodeClient);
       expect(avoidLogicalDatabasesRecommendation).toEqual(null);
@@ -217,7 +223,7 @@ describe('RecommendationProvider', () => {
     it('should not return avoidLogicalDatabases recommendation when only on logical db with keys', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValue(mockRedisKeyspaceInfoResponse_2);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse2);
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(nodeClient);
       expect(avoidLogicalDatabasesRecommendation).toEqual(null);
@@ -226,7 +232,7 @@ describe('RecommendationProvider', () => {
     it('should return avoidLogicalDatabases recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValue(mockRedisKeyspaceInfoResponse_3);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse3);
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(nodeClient);
       expect(avoidLogicalDatabasesRecommendation).toEqual({ name: 'avoidLogicalDatabases' });
@@ -245,7 +251,7 @@ describe('RecommendationProvider', () => {
       nodeClient.isCluster = true;
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValue(mockRedisKeyspaceInfoResponse_3);
+        .mockResolvedValue(mockRedisKeyspaceInfoResponse3);
 
       const avoidLogicalDatabasesRecommendation = await service.determineLogicalDatabasesRecommendation(nodeClient);
       expect(avoidLogicalDatabasesRecommendation).toEqual(null);
@@ -267,7 +273,8 @@ describe('RecommendationProvider', () => {
       expect(smallStringRecommendation).toEqual(null);
     });
     it('should return combineSmallStringsToHashes recommendation', async () => {
-      const smallStringRecommendation = await service.determineCombineSmallStringsToHashesRecommendation(new Array(10).fill(mockSmallStringKey));
+      const smallStringRecommendation = await service
+        .determineCombineSmallStringsToHashesRecommendation(new Array(10).fill(mockSmallStringKey));
       expect(smallStringRecommendation)
         .toEqual({
           name: RECOMMENDATION_NAMES.COMBINE_SMALL_STRINGS_TO_HASHES,
@@ -330,12 +337,12 @@ describe('RecommendationProvider', () => {
         .mockResolvedValue(mockRedisConfigResponse);
 
       const convertHashtableToZiplistRecommendation = await service
-        .determineHashHashtableToZiplistRecommendation(nodeClient, [...mockKeys, mockBigHashKey_3]);
+        .determineHashHashtableToZiplistRecommendation(nodeClient, [...mockKeys, mockBigHashKey3]);
       expect(convertHashtableToZiplistRecommendation)
         .toEqual(
           {
             name: RECOMMENDATION_NAMES.HASH_HASHTABLE_TO_ZIPLIST,
-            params: { keys: [mockBigHashKey_3.name] },
+            params: { keys: [mockBigHashKey3.name] },
           },
         );
     });
@@ -444,7 +451,7 @@ describe('RecommendationProvider', () => {
     it('should not return connectionClients recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValue(mockRedisClientsResponse_1);
+        .mockResolvedValue(mockRedisClientsResponse1);
 
       const connectionClientsRecommendation = await service
         .determineConnectionClientsRecommendation(nodeClient);
@@ -454,7 +461,7 @@ describe('RecommendationProvider', () => {
     it('should return connectionClients recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValue(mockRedisClientsResponse_2);
+        .mockResolvedValue(mockRedisClientsResponse2);
 
       const connectionClientsRecommendation = await service
         .determineConnectionClientsRecommendation(nodeClient);
@@ -478,7 +485,7 @@ describe('RecommendationProvider', () => {
     it('should not return setPassword recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'acl' }))
-        .mockResolvedValue(mockRedisAclListResponse_1);
+        .mockResolvedValue(mockRedisAclListResponse1);
 
       const setPasswordRecommendation = await service
         .determineSetPasswordRecommendation(nodeClient);
@@ -488,7 +495,7 @@ describe('RecommendationProvider', () => {
     it('should return setPassword recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'acl' }))
-        .mockResolvedValue(mockRedisAclListResponse_2);
+        .mockResolvedValue(mockRedisAclListResponse2);
 
       const setPasswordRecommendation = await service
         .determineSetPasswordRecommendation(nodeClient);
@@ -533,7 +540,7 @@ describe('RecommendationProvider', () => {
     it('should not return redis version recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValue(mockRedisServerResponse_1);
+        .mockResolvedValue(mockRedisServerResponse1);
 
       const redisVersionRecommendation = await service
         .determineRedisVersionRecommendation(nodeClient);
@@ -543,7 +550,7 @@ describe('RecommendationProvider', () => {
     it('should return redis version recommendation', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
-        .mockResolvedValueOnce(mockRedisServerResponse_2);
+        .mockResolvedValueOnce(mockRedisServerResponse2);
 
       const redisVersionRecommendation = await service
         .determineRedisVersionRecommendation(nodeClient);
@@ -566,13 +573,13 @@ describe('RecommendationProvider', () => {
   describe('determineSearchJSONRecommendation', () => {
     it('should not return searchJSON', async () => {
       const searchJSONRecommendation = await service
-        .determineSearchJSONRecommendation(mockKeys, mockFTListResponse_2);
+        .determineSearchJSONRecommendation(mockKeys, mockFTListResponse2);
       expect(searchJSONRecommendation).toEqual(null);
     });
 
     it('should return searchJSON recommendation', async () => {
       const searchJSONRecommendation = await service
-        .determineSearchJSONRecommendation(mockKeys, mockFTListResponse_1);
+        .determineSearchJSONRecommendation(mockKeys, mockFTListResponse1);
       expect(searchJSONRecommendation)
         .toEqual({
           name: RECOMMENDATION_NAMES.SEARCH_JSON,
@@ -582,7 +589,7 @@ describe('RecommendationProvider', () => {
 
     it('should return not searchJSON recommendation when there is no JSON key', async () => {
       const searchJSONRecommendation = await service
-        .determineSearchJSONRecommendation([mockBigSet], mockFTListResponse_1);
+        .determineSearchJSONRecommendation([mockBigSet], mockFTListResponse1);
       expect(searchJSONRecommendation)
         .toEqual(null);
     });
@@ -634,13 +641,13 @@ describe('RecommendationProvider', () => {
       while (counter <= 100) {
         when(nodeClient.sendCommand)
           .calledWith(jasmine.objectContaining({ name: 'zscan' }))
-          .mockResolvedValueOnce(mockZScanResponse_1);
+          .mockResolvedValueOnce(mockZScanResponse1);
         counter += 1;
       }
 
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'zscan' }))
-        .mockResolvedValueOnce(mockZScanResponse_2);
+        .mockResolvedValueOnce(mockZScanResponse2);
 
       const RTSRecommendation = await service
         .determineRTSRecommendation(nodeClient, mockSortedSets);
@@ -658,5 +665,63 @@ describe('RecommendationProvider', () => {
           .determineRTSRecommendation(nodeClient, mockKeys);
         expect(RTSRecommendation).toEqual(null);
       });
+  });
+
+  describe('determineLuaToFunctionsRecommendation', () => {
+    it('should return null when there are libraries', async () => {
+      const luaToFunctionsRecommendation = await service
+        .determineLuaToFunctionsRecommendation(nodeClient, mockTfunctionListResponse2);
+      expect(luaToFunctionsRecommendation).toEqual(null);
+    });
+
+    it('should return luaToFunctions recommendation when lua script > 1', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'info' }))
+        .mockResolvedValueOnce(mockRedisMemoryInfoResponse4);
+
+      const luaToFunctionsRecommendation = await service
+        .determineLuaToFunctionsRecommendation(nodeClient, mockTfunctionListResponse1);
+      expect(luaToFunctionsRecommendation).toEqual({ name: RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS });
+    });
+
+    it('should return null when lua script <= 1', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'info' }))
+        .mockResolvedValueOnce(mockRedisMemoryInfoResponse3);
+
+      const luaToFunctionsRecommendation = await service
+        .determineLuaToFunctionsRecommendation(nodeClient, mockTfunctionListResponse1);
+      expect(luaToFunctionsRecommendation).toEqual(null);
+    });
+
+    it('should return null when info command executed with error', async () => {
+      when(nodeClient.sendCommand)
+        .calledWith(jasmine.objectContaining({ name: 'info' }))
+        .mockRejectedValue('some error');
+
+      const luaToFunctionsRecommendation = await service
+        .determineLuaToFunctionsRecommendation(nodeClient, mockTfunctionListResponse1);
+      expect(luaToFunctionsRecommendation).toEqual(null);
+    });
+  });
+
+  describe('determineFunctionsWithStreamsRecommendation', () => {
+    it('should return null when there are libraries', async () => {
+      const functionsWithStreamsRecommendation = await service
+        .determineFunctionsWithStreamsRecommendation(nodeClient, mockTfunctionListResponse2);
+      expect(functionsWithStreamsRecommendation).toEqual(null);
+    });
+
+    it('should return functionsWithStreams recommendation when there is stream key', async () => {
+      const functionsWithStreamsRecommendation = await service
+        .determineFunctionsWithStreamsRecommendation([mockStreamKey], mockTfunctionListResponse1);
+      expect(functionsWithStreamsRecommendation).toEqual({ name: RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS });
+    });
+
+    it('should return null when there is no stream key', async () => {
+      const functionsWithStreamsRecommendation = await service
+        .determineFunctionsWithStreamsRecommendation([mockSmallStringKey], mockTfunctionListResponse1);
+      expect(functionsWithStreamsRecommendation).toEqual(null);
+    });
   });
 });

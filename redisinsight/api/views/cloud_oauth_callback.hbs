@@ -1,12 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>App</title>
+  <title>RedisInsight</title>
+  {{> styles_partial }}
 </head>
 <body>
-<h1>RedisInsight</h1>
-Status: {{ status }} <br/>
-Message: {{ message }} <br/>
+  <div class="container">
+    <div class="content">
+      <header class="header">
+        <div class="logo">
+          {{> logo_partial }}
+        </div>
+      </header>
+      <section class="section">
+        {{#if errorCode}}
+          {{> errors_partial }}
+        {{else}}
+          <h1 class="title">Thank you</h1>
+          <h2 class="subTitle">for connecting to Redis Cloud</h2>
+        {{/if}}
+        <div class="text">Please close this window and navigate back to RedisInsight</div>
+      </section>
+    </div>
+  </div>
 </body>
 </html>

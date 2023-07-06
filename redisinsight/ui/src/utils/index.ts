@@ -27,6 +27,7 @@ export * from './modules'
 export * from './optimizations'
 export * from './events'
 export * from './telemetry'
+export * from './oauth'
 
 export {
   Maybe,

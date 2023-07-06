@@ -19,6 +19,7 @@ import { Pages } from 'uiSrc/constants'
 import { setSelectedLibraryToShow } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import InvokeFunction from 'uiSrc/pages/triggeredFunctions/pages/Functions/components/InvokeFunction'
+import InvokeStreamTrigger from 'uiSrc/pages/triggeredFunctions/pages/Functions/components/InvokeStreamTrigger'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -53,7 +54,8 @@ const FunctionDetails = (props: Props) => {
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_INVOKE_CLICKED,
       eventData: {
         databaseId: instanceId,
-        isAsync: item?.isAsync
+        isAsync: item?.isAsync,
+        functionType: item.type,
       }
     })
   }
@@ -64,6 +66,7 @@ const FunctionDetails = (props: Props) => {
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_INVOKE_CANCELLED,
       eventData: {
         databaseId: instanceId,
+        functionType: item.type,
       }
     })
   }
@@ -81,7 +84,7 @@ const FunctionDetails = (props: Props) => {
     </div>
   )
 
-  const isShowInvokeButton = type === FunctionType.Function
+  const isShowInvokeButton = type === FunctionType.Function || type === FunctionType.StreamTrigger
 
   return (
     <div className={styles.main} data-testid={`function-details-${name}`}>
@@ -185,14 +188,25 @@ const FunctionDetails = (props: Props) => {
         )}
       </div>
       {isInvokeOpen && (
-        <div className="formFooterBar">
-          <InvokeFunction
-            libName={library}
-            name={name}
-            isAsync={item.isAsync}
-            onCancel={handleCancelInvoke}
-          />
-        </div>
+        <>
+          {type === FunctionType.Function && (
+            <div className="formFooterBar">
+              <InvokeFunction
+                libName={library}
+                name={name}
+                isAsync={item.isAsync}
+                onCancel={handleCancelInvoke}
+              />
+            </div>
+          )}
+          {type === FunctionType.StreamTrigger && (
+            <div className="formFooterBar">
+              <InvokeStreamTrigger
+                onCancel={handleCancelInvoke}
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   )

@@ -33,6 +33,7 @@ beforeEach(() => {
 })
 
 const mockedItem = TRIGGERED_FUNCTIONS_FUNCTIONS_LIST_MOCKED_DATA[0]
+const mockedItemStreamTrigger = TRIGGERED_FUNCTIONS_FUNCTIONS_LIST_MOCKED_DATA[4]
 const mockedItemKeySpaceTriggers = TRIGGERED_FUNCTIONS_FUNCTIONS_LIST_MOCKED_DATA[3]
 
 describe('FunctionDetails', () => {
@@ -137,8 +138,14 @@ describe('FunctionDetails', () => {
     expect(pushMock).toHaveBeenCalledWith('/instanceId/triggered-functions/libraries')
   })
 
-  it('should render invoke button', () => {
+  it('should render invoke button with function type', () => {
     render(<FunctionDetails item={mockedItem} onClose={jest.fn()} />)
+
+    expect(screen.getByTestId('invoke-btn')).toBeInTheDocument()
+  })
+
+  it('should render invoke button with stream triggers type', () => {
+    render(<FunctionDetails item={mockedItemStreamTrigger} onClose={jest.fn()} />)
 
     expect(screen.getByTestId('invoke-btn')).toBeInTheDocument()
   })
@@ -164,7 +171,8 @@ describe('FunctionDetails', () => {
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_INVOKE_CLICKED,
       eventData: {
         databaseId: 'instanceId',
-        isAsync: mockedItem.isAsync
+        isAsync: mockedItem.isAsync,
+        functionType: 'functions',
       }
     })
 
@@ -176,6 +184,7 @@ describe('FunctionDetails', () => {
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_INVOKE_CANCELLED,
       eventData: {
         databaseId: 'instanceId',
+        functionType: 'functions',
       }
     })
   })

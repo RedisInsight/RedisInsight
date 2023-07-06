@@ -38,6 +38,7 @@ import {
   CreateRejsonRlWithExpireDto,
   CreateSetWithExpireDto,
   GetKeyInfoResponse,
+  GetKeysWithDetailsResponse,
 } from 'apiSrc/modules/browser/dto'
 import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
@@ -499,7 +500,7 @@ export function fetchPatternKeysAction(
   cursor: string,
   count: number,
   telemetryProperties: { [key: string]: any } = {},
-  onSuccess?: () => void,
+  onSuccess?: (data: GetKeysWithDetailsResponse[]) => void,
   onFailed?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -515,7 +516,7 @@ export function fetchPatternKeysAction(
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
 
-      const { data, status } = await apiService.post<GetKeyInfoResponse[]>(
+      const { data, status } = await apiService.post<GetKeysWithDetailsResponse[]>(
         getUrl(
           state.connections.instances?.connectedInstance?.id ?? '',
           ApiEndpoints.KEYS
@@ -576,7 +577,7 @@ export function fetchPatternKeysAction(
             }
           })
         }
-        onSuccess?.()
+        onSuccess?.(data)
       }
     } catch (error) {
       if (!axios.isCancel(error)) {
@@ -1158,7 +1159,7 @@ export function fetchKeys(
     count: number,
     telemetryProperties?: {},
   },
-  onSuccess?: () => void,
+  onSuccess?: (data: GetKeysWithDetailsResponse[] | GetKeysWithDetailsResponse) => void,
   onFailed?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {

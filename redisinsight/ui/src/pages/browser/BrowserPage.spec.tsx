@@ -162,6 +162,7 @@ describe('BrowserPage', () => {
       setBrowserBulkActionOpen(expect.any(Boolean)),
       setBrowserSelectedKey(null),
       setLastPageContext('browser'),
+      toggleBrowserFullScreen(false)
     ]
 
     expect(store.getActions()).toEqual([...afterRenderActions, ...unmountActions])

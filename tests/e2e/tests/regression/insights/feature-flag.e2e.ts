@@ -1,12 +1,9 @@
 import * as path from 'path';
 import { BrowserPage, MyRedisDatabasePage, SettingsPage } from '../../../pageObjects';
 import { RecommendationIds, rte, env } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
-import {
-    addNewStandaloneDatabaseApi,
-    deleteStandaloneDatabaseApi
-} from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { deleteRowsFromTableInDB, getColumnValueFromTableInDB } from '../../../helpers/database-scripts';
 import { modifyFeaturesConfigJson, refreshFeaturesTestData, updateControlNumber } from '../../../helpers/insights';
 import { Common } from '../../../helpers/common';
@@ -14,6 +11,8 @@ import { Common } from '../../../helpers/common';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const settingsPage = new SettingsPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const featuresConfigTable = 'features_config';
 const redisVersionRecom = RecommendationIds.redisVersion;
@@ -32,12 +31,12 @@ fixture `Feature flag`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config);
         await refreshFeaturesTestData();
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
         await refreshFeaturesTestData();
     });
 test('Verify that default config applied when remote config version is lower', async t => {
@@ -60,8 +59,8 @@ test('Verify that invaid remote config not applied even if its version is higher
 });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
-        await addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV5Config);
         await refreshFeaturesTestData();
     })
     .after(async t => {
@@ -69,8 +68,8 @@ test
         await t.click(browserPage.NavigationPanel.settingsButton);
         await settingsPage.changeAnalyticsSwitcher(true);
         // Delete databases connections
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
         // Update remote config .json to default
         await refreshFeaturesTestData();
     })('Verify that valid remote config applied with version higher than in the default config', async t => {
@@ -129,10 +128,10 @@ test
 test
     .meta({ env: env.desktop })
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config);
     })
     .after(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
         // Update remote config .json to default
         await modifyFeaturesConfigJson(pathes.defaultRemote);
         // Clear features config table

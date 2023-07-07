@@ -1,12 +1,14 @@
 import { Selector } from 'testcafe';
 import { rte, env } from '../../../helpers/constants';
-import { acceptLicenseTerms } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
-import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const moduleNameList = ['RediSearch', 'RedisJSON', 'RedisGraph', 'RedisTimeSeries', 'RedisBloom', 'RedisGears', 'RedisAI'];
 const moduleList = [myRedisDatabasePage.moduleSearchIcon, myRedisDatabasePage.moduleJSONIcon, myRedisDatabasePage.moduleGraphIcon, myRedisDatabasePage.moduleTimeseriesIcon, myRedisDatabasePage.moduleBloomIcon, myRedisDatabasePage.moduleGearsIcon, myRedisDatabasePage.moduleAIIcon];
@@ -15,16 +17,16 @@ fixture `Database modules`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
         // Reload Page
         await browserPage.reloadPage();
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test.skip
+test
     .meta({ rte: rte.standalone, env: env.web })('Verify that user can see DB modules on DB list page for Standalone DB', async t => {
         // Check module column on DB list page
         await t.expect(myRedisDatabasePage.moduleColumn.exists).ok('Module column not found');
@@ -48,7 +50,7 @@ test.skip
         //Verify that user can hover over the module icons and see tooltip with version.
         await myRedisDatabasePage.checkModulesInTooltip(moduleNameList);
     });
-test.skip
+test
     .meta({ rte: rte.standalone })('Verify that user can see full module list in the Edit mode', async t => {
         // Verify that module column is displayed
         await t.expect(myRedisDatabasePage.moduleColumn.visible).ok('Module column not found');
@@ -59,7 +61,7 @@ test.skip
         // Verify modules in Edit mode
         await myRedisDatabasePage.checkModulesOnPage(moduleList);
     });
-test.skip
+test
     .meta({ rte: rte.standalone })('Verify that user can see icons in DB header for RediSearch, RedisGraph, RedisJSON, RedisBloom, RedisTimeSeries, RedisGears, RedisAI default modules', async t => {
         // Connect to DB
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);

@@ -1,25 +1,27 @@
 // import {ClientFunction} from 'testcafe';
 import {rte, env} from '../../../helpers/constants';
-import { acceptLicenseTerms } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import {MyRedisDatabasePage} from '../../../pageObjects';
 import {commonUrl, ossStandaloneConfig} from '../../../helpers/conf';
-import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 // const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `Github functionality`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         // Reload Page
         await myRedisDatabasePage.reloadPage();
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.standalone, env: env.web })('Verify that user can work with Github link in the application', async t => {

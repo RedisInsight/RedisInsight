@@ -1,19 +1,20 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddRECloudDatabase, deleteDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, cloudDatabaseConfig } from '../../../helpers/conf';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
 
 fixture `Overview`
     .meta({ type: 'regression', rte: rte.reCloud })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
+        await databaseHelper.acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteDatabase(cloudDatabaseConfig.databaseName);
+        await databaseHelper.deleteDatabase(cloudDatabaseConfig.databaseName);
     });
 test('Verify that user can see not available metrics from Overview in tooltip with the text "<Metric_name> is/are not available"', async t => {
     // Verify that CPU parameter is not displayed in Overview

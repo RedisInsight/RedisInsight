@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
@@ -7,10 +7,12 @@ import {
 } from '../../../helpers/conf';
 import { keyLength, KeyTypesTexts, rte } from '../../../helpers/constants';
 import { addKeysViaCli, deleteKeysViaCli, keyTypes } from '../../../helpers/keys';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let keyName = Common.generateWord(10);
 const keysData = keyTypes.map(object => ({ ...object }));
@@ -20,17 +22,17 @@ fixture `Filtering per key name in Browser page`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can search a key with selected data type is filters', async t => {
         keyName = Common.generateWord(10);
         // Add new key
@@ -58,7 +60,7 @@ test
     .after(async() => {
         // Clear keys and database
         await deleteKeysViaCli(keysData);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter keys per data type in Browser page', async t => {
         keyName = Common.generateWord(10);
         // Create new keys
@@ -72,11 +74,11 @@ test
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .after(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user see the key type label when filtering per key types and when removes label the filter is removed on Browser page', async t => { //Check filtering labels
         for (const { textType } of keyTypes) {
             await browserPage.selectFilterGroupType(textType);

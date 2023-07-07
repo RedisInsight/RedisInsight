@@ -1,4 +1,4 @@
-import { acceptLicenseTerms } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { deleteAllNotificationsFromDB } from '../../../helpers/notifications';
 import { commonUrl } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
@@ -10,6 +10,7 @@ const jsonNotifications: NotificationParameters[] = description.notifications;
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const settingsPage = new SettingsPage();
+const databaseHelper = new DatabaseHelper();
 const NotificationPanel = myRedisDatabasePage.NavigationPanel.NotificationPanel;
 
 // Sort all notifications in json file
@@ -19,7 +20,7 @@ fixture `Notifications`
     .meta({ rte: rte.none, type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async(t) => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
         await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         await settingsPage.changeNotificationsSwitcher(true);
         await deleteAllNotificationsFromDB();
@@ -114,7 +115,7 @@ test('Verify that all messages in notification center are sorted by timestamp fr
 });
 test
     .before(async t => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
         await settingsPage.changeNotificationsSwitcher(false);
         await deleteAllNotificationsFromDB();
         await myRedisDatabasePage.reloadPage();

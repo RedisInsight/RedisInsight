@@ -1,14 +1,16 @@
 import { Selector } from 'testcafe';
 import { keyLength, rte } from '../../../helpers/constants';
 import { addKeysViaCli, deleteKeysViaCli, keyTypes } from '../../../helpers/keys';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { formatters, phpData } from '../../../test-data/formatters-data';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const keysData = keyTypes.map(object => ({ ...object })).filter((v, i) => i <= 6 && i !== 5);
 keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${Common.generateWord(keyLength)}`);
@@ -27,19 +29,19 @@ fixture `Formatters`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Create new keys
         await addKeysViaCli(keysData);
     })
     .afterEach(async() => {
         // Clear keys and database
         await deleteKeysViaCli(keysData);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 formattersHighlightedSet.forEach(formatter => {
     test
         .before(async() => {
-            await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+            await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
             // Create new keys
             await addKeysViaCli(keysData, formatter.fromText, formatter.fromText);
         })(`Verify that user can see highlighted key details in ${formatter.format} format`, async t => {
@@ -124,7 +126,7 @@ formattersWithTooltipSet.forEach(formatter => {
 binaryFormattersSet.forEach(formatter => {
     test
         .before(async() => {
-            await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+            await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
             // Create new keys
             await addKeysViaCli(keysData, formatter.fromText);
         })(`Verify that user can see key details converted to ${formatter.format} format`, async t => {

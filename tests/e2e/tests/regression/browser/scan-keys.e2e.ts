@@ -1,10 +1,11 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTerms } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage, SettingsPage } from '../../../pageObjects';
 import { commonUrl } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const settingsPage = new SettingsPage();
+const databaseHelper = new DatabaseHelper();
 
 const explicitErrorHandler = (): void => {
     window.addEventListener('error', e => {
@@ -19,7 +20,7 @@ fixture `Browser - Specify Keys to Scan`
     .page(commonUrl)
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
     .beforeEach(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
     });
 test('Verify that the user not enter the value less than 500 - the system automatically applies min value if user enters less than min', async t => {
     // Go to Settings page

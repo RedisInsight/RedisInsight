@@ -1,24 +1,26 @@
-import { join } from 'path';
-import * as os from 'os';
+// import { join } from 'path';
+// import * as os from 'os';
 import * as fs from 'fs';
 import * as editJsonFile from 'edit-json-file';
-import { acceptLicenseTermsAndAddDatabaseApi} from '../../../helpers/database';
+import { DatabaseHelper} from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, workingDirectory } from '../../../helpers/conf';
 import { rte, env } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 if (fs.existsSync(workingDirectory)) {
     // Guides content
     const guidesTimestampPath = `${workingDirectory}/guides/build.json`;
-    const guidesGraphIntroductionFilePath = `${workingDirectory}/guides/quick-guides/graph/introduction.md`;
+    // const guidesGraphIntroductionFilePath = `${workingDirectory}/guides/quick-guides/graph/introduction.md`;
 
     // Tutorials content
     const tutorialsTimestampPath = `${workingDirectory}/tutorials/build.json`;
-    const tutorialsTimeSeriesFilePath = `${workingDirectory}/tutorials/redis_stack/redis_for_time_series.md`;
+    // const tutorialsTimeSeriesFilePath = `${workingDirectory}/tutorials/redis_stack/redis_for_time_series.md`;
 
     // Remove md files from local folder. When desktop tests are started, files will be updated from remote repository
     // Need to uncomment when desktop tests are started
@@ -41,10 +43,10 @@ if (fs.existsSync(workingDirectory)) {
         .meta({ type: 'critical_path' })
         .page(commonUrl)
         .beforeEach(async() => {
-            await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+            await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         })
         .afterEach(async() => {
-            await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+            await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
         });
     test
         .meta({ rte: rte.standalone, env: env.desktop })('Verify that user can see updated info in Enablement Area', async t => {

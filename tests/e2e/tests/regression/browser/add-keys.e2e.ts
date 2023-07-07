@@ -1,13 +1,16 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { BrowserActions } from '../../../common-actions/browser-actions';
 
 const browserPage = new BrowserPage();
 const browserActions = new BrowserActions();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const jsonKeys = [['JSON-string', '"test"'], ['JSON-number', '782364'], ['JSON-boolean', 'true'], ['JSON-null', 'null'], ['JSON-array', '[1, 2, 3]']];
 let keyNames: string[];
 let indexName: string;
@@ -19,7 +22,7 @@ fixture `Add keys`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         let commandString = 'DEL';
@@ -27,7 +30,7 @@ fixture `Add keys`
             commandString = commandString.concat(` ${key[0]}`);
         }
         await browserPage.Cli.sendCommandInCli(commandString);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can create different types(string, number, null, array, boolean) of JSON', async t => {
     for (let i = 0; i < jsonKeys.length; i++) {
@@ -51,7 +54,7 @@ test('Verify that user can create different types(string, number, null, array, b
 // https://redislabs.atlassian.net/browse/RI-3995
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .after(async() => {
         let commandString = 'DEL';
@@ -60,7 +63,7 @@ test
         }
         const commands = [`FT.DROPINDEX ${indexName}`, commandString];
         await browserPage.Cli.sendCommandsInCli(commands);
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that the new key is displayed at the top of the list', async t => {
         const keyName = Common.generateWord(12);
         const keyName1 = Common.generateWord(12);

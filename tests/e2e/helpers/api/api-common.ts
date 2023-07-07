@@ -1,4 +1,4 @@
-import * as request from 'supertest';
+import request from 'supertest';
 import { Common } from '../common';
 import { Methods } from '../constants';
 
@@ -18,7 +18,7 @@ export async function sendRequest(
     body?: Record<string, unknown>
 ): Promise<any> {
     const windowId = Common.getWindowId();
-    let requestEndpoint;
+    let requestEndpoint: any;
 
     if (method === Methods.post) {
         (requestEndpoint = request(endpoint)

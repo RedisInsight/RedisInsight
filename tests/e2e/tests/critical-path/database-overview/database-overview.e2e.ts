@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { rte } from '../../../helpers/constants';
 import { Common } from '../../../helpers/common';
 import {
@@ -13,12 +13,14 @@ import {
     ossStandaloneRedisearch,
     ossStandaloneBigConfig
 } from '../../../helpers/conf';
-import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const chance = new Chance();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const fiveSecondsTimeout = 5000;
 let keyName = chance.string({ length: 10 });
@@ -30,18 +32,18 @@ fixture `Database overview`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         //Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.standalone })
     .after(async() => {
         //Delete databases
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
         const firstDatabaseModules: string[] = [];
         const secondDatabaseModules: string[] = [];
@@ -61,7 +63,7 @@ test
         }
         //Add database with different modules
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
         await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
         countOfModules = await browserPage.modulesButton.count;
@@ -102,8 +104,8 @@ test
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.Cli.sendCommandInCli(`DEL ${keys1.join(' ')}`);
         await browserPage.Cli.sendCommandInCli(`DEL ${keys2.join(' ')}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see total number of keys rounded in format 100, 1K, 1M, 1B in DB header in Browser page', async t => {
         //Add 100 keys
         keys1 = await Common.createArrayWithKeyValue(100);
@@ -119,7 +121,7 @@ test
         await t.expect(totalKeys).eql('1 K', 'Info in DB header after ADD 1000 keys');
         //Add database with more than 1M keys
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await addNewStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneBigConfig);
         await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneBigConfig.databaseName);
         //Wait 5 seconds
@@ -133,7 +135,7 @@ test
     .after(async() => {
         //Clear and delete database
         await browserPage.Cli.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see total memory rounded in format B, KB, MB, GB, TB in DB header in Browser page', async t => {
         //Add new keys
         keys = await Common.createArrayWithKeyValue(100);
@@ -145,14 +147,14 @@ test
 test
     .meta({ rte: rte.standalone })
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
         //Go to Workbench page
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .after(async() => {
         //Delete database and index
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX idx:schools DD');
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see additional information in Overview: Connected Clients, Commands/Sec, CPU (%) using Standalone DB connection type', async t => {
         const commandsSecBeforeEdit = await browserPage.overviewCommandsSec.textContent;
         //Wait 5 second

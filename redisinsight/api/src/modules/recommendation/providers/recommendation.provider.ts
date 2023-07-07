@@ -2,7 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
-import { convertRedisInfoReplyToObject, convertBulkStringsToObject, checkTimestamp } from 'src/utils';
+import {
+  convertRedisInfoReplyToObject, convertBulkStringsToObject, checkTimestamp, checkKeyspaceNotification,
+} from 'src/utils';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
@@ -24,6 +26,7 @@ import {
   SEARCH_HASH_RECOMMENDATION_KEYS_FOR_CHECK,
   SEARCH_HASH_RECOMMENDATION_KEYS_LENGTH,
   RTS_KEYS_FOR_CHECK,
+  LUA_TO_FUNCTIONS_RECOMMENDATION_COUNT,
 } from 'src/common/constants';
 
 @Injectable()
@@ -532,6 +535,92 @@ export class RecommendationProvider {
       return timeSeriesKey ? { name: RECOMMENDATION_NAMES.RTS, params: { keys: [timeSeriesKey] } } : null;
     } catch (err) {
       this.logger.error('Can not determine RTS recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check luaToFunctions recommendation
+   * @param redisClient
+   * @param libraries
+   */
+
+  async determineLuaToFunctionsRecommendation(
+    redisClient: Redis | Cluster,
+    libraries?: string[],
+  ): Promise<Recommendation> {
+    if (libraries?.length) {
+      return null;
+    }
+
+    try {
+      const info = convertRedisInfoReplyToObject(
+        await redisClient.sendCommand(
+          new Command('info', ['memory'], { replyEncoding: 'utf8' }),
+        ) as string,
+      );
+
+      const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
+
+      return parseInt(nodesNumbersOfCachedScripts, 10) > LUA_TO_FUNCTIONS_RECOMMENDATION_COUNT
+        ? { name: RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS }
+        : null;
+    } catch (err) {
+      this.logger.error('Can not determine Lua to functions recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check functionsWithKeyspace recommendation
+   * @param redisClient
+   * @param libraries
+   */
+
+  async determineFunctionsWithKeyspaceRecommendation(
+    redisClient: Redis | Cluster,
+    libraries?: string[],
+  ): Promise<Recommendation> {
+    if (libraries?.length) {
+      return null;
+    }
+
+    try {
+      const info = await redisClient.sendCommand(
+        new Command('CONFIG', ['GET', 'notify-keyspace-events'], { replyEncoding: 'utf8' }),
+      );
+
+      return checkKeyspaceNotification(info[1])
+        ? { name: RECOMMENDATION_NAMES.FUNCTIONS_WITH_KEYSPACE }
+        : null;
+    } catch (err) {
+      this.logger.error('Can not determine functions with keyspace recommendation', err);
+      return null;
+    }
+  }
+
+  /**
+   * Check functionsWithStreams recommendation
+   * @param keys
+   * @param libraries
+   */
+
+  async determineFunctionsWithStreamsRecommendation(
+    keys: Key[],
+    libraries?: string[],
+  ): Promise<Recommendation> {
+    if (libraries?.length) {
+      return null;
+    }
+
+    try {
+      const isStreamKey = keys.some((key) => key.type === RedisDataType.Stream);
+
+      return isStreamKey
+        ? { name: RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS }
+        : null;
+    } catch (err) {
+      this.logger.error('Can not determine functions with streams recommendation', err);
       return null;
     }
   }

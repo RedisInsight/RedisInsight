@@ -14,6 +14,11 @@ export enum AdditionalSearchModuleName {
   FTL = 'ftl',
 }
 
+export enum AdditionalTriggeredAndFunctionsModuleName {
+  RedisGears = 'redisgears',
+  RedisGears2 = 'redisgears_2',
+}
+
 export const SUPPORTED_REDIS_MODULES = Object.freeze({
   ai: AdditionalRedisModuleName.RedisAI,
   graph: AdditionalRedisModuleName.RedisGraph,
@@ -59,4 +64,9 @@ export const REDISEARCH_MODULES: string[] = [
   AdditionalSearchModuleName.SearchLight,
   AdditionalSearchModuleName.FT,
   AdditionalSearchModuleName.FTL,
-]
+];
+
+export const TRIGGERED_AND_FUNCTIONS_MODULES: string[] = [
+  AdditionalTriggeredAndFunctionsModuleName.RedisGears,
+  AdditionalTriggeredAndFunctionsModuleName.RedisGears2,
+];

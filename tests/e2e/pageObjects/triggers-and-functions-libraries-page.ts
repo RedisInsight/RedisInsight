@@ -29,7 +29,7 @@ export class TriggersAndFunctionsLibrariesPage extends InstancePage {
     deleteMask = '[data-testid=delete-library-$name]';
     sectionMask = '[data-testid^=functions-$name]';
     functionMask = '[data-testid=func-$name]';
-    inputMonaco = '[data-testid=$name]';
+    inputMonaco = '[data-testid=wrapper-$name]';
 
     /**
      * Is library displayed in the table

@@ -16,7 +16,11 @@ const triggersAndFunctionsLibrariesPage = new TriggersAndFunctionsLibrariesPage(
 const triggersAndFunctionsFunctionsPage = new TriggersAndFunctionsFunctionsPage();
 
 const libraryName = 'lib';
-const filePath =  path.join('..', '..', '..', 'test-data', 'triggers-and-functions', 'library.txt');
+
+const filePathes = {
+    upload: path.join('..', '..', '..', 'test-data', 'triggers-and-functions', 'library.txt'),
+    invoke: path.join('..', '..', '..', 'test-data', 'triggers-and-functions', 'invoke_function.txt')
+};
 
 const LIBRARIES_LIST = [
     { name: 'Function1', type: LibrariesSections.Functions },
@@ -134,7 +138,7 @@ test('Verify that library can be uploaded', async t => {
     await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
     await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
     await t.click(triggersAndFunctionsLibrariesPage.addLibraryButton);
-    await t.setFilesToUpload(triggersAndFunctionsLibrariesPage.uploadInput, [filePath]);
+    await t.setFilesToUpload(triggersAndFunctionsLibrariesPage.uploadInput, [filePathes.upload]);
     const uploadedText = await triggersAndFunctionsLibrariesPage.getTextFromMonaco();
     await t.expect(uploadedText.length).gte(1, 'file was not uploaded');
     await CommonElementsActions.checkCheckbox(triggersAndFunctionsLibrariesPage.addConfigurationCheckBox, true);
@@ -144,3 +148,23 @@ test('Verify that library can be uploaded', async t => {
     await t.expect(triggersAndFunctionsLibrariesPage.getFunctionsByName(LibrariesSections.Functions, functionNameFromFile).exists).ok('the library information was not opened');
 });
 
+test('Verify that function can be invoked', async t => {
+    const functionNameFromFile = 'function';
+    const keyName = ['Hello'];
+    const argumentsName = ['world', '!!!' ];
+    const expectedCommand = `TFCALL "${libraryName}.${functionNameFromFile}" "${keyName.length}" "${keyName}" "${argumentsName.join('" "')}"`;
+
+    await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
+    await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
+    await t.click(triggersAndFunctionsLibrariesPage.addLibraryButton);
+    await t.setFilesToUpload(triggersAndFunctionsLibrariesPage.uploadInput, [filePathes.invoke]);
+    await t.click(triggersAndFunctionsLibrariesPage.addLibrarySubmitButton);
+    await t.click(triggersAndFunctionsLibrariesPage.functionsLink);
+    await t.click(triggersAndFunctionsFunctionsPage.getFunctionsNameSelector(functionNameFromFile));
+    await t.click(triggersAndFunctionsFunctionsPage.invokeButton);
+    await triggersAndFunctionsFunctionsPage.enterFunctionArguments(argumentsName);
+    await triggersAndFunctionsFunctionsPage.enterFunctionKeyName(keyName);
+    await t.click(triggersAndFunctionsFunctionsPage.runInCliButton);
+    await t.expect(await triggersAndFunctionsFunctionsPage.Cli.getExecutedCommandTextByIndex()).eql(expectedCommand);
+    await t.click(triggersAndFunctionsFunctionsPage.Cli.cliCollapseButton);
+});

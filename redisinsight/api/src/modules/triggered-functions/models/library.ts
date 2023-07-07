@@ -2,8 +2,10 @@ import { Expose, Type } from 'class-transformer';
 import {
   IsArray, IsString, IsNumber,
 } from 'class-validator';
-import { ShortFunction } from 'src/modules/triggered-functions/models';
-import { ApiProperty } from '@nestjs/swagger';
+import { Function } from 'src/modules/triggered-functions/models';
+import { ApiProperty, PickType } from '@nestjs/swagger';
+
+export class ShortFunction extends PickType(Function, ['name', 'type'] as const) {}
 
 export class Library {
   @ApiProperty({
@@ -65,8 +67,8 @@ export class Library {
     type: ShortFunction,
   })
   @IsArray()
-  @Type(() => ShortFunction)
   @Expose()
+  @Type(() => ShortFunction)
   functions: ShortFunction[];
 
   @ApiProperty({

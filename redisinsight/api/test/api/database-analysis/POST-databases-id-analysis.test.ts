@@ -368,6 +368,31 @@ describe('POST /databases/:instanceId/analysis', () => {
         },
       ].map(mainCheckFn);
     });
+  
+    describe('functionsWithKeyspace recommendation', () => {
+      requirements('!rte.pass');
+      [
+        {
+          name: 'Should create new database analysis with functionsWithKeyspace recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          before: async () => {
+            await rte.data.sendCommand('CONFIG', ['set', 'notify-keyspace-events', 'KEA']);
+          },
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([
+              constants.TEST_FUNCTIONS_WITH_KEYSPACE_RECOMMENDATION,
+            ]);
+          },
+          after: async () => {
+            await rte.data.sendCommand('CONFIG', ['set', 'notify-keyspace-events', '']);
+          }
+        },
+      ].map(mainCheckFn);
+    });
 
     describe('searchHash recommendation', () => {
       requirements('!rte.pass');
@@ -692,26 +717,6 @@ describe('POST /databases/:instanceId/analysis', () => {
           ]);
         },
         after: async () => {
-          expect(await repository.count()).to.eq(5);
-        }
-      },
-      {
-        name: 'Should create new database analysis with functionsWithKeyspace recommendation',
-        data: {
-          delimiter: '-',
-        },
-        statusCode: 201,
-        responseSchema,
-        before: async () => {
-          await rte.data.sendCommand('CONFIG', ['set', 'notify-keyspace-events', 'KEA']);
-        },
-        checkFn: async ({ body }) => {
-          expect(body.recommendations).to.include.deep.members([
-            constants.TEST_FUNCTIONS_WITH_KEYSPACE_RECOMMENDATION,
-          ]);
-        },
-        after: async () => {
-          await rte.data.sendCommand('CONFIG', ['set', 'notify-keyspace-events', '']);
           expect(await repository.count()).to.eq(5);
         }
       },

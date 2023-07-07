@@ -47,7 +47,7 @@ const MonacoEditor = (props: Props) => {
     wrapperClassName,
     className,
     options = {},
-    'data-testid': dataTestId
+    'data-testid': dataTestId = 'monaco-editor'
   } = props
 
   const [isEditing, setIsEditing] = useState(!readOnly && !disabled)
@@ -112,7 +112,7 @@ const MonacoEditor = (props: Props) => {
         declineOnUnmount={false}
         preventOutsideClick
       >
-        <div className="inlineMonacoEditor" data-testid={dataTestId}>
+        <div className="inlineMonacoEditor" data-testid={`wrapper-${dataTestId}`}>
           <ReactMonacoEditor
             language={language}
             theme={theme === Theme.Dark ? 'dark' : 'light'}
@@ -121,6 +121,7 @@ const MonacoEditor = (props: Props) => {
             options={monacoOptions}
             className={cx(styles.editor, className, { readMode: !isEditing && readOnly })}
             editorDidMount={editorDidMount}
+            data-testid={dataTestId}
           />
         </div>
       </InlineItemEditor>

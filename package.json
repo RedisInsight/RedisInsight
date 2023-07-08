@@ -252,6 +252,7 @@
     "react": "^18.2.0",
     "react-contenteditable": "^3.3.5",
     "react-dom": "^18.2.0",
+    "react-focus-on": "^3.9.0",
     "react-hotkeys-hook": "^3.3.1",
     "react-json-pretty": "^2.2.0",
     "react-jsx-parser": "^1.28.4",

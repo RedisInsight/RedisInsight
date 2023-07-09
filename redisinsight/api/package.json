@@ -37,6 +37,9 @@
     "typeorm:migrate": "cross-env NODE_ENV=staging yarn typeorm migration:generate ./migration/migration",
     "typeorm:run": "yarn typeorm migration:run"
   },
+  "resolutions": {
+    "mocha/minimatch": "^3.0.5"
+  },
   "dependencies": {
     "@nestjs/common": "^9.0.11",
     "@nestjs/core": "^9.0.11",

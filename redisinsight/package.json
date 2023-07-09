@@ -15,5 +15,8 @@
     "keytar": "^7.9.0",
     "sqlite3": "5.1.6",
     "ssh2": "^1.14.0"
+  },
+  "resolutions": {
+    "sqlite3/node-gyp/make-fetch-happen/http-cache-semantics": "^4.1.1"
   }
 }

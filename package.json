@@ -268,7 +268,7 @@
     "remark-gfm": "^3.0.1",
     "remark-parse": "^10.0.1",
     "remark-rehype": "^10.0.1",
-    "socket.io-client": "^4.4.0",
+    "socket.io-client": "^4.7.1",
     "unified": "^10.1.1",
     "unist-util-visit": "^4.1.0",
     "url-parse": "^1.5.10",

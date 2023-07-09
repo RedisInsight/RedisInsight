@@ -37,6 +37,9 @@
     "typeorm:migrate": "cross-env NODE_ENV=staging yarn typeorm migration:generate ./migration/migration",
     "typeorm:run": "yarn typeorm migration:run"
   },
+  "resolutions": {
+    "word-wrap" : "npm:@aashutoshrathi/word-wrap"
+  },
   "dependencies": {
     "@nestjs/common": "^9.0.11",
     "@nestjs/core": "^9.0.11",

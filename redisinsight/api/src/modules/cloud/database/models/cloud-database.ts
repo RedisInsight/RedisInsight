@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models/cloud-subscription';
 import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-database-details';
+import { IsEnum, IsInt, IsNotEmpty } from 'class-validator';
 
 export enum CloudDatabaseProtocol {
   Redis = 'redis',
@@ -18,6 +19,17 @@ export enum CloudDatabasePersistencePolicy {
   None = 'none',
 }
 
+export enum CloudDatabaseDataEvictionPolicy {
+  AllKeysLru = 'allkeys-lru',
+  AllKeysLfu = 'allkeys-lfu',
+  AllKeysRandom = 'allkeys-random',
+  VolatileLru = 'volatile-lru',
+  VolatileLfu = 'volatile-lfu',
+  VolatileRandom = 'volatile-random',
+  VolatileTtl = 'volatile-ttl',
+  NoEviction = 'noeviction',
+}
+
 export enum CloudDatabaseMemoryStorage {
   Ram = 'ram',
   RamAndFlash = 'ram-and-flash',
@@ -31,6 +43,37 @@ export enum CloudDatabaseStatus {
   ImportPending = 'import-pending',
   DeletePending = 'delete-pending',
   Recovery = 'recovery',
+}
+
+export enum CloudDatabaseAlertName {
+  DatasetSize = 'dataset-size',
+  DatasetsSize = 'datasets-size',
+  ThroughputHigherThan = 'throughput-higher-than',
+  ThroughputLowerThan = 'throughput-lower-than',
+  Latency = 'latency',
+  SyncSourceError = 'syncsource-error',
+  SyncSourceLag = 'syncsource-lag',
+  ConnectionsLimit = 'connections-limit',
+}
+
+export class CloudDatabaseAlert {
+  @ApiProperty({
+    description: 'Database alert name',
+    type: String,
+  })
+  @Expose()
+  @IsEnum(CloudDatabaseAlertName)
+  @IsNotEmpty()
+  name: CloudDatabaseAlertName;
+
+  @ApiProperty({
+    description: 'Database alert value',
+    type: Number,
+  })
+  @Expose()
+  @IsInt()
+  @IsNotEmpty()
+  value: number;
 }
 
 export class CloudDatabase {

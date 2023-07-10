@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import {
+  IsBoolean,
   IsEnum,
   IsInt,
   IsNotEmpty, IsNumber,
@@ -48,4 +49,14 @@ export class CloudDatabaseDetails {
   @IsOptional()
   @IsString()
   memoryLimitMeasurementUnit?: string;
+
+  @ApiPropertyOptional({
+    description: 'Is free database',
+    type: Boolean,
+    example: false,
+  })
+  @Expose()
+  @IsOptional()
+  @IsBoolean()
+  free?: boolean;
 }

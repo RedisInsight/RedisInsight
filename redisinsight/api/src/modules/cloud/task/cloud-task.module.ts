@@ -7,5 +7,8 @@ import { CloudTaskCapiProvider } from 'src/modules/cloud/task/providers/cloud-ta
     CloudTaskCapiProvider,
     CloudTaskCapiService,
   ],
+  exports: [
+    CloudTaskCapiService,
+  ],
 })
 export class CloudTaskModule {}

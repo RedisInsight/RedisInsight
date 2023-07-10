@@ -29,7 +29,7 @@ export class CloudCapiProvider {
       headers: {
         'x-api-key': credentials?.capiKey,
         'x-api-secret-key': credentials?.capiSecret,
-        // 'user-agent': 'RedisInsight/v2.2.0',
+        'User-Agent': 'RedisInsight',
         // todo: add user agent
       },
     };

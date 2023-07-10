@@ -32,8 +32,9 @@ export class CloudAuthService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  static getAuthorizationServerRedirectError(query: { errorDescription: string }) {
-    if (query?.errorDescription?.includes('missing%3A+%27email')) {
+  static getAuthorizationServerRedirectError(query: { error_description: string }) {
+    if (query?.error_description?.indexOf('missing') > -1
+      && query?.error_description?.indexOf('email') > -1) {
       return new CloudOauthGithubEmailPermissionException();
     }
 

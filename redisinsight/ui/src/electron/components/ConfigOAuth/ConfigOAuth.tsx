@@ -60,7 +60,7 @@ const ConfigOAuth = () => {
     }
 
     if (status === CloudAuthStatus.Failed) {
-      const err = parseCloudOAuthCallbackError(error)
+      const err = parseCloudOAuthCallbackError(error?.error || '')
       dispatch(signInFailure(err?.message))
       dispatch(addErrorNotification(err))
       dispatch(setIsAutodiscoverySSO(false))

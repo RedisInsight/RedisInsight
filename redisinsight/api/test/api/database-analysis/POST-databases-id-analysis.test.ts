@@ -689,7 +689,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         statusCode: 201,
         responseSchema,
         before: async () => {
-          await rte.data.generateNCachedScripts(2, true);
+          await rte.data.generateNCachedScripts(1, true);
         },
         checkFn: async ({ body }) => {
           expect(body.recommendations).to.include.deep.members([

@@ -10,8 +10,8 @@ nodeClient.sendCommand = jest.fn();
 
 const mockRedisMemoryInfoResponse1: string = '# Memory\r\nnumber_of_cached_scripts:10\r\n';
 const mockRedisMemoryInfoResponse2: string = '# Memory\r\nnumber_of_cached_scripts:11\r\n';
-const mockRedisMemoryInfoResponse3: string = '# Memory\r\nnumber_of_cached_scripts:1\r\n';
-const mockRedisMemoryInfoResponse4: string = '# Memory\r\nnumber_of_cached_scripts:2\r\n';
+const mockRedisMemoryInfoResponse3: string = '# Memory\r\nnumber_of_cached_scripts:0\r\n';
+const mockRedisMemoryInfoResponse4: string = '# Memory\r\nnumber_of_cached_scripts:1\r\n';
 
 const mockRedisKeyspaceInfoResponse1: string = '# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n';
 const mockRedisKeyspaceInfoResponse2: string = `# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n
@@ -674,7 +674,7 @@ describe('RecommendationProvider', () => {
       expect(luaToFunctionsRecommendation).toEqual(null);
     });
 
-    it('should return luaToFunctions recommendation when lua script > 1', async () => {
+    it('should return luaToFunctions recommendation when lua script > 0', async () => {
       when(nodeClient.sendCommand)
         .calledWith(jasmine.objectContaining({ name: 'info' }))
         .mockResolvedValueOnce(mockRedisMemoryInfoResponse4);

@@ -1,5 +1,5 @@
-import { ClassType } from 'class-transformer/ClassTransformer';
-import { ClassTransformOptions } from 'class-transformer/ClassTransformOptions';
+import { ClassConstructor as ClassType } from 'class-transformer';
+import { ClassTransformOptions } from 'class-transformer';
 import { classToPlain, plainToClass } from 'class-transformer';
 
 export function classToClass<T, V>(

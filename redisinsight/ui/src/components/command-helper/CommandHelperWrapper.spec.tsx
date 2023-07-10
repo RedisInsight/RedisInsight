@@ -194,7 +194,7 @@ describe('CliBodyWrapper', () => {
     })
   })
 
-  it('should not since when matched command is deprecated', () => {
+  it('should render default message when matched command is deprecated', () => {
     const sinceId = 'cli-helper-since'
     const cliHelperDefaultId = 'cli-helper-default'
 

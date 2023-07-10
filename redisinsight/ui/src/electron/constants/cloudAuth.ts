@@ -5,13 +5,15 @@ export enum CloudAuthStatus {
 
 export interface CloudAuthResponse {
   status: CloudAuthStatus
-
   message?: string
-
   error?: object | string
 }
 
 export enum CloudAuthSocial {
   Github = 'github',
   Google = 'google',
+}
+
+export enum CloudJobs {
+  CREATE_FREE_DATABASE = 'CREATE_FREE_DATABASE'
 }

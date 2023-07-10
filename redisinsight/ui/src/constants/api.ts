@@ -114,7 +114,7 @@ enum ApiEndpoints {
   FEATURES = 'features',
 
   CLOUD_ME = 'cloud/me',
-  CLOUD_ME_DATABASES_FREE = 'cloud/me/databases/free',
+  CLOUD_ME_JOBS = 'cloud/me/jobs',
   CLOUD_ME_ACCOUNTS = 'cloud/me/accounts',
   CLOUD_CURRENT = 'current',
 }

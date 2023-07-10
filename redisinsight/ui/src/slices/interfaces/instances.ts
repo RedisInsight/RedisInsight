@@ -51,6 +51,7 @@ export interface Instance extends DatabaseInstanceResponse {
   isRediStack?: boolean
   visible?: boolean
   loading?: boolean
+  isFreeDb?: boolean
 }
 
 interface CaCertificate {
@@ -372,6 +373,7 @@ export interface InitialStateCloud {
   error: string
   credentials: Nullable<ICredentialsRedisCloud>
   subscriptions: Nullable<RedisCloudSubscription[]>
+  isAutodiscoverySSO: boolean
   account: {
     data: Nullable<RedisCloudAccount>
     error: string

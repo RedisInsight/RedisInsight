@@ -6,7 +6,7 @@ import { CloudAuthSocial, IpcInvokeEvent } from 'uiSrc/electron/constants'
 import { setOAuthCloudSource, signIn } from 'uiSrc/slices/oauth/cloud'
 import { setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import OAuthSocial, { OAuthSocialType } from './OAuthSocial'
+import OAuthConnectFreeDb, { OAuthSocialType } from './OAuthConnectFreeDb'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -31,16 +31,16 @@ beforeEach(() => {
   }
 })
 
-describe('OAuthSocial', () => {
+describe('OAuthConnectFreeDb', () => {
   it('should render', () => {
-    expect(render(<OAuthSocial />)).toBeTruthy()
+    expect(render(<OAuthConnectFreeDb />)).toBeTruthy()
   })
 
   it('should send telemetry after click on google btn', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    const { queryByTestId } = render(<OAuthSocial />)
+    const { queryByTestId } = render(<OAuthConnectFreeDb />)
 
     fireEvent.click(queryByTestId('google-oauth') as HTMLButtonElement)
 
@@ -66,7 +66,7 @@ describe('OAuthSocial', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    const { queryByTestId } = render(<OAuthSocial />)
+    const { queryByTestId } = render(<OAuthConnectFreeDb />)
 
     fireEvent.click(queryByTestId('github-oauth') as HTMLButtonElement)
 
@@ -94,7 +94,7 @@ describe('OAuthSocial', () => {
       const sendEventTelemetryMock = jest.fn();
       (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-      const { queryByTestId } = render(<OAuthSocial type={OAuthSocialType.Autodiscovery} />)
+      const { queryByTestId } = render(<OAuthConnectFreeDb type={OAuthSocialType.Autodiscovery} />)
 
       fireEvent.click(queryByTestId('google-oauth') as HTMLButtonElement)
 

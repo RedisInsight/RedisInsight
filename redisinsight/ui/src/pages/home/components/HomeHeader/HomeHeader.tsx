@@ -21,7 +21,7 @@ import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
-import { SignInDialogSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { FeatureFlags } from 'uiSrc/constants'
 import { ReactComponent as ConfettiIcon } from 'uiSrc/assets/img/oauth/confetti.svg'
 import SearchDatabasesList from '../SearchDatabasesList'
@@ -196,7 +196,7 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
               )
               ssoCloudHandlerClick(
                 e,
-                welcomePage ? SignInDialogSource.WelcomeScreen : SignInDialogSource.ListOfDatabases
+                welcomePage ? OAuthSocialSource.WelcomeScreen : OAuthSocialSource.ListOfDatabases
               )
             }}
           />

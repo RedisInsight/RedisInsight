@@ -30,6 +30,7 @@ import { initialState as initialStateAppRedisCommands } from 'uiSrc/slices/app/r
 import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/plugins'
 import { initialState as initialStateAppSocketConnectionReducer } from 'uiSrc/slices/app/socket-connection'
 import { initialState as initialStateAppFeaturesReducer } from 'uiSrc/slices/app/features'
+import { initialState as initialStateAppActionBarReducer } from 'uiSrc/slices/app/actionBar'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
@@ -67,6 +68,7 @@ const initialStateDefault: RootState = {
     plugins: cloneDeep(initialStateAppPluginsReducer),
     socketConnection: cloneDeep(initialStateAppSocketConnectionReducer),
     features: cloneDeep(initialStateAppFeaturesReducer),
+    actionBar: cloneDeep(initialStateAppActionBarReducer),
   },
   connections: {
     instances: cloneDeep(initialStateInstances),

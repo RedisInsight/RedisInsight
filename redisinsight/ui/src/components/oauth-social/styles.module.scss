@@ -5,7 +5,7 @@
   align-items: center;
 }
 
-.link {
+.button {
   padding: 0 !important;
   border-radius: 25px !important;
   width: 38px !important;
@@ -20,7 +20,7 @@
   }
 }
 
-.googleLink {
+.googleButton {
   background-color: var(--cloudSsoGoogle);
 
   svg {
@@ -29,6 +29,42 @@
   }
 }
 
-.githubLink {
+.githubButton {
   background-color: var(--cloudSsoGithub);
+}
+
+.containerAuto {
+  background-color: var(--euiColorLightestShade);
+  padding: 16px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title,
+.text {
+  text-align: center;
+  font-size: 14px !important;
+  font-style: normal;
+  font-weight: 400 !important;
+  line-height: 150% !important;
+  color: var(--htmlColor) !important;
+}
+
+.text {
+  font-size: 12px !important;
+  padding-bottom: 16px;
+}
+
+.buttonsAuto .button {
+  padding: 4px 31px !important;
+  width: 100px !important;
+  height: 22px !important;
+  border-radius: 4px !important;
+
+  svg, path {
+    width: 15px !important;
+    height: 14px !important;
+  }
 }

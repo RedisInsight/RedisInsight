@@ -33,6 +33,7 @@ const notificationsSlice = createSlice({
   reducers: {
     addErrorNotification: (state, { payload }: { payload: IAddInstanceErrorPayload }) => {
       const { instanceId } = payload
+      const title = payload?.response?.data?.title
       const errorName = getApiErrorName(payload)
       const message = getApiErrorMessage(payload)
       const errorExistedId = state.errors.findIndex(
@@ -47,6 +48,7 @@ const notificationsSlice = createSlice({
 
       state.errors.push({
         ...payload,
+        title,
         instanceId,
         id: `${Date.now()}`,
         name: errorName,

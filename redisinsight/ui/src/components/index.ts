@@ -30,6 +30,8 @@ import { ModuleNotLoaded, FilterNotAvailable } from './messages'
 import OAuthSignInDialog from './oauth-sign-in-dialog'
 import OAuthSocial from './oauth-social'
 import OAuthSsoHandlerDialog from './oauth-sso-handler-dialog/OAuthSsoHandlerDialog'
+import OAuthSelectAccountDialog from './oauth-select-account-dialog/OAuthSelectAccountDialog'
+import OAuthConnectFreeDb from './oauth-connect-free-db/OAuthConnectFreeDb'
 
 export {
   NavigationMenu,
@@ -68,4 +70,6 @@ export {
   OAuthSignInDialog,
   OAuthSocial,
   OAuthSsoHandlerDialog,
+  OAuthSelectAccountDialog,
+  OAuthConnectFreeDb,
 }

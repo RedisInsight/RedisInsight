@@ -13,7 +13,7 @@ import cx from 'classnames'
 
 import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
-import { SignInDialogSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
@@ -160,7 +160,7 @@ const renderContentElement = (
               data-testid={`link-sso-${telemetry.telemetryName}-${idx}`}
               target="_blank"
               onClick={(e) => {
-                ssoCloudHandlerClick?.(e, telemetry.telemetryName as SignInDialogSource)
+                ssoCloudHandlerClick?.(e, telemetry.telemetryName as OAuthSocialSource)
               }}
               href={addUtmToLink(value.href, telemetry.telemetryName)}
             >

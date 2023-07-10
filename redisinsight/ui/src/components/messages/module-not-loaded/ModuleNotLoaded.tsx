@@ -12,7 +12,7 @@ import { ReactComponent as MobileIcon } from 'uiSrc/assets/img/icons/mobile_modu
 import { ReactComponent as DesktopIcon } from 'uiSrc/assets/img/icons/module_not_loaded.svg'
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
 import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
-import { RedisDefaultModules, SignInDialogSource } from 'uiSrc/slices/interfaces'
+import { RedisDefaultModules, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 import styles from './styles.module.scss'
@@ -134,7 +134,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
               onClick={(e) => {
                 ssoCloudHandlerClick(
                   e,
-                  type === 'browser' ? SignInDialogSource.BrowserSearch : SignInDialogSource[module]
+                  type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
                 )
                 onFreeDatabaseClick()
               }}

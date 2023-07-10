@@ -11,6 +11,7 @@ import {
   EuiFormRow,
   EuiLink,
   EuiText,
+  EuiTitle,
   EuiToolTip,
   EuiWindowEvent,
   keys,
@@ -18,6 +19,8 @@ import {
 
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
+import { OAuthSocial } from 'uiSrc/components'
+import { OAuthSocialType } from 'uiSrc/components/oauth-social/OAuthSocial'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -43,25 +46,28 @@ interface Values {
 }
 
 const fieldDisplayNames: Values = {
-  accessKey: 'Enter Cloud API Access Key',
-  secretKey: 'Enter Cloud API Secret Key',
+  accessKey: 'Enter Cloud API Account Key',
+  secretKey: 'Enter Cloud API User Key',
 }
 
 const Message = () => (
-  <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
-    {`If you have a subscription on Redis Enterprise Cloud, your databases can automatically
-     be added in RedisInsight by entering the API key. These API keys can be enabled by following the steps
+  <>
+    <EuiTitle className={styles.messageTitle}><h4>Use Cloud API key</h4></EuiTitle>
+    <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
+      {`Enter API keys to discover and add databases.
+    API keys can be enabled by following the steps
     mentioned in the `}
-    <EuiLink
-      color="text"
-      className={styles.link}
-      external={false}
-      target="_blank"
-      href="https://docs.redis.com/latest/rc/api/how-to/enable-your-account-to-use-api/"
-    >
-      documentation.
-    </EuiLink>
-  </EuiText>
+      <EuiLink
+        color="text"
+        className={styles.link}
+        external={false}
+        target="_blank"
+        href="https://docs.redis.com/latest/rc/api/how-to/enable-your-account-to-use-api/"
+      >
+        documentation.
+      </EuiLink>
+    </EuiText>
+  </>
 )
 
 const CloudConnectionForm = (props: Props) => {
@@ -168,48 +174,53 @@ const CloudConnectionForm = (props: Props) => {
   return (
     <>
       <div className="getStartedForm">
-        <Message />
-        <br />
-        <EuiWindowEvent event="keydown" handler={onKeyDown} />
-        <EuiForm component="form" onSubmit={formik.handleSubmit}>
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow label="Cloud API Access Key*">
-                <EuiFieldText
-                  name="accessKey"
-                  id="accessKey"
-                  data-testid="access-key"
-                  maxLength={200}
-                  placeholder={fieldDisplayNames.accessKey}
-                  value={formik.values.accessKey}
-                  autoComplete="off"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
-                  }}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow label="Cloud API Secret Key*">
-                <EuiFieldText
-                  name="secretKey"
-                  id="secretKey"
-                  data-testid="secret-key"
-                  maxLength={200}
-                  placeholder={fieldDisplayNames.secretKey}
-                  value={formik.values.secretKey}
-                  autoComplete="off"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
-                  }}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          <Footer />
-        </EuiForm>
+        <OAuthSocial type={OAuthSocialType.Autodiscovery} />
+        <div className={styles.divider}>OR</div>
+        <div className={styles.cloudApi}>
+          <Message />
+          <br />
+          <EuiWindowEvent event="keydown" handler={onKeyDown} />
+          <EuiForm component="form" onSubmit={formik.handleSubmit}>
+            <EuiFlexGroup className={flexGroupClassName}>
+              <EuiFlexItem className={flexItemClassName}>
+                <EuiFormRow label="Cloud API Account Key*">
+                  <EuiFieldText
+                    name="accessKey"
+                    id="accessKey"
+                    data-testid="access-key"
+                    maxLength={200}
+                    placeholder={fieldDisplayNames.accessKey}
+                    value={formik.values.accessKey}
+                    autoComplete="off"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
+                    }}
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+            <EuiFlexGroup className={flexGroupClassName}>
+              <EuiFlexItem className={flexItemClassName}>
+                <EuiFormRow label="Cloud API User Key*">
+                  <EuiFieldText
+                    name="secretKey"
+                    id="secretKey"
+                    data-testid="secret-key"
+                    maxLength={200}
+                    placeholder={fieldDisplayNames.secretKey}
+                    value={formik.values.secretKey}
+                    autoComplete="off"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
+                    }}
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+            <Footer />
+          </EuiForm>
+        </div>
+
       </div>
     </>
   )

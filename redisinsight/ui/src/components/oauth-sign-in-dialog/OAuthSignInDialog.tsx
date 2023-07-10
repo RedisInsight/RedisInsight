@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import {
   EuiFlexGroup,
   EuiFlexItem,
@@ -12,7 +12,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 
 import { OAuthSocial } from 'uiSrc/components'
-import { oauthCloudSignInDialogSelector, setSignInDialogState } from 'uiSrc/slices/oauth/cloud'
+import { setSignInDialogState, oauthCloudSelector } from 'uiSrc/slices/oauth/cloud'
 import { ReactComponent as DeveloperIcon } from 'uiSrc/assets/img/oauth/developer.svg'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
@@ -20,19 +20,19 @@ import { OAuthAdvantages } from './constants'
 import styles from './styles.module.scss'
 
 const OAuthSignInDialog = () => {
-  const { isOpen, source } = useSelector(oauthCloudSignInDialogSelector)
+  const { source, isOpenSignInDialog } = useSelector(oauthCloudSelector)
 
   const dispatch = useDispatch()
 
-  const handleOnClose = () => {
+  const handleOnClose = useCallback(() => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_FORM_CLOSED,
       eventData: { source },
     })
     dispatch(setSignInDialogState(null))
-  }
+  }, [source])
 
-  if (!isOpen) return null
+  if (!isOpenSignInDialog) return null
 
   return (
     <EuiModal className={styles.content} onClose={handleOnClose} data-testid="oauth-sign-in-dialog">

@@ -13,6 +13,7 @@ import { Config, GlobalSubscriptions, NavigationMenu, Notifications, ShortcutsFl
 import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
 import GlobalDialogs from './components/global-dialogs'
+import GlobalActionBar from './components/global-action-bar'
 
 import themeDark from './styles/themes/dark_theme/_dark_theme.lazy.scss'
 import themeLight from './styles/themes/light_theme/_light_theme.lazy.scss'
@@ -22,17 +23,18 @@ import './App.scss'
 themeService.registerTheme(Theme.Dark, [themeDark])
 themeService.registerTheme(Theme.Light, [themeLight])
 
-const AppWrapper = ({ children }: { children?: ReactElement }) => (
+const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
   <Provider store={store}>
     <ThemeProvider>
       <Router>
-        <App />
+        <App>
+          {children}
+        </App>
       </Router>
     </ThemeProvider>
-    {children}
   </Provider>
 )
-const App = () => {
+const App = ({ children }: { children?: ReactElement[] }) => {
   const { loading: serverLoading } = useSelector(appInfoSelector)
   return (
     <div className="main-container">
@@ -40,6 +42,7 @@ const App = () => {
         ? <PagePlaceholder />
         : (
           <EuiPage className="main">
+            <GlobalActionBar />
             <GlobalDialogs />
             <GlobalSubscriptions />
             <NavigationMenu />
@@ -51,6 +54,7 @@ const App = () => {
       <Notifications />
       <Config />
       <ShortcutsFlyout />
+      {children}
     </div>
   )
 }

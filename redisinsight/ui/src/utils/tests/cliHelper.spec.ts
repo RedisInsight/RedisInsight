@@ -9,6 +9,8 @@ import {
   checkUnsupportedCommand,
   checkBlockingCommand,
   replaceEmptyValue,
+  removeDeprecatedModuleCommands,
+  checkDeprecatedModuleCommand,
 } from 'uiSrc/utils'
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import { render, screen } from 'uiSrc/utils/test-utils'
@@ -89,7 +91,6 @@ const checkCommandModuleTests = [
   { input: 'FT.foo bar', expected: RedisDefaultModules.Search },
   { input: 'JSON.foo bar', expected: RedisDefaultModules.ReJSON },
   { input: 'TS.foo bar', expected: RedisDefaultModules.TimeSeries },
-  { input: 'GRAPH.foo bar', expected: RedisDefaultModules.Graph },
   { input: 'BF.foo bar', expected: RedisDefaultModules.Bloom },
   { input: 'CF.foo bar', expected: RedisDefaultModules.Bloom },
   { input: 'CMS.foo bar', expected: RedisDefaultModules.Bloom },
@@ -108,6 +109,19 @@ const checkBlockingCommandTests = [
   { input: [['ft'], 'FT.foo bar'], expected: 'ft' },
   { input: [['ft'], ' ft.foo bar  '], expected: 'ft' },
   { input: [['foo', 'bar'], 'FT.foo bar'], expected: undefined },
+]
+
+const checkDeprecatedModuleCommandTests = [
+  { input: 'FT.foo bar', expected: false },
+  { input: 'GRAPH foo bar', expected: false },
+  { input: 'GRAPH.foo bar', expected: true },
+  { input: 'FOO bar', expected: false },
+]
+
+const removeDeprecatedModuleCommandsTests = [
+  { input: ['FT.foo'], expected: ['FT.foo'] },
+  { input: ['GRAPH.foo', 'FT.foo'], expected: ['FT.foo'] },
+  { input: ['FOO', 'GRAPH.FOO', 'CF.FOO', 'GRAPH.BAR'], expected: ['FOO', 'CF.FOO'] },
 ]
 
 describe('getCommandNameFromQuery', () => {
@@ -183,5 +197,17 @@ describe('checkBlockingCommand', () => {
   test.each(checkBlockingCommandTests)('%j', ({ input, expected }) => {
     // @ts-ignore
     expect(checkBlockingCommand(...input)).toEqual(expected)
+  })
+})
+
+describe('checkDeprecatedModuleCommand', () => {
+  test.each(checkDeprecatedModuleCommandTests)('%j', ({ input, expected }) => {
+    expect(checkDeprecatedModuleCommand(input)).toEqual(expected)
+  })
+})
+
+describe('removeDeprecatedModuleCommands', () => {
+  test.each(removeDeprecatedModuleCommandsTests)('%j', ({ input, expected }) => {
+    expect(removeDeprecatedModuleCommands(input)).toEqual(expected)
   })
 })

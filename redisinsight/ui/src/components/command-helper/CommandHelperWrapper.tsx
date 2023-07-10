@@ -11,7 +11,13 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { generateArgs, generateArgsNames, getComplexityShortNotation } from 'uiSrc/utils'
+import {
+  generateArgs,
+  generateArgsNames,
+  getComplexityShortNotation,
+  removeDeprecatedModuleCommands,
+  checkDeprecatedModuleCommand,
+} from 'uiSrc/utils'
 import CommandHelper from './CommandHelper'
 import CommandHelperHeader from './CommandHelperHeader'
 
@@ -26,9 +32,12 @@ const CommandHelperWrapper = () => {
     searchingCommand,
     searchingCommandFilter
   } = useSelector(cliSettingsSelector)
-  const { spec: ALL_REDIS_COMMANDS, commandsArray: KEYS_OF_COMMANDS } = useSelector(appRedisCommandsSelector)
+  const { spec: ALL_REDIS_COMMANDS, commandsArray } = useSelector(appRedisCommandsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const lastMatchedCommand = (isEnteringCommand && matchedCommand) ? matchedCommand : searchedCommand
+  const lastMatchedCommand = (isEnteringCommand && matchedCommand && !checkDeprecatedModuleCommand(matchedCommand))
+    ? matchedCommand
+    : searchedCommand
+  const KEYS_OF_COMMANDS = removeDeprecatedModuleCommands(commandsArray)
   let searchedCommands: string[] = []
 
   useEffect(() => {

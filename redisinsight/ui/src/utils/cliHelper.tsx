@@ -162,9 +162,6 @@ const checkCommandModule = (command: string) => {
     case command.startsWith(ModuleCommandPrefix.TimeSeries): {
       return RedisDefaultModules.TimeSeries
     }
-    case command.startsWith(ModuleCommandPrefix.Graph): {
-      return RedisDefaultModules.Graph
-    }
     case command.startsWith(ModuleCommandPrefix.BF):
     case command.startsWith(ModuleCommandPrefix.CF):
     case command.startsWith(ModuleCommandPrefix.CMS):
@@ -221,6 +218,16 @@ const getCommandNameFromQuery = (
   }
 }
 
+const DEPRECATED_MODULES_PREFIXES = [
+  ModuleCommandPrefix.Graph
+]
+
+const checkDeprecatedModuleCommand = (command: string) =>
+  DEPRECATED_MODULES_PREFIXES.some((prefix) => command.startsWith(prefix))
+
+const removeDeprecatedModuleCommands = (commands: string[]) => commands
+  .filter((command) => !checkDeprecatedModuleCommand(command))
+
 export {
   cliParseTextResponse,
   cliParseTextResponseWithOffset,
@@ -239,4 +246,6 @@ export {
   getCommandNameFromQuery,
   wbSummaryCommand,
   replaceEmptyValue,
+  removeDeprecatedModuleCommands,
+  checkDeprecatedModuleCommand,
 }

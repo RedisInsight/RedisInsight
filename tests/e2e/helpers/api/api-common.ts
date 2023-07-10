@@ -18,6 +18,8 @@ export async function sendGetRequest(resourcePath: string): Promise<any> {
     if (await windowId) {
         requestEndpoint.set('X-Window-Id', await windowId);
     }
+
+    return requestEndpoint;
 }
 
 /**
@@ -40,6 +42,7 @@ export async function sendPostRequest(
     if (await windowId) {
         requestEndpoint.set('X-Window-Id', await windowId);
     }
+    return requestEndpoint;
 }
 
 /**
@@ -62,4 +65,6 @@ export async function sendDeleteRequest(
     if (await windowId) {
         requestEndpoint.set('X-Window-Id', await windowId);
     }
+
+    return requestEndpoint;
 }

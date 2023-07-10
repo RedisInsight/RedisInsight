@@ -11,19 +11,14 @@ import {
     ossStandaloneConfig,
     ossStandaloneTlsConfig
 } from '../../../helpers/conf';
-import { acceptLicenseTerms, addRECloudDatabase, clickOnEditDatabaseByName, deleteDatabase } from '../../../helpers/database';
-import {
-    addNewOSSClusterDatabaseApi,
-    addNewStandaloneDatabaseApi,
-    deleteAllDatabasesByConnectionTypeApi,
-    deleteOSSClusterDatabaseApi,
-    deleteStandaloneDatabaseApi,
-    discoverSentinelDatabaseApi
-} from '../../../helpers/api/api-database';
+import { DatabaseHelper } from '../../../helpers/database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { DatabasesActions } from '../../../common-actions/databases-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databasesActions = new DatabasesActions();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let foundExportedFiles: string[];
 
@@ -32,19 +27,19 @@ fixture `Export databases`
     .page(commonUrl);
 test
     .before(async() => {
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
-        await addNewOSSClusterDatabaseApi(ossClusterConfig);
-        await discoverSentinelDatabaseApi(ossSentinelConfig);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
+        await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.discoverSentinelDatabaseApi(ossSentinelConfig);
         await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete all databases
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        await deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         // Delete exported file
         fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
     })('Exporting Standalone, OSS Cluster, and Sentinel connection types', async t => {
@@ -69,10 +64,10 @@ test
         await t.expect(foundExportedFiles.length).gt(0, 'The Exported file not saved');
 
         // Delete databases
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        await deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         await myRedisDatabasePage.reloadPage();
 
         const exportedData = {
@@ -87,23 +82,23 @@ test
         await t.click(myRedisDatabasePage.okDialogBtn);
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
-        await clickOnEditDatabaseByName(databaseNames[1]);
+        await databaseHelper.clickOnEditDatabaseByName(databaseNames[1]);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
         await t.expect(myRedisDatabasePage.AddRedisDatabase.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
     });
 test
     .before(async() => {
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
-        await addRECloudDatabase(cloudDatabaseConfig);
-        await discoverSentinelDatabaseApi(ossSentinelConfig);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
+        await databaseHelper.addRECloudDatabase(cloudDatabaseConfig);
+        await databaseAPIRequests.discoverSentinelDatabaseApi(ossSentinelConfig);
         await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete databases
-        await deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
-        await deleteDatabase(cloudDatabaseConfig.databaseName);
-        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
+        await databaseHelper.deleteDatabase(cloudDatabaseConfig.databaseName);
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         // Delete exported file
         fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
     })('Export databases without passwords', async t => {

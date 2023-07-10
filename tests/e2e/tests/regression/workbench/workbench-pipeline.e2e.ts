@@ -1,16 +1,18 @@
-import { ClientFunction } from 'testcafe';
+// import { ClientFunction } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage, SettingsPage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const settingsPage = new SettingsPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
-const getPageUrl = ClientFunction(() => window.location.href);
-const externalPageLink = 'https://redis.io/docs/manual/pipelining/';
+// const getPageUrl = ClientFunction(() => window.location.href);
+// const externalPageLink = 'https://redis.io/docs/manual/pipelining/';
 const pipelineValues = ['-5', '5', '4', '20'];
 const commandForSend = '100 scan 0 match * count 5000';
 
@@ -18,14 +20,14 @@ fixture `Workbench Pipeline`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
         // Go to Settings page - Pipeline mode
         await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         await t.click(settingsPage.accordionWorkbenchSettings);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test
     .meta({ env: env.web })('Verify that user can see the text in settings for pipeline with link', async t => {

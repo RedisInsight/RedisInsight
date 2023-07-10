@@ -2,18 +2,17 @@ import { Chance } from 'chance';
 import { Common } from '../../../helpers/common';
 import { rte } from '../../../helpers/constants';
 import { BrowserPage } from '../../../pageObjects';
-import {
-    acceptLicenseTermsAndAddDatabaseApi,
-    acceptLicenseTermsAndAddOSSClusterDatabase
-} from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import {
     commonUrl,
     ossClusterConfig,
     ossStandaloneConfig
 } from '../../../helpers/conf';
-import { deleteOSSClusterDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 const chance = new Chance();
 
 const pairsToSet = Common.createArrayPairsWithKeyValue(4);
@@ -25,21 +24,21 @@ fixture `CLI critical`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.ossCluster })
     .before(async() => {
-        await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
+        await databaseHelper.acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user is redirected to another node when he works in CLI with OSS Cluster', async t => {
         keyName = Common.generateWord(10);
         // Open CLI

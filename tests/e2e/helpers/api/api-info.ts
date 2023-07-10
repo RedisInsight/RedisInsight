@@ -1,9 +1,12 @@
-import { sendRequest } from './api-common';
-import { Methods } from '../constants';
+import { t } from 'testcafe';
+import { sendPostRequest } from './api-common';
+import { ResourcePath } from '../constants';
 
 /**
  * Synchronize features
  */
 export async function syncFeaturesApi(): Promise<void> {
-    await sendRequest(Methods.post, '/features/sync', 200);
+    const response = await sendPostRequest(ResourcePath.SyncFeatures);
+
+    await t.expect(await response.status).eql(200);
 }

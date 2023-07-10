@@ -1,26 +1,26 @@
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneBigConfig
-} from '../../../helpers/conf';
+import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
 import { rte, KeyTypesTexts } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const keyNameFilter = `keyName${Common.generateWord(10)}`;
 
 fixture `Tree view verifications`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test('Verify that user can see that "Tree view" mode is enabled state is saved when refreshes the page', async t => {
     // Verify that when user opens the application he can see that Tree View is disabled by default(Browser is selected by default)
@@ -39,7 +39,7 @@ test
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyNameFilter);
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that when user enables filtering by key name he can see only folder with appropriate keys are displayed and the number of keys and percentage is recalculated', async t => {
         await browserPage.addHashKey(keyNameFilter);
         await t.click(browserPage.treeViewButton);

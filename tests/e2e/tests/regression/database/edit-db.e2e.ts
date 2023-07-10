@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabaseApi, clickOnEditDatabaseByName, deleteDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
@@ -7,31 +7,33 @@ import {
 } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { Common } from '../../../helpers/common';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const database = Object.assign({}, ossStandaloneConfig);
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
+const database = Object.assign({}, ossStandaloneConfig);
 const previousDatabaseName = Common.generateWord(20);
 const newDatabaseName = Common.generateWord(20);
 database.databaseName = previousDatabaseName;
 const keyName = Common.generateWord(10);
 
-fixture`List of Databases`
+fixture `List of Databases`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(database, database.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(database);
     });
 test
     .after(async() => {
         // Delete database
-        await deleteDatabase(newDatabaseName);
+        await databaseHelper.deleteDatabase(newDatabaseName);
     })('Verify that user can edit DB alias of Standalone DB', async t => {
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Edit alias of added database
-        await clickOnEditDatabaseByName(database.databaseName);
+        await databaseHelper.clickOnEditDatabaseByName(database.databaseName);
 
         // Verify that timeout input is displayed for edit db window with default value when it wasn't specified
         await t.expect(myRedisDatabasePage.AddRedisDatabase.timeoutInput.value).eql('30', 'Timeout is not defaulted to 30');
@@ -47,17 +49,17 @@ test
 test
     .meta({ env: env.desktop })
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .after(async t => {
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
         await t.typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneConfig.port, { replace: true, paste: true });
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that context for previous database not saved after editing port/username/password/certificates/SSH', async t => {
         const command = 'HSET';
 
@@ -69,7 +71,7 @@ test
         await t.pressKey('enter');
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Edit port of added database
-        await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
         await t.typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneBigConfig.port, { replace: true, paste: true });
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

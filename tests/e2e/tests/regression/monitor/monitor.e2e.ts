@@ -1,5 +1,5 @@
 import { Chance } from 'chance';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     SettingsPage,
@@ -13,7 +13,7 @@ import {
     ossStandaloneNoPermissionsConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { WorkbenchActions } from '../../../common-actions/workbench-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -22,16 +22,18 @@ const browserPage = new BrowserPage();
 const chance = new Chance();
 const workbenchPage = new WorkbenchPage();
 const workbenchActions = new WorkbenchActions();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 fixture `Monitor`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify Monitor refresh/stop', async t => {
     // Run monitor
@@ -87,7 +89,7 @@ test('Verify Monitor refresh/stop', async t => {
 });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
         await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         await t.click(settingsPage.accordionAdvancedSettings);
         await settingsPage.changeKeysToScanValue('20000000');
@@ -99,7 +101,7 @@ test
         await t.click(settingsPage.accordionAdvancedSettings);
         await settingsPage.changeKeysToScanValue('10000');
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see monitor results in high DB load', async t => {
         // Run monitor
         await browserPage.Profiler.startMonitor();
@@ -116,14 +118,14 @@ test
 // Skipped due to redis issue https://redislabs.atlassian.net/browse/RI-4111
 test.skip
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await browserPage.Cli.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor -client');
         // Check command result in CLI
         await t.click(browserPage.Cli.cliExpandButton);
         await t.expect(browserPage.Cli.cliOutputResponseSuccess.textContent).eql('"OK"', 'Command from autocomplete was not found & executed');
         await t.click(browserPage.Cli.cliCollapseButton);
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
         await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     })
@@ -133,7 +135,7 @@ test.skip
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.Cli.sendCommandInCli('acl DELUSER noperm');
         // Delete database
-        await deleteStandaloneDatabasesApi([ossStandaloneConfig, ossStandaloneNoPermissionsConfig]);
+        await databaseAPIRequests.deleteStandaloneDatabasesApi([ossStandaloneConfig, ossStandaloneNoPermissionsConfig]);
     })('Verify that if user doesn\'t have permissions to run monitor, user can see error message', async t => {
         const command = 'CLIENT LIST';
         // Expand the Profiler

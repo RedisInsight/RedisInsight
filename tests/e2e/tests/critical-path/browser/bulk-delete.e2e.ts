@@ -1,13 +1,15 @@
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { deleteAllKeysFromDB, populateDBWithHashes } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const keyNames = [Common.generateWord(20), Common.generateWord(20)];
 const dbParameters = { host: ossStandaloneRedisearch.host, port: ossStandaloneRedisearch.port };
@@ -18,7 +20,7 @@ fixture `Bulk Delete`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         await browserPage.addHashKey(keyNames[0], '100000', Common.generateWord(20), Common.generateWord(20));
         await browserPage.addSetKey(keyNames[1], '100000', Common.generateWord(20));
         if (await browserPage.Toast.toastCloseButton.exists) {
@@ -28,7 +30,7 @@ fixture `Bulk Delete`
     .afterEach(async() => {
         // Clear and delete database
         await deleteAllKeysFromDB(dbParameters.host, dbParameters.port);
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
 test('Verify that user can access the bulk actions screen in the Browser', async t => {
     // Filter by Hash keys
@@ -86,7 +88,7 @@ test('Verify that user can see blue progress line during the process of bulk del
 });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Add 1000000 Hash keys
         await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters2);
         await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters2);
@@ -104,7 +106,7 @@ test
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Add 500000 keys
         await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters2);
         // Filter and search by Hash keys added
@@ -135,7 +137,7 @@ test('Verify that when bulk deletion is completed, status Action completed is di
 });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         await browserPage.addSetKey(keyNames[1], '100000', Common.generateWord(20));
         if (await browserPage.Toast.toastCloseButton.exists) {
             await t.click(browserPage.Toast.toastCloseButton);

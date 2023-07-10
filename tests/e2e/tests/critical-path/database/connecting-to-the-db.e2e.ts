@@ -1,14 +1,16 @@
 import { rte } from '../../../helpers/constants';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, invalidOssStandaloneConfig, ossStandaloneForSSHConfig } from '../../../helpers/conf';
-import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/database';
-import { deleteStandaloneDatabasesByNamesApi } from '../../../helpers/api/api-database';
+import { DatabaseHelper } from '../../../helpers/database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../test-data/sshPrivateKeys';
 import { Common } from '../../../helpers/common';
 // import { BrowserActions } from '../../../common-actions/browser-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 // const browserActions = new BrowserActions();
 
 const sshParams = {
@@ -34,7 +36,7 @@ fixture `Connecting to the databases verifications`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
     });
 test
     .meta({ rte: rte.none })('Verify that user can see error message if he can not connect to added Database', async t => {
@@ -79,7 +81,7 @@ test
     .meta({ rte: rte.standalone })
     .after(async() => {
         // Delete databases
-        await deleteStandaloneDatabasesByNamesApi([sshDbPass.databaseName, sshDbPrivateKey.databaseName, sshDbPasscode.databaseName, newClonedDatabaseAlias]);
+        await databaseAPIRequests.deleteStandaloneDatabasesByNamesApi([sshDbPass.databaseName, sshDbPrivateKey.databaseName, sshDbPasscode.databaseName, newClonedDatabaseAlias]);
     })('Adding database with SSH', async t => {
         // const tooltipText = [
         //     'Enter a value for required fields (3):',
@@ -137,13 +139,13 @@ test
             .typeText(myRedisDatabasePage.AddRedisDatabase.sshPassphraseInput, sshWithPassphrase.sshPassphrase, { replace: true, paste: true });
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton.exists).notOk('Edit database panel still displayed');
-        await clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);
+        await databaseHelper.clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);
         await t
             .expect(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyInput.value).eql(sshWithPassphrase.sshPrivateKey, 'Edited Private key not saved')
             .expect(myRedisDatabasePage.AddRedisDatabase.sshPassphraseInput.value).eql(sshWithPassphrase.sshPassphrase, 'Edited Passphrase not saved');
 
         // Verify that user can clone database with SSH tunnel
-        await clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);
+        await databaseHelper.clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);
         await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
         // Edit Database alias before cloning
         await t.typeText(myRedisDatabasePage.AddRedisDatabase.databaseAliasInput, newClonedDatabaseAlias, { replace: true });

@@ -1,17 +1,20 @@
 import { t } from 'testcafe';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
     ossStandaloneNoPermissionsConfig
 } from '../../../helpers/conf';
-import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const createUserCommand = 'acl setuser noperm nopass on +@all ~* -dbsize';
 const keyName = Common.generateWord(20);
 const createKeyCommand = `set ${keyName} ${Common.generateWord(20)}`;
@@ -20,17 +23,17 @@ fixture `Handle user permissions`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
         await browserPage.Cli.sendCommandInCli(createUserCommand);
         ossStandaloneNoPermissionsConfig.host = process.env.OSS_STANDALONE_BIG_HOST || 'oss-standalone-big';
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
         await browserPage.reloadPage();
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
-        await deleteStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
         // Change config to initial
         ossStandaloneNoPermissionsConfig.host = process.env.OSS_STANDALONE_HOST || 'oss-standalone';
     });

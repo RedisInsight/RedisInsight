@@ -1,5 +1,5 @@
 import { ClientFunction } from 'testcafe';
-import { acceptLicenseTerms, deleteDatabase, discoverSentinelDatabase, addOSSClusterDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
@@ -9,6 +9,7 @@ import {
 import { env, rte } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
 
 const getPageUrl = ClientFunction(() => window.location.href);
 
@@ -16,7 +17,7 @@ fixture `Connecting to the databases verifications`
     .meta({ type: 'smoke' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
     });
 test
     .meta({ env: env.web, rte: rte.sentinel })
@@ -26,7 +27,7 @@ test
         await myRedisDatabasePage.deleteDatabaseByName(ossSentinelConfig.masters[1].name);
     })('Verify that user can connect to Sentinel DB', async t => {
         // Add OSS Sentinel DB
-        await discoverSentinelDatabase(ossSentinelConfig);
+        await databaseHelper.discoverSentinelDatabase(ossSentinelConfig);
 
         // Get groups & their count
         const sentinelGroups = myRedisDatabasePage.dbNameList.withText('primary-group');
@@ -50,10 +51,10 @@ test
 test
     .meta({ env: env.web, rte: rte.ossCluster })
     .after(async() => {
-        await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
+        await databaseHelper.deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
     })('Verify that user can connect to OSS Cluster DB', async t => {
         // Add OSS Cluster DB
-        await addOSSClusterDatabase(ossClusterConfig);
+        await databaseHelper.addOSSClusterDatabase(ossClusterConfig);
         await myRedisDatabasePage.clickOnDBByName(ossClusterConfig.ossClusterDatabaseName);
         // Check that browser page was opened
         await t.expect(getPageUrl()).contains('browser', 'Browser page not opened');

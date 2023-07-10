@@ -1,16 +1,15 @@
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    BrowserPage
-} from '../../../pageObjects';
+import { DatabaseHelper } from '../../../helpers/database';
+import { MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const speed = 0.4;
 let keyName = Common.generateWord(10);
@@ -20,11 +19,11 @@ fixture `Browser Context`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 // Update after resolving https://redislabs.atlassian.net/browse/RI-3299
 test('Verify that user can see saved CLI size on Browser page when he returns back to Browser page', async t => {
@@ -91,11 +90,11 @@ test('Verify that user can see saved executed commands in CLI on Browser page wh
 });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .after(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see key details selected when he returns back to Browser page', async t => {
         // Scroll keys elements
         const scrollY = 1000;
@@ -120,7 +119,7 @@ test
     .after(async() => {
         // Clear and delete database
         await browserPage.Cli.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see list of keys viewed on Browser page when he returns back to Browser page', async t => {
         const numberOfItems = 5000;
         const scrollY = 3200;

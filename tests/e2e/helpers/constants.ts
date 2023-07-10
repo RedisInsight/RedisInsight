@@ -48,8 +48,9 @@ export enum RecommendationIds {
     searchJson = 'searchJSON',
 }
 
-export enum Methods {
-    post = 'post',
-    get = 'get',
-    delete = 'delete'
+export enum ResourcePath {
+    Databases = '/databases',
+    RedisSentinel = '/redis-sentinel',
+    ClusterDetails = '/cluster-details',
+    SyncFeatures = '/features/sync',
 }

@@ -1,12 +1,15 @@
 import { ClientFunction } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
-import { acceptLicenseTerms, addNewStandaloneDatabase, deleteDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { deleteAllDatabasesApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browsePage  = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const getPageUrl = ClientFunction(() => window.location.href);
 const sourcePage = 'https://developer.redis.com/create/from-source/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
 const dockerPage = 'https://developer.redis.com/create/docker/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
@@ -17,19 +20,19 @@ fixture `Add database from welcome page`
     .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
-        await deleteAllDatabasesApi();
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.deleteAllDatabasesApi();
         // Reload Page
         await browsePage.reloadPage();
     });
 test
     .after(async() => {
         // Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await databaseHelper.deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user can add first DB from Welcome page', async t => {
         await t.expect(myRedisDatabasePage.AddRedisDatabase.welcomePageTitle.exists).ok('The welcome page title not displayed');
         // Add database from Welcome page
-        await addNewStandaloneDatabase(ossStandaloneConfig);
+        await databaseHelper.addNewStandaloneDatabase(ossStandaloneConfig);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database not added', { timeout: 10000 });
     });
 // update after resolving testcafe Native Automation mode limitations

@@ -1,17 +1,13 @@
 import { rte } from '../../../helpers/constants';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossClusterConfig, ossSentinelConfig, ossStandaloneConfig } from '../../../helpers/conf';
-import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/database';
-import {
-    addNewOSSClusterDatabaseApi,
-    addNewStandaloneDatabaseApi,
-    deleteAllDatabasesByConnectionTypeApi,
-    deleteOSSClusterDatabaseApi,
-    deleteStandaloneDatabaseApi,
-    discoverSentinelDatabaseApi
-} from '../../../helpers/api/api-database';
+import { DatabaseHelper } from '../../../helpers/database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const newOssDatabaseAlias = 'cloned oss cluster';
 
 fixture `Clone databases`
@@ -19,19 +15,19 @@ fixture `Clone databases`
     .page(commonUrl);
 test
     .before(async() => {
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete databases
         const dbNumber = await myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).count;
         for (let i = 0; i < dbNumber; i++) {
-            await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+            await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
         }
     })
     .meta({ rte: rte.standalone })('Verify that user can clone Standalone db', async t => {
-        await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
 
         // Verify that user can test Standalone connection on edit and see the success message
         await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
@@ -41,7 +37,7 @@ test
         await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
         await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
         await t.expect(myRedisDatabasePage.editAliasButton.withText('Clone ').exists).notOk('Clone panel is still displayed', { timeout: 2000 });
-        await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
         await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
         // Verify that user see the “Add Database Manually” form pre-populated with all the connection data when cloning DB
         await t
@@ -61,17 +57,17 @@ test
     });
 test
     .before(async() => {
-        await acceptLicenseTerms();
-        await addNewOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterConfig);
         await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete database
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
         await myRedisDatabasePage.deleteDatabaseByName(newOssDatabaseAlias);
     })
     .meta({ rte: rte.ossCluster })('Verify that user can clone OSS Cluster', async t => {
-        await clickOnEditDatabaseByName(ossClusterConfig.ossClusterDatabaseName);
+        await databaseHelper.clickOnEditDatabaseByName(ossClusterConfig.ossClusterDatabaseName);
 
         // Verify that user can test OSS Cluster connection on edit and see the success message
         await t.click(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
@@ -93,18 +89,18 @@ test
     });
 test
     .before(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
         // Add Sentinel databases
-        await discoverSentinelDatabaseApi(ossSentinelConfig);
+        await databaseAPIRequests.discoverSentinelDatabaseApi(ossSentinelConfig);
         await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Delete all primary groups
-        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         await myRedisDatabasePage.reloadPage();
     })
     .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
-        await clickOnEditDatabaseByName(ossSentinelConfig.masters[1].alias);
+        await databaseHelper.clickOnEditDatabaseByName(ossSentinelConfig.masters[1].alias);
         await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
 
         // Verify that user can test Sentinel connection on edit and see the success message

@@ -1,12 +1,15 @@
 import { rte } from '../../../helpers/constants';
-import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { Telemetry } from '../../../helpers/telemetry';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const telemetry = new Telemetry();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let keyNameBefore = Common.generateWord(10);
 let keyNameAfter = Common.generateWord(10);
@@ -23,12 +26,12 @@ fixture `Edit Key names verification`
     .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyNameAfter);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .requestHooks(logger)('Verify that user can edit String Key name', async t => {

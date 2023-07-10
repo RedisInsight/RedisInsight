@@ -344,7 +344,7 @@ export class DatabaseAPIRequests {
             databaseParameters.ossClusterDatabaseName
         );
         const resourcePath =
-            ResourcePath.Databases + databaseId + ResourcePath.ClusterDetails;
+            ResourcePath.Databases + `/${databaseId}` + ResourcePath.ClusterDetails;
         const response = await sendGetRequest(resourcePath);
 
         await t.expect(await response.status).eql(200);

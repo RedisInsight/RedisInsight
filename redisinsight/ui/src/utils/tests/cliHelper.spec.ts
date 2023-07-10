@@ -11,6 +11,7 @@ import {
   replaceEmptyValue,
   removeDeprecatedModuleCommands,
   checkDeprecatedModuleCommand,
+  checkDeprecatedCommandGroup,
 } from 'uiSrc/utils'
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import { render, screen } from 'uiSrc/utils/test-utils'
@@ -124,6 +125,35 @@ const removeDeprecatedModuleCommandsTests = [
   { input: ['FOO', 'GRAPH.FOO', 'CF.FOO', 'GRAPH.BAR'], expected: ['FOO', 'CF.FOO'] },
 ]
 
+const checkDeprecatedCommandGroupTests = [
+  { input: 'cluster', expected: false },
+  { input: 'connection', expected: false },
+  { input: 'geo', expected: false },
+  { input: 'bitmap', expected: false },
+  { input: 'generic', expected: false },
+  { input: 'pubsub', expected: false },
+  { input: 'scripting', expected: false },
+  { input: 'transactions', expected: false },
+  { input: 'server', expected: false },
+  { input: 'sorted-set', expected: false },
+  { input: 'hyperloglog', expected: false },
+  { input: 'hash', expected: false },
+  { input: 'set', expected: false },
+  { input: 'stream', expected: false },
+  { input: 'list', expected: false },
+  { input: 'string', expected: false },
+  { input: 'search', expected: false },
+  { input: 'json', expected: false },
+  { input: 'timeseries', expected: false },
+  { input: 'graph', expected: true },
+  { input: 'ai', expected: false },
+  { input: 'tdigest', expected: false },
+  { input: 'cms', expected: false },
+  { input: 'topk', expected: false },
+  { input: 'bf', expected: false },
+  { input: 'cf', expected: false },
+]
+
 describe('getCommandNameFromQuery', () => {
   test.each(getCommandNameFromQueryTests)('%j', ({ input, expected }) => {
     // @ts-ignore
@@ -209,5 +239,11 @@ describe('checkDeprecatedModuleCommand', () => {
 describe('removeDeprecatedModuleCommands', () => {
   test.each(removeDeprecatedModuleCommandsTests)('%j', ({ input, expected }) => {
     expect(removeDeprecatedModuleCommands(input)).toEqual(expected)
+  })
+})
+
+describe('checkDeprecatedCommandGroup', () => {
+  test.each(checkDeprecatedCommandGroupTests)('%j', ({ input, expected }) => {
+    expect(checkDeprecatedCommandGroup(input)).toEqual(expected)
   })
 })

@@ -6,7 +6,7 @@ import { isUndefined } from 'lodash'
 import { localStorageService } from 'uiSrc/services'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-output'
-import { BrowserStorageItem, ICommands } from 'uiSrc/constants'
+import { BrowserStorageItem, ICommands, CommandGroup } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 import { SelectCommand } from 'uiSrc/constants/cliOutput'
 import {
@@ -218,12 +218,19 @@ const getCommandNameFromQuery = (
   }
 }
 
-const DEPRECATED_MODULES_PREFIXES = [
+const DEPRECATED_MODULE_PREFIXES = [
   ModuleCommandPrefix.Graph
 ]
 
+const DEPRECATED_MODULE_GROUPS = [
+  CommandGroup.Graph
+]
+
 const checkDeprecatedModuleCommand = (command: string) =>
-  DEPRECATED_MODULES_PREFIXES.some((prefix) => command.startsWith(prefix))
+  DEPRECATED_MODULE_PREFIXES.some((prefix) => command.startsWith(prefix))
+
+const checkDeprecatedCommandGroup = (item: string) =>
+  DEPRECATED_MODULE_GROUPS.some((group) => group === item)
 
 const removeDeprecatedModuleCommands = (commands: string[]) => commands
   .filter((command) => !checkDeprecatedModuleCommand(command))
@@ -248,4 +255,5 @@ export {
   replaceEmptyValue,
   removeDeprecatedModuleCommands,
   checkDeprecatedModuleCommand,
+  checkDeprecatedCommandGroup,
 }

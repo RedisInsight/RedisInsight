@@ -8,5 +8,7 @@ export * from './cloud-job-unsupported.exception';
 export * from './cloud-plan-not-found-free.exception';
 export * from './cloud-subscription-in-failed-state.exception';
 export * from './cloud-subscription-in-unexpected-state.exception';
+export * from './cloud-subscription-unable-to-determine.exception';
 export * from './cloud-task-no-resource-id.exception';
+export * from './cloud-task-not-found.exception';
 export * from './cloud-task-processing-error.exception';

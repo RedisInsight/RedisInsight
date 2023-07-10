@@ -48,7 +48,7 @@ export class CloudAuthService {
       case CloudAuthIdpType.GitHub:
         return this.githubIdpCloudAuthStrategy;
       default:
-        throw new Error('Unknown cloud auth strategy');
+        throw new CloudOauthUnknownAuthorizationRequestException('Unknown cloud auth strategy');
     }
   }
 

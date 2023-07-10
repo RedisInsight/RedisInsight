@@ -11,7 +11,11 @@ import { WaitForTaskCloudJob } from 'src/modules/cloud/job/jobs/wait-for-task.cl
 import { WaitForActiveSubscriptionCloudJob } from 'src/modules/cloud/job/jobs/wait-for-active-subscription.cloud-job';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobStatus } from 'src/modules/cloud/job/models';
-import { CloudPlanNotFoundFreeException, CloudTaskNoResourceIdException } from 'src/modules/cloud/job/exceptions';
+import {
+  CloudPlanNotFoundFreeException,
+  CloudSubscriptionUnableToDetermineException,
+  CloudTaskNoResourceIdException,
+} from 'src/modules/cloud/job/exceptions';
 
 export class CreateFreeSubscriptionCloudJob extends CloudJob {
   protected name = CloudJobName.CreateFreeSubscription;
@@ -94,7 +98,7 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
     }
 
     if (!freeSubscription) {
-      throw new Error('TODO: unable to determine or create free cloud subscription');
+      throw new CloudSubscriptionUnableToDetermineException();
     }
 
     this.checkSignal();

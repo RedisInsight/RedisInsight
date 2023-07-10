@@ -6,7 +6,7 @@ export class CloudJobUnsupportedException extends HttpException {
   constructor(message = ERROR_MESSAGES.CLOUD_JOB_UNSUPPORTED, options?: HttpExceptionOptions) {
     const response = {
       message,
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      statusCode: HttpStatus.NOT_IMPLEMENTED,
       error: 'CloudJobUnsupported',
       errorCode: CustomErrorCodes.CloudJobUnsupported,
     };

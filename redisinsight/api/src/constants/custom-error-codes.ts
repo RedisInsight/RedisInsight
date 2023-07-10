@@ -25,4 +25,6 @@ export enum CustomErrorCodes {
   CloudDatabaseAlreadyExistsFree = 11_108,
   CloudDatabaseIsInUnexpectedState = 11_109,
   CloudPlanUnableToFindFree = 11_110,
+  CloudSubscriptionUnableToDetermine = 11_111,
+  CloudTaskNotFound = 11_112,
 }

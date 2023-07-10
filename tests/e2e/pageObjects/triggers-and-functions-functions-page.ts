@@ -11,6 +11,10 @@ export class TriggersAndFunctionsFunctionsPage extends InstancePage {
     addArgumentItemButton = Selector('[data-testid=add-new-argument-item]');
     addKeyNameItemButton = Selector('[data-testid=add-new-key-item]');
     runInCliButton = Selector('[data-testid=invoke-function-btn]');
+    findKeyButton = Selector('[data-testid=find-key-btn]');
+
+    // inputs
+    keyNameStreamFunctions =  Selector('[data-testid=keyName-field]');
 
     //Masks
     // insert name

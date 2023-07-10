@@ -21,10 +21,41 @@ export const parseCloudOAuthCallbackError = (err: object | string = DEFAULT_ERRO
 
   switch (err?.errorCode) {
     case CustomErrorCodes.CloudOauthGithubEmailPermission:
-      title = 'Cloud Github Email Permission'
+      title = 'Github Email Permission'
       message = (
         <>
           Unable to get an email from the GitHub account. Make sure that it is available.
+          <br />
+        </>
+      )
+      break
+    case CustomErrorCodes.CloudOauthMisconfiguration:
+      title = 'Misconfiguration'
+      message = (
+        <>
+          Authorization server encountered a misconfiguration and was unable to complete your request.
+          <br />
+          Try again later.
+          <br />
+          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+        </>
+      )
+      break
+    case CustomErrorCodes.CloudOauthUnknownAuthorizationRequest:
+      title = 'Error'
+      message = (
+        <>
+          Unknown authorization request.
+          <br />
+          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+        </>
+      )
+      break
+    case CustomErrorCodes.CloudOauthUnexpectedError:
+      title = 'Error'
+      message = (
+        <>
+          An unexpected error occurred.
           <br />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>

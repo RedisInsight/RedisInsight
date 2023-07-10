@@ -96,7 +96,8 @@ test
         // await browserPage.CommandHelper.checkURLCommand(timeSeriesCommands[0], `https://redis.io/commands/${timeSeriesCommands[0].toLowerCase()}/`);
         // await t.switchToParentWindow();
     });
-test
+// outdated after https://redislabs.atlassian.net/browse/RI-4608
+test.skip
     .meta({ env: env.web })('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {
         const commandForSearch = 'GRAPH.';
         // const externalPageLink = 'https://redis.io/commands/graph.config-get/';

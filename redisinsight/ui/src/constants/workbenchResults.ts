@@ -24,14 +24,6 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
     additionalText: ['These features enable multi-field queries, aggregation, exact phrase matching, numeric filtering, ', 'geo filtering and vector similarity semantic search on top of text queries.'],
     link: 'https://redis.io/docs/stack/search/'
   },
-  [RedisDefaultModules.Graph]: {
-    text: ['RedisGraph adds a Property Graph data structure to Redis. ', 'With this capability you can:'],
-    improvements: [
-      'Create graphs',
-      'Query property graphs using the Cypher query language with proprietary extensions'
-    ],
-    link: 'https://redis.io/docs/stack/graph/'
-  },
   [RedisDefaultModules.ReJSON]: {
     text: ['RedisJSON adds the capability to:'],
     improvements: [
@@ -58,7 +50,6 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
 
 export const MODULE_TEXT_VIEW: { [key in RedisDefaultModules]?: string } = {
   [RedisDefaultModules.Bloom]: 'RedisBloom',
-  [RedisDefaultModules.Graph]: 'RedisGraph',
   [RedisDefaultModules.ReJSON]: 'RedisJSON',
   [RedisDefaultModules.Search]: 'RediSearch',
   [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',

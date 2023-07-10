@@ -183,7 +183,6 @@ export const COMMAND_MODULES = {
   [RedisDefaultModules.Search]: REDISEARCH_MODULES,
   [RedisDefaultModules.ReJSON]: [RedisDefaultModules.ReJSON],
   [RedisDefaultModules.TimeSeries]: [RedisDefaultModules.TimeSeries],
-  [RedisDefaultModules.Graph]: [RedisDefaultModules.Graph],
   [RedisDefaultModules.Bloom]: [RedisDefaultModules.Bloom],
 }
 

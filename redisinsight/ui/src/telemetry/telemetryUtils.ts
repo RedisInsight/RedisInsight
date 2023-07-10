@@ -11,7 +11,7 @@ import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/c
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { checkIsAnalyticsGranted, getInfoServer } from 'uiSrc/telemetry/checkAnalytics'
-import { IModuleSummary } from 'uiSrc/telemetry/interfaces'
+import { IModuleSummary, RedisModulesKeyType } from 'uiSrc/telemetry/interfaces'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import {
   ITelemetrySendEvent,
@@ -243,19 +243,19 @@ const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): IRedisMo
     modules.forEach(((module) => {
       if (SUPPORTED_REDIS_MODULES[module.name]) {
         const moduleName = getEnumKeyBValue(RedisModules, module.name)
-        summary[moduleName as keyof typeof RedisModules] = getModuleSummaryToSent(module)
+        summary[moduleName as RedisModulesKeyType] = getModuleSummaryToSent(module)
         return
       }
 
       if (isRedisearchAvailable([module])) {
         const redisearchName = getEnumKeyBValue(RedisModules, RedisModules.RediSearch)
-        summary[redisearchName as keyof typeof RedisModules] = getModuleSummaryToSent(module)
+        summary[redisearchName as RedisModulesKeyType] = getModuleSummaryToSent(module)
         return
       }
 
       if (isTriggeredAndFunctionsAvailable([module])) {
         const triggeredAndFunctionsName = getEnumKeyBValue(RedisModules, RedisModules['Triggers & Functions'])
-        summary[triggeredAndFunctionsName as keyof typeof RedisModules] = getModuleSummaryToSent(module)
+        summary[triggeredAndFunctionsName as RedisModulesKeyType] = getModuleSummaryToSent(module)
         return
       }
 

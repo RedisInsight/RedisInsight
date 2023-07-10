@@ -60,6 +60,8 @@ export interface IModuleSummary {
   version?: number
   semanticVersion?: string
 }
+
+export type RedisModulesKeyType = keyof typeof RedisModules
 export interface IRedisModulesSummary extends Record<keyof typeof RedisModules, IModuleSummary> {
   customModules: AdditionalRedisModule[]
 }

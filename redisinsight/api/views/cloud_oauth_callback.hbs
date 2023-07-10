@@ -14,17 +14,19 @@
         </div>
       </header>
       <section class="section">
-        {{#if errorCode}}
-          {{> errors_partial }}
-        {{else}}
-          {{#if error}}
-            <h1 class="title">Error</h1>
-            <h2 class="subTitle">{{message}}</h2>
+        {{#with error}}
+          {{#if errorCode}}
+            {{> errors_partial }}
           {{else}}
-            <h1 class="title">Thank you</h1>
-            <h2 class="subTitle">for connecting to Redis Cloud</h2>
+            {{#if error}}
+              <h1 class="title">Error</h1>
+              <h2 class="subTitle">{{message}}</h2>
+            {{else}}
+              <h1 class="title">Thank you</h1>
+              <h2 class="subTitle">for connecting to Redis Cloud</h2>
+            {{/if}}
           {{/if}}
-        {{/if}}
+        {{/with}}
         <div class="text">Please close this window and navigate back to RedisInsight</div>
       </section>
     </div>

@@ -38,13 +38,13 @@ export abstract class CloudJob {
     this.options = options;
   }
 
-  public run() {
+  public async run() {
     try {
       this.changeState({
         status: CloudJobStatus.Running,
       });
 
-      return this.iteration();
+      return await this.iteration();
     } catch (e) {
       this.logger.error('Cloud job failed', e);
 

@@ -194,7 +194,9 @@ export function fetchSubscriptionsRedisCloud(
       const state = stateInit()
       const { isAutodiscoverySSO } = state.connections.cloud
       const { data, status } = await apiService.get(
-        `${ApiEndpoints.REDIS_CLOUD_SUBSCRIPTIONS}`,
+        isAutodiscoverySSO
+          ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS}`
+          : `${ApiEndpoints.REDIS_CLOUD_SUBSCRIPTIONS}`,
         {
           headers: {
             ...(!isAutodiscoverySSO ? generateAuthHeaders(credentials) : {}),
@@ -229,7 +231,9 @@ export function fetchAccountRedisCloud(credentials: Nullable<ICredentialsRedisCl
       const state = stateInit()
       const { isAutodiscoverySSO } = state.connections.cloud
       const { data, status } = await apiService.get(
-        `${ApiEndpoints.REDIS_CLOUD_ACCOUNT}`,
+        isAutodiscoverySSO
+          ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_ACCOUNT}`
+          : `${ApiEndpoints.REDIS_CLOUD_ACCOUNT}`,
         {
           headers: {
             ...(!isAutodiscoverySSO ? generateAuthHeaders(credentials) : {}),
@@ -260,7 +264,9 @@ export function fetchInstancesRedisCloud(payload: {
       const state = stateInit()
       const { isAutodiscoverySSO } = state.connections.cloud
       const { data, status } = await apiService.post(
-        `${ApiEndpoints.REDIS_CLOUD_GET_DATABASES}`,
+        isAutodiscoverySSO
+          ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_GET_DATABASES}`
+          : `${ApiEndpoints.REDIS_CLOUD_GET_DATABASES}`,
         {
           subscriptions: payload.subscriptions,
         },
@@ -296,7 +302,9 @@ export function addInstancesRedisCloud(payload: {
       const state = stateInit()
       const { isAutodiscoverySSO } = state.connections.cloud
       const { data, status } = await apiService.post(
-        `${ApiEndpoints.REDIS_CLOUD_DATABASES}`,
+        isAutodiscoverySSO
+          ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_DATABASES}`
+          : `${ApiEndpoints.REDIS_CLOUD_DATABASES}`,
         {
           databases: payload.databases,
         },

@@ -414,10 +414,10 @@ describe('CloudAutodiscoveryService', () => {
           ...mockAddCloudDatabaseResponse,
           error: {
             error: 'Service Unavailable',
-            message: 'The base is inactive.',
+            message: 'The database is inactive.',
             statusCode: 503,
           },
-          message: 'The base is inactive.',
+          message: 'The database is inactive.',
           status: ActionStatus.Fail,
           databaseDetails: {
             ...mockAddCloudDatabaseResponse.databaseDetails,

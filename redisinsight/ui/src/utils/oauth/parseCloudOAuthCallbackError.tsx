@@ -20,6 +20,16 @@ export const parseCloudOAuthCallbackError = (err: object | string = DEFAULT_ERRO
   let message: React.ReactElement | string = ''
 
   switch (err?.errorCode) {
+    case CustomErrorCodes.CloudOauthGithubEmailPermission:
+      title = 'Cloud Github Email Permission'
+      message = (
+        <>
+          Unable to get an email from the GitHub account. Make sure that it is available.
+          <br />
+          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+        </>
+      )
+      break
     case CustomErrorCodes.CloudApiBadRequest:
       title = 'Bad request'
       message = (

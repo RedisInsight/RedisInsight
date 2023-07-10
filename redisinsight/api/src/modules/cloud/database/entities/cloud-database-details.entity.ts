@@ -26,6 +26,10 @@ export class CloudDatabaseDetailsEntity {
   @Column({ nullable: true })
   memoryLimitMeasurementUnit: number;
 
+  @Expose()
+  @Column({ nullable: true, default: false })
+  free: boolean;
+
   @OneToOne(
     () => DatabaseEntity,
     (database) => database.cloudDetails,

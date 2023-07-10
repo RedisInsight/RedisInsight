@@ -18,6 +18,10 @@ export class CloudTaskCapiService {
       this.logger.debug('Trying to get cloud task', { id });
       const task = await this.cloudTaskCapiProvider.getTask(credentials, id);
 
+      if (!task) {
+        throw Error('TBD: TASK_NOT_FOUND ERROR');
+      }
+
       this.logger.debug('Successfully fetched cloud task', task);
       return parseCloudTaskCapiResponse(task);
     } catch (e) {

@@ -12,4 +12,17 @@ export enum CustomErrorCodes {
   CloudOauthGithubEmailPermission = 11_006,
   CloudOauthUnknownAuthorizationRequest = 11_007,
   CloudOauthUnexpectedError = 11_008,
+
+  // Cloud Job errors [11100, 11199]
+  CloudJobUnexpectedError = 11_100,
+  CloudJobAborted = 11_101,
+  CloudJobUnsupported = 11_102,
+  CloudTaskProcessingError = 11_103,
+  CloudTaskNoResourceId = 11_104,
+  CloudSubscriptionIsInTheFailedState = 11_105,
+  CloudSubscriptionIsInUnexpectedState = 11_106,
+  CloudDatabaseIsInTheFailedState = 11_107,
+  CloudDatabaseAlreadyExistsFree = 11_108,
+  CloudDatabaseIsInUnexpectedState = 11_109,
+  CloudPlanUnableToFindFree = 11_110,
 }

@@ -18,7 +18,7 @@ export class CloudTaskCapiProvider extends CloudCapiProvider {
         CloudCapiProvider.getHeaders(credentials),
       );
 
-      return data?.subscriptions;
+      return data;
     } catch (error) {
       throw wrapCloudApiError(error);
     }

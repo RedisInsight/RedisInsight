@@ -3,6 +3,7 @@ import { CloudAutodiscoveryModule } from 'src/modules/cloud/autodiscovery/cloud.
 import { CloudAuthModule } from 'src/modules/cloud/auth/cloud-auth.module';
 import { CloudUserModule } from 'src/modules/cloud/user/cloud-user.module';
 import { CloudTaskModule } from 'src/modules/cloud/task/cloud-task.module';
+import { CloudJobModule } from 'src/modules/cloud/job/cloud-job.module';
 
 @Module({})
 export class CloudModule {
@@ -14,6 +15,7 @@ export class CloudModule {
         CloudUserModule,
         CloudAutodiscoveryModule,
         CloudTaskModule,
+        CloudJobModule,
       ],
     };
   }

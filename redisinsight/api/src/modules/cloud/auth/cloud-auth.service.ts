@@ -15,6 +15,8 @@ import {
 import { CloudAuthResponse, CloudAuthStatus } from 'src/modules/cloud/auth/models';
 import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics';
 import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CloudAuthServerEvent } from 'src/modules/cloud/common/constants';
 
 @Injectable()
 export class CloudAuthService {
@@ -27,6 +29,7 @@ export class CloudAuthService {
     private readonly googleIdpAuthStrategy: GoogleIdpCloudAuthStrategy,
     private readonly githubIdpCloudAuthStrategy: GithubIdpCloudAuthStrategy,
     private readonly analytics: CloudAuthAnalytics,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   static getAuthorizationServerRedirectError(query: { errorDescription: string }) {
@@ -171,6 +174,8 @@ export class CloudAuthService {
     try {
       this.logger.log('Logout cloud user');
       await this.sessionService.deleteSessionData(sessionMetadata.sessionId);
+
+      this.eventEmitter.emit(CloudAuthServerEvent.Logout, sessionMetadata);
     } catch (e) {
       this.logger.error('Unable to logout', e);
       throw wrapHttpError(e);

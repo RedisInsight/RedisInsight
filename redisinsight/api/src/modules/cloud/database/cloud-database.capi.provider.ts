@@ -2,8 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { CloudCapiProvider } from 'src/modules/cloud/common/providers/cloud.capi.provider';
 import { ICloudCapiDatabase, ICloudCapiSubscriptionDatabases } from 'src/modules/cloud/database/models';
 import { ICloudCapiCredentials } from 'src/modules/cloud/common/models';
-import { GetCloudSubscriptionDatabaseDto, GetCloudSubscriptionDatabasesDto } from 'src/modules/cloud/database/dto';
+import {
+  CreateFreeCloudDatabaseDto,
+  GetCloudSubscriptionDatabaseDto,
+  GetCloudSubscriptionDatabasesDto,
+} from 'src/modules/cloud/database/dto';
 import { wrapCloudCapiError } from 'src/modules/cloud/common/exceptions';
+import { ICloudCapiTask } from 'src/modules/cloud/task/models';
 
 @Injectable()
 export class CloudDatabaseCapiProvider extends CloudCapiProvider {
@@ -44,6 +49,30 @@ export class CloudDatabaseCapiProvider extends CloudCapiProvider {
 
       const { data } = await this.api.get(
         `${CloudCapiProvider.getPrefix(subscriptionType)}/subscriptions/${subscriptionId}/databases`,
+        CloudCapiProvider.getHeaders(credentials),
+      );
+
+      return data;
+    } catch (e) {
+      throw wrapCloudCapiError(e);
+    }
+  }
+
+  /**
+   * Get single database details
+   * @param credentials
+   * @param dto
+   */
+  async createFreeDatabase(
+    credentials: ICloudCapiCredentials,
+    dto: CreateFreeCloudDatabaseDto,
+  ): Promise<ICloudCapiTask> {
+    try {
+      const { subscriptionId, subscriptionType, ...createDto } = dto;
+
+      const { data } = await this.api.post(
+        `${CloudCapiProvider.getPrefix(subscriptionType)}/subscriptions/${subscriptionId}/databases`,
+        createDto,
         CloudCapiProvider.getHeaders(credentials),
       );
 

@@ -78,4 +78,16 @@ export default {
   CLOUD_OAUTH_GITHUB_EMAIL_PERMISSION: 'Unable to get an email from the GitHub account. Make sure that it is available.',
   CLOUD_OAUTH_GITHUB_UNKNOWN_AUTHORIZATION_REQUEST: 'Unknown authorization request.',
   CLOUD_OAUTH_UNEXPECTED_ERROR: 'Unexpected error.',
+
+  CLOUD_JOB_UNEXPECTED_ERROR: 'Unexpected error occurred',
+  CLOUD_JOB_ABORTED: 'Cloud job aborted',
+  CLOUD_JOB_UNSUPPORTED: 'Unsupported cloud job',
+  CLOUD_SUBSCRIPTION_IN_FAILED_STATE: 'Cloud subscription is in the failed state',
+  CLOUD_SUBSCRIPTION_IN_UNEXPECTED_STATE: 'Cloud subscription is in unexpected state',
+  CLOUD_TASK_PROCESSING_ERROR: 'Cloud task processing returned an error',
+  CLOUD_TASK_NO_RESOURCE_ID: 'Cloud task respond without resource id',
+  CLOUD_DATABASE_IN_FAILED_STATE: 'Cloud database is in the failed state',
+  CLOUD_DATABASE_IN_UNEXPECTED_STATE: 'Cloud database is in unexpected state',
+  CLOUD_DATABASE_ALREADY_EXISTS_FREE: 'Free database already exists',
+  CLOUD_PLAN_NOT_FOUND_FREE: 'Unable to find free cloud plan',
 };

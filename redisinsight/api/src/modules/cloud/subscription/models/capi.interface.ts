@@ -41,3 +41,11 @@ export interface ICloudCapiSubscriptions {
   accountId: number;
   subscriptions: ICloudCapiSubscription[];
 }
+
+export interface ICloudCapiSubscriptionPlan {
+  id: number;
+  name: string;
+  price: number;
+  provider: string;
+  region: string;
+}

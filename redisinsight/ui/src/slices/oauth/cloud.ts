@@ -4,6 +4,7 @@ import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, Pages } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
+import { CloudJobs } from 'uiSrc/electron/constants'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { AppDispatch, RootState } from '../store'
 import { ActionBarActions, ActionBarStatus, Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
@@ -178,7 +179,10 @@ export function createFreeDb(onSuccessAction?: (instance: Instance) => void, onF
     dispatch(addFreeDb())
 
     try {
-      const { data, status } = await apiService.post<Instance>(ApiEndpoints.CLOUD_ME_DATABASES_FREE)
+      const { data, status } = await apiService.post<Instance>(
+        ApiEndpoints.CLOUD_ME_JOBS,
+        { name: CloudJobs.CREATE_FREE_DATABASE }
+      )
 
       if (isStatusSuccessful(status)) {
         dispatch(fetchInstancesAction())

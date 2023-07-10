@@ -13,3 +13,7 @@ export enum CloudAuthSocial {
   Github = 'github',
   Google = 'google',
 }
+
+export enum CloudJobs {
+  CREATE_FREE_DATABASE = 'CREATE_FREE_DATABASE'
+}

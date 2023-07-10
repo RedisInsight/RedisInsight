@@ -193,7 +193,7 @@ export const COMMAND_MODULES = {
 }
 
 const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'RediSearch' }), {})
-const TriggeredAndFunctionsModulesText = [...TRIGGERED_AND_FUNCTIONS_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'Triggered & Functions' }), {})
+const TriggeredAndFunctionsModulesText = [...TRIGGERED_AND_FUNCTIONS_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'Triggers & Functions' }), {})
 
 // Enums don't allow to use dynamic key
 export const DATABASE_LIST_MODULES_TEXT = Object.freeze({

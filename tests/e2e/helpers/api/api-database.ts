@@ -8,8 +8,12 @@ import {
     SentinelParameters,
     ClusterNodes,
 } from '../../pageObjects/components/myRedisDatabase/add-redis-database';
-import { Methods } from '../constants';
-import { sendRequest } from './api-common';
+import { ResourcePath } from '../constants';
+import {
+    sendGetRequest,
+    sendPostRequest,
+    sendDeleteRequest,
+} from './api-common';
 
 const chance = new Chance();
 
@@ -60,10 +64,8 @@ export class DatabaseAPIRequests {
                 key: databaseParameters.clientCert!.key,
             };
         }
-        const response = await sendRequest(
-            Methods.post,
-            '/databases',
-            201,
+        const response = await sendPostRequest(
+            ResourcePath.Databases,
             requestBody
         );
         await t
@@ -72,6 +74,7 @@ export class DatabaseAPIRequests {
                 databaseParameters.databaseName,
                 `Database Name is not equal to ${databaseParameters.databaseName} in response`
             );
+        await t.expect(await response.status).eql(201);
     }
 
     /**
@@ -100,10 +103,8 @@ export class DatabaseAPIRequests {
             host: databaseParameters.ossClusterHost,
             port: Number(databaseParameters.ossClusterPort),
         };
-        const response = await sendRequest(
-            Methods.post,
-            '/databases',
-            201,
+        const response = await sendPostRequest(
+            ResourcePath.Databases,
             requestBody
         );
         await t
@@ -112,6 +113,7 @@ export class DatabaseAPIRequests {
                 databaseParameters.ossClusterDatabaseName,
                 `Database Name is not equal to ${databaseParameters.ossClusterDatabaseName} in response`
             );
+        await t.expect(await response.status).eql(201);
     }
 
     /**
@@ -133,20 +135,20 @@ export class DatabaseAPIRequests {
             password: databaseParameters.sentinelPassword,
             masters: masters,
         };
+        const resourcePath =
+            ResourcePath.RedisSentinel + ResourcePath.Databases;
+        const response = await sendPostRequest(resourcePath, requestBody);
 
-        await sendRequest(
-            Methods.post,
-            '/redis-sentinel/databases',
-            201,
-            requestBody
-        );
+        await t.expect(await response.status).eql(201);
     }
 
     /**
      * Get all databases through api
      */
     async getAllDatabases(): Promise<string[]> {
-        const response = await sendRequest(Methods.get, '/databases', 200);
+        const response = await sendGetRequest(ResourcePath.Databases);
+
+        await t.expect(await response.status).eql(200);
         return await response.body;
     }
 
@@ -209,12 +211,11 @@ export class DatabaseAPIRequests {
             }
             if (databaseIds.length > 0) {
                 const requestBody = { ids: databaseIds };
-                await sendRequest(
-                    Methods.delete,
-                    '/databases',
-                    200,
+                const response = await sendDeleteRequest(
+                    ResourcePath.Databases,
                     requestBody
                 );
+                await t.expect(await response.status).eql(200);
             }
         }
     }
@@ -231,7 +232,11 @@ export class DatabaseAPIRequests {
         );
         if (databaseId) {
             const requestBody = { ids: [`${databaseId}`] };
-            await sendRequest(Methods.delete, '/databases', 200, requestBody);
+            const response = await sendDeleteRequest(
+                ResourcePath.Databases,
+                requestBody
+            );
+            await t.expect(await response.status).eql(200);
         } else {
             throw new Error('Error: Missing databaseId');
         }
@@ -248,12 +253,11 @@ export class DatabaseAPIRequests {
             const databaseId = await this.getDatabaseIdByName(databaseName);
             if (databaseId) {
                 const requestBody = { ids: [`${databaseId}`] };
-                await sendRequest(
-                    Methods.delete,
-                    '/databases',
-                    200,
+                const response = await sendDeleteRequest(
+                    ResourcePath.Databases,
                     requestBody
                 );
+                await t.expect(await response.status).eql(200);
             } else {
                 throw new Error('Error: Missing databaseId');
             }
@@ -271,7 +275,11 @@ export class DatabaseAPIRequests {
             databaseParameters.ossClusterDatabaseName
         );
         const requestBody = { ids: [`${databaseId}`] };
-        await sendRequest(Methods.delete, '/databases', 200, requestBody);
+        const response = await sendDeleteRequest(
+            ResourcePath.Databases,
+            requestBody
+        );
+        await t.expect(await response.status).eql(200);
     }
 
     /**
@@ -286,7 +294,11 @@ export class DatabaseAPIRequests {
                 databaseParameters.name![i]
             );
             const requestBody = { ids: [`${databaseId}`] };
-            await sendRequest(Methods.delete, '/databases', 200, requestBody);
+            const response = await sendDeleteRequest(
+                ResourcePath.Databases,
+                requestBody
+            );
+            await t.expect(await response.status).eql(200);
         }
     }
 
@@ -300,7 +312,11 @@ export class DatabaseAPIRequests {
             connectionType
         );
         const requestBody = { ids: [`${databaseIds}`] };
-        await sendRequest(Methods.delete, '/databases', 200, requestBody);
+        const response = await sendDeleteRequest(
+            ResourcePath.Databases,
+            requestBody
+        );
+        await t.expect(await response.status).eql(200);
     }
 
     /**
@@ -327,11 +343,12 @@ export class DatabaseAPIRequests {
         const databaseId = await this.getDatabaseIdByName(
             databaseParameters.ossClusterDatabaseName
         );
-        const response = await sendRequest(
-            Methods.get,
-            `/databases/${databaseId}/cluster-details`,
-            200
-        );
+        const resourcePath =
+            ResourcePath.Databases + databaseId + ResourcePath.ClusterDetails;
+        const response = await sendGetRequest(resourcePath);
+
+        await t.expect(await response.status).eql(200);
+
         const nodes = await response.body.nodes;
         const nodeNames = await nodes.map(
             (node: ClusterNodes) => `${node.host}:${node.port}`

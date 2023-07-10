@@ -3,7 +3,7 @@ import React from 'react'
 import { EuiIcon, EuiText, EuiTitle, EuiSpacer, EuiLink, EuiButton } from '@elastic/eui'
 import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 
-import { SignInDialogSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
@@ -33,7 +33,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
               target="_blank"
               href={GET_STARTED_LINK}
               onClick={(e) => {
-                ssoCloudHandlerClick(e, SignInDialogSource.BrowserFiltering)
+                ssoCloudHandlerClick(e, OAuthSocialSource.BrowserFiltering)
                 onFreeDatabaseClick()
               }}
               data-testid="get-started-link"

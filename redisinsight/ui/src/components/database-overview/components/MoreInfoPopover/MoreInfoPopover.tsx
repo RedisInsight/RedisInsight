@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 
-import { DATABASE_LIST_MODULES_TEXT, SignInDialogSource } from 'uiSrc/slices/interfaces'
+import { DATABASE_LIST_MODULES_TEXT, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getModule, truncateText } from 'uiSrc/utils'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
@@ -124,7 +124,7 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
                 <EuiLink
                   color="text"
                   onClick={(e) => {
-                    ssoCloudHandlerClick(e, SignInDialogSource.BrowserContentMenu)
+                    ssoCloudHandlerClick(e, OAuthSocialSource.BrowserContentMenu)
                     onFreeDatabaseClick()
                   }}
                   external={false}

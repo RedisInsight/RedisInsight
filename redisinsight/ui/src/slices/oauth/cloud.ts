@@ -1,24 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { apiService } from 'uiSrc/services'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, Pages } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
+import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { AppDispatch, RootState } from '../store'
-import { SignInDialogSource, StateAppOAuth } from '../interfaces'
+import { ActionBarActions, ActionBarStatus, Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
 import { addErrorNotification } from '../app/notifications'
+import { checkConnectToInstanceAction, fetchInstancesAction } from '../instances/instances'
+import { setActionBarInitialState, setActionBarState } from '../app/actionBar'
 
 export const initialState: StateAppOAuth = {
-  loading: true,
+  loading: false,
   error: '',
-  signInDialog: {
-    isOpen: false,
-    source: null,
-  },
-  account: {
+  message: '',
+  source: null,
+  isOpenSignInDialog: false,
+  isOpenSelectAccountDialog: false,
+  user: {
     loading: false,
     error: '',
-    currentAccount: null,
+    data: null,
+    freeDb: {
+      loading: false,
+      error: '',
+      data: null,
+    },
   }
 }
 
@@ -32,29 +40,46 @@ const oauthCloudSlice = createSlice({
     signIn: (state) => {
       state.loading = true
     },
-    signInSuccess: (state) => {
+    signInSuccess: (state, { payload }: PayloadAction<string>) => {
       state.loading = false
+      state.error = ''
+      state.message = payload
     },
     signInFailure: (state, { payload }: PayloadAction<string>) => {
       state.loading = false
       state.error = payload
     },
-    getAccountInfo: (state) => {
-      state.account.loading = true
+    getUserInfo: (state) => {
+      state.user.loading = true
     },
-    getAccountInfoSuccess: (state, { payload }: PayloadAction<any>) => {
-      state.account.loading = false
-      state.account.currentAccount = payload
+    getUserInfoSuccess: (state, { payload }: PayloadAction<CloudUser>) => {
+      state.user.loading = false
+      state.user.data = payload
     },
-    getAccountInfoFailure: (state, { payload }: PayloadAction<string>) => {
-      state.account.loading = false
-      state.account.error = payload
+    getUserInfoFailure: (state, { payload }: PayloadAction<string>) => {
+      state.user.loading = false
+      state.user.error = payload
     },
-    setSignInDialogState: (state, { payload }: PayloadAction<Nullable<SignInDialogSource>>) => {
-      state.signInDialog = {
-        isOpen: !!payload,
-        source: payload,
-      }
+    addFreeDb: (state) => {
+      state.user.freeDb.loading = true
+    },
+    addFreeDbSuccess: (state, { payload }: PayloadAction<Instance>) => {
+      state.user.freeDb.loading = false
+      state.user.freeDb.data = payload
+    },
+    addFreeDbFailure: (state, { payload }: PayloadAction<string>) => {
+      state.user.freeDb.loading = false
+      state.user.freeDb.error = payload
+    },
+    setSignInDialogState: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
+      state.source = payload
+      state.isOpenSignInDialog = !!payload
+    },
+    setOAuthCloudSource: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
+      state.source = payload
+    },
+    setSelectAccountDialogState: (state, { payload }: PayloadAction<boolean>) => {
+      state.isOpenSelectAccountDialog = payload
     },
   },
 })
@@ -65,39 +90,139 @@ export const {
   signIn,
   signInSuccess,
   signInFailure,
-  getAccountInfo,
-  getAccountInfoSuccess,
-  getAccountInfoFailure,
+  getUserInfo,
+  getUserInfoSuccess,
+  getUserInfoFailure,
+  addFreeDb,
+  addFreeDbSuccess,
+  addFreeDbFailure,
   setSignInDialogState,
+  setOAuthCloudSource,
+  setSelectAccountDialogState,
 } = oauthCloudSlice.actions
 
 // A selector
 export const oauthCloudSelector = (state: RootState) => state.oauth.cloud
-export const oauthCloudSignInDialogSelector = (state: RootState) => state.oauth.cloud.signInDialog
-export const oauthCloudAccountSelector = (state: RootState) => state.oauth.cloud.account
-export const oauthCloudCurrentAccountSelector = (state: RootState) => state.oauth.cloud.account.currentAccount
+export const oauthCloudUserSelector = (state: RootState) => state.oauth.cloud.user
+export const oauthCloudUserDataSelector = (state: RootState) => state.oauth.cloud.user.data
 
 // The reducer
 export default oauthCloudSlice.reducer
 
+export function createFreeDbSuccess(history: any) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      const state = stateInit()
+      const { id: firstInstanceId } = state.connections.instances.data?.[0]
+      const { id = firstInstanceId } = state.oauth.cloud.user?.freeDb?.data ?? {}
+
+      const onConnect = () => {
+        dispatch(checkConnectToInstanceAction(
+          id,
+          () => {
+            dispatch(setActionBarInitialState())
+
+            history.push(Pages.browser(id))
+          },
+        ))
+      }
+
+      const status = ActionBarStatus.Success
+      const text = 'Success! Your new database was created successfully.'
+      const actions: ActionBarActions[] = [{ onClick: onConnect, label: 'Connect' }]
+
+      dispatch(setActionBarState({ text, status, actions }))
+      dispatch(setSignInDialogState(null))
+      dispatch(setSelectAccountDialogState(false))
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(addFreeDbFailure(errorMessage))
+    }
+  }
+}
+
 // Asynchronous thunk action
-export function fetchAccountInfo(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch) => {
-    dispatch(getAccountInfo())
+    dispatch(getUserInfo())
 
     try {
-      const { data, status } = await apiService.get<any>(ApiEndpoints.CLOUD_ME)
+      const { data, status } = await apiService.get<CloudUser>(ApiEndpoints.CLOUD_ME)
 
       if (isStatusSuccessful(status)) {
-        dispatch(getAccountInfoSuccess(data))
+        const isMultiAccount = (data?.accounts?.length ?? 0) > 1
+        if (isMultiAccount) {
+          dispatch(setSelectAccountDialogState(true))
+        }
+
+        dispatch(getUserInfoSuccess(data))
+        dispatch(setSignInDialogState(null))
+
+        onSuccessAction?.(isMultiAccount)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(getUserInfoFailure(errorMessage))
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function createFreeDb(onSuccessAction?: (instance: Instance) => void, onFailAction?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(addFreeDb())
+
+    try {
+      const { data, status } = await apiService.post<Instance>(ApiEndpoints.CLOUD_ME_DATABASES_FREE)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(fetchInstancesAction())
+        dispatch(addFreeDbSuccess(data))
+        onSuccessAction?.(data)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(addFreeDbFailure(errorMessage))
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function activateAccount(
+  id: string,
+  onSuccessAction?: () => void,
+  onFailAction?: (error: string) => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getUserInfo())
+
+    try {
+      const { data, status } = await apiService.put<CloudUser>(
+        [
+          ApiEndpoints.CLOUD_ME_ACCOUNTS,
+          id,
+          ApiEndpoints.CLOUD_CURRENT,
+        ].join('/'),
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getUserInfoSuccess(data))
         onSuccessAction?.()
       }
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      dispatch(getAccountInfoFailure(errorMessage))
-      onFailAction?.()
+      dispatch(getUserInfoFailure(errorMessage))
+      onFailAction?.(errorMessage)
     }
   }
 }

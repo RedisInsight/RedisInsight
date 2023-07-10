@@ -27,6 +27,7 @@ import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
 import appsSocketConnectionReducer from './app/socket-connection'
 import appFeaturesReducer from './app/features'
+import appActionBarReducer from './app/actionBar'
 import appOauthReducer from './oauth/cloud'
 import workbenchResultsReducer from './workbench/wb-results'
 import workbenchGuidesReducer from './workbench/wb-guides'
@@ -52,6 +53,7 @@ export const rootReducer = combineReducers({
     plugins: appPluginsReducer,
     socketConnection: appsSocketConnectionReducer,
     features: appFeaturesReducer,
+    actionBar: appActionBarReducer,
   }),
   connections: combineReducers({
     instances: instancesReducer,

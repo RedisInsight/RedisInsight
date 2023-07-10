@@ -5,10 +5,13 @@ import { DurationUnits, FeatureFlags, ICommands } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
+import { CloudUser } from 'apiSrc/modules/cloud/user/models'
+import { Instance } from './instances'
 
 export interface IError extends AxiosError {
   id: string
   instanceId?: string
+  title?: string
 }
 
 export interface IMessage {
@@ -203,15 +206,25 @@ export interface StateAppNotifications {
 export interface StateAppOAuth {
   loading: boolean
   error: string
-  account: {
+  message: string
+  source: Nullable<OAuthSocialSource>
+  user: {
     error: string
     loading: boolean
-    currentAccount: Nullable<Account>
+    data: Nullable<CloudUser>
+    freeDb: CloudUserFreeDbState
   }
-  signInDialog: SignInDialog
+  isOpenSignInDialog: boolean
+  isOpenSelectAccountDialog: boolean
 }
 
-export enum SignInDialogSource {
+export interface CloudUserFreeDbState {
+  loading: boolean
+  error: string
+  data: Nullable<Instance>
+}
+
+export enum OAuthSocialSource {
   ListOfDatabases = 'list of databases',
   WelcomeScreen = 'welcome screen',
   BrowserContentMenu = 'browser content menu',
@@ -222,18 +235,25 @@ export enum SignInDialogSource {
   RedisTimeSeries = 'workbench RedisTimeSeries',
   RedisGraph = 'workbench RedisGraph',
   RedisBloom = 'workbench RedisBloom',
+  Autodiscovery = 'autodiscovery',
 }
 
-export interface SignInDialog {
-  isOpen: boolean
-  source: Nullable<SignInDialogSource>
+export interface StateAppActionBar {
+  status: ActionBarStatus
+  text: string
+  actions: ActionBarActions[]
 }
 
-export interface Account {
-  name?: string
-  id?: number
-  currentAccountId?: number
-  accounts?: Account[]
+export interface ActionBarActions {
+  onClick: () => void
+  label: string
+}
+
+export enum ActionBarStatus {
+  Progress = 'progress',
+  Success = 'success',
+  Default = 'default',
+  Close = 'close',
 }
 
 export enum RedisResponseEncoding {

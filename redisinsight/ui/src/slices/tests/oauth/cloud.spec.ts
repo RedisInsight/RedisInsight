@@ -1,22 +1,30 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
-import { SignInDialogSource } from 'uiSrc/slices/interfaces'
+import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import { ActionBarActions, ActionBarStatus, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { loadInstances } from 'uiSrc/slices/instances/instances'
+import { setActionBarState } from 'uiSrc/slices/app/actionBar'
 import reducer, {
   initialState,
   setSignInDialogState,
-  oauthCloudSignInDialogSelector,
+  oauthCloudSelector,
   signIn,
   signInSuccess,
-  oauthCloudSelector,
   signInFailure,
-  getAccountInfo,
-  getAccountInfoSuccess,
-  getAccountInfoFailure,
-  fetchAccountInfo,
+  getUserInfo,
+  getUserInfoSuccess,
+  getUserInfoFailure,
+  fetchUserInfo,
+  addFreeDbFailure,
+  addFreeDbSuccess,
+  addFreeDb,
+  createFreeDb,
+  setSelectAccountDialogState,
+  createFreeDbSuccess,
+  activateAccount,
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -64,13 +72,15 @@ describe('oauth cloud slice', () => {
   describe('signInSuccess', () => {
     it('should properly set the state', () => {
       // Arrange
+      const data = 'message'
       const state = {
         ...initialState,
+        message: data,
         loading: false,
       }
 
       // Act
-      const nextState = reducer(initialState, signInSuccess())
+      const nextState = reducer(initialState, signInSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -105,19 +115,19 @@ describe('oauth cloud slice', () => {
     })
   })
 
-  describe('getAccountInfo', () => {
+  describe('getUserInfo', () => {
     it('should properly set loading = true', () => {
       // Arrange
       const state = {
         ...initialState,
-        account: {
-          ...initialState.account,
+        user: {
+          ...initialState.user,
           loading: true,
         }
       }
 
       // Act
-      const nextState = reducer(initialState, getAccountInfo())
+      const nextState = reducer(initialState, getUserInfo())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -129,21 +139,21 @@ describe('oauth cloud slice', () => {
     })
   })
 
-  describe('getAccountInfoSuccess', () => {
+  describe('getUserInfoSuccess', () => {
     it('should properly set the state with fetched data', () => {
       const data = {}
       // Arrange
       const state = {
         ...initialState,
-        account: {
-          ...initialState.account,
+        user: {
+          ...initialState.user,
           loading: false,
-          currentAccount: data
+          data,
         }
       }
 
       // Act
-      const nextState = reducer(initialState, getAccountInfoSuccess(data))
+      const nextState = reducer(initialState, getUserInfoSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -155,21 +165,127 @@ describe('oauth cloud slice', () => {
     })
   })
 
-  describe('getAccountInfoFailure', () => {
+  describe('getUserInfoFailure', () => {
     it('should properly set the error', () => {
       // Arrange
       const data = 'some error'
       const state = {
         ...initialState,
-        account: {
-          ...initialState.account,
+        user: {
+          ...initialState.user,
           loading: false,
           error: data,
         }
       }
 
       // Act
-      const nextState = reducer(initialState, getAccountInfoFailure(data))
+      const nextState = reducer(initialState, getUserInfoFailure(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('addFreeDb', () => {
+    it('should properly set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        user: {
+          ...initialState.user,
+          freeDb: {
+            ...initialState.user.freeDb,
+            loading: true,
+          }
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, addFreeDb())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('addFreeDbSuccess', () => {
+    it('should properly set the state with fetched data', () => {
+      const data = {}
+      // Arrange
+      const state = {
+        ...initialState,
+        user: {
+          ...initialState.user,
+          freeDb: {
+            ...initialState.user.freeDb,
+            loading: false,
+          }
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, addFreeDbSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('addFreeDbFailure', () => {
+    it('should properly set the error', () => {
+      // Arrange
+      const data = 'some error'
+      const state = {
+        ...initialState,
+        user: {
+          ...initialState.user,
+          freeDb: {
+            ...initialState.user.freeDb,
+            loading: false,
+            error: data,
+          }
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, addFreeDbFailure(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setSelectAccountDialogState', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const data = true
+      const state = {
+        ...initialState,
+        isOpenSelectAccountDialog: true
+      }
+
+      // Act
+      const nextState = reducer(initialState, setSelectAccountDialogState(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -182,33 +298,33 @@ describe('oauth cloud slice', () => {
   })
 
   describe('setSignInDialogState', () => {
-    it('should properly set the source=SignInDialogSource.BrowserSearch and isOpen=true', () => {
+    it('should properly set the source=SignInDialogSource.BrowserSearch and isOpenSignInDialog=true', () => {
       // Arrange
       const state = {
-        isOpen: true,
-        source: SignInDialogSource.BrowserSearch,
+        ...initialState,
+        isOpenSignInDialog: true,
+        source: OAuthSocialSource.BrowserSearch,
       }
 
       // Act
-      const nextState = reducer(initialState, setSignInDialogState(SignInDialogSource.BrowserSearch))
+      const nextState = reducer(initialState, setSignInDialogState(OAuthSocialSource.BrowserSearch))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         oauth: { cloud: nextState },
       })
-      expect(oauthCloudSignInDialogSelector(rootState)).toEqual(state)
+      expect(oauthCloudSelector(rootState)).toEqual(state)
     })
-    it('should properly set the isOpen=false if source=null', () => {
+    it('should properly set the isOpenSignInDialog=false if source=null', () => {
       // Arrange
       const prevInitialState = {
         ...initialState,
-        signInDialog: {
-          isOpen: true,
-          source: SignInDialogSource.BrowserSearch,
-        }
+        isOpenSignInDialog: true,
+        source: OAuthSocialSource.BrowserSearch,
       }
       const state = {
-        isOpen: false,
+        ...initialState,
+        isOpenSignInDialog: false,
         source: null,
       }
 
@@ -219,53 +335,189 @@ describe('oauth cloud slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         oauth: { cloud: nextState },
       })
-      expect(oauthCloudSignInDialogSelector(rootState)).toEqual(state)
+      expect(oauthCloudSelector(rootState)).toEqual(state)
     })
   })
 
   describe('thunks', () => {
-    it('call both fetchAccountInfo and getAccountInfoSuccess when fetch is successed', async () => {
+    describe('fetchUserInfo', () => {
+      it('call both fetchUserInfo and getUserInfoSuccess when fetch is successed', async () => {
       // Arrange
-      const data = [
-        { id: '70b95d32-c19d-4311-bb24-e684af12cf15' },
-      ]
-      const responsePayload = { data, status: 200 }
+        const data = { id: 123123 }
+        const responsePayload = { data, status: 200 }
 
-      apiService.get = jest.fn().mockResolvedValue(responsePayload)
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
-      // Act
-      await store.dispatch<any>(fetchAccountInfo())
+        // Act
+        await store.dispatch<any>(fetchUserInfo())
 
-      // Assert
-      const expectedActions = [
-        getAccountInfo(),
-        getAccountInfoSuccess(responsePayload.data),
-      ]
-      expect(store.getActions()).toEqual(expectedActions)
+        // Assert
+        const expectedActions = [
+          getUserInfo(),
+          getUserInfoSuccess(responsePayload.data),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+      it.only('call setSelectAccountDialogState and setSignInDialogState when fetch is successed and accounts > 1', async () => {
+      // Arrange
+        const data = { id: 123123, accounts: [{}, {}] }
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchUserInfo())
+
+        // Assert
+        const expectedActions = [
+          getUserInfo(),
+          setSelectAccountDialogState(true),
+          getUserInfoSuccess(responsePayload.data),
+          setSignInDialogState(null),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('call both fetchAccountInfo and getUserInfoFailure when fetch is fail', async () => {
+      // Arrange
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchUserInfo())
+
+        // Assert
+        const expectedActions = [
+          getUserInfo(),
+          addErrorNotification(responsePayload as AxiosError),
+          getUserInfoFailure(responsePayload.response.data.message),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
     })
 
-    it('call both fetchAccountInfo and getAccountInfoFailure when fetch is fail', async () => {
+    describe('createFreeDb', () => {
+      it('call both addFreeDbSuccess and fetchInstancesAction when post is successed', async () => {
       // Arrange
-      const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
-      const responsePayload = {
-        response: {
-          status: 500,
-          data: { message: errorMessage },
-        },
-      }
+        const data = { id: 123123 }
+        const responsePayload = { data, status: 200 }
 
-      apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
-      // Act
-      await store.dispatch<any>(fetchAccountInfo())
+        // Act
+        await store.dispatch<any>(createFreeDb())
 
-      // Assert
-      const expectedActions = [
-        getAccountInfo(),
-        addErrorNotification(responsePayload as AxiosError),
-        getAccountInfoFailure(responsePayload.response.data.message),
-      ]
-      expect(store.getActions()).toEqual(expectedActions)
+        // Assert
+        const expectedActions = [
+          addFreeDb(),
+          addFreeDbSuccess(responsePayload.data),
+          loadInstances(),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('call both fetchAccountInfo and addFreeDbFailure when post is fail', async () => {
+      // Arrange
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(createFreeDb())
+
+        // Assert
+        const expectedActions = [
+          addFreeDb(),
+          addErrorNotification(responsePayload as AxiosError),
+          addFreeDbFailure(responsePayload.response.data.message),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('activateAccount', () => {
+      it('call both getUserInfo and getUserInfoSuccess when put is successed', async () => {
+      // Arrange
+        const data = {
+          id: 3,
+          accounts: [
+            { id: 3, name: 'name' },
+            { id: 4, name: 'name' },
+          ]
+        }
+        const responseAccountPayload = { data, status: 200 }
+
+        apiService.put = jest.fn().mockResolvedValue(responseAccountPayload)
+
+        // Act
+        await store.dispatch<any>(activateAccount('123'))
+
+        // Assert
+        const expectedActions = [
+          getUserInfo(),
+          getUserInfoSuccess(data),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('call both getUserInfo and getUserInfoFailure when put is fail', async () => {
+      // Arrange
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.put = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(activateAccount('3'))
+
+        // Assert
+        const expectedActions = [
+          getUserInfo(),
+          addErrorNotification(responsePayload as AxiosError),
+          getUserInfoFailure(responsePayload.response.data.message),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('createFreeDbSuccess', () => {
+      it('call setActionBarState, setSignInDialogState and setSelectAccountDialogState without error', async () => {
+      // Arrange
+        const status = ActionBarStatus.Success
+        const text = 'Success! Your new database was created successfully.'
+        const onConnect = () => {}
+        const actions: ActionBarActions[] = [{ onClick: onConnect, label: 'Connect' }]
+
+        // Act
+        await store.dispatch<any>(createFreeDbSuccess({}))
+
+        // Assert
+        const expectedActions = [
+          setActionBarState({ text, status, actions }),
+          setSignInDialogState(null),
+          setSelectAccountDialogState(false),
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
     })
   })
 })

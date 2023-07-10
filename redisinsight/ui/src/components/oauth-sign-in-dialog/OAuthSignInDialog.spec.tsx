@@ -1,7 +1,7 @@
 import React from 'react'
 import { fireEvent, render } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { oauthCloudSignInDialogSelector } from 'uiSrc/slices/oauth/cloud'
+import { oauthCloudSelector } from 'uiSrc/slices/oauth/cloud'
 import OAuthSignInDialog from './OAuthSignInDialog'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -11,9 +11,9 @@ jest.mock('uiSrc/telemetry', () => ({
 
 jest.mock('uiSrc/slices/oauth/cloud', () => ({
   ...jest.requireActual('uiSrc/slices/oauth/cloud'),
-  oauthCloudSignInDialogSelector: jest.fn().mockReturnValue({
+  oauthCloudSelector: jest.fn().mockReturnValue({
     source: 'source',
-    isOpen: true,
+    isOpenSignInDialog: true,
   }),
 }))
 
@@ -22,9 +22,9 @@ describe('OAuthSignInDialog', () => {
     const { queryByTestId } = render(<OAuthSignInDialog />)
     expect(queryByTestId('oauth-sign-in-dialog')).toBeInTheDocument()
   })
-  it('should not render if isOpen=false', () => {
-    (oauthCloudSignInDialogSelector as jest.Mock).mockReturnValueOnce({
-      isOpen: false,
+  it('should not render if isOpenSignInDialog=false', () => {
+    (oauthCloudSelector as jest.Mock).mockReturnValueOnce({
+      isOpenSignInDialog: false,
     })
     const { queryByTestId } = render(<OAuthSignInDialog />)
     expect(queryByTestId('oauth-sign-in-dialog')).not.toBeInTheDocument()

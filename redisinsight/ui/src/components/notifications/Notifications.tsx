@@ -83,11 +83,11 @@ const Notifications = () => {
     })
 
   const getErrorsToasts = (errors: IError[]) =>
-    errors.map(({ id = '', message = DEFAULT_ERROR_MESSAGE, instanceId = '', name }) => {
+    errors.map(({ id = '', message = DEFAULT_ERROR_MESSAGE, instanceId = '', name, title }) => {
       if (ApiEncryptionErrors.includes(name)) {
         return errorMessages.ENCRYPTION(id, () => removeToast({ id }), instanceId)
       }
-      return errorMessages.DEFAULT(id, message, () => removeToast({ id }))
+      return errorMessages.DEFAULT(id, message, () => removeToast({ id }), title)
     })
 
   return (

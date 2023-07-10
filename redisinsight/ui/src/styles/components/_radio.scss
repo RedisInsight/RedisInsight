@@ -12,7 +12,7 @@
   border: none;
 }
 
-.main-container {
+.main-container, .euiModal {
   .euiRadio .euiRadio__input:focus + .euiRadio__circle,
   .euiRadio .euiRadio__input:active:not(:disabled) + .euiRadio__circle {
     animation: none !important;

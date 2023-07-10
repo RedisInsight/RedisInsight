@@ -36,11 +36,11 @@ const CloudConnectionFormWrapper = ({ onClose, width }: Props) => {
     []
   )
 
-  const formSubmit = ({ accessKey, secretKey }: ICloudConnectionSubmit) => {
+  const formSubmit = (credentials: ICloudConnectionSubmit) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_RE_CLOUD_AUTODISCOVERY_SUBMITTED
     })
-    dispatch(fetchSubscriptionsRedisCloud({ accessKey, secretKey }, onSuccess))
+    dispatch(fetchSubscriptionsRedisCloud(credentials, onSuccess))
   }
 
   const onSuccess = () => {

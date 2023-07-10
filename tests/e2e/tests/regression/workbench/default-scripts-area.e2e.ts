@@ -127,7 +127,6 @@ test('Verify that the same type of content is supported in the “Tutorials” a
             'Working with JSON',
             'Vector Similarity Search',
             'Redis for time series',
-            'Working with graphs',
             'Probabilistic data structures'
         ];
         const command = 'HSET bikes:10000  ';

@@ -41,7 +41,8 @@ test.skip
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.queryGraphContainer).exists).ok('The Graph view is not switched for GRAPH command');
     });
-test
+//skipped due to Graph no longer displayed in tutorials
+test.skip
     .meta({ env: env.desktop })('Verify that user can see "No data to visualize" message for Graph command', async t => {
         // Send Graph command
         await t.click(workbenchPage.redisStackTutorialsButton);

@@ -1,5 +1,5 @@
 import { EuiBadge, EuiFlexGroup, EuiFlexItem, EuiText } from '@elastic/eui'
-import React, { ReactElement, useEffect } from 'react'
+import React, { ReactElement, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -37,7 +37,7 @@ const CommandHelperWrapper = () => {
   const lastMatchedCommand = (isEnteringCommand && matchedCommand && !checkDeprecatedModuleCommand(matchedCommand))
     ? matchedCommand
     : searchedCommand
-  const KEYS_OF_COMMANDS = removeDeprecatedModuleCommands(commandsArray)
+  const KEYS_OF_COMMANDS = useMemo(() => removeDeprecatedModuleCommands(commandsArray), [commandsArray])
   let searchedCommands: string[] = []
 
   useEffect(() => {

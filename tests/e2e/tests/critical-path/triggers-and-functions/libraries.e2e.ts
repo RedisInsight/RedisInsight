@@ -189,7 +189,6 @@ test.after(async() => {
     await t.click(triggersAndFunctionsFunctionsPage.invokeButton);
     await t.typeText(triggersAndFunctionsFunctionsPage.keyNameStreamFunctions, `${streamKeyName}*`);
     await t.click(triggersAndFunctionsFunctionsPage.findKeyButton);
-    await t.debug();
     await t.expect(await browserPage.isKeyIsDisplayedInTheList(streamKeyName)).ok('The stream key is not opened');
     await t.expect(browserPage.keyDetailsBadge.exists).ok('The key details is not opened');
 });

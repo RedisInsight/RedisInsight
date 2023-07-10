@@ -75,9 +75,10 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   public async list(): Promise<Database[]> {
     const entities = await this.repository
       .createQueryBuilder('d')
+      .leftJoinAndSelect('d.cloudDetails', 'cd')
       .select([
         'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
-        'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version', 'd.cloudDetails',
+        'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version',
       ])
       .getMany();
 

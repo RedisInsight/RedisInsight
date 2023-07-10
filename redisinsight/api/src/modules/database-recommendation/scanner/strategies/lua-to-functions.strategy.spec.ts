@@ -37,19 +37,7 @@ describe('LuaToFunctionsStrategy', () => {
         databaseService.get.mockResolvedValue({ modules: [{ name: 'redisgears' }] });
       });
 
-      it('should return true when there is more then 1 lua script', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'TFUNCTION' }))
-          .mockResolvedValue(mockEmptyLibraries);
-
-        expect(await strategy.isRecommendationReached({
-          client: nodeClient,
-          databaseId: mockDatabaseId,
-          info: { cashedScripts: 2 },
-        })).toEqual({ isReached: true });
-      });
-
-      it('should return false when number of cached lua script is 1', async () => {
+      it('should return true when there is more then 0 lua script', async () => {
         when(nodeClient.sendCommand)
           .calledWith(jasmine.objectContaining({ name: 'TFUNCTION' }))
           .mockResolvedValue(mockEmptyLibraries);
@@ -58,6 +46,18 @@ describe('LuaToFunctionsStrategy', () => {
           client: nodeClient,
           databaseId: mockDatabaseId,
           info: { cashedScripts: 1 },
+        })).toEqual({ isReached: true });
+      });
+
+      it('should return false when number of cached lua script is 0', async () => {
+        when(nodeClient.sendCommand)
+          .calledWith(jasmine.objectContaining({ name: 'TFUNCTION' }))
+          .mockResolvedValue(mockEmptyLibraries);
+
+        expect(await strategy.isRecommendationReached({
+          client: nodeClient,
+          databaseId: mockDatabaseId,
+          info: { cashedScripts: 0 },
         })).toEqual({ isReached: false });
       });
 
@@ -82,15 +82,15 @@ describe('LuaToFunctionsStrategy', () => {
         expect(await strategy.isRecommendationReached({
           client: nodeClient,
           databaseId: mockDatabaseId,
-          info: { cashedScripts: 2 },
+          info: { cashedScripts: 1 },
         })).toEqual({ isReached: true });
       });
 
-      it('should return false when number of cached lua script is 1', async () => {
+      it('should return false when number of cached lua script is 0', async () => {
         expect(await strategy.isRecommendationReached({
           client: nodeClient,
           databaseId: mockDatabaseId,
-          info: { cashedScripts: 1 },
+          info: { cashedScripts: 0 },
         })).toEqual({ isReached: false });
       });
     });

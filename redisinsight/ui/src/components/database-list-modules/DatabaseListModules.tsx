@@ -69,6 +69,16 @@ export const modulesDefaultInit = {
     iconLight: RedisGraphLight,
     text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Graph],
   },
+  [RedisDefaultModules.RedisGears]: {
+    iconDark: RedisGearsDark,
+    iconLight: RedisGearsLight,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.RedisGears],
+  },
+  [RedisDefaultModules.RedisGears2]: {
+    iconDark: RedisGearsDark,
+    iconLight: RedisGearsLight,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.RedisGears2],
+  },
   [RedisDefaultModules.ReJSON]: {
     iconDark: RedisJSONDark,
     iconLight: RedisJSONLight,

@@ -5,7 +5,7 @@
 import isGlob from 'is-glob'
 import { cloneDeep } from 'lodash'
 import * as jsonpath from 'jsonpath'
-import { isRedisearchAvailable, Nullable } from 'uiSrc/utils'
+import { isRedisearchAvailable, isTriggeredAndFunctionsAvailable, Nullable } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
@@ -219,6 +219,7 @@ const DEFAULT_SUMMARY: IRedisModulesSummary = Object.freeze(
     RedisBloom: { loaded: false },
     RedisJSON: { loaded: false },
     RedisTimeSeries: { loaded: false },
+    'Triggered & Functions': { loaded: false },
     customModules: [],
   },
 )
@@ -246,6 +247,16 @@ const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): IRedisMo
       if (isRedisearchAvailable([module])) {
         const redisearchName = getEnumKeyBValue(RedisModules, RedisModules.RediSearch)
         summary[redisearchName] = {
+          loaded: true,
+          version: module.version,
+          semanticVersion: module.semanticVersion,
+        }
+        return
+      }
+
+      if (isTriggeredAndFunctionsAvailable([module])) {
+        const triggeredAndFunctionsName = getEnumKeyBValue(RedisModules, RedisModules['Triggered & Functions'])
+        summary[triggeredAndFunctionsName] = {
           loaded: true,
           version: module.version,
           semanticVersion: module.semanticVersion,

@@ -54,13 +54,15 @@ const ConfigOAuth = () => {
   }
 
   const cloudOauthCallback = (_e: any, { status, message = '', error }: CloudAuthResponse) => {
+    console.log({ status, message, error })
+
     if (status === CloudAuthStatus.Succeed) {
       dispatch(signInSuccess(message))
       dispatch(fetchUserInfo(fetchUserInfoSuccess))
     }
 
     if (status === CloudAuthStatus.Failed) {
-      const err = parseCloudOAuthCallbackError(error?.error || '')
+      const err = parseCloudOAuthCallbackError(error || message || '')
       dispatch(signInFailure(err?.message))
       dispatch(addErrorNotification(err))
       dispatch(setIsAutodiscoverySSO(false))

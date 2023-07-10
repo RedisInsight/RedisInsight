@@ -55,7 +55,7 @@ export enum RedisModules {
   'Triggers & Functions' = 'redisgears'
 }
 
-interface IModuleSummary {
+export interface IModuleSummary {
   loaded: boolean
   version?: number
   semanticVersion?: string

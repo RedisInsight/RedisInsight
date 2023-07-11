@@ -478,8 +478,8 @@ const ONBOARDING_FEATURES = {
       return {
         content: (
           <>
-            Triggers and functions can execute server-side functions triggered by certain events or data
-            to decrease latency and react in real time to database events.
+            Triggers and Functions can execute server-side functions triggered by certain
+            events or data operations to decrease latency and react in real time to database events.
             <EuiSpacer size="xs" />
             See the list of uploaded libraries, upload or delete libraries, or investigate and debug functions.
           </>

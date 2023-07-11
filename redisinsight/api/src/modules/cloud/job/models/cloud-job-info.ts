@@ -48,4 +48,10 @@ export class CloudJobInfo {
   })
   @Expose()
   error?: string | object;
+
+  @ApiPropertyOptional({
+    description: 'Job result',
+  })
+  @Expose()
+  result?: any;
 }

@@ -69,7 +69,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
     if (databases?.length) {
       [cloudDatabase] = databases;
 
-      if (cloudDatabase.status !== CloudDatabaseStatus.Pending) {
+      if (cloudDatabase.status !== CloudDatabaseStatus.Pending && cloudDatabase.status !== CloudDatabaseStatus.Draft) {
         throw new CloudDatabaseAlreadyExistsFreeException();
       }
     } else {
@@ -144,6 +144,8 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
       },
       timeout: cloudConfig.cloudDatabaseConnectionTimeout,
     });
+
+    this.result = { resourceId: database.id };
 
     this.changeState({ status: CloudJobStatus.Finished });
 

@@ -4,6 +4,7 @@ import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import config from 'src/utils/config';
 
 const cloudConfig = config.get('cloud');
+const serverConfig = config.get('server');
 
 export class CloudCapiProvider {
   protected api = axios.create({
@@ -29,8 +30,7 @@ export class CloudCapiProvider {
       headers: {
         'x-api-key': credentials?.capiKey,
         'x-api-secret-key': credentials?.capiSecret,
-        'User-Agent': 'RedisInsight',
-        // todo: add user agent
+        'User-Agent': `RedisInsight/${serverConfig.version}`,
       },
     };
   }

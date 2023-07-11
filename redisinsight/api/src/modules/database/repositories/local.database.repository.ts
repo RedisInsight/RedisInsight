@@ -78,7 +78,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
       .leftJoinAndSelect('d.cloudDetails', 'cd')
       .select([
         'd.id', 'd.name', 'd.host', 'd.port', 'd.db', 'd.new', 'd.timeout',
-        'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version',
+        'd.connectionType', 'd.modules', 'd.lastConnection', 'd.provider', 'd.version', 'cd',
       ])
       .getMany();
 

@@ -32,6 +32,8 @@ export abstract class CloudJob {
 
   protected child?: CloudJob;
 
+  protected result?: any;
+
   public options: CloudJobOptions;
 
   protected dependencies: any;
@@ -75,6 +77,7 @@ export abstract class CloudJob {
       id: this.id,
       name: this.options?.name || this.name,
       status: this.status,
+      result: this.result,
       error: this.error ? wrapCloudJobError(this.error).getResponse() : undefined,
       child: this.child?.getState(),
     };

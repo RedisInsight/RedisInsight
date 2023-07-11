@@ -1,6 +1,7 @@
 import { join } from 'path';
 import * as os from 'os';
 import { RequestMethod } from '@nestjs/common';
+import { version } from '../package.json';
 
 const homedir = join(__dirname, '..');
 
@@ -39,6 +40,7 @@ export default {
     clientCertificates: join(homedir, 'client_certificates'),
   },
   server: {
+    version,
     env: 'development',
     listenInterface: process.env.RI_HOSTNAME ?? '0.0.0.0',
     port: 5000,
@@ -215,6 +217,7 @@ export default {
     capiKeyName: process.env.RI_CLOUD_CAPI_KEY_NAME || 'RedisInsight',
     freeSubscriptionName: process.env.RI_CLOUD_FREE_SUBSCRIPTION_NAME || 'My free subscription',
     freeDatabaseName: process.env.RI_CLOUD_FREE_DATABASE_NAME || 'All-in-one-Redis-Enterprise-Cloud',
+    defaultPlanRegion: process.env.RI_CLOUD_DEFAULT_PLAN_REGION || 'eu-west-1',
     jobIterationInterval: parseInt(process.env.RI_CLOUD_JOB_ITERATION_INTERVAL, 10) || 10_000, // 10 sec
     discoveryTimeout: parseInt(process.env.RI_CLOUD_DISCOVERY_TIMEOUT, 10) || 60 * 1000, // 1 min
     databaseConnectionTimeout: parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) || 30 * 1000,

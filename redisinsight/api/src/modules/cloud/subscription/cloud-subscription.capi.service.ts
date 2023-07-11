@@ -38,9 +38,9 @@ export class CloudSubscriptionCapiService {
     const freePlans = filter(plans, { price: 0 });
 
     return find(freePlans, (plan) => plan.provider === CloudSubscriptionPlanProvider.AWS
-        && plan.region === 'us-east-1'
+        && plan.region === cloudConfig.defaultPlanRegion
         && (plan.name).toLowerCase().includes('standard'))
-      || find(freePlans, { provider: CloudSubscriptionPlanProvider.AWS, region: 'us-east-1' })
+      || find(freePlans, { provider: CloudSubscriptionPlanProvider.AWS, region: cloudConfig.defaultPlanRegion })
       || find(freePlans, { provider: CloudSubscriptionPlanProvider.AWS })
       || freePlans[0];
   }

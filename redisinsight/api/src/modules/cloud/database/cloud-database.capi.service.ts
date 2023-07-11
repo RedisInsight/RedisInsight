@@ -88,7 +88,7 @@ export class CloudDatabaseCapiService {
           name: cloudConfig.freeDatabaseName,
           protocol: CloudDatabaseProtocol.Stack,
           dataPersistence: CloudDatabasePersistencePolicy.None,
-          dataEvictionPolicy: CloudDatabaseDataEvictionPolicy.NoEviction,
+          dataEvictionPolicy: CloudDatabaseDataEvictionPolicy.VolatileLru,
           replication: false,
           alerts: [
             {

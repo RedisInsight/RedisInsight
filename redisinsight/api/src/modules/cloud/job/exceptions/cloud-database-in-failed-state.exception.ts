@@ -6,7 +6,7 @@ export class CloudDatabaseInFailedStateException extends HttpException {
   constructor(message = ERROR_MESSAGES.CLOUD_DATABASE_IN_FAILED_STATE, options?: HttpExceptionOptions) {
     const response = {
       message,
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      statusCode: HttpStatus.BAD_REQUEST,
       error: 'CloudDatabaseInFailedState',
       errorCode: CustomErrorCodes.CloudDatabaseIsInTheFailedState,
     };

@@ -6,7 +6,7 @@ export class CloudDatabaseAlreadyExistsFreeException extends HttpException {
   constructor(message = ERROR_MESSAGES.CLOUD_DATABASE_ALREADY_EXISTS_FREE, options?: HttpExceptionOptions) {
     const response = {
       message,
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      statusCode: HttpStatus.CONFLICT,
       error: 'CloudDatabaseAlreadyExistsFree',
       errorCode: CustomErrorCodes.CloudDatabaseAlreadyExistsFree,
     };

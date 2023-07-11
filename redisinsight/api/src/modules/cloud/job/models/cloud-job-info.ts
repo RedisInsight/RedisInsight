@@ -3,6 +3,11 @@ import { Expose, Type } from 'class-transformer';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { HttpException } from '@nestjs/common';
 
+export enum CloudJobRunMode {
+  Async = 'async',
+  Sync = 'sync',
+}
+
 export enum CloudJobStatus {
   Initializing = 'initializing',
   Running = 'running',
@@ -42,6 +47,5 @@ export class CloudJobInfo {
     type: () => HttpException,
   })
   @Expose()
-  @Type(() => HttpException)
-  error?: HttpException;
+  error?: string | object;
 }

@@ -86,10 +86,9 @@ export class CloudDatabaseCapiService {
         {
           ...dto,
           name: cloudConfig.freeDatabaseName,
-          protocol: CloudDatabaseProtocol.Redis,
-          // protocol: CloudDatabaseProtocol.Stack,
+          protocol: CloudDatabaseProtocol.Stack,
           dataPersistence: CloudDatabasePersistencePolicy.None,
-          dataEvictionPolicy: CloudDatabaseDataEvictionPolicy.VolatileLru,
+          dataEvictionPolicy: CloudDatabaseDataEvictionPolicy.NoEviction,
           replication: false,
           alerts: [
             {

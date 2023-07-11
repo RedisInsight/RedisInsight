@@ -6,7 +6,7 @@ export class CloudDatabaseInUnexpectedStateException extends HttpException {
   constructor(message = ERROR_MESSAGES.CLOUD_DATABASE_IN_UNEXPECTED_STATE, options?: HttpExceptionOptions) {
     const response = {
       message,
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      statusCode: HttpStatus.NOT_IMPLEMENTED,
       error: 'CloudDatabaseInUnexpectedState',
       errorCode: CustomErrorCodes.CloudDatabaseIsInUnexpectedState,
     };

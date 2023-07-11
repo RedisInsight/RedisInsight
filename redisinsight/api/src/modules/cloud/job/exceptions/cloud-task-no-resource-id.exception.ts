@@ -6,7 +6,7 @@ export class CloudTaskNoResourceIdException extends HttpException {
   constructor(message = ERROR_MESSAGES.CLOUD_TASK_NO_RESOURCE_ID, options?: HttpExceptionOptions) {
     const response = {
       message,
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      statusCode: HttpStatus.BAD_REQUEST,
       error: 'CloudTaskNoResourceId',
       errorCode: CustomErrorCodes.CloudTaskNoResourceId,
     };

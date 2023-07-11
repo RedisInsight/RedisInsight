@@ -4,6 +4,7 @@ import { wrapHttpError } from 'src/common/utils';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { parseCloudTaskCapiResponse } from 'src/modules/cloud/task/utils';
 import { CloudTask } from 'src/modules/cloud/task/models';
+import { CloudTaskNotFoundException } from 'src/modules/cloud/job/exceptions';
 
 @Injectable({})
 export class CloudTaskCapiService {
@@ -19,7 +20,7 @@ export class CloudTaskCapiService {
       const task = await this.cloudTaskCapiProvider.getTask(credentials, id);
 
       if (!task) {
-        throw Error('TBD: TASK_NOT_FOUND ERROR');
+        throw new CloudTaskNotFoundException();
       }
 
       this.logger.debug('Successfully fetched cloud task', task);

@@ -168,6 +168,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? TriggeredFunctionsActiveSVG : TriggeredFunctionsSVG
       },
+      onboard: ONBOARDING_FEATURES.TRIGGERED_FUNCTIONS_PAGE
     },
   ]
 

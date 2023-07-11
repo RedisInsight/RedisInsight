@@ -21,7 +21,7 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
   protected name = CloudJobName.CreateFreeSubscription;
 
   constructor(
-    protected readonly options: CloudJobOptions,
+    readonly options: CloudJobOptions,
     private readonly data: {
       capiCredentials: CloudCapiAuthDto,
     },

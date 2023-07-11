@@ -3,6 +3,7 @@ export * from './cloud-database-in-failed-state.exception';
 export * from './cloud-database-in-unexpected-state.exception';
 export * from './cloud-job.error.handler';
 export * from './cloud-job-aborted.exception';
+export * from './cloud-job-not-found.exception';
 export * from './cloud-job-unexpected-error.exception';
 export * from './cloud-job-unsupported.exception';
 export * from './cloud-plan-not-found-free.exception';

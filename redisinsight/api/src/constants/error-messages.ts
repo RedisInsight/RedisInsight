@@ -81,6 +81,7 @@ export default {
 
   CLOUD_JOB_UNEXPECTED_ERROR: 'Unexpected error occurred',
   CLOUD_JOB_ABORTED: 'Cloud job aborted',
+  CLOUD_JOB_NOT_FOUND: 'Cloud job was not found',
   CLOUD_JOB_UNSUPPORTED: 'Unsupported cloud job',
   CLOUD_SUBSCRIPTION_IN_FAILED_STATE: 'Cloud subscription is in the failed state',
   CLOUD_SUBSCRIPTION_IN_UNEXPECTED_STATE: 'Cloud subscription is in unexpected state',

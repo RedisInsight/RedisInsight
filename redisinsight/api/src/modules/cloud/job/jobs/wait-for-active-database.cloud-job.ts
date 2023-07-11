@@ -14,7 +14,7 @@ export class WaitForActiveDatabaseCloudJob extends CloudJob {
   protected name = CloudJobName.WaitForActiveDatabase;
 
   constructor(
-    protected readonly options: CloudJobOptions,
+    readonly options: CloudJobOptions,
     private readonly data: {
       databaseId: number,
       subscriptionId: number,
@@ -54,6 +54,7 @@ export class WaitForActiveDatabaseCloudJob extends CloudJob {
       case CloudDatabaseStatus.ImportPending:
       case CloudDatabaseStatus.ActiveChangePending:
       case CloudDatabaseStatus.Pending:
+      case CloudDatabaseStatus.Draft:
         this.logger.debug('Cloud database is not in the active state. Scheduling new iteration');
 
         return await this.runNextIteration();

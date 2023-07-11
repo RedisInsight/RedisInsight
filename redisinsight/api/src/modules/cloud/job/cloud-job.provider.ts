@@ -1,7 +1,7 @@
 import { CloudJob } from 'src/modules/cloud/job/jobs';
 import { SessionMetadata } from 'src/common/models';
 import { CreateCloudJobDto } from 'src/modules/cloud/job/dto';
-import { CloudJobInfo } from 'src/modules/cloud/job/models';
+import { CloudJobInfo, CloudJobRunMode } from 'src/modules/cloud/job/models';
 import { CloudJobFactory } from 'src/modules/cloud/job/cloud-job.factory';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
 import { wrapHttpError } from 'src/common/utils';
@@ -27,7 +27,6 @@ export class CloudJobProvider {
         },
         {
           sessionMetadata,
-          // stateCallback: (self) => console.log(self.getState()),
         },
       );
 
@@ -40,12 +39,20 @@ export class CloudJobProvider {
       }
 
       this.jobs.set(job.id, job);
-      return await job.run();
-      // return job.run().catch(() => {});
 
-      // return job.getState();
+      if (dto.runMode === CloudJobRunMode.Async) {
+        job.run().catch(() => {});
+
+        return job.getState();
+      }
+
+      return await job.run();
     } catch (e) {
       throw wrapHttpError(e);
     }
+  }
+
+  async get(id: string): Promise<CloudJob> {
+    return this.jobs.get(id);
   }
 }

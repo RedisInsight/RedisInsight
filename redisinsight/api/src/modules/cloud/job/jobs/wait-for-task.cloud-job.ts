@@ -13,7 +13,7 @@ export class WaitForTaskCloudJob extends CloudJob {
   protected name = CloudJobName.WaitForTask;
 
   constructor(
-    protected readonly options: CloudJobOptions,
+    readonly options: CloudJobOptions,
     private readonly data: {
       taskId: string,
       capiCredentials: CloudCapiAuthDto,
@@ -47,7 +47,7 @@ export class WaitForTaskCloudJob extends CloudJob {
 
         return task;
       case CloudTaskStatus.ProcessingError:
-        throw new CloudTaskProcessingErrorException();
+        throw new CloudTaskProcessingErrorException(undefined, { cause: task.response?.error });
       default:
         throw new CloudJobUnexpectedErrorException('Something went wrong. Unknown task status or task was not found');
     }

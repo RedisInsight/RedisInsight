@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
+import { Expose } from 'class-transformer';
+import { CloudJobRunMode } from 'src/modules/cloud/job/models';
 
 export class CreateCloudJobDto {
   @ApiProperty({
@@ -10,4 +12,14 @@ export class CreateCloudJobDto {
   @IsEnum(CloudJobName)
   @IsNotEmpty()
   name: CloudJobName;
+
+  @ApiProperty({
+    description: 'Mod in which to run the job.',
+    enum: CloudJobRunMode,
+  })
+  @IsOptional()
+  @Expose()
+  @IsEnum(CloudJobRunMode)
+  @IsNotEmpty()
+  runMode: CloudJobRunMode;
 }

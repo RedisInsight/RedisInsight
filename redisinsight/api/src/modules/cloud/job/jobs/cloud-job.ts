@@ -14,7 +14,9 @@ export class CloudJobOptions {
 
   sessionMetadata: SessionMetadata;
 
-  stateCallback?: (self: CloudJob) => any;
+  stateCallbacks?: ((self: CloudJob) => any)[] = [];
+
+  name?: CloudJobName;
 }
 
 export abstract class CloudJob {
@@ -30,12 +32,16 @@ export abstract class CloudJob {
 
   protected child?: CloudJob;
 
-  protected options: CloudJobOptions;
+  public options: CloudJobOptions;
 
   protected dependencies: any;
 
   protected constructor(options: CloudJobOptions) {
     this.options = options;
+
+    if (!this.options.stateCallbacks) {
+      this.options.stateCallbacks = [];
+    }
   }
 
   public async run() {
@@ -67,26 +73,27 @@ export abstract class CloudJob {
   public getState(): CloudJobInfo {
     return {
       id: this.id,
-      name: this.name,
+      name: this.options?.name || this.name,
       status: this.status,
-      error: this.error ? wrapCloudJobError(this.error) : undefined,
+      error: this.error ? wrapCloudJobError(this.error).getResponse() : undefined,
       child: this.child?.getState(),
     };
   }
 
-  public createChildJob<T>(TargetJob: ClassType<T>, data: {}): T {
+  public createChildJob<T>(TargetJob: ClassType<T>, data: {}, options = {}): T {
     return new TargetJob(
       {
         ...this.options,
-        stateCallback: () => this.changeState(),
+        stateCallbacks: [() => this.changeState()],
+        ...options,
       },
       data,
       this.dependencies,
     );
   }
 
-  public async runChildJob(TargetJob: ClassType<CloudJob>, data: {}): Promise<any> {
-    const child = this.createChildJob(TargetJob, data);
+  public async runChildJob(TargetJob: ClassType<CloudJob>, data: {}, options = {}): Promise<any> {
+    const child = this.createChildJob(TargetJob, data, options);
 
     this.changeState({ child });
 
@@ -97,10 +104,22 @@ export abstract class CloudJob {
     return result;
   }
 
+  public addStateCallback(callback: (self: CloudJob) => any) {
+    this.options.stateCallbacks.push(callback);
+  }
+
+  private async invokeStateCallback(callback) {
+
+  }
+
   protected changeState(state = {}) {
     Object.entries(state).forEach(([key, value]) => { this[key] = value; });
     try {
-      this.options.stateCallback?.(this);
+      (this.options?.stateCallbacks || []).forEach((cb) => {
+        cb?.(this)?.catch?.((e) => {
+          console.log('======= ERROR CB', e);
+        });
+      });
     } catch (e) {
       // silently ignore callback
     }

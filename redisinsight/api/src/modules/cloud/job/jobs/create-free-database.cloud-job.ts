@@ -26,7 +26,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
   protected name = CloudJobName.CreateFreeDatabase;
 
   constructor(
-    protected readonly options: CloudJobOptions,
+    readonly options: CloudJobOptions,
     private readonly data: {
       capiCredentials: CloudCapiAuthDto,
     },

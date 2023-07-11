@@ -17,7 +17,7 @@ export class WaitForActiveSubscriptionCloudJob extends CloudJob {
   protected name = CloudJobName.WaitForActiveSubscription;
 
   constructor(
-    protected readonly options: CloudJobOptions,
+    readonly options: CloudJobOptions,
     private readonly data: {
       subscriptionId: number,
       subscriptionType: CloudSubscriptionType,

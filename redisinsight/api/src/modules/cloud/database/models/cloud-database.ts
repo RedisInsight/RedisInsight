@@ -36,6 +36,7 @@ export enum CloudDatabaseMemoryStorage {
 }
 
 export enum CloudDatabaseStatus {
+  Draft = 'draft',
   Pending = 'pending',
   CreationFailed = 'creation-failed',
   Active = 'active',

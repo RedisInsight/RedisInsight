@@ -7,6 +7,7 @@ import { CloudDatabaseModule } from 'src/modules/cloud/database/cloud-database.m
 import { CloudUserModule } from 'src/modules/cloud/user/cloud-user.module';
 import { CloudJobFactory } from 'src/modules/cloud/job/cloud-job.factory';
 import { CloudJobProvider } from 'src/modules/cloud/job/cloud-job.provider';
+import { CloudJobGateway } from 'src/modules/cloud/job/cloud-job.gateway';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { CloudJobProvider } from 'src/modules/cloud/job/cloud-job.provider';
     CloudJobService,
     CloudJobFactory,
     CloudJobProvider,
+    CloudJobGateway,
   ],
   controllers: [CloudJobController],
 })

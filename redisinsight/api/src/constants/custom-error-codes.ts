@@ -27,4 +27,5 @@ export enum CustomErrorCodes {
   CloudPlanUnableToFindFree = 11_110,
   CloudSubscriptionUnableToDetermine = 11_111,
   CloudTaskNotFound = 11_112,
+  CloudJobNotFound = 11_113,
 }

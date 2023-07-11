@@ -6,12 +6,18 @@ export enum AdditionalRedisModuleName {
   RedisJSON = 'ReJSON',
   RediSearch = 'search',
   RedisTimeSeries = 'timeseries',
+  'Triggers & Functions' = 'redisgears'
 }
 
 export enum AdditionalSearchModuleName {
   SearchLight = 'searchlight',
   FT = 'ft',
   FTL = 'ftl',
+}
+
+export enum AdditionalTriggersAndFunctionsModuleName {
+  TriggersAndFunctions = 'redisgears',
+  TriggersAndFunctions2 = 'redisgears_2',
 }
 
 export const SUPPORTED_REDIS_MODULES = Object.freeze({
@@ -59,4 +65,9 @@ export const REDISEARCH_MODULES: string[] = [
   AdditionalSearchModuleName.SearchLight,
   AdditionalSearchModuleName.FT,
   AdditionalSearchModuleName.FTL,
+]
+
+export const TRIGGERED_AND_FUNCTIONS_MODULES: string[] = [
+  AdditionalTriggersAndFunctionsModuleName.TriggersAndFunctions,
+  AdditionalTriggersAndFunctionsModuleName.TriggersAndFunctions2,
 ]

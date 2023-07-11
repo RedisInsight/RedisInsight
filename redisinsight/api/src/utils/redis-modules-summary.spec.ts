@@ -9,6 +9,7 @@ const DEFAULT_SUMMARY = Object.freeze(
     RedisBloom: { loaded: false },
     RedisJSON: { loaded: false },
     RedisTimeSeries: { loaded: false },
+    'Triggers & Functions': { loaded: false },
     customModules: [],
   },
 );
@@ -53,7 +54,7 @@ const getRedisModulesSummaryTests = [
       RedisJSON: { loaded: true, version: 10000, semanticVersion: '1.0.0' },
       RediSearch: { loaded: true, version: 10000, semanticVersion: '1.0.0' },
       RedisTimeSeries: { loaded: true, version: 10000, semanticVersion: '1.0.0' },
-      'Triggers & Functios': { loaded: true, version: 10000, semanticVersion: '1.0.0' },
+      'Triggers & Functions': { loaded: true, version: 10000, semanticVersion: '1.0.0' },
       customModules: [],
     },
   },

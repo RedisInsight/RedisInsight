@@ -10,13 +10,14 @@ import { FunctionsSections, LibrariesSections, MonacoEditorInputs, rte } from '.
 import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
 import { TriggersAndFunctionLibrary } from '../../../interfaces/triggers-and-functions';
 import { CommonElementsActions } from '../../../common-actions/common-elements-actions';
+import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const triggersAndFunctionsLibrariesPage = new TriggersAndFunctionsLibrariesPage();
 const triggersAndFunctionsFunctionsPage = new TriggersAndFunctionsFunctionsPage();
 
-const libraryName = 'lib';
-const streamKeyName = 'StreamKey';
+const libraryName = Common.generateWord(5);
+const streamKeyName = Common.generateWord(5);
 
 const filePathes = {
     upload: path.join('..', '..', '..', 'test-data', 'triggers-and-functions', 'library.txt'),

@@ -1,7 +1,7 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Post, UseInterceptors, UsePipes, ValidationPipe
+  Controller, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
@@ -30,5 +30,30 @@ export class CloudJobController {
       @Body() dto: CreateCloudJobDto,
   ): Promise<CloudJobInfo> {
     return this.service.create(sessionMetadata, dto);
+  }
+
+  @Get('/')
+  @ApiEndpoint({
+    description: 'Get list of user jobs',
+    statusCode: 200,
+    responses: [{ type: CloudJobInfo, isArray: true }],
+  })
+  async getUserJobsInfo(
+    @RequestSessionMetadata() sessionMetadata,
+  ): Promise<CloudJobInfo[]> {
+    return this.service.getUserJobsInfo(sessionMetadata);
+  }
+
+  @Get('/:id')
+  @ApiEndpoint({
+    description: 'Get user jobs',
+    statusCode: 200,
+    responses: [{ type: CloudJobInfo }],
+  })
+  async getJobInfo(
+    @RequestSessionMetadata() sessionMetadata,
+      @Param('id') id: string,
+  ): Promise<CloudJobInfo> {
+    return this.service.getJobInfo(sessionMetadata, id);
   }
 }

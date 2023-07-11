@@ -1,3 +1,4 @@
+import { filter } from 'lodash';
 import { CloudJob } from 'src/modules/cloud/job/jobs';
 import { SessionMetadata } from 'src/common/models';
 import { CreateCloudJobDto } from 'src/modules/cloud/job/dto';
@@ -54,5 +55,12 @@ export class CloudJobProvider {
 
   async get(id: string): Promise<CloudJob> {
     return this.jobs.get(id);
+  }
+
+  async findUserJobs(sessionMetadata: SessionMetadata): Promise<CloudJob[]> {
+    return filter(
+      [...this.jobs.values()],
+      (job: CloudJob) => job.options?.sessionMetadata?.userId === sessionMetadata.userId,
+    );
   }
 }

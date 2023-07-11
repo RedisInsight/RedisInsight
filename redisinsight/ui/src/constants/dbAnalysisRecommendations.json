@@ -29,7 +29,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/manual/programmability/",
+          "href": "https://redis.io/docs/interact/programmability/",
           "name": "documentation"
         }
       },
@@ -389,7 +389,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search capabilities"
         }
       },
@@ -525,7 +525,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/bloom/",
+          "href": "https://redis.io/docs/data-types/probabilistic/bloom-filter/",
           "name": "probabilistic data structures"
         }
       },
@@ -670,7 +670,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/timeseries/",
+          "href": "https://redis.io/docs/data-types/timeseries/",
           "name": "time series capabilities"
         }
       },
@@ -817,7 +817,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search"
         }
       },
@@ -828,7 +828,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/json/",
+          "href": "https://redis.io/docs/data-types/json/",
           "name": "JSON"
         }
       },
@@ -839,7 +839,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/bloom/",
+          "href": "https://redis.io/docs/data-types/probabilistic/bloom-filter/",
           "name": "probabilistic data structures"
         }
       },
@@ -850,7 +850,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/timeseries/",
+          "href": "https://redis.io/docs/data-types/timeseries/",
           "name": "Time Series"
         }
       },
@@ -871,7 +871,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "RediSearch"
         }
       },
@@ -964,7 +964,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search capabilities"
         }
       },
@@ -1048,7 +1048,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search capabilities"
         }
       },
@@ -1161,7 +1161,7 @@
             {
               "type": "link",
               "value": {
-                "href": "https://redis.io/docs/stack/json/path/",
+                "href": "https://redis.io/docs/data-types/json/path/",
                 "name": "JSONPath"
               }
             },
@@ -1190,7 +1190,7 @@
             {
               "type": "link",
               "value": {
-                "href": "https://redis.io/docs/stack/search/",
+                "href": "https://redis.io/docs/interact/search-and-query/",
                 "name": "query and search capabilities"
               }
             }
@@ -1275,7 +1275,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/json/",
+          "href": "https://redis.io/docs/data-types/json/",
           "name": "JSON"
         }
       },
@@ -1286,7 +1286,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search"
         }
       },
@@ -1297,7 +1297,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/timeseries/",
+          "href": "https://redis.io/docs/data-types/timeseries/",
           "name": "Time Series"
         }
       },
@@ -1340,7 +1340,7 @@
             {
               "type": "link",
               "value": {
-                "href": "https://redis.io/docs/stack/search/reference/aggregations/#apply-expressions/",
+                "href": "https://redis.io/docs/interact/search-and-query/search/aggregations/",
                 "name": "Apply Functions"
               }
             },
@@ -1358,7 +1358,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search"
         }
       },

@@ -138,6 +138,7 @@ test('Verify that library and functions can be deleted', async t => {
 test('Verify that library can be uploaded', async t => {
     const configuration = '{"redisgears_2.lock-redis-timeout": 1000}';
     const functionNameFromFile = 'function';
+    const libNameFromFile = 'lib';
 
     await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
     await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
@@ -148,15 +149,16 @@ test('Verify that library can be uploaded', async t => {
     await CommonElementsActions.checkCheckbox(triggersAndFunctionsLibrariesPage.addConfigurationCheckBox, true);
     await triggersAndFunctionsLibrariesPage.sendTextToMonaco(MonacoEditorInputs.Configuration, configuration);
     await t.click(await triggersAndFunctionsLibrariesPage.addLibrarySubmitButton);
-    await t.expect(triggersAndFunctionsLibrariesPage.getLibraryNameSelector(libraryName).exists).ok('the library was not added');
+    await t.expect(triggersAndFunctionsLibrariesPage.getLibraryNameSelector(libNameFromFile).exists).ok('the library was not added');
     await t.expect(triggersAndFunctionsLibrariesPage.getFunctionsByName(LibrariesSections.Functions, functionNameFromFile).exists).ok('the library information was not opened');
 });
 
 test('Verify that function can be invoked', async t => {
     const functionNameFromFile = 'function';
+    const libNameFromFile = 'lib';
     const keyName = ['Hello'];
     const argumentsName = ['world', '!!!' ];
-    const expectedCommand = `TFCALL "${libraryName}.${functionNameFromFile}" "${keyName.length}" "${keyName}" "${argumentsName.join('" "')}"`;
+    const expectedCommand = `TFCALL "${libNameFromFile}.${functionNameFromFile}" "${keyName.length}" "${keyName}" "${argumentsName.join('" "')}"`;
 
     await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
     await t.click(triggersAndFunctionsFunctionsPage.librariesLink);

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 import { last } from 'lodash'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiBadge,
   EuiButtonIcon,
@@ -12,13 +12,13 @@ import {
   EuiPageSideBar,
   EuiToolTip
 } from '@elastic/eui'
-import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
+import HighlightedFeature, { Props as HighlightedFeatureProps } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import { ANALYTICS_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
 import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { getRouterLinkProps } from 'uiSrc/services'
-import { appFeaturePagesHighlightingSelector } from 'uiSrc/slices/app/features'
+import { appFeaturePagesHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import {
   appInfoSelector,
@@ -41,6 +41,7 @@ import Divider from 'uiSrc/components/divider/Divider'
 import { BuildType } from 'uiSrc/constants/env'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
@@ -68,6 +69,7 @@ interface INavigations {
 const NavigationMenu = () => {
   const history = useHistory()
   const location = useLocation()
+  const dispatch = useDispatch()
 
   const [activePage, setActivePage] = useState(Pages.home)
 
@@ -88,6 +90,18 @@ const NavigationMenu = () => {
   const isTriggeredFunctionsPath = (activePage: string) => !!TRIGGERED_FUNCTIONS_ROUTES.find(
     ({ path }) => (`/${last(path.split('/'))}` === activePage)
   )
+
+  const getAdditionPropsForHighlighting = (pageName: string): Omit<HighlightedFeatureProps, 'children'> => {
+    if (BUILD_FEATURES[pageName]?.asPageFeature) {
+      return ({
+        hideFirstChild: true,
+        onClick: () => dispatch(removeFeatureFromHighlighting(pageName)),
+        ...BUILD_FEATURES[pageName]
+      })
+    }
+
+    return {}
+  }
 
   const privateRoutes: INavigations[] = [
     {
@@ -209,9 +223,11 @@ const NavigationMenu = () => {
               {renderOnboardingTourWithChild(
                 (
                   <HighlightedFeature
+                    {...getAdditionPropsForHighlighting(nav.pageName)}
                     key={nav.tooltipText}
                     isHighlight={!!highlightedPages[nav.pageName]?.length}
                     dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
+                    tooltipPosition="right"
                     transformOnHover
                   >
                     <EuiToolTip content={nav.tooltipText} position="right">

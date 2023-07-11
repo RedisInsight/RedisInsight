@@ -68,3 +68,10 @@ export enum MonacoEditorInputs {
     Library = 'library-code',
     LibraryConfiguration = 'library-configuration',
 }
+
+export enum ResourcePath {
+    Databases = '/databases',
+    RedisSentinel = '/redis-sentinel',
+    ClusterDetails = '/cluster-details',
+    SyncFeatures = '/features/sync',
+}

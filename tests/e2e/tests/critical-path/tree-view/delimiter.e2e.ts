@@ -1,24 +1,21 @@
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import {
-    BrowserPage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneBigConfig
-} from '../../../helpers/conf';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseHelper } from '../../../helpers/database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 fixture `Delimiter tests`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .afterEach(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test('Verify that user can see that input is not saved when the Cancel button is clicked', async t => {
     // Switch to tree view

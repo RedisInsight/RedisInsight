@@ -345,6 +345,8 @@ jobs:
     parallelism: << parameters.parallelism >>
     steps:
       - checkout
+      - node/install:
+          node-version: '18.15.0'
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
@@ -1179,6 +1181,12 @@ workflows:
       - windows:
           name: Build app - Windows (stage)
           requires: *stageElectronBuildRequires
+      # e2e desktop tests on AppImage build
+      - e2e-app-image:
+          name: E2ETest (AppImage)
+          parallelism: 2
+          requires:
+            - Build app - Linux (stage)
       # release to AWS (stage)
       - release-aws-test:
           name: Release AWS stage

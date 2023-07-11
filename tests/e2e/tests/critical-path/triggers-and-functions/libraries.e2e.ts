@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import {
     BrowserPage,
     TriggersAndFunctionsFunctionsPage,
@@ -7,12 +7,14 @@ import {
 } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisGears } from '../../../helpers/conf';
 import { FunctionsSections, LibrariesSections, MonacoEditorInputs, rte } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { TriggersAndFunctionLibrary } from '../../../interfaces/triggers-and-functions';
 import { CommonElementsActions } from '../../../common-actions/common-elements-actions';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 const triggersAndFunctionsLibrariesPage = new TriggersAndFunctionsLibrariesPage();
 const triggersAndFunctionsFunctionsPage = new TriggersAndFunctionsFunctionsPage();
 
@@ -37,12 +39,12 @@ fixture `Triggers and Functions`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisGears, ossStandaloneRedisGears.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisGears);
     })
     .afterEach(async() => {
         // Delete database
         await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libraryName}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
     });
 
 test('Verify that when user can see added library', async t => {
@@ -174,7 +176,7 @@ test('Verify that function can be invoked', async t => {
 test.after(async() => {
     await browserPage.deleteKeyByNameFromList(streamKeyName);
     await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libraryName}`);
-    await deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
+    await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
 })('Verify that user can open a Stream key from function', async t => {
     const command1 = `#!js api_version=1.0 name=${libraryName}`;
     const command2 = `redis.registerStreamTrigger('${LIBRARIES_LIST[3].name}', 'name', function(){});`;

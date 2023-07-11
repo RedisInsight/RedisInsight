@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { Common } from '../../../helpers/common';
 import {
@@ -7,17 +7,16 @@ import {
     WorkbenchPage,
     MemoryEfficiencyPage
 } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList, verifySearchFilterValue } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const keyName = Common.generateWord(10);
 const indexName = `idx:${keyName}`;
@@ -34,7 +33,7 @@ fixture `Allow to change database index`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Create 3 keys and index
         await browserPage.Cli.sendCommandsInCli(commands);
     })
@@ -45,7 +44,7 @@ fixture `Allow to change database index`
         // Delete and clear database
         await browserPage.OverviewPanel.changeDbIndex(0);
         await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames.join(' ')}`, `DEL ${keyName}`, `FT.DROPINDEX ${indexName}`]);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Switching between indexed databases', async t => {
     const command = `HSET ${logicalDbKey} "name" "Gillford School" "description" "Gillford School is a centre" "class" "private" "type" "democratic; waldorf" "address_city" "Goudhurst" "address_street" "Goudhurst" "students" 721 "location" "51.112685, 0.451076"`;

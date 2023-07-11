@@ -1,17 +1,14 @@
-import {
-    acceptLicenseTerms
-} from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage, PubSubPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossClusterConfig } from '../../../helpers/conf';
 import { rte, env } from '../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../helpers/pub-sub';
-import {
-    addNewOSSClusterDatabaseApi, addNewStandaloneDatabaseApi,
-    deleteOSSClusterDatabaseApi, deleteStandaloneDatabaseApi
-} from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 fixture `PubSub OSS Cluster 7 tests`
     .meta({ env: env.web, type: 'regression' })
@@ -19,14 +16,14 @@ fixture `PubSub OSS Cluster 7 tests`
 
 test
     .before(async t => {
-        await acceptLicenseTerms();
-        await addNewOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterConfig);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossClusterConfig.ossClusterDatabaseName);
         await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
     .after(async() => {
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
     })
     .meta({ rte: rte.ossCluster })('Verify that SPUBLISH message is displayed for OSS Cluster 7 database', async t => {
         await t.expect(pubSubPage.ossClusterEmptyMessage.exists).ok('SPUBLISH message not displayed');
@@ -41,14 +38,14 @@ test
     });
 test
     .before(async t => {
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
     .after(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
     .meta({ rte: rte.standalone })('Verify that SPUBLISH message is not displayed for other databases expect OSS Cluster 7', async t => {
         await t.expect(pubSubPage.ossClusterEmptyMessage.exists).notOk('No SPUBLISH message still displayed');

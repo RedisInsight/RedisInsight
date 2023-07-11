@@ -1,14 +1,15 @@
-import { join } from 'path';
-import * as os from 'os';
+// import { join } from 'path';
+// import * as os from 'os';
 import * as fs from 'fs';
 import { Chance } from 'chance';
 import * as editJsonFile from 'edit-json-file';
-import { acceptLicenseTerms } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, workingDirectory } from '../../../helpers/conf';
 import { env } from '../../../helpers/constants';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
 const chance = new Chance();
 
 if (fs.existsSync(workingDirectory)) {
@@ -31,7 +32,7 @@ if (fs.existsSync(workingDirectory)) {
         .meta({type: 'critical_path'})
         .page(commonUrl)
         .beforeEach(async() => {
-            await acceptLicenseTerms();
+            await databaseHelper.acceptLicenseTerms();
         });
     test
         .meta({ env: env.desktop })('Verify that user has the ability to update "Create free database" button without changing the app', async t => {

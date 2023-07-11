@@ -60,8 +60,8 @@ export const initWindowHandlers = (
   })
 
   newWindow.on('closed', () => {
-    if (newWindow) {
-      windows.delete(`${newWindow.id}`)
+    if (newWindow && id) {
+      windows.delete(id)
       // newWindow = null
     }
 

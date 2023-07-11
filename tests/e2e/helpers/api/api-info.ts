@@ -1,14 +1,12 @@
 import { t } from 'testcafe';
-import * as request from 'supertest';
-import { Common } from '../common';
-
-const endpoint = Common.getEndpoint();
+import { sendPostRequest } from './api-common';
+import { ResourcePath } from '../constants';
 
 /**
  * Synchronize features
  */
 export async function syncFeaturesApi(): Promise<void> {
-    const response = await request(endpoint).post('/features/sync')
-        .set('Accept', 'application/json');
-    await t.expect(response.status).eql(200, `Synchronization request failed: ${await response.body.message}`);
+    const response = await sendPostRequest(ResourcePath.SyncFeatures);
+
+    await t.expect(await response.status).eql(200);
 }

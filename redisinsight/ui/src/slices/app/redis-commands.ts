@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { isString, uniqBy } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, ICommand, ICommands } from 'uiSrc/constants'
-import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, isStatusSuccessful, checkDeprecatedCommandGroup } from 'uiSrc/utils'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 
 import { AppDispatch, RootState } from '../store'
@@ -31,6 +31,7 @@ const appRedisCommandsSlice = createSlice({
       state.commandGroups = uniqBy(Object.values(payload), 'group')
         .map((item: ICommand) => item.group)
         .filter((group: string) => isString(group))
+        .filter((group: string) => !checkDeprecatedCommandGroup(group))
     },
     getRedisCommandsFailure: (state, { payload }) => {
       state.loading = false

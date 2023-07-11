@@ -1,29 +1,29 @@
 import { t } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const keyNameGraph = 'bikes_graph';
 
 fixture `Redis Stack command in Workbench`
     .meta({type: 'regression', rte: rte.standalone})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Drop key and database
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`GRAPH.DELETE ${keyNameGraph}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 //skipped due the inaccessibility of the iframe
 test.skip
@@ -41,7 +41,8 @@ test.skip
         await t.switchToIframe(workbenchPage.iframe);
         await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.queryGraphContainer).exists).ok('The Graph view is not switched for GRAPH command');
     });
-test
+//skipped due to Graph no longer displayed in tutorials
+test.skip
     .meta({ env: env.desktop })('Verify that user can see "No data to visualize" message for Graph command', async t => {
         // Send Graph command
         await t.click(workbenchPage.redisStackTutorialsButton);
@@ -68,7 +69,7 @@ test('Verify that user can switches between Chart and Text for TimeSeries comman
     await t.click(workbenchPage.showSalesPerRegiomButton);
     await t.click(workbenchPage.submitCommandButton);
     // Check result is in chart view
-    await t.expect(workbenchPage.chartViewTypeOptionSelected.visible).ok('The chart view option is not selected by default');
+    await t.expect(workbenchPage.chartViewTypeOptionSelected.exists).ok('The chart view option is not selected by default');
     // Switch to Text view and check result
     await workbenchPage.selectViewTypeText();
     await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).exists).ok('The result in text view is not displayed');

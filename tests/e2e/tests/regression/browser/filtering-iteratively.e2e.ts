@@ -1,11 +1,13 @@
-import { acceptLicenseTermsAndAddDatabaseApi, acceptLicenseTermsAndAddOSSClusterDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossClusterConfig, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
-import { deleteOSSClusterDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let keys: string[];
 
@@ -13,12 +15,12 @@ fixture `Filtering iteratively in Browser page`
     .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Clear and delete database
         await browserPage.Cli.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .meta({ rte: rte.standalone })('Verify that user can see search results per 500 keys if number of results is 500', async t => {
@@ -49,12 +51,12 @@ test
 test
     .meta({ rte: rte.ossCluster })
     .before(async() => {
-        await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
+        await databaseHelper.acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.Cli.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can search via Scan more for search pattern and selected data type in OSS Cluster DB', async t => {
         // Create new keys
         keys = await Common.createArrayWithKeyValueForOSSCluster(1000);
@@ -74,11 +76,11 @@ test
     .meta({ rte: rte.standalone })
     .before(async() => {
         // Add Big standalone DB
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .after(async() => {
         // Clear and delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user use Scan More in DB with 10-50 millions of keys (when search by pattern/)', async t => {
         // Search all string keys
         await browserPage.searchByKeyName('*');

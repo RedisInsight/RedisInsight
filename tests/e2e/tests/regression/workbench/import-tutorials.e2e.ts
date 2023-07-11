@@ -1,18 +1,19 @@
 import * as path from 'path';
 import { t } from 'testcafe';
 import { rte } from '../../../helpers/constants';
-import {
-    acceptLicenseTermsAndAddDatabaseApi
-} from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { deleteAllKeysFromDB, verifyKeysDisplayedInTheList } from '../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const zipFolderName = 'customTutorials';
 const folderPath = path.join('..', 'test-data', 'upload-tutorials', zipFolderName);
 const folder1 = 'folder-1';
@@ -33,18 +34,18 @@ fixture `Upload custom tutorials`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 /* https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4198,
 https://redislabs.atlassian.net/browse/RI-4302, https://redislabs.atlassian.net/browse/RI-4318
 */
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         tutorialName = `${zipFolderName}${Common.generateWord(5)}`;
         zipFilePath = path.join('..', 'test-data', 'upload-tutorials', `${tutorialName}.zip`);
@@ -54,7 +55,7 @@ test
     .after(async() => {
         // Delete zip file
         await Common.deleteFileFromFolder(zipFilePath);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can upload tutorial with local zip file without manifest.json', async t => {
         // Verify that user can upload custom tutorials on docker version
         internalLinkName1 = 'probably-1';
@@ -143,7 +144,7 @@ test('Verify that user can upload tutorial with URL with manifest.json', async t
 // https://redislabs.atlassian.net/browse/RI-4352
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         tutorialName = `${zipFolderName}${Common.generateWord(5)}`;
         zipFilePath = path.join('..', 'test-data', 'upload-tutorials', `${tutorialName}.zip`);
@@ -158,7 +159,7 @@ test
         await workbenchPage.deleteTutorialByName(tutorialName);
         await t.expect(workbenchPage.tutorialAccordionButton.withText(tutorialName).exists)
         .notOk(`${tutorialName} tutorial is not deleted`);
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can bulk upload data from custom tutorial', async t => {
         const allKeysResults = ['9Commands Processed', '9Success', '0Errors'];
         const absolutePathResults = ['1Commands Processed', '1Success', '0Errors'];

@@ -1,13 +1,15 @@
 import { keyLength, rte } from '../../../helpers/constants';
 import { addKeysViaCli, deleteKeysViaCli, keyTypes } from '../../../helpers/keys';
-import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const keysData = keyTypes.map(object => ({ ...object }));
 keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${Common.generateWord(keyLength)}`);
@@ -23,20 +25,20 @@ fixture `Format switcher functionality`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Create new keys
         await addKeysViaCli(keysData);
     })
     .afterEach(async() => {
         // Clear keys and database
         await deleteKeysViaCli(keysData);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .before(async() => {
         // Add new databases using API
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabasesApi(databasesForAdding);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabasesApi(databasesForAdding);
         // Reload Page
         await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
@@ -46,7 +48,7 @@ test
     .after(async() => {
         // Clear keys and database
         await deleteKeysViaCli(keysData);
-        await deleteStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
     })('Formatters saved selection', async t => {
         // Open key details and select JSON formatter
         await browserPage.openKeyDetails(keysData[0].keyName);
@@ -74,17 +76,17 @@ test('Verify that user can see switcher icon for narrow screen and tooltip by ho
     for (let i = 0; i < keysWithoutSwitcher.length; i++) {
         await browserPage.openKeyDetailsByKeyName(keysWithoutSwitcher[i].keyName);
         // Verify that user don`t see format switcher for JSON, GRAPH, TS keys
-        await t.expect(browserPage.formatSwitcher.visible).notOk(`Formatter is displayed for ${keysWithoutSwitcher[i].textType} type`, { timeout: 1000 });
+        await t.expect(browserPage.formatSwitcher.exists).notOk(`Formatter is displayed for ${keysWithoutSwitcher[i].textType} type`, { timeout: 1000 });
     }
 
-    await browserPage.openKeyDetails(keysData[0].keyName);
+    await browserPage.openKeyDetailsByKeyName(keysData[0].keyName);
     await browserPage.selectFormatter('JSON');
     // Verify icon is not displayed with high screen resolution
-    await t.expect(browserPage.formatSwitcherIcon.visible).notOk('Format switcher Icon is displayed with high screen resolution');
+    await t.expect(browserPage.formatSwitcherIcon.exists).notOk('Format switcher Icon is displayed with high screen resolution');
     // Minimize the window to check icon
     await t.resizeWindow(1500, 900);
     // Verify icon is displayed with low screen resolution
-    await t.expect(browserPage.formatSwitcherIcon.visible).ok('Format switcher Icon is not displayed with low screen resolution');
+    await t.expect(browserPage.formatSwitcherIcon.exists).ok('Format switcher Icon is not displayed with low screen resolution');
     await t.hover(browserPage.formatSwitcher);
     // Verify tooltip is displayed on hover with low screen resolution
     await t.expect(browserPage.tooltip.textContent).contains('JSON', 'Selected formatter is not displayed in tooltip');

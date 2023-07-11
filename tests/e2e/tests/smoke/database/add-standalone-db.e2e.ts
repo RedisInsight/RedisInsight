@@ -1,10 +1,6 @@
 import { t } from 'testcafe';
 import { Chance } from 'chance';
-import {
-    addOSSClusterDatabase,
-    acceptLicenseTerms,
-    deleteDatabase
-} from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import {
     commonUrl,
     ossStandaloneConfig,
@@ -18,6 +14,7 @@ const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const telemetry = new Telemetry();
 const chance = new Chance();
+const databaseHelper = new DatabaseHelper();
 
 const logger = telemetry.createLogger();
 const telemetryEvent = 'CONFIG_DATABASES_OPEN_DATABASE';
@@ -38,13 +35,13 @@ fixture `Add database`
     .meta({ type: 'smoke' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
     });
 test
     .meta({ rte: rte.standalone })
     .requestHooks(logger)
     .after(async() => {
-        await deleteDatabase(databaseName);
+        await databaseHelper.deleteDatabase(databaseName);
     })('Verify that user can add Standalone Database', async() => {
         const connectionTimeout = '20';
         databaseName = `test_standalone-${chance.string({ length: 10 })}`;
@@ -85,9 +82,9 @@ test
 test
     .meta({ env: env.web, rte: rte.ossCluster })
     .after(async() => {
-        await deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
+        await databaseHelper.deleteDatabase(ossClusterConfig.ossClusterDatabaseName);
     })('Verify that user can add OSS Cluster DB', async() => {
-        await addOSSClusterDatabase(ossClusterConfig);
+        await databaseHelper.addOSSClusterDatabase(ossClusterConfig);
         // Verify new connection badge for OSS cluster
         await myRedisDatabasePage.verifyDatabaseStatusIsVisible(ossClusterConfig.ossClusterDatabaseName);
     });

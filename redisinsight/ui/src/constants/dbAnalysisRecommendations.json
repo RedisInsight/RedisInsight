@@ -400,7 +400,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -544,7 +544,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -705,7 +705,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -983,7 +983,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1016,7 +1016,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/",
+          "href": "https://docs.redis.com/latest/stack/search/search-active-active/",
           "name": "Active-Active setup"
         }
       },
@@ -1075,7 +1075,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1108,7 +1108,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/",
+          "href": "https://docs.redis.com/latest/stack/search/search-active-active/",
           "name": "Active-Active"
         }
       },
@@ -1204,7 +1204,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1264,7 +1264,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1385,7 +1385,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1418,7 +1418,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/",
+          "href": "https://docs.redis.com/latest/stack/search/search-active-active/",
           "name": "Active-Active setup"
         }
       },
@@ -1465,7 +1465,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1534,7 +1534,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1611,7 +1611,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },

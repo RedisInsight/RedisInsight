@@ -9,6 +9,7 @@ const DEFAULT_SUMMARY = Object.freeze(
     RedisBloom: { loaded: false },
     RedisJSON: { loaded: false },
     RedisTimeSeries: { loaded: false },
+    'Triggers & Functions': { loaded: false },
     customModules: [],
   },
 );

@@ -1,7 +1,9 @@
 import { t, Selector } from 'testcafe';
-import { getDatabaseIdByName } from '../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../helpers/api/api-database';
 import { BasePage } from './base-page';
 import { AddRedisDatabase } from './components/myRedisDatabase/add-redis-database';
+
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 export class MyRedisDatabasePage extends BasePage {
     AddRedisDatabase = new AddRedisDatabase();
@@ -192,7 +194,7 @@ export class MyRedisDatabasePage extends BasePage {
      * @param databaseName The name of the database
     */
     async verifyDatabaseStatusIsVisible(databaseName: string): Promise<void> {
-        const databaseId = await getDatabaseIdByName(databaseName);
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(databaseName);
         const databaseEditBtn = Selector(`[data-testid=database-status-new-${databaseId}]`);
 
         await t.expect(databaseEditBtn.exists).ok(`Database status is not visible for ${databaseName}`);
@@ -203,7 +205,7 @@ export class MyRedisDatabasePage extends BasePage {
     * @param databaseName The name of the database
     */
     async verifyDatabaseStatusIsNotVisible(databaseName: string): Promise<void> {
-        const databaseId = await getDatabaseIdByName(databaseName);
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(databaseName);
         const databaseEditBtn = Selector(`[data-testid=database-status-new-${databaseId}]`);
 
         await t.expect(databaseEditBtn.exists).notOk(`Database status is still visible for ${databaseName}`);

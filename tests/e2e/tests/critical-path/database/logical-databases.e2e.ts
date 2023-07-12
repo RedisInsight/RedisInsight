@@ -1,19 +1,20 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTerms, deleteDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
 
 fixture `Logical databases`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
     })
     .afterEach(async() => {
         //Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await databaseHelper.deleteDatabase(ossStandaloneConfig.databaseName);
     });
 test('Verify that user can add DB with logical index via host and port from Add DB manually form', async t => {
     const index = '10';

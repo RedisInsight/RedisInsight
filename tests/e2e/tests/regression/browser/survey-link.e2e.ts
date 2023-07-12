@@ -1,12 +1,15 @@
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { env, rte } from '../../../helpers/constants';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 // import { Common } from '../../../helpers/common';
-import { deleteAllDatabasesApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 // const externalPageLink = 'https://www.surveymonkey.com/r/redisinsight';
 
 fixture `User Survey`
@@ -17,7 +20,7 @@ fixture `User Survey`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can use survey link', async t => {
     // Verify that user can see survey link on any page inside of DB
@@ -41,7 +44,7 @@ test('Verify that user can use survey link', async t => {
     await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     await t.expect(browserPage.userSurveyLink.exists).notOk('Survey Link is visible');
     // Verify that user cannot see survey link for welcome page
-    await deleteAllDatabasesApi();
+    await databaseAPIRequests.deleteAllDatabasesApi();
     await browserPage.reloadPage();
     await t.expect(browserPage.userSurveyLink.exists).notOk('Survey Link is visible');
 });

@@ -1,23 +1,25 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 fixture `Default scripts area at Workbench`
     .meta({type: 'regression', rte: rte.standalone})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Go to Workbench page
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })
 test('Verify that user can expand/collapse the enablement area', async t => {
         // Hover over Enablement area
@@ -125,7 +127,6 @@ test('Verify that the same type of content is supported in the “Tutorials” a
             'Working with JSON',
             'Vector Similarity Search',
             'Redis for time series',
-            'Working with graphs',
             'Probabilistic data structures'
         ];
         const command = 'HSET bikes:10000  ';

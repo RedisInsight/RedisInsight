@@ -1,9 +1,12 @@
 import { rte } from '../../../helpers/constants';
-import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { BrowserPage } from '../../../pageObjects';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const COMMAND_APPEND = 'APPEND';
 const COMMAND_GROUP_SET = 'Set';
@@ -12,11 +15,11 @@ fixture `CLI Command helper`
     .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search per command in Command Helper and see relevant results', async t => {
     const commandForSearch = 'ADD';

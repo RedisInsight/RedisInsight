@@ -2,15 +2,17 @@ import { Chance } from 'chance';
 import { Selector } from 'testcafe';
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { deleteAllKeysFromDB, populateDBWithHashes, populateHashWithFields } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 const chance = new Chance();
 
 const keyToAddParameters = { keysCount: 13, keyNameStartWith: 'hashKey' };
@@ -29,7 +31,7 @@ fixture `Memory Efficiency Top Keys Table`
     .page(commonUrl);
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Create keys
         await populateDBWithHashes(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port, keyToAddParameters);
         // Go to Analysis Tools page
@@ -38,7 +40,7 @@ test
     .after(async() => {
         await browserPage.Cli.sendCommandInCli('flushdb');
         await deleteAllKeysFromDB(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port);
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Top Keys displaying in Summary of big keys', async t => {
         // Verify that user can see “-” as length for all unsupported data types
         await browserPage.Cli.sendCommandInCli(mbloomCommand);
@@ -70,7 +72,7 @@ test
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Create keys
         await populateHashWithFields(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port, keyToAddParameters2);
         // Go to Analysis Tools page
@@ -79,7 +81,7 @@ test
     .after(async t => {
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Big highlighted key tooltip', async t => {
         const tooltipText = 'Consider splitting it into multiple keys';
 

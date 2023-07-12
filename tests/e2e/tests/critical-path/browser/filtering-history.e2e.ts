@@ -1,23 +1,25 @@
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig
 } from '../../../helpers/conf';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 fixture `Key name filters history`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test('Recent filters history', async t => {
     const keysForSearch = ['device', 'mobile'];

@@ -1,12 +1,6 @@
 import { Selector, t } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
-import {
-    acceptLicenseTermsAndAddOSSClusterDatabase,
-    acceptLicenseTermsAndAddRECloudDatabase,
-    acceptLicenseTermsAndAddREClusterDatabase,
-    acceptLicenseTermsAndAddSentinelDatabaseApi,
-    deleteDatabase
-} from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import {
     cloudDatabaseConfig,
@@ -15,9 +9,11 @@ import {
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { deleteOSSClusterDatabaseApi, deleteAllDatabasesByConnectionTypeApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let keyName = Common.generateWord(10);
 const verifyCommandsInCli = async(): Promise<void> => {
@@ -40,12 +36,12 @@ fixture `Work with CLI in all types of databases`
 test
     .meta({ rte: rte.reCluster })
     .before(async() => {
-        await acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
+        await databaseHelper.acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
+        await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cluster DB', async() => {
         // Verify that database index switcher not displayed for RE Cluster
         await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cluster DB');
@@ -55,12 +51,12 @@ test
 test
     .meta({ rte: rte.reCloud })
     .before(async() => {
-        await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
+        await databaseHelper.acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(cloudDatabaseConfig.databaseName);
+        await databaseHelper.deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cloud DB', async() => {
         // Verify that database index switcher not displayed for RE Cloud
         await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cloud DB');
@@ -70,12 +66,12 @@ test
 test
     .meta({ rte: rte.ossCluster })
     .before(async() => {
-        await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
+        await databaseHelper.acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can add data via CLI in OSS Cluster DB', async() => {
         // Verify that database index switcher not displayed for RE Cloud
         await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).notOk('Change Db index control displayed for OSS Cluster DB');
@@ -85,12 +81,12 @@ test
 test
     .meta({ env: env.web, rte: rte.sentinel })
     .before(async() => {
-        await acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig);
+        await databaseHelper.acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     })('Verify that user can add data via CLI in Sentinel Primary Group', async() => {
         // Verify that database index switcher displayed for Sentinel
         await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).ok('Change Db index control not displayed for Sentinel DB');

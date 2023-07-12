@@ -1,28 +1,25 @@
-import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
-import {
-    MyRedisDatabasePage,
-    WorkbenchPage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { DatabaseHelper } from '../../../helpers/database';
+import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 fixture `Scripting area at Workbench`
     .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Go to Workbench page
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can comment out any characters in scripting area and all these characters in this raw number are not send in the request', async t => {
     const command1 = 'info';

@@ -1,10 +1,13 @@
 import { rte } from '../../../helpers/constants';
-import { deleteDatabase, acceptTermsAddDatabaseOrConnectToRedisStack } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let keyName = `KeyForSearch*?[]789${Common.generateWord(10)}`;
 let keyName2 = Common.generateWord(10);
@@ -17,12 +20,12 @@ fixture `Filtering per key name in Browser page`
     .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(`${searchedKeyName}${randomValue}`);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search per full key name', async t => {
     randomValue = Common.generateWord(10);
@@ -57,7 +60,7 @@ test
         await browserPage.deleteKeyByName(keyName);
         await browserPage.deleteKeyByName(keyName2);
         await browserPage.deleteKeyByName(searchedValueWithEscapedSymbols);
-        await deleteDatabase(ossStandaloneConfig.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter per combined pattern with ?, *, [xy], [^x], [a-z] and escaped special symbols', async t => {
         keyName = `KeyForSearch${Common.generateWord(10)}`;
         keyName2 = `KeyForSomething${Common.generateWord(10)}`;

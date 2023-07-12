@@ -34,11 +34,7 @@ const CommandHelperWrapper = () => {
   } = useSelector(cliSettingsSelector)
   const { spec: ALL_REDIS_COMMANDS, commandsArray } = useSelector(appRedisCommandsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const lastMatchedCommand = (
-    isEnteringCommand
-    && matchedCommand
-    && !checkDeprecatedModuleCommand(matchedCommand.toUpperCase())
-  )
+  const lastMatchedCommand = (isEnteringCommand && matchedCommand && !checkDeprecatedModuleCommand(matchedCommand))
     ? matchedCommand
     : searchedCommand
 

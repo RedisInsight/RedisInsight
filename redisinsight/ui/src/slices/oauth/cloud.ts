@@ -5,12 +5,15 @@ import { ApiEndpoints, Pages } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
 import { CloudJobs } from 'uiSrc/electron/constants'
+import {
+  INFINITE_MESSAGES,
+  InfiniteMessagesIds
+} from 'uiSrc/components/notifications/components'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { AppDispatch, RootState } from '../store'
-import { ActionBarActions, ActionBarStatus, Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
-import { addErrorNotification } from '../app/notifications'
+import { Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
+import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from '../app/notifications'
 import { checkConnectToInstanceAction, fetchInstancesAction } from '../instances/instances'
-import { setActionBarInitialState, setActionBarState } from '../app/actionBar'
 
 export const initialState: StateAppOAuth = {
   loading: false,
@@ -121,18 +124,16 @@ export function createFreeDbSuccess(history: any) {
         dispatch(checkConnectToInstanceAction(
           id,
           () => {
-            dispatch(setActionBarInitialState())
-
+            dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
             history.push(Pages.browser(id))
           },
+          () => {
+            dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+          }
         ))
       }
 
-      const status = ActionBarStatus.Success
-      const text = 'Success! Your new database was created successfully.'
-      const actions: ActionBarActions[] = [{ onClick: onConnect, label: 'Connect' }]
-
-      dispatch(setActionBarState({ text, status, actions }))
+      dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(onConnect)))
       dispatch(setSignInDialogState(null))
       dispatch(setSelectAccountDialogState(false))
     } catch (_err) {

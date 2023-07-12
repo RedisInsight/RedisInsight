@@ -9,13 +9,16 @@ import {
   EuiTextColor,
 } from '@elastic/eui'
 import { Toast } from '@elastic/eui/src/components/toast/global_toast_list'
+import cx from 'classnames'
 import {
   errorsSelector,
+  infiniteNotificationsSelector,
   messagesSelector,
+  removeInfiniteNotification,
   removeMessage,
 } from 'uiSrc/slices/app/notifications'
 import { setReleaseNotesViewed } from 'uiSrc/slices/app/info'
-import { IError, IMessage } from 'uiSrc/slices/interfaces'
+import { IError, IMessage, InfiniteMessage } from 'uiSrc/slices/interfaces'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 
@@ -26,6 +29,8 @@ import styles from './styles.module.scss'
 const Notifications = () => {
   const messagesData = useSelector(messagesSelector)
   const errorsData = useSelector(errorsSelector)
+  const infiniteNotifications = useSelector(infiniteNotificationsSelector)
+
   const dispatch = useDispatch()
 
   const removeToast = ({ id }: Toast) => {
@@ -90,11 +95,25 @@ const Notifications = () => {
       return errorMessages.DEFAULT(id, message, () => removeToast({ id }), title)
     })
 
+  const getInfiniteToasts = (data: InfiniteMessage[]): Toast[] => data.map((message: InfiniteMessage) => {
+    const { id, Inner, className = '' } = message
+
+    return {
+      id,
+      className: cx(styles.infiniteMessage, className),
+      text: Inner,
+      color: 'success',
+      onClose: () => dispatch(removeInfiniteNotification(id)),
+      toastLifeTimeMs: 3_600_000,
+    }
+  })
+
   return (
     <EuiGlobalToastList
       toasts={[
         ...getSuccessToasts(messagesData),
         ...getErrorsToasts(errorsData),
+        ...getInfiniteToasts(infiniteNotifications),
       ]}
       dismissToast={removeToast}
       toastLifeTimeMs={6000}

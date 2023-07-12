@@ -2,9 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import {
+  mockIOClusterNode1,
+  mockIOClusterNode2,
   mockClientMetadata,
   mockDatabaseConnectionService,
   mockIORedisClient,
+  mockIORedisCluster,
   mockVerboseLibraryReply,
   mockSimpleLibraryReply,
   MockType,
@@ -306,6 +309,15 @@ describe('TriggeredFunctionsService', () => {
         expect(e).toBeInstanceOf(NotFoundException);
       }
     });
+
+    it('should call refresh cluster', async () => {
+      databaseConnectionService.getOrCreateClient.mockResolvedValueOnce(mockIORedisCluster);
+      const refreshClusterSpy = jest.spyOn(service as any, 'refreshCluster');
+      refreshClusterSpy.mockResolvedValue(null);
+
+      await service.upload(mockClientMetadata, { code: mockCode, configuration: mockConfig }, true);
+      expect(refreshClusterSpy).toHaveBeenCalled();
+    });
   });
 
   describe('delete', () => {
@@ -343,6 +355,28 @@ describe('TriggeredFunctionsService', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
       }
+    });
+
+    it('should call refresh cluster', async () => {
+      databaseConnectionService.getOrCreateClient.mockResolvedValueOnce(mockIORedisCluster);
+      const refreshClusterSpy = jest.spyOn(service as any, 'refreshCluster');
+      refreshClusterSpy.mockResolvedValue(null);
+
+      await service.delete(mockClientMetadata, mockLibraryName);
+      expect(refreshClusterSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('refreshCluster', () => {
+    it('should call REDISGEARS_2.REFRESHCLUSTER on each shard', async () => {
+      mockIORedisCluster.sendCommand.mockResolvedValue(null);
+      await service['refreshCluster'](mockIORedisCluster);
+
+      expect(mockIORedisCluster.nodes).toBeCalledTimes(1);
+      expect(mockIOClusterNode1.sendCommand)
+        .toBeCalledWith(jasmine.objectContaining({ name: 'REDISGEARS_2.REFRESHCLUSTER' }));
+      expect(mockIOClusterNode2.sendCommand)
+        .toBeCalledWith(jasmine.objectContaining({ name: 'REDISGEARS_2.REFRESHCLUSTER' }));
     });
   });
 });

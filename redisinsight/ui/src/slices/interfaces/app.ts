@@ -17,7 +17,7 @@ export interface IError extends AxiosError {
 export interface IMessage {
   id: string
   title: string
-  message: string
+  message: string | JSX.Element
   group?: string
   className?: string
 }
@@ -189,9 +189,16 @@ export interface IGlobalNotification {
   categoryColor?: string
 }
 
+export interface InfiniteMessage {
+  id: string
+  Inner: string | JSX.Element
+  className?: string
+}
+
 export interface StateAppNotifications {
   errors: IError[]
   messages: IMessage[]
+  infiniteMessages: InfiniteMessage[]
   notificationCenter: {
     loading: boolean
     lastReceivedNotification: Nullable<IGlobalNotification>

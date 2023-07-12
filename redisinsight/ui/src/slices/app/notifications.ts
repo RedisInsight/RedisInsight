@@ -1,17 +1,18 @@
-import { createSlice, current } from '@reduxjs/toolkit'
+import { createSlice, current, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { isUndefined } from 'lodash'
+import { findIndex, isUndefined } from 'lodash'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getApiErrorName, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 import { NotificationsDto, NotificationDto } from 'apiSrc/modules/notification/dto'
-import { StateAppNotifications } from '../interfaces'
+import { InfiniteMessage, StateAppNotifications } from '../interfaces'
 
 import { AppDispatch, RootState } from '../store'
 
 export const initialState: StateAppNotifications = {
   errors: [],
   messages: [],
+  infiniteMessages: [],
   notificationCenter: {
     loading: false,
     lastReceivedNotification: null,
@@ -109,6 +110,17 @@ const notificationsSlice = createSlice({
     },
     unreadNotifications: (state, { payload }) => {
       state.notificationCenter.totalUnread = payload
+    },
+    addInfiniteNotification: (state, { payload }: PayloadAction<InfiniteMessage>) => {
+      const index = findIndex(state.infiniteMessages, { id: payload.id })
+      if (index === -1) {
+        state.infiniteMessages.push(payload)
+      } else {
+        state.infiniteMessages[index] = payload
+      }
+    },
+    removeInfiniteNotification: (state, { payload }: PayloadAction<string>) => {
+      state.infiniteMessages = state.infiniteMessages.filter((message) => message.id !== payload)
     }
   },
 })
@@ -128,7 +140,9 @@ export const {
   getNotifications,
   getNotificationsSuccess,
   getNotificationsFailed,
-  unreadNotifications
+  unreadNotifications,
+  addInfiniteNotification,
+  removeInfiniteNotification,
 } = notificationsSlice.actions
 
 // Selectors
@@ -136,6 +150,8 @@ export const errorsSelector = (state: RootState) =>
   state.app.notifications.errors
 export const messagesSelector = (state: RootState) =>
   state.app.notifications.messages
+export const infiniteNotificationsSelector = (state: RootState) =>
+  state.app.notifications.infiniteMessages
 export const notificationCenterSelector = (state: RootState) =>
   state.app.notifications.notificationCenter
 

@@ -34,3 +34,26 @@
     color: var(--euiToastLightColor) !important;
   }
 }
+
+.infiniteMessage {
+  :global {
+
+    .euiToastHeader {
+      display: none;
+    }
+
+    .euiToast__closeButton {
+      opacity: 1;
+    }
+
+    .infiniteMessage__title {
+      display: flex;
+      font-size: 18px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+
+      padding-right: 24px;
+    }
+
+  }
+}

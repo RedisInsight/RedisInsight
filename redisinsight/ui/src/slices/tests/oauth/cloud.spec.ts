@@ -2,11 +2,11 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 
 import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
-import { ActionBarActions, ActionBarStatus, OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { loadInstances } from 'uiSrc/slices/instances/instances'
-import { setActionBarState } from 'uiSrc/slices/app/actionBar'
+import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import reducer, {
   initialState,
   setSignInDialogState,
@@ -500,19 +500,16 @@ describe('oauth cloud slice', () => {
     })
 
     describe('createFreeDbSuccess', () => {
-      it('call setActionBarState, setSignInDialogState and setSelectAccountDialogState without error', async () => {
+      it('should call proper actions without error', async () => {
       // Arrange
-        const status = ActionBarStatus.Success
-        const text = 'Success! Your new database was created successfully.'
         const onConnect = () => {}
-        const actions: ActionBarActions[] = [{ onClick: onConnect, label: 'Connect' }]
 
         // Act
         await store.dispatch<any>(createFreeDbSuccess({}))
 
         // Assert
         const expectedActions = [
-          setActionBarState({ text, status, actions }),
+          addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(onConnect)),
           setSignInDialogState(null),
           setSelectAccountDialogState(false),
         ]

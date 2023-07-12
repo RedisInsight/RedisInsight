@@ -9,6 +9,7 @@ import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { CloudJobUnsupportedException } from 'src/modules/cloud/job/exceptions';
 import { SessionMetadata } from 'src/common/models';
 import { DatabaseService } from 'src/modules/database/database.service';
+import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 
 @Injectable()
 export class CloudJobFactory {
@@ -16,6 +17,7 @@ export class CloudJobFactory {
     private readonly cloudDatabaseCapiService: CloudDatabaseCapiService,
     private readonly cloudSubscriptionCapiService: CloudSubscriptionCapiService,
     private readonly cloudTaskCapiService: CloudTaskCapiService,
+    private readonly cloudDatabaseAnalytics: CloudDatabaseAnalytics,
     private readonly databaseService: DatabaseService,
   ) {}
 
@@ -40,6 +42,7 @@ export class CloudJobFactory {
             cloudDatabaseCapiService: this.cloudDatabaseCapiService,
             cloudSubscriptionCapiService: this.cloudSubscriptionCapiService,
             cloudTaskCapiService: this.cloudTaskCapiService,
+            cloudDatabaseAnalytics: this.cloudDatabaseAnalytics,
             databaseService: this.databaseService,
           },
         );

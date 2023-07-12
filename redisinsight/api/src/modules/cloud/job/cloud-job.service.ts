@@ -83,7 +83,7 @@ export class CloudJobService {
   async monitorJob(sessionMetadata: SessionMetadata, dto: MonitorCloudJobDto, client: Socket): Promise<CloudJobInfo> {
     const job = await this.get(sessionMetadata, dto.jobId);
 
-    job.addStateCallback((cloudJob) => {
+    job.addStateCallback(async (cloudJob) => {
       client.emit(CloudJobEvents.Monitor, cloudJob.getState());
     });
 

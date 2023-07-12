@@ -111,17 +111,11 @@ export abstract class CloudJob {
     this.options.stateCallbacks.push(callback);
   }
 
-  private async invokeStateCallback(callback) {
-
-  }
-
   protected changeState(state = {}) {
     Object.entries(state).forEach(([key, value]) => { this[key] = value; });
     try {
       (this.options?.stateCallbacks || []).forEach((cb) => {
-        cb?.(this)?.catch?.((e) => {
-          console.log('======= ERROR CB', e);
-        });
+        cb?.(this)?.catch?.(() => {});
       });
     } catch (e) {
       // silently ignore callback

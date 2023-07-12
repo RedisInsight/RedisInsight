@@ -33,6 +33,8 @@ export enum TelemetryEvents {
   // Events for cloud oauth
   CloudSignInSucceeded = 'CLOUD_SIGN_IN_SUCCEEDED',
   CloudSignInFailed = 'CLOUD_SIGN_IN_FAILED',
+  CloudFreeDatabaseCreated = 'CLOUD_FREE_DATABASE_CREATED',
+  CloudFreeDatabaseFailed = 'CLOUD_FREE_DATABASE_FAILED',
 
   // Events for cli tool
   CliClientCreated = 'CLI_CLIENT_CREATED',

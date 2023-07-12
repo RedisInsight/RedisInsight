@@ -1,10 +1,11 @@
 import { MyRedisDatabasePage, SettingsPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTerms } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const settingsPage = new SettingsPage();
+const databaseHelper = new DatabaseHelper();
 
 const explicitErrorHandler = (): void => {
     window.addEventListener('error', e => {
@@ -19,7 +20,7 @@ fixture `Settings`
     .page(commonUrl)
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
     .beforeEach(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
     });
 test('Verify that user can customize a number of keys to scan in filters per key name or key type', async t => {
     // Go to Settings page

@@ -1,6 +1,4 @@
-import {
-    acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase
-} from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import {
     commonUrl, ossStandaloneConfigEmpty
 } from '../../../helpers/conf';
@@ -25,6 +23,7 @@ const workBenchPage = new WorkbenchPage();
 const slowLogPage = new SlowLogPage();
 const pubSubPage = new PubSubPage();
 const telemetry = new Telemetry();
+const databaseHelper = new DatabaseHelper();
 
 const logger = telemetry.createLogger();
 const indexName = Common.generateWord(10);
@@ -37,11 +36,11 @@ fixture `Onboarding new user tests`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfigEmpty, ossStandaloneConfigEmpty.databaseName);
+        await databaseHelper.acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfigEmpty);
     })
     .afterEach(async() => {
         await browserPage.Cli.sendCommandInCli(`DEL ${indexName}`);
-        await deleteDatabase(ossStandaloneConfigEmpty.databaseName);
+        await databaseHelper.deleteDatabase(ossStandaloneConfigEmpty.databaseName);
     });
 // https://redislabs.atlassian.net/browse/RI-4070, https://redislabs.atlassian.net/browse/RI-4067
 // https://redislabs.atlassian.net/browse/RI-4278

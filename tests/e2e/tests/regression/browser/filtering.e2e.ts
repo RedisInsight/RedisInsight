@@ -1,13 +1,15 @@
 import { Selector } from 'testcafe';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneBigConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { keyTypes } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let keyName = Common.generateWord(20);
 let keyName2 = Common.generateWord(20);
@@ -17,12 +19,12 @@ fixture `Filtering per key name in Browser page`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
     keyName = `KeyForSearch*${Common.generateWord(10)}?[]789`;
@@ -61,7 +63,7 @@ test
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await browserPage.deleteKeyByName(keyName2);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter per pattern with [xy] (matches one symbol: either x or y))', async t => {
         keyName = `KeyForSearch${Common.generateWord(10)}`;
         keyName2 = `KeyForFearch${Common.generateWord(10)}`;
@@ -91,7 +93,7 @@ test
 test
     .after(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that when user clicks on “clear” control with no filter per key name applied all characters and filter per key type are removed, “clear” control is disappeared', async t => {
         keyName = `KeyForSearch${Common.generateWord(10)}`;
 
@@ -124,13 +126,12 @@ test
     });
 test
     .before(async() => {
-        // Add Big standalone DB
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .after(async() => {
         // Delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can filter per exact key without using any patterns in DB with 10 millions of keys', async t => {
         // Create new key
         keyName = `KeyForSearch-${Common.generateWord(10)}`;
@@ -147,12 +148,11 @@ test
     });
 test
     .before(async() => {
-        // Add Big standalone DB
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .after(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can filter per key name using patterns in DB with 10-50 millions of keys', async t => {
         keyName = 'device*';
         await browserPage.selectFilterGroupType(KeyTypesTexts.Set);

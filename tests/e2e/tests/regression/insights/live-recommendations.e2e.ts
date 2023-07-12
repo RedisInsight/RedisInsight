@@ -1,14 +1,9 @@
 import * as path from 'path';
 import { BrowserPage, MemoryEfficiencyPage, MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { RecommendationIds, rte } from '../../../helpers/constants';
-import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
-import {
-    addNewStandaloneDatabaseApi,
-    addNewStandaloneDatabasesApi,
-    deleteStandaloneDatabaseApi,
-    deleteStandaloneDatabasesApi
-} from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { Telemetry } from '../../../helpers/telemetry';
 import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
@@ -20,6 +15,8 @@ const workbenchPage = new WorkbenchPage();
 const telemetry = new Telemetry();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const recommendationsActions = new RecommendationsActions();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const databasesForAdding = [
     { host: ossStandaloneV5Config.host, port: ossStandaloneV5Config.port, databaseName: ossStandaloneV5Config.databaseName },
@@ -46,27 +43,27 @@ fixture `Live Recommendations`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
         await refreshFeaturesTestData();
         await modifyFeaturesConfigJson(featuresConfig);
         await updateControlNumber(47.2);
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     })
     .afterEach(async() => {
         await refreshFeaturesTestData();
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .before(async() => {
         // Add new databases using API
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
         await refreshFeaturesTestData();
         await modifyFeaturesConfigJson(featuresConfig);
         await updateControlNumber(47.2);
-        await addNewStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.addNewStandaloneDatabasesApi(databasesForAdding);
         // Reload Page
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
@@ -77,7 +74,7 @@ test
         await refreshFeaturesTestData();
         await browserPage.OverviewPanel.changeDbIndex(0);
         await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify Insights panel Recommendations displaying', async t => {
         await browserPage.InsightsPanel.toggleInsightsPanel(true);
         // Verify that "Welcome to recommendations" panel displayed when there are no recommendations
@@ -108,16 +105,16 @@ test
 test
     .requestHooks(logger)
     .before(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
         await refreshFeaturesTestData();
         await modifyFeaturesConfigJson(featuresConfig);
         await updateControlNumber(47.2);
-        await addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV5Config);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
     }).after(async() => {
         await refreshFeaturesTestData();
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can upvote recommendations', async() => {
         const notUsefulVoteOption = 'not useful';
         const usefulVoteOption = 'useful';
@@ -188,15 +185,15 @@ test('Verify that user can snooze recommendation', async t => {
 });
 test
     .before(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
         await refreshFeaturesTestData();
         await modifyFeaturesConfigJson(featuresConfig);
         await updateControlNumber(47.2);
-        await addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV5Config);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
     }).after(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
         await refreshFeaturesTestData();
     })('Verify that recommendations from database analysis are displayed in Insight panel above live recommendations', async t => {
         const redisVersionRecomSelector = browserPage.InsightsPanel.getRecommendationByName(redisVersionRecom);
@@ -237,7 +234,7 @@ test
     .after(async() => {
         await refreshFeaturesTestData();
         await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify that key name is displayed for Insights and DA recommendations', async t => {
         const cliCommand = `JSON.SET ${keyName} $ '{ "model": "Hyperion", "brand": "Velorim"}'`;
         await browserPage.Cli.sendCommandInCli(cliCommand);

@@ -1,11 +1,11 @@
-import {MyRedisDatabasePage} from '../../../pageObjects';
-import {
-    commonUrl
-} from '../../../helpers/conf';
-import {env, rte} from '../../../helpers/constants';
-import {acceptLicenseTerms} from '../../../helpers/database';
+import { MyRedisDatabasePage } from '../../../pageObjects';
+import { commonUrl } from '../../../helpers/conf';
+import { env, rte } from '../../../helpers/constants';
+import { DatabaseHelper } from '../../../helpers/database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
+
 const standalonePorts = [8100, 8101, 8102, 8103, 12000];
 const otherPorts = [28100, 8200];
 
@@ -13,7 +13,7 @@ fixture `Autodiscovery`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
     });
 test
     .meta({ env: env.desktop, rte: rte.none })

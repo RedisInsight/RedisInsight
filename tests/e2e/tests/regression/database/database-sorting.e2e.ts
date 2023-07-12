@@ -1,10 +1,5 @@
-import { acceptLicenseTerms, clickOnEditDatabaseByName } from '../../../helpers/database';
-import {
-    discoverSentinelDatabaseApi,
-    addNewOSSClusterDatabaseApi,
-    addNewStandaloneDatabaseApi,
-    deleteAllDatabasesApi, deleteAllDatabasesByConnectionTypeApi
-} from '../../../helpers/api/api-database';
+import { DatabaseHelper } from '../../../helpers/database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import {
@@ -16,6 +11,9 @@ import {
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const databases = [
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: ossStandaloneConfig.databaseName },
     { host: ossClusterConfig.ossClusterHost, port: ossClusterConfig.ossClusterPort, databaseName: ossClusterConfig.ossClusterDatabaseName },
@@ -38,20 +36,20 @@ fixture `Remember database sorting`
     .page(commonUrl)
     .beforeEach(async() => {
         // Delete all existing databases
-        await deleteAllDatabasesApi();
+        await databaseAPIRequests.deleteAllDatabasesApi();
         // Add new databases using API
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await addNewOSSClusterDatabaseApi(ossClusterConfig);
-        await discoverSentinelDatabaseApi(ossSentinelConfig, 1);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.discoverSentinelDatabaseApi(ossSentinelConfig, 1);
         // Reload Page
         await browserPage.reloadPage();
     })
     .afterEach(async() => {
         // Clear and delete databases
-        await deleteAllDatabasesByConnectionTypeApi('STANDALONE');
-        await deleteAllDatabasesByConnectionTypeApi('CLUSTER');
-        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('STANDALONE');
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('CLUSTER');
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     });
 test('Verify that sorting on the list of databases saved when database opened', async t => {
     // Sort by Connection Type
@@ -81,7 +79,7 @@ test('Verify that user has the same sorting if db name is changed', async t => {
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
     await myRedisDatabasePage.compareDatabases(actualDatabaseList, await sortList());
     // Change DB name inside of sorted list
-    await clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+    await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
     await t.click(myRedisDatabasePage.editAliasButton);
     await t.typeText(myRedisDatabasePage.aliasInput, newDBName, { replace: true, paste: true });
     await t.pressKey('enter');

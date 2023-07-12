@@ -1,15 +1,17 @@
 import { Selector } from 'testcafe';
 import { BrowserPage, MyRedisDatabasePage, ClusterDetailsPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddOSSClusterDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl, ossClusterConfig } from '../../../helpers/conf';
-import { deleteOSSClusterDatabaseApi, getClusterNodesApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const clusterDetailsPage = new ClusterDetailsPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const headerColumns = {
     'Type': 'OSS Cluster',
@@ -25,12 +27,12 @@ fixture `Overview`
     .meta({ type: 'critical_path', rte: rte.ossCluster })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
+        await databaseHelper.acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .afterEach(async() => {
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
     });
 test('Overview tab header for OSS Cluster', async t => {
     const uptime = /[1-9][0-9]\s|[0-9]\smin|[1-9][0-9]\smin|[0-9]\sh/;
@@ -50,11 +52,11 @@ test
     //Clear database and delete
         await browserPage.Cli.sendCommandInCli(`DEL ${keyName}`);
         await browserPage.Cli.sendCommandInCli('FT.DROPINDEX idx:schools DD');
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Primary node statistics table displaying', async t => {
     // Remember initial table values
         const initialValues: number[] = [];
-        const nodes = (await getClusterNodesApi(ossClusterConfig)).sort();
+        const nodes = (await databaseAPIRequests.getClusterNodesApi(ossClusterConfig)).sort();
         const columns = ['Commands/s', 'Clients', 'Total Keys', 'Network Input', 'Network Output', 'Total Memory'];
 
         for (const column in columns) {

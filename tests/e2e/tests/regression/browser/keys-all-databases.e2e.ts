@@ -1,13 +1,6 @@
 import { Selector, t } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
-import {
-    acceptLicenseTermsAndAddDatabaseApi,
-    acceptLicenseTermsAndAddOSSClusterDatabase,
-    acceptLicenseTermsAndAddRECloudDatabase,
-    acceptLicenseTermsAndAddREClusterDatabase,
-    acceptLicenseTermsAndAddSentinelDatabaseApi,
-    deleteDatabase
-} from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     cloudDatabaseConfig,
@@ -18,16 +11,14 @@ import {
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import {
-    deleteOSSClusterDatabaseApi,
-    deleteStandaloneDatabaseApi,
-    deleteAllDatabasesByConnectionTypeApi
-} from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { BrowserActions } from '../../../common-actions/browser-actions';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserActions = new BrowserActions();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let keyName = Common.generateWord(10);
 const verifyKeysAdded = async(): Promise<void> => {
@@ -50,59 +41,59 @@ fixture `Work with keys in all types of databases`
 test
     .meta({ rte: rte.reCluster })
     .before(async() => {
-        await acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
+        await databaseHelper.acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(redisEnterpriseClusterConfig.databaseName);
+        await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add Key in RE Cluster DB', async() => {
         await verifyKeysAdded();
     });
 test
     .meta({ rte: rte.reCloud })
     .before(async() => {
-        await acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
+        await databaseHelper.acceptLicenseTermsAndAddRECloudDatabase(cloudDatabaseConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteDatabase(cloudDatabaseConfig.databaseName);
+        await databaseHelper.deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add Key in RE Cloud DB', async() => {
         await verifyKeysAdded();
     });
 test
     .meta({ rte: rte.ossCluster })
     .before(async() => {
-        await acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig, ossClusterConfig.ossClusterDatabaseName);
+        await databaseHelper.acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can add Key in OSS Cluster DB', async() => {
         await verifyKeysAdded();
     });
 test
     .meta({ env: env.web, rte: rte.sentinel })
     .before(async() => {
-        await acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig);
+        await databaseHelper.acceptLicenseTermsAndAddSentinelDatabaseApi(ossSentinelConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
-        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     })('Verify that user can add Key in Sentinel Primary Group', async() => {
         await verifyKeysAdded();
     });
 test
     .meta({ rte: rte.standalone })
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .after(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can scroll key virtualized table and see keys info displayed', async() => {
         const listItems = browserPage.virtualTableContainer.find(browserPage.cssVirtualTableRow);
         const maxNumberOfScrolls = 15;

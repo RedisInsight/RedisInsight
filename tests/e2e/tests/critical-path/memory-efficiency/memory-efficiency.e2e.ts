@@ -1,15 +1,17 @@
 import { Chance } from 'chance';
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { verifySearchFilterValue } from '../../../helpers/keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 const chance = new Chance();
 
 const hashKeyName = 'test:Hash1';
@@ -25,12 +27,12 @@ fixture `Memory Efficiency`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .afterEach(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('No reports/keys message and report tooltip', async t => {
     const noReportsMessage = 'No Reports foundRun "New Analysis" to generate first report.';
@@ -53,7 +55,7 @@ test('No reports/keys message and report tooltip', async t => {
 });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);
         await browserPage.addStreamKey(streamKeyName, 'field', 'value', keysTTL[2]);
         await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value', keysTTL[2]);
@@ -72,7 +74,7 @@ test
         await browserPage.deleteKeyByName(hashKeyName);
         await browserPage.deleteKeyByName(streamKeyName);
         await browserPage.deleteKeyByName(streamKeyNameDelimiter);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Keyspaces displaying in Summary per keyspaces table', async t => {
         const noNamespacesMessage = 'No namespaces to displayConfigure the delimiter in Tree View to customize the namespaces displayed.';
 
@@ -129,7 +131,7 @@ test
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await browserPage.addHashKey(keySpaces[4], keysTTL[2], hashValue);
         await browserPage.Cli.addKeysFromCliWithDelimiter('MSET', 5);
         await t.click(browserPage.treeViewButton);
@@ -141,7 +143,7 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
         await browserPage.deleteKeyByName(keySpaces[4]);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Namespaces sorting', async t => {
         // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
@@ -174,7 +176,7 @@ test
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await browserPage.addHashKey(hashKeyName, keysTTL[2], hashValue);
         await t.click(browserPage.treeViewButton);
         // Go to Analysis Tools page
@@ -184,7 +186,7 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
         await browserPage.deleteKeyByName(hashKeyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Memory efficiency context saved', async t => {
         // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
@@ -201,7 +203,7 @@ test
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await browserPage.addHashKey(hashKeyName, keysTTL[0], hashValue);
         await browserPage.addStreamKey(streamKeyName, 'field', 'value', keysTTL[1]);
         await browserPage.addStreamKey(streamKeyNameDelimiter, 'field', 'value');
@@ -213,7 +215,7 @@ test
         await browserPage.deleteKeyByName(hashKeyName);
         await browserPage.deleteKeyByName(streamKeyName);
         await browserPage.deleteKeyByName(streamKeyNameDelimiter);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Summary per expiration time', async t => {
         const yAxis = 218;
         // Create new report
@@ -235,12 +237,12 @@ test
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async() => {
         await browserPage.Cli.sendCommandInCli(`del ${keyNamesReport.join(' ')}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Analysis history', async t => {
         const numberOfKeys: string[] = [];
         const dbSize = (await browserPage.Cli.getSuccessCommandResultFromCli('dbsize')).split(' ');

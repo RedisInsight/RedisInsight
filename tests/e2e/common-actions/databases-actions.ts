@@ -1,9 +1,10 @@
 import { Selector, t } from 'testcafe';
 import * as fs from 'fs';
 import { MyRedisDatabasePage } from '../pageObjects';
-import { getDatabaseIdByName } from '../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 export class DatabasesActions {
     /**
@@ -43,7 +44,7 @@ export class DatabasesActions {
      */
     async selectDatabasesByNames(databases: string[]): Promise<void> {
         for (const db of databases) {
-            const databaseId = await getDatabaseIdByName(db);
+            const databaseId = await databaseAPIRequests.getDatabaseIdByName(db);
             const databaseCheckbox = Selector(`[data-test-subj=checkboxSelectRow-${databaseId}]`);
             await t.click(databaseCheckbox);
         }

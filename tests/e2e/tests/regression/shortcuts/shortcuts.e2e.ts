@@ -1,17 +1,18 @@
 // import { ClientFunction } from 'testcafe';
 import { rte, env } from '../../../helpers/constants';
-import { acceptLicenseTerms } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
 // const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `Shortcuts`
     .meta({ type: 'regression', rte: rte.none })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
     });
 test
     .meta({ env: env.web })('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shortcuts" button in Help Center', async t => {

@@ -1,46 +1,70 @@
 import * as request from 'supertest';
 import { Common } from '../common';
-import { Methods } from '../constants';
 
 const endpoint = Common.getEndpoint();
+const jsonType = 'application/json';
 
 /**
- * Send request using API
- * @param method http method
+ * Send GET request using API
  * @param resourcePath URI path segment
- * @param statusCode Expected status code of the response
+ */
+export async function sendGetRequest(resourcePath: string): Promise<any> {
+    const windowId = Common.getWindowId();
+    let requestEndpoint: any;
+
+    requestEndpoint = request(endpoint)
+        .get(resourcePath)
+        .set('Accept', jsonType);
+    if (await windowId) {
+        requestEndpoint.set('X-Window-Id', await windowId);
+    }
+
+    return requestEndpoint;
+}
+
+/**
+ * Send POST request using API
+ * @param resourcePath URI path segment
  * @param body Request body
  */
-export async function sendRequest(
-    method: string,
+export async function sendPostRequest(
     resourcePath: string,
-    statusCode: number,
     body?: Record<string, unknown>
 ): Promise<any> {
     const windowId = Common.getWindowId();
-    let requestEndpoint;
+    let requestEndpoint: any;
 
-    if (method === Methods.post) {
-        (requestEndpoint = request(endpoint)
-            .post(resourcePath)
-            .send(body)
-            .set('Accept', 'application/json'));
+    requestEndpoint = request(endpoint)
+        .post(resourcePath)
+        .send(body)
+        .set('Accept', jsonType);
+
+    if (await windowId) {
+        requestEndpoint.set('X-Window-Id', await windowId);
     }
-    else if (method === Methods.get) {
-        (requestEndpoint = request(endpoint)
-            .get(resourcePath)
-            .set('Accept', 'application/json'));
-    }
-    else if (method === Methods.delete) {
-        (requestEndpoint = request(endpoint)
-            .delete(resourcePath)
-            .send(body)
-            .set('Accept', 'application/json'));
-    }
+    return requestEndpoint;
+}
+
+/**
+ * Send DELETE request using API
+ * @param resourcePath URI path segment
+ * @param body Request body
+ */
+export async function sendDeleteRequest(
+    resourcePath: string,
+    body?: Record<string, unknown>
+): Promise<any> {
+    const windowId = Common.getWindowId();
+    let requestEndpoint: any;
+
+    requestEndpoint = request(endpoint)
+        .delete(resourcePath)
+        .send(body)
+        .set('Accept', jsonType);
 
     if (await windowId) {
         requestEndpoint.set('X-Window-Id', await windowId);
     }
 
-    return await requestEndpoint.expect(statusCode);
+    return requestEndpoint;
 }

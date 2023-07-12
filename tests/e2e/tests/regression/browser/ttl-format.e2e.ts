@@ -1,13 +1,15 @@
 import { Selector } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { keyTypes } from '../../../helpers/keys';
 import { rte, COMMANDS_TO_CREATE_KEY, keyLength } from '../../../helpers/constants';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const keyName = Common.generateWord(20);
 const keysData = keyTypes.map(object => ({ ...object })).slice(0, 6);
@@ -25,14 +27,14 @@ fixture `TTL values in Keys Table`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Clear and delete database
         for (let i = 0; i < keysData.length; i++) {
             await browserPage.deleteKey();
         }
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see TTL in the list of keys rounded down to the nearest unit', async t => {
     // Create new keys with TTL
@@ -54,7 +56,7 @@ test('Verify that user can see TTL in the list of keys rounded down to the neare
 });
 test
     .after(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that Key is deleted if TTL finishes', async t => {
         // Create new key with TTL
         const TTL = 15;

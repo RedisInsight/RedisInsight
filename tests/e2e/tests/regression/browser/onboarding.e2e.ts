@@ -45,7 +45,7 @@ fixture `Onboarding new user tests`
     });
 // https://redislabs.atlassian.net/browse/RI-4070, https://redislabs.atlassian.net/browse/RI-4067
 // https://redislabs.atlassian.net/browse/RI-4278
-test.only('Verify onboarding new user steps', async t => {
+test('Verify onboarding new user steps', async t => {
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.expect(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterPanel.visible).ok('help center panel is not opened');
     // Verify that user can reset onboarding

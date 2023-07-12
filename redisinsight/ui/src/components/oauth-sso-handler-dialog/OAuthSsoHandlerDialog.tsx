@@ -5,7 +5,7 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { oauthCloudUserDataSelector, setSignInDialogState } from 'uiSrc/slices/oauth/cloud'
+import { setSignInDialogState } from 'uiSrc/slices/oauth/cloud'
 
 export interface Props {
   children: (ssoCloudHandlerClick: (e: React.MouseEvent, source: OAuthSocialSource) => void) => React.ReactElement
@@ -13,7 +13,6 @@ export interface Props {
 
 const OAuthSsoHandlerDialog = ({ children }: Props) => {
   const { [FeatureFlags.cloudSso]: feature } = useSelector(appFeatureFlagsFeaturesSelector)
-  const user = useSelector(oauthCloudUserDataSelector)
 
   const dispatch = useDispatch()
 
@@ -24,12 +23,6 @@ const OAuthSsoHandlerDialog = ({ children }: Props) => {
       return
     }
     e?.preventDefault()
-
-    const isSignedIn = !!user
-
-    if (isSignedIn) {
-      return
-    }
 
     dispatch(setSignInDialogState?.(source))
 

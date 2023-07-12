@@ -15,7 +15,7 @@ import {
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceSelector, freeInstanceSelector } from 'uiSrc/slices/instances/instances'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
@@ -48,6 +48,7 @@ const Recommendations = () => {
   const { items: guides } = useSelector(workbenchGuidesSelector)
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { provider } = useSelector(connectedInstanceSelector)
+  const freeInstance = useSelector(freeInstanceSelector)
   const { recommendations = [] } = data ?? {}
 
   const { theme } = useContext(ThemeContext)
@@ -159,10 +160,12 @@ const Recommendations = () => {
       {renderRecommendationBadgesLegend()}
       <div className={styles.recommendationsContainer}>
         {sortRecommendations(recommendations).map(({ name, params, vote }) => {
+          let content = []
           const {
             id = '',
             title = '',
-            content = [],
+            content: initContent = [],
+            contentSSO = null,
             badges = [],
             redisStack = false,
             tutorial,
@@ -172,6 +175,8 @@ const Recommendations = () => {
           if (!(name in recommendationsContent)) {
             return null
           }
+
+          content = freeInstance ? contentSSO || initContent : initContent
 
           return (
             <div key={id} className={styles.recommendation} data-testid={`${id}-recommendation`}>
@@ -188,7 +193,7 @@ const Recommendations = () => {
                 data-testid={`${id}-accordion`}
               >
                 <EuiPanel className={styles.accordionContent} color="subdued">
-                  {renderRecommendationContent(content, params, telemetryEvent ?? name)}
+                  {renderRecommendationContent(content, params, { telemetryName: telemetryEvent ?? name })}
                   {!!params?.keys?.length && (
                     <RecommendationCopyComponent
                       keyName={params.keys[0]}

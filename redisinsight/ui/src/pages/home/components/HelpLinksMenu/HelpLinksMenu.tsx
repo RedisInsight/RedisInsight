@@ -11,6 +11,8 @@ import cx from 'classnames'
 
 import { IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -38,19 +40,32 @@ const HelpLinksMenu = ({ emptyAnchor, onLinkClick, items, buttonText }: Props) =
     }
   }
 
-  const menuItems = items?.map(({ id, url, title, primary }) => (
+  const MenuItem = ({ id, url, title, primary, onClick }: IHelpGuide) => (
     <EuiContextMenuItem className={cx(styles.item, { [styles.itemEmpty]: emptyAnchor })} key={id}>
       <EuiLink
         external={false}
         href={url}
         target="_blank"
-        onClick={() => handleLinkClick(id)}
+        onClick={(e) => {
+          onClick?.(e, OAuthSocialSource.ListOfDatabases)
+          handleLinkClick(id)
+        }}
       >
         <EuiText style={{ fontWeight: primary ? 500 : 400 }}>
           {title}
         </EuiText>
       </EuiLink>
     </EuiContextMenuItem>
+  )
+
+  const menuItems = items?.map((item) => (
+    item.primary ? (
+      <OAuthSsoHandlerDialog>
+        {(ssoCloudHandlerClick) => (
+          <MenuItem {...item} onClick={ssoCloudHandlerClick} />
+        )}
+      </OAuthSsoHandlerDialog>
+    ) : <MenuItem {...item} />
   ))
 
   const button = (

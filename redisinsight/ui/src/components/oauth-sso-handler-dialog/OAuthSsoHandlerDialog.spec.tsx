@@ -77,7 +77,7 @@ describe('OAuthSsoHandlerDialog', () => {
     expect(store.getActions()).toEqual([])
   })
 
-  it(`setSignInDialogState should called if ${FeatureFlags.cloudSso} is enabled and user not signed in`, () => {
+  it(`setSignInDialogState should called if ${FeatureFlags.cloudSso} is enabled`, () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
 
@@ -102,27 +102,5 @@ describe('OAuthSsoHandlerDialog', () => {
         source: OAuthSocialSource.BrowserContentMenu
       }
     })
-  })
-
-  it(`setSignInDialogState should not called if ${FeatureFlags.cloudSso} is enabled and user signed in`, () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockImplementation(() => (
-      { [FeatureFlags.cloudSso]: { flag: true } }
-    ));
-    (oauthCloudUserDataSelector as jest.Mock).mockImplementation(() => (
-      { id: '123' }
-    ))
-
-    const { queryByTestId } = render(
-      <OAuthSsoHandlerDialog>
-        {(ssoCloudHandlerClick) => (childrenMock(ssoCloudHandlerClick, OAuthSocialSource.BrowserContentMenu))}
-      </OAuthSsoHandlerDialog>
-    )
-
-    fireEvent.click(queryByTestId('link'))
-
-    expect(sendEventTelemetry).not.toBeCalled()
-    expect(store.getActions()).toEqual([])
   })
 })

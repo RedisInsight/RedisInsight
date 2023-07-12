@@ -26,6 +26,7 @@ enum BrowserStorageItem {
   onboardingStep = 'onboardingStep',
   recommendationsViewed = 'recommendationsViewed',
   showHiddenRecommendations = 'showHiddenRecommendations',
+  OAuthJobId = 'OAuthJobId',
 }
 
 export default BrowserStorageItem

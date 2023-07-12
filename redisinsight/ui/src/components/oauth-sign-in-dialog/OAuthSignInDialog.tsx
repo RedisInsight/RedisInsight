@@ -20,17 +20,16 @@ import { OAuthAdvantages } from './constants'
 import styles from './styles.module.scss'
 
 const OAuthSignInDialog = () => {
-  const { source, isOpenSignInDialog } = useSelector(oauthCloudSelector)
+  const { isOpenSignInDialog } = useSelector(oauthCloudSelector)
 
   const dispatch = useDispatch()
 
   const handleOnClose = useCallback(() => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_FORM_CLOSED,
-      eventData: { source },
     })
     dispatch(setSignInDialogState(null))
-  }, [source])
+  }, [])
 
   if (!isOpenSignInDialog) return null
 

@@ -6,6 +6,7 @@ import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
+import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { Instance } from './instances'
 
 export interface IError extends AxiosError {
@@ -215,6 +216,7 @@ export interface StateAppOAuth {
   error: string
   message: string
   source: Nullable<OAuthSocialSource>
+  job: Nullable<CloudJobInfo>
   user: {
     error: string
     loading: boolean
@@ -247,8 +249,8 @@ export enum OAuthSocialSource {
 
 export interface StateAppActionBar {
   status: ActionBarStatus
-  text: string
-  actions: ActionBarActions[]
+  text?: string
+  actions?: ActionBarActions[]
 }
 
 export interface ActionBarActions {

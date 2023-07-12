@@ -15,16 +15,19 @@ import { useHistory } from 'react-router-dom'
 
 import {
   activateAccount,
-  createFreeDb,
-  createFreeDbSuccess,
+  createFreeDbJob,
   oauthCloudSelector,
   oauthCloudUserDataSelector,
+  oauthCloudUserSelector,
   setSelectAccountDialogState,
 } from 'uiSrc/slices/oauth/cloud'
 import { Nullable } from 'uiSrc/utils'
-import { cloudSelector } from 'uiSrc/slices/instances/cloud'
+import { cloudSelector, fetchSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { Pages } from 'uiSrc/constants'
+import { addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 
+import { INFINITE_MESSAGES, InfiniteMessagesIds } from '../notifications/components'
 import styles from './styles.module.scss'
 
 interface FormValues {
@@ -35,6 +38,7 @@ const OAuthSelectAccountDialog = () => {
   const { isAutodiscoverySSO } = useSelector(cloudSelector)
   const { accounts = [], id } = useSelector(oauthCloudUserDataSelector) ?? {}
   const { isOpenSelectAccountDialog } = useSelector(oauthCloudSelector)
+  const { loading } = useSelector(oauthCloudUserSelector)
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -57,7 +61,19 @@ const OAuthSelectAccountDialog = () => {
   }
 
   const onActivateAccountSuccess = useCallback(() => {
-    dispatch(createFreeDb(() => dispatch(createFreeDbSuccess(history))))
+    if (isAutodiscoverySSO) {
+      dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB))
+      dispatch(fetchSubscriptionsRedisCloud(
+        null,
+        () => {
+          dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+          history.push(Pages.redisCloudSubscriptions)
+        },
+      ))
+    } else {
+      dispatch(createFreeDbJob())
+    }
+    dispatch(setSelectAccountDialogState(false))
 
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_ACCOUNT_SELECTED,
@@ -129,8 +145,9 @@ const OAuthSelectAccountDialog = () => {
           </EuiButton>
           <EuiButton
             fill
+            isDisabled={loading}
+            isLoading={loading}
             color="secondary"
-            // isDisabled={loading}
             className={styles.button}
             onClick={() => formik.handleSubmit()}
             data-testid="submit-oauth-select-account-dialog"

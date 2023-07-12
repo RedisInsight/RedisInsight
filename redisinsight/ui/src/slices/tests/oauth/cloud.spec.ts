@@ -4,9 +4,8 @@ import { AxiosError } from 'axios'
 import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
-import { loadInstances } from 'uiSrc/slices/instances/instances'
-import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
+import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import reducer, {
   initialState,
   setSignInDialogState,
@@ -21,10 +20,11 @@ import reducer, {
   addFreeDbFailure,
   addFreeDbSuccess,
   addFreeDb,
-  createFreeDb,
+  createFreeDbJob,
   setSelectAccountDialogState,
   createFreeDbSuccess,
   activateAccount,
+  setJob,
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -141,7 +141,7 @@ describe('oauth cloud slice', () => {
 
   describe('getUserInfoSuccess', () => {
     it('should properly set the state with fetched data', () => {
-      const data = {}
+      const data = { id: 12 }
       // Arrange
       const state = {
         ...initialState,
@@ -220,7 +220,7 @@ describe('oauth cloud slice', () => {
 
   describe('addFreeDbSuccess', () => {
     it('should properly set the state with fetched data', () => {
-      const data = {}
+      const data = { host: 'localhost', port: 6379, id: 'id', modules: [], version: '1' }
       // Arrange
       const state = {
         ...initialState,
@@ -228,6 +228,7 @@ describe('oauth cloud slice', () => {
           ...initialState.user,
           freeDb: {
             ...initialState.user.freeDb,
+            data,
             loading: false,
           }
         }
@@ -355,10 +356,11 @@ describe('oauth cloud slice', () => {
         const expectedActions = [
           getUserInfo(),
           getUserInfoSuccess(responsePayload.data),
+          setSignInDialogState(null),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
-      it.only('call setSelectAccountDialogState and setSignInDialogState when fetch is successed and accounts > 1', async () => {
+      it('call setSelectAccountDialogState and setSignInDialogState when fetch is successed and accounts > 1', async () => {
       // Arrange
         const data = { id: 123123, accounts: [{}, {}] }
         const responsePayload = { data, status: 200 }
@@ -372,6 +374,7 @@ describe('oauth cloud slice', () => {
         const expectedActions = [
           getUserInfo(),
           setSelectAccountDialogState(true),
+          removeInfiniteNotification(InfiniteMessagesIds.oAuth),
           getUserInfoSuccess(responsePayload.data),
           setSignInDialogState(null),
         ]
@@ -404,22 +407,21 @@ describe('oauth cloud slice', () => {
     })
 
     describe('createFreeDb', () => {
-      it('call both addFreeDbSuccess and fetchInstancesAction when post is successed', async () => {
+      it('call both addFreeDb and setJob when post is successed', async () => {
       // Arrange
-        const data = { id: 123123 }
+        const data = { id: '123123' }
         const responsePayload = { data, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(createFreeDb())
+        await store.dispatch<any>(createFreeDbJob())
 
         // Assert
         const expectedActions = [
           addFreeDb(),
-          addFreeDbSuccess(responsePayload.data),
-          loadInstances(),
+          setJob(data.id),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -437,7 +439,7 @@ describe('oauth cloud slice', () => {
         apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(createFreeDb())
+        await store.dispatch<any>(createFreeDbJob())
 
         // Assert
         const expectedActions = [
@@ -502,15 +504,15 @@ describe('oauth cloud slice', () => {
     describe('createFreeDbSuccess', () => {
       it('should call proper actions without error', async () => {
       // Arrange
+        const id = '123'
         const onConnect = () => {}
 
         // Act
-        await store.dispatch<any>(createFreeDbSuccess({}))
+        await store.dispatch<any>(createFreeDbSuccess(id, {}))
 
         // Assert
         const expectedActions = [
           addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(onConnect)),
-          setSignInDialogState(null),
           setSelectAccountDialogState(false),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))

@@ -76,14 +76,16 @@ describe('OAuthSelectAccountDialog', () => {
         accountsCount: 2,
       }
     })
+    sendEventTelemetry.mockRestore()
   })
 
   it('click on submit btn should call getUserInfo', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    const { queryByTestId } = render(<OAuthSelectAccountDialog />)
+    apiService.put = jest.fn().mockResolvedValue({ status: 200 })
 
+    const { queryByTestId } = render(<OAuthSelectAccountDialog />)
     const submitEl = queryByTestId('submit-oauth-select-account-dialog')
 
     await act(() => {
@@ -100,8 +102,9 @@ describe('OAuthSelectAccountDialog', () => {
         action: 'import'
       }
     })
+    sendEventTelemetry.mockRestore()
   })
-  it.only('on error in activeAccount telemetry should be sent', async () => {
+  it('on error in activeAccount telemetry should be sent', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
@@ -123,14 +126,7 @@ describe('OAuthSelectAccountDialog', () => {
       fireEvent.click(submitEl as HTMLButtonElement)
     })
 
-    expect(sendEventTelemetry).toBeCalledTimes(2)
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CLOUD_SIGN_IN_ACCOUNT_SELECTED,
-      eventData: {
-        accountsCount: 2,
-        action: 'import'
-      }
-    })
+    expect(sendEventTelemetry).toBeCalledTimes(1)
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_SIGN_IN_ACCOUNT_FAILED,
       eventData: {
@@ -138,5 +134,6 @@ describe('OAuthSelectAccountDialog', () => {
         accountsCount: 2,
       }
     })
+    sendEventTelemetry.mockRestore()
   })
 })

@@ -1,14 +1,13 @@
-import { first, isNull, map } from 'lodash'
+import { first, isNull, map, find, orderBy } from 'lodash'
 import { createSlice } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
 import ApiErrors from 'uiSrc/constants/apiErrors'
 import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem, PageNames, Pages } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
-import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
 import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
@@ -16,8 +15,7 @@ import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
 import { fetchMastersSentinelAction } from './sentinel'
 import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
-import { Instance, InitialStateInstances, ConnectionType, OAuthSocialSource } from '../interfaces'
-import { resetKeys } from '../browser/keys'
+import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
 
 export const initialState: InitialStateInstances = {
   loading: false,
@@ -27,6 +25,7 @@ export const initialState: InitialStateInstances = {
   errorChanging: '',
   changedSuccessfully: false,
   deletedSuccessfully: false,
+  freeInstance: null,
   connectedInstance: {
     id: '',
     name: '',
@@ -73,6 +72,10 @@ const instancesSlice = createSlice({
     loadInstancesSuccess: (state, { payload }: { payload: DatabaseInstanceResponse[] }) => {
       state.data = checkRediStack(payload)
       state.loading = false
+      state.freeInstance = find(
+        [...(orderBy(payload, 'lastConnection', 'desc'))],
+        'cloudDetails.free'
+      ) as unknown as Instance || null
       if (state.connectedInstance.id) {
         const isRediStack = state.data.find((db) => db.id === state.connectedInstance.id)?.isRediStack
         state.connectedInstance.isRediStack = isRediStack || false
@@ -293,6 +296,7 @@ export const {
 
 // selectors
 export const instancesSelector = (state: RootState) => state.connections.instances
+export const freeInstanceSelector = (state: RootState) => state.connections.instances.freeInstance
 export const connectedInstanceSelector = (state: RootState) =>
   state.connections.instances.connectedInstance
 export const connectedInstanceInfoSelector = (state: RootState) =>
@@ -309,51 +313,6 @@ export default instancesSlice.reducer
 
 // eslint-disable-next-line import/no-mutable-exports
 export let sourceInstance: Nullable<CancelTokenSource> = null
-
-const connectToInstance = (
-  event: React.MouseEvent | React.KeyboardEvent,
-  history: any,
-  source: OAuthSocialSource,
-  { id, provider, modules }: Instance
-) => async (dispatch: AppDispatch, stateInit: () => RootState) => {
-  event.preventDefault()
-
-  try {
-    const state = stateInit()
-    const { id: contextInstanceId = '' } = state.connections.instances?.connectedInstance
-    const { lastPage } = state.app.context
-    const modulesSummary = getRedisModulesSummary(modules)
-
-    const connectToInstance = () => {
-      if (contextInstanceId && contextInstanceId !== id) {
-        dispatch(resetKeys())
-        dispatch(setAppContextInitialState())
-      }
-      dispatch(setConnectedInstanceId(id ?? ''))
-
-      if (lastPage === PageNames.workbench && contextInstanceId === id) {
-        history.push(Pages.workbench(id))
-        return
-      }
-      history.push(Pages.browser(id))
-    }
-
-    sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
-      eventData: {
-        databaseId: id,
-        provider,
-        source,
-        // source: source || OAuthSocialSource.ListOfDatabases,
-        ...modulesSummary,
-      }
-    })
-    dispatch(checkConnectToInstanceAction(id, connectToInstance))
-  } catch (_err) {
-    const error = _err as AxiosError
-    dispatch(addErrorNotification(error))
-  }
-}
 
 // Asynchronous thunk action
 export function fetchInstancesAction(onSuccess?: (data?: DatabaseInstanceResponse[]) => void) {

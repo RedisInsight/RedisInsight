@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 
 import { remove } from 'lodash'
-import { SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
+import { CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
@@ -13,8 +13,12 @@ import { setTotalUnread } from 'uiSrc/slices/recommendations/recommendations'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
 import { CustomHeaders } from 'uiSrc/constants/api'
+import { oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
+import { CloudJobs } from 'uiSrc/electron/constants'
+import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 
 const CommonAppSubscription = () => {
+  const { id: jobId = '' } = useSelector(oauthCloudJobSelector) ?? {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const [recommendationsSubscriptions, setRecommendationsSubscriptions] = useState<string[]>([])
   const socketRef = useRef<Nullable<Socket>>(null)
@@ -48,11 +52,23 @@ const CommonAppSubscription = () => {
       // dispatch(fetchFeatureFlags())
     })
 
+    socketRef.current.on(CloudJobEvents.Monitor, (data: CloudJobInfo) => {
+      if ((data.name as unknown) === CloudJobs.CREATE_FREE_DATABASE) {
+        dispatch(setJob(data))
+      }
+    })
+
     // Catch disconnect
     socketRef.current?.on(SocketEvent.Disconnect, () => {
       unSubscribeFromAllRecommendations()
     })
+
+    emitCloudJobMonitor(jobId)
   }, [])
+
+  useEffect(() => {
+    emitCloudJobMonitor(jobId)
+  }, [jobId])
 
   useEffect(() => {
     if (!instanceId) return
@@ -75,6 +91,15 @@ const CommonAppSubscription = () => {
         socketRef.current?.removeListener(subscription)
       }
     })
+  }
+
+  const emitCloudJobMonitor = (jobId: string) => {
+    if (!jobId) return
+
+    socketRef.current?.emit(
+      CloudJobEvents.Monitor,
+      { jobId },
+    )
   }
 
   return null

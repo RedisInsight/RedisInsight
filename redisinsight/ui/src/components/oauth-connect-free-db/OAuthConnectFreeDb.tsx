@@ -1,32 +1,42 @@
 import React from 'react'
 import { EuiButton } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { checkConnectToInstanceAction, connectedInstanceSelector, setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
+import {
+  checkConnectToInstanceAction,
+  connectedInstanceSelector,
+  freeInstanceSelector,
+  instancesSelector,
+  setConnectedInstanceId,
+} from 'uiSrc/slices/instances/instances'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
-import { PageNames, Pages } from 'uiSrc/constants'
+import { Pages } from 'uiSrc/constants'
 
 import styles from './styles.module.scss'
 
 interface Props {
   source?: OAuthSocialSource
-  children: React.ReactElement
+  onSuccessClick?: () => void
 }
 
-const OAuthConnectFreeDb = ({ children, source = OAuthSocialSource.ListOfDatabases }: Props) => {
-  const { instanceId } = useParams<{ instanceId: string }>()
-  const { isFreeDb = false, modules, provider } = useSelector(connectedInstanceSelector) ?? {}
-  const { lastPage, contextInstanceId } = useSelector(appContextSelector) ?? {}
+const OAuthConnectFreeDb = ({
+  source = OAuthSocialSource.ListOfDatabases,
+  onSuccessClick,
+}: Props) => {
+  const { loading } = useSelector(instancesSelector) ?? {}
+  const { modules, provider } = useSelector(connectedInstanceSelector) ?? {}
+  const { contextInstanceId } = useSelector(appContextSelector)
+  const { id = '' } = useSelector(freeInstanceSelector) ?? {}
 
   const dispatch = useDispatch()
   const history = useHistory()
 
-  if (!isFreeDb) {
-    return (children)
+  if (!id) {
+    return null
   }
 
   const sendTelemetry = () => {
@@ -34,7 +44,7 @@ const OAuthConnectFreeDb = ({ children, source = OAuthSocialSource.ListOfDatabas
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
-        databaseId: instanceId,
+        databaseId: id,
         provider,
         source,
         ...modulesSummary,
@@ -43,27 +53,31 @@ const OAuthConnectFreeDb = ({ children, source = OAuthSocialSource.ListOfDatabas
   }
 
   const connectToInstance = () => {
-    if (contextInstanceId && contextInstanceId !== instanceId) {
+    onSuccessClick?.()
+    if (contextInstanceId && contextInstanceId !== id) {
       dispatch(resetKeys())
       dispatch(setAppContextInitialState())
     }
     dispatch(setConnectedInstanceId(id ?? ''))
 
-    if (lastPage === PageNames.workbench && contextInstanceId === id) {
-      history.push(Pages.workbench(instanceId))
-      return
-    }
-    history.push(Pages.browser(instanceId))
+    history.push(Pages.home)
+    setTimeout(() => {
+      history.push(Pages.browser(id))
+    }, 0)
   }
 
   const handleCheckConnectToInstance = (
   ) => {
     sendTelemetry()
-    dispatch(checkConnectToInstanceAction(instanceId, connectToInstance))
+    dispatch(checkConnectToInstanceAction(id, connectToInstance))
   }
 
   return (
     <EuiButton
+      fill
+      isDisabled={loading}
+      isLoading={loading}
+      color="secondary"
       onClick={handleCheckConnectToInstance}
       className={styles.btn}
       data-testid="connect-free-db-btn"

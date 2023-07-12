@@ -317,6 +317,7 @@ export interface InitialStateInstances {
   editedInstance: InitialStateEditedInstances
   instanceOverview: DatabaseConfigInfo
   instanceInfo: RedisNodeInfoResponse
+  freeInstance: Nullable<Instance>
   importInstances: {
     loading: boolean
     error: string

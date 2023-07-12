@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
   EuiTextColor,
@@ -7,13 +7,15 @@ import {
   EuiLink,
   EuiButton,
 } from '@elastic/eui'
+import { useSelector } from 'react-redux'
 
 import { ReactComponent as MobileIcon } from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg'
 import { ReactComponent as DesktopIcon } from 'uiSrc/assets/img/icons/module_not_loaded.svg'
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
 import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { RedisDefaultModules, OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import styles from './styles.module.scss'
 
@@ -37,12 +39,6 @@ const renderTitle = (width: number, moduleName?: string) => (
   </EuiTitle>
 )
 
-const renderText = (moduleName?: string) => (
-  <EuiText className={cx(styles.text, styles.marginBottom)}>
-    {`Create a free Redis Stack database with ${moduleName} which extends the core capabilities of open-source Redis`}
-  </EuiText>
-)
-
 const ListItem = ({ item }: { item: string }) => (
   <li className={styles.listItem}>
     <div className={styles.iconWrapper}>
@@ -54,6 +50,7 @@ const ListItem = ({ item }: { item: string }) => (
 
 const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps) => {
   const [width, setWidth] = useState(0)
+  const freeInstance = useSelector(freeInstanceSelector)
 
   const module = MODULE_TEXT_VIEW[moduleName]
 
@@ -75,6 +72,16 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
       return baseUrl
     }
   }
+
+  const renderText = useCallback((moduleName?: string) => (!freeInstance ? (
+    <EuiText className={cx(styles.text, styles.marginBottom)}>
+      {`Create a free Redis Stack database with ${moduleName} which extends the core capabilities of open-source Redis`}
+    </EuiText>
+  ) : (
+    <EuiText className={cx(styles.text, styles.marginBottom)}>
+      Use your free all-in-one Redis Enterprise Cloud database to start exploring these capabilities.
+    </EuiText>
+  )), [freeInstance])
 
   const onFreeDatabaseClick = () => {
     onClose?.()
@@ -115,42 +122,51 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
         </div>
       </div>
       <div className={styles.linksWrapper}>
-        <EuiLink
-          className={cx(styles.text, styles.link)}
-          external={false}
-          target="_blank"
-          href={getStartedLink(CONTENT[moduleName]?.link)}
-          data-testid="learn-more-link"
-        >
-          Learn More
-        </EuiLink>
-        <OAuthSsoHandlerDialog>
-          {(ssoCloudHandlerClick) => (
+        {!!freeInstance && (
+          <OAuthConnectFreeDb
+            source={type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]}
+          />
+        )}
+        {!freeInstance && (
+          <>
             <EuiLink
-              className={styles.link}
+              className={cx(styles.text, styles.link)}
               external={false}
               target="_blank"
-              href={getStartedLink('https://redis.com/try-free')}
-              onClick={(e) => {
-                ssoCloudHandlerClick(
-                  e,
-                  type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
-                )
-                onFreeDatabaseClick()
-              }}
-              data-testid="get-started-link"
+              href={getStartedLink(CONTENT[moduleName]?.link)}
+              data-testid="learn-more-link"
             >
-              <EuiButton
-                fill
-                size="s"
-                color="secondary"
-                className={styles.btnLink}
-              >
-                Get Started For Free
-              </EuiButton>
+              Learn More
             </EuiLink>
-          )}
-        </OAuthSsoHandlerDialog>
+            <OAuthSsoHandlerDialog>
+              {(ssoCloudHandlerClick) => (
+                <EuiLink
+                  className={styles.link}
+                  external={false}
+                  target="_blank"
+                  href={getStartedLink('https://redis.com/try-free')}
+                  onClick={(e) => {
+                    ssoCloudHandlerClick(
+                      e,
+                      type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
+                    )
+                    onFreeDatabaseClick()
+                  }}
+                  data-testid="get-started-link"
+                >
+                  <EuiButton
+                    fill
+                    size="s"
+                    color="secondary"
+                    className={styles.btnLink}
+                  >
+                    Get Started For Free
+                  </EuiButton>
+                </EuiLink>
+              )}
+            </OAuthSsoHandlerDialog>
+          </>
+        )}
       </div>
     </div>
   )

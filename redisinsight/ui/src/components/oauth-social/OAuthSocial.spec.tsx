@@ -48,7 +48,6 @@ describe('OAuthSocial', () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {
         accountOption: 'Google',
-        source: 'source',
       }
     })
 
@@ -74,7 +73,6 @@ describe('OAuthSocial', () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {
         accountOption: 'GitHub',
-        source: 'source',
       }
     })
 
@@ -102,7 +100,6 @@ describe('OAuthSocial', () => {
         event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
         eventData: {
           accountOption: 'Google',
-          source: 'source',
         }
       })
 

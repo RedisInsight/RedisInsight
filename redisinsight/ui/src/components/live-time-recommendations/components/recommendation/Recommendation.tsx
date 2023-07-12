@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiButton,
@@ -27,6 +27,7 @@ import { deleteLiveRecommendations, setIsContentVisible, updateLiveRecommendatio
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
+import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
@@ -61,14 +62,19 @@ const Recommendation = ({
   provider,
   params,
 }: IProps) => {
+  const freeInstance = useSelector(freeInstanceSelector)
+
   const [isLoading, setIsLoading] = useState(false)
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { redisStack, title, liveTitle } = recommendationsContent[name] || {}
+  const { redisStack, title, liveTitle, content: contentInit = [], contentSSO = null } = recommendationsContent[name]
+    || {}
+
   const recommendationTitle = liveTitle || title
+  const content = freeInstance ? contentSSO || contentInit : contentInit
 
   const handleRedirect = () => {
     dispatch(setIsContentVisible(false))
@@ -151,7 +157,7 @@ const Recommendation = ({
   const recommendationContent = () => (
     <EuiText>
       {renderRecommendationContent(
-        recommendationsContent[name]?.content,
+        content,
         params,
         {
           onClickLink: onRecommendationLinkClick,

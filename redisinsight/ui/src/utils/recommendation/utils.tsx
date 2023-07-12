@@ -12,7 +12,7 @@ import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 
 import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
-import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
@@ -168,6 +168,10 @@ const renderContentElement = (
             </EuiLink>
           )}
         </OAuthSsoHandlerDialog>
+      )
+    case 'connect-btn':
+      return (
+        <OAuthConnectFreeDb source={telemetry.telemetryName as OAuthSocialSource} />
       )
     case 'code-link':
       return (

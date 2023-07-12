@@ -3,6 +3,7 @@ import { render } from 'uiSrc/utils/test-utils'
 import Notifications from './Notifications'
 
 jest.mock('uiSrc/slices/app/notifications', () => ({
+  ...jest.requireActual('uiSrc/slices/app/notifications'),
   messagesSelector: jest.fn().mockReturnValue([{
     id: '1',
     title: 'Header text',

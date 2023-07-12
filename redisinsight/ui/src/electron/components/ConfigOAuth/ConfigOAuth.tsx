@@ -3,18 +3,19 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import {
-  createFreeDb,
-  createFreeDbSuccess,
+  createFreeDbJob,
   fetchUserInfo,
   oauthCloudUserDataSelector,
+  setJob,
+  setSignInDialogState,
   signInFailure,
-  signInSuccess,
 } from 'uiSrc/slices/oauth/cloud'
 import { Pages } from 'uiSrc/constants'
 import { cloudSelector, fetchSubscriptionsRedisCloud, setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
-import { CloudAuthResponse, CloudAuthStatus } from 'uiSrc/electron/constants'
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { CloudAuthResponse, CloudAuthStatus, CloudJobStatus, CloudJobs } from 'uiSrc/electron/constants'
+import { addErrorNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { parseCloudOAuthCallbackError } from 'uiSrc/utils'
+import { InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 
 const ConfigOAuth = () => {
   const { isAutodiscoverySSO } = useSelector(cloudSelector)
@@ -46,19 +47,26 @@ const ConfigOAuth = () => {
     if (isAutodiscoverySSORef.current) {
       dispatch(fetchSubscriptionsRedisCloud(
         null,
-        () => history.push(Pages.redisCloudSubscriptions)
+        () => {
+          closeInfinityNotification()
+          history.push(Pages.redisCloudSubscriptions)
+        },
+        closeInfinityNotification,
       ))
     } else {
-      dispatch(createFreeDb(() => dispatch(createFreeDbSuccess(history))))
+      dispatch(createFreeDbJob(() => {}, closeInfinityNotification))
     }
   }
 
-  const cloudOauthCallback = (_e: any, { status, message = '', error }: CloudAuthResponse) => {
-    console.log({ status, message, error })
+  const closeInfinityNotification = () => {
+    dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+  }
 
+  const cloudOauthCallback = (_e: any, { status, message = '', error }: CloudAuthResponse) => {
     if (status === CloudAuthStatus.Succeed) {
-      dispatch(signInSuccess(message))
-      dispatch(fetchUserInfo(fetchUserInfoSuccess))
+      dispatch(setJob({ id: '', status: CloudJobStatus.Running, name: CloudJobs.CREATE_FREE_DATABASE }))
+      dispatch(setSignInDialogState(null))
+      dispatch(fetchUserInfo(fetchUserInfoSuccess, closeInfinityNotification))
     }
 
     if (status === CloudAuthStatus.Failed) {

@@ -185,7 +185,8 @@ const generateAuthHeaders = (credentials: Nullable<ICredentialsRedisCloud>) => (
 // Asynchronous thunk action
 export function fetchSubscriptionsRedisCloud(
   credentials: Nullable<ICredentialsRedisCloud>,
-  onSuccessAction?: () => void
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadSubscriptionsRedisCloud())
@@ -218,6 +219,7 @@ export function fetchSubscriptionsRedisCloud(
       const errorMessage = getApiErrorMessage(error)
       dispatch(loadSubscriptionsRedisCloudFailure(errorMessage))
       dispatch(addErrorNotification(error))
+      onFailAction?.()
     }
   }
 }

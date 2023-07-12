@@ -26,14 +26,12 @@ interface Props {
 }
 
 const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
-  const { source = '', loading } = useSelector(oauthCloudSelector)
   const dispatch = useDispatch()
   const isAutodiscovery = type === OAuthSocialType.Autodiscovery
 
   const sendTelemetry = (accountOption: string) => sendEventTelemetry({
     event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
     eventData: {
-      source,
       accountOption,
     }
   })

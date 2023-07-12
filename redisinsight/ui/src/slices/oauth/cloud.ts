@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { apiService } from 'uiSrc/services'
-import { ApiEndpoints, Pages } from 'uiSrc/constants'
+import { isString } from 'lodash'
+import { apiService, localStorageService } from 'uiSrc/services'
+import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
 import { CloudJobs } from 'uiSrc/electron/constants'
@@ -10,15 +11,22 @@ import {
   InfiniteMessagesIds
 } from 'uiSrc/components/notifications/components'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
+import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { AppDispatch, RootState } from '../store'
 import { Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from '../app/notifications'
-import { checkConnectToInstanceAction, fetchInstancesAction } from '../instances/instances'
+import { setConnectedInstanceId } from '../instances/instances'
+import { setAppContextInitialState } from '../app/context'
 
 export const initialState: StateAppOAuth = {
   loading: false,
   error: '',
   message: '',
+  job: {
+    id: localStorageService.get(BrowserStorageItem.OAuthJobId) ?? '',
+    name: CloudJobs.CREATE_FREE_DATABASE,
+    state: '',
+  },
   source: null,
   isOpenSignInDialog: false,
   isOpenSelectAccountDialog: false,
@@ -85,6 +93,16 @@ const oauthCloudSlice = createSlice({
     setSelectAccountDialogState: (state, { payload }: PayloadAction<boolean>) => {
       state.isOpenSelectAccountDialog = payload
     },
+    setJob: (state, { payload }: PayloadAction<string | CloudJobInfo>) => {
+      if (isString(payload)) {
+        state.job = {
+          ...state.job,
+          id: payload
+        }
+      } else {
+        state.job = payload
+      }
+    },
   },
 })
 
@@ -103,38 +121,33 @@ export const {
   setSignInDialogState,
   setOAuthCloudSource,
   setSelectAccountDialogState,
+  setJob,
 } = oauthCloudSlice.actions
 
 // A selector
 export const oauthCloudSelector = (state: RootState) => state.oauth.cloud
+export const oauthCloudJobSelector = (state: RootState) => state.oauth.cloud.job
 export const oauthCloudUserSelector = (state: RootState) => state.oauth.cloud.user
 export const oauthCloudUserDataSelector = (state: RootState) => state.oauth.cloud.user.data
 
 // The reducer
 export default oauthCloudSlice.reducer
 
-export function createFreeDbSuccess(history: any) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+export function createFreeDbSuccess(id: string, history: any) {
+  return async (dispatch: AppDispatch) => {
     try {
-      const state = stateInit()
-      const { id: firstInstanceId } = state.connections.instances.data?.[0]
-      const { id = firstInstanceId } = state.oauth.cloud.user?.freeDb?.data ?? {}
-
       const onConnect = () => {
-        dispatch(checkConnectToInstanceAction(
-          id,
-          () => {
-            dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
-            history.push(Pages.browser(id))
-          },
-          () => {
-            dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
-          }
-        ))
+        dispatch(setAppContextInitialState())
+        dispatch(setConnectedInstanceId(id ?? ''))
+        dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+
+        history.push(Pages.home)
+        setTimeout(() => {
+          history.push(Pages.workbench(id))
+        }, 0)
       }
 
       dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(onConnect)))
-      dispatch(setSignInDialogState(null))
       dispatch(setSelectAccountDialogState(false))
     } catch (_err) {
       const error = _err as AxiosError
@@ -157,6 +170,7 @@ export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => voi
         const isMultiAccount = (data?.accounts?.length ?? 0) > 1
         if (isMultiAccount) {
           dispatch(setSelectAccountDialogState(true))
+          dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
         }
 
         dispatch(getUserInfoSuccess(data))
@@ -175,20 +189,20 @@ export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => voi
 }
 
 // Asynchronous thunk action
-export function createFreeDb(onSuccessAction?: (instance: Instance) => void, onFailAction?: () => void) {
+export function createFreeDbJob(onSuccessAction?: () => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(addFreeDb())
 
     try {
-      const { data, status } = await apiService.post<Instance>(
+      const { data, status } = await apiService.post<CloudJobInfo>(
         ApiEndpoints.CLOUD_ME_JOBS,
-        { name: CloudJobs.CREATE_FREE_DATABASE }
+        { name: CloudJobs.CREATE_FREE_DATABASE, runMode: 'async' }
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(fetchInstancesAction())
-        dispatch(addFreeDbSuccess(data))
-        onSuccessAction?.(data)
+        localStorageService.set(BrowserStorageItem.OAuthJobId, data.id)
+        dispatch(setJob(data.id))
+        onSuccessAction?.()
       }
     } catch (_err) {
       const error = _err as AxiosError

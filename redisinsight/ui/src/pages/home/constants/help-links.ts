@@ -1,3 +1,4 @@
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent } from 'uiSrc/telemetry'
 
 export interface IHelpGuide {
@@ -7,6 +8,7 @@ export interface IHelpGuide {
   description?: string
   event?: string
   primary?: boolean
+  onClick?: (e: React.MouseEvent, source: OAuthSocialSource) => void
 }
 
 export const HELP_LINKS = {

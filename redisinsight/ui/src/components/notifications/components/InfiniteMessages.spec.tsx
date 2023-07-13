@@ -7,7 +7,7 @@ describe('INFINITE_MESSAGES', () => {
   describe('SUCCESS_CREATE_DB', () => {
     it('should render message', () => {
       const { Inner } = INFINITE_MESSAGES.SUCCESS_CREATE_DB(jest.fn())
-      expect(render(<>{Inner}</>))
+      expect(render(<>{Inner}</>)).toBeTruthy()
     })
 
     it('should call onSuccess', () => {
@@ -25,7 +25,7 @@ describe('INFINITE_MESSAGES', () => {
   describe('PENDING_CREATE_DB', () => {
     it('should render message', () => {
       const { Inner } = INFINITE_MESSAGES.PENDING_CREATE_DB
-      expect(render(<>{Inner}</>))
+      expect(render(<>{Inner}</>)).toBeTruthy()
     })
   })
 })

@@ -31,3 +31,11 @@ export const mockCloudCapiAuthDto: CloudCapiAuthDto = {
   capiKey: 'api_key',
   capiSecret: 'api_secret_key',
 };
+
+export const mockCloudUserCapiProvider = jest.fn(() => ({
+  getCurrentAccount: jest.fn().mockResolvedValue(mockCloudCapiAccount),
+}));
+
+export const mockCloudUserCapiService = jest.fn(() => ({
+  getCurrentAccount: jest.fn().mockResolvedValue(mockCloudAccountInfo),
+}));

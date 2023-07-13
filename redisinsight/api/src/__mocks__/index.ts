@@ -26,3 +26,4 @@ export * from './cloud-autodiscovery';
 export * from './cloud-database';
 export * from './cloud-subscription';
 export * from './cloud-user';
+export * from './cloud-common';

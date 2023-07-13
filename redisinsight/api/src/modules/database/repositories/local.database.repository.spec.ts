@@ -236,6 +236,17 @@ describe('LocalDatabaseRepository', () => {
         pick(mockDatabaseWithTlsAuth, ...listFields),
       ]);
     });
+    it('should return list with cloud details', async () => {
+      repository.createQueryBuilder().getMany.mockResolvedValue([
+        pick(mockDatabaseEntityWithCloudDetails, ...listFields),
+        pick(mockDatabaseEntityWithCloudDetails, ...listFields),
+      ]);
+
+      expect(await service.list()).toEqual([
+        pick(mockDatabaseWithCloudDetails, ...listFields),
+        pick(mockDatabaseWithCloudDetails, ...listFields),
+      ]);
+    });
   });
 
   describe('create', () => {

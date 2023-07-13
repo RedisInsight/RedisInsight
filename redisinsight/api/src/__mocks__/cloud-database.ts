@@ -1,14 +1,18 @@
 import {
   CloudDatabase,
-  CloudDatabaseDataEvictionPolicy, CloudDatabasePersistencePolicy,
+  CloudDatabaseDataEvictionPolicy, CloudDatabaseDetails, CloudDatabasePersistencePolicy,
   CloudDatabaseProtocol,
   CloudDatabaseStatus,
   ICloudCapiDatabase,
 } from 'src/modules/cloud/database/models';
-import { mockCloudSubscription, mockCloudSubscriptionFixed } from 'src/__mocks__/cloud-subscription';
+import {
+  mockCloudSubscription,
+  mockCloudSubscriptionFixed,
+} from 'src/__mocks__/cloud-subscription';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { mockCloudAccountInfo } from 'src/__mocks__/cloud-user';
 import { GetCloudSubscriptionDatabaseDto, GetCloudSubscriptionDatabasesDto } from 'src/modules/cloud/database/dto';
+import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 
 export const mockCloudCapiDatabase: ICloudCapiDatabase = {
   databaseId: 50859754,
@@ -136,6 +140,18 @@ export const mockCloudCapiSubscriptionDatabasesFixed = {
     databases: [mockCloudCapiDatabaseFixed],
   },
 };
+
+export const mockCloudDatabaseDetails = Object.assign(new CloudDatabaseDetails(), {
+  cloudId: mockCloudDatabase.databaseId,
+  subscriptionType: mockCloudDatabase.subscriptionType,
+  planMemoryLimit: 30,
+  memoryLimitMeasurementUnit: 'MB',
+  free: false,
+});
+
+export const mockCloudDatabaseDetailsEntity = Object.assign(new CloudDatabaseDetailsEntity(), {
+  ...mockCloudDatabaseDetails,
+});
 
 export const mockGetCloudSubscriptionDatabasesDto = Object.assign(new GetCloudSubscriptionDatabasesDto(), {
   subscriptionId: mockCloudSubscription.id,

@@ -116,6 +116,7 @@ const checkDeprecatedModuleCommandTests = [
   { input: 'FT.foo bar', expected: false },
   { input: 'GRAPH foo bar', expected: false },
   { input: 'GRAPH.foo bar', expected: true },
+  { input: 'graph.foo bar', expected: true },
   { input: 'FOO bar', expected: false },
 ]
 

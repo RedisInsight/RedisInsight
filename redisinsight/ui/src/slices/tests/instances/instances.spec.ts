@@ -409,7 +409,6 @@ describe('instances slice', () => {
       // Arrange
       const state = {
         ...initialState,
-        loading: true,
       }
 
       // Act
@@ -440,7 +439,6 @@ describe('instances slice', () => {
       }
       const state = {
         ...initialState,
-        loading: false,
         instanceOverview: data
       }
 
@@ -463,7 +461,6 @@ describe('instances slice', () => {
       const error = 'some error'
       const state = {
         ...initialState,
-        loading: false,
         error
       }
 

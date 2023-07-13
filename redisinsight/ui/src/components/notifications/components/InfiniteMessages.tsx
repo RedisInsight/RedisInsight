@@ -11,8 +11,6 @@ export const INFINITE_MESSAGES = {
     Inner: (
       <div
         role="presentation"
-        onMouseDown={(e) => { e.preventDefault() }}
-        onMouseUp={(e) => { e.preventDefault() }}
         data-testid="pending-create-db-notification"
       >
         <EuiFlexGroup justifyContent="flexEnd" direction="row" gutterSize="none">

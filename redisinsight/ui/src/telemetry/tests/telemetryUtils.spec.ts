@@ -1,4 +1,4 @@
-import { getRedisModulesSummary } from './telemetryUtils'
+import { getRedisModulesSummary } from '../telemetryUtils'
 
 const DEFAULT_SUMMARY = Object.freeze(
   {

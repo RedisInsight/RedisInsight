@@ -16,8 +16,16 @@ describe('INFINITE_MESSAGES', () => {
       render(<>{Inner}</>)
 
       fireEvent.click(screen.getByTestId('notification-connect-db'))
+      fireEvent.mouseUp(screen.getByTestId('success-create-db-notification'))
+      fireEvent.mouseDown(screen.getByTestId('success-create-db-notification'))
 
       expect(onSuccess).toBeCalled()
+    })
+  })
+  describe('PENDING_CREATE_DB', () => {
+    it('should render message', () => {
+      const { Inner } = INFINITE_MESSAGES.PENDING_CREATE_DB
+      expect(render(<>{Inner}</>))
     })
   })
 })

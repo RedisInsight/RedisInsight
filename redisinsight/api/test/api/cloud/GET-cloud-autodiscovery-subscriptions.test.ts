@@ -6,10 +6,11 @@ import {
 } from '../deps';
 import { nock } from '../../helpers/test';
 import {
-  mockCloudApiSubscription,
+  mockCloudCapiSubscription,
   mockCloudSubscription,
   mockCloudSubscriptionFixed
-} from 'src/__mocks__/cloud-autodiscovery';
+} from 'src/__mocks__';
+
 const { request, server, constants } = deps;
 
 const endpoint = () => request(server).get(`/cloud/autodiscovery/subscriptions`);
@@ -31,7 +32,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-const nockScope = nock(serverConfig.get('redis_cloud').url);
+const nockScope = nock(serverConfig.get('cloud').capiUrl);
 
 describe('GET /cloud/autodiscovery/subscriptions', () => {
   requirements('rte.serverType=local');
@@ -42,9 +43,9 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
         before: () => {
           nockScope
             .get('/fixed/subscriptions')
-            .reply(200, { subscriptions: [mockCloudApiSubscription] })
+            .reply(200, { subscriptions: [mockCloudCapiSubscription] })
             .get('/subscriptions')
-            .reply(200, { subscriptions: [mockCloudApiSubscription] });
+            .reply(200, { subscriptions: [mockCloudCapiSubscription] });
         },
         headers,
         name: 'Should get subscriptions list',
@@ -55,7 +56,7 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
         before: () => {
           nockScope
             .get('/fixed/subscriptions')
-            .reply(200, { subscriptions: [mockCloudApiSubscription] })
+            .reply(200, { subscriptions: [mockCloudCapiSubscription] })
             .get('/subscriptions')
             .reply(403, {
               response: {
@@ -83,7 +84,7 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
               }
             })
             .get('/subscriptions')
-            .reply(200, { subscriptions: [mockCloudApiSubscription] });
+            .reply(200, { subscriptions: [mockCloudCapiSubscription] });
         },
         name: 'Should throw Forbidden error when api returned 401',
         headers,

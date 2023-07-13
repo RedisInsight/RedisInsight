@@ -6,7 +6,7 @@ import {
   nock, getMainCheckFn,
   serverConfig,
 } from '../deps';
-import { mockCloudAccountInfo, mockCloudApiAccount } from 'src/__mocks__/cloud-autodiscovery';
+import { mockCloudAccountInfo, mockCloudCapiAccount } from 'src/__mocks__';
 const { request, server, constants } = deps;
 
 const endpoint = () => request(server).get(`/cloud/autodiscovery/account`);
@@ -25,7 +25,7 @@ const responseSchema = Joi.object().keys({
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-const nockScope = nock(serverConfig.get('redis_cloud').url);
+const nockScope = nock(serverConfig.get('cloud').capiUrl);
 
 describe('GET /cloud/autodiscovery/account', () => {
   requirements('rte.serverType=local');
@@ -35,7 +35,7 @@ describe('GET /cloud/autodiscovery/account', () => {
       {
         before: () => {
           nockScope.get('/')
-            .reply(200, { account: mockCloudApiAccount });
+            .reply(200, { account: mockCloudCapiAccount });
         },
         name: 'Should get account info',
         headers,

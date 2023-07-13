@@ -12,7 +12,6 @@ export abstract class CloudAuthStrategy {
    * Create and store auth request params
    */
   async generateAuthRequest(sessionMetadata: SessionMetadata): Promise<CloudAuthRequest> {
-
     const authClient = new OktaAuth(this.config);
     const tokenParams = await authClient.token.prepareTokenParams(this.config);
 

@@ -9,13 +9,12 @@ import {
 } from '../deps';
 import { nock } from '../../helpers/test';
 import {
-  mockCloudApiSubscriptionDatabases,
-  mockCloudApiSubscriptionDatabasesFixed,
+  mockCloudCapiSubscriptionDatabases, mockCloudCapiSubscriptionDatabasesFixed,
   mockCloudDatabaseFromList,
   mockCloudDatabaseFromListFixed,
-  mockGetCloudSubscriptionDatabasesDto,
-  mockGetCloudSubscriptionDatabasesDtoFixed,
-} from 'src/__mocks__/cloud-autodiscovery';
+  mockGetCloudSubscriptionDatabasesDto, mockGetCloudSubscriptionDatabasesDtoFixed
+} from 'src/__mocks__';
+
 const { request, server, constants } = deps;
 
 const endpoint = () => request(server).post(`/cloud/autodiscovery/get-databases`);
@@ -63,7 +62,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-const nockScope = nock(serverConfig.get('redis_cloud').url);
+const nockScope = nock(serverConfig.get('cloud').capiUrl);
 
 describe('POST /cloud/subscriptions/get-databases', () => {
   requirements('rte.serverType=local');
@@ -79,7 +78,7 @@ describe('POST /cloud/subscriptions/get-databases', () => {
       {
         before: () => {
           nockScope.get(`/subscriptions/${mockGetCloudSubscriptionDatabasesDto.subscriptionId}/databases`)
-            .reply(200, mockCloudApiSubscriptionDatabases);
+            .reply(200, mockCloudCapiSubscriptionDatabases);
         },
         name: 'Should get databases list inside subscription',
         data: {
@@ -94,7 +93,7 @@ describe('POST /cloud/subscriptions/get-databases', () => {
       {
         before: () => {
           nockScope.get(`/fixed/subscriptions/${mockGetCloudSubscriptionDatabasesDtoFixed.subscriptionId}/databases`)
-            .reply(200, mockCloudApiSubscriptionDatabasesFixed);
+            .reply(200, mockCloudCapiSubscriptionDatabasesFixed);
         },
         name: 'Should get databases list inside fixed subscription',
         data: {

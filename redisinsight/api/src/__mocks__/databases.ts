@@ -15,8 +15,9 @@ import {
   mockSshOptionsPrivateKey,
   mockSshOptionsPrivateKeyEntity,
 } from 'src/__mocks__/ssh';
-import { CloudDatabaseDetails, CloudSubscriptionType } from 'src/modules/cloud/autodiscovery/models';
-import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/autodiscovery/entities/cloud-database-details.entity';
+import { CloudDatabaseDetails } from 'src/modules/cloud/database/models';
+import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
+import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';
 
@@ -38,6 +39,10 @@ export const mockDatabase = Object.assign(new Database(), {
   new: false,
   compressor: Compressor.NONE,
   version: '7.0',
+  cloudOptions: {
+    cloudId: 123,
+    free: false,
+  },
 });
 
 export const mockDatabaseCloudDetails = Object.assign(new CloudDatabaseDetails(), {
@@ -175,7 +180,7 @@ export const mockNewDatabase = Object.assign(new Database(), {
 });
 
 export const mockClientMetadata: ClientMetadata = {
-  session: undefined,
+  sessionMetadata: undefined,
   databaseId: mockDatabase.id,
   context: ClientContext.Common,
 };

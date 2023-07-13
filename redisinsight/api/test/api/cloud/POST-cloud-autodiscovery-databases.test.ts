@@ -9,10 +9,12 @@ import {
 } from '../deps';
 import { nock } from '../../helpers/test';
 import {
-  mockAddCloudDatabaseDto,
-  mockAddCloudDatabaseDtoFixed,
-  mockCloudApiDatabase, mockCloudApiDatabaseFixed, mockCloudDatabase, mockCloudDatabaseFixed,
-} from 'src/__mocks__/cloud-autodiscovery';
+  mockCloudCapiDatabase,
+  mockCloudCapiDatabaseFixed, mockCloudDatabase, mockCloudDatabaseFixed,
+  mockImportCloudDatabaseDto,
+  mockImportCloudDatabaseDtoFixed
+} from 'src/__mocks__';
+
 const { request, server, constants } = deps;
 
 const endpoint = () => request(server).post(`/cloud/autodiscovery/databases`);
@@ -53,7 +55,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-const nockScope = nock(serverConfig.get('redis_cloud').url);
+const nockScope = nock(serverConfig.get('cloud').capiUrl);
 
 describe('POST /cloud/subscriptions/databases', () => {
   requirements('rte.serverType=local');
@@ -70,22 +72,22 @@ describe('POST /cloud/subscriptions/databases', () => {
       {
         before: () => {
           nockScope
-            .get(`/subscriptions/${mockAddCloudDatabaseDto.subscriptionId}/databases/${mockAddCloudDatabaseDto.databaseId}`)
+            .get(`/subscriptions/${mockImportCloudDatabaseDto.subscriptionId}/databases/${mockImportCloudDatabaseDto.databaseId}`)
             .reply(200, {
-              ...mockCloudApiDatabase,
+              ...mockCloudCapiDatabase,
               publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
             })
-            .get(`/fixed/subscriptions/${mockAddCloudDatabaseDtoFixed.subscriptionId}/databases/${mockAddCloudDatabaseDtoFixed.databaseId}`)
+            .get(`/fixed/subscriptions/${mockImportCloudDatabaseDtoFixed.subscriptionId}/databases/${mockImportCloudDatabaseDtoFixed.databaseId}`)
             .reply(200, {
-              ...mockCloudApiDatabaseFixed,
+              ...mockCloudCapiDatabaseFixed,
               publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
             });
         },
         name: 'Should add 2 databases',
         data: {
           databases: [
-            mockAddCloudDatabaseDto,
-            mockAddCloudDatabaseDtoFixed,
+            mockImportCloudDatabaseDto,
+            mockImportCloudDatabaseDtoFixed,
           ]
         },
         headers,
@@ -93,7 +95,7 @@ describe('POST /cloud/subscriptions/databases', () => {
         statusCode: 201,
         checkFn: ({ body }) => {
           expect(body).to.deep.eq([{
-            ...mockAddCloudDatabaseDto,
+            ...mockImportCloudDatabaseDto,
             message: 'Added',
             status: 'success',
             databaseDetails: {
@@ -101,7 +103,7 @@ describe('POST /cloud/subscriptions/databases', () => {
               publicEndpoint: `${constants.TEST_REDIS_HOST}:${constants.TEST_REDIS_PORT}`,
             }
           }, {
-            ...mockAddCloudDatabaseDtoFixed,
+            ...mockImportCloudDatabaseDtoFixed,
             message: 'Added',
             status: 'success',
             databaseDetails: {
@@ -119,7 +121,7 @@ describe('POST /cloud/subscriptions/databases', () => {
       {
         before: () => {
           nockScope
-            .get(`/fixed/subscriptions/${mockAddCloudDatabaseDtoFixed.subscriptionId}/databases/${mockAddCloudDatabaseDtoFixed.databaseId}`)
+            .get(`/fixed/subscriptions/${mockImportCloudDatabaseDtoFixed.subscriptionId}/databases/${mockImportCloudDatabaseDtoFixed.databaseId}`)
             .reply(403, {
               response: {
                 status: 403,
@@ -131,11 +133,11 @@ describe('POST /cloud/subscriptions/databases', () => {
         headers,
         data: {
           databases: [
-            mockAddCloudDatabaseDtoFixed,
+            mockImportCloudDatabaseDtoFixed,
           ],
         },
         responseBody: [{
-          ...mockAddCloudDatabaseDtoFixed,
+          ...mockImportCloudDatabaseDtoFixed,
           status: 'fail',
           message: 'Error fetching account details.',
           error: {
@@ -147,7 +149,7 @@ describe('POST /cloud/subscriptions/databases', () => {
       },
       {
         before: () => {
-          nockScope.get(`/subscriptions/${mockAddCloudDatabaseDto.subscriptionId}/databases/${mockAddCloudDatabaseDto.databaseId}`)
+          nockScope.get(`/subscriptions/${mockImportCloudDatabaseDto.subscriptionId}/databases/${mockImportCloudDatabaseDto.databaseId}`)
             .reply(401, {
               response: {
                 status: 401,
@@ -159,11 +161,11 @@ describe('POST /cloud/subscriptions/databases', () => {
         headers,
         data: {
           databases: [
-            mockAddCloudDatabaseDto,
+            mockImportCloudDatabaseDto,
           ],
         },
         responseBody: [{
-          ...mockAddCloudDatabaseDto,
+          ...mockImportCloudDatabaseDto,
           status: 'fail',
           message: 'Error fetching account details.',
           error: {
@@ -175,7 +177,7 @@ describe('POST /cloud/subscriptions/databases', () => {
       },
       {
         before: () => {
-          nockScope.get(`/subscriptions/${mockAddCloudDatabaseDto.subscriptionId}/databases/${mockAddCloudDatabaseDto.databaseId}`)
+          nockScope.get(`/subscriptions/${mockImportCloudDatabaseDto.subscriptionId}/databases/${mockImportCloudDatabaseDto.databaseId}`)
             .reply(404, {
               response: {
                 status: 404,
@@ -187,11 +189,11 @@ describe('POST /cloud/subscriptions/databases', () => {
         headers,
         data: {
           databases: [
-            mockAddCloudDatabaseDto,
+            mockImportCloudDatabaseDto,
           ],
         },
         responseBody: [{
-          ...mockAddCloudDatabaseDto,
+          ...mockImportCloudDatabaseDto,
           status: 'fail',
           message: 'Not Found',
           error: {

@@ -7,6 +7,7 @@ import {
   serverConfig,
 } from '../deps';
 import { mockCloudAccountInfo, mockCloudCapiAccount } from 'src/__mocks__';
+import { CustomErrorCodes } from 'src/constants';
 const { request, server, constants } = deps;
 
 const endpoint = () => request(server).get(`/cloud/autodiscovery/account`);
@@ -57,7 +58,8 @@ describe('GET /cloud/autodiscovery/account', () => {
         statusCode: 403,
         responseBody: {
           statusCode: 403,
-          error: 'Forbidden',
+          error: 'CloudApiForbidden',
+          errorCode: CustomErrorCodes.CloudApiForbidden,
         },
       },
       {
@@ -70,12 +72,13 @@ describe('GET /cloud/autodiscovery/account', () => {
               }
             });
         },
-        name: 'Should throw Forbidden error when api returns 401 error',
+        name: 'Should throw Unauthorized error when api returns 401 error',
         headers,
-        statusCode: 403,
+        statusCode: 401,
         responseBody: {
-          statusCode: 403,
-          error: 'Forbidden',
+          statusCode: 401,
+          error: 'CloudApiUnauthorized',
+          errorCode: CustomErrorCodes.CloudApiUnauthorized,
         },
       },
       {

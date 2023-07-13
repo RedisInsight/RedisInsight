@@ -46,6 +46,11 @@ export const mockCloudCapiSubscription: ICloudCapiSubscription = {
   price: 2,
 };
 
+export const mockCloudCapiSubscriptionFixed: ICloudCapiSubscription = {
+  ...mockCloudCapiSubscription,
+  price: 0,
+};
+
 export const mockCloudSubscription = Object.assign(new CloudSubscription(), {
   id: mockCloudCapiSubscription.id,
   type: CloudSubscriptionType.Flexible,
@@ -54,10 +59,11 @@ export const mockCloudSubscription = Object.assign(new CloudSubscription(), {
   provider: mockCloudCapiSubscription.cloudDetails[0].provider,
   region: mockCloudCapiSubscription.cloudDetails[0].regions[0].region,
   status: mockCloudCapiSubscription.status,
+  price: mockCloudCapiSubscription.price,
 });
 
 export const mockCloudSubscriptionFixed = Object.assign(new CloudSubscription(), {
   ...mockCloudSubscription,
   type: CloudSubscriptionType.Fixed,
-  price: 2,
+  price: mockCloudCapiSubscriptionFixed.price,
 });

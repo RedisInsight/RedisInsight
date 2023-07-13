@@ -14,6 +14,8 @@ import {
   mockCloudDatabaseFromListFixed,
   mockGetCloudSubscriptionDatabasesDto, mockGetCloudSubscriptionDatabasesDtoFixed
 } from 'src/__mocks__';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { CustomErrorCodes } from 'src/constants';
 
 const { request, server, constants } = deps;
 
@@ -64,7 +66,7 @@ const mainCheckFn = getMainCheckFn(endpoint);
 
 const nockScope = nock(serverConfig.get('cloud').capiUrl);
 
-describe('POST /cloud/subscriptions/get-databases', () => {
+describe('POST /cloud/autodiscovery/get-databases', () => {
   requirements('rte.serverType=local');
 
   describe('Validation', () => {
@@ -123,7 +125,9 @@ describe('POST /cloud/subscriptions/get-databases', () => {
         statusCode: 403,
         responseBody: {
           statusCode: 403,
-          error: 'Forbidden',
+          error: 'CloudApiForbidden',
+          message: ERROR_MESSAGES.CLOUD_API_FORBIDDEN,
+          errorCode: CustomErrorCodes.CloudApiForbidden,
         },
       },
       {
@@ -141,10 +145,12 @@ describe('POST /cloud/subscriptions/get-databases', () => {
         data: {
           subscriptions: [mockGetCloudSubscriptionDatabasesDto]
         },
-        statusCode: 403,
+        statusCode: 401,
         responseBody: {
-          statusCode: 403,
-          error: 'Forbidden',
+          statusCode: 401,
+          error: 'CloudApiUnauthorized',
+          message:  ERROR_MESSAGES.CLOUD_API_UNAUTHORIZED,
+          errorCode: CustomErrorCodes.CloudApiUnauthorized,
         },
       },
       {
@@ -165,7 +171,9 @@ describe('POST /cloud/subscriptions/get-databases', () => {
         statusCode: 404,
         responseBody: {
           statusCode: 404,
-          error: 'Not Found',
+          error: 'CloudApiNotFound',
+          message: ERROR_MESSAGES.CLOUD_API_NOT_FOUND,
+          errorCode: CustomErrorCodes.CloudApiNotFound,
         },
       },
       {

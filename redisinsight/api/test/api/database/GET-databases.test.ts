@@ -23,6 +23,13 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     version: Joi.number().integer().required(),
     semanticVersion: Joi.string(),
   })).min(0).required(),
+  cloudDetails: Joi.object().keys({
+    cloudId: Joi.number().integer().required(),
+    subscriptionType: Joi.string().valid('flexible', 'fixed').required(),
+    planMemoryLimit: Joi.number().integer(),
+    memoryLimitMeasurementUnit: Joi.string(),
+    free: Joi.boolean(),
+  }).allow(null),
 })).required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);

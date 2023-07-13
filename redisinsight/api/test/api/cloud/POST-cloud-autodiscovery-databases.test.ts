@@ -7,6 +7,8 @@ import {
   validateInvalidDataTestCase,
   Joi, getMainCheckFn, serverConfig,
 } from '../deps';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+
 import { nock } from '../../helpers/test';
 import {
   mockCloudCapiDatabase,
@@ -14,6 +16,7 @@ import {
   mockImportCloudDatabaseDto,
   mockImportCloudDatabaseDtoFixed
 } from 'src/__mocks__';
+import { CustomErrorCodes } from 'src/constants';
 
 const { request, server, constants } = deps;
 
@@ -57,7 +60,7 @@ const mainCheckFn = getMainCheckFn(endpoint);
 
 const nockScope = nock(serverConfig.get('cloud').capiUrl);
 
-describe('POST /cloud/subscriptions/databases', () => {
+describe('POST /cloud/autodiscovery/databases', () => {
   requirements('rte.serverType=local');
 
   describe('Validation', () => {
@@ -139,11 +142,12 @@ describe('POST /cloud/subscriptions/databases', () => {
         responseBody: [{
           ...mockImportCloudDatabaseDtoFixed,
           status: 'fail',
-          message: 'Error fetching account details.',
+          message: ERROR_MESSAGES.CLOUD_API_FORBIDDEN,
           error: {
             statusCode: 403,
-            error: 'Forbidden',
-            message: 'Error fetching account details.',
+            error: 'CloudApiForbidden',
+            message: ERROR_MESSAGES.CLOUD_API_FORBIDDEN,
+            errorCode: CustomErrorCodes.CloudApiForbidden,
           },
         }],
       },
@@ -167,11 +171,12 @@ describe('POST /cloud/subscriptions/databases', () => {
         responseBody: [{
           ...mockImportCloudDatabaseDto,
           status: 'fail',
-          message: 'Error fetching account details.',
+          message: ERROR_MESSAGES.CLOUD_API_UNAUTHORIZED,
           error: {
-            statusCode: 403,
-            error: 'Forbidden',
-            message: 'Error fetching account details.',
+            statusCode: 401,
+            error: 'CloudApiUnauthorized',
+            message:  ERROR_MESSAGES.CLOUD_API_UNAUTHORIZED,
+            errorCode: CustomErrorCodes.CloudApiUnauthorized,
           },
         }],
       },
@@ -195,10 +200,12 @@ describe('POST /cloud/subscriptions/databases', () => {
         responseBody: [{
           ...mockImportCloudDatabaseDto,
           status: 'fail',
-          message: 'Not Found',
+          message: ERROR_MESSAGES.CLOUD_API_NOT_FOUND,
           error: {
             statusCode: 404,
-            message: 'Not Found',
+            error: 'CloudApiNotFound',
+            message: ERROR_MESSAGES.CLOUD_API_NOT_FOUND,
+            errorCode: CustomErrorCodes.CloudApiNotFound,
           },
         }],
       },

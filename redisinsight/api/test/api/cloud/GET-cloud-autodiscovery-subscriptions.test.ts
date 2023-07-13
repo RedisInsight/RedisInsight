@@ -6,10 +6,11 @@ import {
 } from '../deps';
 import { nock } from '../../helpers/test';
 import {
-  mockCloudCapiSubscription,
+  mockCloudCapiSubscription, mockCloudCapiSubscriptionFixed,
   mockCloudSubscription,
   mockCloudSubscriptionFixed
 } from 'src/__mocks__';
+import { CustomErrorCodes } from 'src/constants';
 
 const { request, server, constants } = deps;
 
@@ -28,6 +29,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   provider: Joi.string(),
   region: Joi.string(),
   type: Joi.string(),
+  price: Joi.number().integer(),
 })).required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
@@ -43,7 +45,7 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
         before: () => {
           nockScope
             .get('/fixed/subscriptions')
-            .reply(200, { subscriptions: [mockCloudCapiSubscription] })
+            .reply(200, { subscriptions: [mockCloudCapiSubscriptionFixed] })
             .get('/subscriptions')
             .reply(200, { subscriptions: [mockCloudCapiSubscription] });
         },
@@ -70,7 +72,8 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
         statusCode: 403,
         responseBody: {
           statusCode: 403,
-          error: 'Forbidden',
+          error: 'CloudApiForbidden',
+          errorCode: CustomErrorCodes.CloudApiForbidden,
         },
       },
       {
@@ -88,10 +91,11 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
         },
         name: 'Should throw Forbidden error when api returned 401',
         headers,
-        statusCode: 403,
+        statusCode: 401,
         responseBody: {
-          statusCode: 403,
-          error: 'Forbidden',
+          statusCode: 401,
+          error: 'CloudApiUnauthorized',
+          errorCode: CustomErrorCodes.CloudApiUnauthorized,
         },
       },
       {

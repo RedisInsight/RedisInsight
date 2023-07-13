@@ -8,6 +8,7 @@ const validator = new Validator();
 export const sessionMetadataFromRequestFactory = (data: unknown, ctx: ExecutionContext): SessionMetadata => {
   const request = ctx.switchToHttp().getRequest();
 
+  // todo: do not forget to deal with session vs sessionMetadata property
   const session = plainToClass(SessionMetadata, request.session);
 
   const errors = validator.validateSync(session, {

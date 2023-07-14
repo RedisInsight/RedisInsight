@@ -41,6 +41,10 @@
       display: none;
     }
 
+    .euiText, .euiTitle {
+      color: var(--euiColorPrimaryText) !important;
+    }
+
     .euiToast__closeButton {
       opacity: 1;
     }

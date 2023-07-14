@@ -79,7 +79,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     </EuiText>
   ) : (
     <EuiText className={cx(styles.text, styles.marginBottom)}>
-      Use your free all-in-one Redis Enterprise Cloud database to start exploring these capabilities.
+      Use your Redis Stack database in Redis Enterprise Cloud to start exploring these capabilities.
     </EuiText>
   )), [freeInstance])
 

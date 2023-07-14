@@ -4,7 +4,7 @@ import React from 'react'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 
-export const parseCloudOAuthCallbackError = (err: object | string = DEFAULT_ERROR_MESSAGE): AxiosError => {
+export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAGE): AxiosError => {
   const error = {
     response: {
       status: 500,
@@ -33,7 +33,7 @@ export const parseCloudOAuthCallbackError = (err: object | string = DEFAULT_ERRO
       title = 'Misconfiguration'
       message = (
         <>
-          Authorization server encountered a misconfiguration and was unable to complete your request.
+          Authorization server encountered a misconfiguration error and was unable to complete your request.
           <br />
           Try again later.
           <br />
@@ -78,7 +78,7 @@ export const parseCloudOAuthCallbackError = (err: object | string = DEFAULT_ERRO
       title = 'Access denied'
       message = (
         <>
-          You do not have permission to access Redis Cloud.
+          You do not have permission to access Redis Enterprise Cloud.
         </>
       )
       break
@@ -111,11 +111,22 @@ export const parseCloudOAuthCallbackError = (err: object | string = DEFAULT_ERRO
       title = 'Unauthorized'
       message = (
         <>
-          Your Redis Cloud authorization failed.
+          Your Redis Enterprise Cloud authorization failed.
           <br />
           Try again later.
           <br />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+        </>
+      )
+      break
+
+    case CustomErrorCodes.CloudDatabaseAlreadyExistsFree:
+      title = 'Database already exists'
+      message = (
+        <>
+          You already have a free Redis Enterprise Cloud database running.
+          <br />
+          Check out your <a href="https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main" target="_blank" rel="noreferrer">Cloud console</a> for connection details.
         </>
       )
       break

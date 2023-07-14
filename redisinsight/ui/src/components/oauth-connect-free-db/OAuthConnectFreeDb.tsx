@@ -75,6 +75,7 @@ const OAuthConnectFreeDb = ({
   return (
     <EuiButton
       fill
+      size="s"
       isDisabled={loading}
       isLoading={loading}
       color="secondary"

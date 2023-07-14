@@ -1,6 +1,6 @@
 .content {
-  width: 800px !important;
-  min-width: 800px !important;
+  width: 820px !important;
+  min-width: 820px !important;
   height: 500px;
 }
 
@@ -8,20 +8,25 @@
   align-items: stretch;
   min-width: 400px !important;
   width: 400px !important;
-  padding: 80px 40px 0;
+  padding: 80px 30px 0;
   justify-content: space-between;
 
   background-color: var(--cloudSsoAdvantagesBgColor);
 }
 
 .title {
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 400 !important;
 }
 
 .advantageTitle {
   font-size: 14px;
   line-height: normal;
   padding-bottom: 5px;
+}
+
+.advantageList {
+  margin-left: 1.2rem !important;
 }
 
 .advantageText {
@@ -36,27 +41,26 @@
 
 .advantage {
   display: flex;
-  padding-top: 16px;
+  padding-top: 24px;
+  padding-left: 16px;
 }
 
 .advantageIcon {
   margin-right: 6px;
-}
-
-.developerIcon {
-  height: 108px !important;
-  width: 120px !important;
+  margin-left: -16px;
 }
 
 .social {
   justify-content: normal;
   text-align: center;
-  padding: 80px 24px 0;
+  padding: 0 36px 0;
+  align-self: center;
 }
 
 .socialSubTitle {
-  padding-top: 10px;
+  margin-top: 16px;
   font-size: 12px;
+  font-weight: 500;
 }
 
 .socialText {

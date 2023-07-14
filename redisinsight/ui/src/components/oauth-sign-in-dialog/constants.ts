@@ -1,27 +1,31 @@
 import { ReactComponent as HandIcon } from 'uiSrc/assets/img/oauth/hand.svg'
-import { ReactComponent as RedisearchIcon } from 'uiSrc/assets/img/oauth/redisearch.svg'
-import { ReactComponent as RejsonIcon } from 'uiSrc/assets/img/oauth/rejson.svg'
-import { ReactComponent as RocketIcon } from 'uiSrc/assets/img/oauth/rocket.svg'
 
 export const OAuthAdvantages = [
   {
-    title: 'Native support for JSON standard',
-    text: 'With atomic operations and fast access to sub-elements',
-    icon: RejsonIcon,
+    title: 'Structured querying and full-text search',
+    text: [
+      'Flexible and fast query engine for Redis data structures',
+      'Vector Similarity Search enabled for AI use cases'
+    ],
   },
   {
-    title: 'Full-text search',
-    text: 'And complex structured queries that deliver read-your-writes consistency through synchronous indexing',
-    icon: RedisearchIcon,
+    title: 'Document Store with JSON native',
+    text: [
+      'Hierarchical data structure',
+      'Atomic operations and fast access to sub-elements'
+    ],
   },
   {
     title: 'Scalable and fully managed',
-    text: 'With instant failover and backup recovery',
-    icon: RocketIcon,
+    text: [
+      'With instant failover and backup recovery'
+    ],
   },
   {
-    title: 'Free developer database',
-    text: 'To get started with the best Redis experience',
+    title: 'Free database to get started immediately',
+    text: [
+      'Pay as you grow, without any budget commitment'
+    ],
     icon: HandIcon,
   },
 ]

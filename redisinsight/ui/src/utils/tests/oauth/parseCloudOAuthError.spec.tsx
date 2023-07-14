@@ -1,10 +1,10 @@
 import { set, cloneDeep } from 'lodash'
 import React from 'react'
-import { parseCloudOAuthCallbackError } from 'uiSrc/utils'
+import { parseCloudOAuthError } from 'uiSrc/utils'
 
 const responseData = { response: { data: { }, status: 500 } }
 
-const parseCloudOAuthCallbackErrorTests = [
+const parseCloudOAuthErrorTests = [
   [undefined, set(cloneDeep(responseData), 'response.data', { message: 'Something was wrong!' })],
   ['', set(cloneDeep(responseData), 'response.data', { message: '' })],
   ['test', set(cloneDeep(responseData), 'response.data', { message: 'test' })],
@@ -26,7 +26,7 @@ const parseCloudOAuthCallbackErrorTests = [
       title: 'Access denied',
       message: (
         <>
-          You do not have permission to access Redis Cloud.
+          You do not have permission to access Redis Enterprise Cloud.
         </>
       )
     })],
@@ -59,7 +59,7 @@ const parseCloudOAuthCallbackErrorTests = [
       title: 'Unauthorized',
       message: (
         <>
-          Your Redis Cloud authorization failed.
+          Your Redis Enterprise Cloud authorization failed.
           <br />
           Try again later.
           <br />
@@ -72,13 +72,24 @@ const parseCloudOAuthCallbackErrorTests = [
       title: 'Error',
       message: 'Something was wrong!',
     })],
+  [{ errorCode: 11_108 },
+    set(cloneDeep(responseData), 'response.data', {
+      title: 'Error',
+      message: (
+        <>
+          You already have a free Redis Enterprise Cloud database running.
+          <br />
+          Check out your <a href="https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main" target="_blank" rel="noreferrer">Cloud console</a> for connection details.
+        </>
+      )
+    })],
 ]
 
-describe('parseCloudOAuthCallbackError', () => {
-  test.each(parseCloudOAuthCallbackErrorTests)(
+describe('parseCloudOAuthError', () => {
+  test.each(parseCloudOAuthErrorTests)(
     '%j',
     (input, expected) => {
-      const result = parseCloudOAuthCallbackError(input)
+      const result = parseCloudOAuthError(input)
       expect(result).toEqual(expected)
     }
   )

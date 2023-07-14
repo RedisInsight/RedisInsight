@@ -74,7 +74,7 @@ const parseCloudOAuthErrorTests = [
     })],
   [{ errorCode: 11_108 },
     set(cloneDeep(responseData), 'response.data', {
-      title: 'Error',
+      title: 'Database already exists',
       message: (
         <>
           You already have a free Redis Enterprise Cloud database running.

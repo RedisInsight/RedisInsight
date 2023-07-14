@@ -6,10 +6,12 @@ import {
 } from '../deps';
 import { nock } from '../../helpers/test';
 import {
-  mockCloudApiSubscription,
+  mockCloudCapiSubscription, mockCloudCapiSubscriptionFixed,
   mockCloudSubscription,
   mockCloudSubscriptionFixed
-} from 'src/__mocks__/cloud-autodiscovery';
+} from 'src/__mocks__';
+import { CustomErrorCodes } from 'src/constants';
+
 const { request, server, constants } = deps;
 
 const endpoint = () => request(server).get(`/cloud/autodiscovery/subscriptions`);
@@ -27,11 +29,12 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   provider: Joi.string(),
   region: Joi.string(),
   type: Joi.string(),
+  price: Joi.number().integer(),
 })).required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-const nockScope = nock(serverConfig.get('redis_cloud').url);
+const nockScope = nock(serverConfig.get('cloud').capiUrl);
 
 describe('GET /cloud/autodiscovery/subscriptions', () => {
   requirements('rte.serverType=local');
@@ -42,9 +45,9 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
         before: () => {
           nockScope
             .get('/fixed/subscriptions')
-            .reply(200, { subscriptions: [mockCloudApiSubscription] })
+            .reply(200, { subscriptions: [mockCloudCapiSubscriptionFixed] })
             .get('/subscriptions')
-            .reply(200, { subscriptions: [mockCloudApiSubscription] });
+            .reply(200, { subscriptions: [mockCloudCapiSubscription] });
         },
         headers,
         name: 'Should get subscriptions list',
@@ -55,7 +58,7 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
         before: () => {
           nockScope
             .get('/fixed/subscriptions')
-            .reply(200, { subscriptions: [mockCloudApiSubscription] })
+            .reply(200, { subscriptions: [mockCloudCapiSubscription] })
             .get('/subscriptions')
             .reply(403, {
               response: {
@@ -69,7 +72,8 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
         statusCode: 403,
         responseBody: {
           statusCode: 403,
-          error: 'Forbidden',
+          error: 'CloudApiForbidden',
+          errorCode: CustomErrorCodes.CloudApiForbidden,
         },
       },
       {
@@ -83,14 +87,15 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
               }
             })
             .get('/subscriptions')
-            .reply(200, { subscriptions: [mockCloudApiSubscription] });
+            .reply(200, { subscriptions: [mockCloudCapiSubscription] });
         },
         name: 'Should throw Forbidden error when api returned 401',
         headers,
-        statusCode: 403,
+        statusCode: 401,
         responseBody: {
-          statusCode: 403,
-          error: 'Forbidden',
+          statusCode: 401,
+          error: 'CloudApiUnauthorized',
+          errorCode: CustomErrorCodes.CloudApiUnauthorized,
         },
       },
       {

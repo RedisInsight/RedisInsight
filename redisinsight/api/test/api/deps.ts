@@ -13,9 +13,20 @@ import * as redis from '../helpers/redis';
 import { initCloudDatabase } from '../helpers/cloud';
 
 // Just dummy jest module implementation to be able to use common mocked models in UTests and ITests
+const dummyJest = (factory: Function) => {
+  if (!factory) return ({
+    mockReturnThis: dummyJest,
+    mockReturnValue: dummyJest,
+    mockResolvedValue: dummyJest,
+    mockImplementation: dummyJest,
+  });
+
+  return factory;
+};
+
 global['jest'] = {
   // @ts-ignore
-  fn: () => {}
+  fn: dummyJest,
 };
 
 /**

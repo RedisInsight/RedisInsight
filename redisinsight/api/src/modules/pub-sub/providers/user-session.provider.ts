@@ -20,7 +20,7 @@ export class UserSessionProvider {
         userClient,
         // todo: add multi user support
         this.redisClientProvider.createClient({
-          session: undefined,
+          sessionMetadata: undefined,
           databaseId: userClient.getDatabaseId(),
           context: ClientContext.Common,
         }),

@@ -3,7 +3,7 @@ import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { catchRedisConnectionError, getHostingProvider } from 'src/utils';
 import { Database } from 'src/modules/database/models/database';
 import * as IORedis from 'ioredis';
-import { ClientContext, Session } from 'src/common/models';
+import { ClientContext, SessionMetadata } from 'src/common/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
@@ -33,7 +33,7 @@ export class DatabaseFactory {
 
     const client = await this.redisConnectionFactory.createStandaloneConnection(
       {
-        session: {} as Session,
+        sessionMetadata: {} as SessionMetadata,
         databaseId: database.id,
         context: ClientContext.Common,
       },
@@ -104,7 +104,7 @@ export class DatabaseFactory {
 
       const clusterClient = await this.redisConnectionFactory.createClusterConnection(
         {
-          session: {} as Session,
+          sessionMetadata: {} as SessionMetadata,
           databaseId: model.id,
           context: ClientContext.Common,
         },
@@ -152,7 +152,7 @@ export class DatabaseFactory {
 
       const sentinelClient = await this.redisConnectionFactory.createSentinelConnection(
         {
-          session: {} as Session,
+          sessionMetadata: {} as SessionMetadata,
           databaseId: model.id,
           context: ClientContext.Common,
         },

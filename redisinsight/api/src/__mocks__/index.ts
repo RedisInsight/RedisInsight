@@ -1,4 +1,3 @@
-export * from './config';
 export * from './certificates';
 export * from './commands';
 export * from './common';
@@ -24,3 +23,7 @@ export * from './browser-history';
 export * from './database-recommendation';
 export * from './feature';
 export * from './cloud-autodiscovery';
+export * from './cloud-database';
+export * from './cloud-subscription';
+export * from './cloud-user';
+export * from './cloud-common';

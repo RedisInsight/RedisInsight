@@ -14,6 +14,7 @@ import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
 import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/feature-flag.provider';
+import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -82,7 +83,13 @@ describe('FeatureService', () => {
         .toEqual({
           features: {
             [KnownFeatures.InsightsRecommendations]: {
+              name: KnownFeatures.InsightsRecommendations,
               flag: true,
+            },
+            [KnownFeatures.CloudSso]: {
+              name: KnownFeatures.CloudSso,
+              flag: true,
+              strategy: CloudSsoFeatureStrategy.DeepLink,
             },
           },
         });
@@ -108,7 +115,13 @@ describe('FeatureService', () => {
         configVersion: mockFeaturesConfig.data.version,
         features: {
           [KnownFeatures.InsightsRecommendations]: {
+            name: KnownFeatures.InsightsRecommendations,
             flag: true,
+          },
+          [KnownFeatures.CloudSso]: {
+            name: KnownFeatures.CloudSso,
+            flag: true,
+            strategy: CloudSsoFeatureStrategy.DeepLink,
           },
         },
       });

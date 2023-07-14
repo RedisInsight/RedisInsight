@@ -116,7 +116,7 @@ export class RedisService implements OnModuleDestroy {
   }
 
   public findClientInstances(clientMetadata: Partial<ClientMetadata>): IRedisClientInstance[] {
-    const findOptions = omit(clientMetadata, 'session'); // omit users criteria for searching for now
+    const findOptions = omit(clientMetadata, 'sessionMetadata'); // omit users criteria for searching for now
     return [...this.clients.values()]
       .filter((redisClient) => isMatch(redisClient.clientMetadata, findOptions));
   }

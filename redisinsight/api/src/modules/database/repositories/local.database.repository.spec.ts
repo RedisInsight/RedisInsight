@@ -48,7 +48,7 @@ import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 
 const listFields = [
   'id', 'name', 'host', 'port', 'db', 'timeout',
-  'connectionType', 'modules', 'lastConnection', 'version',
+  'connectionType', 'modules', 'lastConnection', 'version', 'cloudDetails',
 ];
 
 describe('LocalDatabaseRepository', () => {
@@ -234,6 +234,17 @@ describe('LocalDatabaseRepository', () => {
       expect(await service.list()).toEqual([
         pick(mockDatabaseWithTlsAuth, ...listFields),
         pick(mockDatabaseWithTlsAuth, ...listFields),
+      ]);
+    });
+    it('should return list with cloud details', async () => {
+      repository.createQueryBuilder().getMany.mockResolvedValue([
+        pick(mockDatabaseEntityWithCloudDetails, ...listFields),
+        pick(mockDatabaseEntityWithCloudDetails, ...listFields),
+      ]);
+
+      expect(await service.list()).toEqual([
+        pick(mockDatabaseWithCloudDetails, ...listFields),
+        pick(mockDatabaseWithCloudDetails, ...listFields),
       ]);
     });
   });

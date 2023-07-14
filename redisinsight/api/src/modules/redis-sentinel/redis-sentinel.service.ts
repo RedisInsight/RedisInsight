@@ -5,7 +5,7 @@ import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/c
 import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { Database } from 'src/modules/database/models/database';
-import { ActionStatus, ClientContext, Session } from 'src/common/models';
+import { ActionStatus, ClientContext, SessionMetadata } from 'src/common/models';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { getRedisConnectionException } from 'src/utils';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
@@ -118,7 +118,7 @@ export class RedisSentinelService {
     try {
       const database = await this.databaseFactory.createStandaloneDatabaseModel(dto);
       const client = await this.redisConnectionFactory.createStandaloneConnection({
-        session: {} as Session,
+        sessionMetadata: {} as SessionMetadata,
         databaseId: database.id,
         context: ClientContext.Common,
       }, database, { useRetry: false });

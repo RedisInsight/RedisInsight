@@ -5,7 +5,11 @@ import {
     TriggersAndFunctionsFunctionsPage,
     TriggersAndFunctionsLibrariesPage
 } from '../../../pageObjects';
-import { commonUrl, ossStandaloneRedisGears } from '../../../helpers/conf';
+import {
+    commonUrl,
+    ossClusterRedisGears,
+    ossStandaloneRedisGears,
+} from '../../../helpers/conf';
 import { FunctionsSections, LibrariesSections, MonacoEditorInputs, rte } from '../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { TriggersAndFunctionLibrary } from '../../../interfaces/triggers-and-functions';
@@ -196,4 +200,31 @@ test.after(async() => {
     await t.click(triggersAndFunctionsFunctionsPage.findKeyButton);
     await t.expect(await browserPage.isKeyIsDisplayedInTheList(streamKeyName)).ok('The stream key is not opened');
     await t.expect(browserPage.keyDetailsBadge.exists).ok('The key details is not opened');
+});
+
+test.before(async() => {
+    await databaseHelper.acceptLicenseTerms();
+    await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterRedisGears);
+}).after(async() => {
+    await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterRedisGears);
+})('Verify that function can be invoked in cluster', async t => {
+    const functionNameFromFile = 'function';
+    const libNameFromFile = 'lib';
+    const keyName = ['Hello'];
+    const argumentsName = ['world', '!!!' ];
+    const expectedCommand = `TFCALL "${libNameFromFile}.${functionNameFromFile}" "${keyName.length}" "${keyName}" "${argumentsName.join('" "')}"`;
+
+    await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
+    await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
+    await t.click(triggersAndFunctionsLibrariesPage.addLibraryButton);
+    await t.setFilesToUpload(triggersAndFunctionsLibrariesPage.uploadInput, [filePathes.invoke]);
+    await t.click(triggersAndFunctionsLibrariesPage.addLibrarySubmitButton);
+    await t.click(triggersAndFunctionsLibrariesPage.functionsLink);
+    await t.click(triggersAndFunctionsFunctionsPage.getFunctionsNameSelector(functionNameFromFile));
+    await t.click(triggersAndFunctionsFunctionsPage.invokeButton);
+    await triggersAndFunctionsFunctionsPage.enterFunctionArguments(argumentsName);
+    await triggersAndFunctionsFunctionsPage.enterFunctionKeyName(keyName);
+    await t.click(triggersAndFunctionsFunctionsPage.runInCliButton);
+    await t.expect(await triggersAndFunctionsFunctionsPage.Cli.getExecutedCommandTextByIndex()).eql(expectedCommand);
+    await t.click(triggersAndFunctionsFunctionsPage.Cli.cliCollapseButton);
 });

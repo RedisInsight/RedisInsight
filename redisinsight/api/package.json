@@ -38,7 +38,8 @@
     "typeorm:run": "yarn typeorm migration:run"
   },
   "resolutions": {
-    "nanoid": "^3.1.31"
+    "nanoid": "^3.1.31",
+    "word-wrap": "npm:@aashutoshrathi/word-wrap"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.11",

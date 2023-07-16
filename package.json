@@ -80,7 +80,9 @@
   "homepage": "https://github.com/RedisInsight/RedisInsight#readme",
   "resolutions": {
     "**/node-sass": "^8.0.0",
-    "**/trim": "0.0.3"
+    "**/trim": "0.0.3",
+    "word-wrap": "npm:@aashutoshrathi/word-wrap"
+
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

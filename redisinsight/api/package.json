@@ -39,7 +39,8 @@
   },
   "resolutions": {
     "nanoid": "^3.1.31",
-    "word-wrap": "npm:@aashutoshrathi/word-wrap"
+    "word-wrap": "npm:@aashutoshrathi/word-wrap",
+    "mocha/minimatch": "^3.0.5"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.11",

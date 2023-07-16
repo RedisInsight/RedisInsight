@@ -131,7 +131,7 @@ export const checkResponseBody = (body, expected) => {
 
 const defaultValidationErrorMessages = {
   'any.required': '{#label} should not be null or undefined',
-  'any.only': '{#label} must be one of the following values',
+  'any.only': '{#label} must be a valid enum value',
   'array.base': '{#label} must be an array',
   'string.base': `{#label} must be a string`,
   'string.empty': `{#label} should not be null or undefined`,

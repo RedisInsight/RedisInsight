@@ -7,6 +7,10 @@ export class SubscriptionDto {
   channel: string;
 
   @IsNotEmpty()
-  @IsEnum(SubscriptionType)
+  @IsEnum(SubscriptionType, {
+    message: `type must be a valid enum value. Valid values: ${Object.values(
+      SubscriptionType,
+    )}.`,
+  })
   type: SubscriptionType;
 }

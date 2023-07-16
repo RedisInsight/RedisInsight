@@ -43,7 +43,11 @@ export class CreateRedisearchIndexFieldDto {
     enum: RedisearchIndexDataType,
   })
   @IsDefined()
-  @IsEnum(RedisearchIndexDataType)
+  @IsEnum(RedisearchIndexDataType, {
+    message: `type must be a valid enum value. Valid values: ${Object.values(
+      RedisearchIndexDataType,
+    )}.`,
+  })
   type: RedisearchIndexDataType;
 }
 
@@ -62,7 +66,11 @@ export class CreateRedisearchIndexDto {
     enum: RedisearchIndexKeyType,
   })
   @IsDefined()
-  @IsEnum(RedisearchIndexKeyType)
+  @IsEnum(RedisearchIndexKeyType, {
+    message: `type must be a valid enum value. Valid values: ${Object.values(
+      RedisearchIndexKeyType,
+    )}.`,
+  })
   type: RedisearchIndexKeyType;
 
   @ApiPropertyOptional({

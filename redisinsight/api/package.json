@@ -40,7 +40,8 @@
   "resolutions": {
     "nanoid": "^3.1.31",
     "word-wrap": "npm:@aashutoshrathi/word-wrap",
-    "mocha/minimatch": "^3.0.5"
+    "mocha/minimatch": "^3.0.5",
+    "@nestjs/platform-socket.io/socket.io": "^4.7.1"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.11",
@@ -74,7 +75,7 @@
     "node-version-compare": "^1.0.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.6",
-    "socket.io": "^4.4.0",
+    "socket.io": "^4.6.2",
     "source-map-support": "^0.5.19",
     "sqlite3": "5.1.6",
     "ssh2": "^1.14.0",

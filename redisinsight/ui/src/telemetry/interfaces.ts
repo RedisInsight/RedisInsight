@@ -52,13 +52,16 @@ export enum RedisModules {
   RedisJSON = 'ReJSON',
   RediSearch = 'search',
   RedisTimeSeries = 'timeseries',
+  'Triggers & Functions' = 'redisgears'
 }
 
-interface IModuleSummary {
+export interface IModuleSummary {
   loaded: boolean
   version?: number
-  semanticVersion?: number
+  semanticVersion?: string
 }
+
+export type RedisModulesKeyType = keyof typeof RedisModules
 export interface IRedisModulesSummary extends Record<keyof typeof RedisModules, IModuleSummary> {
   customModules: AdditionalRedisModule[]
 }

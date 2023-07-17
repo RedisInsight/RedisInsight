@@ -6,6 +6,7 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 import { CloudJobAbortedException, wrapCloudJobError } from 'src/modules/cloud/job/exceptions';
 import { SessionMetadata } from 'src/common/models';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
+import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
 const cloudConfig = config.get('cloud');
 
@@ -13,6 +14,8 @@ export class CloudJobOptions {
   abortController: AbortController;
 
   sessionMetadata: SessionMetadata;
+
+  utm?: CloudRequestUtm;
 
   stateCallbacks?: ((self: CloudJob) => any)[] = [];
 

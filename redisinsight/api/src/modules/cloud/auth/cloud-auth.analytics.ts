@@ -10,11 +10,11 @@ export class CloudAuthAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendCloudSignInSucceeded(flow: CloudSsoFeatureStrategy) {
-    this.sendEvent(TelemetryEvents.CloudSignInSucceeded, { flow });
+  sendCloudSignInSucceeded(flow: CloudSsoFeatureStrategy, action?: string) {
+    this.sendEvent(TelemetryEvents.CloudSignInSucceeded, { flow, action });
   }
 
-  sendCloudSignInFailed(exception: HttpException, flow?: CloudSsoFeatureStrategy) {
-    this.sendFailedEvent(TelemetryEvents.CloudSignInFailed, exception, { flow });
+  sendCloudSignInFailed(exception: HttpException, flow?: CloudSsoFeatureStrategy, action?: string) {
+    this.sendFailedEvent(TelemetryEvents.CloudSignInFailed, exception, { flow, action });
   }
 }

@@ -32,12 +32,13 @@ describe('CloudAuthAnalytics', () => {
 
   describe('sendCloudSignInSucceeded', () => {
     it('should emit event with deep link flow', () => {
-      service.sendCloudSignInSucceeded(CloudSsoFeatureStrategy.DeepLink);
+      service.sendCloudSignInSucceeded(CloudSsoFeatureStrategy.DeepLink, 'import-database');
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.CloudSignInSucceeded,
         {
           flow: CloudSsoFeatureStrategy.DeepLink,
+          action: 'import-database',
         },
       );
     });
@@ -65,12 +66,12 @@ describe('CloudAuthAnalytics', () => {
 
   describe('sendGetRECloudSubsFailedEvent', () => {
     it('should emit error event with deep link flow', () => {
-      service.sendCloudSignInFailed(httpException, CloudSsoFeatureStrategy.DeepLink);
+      service.sendCloudSignInFailed(httpException, CloudSsoFeatureStrategy.DeepLink, 'import');
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.CloudSignInFailed,
         httpException,
-        { flow: CloudSsoFeatureStrategy.DeepLink },
+        { flow: CloudSsoFeatureStrategy.DeepLink, action: 'import' },
       );
     });
     it('should emit error event with web flow', () => {

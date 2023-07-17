@@ -4,9 +4,9 @@ import { SessionMetadata } from 'src/common/models';
 import { CreateCloudJobDto } from 'src/modules/cloud/job/dto';
 import { CloudJobInfo, CloudJobRunMode } from 'src/modules/cloud/job/models';
 import { CloudJobFactory } from 'src/modules/cloud/job/cloud-job.factory';
-import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
 import { wrapHttpError } from 'src/common/utils';
 import { Injectable } from '@nestjs/common';
+import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
 @Injectable()
 export class CloudJobProvider {
@@ -14,20 +14,20 @@ export class CloudJobProvider {
 
   constructor(
     private readonly cloudJobFactory: CloudJobFactory,
-    private readonly cloudUserApiService: CloudUserApiService,
   ) {}
 
-  async addJob(sessionMetadata: SessionMetadata, dto: CreateCloudJobDto): Promise<CloudJobInfo> {
+  async addJob(
+    sessionMetadata: SessionMetadata,
+    dto: CreateCloudJobDto,
+    utm: CloudRequestUtm,
+  ): Promise<CloudJobInfo> {
     try {
-      const capiCredentials = await this.cloudUserApiService.getCapiKeys(sessionMetadata);
-
       const job = await this.cloudJobFactory.create(
         dto.name,
-        {
-          capiCredentials,
-        },
+        {},
         {
           sessionMetadata,
+          utm,
         },
       );
 

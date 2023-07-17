@@ -5,7 +5,7 @@ import {
 } from 'src/modules/cloud/user/models';
 import config from 'src/utils/config';
 import { wrapCloudApiError } from 'src/modules/cloud/common/exceptions';
-import { ICloudApiCredentials } from 'src/modules/cloud/common/models';
+import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudApiProvider } from 'src/modules/cloud/common/providers/cloud.api.provider';
 
 const cloudConfig = config.get('cloud');
@@ -35,12 +35,16 @@ export class CloudUserApiProvider extends CloudApiProvider {
    * Login user to api using accessToken from oauth flow
    * returns JSESSIONID
    * @param credentials
+   * @param utm
    * @private
    */
-  async getApiSessionId(credentials: ICloudApiCredentials): Promise<string> {
+  async getApiSessionId(credentials: ICloudApiCredentials, utm?: CloudRequestUtm): Promise<string> {
     try {
+      const queryParameters = CloudApiProvider.generateUtmQuery(utm);
+      const query = queryParameters ? `?${queryParameters.toString()}` : '';
+
       const { headers } = await this.api.post(
-        'login',
+        `login${query}`,
         {},
         CloudApiProvider.getHeaders(credentials),
       );

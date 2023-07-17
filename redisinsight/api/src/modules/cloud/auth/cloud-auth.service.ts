@@ -12,7 +12,7 @@ import {
   CloudOauthMisconfigurationException,
   CloudOauthUnknownAuthorizationRequestException,
 } from 'src/modules/cloud/auth/exceptions';
-import { CloudAuthResponse, CloudAuthStatus } from 'src/modules/cloud/auth/models';
+import { CloudAuthRequestInfo, CloudAuthResponse, CloudAuthStatus } from 'src/modules/cloud/auth/models';
 import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics';
 import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -55,16 +55,19 @@ export class CloudAuthService {
   /**
    * Returns authorization url to open in the native browser to initialize oauth flow
    * @param sessionMetadata
-   * @param strategy
-   * @param callback
+   * @param options
    */
   async getAuthorizationUrl(
     sessionMetadata: SessionMetadata,
-    strategy: CloudAuthIdpType,
-    callback?: Function,
+    options: {
+      strategy: CloudAuthIdpType,
+      action?: string,
+      callback?: Function,
+    },
   ): Promise<string> {
-    const authRequest: any = await this.getAuthStrategy(strategy).generateAuthRequest(sessionMetadata);
-    authRequest.callback = callback;
+    const authRequest: any = await this.getAuthStrategy(options?.strategy).generateAuthRequest(sessionMetadata);
+    authRequest.callback = options?.callback;
+    authRequest.action = options?.action;
 
     // based on requirements we must support only single auth request at the moment
     // and logout user before
@@ -98,6 +101,25 @@ export class CloudAuthService {
 
       throw wrapHttpError(e);
     }
+  }
+
+  /**
+   * Get some useful not sensitive information about auth request for analytics purpose
+   * Will not remove auth request from the pool
+   * @param query
+   * @private
+   */
+  private async getAuthRequestInfo(query): Promise<CloudAuthRequestInfo> {
+    if (!this.authRequests.has(query?.state)) {
+      throw new CloudOauthUnknownAuthorizationRequestException();
+    }
+
+    const authRequest = this.authRequests.get(query.state);
+
+    return {
+      idpType: authRequest.idpType,
+      action: authRequest.action,
+    };
   }
 
   /**
@@ -142,14 +164,15 @@ export class CloudAuthService {
     };
 
     let callback;
-
+    let reqInfo: CloudAuthRequestInfo;
     try {
+      reqInfo = await this.getAuthRequestInfo(query);
       callback = await this.callback(query);
-      this.analytics.sendCloudSignInSucceeded(from);
+      this.analytics.sendCloudSignInSucceeded(from, reqInfo?.action);
     } catch (e) {
       this.logger.error(`Error on ${from} cloud oauth callback`, e);
 
-      this.analytics.sendCloudSignInFailed(e, from);
+      this.analytics.sendCloudSignInFailed(e, from, reqInfo?.action);
 
       result = {
         status: CloudAuthStatus.Failed,

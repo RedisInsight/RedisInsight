@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { join } from 'path';
-import * as hbs from 'hbs';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -9,7 +8,7 @@ import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { get } from 'src/utils';
-import { migrateHomeFolder, initHandlebars } from 'src/init-helper';
+import { migrateHomeFolder } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
 import { AppModule } from './app.module';
@@ -25,7 +24,6 @@ interface IApp {
 
 export default async function bootstrap(): Promise<IApp> {
   await migrateHomeFolder();
-  initHandlebars();
 
   const port = process.env.API_PORT || serverConfig.port;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
@@ -47,10 +45,6 @@ export default async function bootstrap(): Promise<IApp> {
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
   app.setGlobalPrefix(serverConfig.globalPrefix);
-  // eslint-disable-next-line no-underscore-dangle
-  app.engine('hbs', hbs.__express);
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.setViewEngine('hbs');
 
   if (process.env.APP_ENV !== 'electron') {
     SwaggerModule.setup(

@@ -1,4 +1,4 @@
-import { DATABASE_LIST_MODULES_TEXT, RedisDefaultModules, REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
+import { DATABASE_LIST_MODULES_TEXT, RedisDefaultModules, REDISEARCH_MODULES, TRIGGERED_AND_FUNCTIONS_MODULES } from 'uiSrc/slices/interfaces'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 export interface IDatabaseModule {
@@ -40,6 +40,10 @@ export const sortModulesByName = (modules: AdditionalRedisModule[] = []) => [...
 export const isRedisearchAvailable = (modules: AdditionalRedisModule[]): boolean =>
   modules?.some(({ name }) =>
     REDISEARCH_MODULES.some((search) => name === search))
+
+export const isTriggeredAndFunctionsAvailable = (modules: AdditionalRedisModule[]): boolean =>
+  modules?.some(({ name }) =>
+    TRIGGERED_AND_FUNCTIONS_MODULES.some((value) => name === value))
 
 export const isContainJSONModule = (modules: AdditionalRedisModule[]): boolean =>
   modules?.some((m: AdditionalRedisModule) => m.name === RedisDefaultModules.ReJSON)

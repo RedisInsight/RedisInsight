@@ -1,5 +1,10 @@
 import { cloneDeep } from 'lodash';
-import { AdditionalRedisModuleName, SUPPORTED_REDIS_MODULES } from 'src/constants';
+import {
+  AdditionalRedisModuleName,
+  SUPPORTED_REDIS_MODULES,
+  REDISEARCH_MODULES,
+  TRIGGERED_AND_FUNCTIONS_MODULES,
+} from 'src/constants';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 
 interface IModuleSummary {
@@ -19,8 +24,17 @@ export const DEFAULT_SUMMARY: IRedisModulesSummary = Object.freeze(
     RedisBloom: { loaded: false },
     RedisJSON: { loaded: false },
     RedisTimeSeries: { loaded: false },
+    'Triggers & Functions': { loaded: false },
     customModules: [],
   },
+);
+
+export const isRedisearchAvailable = (modules: AdditionalRedisModule[]): boolean => (
+  modules?.some(({ name }) => REDISEARCH_MODULES.some((search) => name === search))
+);
+
+export const isTriggeredAndFunctionsAvailable = (modules: AdditionalRedisModule[]): boolean => (
+  modules?.some(({ name }) => TRIGGERED_AND_FUNCTIONS_MODULES.some((value) => name === value))
 );
 
 const getEnumKeyBValue = (myEnum: any, enumValue: number | string): string => {
@@ -29,20 +43,39 @@ const getEnumKeyBValue = (myEnum: any, enumValue: number | string): string => {
   return index > -1 ? keys[index] : '';
 };
 
+const getModuleSummaryToSent = (module: AdditionalRedisModule) => ({
+  loaded: true,
+  version: module.version,
+  semanticVersion: module.semanticVersion,
+});
+
+// same function as in FE
 export const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): IRedisModulesSummary => {
   const summary = cloneDeep(DEFAULT_SUMMARY);
   try {
     modules.forEach(((module) => {
       if (SUPPORTED_REDIS_MODULES[module.name]) {
         const moduleName = getEnumKeyBValue(AdditionalRedisModuleName, module.name);
-        summary[moduleName] = {
-          loaded: true,
-          version: module.version,
-          semanticVersion: module.semanticVersion,
-        };
-      } else {
-        summary.customModules.push(module);
+        summary[moduleName] = getModuleSummaryToSent(module);
+        return;
       }
+
+      if (isRedisearchAvailable([module])) {
+        const redisearchName = getEnumKeyBValue(AdditionalRedisModuleName, AdditionalRedisModuleName.RediSearch);
+        summary[redisearchName] = getModuleSummaryToSent(module);
+        return;
+      }
+
+      if (isTriggeredAndFunctionsAvailable([module])) {
+        const triggeredAndFunctionsName = getEnumKeyBValue(
+          AdditionalRedisModuleName,
+          AdditionalRedisModuleName['Triggers & Functions'],
+        );
+        summary[triggeredAndFunctionsName] = getModuleSummaryToSent(module);
+        return;
+      }
+
+      summary.customModules.push(module);
     }));
   } catch (e) {
     // continue regardless of error

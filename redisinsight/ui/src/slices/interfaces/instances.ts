@@ -179,6 +179,11 @@ export const REDISEARCH_MODULES: string[] = [
   RedisDefaultModules.FTL,
 ]
 
+export const TRIGGERED_AND_FUNCTIONS_MODULES: string[] = [
+  RedisDefaultModules.RedisGears,
+  RedisDefaultModules.RedisGears2,
+]
+
 export const COMMAND_MODULES = {
   [RedisDefaultModules.Search]: REDISEARCH_MODULES,
   [RedisDefaultModules.ReJSON]: [RedisDefaultModules.ReJSON],
@@ -187,6 +192,7 @@ export const COMMAND_MODULES = {
 }
 
 const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'RediSearch' }), {})
+const TriggeredAndFunctionsModulesText = [...TRIGGERED_AND_FUNCTIONS_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'Triggers & Functions' }), {})
 
 // Enums don't allow to use dynamic key
 export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
@@ -198,7 +204,8 @@ export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
   [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
   [RedisCustomModulesName.Proto]: 'redis-protobuf',
   [RedisCustomModulesName.IpTables]: 'RedisPushIpTables',
-  ...RediSearchModulesText
+  ...RediSearchModulesText,
+  ...TriggeredAndFunctionsModulesText,
 })
 
 export enum AddRedisClusterDatabaseOptions {

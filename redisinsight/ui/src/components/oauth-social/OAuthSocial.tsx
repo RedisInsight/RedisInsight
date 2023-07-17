@@ -43,7 +43,7 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
       label: 'google-oauth',
       onButtonClick: () => {
         sendTelemetry('Google')
-        ipcAuthGoogle()
+        ipcAuthGoogle(isAutodiscovery ? 'import' : 'create')
       },
     },
     {
@@ -52,7 +52,7 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
       className: styles.githubButton,
       onButtonClick: () => {
         sendTelemetry('GitHub')
-        ipcAuthGithub()
+        ipcAuthGithub(isAutodiscovery ? 'import' : 'create')
       },
     }
   ]

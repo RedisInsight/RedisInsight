@@ -13,6 +13,14 @@ export interface ICloudApiAccount {
   api_access_key: string;
 }
 
+export interface ICloudApiCapiAccessKey {
+  accessKey: string,
+}
+
+export interface ICloudApiCsrfToken {
+  csrf_token: string,
+}
+
 export interface ICloudApiCapiKey {
   id: number;
   name: string;

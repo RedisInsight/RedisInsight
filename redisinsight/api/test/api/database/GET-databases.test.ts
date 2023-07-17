@@ -26,9 +26,9 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   cloudDetails: Joi.object().keys({
     cloudId: Joi.number().integer().required(),
     subscriptionType: Joi.string().valid('flexible', 'fixed').required(),
-    planMemoryLimit: Joi.number().integer(),
-    memoryLimitMeasurementUnit: Joi.string(),
-    free: Joi.boolean(),
+    planMemoryLimit: Joi.number().integer().allow(null),
+    memoryLimitMeasurementUnit: Joi.string().allow(null),
+    free: Joi.boolean().allow(null),
   }).allow(null),
 })).required().strict(true);
 

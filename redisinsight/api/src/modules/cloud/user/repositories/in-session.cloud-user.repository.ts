@@ -1,4 +1,3 @@
-import { find } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { classToPlain, plainToClass } from 'class-transformer';
 import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
@@ -21,7 +20,7 @@ export class InSessionCloudUserRepository extends CloudUserRepository {
   async get(sessionId: string): Promise<CloudUser> {
     const session = await this.sessionService.getSession(sessionId);
 
-    return plainToClass(CloudUser, session.user, { groups: [TransformGroup.Secure] });
+    return plainToClass(CloudUser, session?.user, { groups: [TransformGroup.Secure] }) || null;
   }
 
   /**

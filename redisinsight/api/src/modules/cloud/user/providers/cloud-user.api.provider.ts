@@ -159,16 +159,16 @@ export class CloudUserApiProvider extends CloudApiProvider {
   /**
    * Create new CApi key
    * @param credentials
-   * @param accountId
+   * @param userId
    */
-  async createCapiKey(credentials: ICloudApiCredentials, accountId: number): Promise<ICloudApiCapiKey> {
+  async createCapiKey(credentials: ICloudApiCredentials, userId: number): Promise<ICloudApiCapiKey> {
     try {
       const { data } = await this.api.post(
         '/accounts/cloud-api/cloudApiKeys',
         {
           cloudApiKey: {
             name: cloudConfig.capiKeyName,
-            user_account: accountId,
+            user_account: userId,
             ip_whitelist: [],
           },
         },

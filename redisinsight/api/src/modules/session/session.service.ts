@@ -28,7 +28,7 @@ export class SessionService {
       data ? {
         ...session.data,
         ...data,
-      } : null,
+      } : {},
     );
   }
 

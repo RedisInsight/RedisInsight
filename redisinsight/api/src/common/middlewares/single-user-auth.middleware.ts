@@ -19,14 +19,11 @@ export class SingleUserAuthMiddleware implements NestMiddleware {
       await this.sessionService.createSession(plainToClass(Session, {
         id: DEFAULT_SESSION_ID,
         userId: DEFAULT_USER_ID,
-        data: {
-          cloud: {
-            accessToken: process.env.MOCK_AKEY || undefined,
-          },
-        },
+        data: {},
       }));
     }
 
+    // todo: pay attention on property name session vs sessionMetadata
     req['session'] = <ISessionMetadata>Object.freeze(plainToClass(SessionMetadata, {
       userId: DEFAULT_USER_ID,
       sessionId: DEFAULT_SESSION_ID,

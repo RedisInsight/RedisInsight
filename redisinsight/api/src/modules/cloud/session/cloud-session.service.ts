@@ -12,8 +12,7 @@ export class CloudSessionService {
 
   async getSession(id: string): Promise<CloudSession> {
     const session = await this.sessionService.getSession(id);
-
-    return session?.data?.cloud;
+    return session?.data?.cloud || null;
   }
 
   async updateSessionData(id: string, cloud: any): Promise<CloudSession> {

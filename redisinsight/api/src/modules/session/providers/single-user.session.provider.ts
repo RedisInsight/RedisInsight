@@ -13,7 +13,7 @@ export class SingleUserSessionProvider extends SessionProvider {
   async createSession(session: Session): Promise<Session> {
     return this.sessionStorage.createSession(plainToClass(Session, {
       ...session,
-      sessionId: DEFAULT_SESSION_ID,
+      id: DEFAULT_SESSION_ID,
     }));
   }
 

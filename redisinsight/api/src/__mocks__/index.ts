@@ -27,3 +27,5 @@ export * from './cloud-database';
 export * from './cloud-subscription';
 export * from './cloud-user';
 export * from './cloud-common';
+export * from './session';
+export * from './cloud-session';

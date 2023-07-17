@@ -10,7 +10,7 @@ import { TriggeredFunctionsService } from 'src/modules/triggered-functions/trigg
 import { ShortLibrary, Library, Function } from 'src/modules/triggered-functions/models';
 import { LibraryDto, UploadLibraryDto, DeleteLibraryDto } from 'src/modules/triggered-functions/dto';
 import { ClientMetadata } from 'src/common/models';
-import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
+import { ClientMetadataParam } from 'src/common/decorators';
 
 @ApiTags('Triggered Functions')
 @Controller('triggered-functions')
@@ -31,7 +31,7 @@ export class TriggeredFunctionsController {
     ],
   })
   async libraryList(
-    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
   ): Promise<ShortLibrary[]> {
     return this.service.libraryList(clientMetadata);
   }
@@ -49,7 +49,7 @@ export class TriggeredFunctionsController {
     ],
   })
   async details(
-    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
       @Body() dto: LibraryDto,
   ): Promise<Library> {
     return this.service.details(clientMetadata, dto.libraryName);
@@ -68,7 +68,7 @@ export class TriggeredFunctionsController {
     ],
   })
   async functionsList(
-    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
   ): Promise<Function[]> {
     return this.service.functionsList(clientMetadata);
   }
@@ -79,7 +79,7 @@ export class TriggeredFunctionsController {
     statusCode: 201,
   })
   async upload(
-    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
       @Body() dto: UploadLibraryDto,
   ): Promise<void> {
     return this.service.upload(clientMetadata, dto);
@@ -91,7 +91,7 @@ export class TriggeredFunctionsController {
     statusCode: 201,
   })
   async upgrade(
-    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
       @Body() dto: UploadLibraryDto,
   ): Promise<void> {
     return this.service.upload(clientMetadata, dto, true);
@@ -103,7 +103,7 @@ export class TriggeredFunctionsController {
     description: 'Delete library by name',
   })
   async deleteLibraries(
-    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
       // library name probably can be really huge
       @Body() dto: DeleteLibraryDto,
   ): Promise<void> {

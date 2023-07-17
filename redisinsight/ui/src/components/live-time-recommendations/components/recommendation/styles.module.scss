@@ -81,7 +81,7 @@
     background-color: var(--euiColorLightestShade);
     border-radius: 4px;
     padding: 3px 6px;
-  
+
     code {
       font-size: inherit !important;
     }
@@ -109,18 +109,18 @@
   justify-content: space-around;
   align-items: center;
   border-top: 1px solid var(--separatorColorLight);
-  height: 40px;
+  height: 48px;
 
   .btn {
-    height: 24px !important;
+    height: 32px !important;
     min-width: 60px !important;
 
     :global(.euiButton__content) {
-      padding: 0 10px;
+      padding: 0 12px;
     }
 
     :global(.euiButton__text) {
-      font: normal normal 400 12px/14px Graphik, sans-serif !important;
+      font: normal normal 400 14px/17px Graphik, sans-serif !important;
     }
 
     &:last-of-type {

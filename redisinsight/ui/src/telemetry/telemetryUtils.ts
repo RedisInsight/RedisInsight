@@ -5,12 +5,13 @@
 import isGlob from 'is-glob'
 import { cloneDeep } from 'lodash'
 import * as jsonpath from 'jsonpath'
-import { isRedisearchAvailable, Nullable } from 'uiSrc/utils'
+import { isRedisearchAvailable, isTriggeredAndFunctionsAvailable, Nullable } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, KeyTypes, StreamViews } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { checkIsAnalyticsGranted, getInfoServer } from 'uiSrc/telemetry/checkAnalytics'
+import { IModuleSummary, RedisModulesKeyType } from 'uiSrc/telemetry/interfaces'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import {
   ITelemetrySendEvent,
@@ -219,6 +220,7 @@ const DEFAULT_SUMMARY: IRedisModulesSummary = Object.freeze(
     RedisBloom: { loaded: false },
     RedisJSON: { loaded: false },
     RedisTimeSeries: { loaded: false },
+    'Triggers & Functions': { loaded: false },
     customModules: [],
   },
 )
@@ -229,27 +231,31 @@ const getEnumKeyBValue = (myEnum: any, enumValue: number | string): string => {
   return index > -1 ? keys[index] : ''
 }
 
+const getModuleSummaryToSent = (module: AdditionalRedisModule): IModuleSummary => ({
+  loaded: true,
+  version: module.version,
+  semanticVersion: module.semanticVersion,
+})
+
 const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): IRedisModulesSummary => {
   const summary = cloneDeep(DEFAULT_SUMMARY)
   try {
     modules.forEach(((module) => {
       if (SUPPORTED_REDIS_MODULES[module.name]) {
         const moduleName = getEnumKeyBValue(RedisModules, module.name)
-        summary[moduleName] = {
-          loaded: true,
-          version: module.version,
-          semanticVersion: module.semanticVersion,
-        }
+        summary[moduleName as RedisModulesKeyType] = getModuleSummaryToSent(module)
         return
       }
 
       if (isRedisearchAvailable([module])) {
         const redisearchName = getEnumKeyBValue(RedisModules, RedisModules.RediSearch)
-        summary[redisearchName] = {
-          loaded: true,
-          version: module.version,
-          semanticVersion: module.semanticVersion,
-        }
+        summary[redisearchName as RedisModulesKeyType] = getModuleSummaryToSent(module)
+        return
+      }
+
+      if (isTriggeredAndFunctionsAvailable([module])) {
+        const triggeredAndFunctionsName = getEnumKeyBValue(RedisModules, RedisModules['Triggers & Functions'])
+        summary[triggeredAndFunctionsName as RedisModulesKeyType] = getModuleSummaryToSent(module)
         return
       }
 

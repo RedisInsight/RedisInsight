@@ -18,6 +18,8 @@ import RedisBloomLight from 'uiSrc/assets/img/modules/RedisBloomLight.svg'
 import RedisBloomDark from 'uiSrc/assets/img/modules/RedisBloomDark.svg'
 import RedisGearsLight from 'uiSrc/assets/img/modules/RedisGearsLight.svg'
 import RedisGearsDark from 'uiSrc/assets/img/modules/RedisGearsDark.svg'
+import RedisGears2Light from 'uiSrc/assets/img/modules/RedisGears2Light.svg'
+import RedisGears2Dark from 'uiSrc/assets/img/modules/RedisGears2Dark.svg'
 import RedisGraphLight from 'uiSrc/assets/img/modules/RedisGraphLight.svg'
 import RedisGraphDark from 'uiSrc/assets/img/modules/RedisGraphDark.svg'
 import RedisJSONLight from 'uiSrc/assets/img/modules/RedisJSONLight.svg'
@@ -68,6 +70,16 @@ export const modulesDefaultInit = {
     iconDark: RedisGraphDark,
     iconLight: RedisGraphLight,
     text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Graph],
+  },
+  [RedisDefaultModules.RedisGears]: {
+    iconDark: RedisGearsDark,
+    iconLight: RedisGearsLight,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.RedisGears],
+  },
+  [RedisDefaultModules.RedisGears2]: {
+    iconDark: RedisGears2Dark,
+    iconLight: RedisGears2Light,
+    text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.RedisGears2],
   },
   [RedisDefaultModules.ReJSON]: {
     iconDark: RedisJSONDark,

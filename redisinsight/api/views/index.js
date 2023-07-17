@@ -12,5 +12,7 @@ Handlebars.registerPartial('errors_partial', errorsPartial);
 Handlebars.registerPartial('styles_partial', stylesPartial);
 
 document.body.innerHTML = template({
-  errorCode: 11008,
+  error: {
+    errorCode: 11008,
+  },
 });

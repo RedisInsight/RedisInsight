@@ -14,7 +14,7 @@ import { Pages } from 'uiSrc/constants'
 import { cloudSelector, fetchSubscriptionsRedisCloud, setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
 import { CloudAuthResponse, CloudAuthStatus, CloudJobStatus, CloudJobs } from 'uiSrc/electron/constants'
 import { addErrorNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
-import { parseCloudOAuthCallbackError } from 'uiSrc/utils'
+import { parseCloudOAuthError } from 'uiSrc/utils'
 import { InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 
 const ConfigOAuth = () => {
@@ -70,7 +70,7 @@ const ConfigOAuth = () => {
     }
 
     if (status === CloudAuthStatus.Failed) {
-      const err = parseCloudOAuthCallbackError(error || message || '')
+      const err = parseCloudOAuthError(error || message || '')
       dispatch(signInFailure(err?.message))
       dispatch(addErrorNotification(err))
       dispatch(setIsAutodiscoverySSO(false))

@@ -1,1 +1,1 @@
-export * from './parseCloudOAuthCallbackError'
+export * from './parseCloudOAuthError'

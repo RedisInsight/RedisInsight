@@ -46,8 +46,8 @@ interface Values {
 }
 
 const fieldDisplayNames: Values = {
-  accessKey: 'Enter Cloud API Account Key',
-  secretKey: 'Enter Cloud API User Key',
+  accessKey: 'Enter API Account Key',
+  secretKey: 'Enter API User Key',
 }
 
 const Message = () => (
@@ -183,7 +183,7 @@ const CloudConnectionForm = (props: Props) => {
           <EuiForm component="form" onSubmit={formik.handleSubmit}>
             <EuiFlexGroup className={flexGroupClassName}>
               <EuiFlexItem className={flexItemClassName}>
-                <EuiFormRow label="Cloud API Account Key*">
+                <EuiFormRow label="API Account Key*">
                   <EuiFieldText
                     name="accessKey"
                     id="accessKey"
@@ -201,7 +201,7 @@ const CloudConnectionForm = (props: Props) => {
             </EuiFlexGroup>
             <EuiFlexGroup className={flexGroupClassName}>
               <EuiFlexItem className={flexItemClassName}>
-                <EuiFormRow label="Cloud API User Key*">
+                <EuiFormRow label="API User Key*">
                   <EuiFieldText
                     name="secretKey"
                     id="secretKey"

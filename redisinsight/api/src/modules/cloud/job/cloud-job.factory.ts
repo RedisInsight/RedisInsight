@@ -11,6 +11,7 @@ import { SessionMetadata } from 'src/common/models';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
 @Injectable()
 export class CloudJobFactory {
@@ -28,6 +29,7 @@ export class CloudJobFactory {
     data: any,
     options: {
       sessionMetadata: SessionMetadata,
+      utm?: CloudRequestUtm,
       capiCredentials?: CloudCapiAuthDto,
       stateCallback?: (self: CloudJob) => any,
     },

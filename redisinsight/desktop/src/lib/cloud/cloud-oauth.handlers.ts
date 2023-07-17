@@ -14,7 +14,10 @@ export const getTokenCallbackFunction = (webContents: WebContents) => (response:
   webContents.focus()
 }
 export const initCloudOauthHandlers = () => {
-  ipcMain.handle(IpcInvokeEvent.cloudOauth, async (event, idp: CloudAuthIdpType) => {
+  ipcMain.handle(IpcInvokeEvent.cloudOauth, async (event, options: {
+    strategy: CloudAuthIdpType,
+    action?: string,
+  }) => {
     try {
       const authService: CloudAuthService = getBackendApp()?.get?.(CloudAuthService)
 
@@ -25,7 +28,10 @@ export const initCloudOauthHandlers = () => {
       const url = await authService.getAuthorizationUrl({
         sessionId: DEFAULT_SESSION_ID,
         userId: DEFAULT_USER_ID,
-      }, idp, getTokenCallbackFunction(event.sender))
+      }, {
+        ...options,
+        callback: getTokenCallbackFunction(event.sender),
+      })
 
       await open(url)
 

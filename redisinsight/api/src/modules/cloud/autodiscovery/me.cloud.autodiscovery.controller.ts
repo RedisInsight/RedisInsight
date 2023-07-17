@@ -1,5 +1,6 @@
 import {
   Body,
+  Query,
   ClassSerializerInterceptor,
   Controller,
   Get,
@@ -26,6 +27,7 @@ import {
 } from 'src/modules/cloud/autodiscovery/dto';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { MeCloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/me.cloud-autodiscovery.service';
+import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
 const cloudConf = config.get('cloud');
 
@@ -49,8 +51,11 @@ export class MeCloudAutodiscoveryController {
       },
     ],
   })
-  async getAccount(@RequestSessionMetadata() sessionMetadata): Promise<CloudAccountInfo> {
-    return await this.service.getAccount(sessionMetadata);
+  async getAccount(
+    @RequestSessionMetadata() sessionMetadata,
+      @Query() utm: CloudRequestUtm,
+  ): Promise<CloudAccountInfo> {
+    return await this.service.getAccount(sessionMetadata, utm);
   }
 
   @Get('subscriptions')
@@ -67,8 +72,11 @@ export class MeCloudAutodiscoveryController {
       },
     ],
   })
-  async discoverSubscriptions(@RequestSessionMetadata() sessionMetadata): Promise<CloudSubscription[]> {
-    return await this.service.discoverSubscriptions(sessionMetadata);
+  async discoverSubscriptions(
+    @RequestSessionMetadata() sessionMetadata,
+      @Query() utm: CloudRequestUtm,
+  ): Promise<CloudSubscription[]> {
+    return await this.service.discoverSubscriptions(sessionMetadata, utm);
   }
 
   @Post('get-databases')
@@ -89,8 +97,9 @@ export class MeCloudAutodiscoveryController {
   async discoverDatabases(
     @RequestSessionMetadata() sessionMetadata,
       @Body() dto: DiscoverCloudDatabasesDto,
+      @Query() utm: CloudRequestUtm,
   ): Promise<CloudDatabase[]> {
-    return await this.service.discoverDatabases(sessionMetadata, dto);
+    return await this.service.discoverDatabases(sessionMetadata, dto, utm);
   }
 
   @Post('databases')
@@ -111,8 +120,9 @@ export class MeCloudAutodiscoveryController {
     @RequestSessionMetadata() sessionMetadata,
       @Body() dto: ImportCloudDatabasesDto,
       @Res() res: Response,
+      @Query() utm: CloudRequestUtm,
   ): Promise<Response> {
-    const result = await this.service.addRedisCloudDatabases(sessionMetadata, dto.databases);
+    const result = await this.service.addRedisCloudDatabases(sessionMetadata, dto.databases, utm);
     const hasSuccessResult = result.some(
       (addResponse: ImportCloudDatabaseResponse) => addResponse.status === ActionStatus.Success,
     );

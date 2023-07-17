@@ -1,5 +1,5 @@
 import {
-  Body,
+  Body, Query,
   ClassSerializerInterceptor,
   Controller, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
@@ -9,6 +9,7 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { CloudJobService } from 'src/modules/cloud/job/cloud-job.service';
 import { CreateCloudJobDto } from 'src/modules/cloud/job/dto';
 import { CloudJobInfo } from 'src/modules/cloud/job/models';
+import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
 @ApiTags('Cloud Jobs')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -28,8 +29,9 @@ export class CloudJobController {
   async createFreeDatabase(
     @RequestSessionMetadata() sessionMetadata,
       @Body() dto: CreateCloudJobDto,
+      @Query() utm: CloudRequestUtm,
   ): Promise<CloudJobInfo> {
-    return this.service.create(sessionMetadata, dto);
+    return this.service.create(sessionMetadata, dto, utm);
   }
 
   @Get('/')

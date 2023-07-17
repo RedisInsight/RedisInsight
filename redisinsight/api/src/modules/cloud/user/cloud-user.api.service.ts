@@ -9,6 +9,7 @@ import { wrapHttpError } from 'src/common/utils';
 import { CloudApiBadRequestException, CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
+import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
 const cloudConfig = config.get('cloud');
 
@@ -58,15 +59,16 @@ export class CloudUserApiService {
   /**
    * Login user to api using accessToken from oauth flow
    * @param sessionMetadata
+   * @param utm
    * @private
    */
-  private async ensureLogin(sessionMetadata: SessionMetadata): Promise<void> {
+  private async ensureLogin(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<void> {
     try {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       if (!session?.apiSessionId) {
         this.logger.log('Trying to login user');
-        const apiSessionId = await this.api.getApiSessionId(session);
+        const apiSessionId = await this.api.getApiSessionId(session, utm);
 
         if (!apiSessionId) {
           throw new CloudApiUnauthorizedException();
@@ -87,11 +89,12 @@ export class CloudUserApiService {
    * Always sync with force=true
    * @param sessionMetadata
    * @param force
+   * @param utm
    * @private
    */
-  private async ensureCloudUser(sessionMetadata: SessionMetadata, force = false) {
+  private async ensureCloudUser(sessionMetadata: SessionMetadata, force = false, utm?: CloudRequestUtm) {
     try {
-      await this.ensureLogin(sessionMetadata);
+      await this.ensureLogin(sessionMetadata, utm);
 
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
@@ -138,10 +141,11 @@ export class CloudUserApiService {
    * Get cloud user profile
    * @param sessionMetadata
    * @param forceSync
+   * @param utm
    */
-  async me(sessionMetadata: SessionMetadata, forceSync = false): Promise<CloudUser> {
+  async me(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudUser> {
     try {
-      await this.ensureCloudUser(sessionMetadata, forceSync);
+      await this.ensureCloudUser(sessionMetadata, forceSync, utm);
 
       return this.repository.get(sessionMetadata.sessionId);
     } catch (e) {
@@ -172,10 +176,11 @@ export class CloudUserApiService {
   /**
    * Generate CAPI key + secret if needed
    * @param sessionMetadata
+   * @param utm
    */
-  private async ensureCapiKeys(sessionMetadata: SessionMetadata): Promise<void> {
+  private async ensureCapiKeys(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<void> {
     try {
-      let user = await this.me(sessionMetadata);
+      let user = await this.me(sessionMetadata, false, utm);
 
       // nothing is needed since we have capi key
       if (user?.capiSecret && user?.capiKey) {
@@ -197,7 +202,7 @@ export class CloudUserApiService {
 
         this.logger.log('Successfully enabled capi');
 
-        user = await this.me(sessionMetadata, true);
+        user = await this.me(sessionMetadata, true, utm);
         currentAccount = CloudUserApiService.getCurrentAccount(user);
       }
 
@@ -229,12 +234,13 @@ export class CloudUserApiService {
   /**
    * Gets current capi keys from local storage or generate new one
    * @param sessionMetadata
+   * @param utm
    */
-  async getCapiKeys(sessionMetadata: SessionMetadata): Promise<CloudCapiAuthDto> {
+  async getCapiKeys(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<CloudCapiAuthDto> {
     try {
       this.logger.log('Getting capi keys');
 
-      await this.ensureCapiKeys(sessionMetadata);
+      await this.ensureCapiKeys(sessionMetadata, utm);
 
       const user = await this.me(sessionMetadata);
 

@@ -8,6 +8,7 @@ import { Socket } from 'socket.io';
 import { CloudJobNotFoundException } from 'src/modules/cloud/job/exceptions';
 import { CloudJobEvents } from 'src/modules/cloud/common/constants';
 import { CloudJob } from 'src/modules/cloud/job/jobs';
+import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
 @Injectable()
 export class CloudJobService {
@@ -19,10 +20,15 @@ export class CloudJobService {
    * Create cloud job
    * @param sessionMetadata
    * @param dto
+   * @param utm
    */
-  async create(sessionMetadata: SessionMetadata, dto: CreateCloudJobDto): Promise<CloudJobInfo> {
+  async create(
+    sessionMetadata: SessionMetadata,
+    dto: CreateCloudJobDto,
+    utm: CloudRequestUtm,
+  ): Promise<CloudJobInfo> {
     try {
-      return await this.cloudJobProvider.addJob(sessionMetadata, dto);
+      return await this.cloudJobProvider.addJob(sessionMetadata, dto, utm);
     } catch (e) {
       throw wrapHttpError(e);
     }

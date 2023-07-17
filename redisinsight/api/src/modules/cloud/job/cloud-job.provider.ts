@@ -6,6 +6,7 @@ import { CloudJobInfo, CloudJobRunMode } from 'src/modules/cloud/job/models';
 import { CloudJobFactory } from 'src/modules/cloud/job/cloud-job.factory';
 import { wrapHttpError } from 'src/common/utils';
 import { Injectable } from '@nestjs/common';
+import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
 @Injectable()
 export class CloudJobProvider {
@@ -15,13 +16,18 @@ export class CloudJobProvider {
     private readonly cloudJobFactory: CloudJobFactory,
   ) {}
 
-  async addJob(sessionMetadata: SessionMetadata, dto: CreateCloudJobDto): Promise<CloudJobInfo> {
+  async addJob(
+    sessionMetadata: SessionMetadata,
+    dto: CreateCloudJobDto,
+    utm: CloudRequestUtm,
+  ): Promise<CloudJobInfo> {
     try {
       const job = await this.cloudJobFactory.create(
         dto.name,
         {},
         {
           sessionMetadata,
+          utm,
         },
       );
 

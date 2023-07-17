@@ -54,6 +54,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       this.data.capiCredentials = await this.dependencies.cloudUserApiService.getCapiKeys(
         this.options.sessionMetadata,
+        this.options.utm,
       );
 
       this.logger.debug('Get or create free subscription');

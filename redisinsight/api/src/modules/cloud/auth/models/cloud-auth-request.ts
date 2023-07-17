@@ -13,4 +13,6 @@ export class CloudAuthRequest {
   callback?: Function;
 
   createdAt: Date;
+
+  action?: string;
 }

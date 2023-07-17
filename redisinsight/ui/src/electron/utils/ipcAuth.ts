@@ -1,8 +1,14 @@
 import { CloudAuthSocial, IpcInvokeEvent } from '../constants'
 
-export const ipcAuthGoogle = async () => {
-  await window.app?.ipc?.invoke(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Google)
+export const ipcAuthGoogle = async (action: string) => {
+  await window.app?.ipc?.invoke(
+    IpcInvokeEvent.cloudOauth,
+    { strategy: CloudAuthSocial.Google, action }
+  )
 }
-export const ipcAuthGithub = async () => {
-  await window.app?.ipc?.invoke(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Github)
+export const ipcAuthGithub = async (action: string) => {
+  await window.app?.ipc?.invoke(
+    IpcInvokeEvent.cloudOauth,
+    { strategy: CloudAuthSocial.Github, action }
+  )
 }

@@ -36,7 +36,7 @@ interface FormValues {
 
 const OAuthSelectAccountDialog = () => {
   const { isAutodiscoverySSO } = useSelector(cloudSelector)
-  const { accounts = [], id } = useSelector(oauthCloudUserDataSelector) ?? {}
+  const { accounts = [], currentAccountId } = useSelector(oauthCloudUserDataSelector) ?? {}
   const { isOpenSelectAccountDialog } = useSelector(oauthCloudSelector)
   const { loading } = useSelector(oauthCloudUserSelector)
 
@@ -44,7 +44,7 @@ const OAuthSelectAccountDialog = () => {
   const dispatch = useDispatch()
 
   const initialValues = {
-    accountId: `${id}`,
+    accountId: `${currentAccountId}`,
   }
 
   const formik = useFormik({
@@ -62,7 +62,6 @@ const OAuthSelectAccountDialog = () => {
 
   const onActivateAccountSuccess = useCallback(() => {
     if (isAutodiscoverySSO) {
-      dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB))
       dispatch(fetchSubscriptionsRedisCloud(
         null,
         () => {
@@ -71,6 +70,7 @@ const OAuthSelectAccountDialog = () => {
         },
       ))
     } else {
+      dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB))
       dispatch(createFreeDbJob())
     }
     dispatch(setSelectAccountDialogState(false))

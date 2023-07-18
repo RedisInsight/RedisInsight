@@ -76,6 +76,7 @@ export default {
 
   CLOUD_OAUTH_MISCONFIGURATION: 'Authorization server misconfiguration.',
   CLOUD_OAUTH_GITHUB_EMAIL_PERMISSION: 'Unable to get an email from the GitHub account. Make sure that it is available.',
+  CLOUD_OAUTH_MISSED_REQUIRED_DATA: 'Unable to get required data from the user profile.',
   CLOUD_OAUTH_GITHUB_UNKNOWN_AUTHORIZATION_REQUEST: 'Unknown authorization request.',
   CLOUD_OAUTH_UNEXPECTED_ERROR: 'Unexpected error.',
 

@@ -41,7 +41,10 @@ describe('OAuthSignInDialog', () => {
     fireEvent.click(closeEl as HTMLButtonElement)
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CLOUD_SIGN_IN_FORM_CLOSED
+      event: TelemetryEvent.CLOUD_SIGN_IN_FORM_CLOSED,
+      eventData: {
+        action: 'create',
+      }
     })
   })
 })

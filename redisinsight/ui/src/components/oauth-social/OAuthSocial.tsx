@@ -29,10 +29,13 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
   const dispatch = useDispatch()
   const isAutodiscovery = type === OAuthSocialType.Autodiscovery
 
+  const getAction = () => (isAutodiscovery ? 'import' : 'create')
+
   const sendTelemetry = (accountOption: string) => sendEventTelemetry({
     event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
     eventData: {
       accountOption,
+      action: getAction(),
     }
   })
 
@@ -43,7 +46,7 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
       label: 'google-oauth',
       onButtonClick: () => {
         sendTelemetry('Google')
-        ipcAuthGoogle(isAutodiscovery ? 'import' : 'create')
+        ipcAuthGoogle(getAction())
       },
     },
     {
@@ -52,7 +55,7 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
       className: styles.githubButton,
       onButtonClick: () => {
         sendTelemetry('GitHub')
-        ipcAuthGithub(isAutodiscovery ? 'import' : 'create')
+        ipcAuthGithub(getAction())
       },
     }
   ]

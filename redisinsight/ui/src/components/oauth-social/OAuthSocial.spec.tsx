@@ -48,11 +48,12 @@ describe('OAuthSocial', () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {
         accountOption: 'Google',
+        action: 'create',
       }
     })
 
     expect(invokeMock).toBeCalledTimes(1)
-    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Google)
+    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'create', strategy: CloudAuthSocial.Google })
 
     const expectedActions = [signIn(), setIsAutodiscoverySSO(false)]
     expect(store.getActions()).toEqual(expectedActions)
@@ -73,11 +74,12 @@ describe('OAuthSocial', () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {
         accountOption: 'GitHub',
+        action: 'create',
       }
     })
 
     expect(invokeMock).toBeCalledTimes(1)
-    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Github)
+    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'create', strategy: CloudAuthSocial.Github })
     invokeMock.mockRestore()
 
     const expectedActions = [signIn(), setIsAutodiscoverySSO(false)]
@@ -100,11 +102,12 @@ describe('OAuthSocial', () => {
         event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
         eventData: {
           accountOption: 'Google',
+          action: 'import',
         }
       })
 
       expect(invokeMock).toBeCalledTimes(1)
-      expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, CloudAuthSocial.Google)
+      expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'import', strategy: CloudAuthSocial.Google })
 
       const expectedActions = [
         signIn(),

@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { OAuthSocial } from 'uiSrc/components'
 import { setSignInDialogState, oauthCloudSelector } from 'uiSrc/slices/oauth/cloud'
-import { ReactComponent as DeveloperIcon } from 'uiSrc/assets/img/oauth/developer.svg'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { OAuthAdvantages } from './constants'
@@ -40,27 +39,31 @@ const OAuthSignInDialog = () => {
           <EuiFlexItem grow={false} className={styles.advantages}>
             <div className={styles.advantagesContent}>
               <EuiTitle size="s">
-                <h3 className={styles.title}>Get started with Redis Cloud</h3>
+                <h3 className={styles.title}>Get started with Redis Enterprise Cloud</h3>
               </EuiTitle>
               {OAuthAdvantages.map(({ icon, text, title }) => (
                 <EuiText className={styles.advantage} key={text?.toString()}>
-                  <EuiIcon type={icon} className={styles.advantageIcon} />
+                  {icon && (<EuiIcon type={icon} className={styles.advantageIcon} />)}
                   <EuiText>
                     <div className={styles.advantageTitle}>{title}</div>
-                    <div className={styles.advantageText}>{text}</div>
+                    <ul className={styles.advantageList}>
+                      {text.map((item, i) => (
+                        <li key={i} className={styles.advantageText}>{item}</li>
+                      ))}
+                    </ul>
                   </EuiText>
                 </EuiText>
               ))}
             </div>
-
-            <EuiIcon type={DeveloperIcon} className={styles.developerIcon} />
-
           </EuiFlexItem>
           <EuiFlexItem grow={false} className={styles.social}>
             <EuiTitle size="s">
-              <h3 className={styles.title}>Create a free Cloud database</h3>
+              <h3 className={styles.title}>Get your free Cloud instance</h3>
             </EuiTitle>
-            <h4 className={styles.socialSubTitle}>Sign in with</h4>
+            <EuiText color="subdued" size="xs">
+              Use Redis as an all-in-one database <br /> and cache like never before
+            </EuiText>
+            <h4 className={styles.socialSubTitle}>Sign up with</h4>
             <OAuthSocial />
             <EuiText className={styles.socialText}>
               {'By signing up, you acknowledge that you agree to our '}

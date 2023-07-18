@@ -4,10 +4,13 @@ import { act, cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-u
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import {
   getUserInfo,
+  getUserInfoSuccess,
   oauthCloudSelector,
   oauthCloudUserDataSelector,
+  setSelectAccountDialogState,
 } from 'uiSrc/slices/oauth/cloud'
 import { apiService } from 'uiSrc/services'
+import { loadSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
 import OAuthSelectAccountDialog from './OAuthSelectAccountDialog'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -92,7 +95,12 @@ describe('OAuthSelectAccountDialog', () => {
       fireEvent.click(submitEl as HTMLButtonElement)
     })
 
-    const expectedActions = [getUserInfo()]
+    const expectedActions = [
+      getUserInfo(),
+      getUserInfoSuccess(),
+      loadSubscriptionsRedisCloud(),
+      setSelectAccountDialogState(false),
+    ]
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
 
     expect(sendEventTelemetry).toBeCalledWith({

@@ -151,18 +151,15 @@ const instancesSlice = createSlice({
       state.error = payload
     },
     getDatabaseConfigInfo: (state) => {
-      state.loading = true
       state.error = ''
     },
     getDatabaseConfigInfoSuccess: (state, { payload }) => {
-      state.loading = false
       state.instanceOverview = {
         ...payload,
         version: payload?.version || state.instanceOverview.version || '',
       }
     },
     getDatabaseConfigInfoFailure: (state, { payload }) => {
-      state.loading = false
       state.error = payload
     },
 

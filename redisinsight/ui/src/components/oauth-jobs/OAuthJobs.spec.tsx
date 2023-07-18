@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { AxiosError } from 'axios'
 import { cleanup, clearStoreActions, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
-import { CloudJobStatus } from 'uiSrc/electron/constants'
+import { CloudJobStatus, CloudJobs } from 'uiSrc/electron/constants'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { RootState } from 'uiSrc/slices/store'
 import { loadInstances } from 'uiSrc/slices/instances/instances'
@@ -102,7 +102,7 @@ describe('OAuthJobs', () => {
 
     const expectedActions = [
       loadInstances(),
-      setJob(''),
+      setJob({ id: '', name: CloudJobs.CREATE_FREE_DATABASE, status: '' }),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions(expectedActions)
@@ -125,7 +125,7 @@ describe('OAuthJobs', () => {
     rerender(<OAuthJobs />)
 
     const expectedActions = [
-      setJob(''),
+      setJob({ id: '', name: CloudJobs.CREATE_FREE_DATABASE, status: '' }),
       removeInfiniteNotification(InfiniteMessagesIds.oAuth),
       addErrorNotification({ response: { data: error } } as AxiosError),
     ]

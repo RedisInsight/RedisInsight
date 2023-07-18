@@ -7,7 +7,7 @@ import {
   resetDataRedisCluster,
   resetInstancesRedisCluster,
 } from 'uiSrc/slices/instances/cluster'
-import { optimizeLSInstances, setTitle } from 'uiSrc/utils'
+import { setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
@@ -98,9 +98,6 @@ const HomePage = () => {
       sendPageViewTelemetry({
         name: TelemetryPageView.DATABASES_LIST_PAGE
       })
-    }
-    if (instances.length && !isPageViewSent) {
-      optimizeLSInstances(instances)
     }
   }, [instances, analyticsIdentified, isPageViewSent, isChangedInstance])
 

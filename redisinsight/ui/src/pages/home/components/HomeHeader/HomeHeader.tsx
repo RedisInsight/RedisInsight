@@ -214,7 +214,7 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
               <div>
                 New!
                 <br />
-                Now you can easily connect and create new database on Redis Cloud
+                Now you can create a free Redis Stack database in Redis Enterprise Cloud in a few clicks.
               </div>
             </div>
           )}

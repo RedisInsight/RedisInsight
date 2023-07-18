@@ -11,8 +11,6 @@ export const INFINITE_MESSAGES = {
     Inner: (
       <div
         role="presentation"
-        onMouseDown={(e) => { e.preventDefault() }}
-        onMouseUp={(e) => { e.preventDefault() }}
         data-testid="pending-create-db-notification"
       >
         <EuiFlexGroup justifyContent="flexEnd" direction="row" gutterSize="none">
@@ -22,15 +20,15 @@ export const INFINITE_MESSAGES = {
           <EuiFlexItem grow>
             <EuiTitle className="infiniteMessage__title">
               <span>
-                Setting up Redis Cloud
+                Setting up your Redis Enterprise Cloud account...
               </span>
             </EuiTitle>
             <EuiText size="xs">
-              This may take several minutes, but is totally worth it!
+              This may take several minutes, but it is totally worth it!
             </EuiText>
             <EuiSpacer size="m" />
             <EuiText size="xs">
-              You can continue working in RedisInsight, and we will notify you after the it is set up.
+              You can continue working in RedisInsight, and we will notify you once done.
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -46,9 +44,10 @@ export const INFINITE_MESSAGES = {
         onMouseUp={(e) => { e.preventDefault() }}
         data-testid="success-create-db-notification"
       >
-        <EuiTitle className="infiniteMessage__title"><span>Success!</span></EuiTitle>
+        <EuiTitle className="infiniteMessage__title"><span>Congratulations!</span></EuiTitle>
         <EuiText size="xs">
-          Connect to your all-in-one Redis Cloud database.
+          You can now use your Redis Stack database in Redis Enterprise Cloud
+          to start exploring all its developer capabilities via RedisInsight tutorials.
         </EuiText>
         <EuiSpacer size="m" />
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="none">
@@ -60,7 +59,7 @@ export const INFINITE_MESSAGES = {
               onClick={() => onSuccess()}
               data-testid="notification-connect-db"
             >
-              Connect
+              Get started
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>

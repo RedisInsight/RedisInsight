@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { AxiosError } from 'axios'
 
-import { CloudJobStatus } from 'uiSrc/electron/constants'
+import { CloudJobStatus, CloudJobs } from 'uiSrc/electron/constants'
 import { fetchInstancesAction } from 'uiSrc/slices/instances/instances'
 import { createFreeDbSuccess, oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { parseCloudOAuthError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from '../notifications/components'
 
 const OAuthJobs = () => {
@@ -27,13 +27,14 @@ const OAuthJobs = () => {
       case CloudJobStatus.Finished:
         const dbId = result?.resourceId || ''
         dispatch(fetchInstancesAction(() => dispatch(createFreeDbSuccess(dbId, history))))
-        dispatch(setJob(''))
+        dispatch(setJob({ id: '', name: CloudJobs.CREATE_FREE_DATABASE, status: '' }))
         break
 
       case CloudJobStatus.Failed:
-        dispatch(setJob(''))
+        const err = parseCloudOAuthError(error || '')
+        dispatch(setJob({ id: '', name: CloudJobs.CREATE_FREE_DATABASE, status: '' }))
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
-        dispatch(addErrorNotification({ response: { data: error } } as AxiosError))
+        dispatch(addErrorNotification(err))
         break
 
       default:

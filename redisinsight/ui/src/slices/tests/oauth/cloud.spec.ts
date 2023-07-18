@@ -6,6 +6,7 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
+import { CloudJobStatus, CloudJobs } from 'uiSrc/electron/constants'
 import reducer, {
   initialState,
   setSignInDialogState,
@@ -409,7 +410,7 @@ describe('oauth cloud slice', () => {
     describe('createFreeDb', () => {
       it('call both addFreeDb and setJob when post is successed', async () => {
       // Arrange
-        const data = { id: '123123' }
+        const data = { id: '123123', name: CloudJobs.CREATE_FREE_DATABASE, status: CloudJobStatus.Running }
         const responsePayload = { data, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
@@ -421,7 +422,7 @@ describe('oauth cloud slice', () => {
         // Assert
         const expectedActions = [
           addFreeDb(),
-          setJob(data.id),
+          setJob(data),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

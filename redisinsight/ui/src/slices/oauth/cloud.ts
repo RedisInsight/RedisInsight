@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { isString } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
-import { CloudJobs } from 'uiSrc/electron/constants'
+import { CloudJobs, CloudJobStatus } from 'uiSrc/electron/constants'
 import {
   INFINITE_MESSAGES,
   InfiniteMessagesIds
@@ -15,7 +14,7 @@ import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { AppDispatch, RootState } from '../store'
 import { Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from '../app/notifications'
-import { setConnectedInstanceId } from '../instances/instances'
+import { checkConnectToInstanceAction, setConnectedInstanceId } from '../instances/instances'
 import { setAppContextInitialState } from '../app/context'
 
 export const initialState: StateAppOAuth = {
@@ -25,7 +24,7 @@ export const initialState: StateAppOAuth = {
   job: {
     id: localStorageService.get(BrowserStorageItem.OAuthJobId) ?? '',
     name: CloudJobs.CREATE_FREE_DATABASE,
-    state: '',
+    status: '',
   },
   source: null,
   isOpenSignInDialog: false,
@@ -93,15 +92,8 @@ const oauthCloudSlice = createSlice({
     setSelectAccountDialogState: (state, { payload }: PayloadAction<boolean>) => {
       state.isOpenSelectAccountDialog = payload
     },
-    setJob: (state, { payload }: PayloadAction<string | CloudJobInfo>) => {
-      if (isString(payload)) {
-        state.job = {
-          ...state.job,
-          id: payload
-        }
-      } else {
-        state.job = payload
-      }
+    setJob: (state, { payload }: PayloadAction<CloudJobInfo>) => {
+      state.job = payload
     },
   },
 })
@@ -140,6 +132,7 @@ export function createFreeDbSuccess(id: string, history: any) {
         dispatch(setAppContextInitialState())
         dispatch(setConnectedInstanceId(id ?? ''))
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+        dispatch(checkConnectToInstanceAction(id))
 
         history.push(Pages.home)
         setTimeout(() => {
@@ -201,7 +194,7 @@ export function createFreeDbJob(onSuccessAction?: () => void, onFailAction?: () 
 
       if (isStatusSuccessful(status)) {
         localStorageService.set(BrowserStorageItem.OAuthJobId, data.id)
-        dispatch(setJob(data.id))
+        dispatch(setJob({ id: data.id, name: CloudJobs.CREATE_FREE_DATABASE, status: CloudJobStatus.Running }))
         onSuccessAction?.()
       }
     } catch (_err) {

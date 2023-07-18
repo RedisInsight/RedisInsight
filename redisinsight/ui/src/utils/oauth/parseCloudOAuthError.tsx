@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios'
 import { isString, set } from 'lodash'
 import React from 'react'
+import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 
@@ -34,9 +35,9 @@ export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAG
       message = (
         <>
           Authorization server encountered a misconfiguration error and was unable to complete your request.
-          <br />
+          <EuiSpacer size="xs" />
           Try again later.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -46,7 +47,7 @@ export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAG
       message = (
         <>
           Unknown authorization request.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -56,7 +57,7 @@ export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAG
       message = (
         <>
           An unexpected error occurred.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -66,9 +67,9 @@ export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAG
       message = (
         <>
           Your request resulted in an error.
-          <br />
+          <EuiSpacer size="xs" />
           Try again later.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -88,7 +89,7 @@ export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAG
       message = (
         <>
           Try restarting RedisInsight.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -99,9 +100,9 @@ export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAG
       message = (
         <>
           Resource requested could not be found.
-          <br />
+          <EuiSpacer size="xs" />
           Try again later.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -112,9 +113,9 @@ export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAG
       message = (
         <>
           Your Redis Enterprise Cloud authorization failed.
-          <br />
+          <EuiSpacer size="xs" />
           Try again later.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -125,7 +126,7 @@ export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAG
       message = (
         <>
           You already have a free Redis Enterprise Cloud database running.
-          <br />
+          <EuiSpacer size="s" />
           Check out your <a href="https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main" target="_blank" rel="noreferrer">Cloud console</a> for connection details.
         </>
       )

@@ -36,7 +36,6 @@ export class CloudAuthService {
       return new CloudOauthMissedRequiredDataException(query.error_description);
     }
 
-    // CloudOauthMissedRequiredDataException
     return new CloudOauthMisconfigurationException();
   }
 

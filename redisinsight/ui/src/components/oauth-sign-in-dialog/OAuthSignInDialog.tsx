@@ -33,7 +33,7 @@ const OAuthSignInDialog = () => {
       }
     })
     dispatch(setSignInDialogState(null))
-  }, [])
+  }, [isAutodiscoverySSO])
 
   if (!isOpenSignInDialog) return null
 

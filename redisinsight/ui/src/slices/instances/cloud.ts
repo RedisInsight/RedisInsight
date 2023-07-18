@@ -198,7 +198,7 @@ export function fetchSubscriptionsRedisCloud(
       const { isAutodiscoverySSO } = state.connections.cloud
       const { data, status } = await apiService.get(
         isAutodiscoverySSO
-          ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS}123`
+          ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS}`
           : `${ApiEndpoints.REDIS_CLOUD_SUBSCRIPTIONS}`,
         {
           headers: {

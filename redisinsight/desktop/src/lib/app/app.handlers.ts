@@ -1,7 +1,7 @@
 import { app } from 'electron'
 import log from 'electron-log'
 import { getBackendGracefulShutdown, WindowType, getWindows, windowFactory, windows } from 'desktopSrc/lib'
-import { cloudOauthCallback } from 'desktopSrc/lib/cloud/cloud-oauth.handlers'
+import { deepLinkHandler } from 'desktopSrc/lib/app/deep-link.handlers';
 
 export const initAppHandlers = () => {
   app.on('activate', () => {
@@ -48,12 +48,12 @@ export const initAppHandlers = () => {
   app.on('open-url', async (event, url) => {
     event.preventDefault()
     // todo: implement url handler to map url to a proper function
-    await cloudOauthCallback(url)
+    await deepLinkHandler(url)
   })
 
   // deep link open (win)
   app.on('second-instance', async (_event, commandLine) => {
-    await cloudOauthCallback(commandLine?.pop())
+    await deepLinkHandler(commandLine?.pop())
     // Someone tried to run a second instance, we should focus our window.
     if (windows.size) {
       const win = windows.values().next().value

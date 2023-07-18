@@ -53,7 +53,7 @@ export const initCloudOauthHandlers = () => {
 export const cloudOauthCallback = async (url: UrlWithParsedQuery) => {
   try {
     const authService: CloudAuthService = getBackendApp()?.get?.(CloudAuthService)
-    const result = await authService.handleCallback(Object.fromEntries(url.query as any))
+    const result = await authService.handleCallback(url.query)
 
     if (result.status === CloudAuthStatus.Failed) {
       const [currentWindow] = getWindows().values()

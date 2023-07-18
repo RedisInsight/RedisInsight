@@ -15,20 +15,25 @@ import { OAuthSocial } from 'uiSrc/components'
 import { setSignInDialogState, oauthCloudSelector } from 'uiSrc/slices/oauth/cloud'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import { OAuthAdvantages } from './constants'
 import styles from './styles.module.scss'
 
 const OAuthSignInDialog = () => {
   const { isOpenSignInDialog } = useSelector(oauthCloudSelector)
+  const { isAutodiscoverySSO } = useSelector(cloudSelector)
 
   const dispatch = useDispatch()
 
   const handleOnClose = useCallback(() => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_FORM_CLOSED,
+      eventData: {
+        action: isAutodiscoverySSO ? 'import' : 'create',
+      }
     })
     dispatch(setSignInDialogState(null))
-  }, [])
+  }, [isAutodiscoverySSO])
 
   if (!isOpenSignInDialog) return null
 

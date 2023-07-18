@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiLoadingSpinner, EuiResizableContainer, } from '@elastic/eui'
-
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import cx from 'classnames'
 import { find, pick } from 'lodash'
 import {
@@ -10,10 +9,12 @@ import {
   setSelectedFunctionToShow,
   triggeredFunctionsFunctionsSelector,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { Pages } from 'uiSrc/constants'
+import { isTriggeredAndFunctionsAvailable, Nullable } from 'uiSrc/utils'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { TriggeredFunctionsFunction } from 'uiSrc/slices/interfaces/triggeredFunctions'
-import { Nullable } from 'uiSrc/utils'
-
 import { LIST_OF_FUNCTION_NAMES } from 'uiSrc/pages/triggeredFunctions/constants'
+import NoLibrariesScreen from 'uiSrc/pages/triggeredFunctions/components/NoLibrariesScreen'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getFunctionsLengthByType } from 'uiSrc/utils/triggered-functions/utils'
 import FunctionsList from './components/FunctionsList'
@@ -23,23 +24,43 @@ import styles from './styles.module.scss'
 
 export const firstPanelId = 'functions-left-panel'
 export const secondPanelId = 'functions-right-panel'
+const NoFunctionsMessage: React.ReactNode = (<span data-testid="no-functions-message">No Functions found</span>)
 
 const FunctionsPage = () => {
   const { lastRefresh, loading, data: functions, selected } = useSelector(triggeredFunctionsFunctionsSelector)
+  const { modules } = useSelector(connectedInstanceSelector)
   const [items, setItems] = useState<TriggeredFunctionsFunction[]>([])
   const [filterValue, setFilterValue] = useState<string>('')
   const [selectedRow, setSelectedRow] = useState<Nullable<TriggeredFunctionsFunction>>(null)
+  const [message, setMessage] = useState<React.ReactNode>(NoFunctionsMessage)
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
+  const history = useHistory()
 
   useEffect(() => {
-    updateList()
+    if (isTriggeredAndFunctionsAvailable(modules)) {
+      updateList()
+    }
   }, [])
 
   useEffect(() => {
     applyFiltering()
   }, [filterValue, functions])
+
+  useEffect(() => {
+    if (functions?.length) {
+      setMessage(NoFunctionsMessage)
+      return
+    }
+    if (isTriggeredAndFunctionsAvailable(modules)) {
+      setMessage(
+        <NoLibrariesScreen isModuleLoaded onAddLibrary={onAddLibrary} />
+      )
+      return
+    }
+    setMessage(<NoLibrariesScreen isModuleLoaded={false} />)
+  }, [functions, modules])
 
   const updateList = () => {
     dispatch(fetchTriggeredFunctionsFunctionsList(instanceId, handleSuccessUpdateList))
@@ -97,6 +118,10 @@ const FunctionsPage = () => {
     setItems(itemsTemp || [])
   }
 
+  const onAddLibrary = () => {
+    history.push({ pathname: Pages.triggeredFunctionsLibraries(instanceId), state: { shouldOpenAddPanel: true } })
+  }
+
   return (
     <EuiFlexGroup
       className={cx('triggeredFunctions__page', styles.main)}
@@ -112,16 +137,15 @@ const FunctionsPage = () => {
           className="triggeredFunctions__topPanel"
         >
           <EuiFlexItem style={{ marginRight: 24 }}>
-            {!!functions?.length && (
-              <EuiFieldSearch
-                isClearable
-                placeholder="Search for Functions"
-                className="triggeredFunctions__search"
-                onChange={onChangeFiltering}
-                aria-label="Search functions"
-                data-testid="search-functions-list"
-              />
-            )}
+            <EuiFieldSearch
+              isClearable
+              placeholder="Search for Functions"
+              className="triggeredFunctions__search"
+              onChange={onChangeFiltering}
+              disabled={!isTriggeredAndFunctionsAvailable(modules)}
+              aria-label="Search functions"
+              data-testid="search-functions-list"
+            />
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlexItem>
@@ -148,16 +172,16 @@ const FunctionsPage = () => {
                       <EuiLoadingSpinner size="xl" />
                     </div>
                   )}
-                  {functions && (
-                    <FunctionsList
-                      items={items}
-                      loading={loading}
-                      onRefresh={updateList}
-                      lastRefresh={lastRefresh}
-                      selectedRow={selectedRow}
-                      onSelectRow={handleSelectRow}
-                    />
-                  )}
+                  <FunctionsList
+                    items={items}
+                    loading={loading}
+                    onRefresh={updateList}
+                    lastRefresh={lastRefresh}
+                    selectedRow={selectedRow}
+                    onSelectRow={handleSelectRow}
+                    message={message}
+                    isRefreshDisabled={!isTriggeredAndFunctionsAvailable(modules)}
+                  />
                 </div>
               </EuiResizablePanel>
               <EuiResizableButton

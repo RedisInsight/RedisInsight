@@ -138,6 +138,22 @@ $breakpoint-to-hide-resize-panel: 1124px;
         }
       }
 
+      &__emptyTable {
+        .euiTableCellContent__text {
+          pointer-events: auto !important;
+        }
+
+        tbody .euiTableCellContent span {
+          white-space: break-spaces;
+          width: 100%;
+        }
+
+        .euiTableRow:hover,
+        .euiTableRow:focus {
+          background-color: inherit !important;
+        }
+      }
+
       &__closeRightPanel {
         position: absolute;
         top: 16px;

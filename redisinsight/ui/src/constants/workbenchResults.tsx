@@ -1,3 +1,5 @@
+import React from 'react'
+import { EuiLink } from '@elastic/eui'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 export const bulkReplyCommands = ['LOLWUT', 'INFO', 'CLIENT', 'CLUSTER', 'MEMORY', 'MONITOR', 'PSUBSCRIBE']
@@ -45,7 +47,27 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
     ],
     additionalText: ['With this capability you can query streaming data without needing to store all the elements of the stream.'],
     link: 'https://redis.io/docs/stack/bloom/'
-  }
+  },
+  [RedisDefaultModules.RedisGears]: {
+    text: ['Triggers and functions add the capability to execute server-side functions that are triggered by certain events or data operations to:'],
+    improvements: [
+      'Decrease latency by moving business logic close to the data',
+      'React in real time to events happening on your database',
+      <>
+        Process{' '}
+        <EuiLink
+          external={false}
+          data-testid="redis-stream-link"
+          target="_blank"
+          href="https://redis.io/docs/data-types/streams/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_triggers_and_functions"
+        >
+          Redis stream
+        </EuiLink>
+        {' '}entries.
+      </>,
+    ],
+    link: 'https://redis.io/docs/interact/programmability/functions-intro/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_triggers_and_functions/'
+  },
 }
 
 export const MODULE_TEXT_VIEW: { [key in RedisDefaultModules]?: string } = {
@@ -53,4 +75,5 @@ export const MODULE_TEXT_VIEW: { [key in RedisDefaultModules]?: string } = {
   [RedisDefaultModules.ReJSON]: 'RedisJSON',
   [RedisDefaultModules.Search]: 'RediSearch',
   [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
+  [RedisDefaultModules.RedisGears]: 'Triggers & Functions',
 }

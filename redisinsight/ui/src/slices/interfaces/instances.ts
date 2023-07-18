@@ -189,6 +189,7 @@ export const COMMAND_MODULES = {
   [RedisDefaultModules.ReJSON]: [RedisDefaultModules.ReJSON],
   [RedisDefaultModules.TimeSeries]: [RedisDefaultModules.TimeSeries],
   [RedisDefaultModules.Bloom]: [RedisDefaultModules.Bloom],
+  [RedisDefaultModules.RedisGears]: TRIGGERED_AND_FUNCTIONS_MODULES,
 }
 
 const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'RediSearch' }), {})

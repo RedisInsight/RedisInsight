@@ -65,9 +65,9 @@ export const REDISEARCH_MODULES: string[] = [
   AdditionalSearchModuleName.SearchLight,
   AdditionalSearchModuleName.FT,
   AdditionalSearchModuleName.FTL,
-]
+];
 
 export const TRIGGERED_AND_FUNCTIONS_MODULES: string[] = [
   AdditionalTriggersAndFunctionsModuleName.TriggersAndFunctions,
   AdditionalTriggersAndFunctionsModuleName.TriggersAndFunctions2,
-]
+];

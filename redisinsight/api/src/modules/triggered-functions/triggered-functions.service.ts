@@ -1,4 +1,4 @@
-import { Command } from 'ioredis';
+import { Command, Redis, Cluster } from 'ioredis';
 import {
   HttpException, Injectable, Logger, NotFoundException,
 } from '@nestjs/common';
@@ -60,12 +60,12 @@ export class TriggeredFunctionsService {
     clientMetadata: ClientMetadata,
     name: string,
   ): Promise<Library> {
-    let client;
+    let client: Redis | Cluster;
     try {
       client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
       const reply = await client.sendCommand(
         new Command('TFUNCTION', ['LIST', 'WITHCODE', 'LIBRARY', name], { replyEncoding: 'utf8' }),
-      );
+      ) as string[][];
 
       if (!reply.length) {
         this.logger.error(
@@ -98,12 +98,12 @@ export class TriggeredFunctionsService {
   async functionsList(
     clientMetadata: ClientMetadata,
   ): Promise<Function[]> {
-    let client;
+    let client: Redis | Cluster;
     try {
       client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
       const reply = await client.sendCommand(
         new Command('TFUNCTION', ['LIST', 'vvv'], { replyEncoding: 'utf8' }),
-      );
+      ) as any;
       const functions = reply.reduce((prev, cur) => concat(prev, getLibraryFunctions(cur)), []);
       return functions.map((func) => plainToClass(
         Function,
@@ -131,7 +131,7 @@ export class TriggeredFunctionsService {
     dto: UploadLibraryDto,
     isExist = false,
   ): Promise<void> {
-    let client;
+    let client: Redis | Cluster;
     try {
       const {
         code, configuration,
@@ -145,6 +145,11 @@ export class TriggeredFunctionsService {
       commandArgs.push(code);
 
       client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
+
+      if (client.isCluster) {
+        await this.refreshCluster(client);
+      }
+
       await client.sendCommand(
         new Command('TFUNCTION', [...commandArgs], { replyEncoding: 'utf8' }),
       );
@@ -172,9 +177,13 @@ export class TriggeredFunctionsService {
     clientMetadata: ClientMetadata,
     libraryName: string,
   ): Promise<void> {
-    let client;
+    let client: Redis | Cluster;
     try {
       client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
+
+      if (client.isCluster) {
+        await this.refreshCluster(client);
+      }
 
       await client.sendCommand(
         new Command('TFUNCTION', ['DELETE', libraryName], { replyEncoding: 'utf8' }),
@@ -192,5 +201,25 @@ export class TriggeredFunctionsService {
 
       throw catchAclError(e);
     }
+  }
+
+  /**
+   * On oss cluster, before executing any gears function,
+   * you must send REDISGEARS_2.REFRESHCLUSTER command to all the shards
+   * so that all the shards will be aware of the cluster topology.
+   *
+   * @param client
+   * @private
+   */
+  private async refreshCluster(
+    client,
+  ): Promise<void> {
+    const nodes = client.nodes('master');
+
+    await Promise.all(nodes.map(async (node) => {
+      await node.sendCommand(
+        new Command('REDISGEARS_2.REFRESHCLUSTER'),
+      );
+    }));
   }
 }

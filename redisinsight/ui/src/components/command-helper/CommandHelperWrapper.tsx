@@ -37,6 +37,7 @@ const CommandHelperWrapper = () => {
   const lastMatchedCommand = (isEnteringCommand && matchedCommand && !checkDeprecatedModuleCommand(matchedCommand))
     ? matchedCommand
     : searchedCommand
+
   const KEYS_OF_COMMANDS = useMemo(() => removeDeprecatedModuleCommands(commandsArray), [commandsArray])
   let searchedCommands: string[] = []
 

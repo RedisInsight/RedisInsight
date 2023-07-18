@@ -8,8 +8,7 @@ import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.ser
 import { GithubIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/github-idp.cloud.auth-strategy';
 import { wrapHttpError } from 'src/common/utils';
 import {
-  CloudOauthGithubEmailPermissionException,
-  CloudOauthMisconfigurationException,
+  CloudOauthMisconfigurationException, CloudOauthMissedRequiredDataException,
   CloudOauthUnknownAuthorizationRequestException,
 } from 'src/modules/cloud/auth/exceptions';
 import { CloudAuthRequestInfo, CloudAuthResponse, CloudAuthStatus } from 'src/modules/cloud/auth/models';
@@ -33,11 +32,11 @@ export class CloudAuthService {
   ) {}
 
   static getAuthorizationServerRedirectError(query: { error_description: string }) {
-    if (query?.error_description?.indexOf('missing') > -1
-      && query?.error_description?.indexOf('email') > -1) {
-      return new CloudOauthGithubEmailPermissionException();
+    if (query?.error_description?.indexOf('properties are missing') > -1) {
+      return new CloudOauthMissedRequiredDataException(query.error_description);
     }
 
+    // CloudOauthMissedRequiredDataException
     return new CloudOauthMisconfigurationException();
   }
 

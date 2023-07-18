@@ -133,7 +133,7 @@ export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAG
 
     default:
       title = 'Error'
-      message = error?.message || DEFAULT_ERROR_MESSAGE
+      message = err?.message || error?.message || DEFAULT_ERROR_MESSAGE
       break
   }
 

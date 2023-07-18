@@ -12,6 +12,7 @@ export enum CustomErrorCodes {
   CloudOauthGithubEmailPermission = 11_006,
   CloudOauthUnknownAuthorizationRequest = 11_007,
   CloudOauthUnexpectedError = 11_008,
+  CloudOauthMissedRequiredData = 11_009,
 
   // Cloud Job errors [11100, 11199]
   CloudJobUnexpectedError = 11_100,

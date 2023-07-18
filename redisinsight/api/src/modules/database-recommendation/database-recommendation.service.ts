@@ -61,28 +61,33 @@ export class DatabaseRecommendationService {
     recommendationName: string,
     data: any,
   ): Promise<DatabaseRecommendation> {
-    const newClientMetadata = {
-      ...clientMetadata,
-      db: clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0,
-    };
-    const isRecommendationExist = await this.databaseRecommendationRepository.isExist(
-      newClientMetadata,
-      recommendationName,
-    );
-    if (!isRecommendationExist) {
-      const recommendation = await this.scanner.determineRecommendation(recommendationName, data);
+    try {
+      const newClientMetadata = {
+        ...clientMetadata,
+        db: clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0,
+      };
+      const isRecommendationExist = await this.databaseRecommendationRepository.isExist(
+        newClientMetadata,
+        recommendationName,
+      );
+      if (!isRecommendationExist) {
+        const recommendation = await this.scanner.determineRecommendation(recommendationName, data);
 
-      if (recommendation) {
-        const entity = plainToClass(
-          DatabaseRecommendation,
-          { databaseId: newClientMetadata?.databaseId, ...recommendation },
-        );
+        if (recommendation) {
+          const entity = plainToClass(
+            DatabaseRecommendation,
+            { databaseId: newClientMetadata?.databaseId, ...recommendation },
+          );
 
-        return await this.create(newClientMetadata, entity);
+          return await this.create(newClientMetadata, entity);
+        }
       }
-    }
 
-    return null;
+      return null;
+    } catch (e) {
+      this.logger.warn('Unable to check recommendation', e);
+      return null;
+    }
   }
 
   /**

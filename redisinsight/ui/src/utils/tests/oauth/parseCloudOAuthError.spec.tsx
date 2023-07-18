@@ -1,5 +1,6 @@
 import { set, cloneDeep } from 'lodash'
 import React from 'react'
+import { EuiSpacer } from '@elastic/eui'
 import { parseCloudOAuthError } from 'uiSrc/utils'
 
 const responseData = { response: { data: { }, status: 500 } }
@@ -14,9 +15,9 @@ const parseCloudOAuthErrorTests = [
       message: (
         <>
           Your request resulted in an error.
-          <br />
+          <EuiSpacer size="xs" />
           Try again later.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -36,7 +37,7 @@ const parseCloudOAuthErrorTests = [
       message: (
         <>
           Try restarting RedisInsight.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -47,9 +48,9 @@ const parseCloudOAuthErrorTests = [
       message: (
         <>
           Resource requested could not be found.
-          <br />
+          <EuiSpacer size="xs" />
           Try again later.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -60,9 +61,9 @@ const parseCloudOAuthErrorTests = [
       message: (
         <>
           Your Redis Enterprise Cloud authorization failed.
-          <br />
+          <EuiSpacer size="xs" />
           Try again later.
-          <br />
+          <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
@@ -78,7 +79,7 @@ const parseCloudOAuthErrorTests = [
       message: (
         <>
           You already have a free Redis Enterprise Cloud database running.
-          <br />
+          <EuiSpacer size="s" />
           Check out your <a href="https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main" target="_blank" rel="noreferrer">Cloud console</a> for connection details.
         </>
       )

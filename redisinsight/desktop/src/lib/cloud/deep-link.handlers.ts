@@ -1,7 +1,8 @@
 import log from 'electron-log'
-import { cloudOauthCallback } from 'desktopSrc/lib/cloud/cloud-oauth.handlers';
+import { UrlWithParsedQuery } from 'url'
+import { cloudOauthCallback } from 'desktopSrc/lib/cloud/cloud-oauth.handlers'
 
-export const cloudDeepLinkHandler = async (url: URL) => {
+export const cloudDeepLinkHandler = async (url: UrlWithParsedQuery) => {
   switch (url?.pathname) {
     case '/oauth/callback':
       await cloudOauthCallback(url)

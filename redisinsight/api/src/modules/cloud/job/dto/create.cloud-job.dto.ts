@@ -22,4 +22,12 @@ export class CreateCloudJobDto {
   @IsEnum(CloudJobRunMode)
   @IsNotEmpty()
   runMode: CloudJobRunMode;
+
+  @ApiProperty({
+    description: 'Any data for a job. planId for an example',
+  })
+  @IsOptional()
+  @Expose()
+  @IsNotEmpty()
+  data: object;
 }

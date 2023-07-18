@@ -7,7 +7,6 @@ import {
 } from 'src/modules/cloud/subscription/models';
 import { wrapHttpError } from 'src/common/utils';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
-import { CloudSubscriptionCapiProvider } from 'src/modules/cloud/subscription/cloud-subscription.capi.provider';
 import {
   parseCloudSubscriptionCapiResponse,
   parseCloudSubscriptionsCapiResponse,
@@ -17,6 +16,7 @@ import { filter, find } from 'lodash';
 import config from 'src/utils/config';
 import { parseCloudTaskCapiResponse } from 'src/modules/cloud/task/utils';
 import { CloudTask } from 'src/modules/cloud/task/models';
+import { CloudSubscriptionCapiProvider } from './providers/cloud-subscription.capi.provider';
 
 const cloudConfig = config.get('cloud');
 
@@ -43,6 +43,12 @@ export class CloudSubscriptionCapiService {
       || find(freePlans, { provider: CloudSubscriptionPlanProvider.AWS, region: cloudConfig.defaultPlanRegion })
       || find(freePlans, { provider: CloudSubscriptionPlanProvider.AWS })
       || freePlans[0];
+  }
+
+  static findFreePlanById(plans: CloudSubscriptionPlan[], planId: number): CloudSubscriptionPlan {
+    const freePlans = filter(plans, { price: 0 });
+
+    return find(freePlans, { id: planId });
   }
 
   /**
@@ -90,7 +96,7 @@ export class CloudSubscriptionCapiService {
   }
 
   /**
-   * Get list of account subscriptions
+   * Get list of subscription plans
    * @param authDto
    * @param type
    */

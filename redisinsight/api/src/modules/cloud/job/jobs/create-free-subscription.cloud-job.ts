@@ -23,6 +23,7 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
+      planId: number,
       capiCredentials: CloudCapiAuthDto,
     },
     protected readonly dependencies: {
@@ -61,7 +62,9 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
         CloudSubscriptionType.Fixed,
       );
 
-      const freePlan = CloudSubscriptionCapiService.findFreePlan(fixedPlans);
+      const freePlan = this.data.planId
+        ? CloudSubscriptionCapiService.findFreePlanById(fixedPlans, this.data.planId)
+        : CloudSubscriptionCapiService.findFreePlan(fixedPlans);
 
       if (!freePlan) {
         throw new CloudPlanNotFoundFreeException();

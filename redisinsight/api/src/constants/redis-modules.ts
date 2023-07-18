@@ -6,7 +6,7 @@ export enum AdditionalRedisModuleName {
   RedisJSON = 'ReJSON',
   RediSearch = 'search',
   RedisTimeSeries = 'timeseries',
-  'Triggers & Functions' = 'redisgears'
+  'Triggers and Functions' = 'redisgears'
 }
 
 export enum AdditionalSearchModuleName {

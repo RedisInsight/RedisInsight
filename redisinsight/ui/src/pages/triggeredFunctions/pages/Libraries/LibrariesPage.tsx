@@ -45,7 +45,6 @@ const LibrariesPage = () => {
   const [filterValue, setFilterValue] = useState<string>('')
   const [selectedRow, setSelectedRow] = useState<Nullable<string>>(null)
   const [isAddLibraryPanelOpen, setIsAddLibraryPanelOpen] = useState<boolean>(false)
-  const [message, setMessage] = useState<React.ReactNode>(NoLibrariesMessage)
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const { state } = useLocation<HistoryState>()
@@ -68,20 +67,6 @@ const LibrariesPage = () => {
   useEffect(() => {
     applyFiltering()
   }, [filterValue, libraries])
-
-  useEffect(() => {
-    if (libraries?.length) {
-      setMessage(NoLibrariesMessage)
-      return
-    }
-    if (isTriggeredAndFunctionsAvailable(modules)) {
-      setMessage(
-        <NoLibrariesScreen isModuleLoaded onAddLibrary={onAddLibrary} isAddLibraryPanelOpen={isAddLibraryPanelOpen} />
-      )
-      return
-    }
-    setMessage(<NoLibrariesScreen isModuleLoaded={false} />)
-  }, [libraries, isAddLibraryPanelOpen, modules])
 
   const handleSuccessUpdateList = (data: TriggeredFunctionsLibrary[]) => {
     if (selectedRow) {
@@ -174,6 +159,16 @@ const LibrariesPage = () => {
   }
 
   const isRightPanelOpen = !isNull(selectedRow) || isAddLibraryPanelOpen
+
+  const message = libraries?.length
+    ? NoLibrariesMessage
+    : (
+      <NoLibrariesScreen
+        isModuleLoaded={isTriggeredAndFunctionsAvailable(modules)}
+        isAddLibraryPanelOpen={isAddLibraryPanelOpen}
+        onAddLibrary={onAddLibrary}
+      />
+    )
 
   return (
     <EuiFlexGroup

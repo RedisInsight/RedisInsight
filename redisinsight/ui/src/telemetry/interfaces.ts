@@ -52,7 +52,7 @@ export enum RedisModules {
   RedisJSON = 'ReJSON',
   RediSearch = 'search',
   RedisTimeSeries = 'timeseries',
-  'Triggers & Functions' = 'redisgears'
+  'Triggers and Functions' = 'redisgears'
 }
 
 export interface IModuleSummary {

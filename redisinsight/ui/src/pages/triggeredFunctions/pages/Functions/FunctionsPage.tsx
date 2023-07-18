@@ -32,7 +32,6 @@ const FunctionsPage = () => {
   const [items, setItems] = useState<TriggeredFunctionsFunction[]>([])
   const [filterValue, setFilterValue] = useState<string>('')
   const [selectedRow, setSelectedRow] = useState<Nullable<TriggeredFunctionsFunction>>(null)
-  const [message, setMessage] = useState<React.ReactNode>(NoFunctionsMessage)
 
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -47,20 +46,6 @@ const FunctionsPage = () => {
   useEffect(() => {
     applyFiltering()
   }, [filterValue, functions])
-
-  useEffect(() => {
-    if (functions?.length) {
-      setMessage(NoFunctionsMessage)
-      return
-    }
-    if (isTriggeredAndFunctionsAvailable(modules)) {
-      setMessage(
-        <NoLibrariesScreen isModuleLoaded onAddLibrary={onAddLibrary} />
-      )
-      return
-    }
-    setMessage(<NoLibrariesScreen isModuleLoaded={false} />)
-  }, [functions, modules])
 
   const updateList = () => {
     dispatch(fetchTriggeredFunctionsFunctionsList(instanceId, handleSuccessUpdateList))
@@ -121,6 +106,10 @@ const FunctionsPage = () => {
   const onAddLibrary = () => {
     history.push({ pathname: Pages.triggeredFunctionsLibraries(instanceId), state: { shouldOpenAddPanel: true } })
   }
+
+  const message = functions?.length
+    ? NoFunctionsMessage
+    : (<NoLibrariesScreen isModuleLoaded={isTriggeredAndFunctionsAvailable(modules)} onAddLibrary={onAddLibrary} />)
 
   return (
     <EuiFlexGroup

@@ -168,9 +168,9 @@ const NavigationMenu = () => {
       onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE
     },
     {
-      tooltipText: 'Triggers & Functions',
+      tooltipText: 'Triggers and Functions',
       pageName: PageNames.triggeredFunctions,
-      ariaLabel: 'Triggers & Functions',
+      ariaLabel: 'Triggers and Functions',
       onClick: () => handleGoPage(Pages.triggeredFunctions(connectedInstanceId)),
       dataTestId: 'triggered-functions-page-btn',
       connectedInstanceId,

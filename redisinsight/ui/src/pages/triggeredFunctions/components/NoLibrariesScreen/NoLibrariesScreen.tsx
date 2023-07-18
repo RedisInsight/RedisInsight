@@ -36,6 +36,8 @@ const ListItem = ({ item }: { item: string }) => (
   </li>
 )
 
+const moduleName = MODULE_TEXT_VIEW[RedisDefaultModules.RedisGears]
+
 const NoLibrariesScreen = (props: Props) => {
   const { isAddLibraryPanelOpen, isModuleLoaded, onAddLibrary = () => {} } = props
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
@@ -44,7 +46,6 @@ const NoLibrariesScreen = (props: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const moduleName = MODULE_TEXT_VIEW[RedisDefaultModules.RedisGears]
   const goToTutorial = () => {
     // triggers and functions tutorial does not upload
     dispatch(setWorkbenchEAMinimized(false))
@@ -65,13 +66,11 @@ const NoLibrariesScreen = (props: Props) => {
             <h4 data-testid="no-libraries-title">
               {isModuleLoaded
                 ? 'Triggers and Functions'
-                : `Looks like ${moduleName} is not available for this database`}
+                : `${moduleName} are not available for this database`}
             </h4>
           </EuiTitle>
           <EuiText className={styles.bigText}>
-            {CONTENT[RedisDefaultModules.RedisGears]?.text.map((item: string) => (
-              <>{item}<br /></>
-            ))}
+            {CONTENT[RedisDefaultModules.RedisGears]?.text.map((item: string) => item)}
           </EuiText>
           <ul className={styles.list}>
             {CONTENT[RedisDefaultModules.RedisGears]?.improvements.map((item: string) => (
@@ -102,7 +101,7 @@ const NoLibrariesScreen = (props: Props) => {
                 className={styles.btn}
                 onClick={onAddLibrary}
               >
-                Upload Library
+                + Library
               </EuiButton>
             )
             : (

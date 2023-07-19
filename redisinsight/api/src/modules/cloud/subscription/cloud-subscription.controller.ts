@@ -8,7 +8,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { CloudSubscriptionApiService } from './cloud-subscription.api.service';
 import { CloudRequestUtm } from '../common/models';
-import { CloudSubscriptionPlanResponse } from './models';
+import { CloudSubscriptionPlanResponse } from './dto';
 
 @ApiTags('Cloud Subscription')
 @UseInterceptors(ClassSerializerInterceptor)

@@ -3,7 +3,7 @@ import axios from 'axios';
 import {
   mockCapiUnauthorizedError,
   mockCloudApiHeaders,
-  mockCloudCapiCloudRegions,
+  mockCloudApiCloudRegions,
   mockCloudSession,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
@@ -30,11 +30,11 @@ describe('CloudSubscriptionApiProvider', () => {
     it('successfully get cloud regions', async () => {
       const response = {
         status: 200,
-        data: mockCloudCapiCloudRegions,
+        data: mockCloudApiCloudRegions,
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getCloudRegions(mockCloudSession)).toEqual(mockCloudCapiCloudRegions);
+      expect(await service.getCloudRegions(mockCloudSession)).toEqual(mockCloudApiCloudRegions);
       expect(mockedAxios.get).toHaveBeenCalledWith('/plans/cloud_regions', mockCloudApiHeaders);
     });
     it('throw CloudApiUnauthorizedException exception', async () => {

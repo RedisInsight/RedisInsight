@@ -6,4 +6,3 @@ export * from './session';
 export * from './client-metadata';
 export * from './object-as-map.decorator';
 export * from './is-multi-number.decorator';
-export * from './cloud';

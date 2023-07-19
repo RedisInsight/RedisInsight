@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, getSchemaPath } from '@nestjs/swagger';
 import {
   IsEnum,
   IsNotEmpty,
@@ -6,12 +6,13 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobRunMode } from 'src/modules/cloud/job/models';
-import { CloudJobDataDecorator } from 'src/common/decorators';
+// eslint-disable-next-line import/no-cycle
+import { cloudJobDataTransformer } from '../transformers/cloud-job-data.transformer';
 
-export class CreateCloudJobDataDto {
+export class CreateDatabaseCloudJobDataDto {
   @ApiProperty({
     description: 'Plan id for create a subscription.',
     type: Number,
@@ -40,12 +41,17 @@ export class CreateCloudJobDto {
   @IsNotEmpty()
   runMode: CloudJobRunMode;
 
-  @CloudJobDataDecorator()
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Any data for create a job.',
+    oneOf: [
+      { $ref: getSchemaPath(CreateDatabaseCloudJobDataDto) },
+      { $ref: getSchemaPath(undefined) },
+    ],
   })
+  @Type(cloudJobDataTransformer)
   @ValidateNested()
   @Expose()
   @IsNotEmpty()
-  data: CreateCloudJobDataDto;
+  @IsOptional()
+  data: CreateDatabaseCloudJobDataDto | undefined;
 }

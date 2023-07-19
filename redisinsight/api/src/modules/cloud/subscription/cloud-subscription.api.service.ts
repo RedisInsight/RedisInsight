@@ -2,16 +2,14 @@ import { filter, find } from 'lodash';
 import { Injectable, Logger } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { wrapHttpError } from 'src/common/utils';
-import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
-import { CloudSubscriptionPlanResponse } from './models/api.interface';
 import { CloudSubscriptionCapiService } from './cloud-subscription.capi.service';
 import { CloudUserApiService } from '../user/cloud-user.api.service';
 import { CloudSubscriptionRegion, CloudSubscriptionType } from './models';
 import { CloudSessionService } from '../session/cloud-session.service';
 import { parseCloudSubscriptionsCloudRegionsApiResponse } from './utils';
-import { CloudSession } from '../session/models/cloud-session';
 import { CloudSubscriptionApiProvider } from './providers/cloud-subscription.api.provider';
+import { CloudSubscriptionPlanResponse } from './dto';
 
 @Injectable()
 export class CloudSubscriptionApiService {
@@ -23,14 +21,6 @@ export class CloudSubscriptionApiService {
     private readonly cloudUserApiService: CloudUserApiService,
     private readonly cloudSubscriptionCapiService: CloudSubscriptionCapiService,
   ) {}
-
-  private async getApiCredentials(sessionId: string): Promise<CloudSession> {
-    return this.sessionService.getSession(sessionId);
-  }
-
-  private async getCapiCredentials(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<CloudCapiAuthDto> {
-    return this.cloudUserApiService.getCapiKeys(sessionMetadata, utm);
-  }
 
   /**
    * Get list of subscription plans and cloud regions
@@ -44,11 +34,11 @@ export class CloudSubscriptionApiService {
     try {
       const [fixedPlans, regions] = await Promise.all([
         this.cloudSubscriptionCapiService.getSubscriptionsPlans(
-          await this.getCapiCredentials(sessionMetadata, utm),
+          await this.cloudUserApiService.getCapiKeys(sessionMetadata, utm),
           CloudSubscriptionType.Fixed,
         ),
         this.getCloudRegions(
-          await this.getApiCredentials(sessionMetadata.sessionId),
+          await this.sessionService.getSession(sessionMetadata.sessionId),
         ),
       ]);
 

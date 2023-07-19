@@ -24,7 +24,7 @@ export class CloudJobProvider {
     try {
       const job = await this.cloudJobFactory.create(
         dto.name,
-        {},
+        dto.data || {},
         {
           sessionMetadata,
           utm,

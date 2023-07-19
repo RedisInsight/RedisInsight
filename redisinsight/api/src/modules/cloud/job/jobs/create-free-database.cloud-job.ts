@@ -30,6 +30,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
+      planId: number,
       capiCredentials: CloudCapiAuthDto,
     },
     protected readonly dependencies: {
@@ -45,6 +46,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
   }
 
   async iteration(): Promise<Database> {
+    let freeSubscription: CloudSubscription;
     try {
       this.logger.log('Create free database');
 
@@ -59,7 +61,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       this.logger.debug('Get or create free subscription');
 
-      const freeSubscription: CloudSubscription = await this.runChildJob(
+      freeSubscription = await this.runChildJob(
         CreateFreeSubscriptionCloudJob,
         this.data,
       );
@@ -164,11 +166,17 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       this.changeState({ status: CloudJobStatus.Finished });
 
-      this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseCreated();
+      this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseCreated({
+        region: freeSubscription?.region || '',
+        provider: freeSubscription?.provider || '',
+      });
 
       return database;
     } catch (e) {
-      this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseFailed(e);
+      this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseFailed(e, {
+        region: freeSubscription?.region || '',
+        provider: freeSubscription?.provider || '',
+      });
 
       throw e;
     }

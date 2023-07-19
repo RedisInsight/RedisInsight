@@ -48,4 +48,6 @@ export interface ICloudCapiSubscriptionPlan {
   price: number;
   provider: string;
   region: string;
+  regionId: number;
 }
+

@@ -9,11 +9,11 @@ export class CloudDatabaseAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendCloudFreeDatabaseCreated() {
-    this.sendEvent(TelemetryEvents.CloudFreeDatabaseCreated);
+  sendCloudFreeDatabaseCreated(eventData: object = {}) {
+    this.sendEvent(TelemetryEvents.CloudFreeDatabaseCreated, eventData);
   }
 
-  sendCloudFreeDatabaseFailed(exception: HttpException) {
-    this.sendFailedEvent(TelemetryEvents.CloudFreeDatabaseFailed, exception);
+  sendCloudFreeDatabaseFailed(exception: HttpException, eventData: object = {}) {
+    this.sendFailedEvent(TelemetryEvents.CloudFreeDatabaseFailed, exception, eventData);
   }
 }

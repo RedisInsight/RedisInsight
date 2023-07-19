@@ -8,10 +8,10 @@ const COMMANDS_CONFIG = get('commands');
 
 async function init() {
   try {
-    await Promise.all(COMMANDS_CONFIG.map(async ({ name, url }) => {
+    await Promise.all(COMMANDS_CONFIG.map(async ({ name, url, defaultUrl }) => {
       try {
         console.log(`Trying to get ${name} commands...`);
-        const { data } = await axios.get(url, {
+        const { data } = await axios.get(defaultUrl || url, {
           responseType: 'text',
           transformResponse: [(raw) => raw],
         });

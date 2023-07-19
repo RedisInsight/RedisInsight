@@ -209,7 +209,7 @@ export class CloudUserApiService {
       const existingKeys = await this.api.getCapiKeys(session);
 
       if (existingKeys?.length) {
-        const existingKey = find(existingKeys, { name: cloudConfig.capiKeyName });
+        const existingKey = find(existingKeys, { name: cloudConfig.capiKeyName, user_account: user.id });
 
         if (existingKey) {
           this.logger.log('Removing existing capi key');

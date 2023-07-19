@@ -109,10 +109,10 @@ const OAuthSelectPlan = () => {
             <h2 className={styles.title}>Select cloud vendor</h2>
           </EuiTitle>
           <section className={styles.providers}>
-            {OAuthProviders.map(({ icon, id, label }) => (
+            {OAuthProviders.map(({ icon, id, label, className = '' }) => (
               <div className={styles.provider}>
                 {id === providerSelected
-                  && <div className={styles.providerActiveIcon}><EuiIcon type="check" /></div>}
+                  && <div className={cx(styles.providerActiveIcon, className)}><EuiIcon type="check" /></div>}
                 <EuiButton
                   iconType={icon}
                   onClick={() => setProviderSelected(id)}

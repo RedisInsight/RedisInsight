@@ -75,8 +75,12 @@
   svg {
     width: 12px;
     height: 12px;
-    fill: var(--euiColorEmptyShade);
+    fill: var(--euiColorMediumShade);
   }
+}
+
+.awsIcon svg > path:first-of-type {
+  fill: var(--euiColorFullShade);
 }
 
 .region {

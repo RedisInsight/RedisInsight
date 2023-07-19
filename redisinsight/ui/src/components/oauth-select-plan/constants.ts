@@ -2,6 +2,8 @@ import { ReactComponent as AzureIcon } from 'uiSrc/assets/img/oauth/azure_provid
 import { ReactComponent as AWSIcon } from 'uiSrc/assets/img/oauth/aws_provider.svg'
 import { ReactComponent as GoogleIcon } from 'uiSrc/assets/img/oauth/google_provider.svg'
 
+import styles from './styles.module.scss'
+
 export enum OAuthProvider {
   AWS = 'AWS',
   Azure = 'Azure',
@@ -12,6 +14,7 @@ export const OAuthProviders = [{
   id: OAuthProvider.AWS,
   icon: AWSIcon,
   label: 'Amazon Web Services',
+  className: styles.awsIcon
 }, {
   id: OAuthProvider.Google,
   icon: GoogleIcon,

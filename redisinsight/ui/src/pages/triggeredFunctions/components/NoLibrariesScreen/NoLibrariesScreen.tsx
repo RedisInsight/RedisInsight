@@ -11,7 +11,7 @@ import {
   EuiLink,
 } from '@elastic/eui'
 
-import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import { EAManifestFirstKey, Pages, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { ReactComponent as DesktopIcon } from 'uiSrc/assets/img/icons/module_not_loaded.svg'
@@ -21,7 +21,7 @@ import { findMarkdownPathByPath } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
-export interface Props {
+export interface IProps {
   isModuleLoaded: boolean
   isAddLibraryPanelOpen?: boolean
   onAddLibrary?: () => void
@@ -38,9 +38,9 @@ const ListItem = ({ item }: { item: string }) => (
 
 const moduleName = MODULE_TEXT_VIEW[RedisDefaultModules.RedisGears]
 
-const NoLibrariesScreen = (props: Props) => {
+const NoLibrariesScreen = (props: IProps) => {
   const { isAddLibraryPanelOpen, isModuleLoaded, onAddLibrary = () => {} } = props
-  const { items: tutorials } = useSelector(workbenchTutorialsSelector)
+  const { items: guides } = useSelector(workbenchGuidesSelector)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -49,9 +49,9 @@ const NoLibrariesScreen = (props: Props) => {
   const goToTutorial = () => {
     // triggers and functions tutorial does not upload
     dispatch(setWorkbenchEAMinimized(false))
-    const tutorialsPath = findMarkdownPathByPath(tutorials, '/quick-guides/triggers-and-functions/introduction.md')
-    if (tutorialsPath) {
-      history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.TUTORIALS}/${tutorialsPath}`)
+    const quickGuidesPath = findMarkdownPathByPath(guides, '/quick-guides/triggers-and-functions/introduction.md')
+    if (quickGuidesPath) {
+      history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.GUIDES}/${quickGuidesPath}`)
     }
 
     dispatch(resetWorkbenchEASearch())
@@ -59,7 +59,7 @@ const NoLibrariesScreen = (props: Props) => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid="no-libraries-component">
       <div className={cx(styles.content, { [styles.fullWidth]: isAddLibraryPanelOpen })}>
         <div className={styles.contentWrapper}>
           <EuiTitle size="m" className={styles.title}>
@@ -88,7 +88,7 @@ const NoLibrariesScreen = (props: Props) => {
             className={cx(styles.text, styles.link, styles.btn)}
             size="s"
             onClick={goToTutorial}
-            data-testid="learn-more-link"
+            data-testid="no-libraries-tutorial-link"
           >
             Tutorial
           </EuiButtonEmpty>
@@ -100,6 +100,7 @@ const NoLibrariesScreen = (props: Props) => {
                 color="secondary"
                 className={styles.btn}
                 onClick={onAddLibrary}
+                data-testid="no-libraries-add-library-btn"
               >
                 + Library
               </EuiButton>

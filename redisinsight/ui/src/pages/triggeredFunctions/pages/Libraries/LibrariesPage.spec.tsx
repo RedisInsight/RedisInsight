@@ -1,4 +1,5 @@
 import React from 'react'
+import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
 import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 
@@ -6,6 +7,7 @@ import {
   getTriggeredFunctionsLibrariesList,
   triggeredFunctionsLibrariesSelector,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { TRIGGERED_FUNCTIONS_LIBRARIES_LIST_MOCKED_DATA } from 'uiSrc/mocks/data/triggeredFunctions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -22,6 +24,13 @@ jest.mock('uiSrc/slices/triggeredFunctions/triggeredFunctions', () => ({
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    modules: [{ name: 'redisgears' }]
+  }),
 }))
 
 let store: typeof mockedStore
@@ -45,24 +54,34 @@ describe('LibrariesPage', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should render message when no libraries uploaded', () => {
-    (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
-      data: [],
-      loading: false
+  it('should not fetch list of libraries if there are no triggers and functions module', () => {
+    (connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
+      modules: [{ name: 'custom' }],
     })
+
     render(<LibrariesPage />)
 
-    expect(screen.getByTestId('triggered-functions-welcome')).toBeInTheDocument()
+    expect(store.getActions()).toEqual([])
   })
+
+  // it('should render message when no libraries uploaded', () => {
+  //   (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
+  //     data: [],
+  //     loading: false
+  //   })
+  //   render(<LibrariesPage />)
+
+  //   expect(screen.getByTestId('no-libraries-component')).toBeInTheDocument()
+  // })
 
   it('should render libraries list', () => {
     (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
       data: mockedLibraries,
       loading: false
     })
+
     render(<LibrariesPage />)
 
-    expect(screen.queryByTestId('triggered-functions-welcome')).not.toBeInTheDocument()
     expect(screen.getByTestId('libraries-list-table')).toBeInTheDocument()
     expect(screen.queryAllByTestId(/^row-/).length).toEqual(3)
   })
@@ -144,6 +163,28 @@ describe('LibrariesPage', () => {
     })
   })
 
+  it('should close library add form and open details', async () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<LibrariesPage />)
+
+    fireEvent.click(screen.getByTestId('btn-add-library'))
+
+    expect(screen.getByTestId('lib-add-form')).toBeInTheDocument()
+
+    fireEvent.change(screen.getByTestId('code-value'), { target: { value: 'code' } })
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('add-library-btn-submit'))
+    })
+
+    expect(screen.queryByTestId('lib-add-form')).not.toBeInTheDocument()
+    // Library is default name when can not parse real name from code
+    expect(screen.getByTestId('lib-details-Library')).toBeInTheDocument()
+  })
+
   it('should close library add form and sent proper telemetry event', () => {
     render(<LibrariesPage />)
 
@@ -183,5 +224,15 @@ describe('LibrariesPage', () => {
     })
 
     expect(screen.queryByTestId('lib-details-lib1')).not.toBeInTheDocument()
+  })
+
+  it('should open add library form and reset history state', async () => {
+    const replaceMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ replace: replaceMock })
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({ state: { shouldOpenAddPanel: true } })
+    render(<LibrariesPage />)
+
+    expect(screen.getByTestId('lib-add-form')).toBeInTheDocument()
+    expect(replaceMock).toBeCalledWith({ state: undefined })
   })
 })

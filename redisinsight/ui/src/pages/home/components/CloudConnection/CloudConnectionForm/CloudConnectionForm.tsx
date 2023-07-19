@@ -19,8 +19,7 @@ import {
 
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
-import { OAuthSocial } from 'uiSrc/components'
-import { OAuthSocialType } from 'uiSrc/components/oauth-social/OAuthSocial'
+import { OAuthSocial, OAuthSocialType } from 'uiSrc/components'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'

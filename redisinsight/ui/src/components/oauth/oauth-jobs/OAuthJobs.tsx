@@ -7,7 +7,7 @@ import { fetchInstancesAction } from 'uiSrc/slices/instances/instances'
 import { createFreeDbSuccess, oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { parseCloudOAuthError } from 'uiSrc/utils'
-import { INFINITE_MESSAGES, InfiniteMessagesIds } from '../notifications/components'
+import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 
 const OAuthJobs = () => {
   const { status, result = {}, error } = useSelector(oauthCloudJobSelector) ?? {}

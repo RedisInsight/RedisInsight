@@ -23,8 +23,8 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 
 import { OAuthProvider, OAuthProviders } from './constants'
-import { INFINITE_MESSAGES } from '../notifications/components'
 import styles from './styles.module.scss'
+import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 
 export const DEFAULT_REGION = 'us-east-1'
 export const DEFAULT_PROVIDER = OAuthProvider.AWS

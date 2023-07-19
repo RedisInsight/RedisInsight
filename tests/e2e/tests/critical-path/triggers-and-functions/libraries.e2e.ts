@@ -141,6 +141,7 @@ test('Verify that library can be uploaded', async t => {
     const libNameFromFile = 'lib';
 
     await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
+    await t.expect(triggersAndFunctionsFunctionsPage.noLibrariesLink.exists).ok('no libraries title is displayed');
     await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
     await t.click(triggersAndFunctionsLibrariesPage.addLibraryButton);
     await t.setFilesToUpload(triggersAndFunctionsLibrariesPage.uploadInput, [filePathes.upload]);

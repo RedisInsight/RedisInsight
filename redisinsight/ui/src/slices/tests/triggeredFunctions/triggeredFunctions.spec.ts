@@ -30,6 +30,7 @@ import reducer, {
   addTriggeredFunctionsLibrarySuccess,
   addTriggeredFunctionsLibraryFailure,
   addTriggeredFunctionsLibraryAction,
+  setAddLibraryFormOpen,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { apiService } from 'uiSrc/services'
 import { addMessageNotification, addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -505,6 +506,7 @@ describe('triggeredFunctions slice', () => {
         const state = {
           ...initialState,
           addLibrary: {
+            open: false,
             loading: true
           }
         }
@@ -553,18 +555,49 @@ describe('triggeredFunctions slice', () => {
         const currentState = {
           ...initialState,
           addLibrary: {
+            ...initialState.addLibrary,
             loading: true,
           },
         }
         const state = {
           ...initialState,
           addLibrary: {
+            ...initialState.addLibrary,
             loading: false,
           },
         }
 
         // Act
         const nextState = reducer(currentState, addTriggeredFunctionsLibraryFailure())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          triggeredFunctions: nextState,
+        })
+        expect(triggeredFunctionsSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('setAddLibraryFormOpen', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          addLibrary: {
+            ...initialState.addLibrary,
+            open: false,
+          },
+        }
+        const state = {
+          ...initialState,
+          addLibrary: {
+            ...initialState.addLibrary,
+            open: true,
+          },
+        }
+
+        // Act
+        const nextState = reducer(currentState, setAddLibraryFormOpen(true))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {

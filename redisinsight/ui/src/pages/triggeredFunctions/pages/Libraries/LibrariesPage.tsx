@@ -11,13 +11,14 @@ import {
 import { isNull, find } from 'lodash'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams, useLocation, useHistory } from 'react-router-dom'
 import cx from 'classnames'
 import {
   fetchTriggeredFunctionsLibrariesList,
   setSelectedLibraryToShow,
   setTriggeredFunctionsSelectedLibrary,
   triggeredFunctionsLibrariesSelector,
+  setAddLibraryFormOpen,
+  triggeredFunctionsAddLibrarySelector,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { isTriggeredAndFunctionsAvailable, Nullable } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -34,39 +35,34 @@ export const firstPanelId = 'libraries-left-panel'
 export const secondPanelId = 'libraries-right-panel'
 const NoLibrariesMessage: React.ReactNode = (<span data-testid="no-libraries-message">No Libraries found</span>)
 
-interface HistoryState {
-  shouldOpenAddPanel?: boolean
-}
-
 const LibrariesPage = () => {
-  const { lastRefresh, loading, data: libraries, selected } = useSelector(triggeredFunctionsLibrariesSelector)
-  const { modules } = useSelector(connectedInstanceSelector)
+  const {
+    lastRefresh, loading, data: libraries, selected,
+  } = useSelector(triggeredFunctionsLibrariesSelector)
+  const { open: isAddLibraryPanelOpen } = useSelector(triggeredFunctionsAddLibrarySelector)
+  const { modules, id: instanceId } = useSelector(connectedInstanceSelector)
   const [items, setItems] = useState<TriggeredFunctionsLibrary[]>([])
   const [filterValue, setFilterValue] = useState<string>('')
   const [selectedRow, setSelectedRow] = useState<Nullable<string>>(null)
-  const [isAddLibraryPanelOpen, setIsAddLibraryPanelOpen] = useState<boolean>(false)
 
-  const { instanceId } = useParams<{ instanceId: string }>()
-  const { state } = useLocation<HistoryState>()
   const dispatch = useDispatch()
-  const history = useHistory()
 
   useEffect(() => {
-    if (isTriggeredAndFunctionsAvailable(modules)) {
+    if (isModuleLoaded) {
       updateList()
     }
-  }, [])
-
-  useEffect(() => {
-    if (state?.shouldOpenAddPanel) {
-      onAddLibrary()
-      history.replace({ ...history.location, state: undefined })
-    }
-  }, [state?.shouldOpenAddPanel])
+  }, [modules])
 
   useEffect(() => {
     applyFiltering()
   }, [filterValue, libraries])
+
+  useEffect(() =>
+  // componentWillUnmount
+    () => {
+      dispatch(setAddLibraryFormOpen(false))
+    },
+  [])
 
   const handleSuccessUpdateList = (data: TriggeredFunctionsLibrary[]) => {
     if (selectedRow) {
@@ -102,7 +98,7 @@ const LibrariesPage = () => {
   }
 
   const handleSelectRow = (name?: string) => {
-    setIsAddLibraryPanelOpen(false)
+    dispatch(setAddLibraryFormOpen(false))
     setSelectedRow(name ?? null)
 
     if (name !== selectedRow) {
@@ -134,7 +130,7 @@ const LibrariesPage = () => {
 
   const onAddLibrary = () => {
     setSelectedRow(null)
-    setIsAddLibraryPanelOpen(true)
+    dispatch(setAddLibraryFormOpen(true))
     sendEventTelemetry({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CLICKED,
       eventData: {
@@ -144,7 +140,7 @@ const LibrariesPage = () => {
   }
 
   const onCloseAddLibrary = () => {
-    setIsAddLibraryPanelOpen(false)
+    dispatch(setAddLibraryFormOpen(false))
     sendEventTelemetry({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CANCELLED,
       eventData: {
@@ -154,21 +150,27 @@ const LibrariesPage = () => {
   }
 
   const onAdded = (libraryName: string) => {
-    setIsAddLibraryPanelOpen(false)
+    dispatch(setAddLibraryFormOpen(false))
     setSelectedRow(libraryName)
   }
 
   const isRightPanelOpen = !isNull(selectedRow) || isAddLibraryPanelOpen
 
+  const isModuleLoaded = isTriggeredAndFunctionsAvailable(modules)
+
   const message = libraries?.length
     ? NoLibrariesMessage
     : (
       <NoLibrariesScreen
-        isModuleLoaded={isTriggeredAndFunctionsAvailable(modules)}
+        isModuleLoaded={isModuleLoaded}
         isAddLibraryPanelOpen={isAddLibraryPanelOpen}
         onAddLibrary={onAddLibrary}
       />
     )
+
+  if (!instanceId) {
+    return null
+  }
 
   return (
     <EuiFlexGroup
@@ -190,7 +192,7 @@ const LibrariesPage = () => {
               placeholder="Search for Libraries"
               className="triggeredFunctions__search"
               onChange={onChangeFiltering}
-              disabled={!isTriggeredAndFunctionsAvailable(modules)}
+              disabled={!isModuleLoaded}
               aria-label="Search libraries"
               data-testid="search-libraries-list"
             />
@@ -199,14 +201,14 @@ const LibrariesPage = () => {
             <EuiToolTip
               position="bottom"
               anchorClassName="euiToolTip__btn-disabled"
-              content={isTriggeredAndFunctionsAvailable(modules) ? null : 'Triggered Functions is not loaded in current database'}
+              content={isModuleLoaded ? null : 'Triggered Functions is not loaded in current database'}
             >
               <EuiButton
                 fill
                 size="s"
                 color="secondary"
                 onClick={onAddLibrary}
-                disabled={!isTriggeredAndFunctionsAvailable(modules)}
+                disabled={!isModuleLoaded}
                 className={styles.addLibrary}
                 data-testid="btn-add-library"
               >
@@ -248,7 +250,7 @@ const LibrariesPage = () => {
                     onSelectRow={handleSelectRow}
                     onDeleteRow={handleDelete}
                     message={message}
-                    isRefreshDisabled={!isTriggeredAndFunctionsAvailable(modules)}
+                    isRefreshDisabled={!isModuleLoaded}
                   />
                 </div>
               </EuiResizablePanel>

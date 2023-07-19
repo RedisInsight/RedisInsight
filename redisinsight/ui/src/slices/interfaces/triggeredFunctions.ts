@@ -67,6 +67,7 @@ export interface StateTriggeredFunctions {
     loading: boolean
   }
   addLibrary: {
+    open: boolean
     loading: boolean
   }
 }

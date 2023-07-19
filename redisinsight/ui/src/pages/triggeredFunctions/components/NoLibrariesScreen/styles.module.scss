@@ -2,9 +2,15 @@
   padding: 32px 30px;
   display: flex;
 
-  .content,
-  .image {
+  .image,
+  .content {
     width: 50%;
+  }
+
+  .image {
+    background-image: url(uiSrc/assets/img/triggers_and_functions.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
   }
 
   .content.fullWidth {
@@ -21,6 +27,10 @@
     font-weight: 500;
     word-break: break-word;
     margin-bottom: 16px;
+
+    &::first-letter {
+      text-transform: uppercase;
+    }
   }
 
   .linksWrapper .text,

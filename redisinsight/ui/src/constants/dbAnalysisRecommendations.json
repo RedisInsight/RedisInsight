@@ -1439,12 +1439,12 @@
   },
   "luaToFunctions": {
     "id": "luaToFunctions",
-    "title": "Consider using Triggers and Functions",
+    "title": "Consider using triggers and functions",
     "tutorial": "/quick-guides/triggers-and-functions/introduction.md",
     "content": [
       {
         "type": "paragraph",
-        "value": "If you are using LUA scripts to run application logic inside Redis, consider using Triggers and Functions to take advantage of Javascript's vast ecosystem of libraries and frameworks and modern, expressive syntax."
+        "value": "If you are using LUA scripts to run application logic inside Redis, consider using triggers and functions to take advantage of Javascript's vast ecosystem of libraries and frameworks and modern, expressive syntax."
       },
       {
         "type": "spacer",
@@ -1452,7 +1452,7 @@
       },
       {
         "type": "paragraph",
-        "value": "Triggers and Functions can execute business logic on changes within a database, and read across all shards in clustered databases."
+        "value": "Triggers and functions can execute business logic on changes within a database, and read across all shards in clustered databases."
       },
       {
         "type": "spacer",
@@ -1500,12 +1500,12 @@
   },
   "functionsWithStreams": {
     "id": "functionsWithStreams",
-    "title": "Consider using Triggers and Functions to react in real-time to stream entries",
+    "title": "Consider using triggers and functions to react in real-time to stream entries",
     "tutorial": "/quick-guides/triggers-and-functions/introduction.md",
     "content": [
       {
         "type": "paragraph",
-        "value": "If you need to manipulate your data based on Redis stream entries, consider using stream triggers that are a part of Triggers and Functions. It can help lower latency by moving business logic closer to the data."
+        "value": "If you need to manipulate your data based on Redis stream entries, consider using stream triggers that are a part of triggers and functions. It can help lower latency by moving business logic closer to the data."
       },
       {
         "type": "spacer",
@@ -1513,7 +1513,7 @@
       },
       {
         "type": "paragraph",
-        "value": "Try Triggers and Functions to take advantage of Javascript's vast ecosystem of libraries and frameworks and modern, expressive syntax."
+        "value": "Try triggers and functions to take advantage of Javascript's vast ecosystem of libraries and frameworks and modern, expressive syntax."
       },
       {
         "type": "spacer",
@@ -1529,7 +1529,7 @@
       },
       {
         "type": "span",
-        "value": "Triggers and Functions are part of "
+        "value": "Triggers and functions are part of "
       },
       {
         "type": "link",
@@ -1570,19 +1570,19 @@
       },
       {
         "type": "paragraph",
-        "value": "Try the interactive tutorial to learn more about Triggers and Functions."
+        "value": "Try the interactive tutorial to learn more about triggers and functions."
       }
     ],
     "badges": ["code_changes"]
   },
   "functionsWithKeyspace": {
     "id": "functionsWithKeyspace",
-    "title": "Consider using Triggers and Functions to react in real-time to database changes",
+    "title": "Consider using triggers and functions to react in real-time to database changes",
     "tutorial": "/quick-guides/triggers-and-functions/introduction.md",
     "content": [
       {
         "type": "paragraph",
-        "value": "If you need to manipulate your data based on keyspace notifications, consider using keyspace triggers that are a part of Triggers and Functions. It can help lower latency by moving business logic closer to the data."
+        "value": "If you need to manipulate your data based on keyspace notifications, consider using keyspace triggers that are a part of triggers and functions. It can help lower latency by moving business logic closer to the data."
       },
       {
         "type": "spacer",
@@ -1590,7 +1590,7 @@
       },
       {
         "type": "paragraph",
-        "value": "Try Triggers and Functions to take advantage of Javascript's vast ecosystem of libraries and frameworks and modern, expressive syntax."
+        "value": "Try triggers and functions to take advantage of Javascript's vast ecosystem of libraries and frameworks and modern, expressive syntax."
       },
       {
         "type": "spacer",
@@ -1606,7 +1606,7 @@
       },
       {
         "type": "span",
-        "value": "Triggers and Functions are part of "
+        "value": "Triggers and functions are part of "
       },
       {
         "type": "link",
@@ -1647,7 +1647,7 @@
       },
       {
         "type": "paragraph",
-        "value": "Try the interactive tutorial to learn more about Triggers and Functions."
+        "value": "Try the interactive tutorial to learn more about triggers and functions."
       }
     ],
     "badges": ["code_changes"]

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiLoadingSpinner, EuiResizableContainer, } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
 import { find, pick } from 'lodash'
 import {
   fetchTriggeredFunctionsFunctionsList,
   setSelectedFunctionToShow,
   triggeredFunctionsFunctionsSelector,
+  setAddLibraryFormOpen,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { Pages } from 'uiSrc/constants'
 import { isTriggeredAndFunctionsAvailable, Nullable } from 'uiSrc/utils'
@@ -28,20 +29,19 @@ const NoFunctionsMessage: React.ReactNode = (<span data-testid="no-functions-mes
 
 const FunctionsPage = () => {
   const { lastRefresh, loading, data: functions, selected } = useSelector(triggeredFunctionsFunctionsSelector)
-  const { modules } = useSelector(connectedInstanceSelector)
+  const { modules, id: instanceId } = useSelector(connectedInstanceSelector)
   const [items, setItems] = useState<TriggeredFunctionsFunction[]>([])
   const [filterValue, setFilterValue] = useState<string>('')
   const [selectedRow, setSelectedRow] = useState<Nullable<TriggeredFunctionsFunction>>(null)
 
-  const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
   const history = useHistory()
 
   useEffect(() => {
-    if (isTriggeredAndFunctionsAvailable(modules)) {
+    if (isModuleLoaded) {
       updateList()
     }
-  }, [])
+  }, [modules])
 
   useEffect(() => {
     applyFiltering()
@@ -104,12 +104,15 @@ const FunctionsPage = () => {
   }
 
   const onAddLibrary = () => {
-    history.push({ pathname: Pages.triggeredFunctionsLibraries(instanceId), state: { shouldOpenAddPanel: true } })
+    dispatch(setAddLibraryFormOpen(true))
+    history.push(Pages.triggeredFunctionsLibraries(instanceId))
   }
+
+  const isModuleLoaded = isTriggeredAndFunctionsAvailable(modules)
 
   const message = functions?.length
     ? NoFunctionsMessage
-    : (<NoLibrariesScreen isModuleLoaded={isTriggeredAndFunctionsAvailable(modules)} onAddLibrary={onAddLibrary} />)
+    : (<NoLibrariesScreen isModuleLoaded={isModuleLoaded} onAddLibrary={onAddLibrary} />)
 
   return (
     <EuiFlexGroup
@@ -131,7 +134,7 @@ const FunctionsPage = () => {
               placeholder="Search for Functions"
               className="triggeredFunctions__search"
               onChange={onChangeFiltering}
-              disabled={!isTriggeredAndFunctionsAvailable(modules)}
+              disabled={!isModuleLoaded}
               aria-label="Search functions"
               data-testid="search-functions-list"
             />
@@ -169,7 +172,7 @@ const FunctionsPage = () => {
                     selectedRow={selectedRow}
                     onSelectRow={handleSelectRow}
                     message={message}
-                    isRefreshDisabled={!isTriggeredAndFunctionsAvailable(modules)}
+                    isRefreshDisabled={!isModuleLoaded}
                   />
                 </div>
               </EuiResizablePanel>

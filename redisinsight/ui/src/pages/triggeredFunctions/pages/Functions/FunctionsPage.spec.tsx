@@ -29,6 +29,7 @@ jest.mock('uiSrc/slices/triggeredFunctions/triggeredFunctions', () => ({
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: 'instanceId',
     modules: [{ name: 'redisgears' }]
   }),
 }))
@@ -149,7 +150,7 @@ describe('FunctionsPage', () => {
     })
   })
 
-  it('should history push with proper args', () => {
+  it('should history push and call proper actions', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
 
@@ -158,6 +159,6 @@ describe('FunctionsPage', () => {
     fireEvent.click(screen.getByTestId('no-libraries-add-library-btn'))
 
     expect(pushMock)
-      .toBeCalledWith({ pathname: Pages.triggeredFunctionsLibraries('instanceId'), state: { shouldOpenAddPanel: true } })
+      .toBeCalledWith(Pages.triggeredFunctionsLibraries('instanceId'))
   })
 })

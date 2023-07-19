@@ -81,15 +81,15 @@ describe('NoLibrariesScreen', () => {
   it('should have proper text when module is loaded', () => {
     render(<NoLibrariesScreen {...instance(mockedProps)} isModuleLoaded />)
 
-    expect(screen.getByTestId('no-libraries-title')).toHaveTextContent('Triggers and Functions')
-    expect(screen.getByTestId('no-libraries-additional-text')).toHaveTextContent('Upload a new library to start working with Triggers and Functions or try the interactive tutorial to learn more.')
+    expect(screen.getByTestId('no-libraries-title')).toHaveTextContent('Triggers and functions')
+    expect(screen.getByTestId('no-libraries-action-text')).toHaveTextContent('Upload a new library to start working with triggers and functions or try the interactive tutorial to learn more.')
   })
 
   it('should have proper text when module is not loaded', () => {
     render(<NoLibrariesScreen {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('no-libraries-title')).toHaveTextContent('Triggers and Functions are not available for this database')
-    expect(screen.getByTestId('no-libraries-additional-text')).toHaveTextContent('Create a free Redis Stack database which extends the core capabilities of open-source Redis and try the interactive tutorial to learn how to work with Triggers and Functions.')
+    expect(screen.getByTestId('no-libraries-title')).toHaveTextContent('triggers and functions are not available for this database')
+    expect(screen.getByTestId('no-libraries-action-text')).toHaveTextContent('Create a free Redis Stack database which extends the core capabilities of open-source Redis and try the interactive tutorial to learn how to work with triggers and functions.')
   })
 
   it('should call proper actions and push to workbench page', () => {

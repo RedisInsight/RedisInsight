@@ -1,11 +1,12 @@
 import React from 'react'
-import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
 import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 
 import {
   getTriggeredFunctionsLibrariesList,
   triggeredFunctionsLibrariesSelector,
+  triggeredFunctionsAddLibrarySelector,
+  setAddLibraryFormOpen,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { TRIGGERED_FUNCTIONS_LIBRARIES_LIST_MOCKED_DATA } from 'uiSrc/mocks/data/triggeredFunctions'
@@ -19,6 +20,9 @@ jest.mock('uiSrc/slices/triggeredFunctions/triggeredFunctions', () => ({
     loading: false,
     data: null
   }),
+  triggeredFunctionsAddLibrarySelector: jest.fn().mockReturnValue({
+    open: false,
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -29,6 +33,7 @@ jest.mock('uiSrc/telemetry', () => ({
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: 'instanceId',
     modules: [{ name: 'redisgears' }]
   }),
 }))
@@ -64,15 +69,15 @@ describe('LibrariesPage', () => {
     expect(store.getActions()).toEqual([])
   })
 
-  // it('should render message when no libraries uploaded', () => {
-  //   (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
-  //     data: [],
-  //     loading: false
-  //   })
-  //   render(<LibrariesPage />)
+  it('should render message when no libraries uploaded', () => {
+    (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
+      data: [],
+      loading: false
+    })
+    render(<LibrariesPage />)
 
-  //   expect(screen.getByTestId('no-libraries-component')).toBeInTheDocument()
-  // })
+    expect(screen.getByTestId('no-libraries-component')).toBeInTheDocument()
+  })
 
   it('should render libraries list', () => {
     (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
@@ -154,7 +159,6 @@ describe('LibrariesPage', () => {
 
     fireEvent.click(screen.getByTestId('btn-add-library'))
 
-    expect(screen.getByTestId('lib-add-form')).toBeInTheDocument()
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CLICKED,
       eventData: {
@@ -163,14 +167,16 @@ describe('LibrariesPage', () => {
     })
   })
 
-  it('should close library add form and open details', async () => {
+  it('should open details', async () => {
+    (triggeredFunctionsAddLibrarySelector as jest.Mock).mockReturnValueOnce({
+      open: true,
+    })
+
     const sendEventTelemetryMock = jest.fn()
 
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
 
     render(<LibrariesPage />)
-
-    fireEvent.click(screen.getByTestId('btn-add-library'))
 
     expect(screen.getByTestId('lib-add-form')).toBeInTheDocument()
 
@@ -180,21 +186,19 @@ describe('LibrariesPage', () => {
       fireEvent.click(screen.getByTestId('add-library-btn-submit'))
     })
 
-    expect(screen.queryByTestId('lib-add-form')).not.toBeInTheDocument()
     // Library is default name when can not parse real name from code
     expect(screen.getByTestId('lib-details-Library')).toBeInTheDocument()
   })
 
-  it('should close library add form and sent proper telemetry event', () => {
+  it('should sent proper telemetry event on close add library form', () => {
+    (triggeredFunctionsAddLibrarySelector as jest.Mock).mockReturnValueOnce({
+      open: true,
+      loading: false
+    })
+
     render(<LibrariesPage />)
 
-    fireEvent.click(screen.getByTestId('btn-add-library'))
-
-    expect(screen.getByTestId('lib-add-form')).toBeInTheDocument()
-
     fireEvent.click(screen.getByTestId('close-add-form-btn'))
-
-    expect(screen.queryByTestId('lib-add-form')).not.toBeInTheDocument()
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CANCELLED,
@@ -224,15 +228,5 @@ describe('LibrariesPage', () => {
     })
 
     expect(screen.queryByTestId('lib-details-lib1')).not.toBeInTheDocument()
-  })
-
-  it('should open add library form and reset history state', async () => {
-    const replaceMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ replace: replaceMock })
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ state: { shouldOpenAddPanel: true } })
-    render(<LibrariesPage />)
-
-    expect(screen.getByTestId('lib-add-form')).toBeInTheDocument()
-    expect(replaceMock).toBeCalledWith({ state: undefined })
   })
 })

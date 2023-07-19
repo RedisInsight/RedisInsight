@@ -9,13 +9,15 @@ import {
   EuiButton,
   EuiButtonEmpty,
   EuiLink,
+  EuiIcon,
 } from '@elastic/eui'
 
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import { EAManifestFirstKey, Pages, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
-import { ReactComponent as DesktopIcon } from 'uiSrc/assets/img/icons/module_not_loaded.svg'
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
+import { ReactComponent as TriggersAndFunctionsImage } from 'uiSrc/assets/img/triggers_and_functions.svg'
+// import TriggersAndFunctionsImage from 'uiSrc/assets/img/triggers_and_functions.svg'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { findMarkdownPathByPath } from 'uiSrc/utils'
 
@@ -65,7 +67,7 @@ const NoLibrariesScreen = (props: IProps) => {
           <EuiTitle size="m" className={styles.title}>
             <h4 data-testid="no-libraries-title">
               {isModuleLoaded
-                ? 'Triggers and Functions'
+                ? 'Triggers and functions'
                 : `${moduleName} are not available for this database`}
             </h4>
           </EuiTitle>
@@ -77,10 +79,18 @@ const NoLibrariesScreen = (props: IProps) => {
               <ListItem key={item} item={item} />
             ))}
           </ul>
-          <EuiText className={cx(styles.additionalText, styles.marginBottom)} data-testid="no-libraries-additional-text">
+          {CONTENT[RedisDefaultModules.RedisGears]?.additionalText.map((item: string, idx: number) => (
+            <EuiText
+              className={cx(styles.additionalText, styles.marginBottom)}
+              data-testid={`no-libraries-additional-text-${idx}`}
+            >
+              {item}
+            </EuiText>
+          ))}
+          <EuiText className={cx(styles.additionalText, styles.marginBottom)} data-testid="no-libraries-action-text">
             {isModuleLoaded
-              ? 'Upload a new library to start working with Triggers and Functions or try the interactive tutorial to learn more.'
-              : 'Create a free Redis Stack database which extends the core capabilities of open-source Redis and try the interactive tutorial to learn how to work with Triggers and Functions.'}
+              ? 'Upload a new library to start working with triggers and functions or try the interactive tutorial to learn more.'
+              : 'Create a free Redis Stack database which extends the core capabilities of open-source Redis and try the interactive tutorial to learn how to work with triggers and functions.'}
           </EuiText>
         </div>
         <div className={styles.linksWrapper}>
@@ -127,7 +137,8 @@ const NoLibrariesScreen = (props: IProps) => {
       </div>
       {!isAddLibraryPanelOpen && (
         <div className={styles.image}>
-          <DesktopIcon />
+          {/* <TriggersAndFunctionsImage /> */}
+          {/* <EuiIcon type={TriggersAndFunctionsImage} size="original" /> */}
         </div>
       )}
     </div>

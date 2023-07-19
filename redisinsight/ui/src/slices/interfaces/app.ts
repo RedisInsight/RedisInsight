@@ -7,6 +7,7 @@ import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
+import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 import { Instance } from './instances'
 
 export interface IError extends AxiosError {
@@ -222,6 +223,11 @@ export interface StateAppOAuth {
     loading: boolean
     data: Nullable<CloudUser>
     freeDb: CloudUserFreeDbState
+  }
+  plan: {
+    isOpenDialog: boolean
+    data: CloudSubscriptionPlanResponse[]
+    loading: boolean
   }
   isOpenSignInDialog: boolean
   isOpenSelectAccountDialog: boolean

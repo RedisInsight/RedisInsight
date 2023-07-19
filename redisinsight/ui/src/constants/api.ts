@@ -118,6 +118,8 @@ enum ApiEndpoints {
   CLOUD_ME_ACCOUNTS = 'cloud/me/accounts',
   CLOUD_CURRENT = 'current',
 
+  CLOUD_SUBSCRIPTION_PLANS = 'cloud/me/subscription/plans',
+
   CLOUD_ME_AUTODISCOVERY_ACCOUNT = 'cloud/me/autodiscovery/account',
   CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS = 'cloud/me/autodiscovery/subscriptions',
   CLOUD_ME_AUTODISCOVERY_GET_DATABASES = 'cloud/me/autodiscovery/get-databases',

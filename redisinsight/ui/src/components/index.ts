@@ -33,6 +33,7 @@ import OAuthSsoHandlerDialog from './oauth-sso-handler-dialog/OAuthSsoHandlerDia
 import OAuthSelectAccountDialog from './oauth-select-account-dialog/OAuthSelectAccountDialog'
 import OAuthConnectFreeDb from './oauth-connect-free-db/OAuthConnectFreeDb'
 import OAuthJobs from './oauth-jobs'
+import OAuthSelectPlan from './oauth-select-plan'
 
 export {
   NavigationMenu,
@@ -74,4 +75,5 @@ export {
   OAuthSelectAccountDialog,
   OAuthConnectFreeDb,
   OAuthJobs,
+  OAuthSelectPlan,
 }

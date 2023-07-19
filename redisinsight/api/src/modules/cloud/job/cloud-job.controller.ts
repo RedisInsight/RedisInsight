@@ -5,17 +5,23 @@ import {
 } from '@nestjs/common';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { ApiTags } from '@nestjs/swagger';
+import { Validator } from 'class-validator';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { CloudJobService } from 'src/modules/cloud/job/cloud-job.service';
 import { CreateCloudJobDto } from 'src/modules/cloud/job/dto';
 import { CloudJobInfo } from 'src/modules/cloud/job/models';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
+import { plainToClass } from 'class-transformer';
 
 @ApiTags('Cloud Jobs')
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('cloud/me/jobs')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class CloudJobController {
+  private readonly validator = new Validator();
+
+  private exceptionFactory = (new ValidationPipe()).createExceptionFactory();
+
   constructor(
     private readonly service: CloudJobService,
   ) {}
@@ -28,10 +34,20 @@ export class CloudJobController {
   })
   async createFreeDatabase(
     @RequestSessionMetadata() sessionMetadata,
-      @Body() dto: CreateCloudJobDto,
+      @Body() data: CreateCloudJobDto,
       @Query() utm: CloudRequestUtm,
   ): Promise<CloudJobInfo> {
-    return this.service.create(sessionMetadata, dto, utm);
+    const dto = plainToClass(CreateCloudJobDto, data);
+
+    const errors = await this.validator.validate(
+      dto,
+      { whitelist: true },
+    );
+
+    if (errors?.length) {
+      throw this.exceptionFactory(errors);
+    }
+    return this.service.create(sessionMetadata, data, utm);
   }
 
   @Get('/')

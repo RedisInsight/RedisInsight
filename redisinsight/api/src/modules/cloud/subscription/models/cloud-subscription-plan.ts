@@ -14,6 +14,11 @@ export class CloudSubscriptionPlan {
   id: number;
 
   @ApiProperty({
+    type: Number,
+  })
+  regionId: number;
+
+  @ApiProperty({
     description: 'Subscription type',
     enum: CloudSubscriptionType,
   })

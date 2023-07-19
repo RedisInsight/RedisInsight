@@ -16,6 +16,9 @@ import {
   CloudSubscriptionUnableToDetermineException,
   CloudTaskNoResourceIdException,
 } from 'src/modules/cloud/job/exceptions';
+import {
+  CloudSubscriptionAlreadyExistsFreeException,
+} from '../exceptions/cloud-subscription-already-exists-free.exception';
 
 export class CreateFreeSubscriptionCloudJob extends CloudJob {
   protected name = CloudJobName.CreateFreeSubscription;
@@ -50,6 +53,10 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
 
     freeSubscription = CloudSubscriptionCapiService.findFreeSubscription(fixedSubscriptions);
 
+    if (freeSubscription) {
+      throw new CloudSubscriptionAlreadyExistsFreeException();
+    }
+
     // in case when no free subscriptions found we must create one
     if (!freeSubscription) {
       this.logger.debug('No free subscription found. Creating one');
@@ -62,9 +69,7 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
         CloudSubscriptionType.Fixed,
       );
 
-      const freePlan = this.data.planId
-        ? CloudSubscriptionCapiService.findFreePlanById(fixedPlans, this.data.planId)
-        : CloudSubscriptionCapiService.findFreePlan(fixedPlans);
+      const freePlan = CloudSubscriptionCapiService.findFreePlanById(fixedPlans, this.data.planId);
 
       if (!freePlan) {
         throw new CloudPlanNotFoundFreeException();

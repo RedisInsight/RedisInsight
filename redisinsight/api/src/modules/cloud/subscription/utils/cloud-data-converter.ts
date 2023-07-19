@@ -1,6 +1,6 @@
 import { get, toNumber } from 'lodash';
 import {
-  CloudSubscription, CloudSubscriptionPlan, CloudSubscriptionRegion, CloudSubscriptionType, ICloudCapiSubscription, ICloudCapiSubscriptionCloudRegion, ICloudCapiSubscriptionPlan,
+  CloudSubscription, CloudSubscriptionPlan, CloudSubscriptionRegion, CloudSubscriptionType, ICloudCapiSubscription, ICloudApiSubscriptionCloudRegion, ICloudCapiSubscriptionPlan,
 } from 'src/modules/cloud/subscription/models';
 import { plainToClass } from 'class-transformer';
 
@@ -49,16 +49,17 @@ export const parseCloudSubscriptionsPlansCapiResponse = (
         type,
         name: plan.name,
         provider: plan.provider,
-        region: plan.region,
         price: plan?.price,
+        region: plan.region,
+        regionId: plan.regionId,
       }));
     });
   }
   return result;
 };
 
-export const parseCloudSubscriptionsCloudRegionsCapiResponse = (
-  regions: ICloudCapiSubscriptionCloudRegion[],
+export const parseCloudSubscriptionsCloudRegionsApiResponse = (
+  regions: ICloudApiSubscriptionCloudRegion[],
 ): CloudSubscriptionRegion[] => {
   const result: CloudSubscriptionRegion[] = [];
   if (regions?.length) {
@@ -70,6 +71,7 @@ export const parseCloudSubscriptionsCloudRegionsCapiResponse = (
         displayOrder: plan.display_order,
         countryName: plan.country_name,
         cityName: plan.city_name,
+        regionId: plan.region_id,
         flag: plan?.flag,
       }));
     });

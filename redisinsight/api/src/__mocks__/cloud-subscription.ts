@@ -5,7 +5,7 @@ import {
   CloudSubscriptionRegion,
   CloudSubscriptionStatus, CloudSubscriptionType,
   ICloudCapiSubscription,
-  ICloudCapiSubscriptionCloudRegion,
+  ICloudApiSubscriptionCloudRegion,
 } from 'src/modules/cloud/subscription/models';
 
 export const mockCloudCapiSubscription: ICloudCapiSubscription = {
@@ -72,7 +72,7 @@ export const mockCloudSubscriptionFixed = Object.assign(new CloudSubscription(),
   price: mockCloudCapiSubscriptionFixed.price,
 });
 
-export const mockCloudCapiCloudRegion1: ICloudCapiSubscriptionCloudRegion = {
+export const mockCloudCapiCloudRegion1: ICloudApiSubscriptionCloudRegion = {
   id: '1',
   region_id: 1,
   zone_id: null,
@@ -87,7 +87,7 @@ export const mockCloudCapiCloudRegion1: ICloudCapiSubscriptionCloudRegion = {
   display_order: 1,
 };
 
-export const mockCloudCapiCloudRegion2: ICloudCapiSubscriptionCloudRegion = {
+export const mockCloudCapiCloudRegion2: ICloudApiSubscriptionCloudRegion = {
   id: '2',
   region_id: 2,
   zone_id: null,
@@ -102,13 +102,14 @@ export const mockCloudCapiCloudRegion2: ICloudCapiSubscriptionCloudRegion = {
   display_order: 2,
 };
 
-export const mockCloudCapiCloudRegions: ICloudCapiSubscriptionCloudRegion[] = [
+export const mockCloudCapiCloudRegions: ICloudApiSubscriptionCloudRegion[] = [
   mockCloudCapiCloudRegion1,
   mockCloudCapiCloudRegion2,
 ];
 
 export const mockFreeCloudSubscriptionPlan1: CloudSubscriptionPlan = {
   id: 1,
+  regionId: 1,
   type: CloudSubscriptionType.Fixed,
   name: 'plan_name',
   provider: 'AWS',
@@ -118,6 +119,7 @@ export const mockFreeCloudSubscriptionPlan1: CloudSubscriptionPlan = {
 
 export const mockFreeCloudSubscriptionPlan2: CloudSubscriptionPlan = {
   id: 2,
+  regionId: 2,
   type: CloudSubscriptionType.Fixed,
   name: 'plan_name2',
   provider: 'GCP',
@@ -138,6 +140,7 @@ export const mockCloudSubscriptionRegion1 = Object.assign(new CloudSubscriptionR
   displayOrder: mockCloudCapiCloudRegion1.display_order,
   flag: mockCloudCapiCloudRegion1.flag,
   name: mockCloudCapiCloudRegion1.name,
+  regionId: mockCloudCapiCloudRegion1.region_id,
 });
 
 export const mockCloudSubscriptionRegion2 = Object.assign(new CloudSubscriptionRegion(), {
@@ -148,6 +151,7 @@ export const mockCloudSubscriptionRegion2 = Object.assign(new CloudSubscriptionR
   displayOrder: mockCloudCapiCloudRegion2.display_order,
   flag: mockCloudCapiCloudRegion2.flag,
   name: mockCloudCapiCloudRegion2.name,
+  regionId: mockCloudCapiCloudRegion2.region_id,
 });
 
 export const mockCloudSubscriptionRegions: CloudSubscriptionRegion[] = [

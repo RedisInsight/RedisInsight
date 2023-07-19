@@ -2,9 +2,14 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CloudSubscriptionRegion {
   @ApiProperty({
+    type: String,
+  })
+  id: string;
+
+  @ApiProperty({
     type: Number,
   })
-  id: number;
+  regionId: number;
 
   @ApiProperty({
     type: String,

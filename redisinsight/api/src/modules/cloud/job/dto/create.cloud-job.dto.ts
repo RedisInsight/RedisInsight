@@ -1,8 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
-import { CloudJobName } from 'src/modules/cloud/job/constants';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
 import { Expose } from 'class-transformer';
+import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobRunMode } from 'src/modules/cloud/job/models';
+import { CloudJobDataDecorator } from 'src/common/decorators';
+
+export class CreateCloudJobDataDto {
+  @ApiProperty({
+    description: 'Plan id for create a subscription.',
+    type: Number,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  planId: number;
+}
 
 export class CreateCloudJobDto {
   @ApiProperty({
@@ -23,11 +40,12 @@ export class CreateCloudJobDto {
   @IsNotEmpty()
   runMode: CloudJobRunMode;
 
+  @CloudJobDataDecorator()
   @ApiProperty({
-    description: 'Any data for a job. planId for an example',
+    description: 'Any data for create a job.',
   })
-  @IsOptional()
+  @ValidateNested()
   @Expose()
   @IsNotEmpty()
-  data: object;
+  data: CreateCloudJobDataDto;
 }

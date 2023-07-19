@@ -94,4 +94,5 @@ export default {
   CLOUD_DATABASE_IN_UNEXPECTED_STATE: 'Cloud database is in unexpected state',
   CLOUD_DATABASE_ALREADY_EXISTS_FREE: 'Free database already exists',
   CLOUD_PLAN_NOT_FOUND_FREE: 'Unable to find free cloud plan',
+  CLOUD_SUBSCRIPTION_ALREADY_EXISTS_FREE: 'Free subscription already exists',
 };

@@ -9,7 +9,7 @@ import { CloudSubscriptionCapiService } from './cloud-subscription.capi.service'
 import { CloudUserApiService } from '../user/cloud-user.api.service';
 import { CloudSubscriptionRegion, CloudSubscriptionType } from './models';
 import { CloudSessionService } from '../session/cloud-session.service';
-import { parseCloudSubscriptionsCloudRegionsCapiResponse } from './utils';
+import { parseCloudSubscriptionsCloudRegionsApiResponse } from './utils';
 import { CloudSession } from '../session/models/cloud-session';
 import { CloudSubscriptionApiProvider } from './providers/cloud-subscription.api.provider';
 
@@ -56,7 +56,7 @@ export class CloudSubscriptionApiService {
 
       return freePlans.map((plan) => ({
         ...plan,
-        details: find(regions, { name: plan.region }),
+        details: find(regions, { regionId: plan.regionId }),
       }));
     } catch (e) {
       // todo: error
@@ -77,7 +77,7 @@ export class CloudSubscriptionApiService {
 
       this.logger.log('Succeed to get cloud regions');
 
-      return parseCloudSubscriptionsCloudRegionsCapiResponse(regions);
+      return parseCloudSubscriptionsCloudRegionsApiResponse(regions);
     } catch (error) {
       throw wrapHttpError(error);
     }

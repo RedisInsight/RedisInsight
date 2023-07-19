@@ -1,6 +1,7 @@
 import { ipcMain, WebContents } from 'electron'
 import log from 'electron-log'
 import open from 'open'
+import { UrlWithParsedQuery } from 'url'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { getBackendApp, getWindows } from 'desktopSrc/lib'
 import { IpcOnEvent, IpcInvokeEvent } from 'uiSrc/electron/constants'
@@ -49,19 +50,15 @@ export const initCloudOauthHandlers = () => {
   })
 }
 
-export const cloudOauthCallback = async (from?: string) => {
-  if (!from) return
+export const cloudOauthCallback = async (url: UrlWithParsedQuery) => {
   try {
-    const url = new URL(from)
-    if (url?.pathname === '/cloud/oauth/callback') {
-      const authService: CloudAuthService = getBackendApp()?.get?.(CloudAuthService)
-      const result = await authService.handleCallback(Object.fromEntries(url.searchParams as any))
+    const authService: CloudAuthService = getBackendApp()?.get?.(CloudAuthService)
+    const result = await authService.handleCallback(url.query)
 
-      if (result.status === CloudAuthStatus.Failed) {
-        const [currentWindow] = getWindows().values()
+    if (result.status === CloudAuthStatus.Failed) {
+      const [currentWindow] = getWindows().values()
 
-        currentWindow?.webContents.send(IpcOnEvent.cloudOauthCallback, result)
-      }
+      currentWindow?.webContents.send(IpcOnEvent.cloudOauthCallback, result)
     }
   } catch (e) {
     log.error(wrapErrorMessageSensitiveData(e as Error))

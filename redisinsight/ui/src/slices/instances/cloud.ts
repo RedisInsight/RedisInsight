@@ -1,19 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, find, map } from 'lodash'
 
-import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import {
   getApiErrorMessage,
   getApiErrorsFromBulkOperation,
+  getAxiosError,
   isStatusSuccessful,
   Maybe,
   Nullable,
-  parseCloudOAuthError,
 } from 'uiSrc/utils'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 import {
+  EnhancedAxiosError,
   ICredentialsRedisCloud,
   InitialStateCloud,
   InstanceRedisCloud,
@@ -218,11 +218,11 @@ export function fetchSubscriptionsRedisCloud(
         dispatch<any>(fetchAccountRedisCloud(credentials))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error as AxiosError)
-      const err = error?.errorCode ? parseCloudOAuthError(error) : error
+      const errorMessage = getApiErrorMessage(error as EnhancedAxiosError)
+      const err = getAxiosError(error as EnhancedAxiosError)
 
       dispatch(loadSubscriptionsRedisCloudFailure(errorMessage))
-      dispatch(addErrorNotification(err as AxiosError))
+      dispatch(addErrorNotification(err))
       onFailAction?.()
     }
   }

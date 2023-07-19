@@ -4,8 +4,9 @@ import React from 'react'
 import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
+import { CustomError } from 'uiSrc/slices/interfaces'
 
-export const parseCloudOAuthError = (err: object | string = DEFAULT_ERROR_MESSAGE): AxiosError => {
+export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_MESSAGE): AxiosError => {
   const error = {
     response: {
       status: 500,

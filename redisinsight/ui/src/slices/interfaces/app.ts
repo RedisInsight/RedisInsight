@@ -10,6 +10,16 @@ import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 import { Instance } from './instances'
 
+export interface CustomError {
+  error: string
+  message: string
+  statusCode: number
+  errorCode?: number
+}
+
+export interface EnhancedAxiosError extends AxiosError<CustomError> {
+}
+
 export interface IError extends AxiosError {
   id: string
   instanceId?: string

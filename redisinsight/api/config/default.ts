@@ -195,6 +195,13 @@ export default {
       url: process.env.COMMANDS_REDISBLOOM_URL
         || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
+    {
+      name: 'triggers_and_functions',
+      url: process.env.COMMANDS_TRIGGERS_AND_FUNCTIONS_URL
+        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
+      defaultUrl: process.env.COMMANDS_TRIGGERS_AND_FUNCTIONS_DEFAULT_URL
+        || 'https://s3.amazonaws.com/redisinsight.download/public/commands/triggers_and_functions.json',
+    },
   ],
   connections: {
     timeout: parseInt(process.env.CONNECTIONS_TIMEOUT_DEFAULT, 10) || 30 * 1_000, // 30 sec

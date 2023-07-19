@@ -245,7 +245,7 @@ const Recommendation = ({
               className={styles.snoozeBtn}
               onClick={handleDelete}
               aria-label="snooze recommendation"
-              data-testid={`snooze-${name}-btn`}
+              data-testid={`${name}-delete-btn`}
             />
           </EuiToolTip>
         </EuiFlexItem>

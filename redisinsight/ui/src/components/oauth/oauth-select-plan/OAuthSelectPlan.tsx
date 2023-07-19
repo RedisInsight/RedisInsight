@@ -21,10 +21,10 @@ import {
 } from 'uiSrc/slices/oauth/cloud'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 
 import { OAuthProvider, OAuthProviders } from './constants'
 import styles from './styles.module.scss'
-import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 
 export const DEFAULT_REGION = 'us-east-1'
 export const DEFAULT_PROVIDER = OAuthProvider.AWS
@@ -109,10 +109,10 @@ const OAuthSelectPlan = () => {
             <h2 className={styles.title}>Select cloud vendor</h2>
           </EuiTitle>
           <section className={styles.providers}>
-            {OAuthProviders.map(({ icon, id, label, className = '' }) => (
+            {OAuthProviders.map(({ icon, id, label }) => (
               <div className={styles.provider}>
                 {id === providerSelected
-                  && <div className={cx(styles.providerActiveIcon, className)}><EuiIcon type="check" /></div>}
+                  && <div className={cx(styles.providerActiveIcon)}><EuiIcon type="check" /></div>}
                 <EuiButton
                   iconType={icon}
                   onClick={() => setProviderSelected(id)}

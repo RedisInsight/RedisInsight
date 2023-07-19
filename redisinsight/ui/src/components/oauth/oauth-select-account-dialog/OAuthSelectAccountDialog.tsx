@@ -27,9 +27,9 @@ import { cloudSelector, fetchSubscriptionsRedisCloud } from 'uiSrc/slices/instan
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
 import { removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 
 import styles from './styles.module.scss'
-import { InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 
 interface FormValues {
   accountId: Nullable<string>

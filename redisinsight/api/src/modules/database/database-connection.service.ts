@@ -78,6 +78,16 @@ export class DatabaseConnectionService {
       RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
       generalInfo,
     );
+    this.recommendationService.check(
+      clientMetadata,
+      RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS,
+      { client, databaseId: clientMetadata.databaseId, info: generalInfo },
+    );
+    this.recommendationService.check(
+      clientMetadata,
+      RECOMMENDATION_NAMES.FUNCTIONS_WITH_KEYSPACE,
+      { client, databaseId: clientMetadata.databaseId },
+    );
 
     this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
   }

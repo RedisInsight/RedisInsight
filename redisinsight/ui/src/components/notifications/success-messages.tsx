@@ -194,5 +194,25 @@ export default {
       ),
       className: 'dynamic'
     })
-  }
+  },
+  DELETE_LIBRARY: (libraryName: string) => ({
+    title: 'Library has been deleted',
+    message: (
+      <>
+        <b>{formatNameShort(libraryName)}</b>
+        {' '}
+        has been deleted.
+      </>
+    ),
+  }),
+  ADD_LIBRARY: (libraryName: string) => ({
+    title: 'Library has been added',
+    message: (
+      <>
+        <b>{formatNameShort(libraryName)}</b>
+        {' '}
+        has been added.
+      </>
+    ),
+  })
 }

@@ -220,7 +220,7 @@ const DEFAULT_SUMMARY: IRedisModulesSummary = Object.freeze(
     RedisBloom: { loaded: false },
     RedisJSON: { loaded: false },
     RedisTimeSeries: { loaded: false },
-    'Triggers & Functions': { loaded: false },
+    'Triggers and Functions': { loaded: false },
     customModules: [],
   },
 )
@@ -254,7 +254,7 @@ const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): IRedisMo
       }
 
       if (isTriggeredAndFunctionsAvailable([module])) {
-        const triggeredAndFunctionsName = getEnumKeyBValue(RedisModules, RedisModules['Triggers & Functions'])
+        const triggeredAndFunctionsName = getEnumKeyBValue(RedisModules, RedisModules['Triggers and Functions'])
         summary[triggeredAndFunctionsName as RedisModulesKeyType] = getModuleSummaryToSent(module)
         return
       }

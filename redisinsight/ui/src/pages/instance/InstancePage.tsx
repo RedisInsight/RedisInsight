@@ -36,6 +36,7 @@ import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
+import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -114,6 +115,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setInitialAnalyticsSettings())
     dispatch(setRedisearchInitialState())
     dispatch(resetRecommendationsHighlighting())
+    dispatch(setTriggeredFunctionsInitialState())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

@@ -173,10 +173,10 @@ orbs:
 executors:
   linux-executor:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2004:2023.04.2
   linux-executor-dlc:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2004:2023.04.2
       docker_layer_caching: true
 
 jobs:

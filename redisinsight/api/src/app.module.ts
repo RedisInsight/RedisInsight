@@ -15,6 +15,7 @@ import { NotificationModule } from 'src/modules/notification/notification.module
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
 import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
+import { TriggeredFunctionsModule } from 'src/modules/triggered-functions/triggered-functions.module';
 import { ServerModule } from 'src/modules/server/server.module';
 import { LocalDatabaseModule } from 'src/local-database.module';
 import { CoreModule } from 'src/core.module';
@@ -59,6 +60,7 @@ const PATH_CONFIG = config.get('dir_path');
     CustomTutorialModule.register(),
     DatabaseAnalysisModule,
     DatabaseImportModule,
+    TriggeredFunctionsModule,
     ...(SERVER_CONFIG.staticContent
       ? [
         ServeStaticModule.forRoot({

@@ -31,9 +31,11 @@ export interface Props {
   containerClassName?: string
   turnOffAutoRefresh?: boolean
   onRefresh: (enableAutoRefresh: boolean) => void
+  onRefreshClicked?: () => void
   onEnableAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
   onChangeAutoRefreshRate?: (enableAutoRefresh: boolean, refreshRate: string) => void
   iconSize?: EuiButtonIconSizes
+  disabled?: boolean
 }
 
 const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * MINUTE // once a minute
@@ -47,9 +49,11 @@ const AutoRefresh = ({
   testid = '',
   turnOffAutoRefresh,
   onRefresh,
+  onRefreshClicked,
   onEnableAutoRefresh,
   onChangeAutoRefreshRate,
-  iconSize = 'm'
+  iconSize = 'm',
+  disabled,
 }: Props) => {
   let intervalText: NodeJS.Timeout
   let intervalRefresh: NodeJS.Timeout
@@ -147,6 +151,11 @@ const AutoRefresh = ({
     onRefresh(enableAutoRefresh)
   }
 
+  const handleRefreshClick = () => {
+    handleRefresh()
+    onRefreshClicked?.()
+  }
+
   const onChangeEnableAutoRefresh = (value: boolean) => {
     setEnableAutoRefresh(value)
 
@@ -173,8 +182,8 @@ const AutoRefresh = ({
         <EuiButtonIcon
           size={iconSize}
           iconType="refresh"
-          disabled={loading}
-          onClick={handleRefresh}
+          disabled={loading || disabled}
+          onClick={handleRefreshClick}
           onMouseEnter={updateLastRefresh}
           className={cx(styles.btn, { [styles.rolling]: enableAutoRefresh })}
           aria-labelledby={testid?.replaceAll?.('-', ' ') || 'Refresh button'}
@@ -191,6 +200,7 @@ const AutoRefresh = ({
         closePopover={closePopover}
         button={(
           <EuiButtonIcon
+            disabled={disabled}
             iconType="arrowDown"
             color="subdued"
             aria-label="Auto-refresh config popover"

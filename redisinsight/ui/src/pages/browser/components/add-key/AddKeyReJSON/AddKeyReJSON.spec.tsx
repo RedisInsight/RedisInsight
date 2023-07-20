@@ -96,11 +96,10 @@ describe('AddKeyReJSON', () => {
     const fileInput = screen.getByTestId('upload-input-file')
 
     expect(fileInput).toHaveAttribute('accept', 'application/json, text/plain')
-    expect(fileInput.files.length).toBe(0)
 
     await userEvent.upload(fileInput, file)
 
-    expect(fileInput.files.length).toBe(1)
+    await waitFor(() => expect(screen.getByTestId('json-value')).toHaveValue('{"a":12}'))
   })
 
   it('should set the value from json file', async () => {

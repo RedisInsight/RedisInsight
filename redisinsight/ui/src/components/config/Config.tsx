@@ -108,13 +108,24 @@ const Config = () => {
   }
 
   const onboardUsers = () => {
-    if (serverInfo?.buildType === BuildType.Electron && config) {
+    if (config) {
       const totalSteps = Object.keys(ONBOARDING_FEATURES).length
       const userCurrentStep = localStorageService.get(BrowserStorageItem.onboardingStep)
 
-      if (!config.agreements || isNumber(userCurrentStep)) {
+      // start onboarding for new electron users
+      if (serverInfo?.buildType === BuildType.Electron && !config.agreements) {
         dispatch(setOnboarding({
-          currentStep: config.agreements ? userCurrentStep : 0,
+          currentStep: 0,
+          totalSteps
+        }))
+
+        return
+      }
+
+      // continue onboarding for all users
+      if (isNumber(userCurrentStep)) {
+        dispatch(setOnboarding({
+          currentStep: userCurrentStep,
           totalSteps
         }))
       }

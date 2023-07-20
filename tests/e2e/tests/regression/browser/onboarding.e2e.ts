@@ -10,7 +10,7 @@ import {
     WorkbenchPage,
     PubSubPage,
     MyRedisDatabasePage,
-    BrowserPage
+    BrowserPage, TriggersAndFunctionsFunctionsPage
 } from '../../../pageObjects';
 import { Telemetry } from '../../../helpers/telemetry';
 import { OnboardingCardsDialog } from '../../../pageObjects/dialogs';
@@ -22,6 +22,7 @@ const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const workBenchPage = new WorkbenchPage();
 const slowLogPage = new SlowLogPage();
 const pubSubPage = new PubSubPage();
+const functionsPage = new TriggersAndFunctionsFunctionsPage();
 const telemetry = new Telemetry();
 const databaseHelper = new DatabaseHelper();
 
@@ -109,6 +110,10 @@ test('Verify onboarding new user steps', async t => {
     // verify pub/sub page is opened
     await t.expect(pubSubPage.subscribeButton.visible).ok('pub/sub page is not opened');
     await onboardingCardsDialog.verifyStepVisible('Pub/Sub');
+    await onboardingCardsDialog.clickNextStep();
+    // verify triggered and functions page is opened
+    await t.expect(functionsPage.librariesLink.visible).ok('triggered and functions page is not opened');
+    await onboardingCardsDialog.verifyStepVisible('Triggers and Functions');
     await onboardingCardsDialog.clickNextStep();
     // verify last step of onboarding process is visible
     await onboardingCardsDialog.verifyStepVisible('Great job!');

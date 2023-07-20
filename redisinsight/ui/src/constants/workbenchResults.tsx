@@ -57,7 +57,7 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
       'Improve code resiliency by backing up and replicating triggers and functions along with the database'
     ],
     additionalText: ['Triggers and functions work with a JavaScript engine, which lets you take advantage of JavaScript’s vast ecosystem of libraries and frameworks and modern, expressive syntax.'],
-    link: 'https://redis.io/docs/interact/programmability/functions-intro/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_triggers_and_functions/'
+    link: 'https://redis.io/docs/interact/programmability/functions-intro'
   },
 }
 

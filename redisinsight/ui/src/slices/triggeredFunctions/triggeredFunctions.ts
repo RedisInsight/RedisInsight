@@ -248,6 +248,7 @@ export function fetchTriggeredFunctionsLibrary(
 
       if (isStatusSuccessful(status)) {
         dispatch(getTriggeredFunctionsLibraryDetailsSuccess(data))
+        dispatch(setAddLibraryFormOpen(false))
         onSuccessAction?.(data)
       }
     } catch (_err) {

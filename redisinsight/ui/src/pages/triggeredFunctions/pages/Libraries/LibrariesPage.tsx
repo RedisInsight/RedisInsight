@@ -150,7 +150,6 @@ const LibrariesPage = () => {
   }
 
   const onAdded = (libraryName: string) => {
-    dispatch(setAddLibraryFormOpen(false))
     setSelectedRow(libraryName)
   }
 

@@ -725,6 +725,7 @@ describe('triggeredFunctions slice', () => {
         const expectedActions = [
           getTriggeredFunctionsLibraryDetails(),
           getTriggeredFunctionsLibraryDetailsSuccess(data),
+          setAddLibraryFormOpen(false)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

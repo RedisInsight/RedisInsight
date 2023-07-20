@@ -1,11 +1,11 @@
 .recommendationAccordion {
-  border: 1px solid var(--recommendationLiveBorderColor);
   margin-bottom: 10px;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
+  border: 1px solid var(--recommendationLiveBorderColor);
 
   &.read {
-    border: 1px solid var(--controlsBorderColor);
+    border: 1px solid var(--recommendationBgColor);
   }
 
   .redisStackLink {
@@ -13,11 +13,14 @@
   }
 
   :global {
+    .euiAccordion__childWrapper {
+      background-color: var(--recommendationBgColor) !important;
+    }
     .euiAccordion__button {
-      padding: 4px 18px;
+      padding: 6px 18px;
       border-bottom: 1px solid transparent;
       color: var(--euiTextSubduedColor) !important;
-      background-color: var(--recommendationsBgColor) !important;
+      background-color: var(--recommendationBgColor) !important;
       font-size: 14px;
       font-weight: 400;
 
@@ -35,8 +38,7 @@
 
     .euiAccordion.euiAccordion-isOpen {
       .euiAccordion__button {
-        border-bottom-color: var(--controlsBorderColor);
-        background-color: var(--recommendationBgColor) !important;
+        padding: 14px 18px;
         color: var(--htmlColor) !important;
         font-weight: 500;
       }
@@ -49,15 +51,15 @@
     }
 
     .euiPanel {
-      background: var(--recommendationsBgColor) !important;
-      padding-bottom: 0 !important;
+      background: var(--recommendationBgColor) !important;
+      padding: 0 18px 18px !important;
     }
 
     .euiAccordion__iconWrapper {
       display: flex;
       justify-content: center;
       align-items: center;
-     }
+    }
 
     .euiAccordion__buttonReverse .euiAccordion__icon {
       width: 12px;
@@ -108,25 +110,7 @@
   margin-top: 15px;
   justify-content: space-around;
   align-items: center;
-  border-top: 1px solid var(--separatorColorLight);
   height: 48px;
-
-  .btn {
-    height: 32px !important;
-    min-width: 60px !important;
-
-    :global(.euiButton__content) {
-      padding: 0 12px;
-    }
-
-    :global(.euiButton__text) {
-      font: normal normal 400 14px/17px Graphik, sans-serif !important;
-    }
-
-    &:last-of-type {
-      margin-left: 8px !important;
-    }
-  }
 }
 
 .fullWidth {
@@ -134,6 +118,10 @@
 }
 
 .votingContainer {
+  justify-content: center;
+  border-radius: 8px;
+  background-color: var(--recommendationsBgColor) !important;
+  padding: 4px 0;
   :global {
     .voteContent {
       margin-left: 6px !important;
@@ -151,4 +139,41 @@
 
 .keyNameContainer {
   background-color: var(--recommendationBgColor);
+}
+
+.snoozeBtn {
+  svg {
+    fill: var(--recommendationBgColor) !important;
+    g {
+      stroke: currentColor !important;
+    }
+  }
+}
+
+.accordionContent {
+  .btn {
+    box-shadow: none !important;
+    display: block;
+    margin-top: 1px;
+    height: 32px !important;
+    min-width: 60px !important;
+    border-color: var(--highlightDotColor) !important;
+    background-color: var(--highlightDotColor) !important;
+    margin-bottom: 12px;
+
+    svg path {
+      fill: var(--euiColorEmptyShade);
+    }
+
+    :global(.euiButton__content) {
+      padding: 0 12px;
+    }
+
+    :global(.euiButton__text) {
+      color: var(--euiColorEmptyShade);
+      font:
+        normal normal 500 14px/17px Graphik,
+        sans-serif !important;
+    }
+  }
 }

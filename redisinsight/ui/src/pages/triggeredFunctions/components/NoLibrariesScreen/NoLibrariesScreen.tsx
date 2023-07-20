@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import cx from 'classnames'
@@ -9,14 +9,15 @@ import {
   EuiButton,
   EuiButtonEmpty,
   EuiLink,
-  EuiIcon,
 } from '@elastic/eui'
 
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { Theme, EAManifestFirstKey, Pages, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
-import { EAManifestFirstKey, Pages, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
-import TriggersAndFunctionsImage from 'uiSrc/assets/img/onboarding-emoji.svg'
+import { ReactComponent as TriggersAndFunctionsImageDark } from 'uiSrc/assets/img/triggers_and_functions_dark.svg'
+import { ReactComponent as TriggersAndFunctionsImageLight } from 'uiSrc/assets/img/triggers_and_functions_light.svg'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { findMarkdownPathByPath } from 'uiSrc/utils'
 
@@ -46,6 +47,7 @@ const NoLibrariesScreen = (props: IProps) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
   const history = useHistory()
+  const { theme } = useContext(ThemeContext)
 
   const goToTutorial = () => {
     // triggers and functions tutorial does not upload
@@ -137,7 +139,9 @@ const NoLibrariesScreen = (props: IProps) => {
       </div>
       {!isAddLibraryPanelOpen && (
         <div className={styles.imageWrapper}>
-          <EuiIcon type={TriggersAndFunctionsImage} size="original" className={styles.image} />
+          {theme === Theme.Dark
+            ? <TriggersAndFunctionsImageDark className={styles.image} />
+            : <TriggersAndFunctionsImageLight className={styles.image} />}
         </div>
       )}
     </div>

@@ -850,6 +850,17 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
             expect(body.response).to.include('command is not supported by the RedisInsight CLI');
           }
         },
+        {
+          name: 'Should return error if try to run unsupported command (hello 3)',
+          data: {
+            command: `hello 3`,
+          },
+          responseSchema,
+          checkFn: ({ body }) => {
+            expect(body.status).to.eql('fail');
+            expect(body.response).to.include('command is not supported by the RedisInsight CLI');
+          }
+        },
       ].map(mainCheckFn);
     });
     describe('Blocking commands', () => {

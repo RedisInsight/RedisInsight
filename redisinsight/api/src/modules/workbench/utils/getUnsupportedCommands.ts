@@ -11,6 +11,7 @@ export enum WorkbenchToolUnsupportedCommands {
   PSync = 'psync',
   ScriptDebug = 'script debug',
   Select = 'select',
+  Hello3 = 'hello 3',
 }
 
 export const getUnsupportedCommands = (): string[] => [

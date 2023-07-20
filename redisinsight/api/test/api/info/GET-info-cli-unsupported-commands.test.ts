@@ -27,7 +27,7 @@ describe('GET /info/cli-unsupported-commands', () => {
       name: 'Should return array with unsupported commands for CLI tool',
       statusCode: 200,
       responseSchema,
-      responseBody: ['monitor', 'subscribe', 'psubscribe', 'ssubscribe', 'sync', 'psync', 'script debug'],
+      responseBody: ['monitor', 'subscribe', 'psubscribe', 'ssubscribe', 'sync', 'psync', 'script debug', 'hello 3'],
     },
   ].map(mainCheckFn);
 });

@@ -11,7 +11,7 @@ import {
 } from 'uiSrc/utils'
 import { ModuleNotLoaded } from 'uiSrc/components'
 import { cliTexts, SelectCommand } from 'uiSrc/constants/cliOutput'
-import { CommandMonitor, CommandPSubscribe, CommandSubscribe, Pages } from 'uiSrc/constants'
+import { CommandMonitor, CommandPSubscribe, CommandSubscribe, CommandHello3, Pages } from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -37,6 +37,11 @@ const CommonErrorResponse = (id: string, command = '', result?: any) => {
   // Flow if PSUBSCRIBE command was executed
   if (checkUnsupportedCommand([CommandPSubscribe.toLowerCase()], commandLine)) {
     return cliTexts.PSUBSCRIBE_COMMAND(Pages.pubSub(instanceId))
+  }
+
+  // Flow if HELLO 3 command was executed
+  if (checkUnsupportedCommand([CommandHello3.toLowerCase()], commandLine)) {
+    return cliTexts.HELLO3_COMMAND()
   }
 
   const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)

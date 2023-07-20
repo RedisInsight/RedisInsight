@@ -196,7 +196,7 @@ export class MenuBuilder {
         {
           label: 'Learn More',
           click() {
-            shell.openExternal('https://docs.redis.com/latest/ri/')
+            shell.openExternal('https://redis.io/docs/ui/insight/?utm_source=redisinsight&utm_medium=main&utm_campaign=learn_more')
           }
         }
       ]
@@ -313,7 +313,7 @@ export class MenuBuilder {
           {
             label: 'Learn More',
             click() {
-              shell.openExternal('https://docs.redis.com/latest/ri/')
+              shell.openExternal('https://redis.io/docs/ui/insight/?utm_source=redisinsight&utm_medium=main&utm_campaign=learn_more')
             }
           },
           { type: 'separator' },

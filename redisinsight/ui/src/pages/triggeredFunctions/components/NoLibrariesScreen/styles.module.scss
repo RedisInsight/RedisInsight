@@ -2,19 +2,23 @@
   padding: 32px 30px;
   display: flex;
 
-  .image,
   .content {
     width: 50%;
+    padding-right: 48px;
+
+    &.fullWidth {
+      padding-right: 0;
+      width: 100%;
+    }
   }
 
-  .image {
-    background-image: url(uiSrc/assets/img/triggers_and_functions.svg);
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
+  .imageWrapper {
+    padding-left: 48px;
+    width: 50%;
 
-  .content.fullWidth {
-    width: 100%;
+    .image {
+      width: 100%;
+    }
   }
 
   .contentWrapper {
@@ -90,7 +94,6 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    margin-top: 20px;
 
     .link {
       margin-right: 16px;

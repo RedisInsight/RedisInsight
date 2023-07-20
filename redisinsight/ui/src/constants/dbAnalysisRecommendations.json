@@ -859,66 +859,6 @@
         "value": " capabilities."
       }
     ],
-    "contentSSO": [
-      {
-        "type": "paragraph",
-        "value": "Upgrade your database to version 6 or above to take advantage of the following:"
-      },
-      {
-        "type": "list",
-        "value": [
-          [
-            {
-              "type": "link",
-              "value": {
-                "href": "https://redis.io/docs/management/security/acl/",
-                "name": "access control lists (ACLs)"
-              }
-            },
-            {
-              "type": "span",
-              "value": " that let you create users with permissions for specific actions"
-            }
-          ],
-          [
-            {
-              "type": "link",
-              "value": {
-                "href": "https://redis.io/docs/manual/client-side-caching/",
-                "name": "client-side caching"
-              }
-            },
-            {
-              "type": "span",
-              "value": " for high-performance services"
-            }
-          ],
-          [
-            {
-              "type": "span",
-              "value": "SSL support"
-            }
-          ],
-          [
-            {
-              "type": "span",
-              "value": "optimized memory utilization through faster eviction of expired keys"
-            }
-          ]
-        ]
-      },
-      {
-        "type": "span",
-        "value": "Use your Redis Stack database in Redis Enterprise Cloud to start exploring these capabilities."
-      },
-      {
-        "type": "spacer",
-        "value": "m"
-      },
-      {
-        "type": "connect-btn"
-      }
-    ],
     "badges": ["upgrade"]
   },
   "redisSearch": {

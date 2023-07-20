@@ -160,12 +160,10 @@ const Recommendations = () => {
       {renderRecommendationBadgesLegend()}
       <div className={styles.recommendationsContainer}>
         {sortRecommendations(recommendations).map(({ name, params, vote }) => {
-          let content = []
           const {
             id = '',
             title = '',
-            content: initContent = [],
-            contentSSO = null,
+            content = [],
             badges = [],
             redisStack = false,
             tutorial,
@@ -175,8 +173,6 @@ const Recommendations = () => {
           if (!(name in recommendationsContent)) {
             return null
           }
-
-          content = freeInstance ? contentSSO || initContent : initContent
 
           return (
             <div key={id} className={styles.recommendation} data-testid={`${id}-recommendation`}>

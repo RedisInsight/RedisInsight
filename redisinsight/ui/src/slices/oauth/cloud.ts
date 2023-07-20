@@ -11,6 +11,8 @@ import {
 } from 'uiSrc/components/notifications/components'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
+import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
+
 import { AppDispatch, RootState } from '../store'
 import { Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from '../app/notifications'
@@ -38,6 +40,11 @@ export const initialState: StateAppOAuth = {
       error: '',
       data: null,
     },
+  },
+  plan: {
+    loading: false,
+    isOpenDialog: false,
+    data: [],
   }
 }
 
@@ -95,6 +102,21 @@ const oauthCloudSlice = createSlice({
     setJob: (state, { payload }: PayloadAction<CloudJobInfo>) => {
       state.job = payload
     },
+
+    // Select Plan
+    setIsOpenSelectPlanDialog: (state, { payload }: PayloadAction<boolean>) => {
+      state.plan.isOpenDialog = payload
+    },
+    getPlans: (state) => {
+      state.plan.loading = true
+    },
+    getPlansSuccess: (state, { payload }: PayloadAction<any[]>) => {
+      state.plan.loading = false
+      state.plan.data = payload
+    },
+    getPlansFailure: (state) => {
+      state.plan.loading = false
+    },
   },
 })
 
@@ -114,6 +136,10 @@ export const {
   setOAuthCloudSource,
   setSelectAccountDialogState,
   setJob,
+  setIsOpenSelectPlanDialog,
+  getPlans,
+  getPlansSuccess,
+  getPlansFailure,
 } = oauthCloudSlice.actions
 
 // A selector
@@ -121,6 +147,7 @@ export const oauthCloudSelector = (state: RootState) => state.oauth.cloud
 export const oauthCloudJobSelector = (state: RootState) => state.oauth.cloud.job
 export const oauthCloudUserSelector = (state: RootState) => state.oauth.cloud.user
 export const oauthCloudUserDataSelector = (state: RootState) => state.oauth.cloud.user.data
+export const oauthCloudPlanSelector = (state: RootState) => state.oauth.cloud.plan
 
 // The reducer
 export default oauthCloudSlice.reducer
@@ -182,14 +209,18 @@ export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => voi
 }
 
 // Asynchronous thunk action
-export function createFreeDbJob(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function createFreeDbJob(planId: number, onSuccessAction?: () => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(addFreeDb())
 
     try {
       const { data, status } = await apiService.post<CloudJobInfo>(
         ApiEndpoints.CLOUD_ME_JOBS,
-        { name: CloudJobs.CREATE_FREE_DATABASE, runMode: 'async' }
+        {
+          name: CloudJobs.CREATE_FREE_DATABASE,
+          runMode: 'async',
+          data: { planId },
+        }
       )
 
       if (isStatusSuccessful(status)) {
@@ -235,6 +266,34 @@ export function activateAccount(
       dispatch(addErrorNotification(error))
       dispatch(getUserInfoFailure(errorMessage))
       onFailAction?.(errorMessage)
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getPlans())
+
+    try {
+      const { data, status } = await apiService.get<CloudSubscriptionPlanResponse[]>(
+        ApiEndpoints.CLOUD_SUBSCRIPTION_PLANS
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getPlansSuccess(data))
+        dispatch(setIsOpenSelectPlanDialog(true))
+        dispatch(setSignInDialogState(null))
+        dispatch(setSelectAccountDialogState(false))
+        dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+
+        onSuccessAction?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      dispatch(addErrorNotification(error))
+      dispatch(getPlansFailure())
+      onFailAction?.()
     }
   }
 }

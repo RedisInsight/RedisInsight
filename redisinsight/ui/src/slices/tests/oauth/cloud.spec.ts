@@ -26,6 +26,11 @@ import reducer, {
   createFreeDbSuccess,
   activateAccount,
   setJob,
+  fetchPlans,
+  getPlans,
+  getPlansSuccess,
+  getPlansFailure,
+  setIsOpenSelectPlanDialog,
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -299,6 +304,118 @@ describe('oauth cloud slice', () => {
     })
   })
 
+  describe('setIsOpenSelectPlanDialog', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const data = true
+      const state = {
+        ...initialState,
+        plan: {
+          ...initialState.plan,
+          isOpenDialog: true
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, setIsOpenSelectPlanDialog(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getPlans', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        plan: {
+          ...initialState.plan,
+          loading: true
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getPlans())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getPlansSuccess', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const data = [{
+        id: 12148,
+        type: 'fixed',
+        name: 'Cache 30MB',
+        provider: 'AWS',
+        region: 'eu-west-1',
+        price: 0,
+        details: {
+          countryName: 'Poland',
+          cityName: 'Warsaw',
+          id: 12148,
+          region: 'eu-west-1',
+        }
+      }]
+      const state = {
+        ...initialState,
+        plan: {
+          ...initialState.plan,
+          loading: false,
+          data,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getPlansSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getPlansFailure', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        plan: {
+          ...initialState.plan,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getPlansFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('setSignInDialogState', () => {
     it('should properly set the source=SignInDialogSource.BrowserSearch and isOpenSignInDialog=true', () => {
       // Arrange
@@ -517,6 +634,101 @@ describe('oauth cloud slice', () => {
           setSelectAccountDialogState(false),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+    })
+
+    describe('fetchPlans', () => {
+      it('call both fetchPlans and getPlansSuccess when fetch is successed', async () => {
+      // Arrange
+        const data = [{
+          id: 12148,
+          type: 'fixed',
+          name: 'Cache 30MB',
+          provider: 'AWS',
+          region: 'eu-west-1',
+          price: 0,
+          details: {
+            countryName: 'Poland',
+            cityName: 'Warsaw',
+            id: 12148,
+            region: 'eu-west-1',
+          }
+        }]
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchPlans())
+
+        // Assert
+        const expectedActions = [
+          getPlans(),
+          getPlansSuccess(responsePayload.data),
+          setIsOpenSelectPlanDialog(true),
+          setSignInDialogState(null),
+          setSelectAccountDialogState(false),
+          removeInfiniteNotification(InfiniteMessagesIds.oAuth)
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+      it('call setIsOpenSelectPlanDialog and setSignInDialogState when fetch is successed and accounts > 1', async () => {
+      // Arrange
+        const data = [{
+          id: 12148,
+          type: 'fixed',
+          name: 'Cache 30MB',
+          provider: 'AWS',
+          region: 'eu-west-1',
+          price: 0,
+          details: {
+            countryName: 'Poland',
+            cityName: 'Warsaw',
+            id: 12148,
+            region: 'eu-west-1',
+          }
+        }]
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchPlans())
+
+        // Assert
+        const expectedActions = [
+          getPlans(),
+          getPlansSuccess(responsePayload.data),
+          setIsOpenSelectPlanDialog(true),
+          setSignInDialogState(null),
+          setSelectAccountDialogState(false),
+          removeInfiniteNotification(InfiniteMessagesIds.oAuth),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('call both getPlans and getPlansFailure when fetch is fail', async () => {
+      // Arrange
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchPlans())
+
+        // Assert
+        const expectedActions = [
+          getPlans(),
+          addErrorNotification(responsePayload as AxiosError),
+          getPlansFailure(),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
       })
     })
   })

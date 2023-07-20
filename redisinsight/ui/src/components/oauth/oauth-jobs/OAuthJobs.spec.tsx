@@ -8,8 +8,8 @@ import { CloudJobStatus, CloudJobs } from 'uiSrc/electron/constants'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { RootState } from 'uiSrc/slices/store'
 import { loadInstances } from 'uiSrc/slices/instances/instances'
+import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import OAuthJobs from './OAuthJobs'
-import { INFINITE_MESSAGES, InfiniteMessagesIds } from '../notifications/components'
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),

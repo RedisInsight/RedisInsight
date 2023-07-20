@@ -1,5 +1,10 @@
 import React from 'react'
-import { FeatureFlagComponent, OAuthSelectAccountDialog, OAuthSignInDialog } from 'uiSrc/components'
+import {
+  FeatureFlagComponent,
+  OAuthSelectAccountDialog,
+  OAuthSelectPlan,
+  OAuthSignInDialog,
+} from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
 
 const GlobalDialogs = () => (
@@ -7,6 +12,7 @@ const GlobalDialogs = () => (
     <FeatureFlagComponent name={FeatureFlags.cloudSso}>
       <OAuthSignInDialog />
       <OAuthSelectAccountDialog />
+      <OAuthSelectPlan />
     </FeatureFlagComponent>
   </>
 )

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import {
-  createFreeDbJob,
+  fetchPlans,
   fetchUserInfo,
   oauthCloudUserDataSelector,
   setJob,
@@ -54,7 +54,7 @@ const ConfigOAuth = () => {
         closeInfinityNotification,
       ))
     } else {
-      dispatch(createFreeDbJob(() => {}, closeInfinityNotification))
+      dispatch(fetchPlans())
     }
   }
 

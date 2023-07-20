@@ -15,7 +15,8 @@ import { useHistory } from 'react-router-dom'
 
 import {
   activateAccount,
-  createFreeDbJob,
+  fetchPlans,
+  oauthCloudPlanSelector,
   oauthCloudSelector,
   oauthCloudUserDataSelector,
   oauthCloudUserSelector,
@@ -25,9 +26,9 @@ import { Nullable } from 'uiSrc/utils'
 import { cloudSelector, fetchSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
-import { addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 
-import { INFINITE_MESSAGES, InfiniteMessagesIds } from '../notifications/components'
 import styles from './styles.module.scss'
 
 interface FormValues {
@@ -39,6 +40,7 @@ const OAuthSelectAccountDialog = () => {
   const { accounts = [], currentAccountId } = useSelector(oauthCloudUserDataSelector) ?? {}
   const { isOpenSelectAccountDialog } = useSelector(oauthCloudSelector)
   const { loading } = useSelector(oauthCloudUserSelector)
+  const { loading: plansLoadings } = useSelector(oauthCloudPlanSelector)
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -69,11 +71,10 @@ const OAuthSelectAccountDialog = () => {
           history.push(Pages.redisCloudSubscriptions)
         },
       ))
+      dispatch(setSelectAccountDialogState(false))
     } else {
-      dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB))
-      dispatch(createFreeDbJob())
+      dispatch(fetchPlans())
     }
-    dispatch(setSelectAccountDialogState(false))
 
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_ACCOUNT_SELECTED,
@@ -145,8 +146,8 @@ const OAuthSelectAccountDialog = () => {
           </EuiButton>
           <EuiButton
             fill
-            isDisabled={loading}
-            isLoading={loading}
+            isDisabled={loading || plansLoadings}
+            isLoading={loading || plansLoadings}
             color="secondary"
             className={styles.button}
             onClick={() => formik.handleSubmit()}

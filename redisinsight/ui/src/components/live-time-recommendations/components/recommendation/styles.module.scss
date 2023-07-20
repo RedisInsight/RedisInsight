@@ -6,6 +6,11 @@
   margin-bottom: 10px;
   border-radius: 8px;
   overflow: hidden;
+  border: 1px solid var(--recommendationLiveBorderColor);
+
+  &.read {
+    border: 1px solid var(--recommendationBgColor);
+  }
 
   .redisStackLink {
     margin-right: 12px;
@@ -168,7 +173,7 @@
     :global(.euiButton__text) {
       color: var(--euiColorEmptyShade);
       font:
-        normal normal 400 14px/17px Graphik,
+        normal normal 600 14px/17px Graphik,
         sans-serif !important;
     }
   }

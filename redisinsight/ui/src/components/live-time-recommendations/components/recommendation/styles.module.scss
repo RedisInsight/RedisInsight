@@ -1,5 +1,5 @@
 :global(.euiAccordion__childWrapper) {
-  background-color: var(--recommendationBgColor);
+  background-color: var(--recommendationBgColor) !important;
 }
 
 .recommendationAccordion {

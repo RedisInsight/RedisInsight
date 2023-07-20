@@ -5,6 +5,7 @@ export class TriggersAndFunctionsFunctionsPage extends InstancePage {
 
     //Links
     librariesLink = Selector('[data-testid=triggered-functions-tab-libraries]');
+    noLibrariesLink = Selector('[data-testid=no-libraries-title]');
 
     //Buttons
     invokeButton = Selector('[data-testid=invoke-btn]');

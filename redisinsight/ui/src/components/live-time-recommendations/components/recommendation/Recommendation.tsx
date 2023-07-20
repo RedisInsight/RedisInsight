@@ -62,19 +62,16 @@ const Recommendation = ({
   provider,
   params,
 }: IProps) => {
-  const freeInstance = useSelector(freeInstanceSelector)
-
   const [isLoading, setIsLoading] = useState(false)
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { redisStack, title, liveTitle, content: contentInit = [], contentSSO = null } = recommendationsContent[name]
+  const { redisStack, title, liveTitle, content = [] } = recommendationsContent[name]
     || {}
 
   const recommendationTitle = liveTitle || title
-  const content = freeInstance ? contentSSO || contentInit : contentInit
 
   const handleRedirect = () => {
     dispatch(setIsContentVisible(false))

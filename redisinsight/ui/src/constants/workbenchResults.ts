@@ -51,7 +51,7 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
     improvements: [
       'Speed up applications by running the application logic where the data lives',
       'Eliminate the need to maintain the same code across different applications by moving application functionality inside the Redis database',
-      'Maintain consistent data when applications react to changing real-time conditions in the keyspace instead of using Pub/Sub notifications',
+      'Maintain consistent data when applications react to any keyspace change',
       'Improve code resiliency by backing up and replicating triggers and functions along with the database'
     ],
     additionalText: ['Triggers and functions work with a JavaScript engine, which lets you take advantage of JavaScript’s vast ecosystem of libraries and frameworks and modern, expressive syntax.'],

@@ -27,5 +27,5 @@ test('Verify that user can see the information message that the RediSearch modul
     // Send command with 'FT.'
     await workbenchPage.sendCommandInWorkbench(commandForSend);
     // Verify the information message
-    await t.expect(await workbenchPage.commandExecutionResult.textContent).contains('Looks like RediSearch is not available', 'The information message');
+    await t.expect(await workbenchPage.commandExecutionResult.textContent).contains('RediSearch is not available for this database', 'The information message');
 });

@@ -5792,10 +5792,10 @@ windows-release@^5.0.1:
   dependencies:
     execa "^5.1.1"
 
-word-wrap@^1.2.3, "word-wrap@npm:@aashutoshrathi/word-wrap":
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
-  integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
+word-wrap@1.2.4, word-wrap@^1.2.3:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.4.tgz#cb4b50ec9aca570abd1f52f33cd45b6c61739a9f"
+  integrity sha512-2V81OA4ugVo5pRo46hAoD2ivUJx8jXmWXfUkY4KFNw0hEptvN0QfH3K4nHiwzGeKl5rFKedV48QVoqYavy4YpA==
 
 wrap-ansi@^7.0.0:
   version "7.0.0"

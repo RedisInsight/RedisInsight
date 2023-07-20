@@ -39,7 +39,7 @@
   },
   "resolutions": {
     "nanoid": "^3.1.31",
-    "word-wrap": "npm:@aashutoshrathi/word-wrap",
+    "word-wrap": "1.2.4",
     "mocha/minimatch": "^3.0.5",
     "@nestjs/platform-socket.io/socket.io": "^4.7.1"
   },

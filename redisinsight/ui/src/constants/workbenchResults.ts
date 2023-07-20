@@ -1,5 +1,3 @@
-import React from 'react'
-import { EuiLink } from '@elastic/eui'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 
 export const bulkReplyCommands = ['LOLWUT', 'INFO', 'CLIENT', 'CLUSTER', 'MEMORY', 'MONITOR', 'PSUBSCRIBE']

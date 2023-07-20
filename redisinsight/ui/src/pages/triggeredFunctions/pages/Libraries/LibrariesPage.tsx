@@ -6,22 +6,25 @@ import {
   EuiFlexItem,
   EuiLoadingSpinner,
   EuiResizableContainer,
+  EuiToolTip,
 } from '@elastic/eui'
 import { isNull, find } from 'lodash'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 import {
   fetchTriggeredFunctionsLibrariesList,
   setSelectedLibraryToShow,
   setTriggeredFunctionsSelectedLibrary,
   triggeredFunctionsLibrariesSelector,
+  setAddLibraryFormOpen,
+  triggeredFunctionsAddLibrarySelector,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { isTriggeredAndFunctionsAvailable, Nullable } from 'uiSrc/utils'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { TriggeredFunctionsLibrary } from 'uiSrc/slices/interfaces/triggeredFunctions'
-import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import NoLibrariesScreen from './components/NoLibrariesScreen'
+import NoLibrariesScreen from 'uiSrc/pages/triggeredFunctions/components/NoLibrariesScreen'
 import LibrariesList from './components/LibrariesList'
 import LibraryDetails from './components/LibraryDetails'
 import AddLibrary from './components/AddLibrary'
@@ -30,24 +33,36 @@ import styles from './styles.module.scss'
 
 export const firstPanelId = 'libraries-left-panel'
 export const secondPanelId = 'libraries-right-panel'
+const NoLibrariesMessage: React.ReactNode = (<span data-testid="no-libraries-message">No Libraries found</span>)
 
 const LibrariesPage = () => {
-  const { lastRefresh, loading, data: libraries, selected } = useSelector(triggeredFunctionsLibrariesSelector)
+  const {
+    lastRefresh, loading, data: libraries, selected,
+  } = useSelector(triggeredFunctionsLibrariesSelector)
+  const { open: isAddLibraryPanelOpen } = useSelector(triggeredFunctionsAddLibrarySelector)
+  const { modules, id: instanceId } = useSelector(connectedInstanceSelector)
   const [items, setItems] = useState<TriggeredFunctionsLibrary[]>([])
   const [filterValue, setFilterValue] = useState<string>('')
   const [selectedRow, setSelectedRow] = useState<Nullable<string>>(null)
-  const [isAddLibraryPanelOpen, setIsAddLibraryPanelOpen] = useState(false)
 
-  const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    updateList()
-  }, [])
+    if (isModuleLoaded) {
+      updateList()
+    }
+  }, [modules])
 
   useEffect(() => {
     applyFiltering()
   }, [filterValue, libraries])
+
+  useEffect(() =>
+  // componentWillUnmount
+    () => {
+      dispatch(setAddLibraryFormOpen(false))
+    },
+  [])
 
   const handleSuccessUpdateList = (data: TriggeredFunctionsLibrary[]) => {
     if (selectedRow) {
@@ -83,7 +98,7 @@ const LibrariesPage = () => {
   }
 
   const handleSelectRow = (name?: string) => {
-    setIsAddLibraryPanelOpen(false)
+    dispatch(setAddLibraryFormOpen(false))
     setSelectedRow(name ?? null)
 
     if (name !== selectedRow) {
@@ -115,7 +130,7 @@ const LibrariesPage = () => {
 
   const onAddLibrary = () => {
     setSelectedRow(null)
-    setIsAddLibraryPanelOpen(true)
+    dispatch(setAddLibraryFormOpen(true))
     sendEventTelemetry({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CLICKED,
       eventData: {
@@ -125,7 +140,7 @@ const LibrariesPage = () => {
   }
 
   const onCloseAddLibrary = () => {
-    setIsAddLibraryPanelOpen(false)
+    dispatch(setAddLibraryFormOpen(false))
     sendEventTelemetry({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CANCELLED,
       eventData: {
@@ -135,11 +150,26 @@ const LibrariesPage = () => {
   }
 
   const onAdded = (libraryName: string) => {
-    setIsAddLibraryPanelOpen(false)
     setSelectedRow(libraryName)
   }
 
   const isRightPanelOpen = !isNull(selectedRow) || isAddLibraryPanelOpen
+
+  const isModuleLoaded = isTriggeredAndFunctionsAvailable(modules)
+
+  const message = libraries?.length
+    ? NoLibrariesMessage
+    : (
+      <NoLibrariesScreen
+        isModuleLoaded={isModuleLoaded}
+        isAddLibraryPanelOpen={isAddLibraryPanelOpen}
+        onAddLibrary={onAddLibrary}
+      />
+    )
+
+  if (!instanceId) {
+    return null
+  }
 
   return (
     <EuiFlexGroup
@@ -156,28 +186,34 @@ const LibrariesPage = () => {
           className="triggeredFunctions__topPanel"
         >
           <EuiFlexItem style={{ marginRight: 24 }}>
-            {!!libraries?.length && (
-              <EuiFieldSearch
-                isClearable
-                placeholder="Search for Libraries"
-                className="triggeredFunctions__search"
-                onChange={onChangeFiltering}
-                aria-label="Search libraries"
-                data-testid="search-libraries-list"
-              />
-            )}
+            <EuiFieldSearch
+              isClearable
+              placeholder="Search for Libraries"
+              className="triggeredFunctions__search"
+              onChange={onChangeFiltering}
+              disabled={!isModuleLoaded}
+              aria-label="Search libraries"
+              data-testid="search-libraries-list"
+            />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton
-              fill
-              size="s"
-              color="secondary"
-              onClick={onAddLibrary}
-              className={styles.addLibrary}
-              data-testid="btn-add-library"
+            <EuiToolTip
+              position="bottom"
+              anchorClassName="euiToolTip__btn-disabled"
+              content={isModuleLoaded ? null : 'Triggered Functions is not loaded in current database'}
             >
-              + Library
-            </EuiButton>
+              <EuiButton
+                fill
+                size="s"
+                color="secondary"
+                onClick={onAddLibrary}
+                disabled={!isModuleLoaded}
+                className={styles.addLibrary}
+                data-testid="btn-add-library"
+              >
+                + Library
+              </EuiButton>
+            </EuiToolTip>
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlexItem>
@@ -204,20 +240,17 @@ const LibrariesPage = () => {
                       <EuiLoadingSpinner size="xl" />
                     </div>
                   )}
-                  {!!libraries?.length && (
-                    <LibrariesList
-                      items={items}
-                      loading={loading}
-                      onRefresh={updateList}
-                      lastRefresh={lastRefresh}
-                      selectedRow={selectedRow}
-                      onSelectRow={handleSelectRow}
-                      onDeleteRow={handleDelete}
-                    />
-                  )}
-                  {libraries?.length === 0 && (
-                    <NoLibrariesScreen onAddLibrary={onAddLibrary} />
-                  )}
+                  <LibrariesList
+                    items={items}
+                    loading={loading}
+                    onRefresh={updateList}
+                    lastRefresh={lastRefresh}
+                    selectedRow={selectedRow}
+                    onSelectRow={handleSelectRow}
+                    onDeleteRow={handleDelete}
+                    message={message}
+                    isRefreshDisabled={!isModuleLoaded}
+                  />
                 </div>
               </EuiResizablePanel>
               <EuiResizableButton

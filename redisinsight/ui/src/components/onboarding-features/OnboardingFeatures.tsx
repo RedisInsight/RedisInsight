@@ -469,7 +469,7 @@ const ONBOARDING_FEATURES = {
   },
   TRIGGERED_FUNCTIONS_PAGE: {
     step: OnboardingSteps.TriggeredFunctionsPage,
-    title: 'Triggers & Functions',
+    title: 'Triggers and Functions',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
       const history = useHistory()

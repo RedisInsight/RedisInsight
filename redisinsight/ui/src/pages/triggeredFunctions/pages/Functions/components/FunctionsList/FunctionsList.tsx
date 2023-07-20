@@ -18,12 +18,12 @@ export interface Props {
   lastRefresh: Nullable<number>
   selectedRow: Nullable<TriggeredFunctionsFunction>
   onSelectRow: (item: TriggeredFunctionsFunction) => void
+  message: React.ReactNode
+  isRefreshDisabled: boolean
 }
 
-const NoFunctionsMessage: React.ReactNode = (<span data-testid="no-functions-message">No Functions found</span>)
-
 const FunctionsList = (props: Props) => {
-  const { items, loading, onRefresh, lastRefresh, selectedRow, onSelectRow } = props
+  const { items, loading, onRefresh, lastRefresh, selectedRow, onSelectRow, message, isRefreshDisabled } = props
   const [sort, setSort] = useState<Maybe<PropertySort>>(undefined)
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -112,6 +112,7 @@ const FunctionsList = (props: Props) => {
           onRefresh={() => onRefresh?.()}
           onRefreshClicked={handleRefreshClicked}
           onEnableAutoRefresh={handleEnableAutoRefresh}
+          disabled={isRefreshDisabled}
           testid="refresh-functions-btn"
         />
       </div>
@@ -126,9 +127,14 @@ const FunctionsList = (props: Props) => {
           className: isRowSelected(row, selectedRow) ? 'selected' : '',
           'data-testid': `row-${row.name}`,
         })}
-        message={NoFunctionsMessage}
+        message={message}
         onTableChange={handleSorting}
-        className={cx('inMemoryTableDefault', 'noBorders', 'triggeredFunctions__table')}
+        className={cx(
+          'inMemoryTableDefault',
+          'noBorders',
+          'triggeredFunctions__table',
+          { triggeredFunctions__emptyTable: !items?.length }
+        )}
         data-testid="functions-list-table"
       />
     </div>

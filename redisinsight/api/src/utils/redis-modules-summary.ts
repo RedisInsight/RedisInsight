@@ -24,7 +24,7 @@ export const DEFAULT_SUMMARY: IRedisModulesSummary = Object.freeze(
     RedisBloom: { loaded: false },
     RedisJSON: { loaded: false },
     RedisTimeSeries: { loaded: false },
-    'Triggers & Functions': { loaded: false },
+    'Triggers and Functions': { loaded: false },
     customModules: [],
   },
 );
@@ -69,7 +69,7 @@ export const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): I
       if (isTriggeredAndFunctionsAvailable([module])) {
         const triggeredAndFunctionsName = getEnumKeyBValue(
           AdditionalRedisModuleName,
-          AdditionalRedisModuleName['Triggers & Functions'],
+          AdditionalRedisModuleName['Triggers and Functions'],
         );
         summary[triggeredAndFunctionsName] = getModuleSummaryToSent(module);
         return;

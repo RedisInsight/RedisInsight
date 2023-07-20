@@ -24,12 +24,22 @@ export interface Props {
   selectedRow: Nullable<string>
   onSelectRow: (name: string) => void
   onDeleteRow: (name: string) => void
+  message: React.ReactNode
+  isRefreshDisabled: boolean
 }
 
-const NoLibrariesMessage: React.ReactNode = (<span data-testid="no-libraries-message">No Libraries found</span>)
-
 const LibrariesList = (props: Props) => {
-  const { items, loading, onRefresh, lastRefresh, selectedRow, onSelectRow, onDeleteRow } = props
+  const {
+    items,
+    loading,
+    onRefresh,
+    lastRefresh,
+    selectedRow,
+    onSelectRow,
+    onDeleteRow,
+    message,
+    isRefreshDisabled,
+  } = props
   const [sort, setSort] = useState<Maybe<PropertySort>>(undefined)
   const [popover, setPopover] = useState<Nullable<string>>(null)
 
@@ -160,6 +170,7 @@ const LibrariesList = (props: Props) => {
           onRefresh={() => onRefresh?.()}
           onRefreshClicked={handleRefreshClicked}
           onEnableAutoRefresh={handleEnableAutoRefresh}
+          disabled={isRefreshDisabled}
           testid="refresh-libraries-btn"
         />
       </div>
@@ -174,10 +185,15 @@ const LibrariesList = (props: Props) => {
           className: row.name === selectedRow ? 'selected' : '',
           'data-testid': `row-${row.name}`,
         })}
-        message={NoLibrariesMessage}
+        message={message}
         onTableChange={handleSorting}
         onWheel={handleClosePopover}
-        className={cx('inMemoryTableDefault', 'noBorders', 'triggeredFunctions__table')}
+        className={cx(
+          'inMemoryTableDefault',
+          'noBorders',
+          'triggeredFunctions__table',
+          { triggeredFunctions__emptyTable: !items?.length }
+        )}
         data-testid="libraries-list-table"
       />
     </div>

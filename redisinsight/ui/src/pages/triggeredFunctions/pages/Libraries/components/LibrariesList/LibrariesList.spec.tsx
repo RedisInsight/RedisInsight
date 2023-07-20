@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { mock } from 'ts-mockito'
-import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { render, screen, fireEvent, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
 import { TriggeredFunctionsLibrary } from 'uiSrc/slices/interfaces/triggeredFunctions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import LibrariesList, { Props } from './LibrariesList'
@@ -85,5 +85,44 @@ describe('LibrariesList', () => {
         databaseId: 'instanceId'
       }
     })
+  })
+
+  it('should render disabled auto refresh btn', () => {
+    render(<LibrariesList {...mockedProps} isRefreshDisabled />)
+
+    expect(screen.getByTestId('refresh-libraries-btn')).toBeDisabled()
+  })
+
+  it('should call proper telemetry events when sorting is changed', () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    const { container } = render(<LibrariesList {...mockedProps} items={mockedLibraries} />)
+
+    fireEvent.click(container.querySelector('[data-test-subj="tableHeaderSortButton"') as HTMLInputElement)
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARIES_SORTED,
+      eventData: {
+        databaseId: 'instanceId',
+        direction: 'asc',
+        field: 'name',
+      }
+    })
+
+    sendEventTelemetry.mockRestore()
+  })
+
+  it('should open delete popover', () => {
+    render(<LibrariesList {...mockedProps} items={mockedLibraries} />)
+
+    fireEvent.click(screen.getByTestId('delete-library-icon-lib1'));
+
+    (async () => {
+      await waitForEuiPopoverVisible()
+    })()
+
+    expect(screen.getByTestId('delete-library-popover-lib1')).toBeInTheDocument()
   })
 })

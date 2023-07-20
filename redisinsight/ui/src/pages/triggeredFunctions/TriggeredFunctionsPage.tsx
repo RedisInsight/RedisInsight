@@ -40,7 +40,7 @@ const TriggeredFunctionsPage = ({ routes = [] }: Props) => {
   const dispatch = useDispatch()
 
   const dbName = `${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)}`
-  setTitle(`${dbName} - Triggers & Functions`)
+  setTitle(`${dbName} - Triggers and Functions`)
 
   useEffect(() => () => {
     dispatch(setLastTriggeredFunctionsPage(pathnameRef.current))

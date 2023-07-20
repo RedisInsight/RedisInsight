@@ -5,7 +5,10 @@ import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/util
 import {
   getTriggeredFunctionsLibrariesList,
   triggeredFunctionsLibrariesSelector,
+  triggeredFunctionsAddLibrarySelector,
+  setAddLibraryFormOpen,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { TRIGGERED_FUNCTIONS_LIBRARIES_LIST_MOCKED_DATA } from 'uiSrc/mocks/data/triggeredFunctions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -17,11 +20,22 @@ jest.mock('uiSrc/slices/triggeredFunctions/triggeredFunctions', () => ({
     loading: false,
     data: null
   }),
+  triggeredFunctionsAddLibrarySelector: jest.fn().mockReturnValue({
+    open: false,
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: 'instanceId',
+    modules: [{ name: 'redisgears' }]
+  }),
 }))
 
 let store: typeof mockedStore
@@ -45,6 +59,16 @@ describe('LibrariesPage', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
+  it('should not fetch list of libraries if there are no triggers and functions module', () => {
+    (connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
+      modules: [{ name: 'custom' }],
+    })
+
+    render(<LibrariesPage />)
+
+    expect(store.getActions()).toEqual([])
+  })
+
   it('should render message when no libraries uploaded', () => {
     (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
       data: [],
@@ -52,7 +76,7 @@ describe('LibrariesPage', () => {
     })
     render(<LibrariesPage />)
 
-    expect(screen.getByTestId('triggered-functions-welcome')).toBeInTheDocument()
+    expect(screen.getByTestId('no-libraries-component')).toBeInTheDocument()
   })
 
   it('should render libraries list', () => {
@@ -60,9 +84,9 @@ describe('LibrariesPage', () => {
       data: mockedLibraries,
       loading: false
     })
+
     render(<LibrariesPage />)
 
-    expect(screen.queryByTestId('triggered-functions-welcome')).not.toBeInTheDocument()
     expect(screen.getByTestId('libraries-list-table')).toBeInTheDocument()
     expect(screen.queryAllByTestId(/^row-/).length).toEqual(3)
   })
@@ -135,7 +159,6 @@ describe('LibrariesPage', () => {
 
     fireEvent.click(screen.getByTestId('btn-add-library'))
 
-    expect(screen.getByTestId('lib-add-form')).toBeInTheDocument()
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CLICKED,
       eventData: {
@@ -144,16 +167,38 @@ describe('LibrariesPage', () => {
     })
   })
 
-  it('should close library add form and sent proper telemetry event', () => {
-    render(<LibrariesPage />)
+  it('should open details', async () => {
+    (triggeredFunctionsAddLibrarySelector as jest.Mock).mockReturnValueOnce({
+      open: true,
+    })
 
-    fireEvent.click(screen.getByTestId('btn-add-library'))
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<LibrariesPage />)
 
     expect(screen.getByTestId('lib-add-form')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByTestId('close-add-form-btn'))
+    fireEvent.change(screen.getByTestId('code-value'), { target: { value: 'code' } })
 
-    expect(screen.queryByTestId('lib-add-form')).not.toBeInTheDocument()
+    await act(() => {
+      fireEvent.click(screen.getByTestId('add-library-btn-submit'))
+    })
+
+    // Library is default name when can not parse real name from code
+    expect(screen.getByTestId('lib-details-Library')).toBeInTheDocument()
+  })
+
+  it('should sent proper telemetry event on close add library form', () => {
+    (triggeredFunctionsAddLibrarySelector as jest.Mock).mockReturnValueOnce({
+      open: true,
+      loading: false
+    })
+
+    render(<LibrariesPage />)
+
+    fireEvent.click(screen.getByTestId('close-add-form-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CANCELLED,

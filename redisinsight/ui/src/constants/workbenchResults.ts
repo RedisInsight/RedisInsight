@@ -45,7 +45,18 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
     ],
     additionalText: ['With this capability you can query streaming data without needing to store all the elements of the stream.'],
     link: 'https://redis.io/docs/stack/bloom/'
-  }
+  },
+  [RedisDefaultModules.RedisGears]: {
+    text: ['Triggers and functions add the capability to execute server-side functions that are triggered by events or data operations to:'],
+    improvements: [
+      'Speed up applications by running the application logic where the data lives',
+      'Eliminate the need to maintain the same code across different applications by moving application functionality inside the Redis database',
+      'Maintain consistent data when applications react to changing real-time conditions in the keyspace instead of using Pub/Sub notifications',
+      'Improve code resiliency by backing up and replicating triggers and functions along with the database'
+    ],
+    additionalText: ['Triggers and functions work with a JavaScript engine, which lets you take advantage of JavaScript’s vast ecosystem of libraries and frameworks and modern, expressive syntax.'],
+    link: 'https://redis.io/docs/interact/programmability/functions-intro'
+  },
 }
 
 export const MODULE_TEXT_VIEW: { [key in RedisDefaultModules]?: string } = {
@@ -53,4 +64,5 @@ export const MODULE_TEXT_VIEW: { [key in RedisDefaultModules]?: string } = {
   [RedisDefaultModules.ReJSON]: 'RedisJSON',
   [RedisDefaultModules.Search]: 'RediSearch',
   [RedisDefaultModules.TimeSeries]: 'RedisTimeSeries',
+  [RedisDefaultModules.RedisGears]: 'triggers and functions',
 }

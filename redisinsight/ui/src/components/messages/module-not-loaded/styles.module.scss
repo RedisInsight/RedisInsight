@@ -7,6 +7,10 @@
     font-weight: 600;
     word-break: break-word;
     margin-bottom: 20px;
+
+    &::first-letter {
+      text-transform: uppercase;
+    }
   }
 
   .linksWrapper .text,

@@ -114,6 +114,10 @@ const FunctionsPage = () => {
     ? NoFunctionsMessage
     : (<NoLibrariesScreen isModuleLoaded={isModuleLoaded} onAddLibrary={onAddLibrary} />)
 
+  if (!instanceId) {
+    return null
+  }
+
   return (
     <EuiFlexGroup
       className={cx('triggeredFunctions__page', styles.main)}
@@ -164,7 +168,7 @@ const FunctionsPage = () => {
                       <EuiLoadingSpinner size="xl" />
                     </div>
                   )}
-                  {!isNull(functions) && (
+                  {(!isModuleLoaded || !isNull(functions)) && (
                     <FunctionsList
                       items={items}
                       loading={loading}

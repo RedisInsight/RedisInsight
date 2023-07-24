@@ -240,7 +240,7 @@ const LibrariesPage = () => {
                       <EuiLoadingSpinner size="xl" />
                     </div>
                   )}
-                  {!isNull(libraries) && (
+                  {(!isModuleLoaded || !isNull(libraries)) && (
                     <LibrariesList
                       items={items}
                       loading={loading}

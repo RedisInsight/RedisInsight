@@ -97,6 +97,7 @@ export class CloudAuthService {
     } catch (e) {
       this.logger.error('Unable to exchange code', e);
 
+      // todo: handle this?
       throw wrapHttpError(e);
     }
   }
@@ -179,9 +180,9 @@ export class CloudAuthService {
     }
 
     try {
-      callback?.(result);
+      callback?.(result)?.catch((e) => this.logger.error('Async callback failed', e));
     } catch (e) {
-      this.logger.error('Callback failed');
+      this.logger.error('Callback failed', e);
     }
 
     return result;

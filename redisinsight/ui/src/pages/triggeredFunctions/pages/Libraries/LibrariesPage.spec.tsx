@@ -229,4 +229,14 @@ describe('LibrariesPage', () => {
 
     expect(screen.queryByTestId('lib-details-lib1')).not.toBeInTheDocument()
   })
+
+  it('should not render libraries list', () => {
+    (triggeredFunctionsLibrariesSelector as jest.Mock).mockReturnValueOnce({
+      data: null,
+      loading: false
+    })
+    const { queryByTestId } = render(<LibrariesPage />)
+
+    expect(queryByTestId('total-libraries')).not.toBeInTheDocument()
+  })
 })

@@ -791,8 +791,8 @@ jobs:
           paths:
             - ./docker-release
       - store_artifacts:
-          path: ./docker-release
-          destination: ./docker-release
+          path: docker-release
+          destination: docker-release
 
   # Release jobs
   store-build-artifacts:

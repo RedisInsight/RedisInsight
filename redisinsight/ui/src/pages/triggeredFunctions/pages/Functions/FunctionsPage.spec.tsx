@@ -161,4 +161,14 @@ describe('FunctionsPage', () => {
     expect(pushMock)
       .toBeCalledWith(Pages.triggeredFunctionsLibraries('instanceId'))
   })
+
+  it('should not render functions list', () => {
+    (triggeredFunctionsFunctionsSelector as jest.Mock).mockReturnValueOnce({
+      data: null,
+      loading: false
+    })
+    const { queryByTestId } = render(<FunctionsPage />)
+
+    expect(queryByTestId('total-functions')).not.toBeInTheDocument()
+  })
 })

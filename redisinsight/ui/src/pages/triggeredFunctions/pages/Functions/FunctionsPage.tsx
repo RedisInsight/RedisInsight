@@ -3,7 +3,7 @@ import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiLoadingSpinner, EuiResiza
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import { find, pick } from 'lodash'
+import { find, isNull, pick } from 'lodash'
 import {
   fetchTriggeredFunctionsFunctionsList,
   setSelectedFunctionToShow,
@@ -114,6 +114,10 @@ const FunctionsPage = () => {
     ? NoFunctionsMessage
     : (<NoLibrariesScreen isModuleLoaded={isModuleLoaded} onAddLibrary={onAddLibrary} />)
 
+  if (!instanceId) {
+    return null
+  }
+
   return (
     <EuiFlexGroup
       className={cx('triggeredFunctions__page', styles.main)}
@@ -164,16 +168,18 @@ const FunctionsPage = () => {
                       <EuiLoadingSpinner size="xl" />
                     </div>
                   )}
-                  <FunctionsList
-                    items={items}
-                    loading={loading}
-                    onRefresh={updateList}
-                    lastRefresh={lastRefresh}
-                    selectedRow={selectedRow}
-                    onSelectRow={handleSelectRow}
-                    message={message}
-                    isRefreshDisabled={!isModuleLoaded}
-                  />
+                  {(!isModuleLoaded || !isNull(functions)) && (
+                    <FunctionsList
+                      items={items}
+                      loading={loading}
+                      onRefresh={updateList}
+                      lastRefresh={lastRefresh}
+                      selectedRow={selectedRow}
+                      onSelectRow={handleSelectRow}
+                      message={message}
+                      isRefreshDisabled={!isModuleLoaded}
+                    />
+                  )}
                 </div>
               </EuiResizablePanel>
               <EuiResizableButton

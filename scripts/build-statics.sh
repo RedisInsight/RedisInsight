@@ -18,8 +18,6 @@ cp -R "./vendor/." "${PLUGINS_VENDOR_DIR}"
 mkdir -p "${DEFAULTS_CONTENT_DIR}"
 curl -H "Content-type: application/json" "${RECOMMENDATIONS_CONTENT_RAW_URL}" -o "${DEFAULTS_CONTENT_DIR}/recommendations.json"
 
-RECOMMENDATIONS_CONTENT_RAW_URL
-
 # Build redisearch plugin
 REDISEARCH_DIR="./redisinsight/ui/src/packages/redisearch"
 yarn --cwd "${REDISEARCH_DIR}"

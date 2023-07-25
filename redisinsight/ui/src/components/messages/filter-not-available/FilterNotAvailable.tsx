@@ -6,7 +6,7 @@ import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 import styles from './styles.module.scss'
 
 const GET_STARTED_LINK = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=browser_filter'
-const LEARN_MORE_LINK = 'https://redis.io/docs/stack/about/?utm_source=redisinsight&utm_medium=main&utm_campaign=browser_filter'
+const LEARN_MORE_LINK = 'https://redis.io/docs/about/about-stack/?utm_source=redisinsight&utm_medium=main&utm_campaign=browser_filter'
 
 const FilterNotAvailable = () => (
   <div className={styles.container}>

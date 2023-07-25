@@ -8,11 +8,26 @@ import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { setDatabaseAnalysisViewTab } from 'uiSrc/slices/analytics/dbAnalysis'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
+import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import DatabaseAnalysisTabs, { Props } from './DatabaseAnalysisTabs'
+
+const mockRecommendationsSelector = jest.requireActual('uiSrc/slices/recommendations/recommendations')
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
+  ...jest.requireActual('uiSrc/slices/recommendations/recommendations'),
+  recommendationsSelector: jest.fn().mockReturnValue({
+    data: {
+      recommendations: [],
+      totalUnread: 0,
+    },
+    isContentVisible: false,
+  }),
 }))
 
 const mockedProps = mock<Props>()
@@ -23,6 +38,8 @@ const mockReports = [
     createdAt: '2022-09-23T05:30:23.000Z'
   }
 ]
+
+const recommendationsContent = MOCK_RECOMMENDATIONS
 
 let store: typeof mockedStore
 
@@ -37,7 +54,12 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
-  store.clearActions()
+  store.clearActions();
+
+  (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ...mockRecommendationsSelector,
+    content: recommendationsContent,
+  }))
 })
 
 describe('DatabaseAnalysisTabs', () => {

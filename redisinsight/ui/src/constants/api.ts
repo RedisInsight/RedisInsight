@@ -90,6 +90,7 @@ enum ApiEndpoints {
   PLUGINS = 'plugins',
   STATE = 'state',
   CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
+  CONTENT_RECOMMENDATIONS = 'static/content/recommendations.json',
   GUIDES_PATH = 'static/guides',
   TUTORIALS_PATH = 'static/tutorials',
   CUSTOM_TUTORIALS_PATH = 'static/custom-tutorials',

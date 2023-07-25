@@ -212,7 +212,7 @@ const ONBOARDING_FEATURES = {
             <EuiSpacer size="xs" />
             Take advantage of syntax highlighting, intelligent auto-complete, and working with commands in editor mode.
             <EuiSpacer size="xs" />
-            Workbench visualizes complex <a href="https://redis.io/docs/stack/" target="_blank" rel="noreferrer">Redis Stack</a> data
+            Workbench visualizes complex <a href="https://redis.io/docs/about/about-stack/" target="_blank" rel="noreferrer">Redis Stack</a> data
             models such as documents, graphs, and time series.
             Or you <a href="https://github.com/RedisInsight/Packages" target="_blank" rel="noreferrer">can build your own visualization</a>.
 

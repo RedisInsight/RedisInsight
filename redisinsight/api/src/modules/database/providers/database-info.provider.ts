@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, ForbiddenException } from '@nestjs/common';
 import * as IORedis from 'ioredis';
 import {
   IRedisClusterInfo,
@@ -216,30 +216,36 @@ export class DatabaseInfoProvider {
   private async getRedisNodeGeneralInfo(
     client: IORedis.Redis,
   ): Promise<RedisDatabaseInfoResponse> {
-    const info = convertRedisInfoReplyToObject(
-      await client.info(),
-    );
-    const serverInfo = info['server'];
-    const memoryInfo = info['memory'];
-    const keyspaceInfo = info['keyspace'];
-    const clientsInfo = info['clients'];
-    const statsInfo = info['stats'];
-    const replicationInfo = info['replication'];
-    const databases = await this.getDatabasesCount(client, keyspaceInfo);
-    return {
-      version: serverInfo?.redis_version,
-      databases,
-      role: get(replicationInfo, 'role') || undefined,
-      totalKeys: this.getRedisNodeTotalKeysCount(keyspaceInfo),
-      usedMemory: parseInt(get(memoryInfo, 'used_memory'), 10) || undefined,
-      connectedClients:
-        parseInt(get(clientsInfo, 'connected_clients'), 10) || undefined,
-      uptimeInSeconds:
-        parseInt(get(serverInfo, 'uptime_in_seconds'), 10) || undefined,
-      hitRatio: this.getRedisHitRatio(statsInfo),
-      cashedScripts: parseInt(get(memoryInfo, 'number_of_cached_scripts'), 10) || undefined,
-      server: serverInfo,
-    };
+    try {
+      const info = convertRedisInfoReplyToObject(
+        await client.info(),
+      );
+      const serverInfo = info['server'];
+      const memoryInfo = info['memory'];
+      const keyspaceInfo = info['keyspace'];
+      const clientsInfo = info['clients'];
+      const statsInfo = info['stats'];
+      const replicationInfo = info['replication'];
+      const databases = await this.getDatabasesCount(client, keyspaceInfo);
+      return {
+        version: serverInfo?.redis_version,
+        databases,
+        role: get(replicationInfo, 'role') || undefined,
+        totalKeys: this.getRedisNodeTotalKeysCount(keyspaceInfo),
+        usedMemory: parseInt(get(memoryInfo, 'used_memory'), 10) || undefined,
+        connectedClients:
+          parseInt(get(clientsInfo, 'connected_clients'), 10) || undefined,
+        uptimeInSeconds:
+          parseInt(get(serverInfo, 'uptime_in_seconds'), 10) || undefined,
+        hitRatio: this.getRedisHitRatio(statsInfo),
+        cashedScripts: parseInt(get(memoryInfo, 'number_of_cached_scripts'), 10) || undefined,
+        server: serverInfo,
+      };
+    } catch (error) {
+      if (error.message.includes('NOPERM this user has no permissions to run the \'info\' command')) {
+        throw new ForbiddenException(ERROR_MESSAGES.NO_PERMISSION_COMMAND_INFO);
+      }
+    }
   }
 
   private async getRedisMasterNodesGeneralInfo(

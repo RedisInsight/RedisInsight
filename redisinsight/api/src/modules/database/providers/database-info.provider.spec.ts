@@ -370,6 +370,19 @@ describe('DatabaseInfoProvider', () => {
         nodes: [mockRedisGeneralInfo, mockRedisGeneralInfo],
       });
     });
+    it('should throw an error if no permission to run \'info\' command', async () => {
+      mockIORedisClient.info.mockRejectedValue({
+        message: 'NOPERM this user has no permissions to run the \'info\' command'
+      });
+
+      try {
+        await service.getRedisGeneralInfo(mockIORedisClient);
+        fail('Should throw an error');
+      } catch (err) {
+        expect(err).toBeInstanceOf(ForbiddenException);
+        expect(err.message).toEqual(ERROR_MESSAGES.NO_PERMISSION_COMMAND_INFO);
+      }
+    });
   });
 
   describe('getMasterEndpoints', () => {

@@ -1,7 +1,8 @@
 import { AxiosError } from 'axios'
 import { cloneDeep, set } from 'lodash'
+import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 import { Vote } from 'uiSrc/constants/recommendations'
-import { apiService } from 'uiSrc/services'
+import { apiService, resourcesService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import reducer, {
   initialState,
@@ -19,7 +20,12 @@ import reducer, {
   updateLiveRecommendation,
   updateRecommendation,
   setTotalUnread,
-  deleteLiveRecommendations, deleteRecommendations,
+  deleteLiveRecommendations,
+  deleteRecommendations,
+  getContentRecommendations,
+  getContentRecommendationsSuccess,
+  getContentRecommendationsFailure,
+  fetchContentRecommendations,
 } from 'uiSrc/slices/recommendations/recommendations'
 import { cleanup, initialStateDefault, mockStore, mockedStore } from 'uiSrc/utils/test-utils'
 
@@ -261,6 +267,67 @@ describe('recommendations slice', () => {
       })
       expect(recommendationsSelector(rootState)).toEqual(state)
     })
+
+    describe('getContentRecommendations', () => {
+      it('should properly set loading: true', () => {
+        // Arrange
+        const state = {
+          ...initialState,
+          loading: true,
+          error: '',
+        }
+
+        // Act
+        const nextState = reducer(initialState, getContentRecommendations())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          recommendations: nextState,
+        })
+        expect(recommendationsSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('getContentRecommendationsFailure', () => {
+      it('should properly set error', () => {
+        // Arrange
+        const error = 'Some error'
+        const state = {
+          ...initialState,
+          loading: false,
+        }
+
+        // Act
+        const nextState = reducer(initialState, getContentRecommendationsFailure())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          recommendations: nextState,
+        })
+        expect(recommendationsSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('getContentRecommendationsSuccess', () => {
+      it('should properly set loading: true', () => {
+        const payload = MOCK_RECOMMENDATIONS
+        // Arrange
+        const state = {
+          ...initialState,
+          loading: false,
+          content: MOCK_RECOMMENDATIONS
+        }
+
+        // Act
+        const nextState = reducer(initialState, getContentRecommendationsSuccess(payload))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          recommendations: nextState,
+        })
+        expect(recommendationsSelector(rootState)).toEqual(state)
+      })
+    })
   })
 
   // thunks
@@ -490,6 +557,49 @@ describe('recommendations slice', () => {
           updateRecommendation(),
           addErrorNotification(responsePayload as AxiosError),
           updateRecommendationError(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchContentRecommendations', () => {
+      it('succeed to get content recommendations', async () => {
+        const data = MOCK_RECOMMENDATIONS
+        const responsePayload = { status: 200, data }
+
+        resourcesService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchContentRecommendations())
+
+        // Assert
+        const expectedActions = [
+          getContentRecommendations(),
+          getContentRecommendationsSuccess(data),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to get content recommendations', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        resourcesService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchContentRecommendations())
+
+        // Assert
+        const expectedActions = [
+          getContentRecommendations(),
+          getContentRecommendationsFailure()
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

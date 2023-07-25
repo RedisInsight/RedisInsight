@@ -68,5 +68,4 @@ export default {
   INVALID_WINDOW_ID: 'Invalid window id.',
   UNDEFINED_WINDOW_ID: 'Undefined window id.',
   LIBRARY_NOT_EXIST: 'This library does not exist.',
-  NO_PERMISSION_COMMAND_INFO: 'This user has no permissions to run the \'info\' command.',
 };

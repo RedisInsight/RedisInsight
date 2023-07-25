@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, ForbiddenException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as IORedis from 'ioredis';
 import {
   IRedisClusterInfo,
@@ -242,9 +242,7 @@ export class DatabaseInfoProvider {
         server: serverInfo,
       };
     } catch (error) {
-      if (error.message.includes('NOPERM this user has no permissions to run the \'info\' command')) {
-        throw new ForbiddenException(ERROR_MESSAGES.NO_PERMISSION_COMMAND_INFO);
-      }
+      throw catchAclError(error);
     }
   }
 

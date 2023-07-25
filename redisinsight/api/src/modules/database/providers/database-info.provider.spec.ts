@@ -380,7 +380,6 @@ describe('DatabaseInfoProvider', () => {
         fail('Should throw an error');
       } catch (err) {
         expect(err).toBeInstanceOf(ForbiddenException);
-        expect(err.message).toEqual(ERROR_MESSAGES.NO_PERMISSION_COMMAND_INFO);
       }
     });
   });

@@ -150,7 +150,7 @@ test
     .after(async() => {
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('No RediSearch module message', async t => {
-        const noRedisearchMessage = 'Looks like RediSearch is not available for this database';
+        const noRedisearchMessage = 'RediSearch is not available for this database';
         // const externalPageLink = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_browser_search';
 
         await t.click(browserPage.redisearchModeBtn);

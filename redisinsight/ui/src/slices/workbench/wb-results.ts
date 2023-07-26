@@ -27,6 +27,7 @@ import {
 export const initialState: StateWorkbenchResults = {
   loading: false,
   processing: false,
+  clearing: false,
   error: '',
   items: [],
 }
@@ -174,6 +175,19 @@ const workbenchResultsSlice = createSlice({
 
     stopProcessing: (state) => {
       state.processing = false
+    },
+
+    clearWbResults: (state) => {
+      state.clearing = true
+    },
+
+    clearWbResultsSuccess: (state) => {
+      state.clearing = false
+      state.items = []
+    },
+
+    clearWbResultsFailed: (state) => {
+      state.clearing = false
     }
   },
 })
@@ -193,7 +207,10 @@ export const {
   toggleOpenWBResult,
   deleteWBCommandSuccess,
   resetWBHistoryItems,
-  stopProcessing
+  stopProcessing,
+  clearWbResults,
+  clearWbResultsSuccess,
+  clearWbResultsFailed,
 } = workbenchResultsSlice.actions
 
 // A selector
@@ -416,6 +433,39 @@ export function deleteWBCommandAction(
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(processWBCommandFailure({ id: commandId, error: errorMessage }))
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function clearWbResultsAction(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      const state = stateInit()
+      const { id = '' } = state.connections.instances.connectedInstance
+
+      dispatch(clearWbResults())
+
+      const { status } = await apiService.delete(
+        getUrl(
+          id,
+          ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
+        ),
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(clearWbResultsSuccess())
+
+        onSuccessAction?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      dispatch(addErrorNotification(error))
+      dispatch(clearWbResultsFailed())
       onFailAction?.()
     }
   }

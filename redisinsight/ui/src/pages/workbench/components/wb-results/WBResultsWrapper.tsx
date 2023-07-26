@@ -7,12 +7,14 @@ import WBResults from './WBResults'
 
 export interface Props {
   items: CommandExecutionUI[]
+  clearing: boolean
   activeMode: RunQueryMode
   activeResultsMode: ResultsMode
   scrollDivRef: React.Ref<HTMLDivElement>
   onQueryReRun: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   onQueryOpen: (commandId: string) => void
   onQueryDelete: (commandId: string) => void
+  onAllQueriesDelete: () => void
   onQueryProfile: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
 }
 

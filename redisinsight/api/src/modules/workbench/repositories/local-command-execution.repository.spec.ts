@@ -253,6 +253,14 @@ describe('LocalCommandExecutionRepository', () => {
       );
     });
   });
+  describe('deleteAll', () => {
+    it('Should not return anything on delete', async () => {
+      repository.delete.mockResolvedValueOnce(1);
+      expect(await service.deleteAll(mockDatabase.id)).toEqual(
+        undefined,
+      );
+    });
+  });
   describe('cleanupDatabaseHistory', () => {
     it('Should should not return anything on cleanup', async () => {
       mockQueryBuilderGetManyRaw.mockReturnValueOnce([

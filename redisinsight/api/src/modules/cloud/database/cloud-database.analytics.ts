@@ -5,6 +5,7 @@ import { TelemetryEvents } from 'src/constants';
 import { CloudSubscriptionCapiService } from '../subscription/cloud-subscription.capi.service';
 import { CloudSubscriptionType } from '../subscription/models';
 import { CloudCapiAuthDto } from '../common/dto';
+import { catchAclError } from 'src/utils';
 
 @Injectable()
 export class CloudDatabaseAnalytics extends TelemetryBaseService {
@@ -22,21 +23,25 @@ export class CloudDatabaseAnalytics extends TelemetryBaseService {
     cloudSubscriptionCapiService: CloudSubscriptionCapiService,
     data: { planId: number, capiCredentials: CloudCapiAuthDto },
   ) {
-    const fixedPlans = await cloudSubscriptionCapiService.getSubscriptionsPlans(
-      data.capiCredentials,
-      CloudSubscriptionType.Fixed,
-    );
+    try {
+      const fixedPlans = await cloudSubscriptionCapiService.getSubscriptionsPlans(
+        data.capiCredentials,
+        CloudSubscriptionType.Fixed,
+      );
 
-    const selectedPlan = CloudSubscriptionCapiService.findFreePlanById(fixedPlans, data.planId);
+      const selectedPlan = CloudSubscriptionCapiService.findFreePlanById(fixedPlans, data.planId);
 
-    this.sendFailedEvent(
-      TelemetryEvents.CloudFreeDatabaseFailed,
-      exception,
-      {
-        region: selectedPlan?.region || '',
-        provider: selectedPlan?.provider || '',
-        ...eventData,
-      },
-    );
+      this.sendFailedEvent(
+        TelemetryEvents.CloudFreeDatabaseFailed,
+        exception,
+        {
+          region: selectedPlan?.region || '',
+          provider: selectedPlan?.provider || '',
+          ...eventData,
+        },
+      );
+    } catch (error) {
+      throw catchAclError(error);
+    }
   }
 }

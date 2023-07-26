@@ -240,17 +240,19 @@ const LibrariesPage = () => {
                       <EuiLoadingSpinner size="xl" />
                     </div>
                   )}
-                  <LibrariesList
-                    items={items}
-                    loading={loading}
-                    onRefresh={updateList}
-                    lastRefresh={lastRefresh}
-                    selectedRow={selectedRow}
-                    onSelectRow={handleSelectRow}
-                    onDeleteRow={handleDelete}
-                    message={message}
-                    isRefreshDisabled={!isModuleLoaded}
-                  />
+                  {(!isModuleLoaded || !isNull(libraries)) && (
+                    <LibrariesList
+                      items={items}
+                      loading={loading}
+                      onRefresh={updateList}
+                      lastRefresh={lastRefresh}
+                      selectedRow={selectedRow}
+                      onSelectRow={handleSelectRow}
+                      onDeleteRow={handleDelete}
+                      message={message}
+                      isRefreshDisabled={!isModuleLoaded}
+                    />
+                  )}
                 </div>
               </EuiResizablePanel>
               <EuiResizableButton

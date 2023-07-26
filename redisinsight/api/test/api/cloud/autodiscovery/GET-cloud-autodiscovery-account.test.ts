@@ -5,7 +5,7 @@ import {
   Joi,
   nock, getMainCheckFn,
   serverConfig,
-} from '../deps';
+} from '../../deps';
 import { mockCloudAccountInfo, mockCloudCapiAccount } from 'src/__mocks__';
 import { CustomErrorCodes } from 'src/constants';
 const { request, server, constants } = deps;

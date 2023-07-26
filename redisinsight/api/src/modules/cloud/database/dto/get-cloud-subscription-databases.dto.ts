@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsDefined, IsEnum, IsInt, IsNotEmpty,
+  IsBoolean,
+  IsDefined, IsEnum, IsInt, IsNotEmpty, IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
@@ -23,4 +24,11 @@ export class GetCloudSubscriptionDatabasesDto {
   @IsEnum(CloudSubscriptionType)
   @IsNotEmpty()
   subscriptionType: CloudSubscriptionType;
+
+  @ApiPropertyOptional({
+    type: Boolean,
+  })
+  @IsOptional()
+  @IsBoolean()
+  free?: boolean;
 }

@@ -1,12 +1,14 @@
 import { ClientFunction } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneV5Config } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const commandForSend = 'FT._LIST';
 const getPageUrl = ClientFunction(() => window.location.href);
@@ -15,13 +17,13 @@ fixture `Redisearch module not available`
     .meta({type: 'regression'})
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config);
         // Go to Workbench page
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     });
 // Skipped as outdated after implementing RI-4230
 test.skip
@@ -41,20 +43,20 @@ test.skip
 test
     .meta({ env: env.web, rte: rte.standalone })
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config);
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .after(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can see options on what can be done to work with capabilities in Workbench for docker', async t => {
         const commandJSON = 'JSON.ARRAPPEND key value';
         const commandFT = 'FT.LIST';
         await workbenchPage.sendCommandInWorkbench(commandJSON);
-        // Verify change screens when capability not available - 'Search'
-        await t.expect(workbenchPage.welcomePageTitle.withText('Looks like RedisJSON is not available').visible)
+        // Verify change screens when capability not available - 'JSON'
+        await t.expect(await workbenchPage.commandExecutionResult.withText('RedisJSON is not available for this database').visible)
             .ok('Missing RedisJSON title is not visible');
         await workbenchPage.sendCommandInWorkbench(commandFT);
-        // Verify  change screens when  capability not available - 'JSON'
-        await t.expect(workbenchPage.welcomePageTitle.withText('Looks like RediSearch is not available').visible)
-            .ok('Missing RedisJSON title is not visible');
+        // Verify change screens when capability not available - 'Search'
+        await t.expect(await workbenchPage.commandExecutionResult.withText('RediSearch is not available for this database').visible)
+            .ok('Missing RedisSearch title is not visible');
     });

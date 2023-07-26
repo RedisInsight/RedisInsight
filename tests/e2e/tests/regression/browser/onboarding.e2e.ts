@@ -1,6 +1,4 @@
-import {
-    acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase
-} from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import {
     commonUrl, ossStandaloneConfigEmpty
 } from '../../../helpers/conf';
@@ -12,7 +10,7 @@ import {
     WorkbenchPage,
     PubSubPage,
     MyRedisDatabasePage,
-    BrowserPage
+    BrowserPage, TriggersAndFunctionsFunctionsPage
 } from '../../../pageObjects';
 import { Telemetry } from '../../../helpers/telemetry';
 import { OnboardingCardsDialog } from '../../../pageObjects/dialogs';
@@ -24,7 +22,9 @@ const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const workBenchPage = new WorkbenchPage();
 const slowLogPage = new SlowLogPage();
 const pubSubPage = new PubSubPage();
+const functionsPage = new TriggersAndFunctionsFunctionsPage();
 const telemetry = new Telemetry();
+const databaseHelper = new DatabaseHelper();
 
 const logger = telemetry.createLogger();
 const indexName = Common.generateWord(10);
@@ -37,11 +37,11 @@ fixture `Onboarding new user tests`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfigEmpty, ossStandaloneConfigEmpty.databaseName);
+        await databaseHelper.acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfigEmpty);
     })
     .afterEach(async() => {
         await browserPage.Cli.sendCommandInCli(`DEL ${indexName}`);
-        await deleteDatabase(ossStandaloneConfigEmpty.databaseName);
+        await databaseHelper.deleteDatabase(ossStandaloneConfigEmpty.databaseName);
     });
 // https://redislabs.atlassian.net/browse/RI-4070, https://redislabs.atlassian.net/browse/RI-4067
 // https://redislabs.atlassian.net/browse/RI-4278
@@ -110,6 +110,10 @@ test('Verify onboarding new user steps', async t => {
     // verify pub/sub page is opened
     await t.expect(pubSubPage.subscribeButton.visible).ok('pub/sub page is not opened');
     await onboardingCardsDialog.verifyStepVisible('Pub/Sub');
+    await onboardingCardsDialog.clickNextStep();
+    // verify triggered and functions page is opened
+    await t.expect(functionsPage.librariesLink.visible).ok('triggered and functions page is not opened');
+    await onboardingCardsDialog.verifyStepVisible('Triggers and Functions');
     await onboardingCardsDialog.clickNextStep();
     // verify last step of onboarding process is visible
     await onboardingCardsDialog.verifyStepVisible('Great job!');

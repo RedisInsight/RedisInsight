@@ -1,20 +1,19 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     BrowserPage,
     SettingsPage
 } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const settingsPage = new SettingsPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let keys: string[] = [];
 
@@ -31,12 +30,12 @@ fixture `Browser - Specify Keys to Scan`
     .page(commonUrl)
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         //Clear and delete database
         await browserPage.Cli.sendCommandInCli(`DEL ${keys.join(' ')}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that the user can see this number of keys applied to new filter requests and to "scan more" functionality in Browser page', async t => {
     const searchPattern = 'key[12]*';

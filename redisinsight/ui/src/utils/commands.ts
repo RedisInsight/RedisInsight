@@ -1,4 +1,4 @@
-import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger } from 'lodash'
+import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger, isString, forEach } from 'lodash'
 import {
   CommandArgsType,
   CommandProvider,
@@ -206,3 +206,22 @@ export const getCommandRepeat = (command = ''): [string, number] => {
 }
 
 export const isRepeatCountCorrect = (number: number): boolean => number >= 1 && isInteger(number)
+
+type RedisArg = string | number | Array<RedisArg>
+export const generateRedisCommand = (
+  command: string,
+  ...rest: Array<RedisArg>
+) => {
+  let commandToSend = command
+
+  forEach(rest, (arg: RedisArg) => {
+    if ((isString(arg) && arg) || isNumber(arg)) {
+      commandToSend += ` "${arg}"`
+    }
+    if (isArray(arg)) {
+      commandToSend += generateRedisCommand('', ...arg)
+    }
+  })
+
+  return commandToSend.replace(/\s\s+/g, ' ')
+}

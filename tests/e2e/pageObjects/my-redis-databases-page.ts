@@ -1,7 +1,9 @@
 import { t, Selector } from 'testcafe';
-import { getDatabaseIdByName } from '../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../helpers/api/api-database';
 import { BasePage } from './base-page';
 import { AddRedisDatabase } from './components/myRedisDatabase/add-redis-database';
+
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 export class MyRedisDatabasePage extends BasePage {
     AddRedisDatabase = new AddRedisDatabase();
@@ -18,7 +20,6 @@ export class MyRedisDatabasePage extends BasePage {
     //BUTTONS
     deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
     confirmDeleteButton = Selector('[data-testid^=delete-instance-]').withExactText('Remove');
-    
     deleteButtonInPopover = Selector('#deletePopover button');
     confirmDeleteAllDbButton = Selector('[data-testid=delete-selected-dbs]');
     editDatabaseButton = Selector('[data-testid^=edit-instance]');
@@ -39,7 +40,7 @@ export class MyRedisDatabasePage extends BasePage {
     exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
-    exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', {timeout: 500});
+    exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', { timeout: 500 });
     //ICONS
     moduleColumn = Selector('[data-test-subj=tableHeaderCell_modules_3]');
     moduleSearchIcon = Selector('[data-testid^=RediSearch]');
@@ -84,7 +85,7 @@ export class MyRedisDatabasePage extends BasePage {
             await t.click(this.Toast.toastCloseButton);
         }
         const db = this.dbNameList.withExactText(dbName.trim());
-        await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, {timeout: 10000});
+        await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, { timeout: 10000 });
         await t.click(db);
     }
 
@@ -192,7 +193,7 @@ export class MyRedisDatabasePage extends BasePage {
      * @param databaseName The name of the database
     */
     async verifyDatabaseStatusIsVisible(databaseName: string): Promise<void> {
-        const databaseId = await getDatabaseIdByName(databaseName);
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(databaseName);
         const databaseEditBtn = Selector(`[data-testid=database-status-new-${databaseId}]`);
 
         await t.expect(databaseEditBtn.exists).ok(`Database status is not visible for ${databaseName}`);
@@ -203,7 +204,7 @@ export class MyRedisDatabasePage extends BasePage {
     * @param databaseName The name of the database
     */
     async verifyDatabaseStatusIsNotVisible(databaseName: string): Promise<void> {
-        const databaseId = await getDatabaseIdByName(databaseName);
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(databaseName);
         const databaseEditBtn = Selector(`[data-testid=database-status-new-${databaseId}]`);
 
         await t.expect(databaseEditBtn.exists).notOk(`Database status is still visible for ${databaseName}`);

@@ -1,35 +1,33 @@
 import { Selector, t } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
-import {
-    BrowserPage
-} from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { DatabaseHelper } from '../../../helpers/database';
+import { BrowserPage } from '../../../pageObjects';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 let keyNames: string[];
 let keyName1: string;
 let keyName2: string;
 let keyNameSingle: string;
 let index: string;
 
-fixture`Tree view navigations improvement tests`
+fixture `Tree view navigations improvement tests`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl);
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .after(async() => {
         await t.click(browserPage.patternModeBtn);
         await browserPage.deleteKeysByNames(keyNames);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Tree view preselected folder', async t => {
         keyName1 = Common.generateWord(10); // used to create index name
         keyName2 = Common.generateWord(10); // used to create index name
@@ -108,17 +106,17 @@ test
         // Filtered Tree view preselected folder
         await t.expect(browserPage.keyListTable.textContent).notContains('No results found.', 'Key is not found message still displayed');
         await t.expect(
-            firstTreeItemKeys.visible)
+            firstTreeItemKeys.exists)
             .notOk('First folder is expanded');
     });
 
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .after(async() => {
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${index}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify tree view navigation for index based search', async t => {
         keyName1 = Common.generateWord(10); // used to create index name
         keyName2 = Common.generateWord(10); // used to create index name
@@ -150,15 +148,15 @@ test
 
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .after(async() => {
         await t.click(browserPage.patternModeBtn);
         await browserPage.deleteKeysByNames(keyNames.slice(1));
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Search capability Refreshed Tree view preselected folder', async t => {
-        keyName1 = Common.generateWord(10); // used to create index name
-        keyName2 = Common.generateWord(10); // used to create index name
+        keyName1 = Common.generateWord(10);
+        keyName2 = Common.generateWord(10);
         keyNameSingle = Common.generateWord(10);
         keyNames = [`${keyName1}:1`, `${keyName1}:2`, `${keyName2}:1`, `${keyName2}:2`, keyNameSingle];
         const commands = [

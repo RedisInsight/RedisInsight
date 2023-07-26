@@ -10,6 +10,7 @@ export enum CliToolUnsupportedCommands {
   Sync = 'sync',
   PSync = 'psync',
   ScriptDebug = 'script debug',
+  Hello3 = 'hello 3',
 }
 
 export const getUnsupportedCommands = (): string[] => [

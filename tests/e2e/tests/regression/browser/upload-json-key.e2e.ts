@@ -1,12 +1,14 @@
 import * as path from 'path';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const filePath = path.join('..', '..', '..', 'test-data', 'upload-json', 'sample.json');
 const jsonValues = ['Live JSON generator', '3.1', '"2014-06-25T00:00:00.000Z"', 'true'];
@@ -19,11 +21,11 @@ fixture `Upload json file`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         await browserPage.Cli.sendCommandInCli(`DEL ${keyName}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 // https://redislabs.atlassian.net/browse/RI-4061
 test('Verify that user can insert a JSON from .json file on the form to add a JSON key', async t => {

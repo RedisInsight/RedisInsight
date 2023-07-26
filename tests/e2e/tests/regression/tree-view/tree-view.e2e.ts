@@ -1,4 +1,4 @@
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, WorkbenchPage } from '../../../pageObjects';
 import {
     commonUrl,
@@ -6,28 +6,30 @@ import {
     ossStandaloneRedisearch
 } from '../../../helpers/conf';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 fixture `Tree view verifications`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
     })
     .after(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see message "No keys to display." when there are no keys in the database', async t => {
         const message = 'No keys to display.Use Workbench Guides and Tutorials to quickly load the data.';
 

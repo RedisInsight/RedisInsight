@@ -48,8 +48,30 @@ export enum RecommendationIds {
     searchJson = 'searchJSON',
 }
 
-export enum Methods {
-    post = 'post',
-    get = 'get',
-    delete = 'delete'
+export enum LibrariesSections {
+    Functions = 'Functions',
+    KeyspaceTriggers = 'Keyspace',
+    ClusterFunctions = 'Cluster',
+    StreamFunctions= 'Stream',
+}
+
+export enum FunctionsSections {
+    General = 'General',
+    Flag = 'Flag',
+}
+
+export enum MonacoEditorInputs {
+    //add library fields
+    Code = 'code-value',
+    Configuration = 'configuration-value',
+    // added library fields
+    Library = 'library-code',
+    LibraryConfiguration = 'library-configuration',
+}
+
+export enum ResourcePath {
+    Databases = '/databases',
+    RedisSentinel = '/redis-sentinel',
+    ClusterDetails = '/cluster-details',
+    SyncFeatures = '/features/sync',
 }

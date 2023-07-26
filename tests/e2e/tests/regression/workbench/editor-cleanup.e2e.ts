@@ -1,12 +1,14 @@
-import { acceptLicenseTerms, acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage, SettingsPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { addNewStandaloneDatabasesApi, deleteStandaloneDatabaseApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const settingsPage = new SettingsPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const commandToSend = 'info server';
 const databasesForAdding = [
@@ -18,11 +20,11 @@ fixture `Workbench Editor Cleanup`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .afterEach(async() => {
         // Clear and delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Disabled Editor Cleanup toggle behavior', async t => {
     // Go to Settings page
@@ -52,15 +54,15 @@ test('Enabled Editor Cleanup toggle behavior', async t => {
 test
     .before(async() => {
         // Add new databases using API
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabasesApi(databasesForAdding);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabasesApi(databasesForAdding);
         // Reload Page
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
     })
     .after(async() => {
         // Clear and delete database
-        await deleteStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
     })('Editor Cleanup settings', async t => {
         // Go to Settings page
         await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);

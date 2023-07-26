@@ -1,0 +1,37 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+.tableWrapper {
+  max-height: 100%;
+
+  .header {
+    height: 42px;
+    background-color: var(--browserTableRowEven);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 20px;
+  }
+}
+
+.table {
+  @include euiScrollBar;
+  overflow: auto;
+  position: relative;
+  max-height: calc(100% - 42px);
+
+  :global {
+    thead {
+      border-bottom: 1px solid var(--tableDarkestBorderColor);
+    }
+
+    .euiTableHeaderCell {
+      background-color: var(--euiColorEmptyShade);
+    }
+
+    .euiTableCellContent {
+      padding: 16px 18px !important;
+    }
+  }
+}

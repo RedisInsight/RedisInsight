@@ -1,13 +1,16 @@
 import { SlowLogPage, MyRedisDatabasePage, BrowserPage, ClusterDetailsPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const slowLogPage = new SlowLogPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const overviewPage = new ClusterDetailsPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const slowerThanParameter = 1;
 let maxCommandLength = 50;
 let command = `slowlog get ${maxCommandLength}`;
@@ -16,13 +19,13 @@ fixture `Slow Log`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(slowLogPage.slowLogTab);
     })
     .afterEach(async() => {
         await slowLogPage.resetToDefaultConfig();
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test('Verify that user can open new Slow Log page using new icon on left app panel', async t => {
     // Verify that user see "Slow Log" page by default for non OSS Cluster

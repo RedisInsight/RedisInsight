@@ -67,4 +67,5 @@ export default {
   INCREASE_MINIMUM_LIMIT: (count: string) => `Set MAXSEARCHRESULTS to at least ${count}.`,
   INVALID_WINDOW_ID: 'Invalid window id.',
   UNDEFINED_WINDOW_ID: 'Undefined window id.',
+  LIBRARY_NOT_EXIST: 'This library does not exist.',
 };

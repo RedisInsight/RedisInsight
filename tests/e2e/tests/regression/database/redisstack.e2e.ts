@@ -1,11 +1,14 @@
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTerms } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const moduleNameList = ['RediSearch', 'RedisGraph', 'RedisBloom', 'RedisJSON', 'RedisTimeSeries'];
 
 fixture `Redis Stack`
@@ -13,14 +16,14 @@ fixture `Redis Stack`
     .page(commonUrl)
     .beforeEach(async() => {
         // Add new databases using API
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         // Reload Page
         await browserPage.reloadPage();
     })
     .afterEach(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can see module list Redis Stack icon hovering (without Redis Stack text)', async t => {
     // Verify that user can see Redis Stack icon when Redis Stack DB is added in the application

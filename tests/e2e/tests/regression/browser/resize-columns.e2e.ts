@@ -1,15 +1,17 @@
-import { acceptLicenseTerms } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     BrowserPage
 } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { addNewStandaloneDatabasesApi, deleteStandaloneDatabasesApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const keyName = Common.generateWord(10);
 const longFieldName = Common.generateSentence(20);
@@ -48,8 +50,8 @@ fixture `Resize columns in Key details`
     .page(commonUrl)
     .beforeEach(async() => {
         // Add new databases using API
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabasesApi(databasesForAdding);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabasesApi(databasesForAdding);
         // Reload Page
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
@@ -61,7 +63,7 @@ fixture `Resize columns in Key details`
         // Clear and delete database
         await browserPage.OverviewPanel.changeDbIndex(0);
         await browserPage.deleteKeysByNames(keyNames);
-        await deleteStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
     });
 test('Resize of columns in Hash, List, Zset Key details', async t => {
     const field = browserPage.keyDetailsTable.find(browserPage.cssRowInVirtualizedTable);

@@ -1,14 +1,13 @@
-import { acceptLicenseTerms, deleteCustomDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneConfig
-} from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let index = '0';
 let databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}`;
@@ -23,16 +22,16 @@ fixture `CLI logical database`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await acceptLicenseTerms();
+        await databaseHelper.acceptLicenseTerms();
     })
     .afterEach(async() => {
         // Delete database
-        await deleteCustomDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
+        await databaseHelper.deleteCustomDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
     });
 test
     .after(async() => {
         // Delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that working with logical DBs, user can not see 0 DB index in CLI', async t => {
         await myRedisDatabasePage.AddRedisDatabase.addLogicalRedisDatabase(ossStandaloneConfig, index);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

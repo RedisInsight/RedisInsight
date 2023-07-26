@@ -921,6 +921,15 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
           },
         },
         {
+          name: 'Should return error if try to run unsupported command (hello 3)',
+          data: {
+            commands: [`hello 3`],
+          },
+          checkFn: ({ body }) => {
+            expect(body[0].executionTime).to.eql(undefined);
+          },
+        },
+        {
           name: 'Should return error if try to run blocking command',
           data: {
             commands: [`blpop key`],

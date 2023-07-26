@@ -1,8 +1,8 @@
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, WorkbenchPage } from '../../../pageObjects';
 import { RecommendationIds, rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi, deleteCustomDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
 import { Common } from '../../../helpers/common';
 
@@ -11,8 +11,10 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const recommendationsActions = new RecommendationsActions();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
-const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
+// const externalPageLink = 'https://docs.redis.com/latest/ri/memory-optimizations/';
 let keyName = `recomKey-${Common.generateWord(10)}`;
 const stringKeyName = `smallStringKey-${Common.generateWord(5)}`;
 const index = '1';
@@ -21,12 +23,12 @@ const useSmallerKeysRecommendation = RecommendationIds.useSmallerKeys;
 const avoidLogicalDbRecommendation = RecommendationIds.avoidLogicalDatabases;
 const redisVersionRecommendation = RecommendationIds.redisVersion;
 const searchJsonRecommendation = RecommendationIds.searchJson;
-fixture `Memory Efficiency Recommendations`
 
+fixture `Memory Efficiency Recommendations`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
@@ -34,11 +36,11 @@ fixture `Memory Efficiency Recommendations`
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Add cached scripts and generate new report
@@ -49,7 +51,7 @@ test
     })
     .after(async() => {
         await browserPage.Cli.sendCommandInCli('SCRIPT FLUSH');
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Recommendations displaying', async t => {
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Verify that user can see Avoid dynamic Lua script recommendation when number_of_cached_scripts> 10
@@ -95,7 +97,7 @@ test.skip('No recommendations message', async t => {
 });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         keyName = `recomKey-${Common.generateWord(10)}`;
         await browserPage.addStringKey(stringKeyName, '2147476121', 'field');
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
@@ -107,10 +109,10 @@ test
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
-        await deleteCustomDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
+        await databaseHelper.deleteCustomDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.deleteKeyByName(stringKeyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Avoid using logical databases recommendation', async t => {
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
@@ -125,13 +127,13 @@ test
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config);
         // Go to Analysis Tools page and create new report and open recommendations
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);
         await t.click(memoryEfficiencyPage.recommendationsTab);
     }).after(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can upvote recommendations', async t => {
         const notUsefulVoteOption = 'not useful';
         const usefulVoteOption = 'useful';
@@ -153,7 +155,7 @@ test
     });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         keyName = `recomKey-${Common.generateWord(10)}`;
         const jsonValue = '{"name":"xyz"}';
         await browserPage.addJsonKey(keyName, jsonValue);
@@ -170,10 +172,16 @@ test
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.deleteKeyByName(keyName);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see the Tutorial opened when clicking on "Tutorial" for recommendations', async t => {
+        const recommendation = memoryEfficiencyPage.getRecommendationByName(searchJsonRecommendation);
+        for (let i = 0; i < 5; i++) {
+            if (!(await recommendation.exists)) {
+                await t.click(memoryEfficiencyPage.newReportBtn);
+            }
+        }
         // Verify that Optimize the use of time series recommendation displayed
-        await t.expect(await memoryEfficiencyPage.getRecommendationByName(searchJsonRecommendation).exists).ok('Query and search JSON documents recommendation not displayed');
+        await t.expect(recommendation.exists).ok('Query and search JSON documents recommendation not displayed');
         // Verify that tutorial opened
         await t.click(memoryEfficiencyPage.getToTutorialBtnByRecomName(searchJsonRecommendation));
         await t.expect(workbenchPage.preselectArea.visible).ok('Workbench Enablement area not opened');

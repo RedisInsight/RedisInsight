@@ -1,11 +1,14 @@
 import { rte } from '../../../helpers/constants';
-import { acceptTermsAddDatabaseOrConnectToRedisStack, deleteDatabase } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 let indexName = Common.generateWord(10);
 
@@ -13,7 +16,7 @@ fixture `JSON verifications at Workbench`
     .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Go to Workbench page
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
@@ -21,7 +24,7 @@ fixture `JSON verifications at Workbench`
         // Clear and delete database
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
-        await deleteDatabase(ossStandaloneRedisearch.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
 test('Verify that user can execute redisearch command for JSON data type in Workbench', async t => {
     indexName = Common.generateWord(10);

@@ -1,17 +1,13 @@
-import { acceptLicenseTerms } from '../../../helpers/database';
-import {
-    addNewStandaloneDatabasesApi,
-    deleteStandaloneDatabasesApi,
-    discoverSentinelDatabaseApi,
-    addNewOSSClusterDatabaseApi,
-    deleteOSSClusterDatabaseApi,
-    deleteAllDatabasesByConnectionTypeApi
-} from '../../../helpers/api/api-database';
+import { DatabaseHelper } from '../../../helpers/database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config, ossSentinelConfig, ossClusterConfig } from '../../../helpers/conf';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
+
 const databasesForSearch = [
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testSearch' },
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testSecondSearch' },
@@ -30,18 +26,18 @@ fixture `Database list search`
     .page(commonUrl)
     .beforeEach(async() => {
         // Add new databases using API
-        await acceptLicenseTerms();
-        await addNewStandaloneDatabasesApi(databasesForAdding);
-        await addNewOSSClusterDatabaseApi(ossClusterConfig);
-        await discoverSentinelDatabaseApi(ossSentinelConfig, 1);
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.discoverSentinelDatabaseApi(ossSentinelConfig, 1);
         // Reload Page
         await myRedisDatabasePage.reloadPage();
     })
     .afterEach(async() => {
         // Clear and delete databases
-        await deleteStandaloneDatabasesApi(databasesForAdding);
-        await deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     });
 test('Verify DB list search', async t => {
     const searchedDBHostInvalid = 'invalid';

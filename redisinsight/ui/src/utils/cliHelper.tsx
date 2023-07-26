@@ -6,7 +6,7 @@ import { isUndefined } from 'lodash'
 import { localStorageService } from 'uiSrc/services'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { resetOutput, updateCliCommandHistory } from 'uiSrc/slices/cli/cli-output'
-import { BrowserStorageItem, ICommands } from 'uiSrc/constants'
+import { BrowserStorageItem, ICommands, CommandGroup } from 'uiSrc/constants'
 import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 import { SelectCommand } from 'uiSrc/constants/cliOutput'
 import {
@@ -162,15 +162,15 @@ const checkCommandModule = (command: string) => {
     case command.startsWith(ModuleCommandPrefix.TimeSeries): {
       return RedisDefaultModules.TimeSeries
     }
-    case command.startsWith(ModuleCommandPrefix.Graph): {
-      return RedisDefaultModules.Graph
-    }
     case command.startsWith(ModuleCommandPrefix.BF):
     case command.startsWith(ModuleCommandPrefix.CF):
     case command.startsWith(ModuleCommandPrefix.CMS):
     case command.startsWith(ModuleCommandPrefix.TDIGEST):
     case command.startsWith(ModuleCommandPrefix.TOPK): {
       return RedisDefaultModules.Bloom
+    }
+    case command.startsWith(ModuleCommandPrefix.TriggersAndFunctions): {
+      return RedisDefaultModules.RedisGears
     }
     default: {
       return null
@@ -221,6 +221,23 @@ const getCommandNameFromQuery = (
   }
 }
 
+const DEPRECATED_MODULE_PREFIXES = [
+  ModuleCommandPrefix.Graph
+]
+
+const DEPRECATED_MODULE_GROUPS = [
+  CommandGroup.Graph
+]
+
+const checkDeprecatedModuleCommand = (command: string) =>
+  DEPRECATED_MODULE_PREFIXES.some((prefix) => command.toUpperCase().startsWith(prefix))
+
+const checkDeprecatedCommandGroup = (item: string) =>
+  DEPRECATED_MODULE_GROUPS.some((group) => group === item)
+
+const removeDeprecatedModuleCommands = (commands: string[]) => commands
+  .filter((command) => !checkDeprecatedModuleCommand(command))
+
 export {
   cliParseTextResponse,
   cliParseTextResponseWithOffset,
@@ -239,4 +256,7 @@ export {
   getCommandNameFromQuery,
   wbSummaryCommand,
   replaceEmptyValue,
+  removeDeprecatedModuleCommands,
+  checkDeprecatedModuleCommand,
+  checkDeprecatedCommandGroup,
 }

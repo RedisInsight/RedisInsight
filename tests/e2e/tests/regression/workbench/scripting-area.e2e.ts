@@ -1,14 +1,16 @@
 import { Selector } from 'testcafe';
 import { rte } from '../../../helpers/constants';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage, SettingsPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const settingsPage = new SettingsPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const indexName = Common.generateWord(5);
 let keyName = Common.generateWord(5);
@@ -17,14 +19,14 @@ fixture `Scripting area at Workbench`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Go to Workbench page
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Clear and delete database
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can run multiple commands written in multiple lines in Workbench page', async t => {
     const commandsForSend = [
@@ -53,7 +55,7 @@ test
     .after(async() => {
         // Clear and delete database
         await workbenchPage.Cli.sendCommandInCli(`DEL ${keyName}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can use double slashes (//) wrapped in double quotes and these slashes will not comment out any characters', async t => {
         keyName = Common.generateWord(10);
         const commandsForSend = [
@@ -79,7 +81,7 @@ test
 test
     .after(async() => {
         // Clear and delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
         // Open Working with Hashes page
         await t.click(workbenchPage.documentButtonInQuickGuides);
@@ -98,7 +100,7 @@ test
     .after(async() => {
         // Clear and delete database
         await workbenchPage.Cli.sendCommandInCli(`DEL ${keyName}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can find (using right click) "Run Commands" custom shortcut option in monaco menu and run a command', async t => {
         keyName = Common.generateWord(10);
         const command = `HSET ${keyName} field value`;

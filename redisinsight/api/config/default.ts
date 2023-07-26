@@ -58,7 +58,7 @@ export default {
     tlsKey: process.env.SERVER_TLS_KEY,
     staticContent: !!process.env.SERVER_STATIC_CONTENT || false,
     buildType: process.env.BUILD_TYPE || 'ELECTRON',
-    appVersion: process.env.APP_VERSION || '2.28.1',
+    appVersion: process.env.APP_VERSION || '2.30.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -194,6 +194,13 @@ export default {
       name: 'redisbloom',
       url: process.env.COMMANDS_REDISBLOOM_URL
         || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
+    },
+    {
+      name: 'triggers_and_functions',
+      url: process.env.COMMANDS_TRIGGERS_AND_FUNCTIONS_URL
+        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
+      defaultUrl: process.env.COMMANDS_TRIGGERS_AND_FUNCTIONS_DEFAULT_URL
+        || 'https://s3.amazonaws.com/redisinsight.download/public/commands/triggers_and_functions.json',
     },
   ],
   connections: {

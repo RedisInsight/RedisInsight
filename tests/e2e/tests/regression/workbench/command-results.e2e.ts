@@ -1,17 +1,16 @@
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
-import {
-    commonUrl,
-    ossStandaloneRedisearch
-} from '../../../helpers/conf';
+import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { WorkbenchActions } from '../../../common-actions/workbench-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const workBenchActions = new WorkbenchActions();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const indexName = Common.generateWord(5);
 const commandsForIndex = [
@@ -24,7 +23,7 @@ fixture `Command results at Workbench`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Add index and data
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForIndex);
@@ -33,7 +32,7 @@ fixture `Command results at Workbench`
         // Drop index and database
         await t.switchToMainWindow();
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
 test
     .meta({ env: env.web })('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
@@ -119,12 +118,12 @@ test('Big output in workbench is visible in virtualized table', async t => {
 });
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch, ossStandaloneRedisearch.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .after(async t => {
         await t.switchToMainWindow();
-        await deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see the client List visualization available for all users', async t => {
         const command = 'CLIENT LIST';
         // Send command in workbench to view client list

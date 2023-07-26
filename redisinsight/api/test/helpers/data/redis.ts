@@ -542,6 +542,18 @@ export const initDataHelper = (rte) => {
     return executeCommand(...command.split(' '));
   };
 
+  const generateTriggeredFunctionsLibrary = async (clean: boolean = true): Promise<any> => {
+    if (clean) {
+      await truncate();
+    }
+
+    await sendCommand('TFUNCTION', [
+      'LOAD',
+      constants.TEST_TRIGGERED_FUNCTIONS_CODE,
+      constants.TEST_TRIGGERED_FUNCTIONS_CONFIGURATION,
+    ])
+  }
+
   return {
     sendCommand,
     executeCommand,
@@ -568,6 +580,7 @@ export const initDataHelper = (rte) => {
     generateNCachedScripts,
     generateHugeNumberOfMembersForSetKey,
     getClientNodes,
+    generateTriggeredFunctionsLibrary,
     setRedisearchConfig,
   }
 }

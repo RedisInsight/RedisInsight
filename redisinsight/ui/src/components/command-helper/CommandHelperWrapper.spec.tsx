@@ -193,4 +193,21 @@ describe('CliBodyWrapper', () => {
       unmount()
     })
   })
+
+  it('should render default message when matched command is deprecated', () => {
+    const sinceId = 'cli-helper-since'
+    const cliHelperDefaultId = 'cli-helper-default'
+
+    cliSettingsSelector.mockImplementation(() => ({
+      matchedCommand: 'GRAPH.CONFIG SET',
+      isEnteringCommand: true,
+    }))
+
+    const { unmount, queryByTestId } = render(<CommandHelperWrapper />)
+
+    expect(queryByTestId(cliHelperDefaultId)).toBeInTheDocument()
+    expect(queryByTestId(sinceId)).not.toBeInTheDocument()
+
+    unmount()
+  })
 })

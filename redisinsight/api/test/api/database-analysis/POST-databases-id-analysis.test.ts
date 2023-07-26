@@ -368,6 +368,31 @@ describe('POST /databases/:instanceId/analysis', () => {
         },
       ].map(mainCheckFn);
     });
+  
+    describe('functionsWithKeyspace recommendation', () => {
+      requirements('!rte.pass');
+      [
+        {
+          name: 'Should create new database analysis with functionsWithKeyspace recommendation',
+          data: {
+            delimiter: '-',
+          },
+          statusCode: 201,
+          responseSchema,
+          before: async () => {
+            await rte.data.sendCommand('CONFIG', ['set', 'notify-keyspace-events', 'KEA']);
+          },
+          checkFn: async ({ body }) => {
+            expect(body.recommendations).to.include.deep.members([
+              constants.TEST_FUNCTIONS_WITH_KEYSPACE_RECOMMENDATION,
+            ]);
+          },
+          after: async () => {
+            await rte.data.sendCommand('CONFIG', ['set', 'notify-keyspace-events', '']);
+          }
+        },
+      ].map(mainCheckFn);
+    });
 
     describe('searchHash recommendation', () => {
       requirements('!rte.pass');
@@ -653,6 +678,45 @@ describe('POST /databases/:instanceId/analysis', () => {
         },
         after: async () => {
           await rte.data.sendCommand('script', ['flush']);
+          expect(await repository.count()).to.eq(5);
+        }
+      },
+      {
+        name: 'Should create new database analysis with luaToFunctions recommendation',
+        data: {
+          delimiter: '-',
+        },
+        statusCode: 201,
+        responseSchema,
+        before: async () => {
+          await rte.data.generateNCachedScripts(1, true);
+        },
+        checkFn: async ({ body }) => {
+          expect(body.recommendations).to.include.deep.members([
+            constants.TEST_LUA_TO_FUNCTIONS_RECOMMENDATION,
+          ]);
+        },
+        after: async () => {
+          await rte.data.sendCommand('script', ['flush']);
+          expect(await repository.count()).to.eq(5);
+        }
+      },
+      {
+        name: 'Should create new database analysis with functionsWithStreams recommendation',
+        data: {
+          delimiter: '-',
+        },
+        statusCode: 201,
+        responseSchema,
+        before: async () => {
+          await rte.data.generateStreams(true);
+        },
+        checkFn: async ({ body }) => {
+          expect(body.recommendations).to.include.deep.members([
+            constants.TEST_FUNCTIONS_WITH_STREAMS_RECOMMENDATION,
+          ]);
+        },
+        after: async () => {
           expect(await repository.count()).to.eq(5);
         }
       },

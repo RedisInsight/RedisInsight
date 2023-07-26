@@ -1,5 +1,5 @@
 import { Selector, t } from 'testcafe';
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
 import {
     commonUrl,
@@ -8,12 +8,14 @@ import {
     ossStandaloneV5Config
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { addNewStandaloneDatabaseApi, deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList } from '../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const patternModeTooltipText = 'Filter by Key Name or Pattern';
 const redisearchModeTooltipText = 'Search by Values of Keys';
@@ -43,7 +45,7 @@ fixture `Search capabilities in Browser`
     .page(commonUrl);
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         keyName = Common.generateWord(10);
         await browserPage.addHashKey(keyName);
     })
@@ -51,7 +53,7 @@ test
         // Clear and delete database
         await browserPage.deleteKeyByName(keyName);
         await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames.join(' ')}`, `FT.DROPINDEX ${indexName}`]);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('RediSearch capabilities in Browser view to search per Hashes or JSONs', async t => {
         indexName = `idx:${keyName}`;
         keyNames = [`${keyName}:1`, `${keyName}:2`, `${keyName}:3`];
@@ -116,12 +118,12 @@ test
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Search by index keys scanned for JSON', async t => {
         keyName = Common.generateWord(10);
         indexName = `idx:${keyName}`;
@@ -143,12 +145,12 @@ test
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config, ossStandaloneV5Config.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config);
     })
     .after(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('No RediSearch module message', async t => {
-        const noRedisearchMessage = 'Looks like RediSearch is not available for this database';
+        const noRedisearchMessage = 'RediSearch is not available for this database';
         // const externalPageLink = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_browser_search';
 
         await t.click(browserPage.redisearchModeBtn);
@@ -162,11 +164,11 @@ test
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, ossStandaloneBigConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .after(async() => {
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Index creation', async t => {
         // const createIndexLink = 'https://redis.io/commands/ft.create/';
 
@@ -211,12 +213,12 @@ test
     });
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Context for RediSearch capability', async t => {
         keyName = Common.generateWord(10);
         indexName = `idx:${keyName}`;
@@ -251,8 +253,8 @@ test
 
 test
     .before(async() => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig, bigDbName);
-        await addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
     })
     .after(async() => {
         //clear database
@@ -265,8 +267,8 @@ test
         await browserPage.deleteKeysByNames(keyNames);
 
         //delete database
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        await deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that indexed keys from previous DB are NOT displayed when user connects to another DB', async t => {
         /*
             Link to ticket: https://redislabs.atlassian.net/browse/RI-3863

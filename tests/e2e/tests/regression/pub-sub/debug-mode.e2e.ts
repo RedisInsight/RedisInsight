@@ -1,18 +1,20 @@
-import { acceptLicenseTermsAndAddDatabaseApi } from '../../../helpers/database';
+import { DatabaseHelper } from '../../../helpers/database';
 import { MyRedisDatabasePage, PubSubPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { env, rte } from '../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../helpers/pub-sub';
-import { deleteStandaloneDatabaseApi } from '../../../helpers/api/api-database';
+import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const pubSubPage = new PubSubPage();
+const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 fixture `PubSub debug mode`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig, ossStandaloneConfig.databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Go to PubSub page and subscribe to channel
         await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
         await t.click(pubSubPage.subscribeButton);
@@ -22,7 +24,7 @@ fixture `PubSub debug mode`
         await pubSubPage.Cli.sendCommandInCli('10 publish channel third');
     })
     .afterEach(async() => {
-        await deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 
 test

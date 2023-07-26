@@ -212,7 +212,7 @@ const ONBOARDING_FEATURES = {
             <EuiSpacer size="xs" />
             Take advantage of syntax highlighting, intelligent auto-complete, and working with commands in editor mode.
             <EuiSpacer size="xs" />
-            Workbench visualizes complex <a href="https://redis.io/docs/stack/" target="_blank" rel="noreferrer">Redis Stack</a> data
+            Workbench visualizes complex <a href="https://redis.io/docs/about/about-stack/" target="_blank" rel="noreferrer">Redis Stack</a> data
             models such as documents, graphs, and time series.
             Or you <a href="https://github.com/RedisInsight/Packages" target="_blank" rel="noreferrer">can build your own visualization</a>.
 
@@ -458,6 +458,35 @@ const ONBOARDING_FEATURES = {
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => {
           history.push(Pages.slowLog(connectedInstanceId))
+          sendBackTelemetryEvent(...telemetryArgs)
+        },
+        onNext: () => {
+          history.push(Pages.triggeredFunctions(connectedInstanceId))
+          sendNextTelemetryEvent(...telemetryArgs)
+        }
+      }
+    }
+  },
+  TRIGGERED_FUNCTIONS_PAGE: {
+    step: OnboardingSteps.TriggeredFunctionsPage,
+    title: 'Triggers and Functions',
+    Inner: () => {
+      const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+      const history = useHistory()
+      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.TriggeredFunctions]
+
+      return {
+        content: (
+          <>
+            Triggers and Functions can execute server-side functions triggered by certain
+            events or data operations to decrease latency and react in real time to database events.
+            <EuiSpacer size="xs" />
+            See the list of uploaded libraries, upload or delete libraries, or investigate and debug functions.
+          </>
+        ),
+        onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
+        onBack: () => {
+          history.push(Pages.pubSub(connectedInstanceId))
           sendBackTelemetryEvent(...telemetryArgs)
         },
         onNext: () => sendNextTelemetryEvent(...telemetryArgs)

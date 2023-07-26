@@ -15,8 +15,10 @@ export default function MonacoEditor(props) {
         createContextKey: jest.fn(),
         focus: jest.fn(),
         onDidChangeCursorPosition: jest.fn(),
+        onDidAttemptReadOnlyEdit: jest.fn(),
         executeEdits: jest.fn(),
-        updateOptions: jest.fn()
+        updateOptions: jest.fn(),
+        setSelection: jest.fn(),
       },
       // monaco
       {
@@ -56,4 +58,8 @@ export const languages = {
   CompletionItemInsertTextRule: {
     InsertAsSnippet: 4
   }
+}
+
+export const monaco = {
+  Selection: jest.fn().mockImplementation(() => { return {} })
 }

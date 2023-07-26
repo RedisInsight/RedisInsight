@@ -23,11 +23,20 @@ export class KeysScanner {
 
   async nodeScan(client: Redis, opts: any) {
     const total = await getTotal(client);
-    let indexes;
+    let indexes: string[];
+    let libraries: string[];
 
     try {
       indexes = await client.sendCommand(
         new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
+      ) as string[];
+    } catch (err) {
+      // Ignore errors
+    }
+
+    try {
+      libraries = await client.sendCommand(
+        new Command('TFUNCTION', ['LIST'], { replyEncoding: 'utf8' }),
       ) as string[];
     } catch (err) {
       // Ignore errors
@@ -77,6 +86,7 @@ export class KeysScanner {
     return {
       keys: nodeKeys,
       indexes,
+      libraries,
       progress: {
         total,
         scanned: opts.filter.count,

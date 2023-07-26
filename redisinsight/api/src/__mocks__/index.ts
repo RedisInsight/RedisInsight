@@ -22,6 +22,7 @@ export * from './ssh';
 export * from './browser-history';
 export * from './database-recommendation';
 export * from './feature';
+export * from './triggered-functions';
 export * from './cloud-autodiscovery';
 export * from './cloud-database';
 export * from './cloud-subscription';

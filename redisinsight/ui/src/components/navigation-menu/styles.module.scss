@@ -53,6 +53,37 @@ $sideBarWidth: 60px;
       height: 20px;
     }
   }
+
+  .navigationButtonWrapper {
+    position: relative;
+
+    &:hover {
+      .betaLabel {
+        transform: translateX(-50%) translateY(-1px);
+      }
+    }
+  }
+
+  .betaLabel {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+
+    font-size: 8px !important;
+    line-height: 12px !important;
+    background-color: var(--recommendationLiveBorderColor) !important;
+    border: 1px solid var(--triggerIconActiveColor) !important;
+    color: #FFF7EA !important;
+    border-radius: 2px !important;
+
+    transition: transform 250ms ease-in-out;
+    pointer-events: none;
+
+    :global(.euiBadge__content) {
+      min-height: 12px !important;
+    }
+  }
 }
 
 

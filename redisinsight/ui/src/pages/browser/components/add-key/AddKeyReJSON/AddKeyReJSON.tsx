@@ -14,7 +14,7 @@ import {
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addReJSONKey, } from 'uiSrc/slices/browser/keys'
 
-import MonacoJson from 'uiSrc/components/monaco-json'
+import { MonacoJson } from 'uiSrc/components/monaco-editor'
 import UploadFile from 'uiSrc/components/upload-file'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/dto'
@@ -72,16 +72,6 @@ const AddKeyReJSON = (props: Props) => {
     dispatch(addReJSONKey(data, onCancel))
   }
 
-  const onFileChange = ({ target: { files } }: { target: { files: FileList | null } }) => {
-    if (files && files[0]) {
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        setReJSONValue(e?.target?.result as string)
-      }
-      reader.readAsText(files[0])
-    }
-  }
-
   const onClick = () => {
     sendEventTelemetry({
       event: TelemetryEvent.BROWSER_JSON_VALUE_IMPORT_CLICKED,
@@ -103,7 +93,7 @@ const AddKeyReJSON = (props: Props) => {
           />
           <EuiFlexGroup justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
-              <UploadFile onClick={onClick} onFileChange={onFileChange} accept="application/json, text/plain" />
+              <UploadFile onClick={onClick} onFileChange={setReJSONValue} accept="application/json, text/plain" />
             </EuiFlexItem>
           </EuiFlexGroup>
         </>

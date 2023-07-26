@@ -44,14 +44,3 @@
   }
 }
 
-.onboardAnchor {
-  position: fixed;
-  visibility: hidden;
-  opacity: 0;
-}
-
-.onboardPanel {
-  position: fixed;
-  top: calc(100% - 194px) !important;
-  left: calc(100% - 328px) !important;
-}

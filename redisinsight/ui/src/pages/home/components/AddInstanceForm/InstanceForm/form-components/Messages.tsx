@@ -33,7 +33,7 @@ const MessageSentinel = () => (
     . &nbsp;
     <EuiLink
       color="text"
-      href="https://redis.io/topics/sentinel"
+      href="https://redis.io/docs/management/sentinel/"
       className={styles.link}
       external={false}
       target="_blank"

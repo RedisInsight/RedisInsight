@@ -1,5 +1,6 @@
 export const RECOMMENDATION_NAMES = Object.freeze({
   LUA_SCRIPT: 'luaScript',
+  LUA_TO_FUNCTIONS: 'luaToFunctions',
   BIG_HASHES: 'bigHashes',
   BIG_STRINGS: 'bigStrings',
   BIG_SETS: 'bigSets',
@@ -20,6 +21,8 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   STRING_TO_JSON: 'stringToJson',
   SEARCH_VISUALIZATION: 'searchVisualization',
   SEARCH_HASH: 'searchHash',
+  FUNCTIONS_WITH_KEYSPACE: 'functionsWithKeyspace',
+  FUNCTIONS_WITH_STREAMS: 'functionsWithStreams',
 });
 
 export const ONE_NODE_RECOMMENDATIONS = [
@@ -37,4 +40,4 @@ export const REDIS_STACK = [
   RECOMMENDATION_NAMES.SEARCH_INDEXES,
   RECOMMENDATION_NAMES.SEARCH_JSON,
   RECOMMENDATION_NAMES.STRING_TO_JSON,
-]
+];

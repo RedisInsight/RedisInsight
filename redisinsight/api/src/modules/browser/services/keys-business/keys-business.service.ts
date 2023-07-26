@@ -184,11 +184,18 @@ export class KeysBusinessService {
       const client = await this.browserTool.getRedisClient(clientMetadata);
       const scanner = this.scanner.getStrategy(client.isCluster ? ConnectionType.CLUSTER : ConnectionType.STANDALONE);
       const result = await scanner.getKeysInfo(client, dto.keys, dto.type);
+
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.SEARCH_JSON,
         { keys: result, client, databaseId: clientMetadata.databaseId },
       );
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS,
+        { keys: result, client, databaseId: clientMetadata.databaseId },
+      );
+
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {
       this.logger.error(`Failed to get keys info: ${error.message}.`);

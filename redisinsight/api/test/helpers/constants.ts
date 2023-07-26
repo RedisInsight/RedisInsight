@@ -19,6 +19,7 @@ const APP_DEFAULT_SETTINGS = {
   theme: null,
   agreements: null,
 };
+const TEST_LIBRARY_NAME = 'lib';
 
 const unprintableBuf = Buffer.concat([
   Buffer.from('acedae', 'hex'),
@@ -558,6 +559,18 @@ export const constants = {
     name: RECOMMENDATION_NAMES.SEARCH_HASH,
   },
 
+  TEST_LUA_TO_FUNCTIONS_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS,
+  },
+
+  TEST_FUNCTIONS_WITH_STREAMS_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS,
+  },
+
+  TEST_FUNCTIONS_WITH_KEYSPACE_RECOMMENDATION: {
+    name: RECOMMENDATION_NAMES.FUNCTIONS_WITH_KEYSPACE,
+  },
+
   TEST_LUA_SCRIPT_VOTE_RECOMMENDATION: {
     name: RECOMMENDATION_NAMES.LUA_SCRIPT,
     vote: 'useful',
@@ -574,5 +587,8 @@ export const constants = {
     type: null,
     match: 'hi',
   },
+  TEST_TRIGGERED_FUNCTIONS_LIBRARY_NAME: TEST_LIBRARY_NAME,
+  TEST_TRIGGERED_FUNCTIONS_CODE: `#!js api_version=1.0 name=${TEST_LIBRARY_NAME}\n redis.registerFunction('foo', ()=>{return 'bar'})`,
+  TEST_TRIGGERED_FUNCTIONS_CONFIGURATION: "{}",
   // etc...
 }

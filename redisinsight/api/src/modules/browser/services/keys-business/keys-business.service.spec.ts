@@ -224,12 +224,19 @@ describe('KeysBusinessService', () => {
         { keys: [getKeyInfoResponse.name] },
       );
 
+      expect(recommendationService.check).toBeCalledTimes(2);
       expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
         RECOMMENDATION_NAMES.SEARCH_JSON,
         { keys: result, client: nodeClient, databaseId: mockBrowserClientMetadata.databaseId },
       );
-      expect(recommendationService.check).toBeCalledTimes(1);
+      expect(recommendationService.check).toBeCalledWith(
+        mockBrowserClientMetadata,
+        RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS,
+        { keys: result, client: nodeClient, databaseId: mockBrowserClientMetadata.databaseId },
+      );
+
+      expect(recommendationService.check).toBeCalledTimes(2);
     });
     it("user don't have required permissions for getKeyInfo", async () => {
       const replyError: ReplyError = {
@@ -322,7 +329,7 @@ describe('KeysBusinessService', () => {
       expect(browserHistory.create).not.toHaveBeenCalled();
     });
     it('should call recommendationService', async () => {
-      const response = [mockGetKeysWithDetailsResponse]
+      const response = [mockGetKeysWithDetailsResponse];
       standaloneScanner.getKeys = jest
         .fn()
         .mockResolvedValue(response);

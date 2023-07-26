@@ -3,15 +3,16 @@ import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/e
 
 interface Props {
   id: number
-  length: number,
-  index: number,
-  loading: boolean,
-  removeItem: (id: number) => void,
-  addItem: () => void,
-  anchorClassName: string,
-  clearItemValues?: (id: number) => void,
-  clearIsDisabled?: boolean,
-  addItemIsDisabled?: boolean,
+  length: number
+  index: number
+  loading: boolean
+  removeItem: (id: number) => void
+  addItem: () => void
+  anchorClassName: string
+  clearItemValues?: (id: number) => void
+  clearIsDisabled?: boolean
+  addItemIsDisabled?: boolean
+  'data-testid'?: string
 }
 
 const AddItemsActions = (props: Props) => {
@@ -25,7 +26,8 @@ const AddItemsActions = (props: Props) => {
     anchorClassName,
     clearItemValues,
     clearIsDisabled,
-    addItemIsDisabled
+    addItemIsDisabled,
+    'data-testid': dataTestId
   } = props
 
   const handleClick = () => {
@@ -79,7 +81,7 @@ const AddItemsActions = (props: Props) => {
                     disabled={loading || addItemIsDisabled}
                     aria-label="Add new item"
                     onClick={addItem}
-                    data-testid="add-new-item"
+                    data-testid={dataTestId || 'add-new-item'}
                   />
                 </EuiToolTip>
               </div>

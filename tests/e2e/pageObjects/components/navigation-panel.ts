@@ -12,6 +12,7 @@ export class NavigationPanel {
     browserButton = Selector('[data-testid=browser-page-btn]');
     pubSubButton = Selector('[data-testid=pub-sub-page-btn]');
     myRedisDBButton = Selector('[data-test-subj=home-page-btn]', { timeout: 1000 });
+    triggeredFunctionsButton  = Selector('[data-testid=triggered-functions-page-btn]');
 
     notificationCenterButton = Selector('[data-testid=notification-menu-button]');
     settingsButton = Selector('[data-testid=settings-page-btn]');

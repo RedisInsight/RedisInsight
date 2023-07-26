@@ -15,6 +15,7 @@ enum OnboardingSteps {
   AnalyticsRecommendations,
   AnalyticsSlowLog,
   PubSubPage,
+  TriggeredFunctionsPage,
   Finish
 }
 
@@ -36,6 +37,7 @@ enum OnboardingStepName {
   DatabaseAnalysisRecommendations = 'database_analysis_recommendations',
   SlowLog = 'slow_log',
   PubSub = 'pub_sub',
+  TriggeredFunctions = 'triggers_and_functions',
   Finish = 'finish',
 }
 

@@ -170,4 +170,12 @@ export class Cli {
         const executedCommand =  await this.cliCommandExecuted.withExactText(command);
         return await executedCommand.nextSibling(0).textContent;
     }
+
+    /**
+     * Get executed text by index
+     * @param index index of the command in the CLI, by default is the last one
+     */
+    async getExecutedCommandTextByIndex(index = -1): Promise<string> {
+        return  await this.cliCommandExecuted.nth(index).textContent;
+    }
 }

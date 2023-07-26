@@ -106,6 +106,28 @@ export const cliTexts = {
       '\n',
     ]
   ),
+  HELLO3_COMMAND: () => (
+    <EuiTextColor color="danger" key={Date.now()}>
+      {'RedisInsight does not support '}
+      <EuiLink
+        href="https://github.com/redis/redis-specifications/blob/master/protocol/RESP3.md"
+        className="btnLikeLink"
+        color="text"
+        target="_blank"
+        external={false}
+        data-test-subj="hello3-btn"
+      >
+        RESP3
+      </EuiLink>
+      {' at the moment, but we are working on it.'}
+    </EuiTextColor>
+  ),
+  HELLO3_COMMAND_CLI: () => (
+    [
+      cliTexts.HELLO3_COMMAND(),
+      '\n',
+    ]
+  ),
   CLI_ERROR_MESSAGE: (message: string) => (
     [
       '\n',

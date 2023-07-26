@@ -19,7 +19,7 @@ import {
   processUnsupportedCommand,
   processUnrepeatableNumber,
 } from 'uiSrc/slices/cli/cli-output'
-import { CommandMonitor, CommandPSubscribe, CommandSubscribe, Pages } from 'uiSrc/constants'
+import { CommandMonitor, CommandPSubscribe, CommandSubscribe, CommandHello3, Pages } from 'uiSrc/constants'
 import { getCommandRepeat, isRepeatCountCorrect } from 'uiSrc/utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
@@ -110,6 +110,13 @@ const CliBodyWrapper = () => {
     // Flow if SUBSCRIBE command was executed
     if (checkUnsupportedCommand([CommandSubscribe.toLowerCase()], commandLine)) {
       dispatch(concatToOutput(cliTexts.SUBSCRIBE_COMMAND_CLI(Pages.pubSub(instanceId))))
+      resetCommand()
+      return
+    }
+
+    // Flow if HELLO 3 command was executed
+    if (checkUnsupportedCommand([CommandHello3.toLowerCase()], commandLine)) {
+      dispatch(concatToOutput(cliTexts.HELLO3_COMMAND_CLI()))
       resetCommand()
       return
     }

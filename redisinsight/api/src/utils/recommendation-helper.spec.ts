@@ -1,5 +1,7 @@
 import { AdditionalSearchModuleName, AdditionalRedisModuleName } from 'src/constants';
-import { isRedisearchModule, sortRecommendations, checkTimestamp } from './recommendation-helper';
+import {
+  isRedisearchModule, sortRecommendations, checkTimestamp, checkKeyspaceNotification,
+} from './recommendation-helper';
 
 const nameToModule = (name: string) => ({ name });
 
@@ -82,6 +84,18 @@ const checkTimestampTests = [
   { input: '-inf', expected: false },
 ];
 
+const checkKeyspaceNotificationTests = [
+  { input: '', expected: false },
+  { input: 'fdKx', expected: true },
+  { input: 'lsE', expected: true },
+  { input: 'fdkx', expected: false },
+  { input: 'lse', expected: false },
+  { input: 'KfdE', expected: true },
+  { input: '1', expected: false },
+  { input: 'K', expected: true },
+  { input: 'E', expected: true },
+];
+
 describe('Recommendation helper', () => {
   describe('isRedisearchModule', () => {
     it.each(getOutputForRedisearchAvailable)('for input: %s (reply), should be output: %s',
@@ -104,6 +118,12 @@ describe('Recommendation helper', () => {
   describe('checkTimestamp', () => {
     test.each(checkTimestampTests)('%j', ({ input, expected }) => {
       expect(checkTimestamp(input)).toEqual(expected);
+    });
+  });
+
+  describe('checkKeyspaceNotification', () => {
+    test.each(checkKeyspaceNotificationTests)('%j', ({ input, expected }) => {
+      expect(checkKeyspaceNotification(input)).toEqual(expected);
     });
   });
 });

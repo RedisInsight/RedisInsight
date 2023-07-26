@@ -232,7 +232,7 @@ const configuration: webpack.Configuration = {
 
     new ReactRefreshWebpackPlugin(),
 
-    new MonacoWebpackPlugin({ languages: ['json'], features: ['!rename'] }),
+    new MonacoWebpackPlugin({ languages: ['json', 'javascript', 'typescript'], features: ['!rename'] }),
 
     ...htmlPagesNames.map((htmlPageName) => (
       new HtmlWebpackPlugin({

@@ -13,3 +13,6 @@ export * from './avoid-lua-scripts.strategy';
 export * from './big-string.strategy';
 export * from './compression-for-list.strategy';
 export * from './big-amount-connected-clients.strategy';
+export * from './functions-with-streams.strategy';
+export * from './lua-to-functions.strategy';
+export * from './functions-with-keyspace.strategy';

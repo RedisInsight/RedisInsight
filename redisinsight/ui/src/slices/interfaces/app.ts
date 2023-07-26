@@ -70,31 +70,31 @@ export interface StateAppContext {
       scrollRedisearchTopPosition: number
       isNotRendered: boolean
       selectedKey: Nullable<RedisResponseBuffer>
-    },
+    }
     panelSizes: {
       [key: string]: number
-    },
+    }
     tree: {
       delimiter: string
       panelSizes: {
         [key: string]: number
-      },
+      }
       openNodes: {
         [key: string]: boolean
-      },
+      }
       selectedLeaf: {
         [key: string]: {
           [key: string]: IKeyPropTypes
         }
-      },
-    },
+      }
+    }
     bulkActions: {
       opened: boolean
     },
     keyDetailsSizes: {
       [key: string]: Nullable<RelativeWidthSizes>
     }
-  },
+  }
   workbench: {
     script: string
     enablementArea: {
@@ -107,12 +107,15 @@ export interface StateAppContext {
         [key: string]: number
       }
     }
-  },
+  }
   pubsub: {
     channel: string
     message: string
-  },
+  }
   analytics: {
+    lastViewedPage: string
+  }
+  triggeredFunctions: {
     lastViewedPage: string
   }
 }

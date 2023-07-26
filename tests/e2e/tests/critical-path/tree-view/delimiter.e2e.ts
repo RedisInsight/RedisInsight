@@ -1,7 +1,7 @@
-import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
-import {rte} from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
+import { DatabaseHelper } from '../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
 const browserPage = new BrowserPage();

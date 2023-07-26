@@ -12,7 +12,8 @@ import {
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import PubSubPage from 'uiSrc/pages/pubSub'
 import AnalyticsPage from 'uiSrc/pages/analytics'
-import { ANALYTICS_ROUTES } from './sub-routes'
+import TriggeredFunctionsPage from 'uiSrc/pages/triggeredFunctions'
+import { ANALYTICS_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from './sub-routes'
 
 import COMMON_ROUTES from './commonRoutes'
 
@@ -37,6 +38,11 @@ const INSTANCE_ROUTES: IRoute[] = [
     component: AnalyticsPage,
     routes: ANALYTICS_ROUTES,
   },
+  {
+    path: Pages.triggeredFunctions(':instanceId'),
+    component: TriggeredFunctionsPage,
+    routes: TRIGGERED_FUNCTIONS_ROUTES
+  }
 ]
 
 const ROUTES: IRoute[] = [

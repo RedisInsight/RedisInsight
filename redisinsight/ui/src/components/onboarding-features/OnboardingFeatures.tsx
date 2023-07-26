@@ -460,6 +460,35 @@ const ONBOARDING_FEATURES = {
           history.push(Pages.slowLog(connectedInstanceId))
           sendBackTelemetryEvent(...telemetryArgs)
         },
+        onNext: () => {
+          history.push(Pages.triggeredFunctions(connectedInstanceId))
+          sendNextTelemetryEvent(...telemetryArgs)
+        }
+      }
+    }
+  },
+  TRIGGERED_FUNCTIONS_PAGE: {
+    step: OnboardingSteps.TriggeredFunctionsPage,
+    title: 'Triggers and Functions',
+    Inner: () => {
+      const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+      const history = useHistory()
+      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.TriggeredFunctions]
+
+      return {
+        content: (
+          <>
+            Triggers and Functions can execute server-side functions triggered by certain
+            events or data operations to decrease latency and react in real time to database events.
+            <EuiSpacer size="xs" />
+            See the list of uploaded libraries, upload or delete libraries, or investigate and debug functions.
+          </>
+        ),
+        onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
+        onBack: () => {
+          history.push(Pages.pubSub(connectedInstanceId))
+          sendBackTelemetryEvent(...telemetryArgs)
+        },
         onNext: () => sendNextTelemetryEvent(...telemetryArgs)
       }
     }

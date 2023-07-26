@@ -1,0 +1,66 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+.main {
+  position: relative;
+  height: 100%;
+
+  .header {
+    height: 92px;
+    padding: 16px;
+    border-bottom: 1px solid var(--euiColorLightShade);
+
+    .actions {
+      display: flex;
+      align-items: center;
+
+      .refreshContainer {
+        margin-right: 12px;
+      }
+    }
+
+    .titleTooltip {
+      width: auto;
+      max-width: calc(100% - 80px);
+    }
+  }
+
+  .content {
+    position: relative;
+    padding: 16px 16px 40px;
+
+    @include euiScrollBar;
+    overflow: auto;
+    height: 100%;
+    max-height: calc(100% - 92px);
+  }
+
+  .editorWrapper {
+    height: 280px;
+
+    :global(.inlineMonacoEditor) {
+      height: 278px;
+    }
+  }
+
+  .accordion {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .listItem {
+    word-wrap: break-word;
+    &:not(:last-child) {
+      margin-bottom: 4px;
+    }
+
+    :global(.euiLink) {
+      color: var(--htmlColor) !important;
+    }
+  }
+
+  :global(.monaco-editor.readMode .monaco-mouse-cursor-text) {
+    cursor: default;
+  }
+}

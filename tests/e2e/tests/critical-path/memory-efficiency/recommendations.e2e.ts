@@ -174,8 +174,14 @@ test
         await browserPage.deleteKeyByName(keyName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see the Tutorial opened when clicking on "Tutorial" for recommendations', async t => {
+        const recommendation = memoryEfficiencyPage.getRecommendationByName(searchJsonRecommendation);
+        for (let i = 0; i < 5; i++) {
+            if (!(await recommendation.exists)) {
+                await t.click(memoryEfficiencyPage.newReportBtn);
+            }
+        }
         // Verify that Optimize the use of time series recommendation displayed
-        await t.expect(await memoryEfficiencyPage.getRecommendationByName(searchJsonRecommendation).exists).ok('Query and search JSON documents recommendation not displayed');
+        await t.expect(recommendation.exists).ok('Query and search JSON documents recommendation not displayed');
         // Verify that tutorial opened
         await t.click(memoryEfficiencyPage.getToTutorialBtnByRecomName(searchJsonRecommendation));
         await t.expect(workbenchPage.preselectArea.visible).ok('Workbench Enablement area not opened');

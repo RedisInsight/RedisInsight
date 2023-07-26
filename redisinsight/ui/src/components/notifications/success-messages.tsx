@@ -58,8 +58,7 @@ export default {
       <>
         <b>{formatNameShort(bufferToString(keyName))}</b>
         {' '}
-        has been added. Please refresh the list of Keys to see
-        updates.
+        has been added.
       </>
     ),
   }),
@@ -195,5 +194,25 @@ export default {
       ),
       className: 'dynamic'
     })
-  }
+  },
+  DELETE_LIBRARY: (libraryName: string) => ({
+    title: 'Library has been deleted',
+    message: (
+      <>
+        <b>{formatNameShort(libraryName)}</b>
+        {' '}
+        has been deleted.
+      </>
+    ),
+  }),
+  ADD_LIBRARY: (libraryName: string) => ({
+    title: 'Library has been added',
+    message: (
+      <>
+        <b>{formatNameShort(libraryName)}</b>
+        {' '}
+        has been added.
+      </>
+    ),
+  })
 }

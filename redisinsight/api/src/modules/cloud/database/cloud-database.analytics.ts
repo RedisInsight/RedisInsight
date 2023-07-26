@@ -41,7 +41,6 @@ export class CloudDatabaseAnalytics extends TelemetryBaseService {
         },
       );
     } catch (error) {
-      throw catchAclError(error);
     }
   }
 }

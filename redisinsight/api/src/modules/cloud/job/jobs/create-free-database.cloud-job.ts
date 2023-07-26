@@ -173,10 +173,15 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       return database;
     } catch (e) {
-      this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseFailed(e, {
-        region: freeSubscription?.region || '',
-        provider: freeSubscription?.provider || '',
-      });
+      this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseFailed(
+        e,
+        {
+          region: freeSubscription?.region || '',
+          provider: freeSubscription?.provider || '',
+        },
+        this.dependencies.cloudSubscriptionCapiService,
+        this.data,
+      );
 
       throw e;
     }

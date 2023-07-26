@@ -5,5 +5,5 @@ export const EXTERNAL_LINKS = {
   userSurvey: 'https://www.surveymonkey.com/r/redisinsight',
   recommendationFeedback: 'https://github.com/RedisInsight/RedisInsight/issues/new/choose',
   guidesRepo: 'https://github.com/RedisInsight/Tutorials',
-  redisStack: 'https://redis.io/docs/stack/',
+  redisStack: 'https://redis.io/docs/about/about-stack/',
 }

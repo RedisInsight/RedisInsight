@@ -12,6 +12,8 @@ import { IMetric } from '../OverviewMetrics'
 import './styles.scss'
 import styles from './styles.module.scss'
 
+const ModulesInfoText = 'More information about Redis modules can be found <a class="link-underline" href="https://redis.io/resources/modules/" target="_blank" rel="noreferrer">here</a>.\nCreate a <a class="link-underline" href="https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight" target="_blank" rel="noreferrer">free Redis database</a> with modules support on Redis Cloud.\n'
+
 export interface IProps {
   metrics: Array<IMetric>,
   modules: Array<AdditionalRedisModule>
@@ -138,6 +140,7 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
             </OAuthSsoHandlerDialog>
             {' with modules support on Redis Cloud.'}
           </p>
+          <p style={{ marginTop: '12px' }} className={styles.mi_smallText}>{parse(ModulesInfoText)}</p>
         </div>
       </div>
     </EuiPopover>

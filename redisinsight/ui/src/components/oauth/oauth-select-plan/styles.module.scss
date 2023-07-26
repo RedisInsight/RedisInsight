@@ -63,18 +63,16 @@
   margin-left: auto;
   margin-right: auto;
 
-  padding-top: 2px;
-
   background-color: var(--euiColorPrimary);
 
   width: 22px;
   height: 22px;
-  border-radius: 11px;
+  border-radius: 50%;
   z-index: 5;
 
   svg {
     width: 12px;
-    height: 12px;
+    height: 22px;
     fill: var(--euiColorMediumShade);
 
     path {

@@ -3,6 +3,7 @@
 :: =============== Plugins ===============
 set PLUGINS_DIR=".\redisinsight\api\static\plugins"
 set PLUGINS_VENDOR_DIR=".\redisinsight\api\static\resources\plugins"
+set DEFAULTS_CONTENT_DIR=".\redisinsight\api\defaults\content"
 
 :: Default plugins assets
 call node-sass ".\redisinsight\ui\src\styles\main_plugin.scss" ".\vendor\global_styles.css" --output-style compressed
@@ -12,6 +13,9 @@ xcopy ".\redisinsight\ui\src\assets\fonts\graphik" ".\vendor\fonts\" /s /e /y
 xcopy ".\redisinsight\ui\src\assets\fonts\inconsolata" ".\vendor\fonts\" /s /e /y
 if not exist %PLUGINS_VENDOR_DIR% mkdir %PLUGINS_VENDOR_DIR%
 xcopy ".\vendor\." "%PLUGINS_VENDOR_DIR%" /s /e /y
+
+if not exist %DEFAULTS_CONTENT_DIR% mkdir %DEFAULTS_CONTENT_DIR%
+curl -H "Content-type: application/json" "%RECOMMENDATIONS_CONTENT_RAW_URL%" -o "%DEFAULTS_CONTENT_DIR%/recommendations.json"
 
 :: Build redisearch plugin
 set REDISEARCH_DIR=".\redisinsight\ui\src\packages\redisearch"

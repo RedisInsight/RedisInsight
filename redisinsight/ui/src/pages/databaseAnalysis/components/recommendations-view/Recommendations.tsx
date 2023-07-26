@@ -16,7 +16,6 @@ import {
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -27,9 +26,9 @@ import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
-import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
+import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import {
   findMarkdownPathByPath,
   sortRecommendations,
@@ -40,13 +39,12 @@ import {
 
 import styles from './styles.module.scss'
 
-const recommendationsContent = _content as IRecommendationsStatic
-
 const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
   const { items: guides } = useSelector(workbenchGuidesSelector)
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { provider } = useSelector(connectedInstanceSelector)
+  const { content: recommendationsContent } = useSelector(recommendationsSelector)
   const { recommendations = [] } = data ?? {}
 
   const { theme } = useContext(ThemeContext)
@@ -157,7 +155,7 @@ const Recommendations = () => {
     <div className={styles.wrapper}>
       {renderRecommendationBadgesLegend()}
       <div className={styles.recommendationsContainer}>
-        {sortRecommendations(recommendations).map(({ name, params, vote }) => {
+        {sortRecommendations(recommendations, recommendationsContent).map(({ name, params, vote }) => {
           const {
             id = '',
             title = '',

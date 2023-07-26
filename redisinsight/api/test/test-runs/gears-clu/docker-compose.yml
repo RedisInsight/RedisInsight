@@ -1,0 +1,5 @@
+version: "3"
+
+services:
+  redis:
+    image: redislabs/redisgears:edge

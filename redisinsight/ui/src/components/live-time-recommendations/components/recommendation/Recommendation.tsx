@@ -32,6 +32,8 @@ import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
 import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
+import { ReactComponent as SnoozeIcon } from 'uiSrc/assets/img/icons/snooze.svg'
+import { ReactComponent as StarsIcon } from 'uiSrc/assets/img/icons/stars.svg'
 
 import styles from './styles.module.scss'
 
@@ -122,9 +124,17 @@ const Recommendation = ({
     )
   }
 
-  const handleDelete = () => {
+  const handleDelete = (event: React.MouseEvent) => {
+    event.stopPropagation()
+    event.preventDefault()
     setIsLoading(true)
-    dispatch(deleteLiveRecommendations([id], onSuccessActionDelete, () => setIsLoading(false)))
+    dispatch(
+      deleteLiveRecommendations(
+        [id],
+        onSuccessActionDelete,
+        () => setIsLoading(false)
+      )
+    )
   }
 
   const onSuccessActionDelete = () => {
@@ -153,6 +163,19 @@ const Recommendation = ({
 
   const recommendationContent = () => (
     <EuiText>
+      {!isUndefined(tutorial) && (
+        <EuiButton
+          fill
+          iconType={StarsIcon}
+          iconSide="right"
+          className={styles.btn}
+          onClick={handleRedirect}
+          color="secondary"
+          data-testid={`${name}-to-tutorial-btn`}
+        >
+          { tutorial ? 'Start Tutorial' : 'Workbench' }
+        </EuiButton>
+      )}
       {renderRecommendationContent(
         content,
         params,
@@ -172,26 +195,6 @@ const Recommendation = ({
       )}
       <div className={styles.actions}>
         <RecommendationVoting live id={id} vote={vote} name={name} containerClass={styles.votingContainer} />
-        <EuiButton
-          isDisabled={isLoading}
-          className={styles.btn}
-          onClick={handleDelete}
-          color="secondary"
-          data-testid={`${name}-delete-btn`}
-        >
-          Snooze
-        </EuiButton>
-        {!isUndefined(tutorial) && (
-          <EuiButton
-            fill
-            className={styles.btn}
-            onClick={handleRedirect}
-            color="secondary"
-            data-testid={`${name}-to-tutorial-btn`}
-          >
-            { tutorial ? 'Tutorial' : 'Workbench' }
-          </EuiButton>
-        )}
       </div>
     </EuiText>
   )
@@ -231,6 +234,24 @@ const Recommendation = ({
         </EuiFlexItem>
         <EuiFlexItem grow className="truncateText">
           {title}
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiToolTip
+            title="Snooze recommendation"
+            content="This recommendation will be removed from the list and displayed again when relevant."
+            position="top"
+            display="inlineBlock"
+            anchorClassName="flex-row"
+          >
+            <EuiButtonIcon
+              href="#"
+              iconType={SnoozeIcon}
+              className={styles.snoozeBtn}
+              onClick={handleDelete}
+              aria-label="snooze recommendation"
+              data-testid={`${name}-delete-btn`}
+            />
+          </EuiToolTip>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiToolTip

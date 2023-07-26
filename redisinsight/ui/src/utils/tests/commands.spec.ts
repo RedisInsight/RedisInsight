@@ -1,5 +1,11 @@
 import { ICommandArgGenerated, ICommands, MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
-import { generateArgs, generateArgsNames, getComplexityShortNotation, getDocUrlForCommand } from '../commands'
+import {
+  generateArgs,
+  generateArgsNames,
+  getComplexityShortNotation,
+  getDocUrlForCommand,
+  generateRedisCommand,
+} from '../commands'
 import { cleanup } from '../test-utils'
 
 const ALL_REDIS_COMMANDS: ICommands = MOCK_COMMANDS_SPEC
@@ -189,5 +195,32 @@ describe('getDocUrlForCommand', () => {
     (command, expected) => {
       const result = getDocUrlForCommand(command)
       expect(result).toBe(expected)
+    })
+})
+
+const generateRedisCommandTests = [
+  {
+    input: ['info'],
+    output: 'info'
+  },
+  {
+    input: ['set', ['a', 'b']],
+    output: 'set "a" "b"'
+  },
+  {
+    input: ['set', 'a', 'b'],
+    output: 'set "a" "b"'
+  },
+  {
+    input: ['command', ['a', 'b'], ['b', 'b'], 0, 'a', 'a b c'],
+    output: 'command "a" "b" "b" "b" "0" "a" "a b c"'
+  },
+]
+
+describe('generateRedisCommand', () => {
+  it.each(generateRedisCommandTests)('for input: %s (input), should be output: %s',
+    ({ input, output }) => {
+      const result = generateRedisCommand(...input)
+      expect(result).toBe(output)
     })
 })

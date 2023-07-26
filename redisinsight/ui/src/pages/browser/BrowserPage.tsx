@@ -99,12 +99,20 @@ const BrowserPage = () => {
       dispatch(setBrowserBulkActionOpen(isBulkActionsPanelOpenRef.current))
       dispatch(setBrowserSelectedKey(selectedKeyRef.current))
       dispatch(setLastPageContext('browser'))
+
+      if (!selectedKeyRef.current) {
+        dispatch(toggleBrowserFullScreen(false))
+      }
     }
   }, [])
 
   useEffect(() => {
     isBulkActionsPanelOpenRef.current = isBulkActionsPanelOpen
   }, [isBulkActionsPanelOpen])
+
+  useEffect(() => {
+    setSelectedKey(selectedKeyContext)
+  }, [selectedKeyContext])
 
   useEffect(() => {
     selectedKeyRef.current = selectedKey

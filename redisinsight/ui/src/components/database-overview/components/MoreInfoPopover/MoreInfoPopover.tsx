@@ -116,7 +116,7 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
           }
           <p style={{ marginTop: '12px' }} className={styles.mi_smallText}>
             {'More information about Redis modules can be found '}
-            <a className="link-underline" href="https://redis.io/modules" target="_blank" rel="noreferrer">here</a>.
+            <a className="link-underline" href="https://redis.io/resources/modules/" target="_blank" rel="noreferrer">here</a>.
             <br />
             {'Create a '}
             <OAuthSsoHandlerDialog>

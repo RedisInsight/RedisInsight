@@ -169,6 +169,9 @@ const checkCommandModule = (command: string) => {
     case command.startsWith(ModuleCommandPrefix.TOPK): {
       return RedisDefaultModules.Bloom
     }
+    case command.startsWith(ModuleCommandPrefix.TriggersAndFunctions): {
+      return RedisDefaultModules.RedisGears
+    }
     default: {
       return null
     }
@@ -227,7 +230,7 @@ const DEPRECATED_MODULE_GROUPS = [
 ]
 
 const checkDeprecatedModuleCommand = (command: string) =>
-  DEPRECATED_MODULE_PREFIXES.some((prefix) => command.startsWith(prefix))
+  DEPRECATED_MODULE_PREFIXES.some((prefix) => command.toUpperCase().startsWith(prefix))
 
 const checkDeprecatedCommandGroup = (item: string) =>
   DEPRECATED_MODULE_GROUPS.some((group) => group === item)

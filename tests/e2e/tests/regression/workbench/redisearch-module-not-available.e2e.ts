@@ -52,11 +52,11 @@ test
         const commandJSON = 'JSON.ARRAPPEND key value';
         const commandFT = 'FT.LIST';
         await workbenchPage.sendCommandInWorkbench(commandJSON);
-        // Verify change screens when capability not available - 'Search'
-        await t.expect(workbenchPage.welcomePageTitle.withText('Looks like RedisJSON is not available').visible)
+        // Verify change screens when capability not available - 'JSON'
+        await t.expect(await workbenchPage.commandExecutionResult.withText('RedisJSON is not available for this database').visible)
             .ok('Missing RedisJSON title is not visible');
         await workbenchPage.sendCommandInWorkbench(commandFT);
-        // Verify  change screens when  capability not available - 'JSON'
-        await t.expect(workbenchPage.welcomePageTitle.withText('Looks like RediSearch is not available').visible)
-            .ok('Missing RedisJSON title is not visible');
+        // Verify change screens when capability not available - 'Search'
+        await t.expect(await workbenchPage.commandExecutionResult.withText('RediSearch is not available for this database').visible)
+            .ok('Missing RedisSearch title is not visible');
     });

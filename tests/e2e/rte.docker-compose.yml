@@ -68,6 +68,11 @@ services:
     image: redislabs/redismod
     ports:
       - 8102:6379
+  
+  oss-standalone-redisgears-2-0:
+    image: redislabs/redisgears:edge
+    ports:
+      - 8106:6379
 
   oss-standalone-big:
     build:
@@ -78,7 +83,7 @@ services:
     ports:
       - 8103:6379
 
-  # oss standalone еды
+  # oss standalone tls
   oss-standalone-tls:
     build:
       context: ./rte/oss-standalone-tls

@@ -29,7 +29,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/manual/programmability/",
+          "href": "https://redis.io/docs/interact/programmability/",
           "name": "documentation"
         }
       },
@@ -389,7 +389,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search capabilities"
         }
       },
@@ -400,7 +400,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -525,7 +525,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/bloom/",
+          "href": "https://redis.io/docs/data-types/probabilistic/bloom-filter/",
           "name": "probabilistic data structures"
         }
       },
@@ -544,7 +544,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -670,7 +670,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/timeseries/",
+          "href": "https://redis.io/docs/data-types/timeseries/",
           "name": "time series capabilities"
         }
       },
@@ -705,7 +705,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -817,7 +817,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search"
         }
       },
@@ -828,7 +828,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/json/",
+          "href": "https://redis.io/docs/data-types/json/",
           "name": "JSON"
         }
       },
@@ -839,7 +839,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/bloom/",
+          "href": "https://redis.io/docs/data-types/probabilistic/bloom-filter/",
           "name": "probabilistic data structures"
         }
       },
@@ -850,7 +850,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/timeseries/",
+          "href": "https://redis.io/docs/data-types/timeseries/",
           "name": "Time Series"
         }
       },
@@ -871,7 +871,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "RediSearch"
         }
       },
@@ -964,7 +964,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search capabilities"
         }
       },
@@ -983,7 +983,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1016,7 +1016,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/",
+          "href": "https://docs.redis.com/latest/stack/search/search-active-active/",
           "name": "Active-Active setup"
         }
       },
@@ -1048,7 +1048,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search capabilities"
         }
       },
@@ -1075,7 +1075,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1108,7 +1108,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/",
+          "href": "https://docs.redis.com/latest/stack/search/search-active-active/",
           "name": "Active-Active"
         }
       },
@@ -1161,7 +1161,7 @@
             {
               "type": "link",
               "value": {
-                "href": "https://redis.io/docs/stack/json/path/",
+                "href": "https://redis.io/docs/data-types/json/path/",
                 "name": "JSONPath"
               }
             },
@@ -1190,7 +1190,7 @@
             {
               "type": "link",
               "value": {
-                "href": "https://redis.io/docs/stack/search/",
+                "href": "https://redis.io/docs/interact/search-and-query/",
                 "name": "query and search capabilities"
               }
             }
@@ -1204,7 +1204,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1264,7 +1264,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1275,7 +1275,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/json/",
+          "href": "https://redis.io/docs/data-types/json/",
           "name": "JSON"
         }
       },
@@ -1286,7 +1286,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search"
         }
       },
@@ -1297,7 +1297,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/timeseries/",
+          "href": "https://redis.io/docs/data-types/timeseries/",
           "name": "Time Series"
         }
       },
@@ -1340,7 +1340,7 @@
             {
               "type": "link",
               "value": {
-                "href": "https://redis.io/docs/stack/search/reference/aggregations/#apply-expressions/",
+                "href": "https://redis.io/docs/interact/search-and-query/search/aggregations/",
                 "name": "Apply Functions"
               }
             },
@@ -1358,7 +1358,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/search/",
+          "href": "https://redis.io/docs/interact/search-and-query/",
           "name": "query and search"
         }
       },
@@ -1385,7 +1385,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://redis.io/docs/stack/about/",
+          "href": "https://redis.io/docs/about/about-stack/",
           "name": "Redis Stack"
         }
       },
@@ -1418,7 +1418,7 @@
       {
         "type": "link",
         "value": {
-          "href": "https://docs.redis.com/latest/modules/redisearch/redisearch-active-active/",
+          "href": "https://docs.redis.com/latest/stack/search/search-active-active/",
           "name": "Active-Active setup"
         }
       },
@@ -1436,5 +1436,220 @@
       }
     ],
     "badges": ["code_changes", "configuration_changes"]
+  },
+  "luaToFunctions": {
+    "id": "luaToFunctions",
+    "title": "Consider using triggers and functions",
+    "tutorial": "/quick-guides/triggers-and-functions/introduction.md",
+    "content": [
+      {
+        "type": "paragraph",
+        "value": "If you are using LUA scripts to run application logic inside Redis, consider using triggers and functions to take advantage of Javascript's vast ecosystem of libraries and frameworks and modern, expressive syntax."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "paragraph",
+        "value": "Triggers and functions can execute business logic on changes within a database, and read across all shards in clustered databases."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "span",
+        "value": "These capabilities are part of "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/about/about-stack/",
+          "name": "Redis Stack"
+        }
+      },
+      {
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-cloud/overview/",
+          "name": "Redis Enterprise Cloud"
+        }
+      },
+      {
+        "type": "span",
+        "value": " and "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-software/overview/",
+          "name": "Redis Enterprise Software"
+        }
+      },
+      {
+        "type": "span",
+        "value": "."
+      }
+    ],
+    "badges": ["code_changes"]
+  },
+  "functionsWithStreams": {
+    "id": "functionsWithStreams",
+    "title": "Consider using triggers and functions to react in real-time to stream entries",
+    "tutorial": "/quick-guides/triggers-and-functions/introduction.md",
+    "content": [
+      {
+        "type": "paragraph",
+        "value": "If you need to manipulate your data based on Redis stream entries, consider using stream triggers that are a part of triggers and functions. It can help lower latency by moving business logic closer to the data."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "paragraph",
+        "value": "Try triggers and functions to take advantage of Javascript's vast ecosystem of libraries and frameworks and modern, expressive syntax."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "paragraph",
+        "value": "These capabilities can execute business logic on changes within a database, and read across all shards in clustered databases."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "span",
+        "value": "Triggers and functions are part of "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/about/about-stack/",
+          "name": "Redis Stack"
+        }
+      },
+      {
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-cloud/overview/",
+          "name": "Redis Enterprise Cloud"
+        }
+      },
+      {
+        "type": "span",
+        "value": " and "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-software/overview/",
+          "name": "Redis Enterprise Software"
+        }
+      },
+      {
+        "type": "span",
+        "value": "."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "paragraph",
+        "value": "Try the interactive tutorial to learn more about triggers and functions."
+      }
+    ],
+    "badges": ["code_changes"]
+  },
+  "functionsWithKeyspace": {
+    "id": "functionsWithKeyspace",
+    "title": "Consider using triggers and functions to react in real-time to database changes",
+    "tutorial": "/quick-guides/triggers-and-functions/introduction.md",
+    "content": [
+      {
+        "type": "paragraph",
+        "value": "If you need to manipulate your data based on keyspace notifications, consider using keyspace triggers that are a part of triggers and functions. It can help lower latency by moving business logic closer to the data."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "paragraph",
+        "value": "Try triggers and functions to take advantage of Javascript's vast ecosystem of libraries and frameworks and modern, expressive syntax."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "paragraph",
+        "value": "These capabilities can execute business logic on changes within a database, and read across all shards in clustered databases."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "span",
+        "value": "Triggers and functions are part of "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.io/docs/about/about-stack/",
+          "name": "Redis Stack"
+        }
+      },
+      {
+        "type": "span",
+        "value": ", "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-cloud/overview/",
+          "name": "Redis Enterprise Cloud"
+        }
+      },
+      {
+        "type": "span",
+        "value": " and "
+      },
+      {
+        "type": "link",
+        "value": {
+          "href": "https://redis.com/redis-enterprise-software/overview/",
+          "name": "Redis Enterprise Software"
+        }
+      },
+      {
+        "type": "span",
+        "value": "."
+      },
+      {
+        "type": "spacer",
+        "value": "l"
+      },
+      {
+        "type": "paragraph",
+        "value": "Try the interactive tutorial to learn more about triggers and functions."
+      }
+    ],
+    "badges": ["code_changes"]
   }
 }

@@ -64,6 +64,7 @@ export class DatabaseAnalysisService {
           client: nodeResult.client,
           keys: nodeResult.keys,
           indexes: nodeResult.indexes,
+          libraries: nodeResult.libraries,
           total: progress.total,
           globalClient: client,
           exclude: recommendationToExclude,

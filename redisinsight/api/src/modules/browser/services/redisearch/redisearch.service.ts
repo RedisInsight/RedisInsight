@@ -93,7 +93,7 @@ export class RedisearchService {
           );
         }
       } catch (error) {
-        if (!error.message?.includes('Unknown Index name')) {
+        if (!error.message?.toLowerCase()?.includes('unknown index name')) {
           throw error;
         }
       }

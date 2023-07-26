@@ -10,7 +10,7 @@ import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import styles from './styles.module.scss'
 
 const GET_STARTED_LINK = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=browser_filter'
-const LEARN_MORE_LINK = 'https://redis.io/docs/stack/about/?utm_source=redisinsight&utm_medium=main&utm_campaign=browser_filter'
+const LEARN_MORE_LINK = 'https://redis.io/docs/about/about-stack/?utm_source=redisinsight&utm_medium=main&utm_campaign=browser_filter'
 
 const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
   const { freeInstance } = useSelector(instancesSelector)

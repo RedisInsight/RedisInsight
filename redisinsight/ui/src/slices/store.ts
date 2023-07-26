@@ -41,6 +41,7 @@ import clusterDetailsReducer from './analytics/clusterDetails'
 import databaseAnalysisReducer from './analytics/dbAnalysis'
 import redisearchReducer from './browser/redisearch'
 import recommendationsReducer from './recommendations/recommendations'
+import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
 
 export const history = createBrowserHistory()
 
@@ -100,9 +101,10 @@ export const rootReducer = combineReducers({
   }),
   pubsub: pubSubReducer,
   recommendations: recommendationsReducer,
+  triggeredFunctions: triggeredFunctionsReducer,
   oauth: combineReducers({
     cloud: appOauthReducer,
-  })
+  }),
 })
 
 const store = configureStore({

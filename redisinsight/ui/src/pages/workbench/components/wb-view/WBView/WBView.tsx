@@ -35,6 +35,7 @@ export interface Props {
   script: string
   items: CommandExecutionUI[]
   clearing: boolean
+  processing: boolean
   setScript: (script: string) => void
   setScriptEl: Function
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
@@ -64,6 +65,7 @@ const WBView = (props: Props) => {
     script = '',
     items,
     clearing,
+    processing,
     setScript,
     setScriptEl,
     scriptEl,
@@ -233,6 +235,7 @@ const WBView = (props: Props) => {
                   <WBResultsWrapper
                     items={items}
                     clearing={clearing}
+                    processing={processing}
                     activeMode={activeMode}
                     activeResultsMode={resultsMode}
                     scrollDivRef={scrollDivRef}

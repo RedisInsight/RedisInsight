@@ -8,6 +8,7 @@ import WBResults from './WBResults'
 export interface Props {
   items: CommandExecutionUI[]
   clearing: boolean
+  processing: boolean
   activeMode: RunQueryMode
   activeResultsMode: ResultsMode
   scrollDivRef: React.Ref<HTMLDivElement>

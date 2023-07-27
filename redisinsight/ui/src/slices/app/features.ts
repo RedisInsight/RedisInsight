@@ -27,7 +27,7 @@ export const initialState: StateAppFeatures = {
         flag: false
       },
       [FeatureFlags.cloudSso]: {
-        flag: false
+        flag: true
       },
     }
   }
@@ -98,7 +98,7 @@ const appFeaturesSlice = createSlice({
     },
     getFeatureFlagsSuccess: (state, { payload }) => {
       state.featureFlags.loading = false
-      state.featureFlags.features = payload.features
+      // state.featureFlags.features = payload.features
     },
     getFeatureFlagsFailure: (state) => {
       state.featureFlags.loading = false

@@ -60,12 +60,12 @@ const HelpLinksMenu = ({ emptyAnchor, onLinkClick, items, buttonText }: Props) =
 
   const menuItems = items?.map((item) => (
     item.primary ? (
-      <OAuthSsoHandlerDialog>
+      <OAuthSsoHandlerDialog key="menu-items-handler-dialog">
         {(ssoCloudHandlerClick) => (
-          <MenuItem {...item} onClick={ssoCloudHandlerClick} />
+          <MenuItem key={`menu-item-${item.id}`} {...item} onClick={ssoCloudHandlerClick} />
         )}
       </OAuthSsoHandlerDialog>
-    ) : <MenuItem {...item} />
+    ) : <MenuItem key={`menu-item-${item.id}`} {...item} />
   ))
 
   const button = (

@@ -99,34 +99,6 @@
   }
 }
 
-.containerWelc {
-  .separator {
-    width: 150px;
-    height: 0;
-    border-top-width: 1px;
-    margin: 25px auto 20px;
-  }
-  .cloudSsoPromoBtnAnchor {
-    width: 100%;
-  }
-  .otherGuides {
-    flex-wrap: wrap;
-    & > div {
-      min-width: 20%;
-      &:nth-of-type(3n + 1) {
-        a {
-          text-align: left;
-        }
-      }
-      &:nth-of-type(3n + 3) {
-        a {
-          text-align: right;
-        }
-      }
-    }
-  }
-}
-
 .searchContainer {
   max-width: 320px;
 }

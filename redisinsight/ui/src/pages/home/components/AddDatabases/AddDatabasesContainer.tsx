@@ -26,14 +26,15 @@ import CloudConnectionFormWrapper from '../CloudConnection/CloudConnectionFormWr
 import styles from './styles.module.scss'
 
 export interface Props {
-  width: number;
-  isResizablePanel?: boolean;
-  editMode: boolean;
-  editedInstance: Nullable<Instance>;
-  onClose?: () => void;
-  onDbEdited?: () => void;
-  onAliasEdited?: (value: string) => void;
-  isFullWidth?: boolean;
+  width: number
+  isResizablePanel?: boolean
+  editMode: boolean
+  editedInstance: Nullable<Instance>
+  onClose?: () => void
+  onDbEdited?: () => void
+  onAliasEdited?: (value: string) => void
+  isFullWidth?: boolean
+  initConnectionType?: AddDbType
 }
 
 export enum AddDbType {
@@ -47,14 +48,13 @@ const AddDatabasesContainer = React.memo((props: Props) => {
     isResizablePanel,
     onClose,
     isFullWidth: isFullWidthProp = false,
+    initConnectionType = AddDbType.manual
   } = props
 
   const [typeSelected, setTypeSelected] = useState<InstanceType>(
     InstanceType.RedisCloudPro
   )
-  const [connectionType, setConnectionType] = useState<AddDbType>(
-    AddDbType.manual
-  )
+  const [connectionType, setConnectionType] = useState<AddDbType>(initConnectionType)
   const [isFullWidth, setIsFullWidth] = useState(isFullWidthProp)
 
   const { credentials: clusterCredentials } = useSelector(clusterSelector)
@@ -193,8 +193,9 @@ const AddDatabasesContainer = React.memo((props: Props) => {
   )
 
   return (
-    <div className={cx('container relative', { addDbWrapper: !editMode })}>
-      {!isFullWidth && onClose && (
+    <>
+      <div className={cx('container relative', { addDbWrapper: !editMode })}>
+        {!isFullWidth && onClose && (
         <EuiToolTip
           content="Close"
           position="left"
@@ -207,8 +208,8 @@ const AddDatabasesContainer = React.memo((props: Props) => {
             onClick={onClose}
           />
         </EuiToolTip>
-      )}
-      {!editMode && (
+        )}
+        {!editMode && (
         <>
           <EuiTitle size="xs">
             <h4>Discover and Add Redis Databases</h4>
@@ -218,9 +219,11 @@ const AddDatabasesContainer = React.memo((props: Props) => {
           />
           {connectionType === AddDbType.auto && <InstanceTypes />}
         </>
-      )}
-      {Form()}
-    </div>
+        )}
+        {Form()}
+      </div>
+      <div id="footerDatabaseForm" />
+    </>
   )
 })
 

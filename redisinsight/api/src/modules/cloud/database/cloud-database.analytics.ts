@@ -35,9 +35,9 @@ export class CloudDatabaseAnalytics extends TelemetryBaseService {
         TelemetryEvents.CloudFreeDatabaseFailed,
         exception,
         {
-          region: selectedPlan?.region || '',
-          provider: selectedPlan?.provider || '',
           ...eventData,
+          region: selectedPlan?.region,
+          provider: selectedPlan?.provider,
         },
       );
     } catch (error) {

@@ -18,6 +18,7 @@ import styles from './styles.module.scss'
 export interface Props {
   items: CommandExecutionUI[]
   clearing: boolean
+  processing: boolean
   activeMode: RunQueryMode
   activeResultsMode?: ResultsMode
   scrollDivRef: React.Ref<HTMLDivElement>
@@ -31,6 +32,7 @@ const WBResults = (props: Props) => {
   const {
     items = [],
     clearing,
+    processing,
     activeMode,
     activeResultsMode,
     onQueryReRun,
@@ -81,6 +83,7 @@ const WBResults = (props: Props) => {
             iconSize="s"
             className={styles.clearAllBtn}
             onClick={() => onAllQueriesDelete?.()}
+            disabled={clearing || processing}
             data-testid="clear-history-btn"
           >
             Clear Results

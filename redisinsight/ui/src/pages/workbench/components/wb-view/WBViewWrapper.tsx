@@ -73,7 +73,7 @@ let state: IState = {
 const WBViewWrapper = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const { loading, items, clearing } = useSelector(workbenchResultsSelector)
+  const { loading, items, clearing, processing } = useSelector(workbenchResultsSelector)
   const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
   const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
   const { cleanup: cleanupWB } = useSelector(userSettingsWBSelector)
@@ -298,6 +298,7 @@ const WBViewWrapper = () => {
     <WBView
       items={items}
       clearing={clearing}
+      processing={processing}
       script={script}
       setScript={setScript}
       setScriptEl={setScriptEl}

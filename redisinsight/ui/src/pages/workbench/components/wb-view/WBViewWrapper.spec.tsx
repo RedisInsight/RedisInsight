@@ -143,6 +143,18 @@ describe('WBViewWrapper', () => {
     expect(clearStoreActions(store.getActions().slice(-1))).toEqual(clearStoreActions([clearWbResults()]))
   })
 
+  it('should be disabled button when commands are processing', () => {
+    (workbenchResultsSelector as jest.Mock).mockImplementation(() => ({
+      items: [
+        { id: '1' },
+      ],
+      processing: true
+    }))
+    render(<WBViewWrapper />)
+
+    expect(screen.getByTestId('clear-history-btn')).toBeDisabled()
+  })
+
   it('should not display clear results when with empty history', () => {
     (workbenchResultsSelector as jest.Mock).mockImplementation(() => ({
       items: [],

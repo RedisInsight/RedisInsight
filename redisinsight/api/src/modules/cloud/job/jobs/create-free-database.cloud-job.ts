@@ -176,8 +176,8 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
       this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseFailed(
         e,
         {
-          region: freeSubscription?.region || '',
-          provider: freeSubscription?.provider || '',
+          region: freeSubscription?.region,
+          provider: freeSubscription?.provider,
         },
         this.dependencies.cloudSubscriptionCapiService,
         this.data,

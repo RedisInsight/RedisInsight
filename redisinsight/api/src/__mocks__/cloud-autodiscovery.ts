@@ -16,6 +16,7 @@ export const mockImportCloudDatabaseDto = Object.assign(new ImportCloudDatabaseD
 export const mockImportCloudDatabaseDtoFixed = Object.assign(new ImportCloudDatabaseDto(), {
   ...mockGetCloudSubscriptionDatabaseDto,
   subscriptionType: CloudSubscriptionType.Fixed,
+  free: true,
 });
 
 export const mockImportCloudDatabaseResponse = Object.assign(new ImportCloudDatabaseResponse(), {

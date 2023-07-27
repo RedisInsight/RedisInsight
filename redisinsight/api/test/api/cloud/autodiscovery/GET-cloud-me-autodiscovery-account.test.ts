@@ -8,7 +8,7 @@ import {
 } from '../../deps';
 import { mockCloudAccountInfo, mockCloudApiCsrfToken, mockCloudApiUser, mockCloudCapiAccount } from 'src/__mocks__';
 import { CustomErrorCodes } from 'src/constants';
-import { initApiUserProfileNockScope } from '../constants';
+import { initApiCapiKeysEnsureNockScope, initApiUserProfileNockScope } from '../constants';
 const { request, server, constants } = deps;
 
 const endpoint = () => request(server).get(`/cloud/me/autodiscovery/account`);
@@ -23,9 +23,9 @@ const responseSchema = Joi.object().keys({
 const mainCheckFn = getMainCheckFn(endpoint);
 
 const nockScope = nock(serverConfig.get('cloud').capiUrl);
-const apiNockScope = initApiUserProfileNockScope();
+const apiNockScope = initApiCapiKeysEnsureNockScope();
 
-xdescribe('GET /cloud/me/autodiscovery/account', () => {
+describe('GET /cloud/me/autodiscovery/account', () => {
   requirements('rte.serverType=local');
 
   describe('Common', () => {

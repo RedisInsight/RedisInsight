@@ -1,5 +1,5 @@
 import { nock, serverConfig } from '../../helpers/test';
-import { mockCloudApiAccount, mockCloudApiCsrfToken, mockCloudApiUser } from 'src/__mocks__';
+import { mockCloudApiAccount, mockCloudApiCapiKey, mockCloudApiCsrfToken, mockCloudApiUser } from 'src/__mocks__';
 
 export const initApiLoginNockScope = (
   apiNockScope = nock(serverConfig.get('cloud').apiUrl),
@@ -24,9 +24,9 @@ export const initApiUserProfileNockScope = (
 export const initApiCapiKeysEnsureNockScope = (
   apiNockScope = nock(serverConfig.get('cloud').apiUrl),
 ) => {
-  return initApiLoginNockScope(apiNockScope)
-    .get('/users/me')
-    .reply(200, mockCloudApiUser)
-    .get('/accounts')
-    .reply(200, { accounts: [mockCloudApiAccount] });
+  return initApiUserProfileNockScope(apiNockScope)
+    .get('/accounts/cloud-api/cloudApiKeys')
+    .reply(200, { cloudApiKeys: [] })
+    .post('/accounts/cloud-api/cloudApiKeys')
+    .reply(200, { cloudApiKey: mockCloudApiCapiKey });
 }

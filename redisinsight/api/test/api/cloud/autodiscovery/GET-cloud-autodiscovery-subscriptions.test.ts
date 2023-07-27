@@ -3,8 +3,8 @@ import {
   deps,
   requirements,
   Joi, getMainCheckFn, serverConfig
-} from '../deps';
-import { nock } from '../../helpers/test';
+} from '../../deps';
+import { nock } from '../../../helpers/test';
 import {
   mockCloudCapiSubscription, mockCloudCapiSubscriptionFixed,
   mockCloudSubscription,
@@ -30,6 +30,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   region: Joi.string(),
   type: Joi.string(),
   price: Joi.number().integer(),
+  free: Joi.boolean(),
 })).required();
 
 const mainCheckFn = getMainCheckFn(endpoint);

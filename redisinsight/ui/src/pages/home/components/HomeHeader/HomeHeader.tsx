@@ -54,8 +54,6 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
 
   const dispatch = useDispatch()
 
-  console.log(features)
-
   useEffect(() => {
     if (loading || !data || isEmpty(data)) {
       return

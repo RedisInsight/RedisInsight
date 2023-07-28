@@ -15,6 +15,13 @@ export enum CloudJobStatus {
   Failed = 'failed',
 }
 
+export enum CloudJobStep {
+  Initializing = 'initializing',
+  Credentials = 'credentials',
+  Subscription = 'subscription',
+  Database = 'database',
+}
+
 export class CloudJobInfo {
   @ApiProperty({
     type: String,
@@ -54,4 +61,10 @@ export class CloudJobInfo {
   })
   @Expose()
   result?: any;
+
+  @ApiPropertyOptional({
+    description: 'Job step',
+  })
+  @Expose()
+  step?: CloudJobStep;
 }

@@ -21,7 +21,11 @@ export class ClientMetadata {
   databaseId: string;
 
   @IsNotEmpty()
-  @IsEnum(ClientContext)
+  @IsEnum(ClientContext, {
+    message: `context must be a valid enum value. Valid values: ${Object.values(
+      ClientContext,
+    )}.`,
+  })
   context: ClientContext;
 
   @IsOptional()

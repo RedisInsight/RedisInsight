@@ -26,7 +26,11 @@ export class CloudDatabaseDetails {
   })
   @Expose()
   @IsNotEmpty()
-  @IsEnum(CloudSubscriptionType)
+  @IsEnum(CloudSubscriptionType, {
+    message: `subscriptionType must be a valid enum value. Valid values: ${Object.values(
+      CloudSubscriptionType,
+    )}.`,
+  })
   subscriptionType: CloudSubscriptionType;
 
   @ApiPropertyOptional({

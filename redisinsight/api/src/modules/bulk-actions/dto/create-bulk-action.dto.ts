@@ -12,7 +12,11 @@ export class CreateBulkActionDto extends BulkActionIdDto {
   databaseId: string;
 
   @IsNotEmpty()
-  @IsEnum(BulkActionType)
+  @IsEnum(BulkActionType, {
+    message: `type must be a valid enum value. Valid values: ${Object.values(
+      BulkActionType,
+    )}.`,
+  })
   type: BulkActionType;
 
   @IsNotEmpty()

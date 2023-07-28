@@ -16,7 +16,6 @@ export enum CloudJobStatus {
 }
 
 export enum CloudJobStep {
-  Initializing = 'initializing',
   Credentials = 'credentials',
   Subscription = 'subscription',
   Database = 'database',

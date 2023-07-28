@@ -70,7 +70,7 @@ export abstract class CloudJob {
     try {
       this.changeState({
         status: CloudJobStatus.Running,
-        step: CloudJobStep.Initializing,
+        step: CloudJobStep.Credentials,
       });
 
       return await this.iteration();

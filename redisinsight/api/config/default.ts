@@ -64,9 +64,7 @@ export default {
     appVersion: process.env.APP_VERSION || '2.30.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
-    excludeAuthRoutes: [
-      { path: 'cloud/oauth/callback', method: RequestMethod.GET },
-    ],
+    excludeAuthRoutes: [],
   },
   sockets: {
     cors: process.env.SOCKETS_CORS ? process.env.SOCKETS_CORS === 'true' : false,

@@ -245,10 +245,12 @@ const WBViewWrapper = () => {
   }
 
   const scrollResults = (inline: ScrollLogicalPosition = 'start') => {
-    scrollIntoView(scrollDivRef?.current, {
-      behavior: 'smooth',
-      block: 'nearest',
-      inline,
+    requestAnimationFrame(() => {
+      scrollIntoView(scrollDivRef?.current, {
+        behavior: 'smooth',
+        block: 'nearest',
+        inline,
+      })
     })
   }
 

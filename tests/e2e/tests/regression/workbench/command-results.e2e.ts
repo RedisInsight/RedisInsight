@@ -133,3 +133,8 @@ test
         // verify table view row count match with text view after client list command
         await workBenchActions.verifyClientListTableViewRowCount();
     });
+test('Verify that user can clear all results at once.', async t => {
+
+    await t.click(workbenchPage.clearResultsBtn);
+    await t.expect(workbenchPage.queryTextResult.exists).notOk('Clear all button does not remove commands');
+});

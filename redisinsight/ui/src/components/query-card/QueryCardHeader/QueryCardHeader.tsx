@@ -62,6 +62,7 @@ export interface Props {
   queryType: WBQueryType
   selectedValue: string
   loading?: boolean
+  clearing?: boolean
   executionTime?: number
   emptyCommand?: boolean
   db?: number
@@ -96,6 +97,7 @@ const QueryCardHeader = (props: Props) => {
     toggleFullScreen,
     query = '',
     loading,
+    clearing,
     message,
     createdAt,
     mode,
@@ -169,6 +171,7 @@ const QueryCardHeader = (props: Props) => {
   const handleQueryDelete = (event: React.MouseEvent) => {
     eventStop(event)
     onQueryDelete()
+    sendEvent(TelemetryEvent.WORKBENCH_CLEAR_RESULT_CLICKED, query)
   }
 
   const handleQueryReRun = (event: React.MouseEvent) => {
@@ -404,7 +407,7 @@ const QueryCardHeader = (props: Props) => {
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.buttonIcon}>
           <EuiButtonIcon
-            disabled={loading}
+            disabled={loading || clearing}
             iconType="trash"
             aria-label="Delete command"
             data-testid="delete-command"

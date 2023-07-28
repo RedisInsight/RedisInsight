@@ -6,4 +6,5 @@ export abstract class CommandExecutionRepository {
   abstract getList(databaseId: string): Promise<ShortCommandExecution[]>;
   abstract getOne(databaseId: string, id: string): Promise<CommandExecution>;
   abstract delete(databaseId: string, id: string): Promise<void>;
+  abstract deleteAll(databaseId: string): Promise<void>;
 }

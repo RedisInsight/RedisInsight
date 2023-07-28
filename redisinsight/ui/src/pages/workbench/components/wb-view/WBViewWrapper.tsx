@@ -7,32 +7,33 @@ import { chunk, without } from 'lodash'
 import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 import {
+  getExecuteParams,
+  getMonacoLines,
+  getMultiCommands,
+  getParsedParamsInQuery,
+  isGroupMode,
+  isGroupResults,
+  Maybe,
   Nullable,
   removeMonacoComments,
-  splitMonacoValuePerLines,
-  getMultiCommands,
   scrollIntoView,
-  getExecuteParams,
-  isGroupMode,
-  getMonacoLines,
-  Maybe,
-  isGroupResults,
-  getParsedParamsInQuery,
+  splitMonacoValuePerLines,
 } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import {
-  sendWBCommandAction,
-  workbenchResultsSelector,
-  fetchWBHistoryAction,
+  clearWbResultsAction,
   deleteWBCommandAction,
-  sendWBCommandClusterAction,
-  resetWBHistoryItems,
   fetchWBCommandAction,
+  fetchWBHistoryAction,
+  resetWBHistoryItems,
+  sendWBCommandAction,
+  sendWBCommandClusterAction,
+  workbenchResultsSelector,
 } from 'uiSrc/slices/workbench/wb-results'
 import { ConnectionType, ExecuteQueryParams, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
-import { initialState as instanceInitState, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceSelector, initialState as instanceInitState } from 'uiSrc/slices/instances/instances'
 import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
-import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
+import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
@@ -72,7 +73,7 @@ let state: IState = {
 const WBViewWrapper = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const { loading, items } = useSelector(workbenchResultsSelector)
+  const { loading, items, clearing, processing } = useSelector(workbenchResultsSelector)
   const { unsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
   const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
   const { cleanup: cleanupWB } = useSelector(userSettingsWBSelector)
@@ -258,6 +259,16 @@ const WBViewWrapper = () => {
     dispatch(deleteWBCommandAction(commandId))
   }
 
+  const handleAllQueriesDelete = () => {
+    dispatch(clearWbResultsAction())
+    sendEventTelemetry({
+      event: TelemetryEvent.WORKBENCH_CLEAR_ALL_RESULTS_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
+  }
+
   const handleQueryOpen = (commandId: string = '') => {
     dispatch(fetchWBCommandAction(commandId))
   }
@@ -288,6 +299,8 @@ const WBViewWrapper = () => {
   return (
     <WBView
       items={items}
+      clearing={clearing}
+      processing={processing}
       script={script}
       setScript={setScript}
       setScriptEl={setScriptEl}
@@ -297,6 +310,7 @@ const WBViewWrapper = () => {
       onSubmit={sourceValueSubmit}
       onQueryOpen={handleQueryOpen}
       onQueryDelete={handleQueryDelete}
+      onAllQueriesDelete={handleAllQueriesDelete}
       onQueryChangeMode={handleChangeQueryRunMode}
       resultsMode={resultsMode}
       onChangeGroupMode={handleChangeGroupMode}

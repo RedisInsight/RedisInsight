@@ -34,6 +34,10 @@ import reducer, {
   deleteWBCommandSuccess,
   resetWBHistoryItems,
   fetchWBHistoryAction,
+  clearWbResultsAction,
+  clearWbResults,
+  clearWbResultsSuccess,
+  clearWbResultsFailed,
 } from '../../workbench/wb-results'
 
 jest.mock('uiSrc/services', () => ({
@@ -322,6 +326,80 @@ describe('workbench results slice', () => {
 
       // Act
       const nextState = reducer(initialStateWithItems, loadWBHistorySuccess(mockCommandExecution))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          results: nextState,
+        },
+      })
+      expect(workbenchResultsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('clearWbResults', () => {
+    it('should properly set state', () => {
+      // Arrange
+
+      const state = {
+        ...initialState,
+        clearing: true
+      }
+
+      // Act
+      const nextState = reducer(initialState, clearWbResults())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          results: nextState,
+        },
+      })
+      expect(workbenchResultsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('clearWbResultsSuccess', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const currentState = {
+        ...initialStateWithItems,
+        clearing: true
+      }
+
+      const state = {
+        ...initialState,
+        clearing: false
+      }
+
+      // Act
+      const nextState = reducer(currentState, clearWbResultsSuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        workbench: {
+          results: nextState,
+        },
+      })
+      expect(workbenchResultsSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('clearWbResultsFailed', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const currentState = {
+        ...initialStateWithItems,
+        clearing: true
+      }
+
+      const state = {
+        ...initialStateWithItems,
+        clearing: false
+      }
+
+      // Act
+      const nextState = reducer(currentState, clearWbResultsFailed())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -705,6 +783,50 @@ describe('workbench results slice', () => {
           addErrorNotification(responsePayload as AxiosError),
           processWBCommandFailure({ command, error: responsePayload.response.data.message }),
         ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+    })
+
+    describe('clearWbResultsAction', () => {
+      it('should call proper actions on success', async () => {
+        // Arrange
+        const responsePayload = { status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(clearWbResultsAction())
+
+        // Assert
+        const expectedActions = [
+          clearWbResults(),
+          clearWbResultsSuccess()
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('should call proper actions on fail', async () => {
+        // Arrange
+        const errorMessage = 'Some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.delete = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(clearWbResultsAction())
+
+        // Assert
+        const expectedActions = [
+          clearWbResults(),
+          addErrorNotification(responsePayload as AxiosError),
+          clearWbResultsFailed(),
+        ]
+
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
     })

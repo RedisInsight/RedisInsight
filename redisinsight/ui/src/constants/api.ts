@@ -77,7 +77,6 @@ enum ApiEndpoints {
   SETTINGS_AGREEMENTS_SPEC = 'settings/agreements/spec',
 
   WORKBENCH_COMMAND_EXECUTIONS = 'workbench/command-executions',
-  WORKBENCH_COMMANDS_EXECUTION = 'workbench/commands-execution',
 
   PROFILER = 'profiler',
   PROFILER_LOGS = 'profiler/logs',

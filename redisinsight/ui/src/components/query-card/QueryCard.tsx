@@ -39,6 +39,7 @@ export interface Props {
   summary?: ResultsSummary
   createdAt?: Date
   loading?: boolean
+  clearing?: boolean
   isNotStored?: boolean
   executionTime?: number
   db?: number
@@ -80,6 +81,7 @@ const QueryCard = (props: Props) => {
     onQueryProfile,
     onQueryReRun,
     loading,
+    clearing,
     emptyCommand,
     isNotStored,
     executionTime,
@@ -173,6 +175,7 @@ const QueryCard = (props: Props) => {
           isFullScreen={isFullScreen}
           query={command}
           loading={loading}
+          clearing={clearing}
           createdAt={createdAt}
           message={message}
           queryType={queryType}

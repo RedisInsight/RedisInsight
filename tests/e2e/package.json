@@ -29,7 +29,6 @@
   "resolutions": {
     "@types/lodash": "4.14.192",
     "@types/node": "20.3.1",
-    "testcafe-hammerhead": "31.4.5",
     "word-wrap": "1.2.4"
   },
   "devDependencies": {
@@ -54,7 +53,7 @@
     "redis": "3.1.1",
     "sqlite3": "^5.1.6",
     "supertest": "^4.0.2",
-    "testcafe": "3.0.0",
+    "testcafe": "^3.1.0",
     "testcafe-browser-provider-electron": "0.0.19",
     "testcafe-reporter-html": "1.4.6",
     "testcafe-reporter-json": "2.2.0",

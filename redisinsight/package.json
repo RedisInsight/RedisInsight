@@ -11,6 +11,9 @@
     "url": "https://redis.com/redis-enterprise/redis-insight"
   },
   "scripts": {},
+  "resolutions": {
+    "**/semver": "^7.5.2"
+  },
   "dependencies": {
     "keytar": "^7.9.0",
     "sqlite3": "5.1.6",

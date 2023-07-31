@@ -26,6 +26,7 @@ export * from './triggered-functions';
 export * from './cloud-autodiscovery';
 export * from './cloud-database';
 export * from './cloud-subscription';
+export * from './cloud-task';
 export * from './cloud-user';
 export * from './cloud-common';
 export * from './session';

@@ -21,7 +21,4 @@ export class CloudUser {
   @Type(() => CloudUserAccount)
   @Expose()
   accounts?: CloudUserAccount[] = [];
-
-  @Expose()
-  syncedAt?: Date;
 }

@@ -50,4 +50,3 @@ export interface ICloudCapiSubscriptionPlan {
   region: string;
   regionId: number;
 }
-

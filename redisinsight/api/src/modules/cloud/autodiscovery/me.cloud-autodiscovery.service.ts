@@ -33,7 +33,7 @@ export class MeCloudAutodiscoveryService {
    * @param sessionMetadata
    * @param utm
    */
-  async getAccount(sessionMetadata: SessionMetadata, utm: CloudRequestUtm): Promise<CloudAccountInfo> {
+  async getAccount(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<CloudAccountInfo> {
     try {
       return await this.cloudAutodiscoveryService.getAccount(
         await this.getCapiCredentials(sessionMetadata, utm),

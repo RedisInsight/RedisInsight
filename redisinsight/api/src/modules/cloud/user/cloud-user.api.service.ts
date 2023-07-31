@@ -147,7 +147,7 @@ export class CloudUserApiService {
     try {
       await this.ensureCloudUser(sessionMetadata, forceSync, utm);
 
-      return this.repository.get(sessionMetadata.sessionId);
+      return await this.repository.get(sessionMetadata.sessionId);
     } catch (e) {
       throw wrapHttpError(e);
     }

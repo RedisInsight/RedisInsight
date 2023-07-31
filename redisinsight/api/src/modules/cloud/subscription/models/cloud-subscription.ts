@@ -62,4 +62,10 @@ export class CloudSubscription {
     type: Number,
   })
   price?: number;
+
+  @ApiPropertyOptional({
+    description: 'Determines if subscription is 0 price',
+    type: Boolean,
+  })
+  free?: boolean;
 }

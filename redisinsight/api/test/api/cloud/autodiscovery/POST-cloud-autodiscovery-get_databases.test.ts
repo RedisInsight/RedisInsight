@@ -6,8 +6,8 @@ import {
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
   Joi, getMainCheckFn, serverConfig,
-} from '../deps';
-import { nock } from '../../helpers/test';
+} from '../../deps';
+import { nock } from '../../../helpers/test';
 import {
   mockCloudCapiSubscriptionDatabases, mockCloudCapiSubscriptionDatabasesFixed,
   mockCloudDatabaseFromList,
@@ -59,6 +59,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     subscriptionType: Joi.string().valid('fixed', 'flexible').required(),
     planMemoryLimit: Joi.number(),
     memoryLimitMeasurementUnit: Joi.string(),
+    free: Joi.boolean().required(),
   }).required(),
 })).required();
 

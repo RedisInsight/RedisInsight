@@ -21,8 +21,10 @@ import { setReleaseNotesViewed } from 'uiSrc/slices/app/info'
 import { IError, IMessage, InfiniteMessage } from 'uiSrc/slices/interfaces'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
+import { showOAuthProgress } from 'uiSrc/slices/oauth/cloud'
 
 import errorMessages from './error-messages'
+import { InfiniteMessagesIds } from './components'
 
 import styles from './styles.module.scss'
 
@@ -103,7 +105,12 @@ const Notifications = () => {
       className: cx(styles.infiniteMessage, className),
       text: Inner,
       color: 'success',
-      onClose: () => dispatch(removeInfiniteNotification(id)),
+      onClose: () => {
+        if (id === InfiniteMessagesIds.oAuthProgress) {
+          dispatch(showOAuthProgress(false))
+        }
+        dispatch(removeInfiniteNotification(id))
+      },
       toastLifeTimeMs: 3_600_000,
     }
   })

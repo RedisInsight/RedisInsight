@@ -8,14 +8,15 @@ import {
   oauthCloudUserDataSelector,
   setJob,
   setSignInDialogState,
+  showOAuthProgress,
   signInFailure,
 } from 'uiSrc/slices/oauth/cloud'
 import { Pages } from 'uiSrc/constants'
 import { cloudSelector, fetchSubscriptionsRedisCloud, setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
-import { CloudAuthResponse, CloudAuthStatus, CloudJobStatus, CloudJobs } from 'uiSrc/electron/constants'
-import { addErrorNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { CloudAuthResponse, CloudAuthStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
+import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { parseCloudOAuthError } from 'uiSrc/utils'
-import { InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
+import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 
 const ConfigOAuth = () => {
   const { isAutodiscoverySSO } = useSelector(cloudSelector)
@@ -59,12 +60,14 @@ const ConfigOAuth = () => {
   }
 
   const closeInfinityNotification = () => {
-    dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+    dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
   }
 
   const cloudOauthCallback = (_e: any, { status, message = '', error }: CloudAuthResponse) => {
     if (status === CloudAuthStatus.Succeed) {
-      dispatch(setJob({ id: '', status: CloudJobStatus.Running, name: CloudJobs.CREATE_FREE_DATABASE }))
+      dispatch(setJob({ id: '', name: CloudJobName.CreateFreeDatabase, status: '' }))
+      dispatch(showOAuthProgress(true))
+      dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
       dispatch(setSignInDialogState(null))
       dispatch(fetchUserInfo(fetchUserInfoSuccess, closeInfinityNotification))
     }

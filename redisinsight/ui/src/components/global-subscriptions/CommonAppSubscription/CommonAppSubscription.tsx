@@ -14,7 +14,7 @@ import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
-import { CloudJobs } from 'uiSrc/electron/constants'
+import { CloudJobName } from 'uiSrc/electron/constants'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 
 const CommonAppSubscription = () => {
@@ -53,7 +53,7 @@ const CommonAppSubscription = () => {
     })
 
     socketRef.current.on(CloudJobEvents.Monitor, (data: CloudJobInfo) => {
-      if ((data.name as unknown) === CloudJobs.CREATE_FREE_DATABASE) {
+      if ((data.name as unknown) === CloudJobName.CreateFreeDatabase) {
         dispatch(setJob(data))
       }
     })

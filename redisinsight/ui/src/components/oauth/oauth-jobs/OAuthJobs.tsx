@@ -1,17 +1,22 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
-import { CloudJobStatus, CloudJobs } from 'uiSrc/electron/constants'
+import { CloudJobStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { fetchInstancesAction } from 'uiSrc/slices/instances/instances'
-import { createFreeDbSuccess, oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
+import { createFreeDbSuccess, oauthCloudJobSelector, oauthCloudSelector, setJob, showOAuthProgress } from 'uiSrc/slices/oauth/cloud'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { parseCloudOAuthError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 
 const OAuthJobs = () => {
-  const { status, result = {}, error } = useSelector(oauthCloudJobSelector) ?? {}
-  const prevStatusRef = useRef(status)
+  const {
+    status,
+    error,
+    step,
+    result: { resourceId = '' } = {},
+  } = useSelector(oauthCloudJobSelector) ?? {}
+  const { showProgress } = useSelector(oauthCloudSelector)
 
   const dispatch = useDispatch()
   const history = useHistory()
@@ -19,29 +24,26 @@ const OAuthJobs = () => {
   useEffect(() => {
     switch (status) {
       case CloudJobStatus.Running:
-        if (status !== prevStatusRef.current) {
-          dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB))
-        }
+        if (!showProgress) return
+
+        dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(step as CloudJobStep)))
         break
 
       case CloudJobStatus.Finished:
-        const dbId = result?.resourceId || ''
-        dispatch(fetchInstancesAction(() => dispatch(createFreeDbSuccess(dbId, history))))
-        dispatch(setJob({ id: '', name: CloudJobs.CREATE_FREE_DATABASE, status: '' }))
+        dispatch(fetchInstancesAction(() => dispatch(createFreeDbSuccess(resourceId, history))))
+        dispatch(setJob({ id: '', name: CloudJobName.CreateFreeDatabase, status: '' }))
         break
 
       case CloudJobStatus.Failed:
         const err = parseCloudOAuthError(error || '')
-        dispatch(setJob({ id: '', name: CloudJobs.CREATE_FREE_DATABASE, status: '' }))
-        dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+        dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
         dispatch(addErrorNotification(err))
         break
 
       default:
         break
     }
-    prevStatusRef.current = status
-  }, [status, error, result])
+  }, [status, error, step, resourceId, showProgress])
 
   return null
 }

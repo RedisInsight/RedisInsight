@@ -1,20 +1,25 @@
-const protocol = 'redisinsight://';
-const callbackUrl = 'cloud/oauth/callback';
+const protocol = 'redisinsight://'
+const callbackUrl = 'cloud/oauth/callback'
 
-const openAppButton = document.querySelector('#open-app');
+const openAppButton = document.querySelector('#open-app')
 
-const openApp = () => {
+const openApp = (forceOpen) => {
   try {
-    const currentUrl = new URL(window.location.href);
-    const redirectUrl = protocol + callbackUrl + currentUrl.search;
+    const currentUrl = new URL(window.location.href)
+    const redirectUrl = protocol + callbackUrl + currentUrl.search
+    const isOpened = window.location.hash === '#success'
 
-    window.location.href = redirectUrl.toString();
+    if (forceOpen || !isOpened) {
+      window.location.href = redirectUrl.toString()
+    }
+
+    window.location.hash = '#success'
   } catch (_e) {
     //
   }
-};
+}
 
 // handlers
-openAppButton.addEventListener('click', openApp);
+openAppButton.addEventListener('click', () => openApp(true))
 
-openApp();
+openApp()

@@ -9,7 +9,7 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import { isEmpty } from 'lodash'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { FeatureFlagComponent, ImportDatabasesDialog, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -24,8 +24,11 @@ import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { FeatureFlags } from 'uiSrc/constants'
 import { ReactComponent as ConfettiIcon } from 'uiSrc/assets/img/oauth/confetti.svg'
-import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getContentByFeature } from 'uiSrc/utils/content'
+import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
+import { appFeatureFlagsFeaturesSelector, appFeatureHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
+import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
+import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import SearchDatabasesList from '../SearchDatabasesList'
 
 import styles from './styles.module.scss'
@@ -43,9 +46,14 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
   const { data: instances } = useSelector(instancesSelector)
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
   const { loading, data } = useSelector(contentSelector)
+  const { features } = useSelector(appFeatureHighlightingSelector)
+  const { cloudButton: cloudButtonHighlighting } = getHighlightingFeatures(features)
+
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
   const [guides, setGuides] = useState<IHelpGuide[]>([])
   const [isImportDialogOpen, setIsImportDialogOpen] = useState<boolean>(false)
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (loading || !data || isEmpty(data)) {
@@ -200,22 +208,28 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
     )
     return (
       <FeatureFlagComponent name={FeatureFlags.cloudSso} otherwise={promoLink}>
-        <EuiToolTip
-          position="bottom"
-          anchorClassName={styles.cloudSsoPromoBtnAnchor}
-          content={(
-            <div className={styles.cloudSsoPromoTooltip}>
-              <EuiIcon type={ConfettiIcon} className={styles.cloudSsoPromoTooltipIcon} />
-              <div>
-                New!
-                <br />
-                Now you can create a free Redis Stack database in Redis Enterprise Cloud in a few clicks.
-              </div>
-            </div>
-          )}
+        <HighlightedFeature
+          isHighlight={cloudButtonHighlighting}
+          type={BUILD_FEATURES?.cloudButton?.type}
+          onClick={() => dispatch(removeFeatureFromHighlighting('cloudButton'))}
         >
-          {promoLink}
-        </EuiToolTip>
+          <EuiToolTip
+            position="bottom"
+            anchorClassName={styles.cloudSsoPromoBtnAnchor}
+            content={(
+              <div className={styles.cloudSsoPromoTooltip}>
+                <EuiIcon type={ConfettiIcon} className={styles.cloudSsoPromoTooltipIcon} />
+                <div>
+                  New!
+                  <br />
+                  Now you can create a free Redis Stack database in Redis Enterprise Cloud in a few clicks.
+                </div>
+              </div>
+          )}
+          >
+            {promoLink}
+          </EuiToolTip>
+        </HighlightedFeature>
       </FeatureFlagComponent>
     )
   }

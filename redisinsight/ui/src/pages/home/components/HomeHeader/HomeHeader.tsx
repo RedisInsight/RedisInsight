@@ -24,8 +24,9 @@ import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { FeatureFlags } from 'uiSrc/constants'
 import { ReactComponent as ConfettiIcon } from 'uiSrc/assets/img/oauth/confetti.svg'
+import { getContentByFeature } from 'uiSrc/utils/content'
 import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
-import { appFeatureHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
+import { appFeatureFlagsFeaturesSelector, appFeatureHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import SearchDatabasesList from '../SearchDatabasesList'
@@ -35,15 +36,15 @@ import styles from './styles.module.scss'
 export interface Props {
   onAddInstance: () => void
   direction: 'column' | 'row'
-  welcomePage?: boolean
 }
 
 const CREATE_DATABASE = 'CREATE DATABASE'
 const THE_GUIDES = 'THE GUIDES'
 
-const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) => {
+const HomeHeader = ({ onAddInstance, direction }: Props) => {
   const { theme } = useContext(ThemeContext)
   const { data: instances } = useSelector(instancesSelector)
+  const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
   const { loading, data } = useSelector(contentSelector)
   const { features } = useSelector(appFeatureHighlightingSelector)
   const { cloudButton: cloudButtonHighlighting } = getHighlightingFeatures(features)
@@ -58,19 +59,26 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
     if (loading || !data || isEmpty(data)) {
       return
     }
+
     if (data?.cloud && !isEmpty(data.cloud)) {
-      setPromoData(data.cloud)
+      setPromoData(getContentByFeature(data.cloud, featureFlags))
     }
-    const items = Object.entries(data).map(([key, { title, links, description }]) => ({
-      id: key,
-      title,
-      description,
-      event: HELP_LINKS[key as keyof typeof HELP_LINKS]?.event,
-      url: links?.main?.url,
-      primary: key.toLowerCase() === 'cloud',
-    }))
+
+    const items = Object.entries(data)
+      .map(([key, item]) => {
+        const { title, links, description } = getContentByFeature(item, featureFlags)
+        return ({
+          id: key,
+          title,
+          description,
+          event: HELP_LINKS[key as keyof typeof HELP_LINKS]?.event,
+          url: links?.main?.url,
+          primary: key.toLowerCase() === 'cloud',
+        })
+      })
+
     setGuides(items)
-  }, [loading, data])
+  }, [loading, data, featureFlags])
 
   const handleOnAddDatabase = () => {
     sendEventTelemetry({
@@ -117,19 +125,11 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
         fill
         color="secondary"
         onClick={handleOnAddDatabase}
-        className={cx(styles.addInstanceBtn, 'eui-showFor--s', 'eui-showFor--xs')}
+        className={styles.addInstanceBtn}
         data-testid="add-redis-database-short"
       >
-        + ADD DATABASE
-      </EuiButton>
-      <EuiButton
-        fill
-        color="secondary"
-        onClick={handleOnAddDatabase}
-        className={cx(styles.addInstanceBtn, 'eui-hideFor--s', 'eui-hideFor--xs')}
-        data-testid="add-redis-database"
-      >
-        + ADD REDIS DATABASE
+        <span className={cx('eui-showFor--s', 'eui-showFor--xs')}>+ ADD DATABASE</span>
+        <span className={cx('eui-hideFor--s', 'eui-hideFor--xs')}>+ ADD REDIS DATABASE</span>
       </EuiButton>
     </>
   )
@@ -179,8 +179,6 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
     </div>
   )
 
-  console.log(cloudButtonHighlighting)
-
   const CreateBtn = ({ content }: { content: ContentCreateRedis }) => {
     const { title, description, styles: stylesCss, links } = content
     // @ts-ignore
@@ -201,14 +199,8 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
                 : undefined
             }}
             onClick={(e) => {
-              handleCreateDatabaseClick(
-                HELP_LINKS.cloud.event,
-                { source: welcomePage ? 'Welcome page' : 'My Redis databases' }
-              )
-              ssoCloudHandlerClick(
-                e,
-                welcomePage ? OAuthSocialSource.WelcomeScreen : OAuthSocialSource.ListOfDatabases
-              )
+              handleCreateDatabaseClick(HELP_LINKS.cloud.event, { source: 'My Redis databases' })
+              ssoCloudHandlerClick(e, OAuthSocialSource.ListOfDatabases)
             }}
           />
         )}
@@ -245,87 +237,56 @@ const HomeHeader = ({ onAddInstance, direction, welcomePage = false }: Props) =>
   return (
     <>
       {isImportDialogOpen && <ImportDatabasesDialog onClose={handleCloseImportDb} />}
-      {direction === 'column' ? (
-        <div className={styles.containerWelc}>
-          <EuiFlexGroup alignItems="center" justifyContent="center" responsive={false}>
-            <EuiFlexItem grow={false}>
-              <AddInstanceBtn />
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} style={{ marginLeft: 0, marginRight: 0 }}>
-              <ImportDatabasesBtn />
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          <EuiFlexGroup>
-            <EuiFlexItem>
-              <div className={styles.separator} />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+      <div className={styles.containerDl}>
+        <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false}>
+          <EuiFlexItem grow={false}>
+            <AddInstanceBtn />
+          </EuiFlexItem>
+          <EuiFlexItem grow={false} style={{ marginLeft: 0, marginRight: 0 }}>
+            <ImportDatabasesBtn />
+          </EuiFlexItem>
+          <EuiFlexItem className={cx(styles.separatorContainer)} grow={false}>
+            <div className={styles.separator} />
+          </EuiFlexItem>
           {!loading && !isEmpty(data) && (
             <>
-              {promoData && (
-                <EuiFlexGroup>
-                  <EuiFlexItem>
-                    <CreateBtn content={promoData} />
+              <EuiFlexItem grow className={cx(styles.promo)}>
+                <EuiFlexGroup alignItems="center">
+                  {promoData && (
+                    <EuiFlexItem grow={false}>
+                      <CreateBtn content={promoData} />
+                    </EuiFlexItem>
+                  )}
+                  <EuiFlexItem className={styles.linkGuides}>
+                    <Guides />
                   </EuiFlexItem>
                 </EuiFlexGroup>
-              )}
-              <Guides />
+              </EuiFlexItem>
+              <EuiFlexItem grow={false} className={styles.fullGuides}>
+                <HelpLinksMenu
+                  items={guides}
+                  buttonText={CREATE_DATABASE}
+                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
+                />
+              </EuiFlexItem>
+              <EuiFlexItem grow={false} className={styles.smallGuides}>
+                <HelpLinksMenu
+                  emptyAnchor
+                  items={guides.slice(1)}
+                  buttonText={THE_GUIDES}
+                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
+                />
+              </EuiFlexItem>
             </>
           )}
-          <EuiSpacer />
-        </div>
-      ) : (
-        <div className={styles.containerDl}>
-          <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false}>
-            <EuiFlexItem grow={false}>
-              <AddInstanceBtn />
+          {instances.length > 0 && (
+            <EuiFlexItem className={styles.searchContainer}>
+              <SearchDatabasesList />
             </EuiFlexItem>
-            <EuiFlexItem grow={false} style={{ marginLeft: 0, marginRight: 0 }}>
-              <ImportDatabasesBtn />
-            </EuiFlexItem>
-            <EuiFlexItem className={cx(styles.separatorContainer)} grow={false}>
-              <div className={styles.separator} />
-            </EuiFlexItem>
-            {!loading && !isEmpty(data) && (
-              <>
-                <EuiFlexItem grow className={cx(styles.promo)}>
-                  <EuiFlexGroup alignItems="center">
-                    {promoData && (
-                      <EuiFlexItem grow={false}>
-                        <CreateBtn content={promoData} />
-                      </EuiFlexItem>
-                    )}
-                    <EuiFlexItem className={styles.linkGuides}>
-                      <Guides />
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                </EuiFlexItem>
-                <EuiFlexItem grow={false} className={styles.fullGuides}>
-                  <HelpLinksMenu
-                    items={guides}
-                    buttonText={CREATE_DATABASE}
-                    onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
-                  />
-                </EuiFlexItem>
-                <EuiFlexItem grow={false} className={styles.smallGuides}>
-                  <HelpLinksMenu
-                    emptyAnchor
-                    items={guides.slice(1)}
-                    buttonText={THE_GUIDES}
-                    onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
-                  />
-                </EuiFlexItem>
-              </>
-            )}
-            {instances.length > 0 && (
-              <EuiFlexItem className={styles.searchContainer}>
-                <SearchDatabasesList />
-              </EuiFlexItem>
-            )}
-          </EuiFlexGroup>
-          <EuiSpacer className={styles.spacerDl} />
-        </div>
-      )}
+          )}
+        </EuiFlexGroup>
+        <EuiSpacer className={styles.spacerDl} />
+      </div>
     </>
   )
 }

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useFormik, FormikErrors } from 'formik'
 import { isEmpty } from 'lodash'
@@ -25,13 +25,13 @@ import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  accessKey: string;
-  secretKey: string;
-  flexGroupClassName: string;
-  flexItemClassName: string;
-  onClose?: () => void;
-  onSubmit: ({ accessKey, secretKey }: ICloudConnectionSubmit) => void;
-  loading: boolean;
+  accessKey: string
+  secretKey: string
+  flexGroupClassName: string
+  flexItemClassName: string
+  onClose?: () => void
+  onSubmit: ({ accessKey, secretKey }: ICloudConnectionSubmit) => void
+  loading: boolean
 }
 
 interface ISubmitButton {
@@ -80,9 +80,14 @@ const CloudConnectionForm = (props: Props) => {
     loading,
   } = props
 
+  const [domReady, setDomReady] = useState(false)
   const [errors, setErrors] = useState<FormikErrors<Values>>(
     accessKey || secretKey ? {} : fieldDisplayNames
   )
+
+  useEffect(() => {
+    setDomReady(true)
+  }, [])
 
   const validate = (values: Values) => {
     const errs: FormikErrors<Values> = {}
@@ -157,6 +162,8 @@ const CloudConnectionForm = (props: Props) => {
   )
 
   const Footer = () => {
+    if (!domReady) return null
+
     const footerEl = document.getElementById('footerDatabaseForm')
     if (footerEl) {
       return ReactDOM.createPortal(
@@ -219,7 +226,6 @@ const CloudConnectionForm = (props: Props) => {
             <Footer />
           </EuiForm>
         </div>
-
       </div>
     </>
   )

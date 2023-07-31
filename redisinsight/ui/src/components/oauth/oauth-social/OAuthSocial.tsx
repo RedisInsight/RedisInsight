@@ -1,11 +1,11 @@
 import React from 'react'
 import { EuiButtonIcon, EuiText, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import { ipcAuthGithub, ipcAuthGoogle } from 'uiSrc/electron/utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { oauthCloudSelector, setOAuthCloudSource, signIn } from 'uiSrc/slices/oauth/cloud'
+import { setOAuthCloudSource, signIn } from 'uiSrc/slices/oauth/cloud'
 
 import { ReactComponent as GoogleIcon } from 'uiSrc/assets/img/oauth/google.svg'
 import { ReactComponent as GithubIcon } from 'uiSrc/assets/img/oauth/github.svg'

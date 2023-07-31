@@ -1,12 +1,8 @@
 import { EuiPage, EuiPageBody, EuiResizableContainer, EuiResizeObserver } from '@elastic/eui'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  clusterSelector,
-  resetDataRedisCluster,
-  resetInstancesRedisCluster,
-} from 'uiSrc/slices/instances/cluster'
+import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
 import { BrowserStorageItem } from 'uiSrc/constants'
@@ -16,13 +12,19 @@ import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { cloudSelector, resetSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
-import { editedInstanceSelector, fetchEditedInstanceAction, fetchInstancesAction, instancesSelector, setEditedInstance } from 'uiSrc/slices/instances/instances'
+import {
+  editedInstanceSelector,
+  fetchEditedInstanceAction,
+  fetchInstancesAction,
+  instancesSelector,
+  setEditedInstance
+} from 'uiSrc/slices/instances/instances'
 import { localStorageService } from 'uiSrc/services'
 import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { fetchContentAction as fetchCreateRedisButtonsAction } from 'uiSrc/slices/content/create-redis-buttons'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
-import AddDatabaseContainer from './components/AddDatabases/AddDatabasesContainer'
+import AddDatabaseContainer, { AddDbType } from './components/AddDatabases/AddDatabasesContainer'
 import DatabasesList from './components/DatabasesListComponent/DatabasesListWrapper'
 import WelcomeComponent from './components/WelcomeComponent/WelcomeComponent'
 import HomeHeader from './components/HomeHeader'
@@ -39,6 +41,8 @@ const HomePage = () => {
     !localStorageService.get(BrowserStorageItem.instancesCount)
   )
   const [isPageViewSent, setIsPageViewSent] = useState(false)
+
+  const initialDbTypeRef = useRef<AddDbType>(AddDbType.manual)
 
   const dispatch = useDispatch()
 
@@ -165,7 +169,8 @@ const HomePage = () => {
     })
   }
 
-  const handleAddInstance = () => {
+  const handleAddInstance = (addDbType = AddDbType.manual) => {
+    initialDbTypeRef.current = addDbType
     setAddDialogIsOpen(true)
     dispatch(setEditedInstance(null))
     setEditDialogIsOpen(false)
@@ -295,9 +300,9 @@ const HomePage = () => {
                           editedInstance={sentinelInstance ?? null}
                           onClose={handleClose}
                           isFullWidth={!instances.length}
+                          initConnectionType={initialDbTypeRef.current}
                         />
                       )}
-                      <div id="footerDatabaseForm" />
                     </>
                   )}
                 </div>

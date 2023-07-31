@@ -31,6 +31,7 @@ import reducer, {
   getPlansSuccess,
   getPlansFailure,
   setIsOpenSelectPlanDialog,
+  showOAuthProgress,
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -630,6 +631,8 @@ describe('oauth cloud slice', () => {
 
         // Assert
         const expectedActions = [
+          showOAuthProgress(true),
+          removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
           addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(onConnect)),
           setSelectAccountDialogState(false),
         ]

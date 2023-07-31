@@ -41,6 +41,7 @@ export class DatabaseImportService {
     ['isCluster', ['cluster']],
     ['type', ['type']],
     ['connectionType', ['connectionType']],
+    ['compressor', ['compressor']],
     ['tls', ['tls', 'ssl']],
     ['tlsServername', ['tlsServername']],
     ['tlsCaName', ['caCert.name']],
@@ -150,7 +151,6 @@ export class DatabaseImportService {
 
       this.fieldsMapSchema.forEach(([field, paths]) => {
         let value;
-
         paths.every((path) => {
           value = get(item, path);
           return value === undefined;

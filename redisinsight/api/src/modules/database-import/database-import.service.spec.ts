@@ -165,7 +165,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor']),
         provider: 'RE_CLOUD',
         new: true,
       });
@@ -177,7 +177,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor']),
         name: `${mockDatabase.host}:${mockDatabase.port}`,
         new: true,
       });
@@ -190,7 +190,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'timeout']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'timeout', 'compressor']),
         connectionType: ConnectionType.CLUSTER,
         new: true,
       });

@@ -55,6 +55,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     certificate: Joi.string().required(),
     key: Joi.string(),
   }).allow(null),
+  compressor: Joi.string().valid('NONE', 'GZIP', 'ZSTD', 'LZ4', 'SNAPPY', 'Brotli', 'PHPGZCompress').required(),
 })).required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
@@ -103,6 +104,7 @@ describe(`POST /databases/export`, () => {
             expect(body[0].clientCert.key).to.have.eq(constants.TEST_USER_TLS_KEY);
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].username).to.eq(constants.TEST_INSTANCE_ACL_USER);
+            expect(body[0].compressor).to.eq(constants.TEST_REDIS_COMPRESSOR);
           },
         },
       ].map(mainCheckFn);

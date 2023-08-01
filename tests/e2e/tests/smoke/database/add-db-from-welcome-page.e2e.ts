@@ -1,7 +1,7 @@
 import { ClientFunction } from 'testcafe';
 import { env, rte } from '../../../helpers/constants';
 import { DatabaseHelper } from '../../../helpers/database';
-import { MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
+import { MyRedisDatabasePage, BrowserPage, WelcomePage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 
@@ -9,6 +9,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const browsePage  = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const welcomePage = new WelcomePage();
 
 const getPageUrl = ClientFunction(() => window.location.href);
 const sourcePage = 'https://developer.redis.com/create/from-source/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
@@ -30,7 +31,7 @@ test
         // Delete database
         await databaseHelper.deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user can add first DB from Welcome page', async t => {
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.welcomePageTitle.exists).ok('The welcome page title not displayed');
+        await t.expect(welcomePage.welcomePageTitle.exists).ok('The welcome page title not displayed');
         // Add database from Welcome page
         await databaseHelper.addNewStandaloneDatabase(ossStandaloneConfig);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database not added', { timeout: 10000 });
@@ -39,18 +40,18 @@ test
 test.skip
     .meta({ env: env.web })('Verify that all the links are valid from Welcome page', async t => {
         // Verify build from source link
-        await t.click(myRedisDatabasePage.AddRedisDatabase.buildFromSource);
+        await t.click(welcomePage.buildFromSource);
         await t.expect(getPageUrl()).eql(sourcePage, 'Build from source link is not valid');
         await t.switchToParentWindow();
         // Verify build from docker link
-        await t.click(myRedisDatabasePage.AddRedisDatabase.buildFromDocker);
+        await t.click(welcomePage.buildFromDocker);
         await t.expect(getPageUrl()).eql(dockerPage, 'Build from docker page is not valid');
         await t.switchToParentWindow();
         // Verify build from homebrew link
-        await t.click(myRedisDatabasePage.AddRedisDatabase.buildFromHomebrew);
+        await t.click(welcomePage.buildFromHomebrew);
         await t.expect(getPageUrl()).eql(homebrewPage, 'Build from homebrew page is not valid');
         await t.switchToParentWindow();
         // Verify promo button link
-        await t.click(myRedisDatabasePage.promoButton);
+        await t.click(welcomePage.tryRedisCloudButton);
         await t.expect(getPageUrl()).eql(promoPage, 'Promotion link is not valid');
     });

@@ -101,7 +101,7 @@ export class BulkImportService {
         const rl = readline.createInterface(stream);
         rl.on('line', (line) => {
           try {
-            const [command, ...args] = splitCliCommandLine((line));
+            const [command, ...args] = splitCliCommandLine((line.trim()));
             if (batch.length >= BATCH_LIMIT) {
               batchResults.push(this.executeBatch(client, batch));
               batch = [];

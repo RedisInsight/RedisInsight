@@ -3,7 +3,7 @@ import { BasePage } from './base-page';
 
 export class WelcomePage extends BasePage {
     // Buttons
-    tryRedisCloudButton = Selector('[data-testid=promo-btn]');
+    tryRedisCloudBtn = Selector('[data-testid=promo-btn]');
     addDbManuallyBtn = Selector('[data-testid=add-db-manually-btn]');
     addDbAutoBtn = Selector('[data-testid=add-db-auto-btn]');
     importCloudDbBtn = Selector('[data-testid=import-cloud-db-btn]');

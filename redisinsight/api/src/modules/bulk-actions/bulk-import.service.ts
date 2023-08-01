@@ -106,8 +106,9 @@ export class BulkImportService {
               batchResults.push(this.executeBatch(client, batch));
               batch = [];
             }
-
-            batch.push([command.toLowerCase(), args]);
+            if (command) {
+              batch.push([command.toLowerCase(), args]);
+            }
           } catch (e) {
             parseErrors += 1;
           }

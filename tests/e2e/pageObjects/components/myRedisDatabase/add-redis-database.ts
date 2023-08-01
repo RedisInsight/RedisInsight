@@ -41,7 +41,6 @@ export class AddRedisDatabase {
     usernameInput = Selector('[data-testid=username]');
     accessKeyInput = Selector('[data-testid=access-key]');
     secretKeyInput = Selector('[data-testid=secret-key]');
-    welcomePageTitle = Selector('[data-testid=welcome-page-title]');
     databaseIndexInput = Selector('[data-testid=db]');
     databaseIndexMessage = Selector('[data-testid=db-index-message]');
     primaryGroupNameInput = Selector('[data-testid=primary-group]');

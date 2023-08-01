@@ -12,4 +12,6 @@ export class WelcomePage extends BasePage {
     buildFromSource = Selector('a').withExactText('Build from source');
     buildFromDocker = Selector('a').withExactText('Docker');
     buildFromHomebrew = Selector('a').withExactText('Homebrew');
+    // Text
+    welcomePageTitle = Selector('[data-testid=welcome-page-title]');
 }

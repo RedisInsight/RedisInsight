@@ -31,7 +31,7 @@ test
         // Delete database
         await databaseHelper.deleteDatabase(ossStandaloneConfig.databaseName);
     })('Verify that user can add first DB from Welcome page', async t => {
-        await t.expect(myRedisDatabasePage.AddRedisDatabase.welcomePageTitle.exists).ok('The welcome page title not displayed');
+        await t.expect(welcomePage.welcomePageTitle.exists).ok('The welcome page title not displayed');
         // Add database from Welcome page
         await databaseHelper.addNewStandaloneDatabase(ossStandaloneConfig);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database not added', { timeout: 10000 });

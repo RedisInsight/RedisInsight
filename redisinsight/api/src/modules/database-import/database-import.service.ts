@@ -4,7 +4,7 @@ import {
 import { get, isArray, set } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import { plainToClass } from 'class-transformer';
-import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import { ConnectionType, Compressor } from 'src/modules/database/entities/database.entity';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import {
   DatabaseImportResponse,
@@ -19,6 +19,7 @@ import {
   NoDatabaseImportFileProvidedException,
   SizeLimitExceededDatabaseImportFileException,
   UnableToParseDatabaseImportFileException,
+  InvalidCompressorException,
 } from 'src/modules/database-import/exceptions';
 import { ValidationException } from 'src/common/exceptions';
 import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
@@ -41,7 +42,6 @@ export class DatabaseImportService {
     ['isCluster', ['cluster']],
     ['type', ['type']],
     ['connectionType', ['connectionType']],
-    ['compressor', ['compressor']],
     ['tls', ['tls', 'ssl']],
     ['tlsServername', ['tlsServername']],
     ['tlsCaName', ['caCert.name']],
@@ -61,6 +61,7 @@ export class DatabaseImportService {
     ['sshPrivateKey', ['sshOptions.privateKey', 'sshOptions.privatekey', 'ssh_private_key_path', 'sshKeyFile']],
     ['sshPassphrase', ['sshOptions.passphrase', 'sshKeyPassphrase']],
     ['sshAgentPath', ['ssh_agent_path']],
+    ['compressor', ['compressor']],
   ];
 
   constructor(
@@ -214,6 +215,12 @@ export class DatabaseImportService {
           status = DatabaseImportStatus.Partial;
           errors.push(e);
         }
+      }
+
+      if (data?.compressor && !(data.compressor in Compressor)) {
+        status = DatabaseImportStatus.Partial;
+        data.compressor = Compressor.NONE;
+        errors.push(new InvalidCompressorException());
       }
 
       const dto = plainToClass(

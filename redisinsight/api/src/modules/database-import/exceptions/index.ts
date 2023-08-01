@@ -2,6 +2,7 @@ export * from './invalid-ca-certificate-body.exception';
 export * from './invalid-client-certificate-body.exception';
 export * from './invalid-client-private-key.exception';
 export * from './invalid-certificate-name.exception';
+export * from './invalid-compressor.exception';
 export * from './invalid-ssh-body.exception';
 export * from './invalid-ssh-private-key-body.exception';
 export * from './size-limit-exceeded-database-import-file.exception';

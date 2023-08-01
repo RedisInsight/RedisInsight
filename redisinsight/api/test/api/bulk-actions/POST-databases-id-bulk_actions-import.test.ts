@@ -148,7 +148,7 @@ describe('POST /databases/:id/bulk-actions/import', () => {
             \n
             SET key0 value0
             \n
-            ' '\n
+                  \n
             SET key1 value1
             \n
             \n
@@ -159,7 +159,7 @@ describe('POST /databases/:id/bulk-actions/import', () => {
           id: 'empty',
           databaseId: constants.TEST_INSTANCE_ID,
           type: 'upload',
-          summary: { processed: 2, succeed: 2, failed: 2, errors: [] },
+          summary: { processed: 2, succeed: 2, failed: 0, errors: [] },
           progress: null,
           filter: null,
           status: 'completed',

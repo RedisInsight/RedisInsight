@@ -1,4 +1,7 @@
 import { t, Selector } from 'testcafe';
+import { WelcomePage } from '../../welcome-page';
+
+const welcomePage = new WelcomePage();
 
 export class AddRedisDatabase {
     //-------------------------------------------------------------------------------------------
@@ -8,7 +11,7 @@ export class AddRedisDatabase {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     // BUTTONS
-    addDatabaseButton = Selector('[data-testid=add-redis-database]');
+    addDatabaseButton = Selector('[data-testid^=add-redis-database]');
     addRedisDatabaseButton = Selector('[data-testid=btn-submit]');
     addDatabaseManually = Selector('[data-testid=add-manual]');
     addAutoDiscoverDatabase = Selector('[data-testid=add-auto]');
@@ -52,10 +55,6 @@ export class AddRedisDatabase {
     sshPrivateKeyInput = Selector('[data-testid=sshPrivateKey]');
     sshPassphraseInput = Selector('[data-testid=sshPassphrase]');
     timeoutInput = Selector('[data-testid=timeout]');
-    // Links
-    buildFromSource = Selector('a').withExactText('Build from source');
-    buildFromDocker = Selector('a').withExactText('Docker');
-    buildFromHomebrew = Selector('a').withExactText('Homebrew');
     // DROPDOWNS
     caCertField = Selector('[data-testid=select-ca-cert]', { timeout: 500 });
     clientCertField = Selector('[data-testid=select-cert]', { timeout: 500 });
@@ -70,10 +69,15 @@ export class AddRedisDatabase {
      * @param parameters the parameters of the database
      */
     async addRedisDataBase(parameters: AddNewDatabaseParameters): Promise<void> {
-        await this.addDatabaseButton.with({ visibilityCheck: true, timeout: 10000 })();
-        await t
-            .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually);
+        if (await welcomePage.addDbManuallyBtn.exists) {
+            await t.click(welcomePage.addDbManuallyBtn);
+        }
+        else {
+            await this.addDatabaseButton.with({ visibilityCheck: true, timeout: 10000 })();
+            await t
+                .click(this.addDatabaseButton)
+                .click(this.addDatabaseManually);
+        }
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
             .typeText(this.portInput, parameters.port, { replace: true, paste: true })
@@ -92,9 +96,14 @@ export class AddRedisDatabase {
      * @param index the logical index of database
      */
     async addLogicalRedisDatabase(parameters: AddNewDatabaseParameters, index: string): Promise<void> {
-        await t
-            .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually);
+        if (await welcomePage.addDbManuallyBtn.exists) {
+            await t.click(welcomePage.addDbManuallyBtn);
+        }
+        else {
+            await t
+                .click(this.addDatabaseButton)
+                .click(this.addDatabaseManually);
+        }
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
             .typeText(this.portInput, parameters.port, { replace: true, paste: true })
@@ -118,9 +127,14 @@ export class AddRedisDatabase {
      * @param sshParameters the parameters of ssh
      */
     async addStandaloneSSHDatabase(databaseParameters: AddNewDatabaseParameters, sshParameters: SSHParameters): Promise<void> {
-        await t
-            .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually);
+        if (await welcomePage.addDbManuallyBtn.exists) {
+            await t.click(welcomePage.addDbManuallyBtn);
+        }
+        else {
+            await t
+                .click(this.addDatabaseButton)
+                .click(this.addDatabaseManually);
+        }
         await t
             .typeText(this.hostInput, databaseParameters.host, { replace: true, paste: true })
             .typeText(this.portInput, databaseParameters.port, { replace: true, paste: true })
@@ -161,10 +175,15 @@ export class AddRedisDatabase {
      * @param parameters - Parameters of Sentinel: host, port and Sentinel password
      */
     async discoverSentinelDatabases(parameters: SentinelParameters): Promise<void> {
-        await t
-            .click(this.addDatabaseButton)
-            .click(this.addAutoDiscoverDatabase)
-            .click(this.redisSentinelType);
+        if (await welcomePage.addDbAutoBtn.exists) {
+            await t.click(welcomePage.addDbAutoBtn);
+        }
+        else {
+            await t
+                .click(this.addDatabaseButton)
+                .click(this.addAutoDiscoverDatabase);
+        }
+        await t.click(this.redisSentinelType);
         if (!!parameters.sentinelHost) {
             await t.typeText(this.hostInput, parameters.sentinelHost, { replace: true, paste: true });
         }
@@ -181,10 +200,15 @@ export class AddRedisDatabase {
      * @param parameters the parameters of the database
      */
     async addAutodiscoverREClusterDatabase(parameters: AddNewDatabaseParameters): Promise<void> {
-        await t
-            .click(this.addDatabaseButton)
-            .click(this.addAutoDiscoverDatabase)
-            .click(this.redisClusterType);
+        if (await welcomePage.addDbAutoBtn.exists) {
+            await t.click(welcomePage.addDbAutoBtn);
+        }
+        else {
+            await t
+                .click(this.addDatabaseButton)
+                .click(this.addAutoDiscoverDatabase);
+        }
+        await t.click(this.redisClusterType);
         await t
             .typeText(this.hostInput, parameters.host, { replace: true, paste: true })
             .typeText(this.portInput, parameters.port, { replace: true, paste: true })
@@ -197,9 +221,14 @@ export class AddRedisDatabase {
      * @param parameters the parameters of the database
      */
     async addAutodiscoverRECloudDatabase(cloudAPIAccessKey: string, cloudAPISecretKey: string): Promise<void> {
-        await t
-            .click(this.addDatabaseButton)
-            .click(this.addAutoDiscoverDatabase);
+        if (await welcomePage.addDbAutoBtn.exists) {
+            await t.click(welcomePage.addDbAutoBtn);
+        }
+        else {
+            await t
+                .click(this.addDatabaseButton)
+                .click(this.addAutoDiscoverDatabase);
+        }
         await t
             .typeText(this.accessKeyInput, cloudAPIAccessKey, { replace: true, paste: true })
             .typeText(this.secretKeyInput, cloudAPISecretKey, { replace: true, paste: true });
@@ -210,9 +239,14 @@ export class AddRedisDatabase {
      * @param parameters - Parameters of Sentinel: host, port and Sentinel password
      */
     async addOssClusterDatabase(parameters: OSSClusterParameters): Promise<void> {
-        await t
-            .click(this.addDatabaseButton)
-            .click(this.addDatabaseManually);
+        if (await welcomePage.addDbManuallyBtn.exists) {
+            await t.click(welcomePage.addDbManuallyBtn);
+        }
+        else {
+            await t
+                .click(this.addDatabaseButton)
+                .click(this.addDatabaseManually);
+        }
         if (!!parameters.ossClusterHost) {
             await t.typeText(this.hostInput, parameters.ossClusterHost, { replace: true, paste: true });
         }

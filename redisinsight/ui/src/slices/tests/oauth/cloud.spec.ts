@@ -6,7 +6,7 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
-import { CloudJobStatus, CloudJobs } from 'uiSrc/electron/constants'
+import { CloudJobStatus, CloudJobName } from 'uiSrc/electron/constants'
 import reducer, {
   initialState,
   setSignInDialogState,
@@ -31,6 +31,7 @@ import reducer, {
   getPlansSuccess,
   getPlansFailure,
   setIsOpenSelectPlanDialog,
+  showOAuthProgress,
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -492,7 +493,7 @@ describe('oauth cloud slice', () => {
         const expectedActions = [
           getUserInfo(),
           setSelectAccountDialogState(true),
-          removeInfiniteNotification(InfiniteMessagesIds.oAuth),
+          removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
           getUserInfoSuccess(responsePayload.data),
           setSignInDialogState(null),
         ]
@@ -527,7 +528,7 @@ describe('oauth cloud slice', () => {
     describe('createFreeDb', () => {
       it('call both addFreeDb and setJob when post is successed', async () => {
       // Arrange
-        const data = { id: '123123', name: CloudJobs.CREATE_FREE_DATABASE, status: CloudJobStatus.Running }
+        const data = { id: '123123', name: CloudJobName.CreateFreeDatabase, status: CloudJobStatus.Running }
         const responsePayload = { data, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
@@ -630,6 +631,8 @@ describe('oauth cloud slice', () => {
 
         // Assert
         const expectedActions = [
+          showOAuthProgress(true),
+          removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
           addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(onConnect)),
           setSelectAccountDialogState(false),
         ]
@@ -668,7 +671,7 @@ describe('oauth cloud slice', () => {
           setIsOpenSelectPlanDialog(true),
           setSignInDialogState(null),
           setSelectAccountDialogState(false),
-          removeInfiniteNotification(InfiniteMessagesIds.oAuth)
+          removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress)
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -702,7 +705,7 @@ describe('oauth cloud slice', () => {
           setIsOpenSelectPlanDialog(true),
           setSignInDialogState(null),
           setSelectAccountDialogState(false),
-          removeInfiniteNotification(InfiniteMessagesIds.oAuth),
+          removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

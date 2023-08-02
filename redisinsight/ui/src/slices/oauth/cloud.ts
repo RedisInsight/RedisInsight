@@ -4,7 +4,7 @@ import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
-import { CloudJobs, CloudJobStatus } from 'uiSrc/electron/constants'
+import { CloudJobName, CloudJobStatus } from 'uiSrc/electron/constants'
 import {
   INFINITE_MESSAGES,
   InfiniteMessagesIds
@@ -25,12 +25,13 @@ export const initialState: StateAppOAuth = {
   message: '',
   job: {
     id: localStorageService.get(BrowserStorageItem.OAuthJobId) ?? '',
-    name: CloudJobs.CREATE_FREE_DATABASE,
+    name: CloudJobName.CreateFreeDatabase,
     status: '',
   },
   source: null,
   isOpenSignInDialog: false,
   isOpenSelectAccountDialog: false,
+  showProgress: true,
   user: {
     loading: false,
     error: '',
@@ -117,6 +118,9 @@ const oauthCloudSlice = createSlice({
     getPlansFailure: (state) => {
       state.plan.loading = false
     },
+    showOAuthProgress: (state, { payload }: PayloadAction<boolean>) => {
+      state.showProgress = payload
+    },
   },
 })
 
@@ -140,6 +144,7 @@ export const {
   getPlans,
   getPlansSuccess,
   getPlansFailure,
+  showOAuthProgress,
 } = oauthCloudSlice.actions
 
 // A selector
@@ -158,7 +163,7 @@ export function createFreeDbSuccess(id: string, history: any) {
       const onConnect = () => {
         dispatch(setAppContextInitialState())
         dispatch(setConnectedInstanceId(id ?? ''))
-        dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+        dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthSuccess))
         dispatch(checkConnectToInstanceAction(id))
 
         history.push(Pages.home)
@@ -167,6 +172,8 @@ export function createFreeDbSuccess(id: string, history: any) {
         }, 0)
       }
 
+      dispatch(showOAuthProgress(true))
+      dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
       dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(onConnect)))
       dispatch(setSelectAccountDialogState(false))
     } catch (_err) {
@@ -190,7 +197,7 @@ export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => voi
         const isMultiAccount = (data?.accounts?.length ?? 0) > 1
         if (isMultiAccount) {
           dispatch(setSelectAccountDialogState(true))
-          dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+          dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
         }
 
         dispatch(getUserInfoSuccess(data))
@@ -217,7 +224,7 @@ export function createFreeDbJob(planId: number, onSuccessAction?: () => void, on
       const { data, status } = await apiService.post<CloudJobInfo>(
         ApiEndpoints.CLOUD_ME_JOBS,
         {
-          name: CloudJobs.CREATE_FREE_DATABASE,
+          name: CloudJobName.CreateFreeDatabase,
           runMode: 'async',
           data: { planId },
         }
@@ -225,7 +232,7 @@ export function createFreeDbJob(planId: number, onSuccessAction?: () => void, on
 
       if (isStatusSuccessful(status)) {
         localStorageService.set(BrowserStorageItem.OAuthJobId, data.id)
-        dispatch(setJob({ id: data.id, name: CloudJobs.CREATE_FREE_DATABASE, status: CloudJobStatus.Running }))
+        dispatch(setJob({ id: data.id, name: CloudJobName.CreateFreeDatabase, status: CloudJobStatus.Running }))
         onSuccessAction?.()
       }
     } catch (_err) {
@@ -285,7 +292,7 @@ export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => vo
         dispatch(setIsOpenSelectPlanDialog(true))
         dispatch(setSignInDialogState(null))
         dispatch(setSelectAccountDialogState(false))
-        dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuth))
+        dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
 
         onSuccessAction?.()
       }

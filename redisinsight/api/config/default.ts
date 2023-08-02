@@ -199,8 +199,6 @@ export default {
       name: 'triggers_and_functions',
       url: process.env.COMMANDS_TRIGGERS_AND_FUNCTIONS_URL
         || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
-      defaultUrl: process.env.COMMANDS_TRIGGERS_AND_FUNCTIONS_DEFAULT_URL
-        || 'https://s3.amazonaws.com/redisinsight.download/public/commands/triggers_and_functions.json',
     },
   ],
   connections: {

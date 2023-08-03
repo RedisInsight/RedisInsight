@@ -94,6 +94,7 @@ const cloudSlice = createSlice({
 
       state.data = map(payload?.data, (instance) => ({
         ...instance,
+        free: !!instance?.cloudDetails?.free,
         subscriptionName:
           find(
             state.subscriptions,
@@ -260,7 +261,7 @@ export function fetchAccountRedisCloud(credentials: Nullable<ICredentialsRedisCl
 
 // Asynchronous thunk action
 export function fetchInstancesRedisCloud(payload: {
-  subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType'>>[];
+  subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>>[];
   credentials: Nullable<ICredentialsRedisCloud>;
 }) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -298,7 +299,7 @@ export function fetchInstancesRedisCloud(payload: {
 
 // Asynchronous thunk action
 export function addInstancesRedisCloud(payload: {
-  databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId'>[];
+  databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId' | 'free'>[];
   credentials: Nullable<ICredentialsRedisCloud>;
 }) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {

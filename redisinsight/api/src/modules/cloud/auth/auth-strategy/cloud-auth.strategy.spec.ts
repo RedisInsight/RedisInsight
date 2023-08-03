@@ -3,7 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { GithubIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/github-idp.cloud.auth-strategy';
 import { mockSessionMetadata } from 'src/__mocks__';
 import {
-  mockAuthCode,
+  mockCloudAuthCode,
   mockCloudAuthGithubRequest,
   mockCloudAuthGithubTokenParams, mockCloudAuthGoogleAuthUrl,
   mockCloudAuthGoogleRequest, mockCloudAuthGoogleTokenUrl,
@@ -60,7 +60,7 @@ describe('CloudAuthStrategy', () => {
 
   describe('generateExchangeCodeUrl', () => {
     it('Should generate exchange code url', () => {
-      expect(CloudAuthStrategy.generateExchangeCodeUrl(mockCloudAuthGoogleRequest, mockAuthCode))
+      expect(CloudAuthStrategy.generateExchangeCodeUrl(mockCloudAuthGoogleRequest, mockCloudAuthCode))
         .toEqual(new URL(mockCloudAuthGoogleTokenUrl));
     });
   });

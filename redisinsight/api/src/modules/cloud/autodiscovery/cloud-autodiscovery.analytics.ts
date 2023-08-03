@@ -64,6 +64,9 @@ export class CloudAutodiscoveryAnalytics extends TelemetryBaseService {
           numberOfActiveDatabases: databases.filter(
             (db) => db.status === CloudDatabaseStatus.Active,
           ).length,
+          numberOfFreeDatabases: databases.filter(
+            (db) => db.cloudDetails?.free === true,
+          ).length,
           totalNumberOfDatabases: databases.length,
           fixed: 0,
           flexible: 0,

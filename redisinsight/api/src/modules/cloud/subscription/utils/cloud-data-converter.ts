@@ -22,6 +22,7 @@ export const parseCloudSubscriptionCapiResponse = (
     'region',
   ], get(subscription, 'region')),
   price: subscription?.price,
+  free: subscription?.price === 0,
 });
 
 export const parseCloudSubscriptionsCapiResponse = (

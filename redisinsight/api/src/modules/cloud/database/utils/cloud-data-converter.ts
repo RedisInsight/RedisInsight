@@ -15,6 +15,7 @@ export const parseCloudDatabaseCapiResponse = (
   database: ICloudCapiDatabase,
   subscriptionId: number,
   subscriptionType: CloudSubscriptionType,
+  free?: boolean,
 ): CloudDatabase => {
   const {
     databaseId, name, publicEndpoint, status, security, planMemoryLimit, memoryLimitMeasurementUnit,
@@ -47,6 +48,7 @@ export const parseCloudDatabaseCapiResponse = (
       subscriptionType,
       planMemoryLimit,
       memoryLimitMeasurementUnit,
+      free,
     },
   }, { groups: ['security'] });
 };
@@ -77,6 +79,7 @@ export const findReplicasForDatabase = (databases: any[], sourceDatabaseId: numb
 export const parseCloudDatabasesCapiResponse = (
   response: ICloudCapiSubscriptionDatabases,
   subscriptionType: CloudSubscriptionType,
+  free?: boolean,
 ): CloudDatabase[] => {
   const subscription = isArray(response.subscription) ? response.subscription[0] : response.subscription;
 
@@ -86,7 +89,7 @@ export const parseCloudDatabasesCapiResponse = (
   databases.forEach((database): void => {
     // We do not send the databases which have 'memcached' as their protocol.
     if ([CloudDatabaseProtocol.Redis, CloudDatabaseProtocol.Stack].includes(database.protocol)) {
-      result.push(parseCloudDatabaseCapiResponse(database, subscriptionId, subscriptionType));
+      result.push(parseCloudDatabaseCapiResponse(database, subscriptionId, subscriptionType, free));
     }
   });
   result = result.map((database) => ({

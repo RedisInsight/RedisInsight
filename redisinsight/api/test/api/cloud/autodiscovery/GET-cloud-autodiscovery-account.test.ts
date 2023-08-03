@@ -2,64 +2,50 @@ import {
   describe,
   deps,
   requirements,
-  Joi, getMainCheckFn, serverConfig
-} from '../deps';
-import { nock } from '../../helpers/test';
-import {
-  mockCloudCapiSubscription, mockCloudCapiSubscriptionFixed,
-  mockCloudSubscription,
-  mockCloudSubscriptionFixed
-} from 'src/__mocks__';
+  Joi,
+  nock, getMainCheckFn,
+  serverConfig,
+} from '../../deps';
+import { mockCloudAccountInfo, mockCloudCapiAccount } from 'src/__mocks__';
 import { CustomErrorCodes } from 'src/constants';
-
 const { request, server, constants } = deps;
 
-const endpoint = () => request(server).get(`/cloud/autodiscovery/subscriptions`);
+const endpoint = () => request(server).get(`/cloud/autodiscovery/account`);
 
 const headers = {
   'x-cloud-api-key': constants.TEST_CLOUD_API_KEY,
   'x-cloud-api-secret': constants.TEST_CLOUD_API_SECRET_KEY,
 }
 
-const responseSchema = Joi.array().items(Joi.object().keys({
-  id: Joi.number().required(),
-  name: Joi.string().required(),
-  numberOfDatabases: Joi.number().required(),
-  status: Joi.string().required(),
-  provider: Joi.string(),
-  region: Joi.string(),
-  type: Joi.string(),
-  price: Joi.number().integer(),
-})).required();
+const responseSchema = Joi.object().keys({
+  accountId: Joi.number().required(),
+  accountName: Joi.string().required(),
+  ownerName: Joi.string().required(),
+  ownerEmail: Joi.string().required(),
+}).required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
 const nockScope = nock(serverConfig.get('cloud').capiUrl);
 
-describe('GET /cloud/autodiscovery/subscriptions', () => {
+describe('GET /cloud/autodiscovery/account', () => {
   requirements('rte.serverType=local');
 
   describe('Common', () => {
     [
       {
         before: () => {
-          nockScope
-            .get('/fixed/subscriptions')
-            .reply(200, { subscriptions: [mockCloudCapiSubscriptionFixed] })
-            .get('/subscriptions')
-            .reply(200, { subscriptions: [mockCloudCapiSubscription] });
+          nockScope.get('/')
+            .reply(200, { account: mockCloudCapiAccount });
         },
+        name: 'Should get account info',
         headers,
-        name: 'Should get subscriptions list',
         responseSchema,
-        responseBody: [mockCloudSubscriptionFixed, mockCloudSubscription],
+        responseBody: mockCloudAccountInfo,
       },
       {
         before: () => {
-          nockScope
-            .get('/fixed/subscriptions')
-            .reply(200, { subscriptions: [mockCloudCapiSubscription] })
-            .get('/subscriptions')
+          nockScope.get('/')
             .reply(403, {
               response: {
                 status: 403,
@@ -67,8 +53,8 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
               }
             });
         },
-        headers,
         name: 'Should throw Forbidden error when api returned 403 error',
+        headers,
         statusCode: 403,
         responseBody: {
           statusCode: 403,
@@ -78,18 +64,15 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
       },
       {
         before: () => {
-          nockScope
-            .get('/fixed/subscriptions')
+          nockScope.get('/')
             .reply(401, {
               response: {
                 status: 401,
                 data: '',
               }
-            })
-            .get('/subscriptions')
-            .reply(200, { subscriptions: [mockCloudCapiSubscription] });
+            });
         },
-        name: 'Should throw Forbidden error when api returned 401',
+        name: 'Should throw Unauthorized error when api returns 401 error',
         headers,
         statusCode: 401,
         responseBody: {

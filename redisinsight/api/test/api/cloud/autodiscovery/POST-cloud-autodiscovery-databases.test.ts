@@ -6,10 +6,10 @@ import {
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
   Joi, getMainCheckFn, serverConfig,
-} from '../deps';
+} from '../../deps';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
-import { nock } from '../../helpers/test';
+import { nock } from '../../../helpers/test';
 import {
   mockCloudCapiDatabase,
   mockCloudCapiDatabaseFixed, mockCloudDatabase, mockCloudDatabaseFixed,
@@ -51,6 +51,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   subscriptionId: Joi.number().required(),
   subscriptionType: Joi.string().valid('fixed', 'flexible').required(),
   databaseId: Joi.number().required(),
+  free: Joi.boolean(),
   status: Joi.string().valid('fail', 'success').required(),
   message: Joi.string().required(),
   databaseDetails: Joi.object().required(),

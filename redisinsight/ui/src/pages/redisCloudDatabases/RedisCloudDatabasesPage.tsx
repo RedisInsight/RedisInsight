@@ -79,7 +79,7 @@ const RedisCloudDatabasesPage = () => {
   }
 
   const handleAddInstances = (
-    databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId'>[]
+    databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId' | 'free'>[]
   ) => {
     dispatch(addInstancesRedisCloud({ databases, credentials }))
   }

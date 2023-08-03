@@ -1,5 +1,5 @@
 import {
-  CloudDatabase,
+  CloudDatabase, CloudDatabaseAlert, CloudDatabaseAlertName,
   CloudDatabaseDataEvictionPolicy, CloudDatabaseDetails, CloudDatabasePersistencePolicy,
   CloudDatabaseProtocol,
   CloudDatabaseStatus,
@@ -11,8 +11,16 @@ import {
 } from 'src/__mocks__/cloud-subscription';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { mockCloudAccountInfo } from 'src/__mocks__/cloud-user';
-import { GetCloudSubscriptionDatabaseDto, GetCloudSubscriptionDatabasesDto } from 'src/modules/cloud/database/dto';
+import {
+  CreateFreeCloudDatabaseDto,
+  GetCloudSubscriptionDatabaseDto,
+  GetCloudSubscriptionDatabasesDto,
+} from 'src/modules/cloud/database/dto';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
+import { mockCloudTaskInit } from 'src/__mocks__/cloud-task';
+import config from 'src/utils/config';
+
+const cloudConfig = config.get('cloud');
 
 export const mockCloudCapiDatabase: ICloudCapiDatabase = {
   databaseId: 50859754,
@@ -66,6 +74,7 @@ export const mockCloudCapiDatabase: ICloudCapiDatabase = {
 
 export const mockCloudCapiDatabaseFixed: ICloudCapiDatabase = {
   ...mockCloudCapiDatabase,
+  name: cloudConfig.freeDatabaseName,
   protocol: CloudDatabaseProtocol.Stack,
   planMemoryLimit: 256,
   memoryLimitMeasurementUnit: 'MB',
@@ -92,17 +101,20 @@ export const mockCloudDatabase = Object.assign(new CloudDatabase(), {
   cloudDetails: {
     cloudId: mockCloudCapiDatabase.databaseId,
     subscriptionType: CloudSubscriptionType.Flexible,
+    free: false,
   },
 });
 
 export const mockCloudDatabaseFixed = Object.assign(new CloudDatabase(), {
   ...mockCloudDatabase,
+  name: cloudConfig.freeDatabaseName,
   subscriptionType: CloudSubscriptionType.Fixed,
   cloudDetails: {
     cloudId: mockCloudCapiDatabaseFixed.databaseId,
     subscriptionType: CloudSubscriptionType.Fixed,
     planMemoryLimit: mockCloudCapiDatabaseFixed.planMemoryLimit,
     memoryLimitMeasurementUnit: mockCloudCapiDatabaseFixed.memoryLimitMeasurementUnit,
+    free: true,
   },
 });
 
@@ -156,20 +168,58 @@ export const mockCloudDatabaseDetailsEntity = Object.assign(new CloudDatabaseDet
 export const mockGetCloudSubscriptionDatabasesDto = Object.assign(new GetCloudSubscriptionDatabasesDto(), {
   subscriptionId: mockCloudSubscription.id,
   subscriptionType: mockCloudSubscription.type,
+  free: false,
 });
 
 export const mockGetCloudSubscriptionDatabasesDtoFixed = Object.assign(new GetCloudSubscriptionDatabasesDto(), {
   subscriptionId: mockCloudSubscription.id,
   subscriptionType: CloudSubscriptionType.Fixed,
+  free: true,
 });
 
 export const mockGetCloudSubscriptionDatabaseDto = Object.assign(new GetCloudSubscriptionDatabaseDto(), {
   subscriptionId: mockCloudSubscription.id,
   subscriptionType: mockCloudSubscription.type,
   databaseId: mockCloudDatabase.databaseId,
+  free: false,
 });
 
 export const mockGetCloudSubscriptionDatabaseDtoFixed = Object.assign(new GetCloudSubscriptionDatabaseDto(), {
   ...mockGetCloudSubscriptionDatabaseDto,
   subscriptionType: mockCloudSubscriptionFixed.type,
+  free: true,
 });
+
+export const mockCloudDatabaseConnectionLimitAlert = Object.assign(new CloudDatabaseAlert(), {
+  name: CloudDatabaseAlertName.ConnectionsLimit,
+  value: 80,
+});
+
+export const mockCloudDatabaseDatasetsSizeAlert = Object.assign(new CloudDatabaseAlert(), {
+  name: CloudDatabaseAlertName.DatasetsSize,
+  value: 80,
+});
+
+export const mockCreateFreeCloudDatabaseDto = Object.assign(new CreateFreeCloudDatabaseDto(), {
+  name: mockCloudDatabaseFixed.name,
+  subscriptionId: mockCloudSubscriptionFixed.id,
+  subscriptionType: mockCloudSubscriptionFixed.type,
+  protocol: CloudDatabaseProtocol.Stack,
+  dataPersistence: CloudDatabasePersistencePolicy.None,
+  dataEvictionPolicy: CloudDatabaseDataEvictionPolicy.VolatileLru,
+  replication: false,
+  free: true,
+  alerts: [mockCloudDatabaseConnectionLimitAlert, mockCloudDatabaseDatasetsSizeAlert],
+});
+
+export const mockCloudDatabaseCapiProvider = jest.fn(() => ({
+  getDatabase: jest.fn().mockResolvedValue(mockCloudCapiDatabase),
+  getDatabases: jest.fn().mockResolvedValue(mockCloudCapiSubscriptionDatabases),
+  createFreeDatabase: jest.fn().mockResolvedValue(mockCloudTaskInit),
+}));
+
+export const mockCloudDatabaseCapiService = jest.fn(() => ({
+  getDatabase: jest.fn().mockResolvedValue(mockCloudDatabase),
+  getDatabases: jest.fn().mockResolvedValue([mockCloudDatabase]),
+  createFreeDatabase: jest.fn().mockResolvedValue(mockCloudTaskInit),
+}));

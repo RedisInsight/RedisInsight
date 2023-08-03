@@ -6,10 +6,14 @@ import {
   ICloudApiCapiKey,
   ICloudApiCsrfToken,
   ICloudApiUser,
-  ICloudCapiAccount
+  ICloudCapiAccount,
 } from 'src/modules/cloud/user/models';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { ICloudApiCredentials } from 'src/modules/cloud/common/models';
+import config from 'src/utils/config';
+import { classToPlain } from 'class-transformer';
+
+const serverConfig = config.get('server');
 
 // ======================================= CAPI =======================================
 export const mockCloudCapiAccount: ICloudCapiAccount = {
@@ -52,6 +56,14 @@ export const mockCloudCapiAuthDto: CloudCapiAuthDto = {
   capiSecret: 'capi_secret_key',
 };
 
+export const mockCloudCapiHeaders = {
+  headers: {
+    'x-api-key': mockCloudCapiAuthDto.capiKey,
+    'x-api-secret-key': mockCloudCapiAuthDto.capiSecret,
+    'User-Agent': `RedisInsight/${serverConfig.version}`,
+  },
+};
+
 export const mockCloudApiCapiAccessKey: ICloudApiCapiAccessKey = {
   accessKey: mockCloudCapiAuthDto.capiKey,
 };
@@ -73,6 +85,12 @@ export const mockCloudUserAccount = Object.assign(new CloudUserAccount(), {
   capiSecret: mockCloudCapiAuthDto.capiSecret,
 });
 
+//
+// export const mockCloudUserAccount2 = Object.assign(new CloudUserAccount(), {
+//   id: mockCloudCapiAccount2.id,
+//   name: mockCloudCapiAccount2.name,
+// });
+
 export const mockCloudApiCapiKey: ICloudApiCapiKey = {
   id: 3001,
   name: 'capi-key-name',
@@ -89,23 +107,23 @@ export const mockCloudApiHeaders = {
 };
 
 export const mockCloudApiUser: ICloudApiUser = {
-  id: 'api_user_id-1',
+  id: '66999',
   current_account_id: `${mockCloudCapiAccount.id}`,
   name: 'User 1',
   email: 'user1@mail.com',
-  user_id: 10001,
+  user_id: 10001, // is it okta id?
   role: 'owner',
 };
 
 export const mockCloudUser = Object.assign(new CloudUser(), {
-  id: 'api_user_id-1',
+  id: +mockCloudApiUser.id,
   name: mockCloudApiUser.name,
-  currentAccountId: mockCloudApiUser.current_account_id,
-  // capiKey?: string
-  // capiSecret?: string;
-  // accounts?: CloudUserAccount[] = [];
-  // syncedAt?: Date;
+  currentAccountId: +mockCloudApiUser.current_account_id,
+  accounts: [mockCloudUserAccount],
+  capiKey: mockCloudCapiAuthDto.capiKey,
 });
+
+export const mockCloudUserSafe = classToPlain(mockCloudUser); // omits all data in the "security" group
 
 export const mockCloudApiAccount: ICloudApiAccount = {
   id: mockCloudCapiAccount.id,

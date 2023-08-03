@@ -181,6 +181,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: 2,
+          numberOfFreeDatabases: 1,
           totalNumberOfDatabases: 2,
           fixed: 1,
           flexible: 1,
@@ -204,6 +205,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: 1,
+          numberOfFreeDatabases: 0,
           totalNumberOfDatabases: 2,
           fixed: 0,
           flexible: 2,
@@ -226,6 +228,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: 0,
+          numberOfFreeDatabases: 0,
           totalNumberOfDatabases: 1,
           fixed: 0,
           flexible: 1,
@@ -240,6 +243,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: 0,
+          numberOfFreeDatabases: 0,
           totalNumberOfDatabases: 0,
           fixed: 0,
           flexible: 0,
@@ -254,6 +258,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
         TelemetryEvents.RECloudDatabasesDiscoverySucceed,
         {
           numberOfActiveDatabases: 0,
+          numberOfFreeDatabases: 0,
           totalNumberOfDatabases: 0,
           fixed: 0,
           flexible: 0,
@@ -278,7 +283,7 @@ describe('CloudAutodiscoveryAnalytics', () => {
         httpException,
         {
           authType: CloudAutodiscoveryAuthType.Credentials,
-        }
+        },
       );
     });
   });

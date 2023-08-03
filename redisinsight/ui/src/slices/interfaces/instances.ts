@@ -140,6 +140,7 @@ export interface InstanceRedisCloud {
   statusAdded?: AddRedisDatabaseStatus
   messageAdded?: string
   databaseDetails?: InstanceRedisCluster
+  free: boolean,
 }
 
 export interface IBulkOperationResult {
@@ -299,6 +300,7 @@ export interface RedisCloudSubscription {
   provider: string
   region: string
   status: RedisCloudSubscriptionStatus
+  free: boolean
 }
 
 export interface DatabaseConfigInfo {

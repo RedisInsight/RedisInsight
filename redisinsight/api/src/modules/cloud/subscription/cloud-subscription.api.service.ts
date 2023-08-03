@@ -44,7 +44,7 @@ export class CloudSubscriptionApiService {
 
       const freePlans = filter(
         fixedPlans,
-        ({ price, name }) => price === 0 && name.startsWith('Cache')
+        ({ price, name }) => price === 0 && name.startsWith('Cache'),
       );
 
       return freePlans.map((plan) => ({

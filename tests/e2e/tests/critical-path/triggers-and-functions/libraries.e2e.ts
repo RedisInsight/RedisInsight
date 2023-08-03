@@ -11,6 +11,7 @@ import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { TriggersAndFunctionLibrary } from '../../../interfaces/triggers-and-functions';
 import { CommonElementsActions } from '../../../common-actions/common-elements-actions';
 import { Common } from '../../../helpers/common';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -177,7 +178,7 @@ test('Verify that function can be invoked', async t => {
 });
 
 test.after(async() => {
-    await browserPage.deleteKeyByNameFromList(streamKeyName);
+    await deleteKeyByNameApi(streamKeyName, ossStandaloneRedisGears);
     await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libraryName}`);
     await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
 })('Verify that user can open a Stream key from function', async t => {

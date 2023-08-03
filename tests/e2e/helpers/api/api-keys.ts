@@ -5,12 +5,14 @@ import {
     ListKeyParameters,
     SetKeyParameters,
     SortedSetKeyParameters,
-    StreamKeyParameters,
+    StreamKeyParameters
 } from '../../pageObjects/browser-page';
-import { sendGetRequest, sendPostRequest } from './api-common';
+import { sendDeleteRequest, sendPostRequest } from './api-common';
 import { DatabaseAPIRequests } from './api-database';
 
 const databaseAPIRequests = new DatabaseAPIRequests();
+
+const bufferPathMask = '/databases/databaseId/keys?encoding=buffer';
 
 /**
  * Add Hash key
@@ -26,7 +28,7 @@ export async function addHashKeyApi(
     );
     const requestBody = {
         keyName: keyParameters.keyName,
-        fields: keyParameters.fields,
+        fields: keyParameters.fields
     };
     const response = await sendPostRequest(
         `/databases/${databaseId}/hash?encoding=buffer`,
@@ -52,7 +54,7 @@ export async function addStreamKeyApi(
     );
     const requestBody = {
         keyName: keyParameters.keyName,
-        entries: keyParameters.entries,
+        entries: keyParameters.entries
     };
     const response = await sendPostRequest(
         `/databases/${databaseId}/streams?encoding=buffer`,
@@ -78,7 +80,7 @@ export async function addSetKeyApi(
     );
     const requestBody = {
         keyName: keyParameters.keyName,
-        members: keyParameters.members,
+        members: keyParameters.members
     };
     const response = await sendPostRequest(
         `/databases/${databaseId}/set?encoding=buffer`,
@@ -104,7 +106,7 @@ export async function addSortedSetKeyApi(
     );
     const requestBody = {
         keyName: keyParameters.keyName,
-        members: keyParameters.members,
+        members: keyParameters.members
     };
     const response = await sendPostRequest(
         `/databases/${databaseId}/zSet?encoding=buffer`,
@@ -130,7 +132,7 @@ export async function addListKeyApi(
     );
     const requestBody = {
         keyName: keyParameters.keyName,
-        element: keyParameters.element,
+        element: keyParameters.element
     };
     const response = await sendPostRequest(
         `/databases/${databaseId}/list?encoding=buffer`,
@@ -151,13 +153,17 @@ export async function searchKeyByNameApi(
     keyName: string,
     databaseParameters: AddNewDatabaseParameters
 ): Promise<string[]> {
+    const requestBody = {
+        cursor: '0',
+        match: keyName
+    };
     const databaseId = await databaseAPIRequests.getDatabaseIdByName(
         databaseParameters.databaseName
     );
-    const response = await sendGetRequest(
-        `/databases/${databaseId}/keys?cursor=0&count=5000&match=${keyName}`
+    const response = await sendPostRequest(
+        bufferPathMask.replace('databaseId', databaseId),
+        requestBody
     );
-
     await t.expect(response.status).eql(200, 'Getting key request failed');
     return await response.body[0].keys;
 }
@@ -176,12 +182,11 @@ export async function deleteKeyByNameApi(
     );
     const isKeyExist = await searchKeyByNameApi(keyName, databaseParameters);
     if (isKeyExist.length > 0) {
-        const requestBody = { keyNames: [keyName] };
-        const response = await sendPostRequest(
-            `/databases/${databaseId}/keys`,
+        const requestBody = { keyNames: [Buffer.from(keyName, 'utf-8')] };
+        const response = await sendDeleteRequest(
+            bufferPathMask.replace('databaseId', databaseId),
             requestBody
         );
-
         await t
             .expect(response.status)
             .eql(200, 'The deletion of the key request failed');
@@ -200,9 +205,10 @@ export async function deleteKeysApi(
     const databaseId = await databaseAPIRequests.getDatabaseIdByName(
         databaseParameters.databaseName
     );
-    const requestBody = { keyNames: keyNames };
+    const bufferKeyNames = keyNames.forEach((key) => Buffer.from(key, 'utf-8'));
+    const requestBody = { keyNames: bufferKeyNames };
     const response = await sendPostRequest(
-        `/databases/${databaseId}/keys`,
+        bufferPathMask.replace('databaseId', databaseId),
         requestBody
     );
 

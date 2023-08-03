@@ -10,7 +10,7 @@ import { CreateFreeSubscriptionCloudJob } from 'src/modules/cloud/job/jobs/creat
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
 import { WaitForActiveDatabaseCloudJob } from 'src/modules/cloud/job/jobs/wait-for-active-database.cloud-job';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
-import { CloudJobStatus } from 'src/modules/cloud/job/models';
+import { CloudJobStatus, CloudJobStep } from 'src/modules/cloud/job/models';
 import {
   CloudDatabaseAlreadyExistsFreeException, CloudJobUnexpectedErrorException,
   CloudTaskNoResourceIdException,
@@ -54,10 +54,14 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       this.logger.debug('Generating capi credentials');
 
+      this.changeState({ step: CloudJobStep.Credentials });
+
       this.data.capiCredentials = await this.dependencies.cloudCapiKeyService.getCapiCredentials(
         this.options.sessionMetadata,
         this.options.utm,
       );
+
+      this.changeState({ step: CloudJobStep.Subscription });
 
       this.logger.debug('Get or create free subscription');
 
@@ -69,6 +73,8 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
       this.logger.debug('Get free subscription databases');
 
       this.checkSignal();
+
+      this.changeState({ step: CloudJobStep.Database });
 
       const databases = await this.dependencies.cloudDatabaseCapiService.getDatabases(
         this.data.capiCredentials,
@@ -173,10 +179,15 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       return database;
     } catch (e) {
-      this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseFailed(e, {
-        region: freeSubscription?.region || '',
-        provider: freeSubscription?.provider || '',
-      });
+      this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseFailed(
+        e,
+        {
+          region: freeSubscription?.region,
+          provider: freeSubscription?.provider,
+        },
+        this.dependencies.cloudSubscriptionCapiService,
+        this.data,
+      );
 
       throw e;
     }

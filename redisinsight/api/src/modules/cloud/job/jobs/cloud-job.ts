@@ -1,12 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import config from 'src/utils/config';
-import { CloudJobInfo, CloudJobStatus } from 'src/modules/cloud/job/models/cloud-job-info';
+import { CloudJobInfo, CloudJobStatus, CloudJobStep } from 'src/modules/cloud/job/models/cloud-job-info';
 import { HttpException, Logger } from '@nestjs/common';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { CloudJobAbortedException, wrapCloudJobError } from 'src/modules/cloud/job/exceptions';
 import { SessionMetadata } from 'src/common/models';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
+import { debounce } from 'lodash';
 
 const cloudConfig = config.get('cloud');
 
@@ -31,6 +32,8 @@ export abstract class CloudJob {
 
   protected status = CloudJobStatus.Initializing;
 
+  protected step = CloudJobStep.Credentials;
+
   protected error?: HttpException;
 
   protected child?: CloudJob;
@@ -41,18 +44,33 @@ export abstract class CloudJob {
 
   protected dependencies: any;
 
+  private readonly debounce: any;
+
   protected constructor(options: CloudJobOptions) {
     this.options = options;
 
     if (!this.options.stateCallbacks) {
       this.options.stateCallbacks = [];
     }
+
+    this.debounce = debounce(() => {
+      try {
+        (this.options?.stateCallbacks || []).forEach((cb) => {
+          cb?.(this)?.catch?.(() => {});
+        });
+      } catch (e) {
+        // silently ignore callback
+      }
+    }, 1_000, {
+      maxWait: 1_000,
+    });
   }
 
   public async run() {
     try {
       this.changeState({
         status: CloudJobStatus.Running,
+        step: CloudJobStep.Credentials,
       });
 
       return await this.iteration();
@@ -88,6 +106,7 @@ export abstract class CloudJob {
       result: this.result,
       error: this.error ? wrapCloudJobError(this.error).getResponse() : undefined,
       child: this.child?.getState(),
+      step: this.step,
     };
   }
 
@@ -121,13 +140,8 @@ export abstract class CloudJob {
 
   protected changeState(state = {}) {
     Object.entries(state).forEach(([key, value]) => { this[key] = value; });
-    try {
-      (this.options?.stateCallbacks || []).forEach((cb) => {
-        cb?.(this)?.catch?.(() => {});
-      });
-    } catch (e) {
-      // silently ignore callback
-    }
+
+    this.debounce();
   }
 
   protected checkSignal() {

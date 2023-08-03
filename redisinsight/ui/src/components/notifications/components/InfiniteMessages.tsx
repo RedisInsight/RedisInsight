@@ -1,13 +1,15 @@
 import React from 'react'
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiLoadingSpinner, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { CloudJobStep } from 'uiSrc/electron/constants'
 
 export enum InfiniteMessagesIds {
-  oAuth = 'oAuth'
+  oAuthProgress = 'oAuthProgress',
+  oAuthSuccess = 'oAuthSuccess',
 }
 
 export const INFINITE_MESSAGES = {
-  PENDING_CREATE_DB: ({
-    id: InfiniteMessagesIds.oAuth,
+  PENDING_CREATE_DB: (step: CloudJobStep) => ({
+    id: InfiniteMessagesIds.oAuthProgress,
     Inner: (
       <div
         role="presentation"
@@ -20,7 +22,9 @@ export const INFINITE_MESSAGES = {
           <EuiFlexItem grow>
             <EuiTitle className="infiniteMessage__title">
               <span>
-                Setting up your Redis Enterprise Cloud account...
+                { (step === CloudJobStep.Credentials || !step) && 'Processing Cloud API keys…'}
+                { step === CloudJobStep.Subscription && 'Processing Cloud subscriptions…'}
+                { step === CloudJobStep.Database && 'Creating a free Cloud database…'}
               </span>
             </EuiTitle>
             <EuiText size="xs">
@@ -36,7 +40,7 @@ export const INFINITE_MESSAGES = {
     )
   }),
   SUCCESS_CREATE_DB: (onSuccess: () => void) => ({
-    id: InfiniteMessagesIds.oAuth,
+    id: InfiniteMessagesIds.oAuthSuccess,
     Inner: (
       <div
         role="presentation"

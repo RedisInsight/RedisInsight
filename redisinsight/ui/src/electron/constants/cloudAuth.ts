@@ -21,6 +21,17 @@ export enum CloudJobStatus {
   Failed = 'failed',
 }
 
-export enum CloudJobs {
-  CREATE_FREE_DATABASE = 'CREATE_FREE_DATABASE'
+export enum CloudJobStep {
+  Credentials = 'credentials',
+  Subscription = 'subscription',
+  Database = 'database',
+}
+
+export enum CloudJobName {
+  CreateFreeDatabase = 'CREATE_FREE_DATABASE',
+  CreateFreeSubscription = 'CREATE_FREE_SUBSCRIPTION',
+  WaitForActiveDatabase = 'WAIT_FOR_ACTIVE_DATABASE',
+  WaitForActiveSubscription = 'WAIT_FOR_ACTIVE_SUBSCRIPTION',
+  WaitForTask = 'WAIT_FOR_TASK',
+  Unknown = 'UNKNOWN',
 }

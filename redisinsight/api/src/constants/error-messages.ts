@@ -69,6 +69,8 @@ export default {
   UNDEFINED_WINDOW_ID: 'Undefined window id.',
   LIBRARY_NOT_EXIST: 'This library does not exist.',
 
+  CLOUD_CAPI_UNAUTHORIZED: 'Authorization failed',
+  CLOUD_CAPI_KEY_UNAUTHORIZED: 'Unable to authorize such CAPI key',
   CLOUD_API_UNAUTHORIZED: 'Authorization failed',
   CLOUD_API_FORBIDDEN: 'Access denied',
   CLOUD_API_BAD_REQUEST: 'Bad request',

@@ -2,8 +2,7 @@ import {
   CloudAccountInfo,
   CloudUser,
   CloudUserAccount,
-  ICloudApiAccount, ICloudApiCapiAccessKey,
-  ICloudApiCapiKey,
+  ICloudApiAccount,
   ICloudApiCsrfToken,
   ICloudApiUser,
   ICloudCapiAccount,
@@ -12,6 +11,7 @@ import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import config from 'src/utils/config';
 import { classToPlain } from 'class-transformer';
+import { ICloudApiCapiAccessKey, ICloudApiCapiKey } from 'src/modules/cloud/capi-key/model';
 
 const serverConfig = config.get('server');
 

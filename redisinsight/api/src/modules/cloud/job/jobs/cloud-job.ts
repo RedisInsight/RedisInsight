@@ -59,7 +59,12 @@ export abstract class CloudJob {
     } catch (e) {
       this.logger.error('Cloud job failed', e);
 
-      const error = wrapCloudJobError(e);
+      const error = wrapCloudJobError(
+        await this.dependencies.cloudCapiKeyService.handleCapiKeyUnauthorizedError(
+          e,
+          this.options.sessionMetadata,
+        ),
+      );
 
       this.changeState({
         status: CloudJobStatus.Failed,

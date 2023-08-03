@@ -20,7 +20,7 @@ import { HostingProvider } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
 import config from 'src/utils/config';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
-import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 
 const cloudConfig = config.get('cloud');
 
@@ -39,7 +39,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
       cloudTaskCapiService: CloudTaskCapiService,
       cloudDatabaseAnalytics: CloudDatabaseAnalytics,
       databaseService: DatabaseService,
-      cloudUserApiService: CloudUserApiService,
+      cloudCapiKeyService: CloudCapiKeyService,
     },
   ) {
     super(options);
@@ -54,7 +54,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       this.logger.debug('Generating capi credentials');
 
-      this.data.capiCredentials = await this.dependencies.cloudUserApiService.getCapiKeys(
+      this.data.capiCredentials = await this.dependencies.cloudCapiKeyService.getCapiCredentials(
         this.options.sessionMetadata,
         this.options.utm,
       );

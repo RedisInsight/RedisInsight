@@ -3,8 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { wrapHttpError } from 'src/common/utils';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
+import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { CloudSubscriptionCapiService } from './cloud-subscription.capi.service';
-import { CloudUserApiService } from '../user/cloud-user.api.service';
 import { CloudSubscriptionRegion, CloudSubscriptionType } from './models';
 import { CloudSessionService } from '../session/cloud-session.service';
 import { parseCloudSubscriptionsCloudRegionsApiResponse } from './utils';
@@ -18,7 +18,7 @@ export class CloudSubscriptionApiService {
   constructor(
     private readonly api: CloudSubscriptionApiProvider,
     private readonly sessionService: CloudSessionService,
-    private readonly cloudUserApiService: CloudUserApiService,
+    private readonly cloudCapiKeyService: CloudCapiKeyService,
     private readonly cloudSubscriptionCapiService: CloudSubscriptionCapiService,
   ) {}
 
@@ -34,7 +34,7 @@ export class CloudSubscriptionApiService {
     try {
       const [fixedPlans, regions] = await Promise.all([
         this.cloudSubscriptionCapiService.getSubscriptionsPlans(
-          await this.cloudUserApiService.getCapiKeys(sessionMetadata, utm),
+          await this.cloudCapiKeyService.getCapiCredentials(sessionMetadata, utm),
           CloudSubscriptionType.Fixed,
         ),
         this.getCloudRegions(

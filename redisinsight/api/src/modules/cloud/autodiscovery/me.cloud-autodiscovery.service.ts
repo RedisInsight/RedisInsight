@@ -14,18 +14,18 @@ import { CloudAccountInfo } from 'src/modules/cloud/user/models';
 import { CloudSubscription } from 'src/modules/cloud/subscription/models';
 import { CloudDatabase } from 'src/modules/cloud/database/models';
 import { CloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.service';
-import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
+import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 
 @Injectable()
 export class MeCloudAutodiscoveryService {
   constructor(
     private readonly cloudAutodiscoveryService: CloudAutodiscoveryService,
-    private readonly cloudUserApiService: CloudUserApiService,
+    private readonly cloudCapiKeyService: CloudCapiKeyService,
   ) {}
 
   private async getCapiCredentials(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<CloudCapiAuthDto> {
-    return this.cloudUserApiService.getCapiKeys(sessionMetadata, utm);
+    return this.cloudCapiKeyService.getCapiCredentials(sessionMetadata, utm);
   }
 
   /**
@@ -39,8 +39,7 @@ export class MeCloudAutodiscoveryService {
         await this.getCapiCredentials(sessionMetadata, utm),
       );
     } catch (e) {
-      // todo: error
-      throw wrapHttpError(e);
+      throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
     }
   }
 
@@ -56,8 +55,7 @@ export class MeCloudAutodiscoveryService {
         CloudAutodiscoveryAuthType.Sso,
       );
     } catch (e) {
-      // todo: error
-      throw wrapHttpError(e);
+      throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
     }
   }
 
@@ -79,8 +77,7 @@ export class MeCloudAutodiscoveryService {
         CloudAutodiscoveryAuthType.Sso,
       );
     } catch (e) {
-      // todo: error
-      throw wrapHttpError(e);
+      throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
     }
   }
 
@@ -101,8 +98,7 @@ export class MeCloudAutodiscoveryService {
         addDatabasesDto,
       );
     } catch (e) {
-      // todo: error
-      throw wrapHttpError(e);
+      throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
     }
   }
 }

@@ -20,6 +20,7 @@ import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-conf
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
+import { CloudCapiKeyEntity } from 'src/modules/cloud/capi-key/entity/cloud-capi-key.entity';
 
 const dbConfig = config.get('db');
 
@@ -46,6 +47,7 @@ const ormConfig = {
     FeatureEntity,
     FeaturesConfigEntity,
     CloudDatabaseDetailsEntity,
+    CloudCapiKeyEntity,
   ],
   migrations,
 };

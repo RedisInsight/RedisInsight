@@ -13,6 +13,9 @@ export enum CustomErrorCodes {
   CloudOauthUnknownAuthorizationRequest = 11_007,
   CloudOauthUnexpectedError = 11_008,
   CloudOauthMissedRequiredData = 11_009,
+  CloudCapiUnauthorized = 11_021,
+  CloudCapiKeyUnauthorized = 11_022,
+  CloudCapiKeyNotFound = 11_023,
 
   // Cloud Job errors [11100, 11199]
   CloudJobUnexpectedError = 11_100,

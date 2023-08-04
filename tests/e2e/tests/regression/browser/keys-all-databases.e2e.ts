@@ -7,12 +7,13 @@ import {
     commonUrl,
     ossClusterConfig,
     ossSentinelConfig,
-    ossStandaloneBigConfig,
+    ossStandaloneBigConfig, ossStandaloneConfig,
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { BrowserActions } from '../../../common-actions/browser-actions';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -45,7 +46,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, redisEnterpriseClusterConfig.databaseName);
         await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add Key in RE Cluster DB', async() => {
         await verifyKeysAdded();
@@ -57,7 +58,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, cloudDatabaseConfig.databaseName);
         await databaseHelper.deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add Key in RE Cloud DB', async() => {
         await verifyKeysAdded();
@@ -69,7 +70,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, ossClusterConfig.ossClusterDatabaseName);
         await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can add Key in OSS Cluster DB', async() => {
         await verifyKeysAdded();

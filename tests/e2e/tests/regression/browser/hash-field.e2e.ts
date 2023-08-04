@@ -5,6 +5,7 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { populateHashWithFields } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -24,7 +25,7 @@ fixture `Hash Key fields verification`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search per exact field name in Hash in DB with 1 million of fields', async t => {

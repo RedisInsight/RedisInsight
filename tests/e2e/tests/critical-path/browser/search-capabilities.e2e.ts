@@ -11,6 +11,7 @@ import { rte } from '../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList } from '../../../helpers/keys';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -51,7 +52,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames.join(' ')}`, `FT.DROPINDEX ${indexName}`]);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('RediSearch capabilities in Browser view to search per Hashes or JSONs', async t => {

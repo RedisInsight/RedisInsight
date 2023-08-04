@@ -2,10 +2,11 @@ import { Selector } from 'testcafe';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig, ossStandaloneBigConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, ossStandaloneBigConfig, ossStandaloneRedisGears } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { keyTypes } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
+import { deleteKeyByNameApi, deleteKeysApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -23,7 +24,7 @@ fixture `Filtering per key name in Browser page`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that when user searches not existed key, he can see the standard screen when there are no keys found', async t => {
@@ -61,8 +62,7 @@ test('Verify that user can filter per pattern with ? (matches keys with any char
 test
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
-        await browserPage.deleteKeyByName(keyName2);
+        await deleteKeysApi([keyName, keyName2], ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter per pattern with [xy] (matches one symbol: either x or y))', async t => {
         keyName = `KeyForSearch${Common.generateWord(10)}`;
@@ -130,7 +130,7 @@ test
     })
     .after(async() => {
         // Delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, ossStandaloneBigConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can filter per exact key without using any patterns in DB with 10 millions of keys', async t => {
         // Create new key

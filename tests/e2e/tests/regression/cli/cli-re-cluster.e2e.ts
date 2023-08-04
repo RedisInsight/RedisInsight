@@ -5,11 +5,12 @@ import { BrowserPage } from '../../../pageObjects';
 import {
     cloudDatabaseConfig,
     commonUrl, ossClusterConfig,
-    ossSentinelConfig,
+    ossSentinelConfig, ossStandaloneConfig,
     redisEnterpriseClusterConfig
 } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -40,7 +41,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, redisEnterpriseClusterConfig.databaseName);
         await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cluster DB', async() => {
         // Verify that database index switcher not displayed for RE Cluster
@@ -55,7 +56,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, cloudDatabaseConfig.databaseName);
         await databaseHelper.deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add data via CLI in RE Cloud DB', async() => {
         // Verify that database index switcher not displayed for RE Cloud

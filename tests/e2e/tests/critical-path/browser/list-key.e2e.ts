@@ -9,6 +9,7 @@ import {
 } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -26,7 +27,7 @@ fixture `List Key verification`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search List element by index', async t => {
@@ -48,7 +49,7 @@ test
     })
     .after(async() => {
         //Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, ossStandaloneV5Config.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('Verify that user can remove only one element for List for Redis v. <6.2', async t => {
         keyName = Common.generateWord(10);

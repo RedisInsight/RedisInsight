@@ -3,10 +3,11 @@ import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
-    ossStandaloneConfig
+    ossStandaloneConfig, ossStandaloneRedisGears
 } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -33,7 +34,7 @@ fixture `Consumer group`
         if (await browserPage.closeKeyButton.exists, { timeout: 500 }) {
             await t.click(browserPage.closeKeyButton);
         }
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can create a new Consumer Group in the current Stream', async t => {

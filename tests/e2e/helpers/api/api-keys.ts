@@ -151,14 +151,14 @@ export async function addListKeyApi(
  */
 export async function searchKeyByNameApi(
     keyName: string,
-    databaseParameters: AddNewDatabaseParameters
+    databaseName: string
 ): Promise<string[]> {
     const requestBody = {
         cursor: '0',
         match: keyName
     };
     const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
+        databaseName
     );
     const response = await sendPostRequest(
         bufferPathMask.replace('databaseId', databaseId),
@@ -175,12 +175,12 @@ export async function searchKeyByNameApi(
  */
 export async function deleteKeyByNameApi(
     keyName: string,
-    databaseParameters: AddNewDatabaseParameters
+    databaseName: string
 ): Promise<void> {
     const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
+        databaseName
     );
-    const isKeyExist = await searchKeyByNameApi(keyName, databaseParameters);
+    const isKeyExist = await searchKeyByNameApi(keyName, databaseName);
     if (isKeyExist.length > 0) {
         const requestBody = { keyNames: [Buffer.from(keyName, 'utf-8')] };
         const response = await sendDeleteRequest(
@@ -200,10 +200,10 @@ export async function deleteKeyByNameApi(
  */
 export async function deleteKeysApi(
     keyNames: string[],
-    databaseParameters: AddNewDatabaseParameters
+    databaseName: string
 ): Promise<void> {
     const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
+        databaseName
     );
     const bufferKeyNames = keyNames.forEach((key) => Buffer.from(key, 'utf-8'));
     const requestBody = { keyNames: bufferKeyNames };

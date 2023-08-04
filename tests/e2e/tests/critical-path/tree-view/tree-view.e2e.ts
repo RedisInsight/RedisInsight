@@ -1,10 +1,11 @@
 import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneBigConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneBigConfig, ossStandaloneRedisGears } from '../../../helpers/conf';
 import { rte, KeyTypesTexts } from '../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { verifySearchFilterValue } from '../../../helpers/keys';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -38,7 +39,7 @@ test('Verify that user can see that "Tree view" mode is enabled state is saved w
 test
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyNameFilter);
+        await deleteKeyByNameApi(keyNameFilter, ossStandaloneBigConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that when user enables filtering by key name he can see only folder with appropriate keys are displayed and the number of keys and percentage is recalculated', async t => {
         await browserPage.addHashKey(keyNameFilter);

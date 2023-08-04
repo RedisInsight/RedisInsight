@@ -178,7 +178,7 @@ test('Verify that function can be invoked', async t => {
 });
 
 test.after(async() => {
-    await deleteKeyByNameApi(streamKeyName, ossStandaloneRedisGears);
+    await deleteKeyByNameApi(streamKeyName, ossStandaloneRedisGears.databaseName);
     await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libraryName}`);
     await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
 })('Verify that user can open a Stream key from function', async t => {

@@ -1,9 +1,10 @@
 import { rte } from '../../../helpers/constants';
 import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, ossStandaloneRedisGears } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -25,7 +26,6 @@ fixture `Consumer group`
         if (await browserPage.closeKeyButton.visible){
             await t.click(browserPage.closeKeyButton);
         }
-        await browserPage.deleteKeyByName(keyName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that when user enter invalid Group Name the error message appears', async t => {

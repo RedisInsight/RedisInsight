@@ -1,10 +1,17 @@
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, WorkbenchPage } from '../../../pageObjects';
 import { RecommendationIds, rte } from '../../../helpers/constants';
 import { DatabaseHelper } from '../../../helpers/database';
-import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
+import {
+    commonUrl,
+    ossStandaloneBigConfig,
+    ossStandaloneConfig,
+    ossStandaloneRedisGears,
+    ossStandaloneV5Config
+} from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
 import { Common } from '../../../helpers/common';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -34,8 +41,7 @@ fixture `Memory Efficiency Recommendations`
     })
     .afterEach(async t => {
         // Clear and delete database
-        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
@@ -107,11 +113,9 @@ test
     })
     .after(async t => {
         // Clear and delete database
-        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, `${ossStandaloneConfig.databaseName} [${index}]`);
         await databaseHelper.deleteCustomDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-        await browserPage.deleteKeyByName(stringKeyName);
+        await deleteKeyByNameApi(stringKeyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Avoid using logical databases recommendation', async t => {
         // Go to Analysis Tools page
@@ -170,8 +174,7 @@ test
     })
     .after(async t => {
         // Clear and delete database
-        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.deleteKeyByName(keyName);
+        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see the Tutorial opened when clicking on "Tutorial" for recommendations', async t => {
         const recommendation = memoryEfficiencyPage.getRecommendationByName(searchJsonRecommendation);

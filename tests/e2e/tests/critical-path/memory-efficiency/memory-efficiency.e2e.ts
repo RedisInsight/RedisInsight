@@ -2,9 +2,10 @@ import { Chance } from 'chance';
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, WorkbenchPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { DatabaseHelper } from '../../../helpers/database';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, ossStandaloneRedisGears } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { verifySearchFilterValue } from '../../../helpers/keys';
+import { deleteKeyByNameApi, deleteKeysApi } from '../../../helpers/api/api-keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -71,9 +72,7 @@ test
         await browserPage.Cli.deleteKeysFromCliWithDelimiter(15);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
-        await browserPage.deleteKeyByName(hashKeyName);
-        await browserPage.deleteKeyByName(streamKeyName);
-        await browserPage.deleteKeyByName(streamKeyNameDelimiter);
+        await deleteKeysApi([streamKeyName, hashKeyName, streamKeyNameDelimiter], ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Keyspaces displaying in Summary per keyspaces table', async t => {
         const noNamespacesMessage = 'No namespaces to displayConfigure the delimiter in Tree View to customize the namespaces displayed.';
@@ -142,7 +141,7 @@ test
         await browserPage.Cli.deleteKeysFromCliWithDelimiter(5);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
-        await browserPage.deleteKeyByName(keySpaces[4]);
+        await deleteKeyByNameApi(keySpaces[4], ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Namespaces sorting', async t => {
         // Create new report
@@ -185,7 +184,7 @@ test
     .after(async t => {
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
-        await browserPage.deleteKeyByName(hashKeyName);
+        await deleteKeyByNameApi(hashKeyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Memory efficiency context saved', async t => {
         // Create new report
@@ -212,9 +211,7 @@ test
     })
     .after(async t => {
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.deleteKeyByName(hashKeyName);
-        await browserPage.deleteKeyByName(streamKeyName);
-        await browserPage.deleteKeyByName(streamKeyNameDelimiter);
+        await deleteKeysApi([hashKeyName, streamKeyName, streamKeyNameDelimiter], ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Summary per expiration time', async t => {
         const yAxis = 218;

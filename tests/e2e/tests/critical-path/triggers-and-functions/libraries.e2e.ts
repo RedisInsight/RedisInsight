@@ -11,11 +11,12 @@ import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { TriggersAndFunctionLibrary } from '../../../interfaces/triggers-and-functions';
 import { CommonElementsActions } from '../../../common-actions/common-elements-actions';
 import { Common } from '../../../helpers/common';
-import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 const triggersAndFunctionsLibrariesPage = new TriggersAndFunctionsLibrariesPage();
 const triggersAndFunctionsFunctionsPage = new TriggersAndFunctionsFunctionsPage();
 
@@ -178,7 +179,7 @@ test('Verify that function can be invoked', async t => {
 });
 
 test.after(async() => {
-    await deleteKeyByNameApi(streamKeyName, ossStandaloneRedisGears.databaseName);
+    await apiKeyRequests.deleteKeyByNameApi(streamKeyName, ossStandaloneRedisGears.databaseName);
     await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libraryName}`);
     await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
 })('Verify that user can open a Stream key from function', async t => {

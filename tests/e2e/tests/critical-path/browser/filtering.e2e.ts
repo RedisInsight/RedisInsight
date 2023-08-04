@@ -3,17 +3,18 @@ import { BrowserPage } from '../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
-    ossStandaloneConfig, ossStandaloneRedisGears
+    ossStandaloneConfig
 } from '../../../helpers/conf';
 import { keyLength, KeyTypesTexts, rte } from '../../../helpers/constants';
 import { addKeysViaCli, deleteKeysViaCli, keyTypes } from '../../../helpers/keys';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
-import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 let keyName = Common.generateWord(10);
 const keysData = keyTypes.map(object => ({ ...object }));
@@ -32,7 +33,7 @@ fixture `Filtering per key name in Browser page`
 test
     .after(async() => {
         // Clear and delete database
-        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can search a key with selected data type is filters', async t => {
         keyName = Common.generateWord(10);

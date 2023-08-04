@@ -1,10 +1,9 @@
 import { rte } from '../../../helpers/constants';
 import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig, ossStandaloneRedisGears } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
-import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();

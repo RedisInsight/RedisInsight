@@ -1,14 +1,15 @@
 import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
-import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
-import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const keyName = Common.generateWord(20);
 const keyValue = Common.generateWord(20);
@@ -30,7 +31,7 @@ test
         await browserPage.openKeyDetails(keyName);
     })
     .after(async() => {
-        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can switch to full screen from key details in Browser', async t => {
         // Save tables size before switching to full screen mode
@@ -66,7 +67,7 @@ test
         await browserPage.openKeyDetails(keyName);
     })
     .after(async() => {
-        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that when user closes key details in full screen mode the list of keys displayed in full screen', async t => {
         // Save keys table size before switching to full screen
@@ -92,7 +93,7 @@ test
         await browserPage.openKeyDetails(keyName);
     })
     .after(async() => {
-        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that when users close key details not in full mode, they can see full key list screen', async t => {
         // Save key list table size before switching to full screen

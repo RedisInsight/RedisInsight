@@ -5,7 +5,7 @@ import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { verifySearchFilterValue } from '../../../helpers/keys';
-import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -13,6 +13,7 @@ const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 const chance = new Chance();
 
 const hashKeyName = 'test:Hash1';
@@ -72,9 +73,9 @@ test
         await browserPage.Cli.deleteKeysFromCliWithDelimiter(15);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
-        await deleteKeyByNameApi(hashKeyName, ossStandaloneConfig.databaseName);
-        await deleteKeyByNameApi(streamKeyName, ossStandaloneConfig.databaseName);
-        await deleteKeyByNameApi(streamKeyNameDelimiter, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(hashKeyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(streamKeyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(streamKeyNameDelimiter, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Keyspaces displaying in Summary per keyspaces table', async t => {
         const noNamespacesMessage = 'No namespaces to displayConfigure the delimiter in Tree View to customize the namespaces displayed.';
@@ -143,7 +144,7 @@ test
         await browserPage.Cli.deleteKeysFromCliWithDelimiter(5);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
-        await deleteKeyByNameApi(keySpaces[4], ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keySpaces[4], ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Namespaces sorting', async t => {
         // Create new report
@@ -186,7 +187,7 @@ test
     .after(async t => {
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await t.click(browserPage.browserViewButton);
-        await deleteKeyByNameApi(hashKeyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(hashKeyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Memory efficiency context saved', async t => {
         // Create new report
@@ -213,9 +214,9 @@ test
     })
     .after(async t => {
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await deleteKeyByNameApi(hashKeyName, ossStandaloneConfig.databaseName);
-        await deleteKeyByNameApi(streamKeyName, ossStandaloneConfig.databaseName);
-        await deleteKeyByNameApi(streamKeyNameDelimiter, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(hashKeyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(streamKeyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(streamKeyNameDelimiter, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Summary per expiration time', async t => {
         const yAxis = 218;

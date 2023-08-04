@@ -1,15 +1,16 @@
 import { rte } from '../../../helpers/constants';
 import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig, redisEnterpriseClusterConfig } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { populateListWithElements } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
-import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port };
 const keyName = `TestListKey-${ Common.generateWord(10) }`;
@@ -25,7 +26,7 @@ fixture `List Key verification`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test

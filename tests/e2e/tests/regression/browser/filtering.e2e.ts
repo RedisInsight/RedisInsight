@@ -2,11 +2,11 @@ import { Selector } from 'testcafe';
 import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { DatabaseHelper } from '../../../helpers/database';
 import { BrowserPage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig, ossStandaloneBigConfig, ossStandaloneRedisGears } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, ossStandaloneBigConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { keyTypes } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
-import { deleteKeyByNameApi, deleteKeysApi } from '../../../helpers/api/api-keys';
+import { deleteKeyByNameApi } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -62,7 +62,8 @@ test('Verify that user can filter per pattern with ? (matches keys with any char
 test
     .after(async() => {
         // Clear and delete database
-        await deleteKeysApi([keyName, keyName2], ossStandaloneConfig.databaseName);
+        await deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
+        await deleteKeyByNameApi(keyName2, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter per pattern with [xy] (matches one symbol: either x or y))', async t => {
         keyName = `KeyForSearch${Common.generateWord(10)}`;

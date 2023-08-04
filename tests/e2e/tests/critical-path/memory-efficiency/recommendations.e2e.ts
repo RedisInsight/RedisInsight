@@ -115,6 +115,7 @@ test
         // Clear and delete database
         await deleteKeyByNameApi(keyName, `${ossStandaloneConfig.databaseName} [${index}]`);
         await databaseHelper.deleteCustomDatabase(`${ossStandaloneConfig.databaseName} [${index}]`);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await deleteKeyByNameApi(stringKeyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Avoid using logical databases recommendation', async t => {

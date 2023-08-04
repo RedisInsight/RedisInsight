@@ -192,27 +192,3 @@ export async function deleteKeyByNameApi(
             .eql(200, 'The deletion of the key request failed');
     }
 }
-
-/**
- * Delete Keys by names
- * @param keyNames The names of keys
- * @param databaseParameters The database parameters
- */
-export async function deleteKeysApi(
-    keyNames: string[],
-    databaseName: string
-): Promise<void> {
-    const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseName
-    );
-    const bufferKeyNames = keyNames.forEach((key) => Buffer.from(key, 'utf-8'));
-    const requestBody = { keyNames: bufferKeyNames };
-    const response = await sendPostRequest(
-        bufferPathMask.replace('databaseId', databaseId),
-        requestBody
-    );
-
-    await t
-        .expect(response.status)
-        .eql(200, 'The deletion of the keys request failed');
-}

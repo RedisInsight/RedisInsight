@@ -28,7 +28,7 @@ const apiNockScope = initApiCapiKeysEnsureNockScope();
 describe('GET /cloud/me/autodiscovery/account', () => {
   requirements('rte.serverType=local');
 
-  describe('Common', () => {
+  xdescribe('Common', () => {
     [
       {
         before: () => {

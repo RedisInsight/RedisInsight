@@ -36,6 +36,10 @@ export enum TelemetryEvents {
   CloudFreeDatabaseCreated = 'CLOUD_FREE_DATABASE_CREATED',
   CloudFreeDatabaseFailed = 'CLOUD_FREE_DATABASE_FAILED',
 
+  // Event for cloud CAPI keys
+  CloudAccountKeyGenerated = 'CLOUD_ACCOUNT_KEY_GENERATED',
+  CloudAccountKeyGenerationFailed = 'CLOUD_ACCOUNT_KEY_GENERATION_FAILED',
+
   // Events for cli tool
   CliClientCreated = 'CLI_CLIENT_CREATED',
   CliClientCreationFailed = 'CLI_CLIENT_CREATION_FAILED',

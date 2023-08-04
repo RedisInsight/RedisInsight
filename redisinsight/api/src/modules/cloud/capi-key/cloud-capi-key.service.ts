@@ -14,6 +14,7 @@ import {
   CloudCapiKeyNotFoundException,
   CloudCapiKeyUnauthorizedException,
 } from 'src/modules/cloud/capi-key/exceptions';
+import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key.analytics';
 
 @Injectable()
 export class CloudCapiKeyService {
@@ -25,6 +26,7 @@ export class CloudCapiKeyService {
     private readonly cloudUserApiService: CloudUserApiService,
     private readonly cloudSessionService: CloudSessionService,
     private readonly serverService: ServerService,
+    private readonly analytics: CloudCapiKeyAnalytics,
   ) {}
 
   private async generateName(capiKey: Partial<CloudCapiKey>): Promise<string> {
@@ -60,35 +62,42 @@ export class CloudCapiKeyService {
       );
 
       if (!capiKey) {
-        const session = await this.cloudSessionService.getSession(sessionMetadata.sessionId);
+        try {
+          const session = await this.cloudSessionService.getSession(sessionMetadata.sessionId);
 
-        // enable capi if needed
-        if (!currentAccount?.capiKey) {
-          this.logger.log('Trying to enable capi');
+          // enable capi if needed
+          if (!currentAccount?.capiKey) {
+            this.logger.log('Trying to enable capi');
 
-          await this.api.enableCapi(session);
+            await this.api.enableCapi(session);
 
-          this.logger.log('Successfully enabled capi');
+            this.logger.log('Successfully enabled capi');
 
-          user = await this.cloudUserApiService.me(sessionMetadata, true, utm);
-          currentAccount = CloudUserApiService.getCurrentAccount(user);
+            user = await this.cloudUserApiService.me(sessionMetadata, true, utm);
+            currentAccount = CloudUserApiService.getCurrentAccount(user);
+          }
+
+          this.logger.log('Creating new capi key');
+
+          capiKey = {
+            userId: sessionMetadata.userId,
+            cloudUserId: user.id,
+            cloudAccountId: user.currentAccountId,
+            capiKey: currentAccount?.capiKey,
+            createdAt: new Date(),
+          } as CloudCapiKey;
+          capiKey.name = await this.generateName(capiKey);
+
+          capiKey = await this.repository.create(plainToClass(CloudCapiKey, capiKey));
+
+          const capiSecret = await this.api.createCapiKey(session, user.id, capiKey.name);
+          capiKey = await this.repository.update(capiKey.id, { capiSecret: capiSecret.secret_key });
+
+          this.analytics.sendCloudAccountKeyGenerated();
+        } catch (e) {
+          this.analytics.sendCloudAccountKeyGenerationFailed(e);
+          throw e;
         }
-
-        this.logger.log('Creating new capi key');
-
-        capiKey = {
-          userId: sessionMetadata.userId,
-          cloudUserId: user.id,
-          cloudAccountId: user.currentAccountId,
-          capiKey: currentAccount?.capiKey,
-          createdAt: new Date(),
-        } as CloudCapiKey;
-        capiKey.name = await this.generateName(capiKey);
-
-        capiKey = await this.repository.create(plainToClass(CloudCapiKey, capiKey));
-
-        const capiSecret = await this.api.createCapiKey(session, user.id, capiKey.name);
-        capiKey = await this.repository.update(capiKey.id, { capiSecret: capiSecret.secret_key });
       } else if (capiKey.valid === false) {
         return Promise.reject(new CloudCapiKeyUnauthorizedException(
           undefined,

@@ -95,8 +95,8 @@ describe('GET /cloud/autodiscovery/subscriptions', () => {
         statusCode: 401,
         responseBody: {
           statusCode: 401,
-          error: 'CloudApiUnauthorized',
-          errorCode: CustomErrorCodes.CloudApiUnauthorized,
+          error: 'CloudCapiUnauthorized',
+          errorCode: CustomErrorCodes.CloudCapiUnauthorized,
         },
       },
       {

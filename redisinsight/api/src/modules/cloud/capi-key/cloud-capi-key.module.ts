@@ -6,6 +6,7 @@ import { CloudCapiKeyRepository } from 'src/modules/cloud/capi-key/repository/cl
 import { CloudCapiKeyApiProvider } from 'src/modules/cloud/capi-key/cloud-capi-key.api.provider';
 import { CloudUserModule } from 'src/modules/cloud/user/cloud-user.module';
 import { CloudSessionModule } from 'src/modules/cloud/session/cloud-session.module';
+import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key.analytics';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CloudSessionModule } from 'src/modules/cloud/session/cloud-session.modu
   providers: [
     CloudCapiKeyApiProvider,
     CloudCapiKeyService,
+    CloudCapiKeyAnalytics,
     {
       provide: CloudCapiKeyRepository,
       useClass: LocalCloudCapiKeyRepository,

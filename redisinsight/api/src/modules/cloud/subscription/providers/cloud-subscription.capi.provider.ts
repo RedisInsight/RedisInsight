@@ -4,7 +4,7 @@ import {
   ICloudCapiSubscription,
   ICloudCapiSubscriptionPlan,
 } from 'src/modules/cloud/subscription/models';
-import { wrapCloudApiError } from 'src/modules/cloud/common/exceptions';
+import { wrapCloudCapiError } from 'src/modules/cloud/common/exceptions';
 import { CloudCapiProvider } from 'src/modules/cloud/common/providers/cloud.capi.provider';
 import { ICloudCapiCredentials } from 'src/modules/cloud/common/models';
 import { CreateFreeCloudSubscriptionDto } from 'src/modules/cloud/subscription/dto';
@@ -29,7 +29,7 @@ export class CloudSubscriptionCapiProvider extends CloudCapiProvider {
 
       return data?.subscriptions;
     } catch (error) {
-      throw wrapCloudApiError(error);
+      throw wrapCloudCapiError(error);
     }
   }
 
@@ -52,7 +52,7 @@ export class CloudSubscriptionCapiProvider extends CloudCapiProvider {
 
       return data;
     } catch (error) {
-      throw wrapCloudApiError(error);
+      throw wrapCloudCapiError(error);
     }
   }
 
@@ -73,7 +73,7 @@ export class CloudSubscriptionCapiProvider extends CloudCapiProvider {
 
       return data?.plans;
     } catch (error) {
-      throw wrapCloudApiError(error);
+      throw wrapCloudCapiError(error);
     }
   }
 
@@ -99,7 +99,7 @@ export class CloudSubscriptionCapiProvider extends CloudCapiProvider {
 
       return data;
     } catch (error) {
-      throw wrapCloudApiError(error);
+      throw wrapCloudCapiError(error);
     }
   }
 }

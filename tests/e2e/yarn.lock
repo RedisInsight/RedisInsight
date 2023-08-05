@@ -4848,7 +4848,7 @@ sanitize-filename@^1.6.0:
   dependencies:
     truncate-utf8-bytes "^1.0.0"
 
-"semver@2 || 3 || 4 || 5", semver@7.5.3, semver@^6.0.0, semver@^6.3.1, semver@^7.2.1, semver@^7.3.5, semver@^7.5.2, semver@^7.5.3:
+"semver@2 || 3 || 4 || 5", semver@5.5.0, semver@^5.6.0, semver@^6.0.0, semver@^6.3.1, semver@^7.2.1, semver@^7.3.5, semver@^7.5.2:
   version "7.5.4"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.5.4.tgz#483986ec4ed38e1c6c48c34894a9182dbff68a6e"
   integrity sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==
@@ -5210,10 +5210,10 @@ testcafe-browser-provider-electron@0.0.19:
     promisify-event "^1.0.0"
     proxyquire "^1.7.10"
 
-testcafe-browser-tools@2.0.26:
-  version "2.0.26"
-  resolved "https://registry.yarnpkg.com/testcafe-browser-tools/-/testcafe-browser-tools-2.0.26.tgz#38b5c0c2cd438895de12ee53cae11c64bd33aab9"
-  integrity sha512-nTKSJhBzn9BmnOs0xVzXMu8dN2Gu13Ca3x3SJr/zF6ZdKjXO82JlbHu55dt5MFoWjzAQmwlqBkSxPaYicsTgUw==
+testcafe-browser-tools@2.0.25:
+  version "2.0.25"
+  resolved "https://registry.yarnpkg.com/testcafe-browser-tools/-/testcafe-browser-tools-2.0.25.tgz#9721f9ba7024a1c95ca4675554cf9477d792edd2"
+  integrity sha512-LK/ZOJUwnpjdJl131qrBN0toCv2wZj2Elb8UPTU71n9Woq7kZtGine4P5XvvvO7mE8bjBfWJOBW9jRhHxyIWzQ==
   dependencies:
     array-find "^1.0.0"
     debug "^4.3.1"
@@ -5233,10 +5233,10 @@ testcafe-browser-tools@2.0.26:
     read-file-relative "^1.2.0"
     which-promise "^1.0.0"
 
-testcafe-hammerhead@31.4.11, testcafe-hammerhead@>=19.4.0:
-  version "31.4.11"
-  resolved "https://registry.yarnpkg.com/testcafe-hammerhead/-/testcafe-hammerhead-31.4.11.tgz#2fd8982606ab864f63c6659978c4b0a33b01bab7"
-  integrity sha512-ZM7DQHAtIyTowHMFMHZkqVnl9bMFA5tFPUJqMU5R032tWrs3+VSSF8u3McypNy3GP/g2soqK2OuLtYuNJo/0fA==
+testcafe-hammerhead@31.4.5, testcafe-hammerhead@>=19.4.0:
+  version "31.4.5"
+  resolved "https://registry.yarnpkg.com/testcafe-hammerhead/-/testcafe-hammerhead-31.4.5.tgz#672ae1ee426f42fcedb8f15c3e8350f198af2670"
+  integrity sha512-L6flQbgQ4IoCqtjjOVPoJsaq6++9/mYKVCDxUjn5FhMyP/P3pfLcpW0h1wV8UiNkcf6WoYVYhwxN/15g5YMgIQ==
   dependencies:
     "@electron/asar" "^3.2.3"
     acorn-hammerhead "0.6.2"
@@ -5259,10 +5259,9 @@ testcafe-hammerhead@31.4.11, testcafe-hammerhead@>=19.4.0:
     parse5 "2.2.3"
     pinkie "2.0.4"
     read-file-relative "^1.2.0"
-    semver "7.5.3"
-    tough-cookie "4.1.3"
+    semver "5.5.0"
+    tough-cookie "4.0.0"
     tunnel-agent "0.6.0"
-    ws "^7.4.6"
 
 testcafe-legacy-api@5.1.6:
   version "5.1.6"
@@ -5329,10 +5328,10 @@ testcafe-selector-generator@^0.1.0:
   resolved "https://registry.yarnpkg.com/testcafe-selector-generator/-/testcafe-selector-generator-0.1.0.tgz#852c86f71565e5d9320da625c2260d040cbed786"
   integrity sha512-MTw+RigHsEYmFgzUFNErDxui1nTYUk6nm2bmfacQiKPdhJ9AHW/wue4J/l44mhN8x3E8NgOUkHHOI+1TDFXiLQ==
 
-testcafe@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/testcafe/-/testcafe-3.1.0.tgz#4673e1f4a6ac575d70837e5c06171571360422ea"
-  integrity sha512-NrA7wqgOUmshsG+FMZZIRMXAOjhqIlDIxyHPBRE9iGeZsqrCgnQ1sj1xjy70SJnz3oYGgd0L4V2EF3vADse7/Q==
+testcafe@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/testcafe/-/testcafe-3.0.0.tgz#c1be0fe770794cfc773651c40e23ed0096db633d"
+  integrity sha512-znaK7JQ2kGdEJq2kDmI5sP6QDDkaqwGCxBVYEBOWRr7lUj/bAyFj6x3n3n1WoA3JcwhkRrxJQXQSk/QDgKCCUw==
   dependencies:
     "@babel/core" "^7.12.1"
     "@babel/plugin-proposal-async-generator-functions" "^7.12.1"
@@ -5410,12 +5409,12 @@ testcafe@^3.1.0:
     resolve-cwd "^1.0.0"
     resolve-from "^4.0.0"
     sanitize-filename "^1.6.0"
-    semver "^7.5.3"
+    semver "^5.6.0"
     set-cookie-parser "^2.5.1"
     source-map-support "^0.5.16"
     strip-bom "^2.0.0"
-    testcafe-browser-tools "2.0.26"
-    testcafe-hammerhead "31.4.11"
+    testcafe-browser-tools "2.0.25"
+    testcafe-hammerhead "31.4.5"
     testcafe-legacy-api "5.1.6"
     testcafe-reporter-json "^2.1.0"
     testcafe-reporter-list "^2.2.0"
@@ -5460,7 +5459,7 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-tough-cookie@4.1.3:
+tough-cookie@4.0.0, tough-cookie@^4.1.3:
   version "4.1.3"
   resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-4.1.3.tgz#97b9adb0728b42280aa3d814b6b999b2ff0318bf"
   integrity sha512-aX/y5pVRkfRnfmuX+OdbSdXvPe6ieKX/G2s7e98f4poJHnqH3281gDPm/metm6E/WRamfx7WC4HUqkWHfQHprw==
@@ -5801,7 +5800,7 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
-ws@^7.2.0, ws@^7.4.6:
+ws@^7.2.0:
   version "7.5.9"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.9.tgz#54fa7db29f4c7cec68b1ddd3a89de099942bb591"
   integrity sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==

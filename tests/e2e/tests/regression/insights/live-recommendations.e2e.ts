@@ -52,7 +52,6 @@ fixture `Live Recommendations`
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-        await browserPage.Cli.sendCommandInCli('flushdb');
     })
     .afterEach(async() => {
         await refreshFeaturesTestData();
@@ -70,6 +69,9 @@ test
         // Reload Page
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
+
+        await browserPage.Cli.sendCommandInCli('flushdb');
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Clear and delete database

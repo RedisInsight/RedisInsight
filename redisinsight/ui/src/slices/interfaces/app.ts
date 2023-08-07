@@ -5,16 +5,13 @@ import { DurationUnits, FeatureFlags, ICommands } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
-import { CloudUser } from 'apiSrc/modules/cloud/user/models'
-import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
-import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
-import { Instance } from './instances'
 
 export interface CustomError {
   error: string
   message: string
   statusCode: number
   errorCode?: number
+  resourceId?: string
 }
 
 export interface EnhancedAxiosError extends AxiosError<CustomError> {
@@ -24,6 +21,7 @@ export interface IError extends AxiosError {
   id: string
   instanceId?: string
   title?: string
+  additionalInfo?: Record<string, any>
 }
 
 export interface IMessage {
@@ -223,48 +221,6 @@ export interface StateAppNotifications {
     totalUnread: number
     shouldDisplayToast: boolean
   }
-}
-
-export interface StateAppOAuth {
-  loading: boolean
-  error: string
-  message: string
-  source: Nullable<OAuthSocialSource>
-  job: Nullable<CloudJobInfo>
-  user: {
-    error: string
-    loading: boolean
-    data: Nullable<CloudUser>
-    freeDb: CloudUserFreeDbState
-  }
-  plan: {
-    isOpenDialog: boolean
-    data: CloudSubscriptionPlanResponse[]
-    loading: boolean
-  }
-  isOpenSignInDialog: boolean
-  isOpenSelectAccountDialog: boolean
-  showProgress: boolean
-}
-
-export interface CloudUserFreeDbState {
-  loading: boolean
-  error: string
-  data: Nullable<Instance>
-}
-
-export enum OAuthSocialSource {
-  ListOfDatabases = 'list of databases',
-  WelcomeScreen = 'welcome screen',
-  BrowserContentMenu = 'browser content menu',
-  BrowserFiltering = 'browser filtering',
-  BrowserSearch = 'browser search',
-  RediSearch = 'workbench RediSearch',
-  RedisJSON = 'workbench RedisJSON',
-  RedisTimeSeries = 'workbench RedisTimeSeries',
-  RedisGraph = 'workbench RedisGraph',
-  RedisBloom = 'workbench RedisBloom',
-  Autodiscovery = 'autodiscovery',
 }
 
 export interface StateAppActionBar {

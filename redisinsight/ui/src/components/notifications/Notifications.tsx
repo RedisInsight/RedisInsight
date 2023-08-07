@@ -23,6 +23,7 @@ import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { showOAuthProgress } from 'uiSrc/slices/oauth/cloud'
 
+import { CustomErrorCodes } from 'uiSrc/constants'
 import errorMessages from './error-messages'
 import { InfiniteMessagesIds } from './components'
 
@@ -90,9 +91,17 @@ const Notifications = () => {
     })
 
   const getErrorsToasts = (errors: IError[]) =>
-    errors.map(({ id = '', message = DEFAULT_ERROR_MESSAGE, instanceId = '', name, title }) => {
+    errors.map(({ id = '', message = DEFAULT_ERROR_MESSAGE, instanceId = '', name, title, additionalInfo }) => {
       if (ApiEncryptionErrors.includes(name)) {
         return errorMessages.ENCRYPTION(id, () => removeToast({ id }), instanceId)
+      }
+
+      if (additionalInfo?.errorCode === CustomErrorCodes.CloudCapiKeyUnauthorized) {
+        return errorMessages.CLOUD_CAPI_KEY_UNAUTHORIZED(
+          { id, message, title },
+          additionalInfo,
+          () => removeToast({ id })
+        )
       }
       return errorMessages.DEFAULT(id, message, () => removeToast({ id }), title)
     })

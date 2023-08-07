@@ -1,6 +1,6 @@
 import { EuiIcon, EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle, EuiSpacer, EuiFlexGrid } from '@elastic/eui'
 import React, { useContext, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
 import { isEmpty } from 'lodash'
@@ -20,10 +20,11 @@ import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
-import { ImportDatabasesDialog, OAuthSocialDialog, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { ImportDatabasesDialog, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
 
+import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -38,8 +39,8 @@ const Welcome = ({ onAddInstance }: Props) => {
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
   const [guides, setGuides] = useState<IHelpGuide[]>([])
   const [isImportDialogOpen, setIsImportDialogOpen] = useState<boolean>(false)
-  const [isOauthSocialOpen, setIsOauthSocialOpen] = useState<boolean>(false)
 
+  const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
 
   setTitle('Welcome to RedisInsight')
@@ -72,7 +73,9 @@ const Welcome = ({ onAddInstance }: Props) => {
           description: 'Sign in to your Redis Enterprise Cloud account to discover and add databases',
           iconType: CloudIcon,
           iconClassName: styles.cloudIcon,
-          onClick: () => setIsOauthSocialOpen(true),
+          onClick: () => {
+            dispatch(setSocialDialogState(OAuthSocialSource.WelcomeScreen))
+          },
           testId: 'import-cloud-db-btn'
         },
         {
@@ -179,7 +182,6 @@ const Welcome = ({ onAddInstance }: Props) => {
   return (
     <>
       {isImportDialogOpen && <ImportDatabasesDialog onClose={handleCloseImportDb} />}
-      {isOauthSocialOpen && <OAuthSocialDialog onClose={() => setIsOauthSocialOpen(false)} />}
       <div className={cx(styles.welcome, theme === Theme.Dark ? styles.welcome_dark : styles.welcome_light)}>
         <div className={styles.content}>
           <EuiTitle size="m" className={styles.title} data-testid="welcome-page-title">

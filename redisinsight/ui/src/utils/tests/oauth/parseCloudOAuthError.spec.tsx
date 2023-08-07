@@ -84,6 +84,23 @@ const parseCloudOAuthErrorTests = [
         </>
       )
     })],
+  [{ errorCode: 11_022 },
+    set(cloneDeep(responseData), 'response.data', {
+      title: 'Invalid API key',
+      message: (
+        <>
+          Your Redis Enterprise Cloud authorization failed.
+          <EuiSpacer size="xs" />
+          Remove the invalid API key from RedisInsight and try again.
+          <EuiSpacer size="s" />
+          Open the Settings page to manage Redis Enterprise Cloud API keys.
+        </>
+      ),
+      additionalInfo: {
+        errorCode: 11022,
+        resourceId: undefined
+      }
+    })],
 ]
 
 describe('parseCloudOAuthError', () => {

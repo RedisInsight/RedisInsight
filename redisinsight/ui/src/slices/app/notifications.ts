@@ -5,7 +5,7 @@ import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getApiErrorName, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 import { NotificationsDto, NotificationDto } from 'apiSrc/modules/notification/dto'
-import { InfiniteMessage, StateAppNotifications } from '../interfaces'
+import { IError, InfiniteMessage, StateAppNotifications } from '../interfaces'
 
 import { AppDispatch, RootState } from '../store'
 
@@ -37,6 +37,7 @@ const notificationsSlice = createSlice({
       const title = payload?.response?.data?.title
       const errorName = getApiErrorName(payload)
       const message = getApiErrorMessage(payload)
+      const additionalInfo = payload?.response?.data?.additionalInfo
       const errorExistedId = state.errors.findIndex(
         (err) => err.message === message
       )
@@ -47,14 +48,20 @@ const notificationsSlice = createSlice({
         })
       }
 
-      state.errors.push({
+      const error: IError = {
         ...payload,
         title,
         instanceId,
         id: `${Date.now()}`,
         name: errorName,
         message,
-      })
+      }
+
+      if (additionalInfo) {
+        error.additionalInfo = additionalInfo
+      }
+
+      state.errors.push(error)
     },
     removeError: (state, { payload = '' }: { payload: string }) => {
       state.errors = state.errors.filter((error) => error.id !== payload)

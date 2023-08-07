@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
+import { remove } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
@@ -9,13 +10,19 @@ import {
   INFINITE_MESSAGES,
   InfiniteMessagesIds
 } from 'uiSrc/components/notifications/components'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 
 import { AppDispatch, RootState } from '../store'
-import { Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
-import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from '../app/notifications'
+import { CloudCapiKey, Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
+import {
+  addErrorNotification,
+  addInfiniteNotification,
+  addMessageNotification,
+  removeInfiniteNotification
+} from '../app/notifications'
 import { checkConnectToInstanceAction, setConnectedInstanceId } from '../instances/instances'
 import { setAppContextInitialState } from '../app/context'
 
@@ -29,6 +36,7 @@ export const initialState: StateAppOAuth = {
     status: '',
   },
   source: null,
+  isOpenSocialDialog: false,
   isOpenSignInDialog: false,
   isOpenSelectAccountDialog: false,
   showProgress: true,
@@ -46,6 +54,10 @@ export const initialState: StateAppOAuth = {
     loading: false,
     isOpenDialog: false,
     data: [],
+  },
+  capiKeys: {
+    loading: false,
+    data: null
   }
 }
 
@@ -90,6 +102,10 @@ const oauthCloudSlice = createSlice({
       state.user.freeDb.loading = false
       state.user.freeDb.error = payload
     },
+    setSocialDialogState: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
+      state.source = payload
+      state.isOpenSocialDialog = !!payload
+    },
     setSignInDialogState: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
       state.source = payload
       state.isOpenSignInDialog = !!payload
@@ -121,6 +137,38 @@ const oauthCloudSlice = createSlice({
     showOAuthProgress: (state, { payload }: PayloadAction<boolean>) => {
       state.showProgress = payload
     },
+    getCapiKeys: (state) => {
+      state.capiKeys.loading = true
+    },
+    getCapiKeysSuccess: (state, { payload }: PayloadAction<CloudCapiKey[]>) => {
+      state.capiKeys.loading = false
+      state.capiKeys.data = payload
+    },
+    getCapiKeysFailure: (state) => {
+      state.capiKeys.loading = false
+    },
+    removeCapiKey: (state) => {
+      state.capiKeys.loading = true
+    },
+    removeCapiKeySuccess: (state, { payload }: PayloadAction<string>) => {
+      state.capiKeys.loading = false
+      if (state.capiKeys.data) {
+        remove(state.capiKeys.data, (item) => item.id === payload)
+      }
+    },
+    removeCapiKeyFailure: (state) => {
+      state.capiKeys.loading = false
+    },
+    removeAllCapiKeys: (state) => {
+      state.capiKeys.loading = true
+    },
+    removeAllCapiKeysSuccess: (state) => {
+      state.capiKeys.loading = false
+      state.capiKeys.data = []
+    },
+    removeAllCapiKeysFailure: (state) => {
+      state.capiKeys.loading = false
+    },
   },
 })
 
@@ -136,6 +184,7 @@ export const {
   addFreeDb,
   addFreeDbSuccess,
   addFreeDbFailure,
+  setSocialDialogState,
   setSignInDialogState,
   setOAuthCloudSource,
   setSelectAccountDialogState,
@@ -145,6 +194,15 @@ export const {
   getPlansSuccess,
   getPlansFailure,
   showOAuthProgress,
+  getCapiKeys,
+  getCapiKeysSuccess,
+  getCapiKeysFailure,
+  removeCapiKey,
+  removeCapiKeySuccess,
+  removeCapiKeyFailure,
+  removeAllCapiKeys,
+  removeAllCapiKeysSuccess,
+  removeAllCapiKeysFailure,
 } = oauthCloudSlice.actions
 
 // A selector
@@ -153,6 +211,7 @@ export const oauthCloudJobSelector = (state: RootState) => state.oauth.cloud.job
 export const oauthCloudUserSelector = (state: RootState) => state.oauth.cloud.user
 export const oauthCloudUserDataSelector = (state: RootState) => state.oauth.cloud.user.data
 export const oauthCloudPlanSelector = (state: RootState) => state.oauth.cloud.plan
+export const oauthCapiKeysSelector = (state: RootState) => state.oauth.cloud.capiKeys
 
 // The reducer
 export default oauthCloudSlice.reducer
@@ -300,6 +359,81 @@ export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => vo
       const error = _err as AxiosError
       dispatch(addErrorNotification(error))
       dispatch(getPlansFailure())
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function getCapiKeysAction(onSuccessAction?: () => void, onFailAction?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getCapiKeys())
+
+    try {
+      const { data, status } = await apiService.get<CloudCapiKey[]>(
+        ApiEndpoints.CLOUD_CAPI_KEYS
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getCapiKeysSuccess(data))
+        onSuccessAction?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      dispatch(addErrorNotification(error))
+      dispatch(getCapiKeysFailure())
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function removeAllCapiKeysAction(onSuccessAction?: () => void, onFailAction?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(removeAllCapiKeys())
+
+    try {
+      const { status } = await apiService.delete(
+        ApiEndpoints.CLOUD_CAPI_KEYS
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(removeAllCapiKeysSuccess())
+        dispatch(addMessageNotification(successMessages.REMOVED_ALL_CAPI_KEYS()))
+        onSuccessAction?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      dispatch(addErrorNotification(error))
+      dispatch(removeAllCapiKeysFailure())
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function removeCapiKeyAction(
+  { id, name }: { id: string, name: string },
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(removeCapiKey())
+
+    try {
+      const { status } = await apiService.delete(
+        `${ApiEndpoints.CLOUD_CAPI_KEYS}/${id}`
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(removeCapiKeySuccess(id))
+        dispatch(addMessageNotification(successMessages.REMOVED_CAPI_KEY(name)))
+        onSuccessAction?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      dispatch(addErrorNotification(error))
+      dispatch(removeCapiKeyFailure())
       onFailAction?.()
     }
   }

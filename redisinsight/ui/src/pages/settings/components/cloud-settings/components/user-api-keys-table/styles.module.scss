@@ -1,0 +1,66 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+.table {
+  @include euiScrollBar;
+  max-height: 240px;
+  overflow-y: auto;
+
+  :global {
+    .euiTableCellContent {
+      padding: 10px 12px !important;
+    }
+  }
+
+  &:global {
+    &.inMemoryTableDefault.noBorders .euiTableHeaderCell {
+      background-color: var(--euiColorEmptyShade);
+      border-bottom: 1px solid var(--euiColorLightShade) !important;
+    }
+  }
+}
+
+.invalidIcon {
+  width: 14px !important;
+  height: 14px !important;
+
+  margin-right: 4px;
+  margin-bottom: 1px;
+}
+
+.nameField {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+}
+
+.noKeysMessage {
+  padding: 18px 30px;
+
+  border: 1px solid var(--separatorColorLight);
+  border-radius: 4px;
+}
+
+.starsIcon {
+  width: 24px !important;
+  height: 24px !important;
+  margin-right: 8px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.autodiscoverBtn {
+  font-size: 13px !important;
+  margin-right: 8px;
+}
+
+
+.copyBtnAnchor {
+  display: inline !important;
+}

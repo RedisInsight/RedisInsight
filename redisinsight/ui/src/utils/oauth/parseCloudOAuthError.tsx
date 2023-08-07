@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios'
-import { isString, set } from 'lodash'
+import { isEmpty, isString, set } from 'lodash'
 import React from 'react'
 import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
@@ -20,6 +20,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
 
   let title: string = 'Error'
   let message: React.ReactElement | string = ''
+  const additionalInfo: Record<string, any> = {}
 
   switch (err?.errorCode) {
     case CustomErrorCodes.CloudOauthGithubEmailPermission:
@@ -109,6 +110,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
       )
       break
 
+    case CustomErrorCodes.CloudCapiUnauthorized:
     case CustomErrorCodes.CloudApiUnauthorized:
       title = 'Unauthorized'
       message = (
@@ -120,6 +122,21 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
+      break
+
+    case CustomErrorCodes.CloudCapiKeyUnauthorized:
+      title = 'Invalid API key'
+      message = (
+        <>
+          Your Redis Enterprise Cloud authorization failed.
+          <EuiSpacer size="xs" />
+          Remove the invalid API key from RedisInsight and try again.
+          <EuiSpacer size="s" />
+          Open the Settings page to manage Redis Enterprise Cloud API keys.
+        </>
+      )
+      additionalInfo.resourceId = err.resourceId
+      additionalInfo.errorCode = err.errorCode
       break
 
     case CustomErrorCodes.CloudDatabaseAlreadyExistsFree:
@@ -135,9 +152,15 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
 
     default:
       title = 'Error'
-      message = err?.message || error?.message || DEFAULT_ERROR_MESSAGE
+      message = err?.message || DEFAULT_ERROR_MESSAGE
       break
   }
 
-  return set(error, 'response.data', { title, message }) as AxiosError
+  const parsedError: any = { title, message }
+
+  if (!isEmpty(additionalInfo)) {
+    parsedError.additionalInfo = additionalInfo
+  }
+
+  return set(error, 'response.data', parsedError) as AxiosError
 }

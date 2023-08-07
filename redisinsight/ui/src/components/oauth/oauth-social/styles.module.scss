@@ -3,6 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .button {
@@ -71,4 +72,5 @@
 
 .containerAgreement {
   margin-top: 16px;
+  text-align: left;
 }

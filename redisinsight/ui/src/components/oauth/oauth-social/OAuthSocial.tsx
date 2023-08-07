@@ -89,10 +89,10 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
   if (!isAutodiscovery) {
     return (
       <div className={cx(styles.container)}>
-        <div className={styles.buttonsAuto}>
-          {buttons}
+        {buttons}
+        <div className={styles.containerAgreement}>
+          <OAuthAgreement />
         </div>
-        <OAuthAgreement />
       </div>
     )
   }

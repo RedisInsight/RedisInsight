@@ -52,6 +52,7 @@ fixture `Live Recommendations`
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
+        await browserPage.Cli.sendCommandInCli('flushdb');
     })
     .afterEach(async() => {
         await refreshFeaturesTestData();

@@ -36,7 +36,13 @@ fixture `Memory Efficiency`
     .afterEach(async() => {
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test('No reports/keys message and report tooltip', async t => {
+test.only.before(async t => {
+    await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+    // Go to Analysis Tools page
+    await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
+    await browserPage.Cli.sendCommandInCli('flushdb');
+
+})('No reports/keys message and report tooltip', async t => {
     const noReportsMessage = 'No Reports foundRun "New Analysis" to generate first report.';
     const noKeysMessage = 'No keys to displayUse Workbench Guides and Tutorials to quickly load the data.';
     const tooltipText = 'Analyze up to 10 000 keys to get an overview of your data and recommendations';

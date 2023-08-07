@@ -55,8 +55,7 @@ const CloudSettings = () => {
           <EuiText size="s" className={styles.smallText} color="subdued">
             The list of API user keys that are stored locally in RedisInsight. <br />
             API user keys grant programmatic access to Redis Enterprise Cloud. <br />
-            To delete API keys from Redis Enterprise Cloud, sign in to
-            {' '}
+            {'To delete API keys from Redis Enterprise Cloud, sign in to '}
             <EuiLink
               target="_blank"
               color="text"
@@ -65,8 +64,7 @@ const CloudSettings = () => {
             >
               Redis Enterprise Cloud
             </EuiLink>
-            {' '}
-            and delete them manually.
+            {' and delete them manually.'}
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
@@ -95,8 +93,7 @@ const CloudSettings = () => {
                 <h4>
                   All API user keys <br /> will be removed from RedisInsight.
                 </h4>
-                To delete API keys from Redis Enterprise Cloud,
-                {' '}
+                {'To delete API keys from Redis Enterprise Cloud, '}
                 <EuiLink
                   target="_blank"
                   color="text"
@@ -106,8 +103,7 @@ const CloudSettings = () => {
                 >
                   sign in to Redis Enterprise Cloud
                 </EuiLink>
-                {' '}
-                and delete them manually.
+                {' and delete them manually.'}
               </EuiText>
               <EuiSpacer />
               <div className={styles.popoverFooter}>

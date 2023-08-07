@@ -164,8 +164,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             header={`${formatLongName(name)} will be removed from RedisInsight.`}
             text={(
               <>
-                To delete this API key from Redis Enterprise Cloud,
-                {' '}
+                {'To delete this API key from Redis Enterprise Cloud, '}
                 <EuiLink
                   target="_blank"
                   color="text"
@@ -175,8 +174,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
                 >
                   sign in to Redis Enterprise Cloud
                 </EuiLink>
-                {' '}
-                and delete it manually.
+                {' and delete it manually.'}
               </>
             )}
             item={id}

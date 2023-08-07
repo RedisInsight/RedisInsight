@@ -26,7 +26,7 @@ fixture `Filtering per key name in Browser page`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await apiKeyRequests.deleteKeyByNameApi(`${searchedKeyName}${randomValue}`, ossStandaloneConfig.databaseName);
+        await browserPage.deleteKeyByName(`${searchedKeyName}${randomValue}`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search per full key name', async t => {
@@ -61,7 +61,7 @@ test
         // Clear and delete database
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await apiKeyRequests.deleteKeyByNameApi(keyName2, ossStandaloneConfig.databaseName);
-        await apiKeyRequests.deleteKeyByNameApi(searchedValueWithEscapedSymbols, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(valueWithEscapedSymbols, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter per combined pattern with ?, *, [xy], [^x], [a-z] and escaped special symbols', async t => {
         keyName = `KeyForSearch${Common.generateWord(10)}`;

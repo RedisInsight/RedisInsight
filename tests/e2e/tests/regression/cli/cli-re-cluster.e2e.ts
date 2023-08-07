@@ -87,7 +87,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await apiKeyRequests.deleteKeyByNameApi(keyName, ossClusterConfig.ossClusterDatabaseName);
+        await browserPage.deleteKeyByName(keyName);
         await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     })('Verify that user can add data via CLI in Sentinel Primary Group', async() => {
         // Verify that database index switcher displayed for Sentinel

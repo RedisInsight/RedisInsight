@@ -9,4 +9,7 @@ export class Feature {
 
   @Expose()
   strategy?: string;
+
+  @Expose()
+  data?: any;
 }

@@ -1,4 +1,4 @@
-import { find } from 'lodash';
+import { find, forEach } from 'lodash';
 import { Injectable, Logger } from '@nestjs/common';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
 import { FeatureServerEvents, FeatureStorage } from 'src/modules/feature/constants';
@@ -45,7 +45,7 @@ export class FeatureService {
 
     const featuresFromDatabase = await this.repository.list();
 
-    knownFeatures.forEach((feature) => {
+    forEach(knownFeatures, (feature) => {
       // todo: implement various storage strategies support with next features
       switch (feature?.storage) {
         case FeatureStorage.Database: {
@@ -54,6 +54,8 @@ export class FeatureService {
             features[feature.name] = {
               name: dbFeature.name,
               flag: dbFeature.flag,
+              strategy: dbFeature.strategy || undefined,
+              data: dbFeature.data || undefined,
             };
           }
           break;
@@ -97,10 +99,11 @@ export class FeatureService {
       this.logger.debug('Recalculating features flags for new config', featuresConfig);
 
       await Promise.all(Array.from(featuresConfig?.data?.features || new Map(), async ([name, feature]) => {
-        actions.toUpsert.push({
-          name,
-          flag: await this.featureFlagProvider.calculate(name, feature),
-        });
+        if (knownFeatures[name]) {
+          actions.toUpsert.push({
+            ...(await this.featureFlagProvider.calculate(knownFeatures[name], feature)),
+          });
+        }
       }));
 
       // calculate to delete features

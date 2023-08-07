@@ -2,6 +2,7 @@ import {
   Column, Entity, PrimaryColumn,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
+import { DataAsJsonString } from 'src/common/decorators';
 
 @Entity('features')
 export class FeatureEntity {
@@ -12,4 +13,13 @@ export class FeatureEntity {
   @Expose()
   @Column()
   flag: boolean;
+
+  @Expose()
+  @Column({ nullable: true })
+  strategy?: string;
+
+  @Expose()
+  @Column({ nullable: true })
+  @DataAsJsonString()
+  data?: string;
 }

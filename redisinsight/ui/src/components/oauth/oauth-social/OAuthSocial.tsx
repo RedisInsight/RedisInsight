@@ -66,7 +66,7 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
     <EuiToolTip
       key={label}
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
+      anchorClassName={!agreement ? 'euiToolTip__btn-disabled' : ''}
       content={agreement ? null : 'Acknowledge the agreement'}
       data-testid={`${label}-tooltip`}
     >

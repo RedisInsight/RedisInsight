@@ -32,6 +32,7 @@ import reducer, {
   getPlansFailure,
   setIsOpenSelectPlanDialog,
   showOAuthProgress,
+  setAgreement,
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -450,6 +451,27 @@ describe('oauth cloud slice', () => {
 
       // Act
       const nextState = reducer(prevInitialState, setSignInDialogState(null))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: { cloud: nextState },
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+
+    it('should properly set the state', () => {
+      // Arrange
+      const prevInitialState = {
+        ...initialState,
+        agreement: false,
+      }
+      const state = {
+        ...initialState,
+        agreement: true,
+      }
+
+      // Act
+      const nextState = reducer(prevInitialState, setAgreement(true))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

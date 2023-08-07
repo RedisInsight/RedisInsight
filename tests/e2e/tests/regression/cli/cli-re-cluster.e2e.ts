@@ -72,7 +72,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossClusterConfig.ossClusterDatabaseName);
         await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can add data via CLI in OSS Cluster DB', async() => {
         // Verify that database index switcher not displayed for RE Cloud
@@ -87,7 +87,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossClusterConfig.ossClusterDatabaseName);
         await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
     })('Verify that user can add data via CLI in Sentinel Primary Group', async() => {
         // Verify that database index switcher displayed for Sentinel

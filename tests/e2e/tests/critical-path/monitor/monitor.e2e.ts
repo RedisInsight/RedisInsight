@@ -8,12 +8,14 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const keyName = `${Common.generateWord(20)}-key`;
 const keyValue = `${Common.generateWord(10)}-value`;
@@ -26,7 +28,7 @@ fixture `Monitor`
     });
 test
     .after(async() => {
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can work with Monitor', async t => {
         const command = 'set';
@@ -47,8 +49,7 @@ test
     });
 test
     .after(async t => {
-        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
     //Define commands in different clients

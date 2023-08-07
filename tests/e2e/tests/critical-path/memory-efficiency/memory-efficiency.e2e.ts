@@ -36,7 +36,7 @@ fixture `Memory Efficiency`
     .afterEach(async() => {
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test.only.before(async t => {
+test.before(async t => {
     await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     // Go to Analysis Tools page
     await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);

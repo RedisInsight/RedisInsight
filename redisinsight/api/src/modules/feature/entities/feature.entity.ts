@@ -19,7 +19,7 @@ export class FeatureEntity {
   strategy?: string;
 
   @Expose()
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'text' })
   @DataAsJsonString()
   data?: string;
 }

@@ -8,6 +8,7 @@ import {
   oauthCloudUserDataSelector,
   setJob,
   setSignInDialogState,
+  setSocialDialogState,
   showOAuthProgress,
   signInFailure,
 } from 'uiSrc/slices/oauth/cloud'
@@ -69,6 +70,7 @@ const ConfigOAuth = () => {
       dispatch(showOAuthProgress(true))
       dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
       dispatch(setSignInDialogState(null))
+      dispatch(setSocialDialogState(null))
       dispatch(fetchUserInfo(fetchUserInfoSuccess, closeInfinityNotification))
     }
 

@@ -4,12 +4,14 @@ import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../pageOb
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 let keyName = Common.generateWord(10);
 const dataTypes: string[] = [
@@ -47,7 +49,7 @@ test('Verify that user can see updated message in Browser for TimeSeries and Gra
         for(const message of messages) {
             await t.expect(browserPage.modulesTypeDetails.textContent).contains(message, `The message for ${dataTypes[i]} key is not displayed`);
         }
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
     }
 });
 test('Verify that user can see link to Workbench under word “Workbench” in the RedisTimeSeries and Graph key details', async t => {
@@ -65,6 +67,6 @@ test('Verify that user can see link to Workbench under word “Workbench” in t
         await t.click(browserPage.internalLinkToWorkbench);
         await t.expect(workbenchPage.queryInput.visible).ok(`The message for ${dataTypes[i]} key is not displayed`);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
     }
 });

@@ -5,10 +5,12 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { populateSetWithMembers } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port };
 const keyName = `TestSetKey-${ Common.generateWord(10) }`;
@@ -24,7 +26,7 @@ fixture `Set Key verification`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search per exact member name in Set key in DB with 1 million of members', async t => {

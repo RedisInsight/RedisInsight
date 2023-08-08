@@ -13,12 +13,14 @@ import {
 import { Common } from '../../../helpers/common';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { BrowserActions } from '../../../common-actions/browser-actions';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserActions = new BrowserActions();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 let keyName = Common.generateWord(10);
 const verifyKeysAdded = async(): Promise<void> => {
@@ -45,7 +47,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, redisEnterpriseClusterConfig.databaseName);
         await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
     })('Verify that user can add Key in RE Cluster DB', async() => {
         await verifyKeysAdded();
@@ -57,7 +59,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, cloudDatabaseConfig.databaseName);
         await databaseHelper.deleteDatabase(cloudDatabaseConfig.databaseName);
     })('Verify that user can add Key in RE Cloud DB', async() => {
         await verifyKeysAdded();
@@ -69,7 +71,7 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossClusterConfig.ossClusterDatabaseName);
         await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
     })('Verify that user can add Key in OSS Cluster DB', async() => {
         await verifyKeysAdded();

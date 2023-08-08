@@ -8,11 +8,13 @@ import {
 import { env, rte } from '../../../helpers/constants';
 import { Common } from '../../../helpers/common';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const database = Object.assign({}, ossStandaloneConfig);
 const previousDatabaseName = Common.generateWord(20);
@@ -58,7 +60,7 @@ test
         await t.typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneConfig.port, { replace: true, paste: true });
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneBigConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that context for previous database not saved after editing port/username/password/certificates/SSH', async t => {
         const command = 'HSET';

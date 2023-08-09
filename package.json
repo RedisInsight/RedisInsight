@@ -25,7 +25,7 @@
     "lint:e2e": "yarn --cwd tests/e2e lint",
     "package": "yarn package:dev",
     "package:prod": "ts-node ./scripts/prebuild.js dist && yarn build:prod && electron-builder build -p never",
-    "package:stage": "ts-node ./scripts/prebuild.js dist && yarn build:stage && cross-env-shell electron-builder build -p never -c.mac.bundleVersion=\"$CIRCLE_BUILD_NUM\"",
+    "package:stage": "ts-node ./scripts/prebuild.js dist && yarn build:stage && electron-builder build -p never -c.mac.bundleVersion=$CIRCLE_BUILD_NUM",
     "package:mas": "electron-builder build -p never -m mas:universal -c.mac.bundleVersion=$CIRCLE_BUILD_NUM -c ./electron-builder-mas.js",
     "package:mas:dev": "electron-builder build -p never -m mas-dev:universal -c ./electron-builder-mas.js",
     "package:dev": "yarn build && cross-env DEBUG=electron-builder electron-builder build -p never",

@@ -60,7 +60,7 @@ test
         await t.typeText(myRedisDatabasePage.AddRedisDatabase.portInput, ossStandaloneConfig.port, { replace: true, paste: true });
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneBigConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that context for previous database not saved after editing port/username/password/certificates/SSH', async t => {
         const command = 'HSET';

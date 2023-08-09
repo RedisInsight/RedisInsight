@@ -59,7 +59,7 @@ export class LocalCloudCapiKeyRepository extends CloudCapiKeyRepository {
       return null;
     }
 
-    return classToClass(CloudCapiKey, await this.modelEncryptor.decryptEntity(entity));
+    return classToClass(CloudCapiKey, await this.modelEncryptor.decryptEntity(entity, true));
   }
 
   /**
@@ -75,6 +75,7 @@ export class LocalCloudCapiKeyRepository extends CloudCapiKeyRepository {
           await this.repository.save(
             await this.modelEncryptor.encryptEntity(entity),
           ),
+          true,
         ),
       );
     } catch (e) {

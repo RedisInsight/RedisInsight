@@ -21,6 +21,10 @@
   }
 }
 
+.invalidIconAnchor {
+  flex-shrink: 0;
+}
+
 .invalidIcon {
   width: 14px !important;
   height: 14px !important;

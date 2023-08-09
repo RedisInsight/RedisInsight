@@ -8,6 +8,7 @@ import { Common } from '../../../helpers/common';
 import { Telemetry } from '../../../helpers/telemetry';
 import { RecommendationsActions } from '../../../common-actions/recommendations-actions';
 import { modifyFeaturesConfigJson, refreshFeaturesTestData, updateControlNumber } from '../../../helpers/insights';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -17,6 +18,7 @@ const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const recommendationsActions = new RecommendationsActions();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const databasesForAdding = [
     { host: ossStandaloneV5Config.host, port: ossStandaloneV5Config.port, databaseName: ossStandaloneV5Config.databaseName },
@@ -67,13 +69,16 @@ test
         // Reload Page
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
+
+        await browserPage.Cli.sendCommandInCli('flushdb');
+        await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         // Clear and delete database
         await browserPage.InsightsPanel.toggleInsightsPanel(false);
         await refreshFeaturesTestData();
         await browserPage.OverviewPanel.changeDbIndex(0);
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, databasesForAdding[1].databaseName);
         await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify Insights panel Recommendations displaying', async t => {
         await browserPage.InsightsPanel.toggleInsightsPanel(true);

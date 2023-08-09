@@ -15,7 +15,11 @@ export class ImportCloudDatabaseDto {
   @IsInt({ always: true })
   subscriptionId: number;
 
-  @IsEnum(CloudSubscriptionType)
+  @IsEnum(CloudSubscriptionType, {
+    message: `subscriptionType must be a valid enum value. Valid values: ${Object.values(
+      CloudSubscriptionType,
+    )}.`,
+  })
   @IsNotEmpty()
   subscriptionType: CloudSubscriptionType;
 

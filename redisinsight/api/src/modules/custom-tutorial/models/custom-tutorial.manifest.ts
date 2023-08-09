@@ -50,7 +50,11 @@ export class CustomTutorialManifest {
 
   @ApiProperty({ enum: CustomTutorialManifestType })
   @Expose()
-  @IsEnum(CustomTutorialManifestType)
+  @IsEnum(CustomTutorialManifestType, {
+    message: `type must be a valid enum value. Valid values: ${Object.values(
+      CustomTutorialManifestType,
+    )}.`,
+  })
   type: CustomTutorialManifestType;
 
   @ApiProperty({ type: String })

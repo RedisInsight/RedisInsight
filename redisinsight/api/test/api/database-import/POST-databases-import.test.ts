@@ -40,6 +40,7 @@ const baseDatabaseData = {
   port: constants.TEST_REDIS_PORT,
   username: constants.TEST_REDIS_USER || '',
   password: constants.TEST_REDIS_PASSWORD || '',
+  compressor: constants.TEST_REDIS_COMPRESSOR,
 }
 
 const baseTls = {

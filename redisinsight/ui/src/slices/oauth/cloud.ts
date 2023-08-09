@@ -36,6 +36,7 @@ export const initialState: StateAppOAuth = {
     status: '',
   },
   source: null,
+  agreement: localStorageService.get(BrowserStorageItem.OAuthAgreement) ?? false,
   isOpenSocialDialog: false,
   isOpenSignInDialog: false,
   isOpenSelectAccountDialog: false,
@@ -137,6 +138,9 @@ const oauthCloudSlice = createSlice({
     showOAuthProgress: (state, { payload }: PayloadAction<boolean>) => {
       state.showProgress = payload
     },
+    setAgreement: (state, { payload }: PayloadAction<boolean>) => {
+      state.agreement = payload
+    },
     getCapiKeys: (state) => {
       state.capiKeys.loading = true
     },
@@ -194,6 +198,7 @@ export const {
   getPlansSuccess,
   getPlansFailure,
   showOAuthProgress,
+  setAgreement,
   getCapiKeys,
   getCapiKeysSuccess,
   getCapiKeysFailure,
@@ -211,6 +216,7 @@ export const oauthCloudJobSelector = (state: RootState) => state.oauth.cloud.job
 export const oauthCloudUserSelector = (state: RootState) => state.oauth.cloud.user
 export const oauthCloudUserDataSelector = (state: RootState) => state.oauth.cloud.user.data
 export const oauthCloudPlanSelector = (state: RootState) => state.oauth.cloud.plan
+export const oauthCloudPAgreementSelector = (state: RootState) => state.oauth.cloud.agreement
 export const oauthCapiKeysSelector = (state: RootState) => state.oauth.cloud.capiKeys
 
 // The reducer

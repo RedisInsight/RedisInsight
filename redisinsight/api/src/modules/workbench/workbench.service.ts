@@ -188,6 +188,15 @@ export class WorkbenchService {
   }
 
   /**
+   * Delete command executions by databaseId
+   *
+   * @param databaseId
+   */
+  async deleteCommandExecutions(databaseId: string): Promise<void> {
+    await this.commandExecutionRepository.deleteAll(databaseId);
+  }
+
+  /**
    * Check if workbench allows such command
    * @param commandLine
    * @private

@@ -6,13 +6,13 @@ import {
     OSSClusterParameters,
     databaseParameters,
     SentinelParameters,
-    ClusterNodes,
+    ClusterNodes
 } from '../../pageObjects/components/myRedisDatabase/add-redis-database';
 import { ResourcePath } from '../constants';
 import {
     sendGetRequest,
     sendPostRequest,
-    sendDeleteRequest,
+    sendDeleteRequest
 } from './api-common';
 
 const chance = new Chance();

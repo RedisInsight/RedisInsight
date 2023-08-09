@@ -103,6 +103,10 @@
   font: normal normal 500 15px/20px Graphik, sans-serif !important;
 }
 
+.euiButtonEmpty__text {
+  font: normal normal 400 14px/18px Graphik, sans-serif;
+}
+
 .euiButton--small {
   height: 30px !important;
   line-height: 30px !important;
@@ -132,21 +136,23 @@
   background-color: transparent;
   transition: color ease 0.3s, background-color ease 0.3s;
 
-  .euiButtonEmpty__text,
-  .euiText {
-    transition: color ease 0.3s;
-    color: var(--euiTextSubduedColor) !important;
-  }
-
-  &:hover,
-  &:focus {
-    text-decoration: none !important;
-    background-color: var(--hoverInListColorDarken);
-    color: var(--htmlColor);
-
+  &:not([class*="isDisabled"]) {
     .euiButtonEmpty__text,
     .euiText {
-      color: var(--htmlColor) !important;
+      transition: color ease 0.3s;
+      color: var(--euiTextSubduedColor) !important;
+    }
+
+    &:hover,
+    &:focus {
+      text-decoration: none !important;
+      background-color: var(--hoverInListColorDarken);
+      color: var(--htmlColor);
+
+      .euiButtonEmpty__text,
+      .euiText {
+        color: var(--htmlColor) !important;
+      }
     }
   }
 }

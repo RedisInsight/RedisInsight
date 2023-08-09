@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiText } from '@elastic/eui'
+import { EuiButtonEmpty, EuiIcon, EuiText } from '@elastic/eui'
 
 import { Theme } from 'uiSrc/constants'
 import { ProfileQueryType } from 'uiSrc/pages/workbench/constants'
@@ -17,22 +17,28 @@ import styles from './styles.module.scss'
 
 export interface Props {
   items: CommandExecutionUI[]
+  clearing: boolean
+  processing: boolean
   activeMode: RunQueryMode
   activeResultsMode?: ResultsMode
   scrollDivRef: React.Ref<HTMLDivElement>
   onQueryReRun: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   onQueryDelete: (commandId: string) => void
+  onAllQueriesDelete: () => void
   onQueryOpen: (commandId: string) => void
   onQueryProfile: (query: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
 }
 const WBResults = (props: Props) => {
   const {
     items = [],
+    clearing,
+    processing,
     activeMode,
     activeResultsMode,
     onQueryReRun,
     onQueryProfile,
     onQueryDelete,
+    onAllQueriesDelete,
     onQueryOpen,
     scrollDivRef
   } = props
@@ -69,6 +75,21 @@ const WBResults = (props: Props) => {
 
   return (
     <div className={cx(styles.container)}>
+      {!!items.length && (
+        <div className={styles.header}>
+          <EuiButtonEmpty
+            size="s"
+            iconType="trash"
+            iconSize="s"
+            className={styles.clearAllBtn}
+            onClick={() => onAllQueriesDelete?.()}
+            disabled={clearing || processing}
+            data-testid="clear-history-btn"
+          >
+            Clear Results
+          </EuiButtonEmpty>
+        </div>
+      )}
       <div ref={scrollDivRef} />
       {items.map((
         {
@@ -93,6 +114,7 @@ const WBResults = (props: Props) => {
           isOpen={isOpen}
           result={result}
           summary={summary}
+          clearing={clearing}
           loading={loading}
           command={command}
           createdAt={createdAt}

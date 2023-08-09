@@ -240,6 +240,39 @@ describe('Telemetry', () => {
         rawMode: true,
       }
     })
+
+    sendEventTelemetry.mockRestore()
+  })
+
+  it('should call proper telemetry on delete', async () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<WorkbenchPage />)
+
+    fireEvent.click(screen.getByTestId('delete-command'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.WORKBENCH_CLEAR_RESULT_CLICKED,
+      eventData: {
+        databaseId: 'instanceId',
+        command: 'info'
+      }
+    })
+
+    sendEventTelemetry.mockRestore()
+
+    fireEvent.click(screen.getByTestId('clear-history-btn'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.WORKBENCH_CLEAR_ALL_RESULTS_CLICKED,
+      eventData: {
+        databaseId: 'instanceId'
+      }
+    })
+
+    sendEventTelemetry.mockRestore()
   })
 })
 describe('Raw mode', () => {

@@ -5,10 +5,12 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { populateHashWithFields } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port };
 const keyName = `TestHashKey-${Common.generateWord(10)}`;
@@ -24,7 +26,7 @@ fixture `Hash Key fields verification`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can search per exact field name in Hash in DB with 1 million of fields', async t => {

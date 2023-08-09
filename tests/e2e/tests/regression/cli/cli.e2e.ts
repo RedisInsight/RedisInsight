@@ -4,10 +4,12 @@ import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 let keyName = Common.generateWord(20);
 const keyTTL = '2147476121';
@@ -51,7 +53,7 @@ test('Verify that user can see results history when he re-opens CLI after minimi
 test
     .after(async() => {
         // Clear database and delete
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can repeat commands by entering a number of repeats before the Redis command in CLI', async t => {
         keyName = Common.generateWord(20);
@@ -68,7 +70,7 @@ test
 test
     .after(async() => {
         // Clear database and delete
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can run command json.get and see JSON object with escaped quotes (\" instead of ")', async t => {
         keyName = Common.generateWord(20);

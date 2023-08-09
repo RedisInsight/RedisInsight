@@ -146,7 +146,7 @@ export const ossStandaloneRedisGears = {
 };
 
 export const ossClusterRedisGears = {
-    ossClusterHost: process.env.OSS_CLUSTER_REDISGEARS_2_HOST || 'cluster-redisgears-2-0',
+    ossClusterHost: process.env.OSS_CLUSTER_REDISGEARS_2_HOST || 'gears-cluster-2-0-node-1',
     ossClusterPort: process.env.OSS_CLUSTER_REDISGEARS_2_PORT || '6379',
     ossClusterDatabaseName: `${process.env.OSS_CLUSTER_REDISGEARS_2_NAME || 'test_cluster-gears-2.0'}-${uniqueId}`
 };

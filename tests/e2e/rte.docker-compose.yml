@@ -68,7 +68,7 @@ services:
     image: redislabs/redismod
     ports:
       - 8102:6379
-  
+
   oss-standalone-redisgears-2-0:
     image: redislabs/redisgears:edge
     ports:
@@ -160,85 +160,53 @@ services:
       default:
         ipv4_address: 172.31.100.223
 
-  #oss cluster with redisgears 2
-  oss-cluster-redisgears-2-0:
-    image: redislabs/redisgears:edge
-    ports:
-      - 8107:6379
-  gears-cluster-2-0:
+  # oss cluster with redisgears 2
+  gears-cluster-2-0-creator:
     image: redis:latest
-    command: redis-cli -p 7001 --cluster create 10.0.0.11:7001 10.0.0.12:7002 10.0.0.13:7003 10.0.0.14:7004 10.0.0.15:7005 10.0.0.16:7006 --cluster-replicas 1 --cluster-yes && sleep infinity
+    entrypoint: ['/bin/sh', '-c', 'redis-cli --cluster create 172.31.100.191:6379 172.31.100.192:6379 172.31.100.193:6379 172.31.100.194:6379 172.31.100.195:6379 172.31.100.196:6379 --cluster-replicas 1 --cluster-yes && tail -f /dev/null']
     depends_on:
-      - redis1
-      - redis2
-      - redis3
-      - redis4
-      - redis5
-      - redis6
+      - gears-cluster-2-0-node-1
+      - gears-cluster-2-0-node-2
+      - gears-cluster-2-0-node-3
+      - gears-cluster-2-0-node-4
+      - gears-cluster-2-0-node-5
+      - gears-cluster-2-0-node-6
+  gears-cluster-2-0-node-1:
+    image: &gears-cluster-img redislabs/redisgears:edge
+    command: &gears-cluster-cmd redis-server --protected-mode no --loadmodule /build/target/release/libredisgears.so v8-plugin-path /build/target/release/libredisgears_v8_plugin.so --cluster-enabled yes
     networks:
-      redisclusternet:
-        ipv4_address: 10.0.0.2
-
-  redis1:
-    image: redislabs/redisgears:edge
-    ports:
-      - 7001:7001
-    command: redis-server --protected-mode no --loadmodule /build/target/release/libredisgears.so v8-plugin-path /build/target/release/libredisgears_v8_plugin.so --logfile /build/7001.log --port 7001 --cluster-enabled yes
+      default:
+        ipv4_address: 172.31.100.191
+  gears-cluster-2-0-node-2:
+    image: *gears-cluster-img
+    command: *gears-cluster-cmd
     networks:
-      redisclusternet:
-        ipv4_address: 10.0.0.11
-  redis2:
-    image: redislabs/redisgears:edge
-    ports:
-      - 7002:7002
-    command: redis-server --protected-mode no --loadmodule /build/target/release/libredisgears.so v8-plugin-path /build/target/release/libredisgears_v8_plugin.so --logfile /build/7002.log --port 7002 --cluster-enabled yes
-    depends_on:
-      - redis1
+      default:
+        ipv4_address: 172.31.100.192
+  gears-cluster-2-0-node-3:
+    image: *gears-cluster-img
+    command: *gears-cluster-cmd
     networks:
-      redisclusternet:
-        ipv4_address: 10.0.0.12
-
-  redis3:
-    image: redislabs/redisgears:edge
-    ports:
-      - 7003:7003
-    command: redis-server --protected-mode no --loadmodule /build/target/release/libredisgears.so v8-plugin-path /build/target/release/libredisgears_v8_plugin.so --logfile /build/7003.log --port 7003 --cluster-enabled yes
-    depends_on:
-      - redis2
+      default:
+        ipv4_address: 172.31.100.193
+  gears-cluster-2-0-node-4:
+    image: *gears-cluster-img
+    command: *gears-cluster-cmd
     networks:
-      redisclusternet:
-        ipv4_address: 10.0.0.13
-
-  redis4:
-    image: redislabs/redisgears:edge
-    ports:
-      - 7004:7004
-    command: redis-server --protected-mode no --loadmodule /build/target/release/libredisgears.so v8-plugin-path /build/target/release/libredisgears_v8_plugin.so --logfile /build/7004.log --port 7004 --cluster-enabled yes
+      default:
+        ipv4_address: 172.31.100.194
+  gears-cluster-2-0-node-5:
+    image: *gears-cluster-img
+    command: *gears-cluster-cmd
     networks:
-      redisclusternet:
-        ipv4_address: 10.0.0.14
-
-  redis5:
-    image: redislabs/redisgears:edge
-    ports:
-      - 7005:7005
-    command: redis-server --protected-mode no --loadmodule /build/target/release/libredisgears.so v8-plugin-path /build/target/release/libredisgears_v8_plugin.so --logfile /build/7005.log --port 7005 --cluster-enabled yes
-    depends_on:
-      - redis1
+      default:
+        ipv4_address: 172.31.100.195
+  gears-cluster-2-0-node-6:
+    image: *gears-cluster-img
+    command: *gears-cluster-cmd
     networks:
-      redisclusternet:
-        ipv4_address: 10.0.0.15
-
-  redis6:
-    image: redislabs/redisgears:edge
-    ports:
-      - 7006:7006
-    command: redis-server --protected-mode no --loadmodule /build/target/release/libredisgears.so v8-plugin-path /build/target/release/libredisgears_v8_plugin.so --logfile /build/7006.log --port 7006 --cluster-enabled yes
-    depends_on:
-      - redis2
-    networks:
-      redisclusternet:
-        ipv4_address: 10.0.0.16
+      default:
+        ipv4_address: 172.31.100.196
 
   # redis enterprise
   redis-enterprise:
@@ -263,9 +231,3 @@ networks:
       config:
         - subnet: 172.33.100.0/24
           gateway: 172.33.100.1
-  redisclusternet:
-    name: redis
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.0.0.0/16

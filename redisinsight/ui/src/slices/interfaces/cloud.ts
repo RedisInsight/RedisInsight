@@ -1,16 +1,20 @@
 import { Nullable } from 'uiSrc/utils'
 import { Instance } from 'uiSrc/slices/interfaces/instances'
 
-import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
+import { CloudJobInfo, CloudJobStatus } from 'apiSrc/modules/cloud/job/models'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
+
+export interface CloudJobInfoState extends Omit<CloudJobInfo, 'status'> {
+  status: '' | CloudJobStatus
+}
 
 export interface StateAppOAuth {
   loading: boolean
   error: string
   message: string
   source: Nullable<OAuthSocialSource>
-  job: Nullable<CloudJobInfo>
+  job: Nullable<CloudJobInfoState>
   user: {
     error: string
     loading: boolean
@@ -30,6 +34,7 @@ export interface StateAppOAuth {
     loading: boolean
     data: Nullable<CloudCapiKey[]>
   }
+  agreement: boolean
 }
 
 export interface CloudCapiKey {

@@ -27,7 +27,6 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
 
-import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import { ReactComponent as SnoozeIcon } from 'uiSrc/assets/img/icons/snooze.svg'
@@ -46,9 +45,8 @@ export interface IProps {
   tutorial?: string
   provider?: string
   params: IRecommendationParams
+  recommendationsContent: IRecommendationsStatic
 }
-
-const recommendationsContent = _content as IRecommendationsStatic
 
 const Recommendation = ({
   id,
@@ -61,6 +59,7 @@ const Recommendation = ({
   hide,
   provider,
   params,
+  recommendationsContent,
 }: IProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const history = useHistory()

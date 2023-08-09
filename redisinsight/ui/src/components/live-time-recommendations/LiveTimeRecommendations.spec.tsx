@@ -11,17 +11,18 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
 import { RECOMMENDATIONS_DATA_MOCK } from 'uiSrc/mocks/handlers/recommendations/recommendationsHandler'
 import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
-import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
-import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 
 import LiveTimeRecommendations from './LiveTimeRecommendations'
 
-const recommendationsContent = _content as IRecommendationsStatic
-
 let store: typeof mockedStore
+const recommendationsContent = MOCK_RECOMMENDATIONS
 
-const mockRecommendationsSelector = jest.requireActual('uiSrc/slices/recommendations/recommendations')
+const mockRecommendationsSelector = {
+  ...jest.requireActual('uiSrc/slices/recommendations/recommendations'),
+  content: recommendationsContent,
+}
 const mockAppContextDbConfigSelector = jest.requireActual('uiSrc/slices/app/context')
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
@@ -190,7 +191,7 @@ describe('LiveTimeRecommendations', () => {
       data: {
         recommendations: [{ name: 'RTS' }],
       },
-      isContentVisible: true
+      isContentVisible: true,
     }))
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
@@ -223,7 +224,7 @@ describe('LiveTimeRecommendations', () => {
       data: {
         recommendations: [],
       },
-      isContentVisible: true
+      isContentVisible: true,
     }))
     render(<LiveTimeRecommendations />)
     const afterRenderActions = [...store.getActions()]
@@ -241,7 +242,7 @@ describe('LiveTimeRecommendations', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       isContentVisible: true,
-      data: RECOMMENDATIONS_DATA_MOCK
+      data: RECOMMENDATIONS_DATA_MOCK,
     }))
 
     const { queryByTestId } = render(<LiveTimeRecommendations />)
@@ -266,7 +267,7 @@ describe('LiveTimeRecommendations', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       isContentVisible: true,
-      data: RECOMMENDATIONS_DATA_MOCK
+      data: RECOMMENDATIONS_DATA_MOCK,
     }))
     const { queryByTestId } = render(<LiveTimeRecommendations />)
 
@@ -278,7 +279,7 @@ describe('LiveTimeRecommendations', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       isContentVisible: true,
-      data: RECOMMENDATIONS_DATA_MOCK
+      data: RECOMMENDATIONS_DATA_MOCK,
     }));
     (appContextDbConfig as jest.Mock).mockImplementation(() => ({
       ...mockAppContextDbConfigSelector,
@@ -294,7 +295,7 @@ describe('LiveTimeRecommendations', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       isContentVisible: true,
-      data: RECOMMENDATIONS_DATA_MOCK
+      data: RECOMMENDATIONS_DATA_MOCK,
     }));
     (appContextDbConfig as jest.Mock).mockImplementation(() => ({
       ...mockAppContextDbConfigSelector,
@@ -317,7 +318,7 @@ describe('LiveTimeRecommendations', () => {
       data: {
         ...RECOMMENDATIONS_DATA_MOCK,
         recommendations: RECOMMENDATIONS_DATA_MOCK.recommendations.map((rec) => ({ ...rec, hide: true }))
-      }
+      },
     }));
     (appContextDbConfig as jest.Mock).mockImplementation(() => ({
       ...mockAppContextDbConfigSelector,

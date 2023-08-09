@@ -16,7 +16,7 @@ import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 
 import { AppDispatch, RootState } from '../store'
-import { CloudCapiKey, Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
+import { CloudCapiKey, CloudJobInfoState, Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
 import {
   addErrorNotification,
   addInfiniteNotification,
@@ -117,7 +117,7 @@ const oauthCloudSlice = createSlice({
     setSelectAccountDialogState: (state, { payload }: PayloadAction<boolean>) => {
       state.isOpenSelectAccountDialog = payload
     },
-    setJob: (state, { payload }: PayloadAction<CloudJobInfo>) => {
+    setJob: (state, { payload }: PayloadAction<CloudJobInfoState>) => {
       state.job = payload
     },
 
@@ -365,6 +365,7 @@ export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => vo
       const error = _err as AxiosError
       dispatch(addErrorNotification(error))
       dispatch(getPlansFailure())
+      dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
       onFailAction?.()
     }
   }

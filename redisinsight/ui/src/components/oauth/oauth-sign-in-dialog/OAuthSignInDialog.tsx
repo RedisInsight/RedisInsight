@@ -70,24 +70,6 @@ const OAuthSignInDialog = () => {
             </EuiText>
             <h4 className={styles.socialSubTitle}>Sign up with</h4>
             <OAuthSocial />
-            <EuiText className={styles.socialText}>
-              {'By signing up, you acknowledge that you agree to our '}
-              <EuiLink
-                external={false}
-                href="https://redis.com/legal/cloud-tos/?utm_source=redisinsight&utm_medium=main&utm_campaign=main"
-                target="_blank"
-              >
-                Cloud Terms of Service
-              </EuiLink>
-              {' and '}
-              <EuiLink
-                external={false}
-                href="https://redis.com/legal/privacy-policy/?utm_source=redisinsight&utm_medium=main&utm_campaign=main"
-                target="_blank"
-              >
-                Privacy Policy.
-              </EuiLink>
-            </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiModalBody>

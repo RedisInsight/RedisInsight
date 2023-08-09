@@ -245,6 +245,7 @@ export interface StateAppOAuth {
   isOpenSignInDialog: boolean
   isOpenSelectAccountDialog: boolean
   showProgress: boolean
+  agreement: boolean
 }
 
 export interface CloudUserFreeDbState {

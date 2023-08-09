@@ -29,6 +29,7 @@ export const initialState: StateAppOAuth = {
     status: '',
   },
   source: null,
+  agreement: localStorageService.get(BrowserStorageItem.OAuthAgreement) ?? false,
   isOpenSignInDialog: false,
   isOpenSelectAccountDialog: false,
   showProgress: true,
@@ -121,6 +122,9 @@ const oauthCloudSlice = createSlice({
     showOAuthProgress: (state, { payload }: PayloadAction<boolean>) => {
       state.showProgress = payload
     },
+    setAgreement: (state, { payload }: PayloadAction<boolean>) => {
+      state.agreement = payload
+    },
   },
 })
 
@@ -145,6 +149,7 @@ export const {
   getPlansSuccess,
   getPlansFailure,
   showOAuthProgress,
+  setAgreement,
 } = oauthCloudSlice.actions
 
 // A selector
@@ -153,6 +158,7 @@ export const oauthCloudJobSelector = (state: RootState) => state.oauth.cloud.job
 export const oauthCloudUserSelector = (state: RootState) => state.oauth.cloud.user
 export const oauthCloudUserDataSelector = (state: RootState) => state.oauth.cloud.user.data
 export const oauthCloudPlanSelector = (state: RootState) => state.oauth.cloud.plan
+export const oauthCloudPAgreementSelector = (state: RootState) => state.oauth.cloud.agreement
 
 // The reducer
 export default oauthCloudSlice.reducer

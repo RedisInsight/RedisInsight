@@ -1,11 +1,12 @@
 import React from 'react'
-import { EuiButtonIcon, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButtonIcon, EuiText, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { ipcAuthGithub, ipcAuthGoogle } from 'uiSrc/electron/utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { setOAuthCloudSource, signIn } from 'uiSrc/slices/oauth/cloud'
+import { setOAuthCloudSource, signIn, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
+import { OAuthAgreement } from 'uiSrc/components'
 
 import { ReactComponent as GoogleIcon } from 'uiSrc/assets/img/oauth/google.svg'
 import { ReactComponent as GithubIcon } from 'uiSrc/assets/img/oauth/github.svg'
@@ -26,9 +27,10 @@ interface Props {
 }
 
 const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
+  const agreement = useSelector(oauthCloudPAgreementSelector)
+
   const dispatch = useDispatch()
   const isAutodiscovery = type === OAuthSocialType.Autodiscovery
-
   const getAction = () => (isAutodiscovery ? 'import' : 'create')
 
   const sendTelemetry = (accountOption: string) => sendEventTelemetry({
@@ -61,25 +63,36 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
   ]
 
   const buttons = socialLinks.map(({ icon, label, className = '', onButtonClick }) => (
-    <EuiButtonIcon
+    <EuiToolTip
       key={label}
-      iconType={icon}
-      className={cx(styles.button, className)}
-      onClick={() => {
-        dispatch(signIn())
-        dispatch(setIsAutodiscoverySSO(isAutodiscovery))
-        isAutodiscovery && dispatch(setOAuthCloudSource(OAuthSocialSource.Autodiscovery))
-        onButtonClick()
-      }}
-      data-testid={label}
-      aria-labelledby={label}
-    />
+      position="top"
+      anchorClassName={!agreement ? 'euiToolTip__btn-disabled' : ''}
+      content={agreement ? null : 'Acknowledge the agreement'}
+      data-testid={`${label}-tooltip`}
+    >
+      <EuiButtonIcon
+        iconType={icon}
+        disabled={!agreement}
+        className={cx(styles.button, className)}
+        onClick={() => {
+          dispatch(signIn())
+          dispatch(setIsAutodiscoverySSO(isAutodiscovery))
+          isAutodiscovery && dispatch(setOAuthCloudSource(OAuthSocialSource.Autodiscovery))
+          onButtonClick()
+        }}
+        data-testid={label}
+        aria-labelledby={label}
+      />
+    </EuiToolTip>
   ))
 
   if (!isAutodiscovery) {
     return (
       <div className={cx(styles.container)}>
         {buttons}
+        <div className={styles.containerAgreement}>
+          <OAuthAgreement />
+        </div>
       </div>
     )
   }
@@ -90,6 +103,9 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
       <EuiText className={styles.text} color="subdued">Auto-discover subscriptions and add your databases or create a free starter database</EuiText>
       <div className={styles.buttonsAuto}>
         {buttons}
+      </div>
+      <div className={styles.containerAgreement}>
+        <OAuthAgreement />
       </div>
     </div>
   )

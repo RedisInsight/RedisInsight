@@ -28,6 +28,7 @@ export default {
   INVALID_SSH_BODY: 'Invalid SSH body',
   INVALID_CERTIFICATE_BODY: 'Invalid certificate body',
   INVALID_PRIVATE_KEY: 'Invalid private key',
+  INVALID_COMPRESSOR: 'Invalid compressor',
   CERTIFICATE_NAME_IS_NOT_DEFINED: 'Certificate name is not defined',
   CLIENT_CERT_EXIST: 'This client certificate name is already in use.',
   INVALID_CERTIFICATE_ID: 'Invalid certificate id.',

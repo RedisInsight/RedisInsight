@@ -5,7 +5,7 @@ import { RedisString } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
 
 export interface Props {
-  header?: string
+  header?: JSX.Element | string
   text: JSX.Element | string
   item: string
   itemRaw?: RedisString

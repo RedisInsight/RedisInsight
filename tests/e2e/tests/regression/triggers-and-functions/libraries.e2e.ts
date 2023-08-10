@@ -13,8 +13,6 @@ import { CommonElementsActions } from '../../../common-actions/common-elements-a
 import { Common } from '../../../helpers/common';
 import { APIKeyRequests } from '../../../helpers/api/api-keys';
 import {
-    ListAndStringKeyParameters,
-    SortedSetKeyParameters,
     StreamKeyParameters
 } from '../../../pageObjects/browser-page';
 
@@ -169,33 +167,16 @@ test.only.after(async() => {
     const command2 = `redis.registerStreamTrigger('${LIBRARIES_LIST[3].name}', 'name', function(){});`;
 
     const streamKeyParameters: StreamKeyParameters = {
-        keyName: 'sdfsdf',
+        keyName: streamKeyName,
         entries: [{
             id: '*',
             fields: [{
-                name: 'asdasd',
-                value: 'asdasdsa'
+                name: 'keyField',
+                value: 'keyValue'
             }]
         }]
     };
-
-    const listKeyParameters: ListAndStringKeyParameters = {
-        keyName: 'asasasas',
-        element: 'sadsd'
-    };
-
-    const sortedSetKeyParameters: SortedSetKeyParameters = {
-        keyName: 'asasasas2',
-        members: [{
-            name: '1',
-            score: 1
-        }]
-    };
-    //await apiKeyRequests.addListKeyApi(listKeyParameters, ossStandaloneRedisGears);
     await apiKeyRequests.addStreamKeyApi(streamKeyParameters, ossStandaloneRedisGears);
-    // await  apiKeyRequests.addStringKeyApi(listKeyParameters, ossStandaloneRedisGears);
-    //await  apiKeyRequests.addSortedSetKeyApi(sortedSetKeyParameters, ossStandaloneRedisGears);
-    await browserPage.addStreamKey(streamKeyName, 'keyField', 'keyValue');
     await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
     await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
     await t.click(triggersAndFunctionsLibrariesPage.addLibraryButton);

@@ -57,9 +57,16 @@ export class APIKeyRequests {
             databaseParameters.databaseName
         );
         const requestBody = {
-            keyName: Buffer.from(keyParameters.keyName, 'utf-8')
-            // entries: keyParameters.entries
-            //    .map((member) => ({ ...member, name: Buffer.from(fie.name, 'utf-8') }))
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            entries: keyParameters.entries
+                .map((member) =>
+                    ({
+                        ...member,
+                        fields: member.fields.map(({ name, value }) => ({
+                            name: Buffer.from(name, 'utf-8'),
+                            value: Buffer.from(value, 'utf-8')
+                        }))
+                    }))
         };
         const response = await sendPostRequest(
             `/databases/${databaseId}/streams?encoding=buffer`,

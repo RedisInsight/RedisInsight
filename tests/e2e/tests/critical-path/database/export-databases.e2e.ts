@@ -25,7 +25,7 @@ let foundExportedFiles: string[];
 fixture `Export databases`
     .meta({ type: 'critical_path', rte: rte.none })
     .page(commonUrl);
-test.only
+test
     .before(async() => {
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);

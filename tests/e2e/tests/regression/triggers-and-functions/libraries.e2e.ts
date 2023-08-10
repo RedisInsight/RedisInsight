@@ -12,6 +12,11 @@ import { TriggersAndFunctionLibrary } from '../../../interfaces/triggers-and-fun
 import { CommonElementsActions } from '../../../common-actions/common-elements-actions';
 import { Common } from '../../../helpers/common';
 import { APIKeyRequests } from '../../../helpers/api/api-keys';
+import {
+    ListAndStringKeyParameters,
+    SortedSetKeyParameters,
+    StreamKeyParameters
+} from '../../../pageObjects/browser-page';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -155,7 +160,7 @@ test('Verify that library can be uploaded', async t => {
     await t.expect(triggersAndFunctionsLibrariesPage.getLibraryNameSelector(libNameFromFile).exists).ok('the library was not added');
     await t.expect(triggersAndFunctionsLibrariesPage.getFunctionsByName(LibrariesSections.Functions, functionNameFromFile).exists).ok('the library information was not opened');
 });
-test.after(async() => {
+test.only.after(async() => {
     await apiKeyRequests.deleteKeyByNameApi(streamKeyName, ossStandaloneRedisGears.databaseName);
     await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libraryName}`);
     await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
@@ -163,6 +168,33 @@ test.after(async() => {
     const command1 = `#!js api_version=1.0 name=${libraryName}`;
     const command2 = `redis.registerStreamTrigger('${LIBRARIES_LIST[3].name}', 'name', function(){});`;
 
+    const streamKeyParameters: StreamKeyParameters = {
+        keyName: 'sdfsdf',
+        entries: [{
+            id: '*',
+            fields: [{
+                name: 'asdasd',
+                value: 'asdasdsa'
+            }]
+        }]
+    };
+
+    const listKeyParameters: ListAndStringKeyParameters = {
+        keyName: 'asasasas',
+        element: 'sadsd'
+    };
+
+    const sortedSetKeyParameters: SortedSetKeyParameters = {
+        keyName: 'asasasas2',
+        members: [{
+            name: '1',
+            score: 1
+        }]
+    };
+    //await apiKeyRequests.addListKeyApi(listKeyParameters, ossStandaloneRedisGears);
+    await apiKeyRequests.addStreamKeyApi(streamKeyParameters, ossStandaloneRedisGears);
+    // await  apiKeyRequests.addStringKeyApi(listKeyParameters, ossStandaloneRedisGears);
+    //await  apiKeyRequests.addSortedSetKeyApi(sortedSetKeyParameters, ossStandaloneRedisGears);
     await browserPage.addStreamKey(streamKeyName, 'keyField', 'keyValue');
     await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
     await t.click(triggersAndFunctionsFunctionsPage.librariesLink);

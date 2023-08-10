@@ -1105,7 +1105,10 @@ export type StreamKeyParameters = {
     keyName: string,
     entries: {
         id: string,
-        fields: string[][]
+        fields: {
+            name: string,
+            value: string
+        }[]
     }[]
 };
 
@@ -1130,7 +1133,7 @@ export type SortedSetKeyParameters = {
     keyName: string,
     members: {
         name: string,
-        score: string
+        score: number
     }[]
 };
 
@@ -1139,7 +1142,7 @@ export type SortedSetKeyParameters = {
  * @param keyName The name of the key
  * @param element The element in list
  */
-export type ListKeyParameters = {
+export type ListAndStringKeyParameters = {
     keyName: string,
     element: string
 };

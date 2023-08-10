@@ -54,7 +54,7 @@ test
         const compressor = 'Brotli';
 
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
-        await myRedisDatabasePage.AddRedisDatabase.setCompressorValue(compressor, true);
+        await myRedisDatabasePage.AddRedisDatabase.setCompressorValue(compressor);
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
 
         // Select databases checkboxes

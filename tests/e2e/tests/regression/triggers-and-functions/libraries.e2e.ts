@@ -158,7 +158,7 @@ test('Verify that library can be uploaded', async t => {
     await t.expect(triggersAndFunctionsLibrariesPage.getLibraryNameSelector(libNameFromFile).exists).ok('the library was not added');
     await t.expect(triggersAndFunctionsLibrariesPage.getFunctionsByName(LibrariesSections.Functions, functionNameFromFile).exists).ok('the library information was not opened');
 });
-test.only.after(async() => {
+test.after(async() => {
     await apiKeyRequests.deleteKeyByNameApi(streamKeyName, ossStandaloneRedisGears.databaseName);
     await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libraryName}`);
     await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);

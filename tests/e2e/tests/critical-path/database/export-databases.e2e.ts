@@ -32,6 +32,7 @@ test
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterConfig);
         await databaseAPIRequests.discoverSentinelDatabaseApi(ossSentinelConfig);
+        await databaseAPIRequests.deleteAllDatabasesApi();
         await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {

@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { remove } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { getApiErrorMessage, getAxiosError, isStatusSuccessful, Nullable, parseCloudOAuthError } from 'uiSrc/utils'
+import { getApiErrorMessage, getAxiosError, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
 import { CloudJobName, CloudJobStatus } from 'uiSrc/electron/constants'
 import {
@@ -19,7 +19,6 @@ import { AppDispatch, RootState } from '../store'
 import {
   CloudCapiKey,
   CloudJobInfoState,
-  CustomError,
   EnhancedAxiosError,
   Instance,
   OAuthSocialSource,

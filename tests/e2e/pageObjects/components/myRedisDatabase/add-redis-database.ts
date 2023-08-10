@@ -64,6 +64,8 @@ export class AddRedisDatabase {
     // RADIO BUTTONS
     sshPasswordRadioBtn = Selector('#password~div', { timeout: 500 });
     sshPrivateKeyRadioBtn = Selector('#privateKey~div', { timeout: 500 });
+    // LABELS
+    dataCompressorLabel = Selector('[data-testid=showCompressor] ~ label');
 
     /**
      * Adding a new redis database
@@ -262,10 +264,13 @@ export class AddRedisDatabase {
     /**
      * set copressor value in dropdown
      * @param compressor - compressor value
+     * @param value - checkbox value
      */
-    async setCompressorValue(compressor: string){
+    async setCompressorValue(compressor: string, value: boolean){
 
-        await t.click(this.dataCompressorCheckbox);
+        if(value !== await this.dataCompressorCheckbox.checked){
+            await t.click(this.dataCompressorLabel);
+        }
         await t.click(this.selectCompressor);
         await t.click(Selector(`[id="${compressor}"]`));
     }

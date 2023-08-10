@@ -25,7 +25,7 @@ let foundExportedFiles: string[];
 fixture `Export databases`
     .meta({ type: 'critical_path', rte: rte.none })
     .page(commonUrl);
-test
+test.only
     .before(async() => {
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
@@ -53,7 +53,7 @@ test
         const compressor = 'Brotli';
 
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
-        await myRedisDatabasePage.AddRedisDatabase.setCompressorValue(compressor);
+        await myRedisDatabasePage.AddRedisDatabase.setCompressorValue(compressor, true);
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
 
         // Select databases checkboxes

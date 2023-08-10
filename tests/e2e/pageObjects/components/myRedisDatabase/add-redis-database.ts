@@ -57,6 +57,7 @@ export class AddRedisDatabase {
     // DROPDOWNS
     caCertField = Selector('[data-testid=select-ca-cert]', { timeout: 500 });
     clientCertField = Selector('[data-testid=select-cert]', { timeout: 500 });
+    selectCompressor = Selector('[data-testid=select-compressor]', { timeout: 500 });
     // CHECKBOXES
     useSSHCheckbox = Selector('[data-testid=use-ssh]~div', { timeout: 500 });
     // RADIO BUTTONS

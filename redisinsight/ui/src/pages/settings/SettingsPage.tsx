@@ -18,9 +18,9 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setTitle } from 'uiSrc/utils'
-import { THEMES } from 'uiSrc/constants'
+import { FeatureFlags, THEMES } from 'uiSrc/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { ConsentsNotifications, ConsentsPrivacy } from 'uiSrc/components'
+import { ConsentsNotifications, ConsentsPrivacy, FeatureFlagComponent } from 'uiSrc/components'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -30,19 +30,23 @@ import {
   userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
 
-import { AdvancedSettings, WorkbenchSettings } from './components'
+import { AdvancedSettings, WorkbenchSettings, CloudSettings } from './components'
 
 import styles from './styles.module.scss'
 
 const SettingsPage = () => {
-  const options = THEMES
-  const themeContext = useContext(ThemeContext)
-
   const [loading, setLoading] = useState(false)
   const { loading: settingsLoading } = useSelector(userSettingsSelector)
   const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
 
+  const initialOpenSection = globalThis.location.hash || ''
+
   const dispatch = useDispatch()
+
+  const options = THEMES
+  const themeContext = useContext(ThemeContext)
+  const { theme, changeTheme } = themeContext
+
   useEffect(() => {
     // componentDidMount
     // fetch config settings, after that take spec
@@ -61,8 +65,8 @@ const SettingsPage = () => {
   setTitle('Settings')
 
   const onChange = (value: string) => {
-    const previousValue = themeContext.theme
-    themeContext.changeTheme(value)
+    const previousValue = theme
+    changeTheme(value)
     sendEventTelemetry({
       event: TelemetryEvent.SETTINGS_COLOR_THEME_CHANGED,
       eventData: {
@@ -82,7 +86,7 @@ const SettingsPage = () => {
         <EuiFormRow label="Specifies the color theme to be used in RedisInsight:">
           <EuiSuperSelect
             options={options}
-            valueOfSelected={themeContext.theme}
+            valueOfSelected={theme}
             onChange={onChange}
             style={{ marginTop: '12px' }}
             data-test-subj="select-theme"
@@ -116,6 +120,17 @@ const SettingsPage = () => {
     </div>
   )
 
+  const CloudSettingsGroup = () => (
+    <div>
+      {loading && (
+        <div className={styles.cover}>
+          <EuiLoadingSpinner size="xl" />
+        </div>
+      )}
+      <CloudSettings />
+    </div>
+  )
+
   const AdvancedSettingsGroup = () => (
     <div>
       {loading && (
@@ -145,7 +160,7 @@ const SettingsPage = () => {
             isCollapsible
             className={styles.accordion}
             title="General"
-            initialIsOpen={false}
+            initialIsOpen={initialOpenSection === '#general'}
             data-test-subj="accordion-appearance"
           >
             {Appearance()}
@@ -154,7 +169,7 @@ const SettingsPage = () => {
             isCollapsible
             className={styles.accordion}
             title="Privacy"
-            initialIsOpen={false}
+            initialIsOpen={initialOpenSection === '#privacy'}
             data-test-subj="accordion-privacy-settings"
           >
             {PrivacySettings()}
@@ -163,16 +178,27 @@ const SettingsPage = () => {
             isCollapsible
             className={styles.accordion}
             title="Workbench"
-            initialIsOpen={false}
+            initialIsOpen={initialOpenSection === '#workbench'}
             data-test-subj="accordion-workbench-settings"
           >
             {WorkbenchSettingsGroup()}
           </EuiCollapsibleNavGroup>
+          <FeatureFlagComponent name={FeatureFlags.cloudSso}>
+            <EuiCollapsibleNavGroup
+              isCollapsible
+              className={cx(styles.accordion, styles.accordionWithSubTitle)}
+              title="Redis Enterprise Cloud"
+              initialIsOpen={initialOpenSection === '#cloud'}
+              data-test-subj="accordion-cloud-settings"
+            >
+              {CloudSettingsGroup()}
+            </EuiCollapsibleNavGroup>
+          </FeatureFlagComponent>
           <EuiCollapsibleNavGroup
             isCollapsible
             className={cx(styles.accordion, styles.accordionWithSubTitle)}
             title="Advanced"
-            initialIsOpen={false}
+            initialIsOpen={initialOpenSection === '#advanced'}
             data-test-subj="accordion-advanced-settings"
           >
             {AdvancedSettingsGroup()}

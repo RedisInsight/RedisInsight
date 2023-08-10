@@ -13,7 +13,7 @@ import {
   mockCreateFreeCloudDatabaseDto,
   mockCloudCapiSubscriptionDatabasesFixed, mockCloudCapiSubscriptionDatabases,
 } from 'src/__mocks__';
-import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import { CloudCapiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudDatabaseCapiProvider } from 'src/modules/cloud/database/cloud-database.capi.provider';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -67,14 +67,14 @@ describe('CloudDatabaseCapiProvider', () => {
         mockCloudCapiHeaders,
       );
     });
-    it('throw CloudApiUnauthorizedException exception', async () => {
+    it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
 
       await expect(service.getDatabase(
         mockCloudCapiAuthDto,
         mockGetCloudSubscriptionDatabaseDto,
       )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+        CloudCapiUnauthorizedException,
       );
     });
   });
@@ -111,14 +111,14 @@ describe('CloudDatabaseCapiProvider', () => {
         mockCloudCapiHeaders,
       );
     });
-    it('throw CloudApiUnauthorizedException exception', async () => {
+    it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
 
       await expect(service.getDatabases(
         mockCloudCapiAuthDto,
         mockGetCloudSubscriptionDatabaseDto,
       )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+        CloudCapiUnauthorizedException,
       );
     });
   });
@@ -143,14 +143,14 @@ describe('CloudDatabaseCapiProvider', () => {
         mockCloudCapiHeaders,
       );
     });
-    it('throw CloudApiUnauthorizedException exception', async () => {
+    it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.post.mockRejectedValue(mockCapiUnauthorizedError);
 
       await expect(service.createFreeDatabase(
         mockCloudCapiAuthDto,
         mockCreateFreeCloudDatabaseDto,
       )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+        CloudCapiUnauthorizedException,
       );
     });
   });

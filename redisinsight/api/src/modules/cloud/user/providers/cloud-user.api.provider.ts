@@ -1,14 +1,11 @@
 import { get } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import {
-  ICloudApiAccount, ICloudApiCapiKey, ICloudApiUser,
+  ICloudApiAccount, ICloudApiUser,
 } from 'src/modules/cloud/user/models';
-import config from 'src/utils/config';
 import { wrapCloudApiError } from 'src/modules/cloud/common/exceptions';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudApiProvider } from 'src/modules/cloud/common/providers/cloud.api.provider';
-
-const cloudConfig = config.get('cloud');
 
 @Injectable()
 export class CloudUserApiProvider extends CloudApiProvider {
@@ -104,82 +101,6 @@ export class CloudUserApiProvider extends CloudApiProvider {
         {},
         CloudApiProvider.getHeaders(credentials),
       );
-    } catch (e) {
-      throw wrapCloudApiError(e);
-    }
-  }
-
-  /**
-   * Delete CApi key from current account
-   * @param credentials
-   * @param id
-   */
-  async deleteCApiKeys(credentials: ICloudApiCredentials, id: number): Promise<void> {
-    try {
-      await this.api.delete(
-        `/accounts/cloud-api/cloudApiKeys/${id}`,
-        CloudApiProvider.getHeaders(credentials),
-      );
-    } catch (e) {
-      throw wrapCloudApiError(e);
-    }
-  }
-
-  /**
-   * Get list of CApi keys
-   * @param credentials
-   */
-  async enableCapi(credentials: ICloudApiCredentials): Promise<string> {
-    try {
-      const { data } = await this.api.post(
-        '/accounts/cloud-api/cloudApiAccessKey',
-        {},
-        CloudApiProvider.getHeaders(credentials),
-      );
-
-      return data?.cloudApiAccessKey?.accessKey;
-    } catch (e) {
-      throw wrapCloudApiError(e);
-    }
-  }
-
-  /**
-   * Get list of CApi keys
-   * @param credentials
-   */
-  async getCapiKeys(credentials: ICloudApiCredentials): Promise<ICloudApiCapiKey[]> {
-    try {
-      const { data } = await this.api.get(
-        '/accounts/cloud-api/cloudApiKeys',
-        CloudApiProvider.getHeaders(credentials),
-      );
-
-      return data?.cloudApiKeys;
-    } catch (e) {
-      throw wrapCloudApiError(e);
-    }
-  }
-
-  /**
-   * Create new CApi key
-   * @param credentials
-   * @param userId
-   */
-  async createCapiKey(credentials: ICloudApiCredentials, userId: number): Promise<ICloudApiCapiKey> {
-    try {
-      const { data } = await this.api.post(
-        '/accounts/cloud-api/cloudApiKeys',
-        {
-          cloudApiKey: {
-            name: cloudConfig.capiKeyName,
-            user_account: userId,
-            ip_whitelist: [],
-          },
-        },
-        CloudApiProvider.getHeaders(credentials),
-      );
-
-      return data?.cloudApiKey;
     } catch (e) {
       throw wrapCloudApiError(e);
     }

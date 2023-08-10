@@ -10,7 +10,7 @@ import {
   CloudSubscriptionCapiProvider,
 } from 'src/modules/cloud/subscription/providers/cloud-subscription.capi.provider';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
-import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import { CloudApiUnauthorizedException, CloudCapiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -56,11 +56,11 @@ describe('CloudSubscriptionApiProvider', () => {
       )).toEqual([mockCloudSubscription]);
       expect(mockedAxios.get).toHaveBeenCalledWith('/fixed/subscriptions', mockCloudCapiHeaders);
     });
-    it('throw CloudApiUnauthorizedException exception', async () => {
+    it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
 
       await expect(service.getSubscriptionsByType(mockCloudCapiAuthDto, CloudSubscriptionType.Fixed)).rejects.toThrow(
-        CloudApiUnauthorizedException,
+        CloudCapiUnauthorizedException,
       );
     });
   });
@@ -100,7 +100,7 @@ describe('CloudSubscriptionApiProvider', () => {
       );
     });
 
-    it('throw CloudApiUnauthorizedException exception', async () => {
+    it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
 
       await expect(service.getSubscriptionByType(
@@ -108,7 +108,7 @@ describe('CloudSubscriptionApiProvider', () => {
         mockCloudSubscription.id,
         CloudSubscriptionType.Fixed,
       )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+        CloudCapiUnauthorizedException,
       );
     });
   });
@@ -126,14 +126,14 @@ describe('CloudSubscriptionApiProvider', () => {
       )).toEqual([mockFreeCloudSubscriptionPlan1]);
       expect(mockedAxios.get).toHaveBeenCalledWith('/fixed/plans', mockCloudCapiHeaders);
     });
-    it('throw CloudApiUnauthorizedException exception', async () => {
+    it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
 
       await expect(service.getSubscriptionsPlansByType(
         mockCloudCapiAuthDto,
         CloudSubscriptionType.Fixed,
       )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+        CloudCapiUnauthorizedException,
       );
     });
   });
@@ -159,14 +159,14 @@ describe('CloudSubscriptionApiProvider', () => {
         mockCloudCapiHeaders,
       );
     });
-    it('throw CloudApiUnauthorizedException exception', async () => {
+    it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.post.mockRejectedValue(mockCapiUnauthorizedError);
 
       await expect(service.createFreeSubscription(
         mockCloudCapiAuthDto,
         mockCreateFreeCloudSubscriptionDto,
       )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+        CloudCapiUnauthorizedException,
       );
     });
   });

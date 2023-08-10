@@ -2,16 +2,15 @@ import {
   CloudAccountInfo,
   CloudUser,
   CloudUserAccount,
-  ICloudApiAccount, ICloudApiCapiAccessKey,
-  ICloudApiCapiKey,
+  ICloudApiAccount,
   ICloudApiCsrfToken,
   ICloudApiUser,
   ICloudCapiAccount,
 } from 'src/modules/cloud/user/models';
-import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import config from 'src/utils/config';
 import { classToPlain } from 'class-transformer';
+import { mockCloudApiCapiAccessKey, mockCloudCapiAuthDto } from 'src/__mocks__/cloud-capi-key';
 
 const serverConfig = config.get('server');
 
@@ -51,21 +50,12 @@ export const mockCloudUserCapiService = jest.fn(() => ({
 }));
 
 // ======================================= API =======================================
-export const mockCloudCapiAuthDto: CloudCapiAuthDto = {
-  capiKey: 'capi_key',
-  capiSecret: 'capi_secret_key',
-};
-
 export const mockCloudCapiHeaders = {
   headers: {
     'x-api-key': mockCloudCapiAuthDto.capiKey,
     'x-api-secret-key': mockCloudCapiAuthDto.capiSecret,
     'User-Agent': `RedisInsight/${serverConfig.version}`,
   },
-};
-
-export const mockCloudApiCapiAccessKey: ICloudApiCapiAccessKey = {
-  accessKey: mockCloudCapiAuthDto.capiKey,
 };
 
 export const mockCloudApiCsrfToken: ICloudApiCsrfToken = {
@@ -90,13 +80,6 @@ export const mockCloudUserAccount = Object.assign(new CloudUserAccount(), {
 //   id: mockCloudCapiAccount2.id,
 //   name: mockCloudCapiAccount2.name,
 // });
-
-export const mockCloudApiCapiKey: ICloudApiCapiKey = {
-  id: 3001,
-  name: 'capi-key-name',
-  user_account: mockCloudUserAccount.id,
-  secret_key: mockCloudCapiAuthDto.capiSecret,
-};
 
 export const mockCloudApiHeaders = {
   headers: {

@@ -12,6 +12,7 @@ import { NestjsFormDataModule } from 'nestjs-form-data';
 import { FeatureModule } from 'src/modules/feature/feature.module';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { SessionModule } from 'src/modules/session/session.module';
+import { ServerModule } from 'src/modules/server/server.module';
 
 @Global()
 @Module({
@@ -29,6 +30,7 @@ import { SessionModule } from 'src/modules/session/session.module';
     FeatureModule.register(),
     AuthModule.register(),
     SessionModule.register(),
+    ServerModule.register(),
   ],
   exports: [
     EncryptionModule,
@@ -41,6 +43,7 @@ import { SessionModule } from 'src/modules/session/session.module';
     NestjsFormDataModule,
     FeatureModule,
     SessionModule,
+    ServerModule,
   ],
 })
 export class CoreModule {}

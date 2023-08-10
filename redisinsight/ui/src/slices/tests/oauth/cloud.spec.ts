@@ -4,9 +4,15 @@ import { AxiosError } from 'axios'
 import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import {
+  addErrorNotification,
+  addInfiniteNotification,
+  addMessageNotification,
+  removeInfiniteNotification
+} from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { CloudJobStatus, CloudJobName } from 'uiSrc/electron/constants'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import reducer, {
   initialState,
   setSignInDialogState,
@@ -33,6 +39,18 @@ import reducer, {
   setIsOpenSelectPlanDialog,
   showOAuthProgress,
   setAgreement,
+  getCapiKeys,
+  getCapiKeysSuccess,
+  getCapiKeysFailure,
+  removeCapiKey,
+  removeCapiKeySuccess,
+  removeCapiKeyFailure,
+  removeAllCapiKeysSuccess,
+  removeAllCapiKeysFailure,
+  removeAllCapiKeys,
+  getCapiKeysAction,
+  removeAllCapiKeysAction,
+  removeCapiKeyAction,
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -481,6 +499,253 @@ describe('oauth cloud slice', () => {
     })
   })
 
+  describe('getCapiKeys', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        capiKeys: {
+          ...initialState.capiKeys,
+          loading: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getCapiKeys())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getCapiKeysSuccess', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const data = [
+        {
+          id: '1'
+        }
+      ]
+      const state = {
+        ...initialState,
+        capiKeys: {
+          ...initialState.capiKeys,
+          data,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getCapiKeysSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getCapiKeysFailure', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        capiKeys: {
+          ...initialState.capiKeys,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, getCapiKeysFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('removeCapiKey', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        capiKeys: {
+          ...initialState.capiKeys,
+          loading: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, removeCapiKey())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('removeCapiKeySuccess', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        capiKeys: {
+          data: [
+            { id: '1' },
+            { id: '2' },
+            { id: '3' },
+          ]
+        }
+      }
+      const state = {
+        ...initialState,
+        capiKeys: {
+          ...initialState.capiKeys,
+          loading: false,
+          data: [
+            { id: '1' },
+            { id: '3' },
+          ]
+        }
+      }
+
+      // Act
+      const nextState = reducer(currentState, removeCapiKeySuccess('2'))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('removeCapiKeyFailure', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        capiKeys: {
+          ...initialState.capiKeys,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, removeCapiKeyFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('removeAllCapiKeys', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        capiKeys: {
+          ...initialState.capiKeys,
+          loading: true,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, removeAllCapiKeys())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('removeAllCapiKeysSuccess', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        capiKeys: {
+          data: [
+            { id: '1' },
+            { id: '2' },
+            { id: '3' },
+          ]
+        }
+      }
+      const state = {
+        ...initialState,
+        capiKeys: {
+          ...initialState.capiKeys,
+          loading: false,
+          data: []
+        }
+      }
+
+      // Act
+      const nextState = reducer(currentState, removeAllCapiKeysSuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('removeAllCapiKeysFailure', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        capiKeys: {
+          ...initialState.capiKeys,
+          loading: false,
+        }
+      }
+
+      // Act
+      const nextState = reducer(initialState, removeAllCapiKeysFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchUserInfo', () => {
       it('call both fetchUserInfo and getUserInfoSuccess when fetch is successed', async () => {
@@ -752,6 +1017,137 @@ describe('oauth cloud slice', () => {
           getPlans(),
           addErrorNotification(responsePayload as AxiosError),
           getPlansFailure(),
+          removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('getCapiKeysAction', () => {
+      it('should call proper actions on succeed', async () => {
+        const data = [
+          { id: '1' },
+          { id: '2' },
+        ]
+
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(getCapiKeysAction())
+
+        // Assert
+        const expectedActions = [
+          getCapiKeys(),
+          getCapiKeysSuccess(data),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on failed', async () => {
+        const errorMessage = 'Error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(getCapiKeysAction())
+
+        // Assert
+        const expectedActions = [
+          getCapiKeys(),
+          addErrorNotification(responsePayload as AxiosError),
+          getCapiKeysFailure(),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('removeAllCapiKeysAction', () => {
+      it('should call proper actions on succeed', async () => {
+        const responsePayload = { status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(removeAllCapiKeysAction())
+
+        // Assert
+        const expectedActions = [
+          removeAllCapiKeys(),
+          removeAllCapiKeysSuccess(),
+          addMessageNotification(successMessages.REMOVED_ALL_CAPI_KEYS())
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on failed', async () => {
+        const errorMessage = 'Error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.delete = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(removeAllCapiKeysAction())
+
+        // Assert
+        const expectedActions = [
+          removeAllCapiKeys(),
+          addErrorNotification(responsePayload as AxiosError),
+          removeAllCapiKeysFailure(),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('removeCapiKeyAction', () => {
+      it('should call proper actions on succeed', async () => {
+        const responsePayload = { status: 200 }
+
+        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(removeCapiKeyAction({ id: '1', name: 'Key' }))
+
+        // Assert
+        const expectedActions = [
+          removeCapiKey(),
+          removeCapiKeySuccess('1'),
+          addMessageNotification(successMessages.REMOVED_CAPI_KEY('Key'))
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on failed', async () => {
+        const errorMessage = 'Error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.delete = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(removeCapiKeyAction({ id: '1', name: 'Key' }))
+
+        // Assert
+        const expectedActions = [
+          removeCapiKey(),
+          addErrorNotification(responsePayload as AxiosError),
+          removeCapiKeyFailure(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

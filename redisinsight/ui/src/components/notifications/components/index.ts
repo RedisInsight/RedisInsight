@@ -1,6 +1,6 @@
-import DefaultErrorContent from './DefaultErrorContent'
-import EncryptionErrorContent from './EncryptionErrorContent'
-import { INFINITE_MESSAGES, InfiniteMessagesIds } from './InfiniteMessages'
+import DefaultErrorContent from './default-error-content'
+import EncryptionErrorContent from './encryption-error-content'
+import { INFINITE_MESSAGES, InfiniteMessagesIds } from './infinite-messages'
 
 export {
   EncryptionErrorContent,

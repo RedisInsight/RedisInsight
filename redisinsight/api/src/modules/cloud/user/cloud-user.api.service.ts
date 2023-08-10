@@ -4,14 +4,10 @@ import { SessionMetadata } from 'src/common/models';
 import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
 import { CloudUser, CloudUserAccount } from 'src/modules/cloud/user/models';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
-import config from 'src/utils/config';
 import { wrapHttpError } from 'src/common/utils';
-import { CloudApiBadRequestException, CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
-import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
-
-const cloudConfig = config.get('cloud');
 
 @Injectable()
 export class CloudUserApiService {
@@ -123,12 +119,6 @@ export class CloudUserApiService {
         capiKey: account?.api_access_key,
       }));
 
-      const currentAccount = CloudUserApiService.getCurrentAccount(user);
-
-      if (currentAccount?.capiKey) {
-        user.capiKey = currentAccount.capiKey;
-      }
-
       await this.repository.update(sessionMetadata.sessionId, user);
       this.logger.log('Successfully synchronized user profile');
     } catch (e) {
@@ -174,83 +164,11 @@ export class CloudUserApiService {
   }
 
   /**
-   * Generate CAPI key + secret if needed
+   * Update user data
    * @param sessionMetadata
-   * @param utm
+   * @param data
    */
-  private async ensureCapiKeys(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<void> {
-    try {
-      let user = await this.me(sessionMetadata, false, utm);
-
-      // nothing is needed since we have capi key
-      if (user?.capiSecret && user?.capiKey) {
-        return;
-      }
-
-      let currentAccount = CloudUserApiService.getCurrentAccount(user);
-
-      if (!currentAccount) {
-        throw new CloudApiBadRequestException('No active account');
-      }
-
-      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
-
-      if (!user?.capiKey) {
-        this.logger.log('Trying to enable capi');
-
-        await this.api.enableCapi(session);
-
-        this.logger.log('Successfully enabled capi');
-
-        user = await this.me(sessionMetadata, true, utm);
-        currentAccount = CloudUserApiService.getCurrentAccount(user);
-      }
-
-      const existingKeys = await this.api.getCapiKeys(session);
-
-      if (existingKeys?.length) {
-        const existingKey = find(existingKeys, { name: cloudConfig.capiKeyName, user_account: user.id });
-
-        if (existingKey) {
-          this.logger.log('Removing existing capi key');
-          await this.api.deleteCApiKeys(session, existingKey.id);
-        }
-      }
-
-      this.logger.log('Creating new capi key');
-      const apiKey = await this.api.createCapiKey(session, user.id);
-      currentAccount.capiSecret = apiKey.secret_key;
-
-      await this.repository.update(sessionMetadata.sessionId, {
-        capiSecret: apiKey.secret_key,
-        accounts: user.accounts,
-      });
-    } catch (e) {
-      this.logger.error('Unable to generate capi keys', e);
-      throw wrapHttpError(e);
-    }
-  }
-
-  /**
-   * Gets current capi keys from local storage or generate new one
-   * @param sessionMetadata
-   * @param utm
-   */
-  async getCapiKeys(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<CloudCapiAuthDto> {
-    try {
-      this.logger.log('Getting capi keys');
-
-      await this.ensureCapiKeys(sessionMetadata, utm);
-
-      const user = await this.me(sessionMetadata);
-
-      return {
-        capiKey: user.capiKey,
-        capiSecret: user.capiSecret,
-      };
-    } catch (e) {
-      this.logger.error('Unable to get capi keys', e);
-      throw wrapHttpError(e);
-    }
+  async updateUser(sessionMetadata: SessionMetadata, data: Partial<CloudUser>): Promise<CloudUser> {
+    return this.repository.update(sessionMetadata.sessionId, data);
   }
 }

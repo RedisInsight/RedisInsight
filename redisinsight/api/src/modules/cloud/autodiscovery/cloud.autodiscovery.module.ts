@@ -7,12 +7,14 @@ import { CloudSubscriptionModule } from 'src/modules/cloud/subscription/cloud-su
 import { CloudUserModule } from 'src/modules/cloud/user/cloud-user.module';
 import { MeCloudAutodiscoveryController } from 'src/modules/cloud/autodiscovery/me.cloud.autodiscovery.controller';
 import { MeCloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/me.cloud-autodiscovery.service';
+import { CloudCapiKeyModule } from 'src/modules/cloud/capi-key/cloud-capi-key.module';
 
 @Module({
   imports: [
     CloudDatabaseModule,
     CloudSubscriptionModule,
     CloudUserModule,
+    CloudCapiKeyModule,
   ],
   controllers: [
     CloudAutodiscoveryController,

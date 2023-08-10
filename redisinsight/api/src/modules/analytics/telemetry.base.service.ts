@@ -29,7 +29,7 @@ export abstract class TelemetryBaseService {
       this.eventEmitter.emit(AppAnalyticsEvents.Track, {
         event,
         eventData: {
-          error: exception.getResponse()['error'] || exception.message,
+          error: exception.getResponse?.()['error'] || exception.message,
           ...eventData,
           command: isString(eventData['command']) ? eventData['command'].toUpperCase() : eventData['command'],
         },

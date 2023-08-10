@@ -1,9 +1,13 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { MOCKED_CREATE_REDIS_BTN_CONTENT } from 'uiSrc/mocks/content/content'
 import { AddDbType } from 'uiSrc/pages/home/components/AddDatabases/AddDatabasesContainer'
+import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import WelcomeComponent, { Props } from './WelcomeComponent'
 
 jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
@@ -11,7 +15,19 @@ jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
   contentSelector: jest.fn().mockReturnValue({ data: {}, loading: false }),
 }))
 
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({}),
+}))
+
 const mockedProps = mock<Props>()
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('WelcomeComponent', () => {
   it('should render', () => {
@@ -51,7 +67,7 @@ describe('WelcomeComponent', () => {
     expect(addInstance).toBeCalledWith(AddDbType.auto)
   })
 
-  it('should open import db diaglog', () => {
+  it('should open import db dialog', () => {
     render(<WelcomeComponent {...instance(mockedProps)} />)
 
     fireEvent.click(screen.getByTestId('import-from-file-btn'))
@@ -59,11 +75,22 @@ describe('WelcomeComponent', () => {
     expect(screen.getByTestId('import-dbs-dialog')).toBeInTheDocument()
   })
 
-  it('should open social oauth dialog', () => {
+  it('should not render import oath cloud db btn', () => {
+    render(<WelcomeComponent {...instance(mockedProps)} />)
+
+    expect(screen.queryByTestId('import-cloud-db-btn')).not.toBeInTheDocument()
+  })
+
+  it('should call open social oauth dialog', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      cloudSso: {
+        flag: true
+      }
+    })
     render(<WelcomeComponent {...instance(mockedProps)} />)
 
     fireEvent.click(screen.getByTestId('import-cloud-db-btn'))
 
-    expect(screen.getByTestId('social-oauth-dialog')).toBeInTheDocument()
+    expect(store.getActions()).toEqual([setSocialDialogState(OAuthSocialSource.WelcomeScreen)])
   })
 })

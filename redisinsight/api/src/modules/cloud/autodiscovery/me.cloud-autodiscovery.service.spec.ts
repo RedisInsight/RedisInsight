@@ -1,38 +1,32 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
 import {
   mockCloudAccountInfo,
-  mockCloudAutodiscoveryAnalytics, mockCloudAutodiscoveryService,
-  mockCloudCapiAuthDto,
-  mockCloudDatabase, mockCloudDatabaseCapiService,
+  mockCloudAutodiscoveryService,
+  mockCloudCapiAuthDto, mockCloudCapiKeyService,
+  mockCloudDatabase,
   mockCloudDatabaseFixed,
-  mockCloudSubscription, mockCloudSubscriptionCapiService, mockCloudSubscriptionFixed, mockCloudUserApiService,
-  mockCloudUserCapiService,
-  mockDatabaseService,
+  mockCloudSubscription,
+  mockCloudSubscriptionFixed,
   mockImportCloudDatabaseDto, mockImportCloudDatabaseDtoFixed,
   mockImportCloudDatabaseResponse,
   mockImportCloudDatabaseResponseFixed, mockSessionMetadata,
-  MockType
+  MockType,
 } from 'src/__mocks__';
-import { DatabaseService } from 'src/modules/database/database.service';
 import { CloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.service';
-import { CloudAutodiscoveryAnalytics } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.analytics';
-import { ActionStatus } from 'src/common/models';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { CloudAutodiscoveryAuthType } from 'src/modules/cloud/autodiscovery/models';
-import { CloudDatabaseStatus } from 'src/modules/cloud/database/models';
 import {
   CloudApiBadRequestException,
   CloudApiForbiddenException, CloudApiInternalServerErrorException,
-  CloudApiUnauthorizedException
+  CloudApiUnauthorizedException,
 } from 'src/modules/cloud/common/exceptions';
 import { MeCloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/me.cloud-autodiscovery.service';
-import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 
 describe('MeCloudAutodiscoveryService', () => {
   let service: MeCloudAutodiscoveryService;
   let cloudAutodiscoveryService: MockType<CloudAutodiscoveryService>;
-  let cloudUserApiService: MockType<CloudUserApiService>;
+  let cloudCapiKeyService: MockType<CloudCapiKeyService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -44,15 +38,15 @@ describe('MeCloudAutodiscoveryService', () => {
           useFactory: mockCloudAutodiscoveryService,
         },
         {
-          provide: CloudUserApiService,
-          useFactory: mockCloudUserApiService,
+          provide: CloudCapiKeyService,
+          useFactory: mockCloudCapiKeyService,
         },
       ],
     }).compile();
 
     service = module.get(MeCloudAutodiscoveryService);
     cloudAutodiscoveryService = module.get(CloudAutodiscoveryService);
-    cloudUserApiService = module.get(CloudUserApiService);
+    cloudCapiKeyService = module.get(CloudCapiKeyService);
   });
 
   describe('getAccount', () => {
@@ -60,7 +54,7 @@ describe('MeCloudAutodiscoveryService', () => {
       expect(await service.getAccount(mockSessionMetadata)).toEqual(mockCloudAccountInfo);
     });
     it('should throw CloudApiUnauthorizedException exception', async () => {
-      cloudUserApiService.getCapiKeys.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+      cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       await expect(service.getAccount(mockSessionMetadata)).rejects.toThrow(
         CloudApiUnauthorizedException,
       );
@@ -83,7 +77,7 @@ describe('MeCloudAutodiscoveryService', () => {
       );
     });
     it('should throw CloudApiUnauthorizedException exception', async () => {
-      cloudUserApiService.getCapiKeys.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+      cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       await expect(service.discoverSubscriptions(mockSessionMetadata)).rejects.toThrow(
         CloudApiUnauthorizedException,
       );
@@ -135,7 +129,7 @@ describe('MeCloudAutodiscoveryService', () => {
       );
     });
     it('should throw CloudApiUnauthorizedException exception', async () => {
-      cloudUserApiService.getCapiKeys.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+      cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       await expect(service.discoverDatabases(
         mockSessionMetadata,
         {
@@ -190,7 +184,7 @@ describe('MeCloudAutodiscoveryService', () => {
       );
     });
     it('should throw CloudApiUnauthorizedException exception', async () => {
-      cloudUserApiService.getCapiKeys.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+      cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       await expect(service.addRedisCloudDatabases(
         mockSessionMetadata,
         [

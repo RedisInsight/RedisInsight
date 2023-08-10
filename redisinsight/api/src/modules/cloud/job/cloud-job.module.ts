@@ -8,13 +8,14 @@ import { CloudUserModule } from 'src/modules/cloud/user/cloud-user.module';
 import { CloudJobFactory } from 'src/modules/cloud/job/cloud-job.factory';
 import { CloudJobProvider } from 'src/modules/cloud/job/cloud-job.provider';
 import { CloudJobGateway } from 'src/modules/cloud/job/cloud-job.gateway';
+import { CloudCapiKeyModule } from 'src/modules/cloud/capi-key/cloud-capi-key.module';
 
 @Module({
   imports: [
     CloudTaskModule,
     CloudSubscriptionModule,
     CloudDatabaseModule,
-    CloudUserModule,
+    CloudCapiKeyModule,
   ],
   providers: [
     CloudJobService,

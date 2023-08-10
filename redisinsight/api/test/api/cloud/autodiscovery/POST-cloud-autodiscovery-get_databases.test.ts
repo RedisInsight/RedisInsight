@@ -149,9 +149,9 @@ describe('POST /cloud/autodiscovery/get-databases', () => {
         statusCode: 401,
         responseBody: {
           statusCode: 401,
-          error: 'CloudApiUnauthorized',
-          message:  ERROR_MESSAGES.CLOUD_API_UNAUTHORIZED,
-          errorCode: CustomErrorCodes.CloudApiUnauthorized,
+          error: 'CloudCapiUnauthorized',
+          errorCode: CustomErrorCodes.CloudCapiUnauthorized,
+          message:  ERROR_MESSAGES.CLOUD_CAPI_UNAUTHORIZED,
         },
       },
       {

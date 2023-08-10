@@ -6,7 +6,7 @@ import {
   mockCloudCapiAuthDto,
 } from 'src/__mocks__';
 import { CloudUserCapiProvider } from 'src/modules/cloud/user/providers/cloud-user.capi.provider';
-import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import { CloudCapiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -35,11 +35,11 @@ describe('CloudUserCapiProvider', () => {
 
       expect(await service.getCurrentAccount(mockCloudCapiAuthDto)).toEqual(mockCloudCapiAccount);
     });
-    it('throw CloudApiUnauthorizedException exception', async () => {
+    it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
 
       await expect(service.getCurrentAccount(mockCloudCapiAuthDto)).rejects.toThrow(
-        CloudApiUnauthorizedException,
+        CloudCapiUnauthorizedException,
       );
     });
   });

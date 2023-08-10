@@ -1,10 +1,10 @@
 import { EuiIcon, EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle, EuiSpacer, EuiFlexGrid } from '@elastic/eui'
 import React, { useContext, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
 import { isEmpty } from 'lodash'
-import { Theme } from 'uiSrc/constants'
+import { FeatureFlags, Theme } from 'uiSrc/constants'
 import { setTitle } from 'uiSrc/utils'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
@@ -20,7 +20,12 @@ import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
-import { ImportDatabasesDialog, OAuthSocialDialog, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import {
+  FeatureFlagComponent,
+  ImportDatabasesDialog,
+  OAuthSocialHandlerDialog,
+  OAuthSsoHandlerDialog
+} from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
 
@@ -38,7 +43,6 @@ const Welcome = ({ onAddInstance }: Props) => {
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
   const [guides, setGuides] = useState<IHelpGuide[]>([])
   const [isImportDialogOpen, setIsImportDialogOpen] = useState<boolean>(false)
-  const [isOauthSocialOpen, setIsOauthSocialOpen] = useState<boolean>(false)
 
   const { theme } = useContext(ThemeContext)
 
@@ -57,7 +61,7 @@ const Welcome = ({ onAddInstance }: Props) => {
         },
         {
           title: 'Auto-discover your Redis databases',
-          description: 'Use discovery tools to automatically discover and add your Redis Databases',
+          description: 'Use discovery tools to add Redis Sentinel or Redis Enterprise databases',
           iconType: 'search',
           onClick: () => onAddInstance(AddDbType.auto),
           testId: 'add-db-auto-btn'
@@ -72,7 +76,7 @@ const Welcome = ({ onAddInstance }: Props) => {
           description: 'Sign in to your Redis Enterprise Cloud account to discover and add databases',
           iconType: CloudIcon,
           iconClassName: styles.cloudIcon,
-          onClick: () => setIsOauthSocialOpen(true),
+          feature: FeatureFlags.cloudSso,
           testId: 'import-cloud-db-btn'
         },
         {
@@ -176,10 +180,36 @@ const Welcome = ({ onAddInstance }: Props) => {
     )
   }
 
+  const renderButton = (
+    { title, description, onClick, iconType, iconClassName, testId }: any,
+    optionalOnClick?: (e: React.MouseEvent) => void
+  ) => (
+    <EuiFlexItem key={testId}>
+      <div
+        key={`btn-${testId}`}
+        role="button"
+        tabIndex={0}
+        className={styles.btn}
+        onKeyDown={() => {}}
+        onClick={(e) => {
+          optionalOnClick?.(e)
+          onClick?.()
+        }}
+        data-testid={testId}
+      >
+        <EuiIcon className={cx(styles.btnIcon, iconClassName)} type={iconType} />
+        <div>
+          <div className={styles.btnTitle}>{title}</div>
+          <div className={styles.btnText}>{description}</div>
+        </div>
+        <EuiIcon className={styles.arrowIcon} type="arrowRight" />
+      </div>
+    </EuiFlexItem>
+  )
+
   return (
     <>
       {isImportDialogOpen && <ImportDatabasesDialog onClose={handleCloseImportDb} />}
-      {isOauthSocialOpen && <OAuthSocialDialog onClose={() => setIsOauthSocialOpen(false)} />}
       <div className={cx(styles.welcome, theme === Theme.Dark ? styles.welcome_dark : styles.welcome_light)}>
         <div className={styles.content}>
           <EuiTitle size="m" className={styles.title} data-testid="welcome-page-title">
@@ -209,28 +239,30 @@ const Welcome = ({ onAddInstance }: Props) => {
             </div>
 
             {CONNECT_BUTTONS.map(({ title, buttons }) => (
-              <div className={styles.controlsGroup}>
-                <EuiTitle className={styles.controlsGroupTitle} size="s"><h5>{title}</h5></EuiTitle>
+              <div className={styles.controlsGroup} key={`container-${title}`}>
+                <EuiTitle className={styles.controlsGroupTitle} size="s">
+                  <h5>{title}</h5>
+                </EuiTitle>
                 <EuiFlexGrid columns={2}>
-                  {buttons.map(({ title, description, onClick, iconType, iconClassName, testId }) => (
-                    <EuiFlexItem key={testId}>
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        className={styles.btn}
-                        onKeyDown={() => {}}
-                        onClick={onClick}
-                        data-testid={testId}
-                      >
-                        <EuiIcon className={cx(styles.btnIcon, iconClassName)} type={iconType} />
-                        <div>
-                          <div className={styles.btnTitle}>{title}</div>
-                          <div className={styles.btnText}>{description}</div>
-                        </div>
-                        <EuiIcon className={styles.arrowIcon} type="arrowRight" />
-                      </div>
-                    </EuiFlexItem>
-                  ))}
+                  {buttons.map((button: any) => {
+                    if (button?.feature === FeatureFlags.cloudSso) {
+                      return (
+                        <FeatureFlagComponent key="cloudSsoComponent" name={FeatureFlags.cloudSso}>
+                          <OAuthSocialHandlerDialog>
+                            {(socialCloudHandlerClick) => (
+                              <>
+                                {renderButton(button, (e: React.MouseEvent) => {
+                                  socialCloudHandlerClick(e, OAuthSocialSource.WelcomeScreen)
+                                })}
+                              </>
+                            )}
+                          </OAuthSocialHandlerDialog>
+                        </FeatureFlagComponent>
+                      )
+                    }
+
+                    return renderButton(button)
+                  })}
                 </EuiFlexGrid>
               </div>
             ))}
@@ -240,7 +272,7 @@ const Welcome = ({ onAddInstance }: Props) => {
             <div className={styles.links} data-testid="guide-links">
               Follow the guides
               <EuiSpacer size="m" />
-              <EuiFlexGroup className={styles.otherGuides}>
+              <EuiFlexGroup key="guides" className={styles.otherGuides}>
                 {guides
                   .map(({ id, url, title, event }) => (
                     <EuiFlexItem key={id} grow={false}>

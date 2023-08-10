@@ -19,7 +19,8 @@ import {
 
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
-import { OAuthSocial, OAuthSocialType } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthSocial, OAuthSocialType } from 'uiSrc/components'
+import { FeatureFlags } from 'uiSrc/constants'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -51,7 +52,9 @@ const fieldDisplayNames: Values = {
 
 const Message = () => (
   <>
-    <EuiTitle className={styles.messageTitle}><h4>Use Cloud API key</h4></EuiTitle>
+    <FeatureFlagComponent name={FeatureFlags.cloudSso}>
+      <EuiTitle className={styles.messageTitle}><h4>Use Cloud API key</h4></EuiTitle>
+    </FeatureFlagComponent>
     <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
       {`Enter API keys to discover and add databases.
     API keys can be enabled by following the steps
@@ -180,8 +183,10 @@ const CloudConnectionForm = (props: Props) => {
   return (
     <>
       <div className="getStartedForm">
-        <OAuthSocial type={OAuthSocialType.Autodiscovery} />
-        <div className={styles.divider}>OR</div>
+        <FeatureFlagComponent name={FeatureFlags.cloudSso}>
+          <OAuthSocial type={OAuthSocialType.Autodiscovery} />
+          <div className={styles.divider}>OR</div>
+        </FeatureFlagComponent>
         <div className={styles.cloudApi}>
           <Message />
           <br />

@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { remove } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { getApiErrorMessage, getAxiosError, isStatusSuccessful, Nullable, parseCloudOAuthError } from 'uiSrc/utils'
 
 import { CloudJobName, CloudJobStatus } from 'uiSrc/electron/constants'
 import {
@@ -16,7 +16,15 @@ import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 
 import { AppDispatch, RootState } from '../store'
-import { CloudCapiKey, CloudJobInfoState, Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
+import {
+  CloudCapiKey,
+  CloudJobInfoState,
+  CustomError,
+  EnhancedAxiosError,
+  Instance,
+  OAuthSocialSource,
+  StateAppOAuth
+} from '../interfaces'
 import {
   addErrorNotification,
   addInfiniteNotification,
@@ -361,9 +369,10 @@ export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => vo
 
         onSuccessAction?.()
       }
-    } catch (_err) {
-      const error = _err as AxiosError
-      dispatch(addErrorNotification(error))
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+
+      dispatch(addErrorNotification(err))
       dispatch(getPlansFailure())
       dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
       onFailAction?.()

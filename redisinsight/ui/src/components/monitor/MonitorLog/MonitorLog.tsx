@@ -6,6 +6,7 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { monitorSelector, resetProfiler, stopMonitor } from 'uiSrc/slices/cli/monitor'
 import { cutDurationText, getBaseApiUrl } from 'uiSrc/utils'
+import { CustomHeaders } from 'uiSrc/constants/api'
 
 import styles from './styles.module.scss'
 
@@ -26,8 +27,6 @@ const MonitorLog = () => {
       })
     )
   )
-  const baseApiUrl = getBaseApiUrl()
-  const linkToDownload = `${baseApiUrl}/api/${ApiEndpoints.PROFILER_LOGS}/${logFileId}`
 
   const downloadBtnProps: any = {
     target: DOWNLOAD_IFRAME_NAME
@@ -42,6 +41,31 @@ const MonitorLog = () => {
     if (width < SMALL_SCREEN_RESOLUTION) return 6
     if (width < MIDDLE_SCREEN_RESOLUTION) return 12
     return 18
+  }
+
+  const handleDownloadLog = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const baseApiUrl = getBaseApiUrl()
+    const linkToDownload = `${baseApiUrl}/api/${ApiEndpoints.PROFILER_LOGS}/${logFileId}`
+
+    const response = await fetch(
+      linkToDownload,
+      { headers: { [CustomHeaders.WindowId]: window.windowId || '' } },
+    )
+
+    const contentDisposition = response.headers.get('Content-Disposition') || ''
+
+    downloadFile(await response.text(), contentDisposition.split('"')?.[1])
+  }
+
+  const downloadFile = (content: string, fileName: string) => {
+    const link = document.createElement('a')
+    const file = new Blob([content], { type: 'text/plain' })
+    link.href = URL.createObjectURL(file)
+    link.download = fileName
+    link.click()
+
+    URL.revokeObjectURL(link.href)
   }
 
   return (
@@ -76,10 +100,10 @@ const MonitorLog = () => {
                   <EuiButton
                     size="s"
                     color="secondary"
-                    href={linkToDownload}
                     iconType="download"
                     className={styles.btn}
                     data-testid="download-log-btn"
+                    onClick={handleDownloadLog}
                     {...downloadBtnProps}
                   >
                     {width > SMALL_SCREEN_RESOLUTION && ' Download '}

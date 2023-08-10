@@ -126,7 +126,7 @@ test('Connection import modal window', async t => {
     await t.click(myRedisDatabasePage.removeImportedFileBtn);
     await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(defaultText, 'File not removed from import input');
 });
-test.only('Connection import from JSON', async t => {
+test('Connection import from JSON', async t => {
     // Verify that user can import database with mandatory/optional fields
     await databasesActions.importDatabase(rdmData);
 
@@ -150,8 +150,6 @@ test.only('Connection import from JSON', async t => {
     // Verify password imported
     await t.click(myRedisDatabasePage.AddRedisDatabase.showPasswordBtn);
     await t.expect(myRedisDatabasePage.AddRedisDatabase.passwordInput.value).eql(rdmListOfDB[1].auth, 'Password import incorrect');
-
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.selectCompressor.textContent).eql('SNAPPY', 'Compressor import incorrect');
 
     // Verify cluster connection type imported
     await databaseHelper.clickOnEditDatabaseByName(rdmData.dbImportedNames[2]);

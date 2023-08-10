@@ -50,6 +50,12 @@ test
             ossSentinelConfig.masters[1].alias
         ];
 
+        const compressor = 'Brotli';
+
+        await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await myRedisDatabasePage.AddRedisDatabase.setCompressorValue(compressor);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+
         // Select databases checkboxes
         await databasesActions.selectDatabasesByNames(databaseNames);
         // Export connections with passwords
@@ -82,9 +88,15 @@ test
         await t.click(myRedisDatabasePage.okDialogBtn);
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
+
         await databaseHelper.clickOnEditDatabaseByName(databaseNames[1]);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
         await t.expect(myRedisDatabasePage.AddRedisDatabase.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
+
+        await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.selectCompressor.textContent).eql(compressor, 'Compressor import incorrect');
+
     });
 test
     .before(async() => {

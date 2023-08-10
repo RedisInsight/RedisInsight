@@ -6,7 +6,6 @@
         "result": "success"
     },
 	{
-    "compressor": "SNAPPY",
         "host": "localhost",
 		"port": 8101,
 		"name": "rdmHost+Port+Name+Username+Password",

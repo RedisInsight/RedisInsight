@@ -3,12 +3,11 @@ import { format, formatDuration, intervalToDuration } from 'date-fns'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { saveAs } from 'file-saver'
 
-import { ApiEndpoints } from 'uiSrc/constants'
 import { monitorSelector, resetProfiler, stopMonitor } from 'uiSrc/slices/cli/monitor'
-import { cutDurationText, getBaseApiUrl } from 'uiSrc/utils'
-import { CustomHeaders } from 'uiSrc/constants/api'
+import { cutDurationText } from 'uiSrc/utils'
+import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
+import { fetchMonitorLog } from 'uiSrc/slices/cli/cli-output'
 
 import styles from './styles.module.scss'
 
@@ -47,18 +46,8 @@ const MonitorLog = () => {
 
   const handleDownloadLog = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    const baseApiUrl = getBaseApiUrl()
-    const linkToDownload = `${baseApiUrl}/api/${ApiEndpoints.PROFILER_LOGS}/${logFileId}`
 
-    const response = await fetch(
-      linkToDownload,
-      { headers: { [CustomHeaders.WindowId]: window.windowId || '' } },
-    )
-
-    const contentDisposition = response.headers.get('Content-Disposition') || ''
-    const file = new Blob([await response.text()], { type: 'text/plain;charset=utf-8' })
-
-    saveAs(file, contentDisposition.split('"')?.[1])
+    dispatch(fetchMonitorLog(logFileId || '', downloadFile))
   }
 
   return (

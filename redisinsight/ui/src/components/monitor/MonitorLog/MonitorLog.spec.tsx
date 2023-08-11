@@ -1,8 +1,8 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { saveAs } from 'file-saver'
 import { monitorSelector, resetProfiler, stopMonitor } from 'uiSrc/slices/cli/monitor'
 import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { sendCliCommand } from 'uiSrc/slices/cli/cli-output'
 import MonitorLog from './MonitorLog'
 
 let store: typeof mockedStore
@@ -28,20 +28,10 @@ jest.mock('uiSrc/slices/cli/monitor', () => ({
   }),
 }))
 
-global.Blob = function (content, options) { return ({ content, options }) }
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    text: () => Promise.resolve('123'),
-    headers: {
-      get: () => '123"filename.txt"oeu',
-    }
-  }))
-
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
   store.clearActions()
-  fetch.mockClear()
 })
 
 describe('MonitorLog', () => {
@@ -61,8 +51,7 @@ describe('MonitorLog', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should call download a file', async () => {
-    const saveAsMock = jest.fn()
+  it('should call fetchMonitorLog after click on Download', async () => {
     const monitorSelectorMock = jest.fn().mockReturnValue({
       isSaveToFile: true,
       logFileId: 'logFileId',
@@ -74,8 +63,7 @@ describe('MonitorLog', () => {
       }
     });
 
-    (monitorSelector as jest.Mock).mockImplementation(monitorSelectorMock);
-    (saveAs as jest.Mock).mockImplementation(() => saveAsMock)
+    (monitorSelector as jest.Mock).mockImplementation(monitorSelectorMock)
 
     render(<MonitorLog />)
 
@@ -83,10 +71,7 @@ describe('MonitorLog', () => {
       fireEvent.click(screen.getByTestId('download-log-btn'))
     })
 
-    expect(saveAs).toBeCalledWith(
-      { content: ['123'], options: { type: 'text/plain;charset=utf-8' } },
-      'filename.txt',
-    )
-    saveAs.mockRestore()
+    const expectedActions = [sendCliCommand()]
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
   })
 })

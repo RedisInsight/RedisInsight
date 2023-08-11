@@ -3,6 +3,7 @@ RUN apk update
 RUN apk add --no-cache --virtual .gyp \
         python3 \
         make \
+        curl \
         g++
 WORKDIR /usr/src/app
 COPY package.json yarn.lock babel.config.js tsconfig.json ./

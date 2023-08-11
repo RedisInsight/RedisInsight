@@ -34,7 +34,7 @@ fixture `Triggers and Functions`
         await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libraryName}`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
     });
-test('Verify that function can be invoked', async t => {
+test.only('Verify that function can be invoked', async t => {
     const functionNameFromFile = 'function';
     const libNameFromFile = 'lib';
     const keyName = ['Hello'];

@@ -37,12 +37,12 @@ test
     })
     .after(async() => {
         // Delete all databases
+        fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
         await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         // Delete exported file
-        fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
     })('Exporting Standalone, OSS Cluster, and Sentinel connection types', async t => {
         const databaseNames = [
             ossStandaloneConfig.databaseName,
@@ -79,7 +79,7 @@ test
 
         const exportedData = {
             path: joinPath(fileDownloadPath, foundExportedFiles[0]),
-            successNumber: 4,
+            successNumber: databaseNames.length,
             dbImportedNames: databaseNames
         };
 

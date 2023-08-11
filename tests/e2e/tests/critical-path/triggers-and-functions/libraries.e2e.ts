@@ -203,8 +203,7 @@ test.after(async() => {
 });
 
 test.before(async() => {
-    await databaseHelper.acceptLicenseTerms();
-    await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterRedisGears);
+    await databaseHelper.acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterRedisGears);
 }).after(async() => {
     await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterRedisGears);
 })('Verify that function can be invoked in cluster', async t => {

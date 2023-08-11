@@ -5,11 +5,7 @@
   "files": [
     "dist",
     "node_modules",
-    "package.json",
-    {
-      "from": "api/views",
-      "to": "dist/views"
-    }
+    "package.json"
   ],
   "afterSign": "electron-builder-notarize",
   "artifactName": "${productName}-${os}-${arch}.${ext}",

@@ -8,10 +8,6 @@
         "outDir": "dist/static"
       },
       {
-        "include": "../views/**/*",
-        "outDir": "dist/views"
-      },
-      {
         "include": "../defaults/**/*",
         "outDir": "dist/defaults"
       }

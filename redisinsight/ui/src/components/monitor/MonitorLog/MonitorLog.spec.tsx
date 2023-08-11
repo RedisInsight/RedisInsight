@@ -1,12 +1,18 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
+import { saveAs } from 'file-saver'
 import { monitorSelector, resetProfiler, stopMonitor } from 'uiSrc/slices/cli/monitor'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import MonitorLog from './MonitorLog'
 
 let store: typeof mockedStore
 let URLMock: jest.SpyInstance<object>
 const mockURLrevokeObjectURL = 123123
+
+jest.mock('file-saver', () => ({
+  ...jest.requireActual('file-saver'),
+  saveAs: jest.fn(),
+}))
 
 jest.mock('uiSrc/slices/cli/monitor', () => ({
   ...jest.requireActual('uiSrc/slices/cli/monitor'),
@@ -22,6 +28,7 @@ jest.mock('uiSrc/slices/cli/monitor', () => ({
   }),
 }))
 
+global.Blob = function (content, options) { return ({ content, options }) }
 global.fetch = jest.fn(() =>
   Promise.resolve({
     text: () => Promise.resolve('123'),
@@ -54,7 +61,8 @@ describe('MonitorLog', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it.skip('should call download a file', () => {
+  it('should call download a file', async () => {
+    const saveAsMock = jest.fn()
     const monitorSelectorMock = jest.fn().mockReturnValue({
       isSaveToFile: true,
       logFileId: 'logFileId',
@@ -65,11 +73,20 @@ describe('MonitorLog', () => {
         duration: 123,
       }
     });
-    (monitorSelector as jest.Mock).mockImplementation(monitorSelectorMock)
+
+    (monitorSelector as jest.Mock).mockImplementation(monitorSelectorMock);
+    (saveAs as jest.Mock).mockImplementation(() => saveAsMock)
 
     render(<MonitorLog />)
-    fireEvent.click(screen.getByTestId('download-log-btn'))
 
-    expect(URLMock).toBeCalled()
+    await act(() => {
+      fireEvent.click(screen.getByTestId('download-log-btn'))
+    })
+
+    expect(saveAs).toBeCalledWith(
+      { content: ['123'], options: { type: 'text/plain;charset=utf-8' } },
+      'filename.txt',
+    )
+    saveAs.mockRestore()
   })
 })

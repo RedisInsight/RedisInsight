@@ -3,6 +3,8 @@ import { format, formatDuration, intervalToDuration } from 'date-fns'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import { saveAs } from 'file-saver'
+
 import { ApiEndpoints } from 'uiSrc/constants'
 import { monitorSelector, resetProfiler, stopMonitor } from 'uiSrc/slices/cli/monitor'
 import { cutDurationText, getBaseApiUrl } from 'uiSrc/utils'
@@ -54,18 +56,9 @@ const MonitorLog = () => {
     )
 
     const contentDisposition = response.headers.get('Content-Disposition') || ''
+    const file = new Blob([await response.text()], { type: 'text/plain;charset=utf-8' })
 
-    downloadFile(await response.text(), contentDisposition.split('"')?.[1])
-  }
-
-  const downloadFile = (content: string, fileName: string) => {
-    const link = document.createElement('a')
-    const file = new Blob([content], { type: 'text/plain' })
-    link.href = URL.createObjectURL(file)
-    link.download = fileName
-    link.click()
-
-    URL.revokeObjectURL(link.href)
+    saveAs(file, contentDisposition.split('"')?.[1])
   }
 
   return (

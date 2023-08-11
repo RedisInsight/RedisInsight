@@ -31,12 +31,16 @@ import styles from './styles.module.scss'
 export interface Props {
   selectKey: ({ rowData }: { rowData: any }) => void
   setSelectedKey: (keyName: Nullable<RedisResponseBuffer>) => void
+  handleAddKeyPanel: (value: boolean) => void
+  handleBulkActionsPanel: (value: boolean) => void
 }
 
 const BrowserLeftPanel = (props: Props) => {
   const {
     selectKey,
     setSelectedKey,
+    handleAddKeyPanel,
+    handleBulkActionsPanel
   } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -131,6 +135,8 @@ const BrowserLeftPanel = (props: Props) => {
           loadMoreItems={loadMoreItems}
           selectKey={selectKey}
           onDelete={onDeleteKey}
+          onAddKeyPanel={handleAddKeyPanel}
+          onBulkActionsPanel={handleBulkActionsPanel}
         />
       )}
       {viewType === KeyViewType.Tree && (
@@ -142,6 +148,8 @@ const BrowserLeftPanel = (props: Props) => {
           selectKey={selectKey}
           loadMoreItems={loadMoreItems}
           onDelete={onDeleteKey}
+          onAddKeyPanel={handleAddKeyPanel}
+          onBulkActionsPanel={handleBulkActionsPanel}
         />
       )}
     </div>

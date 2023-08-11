@@ -2,7 +2,8 @@ import { t } from 'testcafe';
 import { AddNewDatabaseParameters } from '../../pageObjects/components/myRedisDatabase/add-redis-database';
 import {
     HashKeyParameters,
-    ListAndStringKeyParameters,
+    StringKeyParameters,
+    ListKeyParameters,
     SetKeyParameters,
     SortedSetKeyParameters,
     StreamKeyParameters
@@ -137,7 +138,7 @@ export class APIKeyRequests {
      * @param databaseParameters The database parameters
      */
     async addListKeyApi(
-        keyParameters: ListAndStringKeyParameters,
+        keyParameters: ListKeyParameters,
         databaseParameters: AddNewDatabaseParameters
     ): Promise<void> {
         const databaseId = await databaseAPIRequests.getDatabaseIdByName(
@@ -163,7 +164,7 @@ export class APIKeyRequests {
      * @param databaseParameters The database parameters
      */
     async addStringKeyApi(
-        keyParameters: ListAndStringKeyParameters,
+        keyParameters: StringKeyParameters,
         databaseParameters: AddNewDatabaseParameters
     ): Promise<void> {
         const databaseId = await databaseAPIRequests.getDatabaseIdByName(
@@ -171,7 +172,7 @@ export class APIKeyRequests {
         );
         const requestBody = {
             keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
-            value: Buffer.from(keyParameters.element, 'utf-8')
+            value: Buffer.from(keyParameters.value, 'utf-8')
         };
         const response = await sendPostRequest(
             `/databases/${databaseId}/string?encoding=buffer`,

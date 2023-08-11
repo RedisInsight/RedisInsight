@@ -1142,9 +1142,19 @@ export type SortedSetKeyParameters = {
  * @param keyName The name of the key
  * @param element The element in list
  */
-export type ListAndStringKeyParameters = {
+export type ListKeyParameters = {
     keyName: string,
     element: string
+};
+
+/**
+ * String key parameters
+ * @param keyName The name of the key
+ * @param value The value in the string
+ */
+export type StringKeyParameters = {
+    keyName: string,
+    value: string
 };
 
 /**

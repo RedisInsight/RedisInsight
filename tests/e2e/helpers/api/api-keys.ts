@@ -72,9 +72,6 @@ export class APIKeyRequests {
             `/databases/${databaseId}/streams?encoding=buffer`,
             requestBody
         );
-
-        console.log(JSON.stringify(response));
-
         await t
             .expect(response.status)
             .eql(201, 'The creation of new Stream key request failed');
@@ -124,8 +121,6 @@ export class APIKeyRequests {
             members: keyParameters.members
                 .map((member) => ({ ...member, name: Buffer.from(member.name, 'utf-8') }))
         };
-
-        console.log(JSON.stringify(requestBody));
         const response = await sendPostRequest(
             `/databases/${databaseId}/zSet?encoding=buffer`,
             requestBody

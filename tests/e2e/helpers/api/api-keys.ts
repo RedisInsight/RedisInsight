@@ -2,6 +2,7 @@ import { t } from 'testcafe';
 import { AddNewDatabaseParameters } from '../../pageObjects/components/myRedisDatabase/add-redis-database';
 import {
     HashKeyParameters,
+    StringKeyParameters,
     ListKeyParameters,
     SetKeyParameters,
     SortedSetKeyParameters,
@@ -28,8 +29,11 @@ export class APIKeyRequests {
             databaseParameters.databaseName
         );
         const requestBody = {
-            keyName: keyParameters.keyName,
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
             fields: keyParameters.fields
+                .map((fields) => ({ ...fields,
+                    field: Buffer.from(fields.field, 'utf-8'),
+                    value: Buffer.from(fields.value, 'utf-8') }))
         };
         const response = await sendPostRequest(
             `/databases/${databaseId}/hash?encoding=buffer`,
@@ -54,14 +58,21 @@ export class APIKeyRequests {
             databaseParameters.databaseName
         );
         const requestBody = {
-            keyName: keyParameters.keyName,
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
             entries: keyParameters.entries
+                .map((member) =>
+                    ({
+                        ...member,
+                        fields: member.fields.map(({ name, value }) => ({
+                            name: Buffer.from(name, 'utf-8'),
+                            value: Buffer.from(value, 'utf-8')
+                        }))
+                    }))
         };
         const response = await sendPostRequest(
             `/databases/${databaseId}/streams?encoding=buffer`,
             requestBody
         );
-
         await t
             .expect(response.status)
             .eql(201, 'The creation of new Stream key request failed');
@@ -80,8 +91,9 @@ export class APIKeyRequests {
             databaseParameters.databaseName
         );
         const requestBody = {
-            keyName: keyParameters.keyName,
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
             members: keyParameters.members
+                .map((member) => (Buffer.from(member, 'utf-8')))
         };
         const response = await sendPostRequest(
             `/databases/${databaseId}/set?encoding=buffer`,
@@ -106,8 +118,9 @@ export class APIKeyRequests {
             databaseParameters.databaseName
         );
         const requestBody = {
-            keyName: keyParameters.keyName,
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
             members: keyParameters.members
+                .map((member) => ({ ...member, name: Buffer.from(member.name, 'utf-8') }))
         };
         const response = await sendPostRequest(
             `/databases/${databaseId}/zSet?encoding=buffer`,
@@ -132,8 +145,8 @@ export class APIKeyRequests {
             databaseParameters.databaseName
         );
         const requestBody = {
-            keyName: keyParameters.keyName,
-            element: keyParameters.element
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            element: Buffer.from(keyParameters.element, 'utf-8')
         };
         const response = await sendPostRequest(
             `/databases/${databaseId}/list?encoding=buffer`,
@@ -146,9 +159,35 @@ export class APIKeyRequests {
     }
 
     /**
+     * Add String key
+     * @param keyParameters The key parameters
+     * @param databaseParameters The database parameters
+     */
+    async addStringKeyApi(
+        keyParameters: StringKeyParameters,
+        databaseParameters: AddNewDatabaseParameters
+    ): Promise<void> {
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName
+        );
+        const requestBody = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            value: Buffer.from(keyParameters.value, 'utf-8')
+        };
+        const response = await sendPostRequest(
+            `/databases/${databaseId}/string?encoding=buffer`,
+            requestBody
+        );
+
+        await t
+            .expect(response.status)
+            .eql(201, 'The creation of new string key request failed');
+    }
+
+    /**
      * Search Key by name
      * @param keyName The key name
-     * @param databaseParameters The database parameters
+     * @param databaseName The database name
      */
     async searchKeyByNameApi(
         keyName: string,
@@ -172,7 +211,7 @@ export class APIKeyRequests {
     /**
      * Delete Key by name if it exists
      * @param keyName The key name
-     * @param databaseParameters The database parameters
+     * @param databaseName The database name
      */
     async deleteKeyByNameApi(
         keyName: string,

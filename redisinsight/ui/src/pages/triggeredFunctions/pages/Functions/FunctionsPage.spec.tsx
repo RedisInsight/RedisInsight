@@ -1,12 +1,15 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
+import reactRouterDom from 'react-router-dom'
 import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 
 import {
   getTriggeredFunctionsFunctionsList,
   triggeredFunctionsFunctionsSelector,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { TRIGGERED_FUNCTIONS_FUNCTIONS_LIST_MOCKED_DATA } from 'uiSrc/mocks/data/triggeredFunctions'
+import { Pages } from 'uiSrc/constants'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import FunctionsPage from './FunctionsPage'
@@ -20,6 +23,14 @@ jest.mock('uiSrc/slices/triggeredFunctions/triggeredFunctions', () => ({
   ...jest.requireActual('uiSrc/slices/triggeredFunctions/triggeredFunctions'),
   triggeredFunctionsFunctionsSelector: jest.fn().mockReturnValue({
     ...jest.requireActual('uiSrc/slices/triggeredFunctions/triggeredFunctions').triggeredFunctionsFunctionsSelector
+  }),
+}))
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: 'instanceId',
+    modules: [{ name: 'redisgears' }]
   }),
 }))
 
@@ -38,14 +49,19 @@ describe('FunctionsPage', () => {
   })
 
   it('should fetch list of functions', () => {
-    (triggeredFunctionsFunctionsSelector as jest.Mock).mockReturnValueOnce({
-      data: null,
-      loading: false
-    })
     render(<FunctionsPage />)
 
     const expectedActions = [getTriggeredFunctionsFunctionsList()]
     expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should not fetch list of functions if there are no triggers and functions module', () => {
+    (connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
+      modules: [{ name: 'custom' }],
+    })
+    render(<FunctionsPage />)
+
+    expect(store.getActions()).toEqual([])
   })
 
   it('should render libraries list', async () => {
@@ -132,5 +148,27 @@ describe('FunctionsPage', () => {
         }
       }
     })
+  })
+
+  it('should history push and call proper actions', () => {
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+    render(<FunctionsPage />)
+
+    fireEvent.click(screen.getByTestId('no-libraries-add-library-btn'))
+
+    expect(pushMock)
+      .toBeCalledWith(Pages.triggeredFunctionsLibraries('instanceId'))
+  })
+
+  it('should not render functions list', () => {
+    (triggeredFunctionsFunctionsSelector as jest.Mock).mockReturnValueOnce({
+      data: null,
+      loading: false
+    })
+    const { queryByTestId } = render(<FunctionsPage />)
+
+    expect(queryByTestId('total-functions')).not.toBeInTheDocument()
   })
 })

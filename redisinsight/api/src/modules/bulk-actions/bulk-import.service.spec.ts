@@ -232,6 +232,17 @@ describe('BulkImportService', () => {
       expect(mockIORedisClient.disconnect).toHaveBeenCalled();
     });
 
+    it('should ignore blank lines', async () => {
+      await service.import(mockClientMetadata, {
+        file: {
+          ...mockUploadImportFileDto.file,
+          buffer: Buffer.from('\n SET foo bar \n     \n SET foo bar \n    '),
+        } as unknown as MemoryStoredFile,
+      })
+      expect(spy).toBeCalledWith(mockIORedisClient, [['set', ['foo', 'bar']], ['set', ['foo', 'bar']]])
+      expect(mockIORedisClient.disconnect).toHaveBeenCalled();
+    });
+
     it('should throw an error in case of global error', async () => {
       try {
         databaseConnectionService.createClient.mockRejectedValueOnce(new NotFoundException());

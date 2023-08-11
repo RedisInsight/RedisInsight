@@ -34,6 +34,8 @@ const verticalPanelIds = {
 export interface Props {
   script: string
   items: CommandExecutionUI[]
+  clearing: boolean
+  processing: boolean
   setScript: (script: string) => void
   setScriptEl: Function
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
@@ -43,6 +45,7 @@ export interface Props {
   onSubmit: (query?: string, commandId?: Nullable<string>, executeParams?: CodeButtonParams) => void
   onQueryOpen: (commandId?: string) => void
   onQueryDelete: (commandId: string) => void
+  onAllQueriesDelete: () => void
   onQueryChangeMode: () => void
   onChangeGroupMode: () => void
 }
@@ -61,6 +64,8 @@ const WBView = (props: Props) => {
   const {
     script = '',
     items,
+    clearing,
+    processing,
     setScript,
     setScriptEl,
     scriptEl,
@@ -69,6 +74,7 @@ const WBView = (props: Props) => {
     onSubmit,
     onQueryOpen,
     onQueryDelete,
+    onAllQueriesDelete,
     onQueryChangeMode,
     onChangeGroupMode,
     scrollDivRef,
@@ -228,6 +234,8 @@ const WBView = (props: Props) => {
                 >
                   <WBResultsWrapper
                     items={items}
+                    clearing={clearing}
+                    processing={processing}
                     activeMode={activeMode}
                     activeResultsMode={resultsMode}
                     scrollDivRef={scrollDivRef}
@@ -235,6 +243,7 @@ const WBView = (props: Props) => {
                     onQueryProfile={handleProfile}
                     onQueryOpen={onQueryOpen}
                     onQueryDelete={onQueryDelete}
+                    onAllQueriesDelete={onAllQueriesDelete}
                   />
                 </EuiResizablePanel>
               </>

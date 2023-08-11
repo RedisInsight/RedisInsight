@@ -8,9 +8,16 @@ import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS, Pages } from 'uiSrc/constants'
 
 import { updateRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
+import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 import Recommendation, { IProps } from './Recommendation'
 
+const recommendationsContent = MOCK_RECOMMENDATIONS
 const mockedProps = mock<IProps>()
+
+const instanceMock = {
+  ...instance(mockedProps),
+  recommendationsContent,
+}
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -28,12 +35,14 @@ const PROVIDER = 'RE_CLOUD'
 
 describe('Recommendation', () => {
   it('should render', () => {
-    expect(render(<Recommendation {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<Recommendation
+      {...instanceMock}
+    />)).toBeTruthy()
   })
 
   it('should render content if recommendation is not read', () => {
     render(<Recommendation
-      {...instance(mockedProps)}
+      {...instanceMock}
       name="searchJSON"
       tutorial=""
       isRead={false}
@@ -44,7 +53,7 @@ describe('Recommendation', () => {
   })
 
   it('should render RecommendationVoting', () => {
-    const { container } = render(<Recommendation {...instance(mockedProps)} name="searchJSON" />)
+    const { container } = render(<Recommendation {...instanceMock} name="searchJSON" />)
     fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     expect(screen.getByTestId('recommendation-voting')).toBeInTheDocument()
   })
@@ -56,7 +65,7 @@ describe('Recommendation', () => {
 
     const { container } = render(
       <Recommendation
-        {...instance(mockedProps)}
+        {...instanceMock}
         isRead={false}
         name="searchJSON"
         tutorial=""
@@ -86,7 +95,7 @@ describe('Recommendation', () => {
 
     const { container } = render(
       <Recommendation
-        {...instance(mockedProps)}
+        {...instanceMock}
         isRead={false}
         name="searchJSON"
         tutorial="quick-guides/working-with-hash.html"
@@ -118,7 +127,7 @@ describe('Recommendation', () => {
 
     const { container } = render(
       <Recommendation
-        {...instance(mockedProps)}
+        {...instanceMock}
         isRead={false}
         name="searchJSON"
         tutorial="/redis_stack/working_with_json.md"
@@ -145,7 +154,7 @@ describe('Recommendation', () => {
 
   it('should render hide/unhide button', () => {
     const name = 'searchJSON'
-    render(<Recommendation {...instance(mockedProps)} name={name} />)
+    render(<Recommendation {...instanceMock} name={name} />)
 
     expect(screen.getByTestId('toggle-hide-searchJSON-btn')).toBeInTheDocument()
   })
@@ -155,7 +164,7 @@ describe('Recommendation', () => {
     const nameMock = 'searchJSON'
     const { queryByTestId } = render(
       <Recommendation
-        {...instance(mockedProps)}
+        {...instanceMock}
         id={idMock}
         name={nameMock}
       />
@@ -173,28 +182,28 @@ describe('Recommendation', () => {
 
   it('should not render "Tutorial" btn if tutorial is Undefined', () => {
     const name = 'searchJSON'
-    const { queryByTestId } = render(<Recommendation {...instance(mockedProps)} name={name} tutorial={undefined} />)
+    const { queryByTestId } = render(<Recommendation {...instanceMock} name={name} tutorial={undefined} />)
 
     expect(queryByTestId(`${name}-to-tutorial-btn`)).not.toBeInTheDocument()
   })
 
   it('should render "Tutorial" if tutorial="path"', () => {
     const name = 'searchJSON'
-    const { queryByTestId } = render(<Recommendation {...instance(mockedProps)} name={name} tutorial="path" />)
+    const { queryByTestId } = render(<Recommendation {...instanceMock} name={name} tutorial="path" />)
 
     expect(queryByTestId(`${name}-to-tutorial-btn`)).toHaveTextContent('Tutorial')
   })
 
   it('should render "Workbench" btn if tutorial=""', () => {
     const name = 'searchJSON'
-    const { queryByTestId } = render(<Recommendation {...instance(mockedProps)} name={name} tutorial="" />)
+    const { queryByTestId } = render(<Recommendation {...instanceMock} name={name} tutorial="" />)
 
     expect(queryByTestId(`${name}-to-tutorial-btn`)).toHaveTextContent('Workbench')
   })
 
   it('should render Snooze button', () => {
     const name = 'searchJSON'
-    render(<Recommendation {...instance(mockedProps)} name={name} />)
+    render(<Recommendation {...instanceMock} name={name} />)
 
     expect(screen.getByTestId(`${name}-delete-btn`)).toBeInTheDocument()
   })
@@ -204,7 +213,7 @@ describe('Recommendation', () => {
     const nameMock = 'searchJSON'
     const { queryByTestId } = render(
       <Recommendation
-        {...instance(mockedProps)}
+        {...instanceMock}
         id={idMock}
         name={nameMock}
       />

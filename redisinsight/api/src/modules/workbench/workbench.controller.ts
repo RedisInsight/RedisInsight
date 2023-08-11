@@ -98,4 +98,16 @@ export class WorkbenchController {
   ): Promise<void> {
     return this.service.deleteCommandExecution(databaseId, id);
   }
+
+  @ApiEndpoint({
+    description: 'Delete command executions',
+    statusCode: 200,
+  })
+  @Delete('/command-executions')
+  @ApiRedisParams()
+  async deleteCommandExecutions(
+    @Param('dbInstance') databaseId: string,
+  ): Promise<void> {
+    return this.service.deleteCommandExecutions(databaseId);
+  }
 }

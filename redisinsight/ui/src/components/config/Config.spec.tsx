@@ -17,6 +17,7 @@ import { getRedisCommands } from 'uiSrc/slices/app/redis-commands'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
+import { getContentRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import Config from './Config'
 
 let store: typeof mockedStore
@@ -61,6 +62,7 @@ describe('Config', () => {
       processCliClient(),
       getRedisCommands(),
       getNotifications(),
+      getContentRecommendations(),
       getWBGuides(),
       getWBTutorials(),
       getFeatureFlags(),
@@ -94,6 +96,7 @@ describe('Config', () => {
       processCliClient(),
       getRedisCommands(),
       getNotifications(),
+      getContentRecommendations(),
       getWBGuides(),
       getWBTutorials(),
       getFeatureFlags(),

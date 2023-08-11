@@ -22,6 +22,7 @@ export interface StateRecommendations {
   error: string,
   isContentVisible: boolean,
   isHighlighted: boolean,
+  content: IRecommendationsStatic
 }
 
 export interface IRecommendationContent {

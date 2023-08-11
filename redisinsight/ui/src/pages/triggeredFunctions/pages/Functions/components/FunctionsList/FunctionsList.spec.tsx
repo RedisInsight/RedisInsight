@@ -67,4 +67,31 @@ describe('FunctionsList', () => {
       }
     })
   })
+
+  it('should render disabled auto refresh btn', () => {
+    render(<FunctionsList {...mockedProps} isRefreshDisabled />)
+
+    expect(screen.getByTestId('refresh-functions-btn')).toBeDisabled()
+  })
+
+  it('should call proper telemetry events when sorting is changed', () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    const { container } = render(<FunctionsList {...mockedProps} items={mockedFunctions} />)
+
+    fireEvent.click(container.querySelector('[data-test-subj="tableHeaderSortButton"') as HTMLInputElement)
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTIONS_SORTED,
+      eventData: {
+        databaseId: 'instanceId',
+        direction: 'asc',
+        field: 'name',
+      }
+    })
+
+    sendEventTelemetry.mockRestore()
+  })
 })

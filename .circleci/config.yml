@@ -790,6 +790,9 @@ jobs:
           root: .
           paths:
             - ./docker-release
+      - store_artifacts:
+          path: docker-release
+          destination: docker-release
 
   # Release jobs
   store-build-artifacts:
@@ -1011,6 +1014,18 @@ workflows:
               only:
                 - /^e2e/feature.*/
                 - /^e2e/bugfix.*/
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+          requires:
+            - Start E2E Tests
+      - setup-build:
+          name: Setup build (stage)
+          requires:
+            - Setup sign certificates (stage)
+      - linux:
+          name: Build app - Linux (stage)
+          requires:
+            - Setup build (stage)
       - docker:
           name: Build docker image
           requires:
@@ -1021,6 +1036,11 @@ workflows:
           parallelism: 4
           requires:
             - Build docker image
+      - e2e-app-image:
+          name: E2ETest (AppImage)
+          parallelism: 2
+          requires:
+            - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:

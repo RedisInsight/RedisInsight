@@ -2,20 +2,21 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 
 import { remove } from 'lodash'
-import { apiService, localStorageService } from 'uiSrc/services'
+import { apiService, localStorageService, resourcesService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { DeleteDatabaseRecommendationResponse, ModifyDatabaseRecommendationDto } from 'apiSrc/modules/database-recommendation/dto'
 
 import { AppDispatch, RootState } from '../store'
-import { StateRecommendations, IRecommendations, IRecommendation } from '../interfaces/recommendations'
+import { StateRecommendations, IRecommendations, IRecommendation, IRecommendationsStatic } from '../interfaces/recommendations'
 
 export const initialState: StateRecommendations = {
   data: {
     recommendations: [],
     totalUnread: 0,
   },
+  content: {},
   loading: false,
   error: '',
   isContentVisible: false,
@@ -78,6 +79,17 @@ const recommendationsSlice = createSlice({
     deleteRecommendations: (state, { payload }: PayloadAction<string[]>) => {
       remove(state.data.recommendations, (r) => payload.includes(r.id))
     },
+
+    getContentRecommendations: (state) => {
+      state.loading = true
+    },
+    getContentRecommendationsSuccess: (state, { payload }: PayloadAction<IRecommendationsStatic>) => {
+      state.loading = false
+      state.content = payload
+    },
+    getContentRecommendationsFailure: (state) => {
+      state.loading = false
+    },
   },
 })
 
@@ -95,6 +107,9 @@ export const {
   updateRecommendationError,
   setTotalUnread,
   deleteRecommendations,
+  getContentRecommendations,
+  getContentRecommendationsSuccess,
+  getContentRecommendationsFailure,
 } = recommendationsSlice.actions
 
 // A selector
@@ -223,6 +238,23 @@ export function deleteLiveRecommendations(
       dispatch(addErrorNotification(error))
       dispatch(updateRecommendationError(errorMessage))
       onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchContentRecommendations() {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getContentRecommendations())
+
+    try {
+      const { data, status } = await resourcesService
+        .get<IRecommendationsStatic>(ApiEndpoints.CONTENT_RECOMMENDATIONS)
+      if (isStatusSuccessful(status)) {
+        dispatch(getContentRecommendationsSuccess(data))
+      }
+    } catch (_err) {
+      dispatch(getContentRecommendationsFailure())
     }
   }
 }

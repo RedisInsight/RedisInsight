@@ -795,7 +795,7 @@ describe('ONBOARDING_FEATURES', () => {
       expect(
         render(<OnboardingTour options={ONBOARDING_FEATURES.TRIGGERED_FUNCTIONS_PAGE}><span /></OnboardingTour>)
       ).toBeTruthy()
-      expect(screen.getByTestId('step-content')).toHaveTextContent('Triggers and functions can execute server-side functions triggered by certain events or data')
+      expect(screen.getByTestId('step-content')).toHaveTextContent('Triggers and Functions can execute server-side functions triggered by certain events or data operations to decrease latency and react in real time to database events.See the list of uploaded libraries, upload or delete libraries, or investigate and debug functions.')
     })
 
     it('should call proper telemetry events', () => {

@@ -80,7 +80,9 @@
   "homepage": "https://github.com/RedisInsight/RedisInsight#readme",
   "resolutions": {
     "**/node-sass": "^8.0.0",
-    "**/trim": "0.0.3"
+    "**/trim": "0.0.3",
+    "word-wrap": "1.2.4",
+    "electron-builder/app-builder-lib/@electron/universal/dir-compare/minimatch": "^3.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

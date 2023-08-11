@@ -90,6 +90,7 @@ export enum CommandPrefix {
 export const CommandMonitor = 'MONITOR'
 export const CommandPSubscribe = 'PSUBSCRIBE'
 export const CommandSubscribe = 'SUBSCRIBE'
+export const CommandHello3 = 'HELLO 3'
 
 export enum CommandRediSearch {
   Search = 'FT.SEARCH',

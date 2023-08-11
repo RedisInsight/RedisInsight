@@ -30,6 +30,7 @@ import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
 import { fetchGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { fetchTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { fetchContentRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import favicon from 'uiSrc/assets/favicon.ico'
 
 const SETTINGS_PAGE_PATH = '/settings'
@@ -48,6 +49,7 @@ const Config = () => {
     dispatch(fetchUnsupportedCliCommandsAction())
     dispatch(fetchRedisCommandsInfo())
     dispatch(fetchNotificationsAction())
+    dispatch(fetchContentRecommendations())
 
     // get guides & tutorials
     dispatch(fetchGuides())

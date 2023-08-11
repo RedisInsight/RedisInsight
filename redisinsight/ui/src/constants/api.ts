@@ -77,7 +77,6 @@ enum ApiEndpoints {
   SETTINGS_AGREEMENTS_SPEC = 'settings/agreements/spec',
 
   WORKBENCH_COMMAND_EXECUTIONS = 'workbench/command-executions',
-  WORKBENCH_COMMANDS_EXECUTION = 'workbench/commands-execution',
 
   PROFILER = 'profiler',
   PROFILER_LOGS = 'profiler/logs',
@@ -90,6 +89,7 @@ enum ApiEndpoints {
   PLUGINS = 'plugins',
   STATE = 'state',
   CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
+  CONTENT_RECOMMENDATIONS = 'static/content/recommendations.json',
   GUIDES_PATH = 'static/guides',
   TUTORIALS_PATH = 'static/tutorials',
   CUSTOM_TUTORIALS_PATH = 'static/custom-tutorials',

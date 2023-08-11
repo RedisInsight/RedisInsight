@@ -14,6 +14,14 @@
   overflow: auto;
 }
 
+.header {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 12px;
+}
+
 .noResults {
   width: 326px;
   height: 100%;
@@ -41,4 +49,15 @@
 .playIcon {
   width: 42px !important;
   height: 42px !important;
+}
+
+.clearAllBtn {
+  font-size: 14px !important;
+
+  :global {
+    .euiIcon {
+      width: 14px !important;
+      height: 14px !important;
+    }
+  }
 }

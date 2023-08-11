@@ -37,6 +37,7 @@ export const initialState: StateTriggeredFunctions = {
     data: null
   },
   addLibrary: {
+    open: false,
     loading: false,
   },
 }
@@ -124,6 +125,9 @@ const triggeredFunctionsSlice = createSlice({
     addTriggeredFunctionsLibraryFailure: (state) => {
       state.addLibrary.loading = false
     },
+    setAddLibraryFormOpen: (state, { payload }: PayloadAction<boolean>) => {
+      state.addLibrary.open = payload
+    }
   }
 })
 
@@ -150,6 +154,7 @@ export const {
   addTriggeredFunctionsLibrary,
   addTriggeredFunctionsLibrarySuccess,
   addTriggeredFunctionsLibraryFailure,
+  setAddLibraryFormOpen,
 } = triggeredFunctionsSlice.actions
 
 export const triggeredFunctionsSelector = (state: RootState) => state.triggeredFunctions
@@ -243,6 +248,7 @@ export function fetchTriggeredFunctionsLibrary(
 
       if (isStatusSuccessful(status)) {
         dispatch(getTriggeredFunctionsLibraryDetailsSuccess(data))
+        dispatch(setAddLibraryFormOpen(false))
         onSuccessAction?.(data)
       }
     } catch (_err) {

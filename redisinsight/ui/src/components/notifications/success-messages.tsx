@@ -58,8 +58,7 @@ export default {
       <>
         <b>{formatNameShort(bufferToString(keyName))}</b>
         {' '}
-        has been added. Please refresh the list of Keys to see
-        updates.
+        has been added.
       </>
     ),
   }),

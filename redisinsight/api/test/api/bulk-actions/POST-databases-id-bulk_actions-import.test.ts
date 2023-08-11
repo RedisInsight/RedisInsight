@@ -138,6 +138,40 @@ describe('POST /databases/:id/bulk-actions/import', () => {
         },
       });
     });
+    it('Should ignore blank lines', async () => {
+      await validateApiCall({
+        endpoint,
+        attach: [
+          'file',
+          Buffer.from(`
+            \n
+            \n
+            SET key0 value0
+            \n
+                  \n
+            SET key1 value1
+            \n
+            \n
+          `),
+          'any_filename_and_ext',
+        ],
+        responseBody: {
+          id: 'empty',
+          databaseId: constants.TEST_INSTANCE_ID,
+          type: 'upload',
+          summary: { processed: 2, succeed: 2, failed: 0, errors: [] },
+          progress: null,
+          filter: null,
+          status: 'completed',
+        },
+        checkFn: async ({ body }) => {
+          expect(body.duration).to.gt(0);
+
+          expect(await rte.client.get('key0')).to.eq('value0');
+          expect(await rte.client.get('key1')).to.eq('value1');
+        },
+      });
+    });
     it('Should import 100K strings', async () => {
       const b =           Buffer.from(
         (new Array(100_000)).fill(1).map(

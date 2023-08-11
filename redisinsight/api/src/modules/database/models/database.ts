@@ -274,7 +274,11 @@ export class Database {
     enum: Compressor,
   })
   @Expose()
-  @IsEnum(Compressor)
+  @IsEnum(Compressor, {
+    message: `compressor must be a valid enum value. Valid values: ${Object.values(
+      Compressor,
+    )}.`,
+  })
   @IsOptional()
   compressor?: Compressor = Compressor.NONE;
 

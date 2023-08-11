@@ -144,7 +144,7 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
         onClick={handleClickImportDbBtn}
         className={styles.importDatabasesBtn}
         size="m"
-        data-testid="import-dbs-btn"
+        data-testid="import-from-file-btn"
       >
         <EuiIcon type="importAction" />
       </EuiButton>

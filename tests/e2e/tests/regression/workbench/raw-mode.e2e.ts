@@ -1,15 +1,16 @@
 import { DatabaseHelper } from '../../../helpers/database';
-import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
+import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const keyName = Common.generateWord(10);
 const indexName = Common.generateWord(5);
@@ -35,7 +36,7 @@ fixture `Workbench Raw mode`
     .afterEach(async t => {
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Use raw mode for Workbech result', async t => {

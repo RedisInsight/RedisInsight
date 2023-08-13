@@ -13,7 +13,11 @@ export class ScanFilter {
   })
   @IsOptional()
   @Expose()
-  @IsEnum(RedisDataType)
+  @IsEnum(RedisDataType, {
+    message: `type must be a valid enum value. Valid values: ${Object.values(
+      RedisDataType,
+    )}.`,
+  })
   type?: RedisDataType = null;
 
   @ApiProperty({

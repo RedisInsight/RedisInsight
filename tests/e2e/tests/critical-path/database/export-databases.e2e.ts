@@ -28,6 +28,7 @@ fixture `Export databases`
 test
     .before(async() => {
         await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterConfig);
@@ -36,12 +37,12 @@ test
     })
     .after(async() => {
         // Delete all databases
+        fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
         await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
         await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         // Delete exported file
-        fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
     })('Exporting Standalone, OSS Cluster, and Sentinel connection types', async t => {
         const databaseNames = [
             ossStandaloneConfig.databaseName,
@@ -49,6 +50,12 @@ test
             ossClusterConfig.ossClusterDatabaseName,
             ossSentinelConfig.masters[1].alias
         ];
+
+        const compressor = 'Brotli';
+
+        await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await myRedisDatabasePage.AddRedisDatabase.setCompressorValue(compressor);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
 
         // Select databases checkboxes
         await databasesActions.selectDatabasesByNames(databaseNames);
@@ -72,7 +79,7 @@ test
 
         const exportedData = {
             path: joinPath(fileDownloadPath, foundExportedFiles[0]),
-            successNumber: 4,
+            successNumber: databaseNames.length,
             dbImportedNames: databaseNames
         };
 
@@ -82,9 +89,15 @@ test
         await t.click(myRedisDatabasePage.okDialogBtn);
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
+
         await databaseHelper.clickOnEditDatabaseByName(databaseNames[1]);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
         await t.expect(myRedisDatabasePage.AddRedisDatabase.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
+
+        await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.selectCompressor.textContent).eql(compressor, 'Compressor import incorrect');
+
     });
 test
     .before(async() => {

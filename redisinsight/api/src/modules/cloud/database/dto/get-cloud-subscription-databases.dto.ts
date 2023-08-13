@@ -21,7 +21,11 @@ export class GetCloudSubscriptionDatabasesDto {
     description: 'Subscription Id',
     enum: CloudSubscriptionType,
   })
-  @IsEnum(CloudSubscriptionType)
+  @IsEnum(CloudSubscriptionType, {
+    message: `subscriptionType must be a valid enum value. Valid values: ${Object.values(
+      CloudSubscriptionType,
+    )}.`,
+  })
   @IsNotEmpty()
   subscriptionType: CloudSubscriptionType;
 

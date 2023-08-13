@@ -7,10 +7,12 @@ import {
 } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 let keyName = Common.generateWord(20);
 let consumerGroupName = Common.generateWord(20);
@@ -26,7 +28,7 @@ fixture `Acknowledge and Claim of Pending messages`
         if (await browserPage.closeKeyButton.exists){
             await t.click(browserPage.closeKeyButton);
         }
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can acknowledge any message in the list of pending messages', async t => {

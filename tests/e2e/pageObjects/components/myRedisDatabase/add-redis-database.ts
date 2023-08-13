@@ -57,11 +57,15 @@ export class AddRedisDatabase {
     // DROPDOWNS
     caCertField = Selector('[data-testid=select-ca-cert]', { timeout: 500 });
     clientCertField = Selector('[data-testid=select-cert]', { timeout: 500 });
+    selectCompressor = Selector('[data-testid=select-compressor]', { timeout: 1000 });
     // CHECKBOXES
     useSSHCheckbox = Selector('[data-testid=use-ssh]~div', { timeout: 500 });
+    dataCompressorCheckbox = Selector('[data-testid=showCompressor] ~ label');
     // RADIO BUTTONS
     sshPasswordRadioBtn = Selector('#password~div', { timeout: 500 });
     sshPrivateKeyRadioBtn = Selector('#privateKey~div', { timeout: 500 });
+    // LABELS
+    dataCompressorLabel = Selector('[data-testid=showCompressor] ~ label', { timeout: 1000 });
 
     /**
      * Adding a new redis database
@@ -255,6 +259,20 @@ export class AddRedisDatabase {
         if (!!parameters.ossClusterDatabaseName) {
             await t.typeText(this.databaseAliasInput, parameters.ossClusterDatabaseName, { replace: true, paste: true });
         }
+    }
+
+    /**
+     * set copressor value in dropdown
+     * @param compressor - compressor value
+     * @param value - checkbox value
+     */
+    async setCompressorValue(compressor: string){
+
+        if(!await this.selectCompressor.exists) {
+            await t.click(this.dataCompressorLabel);
+        }
+        await t.click(this.selectCompressor);
+        await t.click(Selector(`[id="${compressor}"]`));
     }
 }
 

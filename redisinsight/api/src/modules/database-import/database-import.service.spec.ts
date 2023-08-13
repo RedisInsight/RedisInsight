@@ -12,7 +12,7 @@ import {
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseImportAnalytics } from 'src/modules/database-import/database-import.analytics';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import { ConnectionType, Compressor } from 'src/modules/database/entities/database.entity';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import {
@@ -165,7 +165,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor']),
         provider: 'RE_CLOUD',
         new: true,
       });
@@ -177,8 +177,32 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor']),
         name: `${mockDatabase.host}:${mockDatabase.port}`,
+        new: true,
+      });
+    });
+    it('should create standalone with none compressor', async () => {
+      await service['createDatabase']({
+        ...mockDatabase,
+        compressor: 'custom',
+      }, 0);
+
+      expect(databaseRepository.create).toHaveBeenCalledWith({
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor']),
+        compressor: Compressor.NONE,
+        new: true,
+      });
+    });
+    it('should create standalone with compressor', async () => {
+      await service['createDatabase']({
+        ...mockDatabase,
+        compressor: Compressor.GZIP,
+      }, 0);
+
+      expect(databaseRepository.create).toHaveBeenCalledWith({
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor']),
+        compressor: Compressor.GZIP,
         new: true,
       });
     });
@@ -190,7 +214,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'timeout']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'timeout', 'compressor']),
         connectionType: ConnectionType.CLUSTER,
         new: true,
       });

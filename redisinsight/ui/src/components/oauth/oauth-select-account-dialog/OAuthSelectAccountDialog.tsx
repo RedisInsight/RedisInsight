@@ -70,6 +70,9 @@ const OAuthSelectAccountDialog = () => {
           dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
           history.push(Pages.redisCloudSubscriptions)
         },
+        () => {
+          dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
+        }
       ))
       dispatch(setSelectAccountDialogState(false))
     } else {

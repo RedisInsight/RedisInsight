@@ -64,7 +64,7 @@ const Message = () => (
         className={styles.link}
         external={false}
         target="_blank"
-        href="https://docs.redis.com/latest/rc/api/get-started/manage-api-keys/?utm_source=redisinsight&utm_medium=main&utm_campaign=main"
+        href="https://docs.redis.com/latest/rc/api/get-started/enable-the-api/"
       >
         documentation.
       </EuiLink>

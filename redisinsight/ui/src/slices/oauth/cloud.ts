@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { remove } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { getApiErrorMessage, getAxiosError, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
 import { CloudJobName, CloudJobStatus } from 'uiSrc/electron/constants'
 import {
@@ -16,7 +16,14 @@ import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 
 import { AppDispatch, RootState } from '../store'
-import { CloudCapiKey, Instance, OAuthSocialSource, StateAppOAuth } from '../interfaces'
+import {
+  CloudCapiKey,
+  CloudJobInfoState,
+  EnhancedAxiosError,
+  Instance,
+  OAuthSocialSource,
+  StateAppOAuth
+} from '../interfaces'
 import {
   addErrorNotification,
   addInfiniteNotification,
@@ -36,6 +43,7 @@ export const initialState: StateAppOAuth = {
     status: '',
   },
   source: null,
+  agreement: localStorageService.get(BrowserStorageItem.OAuthAgreement) ?? false,
   isOpenSocialDialog: false,
   isOpenSignInDialog: false,
   isOpenSelectAccountDialog: false,
@@ -116,7 +124,7 @@ const oauthCloudSlice = createSlice({
     setSelectAccountDialogState: (state, { payload }: PayloadAction<boolean>) => {
       state.isOpenSelectAccountDialog = payload
     },
-    setJob: (state, { payload }: PayloadAction<CloudJobInfo>) => {
+    setJob: (state, { payload }: PayloadAction<CloudJobInfoState>) => {
       state.job = payload
     },
 
@@ -136,6 +144,9 @@ const oauthCloudSlice = createSlice({
     },
     showOAuthProgress: (state, { payload }: PayloadAction<boolean>) => {
       state.showProgress = payload
+    },
+    setAgreement: (state, { payload }: PayloadAction<boolean>) => {
+      state.agreement = payload
     },
     getCapiKeys: (state) => {
       state.capiKeys.loading = true
@@ -194,6 +205,7 @@ export const {
   getPlansSuccess,
   getPlansFailure,
   showOAuthProgress,
+  setAgreement,
   getCapiKeys,
   getCapiKeysSuccess,
   getCapiKeysFailure,
@@ -211,6 +223,7 @@ export const oauthCloudJobSelector = (state: RootState) => state.oauth.cloud.job
 export const oauthCloudUserSelector = (state: RootState) => state.oauth.cloud.user
 export const oauthCloudUserDataSelector = (state: RootState) => state.oauth.cloud.user.data
 export const oauthCloudPlanSelector = (state: RootState) => state.oauth.cloud.plan
+export const oauthCloudPAgreementSelector = (state: RootState) => state.oauth.cloud.agreement
 export const oauthCapiKeysSelector = (state: RootState) => state.oauth.cloud.capiKeys
 
 // The reducer
@@ -355,10 +368,12 @@ export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => vo
 
         onSuccessAction?.()
       }
-    } catch (_err) {
-      const error = _err as AxiosError
-      dispatch(addErrorNotification(error))
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+
+      dispatch(addErrorNotification(err))
       dispatch(getPlansFailure())
+      dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
       onFailAction?.()
     }
   }

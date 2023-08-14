@@ -7,6 +7,7 @@ import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { knownFeatures } from 'src/modules/feature/constants/known-features';
+import { Feature } from 'src/modules/feature/model/feature';
 
 @Injectable()
 export class FeatureService {
@@ -38,7 +39,7 @@ export class FeatureService {
   /**
    * Returns list of features flags
    */
-  async list() {
+  async list(): Promise<{ features: Record<string, Feature> }> {
     this.logger.log('Getting features list');
 
     const features = {};
@@ -68,14 +69,6 @@ export class FeatureService {
       }
     });
 
-    try {
-      this.analytics.sendFeatureFlagRecalculated({
-        configVersion: (await this.featuresConfigRepository.getOrCreate())?.data?.version,
-        features,
-      });
-    } catch (e) {
-      // ignore telemetry error
-    }
     return { features };
   }
 
@@ -118,7 +111,17 @@ export class FeatureService {
         `Features flags recalculated. Updated: ${actions.toUpsert.length} deleted: ${actions.toDelete.length}`,
       );
 
-      this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculated, await this.list());
+      const list = await this.list();
+      this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculated, list);
+
+      try {
+        this.analytics.sendFeatureFlagRecalculated({
+          configVersion: (await this.featuresConfigRepository.getOrCreate())?.data?.version,
+          features: list.features,
+        });
+      } catch (e) {
+        // ignore telemetry error
+      }
     } catch (e) {
       this.logger.error('Unable to recalculate features flags', e);
     }

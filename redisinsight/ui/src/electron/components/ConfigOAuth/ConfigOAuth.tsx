@@ -7,6 +7,7 @@ import {
   fetchUserInfo,
   oauthCloudUserDataSelector,
   setJob,
+  setOAuthCloudSource,
   setSignInDialogState,
   setSocialDialogState,
   showOAuthProgress,
@@ -76,6 +77,7 @@ const ConfigOAuth = () => {
 
     if (status === CloudAuthStatus.Failed) {
       const err = parseCloudOAuthError(error || message || '')
+      dispatch(setOAuthCloudSource(null))
       dispatch(signInFailure(err?.message))
       dispatch(addErrorNotification(err))
       dispatch(setIsAutodiscoverySSO(false))

@@ -89,6 +89,11 @@
   padding: 2px 45px;
   text-align: left;
 
+  .selectDescription {
+    padding-top: 10px;
+    color: var(--euiColorMediumShade) !important;
+  }
+
   :global(.euiSuperSelectControl) {
     border-radius: 4px;
     background-color: var(--euiColorLightestShade) !important;
@@ -108,6 +113,10 @@
   :global(.euiTextColor) {
     font-size: 14px !important;
   }
+
+  :global(.euiContextMenuItem__text) {
+    position: relative;
+  }
 }
 
 .regionName {
@@ -124,4 +133,10 @@
 
 .button {
   margin-left: 8px;
+}
+
+.tfOptionIcon {
+  display: inline-block !important;
+  width: 16px !important;
+  margin-left: 11px;
 }

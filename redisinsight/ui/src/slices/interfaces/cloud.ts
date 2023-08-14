@@ -37,6 +37,11 @@ export interface StateAppOAuth {
   agreement: boolean
 }
 
+export interface TFRegion {
+  provider: string
+  regions: string[]
+}
+
 export interface CloudCapiKey {
   id: string
   name: string
@@ -64,5 +69,7 @@ export enum OAuthSocialSource {
   RedisBloom = 'workbench RedisBloom',
   Autodiscovery = 'autodiscovery',
   SettingsPage = 'settings',
-  ConfirmationMessage = 'confirmation message'
+  ConfirmationMessage = 'confirmation message',
+  TriggersAndFunctions = 'triggers_and_functions',
+  'triggers and functions' = 'workbench triggers_and_functions',
 }

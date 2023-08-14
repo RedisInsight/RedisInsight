@@ -25,6 +25,12 @@ describe('AddLibrary', () => {
     expect(render(<AddLibrary {...mockedProps} />)).toBeTruthy()
   })
 
+  it('should display proper code value by default', () => {
+    render(<AddLibrary {...mockedProps} />)
+
+    expect(screen.getByTestId('code-value')).toHaveValue('#!js name=LibName api_version=1.0')
+  })
+
   it('should call proper telemetry event', async () => {
     const onAdded = jest.fn()
 

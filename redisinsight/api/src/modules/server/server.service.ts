@@ -52,6 +52,7 @@ export class ServerService implements OnApplicationBootstrap {
       anonymousId: server.id,
       sessionId: this.sessionId,
       appType: ServerService.getAppType(SERVER_CONFIG.buildType),
+      appVersion: SERVER_CONFIG.appVersion,
       ...(await this.featuresConfigService.getControlInfo()),
     });
 

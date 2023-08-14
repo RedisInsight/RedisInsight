@@ -61,7 +61,7 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
 
-  const { appType: buildType, controlNumber, controlGroup } = getInfoServer() as Record<string, any>
+  const { appType: buildType, controlNumber, controlGroup, appVersion } = getInfoServer() as Record<string, any>
 
   if (isAnalyticsGranted || nonTracking) {
     return telemetryService?.event({
@@ -70,6 +70,7 @@ const sendEventTelemetry = (payload: ITelemetrySendEvent) => {
         buildType,
         controlNumber,
         controlGroup,
+        appVersion,
         ...eventData,
       },
     })
@@ -90,7 +91,7 @@ const sendPageViewTelemetry = (payload: ITelemetrySendPageView) => {
   const isAnalyticsGranted = checkIsAnalyticsGranted()
   setAnonymousId(isAnalyticsGranted)
 
-  const { appType: buildType, controlNumber, controlGroup } = getInfoServer() as Record<string, any>
+  const { appType: buildType, controlNumber, controlGroup, appVersion } = getInfoServer() as Record<string, any>
 
   if (isAnalyticsGranted || nonTracking) {
     telemetryService?.pageView(
@@ -99,7 +100,8 @@ const sendPageViewTelemetry = (payload: ITelemetrySendPageView) => {
         buildType,
         controlNumber,
         controlGroup,
-        databaseId
+        appVersion,
+        databaseId,
       }
     )
   }

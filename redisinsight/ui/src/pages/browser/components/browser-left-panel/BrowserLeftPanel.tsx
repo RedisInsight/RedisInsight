@@ -18,7 +18,7 @@ import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { redisearchDataSelector, redisearchListSelector, redisearchSelector } from 'uiSrc/slices/browser/redisearch'
-import { Nullable } from 'uiSrc/utils'
+import { isEqualBuffers, Nullable } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { KeyTypes } from 'uiSrc/constants'
 
@@ -29,14 +29,16 @@ import KeysHeader from '../keys-header'
 import styles from './styles.module.scss'
 
 export interface Props {
+  selectedKey: Nullable<RedisResponseBuffer>
   selectKey: ({ rowData }: { rowData: any }) => void
-  setSelectedKey: (keyName: Nullable<RedisResponseBuffer>) => void
+  removeSelectedKey: () => void
 }
 
 const BrowserLeftPanel = (props: Props) => {
   const {
+    selectedKey,
     selectKey,
-    setSelectedKey,
+    removeSelectedKey,
   } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -106,8 +108,12 @@ const BrowserLeftPanel = (props: Props) => {
   }
 
   const onDeleteKey = useCallback(
-    () => setSelectedKey(null),
-    [],
+    (key: RedisResponseBuffer) => {
+      if (isEqualBuffers(key, selectedKey)) {
+        removeSelectedKey()
+      }
+    },
+    [selectedKey],
   )
 
   return (

@@ -73,7 +73,7 @@ export interface Props {
     oldKeys: IKeyPropTypes[],
     { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
   ) => void
-  onDelete: () => void
+  onDelete: (key: RedisResponseBuffer) => void
   commonFilterType: Nullable<KeyTypes>
 }
 
@@ -251,7 +251,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   const handleRemoveKey = (key: RedisResponseBuffer) => {
     dispatch(deleteKeyAction(key, () => {
       setDeletePopoverIndex(undefined)
-      onDelete()
+      onDelete(key)
     }))
   }
 

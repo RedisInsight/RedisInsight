@@ -18,6 +18,7 @@ import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import { Nullable, bufferToString } from 'uiSrc/utils'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { KeyTypes } from 'uiSrc/constants'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 import KeyTreeDelimiter from './KeyTreeDelimiter'
 
@@ -33,7 +34,7 @@ export interface Props {
     oldKeys: IKeyPropTypes[],
     { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
   ) => void
-  onDelete: () => void
+  onDelete: (key: RedisResponseBuffer) => void
 }
 
 export const firstPanelId = 'tree'
@@ -224,7 +225,6 @@ const KeyTree = forwardRef((props: Props, ref) => {
               </>
             )}
           </EuiResizableContainer>
-
         </div>
       </div>
     </div>

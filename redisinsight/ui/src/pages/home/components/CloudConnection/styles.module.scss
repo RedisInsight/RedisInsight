@@ -61,13 +61,13 @@
 .accordion {
   background: var(--euiColorLightestShade);
   border-radius: 4px;
-  padding: 12px 18px;
-  margin-top: 14px;
+  padding: 12px 18px !important;
+  margin-top: 14px !important;
 
   :global {
     .euiAccordion__triggerWrapper {
       background: var(--euiColorLightestShade);
-      padding: 0;
+      padding: 0 !important;
     }
 
     .euiAccordion__triggerWrapper h3 {

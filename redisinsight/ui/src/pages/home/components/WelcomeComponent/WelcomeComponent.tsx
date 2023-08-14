@@ -160,6 +160,7 @@ const Welcome = ({ onAddInstance }: Props) => {
               handleClickLink(HELP_LINKS.cloud.event, { source: OAuthSocialSource.WelcomeScreen })
               ssoCloudHandlerClick(e, OAuthSocialSource.WelcomeScreen)
             }}
+            target="_blank"
             style={{
               ...linkStyles,
               backgroundImage: linkStyles?.backgroundImage
@@ -167,6 +168,7 @@ const Welcome = ({ onAddInstance }: Props) => {
                 : undefined
             }}
             data-testid="promo-btn"
+            rel="noreferrer"
           >
             <EuiIcon className={styles.btnIcon} type={CloudStars} />
             <div className={styles.btnContent}>

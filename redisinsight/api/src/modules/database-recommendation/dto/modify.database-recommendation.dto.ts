@@ -9,7 +9,11 @@ export class ModifyDatabaseRecommendationDto {
     enum: Vote,
   })
   @IsOptional()
-  @IsEnum(Vote)
+  @IsEnum(Vote, {
+    message: `vote must be a valid enum value. Valid values: ${Object.values(
+      Vote,
+    )}.`,
+  })
   vote?: Vote;
 
   @ApiPropertyOptional({

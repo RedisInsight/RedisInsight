@@ -20,6 +20,10 @@ export class CreateBrowserHistoryDto {
     example: BrowserHistoryMode.Pattern,
   })
   @IsOptional()
-  @IsEnum(BrowserHistoryMode)
+  @IsEnum(BrowserHistoryMode, {
+    message: `mode must be a valid enum value. Valid values: ${Object.values(
+      BrowserHistoryMode,
+    )}.`,
+  })
   mode?: BrowserHistoryMode = BrowserHistoryMode.Pattern;
 }

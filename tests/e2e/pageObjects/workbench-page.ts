@@ -7,22 +7,15 @@ export class WorkbenchPage extends InstancePage {
     cssSelectorPaginationButtonNext = '[data-test-subj=pagination-button-next]';
     cssReRunCommandButton = '[data-testid=re-run-command]';
     cssDeleteCommandButton = '[data-testid=delete-command]';
-    cssQueryCardOutputResponseSuccess = '[data-testid=query-card-output-response-success]';
-    cssQueryCardOutputResponseFailed = '[data-testid=query-card-output-response-failed]';
     cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
     cssClientListViewTypeOption = '[data-testid=view-type-selected-Plugin-client-list__clients-list]';
     cssJsonViewTypeOption = '[data-testid=view-type-selected-Plugin-client-list__json-view]';
     cssMonacoCommandPaletteLine = '[aria-label="Command Palette"]';
     cssQueryTextResult = '[data-testid=query-cli-result]';
     cssWorkbenchCommandInHistory = '[data-testid=wb-command]';
-    cssWorkbenchCommandSuccessResultInHistory = '[data-testid=cli-output-response-success]';
-    cssWorkbenchCommandFailedResultInHistory = '[data-testid=data-testid="cli-output-response-fail"]';
     cssQueryTableResult = '[data-testid^=query-table-result-]';
-    cssQueryPluginResult = '[data-testid^=query-table-result-]';
     queryGraphContainer = '[data-testid=query-graph-container]';
     cssQueryCardCommand = '[data-testid=query-card-command]';
-    cssQueryCardCommandResult = '[data-testid=query-common-result]';
-    cssCustomPluginTableResult = '[data-testid^=query-table-result-client]';
     cssCommandExecutionDateTime = '[data-testid=command-execution-date-time]';
     cssRowInVirtualizedTable = '[data-testid^=row-]';
     cssTutorialDeleteIcon = '[data-testid^=delete-tutorial-icon-]';
@@ -38,7 +31,6 @@ export class WorkbenchPage extends InstancePage {
     tutorialLinkField = Selector('[data-testid=tutorial-link-field]');
     tutorialLatestDeleteIcon = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);
     tutorialDeleteButton = Selector('button[data-testid^=delete-tutorial-]');
-    tutorialNameField = Selector('[data-testid=tutorial-name-field]');
     tutorialSubmitButton = Selector('[data-testid=submit-upload-tutorial-btn]');
     tutorialImport = Selector('[data-testid=import-tutorial]');
     tutorialAccordionButton = Selector('[data-testid^=accordion-button-]');
@@ -48,11 +40,8 @@ export class WorkbenchPage extends InstancePage {
     expandPreselectAreaButton = Selector('[data-testid=expand-enablement-area]');
     paginationButtonPrevious = Selector(this.cssSelectorPaginationButtonPrevious);
     paginationButtonNext = Selector(this.cssSelectorPaginationButtonNext);
-    preselectList = Selector('[data-testid*=preselect-List]');
     preselectIndexInformation = Selector('[data-testid="preselect-Additional index information"]');
     preselectHashCreate = Selector('[data-testid=preselect-Create]');
-    preselectIndexInfo = Selector('[data-testid*=preselect-Index]');
-    preselectSearch = Selector('[data-testid=preselect-Search]');
     preselectExactSearch = Selector('[data-testid="preselect-Exact text search"]');
     preselectCreateHashIndex = Selector('[data-testid="preselect-Create a hash index"]');
     preselectGroupBy = Selector('[data-testid*=preselect-Group]');
@@ -79,9 +68,9 @@ export class WorkbenchPage extends InstancePage {
     groupMode = Selector('[data-testid=btn-change-group-mode]');
     copyCommand = Selector('[data-testid=copy-command]');
     redisStackTimeSeriesLoadMorePoints = Selector('[data-testid=preselect-Load more data points]');
-    documentHashCreateButton = Selector('[data-testid=preselect-auto-Create]');
     uploadDataBulkBtn = Selector('[data-testid=upload-data-bulk-btn]');
     uploadDataBulkApplyBtn = Selector('[data-testid=upload-data-bulk-apply-btn]');
+    clearResultsBtn = Selector('[data-testid=clear-history-btn]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
     parametersAnchor = Selector('[data-testid=parameters-anchor]');
@@ -92,7 +81,6 @@ export class WorkbenchPage extends InstancePage {
     timeSeriesLink = Selector('[data-testid=internal-link-redis_for_time_series]');
     redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
     tutorialsWorkingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
-    guidesWorkingWithGraphLink = Selector('[data-testid=internal-link-working-with-graphs]');
     guidesIntroductionGraphLink = Selector('[data-testid=internal-link-introduction]');
     internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
     vectorSimilitaritySearchButton = Selector('[data-testid=internal-link-vector_similarity_search]');
@@ -112,7 +100,6 @@ export class WorkbenchPage extends InstancePage {
     queryTextResult = Selector(this.cssQueryTextResult);
     queryColumns = Selector('[data-testid*=query-column-]');
     queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
-    queryCardNoModuleOutput = Selector('[data-testid=query-card-no-module-output]');
     noCommandHistorySection = Selector('[data-testid=wb_no-results]');
     preselectArea = Selector('[data-testid=enablementArea]');
     expandArea = Selector('[data-testid=enablement-area-container]');
@@ -121,7 +108,6 @@ export class WorkbenchPage extends InstancePage {
     scrolledEnablementArea = Selector('[data-testid=enablement-area__page]');
     enablementAreaPaginationPopover = Selector('[data-testid=enablement-area__pagination-popover]');
     enablementAreaTreeView = Selector('[data-testid=enablementArea-treeView]');
-    customPluginsViewType = Selector('[data-test-subj*=clients-list]');
     commandExecutionResult = Selector('[data-testid=query-common-result]');
     commandExecutionResultFailed = Selector('[data-testid=cli-output-response-fail]');
     chartViewTypeOptionSelected = Selector('[data-testid=view-type-selected-Plugin-redistimeseries__redistimeseries-chart]');
@@ -129,18 +115,11 @@ export class WorkbenchPage extends InstancePage {
     loadedCommand = Selector('[class=euiLoadingContent__singleLine]');
     runButtonSpinner = Selector('[data-testid=loading-spinner]');
     enablementAreaEmptyContent = Selector('[data-testid=enablement-area__empty-prompt]');
-    workbenchCommandInHistory = Selector(this.cssWorkbenchCommandInHistory);
-    workbenchCommandSuccessResultInHistory = Selector(this.cssWorkbenchCommandSuccessResultInHistory);
-    workbenchCommandFailedResultInHistory = Selector(this.cssWorkbenchCommandFailedResultInHistory);
     commandExecutionDateAndTime = Selector('[data-testid=command-execution-date-time]');
-    historyResultContainer = Selector('[data-testid=query-cli-card-result]');
-    historyResultRow = Selector('[data-testid=query-cli-card-result]');
     executionCommandTime = Selector('[data-testid=command-execution-time-value]');
     executionCommandIcon = Selector('[data-testid=command-execution-time-icon]');
-    rowInVirtualizedTable = Selector('[data-testid^=row-]');
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');
-    monacoCloseCommandDetails = Selector('span.codicon-close');
     monacoSuggestion = Selector('span.monaco-icon-name-container');
     monacoContextMenu = Selector('div.shadow-root-host').shadowRoot();
     monacoShortcutInput = Selector('input.input');

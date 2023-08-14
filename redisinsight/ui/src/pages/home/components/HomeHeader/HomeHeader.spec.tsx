@@ -31,7 +31,7 @@ describe('HomeHeader', () => {
   it('should open import dbs dialog', () => {
     render(<HomeHeader {...instance(mockedProps)} />)
 
-    fireEvent.click(screen.getByTestId('import-dbs-btn'))
+    fireEvent.click(screen.getByTestId('import-from-file-btn'))
 
     expect(screen.getByTestId('import-dbs-dialog')).toBeInTheDocument()
   })
@@ -42,7 +42,7 @@ describe('HomeHeader', () => {
 
     render(<HomeHeader {...instance(mockedProps)} />)
 
-    fireEvent.click(screen.getByTestId('import-dbs-btn'))
+    fireEvent.click(screen.getByTestId('import-from-file-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_CLICKED

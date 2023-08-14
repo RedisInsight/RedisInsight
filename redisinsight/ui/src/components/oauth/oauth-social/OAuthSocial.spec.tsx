@@ -1,9 +1,9 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { cleanup, fireEvent, mockedStore, render, waitForEuiToolTipVisible, act } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { CloudAuthSocial, IpcInvokeEvent } from 'uiSrc/electron/constants'
-import { setOAuthCloudSource, signIn } from 'uiSrc/slices/oauth/cloud'
+import { setOAuthCloudSource, signIn, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
 import { setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import OAuthSocial, { OAuthSocialType } from './OAuthSocial'
@@ -18,6 +18,7 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
   oauthCloudSelector: jest.fn().mockReturnValue({
     source: 'source',
   }),
+  oauthCloudPAgreementSelector: jest.fn().mockReturnValue(true),
 }))
 
 let store: typeof mockedStore
@@ -121,5 +122,53 @@ describe('OAuthSocial', () => {
       invokeMock.mockRestore();
       (sendEventTelemetry as jest.Mock).mockRestore()
     })
+  })
+
+  it('should render disabled google button with tooltip', async () => {
+    (oauthCloudPAgreementSelector as jest.Mock).mockImplementation(() => false)
+
+    const { queryByTestId } = render(<OAuthSocial />)
+
+    expect(queryByTestId('google-oauth')).toBeDisabled()
+
+    await act(async () => {
+      fireEvent.mouseOver(queryByTestId('google-oauth') as HTMLElement)
+    })
+
+    await waitForEuiToolTipVisible()
+
+    expect(queryByTestId('google-oauth-tooltip')).toBeInTheDocument()
+    expect(queryByTestId('google-oauth-tooltip')).toHaveTextContent('Acknowledge the agreement')
+  })
+
+  it('should render disabled github button with tooltip', async () => {
+    (oauthCloudPAgreementSelector as jest.Mock).mockImplementation(() => false)
+
+    const { queryByTestId } = render(<OAuthSocial />)
+
+    expect(queryByTestId('github-oauth')).toBeDisabled()
+
+    await act(async () => {
+      fireEvent.mouseOver(queryByTestId('github-oauth') as HTMLElement)
+    })
+
+    await waitForEuiToolTipVisible()
+
+    expect(queryByTestId('github-oauth-tooltip')).toBeInTheDocument()
+    expect(queryByTestId('github-oauth-tooltip')).toHaveTextContent('Acknowledge the agreement')
+  })
+
+  it('should not render tooltip', async () => {
+    (oauthCloudPAgreementSelector as jest.Mock).mockImplementation(() => true)
+
+    const { queryByTestId } = render(<OAuthSocial />)
+
+    expect(queryByTestId('github-oauth')).not.toBeDisabled()
+
+    await act(async () => {
+      fireEvent.mouseOver(queryByTestId('github-oauth') as HTMLElement)
+    })
+
+    expect(queryByTestId('github-oauth-tooltip')).not.toBeInTheDocument()
   })
 })

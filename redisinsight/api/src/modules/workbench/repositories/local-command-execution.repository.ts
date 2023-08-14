@@ -164,6 +164,19 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
   }
 
   /**
+   * Delete all items
+   *
+   * @param databaseId
+   */
+  async deleteAll(databaseId: string): Promise<void> {
+    this.logger.log('Delete all command executions');
+
+    await this.commandExecutionRepository.delete({ databaseId });
+
+    this.logger.log('Command executions deleted');
+  }
+
+  /**
    * Clean history for particular database to fit 30 items limitation
    * @param databaseId
    */

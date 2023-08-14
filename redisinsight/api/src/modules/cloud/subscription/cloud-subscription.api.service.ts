@@ -52,8 +52,7 @@ export class CloudSubscriptionApiService {
         details: find(regions, { regionId: plan.regionId }),
       }));
     } catch (e) {
-      // todo: error
-      throw wrapHttpError(e);
+      throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
     }
   }
 

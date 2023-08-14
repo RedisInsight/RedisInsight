@@ -3,16 +3,18 @@ import { Selector } from 'testcafe';
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { DatabaseHelper } from '../../../helpers/database';
-import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { deleteAllKeysFromDB, populateDBWithHashes, populateHashWithFields } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 const chance = new Chance();
 
 const keyToAddParameters = { keysCount: 13, keyNameStartWith: 'hashKey' };
@@ -79,8 +81,7 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
     .after(async t => {
-        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneRedisearch.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Big highlighted key tooltip', async t => {
         const tooltipText = 'Consider splitting it into multiple keys';

@@ -37,6 +37,12 @@
     "typeorm:migrate": "cross-env NODE_ENV=staging yarn typeorm migration:generate ./migration/migration",
     "typeorm:run": "yarn typeorm migration:run"
   },
+  "resolutions": {
+    "nanoid": "^3.1.31",
+    "word-wrap": "1.2.4",
+    "mocha/minimatch": "^3.0.5",
+    "@nestjs/platform-socket.io/socket.io": "^4.7.1"
+  },
   "dependencies": {
     "@nestjs/common": "^9.0.11",
     "@nestjs/core": "^9.0.11",
@@ -53,7 +59,7 @@
     "axios": "^0.25.0",
     "body-parser": "^1.19.0",
     "class-transformer": "^0.2.3",
-    "class-validator": "^0.12.2",
+    "class-validator": "^0.14.0",
     "connect-timeout": "^1.9.0",
     "date-fns": "^2.29.3",
     "detect-port": "^1.5.1",
@@ -70,7 +76,7 @@
     "node-version-compare": "^1.0.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.6",
-    "socket.io": "^4.4.0",
+    "socket.io": "^4.6.2",
     "source-map-support": "^0.5.19",
     "sqlite3": "5.1.6",
     "ssh2": "^1.14.0",
@@ -86,7 +92,6 @@
     "@nestjs/schematics": "^9.0.3",
     "@nestjs/testing": "^9.0.11",
     "@types/adm-zip": "^0.5.0",
-    "@types/axios": "^0.14.0",
     "@types/express": "^4.17.3",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.167",

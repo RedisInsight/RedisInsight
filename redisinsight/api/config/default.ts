@@ -64,9 +64,7 @@ export default {
     appVersion: process.env.APP_VERSION || '2.30.0',
     requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
-    excludeAuthRoutes: [
-      { path: 'cloud/oauth/callback', method: RequestMethod.GET },
-    ],
+    excludeAuthRoutes: [],
   },
   sockets: {
     cors: process.env.SOCKETS_CORS ? process.env.SOCKETS_CORS === 'true' : false,
@@ -199,8 +197,6 @@ export default {
       name: 'triggers_and_functions',
       url: process.env.COMMANDS_TRIGGERS_AND_FUNCTIONS_URL
         || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
-      defaultUrl: process.env.COMMANDS_TRIGGERS_AND_FUNCTIONS_DEFAULT_URL
-        || 'https://s3.amazonaws.com/redisinsight.download/public/commands/triggers_and_functions.json',
     },
   ],
   connections: {

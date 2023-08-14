@@ -1,15 +1,16 @@
 import { DatabaseHelper } from '../../../helpers/database';
-import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../pageObjects';
+import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
-const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const counter = 7;
 const unicodeValue = '山女馬 / 马目 abc 123';
@@ -51,7 +52,7 @@ test
     .after(async t => {
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Workbench modes from editor', async t => {
         const groupCommandResultName = `${counter} Command(s) - ${counter} success, 0 error(s)`;

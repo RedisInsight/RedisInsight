@@ -24,9 +24,10 @@ export enum OAuthSocialType {
 
 interface Props {
   type?: OAuthSocialType
+  hideTitle?: boolean
 }
 
-const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
+const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props) => {
   const agreement = useSelector(oauthCloudPAgreementSelector)
 
   const dispatch = useDispatch()
@@ -99,8 +100,12 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal }: Props) => {
 
   return (
     <div className={cx(styles.containerAuto)} data-testid="oauth-container-autodiscovery">
-      <EuiTitle className={styles.title}><h4>Sign in to your Cloud Account</h4></EuiTitle>
-      <EuiText className={styles.text} color="subdued">Auto-discover subscriptions and add your databases or create a free starter database</EuiText>
+      {!hideTitle && (<EuiTitle className={styles.title}><h4>Sign in to your Cloud Account</h4></EuiTitle>)}
+      <EuiText className={styles.text} color="subdued">
+        Auto-discover subscriptions and add your databases.
+        <br />
+        A new Redis Enterprise Cloud account will be created for you if you don’t have one.
+      </EuiText>
       <div className={styles.buttonsAuto}>
         {buttons}
       </div>

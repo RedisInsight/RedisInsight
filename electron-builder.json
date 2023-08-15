@@ -101,9 +101,8 @@
   },
   "nsis": {
     "oneClick": false,
-    "perMachine": false,
-    "allowToChangeInstallationDirectory": true,
-    "deleteAppDataOnUninstall": true
+    "perMachine": true,
+    "allowToChangeInstallationDirectory": true
   },
   "linux": {
     "icon": "./resources/icons",

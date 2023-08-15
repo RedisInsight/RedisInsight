@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+import { AxiosError, AxiosResponseHeaders } from 'axios'
 import { CliOutputFormatterType, cliTexts, ConnectionSuccessOutputText, SelectCommand } from 'uiSrc/constants/cliOutput'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, CommandMonitor, } from 'uiSrc/constants'
@@ -16,6 +17,7 @@ import { SendClusterCommandDto, SendClusterCommandResponse, SendCommandResponse,
 
 import { AppDispatch, RootState } from '../store'
 import { CommandExecutionStatus, StateCliOutput } from '../interfaces/cli'
+import { addErrorNotification } from '../app/notifications'
 
 export const initialState: StateCliOutput = {
   data: [],
@@ -276,5 +278,31 @@ function handleRecreateClient(dispatch: AppDispatch, stateInit: () => RootState,
         cliParseTextResponseWithOffset(`${message}`, command, CommandExecutionStatus.Fail)
       )),
     ))
+  }
+}
+
+// Asynchronous thunk action
+export function fetchMonitorLog(
+  logFileId: string = '',
+  onSuccessAction?: (data: string, headers: AxiosResponseHeaders) => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(sendCliCommand())
+
+    try {
+      const { data, status, headers } = await apiService.get<string>(
+        `${ApiEndpoints.PROFILER_LOGS}/${logFileId}`
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(sendCliCommandSuccess())
+        onSuccessAction?.(data, headers)
+      }
+    } catch (err) {
+      const error = err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(sendCliCommandFailure(errorMessage))
+    }
   }
 }

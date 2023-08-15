@@ -1,16 +1,13 @@
 import * as path from 'path';
-import { BrowserPage, MyRedisDatabasePage, SettingsPage, WelcomePage } from '../../../pageObjects';
-import { RecommendationIds, rte, env } from '../../../helpers/constants';
+import { MyRedisDatabasePage, WelcomePage } from '../../../pageObjects';
+import { rte, env } from '../../../helpers/constants';
 import { DatabaseHelper } from '../../../helpers/database';
-import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../helpers/conf';
+import { commonUrl } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
-import { deleteRowsFromTableInDB, getColumnValueFromTableInDB } from '../../../helpers/database-scripts';
+import { deleteRowsFromTableInDB } from '../../../helpers/database-scripts';
 import { modifyFeaturesConfigJson, refreshFeaturesTestData, updateControlNumber } from '../../../helpers/insights';
-import { Common } from '../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const browserPage = new BrowserPage();
-const settingsPage = new SettingsPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const welcomePage = new WelcomePage();
@@ -27,33 +24,24 @@ fixture `Cloud SSO`
     .page(commonUrl)
     .beforeEach(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
+        await refreshFeaturesTestData();
         await databaseHelper.acceptLicenseTerms();
-        // await myRedisDatabasePage.reloadPage();
     })
     .afterEach(async() => {
         // Delete database
         await databaseAPIRequests.deleteAllDatabasesApi();
-        await myRedisDatabasePage.reloadPage();
-        // Update remote config .json to default
-        await modifyFeaturesConfigJson(pathes.defaultRemote);
-        // Clear features config table
-        await deleteRowsFromTableInDB(featuresConfigTable);
+        await refreshFeaturesTestData();
     });
 test
     .meta({ env: env.web })
     .before(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
+        await refreshFeaturesTestData();
         await databaseHelper.acceptLicenseTerms();
-        
-        // await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
-        await myRedisDatabasePage.reloadPage();
-        // Update remote config .json to default
-        await modifyFeaturesConfigJson(pathes.defaultRemote);
-        // Clear features config table
-        await deleteRowsFromTableInDB(featuresConfigTable);
+        await refreshFeaturesTestData();
     })('Verify that user can not see the import Cloud databases on the Welcome screen for docker build', async t => {
         // Update remote config .json to config with buildType filter excluding current app build
         await modifyFeaturesConfigJson(pathes.dockerConfig);
@@ -64,4 +52,33 @@ test
         await t.click(welcomePage.addDbAutoBtn);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudAccount.exists).notOk('Use Cloud Account accordion displayed for docker build');
         await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudKeys.exists).notOk('Use Cloud Keys accordion displayed for docker build');
+    });
+test
+    .meta({ env: env.desktop })
+    .before(async() => {
+        await databaseAPIRequests.deleteAllDatabasesApi();
+        await databaseHelper.acceptLicenseTerms();
+    })
+    .after(async() => {
+        await databaseAPIRequests.deleteAllDatabasesApi();
+        await myRedisDatabasePage.reloadPage();
+        // Update remote config .json to default
+        await modifyFeaturesConfigJson(pathes.defaultRemote);
+        // Clear features config table
+        await deleteRowsFromTableInDB(featuresConfigTable);
+    })('Verify that user can see SSO feature if it is enabled in feature config', async t => {
+        // Update remote config .json to config with buildType filter excluding current app build
+        await modifyFeaturesConfigJson(pathes.dockerConfig);
+        await updateControlNumber(48.2);
+        // Verify that user can't see SSO feature if it is disabled in feature config
+        await t.expect(welcomePage.importCloudDbBtn.exists).notOk('Import Cloud database button displayed when SSO feature disabled');
+
+        // Update remote config .json to config with buildType filter including current app build
+        await modifyFeaturesConfigJson(pathes.electronConfig);
+        await updateControlNumber(48.2);
+        await t.expect(welcomePage.importCloudDbBtn.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
+
+        await t.click(welcomePage.addDbAutoBtn);
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudAccount.exists).ok('Use Cloud Account accordion not displayed when SSO feature enabled');
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudKeys.exists).ok('Use Cloud Keys accordion not displayed when SSO feature enabled');
     });

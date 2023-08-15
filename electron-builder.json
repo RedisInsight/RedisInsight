@@ -103,8 +103,7 @@
     "oneClick": false,
     "perMachine": false,
     "allowToChangeInstallationDirectory": true,
-    "deleteAppDataOnUninstall": true,
-    "include": "build/installer.nsh"
+    "deleteAppDataOnUninstall": true
   },
   "linux": {
     "icon": "./resources/icons",

@@ -50,6 +50,7 @@ test
 
         // Verify that user can not see the import Cloud databases on the Auto-discovery flow for docker build
         await t.click(welcomePage.addDbAutoBtn);
+        // Verify that when SSO flag disabled - Use Cloud API Keys displayed not as dropdown
         await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudAccount.exists).notOk('Use Cloud Account accordion displayed for docker build');
         await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudKeys.exists).notOk('Use Cloud Keys accordion displayed for docker build');
     });
@@ -79,6 +80,7 @@ test
         await t.expect(welcomePage.importCloudDbBtn.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
 
         await t.click(welcomePage.addDbAutoBtn);
+        // Verify that RE Cloud auto-discovery options Use Cloud Account and Use Cloud API Keys are displayed on Welcome screen
         await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudAccount.exists).ok('Use Cloud Account accordion not displayed when SSO feature enabled');
         await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudKeys.exists).ok('Use Cloud Keys accordion not displayed when SSO feature enabled');
     });

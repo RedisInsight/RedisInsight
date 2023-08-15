@@ -52,6 +52,6 @@ test.skip
         await t.expect(getPageUrl()).eql(homebrewPage, 'Build from homebrew page is not valid');
         await t.switchToParentWindow();
         // Verify promo button link
-        await t.click(welcomePage.tryRedisCloudButton);
+        await t.click(welcomePage.tryRedisCloudBtn);
         await t.expect(getPageUrl()).eql(promoPage, 'Promotion link is not valid');
     });

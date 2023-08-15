@@ -33,16 +33,7 @@ fixture `Cloud SSO`
         await refreshFeaturesTestData();
     });
 test
-    .meta({ env: env.web })
-    .before(async() => {
-        await databaseAPIRequests.deleteAllDatabasesApi();
-        await refreshFeaturesTestData();
-        await databaseHelper.acceptLicenseTerms();
-    })
-    .after(async() => {
-        await databaseAPIRequests.deleteAllDatabasesApi();
-        await refreshFeaturesTestData();
-    })('Verify that user can not see the import Cloud databases on the Welcome screen for docker build', async t => {
+    .meta({ env: env.web })('Verify that user can not see the import Cloud databases on the Welcome screen for docker build', async t => {
         // Update remote config .json to config with buildType filter excluding current app build
         await modifyFeaturesConfigJson(pathes.dockerConfig);
         await updateControlNumber(48.2);

@@ -123,6 +123,9 @@ const OAuthSelectPlan = () => {
     }
   )
 
+  const isVendorWithTFRegions = !!regionOptions.length
+    && !plans.some(({ region = '' }) => tfProviderRegions?.includes(region))
+
   const onChangeRegion = (region: string) => {
     setPlanIdSelected(region)
   }
@@ -172,7 +175,7 @@ const OAuthSelectPlan = () => {
               onChange={onChangeRegion}
               data-testid="select-oauth-region"
             />
-            {!!regionOptions.length && !plans.some(({ region = '' }) => tfProviderRegions?.includes(region)) && (
+            {isVendorWithTFRegions && (
               <EuiText className={styles.selectDescription} data-testid="select-region-select-description">
                 This vendor does not support triggers and functions capability.
               </EuiText>

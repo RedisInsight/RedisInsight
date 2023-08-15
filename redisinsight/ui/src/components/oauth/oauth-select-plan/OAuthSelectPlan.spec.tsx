@@ -4,6 +4,7 @@ import { cleanup, fireEvent, mockedStore, render, within } from 'uiSrc/utils/tes
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { addFreeDb, oauthCloudPlanSelector, oauthCloudSelector, initialState } from 'uiSrc/slices/oauth/cloud'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { MOCK_NO_TF_REGION, MOCK_REGIONS } from 'uiSrc/constants/mocks/mock-sso'
 import OAuthSelectPlan from './OAuthSelectPlan'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -48,87 +49,6 @@ jest.mock('uiSrc/slices/app/features', () => ({
   }),
 }))
 
-const mockNoTFRegion = {
-  id: 12148,
-  type: 'fixed',
-  name: 'Cache 30MB',
-  provider: 'AWS',
-  price: 0,
-  region: 'eu-west-1',
-  regionId: 4,
-  details: {
-    id: 4,
-    name: 'eu-west-1',
-    cloud: 'AWS',
-    displayOrder: 4,
-    countryName: 'Europe',
-    cityName: 'Ireland',
-    regionId: 4,
-    flag: 'ie'
-  }
-}
-
-const mockRegions = [
-  mockNoTFRegion,
-  {
-    id: 12150,
-    type: 'fixed',
-    name: 'Cache 30MB',
-    provider: 'AWS',
-    price: 0,
-    region: 'ap-southeast-1',
-    regionId: 5,
-    details: {
-      id: 5,
-      name: 'ap-southeast-1',
-      cloud: 'AWS',
-      displayOrder: 7,
-      countryName: 'Asia Pacific',
-      cityName: 'Singapore',
-      regionId: 5,
-      flag: 'sg'
-    }
-  },
-  {
-    id: 12152,
-    type: 'fixed',
-    name: 'Cache 30MB',
-    provider: 'Azure',
-    price: 0,
-    region: 'east-us',
-    regionId: 16,
-    details: {
-      id: 16,
-      name: 'east-us',
-      cloud: 'Azure',
-      displayOrder: 10,
-      countryName: 'East US',
-      cityName: 'Virginia',
-      regionId: 16,
-      flag: 'us'
-    }
-  },
-  {
-    id: 12153,
-    type: 'fixed',
-    name: 'Cache 30MB',
-    provider: 'GCP',
-    price: 0,
-    region: 'us-central1',
-    regionId: 27,
-    details: {
-      id: 27,
-      name: 'us-central1',
-      cloud: 'GCP',
-      displayOrder: 17,
-      countryName: 'North America',
-      cityName: 'Iowa',
-      regionId: 27,
-      flag: 'us'
-    }
-  }
-]
-
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -140,7 +60,7 @@ describe('OAuthSelectPlan', () => {
   beforeEach(() => {
     (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
       isOpenDialog: true,
-      data: mockRegions,
+      data: MOCK_REGIONS,
     })
   })
 
@@ -204,7 +124,7 @@ describe('OAuthSelectPlan', () => {
   it('should display text if no Trigger and Function regions available on this vendor', async () => {
     (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
       isOpenDialog: true,
-      data: [mockNoTFRegion],
+      data: [MOCK_NO_TF_REGION],
     })
 
     const { queryByTestId } = render(<OAuthSelectPlan />)

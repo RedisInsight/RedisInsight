@@ -238,6 +238,8 @@ const BrowserPage = () => {
                     selectedKey={selectedKey}
                     selectKey={selectKey}
                     removeSelectedKey={handleRemoveSelectedKey}
+                    handleAddKeyPanel={handleAddKeyPanel}
+                    handleBulkActionsPanel={handleBulkActionsPanel}
                   />
                 </EuiResizablePanel>
 
@@ -273,6 +275,7 @@ const BrowserPage = () => {
                     isBulkActionsPanelOpen={isBulkActionsPanelOpen}
                     handleAddKeyPanel={handleAddKeyPanel}
                     handleBulkActionsPanel={handleBulkActionsPanel}
+                    handleCreateIndexPanel={handleCreateIndexPanel}
                     closeRightPanels={closeRightPanels}
                   />
                 </EuiResizablePanel>

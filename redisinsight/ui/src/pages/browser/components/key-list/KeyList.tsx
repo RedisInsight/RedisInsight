@@ -27,7 +27,6 @@ import {
   Maybe,
 } from 'uiSrc/utils'
 import {
-  NoKeysToDisplayText,
   NoResultsFoundText,
   FullScanNoResultsFoundText,
   ScanNoResultsFoundText,
@@ -52,18 +51,18 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
-import { KeyTypes, ModulesKeyTypes, Pages, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { KeyTypes, ModulesKeyTypes, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import NoKeysFound from 'uiSrc/pages/browser/components/no-keys-found'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  hideHeader?: boolean
   keysState: KeysStoreData
   loading: boolean
   scrollTopPosition?: number
@@ -75,6 +74,8 @@ export interface Props {
   ) => void
   onDelete: (key: RedisResponseBuffer) => void
   commonFilterType: Nullable<KeyTypes>
+  onAddKeyPanel: (value: boolean) => void
+  onBulkActionsPanel: (value: boolean) => void
 }
 
 const cellCache = new CellMeasurerCache({
@@ -93,6 +94,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     hideFooter,
     onDelete,
     commonFilterType,
+    onAddKeyPanel,
+    onBulkActionsPanel,
   } = props
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -152,19 +155,6 @@ const KeyList = forwardRef((props: Props, ref) => {
     controller.current?.abort()
   }
 
-  const onNoKeysLinkClick = () => {
-    sendEventTelemetry({
-      event: getBasedOnViewTypeEvent(
-        viewType,
-        TelemetryEvent.BROWSER_WORKBENCH_LINK_CLICKED,
-        TelemetryEvent.TREE_VIEW_WORKBENCH_LINK_CLICKED
-      ),
-      eventData: {
-        databaseId: instanceId,
-      }
-    })
-  }
-
   const getNoItemsMessage = () => {
     if (isNotRendered.current) {
       return ''
@@ -185,7 +175,7 @@ const KeyList = forwardRef((props: Props, ref) => {
     }
 
     if (total === 0) {
-      return NoKeysToDisplayText(Pages.workbench(instanceId), onNoKeysLinkClick)
+      return (<NoKeysFound onAddKeyPanel={onAddKeyPanel} onBulkActionsPanel={onBulkActionsPanel} />)
     }
 
     if (isSearched) {

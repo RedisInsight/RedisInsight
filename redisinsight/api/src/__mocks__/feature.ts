@@ -17,6 +17,7 @@ export const mockFeaturesConfigId = '1';
 export const mockFeaturesConfigVersion = defaultConfig.version + 0.111;
 export const mockControlNumber = 7.68;
 export const mockControlGroup = '7';
+export const mockAppVersion = '2.1.0';
 
 export const mockFeaturesConfigJson = {
   version: mockFeaturesConfigVersion,

@@ -29,6 +29,7 @@ import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
+import ExploreGuides from 'uiSrc/components/explore-guides'
 import KeyDetailsHeader from '../../key-details-header/KeyDetailsHeader'
 import ZSetDetails from '../../zset-details/ZSetDetails'
 import StringDetails from '../../string-details/StringDetails'
@@ -163,10 +164,11 @@ const KeyDetails = ({ ...props }: Props) => {
 
               <div className={styles.placeholder}>
                 <EuiText textAlign="center" grow color="subdued" size="m">
-                  <p data-testid="no-keys-selected-text">
-                    {error
-                      || 'Select the key from the list on the left to see the details of the key.'}
-                  </p>
+                  {error ? (
+                    <p data-testid="no-keys-selected-text">
+                      {error}
+                    </p>
+                  ) : (<ExploreGuides />)}
                 </EuiText>
               </div>
             </>

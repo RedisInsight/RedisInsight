@@ -32,6 +32,8 @@ export interface Props {
   selectedKey: Nullable<RedisResponseBuffer>
   selectKey: ({ rowData }: { rowData: any }) => void
   removeSelectedKey: () => void
+  handleAddKeyPanel: (value: boolean) => void
+  handleBulkActionsPanel: (value: boolean) => void
 }
 
 const BrowserLeftPanel = (props: Props) => {
@@ -39,6 +41,8 @@ const BrowserLeftPanel = (props: Props) => {
     selectedKey,
     selectKey,
     removeSelectedKey,
+    handleAddKeyPanel,
+    handleBulkActionsPanel
   } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -137,6 +141,8 @@ const BrowserLeftPanel = (props: Props) => {
           loadMoreItems={loadMoreItems}
           selectKey={selectKey}
           onDelete={onDeleteKey}
+          onAddKeyPanel={handleAddKeyPanel}
+          onBulkActionsPanel={handleBulkActionsPanel}
         />
       )}
       {viewType === KeyViewType.Tree && (
@@ -148,6 +154,8 @@ const BrowserLeftPanel = (props: Props) => {
           selectKey={selectKey}
           loadMoreItems={loadMoreItems}
           onDelete={onDeleteKey}
+          onAddKeyPanel={handleAddKeyPanel}
+          onBulkActionsPanel={handleBulkActionsPanel}
         />
       )}
     </div>

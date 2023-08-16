@@ -67,12 +67,12 @@ const OAuthSelectPlan = () => {
       return
     }
 
-    const defaultRegion = isTFSource ? first(tfProviderRegions) || DEFAULT_REGION : DEFAULT_REGION
+    const defaultRegions = isTFSource ? tfProviderRegions || [DEFAULT_REGION] : [DEFAULT_REGION]
 
     const filteredPlans = filter(plansInit, { provider: providerSelected })
       .sort((a, b) => (a?.details?.displayOrder || 0) - (b?.details?.displayOrder || 0))
 
-    const defaultPlan = filteredPlans.find(({ region }) => region === defaultRegion)
+    const defaultPlan = filteredPlans.find(({ region = '' }) => defaultRegions?.includes(region))
 
     const planId = (defaultPlan || first(filteredPlans) || {}).id?.toString() || ''
 

@@ -11,8 +11,11 @@ import QueryCard from 'uiSrc/components/query-card'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import MultiPlayIconDark from 'uiSrc/assets/img/multi_play_icon_dark.svg'
-import MultiPlayIconLight from 'uiSrc/assets/img/multi_play_icon_light.svg'
+
+import TelescopeDark from 'uiSrc/assets/img/telescope-dark.svg'
+import TelescopeLight from 'uiSrc/assets/img/telescope-light.svg'
+import { ReactComponent as ArrowToGuidesIcon } from 'uiSrc/assets/img/workbench/arrow-to-guides.svg'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -46,14 +49,18 @@ const WBResults = (props: Props) => {
 
   const NoResults = (
     <div className={styles.noResults} data-testid="wb_no-results">
+      <EuiIcon className={styles.arrowToGuides} type={ArrowToGuidesIcon} size="original" />
       <EuiIcon
-        type={theme === Theme.Dark ? MultiPlayIconDark : MultiPlayIconLight}
-        className={styles.playIcon}
+        className={styles.noResultsIcon}
+        type={theme === Theme.Dark ? TelescopeDark : TelescopeLight}
+        size="original"
         data-testid="wb_no-results__icon"
       />
-      <EuiText className={styles.noResultsTitle} color="subdued" data-testid="wb_no-results__title">No results to display</EuiText>
-      <EuiText className={styles.noResultsText} color="subdued" data-testid="wb_no-results__summary">
-        Run Redis commands to get results or see the left menu to learn more
+      <EuiText className={styles.noResultsTitle} data-testid="wb_no-results__title">
+        No results to display yet, <br /> but here&apos;s a good starting point
+      </EuiText>
+      <EuiText className={styles.noResultsText} data-testid="wb_no-results__summary">
+        Explore the amazing world of Redis Stack <br /> with our interactive guides
       </EuiText>
     </div>
   )

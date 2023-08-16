@@ -19,3 +19,16 @@ export interface ContentCreateRedis {
     [Theme.Light]: Record<string, any>
   }
 }
+
+export interface StateContentGuideLinks {
+  data: ContentGuideLinks[]
+  loading: boolean
+  error: string
+}
+
+export interface ContentGuideLinks {
+  title: string
+  tutorial: string
+  icon: string
+  description?: string
+}

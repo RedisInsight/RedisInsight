@@ -39,6 +39,7 @@ import { initialState as initialStateWBEGuides } from 'uiSrc/slices/workbench/wb
 import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { initialState as initialStateWBECustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
+import { initialState as initialStateGuideLinks } from 'uiSrc/slices/content/guide-links'
 import { initialState as initialStateSlowLog } from 'uiSrc/slices/analytics/slowlog'
 import { initialState as initialClusterDetails } from 'uiSrc/slices/analytics/clusterDetails'
 import { initialState as initialStateAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
@@ -103,7 +104,8 @@ const initialStateDefault: RootState = {
     customTutorials: cloneDeep(initialStateWBECustomTutorials),
   },
   content: {
-    createRedisButtons: cloneDeep(initialStateCreateRedisButtons)
+    createRedisButtons: cloneDeep(initialStateCreateRedisButtons),
+    guideLinks: cloneDeep(initialStateGuideLinks),
   },
   analytics: {
     settings: cloneDeep(initialStateAnalyticsSettings),

@@ -34,6 +34,8 @@ export interface Props {
     { startIndex, stopIndex }: { startIndex: number, stopIndex: number },
   ) => void
   onDelete: () => void
+  onAddKeyPanel: (value: boolean) => void
+  onBulkActionsPanel: (value: boolean) => void
 }
 
 export const firstPanelId = 'tree'
@@ -44,7 +46,16 @@ const parseKeyNames = (keys: GetKeyInfoResponse[]) =>
     ({ ...item, nameString: item.nameString ?? bufferToString(item.name) }))
 
 const KeyTree = forwardRef((props: Props, ref) => {
-  const { selectKey, loadMoreItems, loading, keysState, onDelete, commonFilterType } = props
+  const {
+    selectKey,
+    loadMoreItems,
+    loading,
+    keysState,
+    onDelete,
+    commonFilterType,
+    onAddKeyPanel,
+    onBulkActionsPanel
+  } = props
 
   const firstPanelId = 'tree'
   const secondPanelId = 'keys'
@@ -211,13 +222,14 @@ const KeyTree = forwardRef((props: Props, ref) => {
                 >
                   <div className={styles.list}>
                     <KeyList
-                      hideHeader
                       hideFooter
                       keysState={keyListState}
                       loading={loading || constructingTree}
                       commonFilterType={commonFilterType}
                       selectKey={selectKey}
                       onDelete={onDelete}
+                      onAddKeyPanel={onAddKeyPanel}
+                      onBulkActionsPanel={onBulkActionsPanel}
                     />
                   </div>
                 </EuiResizablePanel>

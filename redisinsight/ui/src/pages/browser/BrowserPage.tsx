@@ -233,6 +233,8 @@ const BrowserPage = () => {
                   <BrowserLeftPanel
                     selectKey={selectKey}
                     setSelectedKey={setSelectedKey}
+                    handleAddKeyPanel={handleAddKeyPanel}
+                    handleBulkActionsPanel={handleBulkActionsPanel}
                   />
                 </EuiResizablePanel>
 

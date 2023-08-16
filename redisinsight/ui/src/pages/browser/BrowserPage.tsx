@@ -275,7 +275,6 @@ const BrowserPage = () => {
                     isBulkActionsPanelOpen={isBulkActionsPanelOpen}
                     handleAddKeyPanel={handleAddKeyPanel}
                     handleBulkActionsPanel={handleBulkActionsPanel}
-                    handleCreateIndexPanel={handleCreateIndexPanel}
                     closeRightPanels={closeRightPanels}
                   />
                 </EuiResizablePanel>

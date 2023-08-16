@@ -163,6 +163,10 @@ const BrowserPage = () => {
     setIsBulkActionsPanelOpen(value)
   }, [])
 
+  const handleRemoveSelectedKey = useCallback(() => {
+    handlePanel(true)
+  }, [])
+
   const handleCreateIndexPanel = useCallback((value: boolean) => {
     handlePanel(value)
     setIsCreateIndexPanelOpen(value)
@@ -231,8 +235,9 @@ const BrowserPage = () => {
                   }}
                 >
                   <BrowserLeftPanel
+                    selectedKey={selectedKey}
                     selectKey={selectKey}
-                    setSelectedKey={setSelectedKey}
+                    removeSelectedKey={handleRemoveSelectedKey}
                     handleAddKeyPanel={handleAddKeyPanel}
                     handleBulkActionsPanel={handleBulkActionsPanel}
                   />
@@ -270,7 +275,6 @@ const BrowserPage = () => {
                     isBulkActionsPanelOpen={isBulkActionsPanelOpen}
                     handleAddKeyPanel={handleAddKeyPanel}
                     handleBulkActionsPanel={handleBulkActionsPanel}
-                    handleCreateIndexPanel={handleCreateIndexPanel}
                     closeRightPanels={closeRightPanels}
                   />
                 </EuiResizablePanel>

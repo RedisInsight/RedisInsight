@@ -25,6 +25,8 @@
     height: 100%;
     max-height: calc(100% - 104px);
     margin-bottom: 46px;
+
+    overflow-x: hidden;
   }
 
   .label {

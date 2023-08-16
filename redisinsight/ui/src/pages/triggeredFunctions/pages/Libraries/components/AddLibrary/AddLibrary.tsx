@@ -37,7 +37,7 @@ const LibraryDetails = (props: IProps) => {
 
   const { loading } = useSelector(triggeredFunctionsAddLibrarySelector)
 
-  const [code, setCode] = useState<string>('')
+  const [code, setCode] = useState<string>('#!js name=LibName api_version=1.0')
   const [configuration, setConfiguration] = useState<string>('')
   const [isShowConfiguration, setIsShowConfiguration] = useState<boolean>(false)
 

@@ -81,14 +81,14 @@ async function mergeCsvFiles() {
     const lines = fileData.trim().split('\n');
     lines.shift(); // Remove the first line (header)
 
-    if (i !== 0) {
-      outputStream.write('\n'); // Add a new line separator between files
-    }
+    // if (i !== 0) {
+    //   outputStream.write('\n'); // Add a new line separator between files
+    // }
     outputStream.write(`File: ${file}\n`); // Write file name as a separator
     // outputStream.write(lines.join('\n')); // Write the modified file data
 
     for (const line of lines) {
-      if (!line.startsWith('redisinsight@')) {
+      if (!line.startsWith('"redisinsight@')) {
         outputStream.write(line + '\n'); // Write the line to the output
       }
     }

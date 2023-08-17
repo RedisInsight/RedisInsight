@@ -795,6 +795,17 @@ jobs:
           destination: docker-release
 
   # Release jobs
+  license-check:
+    executor: linux-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Generate licenses csv files
+          command: |
+            npm i -g license-checker
+
   store-build-artifacts:
     executor: linux-executor
     steps:
@@ -1139,6 +1150,13 @@ workflows:
             - Build app - Linux (dev)
             - Build app - MacOS (dev)
             - Build app - Windows (dev)
+      - license-check:
+          name: License check
+          requires:
+            - Build app - Linux (dev)
+            - Build app - MacOS (dev)
+            - Build app - Windows (dev)
+
   # Main workflow for release/* and latest branches only
   release:
     jobs:
@@ -1210,6 +1228,13 @@ workflows:
       # release to AWS (stage)
       - release-aws-test:
           name: Release AWS stage
+          requires:
+            - Build app - Linux (stage)
+            - Build app - MacOS (stage)
+            - Build app - Windows (stage)
+
+      - license-check:
+          name: Submit all dependencies licenses to google drive tables
           requires:
             - Build app - Linux (stage)
             - Build app - MacOS (stage)

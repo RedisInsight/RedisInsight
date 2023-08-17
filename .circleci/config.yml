@@ -557,48 +557,48 @@ jobs:
             yarn install
             yarn build:statics
           no_output_timeout: 15m
-      - run:
-          name: Build linux AppImage and deb
-          command: |
-            if [ << parameters.env >> == 'prod' ]; then
-              yarn package:prod
-              exit 0;
-            fi
+      # - run:
+      #     name: Build linux AppImage and deb
+      #     command: |
+      #       if [ << parameters.env >> == 'prod' ]; then
+      #         yarn package:prod
+      #         exit 0;
+      #       fi
 
-            if [ << parameters.env >> == 'stage' ]; then
-              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
-              exit 0;
-            fi
+      #       if [ << parameters.env >> == 'stage' ]; then
+      #         UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
+      #         exit 0;
+      #       fi
 
-            UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
-      - when:
-          condition:
-            equal: [ true, << parameters.redisstack >> ]
-          steps:
-            - run:
-                name: Repack AppImage to tar
-                command: |
-                  ARCH=x86_64 ./.circleci/redisstack/app-image.repack.sh
-            - run:
-                name: Build sources
-                command: ./.circleci/redisstack/build.sh
-            - run:
-                name: Build modules
-                command: |
-                  PLATFORM=linux ARCH=x64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
-      - persist_to_workspace:
-          root: .
-          paths:
-            - release/RedisInsight*.deb
-            - release/RedisInsight*.rpm
-            - release/RedisInsight*.AppImage
-            - release/RedisInsight*.flatpak
-            - release/RedisInsight*.snap
-            - release/*-linux.yml
-            - release/redisstack
+      #       UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
+      # - when:
+      #     condition:
+      #       equal: [ true, << parameters.redisstack >> ]
+      #     steps:
+      #       - run:
+      #           name: Repack AppImage to tar
+      #           command: |
+      #             ARCH=x86_64 ./.circleci/redisstack/app-image.repack.sh
+      #       - run:
+      #           name: Build sources
+      #           command: ./.circleci/redisstack/build.sh
+      #       - run:
+      #           name: Build modules
+      #           command: |
+      #             PLATFORM=linux ARCH=x64 .circleci/redisstack/build_modules.sh
+      #             PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
+      #             PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
+      #             PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
+      # - persist_to_workspace:
+      #     root: .
+      #     paths:
+      #       - release/RedisInsight*.deb
+      #       - release/RedisInsight*.rpm
+      #       - release/RedisInsight*.AppImage
+      #       - release/RedisInsight*.flatpak
+      #       - release/RedisInsight*.snap
+      #       - release/*-linux.yml
+      #       - release/redisstack
   macosx:
     macos:
       xcode: 14.2.0
@@ -1138,32 +1138,32 @@ workflows:
           env: dev
           requires: &devBuildRequire
             - Setup build (dev)
-      - macosx:
-          name: Build app - MacOS (dev)
-          env: dev
-          requires: *devBuildRequire
-      - windows:
-          name: Build app - Windows (dev)
-          env: dev
-          requires: *devBuildRequire
-      - store-build-artifacts:
-          name: Store build artifacts (dev)
-          requires:
-            - Build app - Linux (dev)
-            - Build app - MacOS (dev)
-            - Build app - Windows (dev)
-      - release-aws-test:
-          name: Release AWS dev
-          requires:
-            - Build app - Linux (dev)
-            - Build app - MacOS (dev)
-            - Build app - Windows (dev)
+      # - macosx:
+      #     name: Build app - MacOS (dev)
+      #     env: dev
+      #     requires: *devBuildRequire
+      # - windows:
+      #     name: Build app - Windows (dev)
+      #     env: dev
+      #     requires: *devBuildRequire
+      # - store-build-artifacts:
+      #     name: Store build artifacts (dev)
+      #     requires:
+      #       - Build app - Linux (dev)
+      #       - Build app - MacOS (dev)
+      #       - Build app - Windows (dev)
+      # - release-aws-test:
+      #     name: Release AWS dev
+      #     requires:
+      #       - Build app - Linux (dev)
+      #       - Build app - MacOS (dev)
+      #       - Build app - Windows (dev)
       - license-check:
           name: License check
           requires:
             - Build app - Linux (dev)
-            - Build app - MacOS (dev)
-            - Build app - Windows (dev)
+            # - Build app - MacOS (dev)
+            # - Build app - Windows (dev)
 
   # Main workflow for release/* and latest branches only
   release:

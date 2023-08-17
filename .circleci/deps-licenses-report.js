@@ -1,6 +1,5 @@
 const fs = require('fs');
 const { exec } = require('child_process');
-const { last } = require('lodash');
 
 const folderName = 'licenses';
 const packageJsons = [
@@ -47,7 +46,7 @@ async function createFolderIfNotExists() {
 }
 
 async function runLicenseCheck({ fileName, path }) {
-  const name = fileName || last(path.split('/'));
+  const name = fileName || path.match(/[^/]+$/)?.[0];
 
   const command = `license-checker --start ${path} --csv --out ./${folderName}/licenses-${name}.csv`;
 

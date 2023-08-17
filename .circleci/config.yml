@@ -799,12 +799,12 @@ jobs:
     executor: linux-executor
     steps:
       - checkout
-      - attach_workspace:
-          at: .
       - run:
           name: Generate licenses csv files
           command: |
             npm i -g license-checker
+
+            node .circleci/deps-licenses-report.js
 
   store-build-artifacts:
     executor: linux-executor

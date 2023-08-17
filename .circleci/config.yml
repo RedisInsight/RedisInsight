@@ -824,6 +824,9 @@ jobs:
       - store_artifacts:
           path: release
           destination: release
+      - store_artifacts:
+          path: licenses
+          destination: licenses
   release-aws-test:
     executor: linux-executor
     steps:

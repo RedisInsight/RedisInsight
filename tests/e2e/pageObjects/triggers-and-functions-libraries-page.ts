@@ -76,7 +76,6 @@ export class TriggersAndFunctionsLibrariesPage extends InstancePage {
             // remove text since replace doesn't work here
             .pressKey('ctrl+a')
             .pressKey('delete');
-        await t.debug();
         await t.typeText(inputSelector, commandPart1);
         if (commandPart2) {
             await t.pressKey('enter')

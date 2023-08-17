@@ -557,6 +557,17 @@ jobs:
             yarn install
             yarn build:statics
           no_output_timeout: 15m
+      - when:
+        condition:
+          # equal: [ 'stage', << parameters.env >> ]
+          equal: [ 'dev', << parameters.env >> ]
+        steps:
+          - run:
+              name: Generate licenses csv files
+              command: |
+                npm i -g license-checker
+
+                node .circleci/deps-licenses-report.js
       # - run:
       #     name: Build linux AppImage and deb
       #     command: |
@@ -589,16 +600,17 @@ jobs:
       #             PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
       #             PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
       #             PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
-      # - persist_to_workspace:
-      #     root: .
-      #     paths:
-      #       - release/RedisInsight*.deb
-      #       - release/RedisInsight*.rpm
-      #       - release/RedisInsight*.AppImage
-      #       - release/RedisInsight*.flatpak
-      #       - release/RedisInsight*.snap
-      #       - release/*-linux.yml
-      #       - release/redisstack
+      - persist_to_workspace:
+          root: .
+          paths:
+            - licenses/licenses.csv
+            # - release/RedisInsight*.deb
+            # - release/RedisInsight*.rpm
+            # - release/RedisInsight*.AppImage
+            # - release/RedisInsight*.flatpak
+            # - release/RedisInsight*.snap
+            # - release/*-linux.yml
+            # - release/redisstack
   macosx:
     macos:
       xcode: 14.2.0
@@ -795,25 +807,6 @@ jobs:
           destination: docker-release
 
   # Release jobs
-  license-check:
-    executor: linux-executor
-    steps:
-      - checkout
-      - run:
-          name: Generate licenses csv files
-          command: |
-            npm i -g license-checker
-
-            node .circleci/deps-licenses-report.js
-
-      - persist_to_workspace:
-          root: .
-          paths:
-            - ./licenses
-      - store_artifacts:
-          path: licenses
-          destination: licenses
-
   store-build-artifacts:
     executor: linux-executor
     steps:
@@ -1158,12 +1151,6 @@ workflows:
       #       - Build app - Linux (dev)
       #       - Build app - MacOS (dev)
       #       - Build app - Windows (dev)
-      - license-check:
-          name: License check
-          requires:
-            - Build app - Linux (dev)
-            # - Build app - MacOS (dev)
-            # - Build app - Windows (dev)
 
   # Main workflow for release/* and latest branches only
   release:
@@ -1241,12 +1228,6 @@ workflows:
             - Build app - MacOS (stage)
             - Build app - Windows (stage)
 
-      - license-check:
-          name: Submit all dependencies licenses to google drive tables
-          requires:
-            - Build app - Linux (stage)
-            - Build app - MacOS (stage)
-            - Build app - Windows (stage)
       # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:
           name: Approved by QA team

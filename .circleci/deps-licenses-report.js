@@ -1,54 +1,60 @@
 const fs = require('fs');
+const { join } = require('path');
+const { last } = require('lodash');
 const { exec } = require('child_process');
 
-const folderName = 'licenses';
-const packageJsons = [
-  {
-    fileName: 'ui+electron',
-    path: './'
-  },
-  {
-    fileName: 'electron',
-    path: './redisinsight'
-  },
-  {
-    path: './redisinsight/api'
-  },
-  {
-    path: './redisinsight/tests/e2e'
-  },
-  {
-    path: "./redisinsight/ui/src/packages/redisearch",
-  },
-  {
-    path: "./redisinsight/ui/src/packages/redisgraph",
-  },
-  {
-    path: "./redisinsight/ui/src/packages/redistimeseries-app",
-  },
-  {
-    path: "./redisinsight/ui/src/packages/ri-explain",
-  },
-  {
-    path: "./redisinsight/ui/src/packages/clients-list",
-  },
-];
+const licenseFolderName = 'licenses';
 
-async function createFolderIfNotExists() {
+async function main() {
+  const folderPath = './';
+  const packageJsons = findPackageJsonFiles(folderPath);
+
+  console.log('All package.jsons was found', packageJsons);
+
+  if (!fs.existsSync(licenseFolderName)) {
+    fs.mkdirSync(licenseFolderName);
+  }
+
   try {
-    if (!fs.existsSync(folderName)) {
-      fs.mkdirSync(folderName);
-    }
-  } catch (err) {
-    console.error(`Failed to create folder ${folderName}, error:`, err);
+    await Promise.all(packageJsons.map(runLicenseCheck));
+    console.log('All csv files was generated');
+    await mergeCsvFiles()
+  } catch (error) {
+    console.error('An error occurred:', error);
     process.exit(1);
   }
 }
 
-async function runLicenseCheck({ fileName, path }) {
-  const name = fileName || path.match(/[^/]+$/)?.[0];
+main();
 
-  const command = `license-checker --start ${path} --csv --out ./${folderName}/licenses-${name}.csv`;
+function findPackageJsonFiles(folderPath) {
+  const packageJsonPaths = [];
+  const packageJsonName = 'package.json';
+  const excludeFolders = ['dist', 'node_modules', 'static'];
+
+  function searchForPackageJson(currentPath) {
+    const files = fs.readdirSync(currentPath);
+
+    for (const file of files) {
+      const filePath = join(currentPath, file);
+      const stats = fs.statSync(filePath);
+
+      if (stats.isDirectory() && !excludeFolders.includes(file)) {
+        searchForPackageJson(filePath);
+      } else if (file === packageJsonName) {
+        packageJsonPaths.push(`./${filePath.slice(0, -packageJsonName.length - 1)}`);
+      }
+    }
+  }
+
+  searchForPackageJson(folderPath);
+  return packageJsonPaths;
+}
+
+async function runLicenseCheck(path) {
+  const name = last(path.split('/')) || 'root';
+
+  const command = `license-checker --start ${path} --csv --out ./${licenseFolderName}/${name}.csv`;
 
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
@@ -61,15 +67,40 @@ async function runLicenseCheck({ fileName, path }) {
   });
 }
 
-async function main() {
-  await createFolderIfNotExists();
+async function mergeCsvFiles() {
+  const outputFilePath = `./${licenseFolderName}/licenses.csv`;
 
-  try {
-    await Promise.all(packageJsons.map(runLicenseCheck));
-  } catch (error) {
-    console.error('An error occurred:', error);
-    process.exit(1);
+  const outputStream = fs.createWriteStream(outputFilePath);
+  const files = fs.readdirSync(licenseFolderName);
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const filePath = join(licenseFolderName, file);
+    const fileData = fs.readFileSync(filePath, 'utf-8');
+
+    const lines = fileData.trim().split('\n');
+    lines.shift(); // Remove the first line (header)
+
+    if (i !== 0) {
+      outputStream.write('\n'); // Add a new line separator between files
+    }
+    outputStream.write(`File: ${file}\n`); // Write file name as a separator
+    outputStream.write(lines.join('\n')); // Write the modified file data
+
+    console.log(`Merged ${file}`);
+
+    // Delete the merged file after merging
+    fs.unlinkSync(filePath);
   }
+
+  outputStream.end(); // Close the output stream when all files have been processed
+
+  outputStream.on('finish', () => {
+    console.log('Merging complete.');
+  });
+
+  outputStream.on('error', err => {
+    console.error('Error writing to output file:', err);
+  });
 }
 
-main();

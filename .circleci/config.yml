@@ -806,6 +806,14 @@ jobs:
 
             node .circleci/deps-licenses-report.js
 
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./licenses
+      - store_artifacts:
+          path: licenses
+          destination: licenses
+
   store-build-artifacts:
     executor: linux-executor
     steps:

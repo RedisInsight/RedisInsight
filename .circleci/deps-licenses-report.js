@@ -5,12 +5,14 @@ const { exec } = require('child_process');
 
 const licenseFolderName = 'licenses';
 
+// Main function
 async function main() {
   const folderPath = './';
-  const packageJsons = findPackageJsonFiles(folderPath);
+  const packageJsons = findPackageJsonFiles(folderPath); // Find all package.json files in the given folder
 
   console.log('All package.jsons was found', packageJsons);
 
+  // Create the folder if it doesn't exist
   if (!fs.existsSync(licenseFolderName)) {
     fs.mkdirSync(licenseFolderName);
   }
@@ -18,7 +20,7 @@ async function main() {
   try {
     await Promise.all(packageJsons.map(runLicenseCheck));
     console.log('All csv files was generated');
-    await mergeCsvFiles()
+    await mergeCsvFiles();
   } catch (error) {
     console.error('An error occurred:', error);
     process.exit(1);
@@ -27,11 +29,13 @@ async function main() {
 
 main();
 
+// Function to find all package.json files in a given folder
 function findPackageJsonFiles(folderPath) {
   const packageJsonPaths = [];
   const packageJsonName = 'package.json';
-  const excludeFolders = ['dist', 'node_modules', 'static'];
+  const excludeFolders = ['dist', 'node_modules', 'static', 'electron'];
 
+  // Recursive function to search for package.json files
   function searchForPackageJson(currentPath) {
     const files = fs.readdirSync(currentPath);
 
@@ -51,6 +55,7 @@ function findPackageJsonFiles(folderPath) {
   return packageJsonPaths;
 }
 
+// Function to run license check for a given package.json file
 async function runLicenseCheck(path) {
   const name = last(path.split('/')) || 'root';
 
@@ -67,28 +72,28 @@ async function runLicenseCheck(path) {
   });
 }
 
+// Function to merge generated CSV files
 async function mergeCsvFiles() {
   const outputFilePath = `./${licenseFolderName}/licenses.csv`;
 
   const outputStream = fs.createWriteStream(outputFilePath);
   const files = fs.readdirSync(licenseFolderName);
 
+  // Loop through all generated CSV files
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     const filePath = join(licenseFolderName, file);
     const fileData = fs.readFileSync(filePath, 'utf-8');
 
     const lines = fileData.trim().split('\n');
-    lines.shift(); // Remove the first line (header)
+    lines.shift();
 
-    // if (i !== 0) {
-    //   outputStream.write('\n'); // Add a new line separator between files
-    // }
-    outputStream.write(`File: ${file}\n`); // Write file name as a separator
-    // outputStream.write(lines.join('\n')); // Write the modified file data
+    // Write file name as a separator
+    outputStream.write(`File: ${file}\n`);
 
+    // Loop through each line and write to the output if it doesn't start with '"redisinsight'
     for (const line of lines) {
-      if (!line.startsWith('"redisinsight@')) {
+      if (!line.startsWith('"redisinsight')) {
         outputStream.write(line + '\n'); // Write the line to the output
       }
     }
@@ -109,4 +114,3 @@ async function mergeCsvFiles() {
     console.error('Error writing to output file:', err);
   });
 }
-

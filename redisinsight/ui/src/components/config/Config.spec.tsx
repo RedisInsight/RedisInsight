@@ -18,6 +18,7 @@ import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { getContentRecommendations } from 'uiSrc/slices/recommendations/recommendations'
+import { getGuideLinks } from 'uiSrc/slices/content/guide-links'
 import Config from './Config'
 
 let store: typeof mockedStore
@@ -63,6 +64,7 @@ describe('Config', () => {
       getRedisCommands(),
       getNotifications(),
       getContentRecommendations(),
+      getGuideLinks(),
       getWBGuides(),
       getWBTutorials(),
       getFeatureFlags(),
@@ -97,6 +99,7 @@ describe('Config', () => {
       getRedisCommands(),
       getNotifications(),
       getContentRecommendations(),
+      getGuideLinks(),
       getWBGuides(),
       getWBTutorials(),
       getFeatureFlags(),

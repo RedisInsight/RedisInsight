@@ -558,16 +558,16 @@ jobs:
             yarn build:statics
           no_output_timeout: 15m
       - when:
-        condition:
-          # equal: [ 'stage', << parameters.env >> ]
-          equal: [ 'dev', << parameters.env >> ]
-        steps:
-          - run:
-              name: Generate licenses csv files
-              command: |
-                npm i -g license-checker
+          condition:
+            # equal: [ 'stage', << parameters.env >> ]
+            equal: [ 'dev', << parameters.env >> ]
+          steps:
+            - run:
+                name: Generate licenses csv files
+                command: |
+                  npm i -g license-checker
 
-                node .circleci/deps-licenses-report.js
+                  node .circleci/deps-licenses-report.js
       # - run:
       #     name: Build linux AppImage and deb
       #     command: |

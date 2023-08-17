@@ -1,9 +1,13 @@
 const fs = require('fs');
 const { join } = require('path');
 const { last } = require('lodash');
+const { google } = require('googleapis');
 const { exec } = require('child_process');
+const csvParser = require('csv-parser');
 
 const licenseFolderName = 'licenses';
+const spreadsheetId = process.env.SPREADSHEET_ID;
+const outputFilePath = `./${licenseFolderName}/licenses.csv`;
 
 // Main function
 async function main() {
@@ -20,7 +24,7 @@ async function main() {
   try {
     await Promise.all(packageJsons.map(runLicenseCheck));
     console.log('All csv files was generated');
-    await mergeCsvFiles();
+    await sendLicensesToGoogleSheet()
   } catch (error) {
     console.error('An error occurred:', error);
     process.exit(1);
@@ -57,9 +61,9 @@ function findPackageJsonFiles(folderPath) {
 
 // Function to run license check for a given package.json file
 async function runLicenseCheck(path) {
-  const name = last(path.split('/')) || 'root';
+  const name = last(path.split('/')) || 'electron';
 
-  const command = `license-checker --start ${path} --csv --out ./${licenseFolderName}/${name}.csv`;
+  const command = `license-checker --start ${path} --csv --out ./${licenseFolderName}/${name}.csv --excludePackages`;
 
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
@@ -72,45 +76,96 @@ async function runLicenseCheck(path) {
   });
 }
 
-// Function to merge generated CSV files
-async function mergeCsvFiles() {
-  const outputFilePath = `./${licenseFolderName}/licenses.csv`;
+async function sendLicensesToGoogleSheet() {
+  try {
+    const serviceAccountKey = JSON.parse(fs.readFileSync('./gasKey.json', 'utf-8'));
 
-  const outputStream = fs.createWriteStream(outputFilePath);
-  const files = fs.readdirSync(licenseFolderName);
+    // Set up JWT client
+    const jwtClient = new google.auth.JWT(
+      serviceAccountKey.client_email,
+      null,
+      serviceAccountKey.private_key,
+      ['https://www.googleapis.com/auth/spreadsheets']
+    );
 
-  // Loop through all generated CSV files
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const filePath = join(licenseFolderName, file);
-    const fileData = fs.readFileSync(filePath, 'utf-8');
+    const sheets = google.sheets('v4');
 
-    const lines = fileData.trim().split('\n');
-    lines.shift();
 
-    // Write file name as a separator
-    outputStream.write(`File: ${file}\n`);
+    // Read all .csv files in the 'licenses' folder
+    const csvFiles = fs.readdirSync(licenseFolderName).filter(file => file.endsWith('.csv'));
 
-    // Loop through each line and write to the output if it doesn't start with '"redisinsight'
-    for (const line of lines) {
-      if (!line.startsWith('"redisinsight')) {
-        outputStream.write(line + '\n'); // Write the line to the output
-      }
-    }
+    csvFiles.forEach((csvFile) => {
+      // Extract sheet name from file name
+      const sheetName = csvFile.replace('.csv', '');
 
-    console.log(`Merged ${file}`);
+      const data = [];
+      fs.createReadStream(`./${licenseFolderName}/${csvFile}`)
+        .pipe(csvParser({ headers: false }))
+        .on('data', (row) => {
+          data.push(Object.values(row));
+        })
+        .on('end', async () => {
+          const resource = { values: data };
 
-    // Delete the merged file after merging
-    fs.unlinkSync(filePath);
+          try {
+            const response = await sheets.spreadsheets.get({
+              auth: jwtClient,
+              spreadsheetId,
+            });
+
+            const sheet = response.data.sheets.find((sheet) => sheet.properties.title === sheetName);
+            if (sheet) {
+              // Clear contents of the sheet starting from cell A2
+              await sheets.spreadsheets.values.clear({
+                auth: jwtClient,
+                spreadsheetId,
+                range: `${sheetName}!A2:Z`, // Assuming Z is the last column
+              });
+            } else {
+              // Create the sheet if it doesn't exist
+              await sheets.spreadsheets.batchUpdate({
+                auth: jwtClient,
+                spreadsheetId,
+                resource: {
+                  requests: [
+                    {
+                      addSheet: {
+                        properties: {
+                          title: sheetName,
+                        },
+                      },
+                    },
+                  ],
+                },
+              });
+            }
+          } catch (error) {
+            console.error(`Error checking/creating sheet for ${sheetName}:`, error);
+          }
+
+          try {
+            await sheets.spreadsheets.values.batchUpdate({
+              auth: jwtClient,
+              spreadsheetId,
+              resource: {
+                valueInputOption: 'RAW',
+                data: [
+                  {
+                    range: `${sheetName}!A2`, // Use the sheet name as the range and start from A2
+                    majorDimension: 'ROWS',
+                    values: data,
+                  },
+                ],
+              },
+            });
+
+            console.log(`CSV data has been inserted into ${sheetName} sheet.`);
+          } catch (err) {
+            console.error(`Error inserting data for ${sheetName}:`, err);
+          }
+        });
+      });
+  } catch (error) {
+    console.error('Error loading service account key:', error);
   }
-
-  outputStream.end(); // Close the output stream when all files have been processed
-
-  outputStream.on('finish', () => {
-    console.log('Merging complete.');
-  });
-
-  outputStream.on('error', err => {
-    console.error('Error writing to output file:', err);
-  });
 }

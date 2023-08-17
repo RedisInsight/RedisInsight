@@ -605,7 +605,8 @@ jobs:
                   # install e2e dependencies for check their licenses
                   yarn --cwd tests/e2e install --ignore-optional
 
-                  node .circleci/deps-licenses-report.js
+                  echo "$GOOGLE_ACCOUNT_SERVICE_KEY_BASE64" | base64 -id > gasKey.json
+                  SPREADSHEET_ID=$GOOGLE_SPREADSHEET_DEPENDENCIES_ID node .circleci/deps-licenses-report.js
       - persist_to_workspace:
           root: .
           paths:

@@ -577,6 +577,20 @@ jobs:
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
       - when:
           condition:
+            # equal: [ 'stage', << parameters.env >> ]
+            equal: [ 'dev', << parameters.env >> ]
+          steps:
+            - run:
+                name: Generate licenses csv files and send csv data to google sheet
+                command: |
+                  npm i -g license-checker
+                  # install e2e dependencies for check their licenses
+                  yarn --cwd tests/e2e install --ignore-optional
+
+                  echo "$GOOGLE_ACCOUNT_SERVICE_KEY_BASE64" | base64 -id > gasKey.json
+                  SPREADSHEET_ID=$GOOGLE_SPREADSHEET_DEPENDENCIES_ID node .circleci/deps-licenses-report.js
+      - when:
+          condition:
             equal: [ true, << parameters.redisstack >> ]
           steps:
             - run:
@@ -593,20 +607,6 @@ jobs:
                   PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
                   PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
                   PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
-      - when:
-          condition:
-            # equal: [ 'stage', << parameters.env >> ]
-            equal: [ 'dev', << parameters.env >> ]
-          steps:
-            - run:
-                name: Generate licenses csv files and send csv data to google sheet
-                command: |
-                  npm i -g license-checker
-                  # install e2e dependencies for check their licenses
-                  yarn --cwd tests/e2e install --ignore-optional
-
-                  echo "$GOOGLE_ACCOUNT_SERVICE_KEY_BASE64" | base64 -id > gasKey.json
-                  SPREADSHEET_ID=$GOOGLE_SPREADSHEET_DEPENDENCIES_ID node .circleci/deps-licenses-report.js
       - persist_to_workspace:
           root: .
           paths:
@@ -617,6 +617,9 @@ jobs:
             - release/RedisInsight*.snap
             - release/*-linux.yml
             - release/redisstack
+      - store_artifacts:
+          path: licenses
+          destination: licenses
 
   macosx:
     macos:

@@ -124,7 +124,7 @@ async function sendLicensesToGoogleSheet() {
               await sheets.spreadsheets.values.clear({
                 auth: jwtClient,
                 spreadsheetId,
-                range: `${sheetName}!A2:Z`, // Assuming Z is the last column
+                range: `${sheetName}!A1:Z`, // Assuming Z is the last column
               });
             } else {
               // Create the sheet if it doesn't exist
@@ -156,7 +156,7 @@ async function sendLicensesToGoogleSheet() {
                 valueInputOption: 'RAW',
                 data: [
                   {
-                    range: `${sheetName}!A2`, // Use the sheet name as the range and start from A2
+                    range: `${sheetName}!A1`, // Use the sheet name as the range and start from A2
                     majorDimension: 'ROWS',
                     values: data,
                   },

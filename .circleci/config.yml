@@ -599,7 +599,7 @@ jobs:
             equal: [ 'dev', << parameters.env >> ]
           steps:
             - run:
-                name: Generate licenses csv files
+                name: Generate licenses csv files and send csv data to google sheet
                 command: |
                   npm i -g license-checker
                   # install e2e dependencies for check their licenses
@@ -617,7 +617,6 @@ jobs:
             - release/RedisInsight*.snap
             - release/*-linux.yml
             - release/redisstack
-            - licenses/licenses.csv
 
   macosx:
     macos:
@@ -823,9 +822,6 @@ jobs:
       - store_artifacts:
           path: release
           destination: release
-      - store_artifacts:
-          path: licenses
-          destination: licenses
   release-aws-test:
     executor: linux-executor
     steps:
@@ -841,7 +837,6 @@ jobs:
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
             aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive
-            aws s3 cp licenses/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive
 
   release-aws-private:
     executor: linux-executor
@@ -864,7 +859,6 @@ jobs:
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
             aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive
-            aws s3 cp licenses/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive
 
   publish-prod-aws:
     executor: linux-executor

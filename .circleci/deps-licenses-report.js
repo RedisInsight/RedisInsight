@@ -37,7 +37,7 @@ main();
 function findPackageJsonFiles(folderPath) {
   const packageJsonPaths = [];
   const packageJsonName = 'package.json';
-  const excludeFolders = ['dist', 'node_modules', 'static', 'electron'];
+  const excludeFolders = ['dist', 'node_modules', 'static', 'electron', 'redisgraph'];
 
   // Recursive function to search for package.json files
   function searchForPackageJson(currentPath) {
@@ -63,17 +63,22 @@ function findPackageJsonFiles(folderPath) {
 async function runLicenseCheck(path) {
   const name = last(path.split('/')) || 'electron';
 
-  const command = `license-checker --start ${path} --csv --out ./${licenseFolderName}/${name}.csv --excludePackages`;
+  const COMMANDS = [
+    `license-checker --start ${path} --csv --out ./${licenseFolderName}/${name}_prod.csv --production`,
+    `license-checker --start ${path} --csv --out ./${licenseFolderName}/${name}_dev.csv --development`,
+  ]
 
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Failed command: ${command}, error:`, stderr);
-        reject(error);
-      }
-      resolve();
-    });
-  });
+  return await Promise.all(COMMANDS.map((command) =>
+    new Promise((resolve, reject) => {
+      exec(command, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Failed command: ${commandProd}, error:`, stderr);
+          reject(error);
+        }
+        resolve();
+      });
+    })
+  ));
 }
 
 async function sendLicensesToGoogleSheet() {
@@ -92,11 +97,11 @@ async function sendLicensesToGoogleSheet() {
 
 
     // Read all .csv files in the 'licenses' folder
-    const csvFiles = fs.readdirSync(licenseFolderName).filter(file => file.endsWith('.csv'));
+    const csvFiles = fs.readdirSync(licenseFolderName).filter(file => file.endsWith('.csv')).sort();
 
     csvFiles.forEach((csvFile) => {
       // Extract sheet name from file name
-      const sheetName = csvFile.replace('.csv', '');
+      const sheetName = csvFile.replace('.csv', '').replaceAll('_', ' ');
 
       const data = [];
       fs.createReadStream(`./${licenseFolderName}/${csvFile}`)

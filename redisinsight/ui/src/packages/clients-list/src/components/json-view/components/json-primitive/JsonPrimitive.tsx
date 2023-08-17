@@ -10,9 +10,6 @@ const JsonPrimitive = ({ data, lastElement = true }: IDefaultProps) => {
   if (isNull(data)) {
     stringValue = 'null'
     valueStyle = 'null'
-  } else if (data === undefined) {
-    stringValue = 'undefined'
-    valueStyle = 'undefined'
   } else if (isString(data)) {
     stringValue = `"${data}"`
     valueStyle = 'string'

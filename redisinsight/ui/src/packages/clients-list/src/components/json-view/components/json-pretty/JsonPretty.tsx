@@ -6,7 +6,7 @@ import JsonPrimitive from '../json-primitive'
 import JsonArray from '../json-array'
 import JsonObject from '../json-object'
 
-const JsonComponent = ({ data, ...props }: IDefaultProps) => {
+const JsonPretty = ({ data, ...props }: IDefaultProps) => {
   if (isArray(data)) {
     return <JsonArray data={data} {...props} />
   }
@@ -18,4 +18,4 @@ const JsonComponent = ({ data, ...props }: IDefaultProps) => {
   return <JsonPrimitive data={data} {...props} />
 }
 
-export default JsonComponent
+export default JsonPretty

@@ -1,22 +1,21 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 
 import { IJsonArrayProps } from '../../interfaces'
-import JsonComponent from '../json-component'
+import JsonPretty from '../json-pretty'
 
 const JsonArray = ({ data, space = 2, gap = 0, lastElement = true }: IJsonArrayProps) => (
   <span data-testid="json-array-component">
     {'[\n'}
     {data.map((value, idx) => (
-      <>
+      <Fragment key={`${value}-{idx}`}>
         {!!space && Array.from({ length: space + gap }, () => ' ')}
-        <JsonComponent
+        <JsonPretty
           data={value}
           lastElement={idx === data.length - 1}
           space={space}
           gap={gap + space}
-          key={idx}
         />
-      </>
+      </Fragment>
     ))}
     {!!gap && Array.from({ length: gap }, () => ' ')}
     ]

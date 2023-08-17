@@ -6,7 +6,7 @@ import JsonObject from 'uiSrc/components/json-viewer/components/json-object'
 import { isArray, isObject } from 'uiSrc/components/json-viewer/utils'
 import { IDefaultProps } from 'uiSrc/components/json-viewer/interfaces'
 
-const JsonComponent = ({ data, ...props }: IDefaultProps) => {
+const JsonPretty = ({ data, ...props }: IDefaultProps) => {
   if (isArray(data)) {
     return <JsonArray data={data} {...props} />
   }
@@ -18,4 +18,4 @@ const JsonComponent = ({ data, ...props }: IDefaultProps) => {
   return <JsonPrimitive data={data} {...props} />
 }
 
-export default JsonComponent
+export default JsonPretty

@@ -22,13 +22,6 @@ describe('JsonPrimitive', () => {
     expect(screen.getByTestId('json-primitive-value')).toHaveClass('number')
   })
 
-  it('should render proper text and value for undefined', () => {
-    render(<JsonPrimitive data={undefined} />)
-
-    expect(screen.getByTestId('json-primitive-value')).toHaveTextContent('undefined')
-    expect(screen.getByTestId('json-primitive-value')).toHaveClass('undefined')
-  })
-
   it('should render proper text and value for boolean', () => {
     render(<JsonPrimitive data={false} />)
 

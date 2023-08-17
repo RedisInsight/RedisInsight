@@ -1,26 +1,25 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 
-import JsonComponent from '../json-component'
+import JsonPretty from '../json-pretty'
 import { IJsonObjectProps } from '../../interfaces'
 
 const JsonObject = ({ data, space = 2, gap = 0, lastElement = true }: IJsonObjectProps) => (
   <span data-testid="json-object-component">
     {'{\n'}
     {Object.keys(data).map((key, idx) => (
-      <>
+      <Fragment key={`${key}-{idx}`}>
         {!!space && Array.from({ length: space + gap }, () => ' ')}
         <span className="key">
           {`"${key}"`}
         </span>
         {': '}
-        <JsonComponent
+        <JsonPretty
           data={data[key]}
           lastElement={idx === Object.keys(data).length - 1}
           space={space}
           gap={gap + space}
-          key={idx}
         />
-      </>
+      </Fragment>
     ))}
     {!!gap && Array.from({ length: gap }, () => ' ')}
     {'}'}

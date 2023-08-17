@@ -1,15 +1,15 @@
 import React, { Fragment } from 'react'
 
-import JsonComponent from 'uiSrc/components/json-viewer/components/json-component'
+import JsonPretty from 'uiSrc/components/json-viewer/components/json-pretty'
 import { IJsonArrayProps } from 'uiSrc/components/json-viewer/interfaces'
 
 const JsonArray = ({ data, space = 2, gap = 0, lastElement = true }: IJsonArrayProps) => (
   <span data-testid="json-array-component">
     {'[\n'}
     {data.map((value, idx) => (
-      <Fragment key={idx}>
+      <Fragment key={`${value}-idx}`}>
         {!!space && Array.from({ length: space + gap }, () => ' ')}
-        <JsonComponent
+        <JsonPretty
           data={value}
           lastElement={idx === data.length - 1}
           space={space}

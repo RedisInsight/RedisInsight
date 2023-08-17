@@ -2,7 +2,7 @@ import cx from 'classnames'
 import React from 'react'
 import JSONBigInt from 'json-bigint'
 
-import JsonComponent from 'uiSrc/components/json-viewer/components/json-component'
+import JsonPretty from 'uiSrc/components/json-viewer/components/json-pretty'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -20,7 +20,7 @@ const JSONViewer = (props: Props) => {
     return {
       value: (
         <div className={cx(styles.jsonViewer, { [styles['jsonViewer-collapsed']]: !expanded })} data-testid="value-as-json">
-          <JsonComponent data={data} space={space} />
+          <JsonPretty data={data} space={space} />
         </div>
       ),
       isValid: true

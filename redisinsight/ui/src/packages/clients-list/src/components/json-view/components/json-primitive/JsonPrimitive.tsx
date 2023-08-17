@@ -5,23 +5,23 @@ import { IDefaultProps } from '../../interfaces'
 
 const JsonPrimitive = ({ data, lastElement = true }: IDefaultProps) => {
   let stringValue = data
-  let valueStyle = 'otherValue'
+  let valueStyle = 'json-pretty__other_value'
 
   if (isNull(data)) {
     stringValue = 'null'
-    valueStyle = 'null'
+    valueStyle = 'json-pretty__null-value'
   } else if (isString(data)) {
     stringValue = `"${data}"`
-    valueStyle = 'string'
+    valueStyle = 'json-pretty__string-value'
   } else if (isBoolean(data)) {
     stringValue = data ? 'true' : 'false'
-    valueStyle = 'boolean'
+    valueStyle = 'json-pretty__boolean-value'
   } else if (isNumber(data)) {
     stringValue = data.toString()
-    valueStyle = 'number'
+    valueStyle = 'json-pretty__number-value'
   } else if (isBigInt(data)) {
     stringValue = data.toString()
-    valueStyle = 'bigint'
+    valueStyle = 'json-pretty__bigint-value'
   } else {
     stringValue = data.toString()
   }

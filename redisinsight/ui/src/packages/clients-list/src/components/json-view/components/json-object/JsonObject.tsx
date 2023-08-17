@@ -9,7 +9,7 @@ const JsonObject = ({ data, space = 2, gap = 0, lastElement = true }: IJsonObjec
     {Object.keys(data).map((key, idx) => (
       <Fragment key={`${key}-{idx}`}>
         {!!space && Array.from({ length: space + gap }, () => ' ')}
-        <span className="key">
+        <span className="json-pretty__key">
           {`"${key}"`}
         </span>
         {': '}

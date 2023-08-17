@@ -1,0 +1,36 @@
+.jsonViewer {
+  font: normal normal normal 13px/18px Inconsolata, monospace;
+  letter-spacing: 0.15px;
+  padding: 0;
+  background: transparent;
+  color: var(--euiTextSubduedColor);
+  margin-bottom: 0;
+  white-space: pre-wrap;
+
+  &-collapsed {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
+    line-height: inherit;
+  }
+
+  .key {
+    color: var(--jsonKeyNameColor);
+  }
+
+  .number,
+  .bigint,
+  .undefined,
+  .null {
+    color: var(--jsonNumberColor);
+  }
+
+  .string {
+    color: var(--jsonStringColor);
+  }
+
+  .boolean {
+    color: var(--jsonBooleanColor);
+  }
+}

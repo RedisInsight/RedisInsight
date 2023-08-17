@@ -51,6 +51,8 @@ import reducer, {
   getCapiKeysAction,
   removeAllCapiKeysAction,
   removeCapiKeyAction,
+  setOAuthCloudSource,
+  setSocialDialogState,
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -454,9 +456,10 @@ describe('oauth cloud slice', () => {
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
-    it('should properly set the isOpenSignInDialog=false if source=null', () => {
+
+    it('should not set source=null and set and isOpenSignInDialog=false', () => {
       // Arrange
-      const prevInitialState = {
+      const prevState = {
         ...initialState,
         isOpenSignInDialog: true,
         source: OAuthSocialSource.BrowserSearch,
@@ -464,11 +467,31 @@ describe('oauth cloud slice', () => {
       const state = {
         ...initialState,
         isOpenSignInDialog: false,
-        source: null,
+        source: OAuthSocialSource.BrowserSearch,
       }
 
       // Act
-      const nextState = reducer(prevInitialState, setSignInDialogState(null))
+      const nextState = reducer(prevState, setSignInDialogState(null))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: { cloud: nextState },
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setSocialDialogState', () => {
+    it('should properly set the source=SignInDialogSource.BrowserSearch and isOpenSocialDialog=true', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        isOpenSocialDialog: true,
+        source: OAuthSocialSource.BrowserSearch,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setSocialDialogState(OAuthSocialSource.BrowserSearch))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -477,6 +500,31 @@ describe('oauth cloud slice', () => {
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
 
+    it('should not set source=null and set and isOpenSocialDialog=false', () => {
+      // Arrange
+      const prevState = {
+        ...initialState,
+        isOpenSocialDialog: true,
+        source: OAuthSocialSource.BrowserSearch,
+      }
+      const state = {
+        ...initialState,
+        isOpenSocialDialog: false,
+        source: OAuthSocialSource.BrowserSearch,
+      }
+
+      // Act
+      const nextState = reducer(prevState, setSocialDialogState(null))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: { cloud: nextState },
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setAgreement', () => {
     it('should properly set the state', () => {
       // Arrange
       const prevInitialState = {
@@ -746,6 +794,28 @@ describe('oauth cloud slice', () => {
     })
   })
 
+  describe('setOAuthCloudSource', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const data = OAuthSocialSource.Autodiscovery
+      const state = {
+        ...initialState,
+        source: data
+      }
+
+      // Act
+      const nextState = reducer(initialState, setOAuthCloudSource(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchUserInfo', () => {
       it('call both fetchUserInfo and getUserInfoSuccess when fetch is successed', async () => {
@@ -807,6 +877,7 @@ describe('oauth cloud slice', () => {
           getUserInfo(),
           addErrorNotification(responsePayload as AxiosError),
           getUserInfoFailure(responsePayload.response.data.message),
+          setOAuthCloudSource(null),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -852,6 +923,7 @@ describe('oauth cloud slice', () => {
           addFreeDb(),
           addErrorNotification(responsePayload as AxiosError),
           addFreeDbFailure(responsePayload.response.data.message),
+          setOAuthCloudSource(null),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -902,6 +974,7 @@ describe('oauth cloud slice', () => {
           getUserInfo(),
           addErrorNotification(responsePayload as AxiosError),
           getUserInfoFailure(responsePayload.response.data.message),
+          setOAuthCloudSource(null),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -1018,6 +1091,7 @@ describe('oauth cloud slice', () => {
           addErrorNotification(responsePayload as AxiosError),
           getPlansFailure(),
           removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
+          setOAuthCloudSource(null),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

@@ -166,6 +166,7 @@ export interface StateAppSocketConnection {
 export interface FeatureFlagComponent {
   flag: boolean
   variant?: string
+  data?: any
 }
 
 export interface StateAppFeatures {

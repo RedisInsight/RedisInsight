@@ -111,11 +111,15 @@ const oauthCloudSlice = createSlice({
       state.user.freeDb.error = payload
     },
     setSocialDialogState: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
-      state.source = payload
+      if (payload) {
+        state.source = payload
+      }
       state.isOpenSocialDialog = !!payload
     },
     setSignInDialogState: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
-      state.source = payload
+      if (payload) {
+        state.source = payload
+      }
       state.isOpenSignInDialog = !!payload
     },
     setOAuthCloudSource: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
@@ -251,6 +255,7 @@ export function createFreeDbSuccess(id: string, history: any) {
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
+      dispatch(setOAuthCloudSource(null))
       dispatch(addErrorNotification(error))
       dispatch(addFreeDbFailure(errorMessage))
     }
@@ -282,6 +287,8 @@ export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => voi
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(getUserInfoFailure(errorMessage))
+      dispatch(setOAuthCloudSource(null))
+
       onFailAction?.()
     }
   }
@@ -312,6 +319,7 @@ export function createFreeDbJob(planId: number, onSuccessAction?: () => void, on
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(addFreeDbFailure(errorMessage))
+      dispatch(setOAuthCloudSource(null))
       onFailAction?.()
     }
   }
@@ -344,6 +352,7 @@ export function activateAccount(
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(getUserInfoFailure(errorMessage))
+      dispatch(setOAuthCloudSource(null))
       onFailAction?.(errorMessage)
     }
   }
@@ -374,6 +383,7 @@ export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => vo
       dispatch(addErrorNotification(err))
       dispatch(getPlansFailure())
       dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
+      dispatch(setOAuthCloudSource(null))
       onFailAction?.()
     }
   }

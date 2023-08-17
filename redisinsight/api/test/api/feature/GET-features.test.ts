@@ -16,7 +16,6 @@ const updateSettings = (data) => request(server).patch('/settings').send(data);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-
 const waitForFlags = async (flags: any) => {
   const client = await getSocket('');
 
@@ -52,7 +51,11 @@ describe('GET /features', () => {
             insightsRecommendations: {
               perc: [],
               flag: true,
-            }
+            },
+            cloudSso: {
+              perc: [[0, 100]],
+              flag: true,
+            },
           },
         })).catch(console.error);
 
@@ -98,7 +101,11 @@ describe('GET /features', () => {
             insightsRecommendations: {
               perc: [[config.controlNumber - 1, config.controlNumber + 1]],
               flag: true,
-            }
+            },
+            cloudSso: {
+              perc: [[0, 100]],
+              flag: true,
+            },
           },
         })).catch(console.error);
 
@@ -149,7 +156,11 @@ describe('GET /features', () => {
                 value: true,
                 cond: 'eq',
               }],
-            }
+            },
+            cloudSso: {
+              perc: [[0, 100]],
+              flag: true,
+            },
           },
         })).catch(console.error);
 

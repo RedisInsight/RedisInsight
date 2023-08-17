@@ -167,7 +167,7 @@ export class Cli {
      */
     async getWarningMessageText(command: string): Promise<string> {
 
-        const executedCommand =  await this.cliCommandExecuted.withExactText(command);
+        const executedCommand = await this.cliCommandExecuted.withExactText(command);
         return await executedCommand.nextSibling(0).textContent;
     }
 
@@ -176,6 +176,6 @@ export class Cli {
      * @param index index of the command in the CLI, by default is the last one
      */
     async getExecutedCommandTextByIndex(index = -1): Promise<string> {
-        return  await this.cliCommandExecuted.nth(index).textContent;
+        return await this.cliCommandExecuted.nth(index).textContent;
     }
 }

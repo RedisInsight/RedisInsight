@@ -58,6 +58,8 @@ export class AddRedisDatabase {
     caCertField = Selector('[data-testid=select-ca-cert]', { timeout: 500 });
     clientCertField = Selector('[data-testid=select-cert]', { timeout: 500 });
     selectCompressor = Selector('[data-testid=select-compressor]', { timeout: 1000 });
+    useCloudAccount = Selector('[data-testid=use-cloud-account-accordion]');
+    useCloudKeys = Selector('[data-testid=use-cloud-keys-accordion]');
     // CHECKBOXES
     useSSHCheckbox = Selector('[data-testid=use-ssh]~div', { timeout: 500 });
     dataCompressorCheckbox = Selector('[data-testid=showCompressor] ~ label');

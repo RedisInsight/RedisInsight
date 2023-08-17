@@ -1,15 +1,10 @@
 {
-  "version": 2,
+  "version": 20,
   "features": {
     "insightsRecommendations": {
       "flag": true,
-      "perc": [[0,30]],
+      "perc": [[44,50]],
       "filters": [
-        {
-          "name": "agreements.analytics",
-          "value": true,
-          "cond": "eq"
-        },
         {
           "name": "config.server.buildType",
           "value": "ELECTRON",
@@ -19,7 +14,7 @@
     },
     "cloudSso": {
       "flag": true,
-      "perc": [[0,100]],
+      "perc": [[44,50]],
       "filters": [
         {
           "name": "config.server.buildType",

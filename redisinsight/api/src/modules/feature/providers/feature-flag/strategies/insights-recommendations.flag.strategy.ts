@@ -1,9 +1,14 @@
 import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/feature.flag.strategy';
+import { Feature } from 'src/modules/feature/model/feature';
+import { IFeatureFlag } from 'src/modules/feature/constants';
 
 export class InsightsRecommendationsFlagStrategy extends FeatureFlagStrategy {
-  async calculate(featureConfig: any): Promise<boolean> {
+  async calculate(knownFeature: IFeatureFlag, featureConfig: any): Promise<Feature> {
     const isInRange = await this.isInTargetRange(featureConfig?.perc);
 
-    return isInRange && await this.filter(featureConfig?.filters) ? !!featureConfig?.flag : !featureConfig?.flag;
+    return {
+      name: knownFeature.name,
+      flag: isInRange && await this.filter(featureConfig?.filters) ? !!featureConfig?.flag : !featureConfig?.flag,
+    };
   }
 }

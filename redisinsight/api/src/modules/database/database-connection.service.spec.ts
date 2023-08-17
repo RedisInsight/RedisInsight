@@ -1,5 +1,6 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { get } from 'lodash';
 import {
   mockCommonClientMetadata,
   mockDatabase,
@@ -13,6 +14,7 @@ import {
   mockDatabaseRecommendationService,
   MockType,
   mockRedisGeneralInfo,
+  mockRedisClientListResult,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -121,6 +123,21 @@ describe('DatabaseConnectionService', () => {
 
       expect(databaseInfoProvider.determineDatabaseServer).toHaveBeenCalled();
       expect(databaseInfoProvider.determineDatabaseModules).toHaveBeenCalled();
+    });
+
+    it('should call getClientListInfo', async () => {
+      expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
+
+      expect(databaseInfoProvider.getClientListInfo).toHaveBeenCalled();
+      expect(analytics.sendDatabaseConnectedClientListEvent).toHaveBeenCalledWith(
+        mockDatabase.id,
+        {
+          version: mockRedisGeneralInfo.version,
+          resp: get(mockRedisClientListResult[0], 'resp', ''),
+          libVer: get(mockRedisClientListResult[0], 'lib-ver', ''),
+          libName: get(mockRedisClientListResult[0], 'lib-name', ''),
+        },
+      );
     });
   });
 

@@ -5,7 +5,7 @@ import {
   mockIOClusterNode1,
   mockIOClusterNode2,
   mockIORedisClient,
-  mockIORedisCluster,
+  mockIORedisCluster, mockRedisClientList, mockRedisClientListResult,
   mockRedisClientsInfoResponse,
   mockRedisClusterFailInfoResponse,
   mockRedisClusterNodesResponse,
@@ -209,6 +209,27 @@ describe('DatabaseInfoProvider', () => {
     });
   });
 
+  describe('getClientListInfo', () => {
+    it('get client list info', async () => {
+      when(mockIORedisClient.call)
+        .calledWith('client', ['list'])
+        .mockResolvedValue(mockRedisClientList);
+
+      const result = await service.getClientListInfo(mockIORedisClient);
+
+      expect(result).toEqual(mockRedisClientListResult);
+    });
+    it('failed to get client list', async () => {
+      when(mockIORedisClient.call)
+        .calledWith('client', ['list'])
+        .mockRejectedValue(new Error("unknown command 'client'"));
+
+      const result = await service.getClientListInfo(mockIORedisClient);
+
+      expect(result).toBe(undefined);
+    });
+  });
+
   describe('getDatabaseCountFromKeyspace', () => {
     it('should return 1 since db0 keys presented only', async () => {
       const result = await service['getDatabaseCountFromKeyspace']({
@@ -372,7 +393,7 @@ describe('DatabaseInfoProvider', () => {
     });
     it('should throw an error if no permission to run \'info\' command', async () => {
       mockIORedisClient.info.mockRejectedValue({
-        message: 'NOPERM this user has no permissions to run the \'info\' command'
+        message: 'NOPERM this user has no permissions to run the \'info\' command',
       });
 
       try {

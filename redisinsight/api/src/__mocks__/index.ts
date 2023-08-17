@@ -25,3 +25,4 @@ export * from './database-recommendation';
 export * from './feature';
 export * from './cloud-autodiscovery';
 export * from './triggered-functions';
+export * from './database-info';

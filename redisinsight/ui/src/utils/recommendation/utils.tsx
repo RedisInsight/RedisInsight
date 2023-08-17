@@ -10,7 +10,7 @@ import {
 } from '@elastic/eui'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
-import { IRecommendationsStatic, IRecommendationContent ,IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
+import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'

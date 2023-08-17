@@ -555,6 +555,10 @@ jobs:
             yarn --cwd redisinsight/api/ install --ignore-optional
             yarn --cwd redisinsight/ install --ignore-optional
             yarn install
+          no_output_timeout: 15m
+      - run:
+          name: install plugins dependencies and build plugins
+          command: |
             yarn build:statics
           no_output_timeout: 15m
       - when:
@@ -567,7 +571,7 @@ jobs:
                 command: |
                   npm i -g license-checker
                   # install e2e dependencies for check their licenses
-                  yarn --cwd redisinsight/tests/e2e install --ignore-optional
+                  yarn --cwd tests/e2e install --ignore-optional
 
                   node .circleci/deps-licenses-report.js
       # - run:

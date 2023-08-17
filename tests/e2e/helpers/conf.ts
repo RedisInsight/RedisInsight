@@ -144,3 +144,9 @@ export const ossStandaloneRedisGears = {
     databaseUsername: process.env.OSS_STANDALONE_REDISGEARS_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_REDISGEARS_PASSWORD
 };
+
+export const ossClusterRedisGears = {
+    ossClusterHost: process.env.OSS_CLUSTER_REDISGEARS_2_HOST || 'gears-cluster-2-0-node-1',
+    ossClusterPort: process.env.OSS_CLUSTER_REDISGEARS_2_PORT || '6379',
+    ossClusterDatabaseName: `${process.env.OSS_CLUSTER_REDISGEARS_2_NAME || 'test_cluster-gears-2.0'}-${uniqueId}`
+};

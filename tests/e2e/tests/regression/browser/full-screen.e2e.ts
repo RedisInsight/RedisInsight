@@ -48,7 +48,10 @@ test
         const widthAfterExitFullScreen = await browserPage.keyDetailsTable.clientWidth;
         await t.expect(widthAfterExitFullScreen).lt(widthAfterFullScreen, 'Width after switching from full screen not less then before');
     });
-test('Verify that when no keys are selected user can click on "Close" control for right table and see key list in full screen', async t => {
+test.before(async() => {
+    await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+    await browserPage.Cli.sendCommandInCli('flushdb');
+})('Verify that when no keys are selected user can click on "Close" control for right table and see key list in full screen', async t => {
     // Verify that user sees two panels(key list and empty details panel) opening Browser page for the first time
     await t.expect(browserPage.noKeysToDisplayText.visible).ok('No keys selected panel not displayed');
     // Save key table size before switching to full screen

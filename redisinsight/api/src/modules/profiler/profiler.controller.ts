@@ -24,6 +24,7 @@ export class ProfilerController {
 
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Disposition', `attachment;filename="${filename}.txt"`);
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
 
     stream
       .on('error', () => res.status(404).send())

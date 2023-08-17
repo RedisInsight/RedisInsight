@@ -1,5 +1,6 @@
 import { cloneDeep, first } from 'lodash'
 
+import { AxiosError } from 'axios'
 import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { cleanup, clearStoreActions, initialStateDefault, mockedStore, mockStore, } from 'uiSrc/utils/test-utils'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
@@ -7,10 +8,12 @@ import { apiService } from 'uiSrc/services'
 import { cliTexts } from 'uiSrc/constants/cliOutput'
 import { cliParseTextResponseWithOffset, cliParseTextResponseWithRedirect } from 'uiSrc/utils/cliHelper'
 import ApiErrors from 'uiSrc/constants/apiErrors'
-import { processCliClient, updateCliClientAction } from 'uiSrc/slices/cli/cli-settings'
+import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { SendClusterCommandDto, SendClusterCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 import reducer, {
   concatToOutput,
+  fetchMonitorLog,
   initialState,
   outputSelector,
   processUnsupportedCommand,
@@ -486,6 +489,56 @@ describe('cliOutput slice', () => {
         ]
         expect(clearStoreActions(tempStore.getActions())).toEqual(clearStoreActions(expectedActions))
       })
+    })
+  })
+
+  describe('fetchMonitorLog', () => {
+    it('call both sendCliCommand and sendCliCommandSuccess when fetch is successed', async () => {
+      // Arrange
+      const fileIdMock = 'fileId'
+      const onSuccessActionMock = jest.fn()
+      const data = 'test'
+      const responsePayload = { data, status: 200 }
+
+      apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(fetchMonitorLog(fileIdMock, onSuccessActionMock))
+
+      // Assert
+      const expectedActions = [
+        sendCliCommand(),
+        sendCliCommandSuccess(),
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+      expect(onSuccessActionMock).toBeCalled()
+    })
+
+    it('call both sendCliCommand and sendCliCommandFailure when fetch is fail', async () => {
+      // Arrange
+      const fileIdMock = 'fileId'
+      const onSuccessActionMock = jest.fn()
+      const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+
+      apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+
+      // Act
+      await store.dispatch<any>(fetchMonitorLog(fileIdMock, onSuccessActionMock))
+
+      // Assert
+      const expectedActions = [
+        sendCliCommand(),
+        addErrorNotification(responsePayload as AxiosError),
+        sendCliCommandFailure(responsePayload.response.data.message),
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+      expect(onSuccessActionMock).not.toBeCalled()
     })
   })
 })

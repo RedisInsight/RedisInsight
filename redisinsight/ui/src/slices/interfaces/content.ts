@@ -25,3 +25,16 @@ export interface ContentCreateRedis extends ContentFeatureCreateRedis {
     [key: string]: ContentFeatureCreateRedis
   }
 }
+
+export interface StateContentGuideLinks {
+  data: ContentGuideLinks[]
+  loading: boolean
+  error: string
+}
+
+export interface ContentGuideLinks {
+  title: string
+  tutorial: string
+  icon: string
+  description?: string
+}

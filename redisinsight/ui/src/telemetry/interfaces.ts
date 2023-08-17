@@ -14,6 +14,7 @@ export interface ITelemetryService {
       buildType?: string
       controlNumber?: number
       controlGroup?: string
+      appVersion?: string
       databaseId?: string
     }
   ): Promise<void>

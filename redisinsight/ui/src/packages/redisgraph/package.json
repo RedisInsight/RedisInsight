@@ -64,6 +64,7 @@
     "redisinsight-plugin-sdk": "^1.1.0"
   },
   "resolutions": {
-    "trim": "0.0.3"
+    "trim": "0.0.3",
+    "**/semver": "^7.5.2"
   }
 }

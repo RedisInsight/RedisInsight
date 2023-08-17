@@ -12,6 +12,9 @@ import { TriggersAndFunctionLibrary } from '../../../interfaces/triggers-and-fun
 import { CommonElementsActions } from '../../../common-actions/common-elements-actions';
 import { Common } from '../../../helpers/common';
 import { APIKeyRequests } from '../../../helpers/api/api-keys';
+import {
+    StreamKeyParameters
+} from '../../../pageObjects/browser-page';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -163,7 +166,17 @@ test.after(async() => {
     const command1 = `#!js api_version=1.0 name=${libraryName}`;
     const command2 = `redis.registerStreamTrigger('${LIBRARIES_LIST[3].name}', 'name', function(){});`;
 
-    await browserPage.addStreamKey(streamKeyName, 'keyField', 'keyValue');
+    const streamKeyParameters: StreamKeyParameters = {
+        keyName: streamKeyName,
+        entries: [{
+            id: '*',
+            fields: [{
+                name: 'keyField',
+                value: 'keyValue'
+            }]
+        }]
+    };
+    await apiKeyRequests.addStreamKeyApi(streamKeyParameters, ossStandaloneRedisGears);
     await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
     await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
     await t.click(triggersAndFunctionsLibrariesPage.addLibraryButton);

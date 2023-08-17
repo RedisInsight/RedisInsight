@@ -34,6 +34,7 @@ import workbenchGuidesReducer from './workbench/wb-guides'
 import workbenchTutorialsReducer from './workbench/wb-tutorials'
 import workbenchCustomTutorialsReducer from './workbench/wb-custom-tutorials'
 import contentCreateRedisButtonReducer from './content/create-redis-buttons'
+import contentGuideLinksReducer from './content/guide-links'
 import pubSubReducer from './pubsub/pubsub'
 import slowLogReducer from './analytics/slowlog'
 import analyticsSettingsReducer from './analytics/settings'
@@ -92,6 +93,7 @@ export const rootReducer = combineReducers({
   }),
   content: combineReducers({
     createRedisButtons: contentCreateRedisButtonReducer,
+    guideLinks: contentGuideLinksReducer,
   }),
   analytics: combineReducers({
     settings: analyticsSettingsReducer,

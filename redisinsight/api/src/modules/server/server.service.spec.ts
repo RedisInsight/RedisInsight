@@ -86,6 +86,7 @@ describe('ServerService', () => {
           anonymousId: mockServer.id,
           sessionId,
           appType: SERVER_CONFIG.buildType,
+          appVersion: SERVER_CONFIG.appVersion,
           controlNumber: mockControlNumber,
           controlGroup: mockControlGroup,
         },

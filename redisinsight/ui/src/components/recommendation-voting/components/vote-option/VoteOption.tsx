@@ -15,10 +15,8 @@ import {
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
-import { IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
-import { updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
+import { recommendationsSelector, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { Nullable } from 'uiSrc/utils'
 import PetardIcon from 'uiSrc/assets/img/icons/petard.svg'
@@ -38,8 +36,6 @@ export interface Props {
   name: string
 }
 
-const recommendationsContent = _content as IRecommendationsStatic
-
 const VoteOption = (props: Props) => {
   const {
     voteOption,
@@ -54,6 +50,7 @@ const VoteOption = (props: Props) => {
 
   const dispatch = useDispatch()
   const { id: instanceId = '', provider } = useSelector(connectedInstanceSelector)
+  const { content: recommendationsContent } = useSelector(recommendationsSelector)
 
   const onSuccessVoted = ({ vote, name }: { name: string, vote: Nullable<Vote> }) => {
     sendEventTelemetry({

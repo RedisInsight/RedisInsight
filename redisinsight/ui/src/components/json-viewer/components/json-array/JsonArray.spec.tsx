@@ -19,12 +19,12 @@ describe('JsonArray', () => {
   it('should render coma', () => {
     render(<JsonArray data={mockArray} lastElement={false} />)
 
-    expect(screen.getByTestId('json-object-component')).toHaveTextContent('{ "value": "{}" },')
+    expect(screen.getByTestId('json-array-component')).toHaveTextContent('[ 123 ],')
   })
 
   it('should not render coma', () => {
     render(<JsonArray data={mockArray} lastElement />)
 
-    expect(screen.getByTestId('json-object-component')).toHaveTextContent('{ "value": "{}" }')
+    expect(screen.getByTestId('json-array-component')).toHaveTextContent('[ 123 ]')
   })
 })

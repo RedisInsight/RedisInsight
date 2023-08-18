@@ -812,7 +812,7 @@ jobs:
             # yarn --cwd redisinsight/api install
             # yarn --cwd tests/e2e install
             # Install plugins dependencies
-            echo "export pluginsOnlyInstall=1" >> $BASH_ENV
+            export pluginsOnlyInstall=1
             # yarn build:statics
             sh ./scripts/build-statics.sh
       - run:

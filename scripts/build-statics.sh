@@ -3,7 +3,7 @@ set -e
 
 echo $pluginsOnlyInstall
 
-if [ $pluginsOnlyInstall = "1" ]; then
+if [ $pluginsOnlyInstall == "1" ]; then
   exit 1
 fi
 

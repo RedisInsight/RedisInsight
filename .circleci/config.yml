@@ -557,7 +557,7 @@ jobs:
             yarn install
           no_output_timeout: 15m
       - run:
-          name: install plugins dependencies and build plugins
+          name: Install plugins dependencies and build plugins
           command: |
             yarn build:statics
           no_output_timeout: 15m
@@ -575,20 +575,6 @@ jobs:
             fi
 
             UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
-      - when:
-          condition:
-            # equal: [ 'stage', << parameters.env >> ]
-            equal: [ 'dev', << parameters.env >> ]
-          steps:
-            - run:
-                name: Generate licenses csv files and send csv data to google sheet
-                command: |
-                  npm i -g license-checker
-                  # install e2e dependencies for check their licenses
-                  yarn --cwd tests/e2e install --ignore-optional
-
-                  echo "$GOOGLE_ACCOUNT_SERVICE_KEY_BASE64" | base64 -id > gasKey.json
-                  SPREADSHEET_ID=$GOOGLE_SPREADSHEET_DEPENDENCIES_ID node .circleci/deps-licenses-report.js
       - when:
           condition:
             equal: [ true, << parameters.redisstack >> ]
@@ -617,9 +603,6 @@ jobs:
             - release/RedisInsight*.snap
             - release/*-linux.yml
             - release/redisstack
-      - store_artifacts:
-          path: licenses
-          destination: licenses
 
   macosx:
     macos:
@@ -815,6 +798,28 @@ jobs:
       - store_artifacts:
           path: docker-release
           destination: docker-release
+  licenses-check:
+    executor: linux-executor
+    steps:
+      - checkout
+      - run:
+          name: Run install all dependencies
+          command: |
+            yarn install
+            yarn --cwd redisinsight/api install
+            yarn --cwd tests/e2e install
+            # Install plugins dependencies
+            yarn build:statics
+      - run:
+          name: Generate licenses csv files and send csv data to google sheet
+          command: |
+            npm i -g license-checker
+
+            echo "$GOOGLE_ACCOUNT_SERVICE_KEY_BASE64" | base64 -id > gasKey.json
+            SPREADSHEET_ID=$GOOGLE_SPREADSHEET_DEPENDENCIES_ID node .circleci/deps-licenses-report.js
+      - store_artifacts:
+          path: licenses
+          destination: licenses
 
   # Release jobs
   store-build-artifacts:
@@ -1136,6 +1141,10 @@ workflows:
           env: dev
           requires:
             - Setup sign certificates (dev)
+      - licenses-check:
+          name: Process licenses of packages
+          requires: &devBuildRequire
+            - Setup build (dev)
       - linux:
           name: Build app - Linux (dev)
           env: dev
@@ -1438,3 +1447,16 @@ workflows:
       #     report: true
       #     requires:
       #       - Build app - Windows (stage)
+
+weekly:
+  triggers:
+    - schedule:
+        cron: '0 0 * * 1'
+        filters:
+          branches:
+            only:
+              - main
+  jobs:
+    # Process all licenses
+    - licenses-check:
+        name: Process licenses of packages

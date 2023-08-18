@@ -813,7 +813,7 @@ jobs:
             yarn --cwd tests/e2e install
             # Install plugins dependencies
             export pluginsOnlyInstall=1
-            sh ./scripts/build-statics.sh
+            yarn build:statics
       - run:
           name: Generate licenses csv files and send csv data to google sheet
           command: |
